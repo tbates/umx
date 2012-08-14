@@ -3,6 +3,78 @@
 # To USE ME IN YOUR SCRIPTS SAY: 
 # source("http://www.github.com/umx.lib.R")
 
+umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
+	# use case
+	# standardizeRAM(model, return="parameters|matrices|model")
+	# make sure 'return' is valid
+	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
+	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
+	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
+	if (class(model@objective)[1] !="MxRAMObjective" & !suppliedNames ){
+		stop("I need either mxRAMObjective or the names of the A and S matrices.")
+	}
+	output <- model@output
+	# stop if there is no objective function
+	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
+	# stop if there is no output
+	if (length(output)<1)stop("Provided model has no output. I can only standardize models that have been run!")
+	# Get the names of the A, S and M matrices 
+	if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
+	if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
+	if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
+	# Get the A and S matrices, and make an identity matrix
+	A <- model[[nameA]]
+	S <- model[[nameS]]
+	I <- diag(nrow(S@values))
+	
+	# Calculate the expected covariance matrix
+	IA <- solve(I-A@values)
+	expCov <- IA %*% S@values %*% t(IA)
+	# Return 1/SD to a diagonal matrix
+	invSDs <- 1/sqrt(diag(expCov))
+	# Give the inverse SDs names, because mxSummary treats column names as characters
+	names(invSDs) <- as.character(1:length(invSDs))
+	if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
+	# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
+	diag(I) <- invSDs
+	# Standardize the A, S and M matrices
+	#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
+	#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
+	stdA <- I %*% A@values %*% solve(I)
+	stdS <- I %*% S@values %*% I
+	# Populate the model
+	model[[nameA]]@values[,] <- stdA
+	model[[nameS]]@values[,] <- stdS
+	if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
+	# Return the model, if asked
+	if(return=="model"){
+		return(model)
+	}else if(return=="matrices"){
+		# return the matrices, if asked
+		matrices <- list(model[[nameA]], model[[nameS]])
+		names(matrices) <- c("A", "S")
+		return(matrices)
+	}else if(return=="parameters"){
+		# return the parameters
+		#recalculate summary based on standardised matrices
+		p <- summary(model)$parameters
+		p <- p[(p[,2]==nameA)|(p[,2]==nameS),]
+		## get the rescaling factor
+		# this is for the A matrix
+		rescale <- invSDs[p$row] * 1/invSDs[p$col]
+		# this is for the S matrix
+		rescaleS <- invSDs[p$row] * invSDs[p$col]
+		# put the A and the S together
+		rescale[p$matrix=="S"] <- rescaleS[p$matrix=="S"]
+		# rescale
+		p[,5] <- p[,5] * rescale
+		p[,6] <- p[,6] * rescale
+		# rename the columns
+		# names(p)[5:6] <- c("Std. Estimate", "Std.Std.Error")
+		return(p)		
+	}
+}
+
 umxReportFit<-function(model) {
 	# use case
 	# umxReportFit(fit1)
