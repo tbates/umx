@@ -1,7 +1,17 @@
 # umx.lib.R
 # To learn more, see
 # To USE ME IN YOUR SCRIPTS SAY: 
-# source("http://www.github.com/umx.lib.R")
+# source("http://github.com/tbates/umx/blob/master/umx.lib.R")
+# source("https://raw.github.com/tbates/umx/master/umx.lib.R")
+
+require(RCurl)
+url = "https://raw.github.com/tbates/umx/master/umx.lib.R"
+# read script lines from website
+script <- getURL(url, ssl.verifypeer = FALSE)
+# parse lines and evaluate in the global environement
+eval(parse(text = script))
+# borrowed from here
+# http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github/
 
 umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# use case
