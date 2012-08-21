@@ -4,12 +4,15 @@ umx stands for "user" mx function, and is a library of helper functions for doin
 It currently contains functions to support:
 
 1. RAM model Modification Indices
-	* **umxMI**(*model*, *vector*=T) # return modification indices for a model
+	* **umxMI**(*model*, *vector*=T) # *return modification indices for a model*
 	* **umxMI_top**(*fit*, *numInd*=5, *typeToShow*="add", *descending*=T) # report the top n indices
 2. Reporting helpers
-	* **umxReportFit**(*model*) # report a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA)
-	* **umxStandardizeRAM**(*model*) # standardize a RAM model
-		* nb: summary() computes standardized paths for RAM models, but this function is still useful, as omxGraphviz() does not, and the function standardizeRAMModel() is not exposed in OpenMx.
+	* **umxReportFit**(*model*) # *report a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA)*
+	* **umxStandardizeRAM**(*model*) #* standardize a RAM model*
+		* **nb**: *summary() computes standardized paths for RAM models, but this function is still useful, as omxGraphviz() does not, and the function standardizeRAMModel() is not exposed in OpenMx.*
+	* **umxTime**(*fit1*) # *report the time taken by a model in a compact friendly, progammable format*
+}
+ 
 
 Feel free to use, and improve! Log suggestions here using the Github comments, wiki, or git.
 

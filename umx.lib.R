@@ -261,3 +261,9 @@ umxMI_top <- function(fit=NA, numInd=10, typeToShow="both") {
 	invisible(mi.df)
 }
 
+# How long did that take?
+umxReportTime <- function(model, formatStr= "%H:%M:%S", tz="GMT"){
+	# use case
+	# umxReportTime(fit1)
+	format(.POSIXct(model$wallTime,tz), formatStr)
+}
