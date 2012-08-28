@@ -11,8 +11,9 @@ It currently contains functions to support:
 	* **umxStandardizeRAM**(*model*) #* standardize a RAM model*
 		* **nb**: *summary() computes standardized paths for RAM models, but this function is still useful, as omxGraphviz() does not, and the function standardizeRAMModel() is not exposed in OpenMx.*
 	* **umxTime**(*fit1*) # *report the time taken by a model in a compact friendly, progammable format*
-}
- 
+3. Speed and efficiency helpers
+	* **umxTryHarder**(*model*)
+		* Sometimes models will code Red, and just need to be re-run from their now closer-to-good starting values. umxTryHard() replaces mxRun, allowing a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases. Ideally, mxRun() might support this option itself.
 
 Feel free to use, and improve! Log suggestions here using the Github comments, wiki, or git.
 

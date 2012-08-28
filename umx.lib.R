@@ -300,6 +300,3 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 	# Use case
 	# model <- tryHard(model, n=10)
 }
-
-#` ###Documentation
-#` Sometimes models will code Red, and just need to be re-run from their now closer-to-good starting values. umxTryHard() replaces mxRun, allowing a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases. Ideally, mxRun() might support this option itself.
