@@ -6,12 +6,11 @@
 
 require(RCurl)
 url = "https://raw.github.com/tbates/umx/master/umx.lib.R"
-# read script lines from website
-script <- getURL(url, ssl.verifypeer = FALSE)
-# parse lines and evaluate in the global environement
+#` Read script lines from github
+script <- RCurl::getURL(url, ssl.verifypeer = FALSE)
+#` parse then evaluate script in the global environement
 eval(parse(text = script))
-# borrowed from here
-# http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github/
+#` Code borrowed from [here](http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github)
 
 umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# use case
@@ -267,3 +266,40 @@ umxReportTime <- function(model, formatStr= "%H:%M:%S", tz="GMT"){
 	# umxReportTime(fit1)
 	format(.POSIXct(model$wallTime,tz), formatStr)
 }
+
+# Functions to speed up running models, or make them easier to run
+# Parallel helpers to be added here
+
+umxTryHard <- function(model, n=3, calc_SE=F){
+	# TODO: add edit history, history of Mx function tryhard
+	# optimise for speed
+	model = mxOption(model, "Calculate Hessian", "No")
+	model = mxOption(model, "Standard Errors", "No")
+	# make an initial run
+	model = mxRun(model);
+	n = n-1
+	tries = 0
+	# carryon if we failed
+	while(model@output$status[[1]] == 6 && n > 2 ) {
+		print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
+		model <- mxRun(model)
+		n <- n-1
+		tries = tries+1
+	}
+	if(tries==0){ 
+		print("Ran fine first time!")	
+	}
+	# get the SEs for summary (if requested)
+	if(calc_SE){
+		print("Calculating Hessian & SEs")
+		model = mxOption(model, "Calculate Hessian", "Yes")
+		model = mxOption(model, "Standard Errors", "Yes")
+		model = mxRun(model)
+	}
+	return(model)
+	# Use case
+	# model <- tryHard(model, n=10)
+}
+
+#` ###Documentation
+#` Sometimes models will code Red, and just need to be re-run from their now closer-to-good starting values. umxTryHard() replaces mxRun, allowing a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases. Ideally, mxRun() might support this option itself.
