@@ -84,6 +84,10 @@ umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatr
 	}
 }
 
+# =====================
+# = Reporting Helpers =
+# =====================
+
 umxReportFit<-function(model) {
 	# use case
 	# umxReportFit(fit1)
@@ -267,8 +271,9 @@ umxReportTime <- function(model, formatStr= "%H:%M:%S", tz="GMT"){
 	format(.POSIXct(model$wallTime,tz), formatStr)
 }
 
-# Functions to speed up running models, or make them easier to run
-# Parallel helpers to be added here
+# =================================
+# = Speed  and Efficiency Helpers =
+# =================================
 
 umxTryHard <- function(model, n=3, calc_SE=F){
 	# TODO: add edit history, history of Mx function tryhard
@@ -301,8 +306,15 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 	# model <- tryHard(model, n=10)
 }
 
-#' # Functions to help building and modifying models
+# Parallel helpers to be added here
+
+
+# ========================================
+# = Model building and modifying helpers =
+# ========================================
 #' ## path-oriented helpers
+
+
 #' ## matrix-oriented helpers
 
 umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA, boundDiag=NA) {
@@ -371,4 +383,20 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 		diag(mx_matrix@lbound)<-boundDiag # bound diagonal to be positive 
 	}
 	return(mx_matrix)
+}
+
+
+# =================
+# = Data handling =
+# =================
+
+umxHcor <- function(data, ML=F, use="pairwise.complete.obs"){
+	# use case
+	# umxHcor(data, use="pairwise.complete.obs")
+	# Function to return correlations from hetcor
+	require(polycor)
+	# TODO add error message if polycor not found
+	# install.packages("polycor")
+	hetc = polycor::hetcor(data, ML=ML, use=use, std.err=F)
+	return(hetc$correlations)
 }

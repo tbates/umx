@@ -14,8 +14,11 @@ It currently contains functions to support:
 3. Speed and efficiency helpers
 	* **umxTryHarder**(*model*)
 		* Sometimes models will code Red, and just need to be re-run from their now closer-to-good starting values. umxTryHard() replaces mxRun, allowing a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases. Ideally, mxRun() might support this option itself.
+4. Data processing helpers
+	* umxHcor(data, use="pairwise.complete.obs")
 
-Feel free to use, and improve! Log suggestions here using the Github comments, wiki, or git.
+
+Feel fFunction to return correlations from hetcorree to use, and improve! Log suggestions here using the Github comments, wiki, or git.
 
 ### Contributors
 * [Tim Bates](tim.bates@ed.ac.uk)
