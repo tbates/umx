@@ -300,3 +300,75 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 	# Use case
 	# model <- tryHard(model, n=10)
 }
+
+#' # Functions to help building and modifying models
+#' ## path-oriented helpers
+#' ## matrix-oriented helpers
+
+umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA, boundDiag=NA) {
+	# Purpose       : label the cells of an mxMatrix
+	# Detail        : Defaults to the handy "matname_r1c1" where 1 is the row or column
+	# Related calls : fit2 = omxSetParameters(fit1, labels="a_r1c1", free=F, value = 0, name="drop_a_row1_c1")
+	# Use case:
+	# umxLabeler(mxMatrix("Lower",3, 3, values=1, name="a", byrow=T), jiggle=.05, boundDiag=NA);
+	type      = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
+	nrow      = nrow(mx_matrix);
+	ncol      = ncol(mx_matrix);
+	newLabels = mx_matrix@labels;
+	mirrorLabels =newLabels
+	if(is.na(baseName)) { baseName = mx_matrix@name }
+	# Make a matrix of labels in the form baseNameRowNumColNum
+	for (r in 1:nrow) {
+		for (c in 1:ncol) {
+			newLabels[r,c]= paste(baseName,"_r",r,"c",c, sep="")
+			if(nrow == ncol) { # Should include all sqaure forms type=="StandMatrix" | type=="SymmMatrix"
+				mirrorLabels[c,r]= paste(baseName,r,c, sep="")
+			}
+		}
+	}
+	if(type=="DiagMatrix"){
+		newLabels[lower.tri(newLabels, diag=F)]=NA
+		newLabels[upper.tri(newLabels, diag=F)]=NA
+	} else if(type=="FullMatrix"){
+		# newLabels = newLabels
+	} else if(type=="LowerMatrix"){
+		newLabels[upper.tri(newLabels, diag=F)] = NA 
+	} else if(type=="SdiagMatrix"){
+		newLabels[upper.tri(newLabels, diag=T)] = NA
+	} else if(type=="SymmMatrix"){
+		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
+		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
+	} else if(type=="StandMatrix") {
+		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
+		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
+		diag(newLabels) <- NA
+	} else if(type=="IdenMatrix"|type=="UnitMatrix"|type=="ZeroMatrix") {
+		stop("you can't run genEpi_Labeler on an Identity matrix - it has no free values!")
+	} else {
+		return(paste("you tried to set type ", "to '", type, "'", sep=""));
+	}
+   # Set labels
+	mx_matrix@labels <- newLabels;
+	if(setfree==FALSE) {
+		# return("Specs not used: leave free as set in mx_matrix") 
+	} else {
+		newFree = mx_matrix@free
+		# return(newFree)
+		newFree[mx_matrix@values==drop] = F;
+		newFree[mx_matrix@values!=drop] = T;
+		if(type=="StandMatrix") {
+			newLabels[lower.tri(newLabels, diag=FALSE)] -> lower.labels;
+			newLabels[upper.tri(newLabels, diag=FALSE)] <- lower.labels;
+		} else {
+			mx_matrix@free <- newFree
+		}
+		# newFree[is.na(newLabels)]=NA; # (validated by mxMatrix???)
+	}
+	if(!is.na(jiggle)){
+		mx_matrix@values <- genEpi_Jiggle(mx_matrix@values, mean=0, sd=jiggle, dontTouch=drop) # Expecting sd
+	}
+	if(!is.na(boundDiag)){
+		diag(mx_matrix@lbound)<-boundDiag # bound diagonal to be positive 
+	}
+	return(mx_matrix)
+}
