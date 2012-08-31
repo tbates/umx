@@ -390,10 +390,10 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 # = Data handling =
 # =================
 
-umxHcor <- function(data, ML=F, use="pairwise.complete.obs"){
+umxHetCor <- function(data, ML=F, use="pairwise.complete.obs"){
 	# use case
-	# umxHcor(data, use="pairwise.complete.obs")
-	# Function to return correlations from hetcor
+	# umxHetCor(data, use="pairwise.complete.obs")
+	# heplper to return just the correlations from polycor::hetcor
 	require(polycor)
 	# TODO add error message if polycor not found
 	# install.packages("polycor")
