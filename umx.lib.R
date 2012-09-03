@@ -1,8 +1,9 @@
 # umx.lib.R
-# To learn more, see
 # To USE ME IN YOUR SCRIPTS SAY: 
 # source("http://github.com/tbates/umx/blob/master/umx.lib.R")
 # source("https://raw.github.com/tbates/umx/master/umx.lib.R")
+
+# To learn more, see http://www.github.com/tbates/umx/README.md
 
 require(RCurl)
 url = "https://raw.github.com/tbates/umx/master/umx.lib.R"
@@ -308,14 +309,12 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 
 # Parallel helpers to be added here
 
-
 # ========================================
 # = Model building and modifying helpers =
 # ========================================
-#' ## path-oriented helpers
+#` ## path-oriented helpers
 
-
-#' ## matrix-oriented helpers
+#` ## matrix-oriented helpers
 
 umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA, boundDiag=NA) {
 	# Purpose       : label the cells of an mxMatrix
@@ -384,7 +383,6 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 	}
 	return(mx_matrix)
 }
-
 
 # =================
 # = Data handling =
