@@ -13,6 +13,82 @@ script <- RCurl::getURL(url, ssl.verifypeer = FALSE)
 eval(parse(text = script))
 #` Code borrowed from [here](http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github)
 
+umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
+	# update the OpenMx Library to latest version:
+	# umxUpdateOpenMx()
+	if( "OpenMx" %in% .packages() ){
+		detach(package:OpenMx); # unload existing version
+	}	
+	if (bleedingEdge){
+		install.packages('OpenMx', repos='http://openmx.psyc.virginia.edu/testing/');
+	} else {
+		if (.Platform$OS.type == "windows") {
+			if (!is.null(.Platform$r_arch) && .Platform$r_arch == "x64") {
+				stop(paste("OpenMx is not yet supported on 64-bit R for Windows.",
+				"Please use 32-bit R in the interim."), call. = FALSE)
+			}
+			repos <- c('http://openmx.psyc.virginia.edu/packages/')
+			install.packages(pkgs=c('OpenMx'), repos=repos)
+		} else {
+			if (Sys.info()["sysname"] == "Darwin") {
+				darwinVers <- as.numeric(substr(Sys.info()['release'], 1, 2))
+				if (darwinVers > 10) {
+					msg <- paste("We have detected that you are running on OS X 10.7 or greater",
+					"whose native version of gcc does not support the OpenMP API.", 
+					"As a result your default installation has been set to single-threaded.",
+					"If you have installed the mac ports version of gcc to address this issue",
+					"please choose the multi-threaded installation option.")
+					msg <- gsub('(.{1,80})(\\s|$)', '\\1\n', msg)
+					cat(msg)
+					cat("1. single-threaded [default]\n")
+					cat("2. multi-threaded \n")
+					select <- readline("Which version of OpenMx should I install? ")
+
+					if (select == "") {
+						select <- 1
+					} 
+
+				} else {
+					cat("1. single-threaded\n")
+					cat("2. multi-threaded [default]\n")
+					select <- readline("Which version of OpenMx should I install? ")
+
+					if (select == "") {
+						select <- 2
+					}
+				}
+				} else {
+					cat("1. single-threaded\n")
+					cat("2. multi-threaded [default]\n")
+					select <- readline("Which version of OpenMx should I install? ")
+
+					if (select == "") {
+						select <- 2
+					}
+				}
+
+				if (!(select %in% c(1,2))) {
+					stop("Please enter '1' or '2'", call. = FALSE)
+				}
+  
+				if (select == 1) {
+					repos <- c('http://openmx.psyc.virginia.edu/sequential/')
+					install.packages(pkgs=c('OpenMx'), repos=repos, 
+					configure.args=c('--disable-openmp'))
+				} else if (select == 2) {
+					repos <- c('http://openmx.psyc.virginia.edu/packages/')
+					install.packages(pkgs=c('OpenMx'), repos=repos)
+				} else {
+					stop(paste("Unknown installation type", select))
+				}
+		}
+	}
+	if(loadNew){
+		require("OpenMx")	
+	}
+}
+
+
 umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# use case
 	# standardizeRAM(model, return="parameters|matrices|model")

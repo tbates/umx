@@ -15,10 +15,12 @@ It currently contains functions to support:
 	* **umxTryHarder**(*model*)
 		* Sometimes models will code Red, and just need to be re-run from their now closer-to-good starting values. umxTryHard() replaces mxRun, allowing a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases. Ideally, mxRun() might support this option itself.
 4. Data processing helpers
-	* umxHcor(data, use="pairwise.complete.obs")
+	* **umxHcor**(data, use="pairwise.complete.obs") # compute heterochoric (pair-wise appropriate) correlationss for mixed data types
+5. Utilities
+	* `umxUpdateOpenMx(bleedingEdge=FALSE, loadNew=TRUE)` *# update your copy of OpenMx library*
 
 
-Feel fFunction to return correlations from hetcorree to use, and improve! Log suggestions here using the Github comments, wiki, or git.
+Feel free to use, and improve! Log suggestions here using the Github comments, wiki, or git.
 
 ### Contributors
 * [Tim Bates](tim.bates@ed.ac.uk)
