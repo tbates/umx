@@ -170,16 +170,103 @@ umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatr
 # = Reporting Helpers =
 # =====================
 
-umxReportFit<-function(model) {
-	# use case
-	# umxReportFit(fit1)
-	with(summary(model),paste(
-		"χ2(", degreesOfFreedom, ") = ", round(Chi,2), ", ",
-		"p = "    , round(p,2)  , "; ",
-		"CFI = "  , round(CFI,3), "; ",
-		"TLI = "  , round(TLI,3), "; ",
-		"RMSEA = ", round(RMSEA, 3), sep="")
+
+umxSaturated <- function(m1, return= "Minus2LogLikelihood") {
+	# Use case
+	# m1_sat = umxSaturated(m1)
+	# summary(m1, SaturatedLikelihood=m1_sat$SaturatedLikelihood, IndependenceLikelihood=m1_sat$IndependenceLikelihood)
+	manifests           = m1@manifestVars
+	nVar                = length(manifests)
+	theData             = m1@data@observed
+	dataMeans           = colMeans(theData)
+	meansLabels         = paste("mean", 1:nVar, sep="")
+	loadingsLabels      = paste("F", 1:nVar, "loading", sep="")
+	factorLoadingStarts = t(chol(cov(theData, use = "pairwise.complete.obs")))
+	independenceStarts  = diag(cov(theData, use = "pairwise.complete.obs"))
+
+	# Set latents to a new set of 1 per manifest
+	# Set S matrix to an Identity matrix (i.e., variance fixed@1)
+	# Set A matrix to a Cholesky, manifests by manifests in size, free to be estimated 
+	# TODO: start the cholesky at the cov values
+	m2 <- mxModel("sat",
+    	# variances set at 1,,,
+		# mxMatrix(name = "factorVariances", type="Iden" , nrow = nVar, ncol = nVar), # Bunch of Ones on the diagonal
+	    mxMatrix(name = "factorMeans"    , type="Zero" , nrow = 1   , ncol = nVar), # Bunch of Zeros
+	    mxMatrix(name = "factorLoadings" , type="Lower", nrow = nVar, ncol = nVar, free=T, values = factorLoadingStarts), # labels = loadingsLabels),
+	    mxAlgebra(name = "expCov"        , expression = factorLoadings %*% t(factorLoadings)),
+
+	    mxMatrix(name = "expMean", type="Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxFIMLObjective(covariance="expCov", means="expMean", dimnames = manifests),
+	    mxData(theData, type="raw")
 	)
+	m3 <- mxModel("independence",
+	    # TODO: slightly inefficient, as this has an analytic solution
+	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free=T, values = independenceStarts), # labels = loadingsLabels),
+	    mxAlgebra(variableLoadings %*% t(variableLoadings), name = "expCov"),
+
+	    mxMatrix(name = "expMean", type="Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxFIMLObjective(covariance="expCov", means="expMean", dimnames = manifests),
+	    mxData(theData, type="raw")
+	)
+
+	if(return == "Minus2LogLikelihood"){
+		message("I am going to run the saturated and independence models: this may take some time")
+		m2 = mxRun(m2)
+		m3 = mxRun(m3)
+	}
+	message("you can use this result in the summary function like this:
+	summary(m1, SaturatedLikelihood=m1_sat$SaturatedLikelihood, IndependenceLikelihood=m1_sat$IndependenceLikelihood)
+	or use 
+	umxReportFit(m1, saturatedModels = m1_sat)")
+	return(list(SaturatedLikelihood = m2, IndependenceLikelihood = m3))
+}
+
+umxReportFit <- function(model, saturatedModels = NA, report="line") {
+	# Use case
+	# umxReportFit(m1, report="table")
+	# umxReportFit(m1, saturatedModels = m1_sat)
+	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
+	# References for OK/bad
+	# Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
+	# Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from http://www.statmodel.com/download/Yudissertation.pdf  
+
+	if(length(saturatedModels)==1){ #is.na
+		modelSummary = summary(model)
+	} else {
+		modelSummary = summary(m1, SaturatedLikelihood=saturatedModels$SaturatedLikelihood, IndependenceLikelihood=saturatedModels$IndependenceLikelihood)
+	}	
+	if(is.na(modelSummary$SaturatedLikelihood)){
+		message("there is no saturated likelihood, you probaby want to run umxSaturated(model) to get it and then include the result
+		saturatedModels = ") 
+	} else {
+		with(modelSummary,{
+			if(TLI > .95){
+				TLI_OK = "OK"
+			} else {
+				TLI_OK = "bad"
+			}
+			if(RMSEA < .06){
+				RMSEA_OK = "OK"
+			} else {
+				RMSEA_OK = "bad"
+			}
+			if(report=="table"){
+				x = data.frame(cbind(model@name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
+				names(x) = c("model","χ2","p","CFI", "TLI","RMSEA")
+				print(x)
+			} else {
+				x = paste(
+				"χ2(", degreesOfFreedom, ") = ", round(Chi,2),
+				", p = "    , formatC(p, format="g"),
+				"; CFI = "  , round(CFI,3),
+				"; TLI = "  , round(TLI,3),
+				"; RMSEA = ", round(RMSEA, 3), 
+				", TLI = "  , TLI_OK,
+				", RMSEA = "  , RMSEA_OK, sep="")
+				print(x)
+			}
+		})
+	}
 }
 
 umxMI <- function(model, vector=T) {
@@ -415,7 +502,6 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 
 #` ## matrix-oriented helpers
 
-
 umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA, boundDiag=NA) {
 	# Purpose       : label the cells of an mxMatrix
 	# Detail        : Defaults to the handy "matname_r1c1" where 1 is the row or column
@@ -483,7 +569,6 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 	}
 	return(mx_matrix)
 }
-
 
 # =================
 # = Data handling =
