@@ -347,11 +347,29 @@ umxMI_top <- function(fit=NA, numInd=10, typeToShow="both") {
 }
 
 # How long did that take?
-umxReportTime <- function(model, formatStr= "%H:%M:%S", tz="GMT"){
+umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 	# use case
 	# umxReportTime(fit1)
-	format(.POSIXct(model$wallTime,tz), formatStr)
+	format(.POSIXct(model@output$wallTime,tz), formatStr)
 }
+
+print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", ...){
+    xx <- format(x, digits = digits, justify = justify)
+    if (any(ina <- is.na(x))) 
+        xx[ina] <- na.print
+	i0 <- !ina & x == 0
+    if (zero.print != "0" && any(i0)) 
+        xx[i0] <- zero.print
+    if (is.numeric(x) || is.complex(x)){
+        print(xx, quote = quote, right = TRUE, ...)
+    }else{
+		print(xx, quote = quote, ...)	
+    }
+    invisible(x)
+	# use case
+	# print.dataframe(bob, digits=2, zero.print = ".", justify="left")
+}
+
 
 # =================================
 # = Speed  and Efficiency Helpers =
@@ -397,12 +415,13 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 
 #` ## matrix-oriented helpers
 
+
 umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA, boundDiag=NA) {
 	# Purpose       : label the cells of an mxMatrix
 	# Detail        : Defaults to the handy "matname_r1c1" where 1 is the row or column
-	# Related calls : fit2 = omxSetParameters(fit1, labels="a_r1c1", free=F, value = 0, name="drop_a_row1_c1")
 	# Use case:
 	# umxLabeler(mxMatrix("Lower",3, 3, values=1, name="a", byrow=T), jiggle=.05, boundDiag=NA);
+	# Related calls : fit2 = omxSetParameters(fit1	, labels="a_r1c1", free=F, value = 0, name="drop_a_row1_c1")
 	type      = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
 	nrow      = nrow(mx_matrix);
 	ncol      = ncol(mx_matrix);
@@ -435,11 +454,11 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
 		diag(newLabels) <- NA
 	} else if(type=="IdenMatrix"|type=="UnitMatrix"|type=="ZeroMatrix") {
-		stop("you can't run genEpi_Labeler on an Identity matrix - it has no free values!")
+		stop("You can't run umxLabeler on an Identity matrix - it has no free values!")
 	} else {
-		return(paste("you tried to set type ", "to '", type, "'", sep=""));
+		return(paste("You tried to set type ", "to '", type, "'", sep=""));
 	}
-   # Set labels
+	# Set labels
 	mx_matrix@labels <- newLabels;
 	if(setfree==FALSE) {
 		# return("Specs not used: leave free as set in mx_matrix") 
@@ -464,6 +483,7 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 	}
 	return(mx_matrix)
 }
+
 
 # =================
 # = Data handling =
