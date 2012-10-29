@@ -12,8 +12,10 @@ script <- RCurl::getURL(url, ssl.verifypeer = FALSE)
 #` parse then evaluate script in the global environement
 eval(parse(text = script))
 #` Code borrowed from [here](http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github)
+
 umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
 	# update the OpenMx Library to latest version:
+	# use case:
 	# umxUpdateOpenMx()
 	if( "OpenMx" %in% .packages() ){
 		oldV = mxVersion();
@@ -93,7 +95,6 @@ umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
 
 }
 
-
 umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# use case
 	# standardizeRAM(model, return="parameters|matrices|model")
@@ -170,14 +171,19 @@ umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatr
 # = Reporting Helpers =
 # =====================
 
-
-umxSaturated <- function(m1, return= "Minus2LogLikelihood") {
+umxSaturated <- function(model, evaluate = T) {
 	# Use case
-	# m1_sat = umxSaturated(m1)
-	# summary(m1, SaturatedLikelihood=m1_sat$SaturatedLikelihood, IndependenceLikelihood=m1_sat$IndependenceLikelihood)
-	manifests           = m1@manifestVars
+	# model_sat = umxSaturated(model)
+	# summary(model, SaturatedLikelihood = model_sat$SaturatedLikelihood, IndependenceLikelihood = model_sat$IndependenceLikelihood)
+	if (!(isS4(model) && is(model, "MxModel"))) {
+		stop("'model' must be an mxModel")
+	}
+	theData = model@data@observed
+	if (is.null(theData)) {
+		stop("'model' does not contain any data")
+	}
+	manifests           = model@manifestVars
 	nVar                = length(manifests)
-	theData             = m1@data@observed
 	dataMeans           = colMeans(theData)
 	meansLabels         = paste("mean", 1:nVar, sep="")
 	loadingsLabels      = paste("F", 1:nVar, "loading", sep="")
@@ -208,18 +214,22 @@ umxSaturated <- function(m1, return= "Minus2LogLikelihood") {
 	    mxFIMLObjective(covariance="expCov", means="expMean", dimnames = manifests),
 	    mxData(theData, type="raw")
 	)
-
-	if(return == "Minus2LogLikelihood"){
+	model <- mxOption(model, "Calculate Hessian", "No")
+	model <- mxOption(model, "Standard Errors", "No")
+	m2 <- mxOption(m2, "Calculate Hessian", "No")
+	m2 <- mxOption(m2, "Standard Errors", "No")
+	if(evaluate){
 		message("I am going to run the saturated and independence models: this may take some time")
 		m2 = mxRun(m2)
 		m3 = mxRun(m3)
 	}
 	message("you can use this result in the summary function like this:
-	summary(m1, SaturatedLikelihood=m1_sat$SaturatedLikelihood, IndependenceLikelihood=m1_sat$IndependenceLikelihood)
+	summary(model, SaturatedLikelihood=model_sat$SaturatedLikelihood, IndependenceLikelihood=model_sat$IndependenceLikelihood)
 	or use 
-	umxReportFit(m1, saturatedModels = m1_sat)")
+	umxReportFit(model, saturatedModels = model_sat)")
 	return(list(SaturatedLikelihood = m2, IndependenceLikelihood = m3))
 }
+
 
 umxReportFit <- function(model, saturatedModels = NA, report="line") {
 	# Use case
@@ -583,4 +593,39 @@ umxHetCor <- function(data, ML=F, use="pairwise.complete.obs"){
 	# install.packages("polycor")
 	hetc = polycor::hetcor(data, ML=ML, use=use, std.err=F)
 	return(hetc$correlations)
+}
+
+umxLower2full <- function(lower.data, diag=F, byrow=T) {
+	# lower2full(lower.tri, diag=F)
+	# lower2full(lower.data, diag=T, byrow=F)
+	# lower2full(lower.no.diag, diag=F, byrow=F)
+	# lower2full(lower.bycol, diag=T, byrow=F)
+	# lower2full(lower.byrow, diag=T, byrow=T)
+
+	len = length(lower.data)
+	if(diag) {
+		# len*2 = ((x+.5)^2)-.25
+		size = len*2
+		size = size + .25
+		size = sqrt(size)
+		size = size -.5; size
+	}else{
+		# len = (x*((x+1)/2))-x	
+		# .5*(x-1)*x
+		size = len *2
+		# (x-.5)^2 - .25
+		size= size + .25
+		size = sqrt(size)
+		size = size +.5; size
+	}
+	mat = diag(size)
+	if(byrow){
+		# put  data into upper triangle, then transform to lower
+		mat[upper.tri(mat,diag=diag)] <- lower.data;
+		mat[lower.tri(mat,diag=F)] <- mat[upper.tri(mat,diag=F)]
+	}else{                            
+		mat[lower.tri(mat,diag=diag)] <- lower.data;
+		mat[upper.tri(mat,diag=F)] <-mat[lower.tri(mat,diag=F)]
+	}
+	return(mat)
 }
