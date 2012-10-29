@@ -170,14 +170,18 @@ umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatr
 # =====================
 # = Reporting Helpers =
 # =====================
-
-umxSaturated <- function(model, evaluate = T) {
+umxSaturated <- function(model, evaluate = T, verbose=T) {
 	# Use case
 	# model_sat = umxSaturated(model)
 	# summary(model, SaturatedLikelihood = model_sat$SaturatedLikelihood, IndependenceLikelihood = model_sat$IndependenceLikelihood)
 	if (!(isS4(model) && is(model, "MxModel"))) {
 		stop("'model' must be an mxModel")
 	}
+
+	if (length(model@submodels)>0) {
+		stop("Cannot yet handle submodels")
+	}
+
 	theData = model@data@observed
 	if (is.null(theData)) {
 		stop("'model' does not contain any data")
@@ -209,24 +213,28 @@ umxSaturated <- function(model, evaluate = T) {
 	    # TODO: slightly inefficient, as this has an analytic solution
 	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free=T, values = independenceStarts), # labels = loadingsLabels),
 	    mxAlgebra(variableLoadings %*% t(variableLoadings), name = "expCov"),
-
 	    mxMatrix(name = "expMean", type="Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
-	    mxFIMLObjective(covariance="expCov", means="expMean", dimnames = manifests),
+	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
 	    mxData(theData, type="raw")
 	)
-	model <- mxOption(model, "Calculate Hessian", "No")
-	model <- mxOption(model, "Standard Errors", "No")
 	m2 <- mxOption(m2, "Calculate Hessian", "No")
 	m2 <- mxOption(m2, "Standard Errors", "No")
+	m3 <- mxOption(m3, "Calculate Hessian", "No")
+	m3 <- mxOption(m3, "Standard Errors", "No")
 	if(evaluate){
-		message("I am going to run the saturated and independence models: this may take some time")
+		if(verbose){
+			message("I am going to run the saturated and independence models: this may take some time")
+		}
 		m2 = mxRun(m2)
 		m3 = mxRun(m3)
 	}
-	message("you can use this result in the summary function like this:
-	summary(model, SaturatedLikelihood=model_sat$SaturatedLikelihood, IndependenceLikelihood=model_sat$IndependenceLikelihood)
-	or use 
-	umxReportFit(model, saturatedModels = model_sat)")
+	if(verbose){
+		m = deparse(substitute(model))
+		message("you can use this result in the summary function like this:
+		summary(", m, ", SaturatedLikelihood = ", m, "_sat$SaturatedLikelihood, IndependenceLikelihood = ", m, "_sat$IndependenceLikelihood)
+or use 
+		umxReportFit(", m, ", saturatedModels = ", m, "_sat)")
+	}
 	return(list(SaturatedLikelihood = m2, IndependenceLikelihood = m3))
 }
 
