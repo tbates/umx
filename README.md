@@ -8,7 +8,7 @@ It currently contains functions to support:
 	* `umxMI_top(fit, numInd = 5, typeToShow = "add", descending = T)` # Report the top n indices
 2. Reporting helpers
 	* `umxReportFit(model)` # *report a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA)*
-	* `umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [http://www.graphviz.org/Gallery.php](GraphViz) file)*
+	* `umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
 	* `umxStandardizeRAM(model)` #* standardize a RAM model*
 		* **nb**:* `summary()` computes standardized paths for RAM models, but this function is still useful, as `omxGraphviz()` does not, and the function `standardizeRAMModel()` is not exposed in OpenMx.
 	* `umxTime(fit1)`  *# Report the time taken by a model in a compact friendly, programable format*
