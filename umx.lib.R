@@ -588,6 +588,41 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 	return(mx_matrix)
 }
 
+umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
+	# usage e.g.
+	# umxGetLabels(model@matrices$as) # all labels of as matrix
+	# umxGetLabels(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
+	if(class(inputTarget)[1] =="MxModel") {
+		topLabels = names(omxGetParameters(inputTarget, indep=FALSE, free=free))
+	} else {
+		# Assuming it is a matrix
+		# omxGetParameters can't take a matrix :-(
+		if(is.na(free)) {
+			topLabels = inputTarget@labels
+		} else {
+			topLabels = inputTarget@labels[inputTarget@free==free]
+		}
+	}
+	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
+	if( !is.na(regex) ) {
+		if(length(grep("[\\.\\*\\[\\(\\+\\|]+", regex) )<1){ # no grep found: add some anchors for safety
+			regex = paste("^", regex, "[0-9]*$", sep=""); # anchor to the start of the string
+			if(verbose==T){
+				cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
+			}
+		}
+		
+		theLabels = grep(regex, theLabels, perl = F, value=T) # return more detail
+		if(length(theLabels)==0){
+			stop("found no matching labels!");
+		}
+	}
+	# TODO Be nice to offer a method to handle submodels
+	# model@submodels$aSubmodel@matrices$aMatrix@labels
+	# model@submodels$MZ@matrices
+	return(theLabels)
+}
+
 # =================
 # = Data handling =
 # =================
