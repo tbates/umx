@@ -286,6 +286,102 @@ umxReportFit <- function(model, saturatedModels = NA, report="line") {
 	}
 }
 
+
+umxGraph_RAM <- function(model=NA, std=T, precision=2, dotFilename="name", pathLabels="none", showFixed=F, showError=T) {
+	# Use case:
+	# umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")
+
+	# TODO: Show fixed paths... perhaps in red, or with "@" signs
+	# legal options for "pathLabels" = "both", "none" or "labels"
+	latents = model@latentVars   # 'vis', 'math', and 'text' 
+	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap', 'sentence', 'numeric', 'series', and 'arithmet'
+	if(std){ model= umxStandardizeModel(model, return="model") }
+	out = "";
+	# Get Asymmetric Paths
+	aRows = dimnames(model[["A"]]@free)[[1]]
+	aCols = dimnames(model[["A"]]@free)[[2]]
+	for(target in aRows ) {
+		for(source in aCols) {
+			thisPathFree = model[["A"]]@free[target,source]
+			thisPathVal  = round(model[["A"]]@values[target,source],precision)
+			if(thisPathFree){
+				out = paste(out, ";\n", source, " -> ", target, " [label=\"", thisPathVal, "\"]", sep="")
+			} else if(thisPathVal!=0 & showFixed) {
+				# TODO Might want to fix this !!! comment out
+				out = paste(out, ";\n", source, " -> ", target, " [label=\"@", thisPathVal, "\"]", sep="")
+				# return(list(thisLatent,thisManifest))
+			}
+		}
+	}
+	variances = c()
+	varianceNames = c()
+	S <- model[["S"]]
+	Svals   = S@values
+	Sfree   = S@free
+	Slabels = S@labels
+	allVars = c(latents, selDVs)
+	for(target in allVars ) { # rows
+		lowerVars  = allVars[1:match(target,allVars)]
+		for(source in lowerVars) { # columns
+			thisPathLabel = Slabels[target,source]
+			thisPathFree  = Sfree[target,source]
+			thisPathVal   = round(Svals[target,source], precision)
+			if(thisPathFree | (!(thisPathFree) & thisPathVal !=0 & showFixed)) {
+				if(thisPathFree){
+					prefix = ""
+				} else {
+					prefix = "@"
+				}
+				if((target==source)) {
+					if(showError){
+						eName     = paste(source, '_var', sep="")
+						varToAdd  = paste(eName, ' [label="', prefix, thisPathVal, '", shape = plaintext]', sep="")
+						variances = append(variances, varToAdd)
+						varianceNames = append(varianceNames, eName)
+						out = paste(out, ";\n", eName, " -> ", target, sep="")
+						# out = paste(out, ";\n", eName, " -> ", target, " [label=\"", thisPathVal, "\"]", sep="")
+					}
+				} else {
+					if(pathLabels=="both"){
+						out = paste(out, ";\n", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "=", prefix, thisPathVal, "\"]", sep="")
+					} else if(pathLabels=="labels"){
+						out = paste(out, ";\n", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "\"]", sep="")
+					}else{
+						out = paste(out, ";\n", source, " -> ", target, " [dir=both, label=\"", prefix, thisPathVal, "\"]", sep="")
+					}
+				}
+			} else {
+				# return(list(thisFrom,thisTo))
+			}
+		}
+	}
+	preOut= "";
+	for(var in selDVs) {
+	   preOut = paste(preOut, var, " [shape = square];\n", sep="")
+	}
+	for(var in variances) {
+	   preOut = paste(preOut, "\n", var, sep="")
+	   # preOut = paste(preOut, "\n", var, " [shape=none];\n", sep="")
+	}
+	rankVariables = paste("\n{rank=min; ", paste(latents, collapse="; "), "};")
+	rankVariables = paste(rankVariables, "\n{rank=same; ", paste(selDVs, collapse=" "), "};") # {rank=same; religT1; ethnicT1; raceT1 }
+	rankVariables = paste(rankVariables, "\n{rank=max; ", paste(varianceNames, collapse=" "), "};")
+
+	# return(out)
+	digraph = paste("digraph G {\nsplines=\"FALSE\";\n", preOut, out, rankVariables, "\n}", sep="");
+	if(!is.na(dotFilename)){
+		if(dotFilename=="name"){
+			dotFilename = paste(model@name, ".dot", sep="")
+		}
+		cat(digraph, file = dotFilename) #write to file
+		system(paste("open", shQuote(dotFilename)));
+		# return(invisible(cat(digraph)))
+	} else {
+		return (cat(digraph));
+	}
+}
+# end umxGraph_RAM(fit1,std=T, precision=3, dotFilename="name")
+
 umxMI <- function(model, vector=T) {
 	# modification indices
 	# v0.9: written Michael Culbertson
