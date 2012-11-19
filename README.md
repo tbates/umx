@@ -25,7 +25,6 @@ It currently contains functions to support:
 	* `umxUpdateOpenMx(bleedingEdge = FALSE, loadNew = TRUE)` *# Update the OpenMx package*
 	* `umxGetLabels(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. Can use regular expressions.*
 
-
 Feel free to use, and improve! Log suggestions here using the Github comments, wiki, or git.
 
 ### Contributors
