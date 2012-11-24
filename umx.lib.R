@@ -295,7 +295,7 @@ umxGraph_RAM <- function(model=NA, std=T, precision=2, dotFilename="name", pathL
 	# legal options for "pathLabels" = "both", "none" or "labels"
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap', 'sentence', 'numeric', 'series', and 'arithmet'
-	if(std){ model= umxStandardizeModel(model, return="model") }
+	if(std){ model= umxStandardizeRAMModel(model, return="model") }
 	out = "";
 	# Get Asymmetric Paths
 	aRows = dimnames(model[["A"]]@free)[[1]]
