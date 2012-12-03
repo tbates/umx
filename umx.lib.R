@@ -11,6 +11,22 @@
 # eval(parse(text = script))
 
 # Code borrowed from [here](http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github)
+umxReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F) {
+	# fit2 = umxReRun(fit1, regex="Cs", newName="AEip")
+	if(is.na(newName)){
+		newName = lastFit@name
+	}
+	if(is.na(regex)) {
+		if(any(is.na(dropList))) {
+			stop("Both dropList and regex cannot be empty!")
+		} else {
+			x = mxRun(omxSetParameters(lastFit, labels=dropList, free = free, value = value, name= newName),intervals = intervals)
+		}
+	} else {
+		x = mxRun(omxSetParameters(lastFit, labels=umxGetLabels(lastFit, regex=regex,free=freeToStart,verbose=verbose), free = free, value = value, name = newName),intervals=intervals)
+	}
+	return(x)
+}
 
 umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
 	# update the OpenMx Library to latest version:

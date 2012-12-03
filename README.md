@@ -22,9 +22,10 @@ It currently contains functions to support:
 4. Data processing helpers
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
 	* `lower2full(lower.no.diag, diag=F, byrow=F)`  *# Create a full matrix from a lower matrix of data*
-5. Utilities
+5. Utilities to update models
 	* `umxUpdateOpenMx(bleedingEdge = FALSE, loadNew = TRUE)` *# Update the OpenMx package*
 	* `umxGetLabels(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. Can use regular expressions.*
+	* `umxReRun(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F)`
 
 Feel free to use, and improve! Log suggestions here using the Github comments, wiki, or git.
 
