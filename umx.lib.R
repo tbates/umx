@@ -631,8 +631,10 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 
 #` ## matrix-oriented helpers
 
-umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA, boundDiag=NA) {
+umxLabel <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {
 	# Purpose       : label the cells of an mxMatrix
+	# History: 2012-12-28 changed function name to "umxLabel" from "umxLabeler"
+	# TODO: unify the path labelling and matrix labelling approaches
 	# Detail        : Defaults to the handy "matname_r1c1" where 1 is the row or column
 	# Use case:
 	# umxLabeler(mxMatrix("Lower",3, 3, values=1, name="a", byrow=T), jiggle=.05, boundDiag=NA);
@@ -641,14 +643,14 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 	nrow      = nrow(mx_matrix);
 	ncol      = ncol(mx_matrix);
 	newLabels = mx_matrix@labels;
-	mirrorLabels =newLabels
+	mirrorLabels = newLabels
 	if(is.na(baseName)) { baseName = mx_matrix@name }
-	# Make a matrix of labels in the form baseNameRowNumColNum
+	# Make a matrix of labels in the form "baseName_rRcC"
 	for (r in 1:nrow) {
 		for (c in 1:ncol) {
 			newLabels[r,c]= paste(baseName,"_r",r,"c",c, sep="")
-			if(nrow == ncol) { # Should include all sqaure forms type=="StandMatrix" | type=="SymmMatrix"
-				mirrorLabels[c,r]= paste(baseName,r,c, sep="")
+			if(nrow == ncol) { # Should include all square forms type=="StandMatrix" | type=="SymmMatrix"
+				mirrorLabels[c,r]= paste(baseName,"_r",r,"c",c, sep="")
 			}
 		}
 	}
@@ -662,6 +664,7 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 	} else if(type=="SdiagMatrix"){
 		newLabels[upper.tri(newLabels, diag=T)] = NA
 	} else if(type=="SymmMatrix"){
+		message("cunt")
 		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
 		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
 	} else if(type=="StandMatrix") {
@@ -698,6 +701,8 @@ umxLabeler <- function(mx_matrix= NA, baseName=NA, setfree=F, drop=0, jiggle=NA,
 	}
 	return(mx_matrix)
 }
+
+
 
 umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
 	# usage e.g.
