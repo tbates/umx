@@ -783,3 +783,38 @@ umxLower2full <- function(lower.data, diag=F, byrow=T) {
 	}
 	return(mat)
 }
+
+
+umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
+	# umxEquate(model1, master="am", slave="af", free=T|NA|F")
+	if(!class(myModel)[1] == "MxModel"){
+		message("ERROR in umxEquate: myModel must be a model, you gave me a ", class(myModel)[1])
+		message("A usage example is umxEquate(model, master=\"am\", slave=\"af\", name=\"new\") # equate am and af parameters")
+		stop()
+	}
+	if(length(grep("[\\.\\*\\[\\(\\+\\|]+", master) )<1){ # no grep found: add some anchors for safety
+		master = paste("^", master, "[0-9]*$", sep=""); # anchor to the start of the string
+		slave  = paste("^", slave,  "[0-9]*$", sep="");
+		if(verbose==T){
+			cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
+		}
+	}
+	masterLabels = names(omxGetParameters(myModel, indep=FALSE, free=free))
+	masterLabels = masterLabels[which(!is.na(masterLabels) )]      # exclude NAs
+	masterLabels = grep(master, masterLabels, perl = F, value=T)
+	# return(masterLabels)
+	slaveLabels = names(omxGetParameters(myModel, indep=F, free=free))
+	slaveLabels = slaveLabels[which(!is.na(slaveLabels))] # exclude NAs
+	slaveLabels = grep(slave, slaveLabels, perl = F, value=T)
+	if( length(slaveLabels) != length(masterLabels)) {
+		print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
+		stop("ERROR in umxEquate: master and slave labels not the same length!")
+	}
+	if( length(slaveLabels)==0 ) {
+		stop("ERROR in umxEquate: no matching labels found!")
+	}
+	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
+	myModel = omxSetParameters(model = myModel, labels = slaveLabels, newlabels = masterLabels, name = name)
+	myModel = omxAssignFirstParameters(myModel, indep = F)
+	return(myModel)
+}
