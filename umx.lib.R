@@ -253,7 +253,6 @@ or use
 	return(list(SaturatedLikelihood = m2, IndependenceLikelihood = m3))
 }
 
-
 umxReportFit <- function(model, saturatedModels = NA, report="line") {
 	# Use case
 	# umxReportFit(m1, report="table")
@@ -301,7 +300,6 @@ umxReportFit <- function(model, saturatedModels = NA, report="line") {
 		})
 	}
 }
-
 
 umxGraph_RAM <- function(model=NA, std=T, precision=2, dotFilename="name", pathLabels="none", showFixed=F, showError=T) {
 	# Use case:
@@ -586,7 +584,6 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 	# print.dataframe(bob, digits=2, zero.print = ".", justify="left")
 }
 
-
 # =================================
 # = Speed  and Efficiency Helpers =
 # =================================
@@ -631,17 +628,18 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 
 #` ## matrix-oriented helpers
 
+
 umxLabel <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {
-	# Purpose       : label the cells of an mxMatrix
-	# History: 2012-12-28 changed function name to "umxLabel" from "umxLabeler"
-	# TODO: unify the path labelling and matrix labelling approaches
-	# Detail        : Defaults to the handy "matname_r1c1" where 1 is the row or column
+	# Purpose: label the cells of an mxMatrix
+	# Detail: Defaults to the handy "matname_r1c1" where 1 is the row or column
 	# Use case:
-	# umxLabeler(mxMatrix("Lower",3, 3, values=1, name="a", byrow=T), jiggle=.05, boundDiag=NA);
-	# Related calls : fit2 = omxSetParameters(fit1	, labels="a_r1c1", free=F, value = 0, name="drop_a_row1_c1")
-	type      = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
-	nrow      = nrow(mx_matrix);
-	ncol      = ncol(mx_matrix);
+	# umxLabel(mxMatrix("Lower",3, 3, values=1, name="a", byrow=T), jiggle=.05, boundDiag=NA);
+	# TODO: unify the path labelling and matrix labelling approaches
+	# See also: fit2 = omxSetParameters(fit1	, labels="a_r1c1", free=F, value = 0, name="drop_a_row1_c1")
+	# History: 2012-12-28 changed function name to "umxLabel" from "umxLabel"
+	type = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
+	nrow = nrow(mx_matrix);
+	ncol = ncol(mx_matrix);
 	newLabels = mx_matrix@labels;
 	mirrorLabels = newLabels
 	if(is.na(baseName)) { baseName = mx_matrix@name }
@@ -664,7 +662,6 @@ umxLabel <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggl
 	} else if(type=="SdiagMatrix"){
 		newLabels[upper.tri(newLabels, diag=T)] = NA
 	} else if(type=="SymmMatrix"){
-		message("cunt")
 		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
 		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
 	} else if(type=="StandMatrix") {
@@ -672,7 +669,7 @@ umxLabel <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggl
 		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
 		diag(newLabels) <- NA
 	} else if(type=="IdenMatrix"|type=="UnitMatrix"|type=="ZeroMatrix") {
-		stop("You can't run umxLabeler on an Identity matrix - it has no free values!")
+		stop("You can't run umxLabel on an Identity matrix - it has no free values!")
 	} else {
 		return(paste("You tried to set type ", "to '", type, "'", sep=""));
 	}
@@ -701,8 +698,6 @@ umxLabel <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggl
 	}
 	return(mx_matrix)
 }
-
-
 
 umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
 	# usage e.g.
@@ -749,7 +744,7 @@ umxHetCor <- function(data, ML=F, use="pairwise.complete.obs"){
 	# heplper to return just the correlations from polycor::hetcor
 	require(polycor)
 	# TODO add error message if polycor not found
-	# install.packages("polycor")
+m1nstall.packages("polycor")
 	hetc = polycor::hetcor(data, ML=ML, use=use, std.err=F)
 	return(hetc$correlations)
 }
