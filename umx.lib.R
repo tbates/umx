@@ -4,29 +4,12 @@
 # source("https://raw.github.com/tbates/umx/master/umx.lib.R")
 
 # To learn more, see http://www.github.com/tbates/umx/README.md
-
+# load code borrowed from [here](http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github)
 # require(RCurl)
 # url = "https://raw.github.com/tbates/umx/master/umx.lib.R"
 # script <- RCurl::getURL(url, ssl.verifypeer = FALSE)
 # eval(parse(text = script))
 
-# Code borrowed from [here](http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github)
-umxReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F) {
-	# fit2 = umxReRun(fit1, regex="Cs", newName="AEip")
-	if(is.na(newName)){
-		newName = lastFit@name
-	}
-	if(is.na(regex)) {
-		if(any(is.na(dropList))) {
-			stop("Both dropList and regex cannot be empty!")
-		} else {
-			x = mxRun(omxSetParameters(lastFit, labels=dropList, free = free, value = value, name= newName),intervals = intervals)
-		}
-	} else {
-		x = mxRun(omxSetParameters(lastFit, labels=umxGetLabels(lastFit, regex=regex,free=freeToStart,verbose=verbose), free = free, value = value, name = newName),intervals=intervals)
-	}
-	return(x)
-}
 
 umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
 	# update the OpenMx Library to latest version:
@@ -109,79 +92,6 @@ umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
 	}
 
 }
-
-umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
-	# use case
-	# standardizeRAM(model, return="parameters|matrices|model")
-	# make sure 'return' is valid
-	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
-	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
-	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
-	if (class(model@objective)[1] !="MxRAMObjective" & !suppliedNames ){
-		stop("I need either mxRAMObjective or the names of the A and S matrices.")
-	}
-	output <- model@output
-	# stop if there is no objective function
-	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
-	# stop if there is no output
-	if (length(output)<1)stop("Provided model has no output. I can only standardize models that have been run!")
-	# Get the names of the A, S and M matrices 
-	if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
-	if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
-	if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
-	# Get the A and S matrices, and make an identity matrix
-	A <- model[[nameA]]
-	S <- model[[nameS]]
-	I <- diag(nrow(S@values))
-	
-	# Calculate the expected covariance matrix
-	IA <- solve(I-A@values)
-	expCov <- IA %*% S@values %*% t(IA)
-	# Return 1/SD to a diagonal matrix
-	invSDs <- 1/sqrt(diag(expCov))
-	# Give the inverse SDs names, because mxSummary treats column names as characters
-	names(invSDs) <- as.character(1:length(invSDs))
-	if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
-	# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
-	diag(I) <- invSDs
-	# Standardize the A, S and M matrices
-	#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
-	#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
-	stdA <- I %*% A@values %*% solve(I)
-	stdS <- I %*% S@values %*% I
-	# Populate the model
-	model[[nameA]]@values[,] <- stdA
-	model[[nameS]]@values[,] <- stdS
-	if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
-	# Return the model, if asked
-	if(return=="model"){
-		return(model)
-	}else if(return=="matrices"){
-		# return the matrices, if asked
-		matrices <- list(model[[nameA]], model[[nameS]])
-		names(matrices) <- c("A", "S")
-		return(matrices)
-	}else if(return=="parameters"){
-		# return the parameters
-		#recalculate summary based on standardised matrices
-		p <- summary(model)$parameters
-		p <- p[(p[,2]==nameA)|(p[,2]==nameS),]
-		## get the rescaling factor
-		# this is for the A matrix
-		rescale <- invSDs[p$row] * 1/invSDs[p$col]
-		# this is for the S matrix
-		rescaleS <- invSDs[p$row] * invSDs[p$col]
-		# put the A and the S together
-		rescale[p$matrix=="S"] <- rescaleS[p$matrix=="S"]
-		# rescale
-		p[,5] <- p[,5] * rescale
-		p[,6] <- p[,6] * rescale
-		# rename the columns
-		# names(p)[5:6] <- c("Std. Estimate", "Std.Std.Error")
-		return(p)		
-	}
-}
-
 # =====================
 # = Reporting Helpers =
 # =====================
@@ -619,15 +529,211 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 	# model <- tryHard(model, n=10)
 }
 
+umxReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F) {
+	# fit2 = umxReRun(fit1, regex="Cs", newName="AEip")
+	if(is.na(newName)){
+		newName = lastFit@name
+	}
+	if(is.na(regex)) {
+		if(any(is.na(dropList))) {
+			stop("Both dropList and regex cannot be empty!")
+		} else {
+			x = mxRun(omxSetParameters(lastFit, labels=dropList, free = free, value = value, name= newName),intervals = intervals)
+		}
+	} else {
+		x = mxRun(omxSetParameters(lastFit, labels=umxGetLabels(lastFit, regex=regex,free=freeToStart,verbose=verbose), free = free, value = value, name = newName),intervals=intervals)
+	}
+	return(x)
+}
+
 # Parallel helpers to be added here
 
 # ========================================
 # = Model building and modifying helpers =
 # ========================================
+
+
+umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
+	# usage e.g.
+	# umxGetLabels(model@matrices$as) # all labels of as matrix
+	# umxGetLabels(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
+	if(class(inputTarget)[1] =="MxModel") {
+		topLabels = names(omxGetParameters(inputTarget, indep=FALSE, free=free))
+	} else {
+		# Assuming it is a matrix
+		# omxGetParameters can't take a matrix :-(
+		if(is.na(free)) {
+			topLabels = inputTarget@labels
+		} else {
+			topLabels = inputTarget@labels[inputTarget@free==free]
+		}
+	}
+	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
+	if( !is.na(regex) ) {
+		if(length(grep("[\\.\\*\\[\\(\\+\\|]+", regex) )<1){ # no grep found: add some anchors for safety
+			regex = paste("^", regex, "[0-9]*$", sep=""); # anchor to the start of the string
+			if(verbose==T){
+				cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
+			}
+		}
+		
+		theLabels = grep(regex, theLabels, perl = F, value=T) # return more detail
+		if(length(theLabels)==0){
+			stop("found no matching labels!");
+		}
+	}
+	# TODO Be nice to offer a method to handle submodels
+	# model@submodels$aSubmodel@matrices$aMatrix@labels
+	# model@submodels$MZ@matrices
+	return(theLabels)
+}
+
+umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
+	# umxEquate(model1, master="am", slave="af", free=T|NA|F")
+	if(!class(myModel)[1] == "MxModel"){
+		message("ERROR in umxEquate: myModel must be a model, you gave me a ", class(myModel)[1])
+		message("A usage example is umxEquate(model, master=\"am\", slave=\"af\", name=\"new\") # equate am and af parameters")
+		stop()
+	}
+	if(length(grep("[\\.\\*\\[\\(\\+\\|]+", master) )<1){ # no grep found: add some anchors for safety
+		master = paste("^", master, "[0-9]*$", sep=""); # anchor to the start of the string
+		slave  = paste("^", slave,  "[0-9]*$", sep="");
+		if(verbose==T){
+			cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
+		}
+	}
+	masterLabels = names(omxGetParameters(myModel, indep=FALSE, free=free))
+	masterLabels = masterLabels[which(!is.na(masterLabels) )]      # exclude NAs
+	masterLabels = grep(master, masterLabels, perl = F, value=T)
+	# return(masterLabels)
+	slaveLabels = names(omxGetParameters(myModel, indep=F, free=free))
+	slaveLabels = slaveLabels[which(!is.na(slaveLabels))] # exclude NAs
+	slaveLabels = grep(slave, slaveLabels, perl = F, value=T)
+	if( length(slaveLabels) != length(masterLabels)) {
+		print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
+		stop("ERROR in umxEquate: master and slave labels not the same length!")
+	}
+	if( length(slaveLabels)==0 ) {
+		stop("ERROR in umxEquate: no matching labels found!")
+	}
+	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
+	myModel = omxSetParameters(model = myModel, labels = slaveLabels, newlabels = masterLabels, name = name)
+	myModel = omxAssignFirstParameters(myModel, indep = F)
+	return(myModel)
+}
+
 #` ## path-oriented helpers
 
-#` ## matrix-oriented helpers
+umxLabelRAM <- function(model) {
+	if (!(isS4(model) && is(model, "MxModel") && class(model$objective)[1] == "MxRAMObjective")) {
+		stop("'model' must be an OpenMx RAM Model")
+	}
+	freeA  = model@matrices$A@free
+	freeS  = model@matrices$S@free
+	namesA = dimnames(freeA)[[1]]
+	namesS = dimnames(freeS)[[1]]
 
+	# =========================
+	# = Add asymmetric labels =
+	# =========================
+	theseNames = namesA
+	for(fromCol in seq_along(theseNames)) {
+		for(toRow in seq_along(theseNames)) {
+			if(freeA[toRow, fromCol]){
+			   thisLabel = paste(theseNames[fromCol], theseNames[toRow], sep = "_to_")
+			   model@matrices$A@labels[toRow,fromCol] = thisLabel
+			}
+		}
+	}
+
+	# =========================
+	# = Add Symmetric labels =
+	# =========================
+	theseNames = namesS
+	for(fromCol in seq_along(theseNames)) {
+		for(toRow in seq_along(theseNames)) {
+			if(freeS[toRow, fromCol]) {
+ 			   thisLabel = paste(theseNames[fromCol], theseNames[toRow], sep = "_with_")
+			   model@matrices$S@labels[toRow,fromCol] = thisLabel
+			}
+		}
+	}
+	return(model)
+}
+
+umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
+	# use case
+	# standardizeRAM(model, return="parameters|matrices|model")
+	# make sure 'return' is valid
+	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
+	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
+	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
+	if (class(model@objective)[1] !="MxRAMObjective" & !suppliedNames ){
+		stop("I need either mxRAMObjective or the names of the A and S matrices.")
+	}
+	output <- model@output
+	# stop if there is no objective function
+	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
+	# stop if there is no output
+	if (length(output)<1)stop("Provided model has no output. I can only standardize models that have been run!")
+	# Get the names of the A, S and M matrices 
+	if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
+	if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
+	if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
+	# Get the A and S matrices, and make an identity matrix
+	A <- model[[nameA]]
+	S <- model[[nameS]]
+	I <- diag(nrow(S@values))
+	
+	# Calculate the expected covariance matrix
+	IA <- solve(I-A@values)
+	expCov <- IA %*% S@values %*% t(IA)
+	# Return 1/SD to a diagonal matrix
+	invSDs <- 1/sqrt(diag(expCov))
+	# Give the inverse SDs names, because mxSummary treats column names as characters
+	names(invSDs) <- as.character(1:length(invSDs))
+	if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
+	# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
+	diag(I) <- invSDs
+	# Standardize the A, S and M matrices
+	#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
+	#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
+	stdA <- I %*% A@values %*% solve(I)
+	stdS <- I %*% S@values %*% I
+	# Populate the model
+	model[[nameA]]@values[,] <- stdA
+	model[[nameS]]@values[,] <- stdS
+	if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
+	# Return the model, if asked
+	if(return=="model"){
+		return(model)
+	}else if(return=="matrices"){
+		# return the matrices, if asked
+		matrices <- list(model[[nameA]], model[[nameS]])
+		names(matrices) <- c("A", "S")
+		return(matrices)
+	}else if(return=="parameters"){
+		# return the parameters
+		#recalculate summary based on standardised matrices
+		p <- summary(model)$parameters
+		p <- p[(p[,2]==nameA)|(p[,2]==nameS),]
+		## get the rescaling factor
+		# this is for the A matrix
+		rescale <- invSDs[p$row] * 1/invSDs[p$col]
+		# this is for the S matrix
+		rescaleS <- invSDs[p$row] * invSDs[p$col]
+		# put the A and the S together
+		rescale[p$matrix=="S"] <- rescaleS[p$matrix=="S"]
+		# rescale
+		p[,5] <- p[,5] * rescale
+		p[,6] <- p[,6] * rescale
+		# rename the columns
+		# names(p)[5:6] <- c("Std. Estimate", "Std.Std.Error")
+		return(p)		
+	}
+}
+
+#` ## matrix-oriented helpers
 
 umxLabel <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {
 	# Purpose: label the cells of an mxMatrix
@@ -698,42 +804,6 @@ umxLabel <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggl
 	}
 	return(mx_matrix)
 }
-
-umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
-	# usage e.g.
-	# umxGetLabels(model@matrices$as) # all labels of as matrix
-	# umxGetLabels(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
-	if(class(inputTarget)[1] =="MxModel") {
-		topLabels = names(omxGetParameters(inputTarget, indep=FALSE, free=free))
-	} else {
-		# Assuming it is a matrix
-		# omxGetParameters can't take a matrix :-(
-		if(is.na(free)) {
-			topLabels = inputTarget@labels
-		} else {
-			topLabels = inputTarget@labels[inputTarget@free==free]
-		}
-	}
-	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
-	if( !is.na(regex) ) {
-		if(length(grep("[\\.\\*\\[\\(\\+\\|]+", regex) )<1){ # no grep found: add some anchors for safety
-			regex = paste("^", regex, "[0-9]*$", sep=""); # anchor to the start of the string
-			if(verbose==T){
-				cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
-			}
-		}
-		
-		theLabels = grep(regex, theLabels, perl = F, value=T) # return more detail
-		if(length(theLabels)==0){
-			stop("found no matching labels!");
-		}
-	}
-	# TODO Be nice to offer a method to handle submodels
-	# model@submodels$aSubmodel@matrices$aMatrix@labels
-	# model@submodels$MZ@matrices
-	return(theLabels)
-}
-
 # =================
 # = Data handling =
 # =================
@@ -782,39 +852,4 @@ umxLower2full <- function(lower.data, diag=F, byrow=T) {
 		mat[upper.tri(mat,diag=F)] <-mat[lower.tri(mat,diag=F)]
 	}
 	return(mat)
-}
-
-
-umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
-	# umxEquate(model1, master="am", slave="af", free=T|NA|F")
-	if(!class(myModel)[1] == "MxModel"){
-		message("ERROR in umxEquate: myModel must be a model, you gave me a ", class(myModel)[1])
-		message("A usage example is umxEquate(model, master=\"am\", slave=\"af\", name=\"new\") # equate am and af parameters")
-		stop()
-	}
-	if(length(grep("[\\.\\*\\[\\(\\+\\|]+", master) )<1){ # no grep found: add some anchors for safety
-		master = paste("^", master, "[0-9]*$", sep=""); # anchor to the start of the string
-		slave  = paste("^", slave,  "[0-9]*$", sep="");
-		if(verbose==T){
-			cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
-		}
-	}
-	masterLabels = names(omxGetParameters(myModel, indep=FALSE, free=free))
-	masterLabels = masterLabels[which(!is.na(masterLabels) )]      # exclude NAs
-	masterLabels = grep(master, masterLabels, perl = F, value=T)
-	# return(masterLabels)
-	slaveLabels = names(omxGetParameters(myModel, indep=F, free=free))
-	slaveLabels = slaveLabels[which(!is.na(slaveLabels))] # exclude NAs
-	slaveLabels = grep(slave, slaveLabels, perl = F, value=T)
-	if( length(slaveLabels) != length(masterLabels)) {
-		print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
-		stop("ERROR in umxEquate: master and slave labels not the same length!")
-	}
-	if( length(slaveLabels)==0 ) {
-		stop("ERROR in umxEquate: no matching labels found!")
-	}
-	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
-	myModel = omxSetParameters(model = myModel, labels = slaveLabels, newlabels = masterLabels, name = name)
-	myModel = omxAssignFirstParameters(myModel, indep = F)
-	return(myModel)
 }
