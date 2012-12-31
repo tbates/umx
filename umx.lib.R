@@ -552,7 +552,6 @@ umxReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStar
 # = Model building and modifying helpers =
 # ========================================
 
-
 umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
 	# usage e.g.
 	# umxGetLabels(model@matrices$as) # all labels of as matrix
@@ -624,7 +623,7 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 
 #` ## path-oriented helpers
 
-umxLabelRAM <- function(model) {
+umxAddLabels <- function(model, suffix = "") {
 	if (!(isS4(model) && is(model, "MxModel") && class(model$objective)[1] == "MxRAMObjective")) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
@@ -640,7 +639,7 @@ umxLabelRAM <- function(model) {
 	for(fromCol in seq_along(theseNames)) {
 		for(toRow in seq_along(theseNames)) {
 			if(freeA[toRow, fromCol]){
-			   thisLabel = paste(theseNames[fromCol], theseNames[toRow], sep = "_to_")
+			   thisLabel = paste(theseNames[fromCol], "_to_", theseNames[toRow], suffix, sep = "")
 			   model@matrices$A@labels[toRow,fromCol] = thisLabel
 			}
 		}
@@ -653,13 +652,14 @@ umxLabelRAM <- function(model) {
 	for(fromCol in seq_along(theseNames)) {
 		for(toRow in seq_along(theseNames)) {
 			if(freeS[toRow, fromCol]) {
- 			   thisLabel = paste(theseNames[fromCol], theseNames[toRow], sep = "_with_")
+			   thisLabel = paste(theseNames[fromCol], "_with_", theseNames[toRow], suffix, sep = "")
 			   model@matrices$S@labels[toRow,fromCol] = thisLabel
 			}
 		}
 	}
 	return(model)
 }
+
 
 umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# use case
