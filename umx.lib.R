@@ -12,7 +12,7 @@
 
 
 umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
-	# update the OpenMx Library to latest version:
+	# Purpose: update the OpenMx Library to latest version:
 	# use case:
 	# umxUpdateOpenMx()
 	if( "OpenMx" %in% .packages() ){
@@ -852,4 +852,19 @@ umxLower2full <- function(lower.data, diag=F, byrow=T) {
 		mat[upper.tri(mat,diag=F)] <-mat[lower.tri(mat,diag=F)]
 	}
 	return(mat)
+}
+
+
+umxFindObject <- function(grepString = ".*", requiredClass = "MxModel") {
+	# Purpose: find objects a certain class, whose name matches a (grep) search string
+	# Use case: umxFindObject("Chol*", "MxModel")
+	# umxFindObject("", "MxModel")
+	matchingNames = ls(envir=sys.frame(-1), pattern=grepString) #envir
+	matchingObjects = c()
+	for (obj in matchingNames) {
+		if(class(get(obj))[1]==requiredClass){
+			matchingObjects = c(matchingObjects, obj)
+		}
+	}
+	return(matchingObjects)
 }
