@@ -95,6 +95,8 @@ umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
 # =====================
 # = Reporting Helpers =
 # =====================
+
+
 umxSaturated <- function(model, evaluate = T, verbose=T) {
 	# Use case
 	# model_sat = umxSaturated(model)
@@ -587,9 +589,11 @@ umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
 	return(theLabels)
 }
 
+
 umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
+	# Purpose: to equate parameters by setting of labels (the slave set) = to the labels in a master set
 	# umxEquate(model1, master="am", slave="af", free=T|NA|F")
-	if(!class(myModel)[1] == "MxModel"){
+	if(!(class(myModel)[1] == "MxModel" | class(myModel)[1] == "MxRAMModel")){
 		message("ERROR in umxEquate: myModel must be a model, you gave me a ", class(myModel)[1])
 		message("A usage example is umxEquate(model, master=\"am\", slave=\"af\", name=\"new\") # equate am and af parameters")
 		stop()
@@ -613,6 +617,9 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 		stop("ERROR in umxEquate: master and slave labels not the same length!")
 	}
 	if( length(slaveLabels)==0 ) {
+		legal = names(omxGetParameters(myModel, indep=FALSE, free=free))
+		legal = legal[which(!is.na(legal))]
+		message("Labels available in model are: ",legal)
 		stop("ERROR in umxEquate: no matching labels found!")
 	}
 	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
@@ -621,9 +628,15 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 	return(myModel)
 }
 
+
 #` ## path-oriented helpers
 
 umxAddLabels <- function(model, suffix = "") {
+	# Purpose: Label all the paths in a model
+	# use case
+	# umxAddLabels(model)
+	# umxAddLabels(model_male, "male")
+	
 	if (!(isS4(model) && is(model, "MxModel") && class(model$objective)[1] == "MxRAMObjective")) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
