@@ -589,7 +589,6 @@ umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
 	return(theLabels)
 }
 
-
 umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 	# Purpose: to equate parameters by setting of labels (the slave set) = to the labels in a master set
 	# umxEquate(model1, master="am", slave="af", free=T|NA|F")
