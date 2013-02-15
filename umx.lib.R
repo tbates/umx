@@ -92,9 +92,22 @@ umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
 	}
 
 }
-# =====================
-# = Reporting Helpers =
-# =====================
+
+# =============================
+# = Fit and Reporting Helpers =
+# =============================
+
+umxSummary <- function(model, precision = 2, parameters=NA, report=NA) {
+	# useage
+	# umxSummary(fit1)
+	if(!is.na(report)){
+		warning("report not implemented")
+	}
+	x = summary(model)$parameters[,c("row", "col", "Std.Estimate")]
+	x$Std.Estimate = round(x$Std.Estimate, precision)
+	print(x)
+	umxReportFit(model)
+}
 
 umxSaturated <- function(model, evaluate = T, verbose=T) {
 	# Use case
@@ -553,23 +566,49 @@ umxReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStar
 # = Model building and modifying helpers =
 # ========================================
 
-umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous = F, model.name = NA, help = FALSE, labelSuffix = "") {
+umxStart <- function(x=1, sd=NA, n=1) {
+	# Purpose: Create startvalues in OpenMx Models
+	# use cases
+	# umxStart(1) # 1 value, varying around 1, with sd of .1
+	# umxStart(1, n=letters) # length(letters) start values, with mean 1 and sd .1
+	# umxStart(100, 15)  # 1 start, with mean 100 and sd 15
+	# TODO: handle connection style
+	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
+	if(is.na(sd)){
+		sd = x/6.6
+	}
+	if(length(n)>1){
+		n = length(n)
+	}
+	return(rnorm(n=n, mean=x, sd=sd))
+}
+umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, model.name=NA, help=FALSE, labelSuffix="", verbose=T) {
 	# TODO: delete manifestVariance
 	# Check both forms and formedBy are not defined
-	if( is.na(formedBy) &&  is.na(forms)) { stop("Error in umxLatent: Must define one of forms or formedBy") }
-	if(!is.na(formedBy) && !is.na(forms)) { stop("Error in umxLatent: Only one of forms or formedBy can be set") }
+	if( is.na(formedBy) &&  is.na(forms)) { stop("Error in mxLatent: Must define one of forms or formedBy") }
+	if(!is.na(formedBy) && !is.na(forms)) { stop("Error in mxLatent: Only one of forms or formedBy can be set") }
 	# ==========================================================
 	# = NB: If any vars are ordinal, a call to umxMakeThresholdsMatrices
 	# = will fix the mean and variance of ordinal vars to 0 and 1
 	# ==========================================================
-	# Warning("If you use this with a dataframe containing ordinal variables, don't forget to call mxAutoThreshRAMObjective(df)")
-	
-	if( nrow(data)==ncol(data)	& all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
-		isCov = T
-		message("treating data as cov")
+	# Warning("If you use this with a dataframe containing ordinal variables, don't forget to call umxAutoThreshRAMObjective(df)")
+	if( nrow(data)==ncol(data)) {
+		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
+			isCov = T
+			if(verbose){
+				message("treating data as cov")
+			}
+		} else {
+			isCov = T
+			if(verbose){
+				message("treating data as cov")
+			}
+		}
 	} else {
 		isCov = F
-		message("treating data as raw")
+		if(verbose){
+			message("treating data as raw")
+		}
 	}
 	if( any(!is.na(forms)) ) {
 		manifests <- forms
@@ -579,7 +618,7 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 	if(isCov){
 		variances = diag(data[manifests,manifests])
 	} else {
-		manifestOrdVars = mxIsOrdinalVar(data[,manifests])
+		manifestOrdVars = umxIsOrdinalVar(data[,manifests])
 		if(any(manifestOrdVars)) {
 			means         = rep(0, times=length(manifests))
 			variances     = rep(1, times=length(manifests))
@@ -591,7 +630,9 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 			means[!manifestOrdVars] = contMeans				
 			variances[!manifestOrdVars] = contVariances				
 		}else{
-			message("no ordinal variables")
+			if(verbose){
+				message("no ordinal variables")
+			}
 			means     = colMeans(data[,manifests], na.rm=T)
 			variances = diag(cov(data[,manifests], use="complete"))
 		}
@@ -603,24 +644,24 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 			# p1 = Residual variance on manifests
 			# p2 = Fix latent variance @ 1
 			# p3 = Add paths from latent to manifests
-			p1 = mxPath(from=manifests, arrows=2, free=T, values=variances, labels=mxLabel(manifests, suffix=glue("unique", labelSuffix)))
+			p1 = mxPath(from=manifests, arrows=2, free=T, values=variances, labels = umxLabels(manifests, suffix=glue("unique", labelSuffix)))
 			if(endogenous){
 				# Free latent variance so it can do more than just redirect what comes in
 				message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5, labels=mxLabel(latent, suffix=glue("var", labelSuffix)))
+				p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5, labels=umxLabels(latent, suffix=glue("var", labelSuffix)))
 			} else {
 				# fix variance at 1 - no inputs
 				message(paste("latent '", latent, "' has variance fixed @ 1"))
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1, labels=mxLabel(latent, suffix=glue("var", labelSuffix)))
+				p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1, labels=umxLabels(latent, suffix=glue("var", labelSuffix)))
 			}
-			p3 = mxPath(from=latent, to=manifests, connect="single", free=T, values=variances, labels=mxLabel(latent, manifests, suffix=glue("path", labelSuffix)))
+			p3 = mxPath(from=latent, to=manifests, connect="single", free=T, values=variances, labels=umxLabels(latent, manifests, suffix=glue("path", labelSuffix)))
 			if(isCov) {
 				# Nothing to do: covariance data don't need means...
 				paths = list(p1, p2, p3)
 			}else{
 				# Add means: fix latent mean @0, and add freely estimated means to manifests
-				p4 = mxPath(from="one", to=latent   , arrows=1, free=F, values=0, labels=mxLabel("one",latent, suffix=labelSuffix))
-				p5 = mxPath(from="one", to=manifests, arrows=1, free=T, values=means, labels=mxLabel("one",manifests, suffix=labelSuffix)) 
+				p4 = mxPath(from="one", to=latent   , arrows=1, free=F, values=0, labels=umxLabels("one", latent, suffix = labelSuffix))
+				p5 = mxPath(from="one", to=manifests, arrows=1, free=T, values=means, labels=umxLabels("one", manifests, suffix = labelSuffix)) 
 				paths = list(p1, p2, p3, p4, p5)
 			}			
 		} else {
@@ -629,21 +670,20 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 		}
 	} else {
 		# Handle formedBy case
-
 		if(!help) {
 			# Add paths from manifests to the latent
-			p1 = mxPath(from=manifests, to=latent, connect="single", free=T, values=mxStart(.6, n=manifests), labels=mxLabel(manifests,latent, suffix=glue("path", labelSuffix)) )
+			p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests), labels=umxLabels(manifests,latent, suffix=glue("path", labelSuffix)) )
 			# In general, manifest variance should be left free…
 			# TODO If the data were correlations… we can inspect for that, and fix the variance to 1
-			p2 = mxPath(from=manifests, connect="single", arrows=2, free=T, values=variances, labels=mxLabel(manifests, suffix=glue("var", labelSuffix)))
+			p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances, labels=umxLabels(manifests, suffix=glue("var", labelSuffix)))
 			# Allow manifests to intercorrelate
-			p3 = mxPath(from=manifests, connect="unique.bivariate", arrows=2, free=T, values=mxStart(.3, n=manifests), labels=mxLabel(manifests, connect="unique.bivariate", suffix=labelSuffix)) 
+			p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxStart(.3, n=manifests), labels=umxLabels(manifests, connect="unique.bivariate", suffix=labelSuffix)) 
 			if(isCov) {
 				paths = list(p1, p2, p3)
 			}else{
 				# Fix latent mean at 0, and freely estimate manifest means
-				p4 = mxPath(from="one", to=latent   , free=F, values=0, labels=mxLabel("one",latent, suffix=labelSuffix))
-				p5 = mxPath(from="one", to=manifests, free=T, values=means, labels=mxLabel("one",manifests, suffix=labelSuffix))
+				p4 = mxPath(from="one", to=latent   , free = F, values = 0, labels = umxLabels("one",latent, suffix=labelSuffix))
+				p5 = mxPath(from="one", to=manifests, free = T, values = means, labels = umxLabels("one",manifests, suffix=labelSuffix))
 				paths = list(p1, p2, p3, p4, p5)
 			}
 		} else {
@@ -668,17 +708,19 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 	}
 	# readMeasures = paste("test", 1:3, sep="")
 	# bad usages
-	# umxLatent("Read") # no too defined
-	# umxLatent("Read", forms=manifestsRead, formedBy=manifestsRead) #both defined
-	# m1 = umxLatent("Read", formedBy = manifestsRead, model.name="base"); umxGraph_RAM(m1, std=F, dotFilename="name")
-	# m2 = umxLatent("Read", forms = manifestsRead, as.model="base"); 
+	# mxLatent("Read") # no too defined
+	# mxLatent("Read", forms=manifestsRead, formedBy=manifestsRead) #both defined
+	# m1 = mxLatent("Read", formedBy = manifestsRead, model.name="base"); umxGraph_RAM(m1, std=F, dotFilename="name")
+	# m2 = mxLatent("Read", forms = manifestsRead, as.model="base"); 
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
 	# umxGraph_RAM(m2, std=F, dotFilename="name")
-	# umxLatent("Read", forms = manifestsRead)
+	# mxLatent("Read", forms = manifestsRead)
+
 }
 
 
 umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
+	# Purpose: a regex-enabled version of omxGetParameters
 	# usage e.g.
 	# umxGetLabels(model@matrices$as) # all labels of as matrix
 	# umxGetLabels(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
@@ -712,6 +754,7 @@ umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
 	# model@submodels$MZ@matrices
 	return(theLabels)
 }
+
 
 umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 	# Purpose: to equate parameters by setting of labels (the slave set) = to the labels in a master set
@@ -755,11 +798,8 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 #` ## path-oriented helpers
 
 umxAddLabels <- function(model, suffix = "") {
-	# Purpose: Label all the paths in a model
-	# use case
-	# umxAddLabels(model)
-	# umxAddLabels(model_male, "male")
-	
+	# Purpose: to label all the free parameters of a (RAM) model
+	# Use case: model = umxAddLabels(model, suffix = "male")
 	if (!(isS4(model) && is(model, "MxModel") && class(model$objective)[1] == "MxRAMObjective")) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
@@ -796,10 +836,9 @@ umxAddLabels <- function(model, suffix = "") {
 	return(model)
 }
 
-
-umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
+umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# use case
-	# standardizeRAM(model, return="parameters|matrices|model")
+	# umxStandardizeModel(model, return="parameters|matrices|model")
 	# make sure 'return' is valid
 	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
 	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
@@ -868,6 +907,7 @@ umxStandardizeRAMModel <- function(model, return="parameters", Amatrix=NA, Smatr
 		return(p)		
 	}
 }
+
 
 #` ## matrix-oriented helpers
 
@@ -940,6 +980,42 @@ umxLabel <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggl
 	}
 	return(mx_matrix)
 }
+
+umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {
+	# Purpose: Create labels for RAM paths
+	# History: changed from "umxLabel" to "umxLabels"
+	# Use case: umxLabels("F1",paste("m",1:4,sep="")) # "F1_to_m1" "F1_to_m2" "F1_to_m3" "F1_to_m4"
+	# TODO: Replace with a post-hoc call to umxAddLabels(model, suffix = \"xxx\"), not umxLabels()")
+	# TODO: make this generate the paths as well... i.e., "umxPath()"
+	# TODO: handle connection style
+	# History: Changed from "umxLabel" to "umxLabels"
+	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
+	if(any(is.na(to)) & (suffix=="var"| suffix=="unique")){
+		# handle from only, variance and residuals
+		from = paste(prefix, from, sep="")
+		return(paste(from, suffix, sep="_"))
+	}else if(any(from == "one")){
+		# handle means (from == "one")
+		if(!all(from == "one")){
+			stop(cat("Error in umxLabels: from was a mix of one and not-one",from))
+		} else {
+			return(paste(to, "mean", sep="_"))
+		}
+	}else if(connect=="unique.bivariate") {
+		if(!all(is.na(to))){
+			if(!(from==to)){
+				stop("with connect = 'unique.bivariate', to must be blank, or the same as from")
+			}
+		}
+		labels = as.character(combn(from, m=2, FUN=paste, collapse="_"))
+		return(labels)
+	} else {
+		from = paste(prefix, from, sep="")
+		to = paste(to, suffix, sep="_")
+		return(paste(from, to, sep="_to_"))
+	}
+}
+
 # =================
 # = Data handling =
 # =================
