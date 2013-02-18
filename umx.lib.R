@@ -846,9 +846,9 @@ umxAddLabels <- function(model, suffix = "") {
 }
 
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
-	# Purpose: standardise a RAM model, usually in order to return a standardized version of the model.
-	# use case umxStandardizeModel(model, return = "model")
-	# Make sure 'return' is a valid option: "parameters", "matrices", or "model"
+	# Purpose : standardise a RAM model, usually in order to return a standardized version of the model.
+	# Use case: umxStandardizeModel(model, return = "model")
+	# note    : Make sure 'return' is a valid option: "parameters", "matrices", or "model"
 	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
 	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
 	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix

@@ -9,15 +9,15 @@ It currently contains functions to support:
 2. Reporting helpers
 	* `umxReportFit(model)` # *report a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA)*
 	* `umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
-	* `umxStandardizeRAM(model)` #* standardize a RAM model*
-		* **nb**:* `summary()` computes standardized paths for RAM models, but this function is still useful, as `omxGraphviz()` does not, and the function `standardizeRAMModel()` is not exposed in OpenMx.
+	* `umxStandardizeModel(model, return = "model")` #* standardize a RAM model*
+		* **nb**:* `summary()` computes standardized paths for RAM models, but this function is still useful, as `omxGraphviz()` does not, and the function `.standardizeRAMModel()` is not exposed in OpenMx.
 	* `umxTime(fit1)`  *# Report the time taken by a model in a compact friendly, programable format*
 	* `umxSaturated(model)` *# Create a saturated model when raw data are being used. *
 		* `summary(model, SaturatedLikelihood = model_sat$SaturatedLikelihood, IndependenceLikelihood = model_sat$IndependenceLikelihood)`
 		* **nb**:* Saturated solutions are not computable for definition variables and some other models.
 
 3. Speed and efficiency helpers
-	* `umxTryHarder(model)`
+	* `umxTryHard(model)`
 		* Sometimes models will code Red, and just need to be re-run from their now closer-to-good starting values. `umxTryHard()` replaces mxRun, allowing a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases. Ideally, mxRun() might support this option itself.
 4. Data processing helpers
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
