@@ -224,16 +224,13 @@ umxReportFit <- function(model, saturatedModels = NA, report="line") {
 		})
 	}
 }
-
-umxGraph_RAM <- function(model=NA, std=T, precision=2, dotFilename="name", pathLabels="none", showFixed=F, showError=T) {
-	# Use case:
+umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
+	# Purpose: Graphical output of your model using "graphviz":
 	# umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")
-
-	# TODO: Show fixed paths... perhaps in red, or with "@" signs
-	# legal options for "pathLabels" = "both", "none" or "labels"
+	# nb: legal values for "pathLabels" are "both", "none" or "labels"
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap', 'sentence', 'numeric', 'series', and 'arithmet'
-	if(std){ model= umxStandardizeRAMModel(model, return="model") }
+	if(std){ model= umxStandardizeModel(model, return="model") }
 	out = "";
 	# Get Asymmetric Paths
 	aRows = dimnames(model[["A"]]@free)[[1]]
@@ -837,9 +834,9 @@ umxAddLabels <- function(model, suffix = "") {
 }
 
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
-	# use case
-	# umxStandardizeModel(model, return="parameters|matrices|model")
-	# make sure 'return' is valid
+	# Purpose: standardise a RAM model, usually in order to return a standardized version of the model.
+	# use case umxStandardizeModel(model, return = "model")
+	# Make sure 'return' is a valid option: "parameters", "matrices", or "model"
 	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
 	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
 	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
