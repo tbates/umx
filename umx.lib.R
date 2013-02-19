@@ -1,15 +1,27 @@
 # umx.lib.R
-# To USE ME IN YOUR SCRIPTS SAY: 
-# source("http://github.com/tbates/umx/blob/master/umx.lib.R")
-# source("https://raw.github.com/tbates/umx/master/umx.lib.R")
+# To USE ME IN YOUR SCRIPTS SAY something like this: 
+# url <- "https://raw.github.com/tbates/umx/master/umx.lib.R"
+# source_https <- function(u, unlink.tmp.certs = F) {
+# 	# read script lines from website using a security certificate
+# 	require(RCurl)
+# 	if(!file.exists("cacert.pem")){
+# 		download.file(url = "http://curl.haxx.se/ca/cacert.pem", destfile = "cacert.pem")
+# 	}
+# 	script <- RCurl::getURL(u, followlocation = T, cainfo = "cacert.pem")
+# 	if(unlink.tmp.certs) unlink("cacert.pem")
+# 	# parse lines and evaluate in the global environement
+# 	eval(parse(text = script), envir = .GlobalEnv)
+# }
+# source_https(url) # Using unlink.tmp.certs = T will delete the security certificates text file that source_https downloads
+
+# or
+# require(RCurl)
+# url = "https://raw.github.com/tbates/umx/master/umx.lib.R"
+# script <- RCurl::getURL(url, ssl.verifypeer = F)
+# eval(parse(text = script), envir = .GlobalEnv)
 
 # To learn more, see http://www.github.com/tbates/umx/README.md
 # load code borrowed from [here](http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github)
-# require(RCurl)
-# url = "https://raw.github.com/tbates/umx/master/umx.lib.R"
-# script <- RCurl::getURL(url, ssl.verifypeer = FALSE)
-# eval(parse(text = script))
-
 
 umxUpdateOpenMx <-function(bleedingEdge = FALSE, loadNew = TRUE) {
 	# Purpose: update the OpenMx Library to latest version:
@@ -224,16 +236,13 @@ umxReportFit <- function(model, saturatedModels = NA, report="line") {
 		})
 	}
 }
-
-umxGraph_RAM <- function(model=NA, std=T, precision=2, dotFilename="name", pathLabels="none", showFixed=F, showError=T) {
-	# Use case:
+umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
+	# Purpose: Graphical output of your model using "graphviz":
 	# umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")
-
-	# TODO: Show fixed paths... perhaps in red, or with "@" signs
-	# legal options for "pathLabels" = "both", "none" or "labels"
+	# nb: legal values for "pathLabels" are "both", "none" or "labels"
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap', 'sentence', 'numeric', 'series', and 'arithmet'
-	if(std){ model= umxStandardizeRAMModel(model, return="model") }
+	if(std){ model= umxStandardizeModel(model, return="model") }
 	out = "";
 	# Get Asymmetric Paths
 	aRows = dimnames(model[["A"]]@free)[[1]]
@@ -837,9 +846,9 @@ umxAddLabels <- function(model, suffix = "") {
 }
 
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
-	# use case
-	# umxStandardizeModel(model, return="parameters|matrices|model")
-	# make sure 'return' is valid
+	# Purpose : standardise a RAM model, usually in order to return a standardized version of the model.
+	# Use case: umxStandardizeModel(model, return = "model")
+	# note    : Make sure 'return' is a valid option: "parameters", "matrices", or "model"
 	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
 	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
 	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
