@@ -842,6 +842,10 @@ umxAddLabels <- function(model, suffix = "") {
 			}
 		}
 	}
+	model@matrices$S@labels[lower.tri(model@matrices$S@labels)] = t(model@matrices$S@labels[upper.tri(t(model@matrices$S@labels))])
+	toGet = model@matrices$S@labels
+	transpose_toGet = t(toGet)
+	model@matrices$S@labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
 	return(model)
 }
 
