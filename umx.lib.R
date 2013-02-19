@@ -11,7 +11,7 @@
 # eval(parse(text = script))
 
 
-umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
+umxUpdateOpenMx <-function(bleedingEdge = FALSE, loadNew = TRUE) {
 	# Purpose: update the OpenMx Library to latest version:
 	# use case:
 	# umxUpdateOpenMx()
@@ -97,7 +97,7 @@ umxUpdateOpenMx <-function(bleedingEdge=FALSE, loadNew=TRUE) {
 # = Fit and Reporting Helpers =
 # =============================
 
-umxSummary <- function(model, precision = 2, parameters=NA, report=NA) {
+umxSummary <- function(model, precision = 2, parameters = NA, report=NA) {
 	# useage
 	# umxSummary(fit1)
 	if(!is.na(report)){
