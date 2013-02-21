@@ -534,9 +534,11 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 # = Speed  and Efficiency Helpers =
 # =================================
 
-umxTryHard <- function(model, n=3, calc_SE=F){
-	# TODO: add edit history, history of Mx function tryhard
+umxRun <- function(model, n = 3, calc_SE = F){
+	# TODO: return change in -2LL
 	# optimise for speed
+	# Use case
+	# model <- umxRun(model, n = 10)
 	model = mxOption(model, "Calculate Hessian", "No")
 	model = mxOption(model, "Standard Errors", "No")
 	# make an initial run
@@ -561,8 +563,6 @@ umxTryHard <- function(model, n=3, calc_SE=F){
 		model = mxRun(model)
 	}
 	return(model)
-	# Use case
-	# model <- tryHard(model, n=10)
 }
 
 umxReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F) {
@@ -830,10 +830,7 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 	return(myModel)
 }
 
-
 #` ## path-oriented helpers
-
-
 
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# Purpose : standardise a RAM model, usually in order to return a standardized version of the model.
@@ -906,7 +903,6 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 		return(p)		
 	}
 }
-
 
 #` ## matrix-oriented helpers
 
@@ -992,7 +988,6 @@ umxLower2full <- function(lower.data, diag=F, byrow=T) {
 	}
 	return(mat)
 }
-
 
 umxFindObject <- function(grepString = ".*", requiredClass = "MxModel") {
 	# Purpose: find objects a certain class, whose name matches a (grep) search string
@@ -1125,8 +1120,9 @@ umxLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	return(mx_matrix)
 }
 
-
 # ==============
 # = Deprecated =
 # ==============
+umxTryHard <- function(model, n=3, calc_SE=F){ stop("just use not umxRun() in place of umxTryHard") }
+
 umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop("please use umxPath in place of umxLabels. To label models or matrices, use umxLabel")}
