@@ -6,7 +6,7 @@
 # 	if(!file.exists("cacert.pem")){
 # 		download.file(url = "http://curl.haxx.se/ca/cacert.pem", destfile = "cacert.pem")
 # 	}
-# 	script = RCurl::getURL(url, followlocation = T, cainfo = "cacert.pem")
+# 	script = RCurl::getURL(URL, followlocation = T, cainfo = "cacert.pem")
 # 	if(unlink.tmp.certs) unlink("cacert.pem")
 # 	# parse lines and evaluate in the global environement
 # 	eval(parse(text = script), envir = .GlobalEnv)
@@ -833,48 +833,7 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 
 #` ## path-oriented helpers
 
-umxAddLabels <- function(model, suffix = "") {
-	# Purpose: to label all the free parameters of a (RAM) model
-	# Use case: model = umxAddLabels(model, suffix = "male")
-	if (!(isS4(model) && is(model, "MxModel") && class(model$objective)[1] == "MxRAMObjective")) {
-		stop("'model' must be an OpenMx RAM Model")
-	}
-	freeA  = model@matrices$A@free
-	freeS  = model@matrices$S@free
-	namesA = dimnames(freeA)[[1]]
-	namesS = dimnames(freeS)[[1]]
 
-	# =========================
-	# = Add asymmetric labels =
-	# =========================
-	theseNames = namesA
-	for(fromCol in seq_along(theseNames)) {
-		for(toRow in seq_along(theseNames)) {
-			if(freeA[toRow, fromCol]){
-			   thisLabel = paste(theseNames[fromCol], "_to_", theseNames[toRow], suffix, sep = "")
-			   model@matrices$A@labels[toRow,fromCol] = thisLabel
-			}
-		}
-	}
-
-	# =========================
-	# = Add Symmetric labels =
-	# =========================
-	theseNames = namesS
-	for(fromCol in seq_along(theseNames)) {
-		for(toRow in seq_along(theseNames)) {
-			if(freeS[toRow, fromCol]) {
-			   thisLabel = paste(theseNames[fromCol], "_with_", theseNames[toRow], suffix, sep = "")
-			   model@matrices$S@labels[toRow,fromCol] = thisLabel
-			}
-		}
-	}
-	model@matrices$S@labels[lower.tri(model@matrices$S@labels)] = t(model@matrices$S@labels[upper.tri(t(model@matrices$S@labels))])
-	toGet = model@matrices$S@labels
-	transpose_toGet = t(toGet)
-	model@matrices$S@labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
-	return(model)
-}
 
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# Purpose : standardise a RAM model, usually in order to return a standardized version of the model.
@@ -1170,4 +1129,4 @@ umxLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 # ==============
 # = Deprecated =
 # ==============
-umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop(("please use umxPath in place of umxLabels")}
+umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop("please use umxPath in place of umxLabels. To label models or matrices, use umxLabel")}
