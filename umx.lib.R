@@ -604,6 +604,7 @@ umxStart <- function(x=1, sd=NA, n=1) {
 	}
 	return(rnorm(n=n, mean=x, sd=sd))
 }
+
 umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, model.name=NA, help=FALSE, labelSuffix="", verbose=T) {
 	# TODO: delete manifestVariance
 	# Check both forms and formedBy are not defined
@@ -740,6 +741,20 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 
 }
 
+umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {	
+	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
+	# nb: obj must be either an mxModel or an mxMatrix
+	# Use case:
+	# m1 = umxLabel(m1, suffix = "")
+	# umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
+	if ((isS4(obj) && is(obj, "MxModel") && class(obj$objective)[1] == "MxRAMObjective")) {
+		return(umxLabel_RAM_Model(obj, suffix))
+	} else if (is(obj, "MxMatrix")) {
+		umxLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag)
+	} else {
+		stop("'obj' must be an OpenMx RAM model OR an mxMatrix")
+	}
+}
 
 umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
 	# Purpose: a regex-enabled version of omxGetParameters
@@ -776,7 +791,6 @@ umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
 	# model@submodels$MZ@matrices
 	return(theLabels)
 }
-
 
 umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 	# Purpose: to equate parameters by setting of labels (the slave set) = to the labels in a master set
@@ -937,84 +951,12 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 
 #` ## matrix-oriented helpers
 
-umxLabel <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {
-	# Purpose: label the cells of an mxMatrix
-	# Detail: Defaults to the handy "matname_r1c1" where 1 is the row or column
-	# Use case:
-	# umxLabel(mxMatrix("Lower",3, 3, values=1, name="a", byrow=T), jiggle=.05, boundDiag=NA);
-	# TODO: unify the path labelling and matrix labelling approaches
-	# See also: fit2 = omxSetParameters(fit1	, labels="a_r1c1", free=F, value = 0, name="drop_a_row1_c1")
-	# History: 2012-12-28 changed function name to "umxLabel" from "umxLabel"
-	type = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
-	nrow = nrow(mx_matrix);
-	ncol = ncol(mx_matrix);
-	newLabels = mx_matrix@labels;
-	mirrorLabels = newLabels
-	if(is.na(baseName)) { baseName = mx_matrix@name }
-	# Make a matrix of labels in the form "baseName_rRcC"
-	for (r in 1:nrow) {
-		for (c in 1:ncol) {
-			newLabels[r,c]= paste(baseName,"_r",r,"c",c, sep="")
-			if(nrow == ncol) { # Should include all square forms type=="StandMatrix" | type=="SymmMatrix"
-				mirrorLabels[c,r]= paste(baseName,"_r",r,"c",c, sep="")
-			}
-		}
-	}
-	if(type=="DiagMatrix"){
-		newLabels[lower.tri(newLabels, diag=F)]=NA
-		newLabels[upper.tri(newLabels, diag=F)]=NA
-	} else if(type=="FullMatrix"){
-		# newLabels = newLabels
-	} else if(type=="LowerMatrix"){
-		newLabels[upper.tri(newLabels, diag=F)] = NA 
-	} else if(type=="SdiagMatrix"){
-		newLabels[upper.tri(newLabels, diag=T)] = NA
-	} else if(type=="SymmMatrix"){
-		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
-		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
-	} else if(type=="StandMatrix") {
-		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
-		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
-		diag(newLabels) <- NA
-	} else if(type=="IdenMatrix"|type=="UnitMatrix"|type=="ZeroMatrix") {
-		stop("You can't run umxLabel on an Identity matrix - it has no free values!")
-	} else {
-		return(paste("You tried to set type ", "to '", type, "'", sep=""));
-	}
-	# Set labels
-	mx_matrix@labels <- newLabels;
-	if(setfree==FALSE) {
-		# return("Specs not used: leave free as set in mx_matrix") 
-	} else {
-		newFree = mx_matrix@free
-		# return(newFree)
-		newFree[mx_matrix@values==drop] = F;
-		newFree[mx_matrix@values!=drop] = T;
-		if(type=="StandMatrix") {
-			newLabels[lower.tri(newLabels, diag=FALSE)] -> lower.labels;
-			newLabels[upper.tri(newLabels, diag=FALSE)] <- lower.labels;
-		} else {
-			mx_matrix@free <- newFree
-		}
-		# newFree[is.na(newLabels)]=NA; # (validated by mxMatrix???)
-	}
-	if(!is.na(jiggle)){
-		mx_matrix@values <- genEpi_Jiggle(mx_matrix@values, mean=0, sd=jiggle, dontTouch=drop) # Expecting sd
-	}
-	if(!is.na(boundDiag)){
-		diag(mx_matrix@lbound)<-boundDiag # bound diagonal to be positive 
-	}
-	return(mx_matrix)
-}
-
-umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {
-	# Purpose: Create labels for RAM paths
-	# History: changed from "umxLabel" to "umxLabels"
-	# Use case: umxLabels("F1",paste("m",1:4,sep="")) # "F1_to_m1" "F1_to_m2" "F1_to_m3" "F1_to_m4"
-	# TODO: Replace with a post-hoc call to umxAddLabels(model, suffix = \"xxx\"), not umxLabels()")
+umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, prefix = "", suffix = "",...) {
+	# {$|single,all.pairs,all.bivariate,unique.pairs,unique.bivariate|}
+	# Purpose: Create  mxPaths with default labels
+	# Use case: umxPath("F1", paste("m",1:4,sep="")) # "F1_to_m1" "F1_to_m2" "F1_to_m3" "F1_to_m4"
 	# TODO: make this generate the paths as well... i.e., "umxPath()"
 	# TODO: handle connection style
-	# History: Changed from "umxLabel" to "umxLabels"
 	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
 	if(any(is.na(to)) & (suffix=="var"| suffix=="unique")){
 		# handle from only, variance and residuals
@@ -1106,3 +1048,126 @@ umxFindObject <- function(grepString = ".*", requiredClass = "MxModel") {
 	}
 	return(matchingObjects)
 }
+
+# ========================================
+# = Not Typically used directly by users =
+# ========================================
+
+umxLabel_RAM_Model <- function(model, suffix = "") {
+	# Purpose: to label all the free parameters of a (RAM) model
+	# Use case: model = umxAddLabels(model, suffix = "male")
+	if (!(isS4(model) && is(model, "MxModel") && class(model$objective)[1] == "MxRAMObjective")) {
+		stop("'model' must be an OpenMx RAM Model")
+	}
+	freeA  = model@matrices$A@free
+	freeS  = model@matrices$S@free
+	namesA = dimnames(freeA)[[1]]
+	namesS = dimnames(freeS)[[1]]
+
+	# =========================
+	# = Add asymmetric labels =
+	# =========================
+	theseNames = namesA
+	for(fromCol in seq_along(theseNames)) {
+		for(toRow in seq_along(theseNames)) {
+			if(freeA[toRow, fromCol]){
+			   thisLabel = paste(theseNames[fromCol], "_to_", theseNames[toRow], suffix, sep = "")
+			   model@matrices$A@labels[toRow,fromCol] = thisLabel
+			}
+		}
+	}
+
+	# =========================
+	# = Add Symmetric labels =
+	# =========================
+	theseNames = namesS
+	for(fromCol in seq_along(theseNames)) {
+		for(toRow in seq_along(theseNames)) {
+			if(freeS[toRow, fromCol]) {
+			   thisLabel = paste(theseNames[fromCol], "_with_", theseNames[toRow], suffix, sep = "")
+			   model@matrices$S@labels[toRow,fromCol] = thisLabel
+			}
+		}
+	}
+	model@matrices$S@labels[lower.tri(model@matrices$S@labels)] = t(model@matrices$S@labels[upper.tri(t(model@matrices$S@labels))])
+	toGet = model@matrices$S@labels
+	transpose_toGet = t(toGet)
+	model@matrices$S@labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
+	return(model)
+}
+
+umxLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {
+	# Purpose: label the cells of an mxMatrix
+	# Detail: Defaults to the handy "matname_r1c1" where 1 is the row or column
+	# Use case:
+	# umxLabel(mxMatrix("Lower",3, 3, values=1, name="a", byrow=T), jiggle=.05, boundDiag=NA);
+	# TODO: unify the path labelling and matrix labelling approaches
+	# See also: fit2 = omxSetParameters(fit1, labels="a_r1c1", free=F, value = 0, name="drop_a_row1_c1")
+	# History: 2012-12-28 changed function name to "umxLabel" from "umxLabel"
+	type = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
+	nrow = nrow(mx_matrix);
+	ncol = ncol(mx_matrix);
+	newLabels = mx_matrix@labels;
+	mirrorLabels = newLabels
+	if(is.na(baseName)) { baseName = mx_matrix@name }
+	# Make a matrix of labels in the form "baseName_rRcC"
+	for (r in 1:nrow) {
+		for (c in 1:ncol) {
+			newLabels[r,c]= paste(baseName,"_r",r,"c",c, sep="")
+			if(nrow == ncol) { # Should include all square forms type=="StandMatrix" | type=="SymmMatrix"
+				mirrorLabels[c,r]= paste(baseName,"_r",r,"c",c, sep="")
+			}
+		}
+	}
+	if(type=="DiagMatrix"){
+		newLabels[lower.tri(newLabels, diag=F)]=NA
+		newLabels[upper.tri(newLabels, diag=F)]=NA
+	} else if(type=="FullMatrix"){
+		# newLabels = newLabels
+	} else if(type=="LowerMatrix"){
+		newLabels[upper.tri(newLabels, diag=F)] = NA 
+	} else if(type=="SdiagMatrix"){
+		newLabels[upper.tri(newLabels, diag=T)] = NA
+	} else if(type=="SymmMatrix"){
+		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
+		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
+	} else if(type=="StandMatrix") {
+		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
+		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
+		diag(newLabels) <- NA
+	} else if(type=="IdenMatrix"|type=="UnitMatrix"|type=="ZeroMatrix") {
+		stop("You can't run umxLabel on an Identity matrix - it has no free values!")
+	} else {
+		return(paste("You tried to set type ", "to '", type, "'", sep=""));
+	}
+	# Set labels
+	mx_matrix@labels <- newLabels;
+	if(setfree == FALSE) {
+		# return("Specs not used: leave free as set in mx_matrix") 
+	} else {
+		newFree = mx_matrix@free
+		# return(newFree)
+		newFree[mx_matrix@values==drop] = F;
+		newFree[mx_matrix@values!=drop] = T;
+		if(type=="StandMatrix") {
+			newLabels[lower.tri(newLabels, diag=FALSE)] -> lower.labels;
+			newLabels[upper.tri(newLabels, diag=FALSE)] <- lower.labels;
+		} else {
+			mx_matrix@free <- newFree
+		}
+		# newFree[is.na(newLabels)]=NA; # (validated by mxMatrix???)
+	}
+	if(!is.na(jiggle)){
+		mx_matrix@values <- genEpi_Jiggle(mx_matrix@values, mean=0, sd=jiggle, dontTouch=drop) # Expecting sd
+	}
+	if(!is.na(boundDiag)){
+		diag(mx_matrix@lbound)<-boundDiag # bound diagonal to be positive 
+	}
+	return(mx_matrix)
+}
+
+
+# ==============
+# = Deprecated =
+# ==============
+umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop(("please use umxPath in place of umxLabels")}
