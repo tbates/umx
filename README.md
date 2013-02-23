@@ -1,7 +1,17 @@
 # umx
 umx stands for "user" mx function, and is a library of helper functions for doing [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in [OpenMx](http://openmx.psyc.virginia.edu).
 
-It currently contains functions to support:
+Load it up like this:
+<pre>
+source_https <- function(URL) {
+	require(RCurl)
+	script <- getURL("https://raw.github.com/tbates/umx/master/umx.lib.R", ssl.verifypeer = F)
+	eval(parse(text = script), envir = .GlobalEnv)
+}
+source_https("https://raw.github.com/tbates/umx/master/umx.lib.R")
+</pre>
+
+It has functions to support:
 
 1. RAM model Modification Indices
 	* `umxMI(model, vector = T)`  *# Return modification indices for a model*
@@ -28,23 +38,6 @@ It currently contains functions to support:
 	* `umxReRun(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F)`
 
 Feel free to use, and improve! Log suggestions here using the Github comments, wiki, or git.
-
-Load it up like this:
-<br />
-<div style="color: #a7a8a7; font-family: Menlo; font-size: 15px;">
-<span style="color: #d77c79;">url</span><span style="color: black;"> </span><span style="color: #9ac9c4;">&lt;-</span><span style="color: black;"> </span><span style="color: #c2c77b;">"https://raw.github.com/tbates/umx/master/umx.lib.R"</span><span style="color: black;"><br />
-</span><span style="color: #93b2ca;">source_https</span><span style="color: black;"> </span><span style="color: #9ac9c4;">&lt;-</span><span style="color: black;"> </span><span style="color: #c0a7c7;">function</span><span style="color: black;">(</span><span style="color: #d77c79;">u</span><span style="color: black;">, </span><span style="color: #e6a472;">unlink.tmp.certs</span><span style="color: black;"> </span><span style="color: #9ac9c4;">=</span><span style="color: black;"> </span><span style="color: #e6a472;">F</span><span style="color: black;">) {<br />
-&nbsp; &nbsp; </span># read script lines from website using a security certificate<br />
-<span style="color: black;">&nbsp; &nbsp; require(</span><span style="color: #d77c79;">RCurl</span><span style="color: black;">)<br />
-&nbsp; &nbsp; </span><span style="color: #c0a7c7;">if</span><span style="color: black;">(</span><span style="color: #9ac9c4;">!</span><span style="color: black;">file.exists(</span><span style="color: #c2c77b;">"cacert.pem"</span><span style="color: black;">)){<br />
-&nbsp; &nbsp; &nbsp; &nbsp; download.file(</span><span style="color: #e6a472;">url</span><span style="color: black;"> </span><span style="color: #9ac9c4;">=</span><span style="color: black;"> </span><span style="color: #c2c77b;">"http://curl.haxx.se/ca/cacert.pem"</span><span style="color: black;">, </span><span style="color: #e6a472;">destfile</span><span style="color: black;"> </span><span style="color: #9ac9c4;">=</span><span style="color: black;"> </span><span style="color: #c2c77b;">"cacert.pem"</span><span style="color: black;">)<br />
-&nbsp; &nbsp; }<br />
-&nbsp; &nbsp; </span><span style="color: #d77c79;">script</span><span style="color: black;"> </span><span style="color: #9ac9c4;">&lt;-</span><span style="color: black;"> RCurl</span><span style="color: #c0a7c7;">::</span><span style="color: black;">getURL(</span><span style="color: #d77c79;">u</span><span style="color: black;">, </span><span style="color: #e6a472;">followlocation</span><span style="color: black;"> </span><span style="color: #9ac9c4;">=</span><span style="color: black;"> </span><span style="color: #e6a472;">T</span><span style="color: black;">, </span><span style="color: #e6a472;">cainfo</span><span style="color: black;"> </span><span style="color: #9ac9c4;">=</span><span style="color: black;"> </span><span style="color: #c2c77b;">"cacert.pem"</span><span style="color: black;">)<br />
-&nbsp; &nbsp; </span><span style="color: #c0a7c7;">if</span><span style="color: black;">(</span><span style="color: #d77c79;">unlink.tmp.certs</span><span style="color: black;">) unlink(</span><span style="color: #c2c77b;">"cacert.pem"</span><span style="color: black;">)<br />
-&nbsp; &nbsp; </span># parse lines and evaluate in the global environement<br />
-<span style="color: black;">&nbsp; &nbsp; eval(parse(</span><span style="color: #e6a472;">text</span><span style="color: black;"> </span><span style="color: #9ac9c4;">=</span><span style="color: black;"> </span><span style="color: #d77c79;">script</span><span style="color: black;">), </span><span style="color: #e6a472;">envir</span><span style="color: black;"> </span><span style="color: #9ac9c4;">=</span><span style="color: black;"> .</span><span style="color: #d77c79;">GlobalEnv</span><span style="color: black;">)<br />
-}<br />
-source_https(</span><span style="color: #d77c79;">url</span><span style="color: black;">) </span># Using unlink.tmp.certs = T will delete the security certificates text file that source_https downloads</div>
 
 ### Contributors
 * [Tim Bates](tim.bates@ed.ac.uk)
