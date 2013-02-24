@@ -1,40 +1,12 @@
 # umx.lib.R
 # To USE ME IN YOUR SCRIPTS SAY something like this: 
-# URL <- "https://raw.github.com/tbates/umx/master/umx.lib.R"
-# source_https <- function(URL, unlink.tmp.certs = F) {
+# source_https <- function(URL) {
 # 	require(RCurl)
-# 	if(!file.exists("cacert.pem")){
-# 		download.file(url = "http://curl.haxx.se/ca/cacert.pem", destfile = "cacert.pem")
-# 	}
-# 	script = RCurl::getURL(URL, followlocation = T, cainfo = "cacert.pem")
-# 	if(unlink.tmp.certs) unlink("cacert.pem")
-# 	# parse lines and evaluate in the global environement
+# 	script = RCurl::getURL(URL, ssl.verifypeer = F)
 # 	eval(parse(text = script), envir = .GlobalEnv)
 # }
-# source_https("https://raw.github.com/tbates/umx/master/umx.lib.R") # Using unlink.tmp.certs = T will delete the security certificates text file that source_https downloads
-
-# or
-# require(RCurl)
-# URL = "https://raw.github.com/tbates/umx/master/umx.lib.R"
-# s<-getURL("https://raw.github.com/tbates/umx/master/umx.lib.R", ssl.verifypeer = F)
-# eval(parse(text = s), envir = .GlobalEnv)
-
+# source_https("https://raw.github.com/tbates/umx/master/umx.lib.R")
 # To learn more, see http://www.github.com/tbates/umx/README.md
-# load code borrowed from [here](http://tonybreyal.wordpress.com/2011/11/24/source_https-sourcing-an-r-script-from-github)
-
-source_https <- function(URL, unlink.tmp.certs = F) {
-	# read script lines from website using a security certificate
-	require(RCurl)
-	if(!file.exists("cacert.pem")){
-		download.file(url = "http://curl.haxx.se/ca/cacert.pem", destfile = "cacert.pem")
-	}
-	script <- RCurl::getURL(URL, followlocation = T, cainfo = "cacert.pem")
-	if(unlink.tmp.certs) unlink("cacert.pem")
-	# parse lines and evaluate in the global environement
-	eval(parse(text = script), envir = .GlobalEnv)
-}
-# source_https("https://raw.github.com/tbates/umx/master/umx.lib.R") # Using unlink.tmp.certs = T will delete the security certificates text file that source_https downloads
-
 
 umxUpdateOpenMx <-function(bleedingEdge = FALSE, loadNew = TRUE) {
 	# Purpose: update the OpenMx Library to latest version:
@@ -121,6 +93,28 @@ umxUpdateOpenMx <-function(bleedingEdge = FALSE, loadNew = TRUE) {
 # =============================
 # = Fit and Reporting Helpers =
 # =============================
+
+umxCompare <- function(base=NA, comparison=NA, all = T, output = "Rout.html") {
+	# c("Rout.html", "return")
+	# umxCompare(fit11, fit11, all=F, output="Rout.html")
+	if(is.na(comparison)){
+		comparison= base
+	} 
+	tableOut  = mxCompare(base=base, comparison=comparison, all=all)
+	tableOut  = format(tableOut,scientific=F,digits=5)
+	tableOut = tableOut[,c(2:1,3,4,6:9)]
+	names(tableOut)<-c("Comparison", "Base", "ep", "-2LL", "AIC", "delta LL", "delta df", "p")
+	if(output=="return"){
+		return(tableOut)
+	} else {
+		print.html(tableOut, output = output, rowlabel="")
+	}
+	# if(render){
+	# 	fName= "Model.Fitting.xls"
+	# 	write.table(tableOut,fName, row.names=F,sep="\t", fileEncoding="UTF-8") # macroman UTF-8 UTF-16LE
+	# 	system(paste("open", fName));
+	# }
+}
 
 umxSummary <- function(model, precision = 2, parameters = NA, report=NA) {
 	# useage
@@ -249,6 +243,7 @@ umxReportFit <- function(model, saturatedModels = NA, report="line") {
 		})
 	}
 }
+
 umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
 	# Purpose: Graphical output of your model using "graphviz":
 	# umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")
@@ -454,48 +449,53 @@ umxMI <- function(model, vector=T) {
 	return(ret)
 }
 
-umxMI_top <- function(fit=NA, numInd=10, typeToShow="both") {
+umxMI_top <- function(fit=NA, numInd=10, typeToShow="both", decreasing=T, cache=T) {
 	# depends on umxMI(fit)
 	# use cases
 	# mi.df = umxMI_top(fit)
 	# umxMI_top(fit, numInd=5, typeToShow="add") # valid options are "both|add|delete"
-	mi = umxMI(fit, vector=T)
-	mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
-	row.names(mi.df) = 1:nrow(mi.df);
-	# TODO: could be a helper: choose direction
-	mi.df$from = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\1", mi.df$path)
-	mi.df$to   = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\3", mi.df$path)
-	mi.df$arrows = 1
-	mi.df$arrows[grepl("<->", mi.df$path)]= 2		
+	if(typeof(fit) == "list"){
+		mi.df = fit
+	} else {
+		mi = umxMI(fit, vector=T)
+		mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
+		row.names(mi.df) = 1:nrow(mi.df);
+		# TODO: could be a helper: choose direction
+		mi.df$from = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\1", mi.df$path)
+		mi.df$to   = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\3", mi.df$path)
+		mi.df$arrows = 1
+		mi.df$arrows[grepl("<->", mi.df$path)]= 2		
 
-	mi.df$action = NA 
-	mi.df  = mi.df[order(mi.df[,2], decreasing=T),] 
-	mi.df$copy = 1:nrow(mi.df)
-	for(n in 1:(nrow(mi.df)-1)) {
-		if(grepl(" <- ", mi.df$path[n])){
-			tmp = mi.df$from[n]; mi.df$from[n] = mi.df$to[n]; mi.df$to[n] = tmp 
-		}
-		from = mi.df$from[n]
-		to   = mi.df$to[n]
-		a = (fit@matrices$S@free[to,from] |fit@matrices$A@free[to,from])
-		b = (fit@matrices$S@values[to,from]!=0 |fit@matrices$A@values[to,from] !=0)
-		if(a|b){
-			mi.df$action[n]="delete"
-		} else {
-			mi.df$action[n]="add"
-		}
-		inc= min(4,nrow(mi.df)-(n))
-		for (i in 1:inc) {
-			if((mi.df$copy[(n)])!=n){
-				# already dirty
-			}else{
-				# could be a helper: swap two 
-				from1 = mi.df[n,"from"]     ; to1   = mi.df[n,"to"]
-				from2 = mi.df[(n+i),"from"] ; to2   = mi.df[(n+i),'to']
-				if((from1==from2 & to1==to2) | (from1==to2 & to1==from2)){
-					mi.df$copy[(n+i)]<-n
-				}
-			}			
+		mi.df$action = NA 
+		# mi.df  = mi.df[order(mi.df[,2], decreasing=decreasing),] 
+		mi.df  = mi.df[order(abs(mi.df[,2]), decreasing=decreasing),] 
+		mi.df$copy = 1:nrow(mi.df)
+		for(n in 1:(nrow(mi.df)-1)) {
+			if(grepl(" <- ", mi.df$path[n])){
+				tmp = mi.df$from[n]; mi.df$from[n] = mi.df$to[n]; mi.df$to[n] = tmp 
+			}
+			from = mi.df$from[n]
+			to   = mi.df$to[n]
+			a = (fit@matrices$S@free[to,from] |fit@matrices$A@free[to,from])
+			b = (fit@matrices$S@values[to,from]!=0 |fit@matrices$A@values[to,from] !=0)
+			if(a|b){
+				mi.df$action[n]="delete"
+			} else {
+				mi.df$action[n]="add"
+			}
+			inc= min(4,nrow(mi.df)-(n))
+			for (i in 1:inc) {
+				if((mi.df$copy[(n)])!=n){
+					# already dirty
+				}else{
+					# could be a helper: swap two 
+					from1 = mi.df[n,"from"]     ; to1   = mi.df[n,"to"]
+					from2 = mi.df[(n+i),"from"] ; to2   = mi.df[(n+i),'to']
+					if((from1==from2 & to1==to2) | (from1==to2 & to1==from2)){
+						mi.df$copy[(n+i)]<-n
+					}
+				}		
+			}
 		}
 	}
 	mi.df = mi.df[unique(mi.df$copy),] # c("copy")
@@ -503,7 +503,7 @@ umxMI_top <- function(fit=NA, numInd=10, typeToShow="both") {
 		mi.df = mi.df[mi.df$action==typeToShow,]
 	}
 	print(mi.df[1:numInd, !(names(mi.df) %in% c("path","copy"))])
-	invisible(mi.df)
+	invisible(mi.df)		
 }
 
 # How long did that take?
@@ -606,6 +606,8 @@ umxStart <- function(x=1, sd=NA, n=1) {
 }
 
 umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, model.name=NA, help=FALSE, labelSuffix="", verbose=T) {
+	# Purpose: make a latent variable formed/or formed by some manifests
+	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
 	# TODO: delete manifestVariance
 	# Check both forms and formedBy are not defined
 	if( is.na(formedBy) &&  is.na(forms)) { stop("Error in mxLatent: Must define one of forms or formedBy") }
@@ -614,6 +616,17 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 	# = NB: If any vars are ordinal, a call to umxMakeThresholdsMatrices
 	# = will fix the mean and variance of ordinal vars to 0 and 1
 	# ==========================================================
+	# manifests <- names(dataFrame)
+	# latents   <- c("G")
+	# m1 <- mxModel("m1", type="RAM",
+	# 	manifestVars = manifests,
+	# 	latentVars   = latents,
+	# 	# Factor loadings
+	# 	mxLatent("Read", forms = readMeasures),
+	# 	mxData(cov(dataFrame), type="cov", numObs=100)
+	# )
+	# m1= mxRun(m1); summary(m1)
+
 	# Warning("If you use this with a dataframe containing ordinal variables, don't forget to call umxAutoThreshRAMObjective(df)")
 	if( nrow(data)==ncol(data)) {
 		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
@@ -738,8 +751,8 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
 	# umxGraph_RAM(m2, std=F, dotFilename="name")
 	# mxLatent("Read", forms = manifestsRead)
-
 }
+
 
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {	
 	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
@@ -939,6 +952,64 @@ umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = T
 	}
 }
 
+umxPath2 <- function(from, to=NA, arrows=1, connect="single", free=TRUE, values=NA, labels=NA, lbound=NA, ubound=NA, prefix="", suffix=""){
+	# Purpose: make mxPaths with informative labels, comments to tim.bates@ed.ac.uk
+	# use case
+	# TODO merge with umxPath
+	# umxPath(from = "OriginSES", to = "PaternalSESn")
+
+	if(prefix!=""){
+		die("prefix not implemented yet")
+	}
+	if(suffix!=""){
+		die("suffix not implemented yet")
+	}
+	if(any(from == "one")){
+		if(!all(from == "one")){
+			message("Error in umxPath: From was a mix of \"one\" and not-one:",from)
+			die()
+		}
+	}
+	if(is.na(to)){
+		to = from
+	}
+	# Could support prefixes and suffixes
+	# from = paste(prefix, from, sep="")
+	# to = paste(to, suffix, sep="_")
+	# return(paste(from, to, sep="_to_"))
+
+	# make the path
+	a = mxPath(from=from, to=to, connect=connect, arrows=arrows, free=free, values=values, labels=labels, lbound=lbound, ubound=ubound)	
+	# connect = "single" ✓ "unique.bivariate" ✓ "unique.pairs", "all.bivariate", "all.pairs"
+	if(any(from == "one")){
+		# handle means (from == "one")
+		a@labels = paste("mean_", to, sep="")
+		
+	} else if(connect == "single") {
+		# For single, labels are pairs: from each from, to each to
+		a@labels = paste(a@from, a@to, sep="_")
+		a@values = 1+abs(rnorm(1))
+	} else if(connect == "unique.bivariate") {
+		# For unique.bivariate, labels are combinations
+		if(!all(is.na(to))){
+			if(!(from == to)){
+				message("With connect = '", connect, "', 'to' must be blank, or the same as from.")
+				stop()
+			}
+		}
+		a@labels = as.character(combn(from, m=2, FUN=paste, collapse="_"))
+	} else if(connect == "all.bivariate") {
+		stop("'all.bivariate' not implemented yet, email timothy.c.bates@gmail.com if you have a use for this.")
+	} else if(connect == "all.pairs") {
+		stop("'all.pairs' not implemented yet, email timothy.c.bates@gmail.com if you have a use for this.")
+	} else if(connect == "unique.pairs") {
+		stop("'unique.pairs' not implemented yet, email timothy.c.bates@gmail.com if you have a use for this.")
+	}
+	return(a)
+	# slotNames(a)
+	# [1] "from"    "to"      "arrows"  "values"  "free"    "labels"  "lbound"  "ubound"  "connect"
+}
+
 # =================
 # = Data handling =
 # =================
@@ -1126,3 +1197,229 @@ umxLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 umxTryHard <- function(model, n=3, calc_SE=F){ stop("just use not umxRun() in place of umxTryHard") }
 
 umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop("please use umxPath in place of umxLabels. To label models or matrices, use umxLabel")}
+
+
+# umxThresholdRAMObjective can set the means and variance of the latents to 0 & 1, and build an appropriate thresholds matrix
+# It uses umxIsOrdinalVar, umxMakeThresholdMatrix as helpers
+
+umxThresholdRAMObjective <- function(df,  deviationBased=T, droplevels = T, verbose=F) {
+	# Purpose: add means@0 and variance@1 to each ordinal variable, 
+	# Use case: umxThresholdRAMObjective(df)
+	# TODO: means = zero & VAR = 1 for ordinal variables
+	# (this is a nice place to do it, as we have the df present...)
+	if(!any(umxIsOrdinalVar(df))){
+		stop("No ordinal variables in dataframe: no need to call umxThresholdRAMObjective")
+	} 
+	pt1 = mxPath(from = "one", to = umxIsOrdinalVar(df,names = T), connect="single", free=F, values = 0)
+	pt2 = mxPath(from = umxIsOrdinalVar(df,names = T), connect = "single", arrows = 2, free = F, values = 1)
+	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = T, droplevels = T, verbose = F)))
+}
+
+umxMakeThresholdMatrix <- function(df, deviationBased=T, droplevels = T, verbose=F) {	
+	# Purpose: return a mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
+	# use case:  umxMakeThresholdMatrix(df, verbose = T)
+	# note, called by umxThresholdRAMObjective()
+	# TODO: Let the user know if there are any levels dropped...
+	if(droplevels){
+		df = droplevels(df)
+	}
+	if(deviationBased){
+		return(tmxMakeDeviationThresholdsMatrices(df, droplevels, verbose))
+	} else {
+		return(tmxMakeThresholdsMatrices(df, droplevels, verbose))
+	}
+}
+
+umxIsOrdinalVar <- function(df, names=F) {
+	# Purpose, return which columns are Ordinal
+	# use case: isContinuous = !umxIsOrdinalVar(df)
+	# nb: can optionally return just the names of these
+	nVar = ncol(df);
+	# Which are ordered factors?
+	factorVariable = rep(F,nVar)
+	for(n in 1:nVar) {
+		if(is.ordered(df[,n])) {
+			factorVariable[n]=T
+		}
+	}
+	if(names){
+		return(names(df)[factorVariable])
+	} else {
+		return(factorVariable)
+	}
+}
+
+tmxMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
+	# Purpose: return a mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
+	# usecase see: umxMakeThresholdMatrix
+	# junk[1]; 	junk[[2]]@values; 	junk[3]
+	isOrdinalVariable = umxIsOrdinalVar(df) 
+	ordinalColumns    = df[,isOrdinalVariable]
+	nOrdinal          = ncol(ordinalColumns);
+	ordNameList       = names(ordinalColumns);
+	levelList         = 1:nOrdinal
+	for(n in 1:nOrdinal) {
+		levelList[n] = nlevels(ordinalColumns[,n])
+	}
+	maxThreshMinus1 = max(levelList) - 1
+	# For Multiplication
+	UnitLower = mxMatrix("Lower", name="UnitLower", nrow = maxThreshMinus1, ncol = maxThreshMinus1, free=F, values=1)
+	# Threshold deviation matrix
+	threshDeviations = mxMatrix("Full", name="threshDeviations", nrow=maxThreshMinus1, ncol=nOrdinal)
+	initialLowerLim = -1
+	initialUpperLim =  1
+	# Fill first row of threshDeviations with useful lower thresholds, perhaps -1 or .5 SD (nthresh/2)
+
+	threshDeviations@free  [1,] <- TRUE
+	threshDeviations@values[1,] <- initialLowerLim # Start with an even -2. Might spread this a bit for different levels, or centre on 0 for 1 threshold
+	threshDeviations@labels[1,] <- paste("ThreshBaseline1", 1:nOrdinal, sep="_")
+	threshDeviations@lbound[1,] <- -7 # baseline limit in SDs
+	threshDeviations@ubound[1,] <-  7 # baseline limit in SDs
+
+	for(n in 1:nOrdinal){
+		thisThreshMinus1 = levelList[n] -1
+		stepSize = (initialUpperLim-initialLowerLim)/thisThreshMinus1
+		threshDeviations@values[2:thisThreshMinus1,n] = (initialUpperLim-initialLowerLim)/thisThreshMinus1
+		threshDeviations@labels[2:thisThreshMinus1,n] = paste("ThreshDeviation", 2:thisThreshMinus1, n, sep="_")
+		threshDeviations@free  [2:thisThreshMinus1,n] = TRUE
+		threshDeviations@lbound[2:thisThreshMinus1,n] = .001
+		if(thisThreshMinus1 < maxThreshMinus1) {
+			# pad the shorter var's excess rows with fixed@99 so humans can see them...
+			threshDeviations@values[(thisThreshMinus1+1):maxThreshMinus1,n] <- (-99)
+			threshDeviations@labels[(thisThreshMinus1+1):maxThreshMinus1,n] <- paste("unusedThresh", min(thisThreshMinus1+1, maxThreshMinus1), n, sep="_")
+			threshDeviations@free  [(thisThreshMinus1+1):maxThreshMinus1,n] <- F
+		}
+	}
+
+	# thresh = mxMatrix("Full", name="thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = F, free = myFree, values= myThreshValues)
+	threshNames = paste("Threshold", 1:maxThreshMinus1, sep='')
+	thresh = mxAlgebra(UnitLower %*% threshDeviations, dimnames=list(threshNames,ordNameList), name="thresh")
+	if(verbose){
+		cat("levels in each variable are:")
+		print(levelList)
+		print(paste("maxThresh - 1 = ", maxThreshMinus1))
+	}
+	return(list(UnitLower,threshDeviations, thresh, mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")))
+}
+
+tmxMakeThresholdsMatrices <- function(df, droplevels, verbose) {
+	# stop("I have not written tmxMakeThresholdsMatrices yet as it is fucked as a reliable strategy and likely to be superceeded")
+	# usecase
+	# junk = tmxMakeThresholdsMatrices(df, droplevels=F, verbose=T)
+	# junk[1]; 	junk[[2]]@values; 	junk[3]
+	
+	isOrdinalVariable = umxIsOrdinalVar(df) 
+	ordinalColumns    = df[,isOrdinalVariable]
+	nOrdinal          = ncol(ordinalColumns);
+	ordNameList       = names(ordinalColumns);
+	levelList         = 1:nOrdinal
+	for(n in 1:nOrdinal){
+		levelList[n] = nlevels(ordinalColumns[,n])
+	}
+	maxThreshMinus1 = max(levelList)-1
+	threshValues = c() # initialise values 
+
+	for(n in 1:nOrdinal){
+		thisLen = levelList[n] -1
+		lim = 1.5 # (thisLen/2)
+		newValues = seq(from = (-lim), to = (lim), length = thisLen)
+		if(thisLen < maxThreshMinus1){
+			newValues = c(newValues, rep(NA,times=maxThreshMinus1-thisLen))
+		}
+		threshValues = c(threshValues, newValues)
+		# threshLbounds[j] <- .001
+	}
+
+	threshNames = paste("Threshold", 1:maxThreshMinus1, sep='')
+	thresh = mxMatrix("Full", name="thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = F, free = T, values= threshValues, dimnames=list(threshNames,ordNameList))
+
+	if(verbose){
+		cat("levels in each variable are:")
+		print(levelList)
+		print(paste("maxThresh - 1 = ", maxThreshMinus1))
+	}
+	return(list(
+		thresh, 
+		mxRAMObjective(A="A", S="S", F="F", M="M", thresholds="thresh"), 
+		mxData(df, type="raw")
+		)
+	)
+}
+
+
+# ==================
+# = Model Builders =
+# ==================
+
+umxSimpleCFA <- function(name="", latents, data, report =c("shortTable","shortLine","long")){
+	# umxSimpleRAM(name="N", latents="N", data)
+	manifests <- names(data)
+	m1 <- mxModel(name, type="RAM",
+		manifestVars = manifests,
+		latentVars   = latents,
+		# Factor loadings
+		mxPath(from = latents, to = manifests),
+		mxPath(from = manifests, arrows = 2), # manifest residuals 
+		mxPath(from = latents, arrows = 2, free = F, values = 1), # latents fixed@1
+		mxData(cov(data), type="cov", numObs = nrow(data))
+	)
+	m1 = mxRun(m1); 
+	if(report == "shortTable") {
+		umxReportFit(m1, report = "table");
+	} else if(report == "shortLine"){
+		umxReportFit(m1, report = "line");
+	} else if (report == "long"){
+		umxSummary(m1, report = "")
+	} else {
+		message("Bad setting for report")
+	}
+	invisible(m1)
+}
+
+# ===============
+# = RAM Helpers =
+# ===============
+umxConnect <- function(x) {
+	# TODO handle endogenous	
+}
+
+umxSingleIndicators <- function(manifests, data, labelSuffix="", verbose=T){
+	# use case
+	# mxSingleIndicators(manifests, data)
+
+	if( nrow(data)==ncol(data)	& all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
+		isCov = T
+		if(verbose){
+			message("treating data as cov")
+		}
+	} else {
+		isCov = F
+		if(verbose){
+			message("treating data as raw")
+		}
+	}
+	if(isCov){
+		variances = diag(data[manifests,manifests])
+		# Add variance to the single manfests
+		p1 = mxPath(from=manifests, arrows=2, value=variances, labels=umxLabels(manifests, suffix=glue("unique", labelSuffix)))
+		return(p1)
+	} else {
+		manifestOrdVars = mxIsOrdinalVar(data[,manifests])
+		if(any(manifestOrdVars)){
+			means         = rep(0, times=length(manifests))
+			variances     = rep(1, times=length(manifests))
+			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm=T)
+			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use="complete"))
+			means[!manifestOrdVars] = contMeans				
+			variances[!manifestOrdVars] = contVariances				
+		}else{
+			means     = colMeans(data[,manifests], na.rm=T)
+			variances = diag(cov(data[,manifests], use="complete"))
+		}
+		# Add variance to the single manfests
+		p1 = mxPath(from=manifests, arrows=2, value=variances, labels=mxLabel(manifests, suffix=glue("unique", labelSuffix)))
+		# Add means for the single manfests
+		p2 = mxPath(from="one", to=manifests, values=means, labels=mxLabel("one",manifests, suffix=labelSuffix))
+		return(list(p1, p2))
+	}
+}
