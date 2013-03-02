@@ -1193,14 +1193,6 @@ umxLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	return(mx_matrix)
 }
 
-# ==============
-# = Deprecated =
-# ==============
-umxTryHard <- function(model, n=3, calc_SE=F){ stop("just use not umxRun() in place of umxTryHard") }
-
-umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop("please use umxPath in place of umxLabels. To label models or matrices, use umxLabel")}
-
-
 # umxThresholdRAMObjective can set the means and variance of the latents to 0 & 1, and build an appropriate thresholds matrix
 # It uses umxIsOrdinalVar, umxMakeThresholdMatrix as helpers
 
@@ -1425,3 +1417,11 @@ umxSingleIndicators <- function(manifests, data, labelSuffix="", verbose=T){
 		return(list(p1, p2))
 	}
 }
+
+
+# ==============
+# = Deprecated =
+# ==============
+umxTryHard = function(model, n=3, calc_SE=F){ stop("Use umxRun() in place of umxTryHard") }
+
+umxLabels = function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop("please use umxPath in place of umxLabels. To label models or matrices, use umxLabel")}
