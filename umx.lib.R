@@ -149,11 +149,11 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 	manifests           = model@manifestVars
 	nVar                = length(manifests)
 	dataMeans           = colMeans(theData, na.rm = T)
+	meansLabels         = paste("mean", 1:nVar, sep = "")
 	covData             = cov(theData, use = "pairwise.complete.obs")
-	meansLabels         = paste("mean", 1:nVar, sep="")
-	loadingsLabels      = paste("F", 1:nVar, "loading", sep="")
 	factorLoadingStarts = t(chol(covData))
 	independenceStarts  = diag(covData)
+	loadingsLabels      = paste("F", 1:nVar, "loading", sep = "")
 
 	# Set latents to a new set of 1 per manifest
 	# Set S matrix to an Identity matrix (i.e., variance fixed@1)
@@ -591,8 +591,8 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 # = Model building and modifying helpers =
 # ========================================
 
-umxStart <- function(x=1, sd=NA, n=1) {
-	# Purpose: Create startvalues in OpenMx Models
+umxStart_value_list <- function(x = 1, sd = NA, n = 1) {
+	# Purpose: Create startvalues for OpenMx paths
 	# use cases
 	# umxStart(1) # 1 value, varying around 1, with sd of .1
 	# umxStart(1, n=letters) # length(letters) start values, with mean 1 and sd .1
@@ -606,6 +606,48 @@ umxStart <- function(x=1, sd=NA, n=1) {
 		n = length(n)
 	}
 	return(rnorm(n=n, mean=x, sd=sd))
+}
+
+umxStart <- function(x = NA, sd = NA, n = 1) {
+	if(is.number(x)){
+		umxStart_value_list(x = 1, sd = NA, n = 1)
+	} else {
+		# Purpose: Set sane starting values in RAM models
+		# use case: m1 = umxStart(m1)
+		# TODO start values in the A matrix...
+		if (!(isS4(model) && is(model, "MxModel"))) {
+			stop("'model' must be an mxModel")
+		}
+		if (length(model@submodels) > 0) {
+			stop("Cannot yet handle submodels")
+		}
+		theData = model@data@observed
+		if (is.null(theData)) {
+			stop("'model' does not contain any data")
+		}
+		if(model@data@type == "raw"){
+			covData     = cov(theData, use = "pairwise.complete.obs")		
+			dataMeans   = colMeans(theData, na.rm = T)
+			meansLabels = paste("mean", 1:nVar, sep = "")
+			# =================
+			# = Set the means =
+			# =================
+			freeMeans = (model@matrices$M@free[1, manifests] == TRUE)
+			model@matrices$M@values[1, manifests][freeMeans] = dataMeans[freeMeans]
+		} else {
+			covData = theData
+		}
+		dataVariances = diag(covData)
+		manifests     = model@manifestVars
+		nVar          = length(manifests)
+		# ==========================================================
+		# = Fill the free symetrical matrix with good start values =
+		# ==========================================================
+		# The diagonal is variances
+		freePaths = (model@matrices$S@free[1:nVar,1:nVar] == TRUE)
+		model@matrices$S@values[1:nVar,1:nVar][freePaths] = covData[freePaths]
+		return(model)
+	}	
 }
 
 umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, model.name=NA, help=FALSE, labelSuffix="", verbose=T) {
@@ -846,7 +888,6 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 }
 
 #` ## path-oriented helpers
-
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# Purpose : standardise a RAM model, usually in order to return a standardized version of the model.
 	# Use case: umxStandardizeModel(model, return = "model")
@@ -1083,6 +1124,7 @@ umxFindObject <- function(grepString = ".*", requiredClass = "MxModel") {
 umxLabel_RAM_Model <- function(model, suffix = "") {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "male")
+	# TODO label means if data = raw
 	if (!(isS4(model) && is(model, "MxModel") && class(model$objective)[1] == "MxRAMObjective")) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
@@ -1120,6 +1162,14 @@ umxLabel_RAM_Model <- function(model, suffix = "") {
 	toGet = model@matrices$S@labels
 	transpose_toGet = t(toGet)
 	model@matrices$S@labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
+
+	# ==============================
+	# = Add means labels if needed =
+	# ==============================
+	if(model@data@type == "raw"){
+		model@matrices$M@labels = matrix(nrow = 1, paste(colnames(model@matrices$M@values),"mean", sep = "_"))
+	}
+	# TODO should check when autocreating names that they don't clash with existing names
 	return(model)
 }
 
