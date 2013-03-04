@@ -1010,9 +1010,36 @@ umxPath2 <- function(from, to=NA, arrows=1, connect="single", free=TRUE, values=
 	# [1] "from"    "to"      "arrows"  "values"  "free"    "labels"  "lbound"  "ubound"  "connect"
 }
 
-# =================
-# = Data handling =
-# =================
+# ====================
+# = Data and Utility =
+# ====================
+
+
+Stouffer.test <- function(p = NULL) {
+	# http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues
+	# Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, and Robin M. Williams, Jr. (1949). Studies in Social Psychology in World War II: The American Soldier. Vol. 1, Adjustment During Army Life. Princeton: Princeton University Press.
+	# 
+	# Bailey TL, Gribskov M (1998). Combining evidence using p-values: application to sequence homology searches. Bioinformatics, 14(1) 48-54.
+	# 
+	# Fisher RA (1925). Statistical methods for research workers (13th edition). London: Oliver and Boyd.
+	# 
+	# Manolov R and Solanas A (2012). Assigning and combining probabilities in single-case studies. Psychological Methods 17(4) 495-509. Describes various methods for combining p-values including Stouffer and Fisher and the binomial test.
+	# useage: Stouffer.test(p = c(.01, .2, .3))
+	pl <- length(p)
+	if (is.null(p) | pl < 2) {
+		stop("There was an empty array of p-values")
+	}
+	erf <- function(x) {
+		2 * pnorm(2 * x/ sqrt(2)) - 1
+	}
+	erfinv <- function(x) {
+		qnorm( (x + 1) / 2 ) / sqrt(2)
+	}
+	pcomb <- function(p) {
+		(1 - erf(sum(sqrt(2) * erfinv(1 - 2 * p)) / sqrt(2 * length(p))))/2
+	}
+	pcomb(p)
+}
 
 umxHetCor <- function(data, ML=F, use="pairwise.complete.obs"){
 	# use case
@@ -1020,7 +1047,7 @@ umxHetCor <- function(data, ML=F, use="pairwise.complete.obs"){
 	# heplper to return just the correlations from polycor::hetcor
 	require(polycor)
 	# TODO add error message if polycor not found
-m1nstall.packages("polycor")
+	# install.packages("polycor")
 	hetc = polycor::hetcor(data, ML=ML, use=use, std.err=F)
 	return(hetc$correlations)
 }
@@ -1072,6 +1099,137 @@ umxFindObject <- function(grepString = ".*", requiredClass = "MxModel") {
 		}
 	}
 	return(matchingObjects)
+}
+
+# ===================
+# = Ordinal helpers =
+# ===================
+
+# umxThresholdRAMObjective can set the means and variance of the latents to 0 & 1, and build an appropriate thresholds matrix
+# It uses umxIsOrdinalVar, umxMakeThresholdMatrix as helpers
+
+umxThresholdRAMObjective <- function(df,  deviationBased=T, droplevels = T, verbose=F) {
+	# Purpose: add means@0 and variance@1 to each ordinal variable, 
+	# Use case: umxThresholdRAMObjective(df)
+	# TODO: means = zero & VAR = 1 for ordinal variables
+	# (this is a nice place to do it, as we have the df present...)
+	if(!any(umxIsOrdinalVar(df))){
+		stop("No ordinal variables in dataframe: no need to call umxThresholdRAMObjective")
+	} 
+	pt1 = mxPath(from = "one", to = umxIsOrdinalVar(df,names = T), connect="single", free=F, values = 0)
+	pt2 = mxPath(from = umxIsOrdinalVar(df,names = T), connect = "single", arrows = 2, free = F, values = 1)
+	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = T, droplevels = T, verbose = F)))
+}
+
+umxMakeThresholdMatrix <- function(df, deviationBased=T, droplevels = T, verbose=F) {	
+	# Purpose: return a mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
+	# use case:  umxMakeThresholdMatrix(df, verbose = T)
+	# note, called by umxThresholdRAMObjective()
+	# TODO: Let the user know if there are any levels dropped...
+	if(droplevels){
+		df = droplevels(df)
+	}
+	if(deviationBased){
+		return(tmxMakeDeviationThresholdsMatrices(df, droplevels, verbose))
+	} else {
+		return(tmxMakeThresholdsMatrices(df, droplevels, verbose))
+	}
+}
+
+umxIsOrdinalVar <- function(df, names=F) {
+	# Purpose, return which columns are Ordinal
+	# use case: isContinuous = !umxIsOrdinalVar(df)
+	# nb: can optionally return just the names of these
+	nVar = ncol(df);
+	# Which are ordered factors?
+	factorVariable = rep(F,nVar)
+	for(n in 1:nVar) {
+		if(is.ordered(df[,n])) {
+			factorVariable[n]=T
+		}
+	}
+	if(names){
+		return(names(df)[factorVariable])
+	} else {
+		return(factorVariable)
+	}
+}
+
+# ==================
+# = Model Builders =
+# ==================
+
+umxSimpleCFA <- function(name="", latents, data, report =c("shortTable","shortLine","long")){
+	# umxSimpleRAM(name="N", latents="N", data)
+	manifests <- names(data)
+	m1 <- mxModel(name, type="RAM",
+		manifestVars = manifests,
+		latentVars   = latents,
+		# Factor loadings
+		mxPath(from = latents, to = manifests),
+		mxPath(from = manifests, arrows = 2), # manifest residuals 
+		mxPath(from = latents, arrows = 2, free = F, values = 1), # latents fixed@1
+		mxData(cov(data), type="cov", numObs = nrow(data))
+	)
+	m1 = mxRun(m1); 
+	if(report == "shortTable") {
+		umxReportFit(m1, report = "table");
+	} else if(report == "shortLine"){
+		umxReportFit(m1, report = "line");
+	} else if (report == "long"){
+		umxSummary(m1, report = "")
+	} else {
+		message("Bad setting for report")
+	}
+	invisible(m1)
+}
+
+# ===============
+# = RAM Helpers =
+# ===============
+umxConnect <- function(x) {
+	# TODO handle endogenous	
+}
+
+umxSingleIndicators <- function(manifests, data, labelSuffix="", verbose=T){
+	# use case
+	# mxSingleIndicators(manifests, data)
+
+	if( nrow(data)==ncol(data)	& all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
+		isCov = T
+		if(verbose){
+			message("treating data as cov")
+		}
+	} else {
+		isCov = F
+		if(verbose){
+			message("treating data as raw")
+		}
+	}
+	if(isCov){
+		variances = diag(data[manifests,manifests])
+		# Add variance to the single manfests
+		p1 = mxPath(from=manifests, arrows=2, value=variances, labels=umxLabels(manifests, suffix=glue("unique", labelSuffix)))
+		return(p1)
+	} else {
+		manifestOrdVars = mxIsOrdinalVar(data[,manifests])
+		if(any(manifestOrdVars)){
+			means         = rep(0, times=length(manifests))
+			variances     = rep(1, times=length(manifests))
+			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm=T)
+			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use="complete"))
+			means[!manifestOrdVars] = contMeans				
+			variances[!manifestOrdVars] = contVariances				
+		}else{
+			means     = colMeans(data[,manifests], na.rm=T)
+			variances = diag(cov(data[,manifests], use="complete"))
+		}
+		# Add variance to the single manfests
+		p1 = mxPath(from=manifests, arrows=2, value=variances, labels=mxLabel(manifests, suffix=glue("unique", labelSuffix)))
+		# Add means for the single manfests
+		p2 = mxPath(from="one", to=manifests, values=means, labels=mxLabel("one",manifests, suffix=labelSuffix))
+		return(list(p1, p2))
+	}
 }
 
 # ========================================
@@ -1191,56 +1349,6 @@ umxLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	return(mx_matrix)
 }
 
-# umxThresholdRAMObjective can set the means and variance of the latents to 0 & 1, and build an appropriate thresholds matrix
-# It uses umxIsOrdinalVar, umxMakeThresholdMatrix as helpers
-
-umxThresholdRAMObjective <- function(df,  deviationBased=T, droplevels = T, verbose=F) {
-	# Purpose: add means@0 and variance@1 to each ordinal variable, 
-	# Use case: umxThresholdRAMObjective(df)
-	# TODO: means = zero & VAR = 1 for ordinal variables
-	# (this is a nice place to do it, as we have the df present...)
-	if(!any(umxIsOrdinalVar(df))){
-		stop("No ordinal variables in dataframe: no need to call umxThresholdRAMObjective")
-	} 
-	pt1 = mxPath(from = "one", to = umxIsOrdinalVar(df,names = T), connect="single", free=F, values = 0)
-	pt2 = mxPath(from = umxIsOrdinalVar(df,names = T), connect = "single", arrows = 2, free = F, values = 1)
-	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = T, droplevels = T, verbose = F)))
-}
-
-umxMakeThresholdMatrix <- function(df, deviationBased=T, droplevels = T, verbose=F) {	
-	# Purpose: return a mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
-	# use case:  umxMakeThresholdMatrix(df, verbose = T)
-	# note, called by umxThresholdRAMObjective()
-	# TODO: Let the user know if there are any levels dropped...
-	if(droplevels){
-		df = droplevels(df)
-	}
-	if(deviationBased){
-		return(tmxMakeDeviationThresholdsMatrices(df, droplevels, verbose))
-	} else {
-		return(tmxMakeThresholdsMatrices(df, droplevels, verbose))
-	}
-}
-
-umxIsOrdinalVar <- function(df, names=F) {
-	# Purpose, return which columns are Ordinal
-	# use case: isContinuous = !umxIsOrdinalVar(df)
-	# nb: can optionally return just the names of these
-	nVar = ncol(df);
-	# Which are ordered factors?
-	factorVariable = rep(F,nVar)
-	for(n in 1:nVar) {
-		if(is.ordered(df[,n])) {
-			factorVariable[n]=T
-		}
-	}
-	if(names){
-		return(names(df)[factorVariable])
-	} else {
-		return(factorVariable)
-	}
-}
-
 tmxMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	# Purpose: return a mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
 	# usecase see: umxMakeThresholdMatrix
@@ -1337,85 +1445,6 @@ tmxMakeThresholdsMatrices <- function(df, droplevels, verbose) {
 		)
 	)
 }
-
-
-# ==================
-# = Model Builders =
-# ==================
-
-umxSimpleCFA <- function(name="", latents, data, report =c("shortTable","shortLine","long")){
-	# umxSimpleRAM(name="N", latents="N", data)
-	manifests <- names(data)
-	m1 <- mxModel(name, type="RAM",
-		manifestVars = manifests,
-		latentVars   = latents,
-		# Factor loadings
-		mxPath(from = latents, to = manifests),
-		mxPath(from = manifests, arrows = 2), # manifest residuals 
-		mxPath(from = latents, arrows = 2, free = F, values = 1), # latents fixed@1
-		mxData(cov(data), type="cov", numObs = nrow(data))
-	)
-	m1 = mxRun(m1); 
-	if(report == "shortTable") {
-		umxReportFit(m1, report = "table");
-	} else if(report == "shortLine"){
-		umxReportFit(m1, report = "line");
-	} else if (report == "long"){
-		umxSummary(m1, report = "")
-	} else {
-		message("Bad setting for report")
-	}
-	invisible(m1)
-}
-
-# ===============
-# = RAM Helpers =
-# ===============
-umxConnect <- function(x) {
-	# TODO handle endogenous	
-}
-
-umxSingleIndicators <- function(manifests, data, labelSuffix="", verbose=T){
-	# use case
-	# mxSingleIndicators(manifests, data)
-
-	if( nrow(data)==ncol(data)	& all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
-		isCov = T
-		if(verbose){
-			message("treating data as cov")
-		}
-	} else {
-		isCov = F
-		if(verbose){
-			message("treating data as raw")
-		}
-	}
-	if(isCov){
-		variances = diag(data[manifests,manifests])
-		# Add variance to the single manfests
-		p1 = mxPath(from=manifests, arrows=2, value=variances, labels=umxLabels(manifests, suffix=glue("unique", labelSuffix)))
-		return(p1)
-	} else {
-		manifestOrdVars = mxIsOrdinalVar(data[,manifests])
-		if(any(manifestOrdVars)){
-			means         = rep(0, times=length(manifests))
-			variances     = rep(1, times=length(manifests))
-			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm=T)
-			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use="complete"))
-			means[!manifestOrdVars] = contMeans				
-			variances[!manifestOrdVars] = contVariances				
-		}else{
-			means     = colMeans(data[,manifests], na.rm=T)
-			variances = diag(cov(data[,manifests], use="complete"))
-		}
-		# Add variance to the single manfests
-		p1 = mxPath(from=manifests, arrows=2, value=variances, labels=mxLabel(manifests, suffix=glue("unique", labelSuffix)))
-		# Add means for the single manfests
-		p2 = mxPath(from="one", to=manifests, values=means, labels=mxLabel("one",manifests, suffix=labelSuffix))
-		return(list(p1, p2))
-	}
-}
-
 
 # ==============
 # = Deprecated =
