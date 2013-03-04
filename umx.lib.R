@@ -8,7 +8,7 @@
 # source_https("https://raw.github.com/tbates/umx/master/umx.lib.R")
 # To learn more, see http://www.github.com/tbates/umx/README.md
 
-umxUpdateOpenMx <-function(bleedingEdge = FALSE, loadNew = TRUE) {
+umxUpdateOpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE) {
 	# Purpose: update the OpenMx Library to latest version:
 	# use case:
 	# umxUpdateOpenMx()
@@ -94,7 +94,7 @@ umxUpdateOpenMx <-function(bleedingEdge = FALSE, loadNew = TRUE) {
 # = Fit and Reporting Helpers =
 # =============================
 
-umxCompare <- function(base=NA, comparison=NA, all = T, output = "Rout.html") {
+umxCompare <- function(base = NA, comparison = NA, all = T, output = "Rout.html") {
 	# c("Rout.html", "return")
 	# umxCompare(fit11, fit11, all=F, output="Rout.html")
 	if(is.na(comparison)){
@@ -116,7 +116,7 @@ umxCompare <- function(base=NA, comparison=NA, all = T, output = "Rout.html") {
 	# }
 }
 
-umxSummary <- function(model, precision = 2, parameters = NA, report=NA) {
+umxSummary <- function(model, precision = 2, parameters = NA, report = NA) {
 	# useage
 	# umxSummary(fit1)
 	if(!is.na(report)){
@@ -128,7 +128,7 @@ umxSummary <- function(model, precision = 2, parameters = NA, report=NA) {
 	umxReportFit(model)
 }
 
-umxSaturated <- function(model, evaluate = T, verbose=T) {
+umxSaturated <- function(model, evaluate = T, verbose = T) {
 	# Use case
 	# model_sat = umxSaturated(model)
 	# summary(model, SaturatedLikelihood = model_sat$SaturatedLikelihood, IndependenceLikelihood = model_sat$IndependenceLikelihood)
@@ -139,79 +139,82 @@ umxSaturated <- function(model, evaluate = T, verbose=T) {
 	if (length(model@submodels)>0) {
 		stop("Cannot yet handle submodels")
 	}
-
+	if(! model@data@type == "raw"){
+		stop("You don't need to run me for cov or cor data - only raw")
+	}
 	theData = model@data@observed
 	if (is.null(theData)) {
 		stop("'model' does not contain any data")
 	}
 	manifests           = model@manifestVars
 	nVar                = length(manifests)
-	dataMeans           = colMeans(theData)
-	meansLabels         = paste("mean", 1:nVar, sep="")
-	loadingsLabels      = paste("F", 1:nVar, "loading", sep="")
-	factorLoadingStarts = t(chol(cov(theData, use = "pairwise.complete.obs")))
-	independenceStarts  = diag(cov(theData, use = "pairwise.complete.obs"))
+	dataMeans           = colMeans(theData, na.rm = T)
+	meansLabels         = paste("mean", 1:nVar, sep = "")
+	covData             = cov(theData, use = "pairwise.complete.obs")
+	factorLoadingStarts = t(chol(covData))
+	independenceStarts  = diag(covData)
+	loadingsLabels      = paste("F", 1:nVar, "loading", sep = "")
 
 	# Set latents to a new set of 1 per manifest
 	# Set S matrix to an Identity matrix (i.e., variance fixed@1)
 	# Set A matrix to a Cholesky, manifests by manifests in size, free to be estimated 
 	# TODO: start the cholesky at the cov values
 	m2 <- mxModel("sat",
-    	# variances set at 1,,,
+    	# variances set at 1
 		# mxMatrix(name = "factorVariances", type="Iden" , nrow = nVar, ncol = nVar), # Bunch of Ones on the diagonal
-	    mxMatrix(name = "factorMeans"    , type="Zero" , nrow = 1   , ncol = nVar), # Bunch of Zeros
-	    mxMatrix(name = "factorLoadings" , type="Lower", nrow = nVar, ncol = nVar, free=T, values = factorLoadingStarts), # labels = loadingsLabels),
-	    mxAlgebra(name = "expCov"        , expression = factorLoadings %*% t(factorLoadings)),
+	    # Bunch of Zeros
+		mxMatrix(name = "factorMeans"   , type = "Zero" , nrow = 1   , ncol = nVar), 
+	    mxMatrix(name = "factorLoadings", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = factorLoadingStarts), 
+		# labels = loadingsLabels),
+	    mxAlgebra(name = "expCov", expression = factorLoadings %*% t(factorLoadings)),
 
-	    mxMatrix(name = "expMean", type="Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
-	    mxFIMLObjective(covariance="expCov", means="expMean", dimnames = manifests),
-	    mxData(theData, type="raw")
+	    mxMatrix(name = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
+	    mxData(theData, type = "raw")
 	)
 	m3 <- mxModel("independence",
 	    # TODO: slightly inefficient, as this has an analytic solution
-	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free=T, values = independenceStarts), # labels = loadingsLabels),
-	    mxAlgebra(variableLoadings %*% t(variableLoadings), name = "expCov"),
-	    mxMatrix(name = "expMean", type="Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free=T, values = independenceStarts), 
+		# labels = loadingsLabels),
+	    mxAlgebra(name = "expCov", expression = variableLoadings %*% t(variableLoadings)),
+	    mxMatrix(name  = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
 	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
-	    mxData(theData, type="raw")
+	    mxData(theData, type = "raw")
 	)
 	m2 <- mxOption(m2, "Calculate Hessian", "No")
-	m2 <- mxOption(m2, "Standard Errors", "No")
+	m2 <- mxOption(m2, "Standard Errors"  , "No")
 	m3 <- mxOption(m3, "Calculate Hessian", "No")
-	m3 <- mxOption(m3, "Standard Errors", "No")
-	if(evaluate){
-		if(verbose){
-			message("I am going to run the saturated and independence models: this may take some time")
-		}
+	m3 <- mxOption(m3, "Standard Errors"  , "No")
+	if(evaluate) {
 		m2 = mxRun(m2)
 		m3 = mxRun(m3)
 	}
-	if(verbose){
+	if(verbose) {
 		m = deparse(substitute(model))
-		message("you can use this result in the summary function like this:
-		summary(", m, ", SaturatedLikelihood = ", m, "_sat$SaturatedLikelihood, IndependenceLikelihood = ", m, "_sat$IndependenceLikelihood)
-or use 
-		umxReportFit(", m, ", saturatedModels = ", m, "_sat)")
+		message("You can use this result in summary():
+	summary(", m, ", SaturatedLikelihood = ", m, "_sat$SaturatedLikelihood, IndependenceLikelihood = ", m, "_sat$IndependenceLikelihood)
+or:
+	umxReportFit(", m, ", saturatedModels = ", m, "_sat)")
 	}
 	return(list(SaturatedLikelihood = m2, IndependenceLikelihood = m3))
 }
 
-umxReportFit <- function(model, saturatedModels = NA, report="line") {
-	# Use case
-	# umxReportFit(m1, report="table")
+umxReportFit <- function(model, saturatedModels = NA, report="line", showEstimates = T) {
+	# TODO make table take lists of models...
+	# Purpose: compactly report fit statistics, as for a paper
+	# Use case: umxReportFit(m1, report="table")
 	# umxReportFit(m1, saturatedModels = m1_sat)
 	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
 	# References for OK/bad
 	# Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
 	# Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from http://www.statmodel.com/download/Yudissertation.pdf  
-
 	if(length(saturatedModels)==1){ #is.na
 		modelSummary = summary(model)
 	} else {
 		modelSummary = summary(m1, SaturatedLikelihood=saturatedModels$SaturatedLikelihood, IndependenceLikelihood=saturatedModels$IndependenceLikelihood)
-	}	
+	}
 	if(is.na(modelSummary$SaturatedLikelihood)){
-		message("there is no saturated likelihood, you probaby want to run umxSaturated(model) to get it and then include the result
+		message("there is no saturated likelihood, you probably want to run umxSaturated(model) to get it and then include the result
 		saturatedModels = ") 
 	} else {
 		with(modelSummary,{
@@ -237,7 +240,10 @@ umxReportFit <- function(model, saturatedModels = NA, report="line") {
 				"; TLI = "  , round(TLI,3),
 				"; RMSEA = ", round(RMSEA, 3), 
 				", TLI = "  , TLI_OK,
-				", RMSEA = "  , RMSEA_OK, sep="")
+				", RMSEA = ", RMSEA_OK, sep="")
+				if(showEstimates){
+					print(modelSummary$parameters[,c(2:4,7,8)])
+				}
 				print(x)
 			}
 		})
@@ -565,7 +571,7 @@ umxRun <- function(model, n = 3, calc_SE = F){
 	return(model)
 }
 
-umxReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F) {
+umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, newName=NA, verbose=F, intervals=F) {
 	# fit2 = umxReRun(fit1, regex="Cs", newName="AEip")
 	if(is.na(newName)){
 		newName = lastFit@name
@@ -588,8 +594,8 @@ umxReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStar
 # = Model building and modifying helpers =
 # ========================================
 
-umxStart <- function(x=1, sd=NA, n=1) {
-	# Purpose: Create startvalues in OpenMx Models
+umxStart_value_list <- function(x = 1, sd = NA, n = 1) {
+	# Purpose: Create startvalues for OpenMx paths
 	# use cases
 	# umxStart(1) # 1 value, varying around 1, with sd of .1
 	# umxStart(1, n=letters) # length(letters) start values, with mean 1 and sd .1
@@ -603,6 +609,48 @@ umxStart <- function(x=1, sd=NA, n=1) {
 		n = length(n)
 	}
 	return(rnorm(n=n, mean=x, sd=sd))
+}
+
+umxStart <- function(x = NA, sd = NA, n = 1) {
+	if(is.number(x)){
+		umxStart_value_list(x = 1, sd = NA, n = 1)
+	} else {
+		# Purpose: Set sane starting values in RAM models
+		# use case: m1 = umxStart(m1)
+		# TODO start values in the A matrix...
+		if (!(isS4(model) && is(model, "MxModel"))) {
+			stop("'model' must be an mxModel")
+		}
+		if (length(model@submodels) > 0) {
+			stop("Cannot yet handle submodels")
+		}
+		theData = model@data@observed
+		if (is.null(theData)) {
+			stop("'model' does not contain any data")
+		}
+		if(model@data@type == "raw"){
+			covData     = cov(theData, use = "pairwise.complete.obs")		
+			dataMeans   = colMeans(theData, na.rm = T)
+			meansLabels = paste("mean", 1:nVar, sep = "")
+			# =================
+			# = Set the means =
+			# =================
+			freeMeans = (model@matrices$M@free[1, manifests] == TRUE)
+			model@matrices$M@values[1, manifests][freeMeans] = dataMeans[freeMeans]
+		} else {
+			covData = theData
+		}
+		dataVariances = diag(covData)
+		manifests     = model@manifestVars
+		nVar          = length(manifests)
+		# ==========================================================
+		# = Fill the free symetrical matrix with good start values =
+		# ==========================================================
+		# The diagonal is variances
+		freePaths = (model@matrices$S@free[1:nVar,1:nVar] == TRUE)
+		model@matrices$S@values[1:nVar,1:nVar][freePaths] = covData[freePaths]
+		return(model)
+	}	
 }
 
 umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, model.name=NA, help=FALSE, labelSuffix="", verbose=T) {
@@ -753,7 +801,6 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 	# mxLatent("Read", forms = manifestsRead)
 }
 
-
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {	
 	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
 	# nb: obj must be either an mxModel or an mxMatrix
@@ -844,7 +891,6 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 }
 
 #` ## path-oriented helpers
-
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	# Purpose : standardise a RAM model, usually in order to return a standardized version of the model.
 	# Use case: umxStandardizeModel(model, return = "model")
@@ -1239,6 +1285,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix="", verbose=T){
 umxLabel_RAM_Model <- function(model, suffix = "") {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "male")
+	# TODO label means if data = raw
 	if (!(isS4(model) && is(model, "MxModel") && class(model$objective)[1] == "MxRAMObjective")) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
@@ -1276,6 +1323,14 @@ umxLabel_RAM_Model <- function(model, suffix = "") {
 	toGet = model@matrices$S@labels
 	transpose_toGet = t(toGet)
 	model@matrices$S@labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
+
+	# ==============================
+	# = Add means labels if needed =
+	# ==============================
+	if(model@data@type == "raw"){
+		model@matrices$M@labels = matrix(nrow = 1, paste(colnames(model@matrices$M@values),"mean", sep = "_"))
+	}
+	# TODO should check when autocreating names that they don't clash with existing names
 	return(model)
 }
 
