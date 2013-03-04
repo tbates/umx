@@ -199,22 +199,22 @@ or:
 	return(list(SaturatedLikelihood = m2, IndependenceLikelihood = m3))
 }
 
-umxReportFit <- function(model, saturatedModels = NA, report="line") {
-	# Use case
-	# umxReportFit(m1, report="table")
+umxReportFit <- function(model, saturatedModels = NA, report="line", showEstimates = T) {
+	# TODO make table take lists of models...
+	# Purpose: compactly report fit statistics, as for a paper
+	# Use case: umxReportFit(m1, report="table")
 	# umxReportFit(m1, saturatedModels = m1_sat)
 	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
 	# References for OK/bad
 	# Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
 	# Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from http://www.statmodel.com/download/Yudissertation.pdf  
-
 	if(length(saturatedModels)==1){ #is.na
 		modelSummary = summary(model)
 	} else {
 		modelSummary = summary(m1, SaturatedLikelihood=saturatedModels$SaturatedLikelihood, IndependenceLikelihood=saturatedModels$IndependenceLikelihood)
-	}	
+	}
 	if(is.na(modelSummary$SaturatedLikelihood)){
-		message("there is no saturated likelihood, you probaby want to run umxSaturated(model) to get it and then include the result
+		message("there is no saturated likelihood, you probably want to run umxSaturated(model) to get it and then include the result
 		saturatedModels = ") 
 	} else {
 		with(modelSummary,{
@@ -240,7 +240,10 @@ umxReportFit <- function(model, saturatedModels = NA, report="line") {
 				"; TLI = "  , round(TLI,3),
 				"; RMSEA = ", round(RMSEA, 3), 
 				", TLI = "  , TLI_OK,
-				", RMSEA = "  , RMSEA_OK, sep="")
+				", RMSEA = ", RMSEA_OK, sep="")
+				if(showEstimates){
+					print(modelSummary$parameters[,c(2:4,7,8)])
+				}
 				print(x)
 			}
 		})
