@@ -801,13 +801,24 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 	# mxLatent("Read", forms = manifestsRead)
 }
 
+umxModelType <- function(obj, typeList) {
+	# uxmModelType(obj, "RAM")
+	notFixed = T
+	isModel = isS4(obj) & is(obj, "MxModel")
+	if(isModel & (notFixed | class(obj$objective)[1] == "MxRAMObjective")){
+		return(T)
+	} else {
+		return(T)			
+	}
+}
+
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {	
 	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
 	# nb: obj must be either an mxModel or an mxMatrix
 	# Use case:
 	# m1 = umxLabel(m1, suffix = "")
 	# umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
-	if ((isS4(obj) && is(obj, "MxModel") && class(obj$objective)[1] == "MxRAMObjective")) {
+	if (umxModelType(obj, "RAM")) {
 		return(umxLabel_RAM_Model(obj, suffix))
 	} else if (is(obj, "MxMatrix")) {
 		umxLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag)
@@ -1288,7 +1299,7 @@ umxLabel_RAM_Model <- function(model, suffix = "") {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "male")
 	# TODO label means if data = raw
-	if (!(isS4(model) && is(model, "MxModel") && class(model$objective)[1] == "MxRAMObjective")) {
+	if (!umxModelType(model, "RAM")) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
 	freeA  = model@matrices$A@free
