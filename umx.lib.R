@@ -540,7 +540,7 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 # = Speed  and Efficiency Helpers =
 # =================================
 
-umxRun <- function(model, n = 3, calc_SE = F){
+umxRun <- function(model, n = 3, calc_SE = T){
 	# TODO: return change in -2LL
 	# optimise for speed
 	# Use case
@@ -551,7 +551,7 @@ umxRun <- function(model, n = 3, calc_SE = F){
 	model = mxRun(model);
 	n = n-1
 	tries = 0
-	# carryon if we failed
+	# carry on if we failed
 	while(model@output$status[[1]] == 6 && n > 2 ) {
 		print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
 		model <- mxRun(model)
@@ -612,7 +612,7 @@ umxStart_value_list <- function(x = 1, sd = NA, n = 1) {
 }
 
 umxStart <- function(x = NA, sd = NA, n = 1) {
-	if(is.number(x)){
+	if(is.numeric(x)){
 		umxStart_value_list(x = 1, sd = NA, n = 1)
 	} else {
 		# Purpose: Set sane starting values in RAM models
