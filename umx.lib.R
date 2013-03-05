@@ -1062,6 +1062,8 @@ umxPath2 <- function(from, to=NA, arrows=1, connect="single", free=TRUE, values=
 
 
 Stouffer.test <- function(p = NULL) {
+	# Purpose:
+	# Use case: Stouffer.test(p = c(0.13, 0.18, 0.06))
 	# http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues
 	# Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, and Robin M. Williams, Jr. (1949). Studies in Social Psychology in World War II: The American Soldier. Vol. 1, Adjustment During Army Life. Princeton: Princeton University Press.
 	# 
