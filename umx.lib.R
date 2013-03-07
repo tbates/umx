@@ -199,25 +199,38 @@ or:
 	return(list(SaturatedLikelihood = m2, IndependenceLikelihood = m3))
 }
 
-umxReportFit <- function(model, saturatedModels = NA, report="line", showEstimates = T) {
+umxReportFit <- function(model=NA, saturatedModels = NA, report = "line", showEstimates = "std") {
+	# "none|raw|std|both"
 	# TODO make table take lists of models...
 	# Purpose: compactly report fit statistics, as for a paper
 	# Use case: umxReportFit(m1, report="table")
 	# umxReportFit(m1, saturatedModels = m1_sat)
+
 	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
-	# References for OK/bad
-	# Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
-	# Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from http://www.statmodel.com/download/Yudissertation.pdf  
-	if(length(saturatedModels)==1){ #is.na
+
+	if(is.na(saturatedModels)){
 		modelSummary = summary(model)
 	} else {
-		modelSummary = summary(m1, SaturatedLikelihood=saturatedModels$SaturatedLikelihood, IndependenceLikelihood=saturatedModels$IndependenceLikelihood)
+		modelSummary = summary(model, SaturatedLikelihood=saturatedModels$SaturatedLikelihood, IndependenceLikelihood=saturatedModels$IndependenceLikelihood)
+	}
+	if(showEstimates != "none"){
+		if("Std.Estimate" %in%  names(modelSummary$parameters)){
+			if(showEstimates=="both"){
+				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
+			} else if(showEstimates=="std"){
+				namesToShow = c("name", "matrix", "row", "col", "Std.Estimate", "Std.SE")
+			}else{
+				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")					
+			}
+		} else {
+			namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")
+		}
+		print(modelSummary$parameters[,namesToShow])
 	}
 	if(is.na(modelSummary$SaturatedLikelihood)){
-		message("there is no saturated likelihood, you probably want to run umxSaturated(model) to get it and then include the result
-		saturatedModels = ") 
+		message("There is no saturated likelihood, you probably want to run umxSaturated(model) to get it and then include the result saturatedModels = ") 
 	} else {
-		with(modelSummary,{
+		with(modelSummary, {
 			if(TLI > .95){
 				TLI_OK = "OK"
 			} else {
@@ -241,13 +254,13 @@ umxReportFit <- function(model, saturatedModels = NA, report="line", showEstimat
 				"; RMSEA = ", round(RMSEA, 3), 
 				", TLI = "  , TLI_OK,
 				", RMSEA = ", RMSEA_OK, sep="")
-				if(showEstimates){
-					print(modelSummary$parameters[,c(2:4,7,8)])
-				}
 				print(x)
 			}
 		})
 	}
+	# References for OK/bad
+	# Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
+	# Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from http://www.statmodel.com/download/Yudissertation.pdf  
 }
 
 umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
