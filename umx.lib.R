@@ -207,6 +207,11 @@ umxReportFit <- function(model=NA, saturatedModels = NA, report = "line", showEs
 	# umxReportFit(m1, saturatedModels = m1_sat)
 
 	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
+	output <- model@output
+	# stop if there is no objective function
+	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
+	# stop if there is no output
+	if ( length(output) <1 ) stop("Provided model has no output. I can only standardize models that have been mxRun() first!")
 
 	if(is.na(saturatedModels)){
 		modelSummary = summary(model)
@@ -823,6 +828,31 @@ umxModelType <- function(obj, typeList) {
 	} else {
 		return(T)			
 	}
+}
+
+umxIsMxModel <- function(obj) {
+	isS4(obj) & is(obj, "MxModel")	
+}
+
+umxIsRAMmodel <- function(obj) {
+	(class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM")	
+}
+
+umxCheckModel <- function(obj, type = "RAM", hasData = NA) {
+	# TODO hasSubmodels = F
+	if (!isS4(obj) & is(obj, "MxModel")	) {
+		stop("'model' must be an mxModel")
+	}
+	if (!(class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM")	) {
+		stop("'model' must be an RAMModel")
+	}
+	if (length(obj@submodels) > 0) {
+		stop("Cannot yet handle submodels")
+	}
+	theData = obj@data@observed
+	if (is.null(theData)) {
+		stop("'model' does not contain any data")
+	}	
 }
 
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {	
