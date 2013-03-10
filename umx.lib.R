@@ -199,24 +199,24 @@ or:
 	return(list(SaturatedLikelihood = m2, IndependenceLikelihood = m3))
 }
 
-umxReportFit <- function(model=NA, saturatedModels = NA, report = "line", showEstimates = "std") {
+umxReportFit <- function(model, saturatedModels, report = "line", showEstimates = "std") {
 	# "none|raw|std|both"
 	# TODO make table take lists of models...
 	# Purpose: compactly report fit statistics, as for a paper
 	# Use case: umxReportFit(m1, report="table")
 	# umxReportFit(m1, saturatedModels = m1_sat)
-
 	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
 	output <- model@output
 	# stop if there is no objective function
 	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
 	# stop if there is no output
 	if ( length(output) <1 ) stop("Provided model has no output. I can only standardize models that have been mxRun() first!")
+	
 
-	if(is.na(saturatedModels)){
+	if(missing(saturatedModels)){
 		modelSummary = summary(model)
 	} else {
-		modelSummary = summary(model, SaturatedLikelihood=saturatedModels$SaturatedLikelihood, IndependenceLikelihood=saturatedModels$IndependenceLikelihood)
+		modelSummary = summary(model, SaturatedLikelihood = saturatedModels$SaturatedLikelihood, IndependenceLikelihood = saturatedModels$IndependenceLikelihood)
 	}
 	if(showEstimates != "none"){
 		if("Std.Estimate" %in%  names(modelSummary$parameters)){
@@ -629,49 +629,49 @@ umxStart_value_list <- function(x = 1, sd = NA, n = 1) {
 	return(rnorm(n=n, mean=x, sd=sd))
 }
 
-umxStart <- function(x = NA, sd = NA, n = 1) {
-	if(is.numeric(x)){
-		umxStart_value_list(x = 1, sd = NA, n = 1)
+umxStart <- function(obj = NA, sd = NA, n = 1) {
+	if(is.numeric(obj) ) {
+		umxStart_value_list(x = obj, sd = NA, n = 1)
 	} else {
 		# Purpose: Set sane starting values in RAM models
 		# use case: m1 = umxStart(m1)
-		# TODO start values in the A matrix...
-		if (!(isS4(model) && is(model, "MxModel"))) {
-			stop("'model' must be an mxModel")
+		# TODO: start values in the A matrix...
+		if (!(isS4(obj) && is(obj, "MxModel"))) {
+			stop("'obj' must be an mxModel (or a simple number)")
 		}
-		if (length(model@submodels) > 0) {
+		if (length(obj@submodels) > 0) {
 			stop("Cannot yet handle submodels")
 		}
-		theData = model@data@observed
+		theData = obj@data@observed
 		if (is.null(theData)) {
 			stop("'model' does not contain any data")
 		}
-		if(model@data@type == "raw"){
+		if(obj@data@type == "raw"){
 			covData     = cov(theData, use = "pairwise.complete.obs")		
 			dataMeans   = colMeans(theData, na.rm = T)
 			meansLabels = paste("mean", 1:nVar, sep = "")
 			# =================
 			# = Set the means =
 			# =================
-			freeMeans = (model@matrices$M@free[1, manifests] == TRUE)
-			model@matrices$M@values[1, manifests][freeMeans] = dataMeans[freeMeans]
+			freeMeans = (obj@matrices$M@free[1, manifests] == TRUE)
+			obj@matrices$M@values[1, manifests][freeMeans] = dataMeans[freeMeans]
 		} else {
 			covData = theData
 		}
 		dataVariances = diag(covData)
-		manifests     = model@manifestVars
+		manifests     = obj@manifestVars
 		nVar          = length(manifests)
 		# ==========================================================
 		# = Fill the free symetrical matrix with good start values =
 		# ==========================================================
 		# The diagonal is variances
-		freePaths = (model@matrices$S@free[1:nVar,1:nVar] == TRUE)
-		model@matrices$S@values[1:nVar,1:nVar][freePaths] = covData[freePaths]
-		return(model)
+		freePaths = (obj@matrices$S@free[1:nVar,1:nVar] == TRUE)
+		obj@matrices$S@values[1:nVar,1:nVar][freePaths] = covData[freePaths]
+		return(obj)
 	}	
 }
 
-umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, model.name=NA, help=FALSE, labelSuffix="", verbose=T) {
+umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous = FALSE, model.name = NA, help = FALSE, labelSuffix = "", verbose = T) {
 	# Purpose: make a latent variable formed/or formed by some manifests
 	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
 	# TODO: delete manifestVariance
@@ -701,9 +701,9 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 				message("treating data as cov")
 			}
 		} else {
-			isCov = T
+			isCov = F
 			if(verbose){
-				message("treating data as cov")
+				message("treating data as raw: it's a bit odd that it's square, however")
 			}
 		}
 	} else {
@@ -717,26 +717,26 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 	}else{
 		manifests <- formedBy
 	}
-	if(isCov){
-		variances = diag(data[manifests,manifests])
+	if(isCov) {
+		variances = diag(data[manifests, manifests])
 	} else {
 		manifestOrdVars = umxIsOrdinalVar(data[,manifests])
 		if(any(manifestOrdVars)) {
-			means         = rep(0, times=length(manifests))
-			variances     = rep(1, times=length(manifests))
-			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm=T)
-			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use="complete"))
+			means         = rep(0, times = length(manifests))
+			variances     = rep(1, times = length(manifests))
+			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm = T)
+			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use = "complete"))
 			if( any(!is.na(forms)) ) {
-				contVariances = contVariances*.1 # hopefully residuals are modest
+				contVariances = contVariances * .1 # hopefully residuals are modest
 			}
 			means[!manifestOrdVars] = contMeans				
 			variances[!manifestOrdVars] = contVariances				
 		}else{
 			if(verbose){
-				message("no ordinal variables")
+				message("No ordinal variables")
 			}
-			means     = colMeans(data[,manifests], na.rm=T)
-			variances = diag(cov(data[,manifests], use="complete"))
+			means     = colMeans(data[, manifests], na.rm = T)
+			variances = diag(cov(data[, manifests], use = "complete"))
 		}
 	}
 
@@ -746,24 +746,28 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 			# p1 = Residual variance on manifests
 			# p2 = Fix latent variance @ 1
 			# p3 = Add paths from latent to manifests
-			p1 = mxPath(from=manifests, arrows=2, free=T, values=variances, labels = umxLabels(manifests, suffix=glue("unique", labelSuffix)))
+			p1 = mxPath(from = manifests, arrows = 2, free = T, values = variances) # umxLabels(manifests, suffix = glue("unique", labelSuffix))
 			if(endogenous){
 				# Free latent variance so it can do more than just redirect what comes in
-				message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5, labels=umxLabels(latent, suffix=glue("var", labelSuffix)))
+				if(verbose){
+					message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
+				}
+				p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5) # labels=umxLabels(latent, suffix=glue("var", labelSuffix))
 			} else {
 				# fix variance at 1 - no inputs
-				message(paste("latent '", latent, "' has variance fixed @ 1"))
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1, labels=umxLabels(latent, suffix=glue("var", labelSuffix)))
+				if(verbose){
+					message(paste("latent '", latent, "' has variance fixed @ 1"))
+				}
+				p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1) # labels=umxLabels(latent, suffix=glue("var", labelSuffix))
 			}
-			p3 = mxPath(from=latent, to=manifests, connect="single", free=T, values=variances, labels=umxLabels(latent, manifests, suffix=glue("path", labelSuffix)))
+			p3 = mxPath(from = latent, to = manifests, connect = "single", free = T, values = variances) # labels = umxLabels(latent, manifests, suffix=glue("path", labelSuffix))
 			if(isCov) {
 				# Nothing to do: covariance data don't need means...
 				paths = list(p1, p2, p3)
 			}else{
 				# Add means: fix latent mean @0, and add freely estimated means to manifests
-				p4 = mxPath(from="one", to=latent   , arrows=1, free=F, values=0, labels=umxLabels("one", latent, suffix = labelSuffix))
-				p5 = mxPath(from="one", to=manifests, arrows=1, free=T, values=means, labels=umxLabels("one", manifests, suffix = labelSuffix)) 
+				p4 = mxPath(from = "one", to = latent   , arrows = 1, free = F, values = 0)  # labels=umxLabels("one", latent, suffix = labelSuffix)
+				p5 = mxPath(from = "one", to = manifests, arrows = 1, free = T, values = means) # labels=umxLabels("one", manifests, suffix = labelSuffix) 
 				paths = list(p1, p2, p3, p4, p5)
 			}			
 		} else {
@@ -774,18 +778,18 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 		# Handle formedBy case
 		if(!help) {
 			# Add paths from manifests to the latent
-			p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests), labels=umxLabels(manifests,latent, suffix=glue("path", labelSuffix)) )
+			p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests)) # labels=umxLabels(manifests,latent, suffix=glue("path", labelSuffix))
 			# In general, manifest variance should be left free…
 			# TODO If the data were correlations… we can inspect for that, and fix the variance to 1
-			p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances, labels=umxLabels(manifests, suffix=glue("var", labelSuffix)))
+			p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances) # labels=umxLabels(manifests, suffix=glue("var", labelSuffix))
 			# Allow manifests to intercorrelate
-			p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxStart(.3, n=manifests), labels=umxLabels(manifests, connect="unique.bivariate", suffix=labelSuffix)) 
+			p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxStart(.3, n = manifests)) #labels = umxLabels(manifests, connect="unique.bivariate", suffix=labelSuffix)
 			if(isCov) {
 				paths = list(p1, p2, p3)
 			}else{
 				# Fix latent mean at 0, and freely estimate manifest means
-				p4 = mxPath(from="one", to=latent   , free = F, values = 0, labels = umxLabels("one",latent, suffix=labelSuffix))
-				p5 = mxPath(from="one", to=manifests, free = T, values = means, labels = umxLabels("one",manifests, suffix=labelSuffix))
+				p4 = mxPath(from="one", to=latent   , free = F, values = 0) # labels = umxLabels("one",latent, suffix=labelSuffix)
+				p5 = mxPath(from="one", to=manifests, free = T, values = means) # labels = umxLabels("one",manifests, suffix=labelSuffix)
 				paths = list(p1, p2, p3, p4, p5)
 			}
 		} else {
@@ -796,12 +800,13 @@ umxLatent <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, 
 	if(!is.na(model.name)) {
 		m1 <- mxModel(model.name, type="RAM", manifestVars=manifests, latentVars=latent, paths)
 		if(isCov){
-			message("To run, you'll need to add data, e.g.:\n  m1 <- mxModel(m1, mxData(cov(df), type=\"cov\", numObs=100))")
+			m1 <- mxModel(m1, mxData(cov(df), type="cov", numObs = 100))
+			message("\n\nIMPORTANT: you need to see numObs in the mxData() statement\n\n\n")
 		} else {
 			if(any(manifestOrdVars)){
-				m1 <- mxModel(m1, umxThresholdRAMObjective(data, deviationBased=T, droplevels=T, verbose=T))
+				m1 <- mxModel(m1, umxThresholdRAMObjective(data, deviationBased = T, droplevels = T, verbose = T))
 			} else {
-				m1 <- mxModel(m1, mxData(data, type="raw"))
+				m1 <- mxModel(m1, mxData(data, type = "raw"))
 			}
 		}
 		return(m1)
@@ -1020,6 +1025,7 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #` ## matrix-oriented helpers
 
 umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, prefix = "", suffix = "",...) {
+	stop("not working yet - I have a feel that umxLabel is a better direction to travel in")
 	# {$|single,all.pairs,all.bivariate,unique.pairs,unique.bivariate|}
 	# Purpose: Create  mxPaths with default labels
 	# Use case: umxPath("F1", paste("m",1:4,sep="")) # "F1_to_m1" "F1_to_m2" "F1_to_m3" "F1_to_m4"
@@ -1028,28 +1034,29 @@ umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = T
 	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
 	if(any(is.na(to)) & (suffix=="var"| suffix=="unique")){
 		# handle from only, variance and residuals
-		from = paste(prefix, from, sep="")
-		return(paste(from, suffix, sep="_"))
-	}else if(any(from == "one")){
+		part1  = paste(prefix, from, sep="")
+		myLabels = (paste(part1, suffix, sep="_"))
+	} else if(any(from == "one")){
 		# handle means (from == "one")
 		if(!all(from == "one")){
 			stop(cat("Error in umxLabels: from was a mix of one and not-one",from))
 		} else {
-			return(paste(to, "mean", sep="_"))
+			myLabels = paste(to, "mean", sep="_")
 		}
-	}else if(connect=="unique.bivariate") {
+	} else if(connect == "unique.bivariate") {
 		if(!all(is.na(to))){
-			if(!(from==to)){
+			if(!(from == to)){
 				stop("with connect = 'unique.bivariate', to must be blank, or the same as from")
 			}
 		}
-		labels = as.character(combn(from, m=2, FUN=paste, collapse="_"))
+		labels = as.character(combn(from, m = 2, FUN = paste, collapse = "_"))
 		return(labels)
 	} else {
-		from = paste(prefix, from, sep="")
-		to = paste(to, suffix, sep="_")
-		return(paste(from, to, sep="_to_"))
+		fromPart = paste(prefix, from, sep = "")
+		toPart   = paste(to  , suffix, sep = "_")
+		myLabels = paste(fromPart, toPart, sep = "_to_")
 	}
+	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = myLabels, lbound = lbound, ubound = ubound)
 }
 
 umxPath2 <- function(from, to=NA, arrows=1, connect="single", free=TRUE, values=NA, labels=NA, lbound=NA, ubound=NA, prefix="", suffix=""){
@@ -1293,11 +1300,10 @@ umxConnect <- function(x) {
 	# TODO handle endogenous	
 }
 
-umxSingleIndicators <- function(manifests, data, labelSuffix="", verbose=T){
+umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 	# use case
 	# mxSingleIndicators(manifests, data)
-
-	if( nrow(data)==ncol(data)	& all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
+	if( nrow(data) == ncol(data) & all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
 		isCov = T
 		if(verbose){
 			message("treating data as cov")
@@ -1311,7 +1317,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix="", verbose=T){
 	if(isCov){
 		variances = diag(data[manifests,manifests])
 		# Add variance to the single manfests
-		p1 = mxPath(from=manifests, arrows=2, value=variances, labels=umxLabels(manifests, suffix=glue("unique", labelSuffix)))
+		p1 = mxPath(from=manifests, arrows=2, value=variances) # labels = umxLabels(manifests, suffix = glue("unique", labelSuffix)))
 		return(p1)
 	} else {
 		manifestOrdVars = mxIsOrdinalVar(data[,manifests])
@@ -1323,13 +1329,13 @@ umxSingleIndicators <- function(manifests, data, labelSuffix="", verbose=T){
 			means[!manifestOrdVars] = contMeans				
 			variances[!manifestOrdVars] = contVariances				
 		}else{
-			means     = colMeans(data[,manifests], na.rm=T)
-			variances = diag(cov(data[,manifests], use="complete"))
+			means     = colMeans(data[,manifests], na.rm = T)
+			variances = diag(cov(data[,manifests], use = "complete"))
 		}
 		# Add variance to the single manfests
-		p1 = mxPath(from=manifests, arrows=2, value=variances, labels=mxLabel(manifests, suffix=glue("unique", labelSuffix)))
+		p1 = mxPath(from = manifests, arrows = 2, value = variances) # labels = mxLabel(manifests, suffix = glue("unique", labelSuffix))
 		# Add means for the single manfests
-		p2 = mxPath(from="one", to=manifests, values=means, labels=mxLabel("one",manifests, suffix=labelSuffix))
+		p2 = mxPath(from="one", to=manifests, values=means) # labels = mxLabel("one", manifests, suffix = labelSuffix)
 		return(list(p1, p2))
 	}
 }
