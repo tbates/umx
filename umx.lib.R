@@ -560,7 +560,7 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 
 umxRun <- function(model, n = 3, calc_SE = T){
 	# TODO: return change in -2LL
-	# optimise for speed
+	# Optimise for speed
 	# Use case
 	# model <- umxRun(model, n = 10)
 	model = mxOption(model, "Calculate Hessian", "No")
@@ -577,11 +577,11 @@ umxRun <- function(model, n = 3, calc_SE = T){
 		tries = tries+1
 	}
 	if(tries==0){ 
-		print("Ran fine first time!")	
+		# print("Ran fine first time!")	
 	}
 	# get the SEs for summary (if requested)
 	if(calc_SE){
-		print("Calculating Hessian & SEs")
+		# print("Calculating Hessian & SEs")
 		model = mxOption(model, "Calculate Hessian", "Yes")
 		model = mxOption(model, "Standard Errors", "Yes")
 		model = mxRun(model)
@@ -694,7 +694,7 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 	# m1= mxRun(m1); summary(m1)
 
 	# Warning("If you use this with a dataframe containing ordinal variables, don't forget to call umxAutoThreshRAMObjective(df)")
-	if( nrow(data)==ncol(data)) {
+	if( nrow(data) == ncol(data)) {
 		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
 			isCov = T
 			if(verbose){
@@ -875,12 +875,12 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jig
 	}
 }
 
-umxGetLabels <- function(inputTarget, regex=NA, free=NA,verbose=F) {
+umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	# Purpose: a regex-enabled version of omxGetParameters
 	# usage e.g.
 	# umxGetLabels(model@matrices$as) # all labels of as matrix
 	# umxGetLabels(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
-	if(class(inputTarget)[1] =="MxModel") {
+	if(class(inputTarget)[1] %in% c("MxRAMModel","MxModel")) {
 		topLabels = names(omxGetParameters(inputTarget, indep=FALSE, free=free))
 	} else {
 		# Assuming it is a matrix
