@@ -630,13 +630,18 @@ umxStart_value_list <- function(x = 1, sd = NA, n = 1) {
 }
 
 umxStart <- function(obj = NA, sd = NA, n = 1) {
+	# Purpose: Set sane starting values in RAM models OR return a list of start values
+	# use case: m1 = umxStart(obj = m1)
 	if(is.numeric(obj) ) {
 		umxStart_value_list(x = obj, sd = NA, n = 1)
 	} else {
-		# Purpose: Set sane starting values in RAM models
-		# use case: m1 = umxStart(m1)
-		# TODO: start values in the A matrix...
+		# This is an MxRAM Model: Set sane starting values
+		# TODO: Start values in the A matrix...
+		# Done: Start values in the S at variance on diag, bit less than cov off diag
+		# Done: Start amnifest means in means model
+		# TODO: Start latent means?...
 		if (!(isS4(obj) && is(obj, "MxModel"))) {
+			# TODO: Need to add a check for RAMness
 			stop("'obj' must be an mxModel (or a simple number)")
 		}
 		if (length(obj@submodels) > 0) {
@@ -646,27 +651,25 @@ umxStart <- function(obj = NA, sd = NA, n = 1) {
 		if (is.null(theData)) {
 			stop("'model' does not contain any data")
 		}
+		manifests     = obj@manifestVars
+		nVar          = length(manifests)
 		if(obj@data@type == "raw"){
-			covData     = cov(theData, use = "pairwise.complete.obs")		
-			dataMeans   = colMeans(theData, na.rm = T)
-			meansLabels = paste("mean", 1:nVar, sep = "")
-			# =================
 			# = Set the means =
-			# =================
-			freeMeans = (obj@matrices$M@free[1, manifests] == TRUE)
-			obj@matrices$M@values[1, manifests][freeMeans] = dataMeans[freeMeans]
+			dataMeans   = colMeans(theData[,manifests], na.rm = T)
+			freeManifestMeans = (obj@matrices$M@free[1, manifests] == T)
+			obj@matrices$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
+
+			covData     = cov(theData, use = "pairwise.complete.obs")		
 		} else {
 			covData = theData
 		}
 		dataVariances = diag(covData)
-		manifests     = obj@manifestVars
-		nVar          = length(manifests)
 		# ==========================================================
 		# = Fill the free symetrical matrix with good start values =
 		# ==========================================================
 		# The diagonal is variances
-		freePaths = (obj@matrices$S@free[1:nVar,1:nVar] == TRUE)
-		obj@matrices$S@values[1:nVar,1:nVar][freePaths] = covData[freePaths]
+		freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE)
+		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
 		return(obj)
 	}	
 }
@@ -828,6 +831,7 @@ umxModelType <- function(obj, typeList) {
 	# uxmModelType(obj, "RAM")
 	notFixed = T
 	isModel = isS4(obj) & is(obj, "MxModel")
+	oldRAM_check = class(obj$objective) == "MxRAMObjective"
 	if(isModel & (notFixed | class(obj$objective)[1] == "MxRAMObjective")){
 		return(T)
 	} else {
