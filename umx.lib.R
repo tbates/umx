@@ -870,10 +870,10 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jig
 	# Use case:
 	# m1 = umxLabel(m1, suffix = "")
 	# umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
-	if (umxModelType(obj, "RAM")) {
-		return(umxLabel_RAM_Model(obj, suffix))
-	} else if (is(obj, "MxMatrix")) {
+	if (is(obj, "MxMatrix")) {
 		umxLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag)
+	} else if (umxModelType(obj, "RAM")) {
+		return(umxLabel_RAM_Model(obj, suffix))
 	} else {
 		stop("'obj' must be an OpenMx RAM model OR an mxMatrix")
 	}
