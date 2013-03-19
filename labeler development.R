@@ -1,5 +1,6 @@
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, verbose = F) {	
 	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
+	# version: 2.0b now that it labels matrices, RAM models, and arbitrary matrix models
 	# nb: obj must be either an mxModel or an mxMatrix
 	# Use case:
 	# m1 = umxLabel(m1, suffix = "")
