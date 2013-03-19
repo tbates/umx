@@ -827,15 +827,17 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 	# mxLatent("Read", forms = manifestsRead)
 }
 
-umxModelType <- function(obj, typeList) {
-	# uxmModelType(obj, "RAM")
-	notFixed = T
+umxModelIsRAM <- function(obj) {
+	# test is model is RAM
+	# umxModelIsRAM(obj)
 	isModel = isS4(obj) & is(obj, "MxModel")
 	oldRAM_check = class(obj$objective) == "MxRAMObjective"
-	if(isModel & (notFixed | class(obj$objective)[1] == "MxRAMObjective")){
+	# TODO: get working on both the old and new objective model...
+	# newRAM_check = (class(obj$objective)[1] == "MxRAMObjective"))
+	if(isModel & oldRAM_check) {
 		return(T)
 	} else {
-		return(T)			
+		return(F)			
 	}
 }
 
@@ -871,9 +873,9 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jig
 	# m1 = umxLabel(m1, suffix = "")
 	# umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 	if (is(obj, "MxMatrix")) {
-		umxLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag)
-	} else if (umxModelType(obj, "RAM")) {
-		return(umxLabel_RAM_Model(obj, suffix))
+		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag)
+	} else if (umxModelIsRAM(obj, "RAM")) {
+		return(xmuLabel_RAM_Model(obj, suffix))
 	} else {
 		stop("'obj' must be an OpenMx RAM model OR an mxMatrix")
 	}
@@ -1125,7 +1127,6 @@ umxPath2 <- function(from, to=NA, arrows=1, connect="single", free=TRUE, values=
 # = Data and Utility =
 # ====================
 
-
 Stouffer.test <- function(p = NULL) {
 	# Purpose:
 	# Use case: Stouffer.test(p = c(0.13, 0.18, 0.06))
@@ -1243,9 +1244,9 @@ umxMakeThresholdMatrix <- function(df, deviationBased=T, droplevels = T, verbose
 		df = droplevels(df)
 	}
 	if(deviationBased){
-		return(tmxMakeDeviationThresholdsMatrices(df, droplevels, verbose))
+		return(xmuMakeDeviationThresholdsMatrices(df, droplevels, verbose))
 	} else {
-		return(tmxMakeThresholdsMatrices(df, droplevels, verbose))
+		return(xmuMakeThresholdsMatrices(df, droplevels, verbose))
 	}
 }
 
@@ -1344,15 +1345,22 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 	}
 }
 
+umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
+	mask      = (matrixIn != dontTouch);
+	newValues = mask;
+	matrixIn[mask==TRUE] = matrixIn[mask==TRUE] + rnorm(length(mask[mask==TRUE]), mean=mean, sd=sd);
+	return (matrixIn);
+}
+
 # ========================================
 # = Not Typically used directly by users =
 # ========================================
 
-umxLabel_RAM_Model <- function(model, suffix = "") {
+xmuLabel_RAM_Model <- function(model, suffix = "") {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "male")
 	# TODO label means if data = raw
-	if (!umxModelType(model, "RAM")) {
+	if (!umxModelIsRAM(model)) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
 	freeA  = model@matrices$A@free
@@ -1400,49 +1408,59 @@ umxLabel_RAM_Model <- function(model, suffix = "") {
 	return(model)
 }
 
-umxLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {
+xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, suffix = "") {
 	# Purpose: label the cells of an mxMatrix
-	# Detail: Defaults to the handy "matname_r1c1" where 1 is the row or column
-	# Use case:
-	# umxLabel(mxMatrix("Lower",3, 3, values=1, name="a", byrow=T), jiggle=.05, boundDiag=NA);
-	# TODO: unify the path labelling and matrix labelling approaches
-	# See also: fit2 = omxSetParameters(fit1, labels="a_r1c1", free=F, value = 0, name="drop_a_row1_c1")
-	# History: 2012-12-28 changed function name to "umxLabel" from "umxLabel"
+	# Detail: Defaults to the handy "matrixname_r1c1" where 1 is the row or column
+	# Use case: You shouldn't be using this
+	# xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
+	# xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
+	# See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = F, value = 0, name = "drop_a_row1_c1")
+	if (!is(mx_matrix, "MxMatrix")){ # label a mxMatrix
+		stop("I'm sorry Dave… xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want umxLabel()")
+	}
 	type = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
 	nrow = nrow(mx_matrix);
 	ncol = ncol(mx_matrix);
-	newLabels = mx_matrix@labels;
+	newLabels    = mx_matrix@labels;
 	mirrorLabels = newLabels
-	if(is.na(baseName)) { baseName = mx_matrix@name }
+
+	if(is.na(baseName)) { 
+		baseName = mx_matrix@name
+	}
+	if(suffix != "") {
+		baseName = paste(baseName, suffix, sep = "_")
+	}
+
 	# Make a matrix of labels in the form "baseName_rRcC"
 	for (r in 1:nrow) {
 		for (c in 1:ncol) {
-			newLabels[r,c]= paste(baseName,"_r",r,"c",c, sep="")
-			if(nrow == ncol) { # Should include all square forms type=="StandMatrix" | type=="SymmMatrix"
-				mirrorLabels[c,r]= paste(baseName,"_r",r,"c",c, sep="")
+			newLabels[r,c] = paste(baseName,"_r", r, "c", c, sep = "")
+			if(nrow == ncol) { # Should include all square forms type == "StandMatrix" | type == "SymmMatrix"
+				mirrorLabels[c,r] = paste(baseName, "_r", r, "c", c, sep = "")
 			}
 		}
 	}
-	if(type=="DiagMatrix"){
-		newLabels[lower.tri(newLabels, diag=F)]=NA
-		newLabels[upper.tri(newLabels, diag=F)]=NA
-	} else if(type=="FullMatrix"){
+	if(type == "DiagMatrix"){
+		newLabels[lower.tri(newLabels, diag = F)] = NA
+		newLabels[upper.tri(newLabels, diag = F)] = NA
+	} else if(type == "FullMatrix"){
 		# newLabels = newLabels
-	} else if(type=="LowerMatrix"){
-		newLabels[upper.tri(newLabels, diag=F)] = NA 
-	} else if(type=="SdiagMatrix"){
-		newLabels[upper.tri(newLabels, diag=T)] = NA
-	} else if(type=="SymmMatrix"){
-		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
-		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
-	} else if(type=="StandMatrix") {
-		newLabels[lower.tri(newLabels, diag=F)] -> lower.labels;
-		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag=F)]
+	} else if(type == "LowerMatrix"){
+		newLabels[upper.tri(newLabels, diag = F)] = NA 
+	} else if(type == "SdiagMatrix"){
+		newLabels[upper.tri(newLabels, diag = T)] = NA
+	} else if(type == "SymmMatrix"){
+		newLabels[lower.tri(newLabels, diag = F)] -> lower.labels;
+		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag = F)]
+	} else if(type == "StandMatrix") {
+		newLabels[lower.tri(newLabels, diag = F)] -> lower.labels;
+		newLabels[upper.tri(newLabels, diag = F)] <- mirrorLabels[upper.tri(mirrorLabels, diag = F)]
 		diag(newLabels) <- NA
-	} else if(type=="IdenMatrix"|type=="UnitMatrix"|type=="ZeroMatrix") {
-		stop("You can't run umxLabel on an Identity matrix - it has no free values!")
+	} else if(type == "IdenMatrix" | type == "UnitMatrix" | type == "ZeroMatrix") {
+		message("umxLabel Ignored Identity matrix ", mx_matrix@name, " - it has no free values!")
+		return(mx_matrix)
 	} else {
-		return(paste("You tried to set type ", "to '", type, "'", sep=""));
+		return(paste("You tried to set type ", "to '", type, "'", sep = ""));
 	}
 	# Set labels
 	mx_matrix@labels <- newLabels;
@@ -1451,18 +1469,18 @@ umxLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	} else {
 		newFree = mx_matrix@free
 		# return(newFree)
-		newFree[mx_matrix@values==drop] = F;
-		newFree[mx_matrix@values!=drop] = T;
+		newFree[mx_matrix@values == drop] = F;
+		newFree[mx_matrix@values != drop] = T;
 		if(type=="StandMatrix") {
-			newLabels[lower.tri(newLabels, diag=FALSE)] -> lower.labels;
-			newLabels[upper.tri(newLabels, diag=FALSE)] <- lower.labels;
+			newLabels[lower.tri(newLabels, diag = F)] -> lower.labels;
+			newLabels[upper.tri(newLabels, diag = F)] <- lower.labels;
 		} else {
 			mx_matrix@free <- newFree
 		}
 		# newFree[is.na(newLabels)]=NA; # (validated by mxMatrix???)
 	}
 	if(!is.na(jiggle)){
-		mx_matrix@values <- genEpi_Jiggle(mx_matrix@values, mean=0, sd=jiggle, dontTouch=drop) # Expecting sd
+		mx_matrix@values <- umxJiggle(mx_matrix@values, mean = 0, sd = jiggle, dontTouch = drop) # Expecting sd
 	}
 	if(!is.na(boundDiag)){
 		diag(mx_matrix@lbound)<-boundDiag # bound diagonal to be positive 
@@ -1470,7 +1488,7 @@ umxLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	return(mx_matrix)
 }
 
-tmxMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
+xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	# Purpose: return a mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
 	# usecase see: umxMakeThresholdMatrix
 	# junk[1]; 	junk[[2]]@values; 	junk[3]
@@ -1523,10 +1541,10 @@ tmxMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	return(list(UnitLower,threshDeviations, thresh, mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")))
 }
 
-tmxMakeThresholdsMatrices <- function(df, droplevels, verbose) {
-	# stop("I have not written tmxMakeThresholdsMatrices yet as it is fucked as a reliable strategy and likely to be superceeded")
+xmuMakeThresholdsMatrices <- function(df, droplevels, verbose) {
+	# stop("I have not written xmuMakeThresholdsMatrices yet as it is fucked as a reliable strategy and likely to be superceeded")
 	# usecase
-	# junk = tmxMakeThresholdsMatrices(df, droplevels=F, verbose=T)
+	# junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose=T)
 	# junk[1]; 	junk[[2]]@values; 	junk[3]
 	
 	isOrdinalVariable = umxIsOrdinalVar(df) 
@@ -1570,6 +1588,182 @@ tmxMakeThresholdsMatrices <- function(df, droplevels, verbose) {
 # ==============
 # = Deprecated =
 # ==============
+
 umxTryHard = function(model, n=3, calc_SE=F){ stop("Use umxRun() in place of umxTryHard") }
 
 umxLabels = function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop("please use umxPath in place of umxLabels. To label models or matrices, use umxLabel")}
+
+genEpi_Jiggle = function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {stop("please use umxJiggle in place of genEpi_Jiggle")}
+
+# ==================================
+# = Borrowed for tutorial purposes =
+# ==================================
+
+summaryACEFit <- function(fit, accuracy = 2, dotFilename = NA, returnStd = F, extended = F, showRg = F, showStd = T, parentModel = NA, CIs = F, zero.print = ".") {
+	# Purpose: summarise a Cholesky model, as returned by makeACE_2Group
+	# use case: summaryACEFit(fit, dotFilename=NA);
+	# summaryACEFit(safeFit, dotFilename = "name", showStd = T)
+	# stdFit = summaryACEFit(fit, accuracy=2, dotFilename="name", returnStd=F, extended=F, showRg=T, showStd=T,parentModel=NA, CIs=T);
+	if(length(fit)>1){ # call self recursively
+		for(thisFit in fit) {
+			message("Output for Model: ",thisFit@name)
+			summaryACEFit(thisFit, accuracy=accuracy, dotFilename=dotFilename, returnStd=returnStd, extended=extended, showRg=showRg, showStd=showStd, parentModel=NA, CIs=CIs)
+		}
+	} else {
+		if(!class(parentModel)=="logical"){
+			message("Comparison of fit")
+			print(mxCompare(parentModel, fit))
+		}
+		logLikelihood = mxEval(objective, fit); 
+		message("-2 \u00d7 log(Likelihood)") # ×
+		print(logLikelihood[1,1]);
+		selDVs = dimnames(fit$top.mzCov)[[1]]
+		# genEpi_TableFitStatistics(fit, extended=extended)
+		nVar <- length(selDVs)/2;
+		# Calculate standardised variance components
+		a  <- mxEval(top.a, fit); # Path coefficients
+		c  <- mxEval(top.c, fit);
+		e  <- mxEval(top.e, fit);
+		A  <- mxEval(top.A, fit); # Variances
+		C  <- mxEval(top.C, fit);
+		E  <- mxEval(top.E, fit);
+		Vtot = A+C+E;             # Total variance
+		I  <- diag(nVar); # nVar Identity matrix
+		SD <- solve(sqrt(I*Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
+	
+		# Standardized _path_ coefficients ready to be stacked together
+		a_std <- SD %*% a; # Standardized path coefficients
+		c_std <- SD %*% c;
+		e_std <- SD %*% e;
+		if(showStd){
+			message("Standardized solution")
+			aClean = a_std
+			cClean = c_std
+			eClean = e_std
+		} else {
+			message("Raw solution")
+			aClean = a
+			cClean = c
+			eClean = e
+		}
+		aClean[upper.tri(aClean)]=NA
+		cClean[upper.tri(cClean)]=NA
+		eClean[upper.tri(eClean)]=NA
+		Estimates = data.frame(cbind(aClean,cClean,eClean), row.names=selDVs[1:nVar]);
+		names(Estimates) = paste(rep(c("a", "c", "e"), each = nVar), rep(1:nVar), sep = "");
+		print.dataframe(Estimates, digits = accuracy, zero.print = ".") # this function is created in genEpi.lib
+		if(extended==TRUE) {
+			message("Unstandardized path coefficients")
+			aClean = a
+			cClean = c
+			eClean = e
+			aClean[upper.tri(aClean)]=NA
+			cClean[upper.tri(cClean)]=NA
+			eClean[upper.tri(eClean)]=NA
+			unStandardizedEstimates = data.frame(cbind(aClean,cClean,eClean), row.names=selDVs[1:nVar]);
+			names(unStandardizedEstimates) = paste(rep(c("a", "c", "e"), each=nVar), rep(1:nVar), sep="");
+			print.dataframe(unStandardizedEstimates, digits=accuracy, zero.print = ".")
+		}
+
+		# Pre & post multiply covariance matrix by inverse of standard deviations
+		if(showRg) {
+			message("Genetic correlations")
+			NAmatrix <- matrix(NA, nVar, nVar);
+			rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error=function(err) return(NAmatrix)); # genetic correlations
+			rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error=function(err) return(NAmatrix)); # shared environmental correlations
+			rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error=function(err) return(NAmatrix)); # Unique environmental correlations
+			rAClean = rA
+			rCClean = rC
+			rEClean = rE
+			rAClean[upper.tri(rAClean)]=NA
+			rCClean[upper.tri(rCClean)]=NA
+			rEClean[upper.tri(rEClean)]=NA
+			genetic_correlations  = data.frame(cbind(rAClean, rCClean, rEClean), row.names=selDVs[1:nVar] );
+			names(genetic_correlations)<-selDVs[1:nVar]
+		 	# Make a nice-ish table
+			names(genetic_correlations)= paste(rep(c("rA", "rC", "rE"), each=nVar), rep(1:nVar), sep="");
+			print.dataframe(genetic_correlations, digits=accuracy, zero.print = ".")
+		}
+		stdFit = fit
+		if(CIs) {
+			# TODO Need to refactor this into some function calls...
+			if(all(dim(fit@output$confidenceIntervals) == c(0,2))){
+				message("You requested me to print out CIs, but there are none - perhaps you’d like to add 'addStd = T' to your makeACE_2Group() call?")
+			} else {
+				message("Computing CI-based diagram!")
+				# get the lower and uppper CIs as a dataframe
+				CIlist = data.frame(fit@output$confidenceIntervals)
+				# Drop rows fixed to zero
+				CIlist = CIlist[(CIlist$lbound!=0 & CIlist$ubound!=0),]
+
+				# These can be names ("top.a_std[1,1]") or labels ("a11")
+				# imxEvalByName finds them both
+				outList = c();
+				for(aName in row.names(CIlist)) {
+					outList <- append(outList, imxEvalByName(aName,fit))
+				}
+				# Add estimates into the CIlist
+				CIlist$estimate = outList
+				# reorder to match summary
+				CIlist <- CIlist[,c("lbound","estimate", "ubound")] 
+				CIlist$fullName = row.names(CIlist)
+				# Initialise empty matrices for the standardized results
+				rows = dim(fit@submodels$top@matrices$a@labels)[1]
+				cols = dim(fit@submodels$top@matrices$a@labels)[2]
+				a_std = c_std = e_std= matrix(NA, rows, cols)
+
+				# iterate over each CI
+				labelList = imxGenerateLabels(fit)			
+				rowCount = dim(CIlist)[1]
+
+				for(n in 1:rowCount) { # n=1
+					thisName = row.names(CIlist)[n] # thisName = "a11"
+					if(!hasSquareBrackets(thisName)) {
+						# upregulate to a bracket name
+						nameParts = labelList[which(row.names(labelList)==thisName),]
+						CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep="")
+					}
+					fullName = CIlist$fullName[n]
+
+					thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
+					thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
+					thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
+					CIparts = round(CIlist[n, c("estimate", "lbound", "ubound")], 2)
+					thisString = paste(CIparts[1], " (",CIparts[2], ":",CIparts[3], ")", sep="")
+					# print(list(CIlist,labelList,rowCount,fullName,thisMatrixName))
+
+					if(grepl("^a", thisMatrixName)) {
+						a_std[thisMatrixRow, thisMatrixCol] = thisString
+					} else if(grepl("^c", thisMatrixName)){
+						c_std[thisMatrixRow, thisMatrixCol] = thisString
+					} else if(grepl("^e", thisMatrixName)){
+						e_std[thisMatrixRow, thisMatrixCol] = thisString
+					} else{
+						stop(paste("illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
+					}
+				}
+				print(a_std)
+				print(c_std)
+				print(e_std)
+			}
+		} #use CIs
+		stdFit@submodels$top@matrices$a@values = a_std
+		stdFit@submodels$top@matrices$c@values = c_std
+		stdFit@submodels$top@matrices$e@values = e_std
+		if(!is.na(dotFilename)) {
+			message("making dot file")
+			if(showStd){
+				graphViz_Cholesky(stdFit, selDVs, dotFilename)
+			}else{
+				graphViz_Cholesky(fit, selDVs, dotFilename)
+			}
+		}
+		if(returnStd) {
+			return(stdFit)
+		}
+
+		# MZc = mxEval(MZ.expCov,  fit);
+		# DZc = mxEval(DZ.expCov,  fit);
+		# M   = mxEval(MZ.expMean, fit);
+	}
+}
