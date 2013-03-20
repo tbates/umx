@@ -2,14 +2,15 @@
 umx stands for "user" mx function, and is a library of helper functions for doing [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in [OpenMx](http://openmx.psyc.virginia.edu).
 
 Load it up like this:
-<pre>
-source_https <- function(URL) {
-	require(RCurl)
-	script <- getURL("https://raw.github.com/tbates/umx/master/umx.lib.R", ssl.verifypeer = F)
-	eval(parse(text = script), envir = .GlobalEnv)
-}
-source_https("https://raw.github.com/tbates/umx/master/umx.lib.R")
-</pre>
+
+    source_https <- function(URL) {
+        require(RCurl)
+        script <- getURL("https://raw.github.com/tbates/umx/master/umx.lib.R", ssl.verifypeer = F)
+        eval(parse(text = script), envir = .GlobalEnv)
+    }
+
+    source_https("https://raw.github.com/tbates/umx/master/umx.lib.R")
+
 
 It has functions to support:
 
