@@ -1,24 +1,3 @@
-umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, verbose = F) {	
-	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
-	# version: 2.0b now that it labels matrices, RAM models, and arbitrary matrix models
-	# nb: obj must be either an mxModel or an mxMatrix
-	# Use case:
-	# m1 = umxLabel(m1, suffix = "")
-	# umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
-	if (is(obj, "MxMatrix") ) { 
-		# label an mxMatrix
-		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
-	} else if (umxModelIsRAM(obj)) { 
-		# label a RAM model
-		if(verbose){message("RAM")}
-		return(xmuLabel_RAM_Model(obj, suffix))
-	} else if (is(obj, "MxModel")) {
-		# label a non-RAM matrix model
-		return(xmuLabel_MATRIX_Model(obj, suffix))
-	} else {
-		stop("'obj' must be an OpenMx RAM model OR an mxMatrix")
-	}
-}
 # =============
 # = unit test =
 # =============
@@ -105,6 +84,29 @@ umxReportFit(ACE, saturatedModels = ACE_sat, report = "line")
 # TODO not fixed yet
 umxLabel(1)
 # End of unit testing
+
+umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, verbose = F) {	
+	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
+	# version: 2.0b now that it labels matrices, RAM models, and arbitrary matrix models
+	# nb: obj must be either an mxModel or an mxMatrix
+	# Use case:
+	# m1 = umxLabel(m1, suffix = "")
+	# umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
+	if (is(obj, "MxMatrix") ) { 
+		# label an mxMatrix
+		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
+	} else if (umxModelIsRAM(obj)) { 
+		# label a RAM model
+		if(verbose){message("RAM")}
+		return(xmuLabel_RAM_Model(obj, suffix))
+	} else if (is(obj, "MxModel")) {
+		# label a non-RAM matrix model
+		return(xmuLabel_MATRIX_Model(obj, suffix))
+	} else {
+		stop("'obj' must be an OpenMx RAM model OR an mxMatrix")
+	}
+}
+
 
 xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 	# Purpose: to label all the free parameters of a (non-RAM) model
