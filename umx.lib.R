@@ -6,7 +6,8 @@ source_https <- function(URL) {
 	eval(parse(text = script), envir = .GlobalEnv)
 }
 # source_https("https://raw.github.com/tbates/umx/master/umx.lib.R")
-# To learn more, see http://www.github.com/tbates/umx/README.md
+
+# To learn more, see https://github.com/tbates/umx/
 
 umxUpdateOpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE) {
 	# Purpose: update the OpenMx Library to latest version:
@@ -893,8 +894,6 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jig
 		stop("I can only label OpenMx models and mxMatrix types. You gave me a ", typeof(obj))
 	}
 }
-
-
 
 umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	# Purpose: a regex-enabled version of omxGetParameters
