@@ -1,10 +1,10 @@
 # umx.lib.R
 # To USE ME IN YOUR SCRIPTS SAY something like this: 
-# source_https <- function(URL) {
-# 	require(RCurl)
-# 	script = RCurl::getURL(URL, ssl.verifypeer = F)
-# 	eval(parse(text = script), envir = .GlobalEnv)
-# }
+source_https <- function(URL) {
+	require(RCurl)
+	script = RCurl::getURL(URL, ssl.verifypeer = F)
+	eval(parse(text = script), envir = .GlobalEnv)
+}
 # source_https("https://raw.github.com/tbates/umx/master/umx.lib.R")
 # To learn more, see http://www.github.com/tbates/umx/README.md
 
@@ -831,10 +831,13 @@ umxModelIsRAM <- function(obj) {
 	# test is model is RAM
 	# umxModelIsRAM(obj)
 	isModel = isS4(obj) & is(obj, "MxModel")
+	if(!isModel){
+		return(F)
+	}
 	oldRAM_check = class(obj$objective) == "MxRAMObjective"
 	# TODO: get working on both the old and new objective model...
 	# newRAM_check = (class(obj$objective)[1] == "MxRAMObjective"))
-	if(isModel & oldRAM_check) {
+	if(oldRAM_check) {
 		return(T)
 	} else {
 		return(F)			
@@ -866,20 +869,32 @@ umxCheckModel <- function(obj, type = "RAM", hasData = NA) {
 	}	
 }
 
-umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {	
+# ======================
+# = Labeling functions =
+# ======================
+
+umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, verbose = F) {	
 	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
+	# version: 2.0b now that it labels matrices, RAM models, and arbitrary matrix models
 	# nb: obj must be either an mxModel or an mxMatrix
-	# Use case:
-	# m1 = umxLabel(m1, suffix = "")
+	# Use case: m1 = umxLabel(m1)
 	# umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
-	if (is(obj, "MxMatrix")) {
-		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag)
-	} else if (umxModelIsRAM(obj, "RAM")) {
+	if (is(obj, "MxMatrix") ) { 
+		# label an mxMatrix
+		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
+	} else if (umxModelIsRAM(obj)) { 
+		# label a RAM model
+		if(verbose){message("RAM")}
 		return(xmuLabel_RAM_Model(obj, suffix))
+	} else if (is(obj, "MxModel")) {
+		# label a non-RAM matrix model
+		return(xmuLabel_MATRIX_Model(obj, suffix))
 	} else {
-		stop("'obj' must be an OpenMx RAM model OR an mxMatrix")
+		stop("I can only label OpenMx models and mxMatrix types. You gave me a ", typeof(obj))
 	}
 }
+
+
 
 umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	# Purpose: a regex-enabled version of omxGetParameters
@@ -888,15 +903,15 @@ umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	# umxGetLabels(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
 	if(class(inputTarget)[1] %in% c("MxRAMModel","MxModel")) {
 		topLabels = names(omxGetParameters(inputTarget, indep=FALSE, free=free))
-	} else {
-		# Assuming it is a matrix
-		# omxGetParameters can't take a matrix :-(
+	} else if(is(inputTarget, "MxMatrix")) {
 		if(is.na(free)) {
 			topLabels = inputTarget@labels
 		} else {
 			topLabels = inputTarget@labels[inputTarget@free==free]
 		}
-	}
+		}else{
+			stop("I'm sorry Dave, I umxGetLabels needs either a model or a matrix: you offered a ", class(inputTarget)[1])
+		}
 	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
 	if( !is.na(regex) ) {
 		if(length(grep("[\\.\\*\\[\\(\\+\\|]+", regex) )<1){ # no grep found: add some anchors for safety
@@ -1356,6 +1371,29 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 # = Not Typically used directly by users =
 # ========================================
 
+xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
+	# Purpose: to label all the free parameters of a (non-RAM) model
+	# nb: We don't assume what each matrix is for, and just stick a_r1c1 into each cell
+	# Use case: model = xmuLabel_MATRIX_Model(model)
+	# Use case: model = xmuLabel_MATRIX_Model(model, suffix = "male")
+	if(!is(model, "MxModel")){
+		stop("xmuLabel_MATRIX_Model needs model as input")
+	}
+	if (umxModelIsRAM(model)) {
+		stop("xmuLabel_MATRIX_Model shouldn't be seeing RAM Models")
+	}
+	model = xmuPropagateLabels(model, suffix = "")
+	return(model)
+}
+
+xmuPropagateLabels <- function(model, suffix = "") {
+    # Called by xmuLabel_MATRIX_Model
+    # useage: xmuPropagateLabels(model, suffix = "")
+	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix, suffix = suffix)
+    model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix)
+    return(model)
+}
+
 xmuLabel_RAM_Model <- function(model, suffix = "") {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "male")
@@ -1408,10 +1446,10 @@ xmuLabel_RAM_Model <- function(model, suffix = "") {
 	return(model)
 }
 
-xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, suffix = "") {
+xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose=T) {
 	# Purpose: label the cells of an mxMatrix
 	# Detail: Defaults to the handy "matrixname_r1c1" where 1 is the row or column
-	# Use case: You shouldn't be using this
+	# Use case: You shouldn't be using this: called by umxLabel
 	# xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
 	# xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
 	# See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = F, value = 0, name = "drop_a_row1_c1")
@@ -1457,7 +1495,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 		newLabels[upper.tri(newLabels, diag = F)] <- mirrorLabels[upper.tri(mirrorLabels, diag = F)]
 		diag(newLabels) <- NA
 	} else if(type == "IdenMatrix" | type == "UnitMatrix" | type == "ZeroMatrix") {
-		message("umxLabel Ignored Identity matrix ", mx_matrix@name, " - it has no free values!")
+		message("umxLabel Ignored ", type, " matrix ", mx_matrix@name, " - it has no free values!")
 		return(mx_matrix)
 	} else {
 		return(paste("You tried to set type ", "to '", type, "'", sep = ""));
