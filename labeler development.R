@@ -80,15 +80,25 @@ ACE <- mxModel("ACE_cholesky",
     mxAlgebraObjective("modelfit")
 )
 ACE <- mxRun(ACE); summaryACEFit(ACE)
-omxGetParameters(ACE) # Use this to see what parameters exist in matrices
+names(omxGetParameters(ACE)) # Use this to see what parameters exist in matrices
 ACE2 <- omxSetParameters(ACE, "top.a[2,1]", values = 0, free = F, name="no_genetic_covariance")
 ACE2 <- mxRun(ACE2)
 mxCompare(ACE, ACE2)
-ACE = umxLabel(ACE)
 omxGetParameters(ACE)
+ACE  <- umxLabel(ACE)
+ACE3 <- mxRun(omxSetParameters(ACE, "a_r2c1", values = 0, free = F, name="no_genetic_covariance2"))
 
-ACE3 <- umxLabel(ACE)
-omxGetParameters(ACE3)
-ACE3 <- mxRun(omxSetParameters(ACE3, "a_r2c1", values = 0, free = F, name="no_genetic_covariance2"))
+ACE25 <- omxSetParameters(ACE, c("Mean_r1c1", "Mean_r1c2"), values = 0, free = F, name="meansequal")
+mxRun(ACE25)
+ACE4 <- mxRun(omxSetParameters(ACE, c("c_r1c1", "c_r2c1", "c_r2c2"), values = 0, free = F, name="no_c"))
+ACE5 <- mxRun(omxSetParameters(ACE, c("e_r2c1"), values = 0, free = F, name="no_c_no_e_cov"))
+summaryACEFit(ACE3)
 mxCompare(ACE, c(ACE2, ACE3))
 mxCompare(ACE2, ACE3)
+
+
+
+mxCompare(ACE, c(ACE3,ACE4,ACE5))
+summaryACEFit(ACE4)
+
+c("a_r1c1", "a_r2c1", "a_r2c2", , "e_r1c1", "e_r2c1", "e_r2c2", "Mean_r1c1", "Mean_r1c2")
