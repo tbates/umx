@@ -1140,6 +1140,7 @@ umxPath2 <- function(from, to=NA, arrows=1, connect="single", free=TRUE, values=
 # ====================
 # = Data and Utility =
 # ====================
+glue <- function(...) paste(...,sep="")
 
 Stouffer.test <- function(p = NULL) {
 	# Purpose:
