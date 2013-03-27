@@ -750,21 +750,21 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 			# p1 = Residual variance on manifests
 			# p2 = Fix latent variance @ 1
 			# p3 = Add paths from latent to manifests
-			p1 = mxPath(from = manifests, arrows = 2, free = T, values = variances) # umxLabels(manifests, suffix = glue("unique", labelSuffix))
+			p1 = mxPath(from = manifests, arrows = 2, free = T, values = variances) # umxLabels(manifests, suffix = paste0("unique", labelSuffix))
 			if(endogenous){
 				# Free latent variance so it can do more than just redirect what comes in
 				if(verbose){
 					message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
 				}
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5) # labels=umxLabels(latent, suffix=glue("var", labelSuffix))
+				p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5) # labels=umxLabels(latent, suffix=paste0("var", labelSuffix))
 			} else {
 				# fix variance at 1 - no inputs
 				if(verbose){
 					message(paste("latent '", latent, "' has variance fixed @ 1"))
 				}
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1) # labels=umxLabels(latent, suffix=glue("var", labelSuffix))
+				p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1) # labels=umxLabels(latent, suffix=paste0("var", labelSuffix))
 			}
-			p3 = mxPath(from = latent, to = manifests, connect = "single", free = T, values = variances) # labels = umxLabels(latent, manifests, suffix=glue("path", labelSuffix))
+			p3 = mxPath(from = latent, to = manifests, connect = "single", free = T, values = variances) # labels = umxLabels(latent, manifests, suffix=paste0("path", labelSuffix))
 			if(isCov) {
 				# Nothing to do: covariance data don't need means...
 				paths = list(p1, p2, p3)
@@ -782,10 +782,10 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 		# Handle formedBy case
 		if(!help) {
 			# Add paths from manifests to the latent
-			p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests)) # labels=umxLabels(manifests,latent, suffix=glue("path", labelSuffix))
+			p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests)) # labels=umxLabels(manifests,latent, suffix=paste0("path", labelSuffix))
 			# In general, manifest variance should be left free…
 			# TODO If the data were correlations… we can inspect for that, and fix the variance to 1
-			p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances) # labels=umxLabels(manifests, suffix=glue("var", labelSuffix))
+			p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances) # labels=umxLabels(manifests, suffix=paste0("var", labelSuffix))
 			# Allow manifests to intercorrelate
 			p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxStart(.3, n = manifests)) #labels = umxLabels(manifests, connect="unique.bivariate", suffix=labelSuffix)
 			if(isCov) {
@@ -1140,7 +1140,6 @@ umxPath2 <- function(from, to=NA, arrows=1, connect="single", free=TRUE, values=
 # ====================
 # = Data and Utility =
 # ====================
-glue <- function(...) paste(...,sep="")
 
 Stouffer.test <- function(p = NULL) {
 	# Purpose:
@@ -1337,7 +1336,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 	if(isCov){
 		variances = diag(data[manifests,manifests])
 		# Add variance to the single manfests
-		p1 = mxPath(from=manifests, arrows=2, value=variances) # labels = umxLabels(manifests, suffix = glue("unique", labelSuffix)))
+		p1 = mxPath(from=manifests, arrows=2, value=variances) # labels = umxLabels(manifests, suffix = paste0("unique", labelSuffix)))
 		return(p1)
 	} else {
 		manifestOrdVars = mxIsOrdinalVar(data[,manifests])
@@ -1353,7 +1352,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 			variances = diag(cov(data[,manifests], use = "complete"))
 		}
 		# Add variance to the single manfests
-		p1 = mxPath(from = manifests, arrows = 2, value = variances) # labels = mxLabel(manifests, suffix = glue("unique", labelSuffix))
+		p1 = mxPath(from = manifests, arrows = 2, value = variances) # labels = mxLabel(manifests, suffix = paste0("unique", labelSuffix))
 		# Add means for the single manfests
 		p2 = mxPath(from="one", to=manifests, values=means) # labels = mxLabel("one", manifests, suffix = labelSuffix)
 		return(list(p1, p2))
