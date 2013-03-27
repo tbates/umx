@@ -235,35 +235,45 @@ umxReportFit <- function(model, saturatedModels, report = "line", showEstimates 
 	}
 	if(is.na(modelSummary$SaturatedLikelihood)){
 		message("There is no saturated likelihood, you probably want to run umxSaturated(model) to get it and then include the result saturatedModels = ") 
-	} else {
-		with(modelSummary, {
-			if(TLI > .95){
+	}
+	
+	with(modelSummary, {
+		if(!is.finite(TLI)){
+			
+			TLI_OK = "--"
+		} else {
+			if(TLI > .95) {
 				TLI_OK = "OK"
-			} else {
-				TLI_OK = "bad"
+				} else {
+					TLI_OK = "bad"
+				}
 			}
+			if(!is.finite(RMSEA)) {
+				RMSEA_OK = "--"
+			} else {
 			if(RMSEA < .06){
 				RMSEA_OK = "OK"
-			} else {
-				RMSEA_OK = "bad"
+				} else {
+					RMSEA_OK = "bad"
+				}
 			}
-			if(report=="table"){
+			if(report == "table"){
 				x = data.frame(cbind(model@name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
 				names(x) = c("model","χ2","p","CFI", "TLI","RMSEA")
 				print(x)
 			} else {
 				x = paste(
-				"χ2(", degreesOfFreedom, ") = ", round(Chi,2),
-				", p = "    , formatC(p, format="g"),
-				"; CFI = "  , round(CFI,3),
-				"; TLI = "  , round(TLI,3),
-				"; RMSEA = ", round(RMSEA, 3), 
-				", TLI = "  , TLI_OK,
-				", RMSEA = ", RMSEA_OK, sep="")
-				print(x)
+					"χ2(", degreesOfFreedom, ") = ", round(Chi,2),
+					", p = "    , formatC(p, format="g"),
+					"; CFI = "  , round(CFI,3),
+					"; TLI = "  , round(TLI,3),
+					"; RMSEA = ", round(RMSEA, 3), 
+					", TLI = "  , TLI_OK,
+					", RMSEA = ", RMSEA_OK, sep="")
+					print(x)
 			}
-		})
-	}
+	})
+	
 	# References for OK/bad
 	# Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
 	# Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from http://www.statmodel.com/download/Yudissertation.pdf  
