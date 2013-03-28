@@ -99,11 +99,11 @@ umxCompare <- function(base = NA, comparison = NA, all = T, output = "Rout.html"
 	# c("Rout.html", "return")
 	# umxCompare(fit11, fit11, all=F, output="Rout.html")
 	if(is.na(comparison)){
-		comparison= base
+		comparison = base
 	} 
-	tableOut  = mxCompare(base=base, comparison=comparison, all=all)
-	tableOut  = format(tableOut,scientific=F,digits=5)
-	tableOut = tableOut[,c(2:1,3,4,6:9)]
+	tableOut  = mxCompare(base = base, comparison = comparison, all = all)
+	tableOut  = format(tableOut, scientific = F, digits = 5)
+	tableOut = tableOut[, c(2:1, 3, 4, 6:9)]
 	names(tableOut)<-c("Comparison", "Base", "ep", "-2LL", "AIC", "delta LL", "delta df", "p")
 	if(output=="return"){
 		return(tableOut)
