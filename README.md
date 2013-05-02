@@ -3,6 +3,7 @@ umx stands for "user" mx function, and is a library of helper functions for doin
 
 Load it up like this:
 
+```S
     source_https <- function(URL) {
         require(RCurl)
         script <- getURL("https://raw.github.com/tbates/umx/master/umx.lib.R", ssl.verifypeer = F)
@@ -10,14 +11,23 @@ Load it up like this:
     }
 
     source_https("https://raw.github.com/tbates/umx/master/umx.lib.R")
-
+```
 
 It has functions to support:
 
-1. RAM model Modification Indices
+1. Build Models
+	* umxStart() *# Add sane start values: very helpful*
+	* umxLabel() *# Add labels to matrices or paths: very helpful for reporting and adding/deleting paths by label!*
+	* umxLatent() *# helper to build formative and reflective latent variables from their manifest indicators*
+3. Run models
+	* `umxRun(model, n = 3, calc_SE = T)`
+		* Use in place of mxRun to allow a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases.
+1. Modify models
 	* `umxMI(model, vector = T)`  *# Return modification indices for a model*
 	* `umxMI_top(fit, numInd = 5, typeToShow = "add", descending = T)` # Report the top n indices
-2. Reporting helpers
+	* `umxGetLabels(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. like `omxGetParameters` but uses regular expressions.*
+	* `umxReRun(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, newName = NA, verbose = F, intervals = F)`
+2. Reporting output
 	* `umxReportFit(model)` # *report a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA)*
 	* `umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
 	* `umxStandardizeModel(model, return = "model")` #* standardize a RAM model*
@@ -26,19 +36,12 @@ It has functions to support:
 	* `umxSaturated(model)` *# Create a saturated model when raw data are being used. *
 		* `summary(model, SaturatedLikelihood = model_sat$SaturatedLikelihood, IndependenceLikelihood = model_sat$IndependenceLikelihood)`
 		* **nb**:* Saturated solutions are not computable for definition variables and some other models.
-
-3. Speed and efficiency helpers
-	* `umxTryHard(model)`
-		* Sometimes models will code Red, and just need to be re-run from their now closer-to-good starting values. `umxTryHard()` replaces mxRun, allowing a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases. Ideally, mxRun() might support this option itself.
-4. Data processing helpers
+4. Data and package helpers
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
 	* `lower2full(lower.no.diag, diag=F, byrow=F)`  *# Create a full matrix from a lower matrix of data*
-5. Utilities to update models
 	* `umxUpdateOpenMx(bleedingEdge = FALSE, loadNew = TRUE)` *# Update the OpenMx package*
-	* `umxGetLabels(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. Can use regular expressions.*
-	* `umxReRun(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F)`
 
-Feel free to use, and improve! Log suggestions here using the Github comments, wiki, or git.
+Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.
 
 ### Contributors
 * [Tim Bates](tim.bates@ed.ac.uk)
