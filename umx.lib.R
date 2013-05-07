@@ -1055,7 +1055,7 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #` ## matrix-oriented helpers
 
 umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, prefix = "", suffix = "",...) {
-	stop("not working yet - I have a feel that umxLabel is a better direction to travel in")
+	stop("replace umxPath with mxPath, and run umxLabel(model) on the model when you are done to add default labels, plus umxStart(model) to add default start values")
 	# {$|single,all.pairs,all.bivariate,unique.pairs,unique.bivariate|}
 	# Purpose: Create  mxPaths with default labels
 	# Use case: umxPath("F1", paste("m",1:4,sep="")) # "F1_to_m1" "F1_to_m2" "F1_to_m3" "F1_to_m4"
@@ -1090,6 +1090,7 @@ umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = T
 }
 
 umxPath2 <- function(from, to=NA, arrows=1, connect="single", free=TRUE, values=NA, labels=NA, lbound=NA, ubound=NA, prefix="", suffix=""){
+	stop("replace umxPath2 with mxPath, and run umxLabel(model) on the model when you are done to add default labels, plus umxStart(model) to add default start values")
 	# Purpose: make mxPaths with informative labels, comments to tim.bates@ed.ac.uk
 	# use case
 	# TODO merge with umxPath
