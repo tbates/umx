@@ -350,10 +350,9 @@ umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name
 	}
 	for(var in variances) {
 	   preOut = paste(preOut, "\n", var, sep="")
-	   # preOut = paste(preOut, "\n", var, " [shape=none];\n", sep="")
 	}
 	rankVariables = paste("\n{rank=min; ", paste(latents, collapse="; "), "};")
-	rankVariables = paste(rankVariables, "\n{rank=same; ", paste(selDVs, collapse=" "), "};") # {rank=same; religT1; ethnicT1; raceT1 }
+	rankVariables = paste(rankVariables, "\n{rank=same; ", paste(selDVs, collapse=" "), "};")
 	rankVariables = paste(rankVariables, "\n{rank=max; ", paste(varianceNames, collapse=" "), "};")
 
 	# return(out)
