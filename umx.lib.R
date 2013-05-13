@@ -1,13 +1,6 @@
 # umx.lib.R
-# To USE ME IN YOUR SCRIPTS SAY something like this: 
-
-source_https <- function(URL) {
-	require(RCurl)
-	script = RCurl::getURL(URL, ssl.verifypeer = F)
-	eval(parse(text = script), envir = .GlobalEnv)
-}
-# source_https("https://raw.github.com/tbates/umx/master/umx.lib.R")
-
+# A recent, but not nevessarily current version can be sourced like this:
+# source("http://timbates.wdfiles.com/local--files/start/umx.lib.R")
 # To learn more, see https://github.com/tbates/umx/
 
 umxUpdateOpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE) {
