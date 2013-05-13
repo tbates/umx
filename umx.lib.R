@@ -1928,3 +1928,14 @@ cor.prob <- function (X, dfr = nrow(X) - 2, digits = 2) {
   tmp[row(tmp) == col(tmp)] <- NA # NA on diagonal: could be sd, or variance
   return(tmp)
 }
+
+rowMax <- function(df, na.rm=T) {
+	tmp = apply(df, MARGIN=1, FUN=max, na.rm=na.rm)
+	tmp[!is.finite(tmp)] = NA
+	return(tmp)
+}
+rowMin <- function(df, na.rm=T) {
+	tmp = apply(df, MARGIN=1, FUN=min, na.rm=na.rm)
+	tmp[!is.finite(tmp)] = NA
+	return(tmp)
+}
