@@ -600,19 +600,23 @@ umxRun <- function(model, n = 3, calc_SE = T){
 	return(model)
 }
 
-umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, newName=NA, verbose=F, intervals=F) {
-	# fit2 = umxReRun(fit1, regex="Cs", newName="AEip")
-	if(is.na(newName)){
-		newName = lastFit@name
+umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, newName = "deprecated") {
+	# fit2 = umxReRun(fit1, regex="Cs", name="AEip")
+	if(newName != "deprecated"){
+		message("newName is deprecated in umxReRun: use name=\"", newName, "\" instead")
+		name = newName
+	}
+	if(is.na(name)){
+		name = lastFit@name
 	}
 	if(is.na(regex)) {
 		if(any(is.na(dropList))) {
 			stop("Both dropList and regex cannot be empty!")
 		} else {
-			x = mxRun(omxSetParameters(lastFit, labels=dropList, free = free, value = value, name= newName),intervals = intervals)
+			x = mxRun(omxSetParameters(lastFit, labels=dropList, free = free, value = value, name= name),intervals = intervals)
 		}
 	} else {
-		x = mxRun(omxSetParameters(lastFit, labels=umxGetLabels(lastFit, regex=regex,free=freeToStart,verbose=verbose), free = free, value = value, name = newName),intervals=intervals)
+		x = mxRun(omxSetParameters(lastFit, labels=umxGetLabels(lastFit, regex=regex,free=freeToStart,verbose=verbose), free = free, value = value, name = name),intervals=intervals)
 	}
 	return(x)
 }
@@ -1863,6 +1867,18 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
+# ===================================
+# = Maybe add some printing helpers =
+# ===================================
+
+umxReportCIs <- function(model) {
+	message("### CIs for model ", model@name)
+	CIs = names(omxGetParameters(model))
+	temp = mxRun(mxModel(model, mxCI(CIs)), intervals = T)
+	print(round(summary(temp)$CI,3))
+}
+
+
 renameFile <- function(baseFolder = "Finder", findStr=NA, replaceStr=NA, listPattern = NA, test=T, overwrite=F) {
 	# renameFile(baseFolder = "~/Downloads/", findStr="", replaceStr="", listPattern = "", test=T)
 	# renameFile(baseFolder = NA, findStr="", replaceStr="", listPattern = "", test=T)
@@ -1901,4 +1917,14 @@ renameFile <- function(baseFolder = "Finder", findStr=NA, replaceStr=NA, listPat
 		}
 	}
 	message("changed ", changed)
+}
+
+cor.prob <- function (X, dfr = nrow(X) - 2, digits = 2) {
+  tmp <- cor(X, use = "pairwise.complete.obs")
+  above <- row(tmp) < col(tmp)
+  r2 <- tmp[above]^2
+  Fstat <- r2 * dfr/(1 - r2)
+  tmp[above] <- 1 - pf(Fstat, 1, dfr)
+  tmp[row(tmp) == col(tmp)] <- NA # NA on diagonal: could be sd, or variance
+  return(tmp)
 }
