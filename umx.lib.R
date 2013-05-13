@@ -921,7 +921,7 @@ umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 			topLabels = inputTarget@labels[inputTarget@free==free]
 		}
 		}else{
-			stop("I'm sorry Dave, I umxGetLabels needs either a model or a matrix: you offered a ", class(inputTarget)[1])
+			stop("I am sorry Dave, umxGetLabels needs either a model or a matrix: you offered a ", class(inputTarget)[1])
 		}
 	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
 	if( !is.na(regex) ) {
