@@ -37,7 +37,6 @@ umxUpdateOpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE) {
 					"As a result your default installation has been set to single-threaded.",
 					"If you have installed the mac ports version of gcc to address this issue",
 					"please choose the multi-threaded installation option.")
-					msg <- gsub('(.{1,80})(\\s|$)', '\\1\n', msg)
 					cat(msg)
 					cat("1. single-threaded [default]\n")
 					cat("2. multi-threaded \n")
