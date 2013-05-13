@@ -1,5 +1,6 @@
 # umx.lib.R
 # To USE ME IN YOUR SCRIPTS SAY something like this: 
+
 source_https <- function(URL) {
 	require(RCurl)
 	script = RCurl::getURL(URL, ssl.verifypeer = F)
@@ -327,8 +328,7 @@ umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name
 						varToAdd  = paste(eName, ' [label="', prefix, thisPathVal, '", shape = plaintext]', sep="")
 						variances = append(variances, varToAdd)
 						varianceNames = append(varianceNames, eName)
-						out = paste(out, ";\n", eName, " -> ", target, sep="")
-						# out = paste(out, ";\n", eName, " -> ", target, " [label=\"", thisPathVal, "\"]", sep="")
+						out = paste(out, ";\n", eName, " -> ", target, sep = "")
 					}
 				} else {
 					if(pathLabels=="both"){
