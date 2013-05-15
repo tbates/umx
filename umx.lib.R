@@ -1,5 +1,5 @@
 # umx.lib.R
-# A recent, but not nevessarily current version can be sourced like this:
+# A recent, but not necessarily current version can be sourced like this:
 # source("http://timbates.wdfiles.com/local--files/start/umx.lib.R")
 # To learn more, see https://github.com/tbates/umx/
 
