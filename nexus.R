@@ -7,7 +7,7 @@ umxUnexplainedCausalNexus = function(IV_from, delta, DV_to, model) {
 	dimnames(partialDataRow) = list("val", manifests)
 	partialDataRow[1, IV_from] <- delta                # delta is in raw IV_from units
 	partialDataRow[1, DV_to]   <- NA
-	completedRow <- conditionalsFromModel(model, partialDataRow, meanOffsets=TRUE)
+	completedRow <- umxConditionalsFromModel(model, partialDataRow, meanOffsets=TRUE)
 	# by default, meanOffsets = FALSE, and the results take expected means into account
 	return(completedRow[1, DV_to])
 }
@@ -162,7 +162,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 	
 }
 
-conditionalsFromModel <- function(model, newData=NULL, returnCovs=FALSE, meanOffsets = FALSE) {
+umxConditionalsFromModel <- function(model, newData=NULL, returnCovs=FALSE, meanOffsets = FALSE) {
 	# TODO:  Special case for latent variables
 	# FIXME: Update for fitfunction/expectation
 	expectation <- model$objective
@@ -221,7 +221,7 @@ conditionalsFromModel <- function(model, newData=NULL, returnCovs=FALSE, meanOff
 	
 	# TODO: Sort by pattern of missingness, lapply over patterns
 	nRows = nrow(newData)
-	outs <- omxApply(newData, 1, computeConditionals, sigma=eCov, mu=eMean, onlyMean=!returnCovs)
+	outs <- omxApply(newData, 1, umxComputeConditionals, sigma=eCov, mu=eMean, onlyMean=!returnCovs)
 	if(returnCovs) {
 		means <- matrix(NA, nrow(newData), ncol(eCov))
 		covs <- rep(list(matrix(NA, nrow(eCov), ncol(eCov))), nRows)
@@ -284,6 +284,7 @@ MIMIC <- mxModel("MIMIC", type="RAM",
     mxPath(from = receivers, arrows = 2),
     mxData(data, type = "cor", numObs = 530)
 )
+
 MIMIC <- mxRun(MIMIC); summary(MIMIC)
 
 MIMIC = umxLabel(MIMIC)
