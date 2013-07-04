@@ -1,21 +1,21 @@
 # umx
 umx stands for "user" mx function, and is a library of helper functions for doing [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in [OpenMx](http://openmx.psyc.virginia.edu).
 
-You can either clone the library to your computer, or else I keep a reasonably uptodate version available for `source()`
+You can either clone the library to your computer, or else I keep a reasonably up-to-date version available here:
 
 ```S
 source("http://timbates.wdfiles.com/local--files/start/umx.lib.R")
 ```
 
-It has functions to support:
+umx.lib.R has functions to support:
 
-1. Build Models
-	* umxStart() *# Add sane start values: very helpful*
-	* umxLabel() *# Add labels to matrices or paths: very helpful for reporting and adding/deleting paths by label!*
-	* umxLatent() *# helper to build formative and reflective latent variables from their manifest indicators*
+1. Building Models
+	* umxStart() *# Add sane start values: **very** helpful*
+	* umxLabel() *# Add labels to matrices or paths: This allows you then to set, equate, or drop paths by label!*
+	* umxLatent() *# Helper for building formative and reflective latent variables from their manifest indicators*
 3. Run models
 	* `umxRun(model, n = 3, calc_SE = T)`
-		* Use in place of mxRun to allow a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases.
+	    * Use in place of mxRun to allow a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases.
 1. Modify models
 	* `umxMI(model, vector = T)`  *# Return modification indices for a model*
 	* `umxMI_top(fit, numInd = 5, typeToShow = "add", descending = T)` # Report the top n indices
