@@ -15,7 +15,7 @@ umx.lib.R has functions to support:
 	* umxLatent() *# Helper for building formative and reflective latent variables from their manifest indicators*
 3. Run models
 	* `umxRun(model, n = 3, calc_SE = T)`
-	    * Use in place of mxRun to allow a model to run as many as n times until it returns green. This function also allows turning off features that slow model evaluation, like the Hessian, and which are not-needed in all cases.
+	    * Use in place of mxRun to: compute saturated for raw data, run model until it returns green, turn off features that slow model evaluation, like the Hessian.
 1. Modify models
 	* `umxMI(model, vector = T)`  *# Return modification indices for a model*
 	* `umxMI_top(fit, numInd = 5, typeToShow = "add", descending = T)` # Report the top n indices
@@ -28,7 +28,7 @@ umx.lib.R has functions to support:
 		* **nb**:* `summary()` computes standardized paths for RAM models, but this function is still useful, as `omxGraphviz()` does not, and the function `.standardizeRAMModel()` is not exposed in OpenMx.
 	* `umxTime(fit1)`  *# Report the time taken by a model in a compact friendly, programable format*
 	* `umxSaturated(model)` *# Create a saturated model when raw data are being used. *
-		* `summary(model, SaturatedLikelihood = model_sat$SaturatedLikelihood, IndependenceLikelihood = model_sat$IndependenceLikelihood)`
+		* `summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)`
 		* **nb**:* Saturated solutions are not computable for definition variables and some other models.
 4. Data and package helpers
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*

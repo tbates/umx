@@ -123,9 +123,11 @@ umxSummary <- function(model, precision = 2, parameters = NA, report = NA) {
 }
 
 umxSaturated <- function(model, evaluate = T, verbose = T) {
+	# TODO: Update to omxSaturated() and omxIndependenceModel()
+	# TODO: Update IndependenceModel to analytic form
 	# Use case
 	# model_sat = umxSaturated(model)
-	# summary(model, SaturatedLikelihood = model_sat$SaturatedLikelihood, IndependenceLikelihood = model_sat$IndependenceLikelihood)
+	# summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)
 	if (!(isS4(model) && is(model, "MxModel"))) {
 		stop("'model' must be an mxModel")
 	}
@@ -185,12 +187,10 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 	}
 	if(verbose) {
 		m = deparse(substitute(model))
-		message("You can use this result in summary():
-	summary(", m, ", SaturatedLikelihood = ", m, "_sat$SaturatedLikelihood, IndependenceLikelihood = ", m, "_sat$IndependenceLikelihood)
-or:
+		message("You can use this result in summary(), but it's easier to use umxRun() instead, which will compute this for you
 	umxReportFit(", m, ", saturatedModels = ", m, "_sat)")
 	}
-	return(list(SaturatedLikelihood = m2, IndependenceLikelihood = m3))
+	return(list(Sat = m2, Ind = m3))
 }
 
 umxReportFit <- function(model, saturatedModels, report = "line", showEstimates = "std") {
@@ -210,7 +210,7 @@ umxReportFit <- function(model, saturatedModels, report = "line", showEstimates 
 	if(missing(saturatedModels)){
 		modelSummary = summary(model)
 	} else {
-		modelSummary = summary(model, SaturatedLikelihood = saturatedModels$SaturatedLikelihood, IndependenceLikelihood = saturatedModels$IndependenceLikelihood)
+		modelSummary = summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
 	}
 	if(showEstimates != "none"){
 		if("Std.Estimate" %in%  names(modelSummary$parameters)){
@@ -255,14 +255,14 @@ umxReportFit <- function(model, saturatedModels, report = "line", showEstimates 
 				names(x) = c("model","χ2","p","CFI", "TLI","RMSEA")
 				print(x)
 			} else {
-				x = paste(
+				x = paste0(
 					"χ2(", degreesOfFreedom, ") = ", round(Chi,2),
 					", p = "    , formatC(p, format="g"),
 					"; CFI = "  , round(CFI,3),
 					"; TLI = "  , round(TLI,3),
 					"; RMSEA = ", round(RMSEA, 3), 
 					", TLI = "  , TLI_OK,
-					", RMSEA = ", RMSEA_OK, sep="")
+					", RMSEA = ", RMSEA_OK)
 					print(x)
 			}
 	})
@@ -794,7 +794,7 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 # = Speed  and Efficiency Helpers =
 # =================================
 
-umxRun <- function(model, n = 3, calc_SE = T){
+umxRun <- function(model, n = 3, calc_SE = T, calcSat = T){
 	# TODO: return change in -2LL
 	# Optimise for speed
 	# Use case
@@ -803,16 +803,16 @@ umxRun <- function(model, n = 3, calc_SE = T){
 	model = mxOption(model, "Standard Errors", "No")
 	# make an initial run
 	model = mxRun(model);
-	n = n-1
+	n = (n-1)
 	tries = 0
 	# carry on if we failed
 	while(model@output$status[[1]] == 6 && n > 2 ) {
 		print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
 		model <- mxRun(model)
-		n <- n-1
-		tries = tries+1
+		n <- (n - 1)
+		tries = (tries + 1)
 	}
-	if(tries==0){ 
+	if(tries == 0){ 
 		# print("Ran fine first time!")	
 	}
 	# get the SEs for summary (if requested)
@@ -822,8 +822,17 @@ umxRun <- function(model, n = 3, calc_SE = T){
 		model = mxOption(model, "Standard Errors", "Yes")
 		model = mxRun(model)
 	}
+	if((class(model$objective)[1] == "MxRAMObjective") & model@data@type =="raw"){
+		# If we have a RAM model with raw data, compute the satuated and indpeendence models
+		# TODO: Update to omxSaturated() and omxIndependenceModel()
+		# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
+		model_sat = umxSaturated(model, evaluate = T, verbose = T)
+		model@output$IndependenceLikelihood = model_sat$IndependenceLikelihood@output$Minus2LogLikelihood
+		model@output$SaturatedLikelihood    = model_sat$SaturatedLikelihood@output$Minus2LogLikelihood
+	}
 	return(model)
 }
+m1 = umxRun(m1); summary(m1)
 
 umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, newName = "deprecated") {
 	# fit2 = umxReRun(fit1, regex="Cs", name="AEip")
@@ -1286,7 +1295,9 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, prefix = "", suffix = "",...) {
 	stop("replace umxPath with mxPath, and run umxLabel(model) on the model when you are done to add default labels, plus umxStart(model) to add default start values")
 	# {$|single,all.pairs,all.bivariate,unique.pairs,unique.bivariate|}
-	# Purpose: Create  mxPaths with default labels
+	# Purpose: make mxPaths with informative labels, comments to tim.bates@ed.ac.uk
+	# use case
+	# umxPath(from = "OriginSES", to = "PaternalSESn")
 	# Use case: umxPath("F1", paste("m",1:4,sep="")) # "F1_to_m1" "F1_to_m2" "F1_to_m3" "F1_to_m4"
 	# TODO: make this generate the paths as well... i.e., "umxPath()"
 	# TODO: handle connection style
@@ -1316,65 +1327,6 @@ umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = T
 		myLabels = paste(fromPart, toPart, sep = "_to_")
 	}
 	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = myLabels, lbound = lbound, ubound = ubound)
-}
-
-umxPath2 <- function(from, to=NA, arrows=1, connect="single", free=TRUE, values=NA, labels=NA, lbound=NA, ubound=NA, prefix="", suffix=""){
-	stop("replace umxPath2 with mxPath, and run umxLabel(model) on the model when you are done to add default labels, plus umxStart(model) to add default start values")
-	# Purpose: make mxPaths with informative labels, comments to tim.bates@ed.ac.uk
-	# use case
-	# TODO merge with umxPath
-	# umxPath(from = "OriginSES", to = "PaternalSESn")
-
-	if(prefix!=""){
-		die("prefix not implemented yet")
-	}
-	if(suffix!=""){
-		die("suffix not implemented yet")
-	}
-	if(any(from == "one")){
-		if(!all(from == "one")){
-			message("Error in umxPath: From was a mix of \"one\" and not-one:",from)
-			die()
-		}
-	}
-	if(is.na(to)){
-		to = from
-	}
-	# Could support prefixes and suffixes
-	# from = paste(prefix, from, sep="")
-	# to = paste(to, suffix, sep="_")
-	# return(paste(from, to, sep="_to_"))
-
-	# make the path
-	a = mxPath(from=from, to=to, connect=connect, arrows=arrows, free=free, values=values, labels=labels, lbound=lbound, ubound=ubound)	
-	# connect = "single" ✓ "unique.bivariate" ✓ "unique.pairs", "all.bivariate", "all.pairs"
-	if(any(from == "one")){
-		# handle means (from == "one")
-		a@labels = paste("mean_", to, sep="")
-		
-	} else if(connect == "single") {
-		# For single, labels are pairs: from each from, to each to
-		a@labels = paste(a@from, a@to, sep="_")
-		a@values = 1+abs(rnorm(1))
-	} else if(connect == "unique.bivariate") {
-		# For unique.bivariate, labels are combinations
-		if(!all(is.na(to))){
-			if(!(from == to)){
-				message("With connect = '", connect, "', 'to' must be blank, or the same as from.")
-				stop()
-			}
-		}
-		a@labels = as.character(combn(from, m=2, FUN=paste, collapse="_"))
-	} else if(connect == "all.bivariate") {
-		stop("'all.bivariate' not implemented yet, email timothy.c.bates@gmail.com if you have a use for this.")
-	} else if(connect == "all.pairs") {
-		stop("'all.pairs' not implemented yet, email timothy.c.bates@gmail.com if you have a use for this.")
-	} else if(connect == "unique.pairs") {
-		stop("'unique.pairs' not implemented yet, email timothy.c.bates@gmail.com if you have a use for this.")
-	}
-	return(a)
-	# slotNames(a)
-	# [1] "from"    "to"      "arrows"  "values"  "free"    "labels"  "lbound"  "ubound"  "connect"
 }
 
 # ====================
@@ -2103,7 +2055,6 @@ umxReportCIs <- function(model) {
 	print(round(summary(temp)$CI,3))
 }
 
-
 renameFile <- function(baseFolder = "Finder", findStr=NA, replaceStr=NA, listPattern = NA, test=T, overwrite=F) {
 	# renameFile(baseFolder = "~/Downloads/", findStr="", replaceStr="", listPattern = "", test=T)
 	# renameFile(baseFolder = NA, findStr="", replaceStr="", listPattern = "", test=T)
@@ -2142,6 +2093,39 @@ renameFile <- function(baseFolder = "Finder", findStr=NA, replaceStr=NA, listPat
 		}
 	}
 	message("changed ", changed)
+}
+
+moveFile <- function(baseFolder = NA, findStr=NA, fileNameList = files, destFolder = NA, test = T, overwrite = F) {
+	# use case: 
+	# base = "/Users/tim/Music/iTunes/iTunes Music/"
+	# dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
+	# moveFile(baseFolder = base, fileNameList = toMove, destFolder = dest, test=F)
+	if(is.na(destFolder)){
+		stop("destFolder can't be NA")
+	}
+	if(baseFolder=="Finder"){
+		baseFolder = system(intern=T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
+		message("Using front-most Finder window:", baseFolder)
+	} else if(baseFolder == "") {
+		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep="") ## choose a directory
+		message("Using selected folder:", baseFolder)
+	}
+	moved = 0
+	# mv -n "/Users/tim/Music/iTunes/iTunes Music/Music/"
+	for (fn in fileNameList) {
+		if(test){
+			message("would move ", fn, " to ", destFolder)	
+			moved = moved + 1;
+		} else {
+			if((!overwrite) & file.exists(paste0(destFolder, fn))){
+				message("moving ", fn, "to", destFolder, "failed as already exists. To overwrite set T")
+			} else {
+				file.rename(paste0(baseFolder, fn), paste0(destFolder, fn))
+				moved = moved + 1;
+			}
+		}
+	}
+	message("moved (or would have moved)", moved)
 }
 
 cor.prob <- function (X, dfr = nrow(X) - 2, digits = 2) {
@@ -2332,3 +2316,4 @@ mx_FakeData <- function(dataset, digits=2, n=NA,
   # return the new data
   return(fake)
 }
+
