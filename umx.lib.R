@@ -1191,7 +1191,7 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 		message("A usage example is umxEquate(model, master=\"am\", slave=\"af\", name=\"new\") # equate am and af parameters")
 		stop()
 	}
-	if(length(grep("[\\.\\*\\[\\(\\+\\|]+", master) )<1){ # no grep found: add some anchors for safety
+	if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", master) )<1){ # no grep found: add some anchors for safety
 		master = paste("^", master, "[0-9]*$", sep=""); # anchor to the start of the string
 		slave  = paste("^", slave,  "[0-9]*$", sep="");
 		if(verbose==T){
