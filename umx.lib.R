@@ -832,7 +832,7 @@ umxRun <- function(model, n = 3, calc_SE = T, calcSat = T){
 	}
 	return(model)
 }
-m1 = umxRun(m1); summary(m1)
+# m1 = umxRun(m1); summary(m1)
 
 umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, newName = "deprecated") {
 	# fit2 = umxReRun(fit1, regex="Cs", name="AEip")
