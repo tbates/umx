@@ -186,20 +186,22 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 		m3 = mxRun(m3)
 	}
 	if(verbose) {
-		m = deparse(substitute(model))
-		message("You can use this result in summary(), but it's easier to use umxRun() instead, which will compute this for you
-	umxReportFit(", m, ", saturatedModels = ", m, "_sat)")
+		message("note: umxRun() will compute saturated for you...")
 	}
 	return(list(Sat = m2, Ind = m3))
 }
 
-umxReportFit <- function(model, saturatedModels, report = "line", showEstimates = "std") {
-	# "none|raw|std|both"
-	# TODO make table take lists of models...
+umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEstimates = "std") {
 	# Purpose: compactly report fit statistics, as for a paper
 	# Use case: umxReportFit(m1, report="table")
 	# umxReportFit(m1, saturatedModels = m1_sat)
 	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
+	# nb: I now compute this for you if you leave it blank and it is needed…
+	# showEstimates = "none|raw|std|both"
+	# report = "line|table"
+	# TODO make table take lists of models...
+	# TODO could have a toggle for computing hte saturated models...
+
 	output <- model@output
 	# stop if there is no objective function
 	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
@@ -207,16 +209,22 @@ umxReportFit <- function(model, saturatedModels, report = "line", showEstimates 
 	if ( length(output) <1 ) stop("Provided model has no output. I can only standardize models that have been mxRun() first!")
 	
 
-	if(missing(saturatedModels)){
+	if(is.null(saturatedModels)){
 		modelSummary = summary(model)
+		if(is.na(modelSummary$SaturatedLikelihood)){
+			message("There is no saturated likelihood: computing that now...")
+			saturatedModels = umxSaturated(model)
+			modelSummary = summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
+		}
 	} else {
 		modelSummary = summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
 	}
+
 	if(showEstimates != "none"){
 		if("Std.Estimate" %in%  names(modelSummary$parameters)){
-			if(showEstimates=="both"){
+			if(showEstimates == "both") {
 				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
-			} else if(showEstimates=="std"){
+			} else if(showEstimates == "std"){
 				namesToShow = c("name", "matrix", "row", "col", "Std.Estimate", "Std.SE")
 			}else{
 				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")					
@@ -226,14 +234,10 @@ umxReportFit <- function(model, saturatedModels, report = "line", showEstimates 
 		}
 		print(modelSummary$parameters[,namesToShow])
 	}
-	if(is.na(modelSummary$SaturatedLikelihood)){
-		message("There is no saturated likelihood, you probably want to run umxSaturated(model) to get it and then include the result saturatedModels = ") 
-	}
 	
 	with(modelSummary, {
-		if(!is.finite(TLI)){
-			
-			TLI_OK = "--"
+		if(!is.finite(TLI)){			
+			TLI_OK = "OK"
 		} else {
 			if(TLI > .95) {
 				TLI_OK = "OK"
@@ -242,7 +246,7 @@ umxReportFit <- function(model, saturatedModels, report = "line", showEstimates 
 				}
 			}
 			if(!is.finite(RMSEA)) {
-				RMSEA_OK = "--"
+				RMSEA_OK = "OK"
 			} else {
 			if(RMSEA < .06){
 				RMSEA_OK = "OK"
@@ -539,7 +543,7 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 	format(.POSIXct(model@output$wallTime,tz), formatStr)
 }
 
-umxUnexplainedCausalNexus = function(from, delta, to, model) {
+umxUnexplainedCausalNexus <- function(from, delta, to, model) {
 	# umxUnexplainedCausalNexus(from, delta, to, model)
 	manifests = model@manifestVars
 	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to support string varnames 
@@ -1587,7 +1591,7 @@ xmuPropagateLabels <- function(model, suffix = "") {
 
 xmuLabel_RAM_Model <- function(model, suffix = "") {
 	# Purpose: to label all the free parameters of a (RAM) model
-	# Use case: model = umxAddLabels(model, suffix = "male")
+	# Use case: model = umxAddLabels(model, suffix = "_male")
 	# TODO label means if data = raw
 	if (!umxModelIsRAM(model)) {
 		stop("'model' must be an OpenMx RAM Model")
@@ -1617,7 +1621,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "") {
 	for(fromCol in seq_along(theseNames)) {
 		for(toRow in seq_along(theseNames)) {
 			if(freeS[toRow, fromCol]) {
-			   thisLabel = paste(theseNames[fromCol], "_with_", theseNames[toRow], suffix, sep = "")
+			   thisLabel = paste0(theseNames[fromCol], "_with_", theseNames[toRow], suffix)
 			   model@matrices$S@labels[toRow,fromCol] = thisLabel
 			}
 		}
@@ -1631,7 +1635,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "") {
 	# = Add means labels if needed =
 	# ==============================
 	if(model@data@type == "raw"){
-		model@matrices$M@labels = matrix(nrow = 1, paste(colnames(model@matrices$M@values),"mean", sep = "_"))
+		model@matrices$M@labels = matrix(nrow = 1, paste0(colnames(model@matrices$M@values),"_mean", suffix))
 	}
 	# TODO should check when autocreating names that they don't clash with existing names
 	return(model)
