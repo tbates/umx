@@ -44,16 +44,18 @@ umx_t.test <- function(x, y = NULL, alternative = c("two.sided", "less", "greate
 	m3 = mxModel("t_test",
 		m1, # group 1
 		m2, # group 2
-	 	# what we want to test is both means models at the same time, so make an objective of the sum of their likelihoods
+	 	# We want to evaluate both means simultaneously, so make an objective of the sum of their likelihoods
 	 	mxAlgebra(grp1.objective + grp2.objective, name = "t"),
 		mxAlgebraObjective("t")
 	)
-	m3 = mxRun(m3)	
+	m3 = mxRun(m3)
 	m4 = umxEquate(m3, master="^x_mean_grp1", slave="^x_mean_grp2", free = T, verbose = T, name="equateMeans")
-	m4 = mxRun(m4)	
+	m4 = mxModel(m3, mxCI("x_mean_grp1"))
+	m4 = mxRun(m4, intervals = T)
 
-	print(mxCompare(m3,m4))
-
+	print(mxCompare(m3, m4))
+	summary(m4)
+	# http://www.ats.ucla.edu/stat/mult_pkg/faq/general/tail_tests.htm
 	# TODO make the output like this...
 	# 
 	# Running equateMeans 
@@ -76,7 +78,9 @@ umx_t.test <- function(x, y = NULL, alternative = c("two.sided", "less", "greate
 	#  3.011344  2.987952 
 	 
 }
+
 umx_t.test(x = data$x, y = data$y, alternative = "two.sided", mu = 0, paired = FALSE, var.equal = FALSE, conf.level = 0.95)
+
 t.test(x = data$x, y = data$y, alternative = "two.sided", mu = 0, paired = FALSE, var.equal = FALSE, conf.level = 0.95)
 
 data = myFADataRaw[,1:2]
@@ -84,14 +88,11 @@ names(data) = c("y", "x")
 group1_data = data.frame(data$x); names(group1_data) = "x"
 group2_data = data.frame(data$y); names(group2_data) = "x"
 
-
 umx_t.test(x, y = x)
 umx_t.test(x, formula = y ~ x)
 
 data = within(data, { x = (x < mean(x))})
 head(data)
-
-
 
 a = c("ABBA")
 b = c("_38 Special","Wild-eyed Southern Boys","Zuell")
@@ -106,6 +107,6 @@ moveFile(baseFolder = base, fileNameList = toMove, destFolder = dest, test = F)
 # Shirley Williams: complete C
 # Foreign in 1968? Admitted East Africans
 # Entry to EU
-# Education Secreatary: Fucked over the grammar schools created shit comprehensives ("our friends, the muslims who want single sex muslim schools")
+# Education Secretary: Fucked over the grammar schools created shit comprehensives ("our friends, the muslims who want single sex muslim schools")
 # Prison minister: 
 
