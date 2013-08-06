@@ -93,20 +93,3 @@ umx_t.test(x, formula = y ~ x)
 
 data = within(data, { x = (x < mean(x))})
 head(data)
-
-a = c("ABBA")
-b = c("_38 Special","Wild-eyed Southern Boys","Zuell")
-toMove = b[!(b  %in% a)]
-base = "/Users/tim/Music/iTunes/iTunes Music/"
-dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
-moveFile(baseFolder = base, fileNameList = toMove, destFolder = dest, test = F)
-
-# Developmental Science aims to represent the very best of contemporary scientific developmental psychology and developmental cognitive neuroscience, both in the presentation of theory and in reporting new data. Developmental Science includes: comparative and biological perspectives, connectionist and computational perspectives, and developmental disorders. Developmental Science publishes work that bridges levels of explanation, such as from brain development to cognitive or social change, or work that specifically attempts to elucidate mechanisms of developmental change at one level. Manuscripts judged to fall outside this remit may be rejected without full refereeing.
-
-# http://jaredknowles.com/r-bootcamp/
-# Shirley Williams: complete C
-# Foreign in 1968? Admitted East Africans
-# Entry to EU
-# Education Secretary: Fucked over the grammar schools created shit comprehensives ("our friends, the muslims who want single sex muslim schools")
-# Prison minister: 
-
