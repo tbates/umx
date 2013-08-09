@@ -3,14 +3,23 @@
 # source("http://timbates.wdfiles.com/local--files/start/umx.lib.R")
 # To learn more, see https://github.com/tbates/umx/
 
-umxUpdateOpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE) {
+# ==========================
+# = Example data in OpenMx =
+# ==========================
+# myFADataRaw # 6 correlated favriable x1:x6
+
+umxUpdateOpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 	# Purpose: update the OpenMx Library to latest version:
 	# use case:
 	# umxUpdateOpenMx()
 	if( "OpenMx" %in% .packages() ){
 		oldV = mxVersion();
-		message("existing version \"" ,oldV, "\" was detached")
+		if(anyOK){
+			message("You have version", oldV, "and that's fine")
+			return()
+		}
 		detach(package:OpenMx); # unload existing version
+		message("existing version \"" ,oldV, "\" was detached")
 	}	
 	if (bleedingEdge){
 		install.packages('OpenMx', repos='http://openmx.psyc.virginia.edu/testing/');
@@ -76,12 +85,15 @@ umxUpdateOpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE) {
 		}
 	}
 	if(loadNew){
+		# detach(package:OpenMx); # unload existing version
 		require("OpenMx")
 		newV = mxVersion();
-		message("Woot: you have upgraded from version \"" ,oldV, "\" to the latest and greatest \"", newV, "\"!")
-		detach(package:OpenMx); # unload existing version
+		if(!is.na(oldV)){
+			message("Woot: installed the latest and greatest \"", newV, "\" of OpenMx!")
+		} else {
+			message("Woot: you have upgraded from version \"" ,oldV, "\" to the latest and greatest \"", newV, "\"!")
+		}
 	}
-
 }
 
 # =============================
@@ -1183,12 +1195,12 @@ umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	return(theLabels)
 }
 
-umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
+umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) {
 	# Purpose: to equate parameters by setting of labels (the slave set) = to the labels in a master set
 	# umxEquate(model1, master="am", slave="af", free=T|NA|F")
-	if(!(class(myModel)[1] == "MxModel" | class(myModel)[1] == "MxRAMModel")){
-		message("ERROR in umxEquate: myModel must be a model, you gave me a ", class(myModel)[1])
-		message("A usage example is umxEquate(model, master=\"am\", slave=\"af\", name=\"new\") # equate am and af parameters")
+	if(!(class(model)[1] == "MxModel" | class(model)[1] == "MxRAMModel")){
+		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])
+		message("A usage example is umxEquate(model, master=\"a_to_b\", slave=\"a_to_c\", name=\"model2\") # equate paths a->b and a->c, in a new model called \"model2\"")
 		stop()
 	}
 	if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", master) )<1){ # no grep found: add some anchors for safety
@@ -1198,11 +1210,11 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 			cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
 		}
 	}
-	masterLabels = names(omxGetParameters(myModel, indep=FALSE, free=free))
+	masterLabels = names(omxGetParameters(model, indep=FALSE, free=free))
 	masterLabels = masterLabels[which(!is.na(masterLabels) )]      # exclude NAs
 	masterLabels = grep(master, masterLabels, perl = F, value=T)
 	# return(masterLabels)
-	slaveLabels = names(omxGetParameters(myModel, indep=F, free=free))
+	slaveLabels = names(omxGetParameters(model, indep=F, free=free))
 	slaveLabels = slaveLabels[which(!is.na(slaveLabels))] # exclude NAs
 	slaveLabels = grep(slave, slaveLabels, perl = F, value=T)
 	if( length(slaveLabels) != length(masterLabels)) {
@@ -1210,15 +1222,15 @@ umxEquate <- function(myModel, master, slave, free=T, verbose=T, name=NULL) {
 		stop("ERROR in umxEquate: master and slave labels not the same length!")
 	}
 	if( length(slaveLabels)==0 ) {
-		legal = names(omxGetParameters(myModel, indep=FALSE, free=free))
+		legal = names(omxGetParameters(model, indep=FALSE, free=free))
 		legal = legal[which(!is.na(legal))]
 		message("Labels available in model are: ",legal)
 		stop("ERROR in umxEquate: no matching labels found!")
 	}
 	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
-	myModel = omxSetParameters(model = myModel, labels = slaveLabels, newlabels = masterLabels, name = name)
-	myModel = omxAssignFirstParameters(myModel, indep = F)
-	return(myModel)
+	model = omxSetParameters(model = model, labels = slaveLabels, newlabels = masterLabels, name = name)
+	model = omxAssignFirstParameters(model, indep = F)
+	return(model)
 }
 
 #` ## path-oriented helpers
@@ -2132,14 +2144,20 @@ moveFile <- function(baseFolder = NA, findStr=NA, fileNameList = files, destFold
 	message("moved (or would have moved)", moved)
 }
 
-cor.prob <- function (X, dfr = nrow(X) - 2, digits = 2) {
-  tmp <- cor(X, use = "pairwise.complete.obs")
-  above <- row(tmp) < col(tmp)
-  r2 <- tmp[above]^2
-  Fstat <- r2 * dfr/(1 - r2)
-  tmp[above] <- 1 - pf(Fstat, 1, dfr)
-  tmp[row(tmp) == col(tmp)] <- NA # NA on diagonal: could be sd, or variance
-  return(tmp)
+cor.prob <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {
+	# cor.prob(myFADataRaw[1:8,])
+	R <- cor(X, use = use)
+	above <- upper.tri(R)
+	below <- lower.tri(R)
+	r2 <- R[above]^2
+	Fstat <- r2 * df/(1 - r2)
+	R[row(R) == col(R)] <- NA # NA on the diagonal
+	R[above] <- pf(Fstat, 1, df, lower.tail=F)
+	R[below] = round(R[below], digits)
+	R[above] = round(R[above], digits)
+	# R[above] = paste("p=",round(R[above], digits))
+	message("lower tri  = correlation; upper tri = p-value")
+	return(R)
 }
 
 rowMax <- function(df, na.rm=T) {
