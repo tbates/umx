@@ -244,7 +244,7 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 		} else {
 			namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")
 		}
-		print(modelSummary$parameters[,namesToShow])
+		print(modelSummary$parameters[,namesToShow], digits= 3, na.print = "", zero.print = "0", justify = "none")
 	}
 	
 	with(modelSummary, {
@@ -2064,11 +2064,19 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 # = Maybe add some printing helpers =
 # ===================================
 
-umxReportCIs <- function(model) {
+umxReportCIs <- function(model, addCIs = T, runCIs="if necessary") {
+	if(is.na(model)){
+		message("umxReportCIs adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxReportCIs(model)")
+		stop();
+	}
 	message("### CIs for model ", model@name)
-	CIs = names(omxGetParameters(model))
-	temp = mxRun(mxModel(model, mxCI(CIs)), intervals = T)
-	print(round(summary(temp)$CI,3))
+	if(addCIs){
+		CIs = names(omxGetParameters(model))
+		model = mxRun(mxModel(model, mxCI(CIs)), intervals = T)
+	} else if(runCIs == "if necessary"){
+		model = mxRun(model, intervals = T)		
+	}
+	print(round(summary(model)$CI,3))
 }
 
 renameFile <- function(baseFolder = "Finder", findStr=NA, replaceStr=NA, listPattern = NA, test=T, overwrite=F) {
@@ -2339,3 +2347,55 @@ mx_FakeData <- function(dataset, digits=2, n=NA,
   return(fake)
 }
 
+umxSummaryGxE <- function(model = NA, xlab = NA, location = "topleft", separateGraphs = F) {
+	# Plot Moderation
+	# umxSummaryGxE(model, location = "topright")
+	if(is.na(model)){
+		message("umxSummaryGxE creates Plots for twin moderation models. A use example is:\n umxSummaryGxE(model, location = \"topright\")")
+		stop();
+	}
+	# get unique values of moderator
+	mzData = model@submodels$MZ@data@observed
+	dzData = model@submodels$DZ@data@observed
+	selDefs = names(mzData)[3:4]
+	if(is.na(xlab)){
+		xlab = selDefs[1]
+	}
+	mz1 = as.vector(mzData[,selDefs[1]])
+	mz2 = as.vector(mzData[,selDefs[2]])
+	dz1 = as.vector(dzData[,selDefs[1]])
+	dz2 = as.vector(dzData[,selDefs[2]])
+	allValuesOfDefVar = c(mz1,mz2,dz1,dz2)
+	defVarValues = sort(unique(allValuesOfDefVar))
+	a   = model@submodels$top@matrices$a@values
+	c   = model@submodels$top@matrices$c@values
+	e   = model@submodels$top@matrices$e@values
+	am  = model@submodels$top@matrices$am@values
+	cm  = model@submodels$top@matrices$cm@values
+	em  = model@submodels$top@matrices$em@values
+	Va  = (a + am*defVarValues)^2
+	Vc  = (c + cm*defVarValues)^2
+	Ve  = (e + em*defVarValues)^2
+	Vt  = Va + Vc + Ve
+    # c("total", "genetic", "unique", "shared")
+	out    = as.matrix(cbind(Va   , Ve   , Vc, Vt))
+	outStd = as.matrix(cbind(Va/Vt, Ve/Vt, Vc/Vt))
+	if(separateGraphs){
+		print("Outputting two graphs")
+		matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = 1:4, xlab = xlab, ylab = "Raw Variance", main = "Raw Moderation Effects")
+		legend(location, legend = c("Va", "Vc", "Ve", "Vtot"), lty = 1:4, col = 1:4)
+		matplot(defVarValues, outStd, type = "l", lty = 1:4, col = 1:4, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main = "Standardized Moderation Effects")
+		legend(location, legend = c("Va", "Vc", "Ve"), lty = 1:4, col = 1:4)
+		par(mfrow = c(1, 1)) # back to black
+	}else{
+		par(mfrow = c(2, 1)) # two rows, one column for raw and std variance
+		par(mfrow = c(1, 2)) # one row: raw and std variance
+
+		matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = 1:4, xlab = xlab, ylab = "Raw Variance", main = "Raw Moderation Effects")
+		legend(location, legend = c("genetic", "unique", "shared", "total"), lty = 1:4, col = 1:4)
+
+		matplot(defVarValues, outStd, type = "l", lty = 1:4, col = 1:4, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main = "Standardized Moderation Effects")
+		legend(location, legend = c("genetic", "unique", "shared"), lty = 1:4, col = 1:4)
+		par(mfrow = c(1, 1)) # back to black
+	}
+}
