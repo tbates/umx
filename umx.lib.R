@@ -2073,10 +2073,16 @@ umxReportCIs <- function(model, addCIs = T, runCIs="if necessary") {
 	if(addCIs){
 		CIs = names(omxGetParameters(model))
 		model = mxRun(mxModel(model, mxCI(CIs)), intervals = T)
-	} else if(runCIs == "if necessary"){
+	} else if(runCIs == "if necessary" & dim(model@output$confidenceIntervals)[1] < 0){
 		model = mxRun(model, intervals = T)		
 	}
-	print(round(summary(model)$CI,3))
+	model_summary = summary(model)
+	model_CIs = round(model_summary$CI, 3)
+	model_CI_OK = model@output$confidenceIntervalCodes
+	colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
+	model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
+	print(model_CIs)
+	invisible(model)
 }
 
 renameFile <- function(baseFolder = "Finder", findStr=NA, replaceStr=NA, listPattern = NA, test=T, overwrite=F) {
