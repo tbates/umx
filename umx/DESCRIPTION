@@ -14,5 +14,3 @@ Suggests:
     mass,
     testthat,
     roxygen2
-Collate:
-    'umx-package.r'
