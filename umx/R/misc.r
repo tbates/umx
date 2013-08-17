@@ -1,3 +1,13 @@
+umxHasCIs <- function(model) {
+	# umxHasCIs(model)
+	if(is.null(model@output$confidenceIntervals)){
+		hasCIs = F
+	} else {
+		hasCIs = dim(model@output$confidenceIntervals)[1] >= 0
+	}
+	return(hasCIs)
+}
+
 # How long did that take?
 umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 	# use case

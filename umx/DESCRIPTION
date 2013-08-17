@@ -5,7 +5,8 @@ Version: 0.5
 License: GPL-3
 Title: umx
 URL: http://github.com/tbates/umx
-Description: A library of Helper functions for OpenMx. If you're getting started, have a look at \code{\link{umxReport}}
+Description: A library of Helper functions for OpenMx. If you're getting
+    started, have a look at \code{\link{umxReport}}
 Depends:
     R (>= 2.11.0),
     OpenMx (>= 1.3.0),

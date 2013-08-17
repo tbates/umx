@@ -1,3 +1,4 @@
+export(umxLabel)
 export(umxStart)
 export(umxUpdateOpenMx)
 export(xmuLabel_MATRIX_Model)
