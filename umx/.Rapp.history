@@ -1,0 +1,1087 @@
+mxVersion()
+QIMR$FIQ
+QIMR$FSIQ
+mean(QIMR$ChildhoodSEI, na.rm=T); sd(QIMR$ChildhoodSEI, na.rm=T)
+hist(QIMR$ChildhoodSEI)
+(QIMR$FSIQ)
+quantile(x <- rnorm(1001))
+quantile(x,  probs = c(0.1, 0.5, 1, 2, 5, 10, 50, NA)/100)
+with(airquality, table(cut(Temp, quantile(Temp)), Month))
+with(QIMR, table(cut(FSIQ, quantile(FSIQ)), zyg))
+with(QIMR, table(cut(FSIQ, quantile(FSIQ)), zyg, useNA="always"))
+with(QIMR, table(cut(FSIQ, quantile(FSIQ, na.rm=T)), zyg))
+with(QIMR, table(cut(FIQ, quantile(FIQ, na.rm=T)), zyg, useNA="always"))
+sum(c(153, 101, 126, 86, 76, 100, 56, 127, 96, 107, 79, 80, 97, 69, 112, 104, 101, 82, 85, 87, 84, 91, 119, 73, 103, 95, 76, 86))
+sum(c(153, 101, 126, 86, 76, 100, 127, 96, 107, 79, 80, 97, 112, 104, 101, 82, 85, 87, 91, 119, 73, 103, 95, 76))
+with(QIMR, table(cut(FSIQ, quantile(FSIQ, na.rm=T)), zyg, useNA="always"))
+twinData = QIMR[QIMR$newTwinOrder < 3, ]
+twinData = QIMR[QIMR$newTwinOrder %in%  c(1,2), ]
+sum(c(9, 4, 9, 15, 2, 7, 0))
+with(twinData, print(ftable(zyg, newTwinOrder, SEX)))
+with(twinData, { DEIDENT_FAMID[zyg == "MZFF" & SEX == "M"] })
+with(twinData, table(cut(FSIQ, quantile(FSIQ, na.rm=T)), zyg, useNA="always"))
+with(twinData, table(cut(FIQ, quantile(FIQ, na.rm=T)), zyg, useNA="always"))
+table(is.na(QIMR$FSIQ), is.na(QIMR$FIQ))
+table(is.na(QIMR$FSIQ))
+with(QIMR, table(zyg, is.na(FIQ), useNA="always"))
+with(QIMR, table(zyg, is.na(FIQ)))
+with(QIMR, QIMR[zyg=="MZFF" & is.na(FIQ),])
+with(QIMR, QIMR[zyg=="MZFF" & is.na(FIQ),"FIQ"])
+with(QIMR, QIMR[zyg=="MZFF" & is.na(FIQ),c("FAMID","FIQ")])
+with(QIMR, QIMR[zyg %in% "MZFF" & is.na(FIQ),c("FAMID","FIQ")])
+with(QIMR, QIMR[zyg %in% "MZFF" & is.na(FIQ), ])
+with(QIMR, QIMR[zyg %in% "MZFF" & is.na(FIQ), 1:12])
+with(QIMR, QIMR[DEIDENT_FAMID ==135, ])
+with(QIMR, QIMR[DEIDENT_FAMID ==140, ])
+with(QIMR, QIMR[DEIDENT_FAMID ==140, 1:12])
+library(ggplot2)   #
+library(foreign)   #
+library(Hmisc)     #
+library(car)       #
+library(QuantPsyc) #
+library(OpenMx)    #
+source("~/bin/omxhelper/genEpi.lib.R")#
+source("~/bin/umx/umx.lib.R")
+renameFile("Finder", findStr="_hd_no_smoking_to_pornolab.net", replaceStr="", listPattern = NA, test=T)
+renameFile("Finder", findStr="_hd_no_smoking_to_pornolab.net", replaceStr="", listPattern = NA, test=F)
+install.packages("devtools")#
+devtools::install_github('R2DOC', 'davidgohel')#
+devtools::install_github('R2DOCX', 'davidgohel')
+library("devtools")
+devtools::install_github('R2DOC', 'davidgohel')
+iris
+m1 = lm(Petal.Width ~ Species, data= iris)
+Anova(m1)
+library("visreg")
+levels(iris$Species)
+visreg(m1)
+linearHypothesis(m1, "0.5 * versicolor + 0.5 * virginica")
+names(iris)
+m1 = lm(Petal.Length ~ Species, data= iris)
+m1 = lm(Petal.Length ~ Species, data= iris); Anova(m1)
+m1 = lm(Petal.Length ~ Species, data= iris); Anova(m1); visreg(m1)
+linearHypothesis(m1, "Speciesversicolor = Speciesvirginica")
+renameFile("Finder", findStr="^.*The Equalizer", replaceStr="The Equalizer", listPattern = NA, test=T)
+renameFile("Finder", findStr="^.*The Equalizer", replaceStr="The Equalizer", listPattern = NA, test=F)
+1.96 & (0.15)
+1.96 * (0.15)
+cunt = 1
+cunt
+library(car)
+xtabs(~ treatment, data=OBrienKaiser)
+xtabs(~ gender, data=OBrienKaiser)
+xtabs(gender ~ treatment, data=OBrienKaiser)
+names(OBrienKaiser)
+xtabs(~ treatment + gender, data=OBrienKaiser)
+xtabs(~ gender *treatment, data=OBrienKaiser)
+xtabs(~ gender + treatment, data=OBrienKaiser)
+library(OpenMx)
+mxFactor(1:3)
+in = 1:3; mxFactor(in, levels=range)
+x = 1:3; mxFactor(x, levels=range)
+x = 1:3; mxFactor(x, levels=range(x))
+x = 1:3; mxFactor(x, levels=order(unique(x)))
+y = 1:3; mxFactor(x=y, levels=order(unique(x)))
+x = 0; y = 1:3; mxFactor(x=y, levels=order(unique(x)))
+x = 0; y = 1:3; mxFactor(x=y, levels=order(unique(y)))
+y = 1:3; mxFactor(x=y, levels=order(unique(y)))
+?mxFactor
+data(demoOneFactor)
+demoOneFactor
+manifests <- names(demoOneFactor)#
+latents <- c("G")#
+m1 <- mxModel("One Factor",#
+      type="RAM",#
+      manifestVars = manifests,#
+      latentVars = latents,#
+      mxPath(from=latents, to=manifests),#
+      mxPath(from=manifests, arrows=2),#
+      mxPath(from=latents, arrows=2,free=F, values=1.0),#
+      mxPath(from="one", to = manifests),#
+      mxPath(from="one", to = latents, free=F),#
+      mxData(demoOneFactor, type = "raw")#
+)
+m1 = mxRun(m1)
+summary(m1)
+summary(m1, SaturatedLikelihood= m1.sat)
+omxSaturatedModel <- function(x, run=FALSE) {#
+	if ( (!(isS4(x) && is(x, "MxModel"))) && !is.data.frame(x) && !(is.matrix(x) && is.numeric(x)) ) {#
+		stop("The 'x' argument must be (1) an MxModel object, (2) a raw data frame, or (3) a raw data matrix.")#
+	}#
+	if ( is(x, "MxModel") ) {#
+		datasource <- x$data#
+		if (is.null(datasource)) {#
+			stop("'model' argument does not contain any data")#
+		}#
+		obsdata <- datasource@observed#
+		datatype <- datasource@type#
+		modelName <- x@name#
+	} else {#
+		obsdata <- x#
+		if(ncol(obsdata) != nrow(obsdata)) {#
+			datatype <- "raw"#
+		}#
+		else {datatype <- "cov"}#
+		datasource <- mxData(observed=obsdata, type=datatype)#
+		modelName <- "Data Model"#
+	}#
+	numVar <- ncol(obsdata)#
+	varnam <- colnames(obsdata)#
+	if(is.null(varnam)) {#
+		varnam <- paste("V", 1:numVar, sep="")#
+		dimnames(obsdata) <- list(varnam, varnam)#
+	}#
+	if(datatype == "raw") {#
+		if (is.data.frame(obsdata)) {#
+			ordinalCols <- sapply(obsdata, is.ordered)#
+		}#
+		if(!any(ordinalCols)){#
+			startcov <- t(chol(cov(obsdata, use="pairwise.complete.obs")))#
+			startcov <- startcov[lower.tri(startcov, TRUE)]#
+			startmea <- colMeans(obsdata, na.rm=TRUE)#
+		}#
+		else {#
+			ordinalLevels <- lapply(obsdata[,ordinalCols], levels)#
+			numOrdinal <- sum(ordinalCols)#
+			maxLevels <- max(sapply(ordinalLevels, length))#
+			numThresholds <- maxLevels-1#
+			startcov <- t(chol(diag(1, numVar)))#
+			startcov <- startcov[lower.tri(startcov, TRUE)]#
+			startmea <- rep(0, numVar)#
+		}#
+	} else {#
+		startcov <- 0.3#
+		startmea <- 3.0#
+	}#
+	saturatedModel <- mxModel(#
+		name=paste("Saturated", modelName),#
+		datasource,#
+		mxMatrix(type="Lower",#
+			nrow=numVar,#
+			ncol=numVar,#
+			values=startcov,#
+			free=TRUE,#
+			name="ltCov"),#
+		mxAlgebra(name="satCov", expression= ltCov %*% t(ltCov), dimnames=list(varnam, varnam))#
+	)#
+	if(datatype == "raw" || !any(is.na(datasource@means)) ) {#
+		saturatedModel <- mxModel(saturatedModel,#
+			mxMatrix(nrow=1, ncol=numVar, values=startmea, free=TRUE, name="satMea", dimnames=list(NA, varnam)),#
+			mxExpectationNormal("satCov", "satMea"),#
+			mxFitFunctionML()#
+		)#
+	} else if(any(ordinalCols)) {#
+		saturatedModel <- mxModel(saturatedModel,#
+			mxMatrix(nrow=1, ncol=numVar, values=startmea, free=c(!ordinalCols), name="satMea", dimnames=list(NA, varnam)),#
+			mxMatrix("Full", #
+				name="thresholdDeviations", nrow=numThresholds, ncol=numOrdinal,#
+				values=.2,#
+				free = TRUE, #
+				lbound = rep( c(-Inf,rep(.01, (numThresholds-1))) , numOrdinal), #
+				dimnames = list(c(), varnam[ordinalCols])), #
+			mxMatrix("Lower", numThresholds, numThresholds, values=1, free=FALSE, name="unitLower"),#
+			mxAlgebra(unitLower %*% thresholdDeviations, name="thresholdMatrix"),#
+			mxExpectationNormal("satCov", "satMea", thresholds="thresholdMatrix"),#
+			mxFitFunctionML()#
+		)#
+	} else {#
+		saturatedModel <- mxModel(saturatedModel,#
+			mxExpectationNormal("satCov"),#
+			mxFitFunctionML()#
+		)#
+	}#
+	saturatedModel <- mxOption(saturatedModel, "Calculate Hessian", "No")#
+	saturatedModel <- mxOption(saturatedModel, "Standard Errors", "No")#
+	if(run) {return(mxRun(saturatedModel))}#
+	else { return(saturatedModel) }#
+}
+setClass(Class = "MxExpectationNormal",#
+	representation = representation(#
+		covariance = "MxCharOrNumber",#
+		means = "MxCharOrNumber",#
+		definitionVars = "list",#
+		thresholds = "MxCharOrNumber",#
+		dims = "character",#
+		dataColumns = "numeric",#
+		thresholdColumns = "numeric",#
+		thresholdLevels = "numeric",#
+		threshnames = "character",#
+		ExpCov = "matrix",#
+		ExpMean = "matrix"),#
+	contains = "MxBaseExpectation")#
+#
+setMethod("initialize", "MxExpectationNormal",#
+	function(.Object, covariance, means, dims, thresholds, threshnames,#
+		data = as.integer(NA), definitionVars = list(), name = 'expectation') {#
+		.Object@name <- name#
+		.Object@covariance <- covariance#
+		.Object@means <- means#
+		.Object@data <- data#
+		.Object@definitionVars <- definitionVars#
+		.Object@thresholds <- thresholds#
+		.Object@dims <- dims#
+		.Object@threshnames <- threshnames#
+		.Object@ExpCov <- matrix()#
+		.Object@ExpMean <- matrix()#
+		return(.Object)#
+	}#
+)#
+#
+setMethod("qualifyNames", signature("MxExpectationNormal"), #
+	function(.Object, modelname, namespace) {#
+		.Object@name <- imxIdentifier(modelname, .Object@name)#
+		.Object@covariance <- imxConvertIdentifier(.Object@covariance, #
+			modelname, namespace)#
+		.Object@means <- imxConvertIdentifier(.Object@means, #
+			modelname, namespace)#
+		.Object@data <- imxConvertIdentifier(.Object@data, #
+			modelname, namespace)#
+		.Object@thresholds <- sapply(.Object@thresholds,#
+			imxConvertIdentifier, modelname, namespace)#
+		return(.Object)#
+})#
+#
+setMethod("genericExpDependencies", signature("MxExpectationNormal"),#
+	function(.Object, dependencies) {#
+	sources <- c(.Object@covariance, .Object@means, .Object@thresholds)#
+	sources <- sources[!is.na(sources)]#
+	dependencies <- imxAddDependency(sources, .Object@name, dependencies)#
+	return(dependencies)#
+})#
+#
+setMethod("genericExpAddEntities", "MxExpectationNormal",#
+	function(.Object, job, flatJob, labelsData) {#
+		precision <- "Function precision"#
+		if(!single.na(.Object@thresholds)) {#
+			if (is.null(job@options[[precision]])) {#
+				job <- mxOption(job, precision, 1e-9)#
+			}#
+		}#
+		return(job)#
+	}#
+)#
+#
+setMethod("genericExpConvertEntities", "MxExpectationNormal",#
+	function(.Object, flatModel, namespace, labelsData) {#
+		flatModel <- updateExpectationDimnames(.Object, flatModel, labelsData)#
+		flatModel <- updateThresholdDimnames(.Object, flatModel, labelsData)#
+		return(flatModel)#
+	}#
+)#
+#
+setMethod("genericExpRename", signature("MxExpectationNormal"),#
+	function(.Object, oldname, newname) {#
+		.Object@means <- renameReference(.Object@means, oldname, newname)#
+		.Object@covariance <- renameReference(.Object@covariance, oldname, newname)#
+		.Object@data <- renameReference(.Object@data, oldname, newname)#
+		.Object@thresholds <- sapply(.Object@thresholds, renameReference, oldname, newname)		#
+		return(.Object)#
+})#
+#
+verifyExpectedObservedNames <- function(data, covName, flatModel, modelname, objectiveName) {#
+	covariance <- flatModel[[covName]]#
+	if (is(covariance, "MxMatrix") && !identical(dim(covariance), dim(data))) {#
+		msg <- paste("The dimensions for the expected covariance matrix",#
+			"and the observed covariance matrix",#
+			"in the", objectiveName, "expectation function in model",#
+			omxQuotes(modelname), "are not identical.")#
+		stop(msg, call. = FALSE)#
+	}#
+	if (!identical(dimnames(covariance), dimnames(data))) {#
+		msg <- paste("The dimnames for the expected covariance matrix",#
+			"and the observed covariance matrix",#
+			"in the", objectiveName, "expectation function in model",#
+			omxQuotes(modelname), "are not identical.")#
+		stop(msg, call. = FALSE)		#
+	}#
+}#
+#
+verifyMeans <- function(meansName, mxDataObject, flatModel, modelname) {#
+	means <- flatModel[[meansName]]#
+	if (!is.null(means)) {#
+		if(any(is.na(mxDataObject@means))) {#
+			msg <- paste("In model", omxQuotes(modelname),#
+				"the Normal expectation function contains an expected means",#
+				"vector but the model is missing some data",#
+				"for the observed means.")#
+			stop(msg, call. = FALSE)#
+		}#
+		meanDimnames <- dimnames(means)		#
+	}#
+}#
+#
+setMethod("genericExpFunConvert", "MxExpectationNormal", #
+	function(.Object, flatModel, model, labelsData, defVars, dependencies) {#
+		modelname <- imxReverseIdentifier(model, .Object@name)[[1]]#
+		name <- .Object@name#
+		if(is.na(.Object@data)) {#
+			msg <- paste("The normal expectation function",#
+				"does not have a dataset associated with it in model",#
+				omxQuotes(modelname))#
+			stop(msg, call.=FALSE)#
+		}#
+		mxDataObject <- flatModel@datasets[[.Object@data]]#
+		if (mxDataObject@type != "raw") {#
+			verifyExpectedObservedNames(mxDataObject@observed, .Object@covariance, flatModel, modelname, "Normal")#
+			verifyMeans(.Object@means, mxDataObject, flatModel, modelname)#
+		}#
+		verifyObservedNames(mxDataObject@observed, mxDataObject@means, mxDataObject@type, flatModel, modelname, "Normal")#
+		checkNumericData(mxDataObject)#
+		checkNumberOrdinalColumns(mxDataObject)#
+		meansName <- .Object@means#
+		covName <- .Object@covariance#
+		dataName <- .Object@data#
+		threshName <- .Object@thresholds#
+		covariance <- flatModel[[covName]]#
+		covNames <- colnames(covariance)#
+		.Object@definitionVars <- imxFilterDefinitionVariables(defVars, .Object@data)#
+		.Object@means <- imxLocateIndex(flatModel, .Object@means, name)#
+		.Object@covariance <- imxLocateIndex(flatModel, .Object@covariance, name)#
+		.Object@data <- imxLocateIndex(flatModel, .Object@data, name)#
+		verifyExpectedNames(covName, meansName, flatModel, modelname, "normal")#
+		.Object@dataColumns <- generateDataColumns(flatModel, covNames, dataName)#
+		verifyThresholds(flatModel, model, labelsData, dataName, covNames, threshName)#
+		.Object@thresholds <- imxLocateIndex(flatModel, threshName, name)#
+		retval <- generateThresholdColumns(flatModel, model, labelsData, covNames, dataName, threshName)#
+		.Object@thresholdColumns <- retval[[1]] #
+		.Object@thresholdLevels <- retval[[2]]#
+		if (length(mxDataObject@observed) == 0) {#
+			.Object@data <- as.integer(NA)#
+		}#
+		if (single.na(.Object@dims)) {#
+			.Object@dims <- covNames#
+		}#
+		return(.Object)#
+})#
+#
+verifyExpectedNames <- function(covName, meansName, flatModel, modelname, expectationName) {#
+	if (is.na(meansName)) {#
+		means <- NA#
+	} else {#
+		means <- flatModel[[meansName]]#
+	}#
+	covariance <- flatModel[[covName]]#
+	covariance <- dimnames(covariance)#
+	if (is.null(covariance)) {#
+			msg <- paste("The expected covariance matrix associated",#
+				"with the", expectationName, "expectation in model", #
+				omxQuotes(modelname), "does not contain dimnames.")#
+			stop(msg, call. = FALSE)	#
+	}#
+	covRows <- covariance[[1]]#
+	covCols <- covariance[[2]]	#
+	if (is.null(covRows) || is.null(covCols) ||#
+		(length(covRows) != length(covCols)) || !all(covRows == covCols)) {#
+			msg <- paste("The expected covariance matrix associated",#
+				"with the", expectationName, "expectation in model", #
+				omxQuotes(modelname), "does not contain identical",#
+				"row and column dimnames.")#
+			stop(msg, call.=FALSE)#
+	}#
+	if (!isS4(means) && is.na(means)) return()#
+	meanDimnames <- dimnames(means)#
+	if (is.null(meanDimnames)) {#
+			msg <- paste("The expected means matrix associated",#
+				"with the", expectationName, "expectation function in model", #
+				omxQuotes(modelname), "does not contain dimnames.")#
+			stop(msg, call.=FALSE)	#
+	}#
+	meanRows <- meanDimnames[[1]]#
+	meanCols <- meanDimnames[[2]]#
+	if (!is.null(meanRows) && length(meanRows) > 1) {#
+		msg <- paste("The expected means matrix associated",#
+			"with the", expectationName, "expectation in model", #
+			omxQuotes(modelname), "is not a 1 x N matrix.")#
+			stop(msg, call.=FALSE)#
+	}#
+	if ((length(covCols) != length(meanCols)) || !all(covCols == meanCols)) {#
+			msg <- paste("The expected covariance and expected",#
+				"means matrices associated",#
+				"with the", expectationName, "expectation function in model", #
+				omxQuotes(modelname), "do not contain identical",#
+				"dimnames.")#
+			stop(msg, call.=FALSE)#
+	}#
+}#
+#
+verifyObservedNames <- function(data, means, type, flatModel, modelname, expectationName) {#
+	dataNames <- dimnames(data)#
+	if(is.null(dataNames)) {#
+		msg <- paste("The observed data associated with the",#
+			expectationName, "expectation function in model",#
+			omxQuotes(modelname), "does not contain dimnames.")#
+		stop(msg, call. = FALSE)#
+	}#
+	if (type == "cov" || type == "cor") {#
+		if (length(dataNames) < 2 ||#
+			is.null(dataNames[[1]]) || is.null(dataNames[[2]]) || #
+			!identical(dataNames[[1]], dataNames[[2]])) {#
+				msg <- paste("The dataset associated with the", expectationName,#
+					"expectation function in model", omxQuotes(modelname),#
+    	            "does not contain identical row and column non-NULL dimnames.")#
+			stop(msg, call. = FALSE)#
+		}#
+		if (!single.na(means) && is.null(dimnames(means))) {#
+			msg <- paste("In model", omxQuotes(modelname), #
+				", the observed means vector does not contain column names.",#
+				"Use the name() function to assign names to the means vector.")#
+			stop(msg, call. = FALSE)#
+		}#
+		if (!single.na(means) && !identical(dataNames[[1]], dimnames(means)[[2]])) {#
+			msg <- paste("The observed covariance or correlation matrix associated with the", expectationName,#
+				"expectation function in model", omxQuotes(modelname),#
+				"does not contain identical dimnames to the observed means vector.")#
+			stop(msg, call. = FALSE)#
+		}#
+	} else if ((type == "raw") && (length(dataNames) < 2 || is.null(dataNames[[2]]))) {#
+		msg <- paste("The dataset associated with the", expectationName,#
+				"expectation function in model", omxQuotes(modelname),#
+				"does not contain column names (use dimnames).")#
+		stop(msg, call. = FALSE)#
+	}#
+}#
+#
+generateDataColumns <- function(flatModel, covNames, dataName) {#
+	retval <- c()#
+	dataColumnNames <- dimnames(flatModel@datasets[[dataName]]@observed)[[2]]#
+	for(i in 1:length(covNames)) {#
+		targetName <- covNames[[i]]#
+		index <- match(targetName, dataColumnNames)#
+		if(is.na(index)) {#
+			msg <- paste("The column name", omxQuotes(targetName),#
+				"in the expected covariance matrix",#
+				"of the expectation function in model",#
+				omxQuotes(flatModel@name),#
+				"cannot be found in the column names of the data.")#
+			stop(msg, call. = FALSE)#
+		}#
+		retval[[i]] <- index - 1#
+	}#
+	return(retval)#
+}#
+updateThresholdDimnames <- function(flatExpectation, flatModel, labelsData) {#
+	threshName <- flatExpectation@thresholds#
+	if (is.na(threshName)) {#
+		return(flatModel)#
+	}#
+	thresholds <- flatModel[[threshName]]#
+	if (is.null(thresholds)) {#
+		modelname <- getModelName(flatExpectation)#
+		stop(paste("Unknown thresholds name", #
+			omxQuotes(simplifyName(threshName, modelname)),#
+			"detected in the expectation function",#
+			"of model", omxQuotes(modelname)), call. = FALSE)#
+	}#
+	dims <- flatExpectation@threshnames#
+	if (!is.null(colnames(thresholds)) && !single.na(dims) && #
+		!identical(colnames(thresholds), dims)) {#
+		modelname <- getModelName(flatExpectation)#
+		msg <- paste("The thresholds matrix associated",#
+		"with the expectation function in model", #
+		omxQuotes(modelname), "contains column names and",#
+		"the expectation function has specified non-identical threshnames.")#
+		stop(msg, call.=FALSE)      #
+	}#
+	if (is.null(colnames(thresholds)) && !single.na(dims)) {#
+		tuple <- evaluateMxObject(threshName, flatModel, labelsData, new.env(parent = emptyenv()))#
+		threshMatrix <- tuple[[1]]#
+		if (ncol(threshMatrix) != length(dims)) {#
+			modelname <- getModelName(flatExpectation)#
+			msg <- paste("The thresholds matrix associated",#
+			"with the expectation function in model", #
+			omxQuotes(modelname), "is not of the same length as the 'threshnames'",#
+			"argument provided by the expectation function. The 'threshnames' argument is",#
+			"of length", length(dims), "and the expected covariance matrix",#
+			"has", ncol(threshMatrix), "columns.")#
+			stop(msg, call.=FALSE)      #
+		}#
+		dimnames(flatModel[[threshName]]) <- list(NULL, dims)#
+	}#
+	return(flatModel)#
+}#
+#
+updateExpectationDimnames <- function(flatExpectation, flatModel,#
+		labelsData, unsafe = FALSE) {#
+	covName <- flatExpectation@covariance#
+	meansName <- flatExpectation@means#
+	if (is.na(meansName)) {#
+		means <- NA#
+	} else {#
+		means <- flatModel[[meansName]]#
+	}#
+	covariance <- flatModel[[covName]]#
+	if (is.null(covariance)) {#
+		modelname <- getModelName(flatExpectation)#
+		stop(paste("Unknown expected covariance name", #
+			omxQuotes(simplifyName(covName, modelname)),#
+			"detected in the expectation function",#
+			"of model", omxQuotes(modelname)), call. = FALSE)#
+	}#
+	if (is.null(means)) {#
+		modelname <- getModelName(flatExpectation)#
+		stop(paste("Unknown expected means name", #
+			omxQuotes(simplifyName(meansName, modelname)),#
+			"detected in the expectation function",#
+			"of model", omxQuotes(modelname)), call. = FALSE)#
+	}#
+	dims <- flatExpectation@dims#
+	if (!is.null(dimnames(covariance)) && !single.na(dims) && #
+		!identical(dimnames(covariance), list(dims, dims))) {#
+		modelname <- getModelName(flatExpectation)#
+		msg <- paste("The expected covariance matrix associated",#
+			"with the expectation function in model", #
+			omxQuotes(modelname), "contains dimnames: ", #
+            paste(toString(dimnames(covariance)), ".", sep = ""),#
+			"The expectation function has specified dimnames:", #
+			paste(toString(dims), ".", sep =""))#
+		stop(msg, call.=FALSE)		#
+	}#
+	if (is.null(dimnames(covariance)) && !single.na(dims)) {#
+		if (!unsafe) {#
+			tuple <- evaluateMxObject(covName, flatModel, labelsData, new.env(parent = emptyenv()))#
+			covMatrix <- tuple[[1]]#
+			if (nrow(covMatrix) != ncol(covMatrix)) {#
+				modelname <- getModelName(flatExpectation)#
+				msg <- paste("The expected covariance matrix associated",#
+					"with the expectation function in model", #
+					omxQuotes(modelname), "is not a square matrix.")#
+				stop(msg, call.=FALSE)		#
+			}#
+			if (nrow(covMatrix) != length(dims)) {#
+				modelname <- getModelName(flatExpectation)#
+				msg <- paste("The expected covariance matrix associated",#
+					"with the expectation function in model", #
+					omxQuotes(modelname), "is not of the same length as the 'dimnames'",#
+					"argument provided by the expectation function. The 'dimnames' argument is",#
+					"of length", length(dims), "and the expected covariance matrix",#
+					"has", nrow(covMatrix), "rows and columns.")#
+				stop(msg, call.=FALSE)		#
+			}#
+		}#
+		dimnames(flatModel[[covName]]) <- list(dims, dims)#
+	}#
+#
+	if (!isS4(means) && is.na(means)) {#
+		return(flatModel)#
+	}#
+#
+	if (!is.null(dimnames(means)) && !single.na(dims) &&#
+		!identical(dimnames(means), list(NULL, dims))) {#
+		modelname <- getModelName(flatExpectation)#
+		msg <- paste("The expected means matrix associated",#
+			"with the expectation function in model", #
+			omxQuotes(modelname), "contains dimnames: ", #
+            paste(toString(dimnames(means)), ".", sep = ""),#
+			"The expectation function has specified dimnames:", #
+			paste(toString(dims), ".", sep =""))#
+		stop(msg, call.=FALSE)	#
+	}#
+	if (is.null(dimnames(means)) && !single.na(dims)) {#
+		if (!unsafe) {#
+			tuple <- evaluateMxObject(meansName, flatModel, labelsData, new.env(parent = emptyenv()))#
+			meansMatrix <- tuple[[1]]#
+			if (nrow(meansMatrix) != 1) {#
+				modelname <- getModelName(flatExpectation)#
+				msg <- paste("The expected means vector associated",#
+					"with the expectation function in model", #
+					omxQuotes(modelname), "is not a 1 x n matrix.",#
+					"It has dimensions", nrow(meansMatrix), "x", #
+					paste(ncol(meansMatrix), '.', sep=''))#
+				stop(msg, call.=FALSE)		#
+			}#
+			if (ncol(meansMatrix) != length(dims)) {#
+				modelname <- getModelName(flatExpectation)#
+				msg <- paste("The expected means vector associated",#
+					"with the expectation function in model", #
+					omxQuotes(modelname), "is not of the same length as the 'dimnames'",#
+					"argument provided by the expectation function. The 'dimnames' argument is",#
+					"of length", length(dims), "and the expected means vector",#
+					"has", ncol(meansMatrix), "columns.")#
+				stop(msg, call.=FALSE)#
+			}#
+		}#
+		dimnames(flatModel[[meansName]]) <- list(NULL, dims)#
+	}#
+	return(flatModel)#
+}#
+mxExpectationNormal <- function(covariance, means = NA, #
+	dimnames = NA, thresholds = NA, threshnames = dimnames) {#
+	if (missing(covariance) || typeof(covariance) != "character") {#
+		stop("'covariance' argument is not a string (the name of the expected covariance matrix)")#
+	}#
+	if (!(single.na(means) || typeof(means) == "character")) {#
+		stop("Means argument is not a string (the name of the expected means matrix)")#
+	}#
+	if (is.na(means)) means <- as.integer(NA)#
+	if (single.na(thresholds)) thresholds <- as.character(NA)#
+	if (single.na(dimnames)) dimnames <- as.character(NA)#
+	if (single.na(threshnames)) threshnames <- as.character(NA)#
+	if (!is.vector(dimnames) || typeof(dimnames) != 'character') {#
+		stop("'dimnames' argument is not a character vector")#
+	}#
+	if (!is.vector(threshnames) || typeof(threshnames) != 'character') {#
+		stop("'threshnames' argument is not a character vector")#
+	}#
+	if (length(thresholds) != 1) {#
+		stop("'thresholds' argument must be a single matrix or algebra name")#
+	}#
+	if (length(dimnames) == 0) {#
+		stop("'dimnames' argument cannot be an empty vector")#
+	}#
+	if (length(threshnames) == 0) {#
+		stop("'threshnames' argument cannot be an empty vector")#
+	}#
+	if (length(dimnames) > 1 && any(is.na(dimnames))) {#
+		stop("NA values are not allowed for 'dimnames' vector")#
+	}#
+	if (length(threshnames) > 1 && any(is.na(threshnames))) {#
+		stop("NA values are not allowed for 'threshnames' vector")#
+	}#
+	return(new("MxExpectationNormal", covariance, means, dimnames, thresholds, threshnames))#
+}#
+#
+displayMxExpectationNormal <- function(expectation) {#
+	cat("MxExpectationNormal", omxQuotes(expectation@name), '\n')#
+	cat("@covariance :", omxQuotes(expectation@covariance), '\n')#
+	cat("@means :", omxQuotes(expectation@means), '\n')#
+	if (single.na(expectation@dims)) {#
+		cat("@dims : NA \n")#
+	} else {#
+		cat("@dims :", omxQuotes(expectation@dims), '\n')#
+	}#
+	if (single.na(expectation@thresholds)) {#
+		cat("@thresholds : NA \n")#
+	} else {#
+		cat("@thresholds :", omxQuotes(expectation@thresholds), '\n')#
+	}#
+	if (single.na(expectation@threshnames)) {#
+		cat("@threshnames : NA \n")#
+	} else {#
+		cat("@threshnames :", omxQuotes(expectation@threshnames), '\n')#
+	}#
+	invisible(expectation)#
+}#
+setMethod("print", "MxExpectationNormal", function(x,...) { #
+	displayMxExpectationNormal(x) #
+})#
+#
+setMethod("show", "MxExpectationNormal", function(object) { #
+	displayMxExpectationNormal(object) #
+})
+m1.sat <- omxSaturatedModel(m1, run = TRUE)
+install.packages("Markdown")
+install.packages("markdown")
+library("markdown")
+browseVignettes(package = 'markdown')
+install.packages("markdown", type="source")
+install.packages('knitr', repos = 'http://www.rforge.net/', type = 'source')
+stitch("~/Dropbox/Notational Data/cunt.r")
+system.file("misc", "knitr-template.Rnw"
+system.file("misc", "knitr-template.Rnw")
+stitch_rmd("~/Dropbox/Notational Data/cunt.r")
+s = system.file("misc", "stitch-test.R", package = "knitr")
+s
+stitch(s, system.file("misc", "knitr-template.Rmd", package = "knitr"))
+library(knitr)
+s = system.file("misc", "stitch-test.R", package = "knitr")#
+stitch(s, system.file("misc", "knitr-template.Rhtml", package = "knitr"))
+sample(1:365,23, replace=T)
+results = rep(NA,n)
+n = 1000; #
+results = rep(NA,n)
+for (i in 1:n) {#
+	results[i] = anyDuplicated(sample(1:365, 23, replace = T))#
+}
+n = 10000; #
+results = rep(NA,n)#
+for (i in 1:n) {#
+	results[i] = anyDuplicated(sample(1:365, 23, replace = T))#
+}
+results
+anyDuplicated(sample(1:365, 23, replace = T))
+x = sample(1:365, 23, replace = T); anyDuplicated(x)
+x
+sort(x)
+n = 10000; #
+results = rep(NA,n)#
+for (i in 1:n) {#
+	results[i] = (anyDuplicated(sample(1:365, 23, replace = T))>0)#
+}
+head(results)
+sum(results)
+sum(results)/n
+n = 10000; #
+results = rep(NA,n)#
+for (i in 1:n) {#
+	results[i] = (anyDuplicated(sample(1:365, 23, replace = T))>0)#
+}#
+sum(results)/n
+n = 100000; #
+results = rep(NA,n)#
+for (i in 1:n) {#
+	results[i] = (anyDuplicated(sample(1:365, 23, replace = T))>0)#
+}#
+sum(results)/n
+library(paran);   require(ggplot2)   #
+require(foreign); require(Hmisc)     #
+require(OpenMx);  require(QuantPsyc) #
+require(car)      #
+library("visreg") #
+#
+source("~/bin/omxhelper/genEpi.lib.R") #
+source("~/bin/umx/umx.lib.R") #
+#
+GbyEwrapper = function(DVs, Defs, twinData, suffix="_T") {#
+	selDVs  = c(paste(DVs ,suffix, "1", sep=""), paste(DVs, suffix, "2", sep=""))#
+	selDefs = c(paste(Defs,suffix, "1", sep=""), paste(Defs,suffix, "2", sep=""))#
+	selVars = c(selDVs, selDefs)#
+	mzData  = subset(twinData, zyg %in% c("MZFF", "MZMM"), selVars) #
+	dzData  = subset(twinData, zyg %in% c("DZFF", "DZMM", "DZFM", "DZMF"), selVars) #
+	mzData <- mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]#
+	dzData <- dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]#
+	return(makeGxE_2Group(name= paste0(DVs, "_gx",Defs), selDVs=selDVs, selDefs=selDefs, dzData=dzData, mzData=mzData))#
+}#
+#
+ACEwrapper = function(name = "ACE", DVs, twinData, suffix="_T", dzCr = .5) {#
+	selDVs  = c(paste(DVs ,suffix, "1", sep=""), paste(DVs, suffix, "2", sep=""))#
+	selVars = c(selDVs)#
+	mzData  = subset(twinData, zyg %in% c("MZFF", "MZMM"), selVars) #
+	dzData  = subset(twinData, zyg %in% c("DZFF", "DZMM", "DZFM", "DZMF"), selVars) #
+	return(makeACE_2Group(name = name, selDVs = selDVs, dzData = dzData, mzData = mzData, addStd = T, dzCr = .5))#
+}#
+QIMR = read.csv("~/Dropbox/current/IQ/MIDUS/GxE IQ/QIMR GxE/R/sei.csv", header = T, stringsAsFactors = F); #
+names(QIMR) #
+#
+QIMR$zyg = factor(QIMR$ZYGOSITY, levels = c(1:6), labels= c("MZFF", "MZMM", "DZFF", "DZMM", "DZFM", "DZMF"))#
+QIMR$SEX = as.factor(QIMR$SEX)#
+QIMR$ChildhoodSEI = QIMR$MAX_SEI#
+QIMR$FAMID = QIMR$DEIDENT_FAMID#
+QIMR$FSIQ = residuals(lm(FIQ ~ AGE*SEX + AGE^2, data = QIMR, na.action = na.exclude)) #
+QIMR$FSIQ = (as.numeric(scale(QIMR$FSIQ))*sd(QIMR$FIQ, na.rm=T))+ mean(QIMR$FIQ, na.rm=T) #
+table(is.na(QIMR$FSIQ), is.na(QIMR$FIQ)) #
+with(QIMR, table(zyg, is.na(FIQ))) #
+hist(QIMR$FSIQ)#
+QIMR$newTwinOrder = QIMR$FAMILY_MEMBER #
+QIMR[QIMR$zyg == "DZMF" & QIMR$FAMILY_MEMBER == 2, "newTwinOrder"] = 1 #
+QIMR[QIMR$zyg == "DZMF" & QIMR$FAMILY_MEMBER == 1, "newTwinOrder"] = 2 #
+QIMR[QIMR$DEIDENT_FAMID == 220, c("DEIDENT_FAMID", "zyg", "SEX", "newTwinOrder")]#
+QIMR[QIMR$DEIDENT_FAMID == 220, "newTwinOrder"] = c(1, 2)#
+#
+QIMR[QIMR$DEIDENT_FAMID == 1105, c("DEIDENT_FAMID", "zyg", "SEX", "newTwinOrder")] #
+QIMR[QIMR$DEIDENT_FAMID == 1105, "zyg"] = "DZFF"#
+#
+QIMR[QIMR$DEIDENT_FAMID == 1389, c("DEIDENT_FAMID", "zyg", "SEX", "newTwinOrder")] #
+QIMR[QIMR$DEIDENT_FAMID == 1389, "zyg"] = "MZMM"#
+#
+QIMR$FSIQz = scale(QIMR$FSIQ)#
+QIMR$ChildhoodSEIz = scale(QIMR$ChildhoodSEI)#
+twinData = QIMR[QIMR$newTwinOrder %in% c(1, 2), ]
+head(twinData)
+m1 = lmer(FSIQz ~ ChildhoodSEIz + (1 + ChildhoodSEIz|DEIDENT_FAMID), data = twinData)#
+m1
+library(lme4)#
+m1 = lmer(FSIQz ~ ChildhoodSEIz + (1 + ChildhoodSEIz|DEIDENT_FAMID), data = twinData); m1
+citation("lme4")
+citation("R")
+citation()
+drop1(m1)
+m1 = lmer(FSIQz ~ 1 + (1 + ChildhoodSEIz|DEIDENT_FAMID), data = twinData); m1
+m1 = lmer(FSIQz ~ ChildhoodSEIz + (1 + ChildhoodSEIz|DEIDENT_FAMID), data = twinData); m1#
+drop1(m1)#
+m2 = lmer(FSIQz ~ 1 + (1 + ChildhoodSEIz|DEIDENT_FAMID), data = twinData); m2
+anova(m1,m2)
+choice = rep("A",6)
+choice
+myChoice = rep(1,6)#
+options  = c(300,600)#
+for (i in myChoice) {#
+	print(paste("you chose",options[i]))#
+}
+print("initial change is ±",delta)
+delta = options[1]/2#
+print("initial change is ±",delta)
+delta = options[1]/2#
+print(paste("initial change is ±", delta))
+delta = c(options[1]/2)
+delta
+300*c(.5,.25)
+125/2
+.125/2
+(1:6)^2
+300*c(1/2,1/4,1/8 1/16,1/32, 1/64)
+300 * c(1/2, 1/4, 1/8, 1/16, 1/32, 1/64)
+deltaList = 300 * c(1/2, 1/4, 1/8, 1/16, 1/32, 1/64)
+print(paste("initial change is ±", deltaList[1]))
+myChoice = rep(1,6)#
+n = length(myChoice)#
+availableOptions = rep(NA,n)#
+options  = c(300, 600)#
+delta = options[1]/2#
+delta = c(options[1]/2)#
+deltaList = 300 * c(1/2, 1/4, 1/8, 1/16, 1/32, 1/64)#
+for (i in 1:n) {#
+	thisChoice = options[myChoice[i]]#
+	thisDelta  = deltaList[i]#
+	availableOptions[i] = options[1]#
+	print(paste("from ", options[1], "and", options[2], "you chose", thisChoice, ". Δ is", deltaList[i]))#
+	if(i == 1){ #
+		options[1] = options[1] - thisDelta#
+	} else { #
+		options[1] = options[1] + thisDelta#
+	}#
+}#
+availableOptions
+myChoice#
+availableOptions
+myChoice = rep(1,6)#
+n = length(myChoice)#
+availableOptions = rep(NA,n)#
+options  = c(300, 600)#
+delta = options[1]/2#
+delta = c(options[1]/2)#
+deltaList = 300 * c(1/2, 1/4, 1/8, 1/16, 1/32, 1/64)#
+for (i in 1:n) {#
+	thisChoice = options[myChoice[i]]#
+	thisDelta  = deltaList[i]#
+	availableOptions[i] = options[1]#
+	print(paste("from ", options[1], "and", options[2], "you chose", thisChoice, ". Δ is", deltaList[i]))#
+	if(thisChoice == 1){ #
+		options[1] = options[1] - thisDelta#
+	} else { #
+		options[1] = options[1] + thisDelta#
+	}#
+}#
+myChoice#
+availableOptions
+options[myChoice[i]]
+myChoice = rep(1,6)#
+n = length(myChoice)#
+availableOptions = rep(NA,n)#
+options  = c(300, 600)#
+delta = options[1]/2#
+delta = c(options[1]/2)#
+deltaList = 300 * c(1/2, 1/4, 1/8, 1/16, 1/32, 1/64)#
+for (i in 1:n) {#
+	thisChoice = options[myChoice[i]]#
+	thisDelta  = deltaList[i]#
+	availableOptions[i] = options[1]#
+	print(paste("from ", options[1], "and", options[2], "you chose", thisChoice, ". Δ is", deltaList[i]))#
+	if(myChoice[i] == 1){ #
+		options[1] = options[1] - thisDelta#
+	} else { #
+		options[1] = options[1] + thisDelta#
+	}#
+}#
+myChoice#
+availableOptions
+myChoice = rep(2,6); myChoice[1]=1
+myChoice
+myChoice = rep(2,6); myChoice[1]=1 #
+n = length(myChoice)#
+availableOptions = rep(NA,n)#
+options  = c(300, 600)#
+delta = options[1]/2#
+delta = c(options[1]/2)#
+deltaList = 300 * c(1/2, 1/4, 1/8, 1/16, 1/32, 1/64)#
+for (i in 1:n) {#
+	thisChoice = options[myChoice[i]]#
+	thisDelta  = deltaList[i]#
+	availableOptions[i] = options[1]#
+	print(paste("from ", options[1], "and", options[2], "you chose", thisChoice, ". Δ is", deltaList[i]))#
+	if(myChoice[i] == 1){ #
+		options[1] = options[1] - thisDelta#
+	} else { #
+		options[1] = options[1] + thisDelta#
+	}#
+}#
+myChoice#
+availableOptions
+myChoice[2]=1 #
+n = length(myChoice)#
+availableOptions = rep(NA,n)#
+options  = c(300, 600)#
+delta = options[1]/2#
+delta = c(options[1]/2)#
+deltaList = 300 * c(1/2, 1/4, 1/8, 1/16, 1/32, 1/64)#
+for (i in 1:n) {#
+	thisChoice = options[myChoice[i]]#
+	thisDelta  = deltaList[i]#
+	availableOptions[i] = options[1]#
+	print(paste("from ", options[1], "and", options[2], "you chose", thisChoice, ". Δ is", deltaList[i]))#
+	if(myChoice[i] == 1){ #
+		options[1] = options[1] - thisDelta#
+	} else { #
+		options[1] = options[1] + thisDelta#
+	}#
+}#
+myChoice#
+availableOptions
+library(ggplot2)#
+data<-data.frame(x=(rbinom(1000, 1, 0.5)+0.1)*rnorm(1000, 100,50), y=rnorm(1000, 100, 50))
+find_hull <- function(df) df[chull(df$x, df$y), ]
+p<-ggplot(data=data, aes(x,y))#
+p+geom_point()+#
+  geom_polygon(data=find_hull(data[data$x<35,]), fill=NA, colour="black", size=1)+#
+  geom_polygon(data=find_hull(data[data$x>35,]), fill=NA, colour="red", size=1)
+a<-find_hull(data[data$x<35,])#
+b<-find_hull(data[data$x>35,])#
+a1<-rbind(a,a[1,])#
+b1<-rbind(b,b[1,])#
+#
+p <- ggplot(data=data, aes(x,y))#
+p + geom_point()+ geom_path(data=a1)+ geom_path(data=b1)
+a = matrix(c(1,2,-1,1),nrow=2)
+a = matrix(c(1,-1,2,1),nrow=2)
+matrix(c(4,3,2,3,-,-1),nrow=2)
+matrix(c(4,3,2,3,0,-1),nrow=2)
+matrix(c(4,3,2,1,0,-1),nrow=2)
+matrix(c(4,3,2,1,0,-1),nrow=2)->b
+a %*% b
+a %*% b[,1]
+b
+a
+renameFile("Finder", findStr=".HDTV.x264-EVOLVE", replaceStr="", listPattern = NA, test=T)
+renameFile("Finder", findStr=".HDTV.x264-EVOLVE", replaceStr="", listPattern = NA, test=F)
+renameFile("Finder", findStr=".HDTV.x264-ASAP", replaceStr="", listPattern = NA, test=F)
+renameFile("Finder", findStr=".PROPER", replaceStr="", listPattern = NA, test=F)
+source("~/bin/umx/umx.lib.R")
+data = read.csv("~/Dropbox/current/IQ/MIDUS/GxE IQ/data GxE/R/sei.csv", header = T, stringsAsFactors = F);
+data = read.csv("~/Dropbox/current/IQ/MIDUS/GxE IQ/QIMR GxE/R/sei.csv", header = T, stringsAsFactors = F);
+names(data)
+unique(data$ZYGOSITY)
+intersect(1:2, unique(data$ZYGOSITY))
+unique(data$ZYGOSITY)) == 1:2
+unique(data$ZYGOSITY) == 1:2
+scale(data$FSIQ)
+mean(scale(data$FSIQ))
+mean(scale(data$FIQ))
+mean(scale(data$FIQ), na.rm=T)
+mean(scale(data$FIQ), na.rm=T)==0
+all.equal(mean(scale(data$FIQ), na.rm=T), 0)
+with(data,{#
+	all.equal(c(mean(T1, na.rm = T), sd(T1, na.rm = T), c(0, 1))#
+	all.equal(c(mean(T2, na.rm = T), sd(T2, na.rm = T), c(0, 1))#
+}
+with(data,{#
+	all.equal(c(mean(T1, na.rm = T), sd(T1, na.rm = T), c(0, 1))#
+	all.equal(c(mean(T2, na.rm = T), sd(T2, na.rm = T), c(0, 1))#
+	}#
+)
+with(data, {#
+	all.equal(c(mean(T1, na.rm = T), sd(T1, na.rm = T)), c(0, 1))#
+	all.equal(c(mean(T2, na.rm = T), sd(T2, na.rm = T)), c(0, 1))#
+	}#
+)
+data
+dim(data)
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not", data)[2])#
+}
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not", data[2])#
+}
+dim(data)[2]
+dim(data)[[2]]
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not", dim(data)[2])#
+}
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not ", dim(data)[2])#
+}
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not ", dim(data)[2], "following column names found (expected \"SES\", \"T1\", \"T2\", \"Zygosity\"")#
+}
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not ", dim(data)[2], ". Following column names found (expected \"SES\", \"T1\", \"T2\", \"Zygosity\"\n", names(data))#
+}
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not ", dim(data)[2], ". Following column names found (expected \"SES\", \"T1\", \"T2\", \"Zygosity\"\n", #
+	paste(names(data))#
+}
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not ", dim(data)[2], ". Following column names found (expected \"SES\", \"T1\", \"T2\", \"Zygosity\"\n", #
+	paste(names(data)))#
+}
+paste(names(data))
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not ", dim(data)[2], ". Following column names found (expected \"SES\", \"T1\", \"T2\", \"Zygosity\"\n") #
+	paste(names(data))#
+}
+if(dim(data)[2] != 4){#
+	message("you need to supply me with 4 columns, not ", dim(data)[2], ". Following column names found (expected \"SES\", \"T1\", \"T2\", \"Zygosity\")\n") #
+	paste(names(data))#
+}
+if(dim(data)[2] != 4){#
+	message("You need to supply me with 4 columns, not ", dim(data)[2], ". Following column names found (expected \"SES\", \"T1\", \"T2\", \"Zygosity\")\n") #
+	paste(names(data))#
+}
+subset()
+2+2
+sqrt(exp(1))
+(exp(1)
+)
+log(exp(3))
+log(exp(1))
+log(exp(1)+3)
+log(exp(1)+exp(2))
+exp(1)+exp(2)
+log(exp(2))
+exp(2)
+exp(1)
+exp(2)+exp(3)
+log(exp(2)+exp(3))
+library("car"); library("visreg") #
+names(iris) #
+m1 = lm(Petal.Length ~ Species, data = iris); Anova(m1); visreg(m1)
+linearHypothesis(m1, "0.5 * Speciesversicolor + 0.5 * Speciesvirginica")
+linearHypothesis(m1, "Speciesversicolor = Speciesvirginica", verbose=T)
+some(OBrienKaiser, 4)
+contrasts(OBrienKaiser$treatment)
+xtabs(~ treatment + gender, data = OBrienKaiser)
+car::linearHypothesis(m1, "0.5 * Speciesversicolor + 0.5 * Speciesvirginica")
+car::linearHypothesis(m1, "Speciesversicolor = Speciesvirginica", verbose=T)
+require("psych"); require("ggplot2"); require("OpenMx"); require("foreign"); require("MASS"); require("car"); require("doBy"); #
+require("reshape2"); require("ggplot2")#
+source("~/bin/omxhelper/genEpi.lib.R")#
+source("~/bin/umx/umx.lib.R")#
+#
+GbyEwrapper = function(DVs, Defs, twinData, suffix="_T") {#
+	selDVs  = c(paste(DVs ,suffix, "1", sep=""), paste(DVs, suffix, "2", sep=""))#
+	selDefs = c(paste(Defs,suffix, "1", sep=""), paste(Defs,suffix, "2", sep=""))#
+	selVars = c(selDVs, selDefs)#
+	twinData[,selDefs] = log(twinData[,selDefs])#
+	mzData  = subset(twinData, zyg == "MONOZYGOTIC", selVars) #
+	dzData  = subset(twinData, zyg == "DIZYGOTIC - DIFFERENT SEX" | zyg == "DIZYGOTIC - SAME SEX", selVars) #
+	mzData <- mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]#
+	dzData <- dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]#
+	return(makeGxE_2Group(selDVs=selDVs, selDefs=selDefs, dzData=dzData, mzData=mzData))#
+}#
+#
+ACEwrapper = function(DVs, twinData, suffix="_T") {#
+	selDVs  = c(paste(DVs ,suffix, "1", sep=""), paste(DVs, suffix, "2", sep=""))#
+	selVars = c(selDVs)#
+	mzData  = subset(twinData, zyg=="MONOZYGOTIC", selVars) #
+	dzData  = subset(twinData, zyg=="DIZYGOTIC - DIFFERENT SEX" | zyg=="DIZYGOTIC - SAME SEX", selVars) #
+	return(makeACE_2Group(selDVs=selDVs, dzData=dzData, mzData=mzData, addStd=T))#
+}#
+print(load("~/Dropbox/current/IQ/MIDUS/GxE IQ/data/twinData.rda"))
+fit11 = mxRun(GbyEwrapper(DVs = c("IQ100"), Defs = c('ChildhoodSEI'), twinData))
+summary(fit11)
+pf(4.10, 1, 40)
+pf(4.10, 1, 40, lower.tail=F)
+2
+cut my wrists
+library(umx)
+????umx-package
+?umx-package
+setwd("~/bin/umx/umx")
+xmuPropagateLabels()
+has_devel()
+library(devtools); devtools::has_devel()
+dev_help()
+dev_help("xmuPropagateLabels")
+?xmuPropagateLabels()
+dev_help("umxStart")
+devtools::document()
+devtools::install()
+?umxStart

@@ -1,13 +1,30 @@
+# setwd("~/bin/umx/umx")
+# devtools::load_all()
+# devtools::dev_help("xmuLabel_MATRIX_Model")
+# devtools::document()
+# devtools::install()
 
 # ========================================
 # = Not Typically used directly by users =
 # ========================================
 
+#' xmuLabel_MATRIX_Model (not a user function)
+#'
+#' This function label all the free parameters in a (non-RAM) OpenMx \code{\link{mxMmodel}}
+#' nb: We don't assume what each matrix is for, and just stick a_r1c1 into each cell
+#'
+#' @param model a model to label
+#' @param suffix a string to append to each label
+#' @param verbose how much feedback to give
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' model = xmuLabel_MATRIX_Model(model)
+#' model = xmuLabel_MATRIX_Model(model, suffix = "male")
+
 xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
-	# Purpose: to label all the free parameters of a (non-RAM) model
-	# nb: We don't assume what each matrix is for, and just stick a_r1c1 into each cell
-	# Use case: model = xmuLabel_MATRIX_Model(model)
-	# Use case: model = xmuLabel_MATRIX_Model(model, suffix = "male")
 	if(!is(model, "MxModel")){
 		stop("xmuLabel_MATRIX_Model needs model as input")
 	}
@@ -18,8 +35,20 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 	return(model)
 }
 
+#' xmuPropagateLabels (not a user function)
+#'
+#' You should be calling umxLabel.
+#' This function is called by xmuLabel_MATRIX_Model
+#'
+#' @param model a model to label
+#' @param suffix a string to append to each label
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
+
 xmuPropagateLabels <- function(model, suffix = "") {
-    # Called by xmuLabel_MATRIX_Model
+    # 
     # useage: xmuPropagateLabels(model, suffix = "")
 	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix, suffix = suffix)
     model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix)
@@ -158,6 +187,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	return(mx_matrix)
 }
 
+# TODO document xmuMakeDeviationThresholdsMatrices
 xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	# Purpose: return a mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
 	# usecase see: umxMakeThresholdMatrix
@@ -211,12 +241,23 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	return(list(UnitLower,threshDeviations, thresh, mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")))
 }
 
-xmuMakeThresholdsMatrices <- function(df, droplevels, verbose) {
-	# stop("I have not written xmuMakeThresholdsMatrices yet as it is fucked as a reliable strategy and likely to be superceeded")
-	# usecase
-	# junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose=T)
-	# junk[1]; 	junk[[2]]@values; 	junk[3]
-	
+#' xmuMakeThresholdsMatrices (not a user function)
+#'
+#' You should not be calling this directly.
+#' This is not as a reliable strategy and likely to be superceeded...
+#'
+#' @param df a \code{\link{data.frame}} containing the data for your \code{\link{mxData}} statement
+#' @param droplevels a binary asking if empty levels should be dropped (defaults to FALSE)
+#' @param verbose how much feedback to give (defaults to FALSE)
+#' @return - a list containing an \code{\link{mxMatrix}} called "thresh", 
+#' an \code{\link{mxRAMObjective}} object, and an \code{\link{mxData}} object
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose=T)
+
+xmuMakeThresholdsMatrices <- function(df, droplevels = F, verbose = F) {
 	isOrdinalVariable = umxIsOrdinalVar(df) 
 	ordinalColumns    = df[,isOrdinalVariable]
 	nOrdinal          = ncol(ordinalColumns);

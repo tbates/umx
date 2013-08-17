@@ -1,72 +1,37 @@
-# ===============
-# = RAM Helpers =
-# ===============
-umxConnect <- function(x) {
-	# TODO handle endogenous	
-}
-
-umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
-	# use case
-	# mxSingleIndicators(manifests, data)
-	if( nrow(data) == ncol(data) & all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
-		isCov = T
-		if(verbose){
-			message("treating data as cov")
-		}
-	} else {
-		isCov = F
-		if(verbose){
-			message("treating data as raw")
-		}
-	}
-	if(isCov){
-		variances = diag(data[manifests,manifests])
-		# Add variance to the single manfests
-		p1 = mxPath(from=manifests, arrows=2, value=variances) # labels = umxLabels(manifests, suffix = paste0("unique", labelSuffix)))
-		return(p1)
-	} else {
-		manifestOrdVars = mxIsOrdinalVar(data[,manifests])
-		if(any(manifestOrdVars)){
-			means         = rep(0, times=length(manifests))
-			variances     = rep(1, times=length(manifests))
-			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm=T)
-			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use="complete"))
-			means[!manifestOrdVars] = contMeans				
-			variances[!manifestOrdVars] = contVariances				
-		}else{
-			means     = colMeans(data[,manifests], na.rm = T)
-			variances = diag(cov(data[,manifests], use = "complete"))
-		}
-		# Add variance to the single manfests
-		p1 = mxPath(from = manifests, arrows = 2, value = variances) # labels = mxLabel(manifests, suffix = paste0("unique", labelSuffix))
-		# Add means for the single manfests
-		p2 = mxPath(from="one", to=manifests, values=means) # labels = mxLabel("one", manifests, suffix = labelSuffix)
-		return(list(p1, p2))
-	}
-}
-
-umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
-	mask      = (matrixIn != dontTouch);
-	newValues = mask;
-	matrixIn[mask==TRUE] = matrixIn[mask==TRUE] + rnorm(length(mask[mask==TRUE]), mean=mean, sd=sd);
-	return (matrixIn);
-}
+# setwd("~/bin/umx/umx")
+# devtools::load_all()
+# devtools::dev_help("umxStart")
+# devtools::document()
+# devtools::install()
 
 # =================================
 # = Speed  and Efficiency Helpers =
 # =================================
+#' umxRun
+#'
+#' umxRun is a version of \code{\link{mxRun}} which can run multiple times by default
+#' The main value for umxRun over mxRun is with raw data. It's slightly faster, but 
+#' can also calculate the saturated and independence likelihoods necessary for most fit indices.
+#'
+#' @param model the \code{\link{mxModel}} you wish to run.
+#' @param n the maximum number of times you want to run the model trying to get a code green run (defaults to 3)
+#' @param calc_SE whether to calculate standard errors 
+#' for the summary (they are not very accurate, so if you use \code{\link{mxCI}} you can trun this off)
+#' @param calc_sat whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s)
+#' @return - \code{\link{mxModel}}
+#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#'  model = umxRun(model, n = 10)
 
-umxRun <- function(model, n = 3, calc_SE = T, calcSat = T){
+umxRun <- function(model, n = 3, calc_SE = T, calc_sat = T){
 	# TODO: return change in -2LL
 	# Optimise for speed
-	# Use case
-	# model <- umxRun(model, n = 10)
 	model = mxOption(model, "Calculate Hessian", "No")
 	model = mxOption(model, "Standard Errors", "No")
 	# make an initial run
 	model = mxRun(model);
-	n = (n-1)
-	tries = 0
+	n = (n - 1); tries = 0
 	# carry on if we failed
 	while(model@output$status[[1]] == 6 && n > 2 ) {
 		print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
@@ -96,6 +61,25 @@ umxRun <- function(model, n = 3, calc_SE = T, calcSat = T){
 }
 # m1 = umxRun(m1); summary(m1)
 
+#' umxRun
+#'
+#' umxRun is a version of \code{\link{mxRun}} which can run multiple times by default
+#' The main value for umxRun over mxRun is with raw data. It's slightly faster, but 
+#' can also calculate the saturated and independence likelihoods necessary for most fit indices.
+#'
+#' @param lastFit The \code{\link{mxModel}} you wish to update and run.
+#' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
+#' @param regex = A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
+#' @param free Whether to set the parameters whose labels you specify to free or fixed (defaults to FALSE, i.e., fixed)
+#' @param freeToStart Whether to only update parameters which are free to start (defaults to NA - i.e, not checked)
+#' @param name The name for the new model)
+#' @param verbose The name for the new model)
+#' @param intervals whether to run confidence intervals (see \code{\link{mxRun}})
+#' @return - \code{\link{mxModel}}
+#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' fit2 = umxReRun(fit1, regex="Cs", name="AEmodel")
 umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, newName = "deprecated") {
 	# fit2 = umxReRun(fit1, regex="Cs", name="AEip")
 	if(newName != "deprecated"){
@@ -109,10 +93,10 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 		if(any(is.na(dropList))) {
 			stop("Both dropList and regex cannot be empty!")
 		} else {
-			x = mxRun(omxSetParameters(lastFit, labels=dropList, free = free, value = value, name= name),intervals = intervals)
+			x = mxRun(omxSetParameters(lastFit, labels=dropList, free = free, value = value, name= name), intervals = intervals)
 		}
 	} else {
-		x = mxRun(omxSetParameters(lastFit, labels=umxGetLabels(lastFit, regex=regex,free=freeToStart,verbose=verbose), free = free, value = value, name = name),intervals=intervals)
+		x = mxRun(omxSetParameters(lastFit, labels = umxGetLabels(lastFit, regex= regex, free= freeToStart, verbose= verbose), free = free, value = value, name = name), intervals= intervals)
 	}
 	return(x)
 }
@@ -123,28 +107,24 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 # = Model building and modifying helpers =
 # ========================================
 
-umxStart_value_list <- function(x = 1, sd = NA, n = 1) {
-	# Purpose: Create startvalues for OpenMx paths
-	# use cases
-	# umxStart(1) # 1 value, varying around 1, with sd of .1
-	# umxStart(1, n=letters) # length(letters) start values, with mean 1 and sd .1
-	# umxStart(100, 15)  # 1 start, with mean 100 and sd 15
-	# TODO: handle connection style
-	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
-	if(is.na(sd)){
-		sd = x/6.6
-	}
-	if(length(n)>1){
-		n = length(n)
-	}
-	return(rnorm(n=n, mean=x, sd=sd))
-}
+#' umxStart
+#'
+#' umxStart will set start values for the free parameters in RAM and Matrix \code{\link{mxModels}}, or even mxMatrices.
+#' It will try and be smart in guessing these from the values in your data, and the model type.
+#'
+#' @param obj the RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.
+#' @param sd optional sd for start values
+#' @param n  optional mean for start values
+#' @return - \code{\link{mxModel}} with updated start values
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' model = umxStart(model)
 
 umxStart <- function(obj = NA, sd = NA, n = 1) {
-	# Purpose: Set sane starting values in RAM models OR return a list of start values
-	# use case: m1 = umxStart(obj = m1)
 	if(is.numeric(obj) ) {
-		umxStart_value_list(x = obj, sd = NA, n = 1)
+		xmuStart_value_list(x = obj, sd = NA, n = 1)
 	} else {
 		# This is an MxRAM Model: Set sane starting values
 		# TODO: Start values in the A matrix...
@@ -184,6 +164,10 @@ umxStart <- function(obj = NA, sd = NA, n = 1) {
 		return(obj)
 	}	
 }
+
+# ===============
+# = RAM Helpers =
+# ===============
 
 umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous = FALSE, model.name = NA, help = FALSE, labelSuffix = "", verbose = T) {
 	# Purpose: make a latent variable formed/or formed by some manifests
@@ -338,29 +322,48 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 	# mxLatent("Read", forms = manifestsRead)
 }
 
-umxModelIsRAM <- function(obj) {
-	# test is model is RAM
-	# umxModelIsRAM(obj)
-	isModel = isS4(obj) & is(obj, "MxModel")
-	if(!isModel){
-		return(F)
-	}
-	oldRAM_check = class(obj$objective) == "MxRAMObjective"
-	# TODO: get working on both the old and new objective model...
-	# newRAM_check = (class(obj$objective)[1] == "MxRAMObjective"))
-	if(oldRAM_check) {
-		return(T)
+umxConnect <- function(x) {
+	# TODO handle endogenous	
+}
+
+umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
+	# use case
+	# mxSingleIndicators(manifests, data)
+	if( nrow(data) == ncol(data) & all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
+		isCov = T
+		if(verbose){
+			message("treating data as cov")
+		}
 	} else {
-		return(F)			
+		isCov = F
+		if(verbose){
+			message("treating data as raw")
+		}
 	}
-}
-
-umxIsMxModel <- function(obj) {
-	isS4(obj) & is(obj, "MxModel")	
-}
-
-umxIsRAMmodel <- function(obj) {
-	(class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM")	
+	if(isCov){
+		variances = diag(data[manifests,manifests])
+		# Add variance to the single manfests
+		p1 = mxPath(from=manifests, arrows=2, value=variances) # labels = umxLabels(manifests, suffix = paste0("unique", labelSuffix)))
+		return(p1)
+	} else {
+		manifestOrdVars = mxIsOrdinalVar(data[,manifests])
+		if(any(manifestOrdVars)){
+			means         = rep(0, times=length(manifests))
+			variances     = rep(1, times=length(manifests))
+			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm=T)
+			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use="complete"))
+			means[!manifestOrdVars] = contMeans				
+			variances[!manifestOrdVars] = contVariances				
+		}else{
+			means     = colMeans(data[,manifests], na.rm = T)
+			variances = diag(cov(data[,manifests], use = "complete"))
+		}
+		# Add variance to the single manfests
+		p1 = mxPath(from = manifests, arrows = 2, value = variances) # labels = mxLabel(manifests, suffix = paste0("unique", labelSuffix))
+		# Add means for the single manfests
+		p2 = mxPath(from="one", to=manifests, values=means) # labels = mxLabel("one", manifests, suffix = labelSuffix)
+		return(list(p1, p2))
+	}
 }
 
 umxCheckModel <- function(obj, type = "RAM", hasData = NA) {
@@ -380,9 +383,102 @@ umxCheckModel <- function(obj, type = "RAM", hasData = NA) {
 	}	
 }
 
-# ======================
-# = Labeling functions =
-# ======================
+umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
+	# Purpose : standardise a RAM model, usually in order to return a standardized version of the model.
+	# Use case: umxStandardizeModel(model, return = "model")
+	# note    : Make sure 'return' is a valid option: "parameters", "matrices", or "model"
+	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
+	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
+	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
+	if (class(model@objective)[1] !="MxRAMObjective" & !suppliedNames ){
+		stop("I need either mxRAMObjective or the names of the A and S matrices.")
+	}
+	output <- model@output
+	# stop if there is no objective function
+	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
+	# stop if there is no output
+	if (length(output)<1)stop("Provided model has no output. I can only standardize models that have been run!")
+	# Get the names of the A, S and M matrices 
+	if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
+	if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
+	if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
+	# Get the A and S matrices, and make an identity matrix
+	A <- model[[nameA]]
+	S <- model[[nameS]]
+	I <- diag(nrow(S@values))
+	
+	# Calculate the expected covariance matrix
+	IA <- solve(I-A@values)
+	expCov <- IA %*% S@values %*% t(IA)
+	# Return 1/SD to a diagonal matrix
+	invSDs <- 1/sqrt(diag(expCov))
+	# Give the inverse SDs names, because mxSummary treats column names as characters
+	names(invSDs) <- as.character(1:length(invSDs))
+	if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
+	# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
+	diag(I) <- invSDs
+	# Standardize the A, S and M matrices
+	#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
+	#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
+	stdA <- I %*% A@values %*% solve(I)
+	stdS <- I %*% S@values %*% I
+	# Populate the model
+	model[[nameA]]@values[,] <- stdA
+	model[[nameS]]@values[,] <- stdS
+	if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
+	# Return the model, if asked
+	if(return=="model"){
+		return(model)
+	}else if(return=="matrices"){
+		# return the matrices, if asked
+		matrices <- list(model[[nameA]], model[[nameS]])
+		names(matrices) <- c("A", "S")
+		return(matrices)
+	}else if(return=="parameters"){
+		# return the parameters
+		#recalculate summary based on standardised matrices
+		p <- summary(model)$parameters
+		p <- p[(p[,2]==nameA)|(p[,2]==nameS),]
+		## get the rescaling factor
+		# this is for the A matrix
+		rescale <- invSDs[p$row] * 1/invSDs[p$col]
+		# this is for the S matrix
+		rescaleS <- invSDs[p$row] * invSDs[p$col]
+		# put the A and the S together
+		rescale[p$matrix=="S"] <- rescaleS[p$matrix=="S"]
+		# rescale
+		p[,5] <- p[,5] * rescale
+		p[,6] <- p[,6] * rescale
+		# rename the columns
+		# names(p)[5:6] <- c("Std. Estimate", "Std.Std.Error")
+		return(p)		
+	}
+}
+
+umxReportCIs <- function(model, addCIs = T, runCIs="if necessary") {
+	if(is.na(model)){
+		message("umxReportCIs adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxReportCIs(model)")
+		stop();
+	}
+	message("### CIs for model ", model@name)
+	if(addCIs){
+		CIs = names(omxGetParameters(model))
+		model = mxRun(mxModel(model, mxCI(CIs)), intervals = T)
+	} else if(runCIs == "if necessary" & dim(model@output$confidenceIntervals)[1] < 0){
+		model = mxRun(model, intervals = T)		
+	}
+	model_summary = summary(model)
+	model_CIs = round(model_summary$CI, 3)
+	model_CI_OK = model@output$confidenceIntervalCodes
+	colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
+	model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
+	print(model_CIs)
+	invisible(model)
+}
+
+# ==============================
+# = Label and equate functions =
+# ==============================
 
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, verbose = F) {	
 	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
@@ -480,137 +576,7 @@ umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) 
 }
 
 #` ## path-oriented helpers
-umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
-	# Purpose : standardise a RAM model, usually in order to return a standardized version of the model.
-	# Use case: umxStandardizeModel(model, return = "model")
-	# note    : Make sure 'return' is a valid option: "parameters", "matrices", or "model"
-	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
-	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
-	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
-	if (class(model@objective)[1] !="MxRAMObjective" & !suppliedNames ){
-		stop("I need either mxRAMObjective or the names of the A and S matrices.")
-	}
-	output <- model@output
-	# stop if there is no objective function
-	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
-	# stop if there is no output
-	if (length(output)<1)stop("Provided model has no output. I can only standardize models that have been run!")
-	# Get the names of the A, S and M matrices 
-	if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
-	if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
-	if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
-	# Get the A and S matrices, and make an identity matrix
-	A <- model[[nameA]]
-	S <- model[[nameS]]
-	I <- diag(nrow(S@values))
-	
-	# Calculate the expected covariance matrix
-	IA <- solve(I-A@values)
-	expCov <- IA %*% S@values %*% t(IA)
-	# Return 1/SD to a diagonal matrix
-	invSDs <- 1/sqrt(diag(expCov))
-	# Give the inverse SDs names, because mxSummary treats column names as characters
-	names(invSDs) <- as.character(1:length(invSDs))
-	if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
-	# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
-	diag(I) <- invSDs
-	# Standardize the A, S and M matrices
-	#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
-	#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
-	stdA <- I %*% A@values %*% solve(I)
-	stdS <- I %*% S@values %*% I
-	# Populate the model
-	model[[nameA]]@values[,] <- stdA
-	model[[nameS]]@values[,] <- stdS
-	if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
-	# Return the model, if asked
-	if(return=="model"){
-		return(model)
-	}else if(return=="matrices"){
-		# return the matrices, if asked
-		matrices <- list(model[[nameA]], model[[nameS]])
-		names(matrices) <- c("A", "S")
-		return(matrices)
-	}else if(return=="parameters"){
-		# return the parameters
-		#recalculate summary based on standardised matrices
-		p <- summary(model)$parameters
-		p <- p[(p[,2]==nameA)|(p[,2]==nameS),]
-		## get the rescaling factor
-		# this is for the A matrix
-		rescale <- invSDs[p$row] * 1/invSDs[p$col]
-		# this is for the S matrix
-		rescaleS <- invSDs[p$row] * invSDs[p$col]
-		# put the A and the S together
-		rescale[p$matrix=="S"] <- rescaleS[p$matrix=="S"]
-		# rescale
-		p[,5] <- p[,5] * rescale
-		p[,6] <- p[,6] * rescale
-		# rename the columns
-		# names(p)[5:6] <- c("Std. Estimate", "Std.Std.Error")
-		return(p)		
-	}
-}
-
 #` ## matrix-oriented helpers
-
-umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, prefix = "", suffix = "",...) {
-	stop("replace umxPath with mxPath, and run umxLabel(model) on the model when you are done to add default labels, plus umxStart(model) to add default start values")
-	# {$|single,all.pairs,all.bivariate,unique.pairs,unique.bivariate|}
-	# Purpose: make mxPaths with informative labels, comments to tim.bates@ed.ac.uk
-	# use case
-	# umxPath(from = "OriginSES", to = "PaternalSESn")
-	# Use case: umxPath("F1", paste("m",1:4,sep="")) # "F1_to_m1" "F1_to_m2" "F1_to_m3" "F1_to_m4"
-	# TODO: make this generate the paths as well... i.e., "umxPath()"
-	# TODO: handle connection style
-	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
-	if(any(is.na(to)) & (suffix=="var"| suffix=="unique")){
-		# handle from only, variance and residuals
-		part1  = paste(prefix, from, sep="")
-		myLabels = (paste(part1, suffix, sep="_"))
-	} else if(any(from == "one")){
-		# handle means (from == "one")
-		if(!all(from == "one")){
-			stop(cat("Error in umxLabels: from was a mix of one and not-one",from))
-		} else {
-			myLabels = paste(to, "mean", sep="_")
-		}
-	} else if(connect == "unique.bivariate") {
-		if(!all(is.na(to))){
-			if(!(from == to)){
-				stop("with connect = 'unique.bivariate', to must be blank, or the same as from")
-			}
-		}
-		labels = as.character(combn(from, m = 2, FUN = paste, collapse = "_"))
-		return(labels)
-	} else {
-		fromPart = paste(prefix, from, sep = "")
-		toPart   = paste(to  , suffix, sep = "_")
-		myLabels = paste(fromPart, toPart, sep = "_to_")
-	}
-	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = myLabels, lbound = lbound, ubound = ubound)
-}
-
-umxReportCIs <- function(model, addCIs = T, runCIs="if necessary") {
-	if(is.na(model)){
-		message("umxReportCIs adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxReportCIs(model)")
-		stop();
-	}
-	message("### CIs for model ", model@name)
-	if(addCIs){
-		CIs = names(omxGetParameters(model))
-		model = mxRun(mxModel(model, mxCI(CIs)), intervals = T)
-	} else if(runCIs == "if necessary" & dim(model@output$confidenceIntervals)[1] < 0){
-		model = mxRun(model, intervals = T)		
-	}
-	model_summary = summary(model)
-	model_CIs = round(model_summary$CI, 3)
-	model_CI_OK = model@output$confidenceIntervalCodes
-	colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
-	model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
-	print(model_CIs)
-	invisible(model)
-}
 
 # ===================
 # = Ordinal helpers =
@@ -665,36 +631,6 @@ umxIsOrdinalVar <- function(df, names=F) {
 		return(factorVariable)
 	}
 }
-
-# ==================
-# = Model Builders =
-# ==================
-
-umxSimpleCFA <- function(name="", latents, data, report =c("shortTable","shortLine","long")){
-	# umxSimpleRAM(name="N", latents="N", data)
-	manifests <- names(data)
-	m1 <- mxModel(name, type="RAM",
-		manifestVars = manifests,
-		latentVars   = latents,
-		# Factor loadings
-		mxPath(from = latents, to = manifests),
-		mxPath(from = manifests, arrows = 2), # manifest residuals 
-		mxPath(from = latents, arrows = 2, free = F, values = 1), # latents fixed@1
-		mxData(cov(data), type="cov", numObs = nrow(data))
-	)
-	m1 = mxRun(m1); 
-	if(report == "shortTable") {
-		umxReportFit(m1, report = "table");
-	} else if(report == "shortLine"){
-		umxReportFit(m1, report = "line");
-	} else if (report == "long"){
-		umxSummary(m1, report = "")
-	} else {
-		message("Bad setting for report")
-	}
-	invisible(m1)
-}
-
 
 # ==================================
 # = Borrowed for tutorial purposes =
@@ -867,4 +803,57 @@ summaryACEFit <- function(fit, accuracy = 2, dotFilename = NA, returnStd = F, ex
 		# DZc = mxEval(DZ.expCov,  fit);
 		# M   = mxEval(MZ.expMean, fit);
 	}
+}
+
+# ===========
+# = Utility =
+# ===========
+
+umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
+	mask      = (matrixIn != dontTouch);
+	newValues = mask;
+	matrixIn[mask==TRUE] = matrixIn[mask==TRUE] + rnorm(length(mask[mask==TRUE]), mean=mean, sd=sd);
+	return (matrixIn);
+}
+
+umxModelIsRAM <- function(obj) {
+	# test is model is RAM
+	# umxModelIsRAM(obj)
+	isModel = isS4(obj) & is(obj, "MxModel")
+	if(!isModel){
+		return(F)
+	}
+	oldRAM_check = class(obj$objective) == "MxRAMObjective"
+	# TODO: get working on both the old and new objective model...
+	# newRAM_check = (class(obj$objective)[1] == "MxRAMObjective"))
+	if(oldRAM_check) {
+		return(T)
+	} else {
+		return(F)			
+	}
+}
+
+umxIsMxModel <- function(obj) {
+	isS4(obj) & is(obj, "MxModel")	
+}
+
+umxIsRAMmodel <- function(obj) {
+	(class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM")	
+}
+
+xmuStart_value_list <- function(x = 1, sd = NA, n = 1) {
+	# Purpose: Create startvalues for OpenMx paths
+	# use cases
+	# umxStart(1) # 1 value, varying around 1, with sd of .1
+	# umxStart(1, n=letters) # length(letters) start values, with mean 1 and sd .1
+	# umxStart(100, 15)  # 1 start, with mean 100 and sd 15
+	# TODO: handle connection style
+	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
+	if(is.na(sd)){
+		sd = x/6.6
+	}
+	if(length(n)>1){
+		n = length(n)
+	}
+	return(rnorm(n=n, mean=x, sd=sd))
 }

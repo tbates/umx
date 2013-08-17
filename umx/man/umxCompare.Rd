@@ -1,0 +1,37 @@
+\name{umxCompare}
+\alias{umxCompare}
+\title{umxCompare}
+\usage{
+  umxCompare(base = NA, comparison = NA, all = T,
+    output = "Rout.html")
+}
+\arguments{
+  \item{base}{the base \code{\link{mxModel}}}
+
+  \item{comparison}{= the models which will be compared for
+  fit with the base model (can be empty)}
+
+  \item{all}{whether to make all possible comparisons if
+  there is more than one base model (defaults to T)}
+
+  \item{output}{Optionally output to an html table which
+  will open your default browser: handy for getting tables
+  into word}
+}
+\description{
+  umxCompare compares two or more \code{\link{mxModel}}s.
+  If you leave comparison blank, it will just give fit info
+  for the base model
+}
+\examples{
+umxCompare(model1, model2)
+umxCompare(model1, c(model2,model3))
+}
+\references{
+  - http://openmx.psyc.virginia.edu/
+}
+\seealso{
+  - \code{\link{mxCompare}}, \code{\link{umxReport}},
+  \code{\link{umxRun}},
+}
+
