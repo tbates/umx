@@ -2,11 +2,38 @@
 # = Deprecated =
 # ==============
 
-umxTryHard = function(model, n=3, calc_SE=F){ stop("Use umxRun() in place of umxTryHard") }
+#' umxTryHard
+#'
+#' umxTryHard Is deprecated: use \code{\link{umxRun}} instead
+#'
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
 
-umxLabels = function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop("please use umxPath in place of umxLabels. To label models or matrices, use umxLabel")}
+umxTryHard <- function(model, n=3, calc_SE=F){ stop("Use umxRun() in place of umxTryHard") }
 
-genEpi_Jiggle = function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {stop("please use umxJiggle in place of genEpi_Jiggle")}
+#' umxLabels
+#'
+#' umxLabels Is deprecated: use \code{\link{umxLabel}} instead
+#'
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
+
+umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop("please use umxPath in place of umxLabels. To label models or matrices, use umxLabel")}
+
+#' genEpi_Jiggle
+#' genEpi_Jiggle is deprecated: use \code{\link{umxJiggle}} instead
+#'
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
+
+genEpi_Jiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {stop("please use umxJiggle in place of genEpi_Jiggle")}
+
+#' umxPath
+#' umxPath is not yet working: It's not clear it will be helpful: 
+#' just use \code{\link{umxPath}} and \code{\link{umxLabel}} instead
+#'
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
 
 umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, prefix = "", suffix = "",...) {
 	stop("replace umxPath with mxPath, and run umxLabel(model) on the model when you are done to add default labels, plus umxStart(model) to add default start values")

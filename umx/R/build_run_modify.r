@@ -1,9 +1,7 @@
 # https://github.com/hadley/devtools/wiki/Philosophy
-# setwd("~/bin/umx/umx")
 # devtools::load_all()
 # devtools::dev_help("umxStart")
-# devtools::document()
-# devtools::install()
+# setwd("~/bin/umx/umx"); devtools::document(); devtools::install()
 
 # =================================
 # = Speed  and Efficiency Helpers =

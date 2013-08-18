@@ -1,3 +1,124 @@
+# https://github.com/hadley/devtools/wiki/Philosophy
+# devtools::load_all()
+# devtools::dev_help("Stouffer.test")
+# setwd("~/bin/umx/umx"); devtools::document(); devtools::install()
+
+# ====================
+# = Updating helpers =
+# ====================
+
+#' 	Update the OpenMx Library to latest version:
+#'
+#' This function automates the process of updating OpenMx while it is not a cran package
+#'
+#' @param bleedingEdge  binary factor determining whether to request the beta or relase version (F)
+#' @param loadNew binary parameter determining whether to load the library after (optionally) updating
+#' @param anyOK minimum version to accept without updating
+
+#' @export
+#' @examples
+#' umxUpdateOpenMx()
+
+umxUpdateOpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
+	# umxUpdateOpenMx()
+	if( "OpenMx" %in% .packages() ){
+		oldV = mxVersion();
+		if(anyOK){
+			message("You have version", oldV, "and that's fine")
+			return()
+		}
+		detach(package:OpenMx); # unload existing version
+		message("existing version \"" ,oldV, "\" was detached")
+	}	
+	if (bleedingEdge){
+		install.packages('OpenMx', repos='http://openmx.psyc.virginia.edu/testing/');
+	} else {
+		if (.Platform$OS.type == "windows") {
+			if (!is.null(.Platform$r_arch) && .Platform$r_arch == "x64") {
+				stop(paste("OpenMx is not yet supported on 64-bit R for Windows.",
+				"Please use 32-bit R in the interim."), call. = FALSE)
+			}
+			repos <- c('http://openmx.psyc.virginia.edu/packages/')
+			install.packages(pkgs=c('OpenMx'), repos=repos)
+		} else {
+			if (Sys.info()["sysname"] == "Darwin") {
+				darwinVers <- as.numeric(substr(Sys.info()['release'], 1, 2))
+				if (darwinVers > 10) {
+					msg <- paste("We have detected that you are running on OS X 10.7 or greater",
+					"whose native version of gcc does not support the OpenMP API.", 
+					"As a result your default installation has been set to single-threaded.",
+					"If you have installed the mac ports version of gcc to address this issue",
+					"please choose the multi-threaded installation option.")
+					cat(msg)
+					cat("1. single-threaded [default]\n")
+					cat("2. multi-threaded \n")
+					select <- readline("Which version of OpenMx should I install? ")
+
+					if (select == "") {
+						select <- 1
+					} 
+
+				} else {
+					cat("1. single-threaded\n")
+					cat("2. multi-threaded [default]\n")
+					select <- readline("Which version of OpenMx should I install? ")
+
+					if (select == "") {
+						select <- 2
+					}
+				}
+				} else {
+					cat("1. single-threaded\n")
+					cat("2. multi-threaded [default]\n")
+					select <- readline("Which version of OpenMx should I install? ")
+
+					if (select == "") {
+						select <- 2
+					}
+				}
+
+				if (!(select %in% c(1,2))) {
+					stop("Please enter '1' or '2'", call. = FALSE)
+				}
+  
+				if (select == 1) {
+					repos <- c('http://openmx.psyc.virginia.edu/sequential/')
+					install.packages(pkgs=c('OpenMx'), repos=repos, 
+					configure.args=c('--disable-openmp'))
+				} else if (select == 2) {
+					repos <- c('http://openmx.psyc.virginia.edu/packages/')
+					install.packages(pkgs=c('OpenMx'), repos=repos)
+				} else {
+					stop(paste("Unknown installation type", select))
+				}
+		}
+	}
+	if(loadNew){
+		# detach(package:OpenMx); # unload existing version
+		require("OpenMx")
+		newV = mxVersion();
+		if(!is.na(oldV)){
+			message("Woot: installed the latest and greatest \"", newV, "\" of OpenMx!")
+		} else {
+			message("Woot: you have upgraded from version \"" ,oldV, "\" to the latest and greatest \"", newV, "\"!")
+		}
+	}
+}
+
+# =====================
+# = utility functions =
+# =====================
+#' umxHasCIs
+#'
+#' umxHasCIs is a utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
+#'
+#' @param model \code{\link{mxModel}} to check for presence of CIs
+#' @return - TRUE or FALSE
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxRun}}, \code{\link{umxReportCIs}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' umxHasCIs(model)
+
 umxHasCIs <- function(model) {
 	# umxHasCIs(model)
 	if(is.null(model@output$confidenceIntervals)){
@@ -9,10 +130,48 @@ umxHasCIs <- function(model) {
 }
 
 # How long did that take?
+#' umxReportTime
+#'
+#' umxReportTime Reports how long the model took to execute compactly, without having to run a summary
+#'
+#' @param model an \code{\link{mxModel}} to get the time from
+#' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' umxReportTime(model)
 umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 	# use case
 	# umxReportTime(fit1)
 	format(.POSIXct(model@output$wallTime,tz), formatStr)
+}
+
+#' APA_ANOVA
+#'
+#' APA_ANOVA just runs anova(); lm.beta(), and puts that together in a regression table...
+#'
+#' @param model an \code{\link{anova}} model to make a table from 
+#' @param printDIC a boolean toggle whether tou want AIC-type fit change table printed
+#' @seealso - \code{\link{Anova}}, \code{\link{anova}}, \code{\link{lm.beta}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' APA_ANOVA(model)
+
+APA_ANOVA <- function(model, printDIC = F) {
+	a = anova(model);
+	a$beta = c(lm.beta(model),NA);
+	x <- c("Df", "beta", "F value", "Pr(>F)");
+	a = a[,x]; 
+	names(a) <- c("df", "𝛽", "F", "p"); 
+	ci = confint(model)
+	a$lowerCI = ci[,1]
+	a$upperCI = ci[,2]
+	a <- a[,c("df", "𝛽", "lowerCI", "upperCI", "F", "p")]; 
+	print(a)
+	if(printDIC){
+		a = drop1(model); 
+		a$DIC = round(a$AIC - a$AIC[1], 2); 
+		print(a)	
+	}
 }
 
 print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", ...){
@@ -36,6 +195,19 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 # = Data and Utility =
 # ====================
 
+#' Stouffer.test
+#'
+#' Runs a Stouffer.test
+#'
+#' @param p a list of p values, i.e., p(.4, .3, .6, .01)
+#' @seealso - 
+#' @references - Stouffer, S.A, Lumsdaine, A.A, Lumsdaine, M.H, 
+#' Williams Jr, R.M, Smith, M Brewster, J, Irving L, . . . Cottrell Jr, L.S. (1949). 
+#' The American soldier: combat and its aftermath.(Studies in 
+#' social psychology in World War II, Vol. 2.).
+#' \url{http://www.burns-stat.com/pages/Working/perfmeasrandport.pdf}
+#' @examples
+#'  model = Stouffer.test(model)
 Stouffer.test <- function(p = NULL) {
 	# Purpose:
 	# Use case: Stouffer.test(p = c(0.13, 0.18, 0.06))
@@ -218,6 +390,7 @@ rowMax <- function(df, na.rm=T) {
 	tmp[!is.finite(tmp)] = NA
 	return(tmp)
 }
+
 rowMin <- function(df, na.rm=T) {
 	tmp = apply(df, MARGIN=1, FUN=min, na.rm=na.rm)
 	tmp[!is.finite(tmp)] = NA
