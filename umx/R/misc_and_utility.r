@@ -1,6 +1,7 @@
 # https://github.com/hadley/devtools/wiki/Philosophy
 # devtools::dev_help("Stouffer.test")
 # setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
+# devtools::check()
 
 # ====================
 # = Updating helpers =
@@ -192,6 +193,25 @@ umxAnovaReport <- function(model, printDIC = F) {
 	}
 }
 
+#' print.dataframe
+#'
+#' print.dataframe is a helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
+#' Its most useful characteristic is allowing you to change how NA and zero appear.
+#' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
+#'
+#' @param x a data.frame to print
+#' @param digits  the number of decimal places to print (defaults to getOption("digits")
+#' @param quote  parameter passed to print
+#' @param na.print String to replace NA with (default to blank "")
+#' @param zero.print String to replace 0.000 with  (defaults to "0")
+#' @param justify parameter passed to print
+#' @param ... option parameters for print
+#' @export
+#' @seealso - \code{\link{print}}
+#' @examples
+#' \dontrun{
+#' print.dataframe(model)
+#' }
 print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", ...){
     xx <- format(x, digits = digits, justify = justify)
     if (any(ina <- is.na(x))) 
@@ -252,18 +272,35 @@ Stouffer.test <- function(p = NULL) {
 	pcomb(p)
 }
 
+#' umxHetCor
+#'
+#' umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
+#'
+#' @param data a \code{\link{data.frame}} of columns for which to compute heterochoric correlations
+#' @param ML Whether to use Maximum likelihood computation of correlations (default = F)
+#' @param use How to delete missing data
+#' @return - a matrix of correlations
+#' @export
+#' @seealso - \code{\link{hetcor}}
+#' @references - 
+#' @examples
+#' \dontrun{
+#' cor_mat_ = umxHetCor(df)
+#' umxHetCor(data, use="pairwise.complete.obs")
+#' }
+
+
 umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs"){
-	# use case
-	# umxHetCor(data, use="pairwise.complete.obs")
-	# helper to return just the correlations from polycor::hetcor
-	require(polycor)
-	# TODO add error message if polycor not found
-	# install.packages("polycor")
-	hetc = polycor::hetcor(data, ML=ML, use=use, std.err=F)
-	return(hetc$correlations)
+	if(require(polycor)){
+		hetc = polycor::hetcor(data, ML=ML, use=use, std.err=F)
+		return(hetc$correlations)
+	} else {
+		# TODO add error message if polycor not found
+		stop("To run umxHetCor, you must install the polycor package\ninstall.packages('polycor')")
+	}
 }
 
-umxLower2full <- function(lower.data, diag=F, byrow=T) {
+umxLower2full <- function(lower.data, diag = F, byrow = T) {
 	# lower2full(lower.tri, diag=F)
 	# lower2full(lower.data, diag=T, byrow=F)
 	# lower2full(lower.no.diag, diag=F, byrow=F)
