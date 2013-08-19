@@ -32,13 +32,15 @@
   standardized version.
 }
 \examples{
-model = umxStandardizeModel(model, return = "model")
+\dontrun{
+ model = umxStandardizeModel(model, return = "model")
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/
 }
 \seealso{
-  - \code{\link{omxLabel}}, \code{\link{umxRun}},
+  - \code{\link{umxLabel}}, \code{\link{umxRun}},
   \code{\link{umxStart}}
 }
 

@@ -24,14 +24,16 @@
   for the base model
 }
 \examples{
+\dontrun{
 umxCompare(model1, model2)
-umxCompare(model1, c(model2,model3))
+umxCompare(model1, c(model2, model3))
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/
 }
 \seealso{
-  - \code{\link{mxCompare}}, \code{\link{umxReport}},
+  - \code{\link{mxCompare}}, \code{\link{umxReportFit}},
   \code{\link{umxRun}},
 }
 

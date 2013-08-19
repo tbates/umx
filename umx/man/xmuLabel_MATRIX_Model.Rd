@@ -16,13 +16,15 @@
 }
 \description{
   This function label all the free parameters in a
-  (non-RAM) OpenMx \code{\link{mxMmodel}} nb: We don't
+  (non-RAM) OpenMx \code{\link{mxModel}} nb: We don't
   assume what each matrix is for, and just stick a_r1c1
   into each cell
 }
 \examples{
+\dontrun{
 model = xmuLabel_MATRIX_Model(model)
 model = xmuLabel_MATRIX_Model(model, suffix = "male")
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/

@@ -18,12 +18,14 @@
 }
 \description{
   umxStart will set start values for the free parameters in
-  RAM and Matrix \code{\link{mxModels}}, or even
+  RAM and Matrix \code{\link{mxModel}}s, or even
   mxMatrices. It will try and be smart in guessing these
   from the values in your data, and the model type.
 }
 \examples{
+\dontrun{
 model = umxStart(model)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/

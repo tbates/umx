@@ -26,7 +26,9 @@
   summary.
 }
 \examples{
+\dontrun{
 umxReportCIs(model)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/

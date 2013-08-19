@@ -1,6 +1,6 @@
 \name{umxReRun}
 \alias{umxReRun}
-\title{umxRun}
+\title{umxReRun}
 \usage{
   umxReRun(lastFit, dropList = NA, regex = NA, free = F,
     value = 0, freeToStart = NA, name = NA, verbose = F,
@@ -22,35 +22,49 @@
   you specify to free or fixed (defaults to FALSE, i.e.,
   fixed)}
 
+  \item{value}{The value to set the parameters whose labels
+  you specify too (defaults to 0)}
+
   \item{freeToStart}{Whether to only update parameters
   which are free to start (defaults to NA - i.e, not
   checked)}
 
-  \item{name}{The name for the new model)}
+  \item{name}{The name for the new model}
 
-  \item{verbose}{The name for the new model)}
+  \item{verbose}{How much feedback to give}
 
-  \item{intervals}{whether to run confidence intervals (see
+  \item{intervals}{Whether to run confidence intervals (see
   \code{\link{mxRun}})}
+
+  \item{newName}{DEPRECATED equivalent of name. Use name =
+  to change name of the new model}
 }
 \value{
   - \code{\link{mxModel}}
 }
 \description{
-  umxRun is a version of \code{\link{mxRun}} which can run
-  multiple times by default The main value for umxRun over
-  mxRun is with raw data. It's slightly faster, but can
-  also calculate the saturated and independence likelihoods
-  necessary for most fit indices.
+  umxReRun Is a convenience function to re-run an
+  \code{\link{mxModel}}, optionally dropping parameters The
+  main value for umxReRun is compactness. So this one-liner
+  drops a path labelled "Cs", and returns the updated
+  model: fit2 = umxReRun(fit1, dropList = "Cs", name =
+  "newModelName")
+}
+\details{
+  If you're a beginner, stick to fit2 =
+  omxSetParameters(fit1, labels = "Cs", values = 0, free =
+  F, name = "newModelName") fit2 = mxRun(fit2)
 }
 \examples{
-fit2 = umxReRun(fit1, regex="Cs", name="AEmodel")
+\dontrun{
+fit2 = umxReRun(fit1, regex = "Cs", name = "drop_cs")
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/
 }
 \seealso{
   - \code{\link{mxRun}}, \code{\link{umxLabel}},
-  \code{\link{umxStart}}
+  \code{\link{omxGetParameters}}
 }
 

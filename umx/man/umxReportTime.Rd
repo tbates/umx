@@ -6,15 +6,22 @@
     tz = "GMT")
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to get the time
-  from}
+  \item{model}{an \code{\link{mxModel}} from which to get
+  the elapsed time}
+
+  \item{formatStr}{A format string, defining how to show
+  the time}
+
+  \item{tz}{The time zone in which the model was executed}
 }
 \description{
   umxReportTime Reports how long the model took to execute
   compactly, without having to run a summary
 }
 \examples{
+\dontrun{
 umxReportTime(model)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/

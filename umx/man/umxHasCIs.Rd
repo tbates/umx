@@ -17,7 +17,9 @@
   confidence intervals?"
 }
 \examples{
+\dontrun{
 umxHasCIs(model)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/

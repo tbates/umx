@@ -11,14 +11,26 @@
   Runs a Stouffer.test
 }
 \examples{
-model = Stouffer.test(model)
+Stouffer.test(p = c(.01, .2, .3))
 }
 \references{
-  - Stouffer, S.A, Lumsdaine, A.A, Lumsdaine, M.H, Williams
-  Jr, R.M, Smith, M Brewster, J, Irving L, . . . Cottrell
-  Jr, L.S. (1949). The American soldier: combat and its
-  aftermath.(Studies in social psychology in World War II,
-  Vol. 2.).
+  -
+  \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
+  Stouffer, Samuel A., Edward A. Suchman, Leland C.
+  DeVinney, Shirley A. Star, and Robin M. Williams, Jr.
+  (1949). Studies in Social Psychology in World War II: The
+  American Soldier. Vol. 1, Adjustment During Army Life.
+  Princeton: Princeton University Press.
+
+  Bailey TL, Gribskov M (1998). Combining evidence using
+  p-values: application to sequence homology searches.
+  Bioinformatics, 14(1) 48-54. Fisher RA (1925).
+  Statistical methods for research workers (13th edition).
+  London: Oliver and Boyd. Manolov R and Solanas A (2012).
+  Assigning and combining probabilities in single-case
+  studies. Psychological Methods 17(4) 495-509. Describes
+  various methods for combining p-values including Stouffer
+  and Fisher and the binomial test.
   \url{http://www.burns-stat.com/pages/Working/perfmeasrandport.pdf}
 }
 \seealso{

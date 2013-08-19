@@ -21,7 +21,9 @@
   (delta) in a variable (from) on an output (to)
 }
 \examples{
+\dontrun{
 umxUnexplainedCausalNexus(model)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/

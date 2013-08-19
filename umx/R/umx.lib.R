@@ -1,14 +1,13 @@
-# myFADataRaw
+# setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
+# devtools::dev_help("xmuLabel_MATRIX_Model")
 
-# umx.lib.R
-# A recent, but not necessarily current version can be sourced like this:
-# source("http://timbates.wdfiles.com/local--files/start/umx.lib.R")
+# Description notes
+# Here's a worked example
+# OpenMx has example data suitable for developing models with
+# myFADataRaw
 # To learn more, see https://github.com/tbates/umx/
 
 # https://github.com/hadley/devtools/wiki/Package-basics
-# A recent, but not necessarily current version can be sourced like this:
-# source("http://timbates.wdfiles.com/local--files/start/umx.lib.R")
-# To learn more, see https://github.com/tbates/umx/
 
 # Multiple plot function
 #
@@ -19,7 +18,7 @@
 # If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
 # then plot 1 will go in the upper left, 2 will go in the upper right, and
 # 3 will go all the way across the bottom.
-#
+
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   require(grid)
 

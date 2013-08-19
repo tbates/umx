@@ -1,8 +1,8 @@
-\name{APA_ANOVA}
-\alias{APA_ANOVA}
-\title{APA_ANOVA}
+\name{umxAnovaReport}
+\alias{umxAnovaReport}
+\title{umxAnovaReport}
 \usage{
-  APA_ANOVA(model, printDIC = F)
+  umxAnovaReport(model, printDIC = F)
 }
 \arguments{
   \item{model}{an \code{\link{anova}} model to make a table
@@ -12,11 +12,14 @@
   AIC-type fit change table printed}
 }
 \description{
-  APA_ANOVA just runs anova(); lm.beta(), and puts that
-  together in a regression table...
+  umxAnovaReport just runs anova(); lm.beta(), and puts
+  that together in a regression table...
 }
 \examples{
-APA_ANOVA(model)
+model = lm(mpg ~ cyl+disp, data = mtcars)
+\dontrun{
+umxAnovaReport(model)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/

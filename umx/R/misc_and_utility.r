@@ -1,26 +1,25 @@
 # https://github.com/hadley/devtools/wiki/Philosophy
-# devtools::load_all()
 # devtools::dev_help("Stouffer.test")
-# setwd("~/bin/umx/umx"); devtools::document(); devtools::install()
+# setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
 
 # ====================
 # = Updating helpers =
 # ====================
 
-#' 	Update the OpenMx Library to latest version:
+#' umxUpdateOpenMx
 #'
 #' This function automates the process of updating OpenMx while it is not a cran package
 #'
 #' @param bleedingEdge  binary factor determining whether to request the beta or relase version (F)
 #' @param loadNew binary parameter determining whether to load the library after (optionally) updating
 #' @param anyOK minimum version to accept without updating
-
 #' @export
 #' @examples
+#' \dontrun{
 #' umxUpdateOpenMx()
+#' }
 
 umxUpdateOpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
-	# umxUpdateOpenMx()
 	if( "OpenMx" %in% .packages() ){
 		oldV = mxVersion();
 		if(anyOK){
@@ -114,10 +113,13 @@ umxUpdateOpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 #'
 #' @param model \code{\link{mxModel}} to check for presence of CIs
 #' @return - TRUE or FALSE
+#' @export
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxRun}}, \code{\link{umxReportCIs}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
+#' \dontrun{
 #' umxHasCIs(model)
+#' }
 
 umxHasCIs <- function(model) {
 	# umxHasCIs(model)
@@ -134,38 +136,54 @@ umxHasCIs <- function(model) {
 #'
 #' umxReportTime Reports how long the model took to execute compactly, without having to run a summary
 #'
-#' @param model an \code{\link{mxModel}} to get the time from
+#' @param model an \code{\link{mxModel}} from which to get the elapsed time
+#' @param formatStr A format string, defining how to show the time
+#' @param tz The time zone in which the model was executed
+#' @export
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
+#' \dontrun{
 #' umxReportTime(model)
+#' }
+
 umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 	# use case
 	# umxReportTime(fit1)
 	format(.POSIXct(model@output$wallTime,tz), formatStr)
 }
 
-#' APA_ANOVA
+#' umxAnovaReport
 #'
-#' APA_ANOVA just runs anova(); lm.beta(), and puts that together in a regression table...
+#' umxAnovaReport just runs anova(); lm.beta(), and puts that together in a regression table...
 #'
 #' @param model an \code{\link{anova}} model to make a table from 
 #' @param printDIC a boolean toggle whether tou want AIC-type fit change table printed
 #' @seealso - \code{\link{Anova}}, \code{\link{anova}}, \code{\link{lm.beta}}
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
-#' APA_ANOVA(model)
+#' model = lm(mpg ~ cyl+disp, data = mtcars)
+#' \dontrun{
+#' umxAnovaReport(model)
+#' }
 
-APA_ANOVA <- function(model, printDIC = F) {
+umxAnovaReport <- function(model, printDIC = F) {
 	a = anova(model);
-	a$beta = c(lm.beta(model),NA);
+	if(require(QuantPsyc, quietly = T)){
+		a$beta = c(QuantPsyc::lm.beta(model), NA);
+	} else {
+		a$beta = NA
+		message("To include beta weights\ninstall.packages(\"QuantPsyc\")")
+	}
+
 	x <- c("Df", "beta", "F value", "Pr(>F)");
 	a = a[,x]; 
-	names(a) <- c("df", "𝛽", "F", "p"); 
+	names(a) <- c("df", "beta", "F", "p"); 
 	ci = confint(model)
 	a$lowerCI = ci[,1]
 	a$upperCI = ci[,2]
-	a <- a[,c("df", "𝛽", "lowerCI", "upperCI", "F", "p")]; 
+	a <- a[,c("df", "beta", "lowerCI", "upperCI", "F", "p")]; 
 	print(a)
 	if(printDIC){
 		a = drop1(model); 
@@ -201,25 +219,23 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 #'
 #' @param p a list of p values, i.e., p(.4, .3, .6, .01)
 #' @seealso - 
-#' @references - Stouffer, S.A, Lumsdaine, A.A, Lumsdaine, M.H, 
-#' Williams Jr, R.M, Smith, M Brewster, J, Irving L, . . . Cottrell Jr, L.S. (1949). 
-#' The American soldier: combat and its aftermath.(Studies in 
-#' social psychology in World War II, Vol. 2.).
+#' @references - \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
+#' Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, 
+#' and Robin M. Williams, Jr. (1949). Studies in Social Psychology in World War II: 
+#' The American Soldier. Vol. 1, Adjustment During Army Life. Princeton: Princeton University Press.
+#' 
+#' Bailey TL, Gribskov M (1998). Combining evidence using p-values: application to sequence
+#' homology searches. Bioinformatics, 14(1) 48-54.
+#' Fisher RA (1925). Statistical methods for research workers (13th edition). London: Oliver and Boyd.
+#' Manolov R and Solanas A (2012). Assigning and combining probabilities in single-case studies.
+#' Psychological Methods 17(4) 495-509. Describes various methods for combining p-values including
+#' Stouffer and Fisher and the binomial test.
 #' \url{http://www.burns-stat.com/pages/Working/perfmeasrandport.pdf}
+#' @export
 #' @examples
-#'  model = Stouffer.test(model)
+#' Stouffer.test(p = c(.01, .2, .3))
+
 Stouffer.test <- function(p = NULL) {
-	# Purpose:
-	# Use case: Stouffer.test(p = c(0.13, 0.18, 0.06))
-	# http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues
-	# Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, and Robin M. Williams, Jr. (1949). Studies in Social Psychology in World War II: The American Soldier. Vol. 1, Adjustment During Army Life. Princeton: Princeton University Press.
-	# 
-	# Bailey TL, Gribskov M (1998). Combining evidence using p-values: application to sequence homology searches. Bioinformatics, 14(1) 48-54.
-	# 
-	# Fisher RA (1925). Statistical methods for research workers (13th edition). London: Oliver and Boyd.
-	# 
-	# Manolov R and Solanas A (2012). Assigning and combining probabilities in single-case studies. Psychological Methods 17(4) 495-509. Describes various methods for combining p-values including Stouffer and Fisher and the binomial test.
-	# useage: Stouffer.test(p = c(.01, .2, .3))
 	pl <- length(p)
 	if (is.null(p) | pl < 2) {
 		stop("There was an empty array of p-values")
@@ -236,10 +252,10 @@ Stouffer.test <- function(p = NULL) {
 	pcomb(p)
 }
 
-umxHetCor <- function(data, ML=F, use="pairwise.complete.obs"){
+umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs"){
 	# use case
 	# umxHetCor(data, use="pairwise.complete.obs")
-	# heplper to return just the correlations from polycor::hetcor
+	# helper to return just the correlations from polycor::hetcor
 	require(polycor)
 	# TODO add error message if polycor not found
 	# install.packages("polycor")
@@ -296,25 +312,25 @@ umxFindObject <- function(grepString = ".*", requiredClass = "MxModel") {
 	return(matchingObjects)
 }
 
-renameFile <- function(baseFolder = "Finder", findStr=NA, replaceStr=NA, listPattern = NA, test=T, overwrite=F) {
+renameFile <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, listPattern = NA, test = T, overwrite = F) {
 	# renameFile(baseFolder = "~/Downloads/", findStr="", replaceStr="", listPattern = "", test=T)
 	# renameFile(baseFolder = NA, findStr="", replaceStr="", listPattern = "", test=T)
 	# uppercase = u$1
-	if(baseFolder=="Finder"){
+	if(baseFolder == "Finder"){
 		baseFolder = system(intern=T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
 		message("Using front-most Finder window:", baseFolder)
 	} else if(baseFolder == "") {
-		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep="") ## choose a directory
+		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep = "") ## choose a directory
 		message("Using selected folder:", baseFolder)
 	}
 	if(is.na(listPattern)){
-		listPattern= findStr
+		listPattern = findStr
 	}
-	a = list.files(baseFolder, pattern=listPattern)
+	a = list.files(baseFolder, pattern = listPattern)
 	message("found ", length(a), " possible files")
 	changed = 0
 	for (fn in a) {
-		findB = grepl(pattern=findStr, fn) #returns 1 if found
+		findB = grepl(pattern = findStr, fn) #returns 1 if found
 		if(findB){
 			fnew = gsub(findStr, replace = replaceStr, fn) # replace all instances
 			if(test){
@@ -336,7 +352,7 @@ renameFile <- function(baseFolder = "Finder", findStr=NA, replaceStr=NA, listPat
 	message("changed ", changed)
 }
 
-moveFile <- function(baseFolder = NA, findStr=NA, fileNameList = files, destFolder = NA, test = T, overwrite = F) {
+moveFile <- function(baseFolder = NA, findStr=NA, fileNameList = NA, destFolder = NA, test = T, overwrite = F) {
 	# use case: 
 	# base = "/Users/tim/Music/iTunes/iTunes Music/"
 	# dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
@@ -344,7 +360,7 @@ moveFile <- function(baseFolder = NA, findStr=NA, fileNameList = files, destFold
 	if(is.na(destFolder)){
 		stop("destFolder can't be NA")
 	}
-	if(baseFolder=="Finder"){
+	if(baseFolder == "Finder"){
 		baseFolder = system(intern=T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
 		message("Using front-most Finder window:", baseFolder)
 	} else if(baseFolder == "") {

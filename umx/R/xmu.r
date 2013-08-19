@@ -10,7 +10,7 @@
 
 #' xmuLabel_MATRIX_Model (not a user function)
 #'
-#' This function label all the free parameters in a (non-RAM) OpenMx \code{\link{mxMmodel}}
+#' This function label all the free parameters in a (non-RAM) OpenMx \code{\link{mxModel}}
 #' nb: We don't assume what each matrix is for, and just stick a_r1c1 into each cell
 #'
 #' @param model a model to label
@@ -21,9 +21,10 @@
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
+#' \dontrun{
 #' model = xmuLabel_MATRIX_Model(model)
 #' model = xmuLabel_MATRIX_Model(model, suffix = "male")
-
+#' }
 xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 	if(!is(model, "MxModel")){
 		stop("xmuLabel_MATRIX_Model needs model as input")
@@ -115,7 +116,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	# xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
 	# See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = F, value = 0, name = "drop_a_row1_c1")
 	if (!is(mx_matrix, "MxMatrix")){ # label a mxMatrix
-		stop("I'm sorry Dave… xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want umxLabel()")
+		stop("I'm sorry Dave... xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want umxLabel()")
 	}
 	type = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
 	nrow = nrow(mx_matrix);
@@ -255,7 +256,9 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
+#' \dontrun{
 #' junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose=T)
+#' }
 
 xmuMakeThresholdsMatrices <- function(df, droplevels = F, verbose = F) {
 	isOrdinalVariable = umxIsOrdinalVar(df) 

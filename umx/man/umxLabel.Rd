@@ -7,7 +7,7 @@
 }
 \arguments{
   \item{obj}{An \code{\link{mxModel}} (RAM or matrix
-  based), \code{\link{mxPath}}, or \code{\link{mxmatrix}}}
+  based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}}
 
   \item{suffix}{String to append to each label (might be
   used to distinguish, say male and female submodels in a
@@ -36,13 +36,15 @@
 \description{
   umxLabel adds labels to things, be it an:
   \code{\link{mxModel}} (RAM or matrix based), an
-  \code{\link{mxPath}}, or an \code{\link{mxmatrix}} This
+  \code{\link{mxPath}}, or an \code{\link{mxMatrix}} This
   is a core function in umx: Adding labels to paths opens
   the door to \code{\link{umxEquate}}, as well as
   \code{\link{omxSetParameters}}
 }
 \examples{
-model = umxLabel(model)
+\dontrun{
+ model = umxLabel(model)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/

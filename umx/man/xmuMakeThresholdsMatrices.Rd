@@ -25,7 +25,9 @@
   reliable strategy and likely to be superceeded...
 }
 \examples{
+\dontrun{
 junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose=T)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/

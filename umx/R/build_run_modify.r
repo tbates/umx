@@ -1,7 +1,7 @@
 # https://github.com/hadley/devtools/wiki/Philosophy
+# setwd("~/bin/umx/umx"); devtools::document(); devtools::install()
 # devtools::load_all()
 # devtools::dev_help("umxStart")
-# setwd("~/bin/umx/umx"); devtools::document(); devtools::install()
 
 # =================================
 # = Speed  and Efficiency Helpers =
@@ -20,10 +20,15 @@
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
-#'  model = umxRun(model, n = 10)
+#' \dontrun{
+#' model = umxRun(model)
+#' model = umxRun(model, n=10)
+#' }
 
 umxRun <- function(model, n = 3, calc_SE = T, calc_sat = T){
+	# m1 = umxRun(m1); umxReportFit(m1)
 	# TODO: return change in -2LL
 	# Optimise for speed
 	model = mxOption(model, "Calculate Hessian", "No")
@@ -58,27 +63,37 @@ umxRun <- function(model, n = 3, calc_SE = T, calc_sat = T){
 	}
 	return(model)
 }
-# m1 = umxRun(m1); summary(m1)
 
-#' umxRun
+#' umxReRun
 #'
-#' umxRun is a version of \code{\link{mxRun}} which can run multiple times by default
-#' The main value for umxRun over mxRun is with raw data. It's slightly faster, but 
-#' can also calculate the saturated and independence likelihoods necessary for most fit indices.
+#' umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally dropping parameters
+#' The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
+#' fit2 = umxReRun(fit1, dropList = "Cs", name = "newModelName")
+#' 
+#' If you're a beginner, stick to 
+#' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = F, name = "newModelName")
+#' fit2 = mxRun(fit2)
 #'
 #' @param lastFit The \code{\link{mxModel}} you wish to update and run.
 #' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
 #' @param regex = A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
 #' @param free Whether to set the parameters whose labels you specify to free or fixed (defaults to FALSE, i.e., fixed)
+#' @param value The value to set the parameters whose labels you specify too (defaults to 0)
 #' @param freeToStart Whether to only update parameters which are free to start (defaults to NA - i.e, not checked)
-#' @param name The name for the new model)
-#' @param verbose The name for the new model)
-#' @param intervals whether to run confidence intervals (see \code{\link{mxRun}})
+#' @param name The name for the new model
+#' @param verbose How much feedback to give
+#' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
+#' @param newName DEPRECATED equivalent of name. Use name = to change name of the new model
+
 #' @return - \code{\link{mxModel}}
-#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{omxGetParameters}}
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
-#' fit2 = umxReRun(fit1, regex="Cs", name="AEmodel")
+#' \dontrun{
+#' fit2 = umxReRun(fit1, regex = "Cs", name = "drop_cs")
+#' }
+
 umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, newName = "deprecated") {
 	# fit2 = umxReRun(fit1, regex="Cs", name="AEip")
 	if(newName != "deprecated"){
@@ -108,7 +123,7 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 
 #' umxStart
 #'
-#' umxStart will set start values for the free parameters in RAM and Matrix \code{\link{mxModels}}, or even mxMatrices.
+#' umxStart will set start values for the free parameters in RAM and Matrix \code{\link{mxModel}}s, or even mxMatrices.
 #' It will try and be smart in guessing these from the values in your data, and the model type.
 #'
 #' @param obj the RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.
@@ -118,8 +133,11 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
+#' \dontrun{
 #' model = umxStart(model)
+#' }
 
 umxStart <- function(obj = NA, sd = NA, n = 1) {
 	if(is.numeric(obj) ) {
@@ -175,10 +193,13 @@ umxStart <- function(obj = NA, sd = NA, n = 1) {
 #' @param Smatrix Optionally tell the function what the name of the symmetric matrix is (defaults to RAM standard S)
 #' @param Mmatrix Optionally tell the function what the name of the means matrix is (defaults to RAM standard M)
 #' @return - a \code{\link{mxModel}} or else parameters or matrices if you request those
-#' @seealso - \code{\link{omxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
+#' \dontrun{
 #'  model = umxStandardizeModel(model, return = "model")
+#' }
 
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
@@ -261,8 +282,11 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
+#' \dontrun{
 #' umxReportCIs(model)
+#' }
 
 umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 	# TODO add code to not-run CIs
@@ -298,10 +322,10 @@ umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 
 #' umxLabel
 #'
-#' umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix based), an \code{\link{mxPath}}, or an \code{\link{mxmatrix}}
+#' umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix based), an \code{\link{mxPath}}, or an \code{\link{mxMatrix}}
 #' This is a core function in umx: Adding labels to paths opens the door to \code{\link{umxEquate}}, as well as \code{\link{omxSetParameters}}
 #'
-#' @param obj An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxmatrix}}
+#' @param obj An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}
 #' @param suffix String to append to each label (might be used to distinguish, say male and female submodels in a model)
 #' @param baseName String to prepend to labels. Defaults to empty
 #' @param setfree Whether to also 
@@ -315,8 +339,11 @@ umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
+#' \dontrun{
 #'  model = umxLabel(model)
+#' }
 
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, verbose = F) {	
 	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
@@ -372,6 +399,26 @@ umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	# model@submodels$MZ@matrices
 	return(theLabels)
 }
+
+#' umxEquate
+#'
+#' umxEquate equates slave labels to a set of master labels
+#'
+#' @param model an \code{\link{mxModel}} within which to equate chosen parameters
+#' @param master A list of labels with which slave labels will be equated
+#' @param slave A list of labels which will be updated to match master labels, thus equating the parameters
+#' @param free Boolean determining what the initial state is of master and slave parameters. 
+#' Allows stepping over parameters if they are in a particular state
+#' @param verbose How much feedback will be given
+#' @param name Optional new name for the returned model
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#'  model = umxEquate(model)
+#' }
 
 umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) {
 	# Purpose: to equate parameters by setting of labels (the slave set) = to the labels in a master set
@@ -490,28 +537,28 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 			# p1 = Residual variance on manifests
 			# p2 = Fix latent variance @ 1
 			# p3 = Add paths from latent to manifests
-			p1 = mxPath(from = manifests, arrows = 2, free = T, values = variances) # umxLabels(manifests, suffix = paste0("unique", labelSuffix))
+			p1 = mxPath(from = manifests, arrows = 2, free = T, values = variances)
 			if(endogenous){
 				# Free latent variance so it can do more than just redirect what comes in
 				if(verbose){
 					message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
 				}
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5) # labels=umxLabels(latent, suffix=paste0("var", labelSuffix))
+				p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5)
 			} else {
 				# fix variance at 1 - no inputs
 				if(verbose){
 					message(paste("latent '", latent, "' has variance fixed @ 1"))
 				}
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1) # labels=umxLabels(latent, suffix=paste0("var", labelSuffix))
+				p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1)
 			}
-			p3 = mxPath(from = latent, to = manifests, connect = "single", free = T, values = variances) # labels = umxLabels(latent, manifests, suffix=paste0("path", labelSuffix))
+			p3 = mxPath(from = latent, to = manifests, connect = "single", free = T, values = variances)
 			if(isCov) {
 				# Nothing to do: covariance data don't need means...
 				paths = list(p1, p2, p3)
 			}else{
 				# Add means: fix latent mean @0, and add freely estimated means to manifests
-				p4 = mxPath(from = "one", to = latent   , arrows = 1, free = F, values = 0)  # labels=umxLabels("one", latent, suffix = labelSuffix)
-				p5 = mxPath(from = "one", to = manifests, arrows = 1, free = T, values = means) # labels=umxLabels("one", manifests, suffix = labelSuffix) 
+				p4 = mxPath(from = "one", to = latent   , arrows = 1, free = F, values = 0)
+				p5 = mxPath(from = "one", to = manifests, arrows = 1, free = T, values = means)
 				paths = list(p1, p2, p3, p4, p5)
 			}			
 		} else {
@@ -522,18 +569,18 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 		# Handle formedBy case
 		if(!help) {
 			# Add paths from manifests to the latent
-			p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests)) # labels=umxLabels(manifests,latent, suffix=paste0("path", labelSuffix))
-			# In general, manifest variance should be left free…
-			# TODO If the data were correlations… we can inspect for that, and fix the variance to 1
-			p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances) # labels=umxLabels(manifests, suffix=paste0("var", labelSuffix))
+			p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests)) 
+			# In general, manifest variance should be left free...
+			# TODO If the data were correlations... we can inspect for that, and fix the variance to 1
+			p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances)
 			# Allow manifests to intercorrelate
-			p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxStart(.3, n = manifests)) #labels = umxLabels(manifests, connect="unique.bivariate", suffix=labelSuffix)
+			p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxStart(.3, n = manifests))
 			if(isCov) {
 				paths = list(p1, p2, p3)
 			}else{
 				# Fix latent mean at 0, and freely estimate manifest means
-				p4 = mxPath(from="one", to=latent   , free = F, values = 0) # labels = umxLabels("one",latent, suffix=labelSuffix)
-				p5 = mxPath(from="one", to=manifests, free = T, values = means) # labels = umxLabels("one",manifests, suffix=labelSuffix)
+				p4 = mxPath(from="one", to=latent   , free = F, values = 0)
+				p5 = mxPath(from="one", to=manifests, free = T, values = means)
 				paths = list(p1, p2, p3, p4, p5)
 			}
 		} else {
@@ -589,10 +636,10 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 	if(isCov){
 		variances = diag(data[manifests,manifests])
 		# Add variance to the single manfests
-		p1 = mxPath(from=manifests, arrows=2, value=variances) # labels = umxLabels(manifests, suffix = paste0("unique", labelSuffix)))
+		p1 = mxPath(from=manifests, arrows=2, value=variances)
 		return(p1)
 	} else {
-		manifestOrdVars = mxIsOrdinalVar(data[,manifests])
+		manifestOrdVars = umxIsOrdinalVar(data[,manifests])
 		if(any(manifestOrdVars)){
 			means         = rep(0, times=length(manifests))
 			variances     = rep(1, times=length(manifests))
@@ -711,7 +758,7 @@ summaryACEFit <- function(fit, accuracy = 2, dotFilename = NA, returnStd = F, ex
 			print(mxCompare(parentModel, fit))
 		}
 		logLikelihood = mxEval(objective, fit); 
-		message("-2 \u00d7 log(Likelihood)") # ×
+		message("-2 \u00d7 log(Likelihood)") # 00d7 is unicode for non-ascii multiplication sign
 		print(logLikelihood[1,1]);
 		selDVs = dimnames(fit$top.mzCov)[[1]]
 		# genEpi_TableFitStatistics(fit, extended=extended)
@@ -784,7 +831,8 @@ summaryACEFit <- function(fit, accuracy = 2, dotFilename = NA, returnStd = F, ex
 		if(CIs) {
 			# TODO Need to refactor this into some function calls...
 			if(all(dim(fit@output$confidenceIntervals) == c(0,2))){
-				message("You requested me to print out CIs, but there are none - perhaps you’d like to add 'addStd = T' to your makeACE_2Group() call?")
+				message("You requested me to print out CIs, but there are none...\n
+Perhaps you'd like to add 'addStd = T' to your makeACE_2Group() call?")
 			} else {
 				message("Computing CI-based diagram!")
 				# get the lower and uppper CIs as a dataframe
@@ -849,6 +897,7 @@ summaryACEFit <- function(fit, accuracy = 2, dotFilename = NA, returnStd = F, ex
 		if(!is.na(dotFilename)) {
 			message("making dot file")
 			if(showStd){
+				# TODO import this function...
 				graphViz_Cholesky(stdFit, selDVs, dotFilename)
 			}else{
 				graphViz_Cholesky(fit, selDVs, dotFilename)
@@ -867,9 +916,25 @@ summaryACEFit <- function(fit, accuracy = 2, dotFilename = NA, returnStd = F, ex
 # ===========
 # = Utility =
 # ===========
+#' umxJiggle
+#'
+#' umxJiggle takes values in a matrix and jiggles them
+#'
+#' @param matrixIn an \code{\link{mxMatrix}} to jiggle the values of
+#' @param mean the mean value to add to each value
+#' @param sd the sd of the jiggle noise
+#' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
+#' @return - \code{\link{mxMatrix}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @export
+#' @examples
+#' \dontrun{
+#' mat1 = umxJiggle(mat1)
+#' }
 
 umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
-	mask      = (matrixIn != dontTouch);
+	mask = (matrixIn != dontTouch);
 	newValues = mask;
 	matrixIn[mask==TRUE] = matrixIn[mask==TRUE] + rnorm(length(mask[mask==TRUE]), mean=mean, sd=sd);
 	return (matrixIn);

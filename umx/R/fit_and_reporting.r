@@ -13,11 +13,14 @@
 #' @param comparison = the models which will be compared for fit with the base model (can be empty)
 #' @param all whether to make all possible comparisons if there is more than one base model (defaults to T)
 #' @param output Optionally output to an html table which will open your default browser: handy for getting tables into word
-#' @seealso - \code{\link{mxCompare}}, \code{\link{umxReport}}, \code{\link{umxRun}},
+#' @seealso - \code{\link{mxCompare}}, \code{\link{umxReportFit}}, \code{\link{umxRun}},
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
+#' \dontrun{
 #' umxCompare(model1, model2)
-#' umxCompare(model1, c(model2,model3))
+#' umxCompare(model1, c(model2, model3))
+#' }
 
 umxCompare <- function(base = NA, comparison = NA, all = T, output = "Rout.html") {
 	# c("Rout.html", "return")
@@ -41,105 +44,58 @@ umxCompare <- function(base = NA, comparison = NA, all = T, output = "Rout.html"
 	# }
 }
 
-umxSummary <- function(model, precision = 2, parameters = NA, report = NA) {
-	# useage
-	# umxSummary(fit1)
+#' umxSummary
+#'
+#' umxSummary is a modified summary function for \code{\link{OpenMx}}, 
+#' designed to give you the information you need for writing paper. 
+#' Given a model, it returns a simplified version of the path loadings, along with chi^2, AIC and other important fit parameters.
+#'
+#' @param model an \code{\link{mxModel}} to summarise
+#' @param saturatedModels Option saturated models as a basis for comparison for model
+#' @param precision : the number of decimal places you want for p-values etc. (defaults to 2)
+#' @param displayColumns the subset of fit columns to show in the summary
+#' @param report Currently not used - but will allow users to request different forms of report
+#' @seealso - \code{\link{umxRun}}, \code{\link{umxReportFit}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @export
+#' @examples
+#' \dontrun{
+#' umxSummary(model)
+#' }
+
+umxSummary <- function(model, saturatedModels = NULL, precision = 2, displayColumns = c("row", "col", "Std.Estimate"), report = NA) {
 	if(!is.na(report)){
 		warning("report not implemented")
 	}
-	x = summary(model)$parameters[,c("row", "col", "Std.Estimate")]
+	x = summary(model)$parameters[, displayColumns]
 	x$Std.Estimate = round(x$Std.Estimate, precision)
 	print(x)
-	umxReportFit(model)
-}
-
-umxSaturated <- function(model, evaluate = T, verbose = T) {
-	# TODO: Update to omxSaturated() and omxIndependenceModel()
-	# TODO: Update IndependenceModel to analytic form
-	# Use case
-	# model_sat = umxSaturated(model)
-	# summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)
-	if (!(isS4(model) && is(model, "MxModel"))) {
-		stop("'model' must be an mxModel")
-	}
-
-	if (length(model@submodels)>0) {
-		stop("Cannot yet handle submodels")
-	}
-	if(! model@data@type == "raw"){
-		stop("You don't need to run me for cov or cor data - only raw")
-	}
-	theData = model@data@observed
-	if (is.null(theData)) {
-		stop("'model' does not contain any data")
-	}
-	manifests           = model@manifestVars
-	nVar                = length(manifests)
-	dataMeans           = colMeans(theData, na.rm = T)
-	meansLabels         = paste("mean", 1:nVar, sep = "")
-	covData             = cov(theData, use = "pairwise.complete.obs")
-	factorLoadingStarts = t(chol(covData))
-	independenceStarts  = diag(covData)
-	loadingsLabels      = paste("F", 1:nVar, "loading", sep = "")
-
-	# Set latents to a new set of 1 per manifest
-	# Set S matrix to an Identity matrix (i.e., variance fixed@1)
-	# Set A matrix to a Cholesky, manifests by manifests in size, free to be estimated 
-	# TODO: start the cholesky at the cov values
-	m2 <- mxModel("sat",
-    	# variances set at 1
-		# mxMatrix(name = "factorVariances", type="Iden" , nrow = nVar, ncol = nVar), # Bunch of Ones on the diagonal
-	    # Bunch of Zeros
-		mxMatrix(name = "factorMeans"   , type = "Zero" , nrow = 1   , ncol = nVar), 
-	    mxMatrix(name = "factorLoadings", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = factorLoadingStarts), 
-		# labels = loadingsLabels),
-	    mxAlgebra(name = "expCov", expression = factorLoadings %*% t(factorLoadings)),
-
-	    mxMatrix(name = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
-	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
-	    mxData(theData, type = "raw")
-	)
-	m3 <- mxModel("independence",
-	    # TODO: slightly inefficient, as this has an analytic solution
-	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free=T, values = independenceStarts), 
-		# labels = loadingsLabels),
-	    mxAlgebra(name = "expCov", expression = variableLoadings %*% t(variableLoadings)),
-	    mxMatrix(name  = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
-	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
-	    mxData(theData, type = "raw")
-	)
-	m2 <- mxOption(m2, "Calculate Hessian", "No")
-	m2 <- mxOption(m2, "Standard Errors"  , "No")
-	m3 <- mxOption(m3, "Calculate Hessian", "No")
-	m3 <- mxOption(m3, "Standard Errors"  , "No")
-	if(evaluate) {
-		m2 = mxRun(m2)
-		m3 = mxRun(m3)
-	}
-	if(verbose) {
-		message("note: umxRun() will compute saturated for you...")
-	}
-	return(list(Sat = m2, Ind = m3))
+	umxReportFit(model, saturatedModels)
 }
 
 #' umxReportFit
 #'
 #' umxReportFit Report fit of a model in a compact form suitable for a journal
 #'
-#' @param model an \code{\link{mxModel}} to WITH
-#' @return - \code{\link{mxModel}}
-#' @keywords manip
-#' @export
+#' @param model an \code{\link{mxModel}} to report fit for
+#' @param saturatedModels saturatedModels to compare this model.
+#' Only needed for raw data, and then not if you've run umxRun
+#' @param report the format for the output (currently only a 1-liner is supported)
+#' @param showEstimates whether to show the raw or standadized estimates (default is std)
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
-#'  model = umxReportFit(model)
+#' \dontrun{
+#' model = umxReportFit(model)
+#' }
+
 umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEstimates = "std") {
 	# Purpose: compactly report fit statistics, as for a paper
 	# Use case: umxReportFit(m1, report="table")
 	# umxReportFit(m1, saturatedModels = m1_sat)
 	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
-	# nb: I now compute this for you if you leave it blank and it is needed…
+	# nb: I now compute this for you if you leave it blank and it is needed...
 	# showEstimates = "none|raw|std|both"
 	# report = "line|table"
 	# TODO make table take lists of models...
@@ -149,10 +105,10 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 	# stop if there is no objective function
 	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
 	# stop if there is no output
-	if ( length(output) <1 ) stop("Provided model has no output. I can only standardize models that have been mxRun() first!")
+	if ( length(output) < 1 ) stop("Provided model has no output. I can only standardize models that have been mxRun() first!")
 	
-
 	if(is.null(saturatedModels)){
+		# saturatedModels not passed in from outside, so get them from the model
 		modelSummary = summary(model)
 		if(is.na(modelSummary$SaturatedLikelihood)){
 			message("There is no saturated likelihood: computing that now...")
@@ -199,11 +155,11 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 			}
 			if(report == "table"){
 				x = data.frame(cbind(model@name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
-				names(x) = c("model","χ2","p","CFI", "TLI","RMSEA")
+				names(x) = c("model","\u03A7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
 				print(x)
 			} else {
 				x = paste0(
-					"χ2(", degreesOfFreedom, ") = ", round(Chi,2),
+					"\u03A72\u00B2(", degreesOfFreedom, ") = ", round(Chi,2),
 					", p = "    , formatC(p, format="g"),
 					"; CFI = "  , round(CFI,3),
 					"; TLI = "  , round(TLI,3),
@@ -309,6 +265,21 @@ umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name
 	}
 }
 # end umxGraph_RAM(fit1,std=T, precision=3, dotFilename="name")
+
+#' umxMI
+#'
+#' umxMI A function to compute and report modifications which would improve fit.
+#' You will probably use \code{\link{umxMI_top}} instead
+#'
+#' @param model an \code{\link{mxModel}} to derive modification indices for
+#' @param vector = Whether to report the results as a vector default = TRUE
+#' @seealso - \code{\link{umxMI_top}}, \code{\link{umxRun}}, \code{\link{umxReportFit}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @export
+#' @examples
+#' \dontrun{
+#' umxMI(model)
+#' }
 
 umxMI <- function(model, vector=T) {
 	# modification indices
@@ -422,15 +393,30 @@ umxMI <- function(model, vector=T) {
 	return(ret)
 }
 
-umxMI_top <- function(fit=NA, numInd=10, typeToShow="both", decreasing=T, cache=T) {
-	# depends on umxMI(fit)
-	# use cases
-	# mi.df = umxMI_top(fit)
-	# umxMI_top(fit, numInd=5, typeToShow="add") # valid options are "both|add|delete"
-	if(typeof(fit) == "list"){
-		mi.df = fit
+#' umxMI_top
+#'
+#' umxMI_top A function to report the top modifications which would improve fit.
+#'
+#' @param model an \code{\link{mxModel}} to report modification indices for
+#' @param numInd = How many modifications to report
+#' @param typeToShow = Whether to additions or deletions (default = "both")
+#' @param decreasing = How to sort (default = T, decreasing)
+#' @param cache = Future function to cahce these time-consuming results
+#' @seealso - \code{\link{umxMI_top}}, \code{\link{umxRun}}, \code{\link{umxReportFit}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @export
+#' @examples
+#' \dontrun{
+#' umxMI_top(model)
+#' umxMI_top(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
+#' }
+
+umxMI_top <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, cache = T) {
+	# depends on umxMI(model)
+	if(typeof(model) == "list"){
+		mi.df = model
 	} else {
-		mi = umxMI(fit, vector=T)
+		mi = umxMI(model, vector = T)
 		mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
 		row.names(mi.df) = 1:nrow(mi.df);
 		# TODO: could be a helper: choose direction
@@ -440,8 +426,7 @@ umxMI_top <- function(fit=NA, numInd=10, typeToShow="both", decreasing=T, cache=
 		mi.df$arrows[grepl("<->", mi.df$path)]= 2		
 
 		mi.df$action = NA 
-		# mi.df  = mi.df[order(mi.df[,2], decreasing=decreasing),] 
-		mi.df  = mi.df[order(abs(mi.df[,2]), decreasing=decreasing),] 
+		mi.df  = mi.df[order(abs(mi.df[,2]), decreasing = decreasing),] 
 		mi.df$copy = 1:nrow(mi.df)
 		for(n in 1:(nrow(mi.df)-1)) {
 			if(grepl(" <- ", mi.df$path[n])){
@@ -449,8 +434,8 @@ umxMI_top <- function(fit=NA, numInd=10, typeToShow="both", decreasing=T, cache=
 			}
 			from = mi.df$from[n]
 			to   = mi.df$to[n]
-			a = (fit@matrices$S@free[to,from] |fit@matrices$A@free[to,from])
-			b = (fit@matrices$S@values[to,from]!=0 |fit@matrices$A@values[to,from] !=0)
+			a = (model@matrices$S@free[to,from] |model@matrices$A@free[to,from])
+			b = (model@matrices$S@values[to,from]!=0 |model@matrices$A@values[to,from] !=0)
 			if(a|b){
 				mi.df$action[n]="delete"
 			} else {
@@ -472,11 +457,81 @@ umxMI_top <- function(fit=NA, numInd=10, typeToShow="both", decreasing=T, cache=
 		}
 	}
 	mi.df = mi.df[unique(mi.df$copy),] # c("copy")
-	if(typeToShow!="both"){
-		mi.df = mi.df[mi.df$action==typeToShow,]
+	if(typeToShow != "both"){
+		mi.df = mi.df[mi.df$action == typeToShow,]
 	}
 	print(mi.df[1:numInd, !(names(mi.df) %in% c("path","copy"))])
 	invisible(mi.df)		
+}
+
+
+umxSaturated <- function(model, evaluate = T, verbose = T) {
+	# TODO: Update to omxSaturated() and omxIndependenceModel()
+	# TODO: Update IndependenceModel to analytic form
+	# Use case
+	# model_sat = umxSaturated(model)
+	# summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)
+	if (!(isS4(model) && is(model, "MxModel"))) {
+		stop("'model' must be an mxModel")
+	}
+
+	if (length(model@submodels)>0) {
+		stop("Cannot yet handle submodels")
+	}
+	if(! model@data@type == "raw"){
+		stop("You don't need to run me for cov or cor data - only raw")
+	}
+	theData = model@data@observed
+	if (is.null(theData)) {
+		stop("'model' does not contain any data")
+	}
+	manifests           = model@manifestVars
+	nVar                = length(manifests)
+	dataMeans           = colMeans(theData, na.rm = T)
+	meansLabels         = paste("mean", 1:nVar, sep = "")
+	covData             = cov(theData, use = "pairwise.complete.obs")
+	factorLoadingStarts = t(chol(covData))
+	independenceStarts  = diag(covData)
+	loadingsLabels      = paste0("F", 1:nVar, "loading")
+
+	# Set latents to a new set of 1 per manifest
+	# Set S matrix to an Identity matrix (i.e., variance fixed@1)
+	# Set A matrix to a Cholesky, manifests by manifests in size, free to be estimated 
+	# TODO: start the cholesky at the cov values
+	m2 <- mxModel("sat",
+    	# variances set at 1
+		# mxMatrix(name = "factorVariances", type="Iden" , nrow = nVar, ncol = nVar), # Bunch of Ones on the diagonal
+	    # Bunch of Zeros
+		mxMatrix(name = "factorMeans"   , type = "Zero" , nrow = 1   , ncol = nVar), 
+	    mxMatrix(name = "factorLoadings", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = factorLoadingStarts), 
+		# labels = loadingsLabels),
+	    mxAlgebra(name = "expCov", expression = factorLoadings %*% t(factorLoadings)),
+
+	    mxMatrix(name = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
+	    mxData(theData, type = "raw")
+	)
+	m3 <- mxModel("independence",
+	    # TODO: slightly inefficient, as this has an analytic solution
+	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free=T, values = independenceStarts), 
+		# labels = loadingsLabels),
+	    mxAlgebra(name = "expCov", expression = variableLoadings %*% t(variableLoadings)),
+	    mxMatrix(name  = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
+	    mxData(theData, type = "raw")
+	)
+	m2 <- mxOption(m2, "Calculate Hessian", "No")
+	m2 <- mxOption(m2, "Standard Errors"  , "No")
+	m3 <- mxOption(m3, "Calculate Hessian", "No")
+	m3 <- mxOption(m3, "Standard Errors"  , "No")
+	if(evaluate) {
+		m2 = mxRun(m2)
+		m3 = mxRun(m3)
+	}
+	if(verbose) {
+		message("note: umxRun() will compute saturated for you...")
+	}
+	return(list(Sat = m2, Ind = m3))
 }
 
 # ======================
@@ -492,8 +547,11 @@ umxMI_top <- function(fit=NA, numInd=10, typeToShow="both", decreasing=T, cache=
 #' @param model The model containing from and to
 #' @seealso - \code{\link{umxRun}}, \code{\link{mxCompare}}
 #' @references - http://openmx.psyc.virginia.edu/
+#' @export
 #' @examples
+#' \dontrun{
 #' umxUnexplainedCausalNexus(model)
+#' }
 
 umxUnexplainedCausalNexus <- function(from, delta, to, model) {
 	# umxUnexplainedCausalNexus(from, delta, to, model)

@@ -1,6 +1,6 @@
 \name{umxUpdateOpenMx}
 \alias{umxUpdateOpenMx}
-\title{Update the OpenMx Library to latest version:}
+\title{umxUpdateOpenMx}
 \usage{
   umxUpdateOpenMx(bleedingEdge = F, loadNew = T, anyOK = F)
 }
@@ -18,6 +18,8 @@
   while it is not a cran package
 }
 \examples{
+\dontrun{
 umxUpdateOpenMx()
+}
 }
 

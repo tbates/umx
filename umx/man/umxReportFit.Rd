@@ -6,17 +6,26 @@
     report = "line", showEstimates = "std")
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to WITH}
-}
-\value{
-  - \code{\link{mxModel}}
+  \item{model}{an \code{\link{mxModel}} to report fit for}
+
+  \item{saturatedModels}{saturatedModels to compare this
+  model. Only needed for raw data, and then not if you've
+  run umxRun}
+
+  \item{report}{the format for the output (currently only a
+  1-liner is supported)}
+
+  \item{showEstimates}{whether to show the raw or
+  standadized estimates (default is std)}
 }
 \description{
   umxReportFit Report fit of a model in a compact form
   suitable for a journal
 }
 \examples{
+\dontrun{
 model = umxReportFit(model)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/
@@ -25,5 +34,4 @@ model = umxReportFit(model)
   - \code{\link{umxLabel}}, \code{\link{umxRun}},
   \code{\link{umxStart}}
 }
-\keyword{manip}
 

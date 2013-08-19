@@ -29,7 +29,10 @@
   necessary for most fit indices.
 }
 \examples{
-model = umxRun(model, n = 10)
+\dontrun{
+model = umxRun(model)
+model = umxRun(model, n=10)
+}
 }
 \references{
   - http://openmx.psyc.virginia.edu/
