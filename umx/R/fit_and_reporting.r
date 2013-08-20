@@ -9,12 +9,12 @@
 #'
 #' umxCompare compares two or more \code{\link{mxModel}}s. If you leave comparison blank, it will just give fit info for the base model
 #'
-#' @param base the base \code{\link{mxModel}}
-#' @param comparison = the models which will be compared for fit with the base model (can be empty)
-#' @param all whether to make all possible comparisons if there is more than one base model (defaults to T)
+#' @param base The base \code{\link{mxModel}} for comparison
+#' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
+#' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
 #' @param output Optionally output to an html table which will open your default browser: handy for getting tables into word
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxReportFit}}, \code{\link{umxRun}},
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - \url{http://openmx.psyc.virginia.edu/}
 #' @export
 #' @examples
 #' \dontrun{
@@ -77,13 +77,13 @@ umxSummary <- function(model, saturatedModels = NULL, precision = 2, displayColu
 #'
 #' umxReportFit Report fit of a model in a compact form suitable for a journal
 #'
-#' @param model an \code{\link{mxModel}} to report fit for
-#' @param saturatedModels saturatedModels to compare this model.
+#' @param model The \code{\link{mxModel}} whose fit will be reported
+#' @param saturatedModels Saturated models if needed for fit indices (see note below: 
 #' Only needed for raw data, and then not if you've run umxRun
-#' @param report the format for the output (currently only a 1-liner is supported)
-#' @param showEstimates whether to show the raw or standadized estimates (default is std)
+#' @param report The format for the output (currently only a 1-liner is supported)
+#' @param showEstimates Whether to show the raw or standadized estimates (default is std)
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
 #' \dontrun{
@@ -91,7 +91,6 @@ umxSummary <- function(model, saturatedModels = NULL, precision = 2, displayColu
 #' }
 
 umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEstimates = "std") {
-	# Purpose: compactly report fit statistics, as for a paper
 	# Use case: umxReportFit(m1, report="table")
 	# umxReportFit(m1, saturatedModels = m1_sat)
 	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()

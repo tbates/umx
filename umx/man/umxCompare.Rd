@@ -6,12 +6,14 @@
     output = "Rout.html")
 }
 \arguments{
-  \item{base}{the base \code{\link{mxModel}}}
+  \item{base}{The base \code{\link{mxModel}} for
+  comparison}
 
-  \item{comparison}{= the models which will be compared for
-  fit with the base model (can be empty)}
+  \item{comparison}{The model (or list of models) which
+  will be compared for fit with the base model (can be
+  empty)}
 
-  \item{all}{whether to make all possible comparisons if
+  \item{all}{Whether to make all possible comparisons if
   there is more than one base model (defaults to T)}
 
   \item{output}{Optionally output to an html table which
@@ -30,7 +32,7 @@ umxCompare(model1, c(model2, model3))
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu/}
 }
 \seealso{
   - \code{\link{mxCompare}}, \code{\link{umxReportFit}},
