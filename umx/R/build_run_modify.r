@@ -127,13 +127,13 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 #' umxStart will set start values for the free parameters in RAM and Matrix \code{\link{mxModel}}s, or even mxMatrices.
 #' It will try and be smart in guessing these from the values in your data, and the model type.
 #'
-#' @param obj the RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.
-#' @param sd optional sd for start values
-#' @param n  optional mean for start values
+#' @param obj The RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.
+#' @param sd Optional Standard Deviation for start values
+#' @param n  Optional Mean for start values
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
 #' \dontrun{

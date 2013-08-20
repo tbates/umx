@@ -18,7 +18,7 @@
 #' @param verbose how much feedback to give
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
 #' \dontrun{
