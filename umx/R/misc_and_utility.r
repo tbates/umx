@@ -156,40 +156,61 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 
 #' umxAnovaReport
 #'
-#' umxAnovaReport just runs anova(); lm.beta(), and puts that together in a regression table...
-#'
-#' @param model an \code{\link{anova}} model to make a table from 
+#' umxAnovaReport is a convenience function to format results for journals. There are others. Bt I made this one.
+#' If you give it the output of an lm, it runs anova() and lm.beta(), and puts that together in a regression table...
+#' Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
+#' @param model1 an \code{\link{lm}} model to make a table from 
+#' @param model2 an (optional) second \code{\link{lm}} model to compare to model 1
+#' @param raw should the raw table also be output? (allows checking that nothing crazy is going on)
+#' @param format string or markdown format?
 #' @param printDIC a boolean toggle whether tou want AIC-type fit change table printed
-#' @seealso - \code{\link{Anova}}, \code{\link{anova}}, \code{\link{lm.beta}}
+#' @seealso - \code{\link{umxReportFit}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @export
 #' @examples
-#' model = lm(mpg ~ cyl+disp, data = mtcars)
-#' \dontrun{
+#' model = lm(mpg ~ cyl + disp, data = mtcars)
 #' umxAnovaReport(model)
-#' }
 
-umxAnovaReport <- function(model, printDIC = F) {
-	a = anova(model);
-	if(require(QuantPsyc, quietly = T)){
-		a$beta = c(QuantPsyc::lm.beta(model), NA);
+umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", printDIC = F) {
+	if(!is.null(model2)){
+		# F(-2, 336) =  0.30, p = 0.74
+		a = anova(model1, model2)
+		if(raw){
+			print(a)
+		}
+		if(format == "string"){
+			print( paste0("F(", a[2,"Df"], ",", a[2,"Res.Df"], ") = ",
+					round(a[2,"F"],2), ", p ", umx_u_APA_pval(a[2,"Pr(>F)"])
+				)
+			)
+		} else {
+			print( paste0("| ", a[2,"Df"], " | ", a[2,"Res.Df"], " | ", 
+				round(a[2,"F"],2), " | ", umx_u_APA_pval(a[2,"Pr(>F)"]), " | ")
+			)
+		}		
+
 	} else {
-		a$beta = NA
-		message("To include beta weights\ninstall.packages(\"QuantPsyc\")")
-	}
+		a = anova(model1);
+		if(require(QuantPsyc, quietly = T)){
+			a$beta = c(QuantPsyc::lm.beta(model1), NA);
+		} else {
+			a$beta = NA
+			message("To include beta weights\ninstall.packages(\"QuantPsyc\")")
+		}
 
-	x <- c("Df", "beta", "F value", "Pr(>F)");
-	a = a[,x]; 
-	names(a) <- c("df", "beta", "F", "p"); 
-	ci = confint(model)
-	a$lowerCI = ci[,1]
-	a$upperCI = ci[,2]
-	a <- a[,c("df", "beta", "lowerCI", "upperCI", "F", "p")]; 
-	print(a)
-	if(printDIC){
-		a = drop1(model); 
-		a$DIC = round(a$AIC - a$AIC[1], 2); 
-		print(a)	
+		x <- c("Df", "beta", "F value", "Pr(>F)");
+		a = a[,x]; 
+		names(a) <- c("df", "beta", "F", "p"); 
+		ci = confint(model1)
+		a$lowerCI = ci[,1]
+		a$upperCI = ci[,2]
+		a <- a[,c("df", "beta", "lowerCI", "upperCI", "F", "p")]; 
+		print(a)
+		if(printDIC){
+			a = drop1(model1); 
+			a$DIC = round(a$AIC - a$AIC[1], 2); 
+			print(a)	
+		}
 	}
 }
 
@@ -448,4 +469,15 @@ rowMin <- function(df, na.rm=T) {
 	tmp = apply(df, MARGIN=1, FUN=min, na.rm=na.rm)
 	tmp[!is.finite(tmp)] = NA
 	return(tmp)
+}
+
+umx_u_APA_pval <- function(p) {
+	# umx_u_APA_pval()
+	# umxAnovaReport
+	min = .001
+	if(p < min){
+		return(paste0("< ", min))
+	} else {
+		return(paste0("= ", round(p, 2)))
+	}	
 }

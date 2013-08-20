@@ -13,14 +13,14 @@
 #' The main value for umxRun over mxRun is with raw data. It's slightly faster, but 
 #' can also calculate the saturated and independence likelihoods necessary for most fit indices.
 #'
-#' @param model the \code{\link{mxModel}} you wish to run.
-#' @param n the maximum number of times you want to run the model trying to get a code green run (defaults to 3)
-#' @param calc_SE whether to calculate standard errors 
-#' for the summary (they are not very accurate, so if you use \code{\link{mxCI}} you can trun this off)
-#' @param calc_sat whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s)
+#' @param model The \code{\link{mxModel}} you wish to run.
+#' @param n The maximum number of times you want to run the model trying to get a code green run (defaults to 3)
+#' @param calc_SE Whether to calculate standard errors 
+#' for the summary (they are not very accurate, so if you use \code{\link{mxCI}} you can turn this off)
+#' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s)
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
 #' \dontrun{
@@ -75,17 +75,16 @@ umxRun <- function(model, n = 3, calc_SE = T, calc_sat = T){
 #' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = F, name = "newModelName")
 #' fit2 = mxRun(fit2)
 #'
-#' @param lastFit The \code{\link{mxModel}} you wish to update and run.
+#' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
-#' @param regex = A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
-#' @param free Whether to set the parameters whose labels you specify to free or fixed (defaults to FALSE, i.e., fixed)
-#' @param value The value to set the parameters whose labels you specify too (defaults to 0)
+#' @param regex    A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
+#' @param free     Whether to set the parameters whose labels you specify to free or fixed (defaults to FALSE, i.e., fixed)
+#' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
 #' @param freeToStart Whether to only update parameters which are free to start (defaults to NA - i.e, not checked)
-#' @param name The name for the new model
-#' @param verbose How much feedback to give
+#' @param name      The name for the new model
+#' @param verbose   How much feedback to give
 #' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
-#' @param newName DEPRECATED equivalent of name. Use name = to change name of the new model
-
+#' @param newName   DEPRECATED! equivalent of name. Use name = to change name of the new model
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{omxGetParameters}}
 #' @references - http://openmx.psyc.virginia.edu/
