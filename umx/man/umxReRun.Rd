@@ -14,7 +14,7 @@
   labels listed here will be dropped (or set to the value
   and free state you specify)}
 
-  \item{regex}{= A regular expression. If not NA, then all
+  \item{regex}{A regular expression. If not NA, then all
   labels matching this expression will be dropped (or set
   to the value and free state you specify)}
 
@@ -36,7 +36,7 @@
   \item{intervals}{Whether to run confidence intervals (see
   \code{\link{mxRun}})}
 
-  \item{newName}{DEPRECATED equivalent of name. Use name =
+  \item{newName}{DEPRECATED! equivalent of name. Use name =
   to change name of the new model}
 }
 \value{

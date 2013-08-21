@@ -3,7 +3,7 @@
 \title{umxAnovaReport}
 \usage{
   umxAnovaReport(model1, model2 = NULL, raw = T,
-    printDIC = F)
+    format = "string", printDIC = F)
 }
 \arguments{
   \item{model1}{an \code{\link{lm}} model to make a table
@@ -14,6 +14,8 @@
 
   \item{raw}{should the raw table also be output? (allows
   checking that nothing crazy is going on)}
+
+  \item{format}{string or markdown format?}
 
   \item{printDIC}{a boolean toggle whether tou want
   AIC-type fit change table printed}

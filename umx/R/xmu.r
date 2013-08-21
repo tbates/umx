@@ -1,8 +1,7 @@
-# setwd("~/bin/umx/umx")
-# devtools::load_all()
-# devtools::dev_help("xmuLabel_MATRIX_Model")
-# devtools::document()
-# devtools::install()
+# https://github.com/hadley/devtools/wiki/Philosophy
+# setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
+# devtools::check()
+# devtools::dev_help("umxStart")
 
 # ========================================
 # = Not Typically used directly by users =

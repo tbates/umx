@@ -5,13 +5,13 @@
   umxStart(obj = NA, sd = NA, n = 1)
 }
 \arguments{
-  \item{obj}{the RAM or matrix \code{\link{mxModel}}, or
+  \item{obj}{The RAM or matrix \code{\link{mxModel}}, or
   \code{\link{mxMatrix}} that you want to set start values
   for.}
 
-  \item{sd}{optional sd for start values}
+  \item{sd}{Optional Standard Deviation for start values}
 
-  \item{n}{optional mean for start values}
+  \item{n}{Optional Mean for start values}
 }
 \value{
   - \code{\link{mxModel}} with updated start values
@@ -28,7 +28,7 @@ model = umxStart(model)
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
   - \code{\link{umxLabel}}, \code{\link{umxRun}}

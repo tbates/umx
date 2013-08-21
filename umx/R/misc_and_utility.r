@@ -1,7 +1,7 @@
 # https://github.com/hadley/devtools/wiki/Philosophy
-# devtools::dev_help("Stouffer.test")
 # setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
 # devtools::check()
+# devtools::dev_help("umxStart")
 
 # ====================
 # = Updating helpers =
@@ -11,9 +11,9 @@
 #'
 #' This function automates the process of updating OpenMx while it is not a cran package
 #'
-#' @param bleedingEdge  binary factor determining whether to request the beta or relase version (F)
-#' @param loadNew binary parameter determining whether to load the library after (optionally) updating
-#' @param anyOK minimum version to accept without updating
+#' @param bleedingEdge  A Boolean determining whether to request the beta (TRUE) or relase version (defaults to FALSE)
+#' @param loadNew A Boolean parameter determining whether to load the library after (optionally) updating
+#' @param anyOK The minimum version to accept without updating
 #' @export
 #' @examples
 #' \dontrun{
@@ -110,9 +110,9 @@ umxUpdateOpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 # =====================
 #' umxHasCIs
 #'
-#' umxHasCIs is a utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
+#' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
 #'
-#' @param model \code{\link{mxModel}} to check for presence of CIs
+#' @param model The \code{\link{mxModel}} to check for presence of CIs
 #' @return - TRUE or FALSE
 #' @export
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxRun}}, \code{\link{umxReportCIs}}
@@ -135,14 +135,14 @@ umxHasCIs <- function(model) {
 # How long did that take?
 #' umxReportTime
 #'
-#' umxReportTime Reports how long the model took to execute compactly, without having to run a summary
+#' A functoin to compactly report how long a model took to execute
 #'
-#' @param model an \code{\link{mxModel}} from which to get the elapsed time
+#' @param model An \code{\link{mxModel}} from which to get the elapsed time
 #' @param formatStr A format string, defining how to show the time
 #' @param tz The time zone in which the model was executed
 #' @export
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
 #' umxReportTime(model)
@@ -159,13 +159,13 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' umxAnovaReport is a convenience function to format results for journals. There are others. Bt I made this one.
 #' If you give it the output of an lm, it runs anova() and lm.beta(), and puts that together in a regression table...
 #' Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
-#' @param model1 an \code{\link{lm}} model to make a table from 
-#' @param model2 an (optional) second \code{\link{lm}} model to compare to model 1
-#' @param raw should the raw table also be output? (allows checking that nothing crazy is going on)
-#' @param format string or markdown format?
-#' @param printDIC a boolean toggle whether tou want AIC-type fit change table printed
+#' @param model1 An \code{\link{lm}} model to make a table from 
+#' @param model2 An (optional) second \code{\link{lm}} model to compare to model 1
+#' @param raw Should the raw table also be output? (allows checking that nothing crazy is going on)
+#' @param format String or markdown format?
+#' @param printDIC A Boolean toggle whether tou want AIC-type fit change table printed
 #' @seealso - \code{\link{umxReportFit}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
 #' model = lm(mpg ~ cyl + disp, data = mtcars)
@@ -216,17 +216,17 @@ umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", pr
 
 #' print.dataframe
 #'
-#' print.dataframe is a helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
+#' A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
 #' Its most useful characteristic is allowing you to change how NA and zero appear.
 #' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 #'
-#' @param x a data.frame to print
-#' @param digits  the number of decimal places to print (defaults to getOption("digits")
-#' @param quote  parameter passed to print
+#' @param x A data.frame to print
+#' @param digits  The number of decimal places to print (defaults to getOption("digits")
+#' @param quote  Parameter passed to print
 #' @param na.print String to replace NA with (default to blank "")
 #' @param zero.print String to replace 0.000 with  (defaults to "0")
-#' @param justify parameter passed to print
-#' @param ... option parameters for print
+#' @param justify Parameter passed to print
+#' @param ... Optional parameters for print
 #' @export
 #' @seealso - \code{\link{print}}
 #' @examples
@@ -258,7 +258,7 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 #'
 #' Runs a Stouffer.test
 #'
-#' @param p a list of p values, i.e., p(.4, .3, .6, .01)
+#' @param p A list of p values, i.e., p(.4, .3, .6, .01)
 #' @seealso - 
 #' @references - \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
 #' Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, 
@@ -297,10 +297,10 @@ Stouffer.test <- function(p = NULL) {
 #'
 #' umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
 #'
-#' @param data a \code{\link{data.frame}} of columns for which to compute heterochoric correlations
+#' @param data A \code{\link{data.frame}} of columns for which to compute heterochoric correlations
 #' @param ML Whether to use Maximum likelihood computation of correlations (default = F)
 #' @param use How to delete missing data
-#' @return - a matrix of correlations
+#' @return - A matrix of correlations
 #' @export
 #' @seealso - \code{\link{hetcor}}
 #' @references - 

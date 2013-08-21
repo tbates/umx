@@ -5,16 +5,16 @@
   umxRun(model, n = 3, calc_SE = T, calc_sat = T)
 }
 \arguments{
-  \item{model}{the \code{\link{mxModel}} you wish to run.}
+  \item{model}{The \code{\link{mxModel}} you wish to run.}
 
-  \item{n}{the maximum number of times you want to run the
+  \item{n}{The maximum number of times you want to run the
   model trying to get a code green run (defaults to 3)}
 
-  \item{calc_SE}{whether to calculate standard errors for
+  \item{calc_SE}{Whether to calculate standard errors for
   the summary (they are not very accurate, so if you use
-  \code{\link{mxCI}} you can trun this off)}
+  \code{\link{mxCI}} you can turn this off)}
 
-  \item{calc_sat}{whether to calculate the saturated and
+  \item{calc_sat}{Whether to calculate the saturated and
   independence models (for raw \code{\link{mxData}}
   \code{\link{mxModel}}s)}
 }
@@ -35,7 +35,7 @@ model = umxRun(model, n=10)
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
   - \code{\link{mxRun}}, \code{\link{umxLabel}},

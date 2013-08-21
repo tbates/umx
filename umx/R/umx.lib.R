@@ -1,5 +1,7 @@
+# https://github.com/hadley/devtools/wiki/Philosophy
 # setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
-# devtools::dev_help("xmuLabel_MATRIX_Model")
+# devtools::check()
+# devtools::dev_help("umxStart")
 
 # Description notes
 # Here's a worked example

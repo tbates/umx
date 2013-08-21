@@ -1,3 +1,8 @@
+# https://github.com/hadley/devtools/wiki/Philosophy
+# setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
+# devtools::check()
+# devtools::dev_help("umxStart")
+
 # ==================
 # = Model Builders =
 # ==================
