@@ -6,18 +6,18 @@
     format = "string", printDIC = F)
 }
 \arguments{
-  \item{model1}{an \code{\link{lm}} model to make a table
+  \item{model1}{An \code{\link{lm}} model to make a table
   from}
 
-  \item{model2}{an (optional) second \code{\link{lm}} model
+  \item{model2}{An (optional) second \code{\link{lm}} model
   to compare to model 1}
 
-  \item{raw}{should the raw table also be output? (allows
+  \item{raw}{Should the raw table also be output? (allows
   checking that nothing crazy is going on)}
 
-  \item{format}{string or markdown format?}
+  \item{format}{String or markdown format?}
 
-  \item{printDIC}{a boolean toggle whether tou want
+  \item{printDIC}{A Boolean toggle whether tou want
   AIC-type fit change table printed}
 }
 \description{
@@ -34,7 +34,7 @@ model = lm(mpg ~ cyl + disp, data = mtcars)
 umxAnovaReport(model)
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
   - \code{\link{umxReportFit}}, \code{\link{umxCompare}},

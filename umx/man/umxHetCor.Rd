@@ -5,7 +5,7 @@
   umxHetCor(data, ML = F, use = "pairwise.complete.obs")
 }
 \arguments{
-  \item{data}{a \code{\link{data.frame}} of columns for
+  \item{data}{A \code{\link{data.frame}} of columns for
   which to compute heterochoric correlations}
 
   \item{ML}{Whether to use Maximum likelihood computation
@@ -14,7 +14,7 @@
   \item{use}{How to delete missing data}
 }
 \value{
-  - a matrix of correlations
+  - A matrix of correlations
 }
 \description{
   umxHetCor Helper to return just the correlations from

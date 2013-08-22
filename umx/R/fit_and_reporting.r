@@ -1,5 +1,6 @@
 # https://github.com/hadley/devtools/wiki/Philosophy
-# setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
+# setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); 
+# devtools::load_all()
 # devtools::check()
 # devtools::dev_help("umxStart")
 
@@ -82,9 +83,12 @@ umxSummary <- function(model, saturatedModels = NULL, precision = 2, displayColu
 #' @param saturatedModels Saturated models if needed for fit indices (see note below: 
 #' Only needed for raw data, and then not if you've run umxRun
 #' @param report The format for the output (currently only a 1-liner is supported)
-#' @param showEstimates Whether to show the raw or standadized estimates (default is std)
+#' @param showEstimates Whether to show the raw or standadized estimates.
+#' Options are "none|raw|std|both" (The default is standardized parameters. Choose none just to get the fit statistics)
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
+#'  - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
+#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
 #' @export
 #' @examples
 #' \dontrun{
@@ -95,8 +99,6 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 	# Use case: umxReportFit(m1, report="table")
 	# umxReportFit(m1, saturatedModels = m1_sat)
 	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
-	# nb: I now compute this for you if you leave it blank and it is needed...
-	# showEstimates = "none|raw|std|both"
 	# report = "line|table"
 	# TODO make table take lists of models...
 	# TODO could have a toggle for computing hte saturated models...
@@ -169,10 +171,52 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 					print(x)
 			}
 	})
+}
+
+#' umxReportCIs
+#'
+#' umxReportCIs umxReportCIs adds mxCI() calls for all free parameters in a model, 
+#' runs the CIs, and reports a neat summary.
+#'
+#' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
+#' @param addCIs Whether or not to add mxCIs if none are found (defaults to TRUE)
+#' @param runCIs Whether or not to run the CIs: if F, this function can simply add CIs and return the model. Valid values = "no", "yes", "if necessary"
+#' all the CIs and return that model for \code{\link{mxRun}}ning later
+#' @return - \code{\link{mxModel}}
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @export
+#' @examples
+#' \dontrun{
+#' umxReportCIs(model)
+#' }
+
+umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
+	# TODO add code to not-run CIs
+	if(is.na(model)){
+		message("umxReportCIs adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxReportCIs(model)")
+		stop();
+	}
+	message("### CIs for model ", model@name)
+	if(addCIs){
+		CIs   = names(omxGetParameters(model))
+		model = mxModel(model, mxCI(CIs))
+	}
+	runCIs = "yes"
 	
-	# References for OK/bad
-	# Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
-	# Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from http://www.statmodel.com/download/Yudissertation.pdf  
+	if( (runCIs == "yes") | (umxHasCIs(model) & runCIs != "no") ) {
+		model = mxRun(model, intervals = T)
+	}
+
+	if(umxHasCIs(model)){
+		model_summary = summary(model)
+		model_CIs = round(model_summary$CI, 3)
+		model_CI_OK = model@output$confidenceIntervalCodes
+		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
+		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
+		print(model_CIs)
+	}
+	invisible(model)
 }
 
 umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {

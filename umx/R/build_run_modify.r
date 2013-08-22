@@ -270,52 +270,6 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 	}
 }
 
-#' umxReportCIs
-#'
-#' umxReportCIs umxReportCIs adds mxCI() calls for all free parameters in a model, 
-#' runs the CIs, and reports a neat summary.
-#'
-#' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
-#' @param addCIs Whether or not to add mxCIs if none are found (defaults to TRUE)
-#' @param runCIs Whether or not to run the CIs: if F, this function can simply add CIs and return the model. Valid values = "no", "yes", "if necessary"
-#' all the CIs and return that model for \code{\link{mxRun}}ning later
-#' @return - \code{\link{mxModel}}
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
-#' @references - http://openmx.psyc.virginia.edu/
-#' @export
-#' @examples
-#' \dontrun{
-#' umxReportCIs(model)
-#' }
-
-umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
-	# TODO add code to not-run CIs
-	if(is.na(model)){
-		message("umxReportCIs adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxReportCIs(model)")
-		stop();
-	}
-	message("### CIs for model ", model@name)
-	if(addCIs){
-		CIs   = names(omxGetParameters(model))
-		model = mxModel(model, mxCI(CIs))
-	}
-	runCIs = "yes"
-	
-	if( (runCIs == "yes") | (umxHasCIs(model) & runCIs != "no") ) {
-		model = mxRun(model, intervals = T)
-	}
-
-	if(umxHasCIs(model)){
-		model_summary = summary(model)
-		model_CIs = round(model_summary$CI, 3)
-		model_CI_OK = model@output$confidenceIntervalCodes
-		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
-		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
-		print(model_CIs)
-	}
-	invisible(model)
-}
-
 # ==============================
 # = Label and equate functions =
 # ==============================

@@ -17,7 +17,9 @@
   1-liner is supported)}
 
   \item{showEstimates}{Whether to show the raw or
-  standadized estimates (default is std)}
+  standadized estimates. Options are "none|raw|std|both"
+  (The default is standardized parameters. Choose none just
+  to get the fit statistics)}
 }
 \description{
   umxReportFit Report fit of a model in a compact form
@@ -29,7 +31,15 @@ model = umxReportFit(model)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+  - \url{http://openmx.psyc.virginia.edu} - Hu, L., &
+  Bentler, P. M. (1999). Cutoff criteria for fit indexes in
+  covariance structure analysis: Coventional criteria
+  versus new alternatives. Structural Equation Modeling, 6,
+  1-55.  - Yu, C.Y. (2002). Evaluating cutoff criteria of
+  model fit indices for latent variable models with binary
+  and continuous outcomes. University of California, Los
+  Angeles, Los Angeles. Retrieved from
+  \url{http://www.statmodel.com/download/Yudissertation.pdf}
 }
 \seealso{
   - \code{\link{umxLabel}}, \code{\link{umxRun}},

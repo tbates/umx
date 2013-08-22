@@ -25,14 +25,8 @@ Built: \tab R 2.15.2; ; 2013-08-20 19:34:13 UTC; unix\cr
 
 Index:
 \preformatted{
-Stouffer.test           Stouffer.test
-print.dataframe         print.dataframe
-umxAnovaReport          umxAnovaReport
-umxCompare              umxCompare
-umxEquate               umxEquate
-umxHasCIs               umxHasCIs
-umxHetCor               umxHetCor
-umxJiggle               umxJiggle
+umxCompare              Compare models
+umxEquate               Equate parameters
 umxLabel                umxLabel
 umxMI                   umxMI
 umxMI_top               umxMI_top
@@ -44,12 +38,19 @@ umxRun                  umxRun
 umxStandardizeModel     umxStandardizeModel
 umxStart                umxStart
 umxSummary              umxSummary
-umxUnexplainedCausalNexus
 umxUpdateOpenMx         umxUpdateOpenMx
-xmuLabel_MATRIX_Model   xmuLabel_MATRIX_Model (not a user function)
-xmuMakeThresholdsMatrices
-                        xmuMakeThresholdsMatrices (not a user function)
-xmuPropagateLabels      xmuPropagateLabels (not a user function)
+
+umxUnexplainedCausalNexus
+
+umxHasCIs               Utility to ask a model if it has CIs
+umxHetCor               umxHetCor
+umxJiggle               umxJiggle
+
+Misc
+print.dataframe         print.dataframe
+umxAnovaReport          umxAnovaReport
+Stouffer.test           Run a Stouffer.test
+
 }
 }
 \author{
