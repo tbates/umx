@@ -6,7 +6,7 @@
     tz = "GMT")
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} from which to get
+  \item{model}{An \code{\link{mxModel}} from which to get
   the elapsed time}
 
   \item{formatStr}{A format string, defining how to show
@@ -15,8 +15,8 @@
   \item{tz}{The time zone in which the model was executed}
 }
 \description{
-  umxReportTime Reports how long the model took to execute
-  compactly, without having to run a summary
+  A functoin to compactly report how long a model took to
+  execute
 }
 \examples{
 \dontrun{
@@ -24,7 +24,7 @@ umxReportTime(model)
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
   - \code{\link{summary}}, \code{\link{umxRun}}

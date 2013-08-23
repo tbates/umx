@@ -5,16 +5,16 @@
   umxHasCIs(model)
 }
 \arguments{
-  \item{model}{\code{\link{mxModel}} to check for presence
-  of CIs}
+  \item{model}{The \code{\link{mxModel}} to check for
+  presence of CIs}
 }
 \value{
   - TRUE or FALSE
 }
 \description{
-  umxHasCIs is a utility function to return a binary answer
-  to the question "does this \code{\link{mxModel}} have
-  confidence intervals?"
+  A utility function to return a binary answer to the
+  question "does this \code{\link{mxModel}} have confidence
+  intervals?"
 }
 \examples{
 \dontrun{

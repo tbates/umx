@@ -7,12 +7,12 @@
     justify = "none", ...)
 }
 \arguments{
-  \item{x}{a data.frame to print}
+  \item{x}{A data.frame to print}
 
-  \item{digits}{the number of decimal places to print
+  \item{digits}{The number of decimal places to print
   (defaults to getOption("digits")}
 
-  \item{quote}{parameter passed to print}
+  \item{quote}{Parameter passed to print}
 
   \item{na.print}{String to replace NA with (default to
   blank "")}
@@ -20,16 +20,16 @@
   \item{zero.print}{String to replace 0.000 with (defaults
   to "0")}
 
-  \item{justify}{parameter passed to print}
+  \item{justify}{Parameter passed to print}
 
-  \item{...}{option parameters for print}
+  \item{...}{Optional parameters for print}
 }
 \description{
-  print.dataframe is a helper to aid the interpretability
-  of printed tables from OpenMx (and elsewhere). Its most
-  useful characteristic is allowing you to change how NA
-  and zero appear. By default, Zeros have the decimals
-  suppressed, and NAs are suppressed altogether.
+  A helper to aid the interpretability of printed tables
+  from OpenMx (and elsewhere). Its most useful
+  characteristic is allowing you to change how NA and zero
+  appear. By default, Zeros have the decimals suppressed,
+  and NAs are suppressed altogether.
 }
 \examples{
 \dontrun{

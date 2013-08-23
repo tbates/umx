@@ -5,13 +5,15 @@
   umxUpdateOpenMx(bleedingEdge = F, loadNew = T, anyOK = F)
 }
 \arguments{
-  \item{bleedingEdge}{binary factor determining whether to
-  request the beta or relase version (F)}
+  \item{bleedingEdge}{A Boolean determining whether to
+  request the beta (TRUE) or relase version (defaults to
+  FALSE)}
 
-  \item{loadNew}{binary parameter determining whether to
+  \item{loadNew}{A Boolean parameter determining whether to
   load the library after (optionally) updating}
 
-  \item{anyOK}{minimum version to accept without updating}
+  \item{anyOK}{The minimum version to accept without
+  updating}
 }
 \description{
   This function automates the process of updating OpenMx
