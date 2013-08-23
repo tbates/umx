@@ -1,7 +1,7 @@
 # https://github.com/hadley/devtools/wiki/Philosophy
 # setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); 
 # devtools::load_all()
-# devtools::check()
+# setwd("~/bin/umx/umx"); devtools::check()
 # devtools::dev_help("umxStart")
 
 # =============================
@@ -18,21 +18,23 @@
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxReportFit}}, \code{\link{umxRun}},
 #' @references - \url{http://openmx.psyc.virginia.edu/}
 #' @export
+#' @import OpenMx
 #' @examples
 #' \dontrun{
 #' umxCompare(model1, model2)
 #' umxCompare(model1, c(model2, model3))
 #' }
 
-umxCompare <- function(base = NA, comparison = NA, all = T, output = "Rout.html") {
-	# c("Rout.html", "return")
+umxCompare <- function(base = NA, comparison = NA, all = T, output = "return") {
+	# output != "return"is interpreted as a file to write html too...
 	# umxCompare(fit11, fit11, all=F, output="Rout.html")
+	# TODO eliminate this once mxCompare finally updates...
 	if(is.na(comparison)){
-		comparison = base
+		comparison <- base
 	} 
 	tableOut  = mxCompare(base = base, comparison = comparison, all = all)
 	tableOut  = format(tableOut, scientific = F, digits = 5)
-	tableOut = tableOut[, c(2:1, 3, 4, 6:9)]
+	tableOut  = tableOut[, c(2:1, 3, 4, 6:9)]
 	names(tableOut)<-c("Comparison", "Base", "ep", "-2LL", "AIC", "delta LL", "delta df", "p")
 	if(output=="return"){
 		return(tableOut)
@@ -48,60 +50,35 @@ umxCompare <- function(base = NA, comparison = NA, all = T, output = "Rout.html"
 
 #' umxSummary
 #'
-#' umxSummary is a modified summary function for \code{\link{OpenMx}}, 
-#' designed to give you the information you need for writing paper. 
-#' Given a model, it returns a simplified version of the path loadings, along with chi^2, AIC and other important fit parameters.
-#'
-#' @param model an \code{\link{mxModel}} to summarise
-#' @param saturatedModels Option saturated models as a basis for comparison for model
-#' @param precision : the number of decimal places you want for p-values etc. (defaults to 2)
-#' @param displayColumns the subset of fit columns to show in the summary
-#' @param report Currently not used - but will allow users to request different forms of report
-#' @seealso - \code{\link{umxRun}}, \code{\link{umxReportFit}}
-#' @references - http://openmx.psyc.virginia.edu/
-#' @export
-#' @examples
-#' \dontrun{
-#' umxSummary(model)
-#' }
-
-umxSummary <- function(model, saturatedModels = NULL, precision = 2, displayColumns = c("row", "col", "Std.Estimate"), report = NA) {
-	if(!is.na(report)){
-		warning("report not implemented")
-	}
-	x = summary(model)$parameters[, displayColumns]
-	x$Std.Estimate = round(x$Std.Estimate, precision)
-	print(x)
-	umxReportFit(model, saturatedModels)
-}
-
-#' umxReportFit
-#'
-#' umxReportFit Report fit of a model in a compact form suitable for a journal
+#' Report the fit of a model in a compact form suitable for a journal
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param saturatedModels Saturated models if needed for fit indices (see note below: 
 #' Only needed for raw data, and then not if you've run umxRun
-#' @param report The format for the output (currently only a 1-liner is supported)
-#' @param showEstimates Whether to show the raw or standadized estimates.
+#' @param report The format for the output line or table (default is "line")
+#' @param showEstimates What estimates to show: raw or standardized, a custom list or (default) none (just shows the fit indices)
 #' Options are "none|raw|std|both" (The default is standardized parameters. Choose none just to get the fit statistics)
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
+#'
 #'  - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
+#'
 #'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
 #' @export
+#' @import OpenMx
 #' @examples
 #' \dontrun{
-#' model = umxReportFit(model)
+#' umxSummary(m1)
+#' umxSummary(m1, report = "table")
+#' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
 
-umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEstimates = "std") {
-	# Use case: umxReportFit(m1, report="table")
-	# umxReportFit(m1, saturatedModels = m1_sat)
-	# nb: "saturatedModels" is a list of the saturated and independence models from umxSaturated()
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, precision = 2){
 	# report = "line|table"
+	# showEstimates = "NULL|raw|std|both|c("row", "col", "Std.Estimate")"
+	# c("names", "Std.Estimate")
 	# TODO make table take lists of models...
-	# TODO could have a toggle for computing hte saturated models...
+	# TODO should/could have a toggle for computing the saturated models...
 
 	output <- model@output
 	# stop if there is no objective function
@@ -111,19 +88,23 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 	
 	if(is.null(saturatedModels)){
 		# saturatedModels not passed in from outside, so get them from the model
-		modelSummary = summary(model)
+		modelSummary = OpenMx::summary(model)
+		
 		if(is.na(modelSummary$SaturatedLikelihood)){
 			message("There is no saturated likelihood: computing that now...")
 			saturatedModels = umxSaturated(model)
-			modelSummary = summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
+			modelSummary = OpenMx::summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
 		}
 	} else {
-		modelSummary = summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
+		modelSummary = OpenMx::summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
 	}
 
-	if(showEstimates != "none"){
+	# displayColumns
+	if(!is.null(showEstimates)){
 		if("Std.Estimate" %in%  names(modelSummary$parameters)){
-			if(showEstimates == "both") {
+			if(length(showEstimates) >1) {
+				namesToShow = showEstimates
+			}else if(showEstimates == "both") {
 				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
 			} else if(showEstimates == "std"){
 				namesToShow = c("name", "matrix", "row", "col", "Std.Estimate", "Std.SE")
@@ -133,11 +114,13 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 		} else {
 			namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")
 		}
-		print(modelSummary$parameters[,namesToShow], digits= 3, na.print = "", zero.print = "0", justify = "none")
+		print(modelSummary$parameters[,namesToShow], digits= precision, na.print = "", zero.print = "0", justify = "none")
+	} else {
+		message("For estimates, add showEstimates = 'raw' or 'std' etc")
 	}
-	
+
 	with(modelSummary, {
-		if(!is.finite(TLI)){			
+		if(!is.finite(TLI)){
 			TLI_OK = "OK"
 		} else {
 			if(TLI > .95) {
@@ -149,7 +132,7 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 			if(!is.finite(RMSEA)) {
 				RMSEA_OK = "OK"
 			} else {
-			if(RMSEA < .06){
+				if(RMSEA < .06){
 				RMSEA_OK = "OK"
 				} else {
 					RMSEA_OK = "bad"
@@ -165,12 +148,21 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 					", p = "    , formatC(p, format="g"),
 					"; CFI = "  , round(CFI,3),
 					"; TLI = "  , round(TLI,3),
-					"; RMSEA = ", round(RMSEA, 3), 
-					", TLI = "  , TLI_OK,
-					", RMSEA = ", RMSEA_OK)
+					"; RMSEA = ", round(RMSEA, 3)
+					)
 					print(x)
+					if(TLI_OK != "OK"){
+						message("TLI is worse than desired")
+					}
+					if(RMSEA_OK != "OK"){
+						message("RMSEA is worse than desired")
+					}
 			}
 	})
+}
+
+umxtmp <- function(model){
+	summary(model)
 }
 
 #' umxReportCIs

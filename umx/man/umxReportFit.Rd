@@ -3,7 +3,8 @@
 \title{umxReportFit}
 \usage{
   umxReportFit(model, saturatedModels = NULL,
-    report = "line", showEstimates = "std")
+    report = "line", showEstimates = "std", precision = 2,
+    displayColumns = c("row", "col", "Std.Estimate"))
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} whose fit will be
@@ -27,7 +28,9 @@
 }
 \examples{
 \dontrun{
-model = umxReportFit(model)
+umxReportFit(m1)
+umxReportFit(m1, report = "table")
+umxReportFit(m1, saturatedModels = umxSaturated(m1))
 }
 }
 \references{

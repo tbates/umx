@@ -7,7 +7,7 @@ umx
 }
 \description{
 A library of Helper functions for OpenMx. If you are just
-    starting, try typing ?umxReport()
+    starting, see the examples below:
 }
 \details{
 \tabular{ll}{
@@ -19,36 +19,34 @@ Depends: \tab R (>= 2.11.0), OpenMx (>= 1.3.0),\cr
 Suggests: \tab testthat, roxygen2\cr
 Collate: \tab 'build_run_modify.r' 'deprecated.r' 'fit_and_reporting.r'
 'umx.lib.R' 'xmu.r' 'model_builders.r' 'misc_and_utility.r'\cr
-Packaged: \tab 2013-08-20 19:34:12 UTC; tim\cr
-Built: \tab R 2.15.2; ; 2013-08-20 19:34:13 UTC; unix\cr
+Packaged: \tab 2013-08-22 22:49:21 UTC; tim\cr
+Built: \tab R 2.15.2; ; 2013-08-22 22:49:22 UTC; unix\cr
 }
 
 Index:
 \preformatted{
-umxCompare              Compare models
-umxEquate               Equate parameters
-umxLabel                umxLabel
-umxMI                   umxMI
-umxMI_top               umxMI_top
-umxReRun                umxReRun
-umxReportCIs            umxReportCIs
-umxReportFit            umxReportFit
-umxReportTime           umxReportTime
+umxLabel                Add labels to all parameters of a model
+umxStart                Set sensible start values
 umxRun                  umxRun
-umxStandardizeModel     umxStandardizeModel
-umxStart                umxStart
-umxSummary              umxSummary
+umxSummary              Compact summary
+umxReRun                Re-run a model with changes
+umxCompare              Compare one or more models
+umxEquate               Equate parameters in a model  by label
+umxMI_top               Modification indices for RAM models
+umxReportCIs            Report FIML CIs on a model
+umxReportTime           Show how long a model took to run
+umxStandardizeModel     Standardize a RAM Model
 umxUpdateOpenMx         umxUpdateOpenMx
 
 umxUnexplainedCausalNexus
 
 umxHasCIs               Utility to ask a model if it has CIs
-umxHetCor               umxHetCor
-umxJiggle               umxJiggle
+umxHetCor               Calculate HeteroChoric correlations
+umxJiggle               Jiggle values in a list
 
 Misc
-print.dataframe         print.dataframe
-umxAnovaReport          umxAnovaReport
+print.dataframe         print dataframe in readable form by supressing NA and rounding 0
+umxAnovaReport          A handy ANOVA report formatter
 Stouffer.test           Run a Stouffer.test
 
 }
@@ -95,7 +93,7 @@ fit1 = umxRun(fit1)
 
 # Let's get some journal-ready fit information
 
-umxReportFit(fit1) 
+umxSummary(fit1) 
 
 # Model updating example
 # Can we equate the loading of X5 on g to zero?
@@ -116,7 +114,6 @@ umxGraph_RAM(fit1, std = T)
 
 # Run this if you don't have GraphViz
 umxGraph_RAM(fit1, std = T, dotFilename = NA)
-
 
 }
 }

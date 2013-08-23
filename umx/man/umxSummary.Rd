@@ -2,41 +2,53 @@
 \alias{umxSummary}
 \title{umxSummary}
 \usage{
-  umxSummary(model, saturatedModels = NULL, precision = 2,
-    displayColumns = c("row", "col", "Std.Estimate"),
-    report = NA)
+  umxSummary(model, saturatedModels = NULL,
+    report = "line", showEstimates = NULL, precision = 2)
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to summarise}
+  \item{model}{The \code{\link{mxModel}} whose fit will be
+  reported}
 
-  \item{saturatedModels}{Option saturated models as a basis
-  for comparison for model}
+  \item{saturatedModels}{Saturated models if needed for fit
+  indices (see note below: Only needed for raw data, and
+  then not if you've run umxRun}
 
-  \item{precision}{: the number of decimal places you want
-  for p-values etc. (defaults to 2)}
+  \item{report}{The format for the output line or table
+  (default is "line")}
 
-  \item{displayColumns}{the subset of fit columns to show
-  in the summary}
-
-  \item{report}{Currently not used - but will allow users
-  to request different forms of report}
+  \item{showEstimates}{What estimates to show: raw or
+  standardized, a custom list or (default) none (just shows
+  the fit indices) Options are "none|raw|std|both" (The
+  default is standardized parameters. Choose none just to
+  get the fit statistics)}
 }
 \description{
-  umxSummary is a modified summary function for
-  \code{\link{OpenMx}}, designed to give you the
-  information you need for writing paper. Given a model, it
-  returns a simplified version of the path loadings, along
-  with chi^2, AIC and other important fit parameters.
+  Report the fit of a model in a compact form suitable for
+  a journal
 }
 \examples{
 \dontrun{
-umxSummary(model)
+umxSummary(m1)
+umxSummary(m1, report = "table")
+umxSummary(m1, saturatedModels = umxSaturated(m1))
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
+
+  - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for
+  fit indexes in covariance structure analysis: Coventional
+  criteria versus new alternatives. Structural Equation
+  Modeling, 6, 1-55.
+
+  - Yu, C.Y. (2002). Evaluating cutoff criteria of model
+  fit indices for latent variable models with binary and
+  continuous outcomes. University of California, Los
+  Angeles, Los Angeles. Retrieved from
+  \url{http://www.statmodel.com/download/Yudissertation.pdf}
 }
 \seealso{
-  - \code{\link{umxRun}}, \code{\link{umxReportFit}}
+  - \code{\link{umxLabel}}, \code{\link{umxRun}},
+  \code{\link{umxStart}}
 }
 
