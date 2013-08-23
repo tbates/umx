@@ -3,7 +3,7 @@
 \title{umxCompare}
 \usage{
   umxCompare(base = NA, comparison = NA, all = T,
-    output = "Rout.html")
+    output = "return")
 }
 \arguments{
   \item{base}{The base \code{\link{mxModel}} for

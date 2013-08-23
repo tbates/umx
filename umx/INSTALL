@@ -1,0 +1,14 @@
+umx depends on OpenMx.
+
+OpenMx currently lives on \url{http://openmx.psyc.virginia.edu} rather than CRAN so, to install it use
+
+source('http://openmx.psyc.virginia.edu/getOpenMx.R')
+
+This will download and install OpenMx!
+
+MORE INFO
+
+See the umx and OpenMx home pages for more.
+
+ - (\url{http://github.com/tbates/umx})
+  - (\url{http://openmx.psyc.virginia.edu})

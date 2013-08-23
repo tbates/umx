@@ -1,0 +1,17 @@
+bibentry("Manual",
+   title = "umx: A help package for Structural Equation Modeling in OpenMx",
+   author = person("Tim Bates"),
+   organization = "University of Edinburgh",
+   address      = "Edinburgh, UK",
+   year   = version$year,
+   note   = "",
+   url    = "http://github.com/tbaes/umx/",
+
+   mheader = "To cite umx in publications use:",
+
+   mfooter = 
+     paste("We have invested a significant time and effort in creating umx,",
+      "please cite it when using it for data analysis.",
+      "See also", sQuote("citation(\"umx\")"),
+      "for citing R packages.", sep = " ")
+)
