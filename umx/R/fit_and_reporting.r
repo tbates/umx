@@ -25,13 +25,15 @@
 #' umxCompare(model1, c(model2, model3))
 #' }
 
-umxCompare <- function(base = NA, comparison = NA, all = T, output = "return") {
+umxCompare <- function(base = NULL, comparison = NULL, all = T, output = "return") {
 	# output != "return"is interpreted as a file to write html too...
 	# umxCompare(fit11, fit11, all=F, output="Rout.html")
 	# TODO eliminate this once mxCompare finally updates...
-	if(is.na(comparison)){
+	if(is.null(comparison)){
 		comparison <- base
-	} 
+	} else if (is.null(base)) {
+		stop("You must provide at least a base model for umxCompare")
+	}
 	tableOut  = mxCompare(base = base, comparison = comparison, all = all)
 	tableOut  = format(tableOut, scientific = F, digits = 5)
 	tableOut  = tableOut[, c(2:1, 3, 4, 6:9)]
