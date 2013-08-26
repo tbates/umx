@@ -62,9 +62,12 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "ret
 #' @param showEstimates What estimates to show. Options are "raw|std|list|NULL" for raw, standardized, a custom list or (default)
 #' none (just shows the fit indices)
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
+#' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
+#'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
 #'
-#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
+#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
+#'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
+#'  Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
 #'  
 #' \url{http://openmx.psyc.virginia.edu}
 #' @export
@@ -147,7 +150,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				print(x)
 			} else {
 				x = paste0(
-					"\u03A72\u00B2(", degreesOfFreedom, ") = ", round(Chi,2),
+					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi,2), # was A7
 					", p = "    , formatC(p, format="g"),
 					"; CFI = "  , round(CFI,3),
 					"; TLI = "  , round(TLI,3),
