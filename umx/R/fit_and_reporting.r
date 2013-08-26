@@ -31,7 +31,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "ret
 	# TODO eliminate this once mxCompare finally updates...
 	if(is.null(comparison)){
 		comparison <- base
-	} 
+	} else if (is.null(base)) {
+		stop("You must provide at least a base model for umxCompare")
+	}
 	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
 	tableOut  = format(tableOut, scientific = F, digits = 5)
 	tableOut  = tableOut[, c(2:1, 3, 4, 6:9)]

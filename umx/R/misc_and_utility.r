@@ -477,8 +477,9 @@ cor.prob <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits
 	return(R)
 }
 
-rowMax <- function(df, na.rm = T) {
-	tmp = apply(df, MARGIN = 1, FUN = max, na.rm = na.rm)
+# Return the maximum value in a row
+rowMax <- function(df, na.rm=T) {
+	tmp = apply(df, MARGIN=1, FUN=max, na.rm=na.rm)
 	tmp[!is.finite(tmp)] = NA
 	return(tmp)
 }
@@ -487,6 +488,27 @@ rowMin <- function(df, na.rm=T) {
 	tmp = apply(df, MARGIN=1, FUN=min, na.rm=na.rm)
 	tmp[!is.finite(tmp)] = NA
 	return(tmp)
+}
+
+col.as.numeric <- function(df) {
+	# use case
+	# col.as.numeric(df)
+	for (i in names(df)) {
+		df[,i] = as.numeric(df[,i])
+	}
+	return(df)
+}
+
+swapABlock <- function(twinData, rowSelector, T1Names, T2Names) {
+	# test = data.frame(a=paste("a",1:10,sep=""),b=paste("b",1:10,sep=""), c=paste("c",1:10,sep=""),d=paste("d",1:10,sep=""),stringsAsFactors=F)
+	# swapABlock(test, rowSelector=c(1,2,3,6), T1Names="b", T2Names="c")
+	# swapABlock(test, rowSelector=c(1,2,3,6), T1Names=c("a","c"), T2Names=c("b","d"))
+	theRows = twinData[rowSelector,]
+	old_BlockTwo = theRows[,T2Names]
+	theRows[,T1Names] -> theRows[,T2Names]
+	theRows[,T1Names] <- old_BlockTwo
+	twinData[rowSelector,] <- theRows
+	return(twinData)
 }
 
 umx_u_APA_pval <- function(p) {
@@ -499,3 +521,329 @@ umx_u_APA_pval <- function(p) {
 		return(paste0("= ", round(p, 2)))
 	}	
 }
+
+
+rename <- function (x, replace, old = NA) {
+	# add to help: see also gdate::rename.vars(data, from, to)	
+	# rename(x, replace = c(ages = "age"))
+	# rename(x, old= c("ages"), replace = c("age"))
+	if(typeof(old)=="character"){
+		# message("replacing old with replace")
+		if(length(old)!=length(replace)){
+			stop("you are trying to replace ", length(old), " old names with ", length(replace), "new names: Lengths must match")
+		}
+		names_to_replace <- old
+		new_names_to_try <- replace
+	} else {
+		names_to_replace <- names(replace)
+		new_names_to_try <- unname(replace)
+	}
+	old_names <- names(x)
+
+	if(!all(names_to_replace %in% old_names)) {
+		warning("The following names did not appear in the dataframe:", 
+		paste(names_to_replace[!names_to_replace %in% old_names], collapse=", "), "\nperhaps you already updated them")
+	}
+
+	if(anyDuplicated(names_to_replace)) {
+	  err <- paste("You are trying to update the following names more than once:", 
+	           paste(names_to_replace[duplicated(names_to_replace)], collapse=", "))
+	  stop(err)
+	}
+
+	if(anyDuplicated(new_names_to_try)) {
+	  err <- paste("You have the following duplicates in your replace list:", 
+	         	paste(new_names_to_try[duplicated(new_names_to_try)], collapse=", "))
+	  stop(err)
+	}
+	new_names <- new_names_to_try[match(old_names, names_to_replace)]  
+	setNames(x, ifelse(is.na(new_names), old_names, new_names))
+}
+
+
+
+grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
+	# output = "both", "label" or "name"
+	# grepSPSS_labels(relig, "Race", output="both", ignore.case=T) 
+	# grepSPSS_labels(relig, "race", output="label") 
+	# grepSPSS_labels(relig, "race", output="name") 
+	# need to check this exists
+	vLabels = attr(df,"variable.labels") # list of descriptive labels?
+	a       = names(df) 
+	if(is.null(vLabels)){
+		stop("no labels")
+	}
+	if(useNames) {
+		findIndex = grep(grepString,a, value=F, ignore.case=ignore.case)
+		return( as.matrix(vLabels[findIndex]))
+	} else {
+		# need to cope with finding nothing
+		findIndex = grep(grepString,vLabels, value=F, ignore.case=ignore.case)
+		if(output=="both") {
+			theResult <- as.matrix(vLabels[findIndex])
+		} else if(output=="label"){
+			vLabels= as.vector(vLabels[findIndex])
+			theResult <- (vLabels)
+		} else if(output=="name"){
+			theResult <- names(vLabels)[findIndex]
+		}else{
+			stop(paste("bad choice of output:", output))
+		}
+		if(dim(theResult)[1]==0 |is.null(theResult)){
+			cat("using names!!!!\n")
+			findIndex = grep(grepString,a, value=F, ignore.case=ignore.case)
+			return(as.matrix(vLabels[findIndex]))
+		} else {
+			return(theResult)
+		}
+	}
+}
+
+
+
+# ======================
+# = Comparison helpers =
+# ======================
+
+"%<%"<- function(table, x){
+	lessThan = table<  x
+	lessThan[is.na(lessThan)] = FALSE
+	return(lessThan)
+}
+
+"%>%"<- function(table, x){
+	moreThan = table<  x
+	moreThan[is.na(moreThan)] = FALSE
+	return(moreThan)
+}
+
+
+# =====================
+# = Utility functions =
+# =====================
+
+round.num <- function(x, digits) {
+	# foreach column, if numeric, round
+	rows = dim(x)[1]
+	cols = dim(x)[2]
+	for(r in rows) {
+		for(c in cols) {
+			if(is.numeric(x[r,c])){
+				x[r,c] = round(x[r,c],digits)
+			}
+		}
+	}
+	return(x)
+}
+
+specify_decimal <- function(x, k) format(round(x, k), nsmall=k)
+
+# R2HTML::HTML(a, file="tables.html"); system("open tables.html")
+
+print.html <- function(x, rounding = 3, title=grep(".*\\b",deparse(substitute(x)),value=T),headings=colnames(x), align = paste0(rep('c',ncol(x)), collapse = ''), halign=paste(rep('c',ncol(x)),collapse=''), cgroup=NULL, n.cgroup=NULL, cgroup.just=rep("c",length(n.cgroup)), rgroup=NULL, n.rgroup=NULL, rowlabel=title, ctable=F, caption=NULL, caption.loc='top', label=title, output = "Rout.html",...) {
+	# usage: htmlTable(x, output = "Rout.html")
+	# options for output = c("Rout.html","cat","return")
+
+    table_str <- "<table class='gmisc_table' style='border-top: 2px solid grey; border-bottom: 2px solid grey;'>"
+    
+  if (length(label) > 0){ table_str <- sprintf("%s\n\t<a name='%s'></a>", table_str, label) }
+
+  # Not quite as intended but close enough
+  if(length(list(...))) x <- format.df(x, numeric.dollar=FALSE, ...)
+  # Remove some specifics for LaTeX
+  if (is.character(x)){
+  	x <- matrix(str_replace(x, "\\\\%", "%"), ncol=ncol(x))
+  }
+  if (length(caption) > 0){
+    if (caption.loc == "bottom"){
+      table_str <- sprintf("%s\n\t<caption align=bottom>", table_str)
+    }else{
+      table_str <- sprintf("%s\n\t<caption align=top>", table_str)
+    }
+    table_str <- sprintf("%s%s</caption>", table_str, caption)
+  }
+
+  set_rownames = (length(rownames(x)) > 0)
+  # Add the cgroup table header
+  if (length(cgroup) > 0){
+    if (length(n.cgroup) == 0 && ncol(x) %% length(cgroup) == 0){
+      n.cgroup <- rep(ncol(x)/length(cgroup), times=length(cgroup))
+    }else if(sum(n.cgroup) != ncol(x)){
+      stop(sprintf("Your columns don't match in the n.cgroup, i.e. %d != %d", sum(n.cgroup), ncol(x)))
+    }
+    table_str <- sprintf("%s\n\t<tr>", table_str)
+    if (set_rownames && length(rowlabel) > 0){
+      table_str <- sprintf("%s\n\t\t<th style='font-weight: 900;'>%s</th>", table_str, rowlabel)
+    }
+    for (i in 1:length(cgroup)){
+      table_str <- sprintf("%s\n\t\t<th colspan=%d style='font-weight: 900; border-bottom: 1px solid grey;'>%s</th>", table_str, n.cgroup[i], cgroup[i])
+      if (i != length(cgroup))
+        table_str <- sprintf("%s<th>&nbsp;</th>", table_str)
+    }
+    table_str <- sprintf("%s\n\t</tr>", table_str)
+  }
+  addCells <- function(table_str, rowcells, cellcode, align){
+    cgroup_iterator <- 0
+    for (nr in 1:length(rowcells)){
+      if (length(cgroup) > 0){
+        if (cgroup_iterator > 0){
+          if (sum(n.cgroup[1:cgroup_iterator]) < nr ){
+            table_str <- sprintf("%s\n\t\t<%s>&nbsp</%s>", table_str, cellcode, cellcode)
+            cgroup_iterator = cgroup_iterator + 1
+          }
+        }else{
+          cgroup_iterator = cgroup_iterator + 1
+        }
+      }
+      table_str <- sprintf("%s\n\t\t<%s align='%s'>%s</%s>", table_str, cellcode, align, rowcells[nr], cellcode)
+    }
+    return (table_str)
+  }
+
+  # Add the headings
+  if (length(headings) > 0){
+    table_str <- sprintf("%s\n\t<tr style='border-bottom: 1px solid grey;'>", table_str)
+    if (set_rownames && length(cgroup) == 0  && length(rowlabel) > 0){
+      table_str <- sprintf("%s\n\t\t<th style='font-weight: 900;'>%s</th>", table_str, rowlabel)
+    }else if(set_rownames){
+      table_str <- sprintf("%s\n\t\t<th>&nbsp;</th>", table_str)
+    }
+    table_str <- addCells(table_str = table_str, rowcells = headings, cellcode = "th", align="center")
+    table_str <- sprintf("%s\n\t</tr>", table_str)
+  }
+  if (length(rgroup) > 0 && sum(n.rgroup) !=  nrow(x)){
+  	stop(sprintf("Your rows don't match in the n.rgroup, i.e. %d != %d", sum(n.rgroup), nrow(x)))
+  }
+  rgroup_iterator <- 0
+  for (row_nr in 1:nrow(x)){
+    if (length(rgroup) > 0){
+      if (rgroup_iterator == 0){
+        rgroup_iterator = rgroup_iterator + 1
+        table_str <- sprintf("%s\n\t<tr><td colspan=%d style='font-weight: 900'>%s</tr>", table_str, 
+          ncol(x)+set_rownames, rgroup[rgroup_iterator])
+      }else if(row_nr > sum(n.rgroup[1:rgroup_iterator])){
+        rgroup_iterator = rgroup_iterator + 1
+        table_str <- sprintf("%s\n\t<tr><td colspan=%d style='font-weight: 900; border-top: 1px solid grey;'>%s</tr>", table_str, 
+                             ncol(x)+set_rownames, rgroup[rgroup_iterator])
+      }
+    }
+    table_str <- sprintf("%s\n\t<tr>", table_str)
+    if (set_rownames){
+      if (rgroup_iterator > 0)
+        table_str <- sprintf("%s\n\t\t<td style='padding-left: .5em;'>%s</td>", table_str, rowname[row_nr])
+      else
+        table_str <- sprintf("%s\n\t\t<td>%s</td>", table_str, rowname[row_nr])
+    }
+    table_str <- addCells(table_str = table_str, rowcells = round(x[row_nr,],rounding), cellcode = "td", align="right")
+    table_str <- sprintf("%s\n\t</tr>", table_str)
+  }
+  table_str <- sprintf("%s\n</table>", table_str)
+  if (output=="cat"){
+    cat(table_str)
+  }else if (output == "return"){
+    return(table_str)
+  }else{
+	cat(table_str, file = output)
+	system(paste("open '", output, "'", sep=""));
+  }
+}
+
+# extracted from Rcmdr
+reliability <-function (S){
+     reliab <- function(S, R) {
+         k <- dim(S)[1]
+         ones <- rep(1, k)
+         v <- as.vector(ones %*% S %*% ones)
+         alpha <- (k/(k - 1)) * (1 - (1/v) * sum(diag(S)))
+         rbar <- mean(R[lower.tri(R)])
+         std.alpha <- k * rbar/(1 + (k - 1) * rbar)
+         c(alpha = alpha, std.alpha = std.alpha)
+     }
+     result <- list()
+     if ((!is.numeric(S)) || !is.matrix(S) || (nrow(S) != ncol(S)) || any(abs(S - t(S)) > max(abs(S)) * 1e-10) || nrow(S) < 2)
+         stop("argument must be a square, symmetric, numeric covariance matrix")
+     k <- dim(S)[1]
+     s <- sqrt(diag(S))
+     R <- S/(s %o% s)
+     rel <- reliab(S, R)
+     result$alpha <- rel[1]
+     result$st.alpha <- rel[2]
+     if (k < 3) {
+         warning("there are fewer than 3 items in the scale")
+         return(invisible(NULL))
+     }
+     rel <- matrix(0, k, 3)
+     for (i in 1:k) {
+         rel[i, c(1, 2)] <- reliab(S[-i, -i], R[-i, -i])
+         a <- rep(0, k)
+         b <- rep(1, k)
+         a[i] <- 1
+         b[i] <- 0
+         cov <- a %*% S %*% b
+         var <- b %*% S %*% b
+         rel[i, 3] <- cov/(sqrt(var * S[i, i]))
+     }
+     rownames(rel) <- rownames(S)
+     colnames(rel) <- c("Alpha", "Std.Alpha", "r(item, total)")
+     result$rel.matrix <- rel
+     class(result) <- "reliability"
+     result
+}
+
+print.reliability <- function (x, digits = 4, ...){
+     cat(paste("Alpha reliability = ", round(x$alpha, digits), "\n"))
+     cat(paste("Standardized alpha = ", round(x$st.alpha, digits), "\n"))
+     cat("\nReliability deleting each item in turn:\n")
+     print(round(x$rel.matrix, digits))
+     invisible(x)
+}
+
+anova.report.F <- function(model, precision=3) {
+	# useage
+	# anova.report.F(model) # "F(495,1) = 0.002"
+	# or
+	# 1anova.report.F(anova(m1, m2))
+	tmp = class(model)
+	if(all(tmp=="lm")){
+		a = summary(model)
+		dendf = a$fstatistic["dendf"]
+		numdf  = a$fstatistic["numdf"]
+		value = a$fstatistic["value"]
+		return(paste0("F(", dendf, ",",numdf,") = " ,round(value,precision), ",p = ", round(pf(value,numdf,dendf, lower.tail=F),precision)))
+	} else {
+		if(model[2, "Res.Df"] > model[1, "Res.Df"]){
+			message("Have you got the models the right way around?")
+		}
+		paste0(
+			"F(", 
+			round(model[2, "Res.Df"]), ",",
+			round(model[2,"Df"]), ") = ",
+			round(model[2,"F"],precision), ", p = ",
+			round(model[2,"Pr(>F)"], precision)
+		)
+	}	
+}
+
+# =====================
+# = Statistical tools =
+# =====================
+
+
+# Test differences in Kurtosis and Skewness
+kurtosisDiff <- function(x, y, B = 1000){
+	kx <- replicate(B, kurtosi(sample(x, replace = TRUE)))
+	ky <- replicate(B, kurtosi(sample(y, replace = TRUE)))
+	return(kx - ky)	
+}
+# Skew
+skewnessDiff<- function(x, y, B = 1000){
+	sx <- replicate(B, skew(sample(x, replace = TRUE)))
+	sy <- replicate(B, skew(sample(y, replace = TRUE)))
+	return(sx - sy)	
+}
+
+# get the S3 and its parameter list with
+# seq.default()
+
+
+# glue <- function(...) paste(...,sep="")

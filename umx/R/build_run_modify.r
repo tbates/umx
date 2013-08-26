@@ -14,10 +14,10 @@
 #' can also calculate the saturated and independence likelihoods necessary for most fit indices.
 #'
 #' @param model The \code{\link{mxModel}} you wish to run.
-#' @param n The maximum number of times you want to run the model trying to get a code green run (defaults to 3)
-#' @param calc_SE Whether to calculate standard errors 
+#' @param n The maximum number of times you want to run the model trying to get a code green run (defaults to 1)
+#' @param calc_SE Whether to calculate standard errors (not used when n = 1)
 #' for the summary (they are not very accurate, so if you use \code{\link{mxCI}} you can turn this off)
-#' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s)
+#' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s) (defaults to TRUE - why would you want anything else?)
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -28,31 +28,36 @@
 #' model = umxRun(model, n=10)
 #' }
 
-umxRun <- function(model, n = 3, calc_SE = T, calc_sat = T){
+umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T){
 	# m1 = umxRun(m1); umxReportFit(m1)
-	# TODO: return change in -2LL
+	# TODO: return change in -2LL for models being re-run
+	# TODO: stash saturated model for re-use
 	# Optimise for speed
-	model = mxOption(model, "Calculate Hessian", "No")
-	model = mxOption(model, "Standard Errors", "No")
-	# make an initial run
-	model = mxRun(model);
-	n = (n - 1); tries = 0
-	# carry on if we failed
-	while(model@output$status[[1]] == 6 && n > 2 ) {
-		print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
-		model <- mxRun(model)
-		n <- (n - 1)
-		tries = (tries + 1)
-	}
-	if(tries == 0){ 
-		# print("Ran fine first time!")	
-	}
-	# get the SEs for summary (if requested)
-	if(calc_SE){
-		# print("Calculating Hessian & SEs")
-		model = mxOption(model, "Calculate Hessian", "Yes")
-		model = mxOption(model, "Standard Errors", "Yes")
-		model = mxRun(model)
+	if(n == 1){
+		model = mxRun(model);
+	} else {
+		model = mxOption(model, "Calculate Hessian", "No")
+		model = mxOption(model, "Standard Errors", "No")
+		# make an initial run
+		model = mxRun(model);
+		n = (n - 1); tries = 0
+		# carry on if we failed
+		while(model@output$status[[1]] == 6 && n > 2 ) {
+			print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
+			model <- mxRun(model)
+			n <- (n - 1)
+			tries = (tries + 1)
+		}
+		if(tries == 0){ 
+			# print("Ran fine first time!")	
+		}
+		# get the SEs for summary (if requested)
+		if(calc_SE){
+			# print("Calculating Hessian & SEs")
+			model = mxOption(model, "Calculate Hessian", "Yes")
+			model = mxOption(model, "Standard Errors", "Yes")
+			model = mxRun(model)
+		}
 	}
 	if((class(model$objective)[1] == "MxRAMObjective") & model@data@type =="raw"){
 		# If we have a RAM model with raw data, compute the satuated and indpeendence models
