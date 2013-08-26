@@ -2,21 +2,23 @@
 \alias{umxRun}
 \title{umxRun}
 \usage{
-  umxRun(model, n = 3, calc_SE = T, calc_sat = T)
+  umxRun(model, n = 1, calc_SE = T, calc_sat = T)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} you wish to run.}
 
   \item{n}{The maximum number of times you want to run the
-  model trying to get a code green run (defaults to 3)}
+  model trying to get a code green run (defaults to 1)}
 
-  \item{calc_SE}{Whether to calculate standard errors for
-  the summary (they are not very accurate, so if you use
-  \code{\link{mxCI}} you can turn this off)}
+  \item{calc_SE}{Whether to calculate standard errors (not
+  used when n = 1) for the summary (they are not very
+  accurate, so if you use \code{\link{mxCI}} you can turn
+  this off)}
 
   \item{calc_sat}{Whether to calculate the saturated and
   independence models (for raw \code{\link{mxData}}
-  \code{\link{mxModel}}s)}
+  \code{\link{mxModel}}s) (defaults to TRUE - why would you
+  want anything else?)}
 }
 \value{
   - \code{\link{mxModel}}
