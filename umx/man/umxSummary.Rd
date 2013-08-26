@@ -24,7 +24,9 @@
 }
 \description{
   Report the fit of a model in a compact form suitable for
-  a journal
+  a journal. Emits a "warning" not when model fit is worse
+  than accepted criterion (TLI > .95 and RMSEA < .06; (Hu &
+  Bentler, 1999; Yu, 2002).
 }
 \examples{
 \dontrun{

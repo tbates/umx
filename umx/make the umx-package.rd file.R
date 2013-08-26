@@ -94,6 +94,8 @@ fit1 = umxRun(fit1)
 
 umxReportFit(fit1) 
 
+umxReportFit(fit1, ) 
+
 # Model updating example
 # Can we equate the loading of X5 on g to zero?
 fit2 = omxSetParameters(fit1, labels = "G_to_x1", values = 0, free = F, name = "no_effect_of_g_on_X5")
