@@ -24,33 +24,61 @@ Built: \tab R 2.15.2; ; 2013-08-22 22:49:22 UTC; unix\cr
 }
 
 Index:
-\preformatted{
-umxLabel                Add labels to all parameters of a model
-umxStart                Set sensible start values
-umxRun                  umxRun
-umxSummary              Compact summary
-umxReRun                Re-run a model with changes
-umxCompare              Compare one or more models
-umxEquate               Equate parameters in a model  by label
-umxMI_top               Modification indices for RAM models
-umxReportCIs            Report FIML CIs on a model
-umxReportTime           Show how long a model took to run
-umxStandardizeModel     Standardize a RAM Model
-umxUpdateOpenMx         umxUpdateOpenMx
 
-umxUnexplainedCausalNexus
+Build, Run, and Report
 
-umxHasCIs               Utility to ask a model if it has CIs
-umxHetCor               Calculate HeteroChoric correlations
-umxJiggle               Jiggle values in a list
+\code{\link{umxLabel}}                Add labels to all parameters of a model
 
-Misc
-print.dataframe         print dataframe in readable form by supressing NA and rounding 0
-umxAnovaReport          A handy ANOVA report formatter
-Stouffer.test           Run a Stouffer.test
+\code{\link{umxLabel}}                Add labels to all parameters of a model
+
+\code{\link{umxStart}}                Set sensible start values
+
+\code{\link{umxRun}}                  umxRun
+
+\code{\link{umxSummary}}              Compact summary
+
+\code{\link{umxCompare}}              Compare one or more models
+
+\code{\link{umxReportCIs}}            Report FIML CIs on a model
+
+\code{\link{umxGraph_RAM}}            Create a Path Figure of your SEM
+
+Updating & MOdifying
+
+\code{\link{umxReRun}}                Re-run a model with changes
+
+\code{\link{umxEquate}}               Equate parameters in a model  by label
+
+\code{\link{umxMI_top}}               Modification indices for RAM models
+
+\code{\link{umxReportTime}}           Show how long a model took to run
+
+\code{\link{umxStandardizeModel}}     Standardize a RAM Model
+
+\code{\link{umxUpdateOpenMx}}         umxUpdateOpenMx
+
+High-level reporting
+
+\code{\link{umxUnexplainedCausalNexus}}
+
+Utilities
+
+\code{\link{umxHasCIs}}               Utility to ask a model if it has CIs
+
+\code{\link{umxHetCor}}               Calculate HeteroChoric correlations
+
+\code{\link{umxJiggle}}               Jiggle values in a list
+
+Non-SEM helpers
+
+\code{\link{print.dataframe}}         print dataframe in readable form by supressing NA and rounding 0
+
+\code{\link{umxAnovaReport}}          A handy ANOVA report formatter
+
+\code{\link{Stouffer.test}}           Run a Stouffer.test
 
 }
-}
+
 \author{
 Tim Bates
 
@@ -108,11 +136,11 @@ fit2 = umxReRun(fit1, "x5_with_x5", name = "no_residual_onX5")
 umxCompare(fit1, fit2)
 
 # And make a Figure it dot format!
-# If you have installed GraphViz, the first command will open it for you to see!
+# If you have installed GraphViz, the next command will open it for you to see!
 
 umxGraph_RAM(fit1, std = T)
 
-# Run this if you don't have GraphViz
+# Run this instead if you don't have GraphViz
 umxGraph_RAM(fit1, std = T, dotFilename = NA)
 
 }
