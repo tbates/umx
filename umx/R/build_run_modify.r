@@ -323,7 +323,24 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jig
 	}
 }
 
-umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
+#' umxGetParameters
+#'
+#' Get the parameter labels from a model. enabled with regular expressions for more power and ease!
+#'
+#' @param inputTarget An object to get parameters from
+#' @param regex A regular expression to filter the labels defaults to NA - no filtering)
+#' @param free  A Boolean determining whether to return free parameters or not.
+#' @param verbose How much feedback to give
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{omxGetParameters}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umxGetParameters(model)
+#' }
+
+
+umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	# Purpose: a regex-enabled version of omxGetParameters
 	# usage e.g.
 	# umxGetLabels(model@matrices$as) # all labels of as matrix
