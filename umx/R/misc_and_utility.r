@@ -511,14 +511,26 @@ swapABlock <- function(twinData, rowSelector, T1Names, T2Names) {
 	return(twinData)
 }
 
-umx_u_APA_pval <- function(p) {
-	# umx_u_APA_pval()
-	# umxAnovaReport
-	min = .001
+#' umx_u_APA_pval
+#'
+#' round a p value so you get < .001 instead of .000000002 or .134E-16
+#'
+#' @param p A p-value to round
+#' @param min Threshold to say < min
+#' @param rounding Number of decimal to round to 
+#' @return - a value
+#' @export
+#' @seealso - \code{\link{round}}
+#' @examples
+#' \dontrun{
+#' umx_u_APA_pval(1.23E3)
+#' }
+
+umx_u_APA_pval <- function(p, min = .001, rounding = 3) {
 	if(p < min){
 		return(paste0("< ", min))
 	} else {
-		return(paste0("= ", round(p, 2)))
+		return(paste0("= ", round(p, rounding)))
 	}	
 }
 

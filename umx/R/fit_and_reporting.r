@@ -146,12 +146,12 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 			}
 			if(report == "table"){
 				x = data.frame(cbind(model@name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
-				names(x) = c("model","\u03A7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
+				names(x) = c("model","\u03C7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
 				print(x)
 			} else {
 				x = paste0(
-					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi,2), # was A7
-					", p = "    , formatC(p, format="g"),
+					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi, 2), # was A7
+					", p = "    , umx_u_APA_pval(p, .001, 3)
 					"; CFI = "  , round(CFI,3),
 					"; TLI = "  , round(TLI,3),
 					"; RMSEA = ", round(RMSEA, 3)
