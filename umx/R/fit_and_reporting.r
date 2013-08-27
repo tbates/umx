@@ -146,7 +146,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				print(x)
 			} else {
 				x = paste0(
-					"\u03A72\u00B2(", degreesOfFreedom, ") = ", round(Chi,2),
+					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi,2), # was 03A7
 					", p = "    , formatC(p, format="g"),
 					"; CFI = "  , round(CFI,3),
 					"; TLI = "  , round(TLI,3),
@@ -212,6 +212,27 @@ umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 	}
 	invisible(model)
 }
+
+#' umxGraph_RAM
+#'
+#' A function to create graphical path diagrams from your OpenMx models!
+#'
+#' @param model an \code{\link{mxModel}} to make a path diagram from
+#' @param std Whether to standardize the model.
+#' @param precision The number of decimal places to add to the path coefficients
+#' @param dotFilename A file to write the path model to. if you leave it at the 
+#' default "name", then the model's internal name will be used
+#' @param pathLabels whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
+#' @param showFixed whether to show fixed paths (defaults to FALSE)
+#' @param showError whether to show errors
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umxGraph_RAM(model)
+#' }
+
 
 umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
 	# Purpose: Graphical output of your model using "graphviz":
