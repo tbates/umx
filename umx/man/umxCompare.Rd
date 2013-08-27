@@ -2,7 +2,7 @@
 \alias{umxCompare}
 \title{umxCompare}
 \usage{
-  umxCompare(base = NA, comparison = NA, all = T,
+  umxCompare(base = NULL, comparison = NULL, all = TRUE,
     output = "return")
 }
 \arguments{

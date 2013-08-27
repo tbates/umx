@@ -25,7 +25,7 @@
 #' umxCompare(model1, c(model2, model3))
 #' }
 
-umxCompare <- function(base = NULL, comparison = NULL, all = T, output = "return") {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "return") {
 	# output != "return"is interpreted as a file to write html too...
 	# umxCompare(fit11, fit11, all=F, output="Rout.html")
 	# TODO eliminate this once mxCompare finally updates...
@@ -34,16 +34,16 @@ umxCompare <- function(base = NULL, comparison = NULL, all = T, output = "return
 	} else if (is.null(base)) {
 		stop("You must provide at least a base model for umxCompare")
 	}
-	tableOut  = mxCompare(base = base, comparison = comparison, all = all)
+	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
 	tableOut  = format(tableOut, scientific = F, digits = 5)
 	tableOut  = tableOut[, c(2:1, 3, 4, 6:9)]
-	names(tableOut)<-c("Comparison", "Base", "ep", "-2LL", "AIC", "delta LL", "delta df", "p")
-	if(output=="return"){
+	names(tableOut) <- c("Comparison", "Base", "ep", "-2LL", "AIC", "delta LL", "delta df", "p")
+	if(output == "return"){
 		return(tableOut)
 	} else {
 		print.html(tableOut, output = output, rowlabel="")
 	}
-	# if(render){
+	# if(export){
 	# 	fName= "Model.Fitting.xls"
 	# 	write.table(tableOut,fName, row.names=F,sep="\t", fileEncoding="UTF-8") # macroman UTF-8 UTF-16LE
 	# 	system(paste("open", fName));
@@ -52,20 +52,24 @@ umxCompare <- function(base = NULL, comparison = NULL, all = T, output = "return
 
 #' umxSummary
 #'
-#' Report the fit of a model in a compact form suitable for a journal
+#' Report the fit of a model in a compact form suitable for a journal. Emits a "warning" not 
+#' when model fit is worse than accepted criterion (TLI > .95 and RMSEA < .06; (Hu & Bentler, 1999; Yu, 2002).
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
-#' @param saturatedModels Saturated models if needed for fit indices (see note below: 
+#' @param saturatedModels Saturated models if needed for fit indices (see example below: 
 #' Only needed for raw data, and then not if you've run umxRun
 #' @param report The format for the output line or table (default is "line")
-#' @param showEstimates What estimates to show: raw or standardized, a custom list or (default) none (just shows the fit indices)
-#' Options are "none|raw|std|both" (The default is standardized parameters. Choose none just to get the fit statistics)
+#' @param showEstimates What estimates to show. Options are "raw|std|list|NULL" for raw, standardized, a custom list or (default)
+#' none (just shows the fit indices)
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
+#'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
 #'
-#'  - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
-#'
-#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
+#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
+#'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
+#'  Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
+#'  
+#' \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @import OpenMx
 #' @examples
@@ -146,7 +150,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				print(x)
 			} else {
 				x = paste0(
-					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi,2), # was 03A7
+					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi,2), # was A7
 					", p = "    , formatC(p, format="g"),
 					"; CFI = "  , round(CFI,3),
 					"; TLI = "  , round(TLI,3),
@@ -212,27 +216,6 @@ umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 	}
 	invisible(model)
 }
-
-#' umxGraph_RAM
-#'
-#' A function to create graphical path diagrams from your OpenMx models!
-#'
-#' @param model an \code{\link{mxModel}} to make a path diagram from
-#' @param std Whether to standardize the model.
-#' @param precision The number of decimal places to add to the path coefficients
-#' @param dotFilename A file to write the path model to. if you leave it at the 
-#' default "name", then the model's internal name will be used
-#' @param pathLabels whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
-#' @param showFixed whether to show fixed paths (defaults to FALSE)
-#' @param showError whether to show errors
-#' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' \dontrun{
-#' umxGraph_RAM(model)
-#' }
-
 
 umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
 	# Purpose: Graphical output of your model using "graphviz":

@@ -310,10 +310,9 @@ Stouffer.test <- function(p = NULL) {
 #' umxHetCor(data, use="pairwise.complete.obs")
 #' }
 
-
 umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs"){
 	if(require(polycor)){
-		hetc = polycor::hetcor(data, ML=ML, use=use, std.err=F)
+		hetc = polycor::hetcor(data, ML = ML, use = use, std.err = F)
 		return(hetc$correlations)
 	} else {
 		# TODO add error message if polycor not found
@@ -321,13 +320,32 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs"){
 	}
 }
 
-umxLower2full <- function(lower.data, diag = F, byrow = T) {
-	# lower2full(lower.tri, diag=F)
-	# lower2full(lower.data, diag=T, byrow=F)
-	# lower2full(lower.no.diag, diag=F, byrow=F)
-	# lower2full(lower.bycol, diag=T, byrow=F)
-	# lower2full(lower.byrow, diag=T, byrow=T)
+#' umxLower2full
+#'
+#' Take a lower triangle of data (either from a "lower" \code{\link{mxMatrix}}, or entered from  as you might see in a journal article) 
+#' and turn it into a full matrix
+#' 
+#' @param lower.data An \code{\link{mxMarix}}
+#' @param diag A boolean noting whether the lower matrix includes the diagonal
+#' @param byrow Whether the matrix is to be filled by row or by column
+#' @return - \code{\link{mxMatrix}}
+#' 
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' \dontrun{
+#' matrix = umxLower2full(matrix)
+#' lower2full(lower.tri, diag = F)
+#' lower2full(lower.data, diag = T, byrow = F)
+#' lower2full(lower.no.diag, diag = F, byrow = F)
+#' lower2full(lower.bycol, diag = T, byrow = F)
+#' lower2full(lower.byrow, diag = T, byrow = T)
 
+#' }
+
+
+umxLower2full <- function(lower.data, diag = F, byrow = T) {
 	len = length(lower.data)
 	if(diag) {
 		# len*2 = ((x+.5)^2)-.25
@@ -410,7 +428,7 @@ renameFile <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, lis
 	message("changed ", changed)
 }
 
-moveFile <- function(baseFolder = NA, findStr=NA, fileNameList = NA, destFolder = NA, test = T, overwrite = F) {
+moveFile <- function(baseFolder = NA, findStr = NA, fileNameList = NA, destFolder = NA, test = T, overwrite = F) {
 	# use case: 
 	# base = "/Users/tim/Music/iTunes/iTunes Music/"
 	# dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
@@ -419,7 +437,7 @@ moveFile <- function(baseFolder = NA, findStr=NA, fileNameList = NA, destFolder 
 		stop("destFolder can't be NA")
 	}
 	if(baseFolder == "Finder"){
-		baseFolder = system(intern=T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
+		baseFolder = system(intern = T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
 		message("Using front-most Finder window:", baseFolder)
 	} else if(baseFolder == "") {
 		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep="") ## choose a directory

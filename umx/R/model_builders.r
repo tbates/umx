@@ -7,7 +7,7 @@
 # = Model Builders =
 # ==================
 
-umxCFA <- function(name="", latents, data, report =c("shortTable", "shortLine", "long")){
+umxCFA <- function(name = "", latents, data, report = c("shortTable", "shortLine", "long")){
 	# umxCFA(name="myFirstCFA", latents="g", data = myFAdata)
 	manifests <- names(data)
 	m1 <- mxModel(name, type="RAM",
@@ -21,13 +21,13 @@ umxCFA <- function(name="", latents, data, report =c("shortTable", "shortLine", 
 	)
 	m1 = mxRun(m1); 
 	if(report == "shortTable") {
-		umxReportFit(m1, report = "table");
+		umxSummary(m1, report = "table");
 	} else if(report == "shortLine"){
-		umxReportFit(m1, report = "line");
+		umxSummary(m1, report = "line");
 	} else if (report == "long"){
 		umxSummary(m1, report = "")
 	} else {
-		message("Bad setting for report, you said", report, "but only \"shortTable\", \"shortLine\", and \"long\" are valid")
+		message("Bad setting for summary, you said", report, "but only \"shortTable\", \"shortLine\", and \"long\" are valid")
 	}
 	invisible(m1)
 }
