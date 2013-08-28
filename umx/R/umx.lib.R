@@ -1,4 +1,5 @@
-# https://github.com/hadley/devtools/wiki/Philosophy
+# http://adv-r.had.co.nz/Philosophy.html
+# https://github.com/hadley/devtools
 # setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
 # devtools::check()
 # devtools::dev_help("umxStart")
@@ -9,7 +10,8 @@
 # myFADataRaw
 # To learn more, see https://github.com/tbates/umx/
 
-# https://github.com/hadley/devtools/wiki/Package-basics
+# http://adv-r.had.co.nz/Philosophy.html
+# https://github.com/hadley/devtools
 
 # Multiple plot function
 #

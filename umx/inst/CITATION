@@ -1,11 +1,11 @@
 bibentry("Manual",
    title = "umx: A help package for Structural Equation Modeling in OpenMx",
-   author = person("Tim Bates"),
+   author = person("Timothy C. Bates"),
    organization = "University of Edinburgh",
    address      = "Edinburgh, UK",
    year   = version$year,
-   note   = "",
-   url    = "http://github.com/tbaes/umx/",
+   note   = "version 0.5",
+   url    = "http://github.com/tbates/umx/",
 
    mheader = "To cite umx in publications use:",
 
