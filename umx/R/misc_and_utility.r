@@ -518,6 +518,7 @@ swapABlock <- function(twinData, rowSelector, T1Names, T2Names) {
 #' @param p A p-value to round
 #' @param min Threshold to say < min
 #' @param rounding Number of decimal to round to 
+#' @param addComparison Whether to return the bare number, or to add the appropriate comparison symbol (= <)
 #' @return - a value
 #' @export
 #' @seealso - \code{\link{round}}
@@ -526,11 +527,19 @@ swapABlock <- function(twinData, rowSelector, T1Names, T2Names) {
 #' umx_u_APA_pval(1.23E3)
 #' }
 
-umx_u_APA_pval <- function(p, min = .001, rounding = 3) {
+umx_u_APA_pval <- function(p, min = .001, rounding = 3, addComparison=T) {
 	if(p < min){
-		return(paste0("< ", min))
+		if(addComparison){
+			return(paste0("< ", min))
+		} else {
+			return(min)
+		}
 	} else {
-		return(paste0("= ", round(p, rounding)))
+		if(addComparison){
+			return(paste0("= ", round(p, rounding)))
+		} else {
+			return(round(p, rounding))
+		}
 	}	
 }
 
