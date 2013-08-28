@@ -1,8 +1,10 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
-# devtools::check()
-# devtools::dev_help("umxStart")
+# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# setwd("~/bin/umx"); devtools::check()
+# devtools::load_all()
+# devtools::dev_help("umxReportFit")
+# show_news()
 
 # ====================
 # = Updating helpers =
@@ -868,4 +870,38 @@ skewnessDiff<- function(x, y, B = 1000){
 # seq.default()
 
 
-# glue <- function(...) paste(...,sep="")
+#' umx_pp33
+#'
+#' A utility function to compute the critical value of student (xc) that
+#' gives p = .05 when df = df_xc = qt(p = .975, df = target_df)
+#' 
+#' Find noncentrality parameter (ncp) that leads 33% power to obtain xc
+#' The original is published at p-curve
+#' \url{http://www.p-curve.com/Supplement/R/pp33.r} 
+#' 
+#' Find noncentrality parameter (ncp) that leads 33% power to obtain xc
+#'
+#' @param target_df the... TODO
+#' @param x the... TODO
+#' @return - value
+#' @export
+#' @seealso - \code{\link{pnorm}}
+#' @references - \url{http://www.p-curve.com/Supplement/R/pp33.r}
+#' @examples
+#' # To find the pp-value for 33% power for a t(38)=2.4, execute 
+#' umx_pp33(38,2.4)
+
+umx_pp33 <- function(target_df, x) {
+	f <- function(delta, pr, x, df){
+		pt(x, df = df, ncp = delta) - pr
+	}
+	out <- uniroot(f, c(0, 37.62), pr =2/3, x = xc, df = target_df)	
+	ncp_=out$root	
+	# Find probability of getting x_ or larger given ncp
+	p_larger = pt(x_, df = target_df, ncp = ncp_)
+	# Condition on p < .05 (i.e., get pp-value)
+	pp = 3 * (p_larger - 2/3)
+	# Print results
+	return(pp)
+}
+

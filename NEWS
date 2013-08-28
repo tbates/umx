@@ -1,1 +1,8 @@
-2013-08-28: Just getting started :-)
+umx 0.5-alpha
+--------------
+
+* First release for internal testing
+
+* Release 1 feature complete
+
+* function names still not locked in stone, as implied by .5 semantic-versioning

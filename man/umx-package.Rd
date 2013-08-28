@@ -23,6 +23,11 @@ Packaged: \tab 2013-08-22 22:49:21 UTC; tim\cr
 Built: \tab R 2.15.2; ; 2013-08-22 22:49:22 UTC; unix\cr
 }
 
+install.packages("devtools")
+library("devtools")
+install_github("umx", username = "tbates")
+library("umx")
+
 Index:
 
 Build, Run, and Report

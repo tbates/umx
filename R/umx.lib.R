@@ -1,17 +1,10 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); devtools::load_all()
-# devtools::check()
-# devtools::dev_help("umxStart")
-
-# Description notes
-# Here's a worked example
-# OpenMx has example data suitable for developing models with
-# myFADataRaw
-# To learn more, see https://github.com/tbates/umx/
-
-# http://adv-r.had.co.nz/Philosophy.html
-# https://github.com/hadley/devtools
+# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# setwd("~/bin/umx"); devtools::check()
+# devtools::load_all()
+# devtools::dev_help("umxReportFit")
+# show_news()
 
 # Multiple plot function
 #
@@ -62,27 +55,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 # ===================================
 # = Maybe add some printing helpers =
 # ===================================
-
-pp33 <- function(df_, x_) {
-	# http://www.p-curve.com/Supplement/R/pp33.r
-	# Find critical value of student (xc) that gives p=.05 when df=df_
-	xc = qt(p = .975, df = df_)		
-	# Find noncentrality parameter (ncp) that leads 33% power to obtain xc
-	f <- function(delta, pr, x, df){
-		pt(x, df = df, ncp = delta) - pr
-	}
-	out <- uniroot(f, c(0, 37.62), pr =2/3, x = xc, df = df_)	
-	ncp_=out$root	
-	# Find probability of getting x_ or larger given ncp
-	p_larger = pt(x_, df = df_, ncp = ncp_)
-	# Condition on p < .05 (i.e., get pp-value)
-	pp = 3 * (p_larger - 2/3)
-	# Print results
-	return(pp)
-}
-
-# To USE ME IN YOUR SCRIPTS SAY: 
-# source("http://github.com/OpenMx/mxHelper.R")
 
 mx_FakeData <- function(dataset, digits=2, n=NA, 
   use.names=TRUE, use.levels=TRUE, use.miss=TRUE,

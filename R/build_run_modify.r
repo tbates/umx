@@ -1,10 +1,11 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx/umx"); devtools::document(); devtools::install()
-# devtools::check()
+# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
-# devtools::dev_help("umxStart")
+# devtools::dev_help("umxReportFit")
 # show_news()
+
 # =================================
 # = Speed  and Efficiency Helpers =
 # =================================

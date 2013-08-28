@@ -1,9 +1,10 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx/umx"); devtools::document(); devtools::install(); 
+# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
-# setwd("~/bin/umx/umx"); devtools::check()
-# devtools::dev_help("umxStart")
+# devtools::dev_help("umxReportFit")
+# show_news()
 
 # =============================
 # = Fit and Reporting Helpers =
