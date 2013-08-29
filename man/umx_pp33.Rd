@@ -27,7 +27,7 @@
 }
 \examples{
 # To find the pp-value for 33\% power for a t(38)=2.4, execute
-umx_pp33(38,2.4)
+umx_pp33(target_df = 38, x = 2.4)
 }
 \references{
   - \url{http://www.p-curve.com/Supplement/R/pp33.r}

@@ -889,16 +889,19 @@ skewnessDiff<- function(x, y, B = 1000){
 #' @references - \url{http://www.p-curve.com/Supplement/R/pp33.r}
 #' @examples
 #' # To find the pp-value for 33% power for a t(38)=2.4, execute 
-#' umx_pp33(38,2.4)
+#' umx_pp33(target_df = 38, x = 2.4)
 
 umx_pp33 <- function(target_df, x) {
 	f <- function(delta, pr, x, df){
 		pt(x, df = df, ncp = delta) - pr
 	}
+	# Find critical value of student (xc) that gives p=.05 when df = target_df
+	xc = qt(p = .975, df = target_df)		
+	# Find noncentrality parameter (ncp) that leads 33% power to obtain xc
 	out <- uniroot(f, c(0, 37.62), pr =2/3, x = xc, df = target_df)	
-	ncp_=out$root	
+	ncp_ = out$root	
 	# Find probability of getting x_ or larger given ncp
-	p_larger = pt(x_, df = target_df, ncp = ncp_)
+	p_larger = pt(x, df = target_df, ncp = ncp_)
 	# Condition on p < .05 (i.e., get pp-value)
 	pp = 3 * (p_larger - 2/3)
 	# Print results
