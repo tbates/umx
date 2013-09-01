@@ -2,6 +2,7 @@
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); devtools::document(); devtools::install(); 
 # setwd("~/bin/umx"); devtools::check()
+# setwd("~/bin/umx"); devtools::release()
 # devtools::load_all()
 # devtools::dev_help("umxReportFit")
 # show_news()

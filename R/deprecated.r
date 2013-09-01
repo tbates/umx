@@ -185,9 +185,8 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 	})
 }
 
-
 umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
-	message("Please update to use umxGetParameters")
+	message("Please use umxGetParameters instead of umxGetLabels")
 	# Purpose: a regex-enabled version of omxGetParameters
 	# usage e.g.
 	# umxGetLabels(model@matrices$as) # all labels of as matrix

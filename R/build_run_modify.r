@@ -114,10 +114,10 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 		if(any(is.na(dropList))) {
 			stop("Both dropList and regex cannot be empty!")
 		} else {
-			x = mxRun(omxSetParameters(lastFit, labels=dropList, free = free, value = value, name= name), intervals = intervals)
+			x = mxRun(omxSetParameters(lastFit, labels = dropList, free = free, value = value, name= name), intervals = intervals)
 		}
 	} else {
-		x = mxRun(omxSetParameters(lastFit, labels = umxGetLabels(lastFit, regex= regex, free= freeToStart, verbose= verbose), free = free, value = value, name = name), intervals= intervals)
+		x = mxRun(omxSetParameters(lastFit, labels = umxGetParameters(lastFit, regex= regex, free= freeToStart, verbose= verbose), free = free, value = value, name = name), intervals= intervals)
 	}
 	return(x)
 }
@@ -327,28 +327,25 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jig
 
 #' umxGetParameters
 #'
-#' Get the parameter labels from a model. enabled with regular expressions for more power and ease!
+#' Get the parameter labels from a model. A version of \code{\link{omxGetParameters}}, but supercharged with regular expressions for more power and ease!
 #'
-#' @param inputTarget An object to get parameters from
-#' @param regex A regular expression to filter the labels defaults to NA - no filtering)
-#' @param free  A Boolean determining whether to return free parameters or not.
+#' @param inputTarget An object to get parameters from: could be a RAM \code{\link{mxModel}}
+#' @param regex A regular expression to filter the labels defaults to NA - just returns all labels)
+#' @param free  A Boolean determining whether to return only free parameters.
 #' @param verbose How much feedback to give
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{omxGetParameters}}
+#' @seealso - \code{\link{omxGetParameters}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
 #' umxGetParameters(model)
+#' umxGetParameters(model@matrices$as) # all labels of as matrix
+#' umxGetParameters(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
 #' }
 
-
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
-	# Purpose: a regex-enabled version of omxGetParameters
-	# usage e.g.
-	# umxGetLabels(model@matrices$as) # all labels of as matrix
-	# umxGetLabels(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
 	if(class(inputTarget)[1] %in% c("MxRAMModel","MxModel")) {
-		topLabels = names(omxGetParameters(inputTarget, indep=FALSE, free=free))
+		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(is(inputTarget, "MxMatrix")) {
 		if(is.na(free)) {
 			topLabels = inputTarget@labels
@@ -362,14 +359,14 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	if( !is.na(regex) ) {
 		if(length(grep("[\\.\\*\\[\\(\\+\\|]+", regex) )<1){ # no grep found: add some anchors for safety
 			regex = paste("^", regex, "[0-9]*$", sep=""); # anchor to the start of the string
-			if(verbose==T){
+			if(verbose == T) {
 				cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
 			}
 		}
 		
-		theLabels = grep(regex, theLabels, perl = F, value=T) # return more detail
-		if(length(theLabels)==0){
-			stop("found no matching labels!");
+		theLabels = grep(regex, theLabels, perl = F, value = T) # return more detail
+		if(length(theLabels) == 0){
+			stop("Found no matching labels!");
 		}
 	}
 	# TODO Be nice to offer a method to handle submodels

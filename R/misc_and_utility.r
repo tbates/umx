@@ -328,14 +328,14 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs"){
 #' Take a lower triangle of data (either from a "lower" \code{\link{mxMatrix}}, or entered from  as you might see in a journal article) 
 #' and turn it into a full matrix
 #' 
-#' @param lower.data An \code{\link{mxMarix}}
+#' @param lower.data An \code{\link{mxMatrix}}
 #' @param diag A boolean noting whether the lower matrix includes the diagonal
 #' @param byrow Whether the matrix is to be filled by row or by column
 #' @return - \code{\link{mxMatrix}}
 #' 
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
 #' matrix = umxLower2full(matrix)
@@ -344,7 +344,6 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs"){
 #' lower2full(lower.no.diag, diag = F, byrow = F)
 #' lower2full(lower.bycol, diag = T, byrow = F)
 #' lower2full(lower.byrow, diag = T, byrow = T)
-
 #' }
 
 
@@ -352,27 +351,27 @@ umxLower2full <- function(lower.data, diag = F, byrow = T) {
 	len = length(lower.data)
 	if(diag) {
 		# len*2 = ((x+.5)^2)-.25
-		size = len*2
+		size = len * 2
 		size = size + .25
 		size = sqrt(size)
-		size = size -.5; size
+		size = size - .5; size
 	}else{
 		# len = (x*((x+1)/2))-x	
 		# .5*(x-1)*x
-		size = len *2
+		size = len * 2
 		# (x-.5)^2 - .25
 		size= size + .25
 		size = sqrt(size)
-		size = size +.5; size
+		size = size + .5; size
 	}
 	mat = diag(size)
 	if(byrow){
 		# put  data into upper triangle, then transform to lower
-		mat[upper.tri(mat,diag=diag)] <- lower.data;
-		mat[lower.tri(mat,diag=F)] <- mat[upper.tri(mat,diag=F)]
+		mat[upper.tri(mat, diag = diag)] <- lower.data;
+		mat[lower.tri(mat, diag = F)] <- mat[upper.tri(mat, diag = F)]
 	}else{                            
-		mat[lower.tri(mat,diag=diag)] <- lower.data;
-		mat[upper.tri(mat,diag=F)] <-mat[lower.tri(mat,diag=F)]
+		mat[lower.tri(mat, diag = diag)] <- lower.data;
+		mat[upper.tri(mat, diag = F)] <-mat[lower.tri(mat, diag = F)]
 	}
 	return(mat)
 }
@@ -381,10 +380,10 @@ umxFindObject <- function(grepString = ".*", requiredClass = "MxModel") {
 	# Purpose: find objects a certain class, whose name matches a (grep) search string
 	# Use case: umxFindObject("Chol*", "MxModel")
 	# umxFindObject("", "MxModel")
-	matchingNames = ls(envir=sys.frame(-1), pattern=grepString) #envir
+	matchingNames = ls(envir = sys.frame(-1), pattern = grepString) # envir
 	matchingObjects = c()
 	for (obj in matchingNames) {
-		if(class(get(obj))[1]==requiredClass){
+		if(class(get(obj))[1] == requiredClass){
 			matchingObjects = c(matchingObjects, obj)
 		}
 	}
@@ -396,7 +395,7 @@ renameFile <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, lis
 	# renameFile(baseFolder = NA, findStr="", replaceStr="", listPattern = "", test=T)
 	# uppercase = u$1
 	if(baseFolder == "Finder"){
-		baseFolder = system(intern=T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
+		baseFolder = system(intern = T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
 		message("Using front-most Finder window:", baseFolder)
 	} else if(baseFolder == "") {
 		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep = "") ## choose a directory
