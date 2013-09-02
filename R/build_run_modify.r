@@ -433,6 +433,35 @@ umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) 
 	return(model)
 }
 
+#' umxDrop1
+#'
+#' Drops each free parameter (selected via regex), returning an \code{\link{mxCompare}}
+#' table comparing the effects. A great way to quickly determine which of several 
+#' parameters can be dropped without excessive cost
+#'
+#' @param model An \code{\link{mxModel}} to drop parameters from 
+#' @param regex A string to select which parameters. e.g. "^a_" (begins with "a_") or "ab|ba" either "ab" or "ba"
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' drop "a_r1c1" and "a_r1c2" (separately) and see which matters more.
+#' umxDrop1(model, regex="a_r1c1|a_r1c2")
+#' }
+
+umxDrop1 <- function(model, regex) {
+	# umxDrop1(fit3, "a_.*")
+	toDrop = grep(regex, umxGetParameters(model, free = T), value = T, ignore.case = T)
+	message("Will drop each of ", length(toDrop), " parameters: ", paste(toDrop, collapse = ", "), ".\nThis might take some time...")
+	out = list(rep(NA, length(toDrop)))
+	for(i in seq_along(toDrop)){
+		out[i] = umxReRun(model, name = paste0("drop_", toDrop[i]), regex = toDrop[i])
+	}
+	umxCompare(model, out)
+}
+
+
 # ===============
 # = RAM Helpers =
 # ===============
