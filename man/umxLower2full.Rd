@@ -5,7 +5,7 @@
   umxLower2full(lower.data, diag = F, byrow = T)
 }
 \arguments{
-  \item{lower.data}{An \code{\link{mxMarix}}}
+  \item{lower.data}{An \code{\link{mxMatrix}}}
 
   \item{diag}{A boolean noting whether the lower matrix
   includes the diagonal}
@@ -32,7 +32,7 @@ lower2full(lower.byrow, diag = T, byrow = T)
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
   - \code{\link{umxLabel}}, \code{\link{umxRun}},

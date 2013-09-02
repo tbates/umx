@@ -296,10 +296,9 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #' @param verbose How much feedback to give the user (default = F)
 
 #' @return - \code{\link{mxModel}}
-#' @keywords manip
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
 #' \dontrun{
@@ -327,7 +326,8 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jig
 
 #' umxGetParameters
 #'
-#' Get the parameter labels from a model. A version of \code{\link{omxGetParameters}}, but supercharged with regular expressions for more power and ease!
+#' Get the parameter labels from a model. Like \code{\link{omxGetParameters}},
+#' but supercharged with regular expressions for more power and ease!
 #'
 #' @param inputTarget An object to get parameters from: could be a RAM \code{\link{mxModel}}
 #' @param regex A regular expression to filter the labels defaults to NA - just returns all labels)
@@ -339,8 +339,8 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jig
 #' @examples
 #' \dontrun{
 #' umxGetParameters(model)
-#' umxGetParameters(model@matrices$as) # all labels of as matrix
-#' umxGetParameters(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
+#' umxGetParameters(mxEval("as", model1)) # all labels of matrix "as" in model "model1"
+#' umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T) # get all columns in row 2 of matrix "as"
 #' }
 
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
@@ -363,7 +363,6 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 				cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
 			}
 		}
-		
 		theLabels = grep(regex, theLabels, perl = F, value = T) # return more detail
 		if(length(theLabels) == 0){
 			stop("Found no matching labels!");

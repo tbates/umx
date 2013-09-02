@@ -47,11 +47,10 @@
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
+  - \code{\link{umxGetParameters}}, \code{\link{umxRun}},
   \code{\link{umxStart}}
 }
-\keyword{manip}
 

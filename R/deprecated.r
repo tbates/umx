@@ -187,10 +187,6 @@ umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEst
 
 umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	message("Please use umxGetParameters instead of umxGetLabels")
-	# Purpose: a regex-enabled version of omxGetParameters
-	# usage e.g.
-	# umxGetLabels(model@matrices$as) # all labels of as matrix
-	# umxGetLabels(model, regex="as_r_2c_[0-9]", free=T) # get all columns of row 2 or as matrix
 	if(class(inputTarget)[1] %in% c("MxRAMModel","MxModel")) {
 		topLabels = names(omxGetParameters(inputTarget, indep=FALSE, free=free))
 	} else if(is(inputTarget, "MxMatrix")) {
@@ -216,8 +212,5 @@ umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 			stop("found no matching labels!");
 		}
 	}
-	# TODO Be nice to offer a method to handle submodels
-	# model@submodels$aSubmodel@matrices$aMatrix@labels
-	# model@submodels$MZ@matrices
 	return(theLabels)
 }

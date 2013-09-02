@@ -869,11 +869,12 @@ skewnessDiff<- function(x, y, B = 1000){
 # seq.default()
 
 
-#' umx_pp33
-#'
+#' @title umx_pp33
+#' @description
 #' A utility function to compute the critical value of student (xc) that
 #' gives p = .05 when df = df_xc = qt(p = .975, df = target_df)
 #' 
+#' @details
 #' Find noncentrality parameter (ncp) that leads 33% power to obtain xc
 #' The original is published at p-curve
 #' \url{http://www.p-curve.com/Supplement/R/pp33.r} 
@@ -907,28 +908,27 @@ umx_pp33 <- function(target_df, x) {
 	return(pp)
 }
 
-
 #' umxDescriptives
 #'
-#' Summarizes data.
-#' Gives count, mean, standard deviation, standard error of the mean, and confidence interval (default 95%).
+#' Summarize data for an APA style subjects table
 #'
-#' @param data: a data frame
-#' @param measurevar: the name of a column that contains the variable to be summariezed
-#' @param groupvars: a vector containing names of columns that contain grouping variables
-#' @param na.rm: a boolean that indicates whether to ignore NA's
-#' @param conf.interval: the percent range of the confidence interval (default is 95%)
+#' @param data          data.frame to compute descriptive statistics for
+#' @param measurevar    The data column to summarise
+#' @param groupvars     A list of columns to group the data by
+#' @param na.rm         whether to remove NA from the data
+#' @param conf.interval The size of the CI you request - 95 by default
+#' @param .drop         Whether to drop TODO
 #' @export
-#' @seealso - \code{\link{plyr}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{plyr}}
 #' @references - \url{http://www.cookbook-r.com/Manipulating_data/Summarizing_data}
 #' @examples
 #' \dontrun{
-#' umxDescriptives(mtcars)
+#' umxDescriptives(data)
 #' }
 
 umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = FALSE, conf.interval = .95, .drop = TRUE) {
     require(plyr)
-    # New version of length which can handle NA's: if na.rm==T, don't count them
+    # New version of length which can handle NA's: if na.rm == T, don't count them
     length2 <- function (x, na.rm=FALSE) {
         if (na.rm){
 			sum(!is.na(x))        	
