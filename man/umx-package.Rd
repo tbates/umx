@@ -28,57 +28,56 @@ library("devtools")
 install_github("umx", username = "tbates")
 library("umx")
 
-Index:
+\bold{Index:}
 
-Build, Run, and Report
-
-\code{\link{umxLabel}}                Add labels to all parameters of a model
+\bold{Build, Run, and Report}
 
 \code{\link{umxLabel}}                Add labels to all parameters of a model
 
 \code{\link{umxStart}}                Set sensible start values
 
-\code{\link{umxRun}}                  umxRun
+\code{\link{umxRun}}                  Run a model, adding saturated models if necessary
 
-\code{\link{umxSummary}}              Compact summary
+\code{\link{umxSummary}}              Compact summary report of model fit
 
 \code{\link{umxCompare}}              Compare one or more models
 
-\code{\link{umxReportCIs}}            Report FIML CIs on a model
+\code{\link{umxReportCIs}}            Report FIML CIs on a model, creating them if necessary
 
-\code{\link{umxGraph_RAM}}            Create a Path Figure of your SEM
+\code{\link{umxGraph_RAM}}            Create a Path Diagram from your model!
 
-Updating & MOdifying
+Updating & Modifying
 
 \code{\link{umxReRun}}                Re-run a model with changes
 
-\code{\link{umxEquate}}               Equate parameters in a model  by label
+\code{\link{umxEquate}}               Equate parameters in a model by label
 
-\code{\link{umxMI_top}}               Modification indices for RAM models
-
-\code{\link{umxReportTime}}           Show how long a model took to run
+\code{\link{umxMI_top}}               Compute modification indices for RAM models
 
 \code{\link{umxStandardizeModel}}     Standardize a RAM Model
 
-\code{\link{umxUpdateOpenMx}}         umxUpdateOpenMx
 
 High-level reporting
 
 \code{\link{umxUnexplainedCausalNexus}}
 
-Utilities
+\bold{Utilities}
 
-\code{\link{umxHasCIs}}               Utility to ask a model if it has CIs
+\code{\link{umxReportTime}}           Show how long a model took to run
 
 \code{\link{umxHetCor}}               Calculate HeteroChoric correlations
 
 \code{\link{umxJiggle}}               Jiggle values in a list
 
-Non-SEM helpers
+\code{\link{umxUpdateOpenMx}}         umxUpdateOpenMx
+
+\code{\link{umxHasCIs}}               Utility to ask a model if it has CIs
+
+\bold{Non-SEM helpers}
 
 \code{\link{print.dataframe}}         print dataframe in readable form by supressing NA and rounding 0
 
-\code{\link{umxAnovaReport}}          A handy ANOVA report formatter
+\code{\link{umxAnovaReport}}          A handy APA-style ANOVA report formatter
 
 \code{\link{Stouffer.test}}           Run a Stouffer.test
 

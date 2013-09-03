@@ -2,7 +2,7 @@
 \alias{umxStart}
 \title{umxStart}
 \usage{
-  umxStart(obj = NA, sd = NA, n = 1)
+  umxStart(obj = NA, sd = NA, n = 1, onlyTouchZeros = F)
 }
 \arguments{
   \item{obj}{The RAM or matrix \code{\link{mxModel}}, or

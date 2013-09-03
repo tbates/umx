@@ -1,6 +1,6 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# setwd("~/bin/umx"); devtools::document(); devtools::install(); ?umx
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxReportFit")
@@ -85,9 +85,9 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T){
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
 #' @param regex    A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
-#' @param free     Whether to set the parameters whose labels you specify to free or fixed (defaults to FALSE, i.e., fixed)
+#' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
 #' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
-#' @param freeToStart Whether to only update parameters which are free to start (defaults to NA - i.e, not checked)
+#' @param freeToStart Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)
 #' @param name      The name for the new model
 #' @param verbose   How much feedback to give
 #' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
@@ -114,11 +114,14 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 		if(any(is.na(dropList))) {
 			stop("Both dropList and regex cannot be empty!")
 		} else {
-			x = mxRun(omxSetParameters(lastFit, labels = dropList, free = free, value = value, name= name), intervals = intervals)
+			theLabels = dropList
 		}
 	} else {
-		x = mxRun(omxSetParameters(lastFit, labels = umxGetParameters(lastFit, regex= regex, free= freeToStart, verbose= verbose), free = free, value = value, name = name), intervals= intervals)
+		theLabels = umxGetParameters(lastFit, regex = regex, free = freeToStart, verbose = verbose)
 	}
+	x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)
+	# x = umxStart(x)
+	x = mxRun(x, intervals = intervals)
 	return(x)
 }
 
@@ -146,7 +149,7 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 #' model = umxStart(model)
 #' }
 
-umxStart <- function(obj = NA, sd = NA, n = 1) {
+umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {
 		xmuStart_value_list(x = obj, sd = NA, n = 1)
 	} else {
@@ -155,9 +158,9 @@ umxStart <- function(obj = NA, sd = NA, n = 1) {
 		# Done: Start values in the S at variance on diag, bit less than cov off diag
 		# Done: Start amnifest means in means model
 		# TODO: Start latent means?...
-		if (!(isS4(obj) && is(obj, "MxModel"))) {
-			# TODO: Need to add a check for RAMness
-			stop("'obj' must be an mxModel (or a simple number)")
+		
+		if (!umxIsRAMmodel(obj) ) {
+			stop("'obj' must be a RAM model (or a simple number)")
 		}
 		if (length(obj@submodels) > 0) {
 			stop("Cannot yet handle submodels")
@@ -183,10 +186,14 @@ umxStart <- function(obj = NA, sd = NA, n = 1) {
 		# = Fill the free symetrical matrix with good start values =
 		# ==========================================================
 		# The diagonal is variances
-		freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE)
+		if(onlyTouchZeros){
+			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE) & obj@matrices$S@values[1:nVar, 1:nVar] == 0
+		}else{
+			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE)			
+		}
 		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
 		return(obj)
-	}	
+	}
 }
 
 #' umxStandardizeModel
@@ -305,18 +312,18 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #'  model = umxLabel(model)
 #' }
 
-umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, verbose = F) {	
+umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F, overRideExisting = F) {	
 	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
 	# Use case: m1 = umxLabel(m1)
 	# umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 	if (is(obj, "MxMatrix") ) { 
 		# label an mxMatrix
 		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
-	} else if (umxModelIsRAM(obj)) { 
+	} else if (umxIsRAMmodel(obj)) { 
 		# label a RAM model
 		if(verbose){message("RAM")}
-		return(xmuLabel_RAM_Model(obj, suffix))
-	} else if (is(obj, "MxModel")) {
+		return(xmuLabel_RAM_Model(obj, suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting))
+	} else if (umxIsMxModel(obj) ) {
 		# label a non-RAM matrix model
 		return(xmuLabel_MATRIX_Model(obj, suffix))
 	} else {
@@ -460,6 +467,59 @@ umxDrop1 <- function(model, regex) {
 	umxCompare(model, out)
 }
 
+umxAdd1 <- function(model, pathList) {
+	# Working with symmetric paths
+	# TODO add A matrix
+	# TODO add non-RAM
+	output <- model@output
+	# stop if there is no objective function
+	if ( is.null(output) ) stop("Provided model hasn't been run: use mxRun(model) first")
+	# stop if there is no output
+	if ( length(output) < 1 ) stop("Provided model has no output. use mxRun() first!")
+	a       = combn(pathList, 2)
+	nVar    = dim(a)[2]
+	toAdd = rep(NA, nVar)
+	n       = 1
+	for (i in 1:nVar) {
+		from = a[1,i]
+		to   = a[2,i]
+		if(match(to, pathList) > match(from, pathList)){
+			labelString = paste0(to, "_with_", from)
+		} else {
+			labelString = paste0(from, "_with_", to)
+		}
+		toAdd[n] = labelString
+		n = n+1
+	}
+	message("You gave me", length(pathList), "variables. I made ", length(toAdd), "paths from these.")
+
+	# Just keep the ones that are not already free... (if any)
+	toAdd = toAdd[toAdd %in% umxGetParameters(model, free = F)]
+	if(length(toAdd==0)){
+		stop("I couldn't find any of those paths fixed in this model. the most common cause of this error is submitting the wrong model")
+	}
+	message("Of these ", length(toAdd), "were currently fixed, and that I could try adding")
+	message(paste(toAdd, collapse = ", "))
+	message("This might take some time...")
+	
+	out = data.frame(Base = "test", ep = 1, AIC = 1.0, p = 1.0); 
+	row1Cols = c("Base", "ep", "AIC", "p")
+	out = data.frame(umxCompare(model)[1,row1Cols])
+	for(i in seq_along(toAdd)){
+		# model = fit1 ; toAdd = c("x2_with_x1"); i=1
+		tmp = omxSetParameters(model, labels = toAdd[i], free = T, value = .01, name = paste0("add_", toAdd[i]))
+		tmp = mxRun(tmp)
+		mxc = umxCompare(tmp, model)
+		newRow = mxc[2, row1Cols]
+		newRow$AIC = mxc[1, "AIC"]
+		out = rbind(out, newRow)
+	}
+	out[out=="NA"] = NA
+	out$p = round(as.numeric(out$p), 3)
+	out$AIC = round(as.numeric(out$AIC), 3)
+	out <- out[order(out$p),]
+	return(out)
+}
 
 # ===============
 # = RAM Helpers =
@@ -741,6 +801,61 @@ umxIsOrdinalVar <- function(df, names=F) {
 	}
 }
 
+
+umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
+	mask = (matrixIn != dontTouch);
+	newValues = mask;
+	matrixIn[mask==TRUE] = matrixIn[mask==TRUE] + rnorm(length(mask[mask==TRUE]), mean=mean, sd=sd);
+	return (matrixIn);
+}
+
+#' umxIsRAMmodel
+#'
+#' Utility function returning a binary answer to the question "Is this a RAM model?"
+#'
+#' @param obj an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}
+#' @return - Boolean
+#' @export
+#' @seealso - \code{\link{mxModel}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' if(umxIsRAMmodel(fit1)){
+#' 	message("nice RAM model!")
+#' }
+#' }
+
+umxIsRAMmodel <- function(obj) {
+	if(!umxIsMxModel(obj)){
+		return(F)
+	}else{
+		return(class(obj$objective) == "MxRAMObjective")
+	}
+	# TODO: get working on both the old and new objective model...
+	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
+}
+
+
+#' umxIsMxModel
+#'
+#' Utility function returning a binary answer to the question "Is this an OpenMx model?"
+#'
+#' @param obj an object to be tested to see if it is an OpenMx \code{\link{mxModel}}
+#' @return - Boolean
+#' @export
+#' @seealso - \code{\link{mxModel}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' if(umxIsMxModel(fit1)){
+#' 	message("nice OpenMx model!")
+#' }
+#' }
+umxIsMxModel <- function(obj) {
+	isS4(obj) & is(obj, "MxModel")	
+}
+
+
 # ==================================
 # = Borrowed for tutorial purposes =
 # ==================================
@@ -935,52 +1050,3 @@ Perhaps you'd like to add 'addStd = T' to your makeACE_2Group() call?")
 #' \dontrun{
 #' mat1 = umxJiggle(mat1)
 #' }
-
-umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
-	mask = (matrixIn != dontTouch);
-	newValues = mask;
-	matrixIn[mask==TRUE] = matrixIn[mask==TRUE] + rnorm(length(mask[mask==TRUE]), mean=mean, sd=sd);
-	return (matrixIn);
-}
-
-umxModelIsRAM <- function(obj) {
-	# test is model is RAM
-	# umxModelIsRAM(obj)
-	isModel = isS4(obj) & is(obj, "MxModel")
-	if(!isModel){
-		return(F)
-	}
-	oldRAM_check = class(obj$objective) == "MxRAMObjective"
-	# TODO: get working on both the old and new objective model...
-	# newRAM_check = (class(obj$objective)[1] == "MxRAMObjective"))
-	if(oldRAM_check) {
-		return(T)
-	} else {
-		return(F)			
-	}
-}
-
-umxIsMxModel <- function(obj) {
-	isS4(obj) & is(obj, "MxModel")	
-}
-
-umxIsRAMmodel <- function(obj) {
-	(class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM")	
-}
-
-xmuStart_value_list <- function(x = 1, sd = NA, n = 1) {
-	# Purpose: Create startvalues for OpenMx paths
-	# use cases
-	# umxStart(1) # 1 value, varying around 1, with sd of .1
-	# umxStart(1, n=letters) # length(letters) start values, with mean 1 and sd .1
-	# umxStart(100, 15)  # 1 start, with mean 100 and sd 15
-	# TODO: handle connection style
-	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
-	if(is.na(sd)){
-		sd = x/6.6
-	}
-	if(length(n)>1){
-		n = length(n)
-	}
-	return(rnorm(n=n, mean=x, sd=sd))
-}

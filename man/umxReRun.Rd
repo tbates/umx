@@ -18,16 +18,16 @@
   labels matching this expression will be dropped (or set
   to the value and free state you specify)}
 
-  \item{free}{Whether to set the parameters whose labels
-  you specify to free or fixed (defaults to FALSE, i.e.,
+  \item{free}{The state to set "free" to for the parameters
+  whose labels you specify (defaults to free = FALSE, i.e.,
   fixed)}
 
   \item{value}{The value to set the parameters whose labels
   you specify too (defaults to 0)}
 
-  \item{freeToStart}{Whether to only update parameters
-  which are free to start (defaults to NA - i.e, not
-  checked)}
+  \item{freeToStart}{Whether to update parameters based on
+  their current free-state. free = c(TRUE, FALSE, NA),
+  (defaults to NA - i.e, not checked)}
 
   \item{name}{The name for the new model}
 

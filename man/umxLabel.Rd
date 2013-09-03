@@ -3,7 +3,8 @@
 \title{umxLabel}
 \usage{
   umxLabel(obj, suffix = "", baseName = NA, setfree = F,
-    drop = 0, jiggle = NA, boundDiag = NA, verbose = F)
+    drop = 0, labelFixedCells = T, jiggle = NA,
+    boundDiag = NA, verbose = F, overRideExisting = F)
 }
 \arguments{
   \item{obj}{An \code{\link{mxModel}} (RAM or matrix

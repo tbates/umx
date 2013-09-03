@@ -17,7 +17,7 @@
   by xmuLabel_MATRIX_Model
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
   - \code{\link{umxLabel}}, \code{\link{umxRun}},

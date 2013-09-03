@@ -26,42 +26,24 @@
 #' model = xmuLabel_MATRIX_Model(model)
 #' model = xmuLabel_MATRIX_Model(model, suffix = "male")
 #' }
+
 xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
-	if(!is(model, "MxModel")){
+	if(!umxIsMxModel(model) ){
 		stop("xmuLabel_MATRIX_Model needs model as input")
 	}
-	if (umxModelIsRAM(model)) {
+	if (!umxIsRAMmodel(model)) {
 		stop("xmuLabel_MATRIX_Model shouldn't be seeing RAM Models")
 	}
 	model = xmuPropagateLabels(model, suffix = "")
 	return(model)
 }
 
-#' xmuPropagateLabels (not a user function)
-#'
-#' You should be calling umxLabel.
-#' This function is called by xmuLabel_MATRIX_Model
-#'
-#' @param model a model to label
-#' @param suffix a string to append to each label
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - http://openmx.psyc.virginia.edu/
-
-xmuPropagateLabels <- function(model, suffix = "") {
-    # 
-    # useage: xmuPropagateLabels(model, suffix = "")
-	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix, suffix = suffix)
-    model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix)
-    return(model)
-}
-
-xmuLabel_RAM_Model <- function(model, suffix = "") {
+xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = T, overRideExisting = F) {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "_male")
 	# TODO label means if data = raw
-	if (!umxModelIsRAM(model)) {
+	# TODO implement overRideExisting !!!
+	if (!umxIsRAMmodel(model)) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
 	freeA  = model@matrices$A@free
@@ -75,7 +57,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "") {
 	theseNames = namesA
 	for(fromCol in seq_along(theseNames)) {
 		for(toRow in seq_along(theseNames)) {
-			if(freeA[toRow, fromCol]){
+			if(labelFixedCells | freeA[toRow, fromCol]){
 			   thisLabel = paste(theseNames[fromCol], "_to_", theseNames[toRow], suffix, sep = "")
 			   model@matrices$A@labels[toRow,fromCol] = thisLabel
 			}
@@ -88,7 +70,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "") {
 	theseNames = namesS
 	for(fromCol in seq_along(theseNames)) {
 		for(toRow in seq_along(theseNames)) {
-			if(freeS[toRow, fromCol]) {
+			if(labelFixedCells | freeS[toRow, fromCol]) {
 			   thisLabel = paste0(theseNames[fromCol], "_with_", theseNames[toRow], suffix)
 			   model@matrices$S@labels[toRow,fromCol] = thisLabel
 			}
@@ -105,11 +87,10 @@ xmuLabel_RAM_Model <- function(model, suffix = "") {
 	if(model@data@type == "raw"){
 		model@matrices$M@labels = matrix(nrow = 1, paste0(colnames(model@matrices$M@values),"_mean", suffix))
 	}
-	# TODO should check when autocreating names that they don't clash with existing names
 	return(model)
 }
 
-xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose=T) {
+xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = T, labelFixedCells = F) {
 	# Purpose: label the cells of an mxMatrix
 	# Detail: Defaults to the handy "matrixname_r1c1" where 1 is the row or column
 	# Use case: You shouldn't be using this: called by umxLabel
@@ -166,7 +147,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	# Set labels
 	mx_matrix@labels <- newLabels;
 	if(setfree == FALSE) {
-		# return("Specs not used: leave free as set in mx_matrix") 
+		# return("Matrix Specification not used: leave free as set in mx_matrix") 
 	} else {
 		newFree = mx_matrix@free
 		# return(newFree)
@@ -183,6 +164,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	if(!is.na(jiggle)){
 		mx_matrix@values <- umxJiggle(mx_matrix@values, mean = 0, sd = jiggle, dontTouch = drop) # Expecting sd
 	}
+	# TODO this might want something to equate values after jiggling around equal labels?
 	if(!is.na(boundDiag)){
 		diag(mx_matrix@lbound)<-boundDiag # bound diagonal to be positive 
 	}
@@ -298,4 +280,41 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = F, verbose = F) {
 		mxData(df, type="raw")
 		)
 	)
+}
+
+xmuStart_value_list <- function(x = 1, sd = NA, n = 1) {
+	# Purpose: Create startvalues for OpenMx paths
+	# use cases
+	# umxStart(1) # 1 value, varying around 1, with sd of .1
+	# umxStart(1, n=letters) # length(letters) start values, with mean 1 and sd .1
+	# umxStart(100, 15)  # 1 start, with mean 100 and sd 15
+	# TODO: handle connection style
+	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
+	if(is.na(sd)){
+		sd = x/6.6
+	}
+	if(length(n)>1){
+		n = length(n)
+	}
+	return(rnorm(n=n, mean=x, sd=sd))
+}
+
+#' xmuPropagateLabels (not a user function)
+#'
+#' You should be calling umxLabel.
+#' This function is called by xmuLabel_MATRIX_Model
+#'
+#' @param model a model to label
+#' @param suffix a string to append to each label
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+
+xmuPropagateLabels <- function(model, suffix = "") {
+    # 
+    # useage: xmuPropagateLabels(model, suffix = "")
+	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix, suffix = suffix)
+    model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix)
+    return(model)
 }
