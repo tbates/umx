@@ -446,25 +446,32 @@ umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) 
 #' parameters can be dropped without excessive cost
 #'
 #' @param model An \code{\link{mxModel}} to drop parameters from 
-#' @param regex A string to select which parameters. e.g. "^a_" (begins with "a_") or "ab|ba" either "ab" or "ba"
+#' @param regex A string to select parameters to drop. leave empty to try all.
+#' This is regular expression enabled. i.e., "^a_" will drop parameters beginning with "a_"
+#' @return a table of model comparisons
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{grep}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' drop "a_r1c1" and "a_r1c2" (separately) and see which matters more.
+#' umxDrop1(fit3) # try dropping each free parameters (default)  
+#' # drop "a_r1c1" and "a_r1c2" and see which matters more.
 #' umxDrop1(model, regex="a_r1c1|a_r1c2")
 #' }
 
-umxDrop1 <- function(model, regex) {
-	# umxDrop1(fit3, "a_.*")
-	toDrop = grep(regex, umxGetParameters(model, free = T), value = T, ignore.case = T)
+umxDrop1 <- function(model, regex = NULL) {
+	if(is.null(regex)){
+		toDrop = umxGetParameters(model, free = T)
+	} else {
+		toDrop = grep(regex, umxGetParameters(model, free = T), value = T, ignore.case = T)
+	}
 	message("Will drop each of ", length(toDrop), " parameters: ", paste(toDrop, collapse = ", "), ".\nThis might take some time...")
 	out = list(rep(NA, length(toDrop)))
 	for(i in seq_along(toDrop)){
 		out[i] = umxReRun(model, name = paste0("drop_", toDrop[i]), regex = toDrop[i])
 	}
-	umxCompare(model, out)
+	a = umxCompare(model, out)
+	return(a)
 }
 
 #' umxAdd1
@@ -473,7 +480,7 @@ umxDrop1 <- function(model, regex) {
 #'
 #' @param model an \code{\link{mxModel}} to alter
 #' @param pathList a list of variables that (currently) will be expanded in a set of bivariate links
-#' @return 
+#' @return table of fits
 #' @export
 #' @seealso - \code{\link{umxDrop1}}, \code{\link{umxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}

@@ -45,6 +45,7 @@
 \examples{
 \dontrun{
  model = umxLabel(model)
+ umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 }
 }
 \references{
