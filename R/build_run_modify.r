@@ -310,12 +310,12 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #' @examples
 #' \dontrun{
 #'  model = umxLabel(model)
+#'  umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 #' }
 
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F, overRideExisting = F) {	
-	# Purpose: Label the cells of a matrix, OR the matrices of a RAM model
-	# Use case: m1 = umxLabel(m1)
-	# umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
+	# TODO !!!! labelling rule for bivariate perhaps should be sort alphabetically, makes it unambiguous...
+	# TODO !!!! implications for umxAdd1 finding the right labels...
 	if (is(obj, "MxMatrix") ) { 
 		# label an mxMatrix
 		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
@@ -467,44 +467,61 @@ umxDrop1 <- function(model, regex) {
 	umxCompare(model, out)
 }
 
-umxAdd1 <- function(model, pathList) {
-	# Working with symmetric paths
+#' umxAdd1
+#'
+#' Add each of a set of paths you provide to the model, returning a table of theire effect on fit
+#'
+#' @param model an \code{\link{mxModel}} to alter
+#' @param pathList a list of variables that (currently) will be expanded in a set of bivariate links
+#' @return 
+#' @export
+#' @seealso - \code{\link{umxDrop1}}, \code{\link{umxModel}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' model = umxAdd1(model)
+#' }
+
+
+umxAdd1 <- function(model, pathList1, pathList2) {
+	# DONE: symmetric paths
 	# TODO add A matrix
 	# TODO add non-RAM
-	output <- model@output
 	# stop if there is no objective function
-	if ( is.null(output) ) stop("Provided model hasn't been run: use mxRun(model) first")
+	if ( is.null(model@output) ) stop("Provided model hasn't been run: use mxRun(model) first")
 	# stop if there is no output
-	if ( length(output) < 1 ) stop("Provided model has no output. use mxRun() first!")
-	a       = combn(pathList, 2)
-	nVar    = dim(a)[2]
-	toAdd = rep(NA, nVar)
-	n       = 1
-	for (i in 1:nVar) {
-		from = a[1,i]
-		to   = a[2,i]
-		if(match(to, pathList) > match(from, pathList)){
-			labelString = paste0(to, "_with_", from)
-		} else {
-			labelString = paste0(from, "_with_", to)
-		}
-		toAdd[n] = labelString
-		n = n+1
+	if ( length(model@output) < 1 ) stop("Provided model has no output. use mxRun() first!")
+	if(!is.null(pathList2)){
+		a = xmuMakeBivariatePathsFromPathList(pathList1)
+		b = xmuMakeBivariatePathsFromPathList(pathList2)
+		a_to_b = xmuMakeBivariatePathsFromPathList(c(pathList1, pathList2))
+		betweenGroupLabels = a_to_b[!(a_to_b %in% c(a,b))]
 	}
-	message("You gave me", length(pathList), "variables. I made ", length(toAdd), "paths from these.")
+	message("You gave me ", length(pathList1), " variables. I made ", length(toAdd), " paths from these.")
 
 	# Just keep the ones that are not already free... (if any)
-	toAdd = toAdd[toAdd %in% umxGetParameters(model, free = F)]
-	if(length(toAdd==0)){
-		stop("I couldn't find any of those paths fixed in this model. the most common cause of this error is submitting the wrong model")
+	toAdd2 = toAdd[toAdd %in% umxGetParameters(model, free = F)]
+	if(length(toAdd2) == 0){
+		if(length(toAdd[toAdd %in% umxGetParameters(model, free = NA)] == 0)){
+			message("I couldn't find any of those paths in this model.",
+				"The most common cause of this error is submitting the wrong model")
+			message("You asked for: ", paste(toAdd, collapse=", "))
+		}else{
+			message("I found (at least some) of those paths in this model, but they were already free")
+			message("You asked for: ", paste(toAdd, collapse=", "))
+		}		
+		stop()
+	}else{
+		toAdd = toAdd2
 	}
-	message("Of these ", length(toAdd), "were currently fixed, and that I could try adding")
+	message("Of these ", length(toAdd), "were currently fixed, and I will try adding them")
 	message(paste(toAdd, collapse = ", "))
+
 	message("This might take some time...")
 	
-	out = data.frame(Base = "test", ep = 1, AIC = 1.0, p = 1.0); 
+	# out = data.frame(Base = "test", ep = 1, AIC = 1.0, p = 1.0); 
 	row1Cols = c("Base", "ep", "AIC", "p")
-	out = data.frame(umxCompare(model)[1,row1Cols])
+	out = data.frame(umxCompare(model)[1, row1Cols])
 	for(i in seq_along(toAdd)){
 		# model = fit1 ; toAdd = c("x2_with_x1"); i=1
 		tmp = omxSetParameters(model, labels = toAdd[i], free = T, value = .01, name = paste0("add_", toAdd[i]))
@@ -515,11 +532,12 @@ umxAdd1 <- function(model, pathList) {
 		out = rbind(out, newRow)
 	}
 	out[out=="NA"] = NA
-	out$p = round(as.numeric(out$p), 3)
+	out$p   = round(as.numeric(out$p), 3)
 	out$AIC = round(as.numeric(out$AIC), 3)
 	out <- out[order(out$p),]
 	return(out)
 }
+
 
 # ===============
 # = RAM Helpers =
@@ -801,14 +819,6 @@ umxIsOrdinalVar <- function(df, names=F) {
 	}
 }
 
-
-umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
-	mask = (matrixIn != dontTouch);
-	newValues = mask;
-	matrixIn[mask==TRUE] = matrixIn[mask==TRUE] + rnorm(length(mask[mask==TRUE]), mean=mean, sd=sd);
-	return (matrixIn);
-}
-
 #' umxIsRAMmodel
 #'
 #' Utility function returning a binary answer to the question "Is this a RAM model?"
@@ -1050,3 +1060,29 @@ Perhaps you'd like to add 'addStd = T' to your makeACE_2Group() call?")
 #' \dontrun{
 #' mat1 = umxJiggle(mat1)
 #' }
+
+umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
+	mask = (matrixIn != dontTouch);
+	newValues = mask;
+	matrixIn[mask == TRUE] = matrixIn[mask == TRUE] + rnorm(length(mask[mask == TRUE]), mean = mean, sd = sd);
+	return (matrixIn);
+}
+
+xmuMakeBivariatePathsFromPathList <- function(pathList) {
+	a       = combn(pathList, 2)
+	nVar    = dim(a)[2]
+	toAdd   = rep(NA, nVar)
+	n       = 1
+	for (i in 1:nVar) {
+		from = a[1,i]
+		to   = a[2,i]
+		if(match(to, pathList) > match(from, pathList)){
+			labelString = paste0(to, "_with_", from)
+		} else {
+			labelString = paste0(from, "_with_", to)
+		}
+		toAdd[n] = labelString
+		n = n+1
+	}
+	return(toAdd)
+}

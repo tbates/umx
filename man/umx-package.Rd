@@ -46,7 +46,7 @@ library("umx")
 
 \code{\link{umxGraph_RAM}}            Create a Path Diagram from your model!
 
-Updating & Modifying
+\bold{Updating & Modifying}
 
 \code{\link{umxReRun}}                Re-run a model with changes
 
@@ -57,9 +57,10 @@ Updating & Modifying
 \code{\link{umxStandardizeModel}}     Standardize a RAM Model
 
 
-High-level reporting
+\bold{High-level reporting}
 
 \code{\link{umxUnexplainedCausalNexus}}
+
 
 \bold{Utilities}
 
@@ -72,6 +73,7 @@ High-level reporting
 \code{\link{umxUpdateOpenMx}}         umxUpdateOpenMx
 
 \code{\link{umxHasCIs}}               Utility to ask a model if it has CIs
+
 
 \bold{Non-SEM helpers}
 
