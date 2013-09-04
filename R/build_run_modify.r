@@ -483,7 +483,7 @@ umxDrop1 <- function(model, regex) {
 #' }
 
 
-umxAdd1 <- function(model, pathList1, pathList2) {
+umxAdd1 <- function(model, pathList1, pathList2 = NULL, arrows = 2) {
 	# DONE: symmetric paths
 	# TODO add A matrix
 	# TODO add non-RAM
@@ -491,13 +491,27 @@ umxAdd1 <- function(model, pathList1, pathList2) {
 	if ( is.null(model@output) ) stop("Provided model hasn't been run: use mxRun(model) first")
 	# stop if there is no output
 	if ( length(model@output) < 1 ) stop("Provided model has no output. use mxRun() first!")
-	if(!is.null(pathList2)){
-		a = xmuMakeBivariatePathsFromPathList(pathList1)
-		b = xmuMakeBivariatePathsFromPathList(pathList2)
-		a_to_b = xmuMakeBivariatePathsFromPathList(c(pathList1, pathList2))
-		betweenGroupLabels = a_to_b[!(a_to_b %in% c(a,b))]
+
+	if(arrows == 2){
+		if(!is.null(pathList2)){
+			a = xmuMakeTwoHeadedPathsFromPathList(pathList1)
+			b = xmuMakeTwoHeadedPathsFromPathList(pathList2)
+			a_to_b = xmuMakeTwoHeadedPathsFromPathList(c(pathList1, pathList2))
+			toAdd = a_to_b[!(a_to_b %in% c(a,b))]
+		}else{
+			toAdd = xmuMakeTwoHeadedPathsFromPathList(pathList1)
+		}
+	} else if(arrows == 1){
+		if(is.null(pathList2)){
+			stop("pathList2 must not be empty for arrows = 1: it forms the target of each path")
+		} else {
+			toAdd = xmuMakeOneHeadedPathsFromPathList(pathList1, pathList2)
+		}
+	}else{
+		stop("You idiot :-) : arrows must be either 1 or 2, you tried", arrows)
 	}
-	message("You gave me ", length(pathList1), " variables. I made ", length(toAdd), " paths from these.")
+	# TODO fix count? or drop giving it?
+	message("You gave me ", length(pathList1), "source variables. I made ", length(toAdd), " paths from these.")
 
 	# Just keep the ones that are not already free... (if any)
 	toAdd2 = toAdd[toAdd %in% umxGetParameters(model, free = F)]
@@ -1068,7 +1082,7 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 	return (matrixIn);
 }
 
-xmuMakeBivariatePathsFromPathList <- function(pathList) {
+xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
 	a       = combn(pathList, 2)
 	nVar    = dim(a)[2]
 	toAdd   = rep(NA, nVar)
@@ -1083,6 +1097,20 @@ xmuMakeBivariatePathsFromPathList <- function(pathList) {
 		}
 		toAdd[n] = labelString
 		n = n+1
+	}
+	return(toAdd)
+}
+
+xmuMakeOneHeadedPathsFromPathList(letters[1:3], letters[5:7])
+xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
+	toAdd   = rep(NA, length(sourceList) * length(destinationList))
+	n       = 1
+	for (from in sourceList) {
+		for (to in destinationList) {
+			labelString = paste0(from, "_to_", to)
+			toAdd[n] = labelString
+			n = n + 1
+		}
 	}
 	return(toAdd)
 }
