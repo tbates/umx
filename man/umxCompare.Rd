@@ -35,7 +35,7 @@ umxCompare(model1, c(model2, model3))
   - \url{http://openmx.psyc.virginia.edu/}
 }
 \seealso{
-  - \code{\link{mxCompare}}, \code{\link{umxReportFit}},
+  - \code{\link{mxCompare}}, \code{\link{umxSummary}},
   \code{\link{umxRun}},
 }
 

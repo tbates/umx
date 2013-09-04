@@ -6,16 +6,15 @@
     decreasing = T, cache = T)
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to report
-  modification indices for}
+  \item{model}{An \code{\link{mxModel}} for which to report
+  modification indices}
 
-  \item{numInd}{= How many modifications to report}
+  \item{numInd}{How many modifications to report}
 
-  \item{typeToShow}{= Whether to additions or deletions
+  \item{typeToShow}{Whether to shown additions or deletions
   (default = "both")}
 
-  \item{decreasing}{= How to sort (default = T,
-  decreasing)}
+  \item{decreasing}{How to sort (default = T, decreasing)}
 
   \item{cache}{= Future function to cahce these
   time-consuming results}
@@ -31,10 +30,11 @@ umxMI_top(model, numInd=5, typeToShow="add") # valid options are "both|add|delet
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxMI_top}}, \code{\link{umxRun}},
-  \code{\link{umxReportFit}}
+  - \code{\link{umxMI}}, \code{\link{umxAdd1}},
+  \code{\link{umxDrop1}}, \code{\link{umxRun}},
+  \code{\link{umxSummary}}
 }
 

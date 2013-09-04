@@ -23,14 +23,13 @@
   to get the fit statistics)}
 }
 \description{
-  umxReportFit Report fit of a model in a compact form
-  suitable for a journal
+  Deprecated: Please use \code{\link{umxSummary}} instead.
+  Both functions report fit in a compact form suitable for
+  a journal.
 }
 \examples{
 \dontrun{
-umxReportFit(m1)
-umxReportFit(m1, report = "table")
-umxReportFit(m1, saturatedModels = umxSaturated(m1))
+umxSummary(m1)
 }
 }
 \references{

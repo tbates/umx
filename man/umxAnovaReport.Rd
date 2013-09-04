@@ -37,7 +37,7 @@ umxAnovaReport(model)
   - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxReportFit}}, \code{\link{umxCompare}},
+  - \code{\link{umxSummary}}, \code{\link{umxCompare}},
   \code{\link{anova}}, \code{\link{lm.beta}}
 }
 

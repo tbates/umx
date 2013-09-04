@@ -4,7 +4,7 @@
 # setwd("~/bin/umx"); devtools::check()
 # setwd("~/bin/umx"); devtools::release()
 # devtools::load_all()
-# devtools::dev_help("umxReportFit")
+# devtools::dev_help("umxX")
 # show_news()
 
 # =============================
@@ -18,7 +18,7 @@
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
 #' @param output Optionally output to an html table which will open your default browser: handy for getting tables into word
-#' @seealso - \code{\link{mxCompare}}, \code{\link{umxReportFit}}, \code{\link{umxRun}},
+#' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://openmx.psyc.virginia.edu/}
 #' @export
 #' @import OpenMx
@@ -338,8 +338,8 @@ umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name
 #'
 #' @param model an \code{\link{mxModel}} to derive modification indices for
 #' @param vector = Whether to report the results as a vector default = TRUE
-#' @seealso - \code{\link{umxMI_top}}, \code{\link{umxRun}}, \code{\link{umxReportFit}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @seealso - \code{\link{umxMI_top}}, \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
 #' \dontrun{
@@ -462,13 +462,13 @@ umxMI <- function(model, vector=T) {
 #'
 #' umxMI_top A function to report the top modifications which would improve fit.
 #'
-#' @param model an \code{\link{mxModel}} to report modification indices for
-#' @param numInd = How many modifications to report
-#' @param typeToShow = Whether to additions or deletions (default = "both")
-#' @param decreasing = How to sort (default = T, decreasing)
+#' @param model An \code{\link{mxModel}} for which to report modification indices
+#' @param numInd How many modifications to report
+#' @param typeToShow Whether to shown additions or deletions (default = "both")
+#' @param decreasing How to sort (default = T, decreasing)
 #' @param cache = Future function to cahce these time-consuming results
-#' @seealso - \code{\link{umxMI_top}}, \code{\link{umxRun}}, \code{\link{umxReportFit}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @seealso - \code{\link{umxMI}}, \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
 #' \dontrun{

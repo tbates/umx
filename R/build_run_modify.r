@@ -1,9 +1,10 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document(); devtools::install(); ?umx
+# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# require(OpenMx); require(umx); ?umx
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
-# devtools::dev_help("umxReportFit")
+# devtools::dev_help("umxX")
 # show_news()
 
 # =================================
@@ -31,7 +32,6 @@
 #' }
 
 umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T){
-	# m1 = umxRun(m1); umxReportFit(m1)
 	# TODO: return change in -2LL for models being re-run
 	# TODO: stash saturated model for re-use
 	# Optimise for speed
@@ -1108,7 +1108,6 @@ xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
 	return(toAdd)
 }
 
-xmuMakeOneHeadedPathsFromPathList(letters[1:3], letters[5:7])
 xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	toAdd   = rep(NA, length(sourceList) * length(destinationList))
 	n       = 1
