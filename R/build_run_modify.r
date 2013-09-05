@@ -30,11 +30,18 @@
 #' model = umxRun(model, n=10)
 #' }
 
-umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T){
+umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLabels = F){
 	# m1 = umxRun(m1); umxReportFit(m1)
 	# TODO: return change in -2LL for models being re-run
 	# TODO: stash saturated model for re-use
 	# Optimise for speed
+	if(setStarts){
+		model = umxStart(model)
+	}
+	if(setLabels){
+		model = umxLabel(model)
+	}
+
 	if(n == 1){
 		model = mxRun(model);
 	} else {
@@ -473,7 +480,7 @@ umxDrop1 <- function(model, regex) {
 #'
 #' @param model an \code{\link{mxModel}} to alter
 #' @param pathList a list of variables that (currently) will be expanded in a set of bivariate links
-#' @return 
+#' @return a table of fit changes
 #' @export
 #' @seealso - \code{\link{umxDrop1}}, \code{\link{umxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -1101,7 +1108,6 @@ xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
 	return(toAdd)
 }
 
-xmuMakeOneHeadedPathsFromPathList(letters[1:3], letters[5:7])
 xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	toAdd   = rep(NA, length(sourceList) * length(destinationList))
 	n       = 1

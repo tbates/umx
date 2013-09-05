@@ -1,5 +1,6 @@
 export(Stouffer.test)
 export(print.dataframe)
+export(umxAdd1)
 export(umxAnovaReport)
 export(umxCompare)
 export(umxDescriptives)
