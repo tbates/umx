@@ -458,7 +458,6 @@ umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) 
 #' # drop "a_r1c1" and "a_r1c2" and see which matters more.
 #' umxDrop1(model, regex="a_r1c1|a_r1c2")
 #' }
-
 umxDrop1 <- function(model, regex = NULL) {
 	if(is.null(regex)){
 		toDrop = umxGetParameters(model, free = T)
@@ -468,9 +467,18 @@ umxDrop1 <- function(model, regex = NULL) {
 	message("Will drop each of ", length(toDrop), " parameters: ", paste(toDrop, collapse = ", "), ".\nThis might take some time...")
 	out = list(rep(NA, length(toDrop)))
 	for(i in seq_along(toDrop)){
-		out[i] = umxReRun(model, name = paste0("drop_", toDrop[i]), regex = toDrop[i])
+		tryCatch({
+			out[i] = umxReRun(m1, name = "bob", dropList = bob)
+		}, warning = function(w) {
+			message("Warning incurred trying to drop ", bob)
+			message(w)
+		}, error = function(e) {
+			message("Error occurred trying to drop ", bob)
+			message(e)
+		})
 	}
 	a = umxCompare(model, out)
+	print(a)
 	return(a)
 }
 
@@ -539,7 +547,7 @@ umxAdd1 <- function(model, pathList1, pathList2 = NULL, arrows = 2) {
 	message(paste(toAdd, collapse = ", "))
 
 	message("This might take some time...")
-	
+	flush.console()
 	# out = data.frame(Base = "test", ep = 1, AIC = 1.0, p = 1.0); 
 	row1Cols = c("Base", "ep", "AIC", "p")
 	out = data.frame(umxCompare(model)[1, row1Cols])
