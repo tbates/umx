@@ -628,11 +628,31 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 # = Comparison helpers =
 # ======================
 
+#' %<%
+#'
+#' A version of less-than that excludes NA as a match
+#'
+#' @export
+#' @seealso - \code{\link{%>%}}, 
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' c(1:3,NA,5) = %<% 2 
+
 "%<%"<- function(table, x){
 	lessThan = table<  x
 	lessThan[is.na(lessThan)] = FALSE
 	return(lessThan)
 }
+
+#' %>%
+#'
+#' A version of greater-than that excludes NA as a match
+#'
+#' @export
+#' @seealso - \code{\link{%<%}}, 
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' c(1:3,NA,5) = %>% 2 
 
 "%>%"<- function(table, x){
 	moreThan = table<  x
@@ -854,12 +874,14 @@ anova.report.F <- function(model, precision=3) {
 
 # Test differences in Kurtosis and Skewness
 kurtosisDiff <- function(x, y, B = 1000){
+	require(psych)
 	kx <- replicate(B, kurtosi(sample(x, replace = TRUE)))
 	ky <- replicate(B, kurtosi(sample(y, replace = TRUE)))
 	return(kx - ky)	
 }
 # Skew
 skewnessDiff<- function(x, y, B = 1000){
+	require(psych)
 	sx <- replicate(B, skew(sample(x, replace = TRUE)))
 	sy <- replicate(B, skew(sample(y, replace = TRUE)))
 	return(sx - sy)	

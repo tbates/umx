@@ -38,15 +38,14 @@ library("umx")
 
 \code{\link{umxRun}}                  Run a model, adding saturated models if necessary, optionally adds labels and starts
 
-\code{\link{umxSummary}}              Compact report of model fit
-
 \code{\link{umxCompare}}              Compare one or more models
+
+\code{\link{umxSummary}}              Compact report of model fit
 
 \code{\link{umxReportCIs}}            Report FIML CIs on a model, creating them if necessary
 
 \code{\link{umxGraph_RAM}}            Create a Path Diagram from your model!
 
-\code{\link{umxStandardizeModel}}     Standardize a RAM Model
 
 \bold{Updating & Modifying}
 
@@ -54,18 +53,19 @@ library("umx")
 
 \code{\link{umxEquate}}               Equate parameters in a model by label
 
-\code{\link{umxMI_top}}               Compute modification indices for RAM models
-
 \code{\link{umxDrop1}}                Compute a table of fits based on dropping single paths
 
 \code{\link{umxAdd1}}                 Compute a table of fits based on adding paths to the model
+
+\code{\link{umxMI}}                   Compute modification indices for RAM models
 
 \bold{High-level reporting}
 
 \code{\link{umxUnexplainedCausalNexus}}
 
-
 \bold{Utilities}
+
+\code{\link{umxStandardizeModel}}     Standardize a RAM Model
 
 \code{\link{umxReportTime}}           Show how long a model took to run
 
@@ -75,16 +75,25 @@ library("umx")
 
 \code{\link{umxUpdateOpenMx}}         umxUpdateOpenMx
 
-\code{\link{umxHasCIs}}               Utility to ask a model if it has CIs
+\code{\link{umxHasCIs}}               Utility function to ask a model if it has CIs
 
+\code{\link{umxIsMxModel}}            Utility function to an object "Are you an OpenMx model?"
+
+\code{\link{umxIsRAMmodel}}            Utility function to an object "Are you an OpenMx RAM model?"
 
 \bold{Non-SEM helpers}
 
 \code{\link{print.dataframe}}         print dataframe in readable form by supressing NA and rounding 0
 
-\code{\link{umxAnovaReport}}          A handy APA-style ANOVA report formatter
+\code{\link{umxAnovaReport}}          Format an anova model into an APA-style report
 
-\code{\link{Stouffer.test}}           Run a Stouffer.test
+\code{\link{Stouffer.test}}           Run a Stouffer.test (meta-analytic p-value)
+
+\code{\link{umx_u_APA_pval}}          Utility function to format a p-value for APA (three decimals, "<.001" if under that)
+
+\code{\link{umxDescriptives}}         Utility function to generate participant section for an APA-style article.
+
+\code{\link{umx_pp33.Rd}}             Reproducibility function: Use non-central distribution: likelihood of a result given the effect was true
 
 }
 
