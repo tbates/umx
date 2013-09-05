@@ -468,7 +468,7 @@ umxDrop1 <- function(model, regex = NULL) {
 	out = list(rep(NA, length(toDrop)))
 	for(i in seq_along(toDrop)){
 		tryCatch({
-			out[i] = umxReRun(m1, name = "bob", dropList = bob)
+        	out[i] = umxReRun(model, name = paste0("drop_", toDrop[i]), regex = toDrop[i])
 		}, warning = function(w) {
 			message("Warning incurred trying to drop ", bob)
 			message(w)
