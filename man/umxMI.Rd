@@ -22,10 +22,11 @@ umxMI(model)
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+  - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxMI_top}}, \code{\link{umxRun}},
-  \code{\link{umxReportFit}}
+  - \code{\link{umxMI_top}}, \code{\link{umxAdd1}},
+  \code{\link{umxDrop1}}, \code{\link{umxRun}},
+  \code{\link{umxSummary}}
 }
 

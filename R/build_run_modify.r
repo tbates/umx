@@ -1,9 +1,10 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document(); devtools::install(); ?umx
+# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# require(OpenMx); require(umx); ?umx
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
-# devtools::dev_help("umxReportFit")
+# devtools::dev_help("umxX")
 # show_news()
 
 # =================================
@@ -31,7 +32,6 @@
 #' }
 
 umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLabels = F){
-	# m1 = umxRun(m1); umxReportFit(m1)
 	# TODO: return change in -2LL for models being re-run
 	# TODO: stash saturated model for re-use
 	# Optimise for speed
@@ -453,25 +453,40 @@ umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) 
 #' parameters can be dropped without excessive cost
 #'
 #' @param model An \code{\link{mxModel}} to drop parameters from 
-#' @param regex A string to select which parameters. e.g. "^a_" (begins with "a_") or "ab|ba" either "ab" or "ba"
+#' @param regex A string to select parameters to drop. leave empty to try all.
+#' This is regular expression enabled. i.e., "^a_" will drop parameters beginning with "a_"
+#' @return a table of model comparisons
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{grep}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' drop "a_r1c1" and "a_r1c2" (separately) and see which matters more.
+#' umxDrop1(fit3) # try dropping each free parameters (default)  
+#' # drop "a_r1c1" and "a_r1c2" and see which matters more.
 #' umxDrop1(model, regex="a_r1c1|a_r1c2")
 #' }
-
-umxDrop1 <- function(model, regex) {
-	# umxDrop1(fit3, "a_.*")
-	toDrop = grep(regex, umxGetParameters(model, free = T), value = T, ignore.case = T)
+umxDrop1 <- function(model, regex = NULL) {
+	if(is.null(regex)){
+		toDrop = umxGetParameters(model, free = T)
+	} else {
+		toDrop = grep(regex, umxGetParameters(model, free = T), value = T, ignore.case = T)
+	}
 	message("Will drop each of ", length(toDrop), " parameters: ", paste(toDrop, collapse = ", "), ".\nThis might take some time...")
 	out = list(rep(NA, length(toDrop)))
 	for(i in seq_along(toDrop)){
-		out[i] = umxReRun(model, name = paste0("drop_", toDrop[i]), regex = toDrop[i])
+		tryCatch({
+        	out[i] = umxReRun(model, name = paste0("drop_", toDrop[i]), regex = toDrop[i])
+		}, warning = function(w) {
+			message("Warning incurred trying to drop ", toDrop[i])
+			message(w)
+		}, error = function(e) {
+			message("Error occurred trying to drop ", toDrop[i])
+			message(e)
+		})
 	}
-	umxCompare(model, out)
+	a = umxCompare(model, out)
+	print(a)
+	return(a)
 }
 
 #' umxAdd1
@@ -539,7 +554,7 @@ umxAdd1 <- function(model, pathList1, pathList2 = NULL, arrows = 2) {
 	message(paste(toAdd, collapse = ", "))
 
 	message("This might take some time...")
-	
+	flush.console()
 	# out = data.frame(Base = "test", ep = 1, AIC = 1.0, p = 1.0); 
 	row1Cols = c("Base", "ep", "AIC", "p")
 	out = data.frame(umxCompare(model)[1, row1Cols])

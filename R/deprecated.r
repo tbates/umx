@@ -3,7 +3,7 @@
 # setwd("~/bin/umx"); devtools::document(); devtools::install(); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
-# devtools::dev_help("umxReportFit")
+# devtools::dev_help("umxX")
 # show_news()
 
 # ==============
@@ -86,7 +86,7 @@ umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = T
 
 #' umxReportFit
 #'
-#' umxReportFit Report fit of a model in a compact form suitable for a journal
+#' Deprecated: Please use \code{\link{umxSummary}} instead. Both functions report fit in a compact form suitable for a journal. 
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param saturatedModels Saturated models if needed for fit indices (see note below: 
@@ -102,9 +102,7 @@ umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = T
 #' @import OpenMx
 #' @examples
 #' \dontrun{
-#' umxReportFit(m1)
-#' umxReportFit(m1, report = "table")
-#' umxReportFit(m1, saturatedModels = umxSaturated(m1))
+#' umxSummary(m1)
 #' }
 
 umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEstimates = "std", precision = 2, displayColumns = c("row", "col", "Std.Estimate")){

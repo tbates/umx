@@ -3,7 +3,7 @@
 # setwd("~/bin/umx"); devtools::document(); devtools::install(); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
-# devtools::dev_help("umxReportFit")
+# devtools::dev_help("umxX")
 # show_news()
 
 # ====================
@@ -167,7 +167,7 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' @param raw Should the raw table also be output? (allows checking that nothing crazy is going on)
 #' @param format String or markdown format?
 #' @param printDIC A Boolean toggle whether tou want AIC-type fit change table printed
-#' @seealso - \code{\link{umxReportFit}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
+#' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples

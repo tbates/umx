@@ -14,9 +14,9 @@ A library of Helper functions for OpenMx. If you are just
 Package: \tab umx\cr
 Version: \tab 0.5\cr
 License: \tab GPL-3\cr
-URL: \tab http://github.com/tbates/umx\cr
+URL: \tab \url{http://github.com/tbates/umx}\cr
 Depends: \tab R (>= 2.11.0), OpenMx (>= 1.3.0),\cr
-Suggests: \tab testthat, roxygen2\cr
+Suggests: \tab \cr
 Collate: \tab 'build_run_modify.r' 'deprecated.r' 'fit_and_reporting.r'
 'umx.lib.R' 'xmu.r' 'model_builders.r' 'misc_and_utility.r'\cr
 Packaged: \tab 2013-08-22 22:49:21 UTC; tim\cr
@@ -36,15 +36,17 @@ library("umx")
 
 \code{\link{umxStart}}                Set sensible start values
 
-\code{\link{umxRun}}                  Run a model, adding saturated models if necessary
+\code{\link{umxRun}}                  Run a model, adding saturated models if necessary, optionally adds labels and starts
 
-\code{\link{umxSummary}}              Compact summary report of model fit
+\code{\link{umxSummary}}              Compact report of model fit
 
 \code{\link{umxCompare}}              Compare one or more models
 
 \code{\link{umxReportCIs}}            Report FIML CIs on a model, creating them if necessary
 
 \code{\link{umxGraph_RAM}}            Create a Path Diagram from your model!
+
+\code{\link{umxStandardizeModel}}     Standardize a RAM Model
 
 \bold{Updating & Modifying}
 
@@ -54,8 +56,9 @@ library("umx")
 
 \code{\link{umxMI_top}}               Compute modification indices for RAM models
 
-\code{\link{umxStandardizeModel}}     Standardize a RAM Model
+\code{\link{umxDrop1}}                Compute a table of fits based on dropping single paths
 
+\code{\link{umxAdd1}}                 Compute a table of fits based on adding paths to the model
 
 \bold{High-level reporting}
 

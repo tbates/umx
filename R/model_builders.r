@@ -3,7 +3,7 @@
 # setwd("~/bin/umx"); devtools::document(); devtools::install(); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
-# devtools::dev_help("umxReportFit")
+# devtools::dev_help("umxX")
 # show_news()
 
 # ==================

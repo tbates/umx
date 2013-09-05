@@ -2,14 +2,18 @@
 \alias{umxDrop1}
 \title{umxDrop1}
 \usage{
-  umxDrop1(model, regex)
+  umxDrop1(model, regex = NULL)
 }
 \arguments{
   \item{model}{An \code{\link{mxModel}} to drop parameters
   from}
 
-  \item{regex}{A string to select which parameters. e.g.
-  "^a_" (begins with "a_") or "ab|ba" either "ab" or "ba"}
+  \item{regex}{A string to select parameters to drop. leave
+  empty to try all. This is regular expression enabled.
+  i.e., "^a_" will drop parameters beginning with "a_"}
+}
+\value{
+  a table of model comparisons
 }
 \description{
   Drops each free parameter (selected via regex), returning
@@ -19,7 +23,8 @@
 }
 \examples{
 \dontrun{
-drop "a_r1c1" and "a_r1c2" (separately) and see which matters more.
+umxDrop1(fit3) # try dropping each free parameters (default)
+# drop "a_r1c1" and "a_r1c2" and see which matters more.
 umxDrop1(model, regex="a_r1c1|a_r1c2")
 }
 }
@@ -27,7 +32,7 @@ umxDrop1(model, regex="a_r1c1|a_r1c2")
   - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+  - \code{\link{grep}}, \code{\link{umxLabel}},
+  \code{\link{umxRun}}
 }
 
