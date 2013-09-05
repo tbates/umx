@@ -2,7 +2,8 @@
 \alias{umxRun}
 \title{umxRun}
 \usage{
-  umxRun(model, n = 1, calc_SE = T, calc_sat = T)
+  umxRun(model, n = 1, calc_SE = T, calc_sat = T,
+    setStarts = F, setLabels = F)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} you wish to run.}
@@ -32,8 +33,9 @@
 }
 \examples{
 \dontrun{
-model = umxRun(model)
-model = umxRun(model, n=10)
+model = umxRun(model) # just run: will create sturated model if needed
+model = umxRun(model, setStarts = T, setLabels = T) # set start values and label all parameters
+model = umxRun(model, n=10) # run, but also re-run if not clean the first time
 }
 }
 \references{

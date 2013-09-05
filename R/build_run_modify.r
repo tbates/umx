@@ -27,8 +27,9 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' model = umxRun(model)
-#' model = umxRun(model, n=10)
+#' model = umxRun(model) # just run: will create sturated model if needed
+#' model = umxRun(model, setStarts = T, setLabels = T) # set start values and label all parameters
+#' model = umxRun(model, n=10) # run, but also re-run if not clean the first time
 #' }
 
 umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLabels = F){
@@ -484,9 +485,8 @@ umxDrop1 <- function(model, regex = NULL) {
 			message(e)
 		})
 	}
-	a = umxCompare(model, out)
-	print(a)
-	return(a)
+	# TODO 1. sort list, 2. filter on p
+	return(umxCompare(model, out))
 }
 
 #' umxAdd1
