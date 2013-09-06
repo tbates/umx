@@ -1,3 +1,4 @@
+# https://r-forge.r-project.org/project/admin/?group_id=1745
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); devtools::document(); devtools::install(); 
@@ -466,9 +467,11 @@ umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) 
 #' # drop "a_r1c1" and "a_r1c2" and see which matters more.
 #' umxDrop1(model, regex="a_r1c1|a_r1c2")
 #' }
-umxDrop1 <- function(model, regex = NULL) {
-	if(is.null(regex)){
+umxDrop1 <- function(model, regex = NULL, maxP = 1) {
+	if(is.null(regex)) {
 		toDrop = umxGetParameters(model, free = T)
+	} else if (length(regex) > 1) {
+		toDrop = regex
 	} else {
 		toDrop = grep(regex, umxGetParameters(model, free = T), value = T, ignore.case = T)
 	}
@@ -476,6 +479,7 @@ umxDrop1 <- function(model, regex = NULL) {
 	out = list(rep(NA, length(toDrop)))
 	for(i in seq_along(toDrop)){
 		tryCatch({
+			message("item ", i, " of ", length(toDrop))
         	out[i] = umxReRun(model, name = paste0("drop_", toDrop[i]), regex = toDrop[i])
 		}, warning = function(w) {
 			message("Warning incurred trying to drop ", toDrop[i])
@@ -486,7 +490,19 @@ umxDrop1 <- function(model, regex = NULL) {
 		})
 	}
 	# TODO 1. sort list, 2. filter on p
-	return(umxCompare(model, out))
+	out = data.frame(umxCompare(model, out))
+	out[out=="NA"] = NA
+	suppressWarnings({
+		out$p   = as.numeric(out$p) 
+		out$AIC = as.numeric(out$AIC)
+	})
+	n_row = dim(out)[1] # 2 9
+	sortedOrder = order(out$p[2:n_row])+1
+	out[2:n_row, ] <- out[sortedOrder, ]
+	good_rows = out$p < maxP
+	good_rows[1] = T
+	message(sum(good_rows)-1, "of ", length(out$p)-1, " items were beneath your p-threshold of ", maxP)
+	return(out[good_rows, ])
 }
 
 #' umxAdd1
