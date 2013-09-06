@@ -458,16 +458,16 @@ umxMI <- function(model, vector=T) {
 	return(ret)
 }
 
-#' umxMI_top
+#' umxMI
 #'
-#' umxMI_top A function to report the top modifications which would improve fit.
+#' umxMI A function to report the top modifications which would improve fit.
 #'
 #' @param model An \code{\link{mxModel}} for which to report modification indices
 #' @param numInd How many modifications to report
 #' @param typeToShow Whether to shown additions or deletions (default = "both")
 #' @param decreasing How to sort (default = T, decreasing)
 #' @param cache = Future function to cahce these time-consuming results
-#' @seealso - \code{\link{umxMI}}, \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+#' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
@@ -476,8 +476,8 @@ umxMI <- function(model, vector=T) {
 #' umxMI_top(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 #' }
 
-umxMI_top <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, cache = T) {
-	# depends on umxMI(model)
+umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, cache = T) {
+	# depends on xmuMI(model)
 	if(typeof(model) == "list"){
 		mi.df = model
 	} else {
