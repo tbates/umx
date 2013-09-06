@@ -5,7 +5,7 @@
 # setwd("~/bin/umx"); devtools::release()
 # devtools::load_all()
 # devtools::dev_help("umxX")
-# show_news()
+# devtools::show_news()
 
 # =============================
 # = Fit and Reporting Helpers =
