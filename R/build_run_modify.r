@@ -457,6 +457,7 @@ umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) 
 #' @param model An \code{\link{mxModel}} to drop parameters from 
 #' @param regex A string to select parameters to drop. leave empty to try all.
 #' This is regular expression enabled. i.e., "^a_" will drop parameters beginning with "a_"
+#' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of model comparisons
 #' @export
 #' @seealso - \code{\link{grep}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
@@ -489,7 +490,6 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 			message(e)
 		})
 	}
-	# TODO 1. sort list, 2. filter on p
 	out = data.frame(umxCompare(model, out))
 	out[out=="NA"] = NA
 	suppressWarnings({
@@ -510,7 +510,10 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' Add each of a set of paths you provide to the model, returning a table of theire effect on fit
 #'
 #' @param model an \code{\link{mxModel}} to alter
-#' @param pathList a list of variables that (currently) will be expanded in a set of bivariate links
+#' @param pathList a list of variables to generate a set of paths
+#' @param pathList2 an optional second list: IF set paths will be from pathList1 to members of this list
+#' @param arrows Make paths with one or two arrows
+#' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of fit changes
 #' @export
 #' @seealso - \code{\link{umxDrop1}}, \code{\link{umxModel}}
@@ -521,11 +524,9 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' }
 
 
-umxAdd1 <- function(model, pathList1, pathList2 = NULL, arrows = 2) {
-	# DONE: symmetric paths
-	# TODO add A matrix
+umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP = 1) {
+	# DONE: RAM paths
 	# TODO add non-RAM
-	# stop if there is no objective function
 	if ( is.null(model@output) ) stop("Provided model hasn't been run: use mxRun(model) first")
 	# stop if there is no output
 	if ( length(model@output) < 1 ) stop("Provided model has no output. use mxRun() first!")
@@ -537,7 +538,12 @@ umxAdd1 <- function(model, pathList1, pathList2 = NULL, arrows = 2) {
 			a_to_b = xmuMakeTwoHeadedPathsFromPathList(c(pathList1, pathList2))
 			toAdd = a_to_b[!(a_to_b %in% c(a,b))]
 		}else{
-			toAdd = xmuMakeTwoHeadedPathsFromPathList(pathList1)
+			if(is.null(pathList1)){
+				stop("best to set pathList1!")
+				# toAdd = umxGetParameters(model, free = F)
+			} else {
+				toAdd = xmuMakeTwoHeadedPathsFromPathList(pathList1)
+			}
 		}
 	} else if(arrows == 1){
 		if(is.null(pathList2)){
@@ -566,7 +572,7 @@ umxAdd1 <- function(model, pathList1, pathList2 = NULL, arrows = 2) {
 	}else{
 		toAdd = toAdd2
 	}
-	message("Of these ", length(toAdd), "were currently fixed, and I will try adding them")
+	message("Of these ", length(toAdd), " were currently fixed, and I will try adding them")
 	message(paste(toAdd, collapse = ", "))
 
 	message("This might take some time...")
@@ -576,6 +582,7 @@ umxAdd1 <- function(model, pathList1, pathList2 = NULL, arrows = 2) {
 	out = data.frame(umxCompare(model)[1, row1Cols])
 	for(i in seq_along(toAdd)){
 		# model = fit1 ; toAdd = c("x2_with_x1"); i=1
+		message("item ", i, " of ", length(toAdd))
 		tmp = omxSetParameters(model, labels = toAdd[i], free = T, value = .01, name = paste0("add_", toAdd[i]))
 		tmp = mxRun(tmp)
 		mxc = umxCompare(tmp, model)
@@ -583,11 +590,20 @@ umxAdd1 <- function(model, pathList1, pathList2 = NULL, arrows = 2) {
 		newRow$AIC = mxc[1, "AIC"]
 		out = rbind(out, newRow)
 	}
+
 	out[out=="NA"] = NA
 	out$p   = round(as.numeric(out$p), 3)
 	out$AIC = round(as.numeric(out$AIC), 3)
 	out <- out[order(out$p),]
-	return(out)
+	if(maxP==1){
+		return(out)
+	} else {
+		good_rows = out$p < maxP
+		message(sum(good_rows, na.rm = T), "of ", length(out$p), " items were beneath your p-threshold of ", maxP)
+		message(sum(is.na(good_rows)), " was/were NA")
+		good_rows[is.na(good_rows)] = T
+		return(out[good_rows, ])
+	}
 }
 
 
