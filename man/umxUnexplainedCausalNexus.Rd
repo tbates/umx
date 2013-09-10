@@ -22,7 +22,7 @@
 }
 \examples{
 \dontrun{
-umxUnexplainedCausalNexus(model)
+umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 }
 }
 \references{

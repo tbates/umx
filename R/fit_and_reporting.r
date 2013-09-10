@@ -170,10 +170,6 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 	})
 }
 
-umxtmp <- function(model){
-	summary(model)
-}
-
 #' umxReportCIs
 #'
 #' umxReportCIs umxReportCIs adds mxCI() calls for all free parameters in a model, 
@@ -333,147 +329,20 @@ umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name
 
 #' umxMI
 #'
-#' umxMI A function to compute and report modifications which would improve fit.
-#' You will probably use \code{\link{umxMI_top}} instead
-#'
-#' @param model an \code{\link{mxModel}} to derive modification indices for
-#' @param vector = Whether to report the results as a vector default = TRUE
-#' @seealso - \code{\link{umxMI_top}}, \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @export
-#' @examples
-#' \dontrun{
-#' umxMI(model)
-#' }
-
-umxMI <- function(model, vector=T) {
-	# modification indices
-	# v0.9: written Michael Culbertson
-	# v0.91: up on github; added progress bar, Bates
-	# http://openmx.psyc.virginia.edu/thread/831
-	# http://openmx.psyc.virginia.edu/thread/1019
-	# http://openmx.psyc.virginia.edu/sites/default/files/mi-new.r
-	steps <- 5
-	bar <- txtProgressBar (min=0, max=steps, style=3)
-    setTxtProgressBar(bar, 1)
-	accumulate <- function(A, B, C, D, d) {
-		res <- matrix(0, d^2, d^2)    
-		for (ii in 1:(d^2)){
-			for (jj in ii:(d^2)){
-				g <- 1 + (ii - 1) %% d
-				h <- 1 + (ii - 1) %/% d
-				i <- 1 + (jj - 1) %% d
-				j <- 1 + (jj - 1) %/% d
-				res[ii, jj] <- res[jj, ii] <- A[g, i] * B[h, j] + C[g, j] * D[h, i]
-			}
-		}
-		res
-	}
-	accumulate.asym <- function(A, B, C, D, d) {
-		res <- matrix(0, d^2, d^2)    
-		for (ii in 1:(d^2)){
-			for (jj in 1:(d^2)){
-				g <- 1 + (ii - 1) %% d
-				h <- 1 + (ii - 1) %/% d
-				i <- 1 + (jj - 1) %% d
-				j <- 1 + (jj - 1) %/% d
-				res[ii, jj] <- A[g, i] * B[h, j] + C[g, j] * D[h, i]
-			}
-		}
-		res
-	}
-	A <- model$A@values
-	P <- model$S@values
-	S <- model$data@observed
-	J <- model$F@values
-	m <- dim(A)[1]
-	which.free <- c(model$A@free, model$S@free & upper.tri(diag(m), diag=T))
-	vars       <- colnames(A)
-	parNames   <- c(model$A@labels, model$S@labels)
-	parNames[is.na(parNames)] <- c(outer(vars, vars, paste, sep=' <- '),
-	outer(vars, vars, paste, sep=' <-> '))[is.na(parNames)]
-	NM     <- model$data@numObs - 1
-	I.Ainv <- solve(diag(m) - A) 
-	C      <- J %*% I.Ainv %*% P %*% t(I.Ainv) %*% t(J)
-	Cinv   <- solve(C)    
-	AA     <- t(I.Ainv) %*% t(J)
-	BB     <- J %*% I.Ainv %*% P %*% t(I.Ainv)
-	correct <- matrix(2, m, m)
-	diag(correct) <- 1
-	grad.P <- correct * AA %*% Cinv %*% (C - S) %*% Cinv %*% t(AA)
-	grad.A <- correct * AA %*% Cinv %*% (C - S) %*% Cinv %*% BB 
-	grad   <- c(grad.A, grad.P) * NM
-	names(grad) <- parNames
-	dF.dBdB <- accumulate(AA %*% Cinv %*% t(AA), t(BB) %*% Cinv %*% BB, AA %*% Cinv %*% BB, t(BB) %*% Cinv %*% t(AA), m)
-    setTxtProgressBar(bar, 2)
-	dF.dPdP <- accumulate(AA %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), m)
-    setTxtProgressBar(bar, 3)
-	dF.dBdP <- accumulate.asym(AA %*% Cinv %*% t(AA), t(BB) %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), t(BB) %*% Cinv %*% t(AA), m)
-    setTxtProgressBar(bar, 4)
-	correct.BB <- correct.PP <- correct.BP <- matrix(1, m^2, m^2)
-	correct.BB[diag(m)==0, diag(m)==0] <- 2
-	correct.PP[diag(m)==1, diag(m)==1] <- 0.5
-	correct.PP[diag(m)==0, diag(m)==0] <- 2
-	correct.BP[diag(m)==0, diag(m)==0] <- 2
-	Hessian <- NM*rbind(cbind(dF.dBdB * correct.BB,    dF.dBdP * correct.BP),
-	cbind(t(dF.dBdP * correct.BP), dF.dPdP * correct.PP))
-	rownames(Hessian) <- parNames
-	colnames(Hessian) <- parNames
-	# list(gradient=grad[which.free], Hessian[which.free, which.free])
-
-	hessian <- Hessian[which.free, which.free]
-	E.inv <- solve(hessian)
-	par.change <- mod.indices <- rep(0, 2*(m^2))                
-	for (i in 1:(2*(m^2))) {
-		k <- Hessian[i, i]
-		d <- Hessian[i, which.free]
-		par.change[i]  <- (-grad[i] / (k - d %*% E.inv %*% d))
-		mod.indices[i] <- (-0.5 * grad[i] * par.change[i])
-	}
-	names(mod.indices) <- parNames
-	names(par.change)  <- parNames
-	if (vector) {
-		which.ret <- c(!model$A@free & !diag(m), !model$S@free) # & upper.tri(diag(m), diag=T))
-		sel <- order(mod.indices[which.ret], decreasing=T)
-		ret <- list(mi=mod.indices[which.ret][sel], par.change=par.change[which.ret][sel])
-	} else {
-		mod.A <- matrix(mod.indices[1:(m^2)]   , m, m)
-		mod.P <- matrix(mod.indices[-(1:(m^2))], m, m)
-		par.A <- matrix(par.change[1:(m^2)]    , m, m)
-		par.P <- matrix(par.change[-(1:(m^2))] , m, m)
-		rownames(mod.A) <- colnames(mod.A) <- vars
-		rownames(mod.P) <- colnames(mod.P) <- vars
-		rownames(par.A) <- colnames(par.A) <- vars
-		rownames(par.P) <- colnames(par.P) <- vars
-		mod.A[model$A@free] <- NA
-		par.A[model$A@free] <- NA
-		diag(mod.A) <- NA
-		diag(par.A) <- NA
-		mod.P[model$S@free] <- NA
-		par.P[model$S@free] <- NA
-		ret <- list(mod.A=mod.A, par.A=par.A, mod.S=mod.P, par.S=par.P)
-	}
-    setTxtProgressBar(bar, 5)
-	close(bar)
-	return(ret)
-}
-
-#' umxMI
-#'
 #' umxMI A function to report the top modifications which would improve fit.
 #'
 #' @param model An \code{\link{mxModel}} for which to report modification indices
 #' @param numInd How many modifications to report
 #' @param typeToShow Whether to shown additions or deletions (default = "both")
 #' @param decreasing How to sort (default = T, decreasing)
-#' @param cache = Future function to cahce these time-consuming results
+#' @param cache = Future function to cache these time-consuming results
 #' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
 #' \dontrun{
-#' umxMI_top(model)
-#' umxMI_top(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
+#' umxMI(model)
+#' umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 #' }
 
 umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, cache = T) {
@@ -481,7 +350,7 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, 
 	if(typeof(model) == "list"){
 		mi.df = model
 	} else {
-		mi = umxMI(model, vector = T)
+		mi = xmuMI(model, vector = T)
 		mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
 		row.names(mi.df) = 1:nrow(mi.df);
 		# TODO: could be a helper: choose direction
@@ -529,13 +398,25 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, 
 	invisible(mi.df)		
 }
 
+#' umxSaturated
+#'
+#' Computes the saturated and independence forms of a RAM model (needed to return most 
+#' fit statistics when using raw data). umxRun calls this automagically.
+#'
+#' @param model an \code{\link{mxModel}} to get independence and saturated fits to
+#' @return - A list of the saturated and independence models, from which fits can be extracted
+#' @export
+#' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' model_sat = umxSaturated(model)
+#' summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)
+#' }
 
 umxSaturated <- function(model, evaluate = T, verbose = T) {
 	# TODO: Update to omxSaturated() and omxIndependenceModel()
 	# TODO: Update IndependenceModel to analytic form
-	# Use case
-	# model_sat = umxSaturated(model)
-	# summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)
 	if (!(isS4(model) && is(model, "MxModel"))) {
 		stop("'model' must be an mxModel")
 	}
@@ -615,11 +496,10 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 #' @export
 #' @examples
 #' \dontrun{
-#' umxUnexplainedCausalNexus(model)
+#' umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 #' }
 
 umxUnexplainedCausalNexus <- function(from, delta, to, model) {
-	# umxUnexplainedCausalNexus(from, delta, to, model)
 	manifests = model@manifestVars
 	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to support string varnames 
 	dimnames(partialDataRow) = list("val", manifests)
@@ -851,4 +731,3 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 	return(list(sigma=totalCondCov, mu=totalMean))
 	
 }
-

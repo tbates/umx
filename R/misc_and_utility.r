@@ -376,11 +376,26 @@ umxLower2full <- function(lower.data, diag = F, byrow = T) {
 	return(mat)
 }
 
-umxFindObject <- function(grepString = ".*", requiredClass = "MxModel") {
-	# Purpose: find objects a certain class, whose name matches a (grep) search string
+#' umxFindObject
+#'
+#' find objects a certain class, whose name matches a search string.
+#' The string (pattern) is grep-enabled, so you can match wild-cards
+#'
+#' @param pattern the pattern that matching objects must contain
+#' @param requiredClass the class of object that will be matched
+#' @return - a list of objects matching the class and name
+#' @export
+#' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - 
+#' @examples
+#' \dontrun{
+#' umxFindObject("^m[0-9]") # mxModels beginning "m1" etc.
+#  umxFindObject("", "MxModel") # all MxModels
+#' }
+
+umxFindObject <- function(pattern = ".*", requiredClass = "MxModel") {
 	# Use case: umxFindObject("Chol*", "MxModel")
-	# umxFindObject("", "MxModel")
-	matchingNames = ls(envir = sys.frame(-1), pattern = grepString) # envir
+	matchingNames = ls(envir = sys.frame(-1), pattern = pattern) # envir
 	matchingObjects = c()
 	for (obj in matchingNames) {
 		if(class(get(obj))[1] == requiredClass){
@@ -390,9 +405,29 @@ umxFindObject <- function(grepString = ".*", requiredClass = "MxModel") {
 	return(matchingObjects)
 }
 
-renameFile <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, listPattern = NA, test = T, overwrite = F) {
-	# renameFile(baseFolder = "~/Downloads/", findStr="", replaceStr="", listPattern = "", test=T)
-	# renameFile(baseFolder = NA, findStr="", replaceStr="", listPattern = "", test=T)
+#' umxRenameFile
+#'
+#' rename files. On OS X, the function can access the current frontmost Finder window.
+#' The file renaming is fast and, because you can use regular expressions, powerful
+#'
+#' @param baseFolder  The folder to search in. If set to "Finder" (and you are 
+#' on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.
+#' @param findStr = The string to find
+#' @param replaceStr = The replacement string
+#' @param listPattern = A pre-filter for files
+#' @param test Boolean determining whether to chagne the names, or just report on what would have happened
+#' @param overwrite Boolean determining 
+#' @return - 
+#' @export
+#' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' renameFile(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
+#' renameFile(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceStr="S\1", test = T)
+#' }
+
+umxRenameFile <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, listPattern = NA, test = T, overwrite = F) {
 	# uppercase = u$1
 	if(baseFolder == "Finder"){
 		baseFolder = system(intern = T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
@@ -408,17 +443,17 @@ renameFile <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, lis
 	message("found ", length(a), " possible files")
 	changed = 0
 	for (fn in a) {
-		findB = grepl(pattern = findStr, fn) #returns 1 if found
+		findB = grepl(pattern = findStr, fn) # returns 1 if found
 		if(findB){
 			fnew = gsub(findStr, replace = replaceStr, fn) # replace all instances
 			if(test){
 				message("would change ", fn, " to ", fnew)	
 			} else {
-				if((!overwrite) & file.exists(paste(baseFolder, fnew, sep=""))){
+				if((!overwrite) & file.exists(paste(baseFolder, fnew, sep = ""))){
 					message("renaming ", fn, "to", fnew, "failed as already exists. To overwrite set T")
 				} else {
-					file.rename(paste(baseFolder, fn, sep=""), paste(baseFolder, fnew, sep=""))
-					changed = changed+1;
+					file.rename(paste(baseFolder, fn, sep = ""), paste(baseFolder, fnew, sep = ""))
+					changed = changed + 1;
 				}
 			}
 		}else{
@@ -480,19 +515,21 @@ cor.prob <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits
 }
 
 # Return the maximum value in a row
-rowMax <- function(df, na.rm=T) {
-	tmp = apply(df, MARGIN=1, FUN=max, na.rm=na.rm)
+rowMax <- function(df, na.rm = T) {
+	tmp = apply(df, MARGIN = 1, FUN = max, na.rm = na.rm)
 	tmp[!is.finite(tmp)] = NA
 	return(tmp)
 }
 
 rowMin <- function(df, na.rm=T) {
-	tmp = apply(df, MARGIN=1, FUN=min, na.rm=na.rm)
+	tmp = apply(df, MARGIN = 1, FUN = min, na.rm = na.rm)
 	tmp[!is.finite(tmp)] = NA
 	return(tmp)
 }
 
-col.as.numeric <- function(df) {
+umx.as.numeric <- function(df) {
+	# TODO umx.as.numeric <- function(df) {
+	# handle case of not being a data.frame...
 	# use case
 	# col.as.numeric(df)
 	for (i in names(df)) {
@@ -507,7 +544,7 @@ swapABlock <- function(twinData, rowSelector, T1Names, T2Names) {
 	# swapABlock(test, rowSelector=c(1,2,3,6), T1Names=c("a","c"), T2Names=c("b","d"))
 	theRows = twinData[rowSelector,]
 	old_BlockTwo = theRows[,T2Names]
-	theRows[,T1Names] -> theRows[,T2Names]
+	theRows[,T1Names] -> theRows[, T2Names]
 	theRows[,T1Names] <- old_BlockTwo
 	twinData[rowSelector,] <- theRows
 	return(twinData)

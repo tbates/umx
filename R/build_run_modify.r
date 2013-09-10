@@ -523,7 +523,6 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' model = umxAdd1(model)
 #' }
 
-
 umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP = 1) {
 	# DONE: RAM paths
 	# TODO add non-RAM
@@ -605,7 +604,6 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 		return(out[good_rows, ])
 	}
 }
-
 
 # ===============
 # = RAM Helpers =
@@ -912,7 +910,6 @@ umxIsRAMmodel <- function(obj) {
 	# TODO: get working on both the old and new objective model...
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
 }
-
 
 #' umxIsMxModel
 #'

@@ -318,3 +318,130 @@ xmuPropagateLabels <- function(model, suffix = "") {
     model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix)
     return(model)
 }
+
+#' xmuMI
+#'
+#' A function to compute and report modifications which would improve fit.
+#' You will probably use \code{\link{umxMI}} instead
+#'
+#' @param model an \code{\link{mxModel}} to derive modification indices for
+#' @param vector = Whether to report the results as a vector default = TRUE
+#' @seealso - \code{\link{umxMI}}, \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+#' @references - 
+#' @export
+#' @examples
+#' \dontrun{
+#' xmuMI(model)
+#' }
+
+xmuMI <- function(model, vector = T) {
+	# modification indices
+	# v0.9: written Michael Culbertson
+	# v0.91: up on github; added progress bar, Bates
+	# http://openmx.psyc.virginia.edu/thread/831
+	# http://openmx.psyc.virginia.edu/thread/1019
+	# http://openmx.psyc.virginia.edu/sites/default/files/mi-new.r
+	steps <- 5
+	bar <- txtProgressBar (min=0, max=steps, style=3)
+    setTxtProgressBar(bar, 1)
+	accumulate <- function(A, B, C, D, d) {
+		res <- matrix(0, d^2, d^2)    
+		for (ii in 1:(d^2)){
+			for (jj in ii:(d^2)){
+				g <- 1 + (ii - 1) %% d
+				h <- 1 + (ii - 1) %/% d
+				i <- 1 + (jj - 1) %% d
+				j <- 1 + (jj - 1) %/% d
+				res[ii, jj] <- res[jj, ii] <- A[g, i] * B[h, j] + C[g, j] * D[h, i]
+			}
+		}
+		res
+	}
+	accumulate.asym <- function(A, B, C, D, d) {
+		res <- matrix(0, d^2, d^2)    
+		for (ii in 1:(d^2)){
+			for (jj in 1:(d^2)){
+				g <- 1 + (ii - 1) %% d
+				h <- 1 + (ii - 1) %/% d
+				i <- 1 + (jj - 1) %% d
+				j <- 1 + (jj - 1) %/% d
+				res[ii, jj] <- A[g, i] * B[h, j] + C[g, j] * D[h, i]
+			}
+		}
+		res
+	}
+	A <- model$A@values
+	P <- model$S@values
+	S <- model$data@observed
+	J <- model$F@values
+	m <- dim(A)[1]
+	which.free <- c(model$A@free, model$S@free & upper.tri(diag(m), diag=T))
+	vars       <- colnames(A)
+	parNames   <- c(model$A@labels, model$S@labels)
+	parNames[is.na(parNames)] <- c(outer(vars, vars, paste, sep=' <- '),
+	outer(vars, vars, paste, sep=' <-> '))[is.na(parNames)]
+	NM     <- model$data@numObs - 1
+	I.Ainv <- solve(diag(m) - A) 
+	C      <- J %*% I.Ainv %*% P %*% t(I.Ainv) %*% t(J)
+	Cinv   <- solve(C)    
+	AA     <- t(I.Ainv) %*% t(J)
+	BB     <- J %*% I.Ainv %*% P %*% t(I.Ainv)
+	correct <- matrix(2, m, m)
+	diag(correct) <- 1
+	grad.P <- correct * AA %*% Cinv %*% (C - S) %*% Cinv %*% t(AA)
+	grad.A <- correct * AA %*% Cinv %*% (C - S) %*% Cinv %*% BB 
+	grad   <- c(grad.A, grad.P) * NM
+	names(grad) <- parNames
+	dF.dBdB <- accumulate(AA %*% Cinv %*% t(AA), t(BB) %*% Cinv %*% BB, AA %*% Cinv %*% BB, t(BB) %*% Cinv %*% t(AA), m)
+    setTxtProgressBar(bar, 2)
+	dF.dPdP <- accumulate(AA %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), m)
+    setTxtProgressBar(bar, 3)
+	dF.dBdP <- accumulate.asym(AA %*% Cinv %*% t(AA), t(BB) %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), t(BB) %*% Cinv %*% t(AA), m)
+    setTxtProgressBar(bar, 4)
+	correct.BB <- correct.PP <- correct.BP <- matrix(1, m^2, m^2)
+	correct.BB[diag(m)==0, diag(m)==0] <- 2
+	correct.PP[diag(m)==1, diag(m)==1] <- 0.5
+	correct.PP[diag(m)==0, diag(m)==0] <- 2
+	correct.BP[diag(m)==0, diag(m)==0] <- 2
+	Hessian <- NM*rbind(cbind(dF.dBdB * correct.BB,    dF.dBdP * correct.BP),
+	cbind(t(dF.dBdP * correct.BP), dF.dPdP * correct.PP))
+	rownames(Hessian) <- parNames
+	colnames(Hessian) <- parNames
+	# list(gradient=grad[which.free], Hessian[which.free, which.free])
+
+	hessian <- Hessian[which.free, which.free]
+	E.inv <- solve(hessian)
+	par.change <- mod.indices <- rep(0, 2*(m^2))                
+	for (i in 1:(2*(m^2))) {
+		k <- Hessian[i, i]
+		d <- Hessian[i, which.free]
+		par.change[i]  <- (-grad[i] / (k - d %*% E.inv %*% d))
+		mod.indices[i] <- (-0.5 * grad[i] * par.change[i])
+	}
+	names(mod.indices) <- parNames
+	names(par.change)  <- parNames
+	if (vector) {
+		which.ret <- c(!model$A@free & !diag(m), !model$S@free) # & upper.tri(diag(m), diag=T))
+		sel <- order(mod.indices[which.ret], decreasing=T)
+		ret <- list(mi=mod.indices[which.ret][sel], par.change=par.change[which.ret][sel])
+	} else {
+		mod.A <- matrix(mod.indices[1:(m^2)]   , m, m)
+		mod.P <- matrix(mod.indices[-(1:(m^2))], m, m)
+		par.A <- matrix(par.change[1:(m^2)]    , m, m)
+		par.P <- matrix(par.change[-(1:(m^2))] , m, m)
+		rownames(mod.A) <- colnames(mod.A) <- vars
+		rownames(mod.P) <- colnames(mod.P) <- vars
+		rownames(par.A) <- colnames(par.A) <- vars
+		rownames(par.P) <- colnames(par.P) <- vars
+		mod.A[model$A@free] <- NA
+		par.A[model$A@free] <- NA
+		diag(mod.A) <- NA
+		diag(par.A) <- NA
+		mod.P[model$S@free] <- NA
+		par.P[model$S@free] <- NA
+		ret <- list(mod.A=mod.A, par.A=par.A, mod.S=mod.P, par.S=par.P)
+	}
+    setTxtProgressBar(bar, 5)
+	close(bar)
+	return(ret)
+}
