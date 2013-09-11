@@ -2,13 +2,22 @@
 \alias{umxAdd1}
 \title{umxAdd1}
 \usage{
-  umxAdd1(model, pathList1, pathList2 = NULL, arrows = 2)
+  umxAdd1(model, pathList1 = NULL, pathList2 = NULL,
+    arrows = 2, maxP = 1)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to alter}
 
-  \item{pathList}{a list of variables that (currently) will
-  be expanded in a set of bivariate links}
+  \item{pathList}{a list of variables to generate a set of
+  paths}
+
+  \item{pathList2}{an optional second list: IF set paths
+  will be from pathList1 to members of this list}
+
+  \item{arrows}{Make paths with one or two arrows}
+
+  \item{maxP}{The threshold for returning values (defaults
+  to p==1 - all values)}
 }
 \value{
   a table of fit changes

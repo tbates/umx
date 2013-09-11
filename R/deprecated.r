@@ -10,6 +10,7 @@
 # = Deprecated =
 # ==============
 
+
 # umxTryHard
 #
 # umxTryHard Is deprecated: use \code{\link{umxRun}} instead
@@ -40,8 +41,7 @@ umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {s
 genEpi_Jiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {stop("please use umxJiggle in place of genEpi_Jiggle")}
 
 # umxPath
-# umxPath is not yet working: It's not clear it will be helpful: 
-# just use \code{\link{umxPath}} and \code{\link{umxLabel}} instead
+# umxPath is deprecated: Use \code{\link{mxPath}} and \code{\link{umxLabel}} instead
 #
 # @export
 # @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
@@ -211,4 +211,14 @@ umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 		}
 	}
 	return(theLabels)
+}
+
+col.as.numeric <- function(df) {
+	stop("col.as.numeric is deprecated. Please replace with umx.as.numeric()")
+	# use case
+	# col.as.numeric(df)
+	for (i in names(df)) {
+		df[,i] = as.numeric(df[,i])
+	}
+	return(df)
 }
