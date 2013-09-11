@@ -628,10 +628,11 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 # = Comparison helpers =
 # ======================
 
-#' %<%
+#' umxGreaterThan
 #'
 #' A version of less-than that excludes NA as a match
 #'
+#' \alias "%<%"
 #' @export
 #' @seealso - \code{\link{%>%}}, 
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -644,10 +645,11 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 	return(lessThan)
 }
 
-#' %>%
+#' umxGreaterThan
 #'
 #' A version of greater-than that excludes NA as a match
 #'
+#' \alias "%>%" 
 #' @export
 #' @seealso - \code{\link{%<%}}, 
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -659,7 +661,6 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 	moreThan[is.na(moreThan)] = FALSE
 	return(moreThan)
 }
-
 
 # =====================
 # = Utility functions =
