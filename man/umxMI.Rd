@@ -16,7 +16,7 @@
 
   \item{decreasing}{How to sort (default = T, decreasing)}
 
-  \item{cache}{= Future function to cahce these
+  \item{cache}{= Future function to cache these
   time-consuming results}
 }
 \description{
@@ -25,8 +25,8 @@
 }
 \examples{
 \dontrun{
-umxMI_top(model)
-umxMI_top(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
+umxMI(model)
+umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 }
 }
 \references{

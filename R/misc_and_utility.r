@@ -562,24 +562,39 @@ swapABlock <- function(twinData, rowSelector, T1Names, T2Names) {
 #' @export
 #' @seealso - \code{\link{round}}
 #' @examples
-#' \dontrun{
-#' umx_u_APA_pval(1.23E3)
-#' }
+#' umx_u_APA_pval(1.23E-3)
+#' umx_u_APA_pval(c(1.23E-3, .5))
+#' umx_u_APA_pval(c(1.23E-3, .5), addComparison=F)
 
 umx_u_APA_pval <- function(p, min = .001, rounding = 3, addComparison=T) {
-	if(p < min){
-		if(addComparison){
-			return(paste0("< ", min))
-		} else {
-			return(min)
+	if(length(p)>1){
+		o = rep(NA, length(p))
+		for(i in seq_along(p)) {
+		   o[i] = umx_u_APA_pval(p[i], min = min, rounding = rounding, addComparison=addComparison)
 		}
+		return(o)
 	} else {
-		if(addComparison){
-			return(paste0("= ", round(p, rounding)))
-		} else {
-			return(round(p, rounding))
+		if(is.nan(p) | is.na(p)){
+			if(addComparison){
+				return(paste0("= ", p))
+			} else {
+				return(p)
+			}
 		}
-	}	
+		if(p < min){
+			if(addComparison){
+				return(paste0("< ", min))
+			} else {
+				return(min)
+			}
+		} else {
+			if(addComparison){
+				return(paste0("= ", round(p, rounding)))
+			} else {
+				return(round(p, rounding))
+			}
+		}	
+	}
 }
 
 
@@ -620,8 +635,6 @@ rename <- function (x, replace, old = NA) {
 	setNames(x, ifelse(is.na(new_names), old_names, new_names))
 }
 
-
-
 grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 	# output = "both", "label" or "name"
 	# grepSPSS_labels(relig, "Race", output="both", ignore.case=T) 
@@ -658,8 +671,6 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 		}
 	}
 }
-
-
 
 # ======================
 # = Comparison helpers =
