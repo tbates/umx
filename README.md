@@ -13,14 +13,14 @@ library("umx")
 ```
 <!-- source("http://timbates.wdfiles.com/local--files/start/umx.lib.R") -->
 
-The umx package has helpers supporting:
+The umx package has a range of useful helpers to help you get things done in SEM. This list is not comprehensive: install the package to learn more
 
 1. Building Models
 	* `umxStart()` *# Add sane start values to a model: **very** helpful*
 	* `umxLabel()` *# Add labels to paths: Labels allow you to set, equate, and drop paths by label!*
 	* `umxLatent()` *# Helper for building formative and reflective latent variables from their manifest indicators*
 2. Run models
-	* `umxRun()` *# Use in place of mxRun to: compute saturated for raw data, run model until it returns green, turn off features that slow model evaluation, like the Hessian.*
+	* `umxRun()` *# Use in place of mxRun to: set labels, starts, compute saturated for raw data, run model until it returns green, turn off features that slow model evaluation*
 3. Reporting output
 	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA)*
 	* `umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
@@ -31,10 +31,11 @@ The umx package has helpers supporting:
 		* `summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)`
 		* **nb**:* Saturated solutions are not computable for definition variables and some other models.
 3. Modify models
-	* `umxMI_top()` # Report the top n modification indices
-		* `umxMI()` *# Get modification indices for a model*
+	* `umxMI()` # Report the top n modification indices
+	* `umxAdd1()` # add parameters and return a table of the effect on fit
+	* `umxDrop1()` # Drop parameters and return a table of the effect on fit
 	* `umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. like `omxGetParameters` but uses regular expressions.*
-	* `umxReRun(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, newName = NA, verbose = F, intervals = F)`
+	* `umxReRun()` *# re-run a model: Quickly drop or free parameters, rename the model, and re-run...*
 4. Data and package helpers
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
 	* `lower2full(lower.no.diag, diag=F, byrow=F)`  *# Create a full matrix from a lower matrix of data*
