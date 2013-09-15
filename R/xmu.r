@@ -312,7 +312,6 @@ xmuStart_value_list <- function(x = 1, sd = NA, n = 1) {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 
 xmuPropagateLabels <- function(model, suffix = "") {
-    # 
     # useage: xmuPropagateLabels(model, suffix = "")
 	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix, suffix = suffix)
     model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix)
