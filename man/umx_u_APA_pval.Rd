@@ -23,9 +23,9 @@
   or .134E-16
 }
 \examples{
-\dontrun{
-umx_u_APA_pval(1.23E3)
-}
+umx_u_APA_pval(1.23E-3)
+umx_u_APA_pval(c(1.23E-3, .5))
+umx_u_APA_pval(c(1.23E-3, .5), addComparison=F)
 }
 \seealso{
   - \code{\link{round}}
