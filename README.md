@@ -23,13 +23,10 @@ The umx package has a range of useful helpers to help you get things done in SEM
 	* `umxRun()` *# Use in place of mxRun to: set labels, starts, compute saturated for raw data, run model until it returns green, turn off features that slow model evaluation*
 3. Reporting output
 	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA)*
-	* `umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
+	* `umxPlot(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
 	* `umxStandardizeModel(model, return = "model")` #* standardize a RAM model*
 		* **nb**:* `summary()` computes standardized paths for RAM models, but this function is still useful, as `omxGraphviz()` does not, and the function `.standardizeRAMModel()` is not exposed in OpenMx.
 	* `umxTime(fit1)`  *# Report the time taken by a model in a compact friendly, programable format*
-	* `umxSaturated(model)` *# Create a saturated model when raw data are being used. *
-		* `summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)`
-		* **nb**:* Saturated solutions are not computable for definition variables and some other models.
 3. Modify models
 	* `umxMI()` # Report the top n modification indices
 	* `umxAdd1()` # add parameters and return a table of the effect on fit
@@ -40,6 +37,9 @@ The umx package has a range of useful helpers to help you get things done in SEM
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
 	* `lower2full(lower.no.diag, diag=F, byrow=F)`  *# Create a full matrix from a lower matrix of data*
 	* `umxUpdateOpenMx(bleedingEdge = FALSE, loadNew = TRUE)` *# Update the OpenMx package*
+	* `umxSaturated(model)` *# Create a saturated model when raw data are being used. *
+		* `summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)`
+		* **nb**:* Saturated solutions are not computable for definition variables and some other models.
 
 Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.
 

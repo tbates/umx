@@ -216,7 +216,7 @@ umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 	invisible(model)
 }
 
-#' umxGraph_RAM
+#' umxPlot
 #'
 #' A function to create graphical path diagrams from your OpenMx models!
 #'
@@ -233,12 +233,12 @@ umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' umxGraph_RAM(model)
+#' umxPlot(model)
 #' }
 
-umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
+umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
 	# Purpose: Graphical output of your model using "graphviz":
-	# umxGraph_RAM(fit1, std=T, precision=3, dotFilename="name")
+	# umxPlot(fit1, std=T, precision=3, dotFilename="name")
 	# nb: legal values for "pathLabels" are "both", "none" or "labels"
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap', 'sentence', 'numeric', 'series', and 'arithmet'
