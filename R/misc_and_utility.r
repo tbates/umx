@@ -1,6 +1,6 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# setwd("~/bin/umx"); devtools::document(); devtools::build(); devtools::install(); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxX")
@@ -676,19 +676,19 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 # = Comparison helpers =
 # ======================
 
-#' umxGreaterThan
+#' umxLessThan
 #'
-#' A version of less-than that excludes NA as a match
+#' A version of less-than which returns FALSE for NAs (rather than NA)
 #'
 #' \alias "%<%"
+#'
 #' @export
-#' @seealso - \code{\link{%>%}}, 
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @seealso - \code{\link{umxGreaterThan}}, 
 #' @examples
-#' c(1:3,NA,5) = %<% 2 
+#' c(1:3, NA, 5) = %<% 2
 
-"%<%"<- function(table, x){
-	lessThan = table<  x
+umxLessThan <- function(table, x){
+	lessThan = table < x
 	lessThan[is.na(lessThan)] = FALSE
 	return(lessThan)
 }
@@ -698,14 +698,15 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 #' A version of greater-than that excludes NA as a match
 #'
 #' \alias "%>%" 
+#'
 #' @export
-#' @seealso - \code{\link{%<%}}, 
+#' @seealso - \code{\link{umxLessThan}}, 
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' c(1:3,NA,5) = %>% 2 
 
-"%>%"<- function(table, x){
-	moreThan = table<  x
+umxGreaterThan <- function(table, x){
+	moreThan = table > x
 	moreThan[is.na(moreThan)] = FALSE
 	return(moreThan)
 }

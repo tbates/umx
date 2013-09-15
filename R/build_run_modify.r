@@ -755,10 +755,10 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 	# bad usages
 	# mxLatent("Read") # no too defined
 	# mxLatent("Read", forms=manifestsRead, formedBy=manifestsRead) #both defined
-	# m1 = mxLatent("Read", formedBy = manifestsRead, model.name="base"); umxGraph_RAM(m1, std=F, dotFilename="name")
+	# m1 = mxLatent("Read", formedBy = manifestsRead, model.name="base"); umxPlot(m1, std=F, dotFilename="name")
 	# m2 = mxLatent("Read", forms = manifestsRead, as.model="base"); 
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
-	# umxGraph_RAM(m2, std=F, dotFilename="name")
+	# umxPlot(m2, std=F, dotFilename="name")
 	# mxLatent("Read", forms = manifestsRead)
 }
 

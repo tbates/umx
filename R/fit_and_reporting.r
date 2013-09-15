@@ -325,7 +325,6 @@ umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pa
 		return (cat(digraph));
 	}
 }
-# end umxGraph_RAM(fit1,std=T, precision=3, dotFilename="name")
 
 #' umxMI
 #'
