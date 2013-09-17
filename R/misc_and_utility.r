@@ -423,10 +423,9 @@ umxFindObject <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' renameFile(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
-#' renameFile(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceStr="S\1", test = T)
+#' umxRenameFile(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
+#' umxRenameFile(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceStr="S\1", test = T)
 #' }
-
 umxRenameFile <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, listPattern = NA, test = T, overwrite = F) {
 	# uppercase = u$1
 	if(baseFolder == "Finder"){
