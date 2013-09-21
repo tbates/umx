@@ -730,3 +730,27 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 	return(list(sigma=totalCondCov, mu=totalMean))
 	
 }
+
+# helper function which enables AIC(model)
+# http://openmx.psyc.virginia.edu/thread/931#comment-4858
+# brandmaier
+
+logLik.MxModel<-function(model) {
+	Minus2LogLikelihood <- NA
+	if (!is.null(model@output) & !is.null(model@output$Minus2LogLikelihood)){
+		Minus2LogLikelihood <- (-0.5) * model@output$Minus2LogLikelihood		
+	}
+
+	if (!is.null(model@data)){
+		attr(Minus2LogLikelihood,"nobs") <- model@data@numObs
+	}else{ 
+		attr(Minus2LogLikelihood,"nobs") <- NA
+	}
+	if (!is.null(model@output)){
+		attr(Minus2LogLikelihood,"df")<- length(model@output$estimate)	
+	} else {
+		attr(Minus2LogLikelihood, "df") <- NA
+	}
+	class(Minus2LogLikelihood) <- "logLik"
+	return(Minus2LogLikelihood);
+}
