@@ -587,8 +587,8 @@ umx_u_APA_pval <- function(p, min = .001, rounding = 3, addComparison=T) {
 				return(min)
 			}
 		} else {
-			if(addComparison){
-				return(paste0("= ", round(p, rounding)))
+			if(addComparison){				
+				return(paste0("= ", format(round(p, rounding), scientific = F, nsmall=rounding)))
 			} else {
 				return(round(p, rounding))
 			}

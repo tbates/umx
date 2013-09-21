@@ -34,8 +34,8 @@
 }
 \examples{
 \dontrun{
-renameFile(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
-renameFile(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceStr="S\\1", test = T)
+umxRenameFile(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
+umxRenameFile(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceStr="S\\1", test = T)
 }
 }
 \references{
