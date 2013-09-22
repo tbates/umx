@@ -1,0 +1,45 @@
+\name{umx_move_file}
+\alias{umx_move_file}
+\title{umx_move_file}
+\usage{
+  umx_move_file(baseFolder = NA, findStr = NA,
+    fileNameList = NA, destFolder = NA, test = T,
+    overwrite = F)
+}
+\arguments{
+  \item{baseFolder}{The folder to search in. If set to
+  "Finder" (and you are on OS X) it will use the current
+  frontmost Finder window. If it is blank, a choose folder
+  dialog will be thrown.}
+
+  \item{findStr}{= The string to find}
+
+  \item{replaceStr}{= The replacement string}
+
+  \item{listPattern}{= A pre-filter for files}
+
+  \item{test}{Boolean determining whether to chagne the
+  names, or just report on what would have happened}
+
+  \item{overwrite}{Boolean determining}
+}
+\value{
+  -
+}
+\description{
+  move files. On OS X, the function can access the current
+  frontmost Finder window. The file moves are fast and,
+  because you can use regular expressions, powerful
+}
+\examples{
+\dontrun{
+base = "/Users/tim/Music/iTunes/iTunes Music/"
+dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
+umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test=F)
+}
+}
+\seealso{
+  - \code{\link{umx_rename_file}},
+  \code{\link{file.rename}}
+}
+

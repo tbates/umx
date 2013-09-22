@@ -1,0 +1,31 @@
+\name{umx_swap_a_block}
+\alias{umx_swap_a_block}
+\title{umx_swap_a_block}
+\usage{
+  umx_swap_a_block(theData, rowSelector, T1Names, T2Names)
+}
+\arguments{
+  \item{theData}{a data frame to swap within}
+
+  \item{rowSelector}{rows to swap amongst columns}
+
+  \item{T1Names}{the first set of columns}
+
+  \item{T2Names}{the second set of columns}
+}
+\value{
+  - dataframe
+}
+\description{
+  Swap a block of rows of a datset between two lists
+  variables (typically twin 1 and twin2)
+}
+\examples{
+test = data.frame(a=paste("a",1:10,sep=""),b=paste("b",1:10,sep=""), c=paste("c",1:10,sep=""),d=paste("d",1:10,sep=""),stringsAsFactors=F)
+umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
+umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
+}
+\seealso{
+  - \code{\link{subset}}
+}
+

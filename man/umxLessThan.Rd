@@ -9,7 +9,7 @@
   (rather than NA)
 }
 \details{
-  \alias "%<%"
+  \alias "\%<\%"
 }
 \examples{
 c(1:3, NA, 5) = \%<\% 2

@@ -1,3 +1,6 @@
+# utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
+# so umx_swap_a_block()
+
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); devtools::document(); devtools::build(); devtools::install(); 
@@ -6,11 +9,15 @@
 # devtools::dev_help("umxX")
 # show_news()
 
+# =====================
+# = utility functions =
+# =====================
+
 # ====================
 # = Updating helpers =
 # ====================
 
-#' umxUpdateOpenMx
+#' umx_update_OpenMx
 #'
 #' This function automates the process of updating OpenMx while it is not a cran package
 #'
@@ -20,10 +27,10 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' umxUpdateOpenMx()
+#' umx_update_OpenMx()
 #' }
 
-umxUpdateOpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
+umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 	if( "OpenMx" %in% .packages() ){
 		oldV = mxVersion();
 		if(anyOK){
@@ -34,7 +41,7 @@ umxUpdateOpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 		message("existing version \"" ,oldV, "\" was detached")
 	}	
 	if (bleedingEdge){
-		install.packages('OpenMx', repos='http://openmx.psyc.virginia.edu/testing/');
+		install.packages('OpenMx', repos = 'http://openmx.psyc.virginia.edu/testing/');
 	} else {
 		if (.Platform$OS.type == "windows") {
 			if (!is.null(.Platform$r_arch) && .Platform$r_arch == "x64") {
@@ -108,9 +115,6 @@ umxUpdateOpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 	}
 }
 
-# =====================
-# = utility functions =
-# =====================
 #' umxHasCIs
 #'
 #' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
@@ -376,9 +380,9 @@ umxLower2full <- function(lower.data, diag = F, byrow = T) {
 	return(mat)
 }
 
-#' umxFindObject
+#' umx_find_object
 #'
-#' find objects a certain class, whose name matches a search string.
+#' Find objects a certain class, whose name matches a search string.
 #' The string (pattern) is grep-enabled, so you can match wild-cards
 #'
 #' @param pattern the pattern that matching objects must contain
@@ -389,11 +393,11 @@ umxLower2full <- function(lower.data, diag = F, byrow = T) {
 #' @references - 
 #' @examples
 #' \dontrun{
-#' umxFindObject("^m[0-9]") # mxModels beginning "m1" etc.
-#  umxFindObject("", "MxModel") # all MxModels
+#' umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
+#  umx_find_object("", "MxModel") # all MxModels
 #' }
 
-umxFindObject <- function(pattern = ".*", requiredClass = "MxModel") {
+umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 	# Use case: umxFindObject("Chol*", "MxModel")
 	matchingNames = ls(envir = sys.frame(-1), pattern = pattern) # envir
 	matchingObjects = c()
@@ -405,7 +409,7 @@ umxFindObject <- function(pattern = ".*", requiredClass = "MxModel") {
 	return(matchingObjects)
 }
 
-#' umxRenameFile
+#' umx_rename_file
 #'
 #' rename files. On OS X, the function can access the current frontmost Finder window.
 #' The file renaming is fast and, because you can use regular expressions, powerful
@@ -423,10 +427,10 @@ umxFindObject <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' umxRenameFile(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
-#' umxRenameFile(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceStr="S\1", test = T)
+#' umx_rename_file(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
+#' umx_rename_file(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceStr="S\1", test = T)
 #' }
-umxRenameFile <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, listPattern = NA, test = T, overwrite = F) {
+umx_rename_file <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, listPattern = NA, test = T, overwrite = F) {
 	# uppercase = u$1
 	if(baseFolder == "Finder"){
 		baseFolder = system(intern = T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
@@ -464,11 +468,28 @@ umxRenameFile <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, 
 	message("changed ", changed)
 }
 
-moveFile <- function(baseFolder = NA, findStr = NA, fileNameList = NA, destFolder = NA, test = T, overwrite = F) {
-	# use case: 
-	# base = "/Users/tim/Music/iTunes/iTunes Music/"
-	# dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
-	# moveFile(baseFolder = base, fileNameList = toMove, destFolder = dest, test=F)
+#' umx_move_file
+#'
+#' move files. On OS X, the function can access the current frontmost Finder window.
+#' The file moves are fast and, because you can use regular expressions, powerful
+#'
+#' @param baseFolder  The folder to search in. If set to "Finder" (and you are 
+#' on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.
+#' @param findStr = The string to find
+#' @param replaceStr = The replacement string
+#' @param listPattern = A pre-filter for files
+#' @param test Boolean determining whether to chagne the names, or just report on what would have happened
+#' @param overwrite Boolean determining 
+#' @return - 
+#' @export
+#' @seealso - \code{\link{umx_rename_file}}, \code{\link{file.rename}}
+#' @examples
+#' \dontrun{
+#' base = "/Users/tim/Music/iTunes/iTunes Music/"
+#' dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
+#' umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test=F)
+#' }
+umx_move_file <- function(baseFolder = NA, findStr = NA, fileNameList = NA, destFolder = NA, test = T, overwrite = F) {
 	if(is.na(destFolder)){
 		stop("destFolder can't be NA")
 	}
@@ -480,7 +501,6 @@ moveFile <- function(baseFolder = NA, findStr = NA, fileNameList = NA, destFolde
 		message("Using selected folder:", baseFolder)
 	}
 	moved = 0
-	# mv -n "/Users/tim/Music/iTunes/iTunes Music/Music/"
 	for (fn in fileNameList) {
 		if(test){
 			message("would move ", fn, " to ", destFolder)	
@@ -537,16 +557,29 @@ umx.as.numeric <- function(df) {
 	return(df)
 }
 
-swapABlock <- function(twinData, rowSelector, T1Names, T2Names) {
-	# test = data.frame(a=paste("a",1:10,sep=""),b=paste("b",1:10,sep=""), c=paste("c",1:10,sep=""),d=paste("d",1:10,sep=""),stringsAsFactors=F)
-	# swapABlock(test, rowSelector=c(1,2,3,6), T1Names="b", T2Names="c")
-	# swapABlock(test, rowSelector=c(1,2,3,6), T1Names=c("a","c"), T2Names=c("b","d"))
-	theRows = twinData[rowSelector,]
+#' umx_swap_a_block
+#'
+#' Swap a block of rows of a datset between two lists variables (typically twin 1 and twin2)
+#'
+#' @param theData a data frame to swap within
+#' @param rowSelector rows to swap amongst columns
+#' @param T1Names the first set of columns
+#' @param T2Names the second set of columns
+#' @return - dataframe
+#' @export
+#' @seealso - \code{\link{subset}}
+#' @examples
+#' test = data.frame(a=paste("a",1:10,sep=""),b=paste("b",1:10,sep=""), c=paste("c",1:10,sep=""),d=paste("d",1:10,sep=""),stringsAsFactors=F)
+#' umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
+#' umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
+#'
+umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
+	theRows = theData[rowSelector,]
 	old_BlockTwo = theRows[,T2Names]
 	theRows[,T1Names] -> theRows[, T2Names]
 	theRows[,T1Names] <- old_BlockTwo
-	twinData[rowSelector,] <- theRows
-	return(twinData)
+	theData[rowSelector,] <- theRows
+	return(theData)
 }
 
 #' umx_u_APA_pval
@@ -565,11 +598,11 @@ swapABlock <- function(twinData, rowSelector, T1Names, T2Names) {
 #' umx_u_APA_pval(c(1.23E-3, .5))
 #' umx_u_APA_pval(c(1.23E-3, .5), addComparison=F)
 
-umx_u_APA_pval <- function(p, min = .001, rounding = 3, addComparison=T) {
-	if(length(p)>1){
+umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = T) {
+	if(length(p) > 1){
 		o = rep(NA, length(p))
 		for(i in seq_along(p)) {
-		   o[i] = umx_u_APA_pval(p[i], min = min, rounding = rounding, addComparison=addComparison)
+		   o[i] = umx_u_APA_pval(p[i], min = min, rounding = rounding, addComparison = addComparison)
 		}
 		return(o)
 	} else {
@@ -588,7 +621,7 @@ umx_u_APA_pval <- function(p, min = .001, rounding = 3, addComparison=T) {
 			}
 		} else {
 			if(addComparison){				
-				return(paste0("= ", format(round(p, rounding), scientific = F, nsmall=rounding)))
+				return(paste0("= ", format(round(p, rounding), scientific = F, nsmall = rounding)))
 			} else {
 				return(round(p, rounding))
 			}
@@ -679,7 +712,7 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 #'
 #' A version of less-than which returns FALSE for NAs (rather than NA)
 #'
-#' \alias "%<%"
+#' \alias "\%<\%"
 #'
 #' @export
 #' @seealso - \code{\link{umxGreaterThan}}, 
@@ -696,7 +729,7 @@ umxLessThan <- function(table, x){
 #'
 #' A version of greater-than that excludes NA as a match
 #'
-#' \alias "%>%" 
+#' \alias "\%>\%" 
 #'
 #' @export
 #' @seealso - \code{\link{umxLessThan}}, 
