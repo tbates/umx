@@ -517,15 +517,40 @@ umx_move_file <- function(baseFolder = NA, findStr = NA, fileNameList = NA, dest
 	message("moved (or would have moved)", moved)
 }
 
-cor.prob <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {
-	# cor.prob(myFADataRaw[1:8,])
+#' umx_cor
+#'
+#' Report correlations and their p-values
+#'
+#' @param X a matrix or dataframe
+#' @param df the degrees of freedom for the test
+#' @param use how to handle missing data
+#' @param digits rounding of answers
+#' @return - matrix of correlations and p-values
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umx_cor(myFADataRaw[1:8,])
+#' }
+
+
+umx_cor <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {
+	# see also
+	himisc::rcorr( )
+	warning("don't use this until we are computing n properly")
+	# nvar    = dim(x)[2]
+	# nMatrix = diag(NA, nrow= nvar)
+	# for (i in 1:nvar) {
+	# 	x[,i]
+	# }
 	R <- cor(X, use = use)
 	above <- upper.tri(R)
 	below <- lower.tri(R)
 	r2 <- R[above]^2
 	Fstat <- r2 * df/(1 - r2)
 	R[row(R) == col(R)] <- NA # NA on the diagonal
-	R[above] <- pf(Fstat, 1, df, lower.tail=F)
+	R[above] <- pf(Fstat, 1, df, lower.tail = F)
 	R[below] = round(R[below], digits)
 	R[above] = round(R[above], digits)
 	# R[above] = paste("p=",round(R[above], digits))
@@ -746,22 +771,42 @@ umxGreaterThan <- function(table, x){
 # =====================
 # = Utility functions =
 # =====================
+round.num <- function(x, digits) { message("Use umx_round()")}
 
-round.num <- function(x, digits) {
-	# foreach column, if numeric, round
+#' umx_round
+#'
+#' A version of round() which works on dataframes that contain non-numeric data (or data that cannot be coerced to numeric)
+#' Helpful for dealing with table output that mixes numeric and string types.
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' model = umx_round(model)
+#' }
+
+umx_round <- function(x, digits, coerce = T) {
+	# for each column, if numeric, round
 	rows = dim(x)[1]
 	cols = dim(x)[2]
-	for(r in rows) {
-		for(c in cols) {
-			if(is.numeric(x[r,c])){
-				x[r,c] = round(x[r,c],digits)
+	for(c in 1:cols) {
+		if(coerce){
+			for(r in 1:rows) {
+				x[r, c] = round(as.numeric(x[r, c]), digits)
+			}
+		} else {
+			if(is.numeric(x[1, c])){
+				x[ , c] = round(x[ , c], digits)
 			}
 		}
 	}
 	return(x)
 }
 
-specify_decimal <- function(x, k) format(round(x, k), nsmall=k)
+specify_decimal <- function(x, k) format(round(x, k), nsmall = k)
 
 # R2HTML::HTML(a, file="tables.html"); system("open tables.html")
 

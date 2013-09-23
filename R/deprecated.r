@@ -222,3 +222,5 @@ col.as.numeric <- function(df) {
 	}
 	return(df)
 }
+
+cor.prob <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {message("Use umx_cor")}

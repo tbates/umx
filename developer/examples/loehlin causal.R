@@ -1,15 +1,36 @@
 # My reasoning is that a long rich tail might create an artifact of higher heritability, and because older people were born in earlier times, and were therefore lower SES on average, the age=SES correlation will work against the prediction.
 
+### How does school raise IQ?
+# Developing intuition: System I intuition doesn't require reasoning. A good intuition, therefore, decouples ability from g. If you "get the procedure"
+# Procedural knowledge: This is a mechanism for intuition. 
 
-fit1 = mxModel("fit1",
-	mxMatrix("Full", nrow=1, ncol=1, free=T, values=1, name="bat"),
-	mxMatrix("Full", nrow=1, ncol=1, free=T, values=1, name="ball"),
-	mxAlgebra(a + b, name="a_plus_b"),
-	mxConstraint(a_plus_b == 1.10, name = "total"),
-	mxAlgebraObjective(algebra="ab", numObs= NA, numStats=NA)
+fit1 = mxModel("BatAndBallProblem",
+	mxMatrix("Full", nrow = 1, ncol = 1, free= T, name = "bat"), 
+	mxMatrix("Full", nrow = 1, ncol = 1, free= T, name = "ball"), 
+	mxConstraint((bat + ball) == 1.10, name = "total"),
+	mxConstraint((bat - ball) == 1.00 , name = "batOneMoreThanBall"),
+	# OpenMx works by finding values for each free parameter which jointly make the model fit best
+	# This "Optimization" means that some value has to provided as a target: the Objective
+	# Typically that would be the predicting the variances and covariances in a dataframe, 
+	# but it can also be an algebra. Here's an example where we just solve some simple constraints: the 
+	mxAlgebraObjective(algebra = "ball", numObs = NA, numStats = NA)
 )
 fit1 = mxRun(fit1)
-mxEval(list(ab = ab), fit1)
+mxEval(list(bat = bat, ball = ball), fit1)
+
+
+# This version runs, and returns bad values (because bat and ball are fixed at 0 by default.
+# 
+# Even though the constraints are not met, there's not error. Isn't that wrong?
+
+fit2 = mxModel("Bad_BatAndBall",
+	mxMatrix("Full", nrow = 1, ncol = 1, name = "bat" ), 
+	mxMatrix("Full", nrow = 1, ncol = 1, name = "ball"), 
+	mxConstraint((bat + ball) == 1.10 , name = "total"),
+	mxConstraint((bat - ball) == 1.00  , name = "batOneMoreThanBall"),
+	mxAlgebraObjective(algebra = "ball", numObs = NA, numStats = NA)
+)
+fit2 = mxRun(fit2); mxEval(list(bat = bat, ball = ball), fit1)
 
 demo(OneFactorModelDemo)
 
