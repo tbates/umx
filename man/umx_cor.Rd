@@ -1,0 +1,35 @@
+\name{umx_cor}
+\alias{umx_cor}
+\title{umx_cor}
+\usage{
+  umx_cor(X, df = nrow(X) - 2,
+    use = "pairwise.complete.obs", digits = 3)
+}
+\arguments{
+  \item{X}{a matrix or dataframe}
+
+  \item{df}{the degrees of freedom for the test}
+
+  \item{use}{how to handle missing data}
+
+  \item{digits}{rounding of answers}
+}
+\value{
+  - matrix of correlations and p-values
+}
+\description{
+  Report correlations and their p-values
+}
+\examples{
+\dontrun{
+umx_cor(myFADataRaw[1:8,])
+}
+}
+\references{
+  - \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+  - \code{\link{umxLabel}}, \code{\link{umxRun}},
+  \code{\link{umxStart}}
+}
+

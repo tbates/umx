@@ -758,7 +758,6 @@ umxLessThan <- function(table, x){
 #'
 #' @export
 #' @seealso - \code{\link{umxLessThan}}, 
-#' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' c(1:3,NA,5) = %>% 2 
 

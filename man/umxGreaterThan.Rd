@@ -13,9 +13,6 @@
 \examples{
 c(1:3,NA,5) = \%>\% 2
 }
-\references{
-  - \url{http://openmx.psyc.virginia.edu}
-}
 \seealso{
   - \code{\link{umxLessThan}},
 }
