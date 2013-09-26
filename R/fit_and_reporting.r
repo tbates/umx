@@ -154,7 +154,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 			} else {
 				x = paste0(
 					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi, 2), # was A7
-					", p "    , umx_u_APA_pval(p, .001, 3),
+					", p "      , umx_APA_pval(p, .001, 3),
 					"; CFI = "  , round(CFI,3),
 					"; TLI = "  , round(TLI,3),
 					"; RMSEA = ", round(RMSEA, 3)
