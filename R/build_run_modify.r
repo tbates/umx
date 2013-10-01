@@ -37,11 +37,11 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLa
 	# TODO: return change in -2LL for models being re-run
 	# TODO: stash saturated model for re-use
 	# Optimise for speed
-	if(setStarts){
-		model = umxStart(model)
-	}
 	if(setLabels){
 		model = umxLabel(model)
+	}
+	if(setStarts){
+		model = umxStart(model)
 	}
 
 	if(n == 1){
