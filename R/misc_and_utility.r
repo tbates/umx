@@ -537,7 +537,7 @@ umx_move_file <- function(baseFolder = NA, findStr = NA, fileNameList = NA, dest
 
 umx_cor <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {
 	# see also
-	himisc::rcorr( )
+	# hmisc::rcorr( )
 	warning("don't use this until we are computing n properly")
 	# nvar    = dim(x)[2]
 	# nMatrix = diag(NA, nrow= nvar)
