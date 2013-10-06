@@ -737,14 +737,14 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 #'
 #' A version of less-than which returns FALSE for NAs (rather than NA)
 #'
-#' \alias "\%<\%"
+#' @aliases %%<%%
 #'
 #' @export
-#' @seealso - \code{\link{umxGreaterThan}}, 
+#' @seealso - \code{\link{umx_greater_than}}, 
 #' @examples
 #' c(1:3, NA, 5) = %<% 2
 
-umxLessThan <- function(table, x){
+umx_less_than <- function(table, x){
 	lessThan = table < x
 	lessThan[is.na(lessThan)] = FALSE
 	return(lessThan)
@@ -754,14 +754,14 @@ umxLessThan <- function(table, x){
 #'
 #' A version of greater-than that excludes NA as a match
 #'
-#' \alias "\%>\%" 
+#' @aliases %%>%%
 #'
 #' @export
-#' @seealso - \code{\link{umxLessThan}}, 
+#' @seealso - \code{\link{umx_less_than}}, 
 #' @examples
 #' c(1:3,NA,5) = %>% 2 
 
-umxGreaterThan <- function(table, x){
+umx_greater_than <- function(table, x){
 	moreThan = table > x
 	moreThan[is.na(moreThan)] = FALSE
 	return(moreThan)

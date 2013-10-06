@@ -1,4 +1,5 @@
 \name{umxGreaterThan}
+\alias{\%\%>\%\%}
 \alias{umxGreaterThan}
 \title{umxGreaterThan}
 \usage{
@@ -6,9 +7,6 @@
 }
 \description{
   A version of greater-than that excludes NA as a match
-}
-\details{
-  \alias "\%>\%"
 }
 \examples{
 c(1:3,NA,5) = \%>\% 2

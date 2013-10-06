@@ -1,4 +1,5 @@
 \name{umxLessThan}
+\alias{\%\%<\%\%}
 \alias{umxLessThan}
 \title{umxLessThan}
 \usage{
@@ -7,9 +8,6 @@
 \description{
   A version of less-than which returns FALSE for NAs
   (rather than NA)
-}
-\details{
-  \alias "\%<\%"
 }
 \examples{
 c(1:3, NA, 5) = \%<\% 2

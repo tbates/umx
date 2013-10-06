@@ -1,13 +1,12 @@
 # https://r-forge.r-project.org/project/admin/?group_id=1745
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# setwd("~/bin/umx"); devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # require(OpenMx); require(umx); ?umx
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxX")
 # show_news()
-
 # =================================
 # = Speed  and Efficiency Helpers =
 # =================================
