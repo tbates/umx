@@ -3,7 +3,7 @@
 \title{umx_u_APA_pval}
 \usage{
   umx_APA_pval(p, min = 0.001, rounding = 3,
-    addComparison = T)
+    addComparison = NA)
 }
 \arguments{
   \item{p}{A p-value to round}
@@ -23,9 +23,9 @@
   or .134E-16
 }
 \examples{
-umx_u_APA_pval(1.23E-3)
-umx_u_APA_pval(c(1.23E-3, .5))
-umx_u_APA_pval(c(1.23E-3, .5), addComparison=F)
+umx_APA_pval(1.23E-3)
+umx_APA_pval(c(1.23E-3, .5))
+umx_APA_pval(c(1.23E-3, .5), addComparison=F)
 }
 \seealso{
   - \code{\link{round}}

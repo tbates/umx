@@ -3,7 +3,7 @@
 \title{umxCompare}
 \usage{
   umxCompare(base = NULL, comparison = NULL, all = TRUE,
-    output = "return")
+    output = "return", digits = 3)
 }
 \arguments{
   \item{base}{The base \code{\link{mxModel}} for

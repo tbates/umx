@@ -178,13 +178,13 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #'
 #' This function also reports any problems computing a CI. The codes are standard OpenMx errors and warnings
 #' \itemize{
-#'  \item{"1"}{The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN)}
-#'  \item{"2"}{The linear constraints and bounds could not be satisfied. The problem has no feasible solution.}
-#'  \item{"3"}{The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.}
-#'  \item{"4"}{The major iteration limit was reached (Mx status BLUE).}
-#'  \item{"6"}{The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)}
-#'  \item{"7"}{The function derivates returned by funcon or funobj appear to be incorrect.}
-#'  \item{"9"}{An input parameter was invalid}
+#' \item 1: The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN)
+#' \item 2: The linear constraints and bounds could not be satisfied. The problem has no feasible solution.
+#' \item 3: The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.
+#' \item 4: The major iteration limit was reached (Mx status BLUE).
+#' \item 6: The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)
+#' \item 7: The function derivates returned by funcon or funobj appear to be incorrect.
+#' \item 9: An input parameter was invalid
 #' }
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
