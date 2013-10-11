@@ -28,7 +28,7 @@
 #' umxCompare(model1, c(model2, model3))
 #' }
 
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "return") {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "return", digits = 3) {
 	# output != "return"is interpreted as a file to write html too...
 	# umxCompare(fit11, fit11, all=F, output="Rout.html")
 	# TODO eliminate this once mxCompare finally updates...
@@ -38,9 +38,10 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "ret
 		stop("You must provide at least a base model for umxCompare")
 	}
 	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
-	tableOut  = format(tableOut, scientific = F, digits = 5)
-	tableOut  = tableOut[, c(2:1, 3, 4, 6:9)]
-	names(tableOut) <- c("Comparison", "Base", "ep", "-2LL", "AIC", "delta LL", "delta df", "p")
+	# tableOut  = format(tableOut, scientific = F, digits = digits)
+	tableOut  = tableOut[, c(2:1, 3, 6, 7:9)]
+	names(tableOut) <- c("Comparison", "Base", "ep", "AIC", "delta LL", "delta df", "p")
+	tableOut[,"p"] = umx_APA_pval(tableOut[,"p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
 	if(output == "return"){
 		return(tableOut)
 	} else {

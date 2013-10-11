@@ -619,33 +619,40 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @export
 #' @seealso - \code{\link{round}}
 #' @examples
-#' umx_u_APA_pval(1.23E-3)
-#' umx_u_APA_pval(c(1.23E-3, .5))
-#' umx_u_APA_pval(c(1.23E-3, .5), addComparison=F)
+#' umx_APA_pval(1.23E-3)
+#' umx_APA_pval(c(1.23E-3, .5))
+#' umx_APA_pval(c(1.23E-3, .5), addComparison=F)
 
-umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = T) {
+umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
+	# addComparison can be NA to only add when needed
 	if(length(p) > 1){
 		o = rep(NA, length(p))
 		for(i in seq_along(p)) {
-		   o[i] = umx_u_APA_pval(p[i], min = min, rounding = rounding, addComparison = addComparison)
+		   o[i] = umx_APA_pval(p[i], min = min, rounding = rounding, addComparison = addComparison)
 		}
 		return(o)
 	} else {
 		if(is.nan(p) | is.na(p)){
-			if(addComparison){
+			if(is.na(addComparison)){
+				return(p)
+			}else if(addComparison){
 				return(paste0("= ", p))
 			} else {
 				return(p)
 			}
 		}
 		if(p < min){
-			if(addComparison){
+			if(is.na(addComparison)){
+				return(paste0("< ", min))
+			}else if(addComparison){
 				return(paste0("< ", min))
 			} else {
 				return(min)
 			}
 		} else {
-			if(addComparison){				
+			if(is.na(addComparison)){
+				return(format(round(p, rounding), scientific = F, nsmall = rounding))
+			}else if(addComparison){				
 				return(paste0("= ", format(round(p, rounding), scientific = F, nsmall = rounding)))
 			} else {
 				return(round(p, rounding))
