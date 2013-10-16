@@ -1,6 +1,6 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document(); devtools::build(); devtools::install(); 
+# setwd("~/bin/umx"); devtools::document("~/bin/umx"); devtools::build("~/bin/umx"); devtools::install("~/bin/umx"); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxFUNCTION_NAME")
