@@ -777,3 +777,80 @@ logLik.MxModel<-function(model) {
 	class(Minus2LogLikelihood) <- "logLik"
 	return(Minus2LogLikelihood);
 }
+
+goodnessOfFit <- function(indepfit, modelfit) {
+	options(scipen = 3)
+	indep     <- summary(indepfit)
+	model     <- summary(modelfit)
+	N         <- model$numObs
+	N.parms   <- model$estimatedParameters
+	N.manifest <- length(modelfit@manifestVars)
+	deviance  <- model$Minus2LogLikelihood
+	Chi       <- model$Chi
+	df        <- model$degreesOfFreedom
+	p.Chi     <- 1 - pchisq(Chi, df)
+	Chi.df    <- Chi/df
+	indep.chi <- indep$Chi
+	indep.df  <- indep$degreesOfFreedom
+	q <- (N.manifest*(N.manifest+1))/2
+	N.latent     <- length(modelfit@latentVars)
+	observed.cov <- modelfit@data@observed
+	observed.cor <- cov2cor(observed.cov)
+
+	A <- modelfit@matrices$A@values
+	S <- modelfit@matrices$S@values
+	F <- modelfit@matrices$F@values
+	I <- diag(N.manifest+N.latent)
+	estimate.cov <- F %*% (qr.solve(I-A)) %*% S %*% (t(qr.solve(I-A))) %*% t(F)
+	estimate.cor <- cov2cor(estimate.cov)
+	Id.manifest  <- diag(N.manifest)
+	residual.cov <- observed.cov-estimate.cov
+	residual.cor <- observed.cor-estimate.cor
+	F0       <- max((Chi-df)/(N-1),0)
+	NFI      <- (indep.chi-Chi)/indep.chi
+	NNFI.TLI <- (indep.chi-indep.df/df*Chi)/(indep.chi-indep.df)
+	PNFI     <- (df/indep.df)*NFI
+	RFI      <- 1 - (Chi/df) / (indep.chi/indep.df)
+	IFI      <- (indep.chi-Chi)/(indep.chi-df)
+	CFI      <- min(1.0-(Chi-df)/(indep.chi-indep.df),1)
+	PRATIO   <- df/indep.df
+	PCFI     <- PRATIO*CFI
+	NCP      <- max((Chi-df),0)
+	RMSEA    <- sqrt(F0/df) # need confidence intervals
+	MFI      <- exp(-0.5*(Chi-df)/N)
+	GH       <- N.manifest / (N.manifest+2*((Chi-df)/(N-1)))
+	GFI      <- 1-(
+		sum(diag(((solve(estimate.cor)%*%observed.cor)-Id.manifest)%*%((solve(estimate.cor)%*%observed.cor)-Id.manifest))) /
+	    sum(diag((solve(estimate.cor)%*%observed.cor)%*%(solve(estimate.cor)%*%observed.cor)))
+	)
+	AGFI     <- 1 - (q/df)*(1-GFI)
+	PGFI     <- GFI * df/q
+	AICchi   <- Chi+2*N.parms
+	AICdev   <- deviance+2*N.parms
+	BCCchi   <- Chi + 2*N.parms/(N-N.manifest-2)
+	BCCdev   <- deviance + 2*N.parms/(N-N.manifest-2)
+	BICchi   <- Chi+N.parms*log(N)
+	BICdev   <- deviance+N.parms*log(N)
+	CAICchi  <- Chi+N.parms*(log(N)+1)
+	CAICdev  <- deviance+N.parms*(log(N)+1)
+	ECVIchi  <- 1/N*AICchi
+	ECVIdev  <- 1/N*AICdev
+	MECVIchi <- 1/BCCchi
+	MECVIdev <- 1/BCCdev
+	RMR      <- sqrt((2*sum(residual.cov^2))/(2*q))
+	SRMR     <- sqrt((2*sum(residual.cor^2))/(2*q))
+	indices  <-
+	rbind(N,deviance,N.parms,Chi,df,p.Chi,Chi.df,
+		AICchi,AICdev,
+		BCCchi,BCCdev,
+		BICchi,BICdev,
+		CAICchi,CAICdev,
+		RMSEA,SRMR,RMR,
+		GFI,AGFI,PGFI,
+		NFI,RFI,IFI,
+		NNFI.TLI,CFI,
+		PRATIO,PNFI,PCFI,NCP,
+		ECVIchi,ECVIdev,MECVIchi,MECVIdev,MFI,GH
+	)
+	return(indices)
+}

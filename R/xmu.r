@@ -104,7 +104,12 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = T, overRide
 	# = Add means labels if needed =
 	# ==============================
 	if(model@data@type == "raw"){
-		model@matrices$M@labels = matrix(nrow = 1, paste0(colnames(model@matrices$M@values),"_mean", suffix))
+		if(is.null(model@matrices$M)){
+			msg("You are using raw data, but have not yet added paths for the means\n")
+			stop("You do this with mxPath(from = 'one', to = 'var')")
+		} else {
+			model@matrices$M@labels = matrix(nrow = 1, paste0(colnames(model@matrices$M@values),"_mean", suffix))
+		}
 	}
 	return(model)
 }
@@ -152,7 +157,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 		newLabels[upper.tri(newLabels, diag = T)] = NA
 	} else if(type == "SymmMatrix"){
 		newLabels[lower.tri(newLabels, diag = F)] -> lower.labels;
-		newLabels[upper.tri(newLabels, diag=F)] <- mirrorLabels[upper.tri(mirrorLabels, diag = F)]
+		newLabels[upper.tri(newLabels, diag = F)] <- mirrorLabels[upper.tri(mirrorLabels, diag = F)]
 	} else if(type == "StandMatrix") {
 		newLabels[lower.tri(newLabels, diag = F)] -> lower.labels;
 		newLabels[upper.tri(newLabels, diag = F)] <- mirrorLabels[upper.tri(mirrorLabels, diag = F)]
@@ -185,7 +190,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	}
 	# TODO this might want something to equate values after jiggling around equal labels?
 	if(!is.na(boundDiag)){
-		diag(mx_matrix@lbound)<-boundDiag # bound diagonal to be positive 
+		diag(mx_matrix@lbound) <- boundDiag # bound diagonal to be positive 
 	}
 	return(mx_matrix)
 }

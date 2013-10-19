@@ -165,8 +165,7 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		# TODO: Start values in the A matrix...
 		# Done: Start values in the S at variance on diag, bit less than cov off diag
 		# Done: Start amnifest means in means model
-		# TODO: Start latent means?...
-		
+		# TODO: Start latent means?...		
 		if (!umxIsRAMmodel(obj) ) {
 			stop("'obj' must be a RAM model (or a simple number)")
 		}
@@ -177,15 +176,19 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		if (is.null(theData)) {
 			stop("'model' does not contain any data")
 		}
-		manifests     = obj@manifestVars
-		nVar          = length(manifests)
+		manifests = obj@manifestVars
+		nVar      = length(manifests)
 		if(obj@data@type == "raw"){
 			# = Set the means =
-			dataMeans   = colMeans(theData[,manifests], na.rm = T)
-			freeManifestMeans = (obj@matrices$M@free[1, manifests] == T)
-			obj@matrices$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
-
-			covData     = cov(theData, use = "pairwise.complete.obs")		
+			if(is.null(obj@matrices$M)){
+				msg("You are using raw data, but have not yet added paths for the means\n")
+				stop("You do this with mxPath(from = 'one', to = 'var')")
+			} else {			
+				dataMeans = colMeans(theData[,manifests], na.rm = T)
+				freeManifestMeans = (obj@matrices$M@free[1, manifests] == T)
+				obj@matrices$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
+				covData = cov(theData, use = "pairwise.complete.obs")
+			}
 		} else {
 			covData = theData
 		}
@@ -194,9 +197,9 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		# = Fill the free symetrical matrix with good start values =
 		# ==========================================================
 		# The diagonal is variances
-		if(onlyTouchZeros){
+		if(onlyTouchZeros) {
 			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE) & obj@matrices$S@values[1:nVar, 1:nVar] == 0
-		}else{
+		} else {
 			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE)			
 		}
 		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
@@ -1162,4 +1165,25 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 		}
 	}
 	return(toAdd)
+}
+
+
+umxCheck <- function(fit1){
+	# are all the manifests in paths?
+	# do the manifests have residuals?
+	if(any(duplicated(fit1@manifestVars))){
+		stop(paste("manifestVars contains duplicates:", duplicated(fit1@manifestVars)))
+	}
+	if(length(fit1@latentVars) == 0){
+		# Check none are duplicates, none in manifests
+		if(any(duplicated(fit1@latentVars))){
+			stop(paste("latentVars contains duplicates:", duplicated(fit1@latentVars)))
+		}
+		if(any(duplicated(c(fit1@manifestVars,fit1@latentVars)))){
+			stop(
+				paste("manifest and latent lists contain clashing names:", duplicated(c(fit1@manifestVars,fit1@latentVars)))
+			)
+		}
+	}
+	# Check manifests in dataframe
 }
