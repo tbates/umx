@@ -3,7 +3,8 @@
 
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document(); devtools::build(); devtools::install(); 
+# setwd("~/bin/umx"); 
+# devtools::document("~/bin/umx"); devtools::build("~/bin/umx"); devtools::install("~/bin/umx"); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxX")
@@ -1113,4 +1114,13 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
     ciMult <- qt(conf.interval/2 + .5, datac$N - 1)
     datac$ci <- datac$se * ciMult
     return(datac)
+}
+
+umxCovData = function(df, columns = manifests, use = "pairwise.complete.obs") {
+	if(!all(manifests %in%  names(df))){
+		message("You asked for", length(manifests), "variables. Of these the following were not in the dataframe:")
+		stop(paste(manifests[!(manifests %in% names(df))], collapse=", "))
+	} else {
+		return(mxData(cov( df[,manifests], use = use), type = "cov", numObs = nrow(df)))
+	}	
 }

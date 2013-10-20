@@ -7,9 +7,11 @@
 # devtools::load_all()
 # devtools::dev_help("umxX")
 # show_news()
+
 # =================================
 # = Speed  and Efficiency Helpers =
 # =================================
+
 #' umxRun
 #'
 #' umxRun is a version of \code{\link{mxRun}} which can run multiple times by default
@@ -853,8 +855,9 @@ umxThresholdRAMObjective <- function(df,  deviationBased=T, droplevels = T, verb
 	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = T, droplevels = T, verbose = F)))
 }
 
-umxMakeThresholdMatrix <- function(df, deviationBased=T, droplevels = T, verbose=F) {	
-	# Purpose: return a mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
+umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbose = F) {	
+	# Purpose: return a mxRAMObjective
+	# mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
 	# use case:  umxMakeThresholdMatrix(df, verbose = T)
 	# note, called by umxThresholdRAMObjective()
 	# TODO: Let the user know if there are any levels dropped...
@@ -867,6 +870,20 @@ umxMakeThresholdMatrix <- function(df, deviationBased=T, droplevels = T, verbose
 		return(xmuMakeThresholdsMatrices(df, droplevels, verbose))
 	}
 }
+
+#' umxIsOrdinalVar
+#'
+#' return the names of any ordinal variables in a dataframe
+#'
+#' @param df an \code{\link{data.frame}} to look in for ordinal variables
+#' @return - list of variable names
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umxIsOrdinalVar(df)
+#' }
 
 umxIsOrdinalVar <- function(df, names=F) {
 	# Purpose, return which columns are Ordinal
@@ -1166,7 +1183,6 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	}
 	return(toAdd)
 }
-
 
 umxCheck <- function(fit1){
 	# are all the manifests in paths?

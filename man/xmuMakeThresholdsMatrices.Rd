@@ -21,8 +21,8 @@
   \code{\link{mxData}} object
 }
 \description{
-  You should not be calling this directly. This is not as a
-  reliable strategy and likely to be superceeded...
+  You should not be calling this directly. This is not as
+  reliable a strategy and likely to be superceeded...
 }
 \examples{
 \dontrun{

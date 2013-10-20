@@ -758,7 +758,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 # http://openmx.psyc.virginia.edu/thread/931#comment-4858
 # brandmaier
 
-logLik.MxModel<-function(model) {
+logLik.MxModel <- function(model) {
 	Minus2LogLikelihood <- NA
 	if (!is.null(model@output) & !is.null(model@output$Minus2LogLikelihood)){
 		Minus2LogLikelihood <- (-0.5) * model@output$Minus2LogLikelihood		

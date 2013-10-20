@@ -197,62 +197,61 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 
 # TODO document xmuMakeDeviationThresholdsMatrices
 xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
-	# Purpose: return a mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
+	# Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
 	# usecase see: umxMakeThresholdMatrix
 	# junk[1]; 	junk[[2]]@values; 	junk[3]
-	isOrdinalVariable = umxIsOrdinalVar(df) 
+	isOrdinalVariable = umx::umxIsOrdinalVar(df) 
 	ordinalColumns    = df[,isOrdinalVariable]
-	nOrdinal          = ncol(ordinalColumns);
 	ordNameList       = names(ordinalColumns);
-	levelList         = 1:nOrdinal
+	nOrdinal          = ncol(ordinalColumns);
+
+	levelList = rep(NA, nOrdinal)
 	for(n in 1:nOrdinal) {
-		levelList[n] = nlevels(ordinalColumns[,n])
+		levelList[n] = nlevels(ordinalColumns[, n])
 	}
 	maxThreshMinus1 = max(levelList) - 1
 	# For Multiplication
-	UnitLower = mxMatrix("Lower", name="UnitLower", nrow = maxThreshMinus1, ncol = maxThreshMinus1, free=F, values=1)
+	lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThreshMinus1, ncol = maxThreshMinus1, free = F, values = 1)
 	# Threshold deviation matrix
-	threshDeviations = mxMatrix("Full", name="threshDeviations", nrow=maxThreshMinus1, ncol=nOrdinal)
-	initialLowerLim = -1
-	initialUpperLim =  1
-	# Fill first row of threshDeviations with useful lower thresholds, perhaps -1 or .5 SD (nthresh/2)
-
-	threshDeviations@free  [1,] <- TRUE
-	threshDeviations@values[1,] <- initialLowerLim # Start with an even -2. Might spread this a bit for different levels, or centre on 0 for 1 threshold
-	threshDeviations@labels[1,] <- paste("ThreshBaseline1", 1:nOrdinal, sep="_")
-	threshDeviations@lbound[1,] <- -7 # baseline limit in SDs
-	threshDeviations@ubound[1,] <-  7 # baseline limit in SDs
+	deviations_for_thresh = mxMatrix(name = "deviations_for_thresh", type = "Full", nrow = maxThreshMinus1, ncol = nOrdinal)
+	initialLowerLim  = -1
+	initialUpperLim  =  1
+	# Fill first row of deviations_for_thresh with useful lower thresholds, perhaps -1 or .5 SD (nthresh/2)
+	deviations_for_thresh@free[1,]   <- TRUE
+	deviations_for_thresh@values[1,] <- initialLowerLim # Start with an even -2. Might spread this a bit for different levels, or centre on 0 for 1 threshold
+	deviations_for_thresh@labels[1,] <- paste("ThreshBaseline1", 1:nOrdinal, sep ="_")
+	deviations_for_thresh@lbound[1,] <- -7 # baseline limit in SDs
+	deviations_for_thresh@ubound[1,] <-  7 # baseline limit in SDs
 
 	for(n in 1:nOrdinal){
 		thisThreshMinus1 = levelList[n] -1
 		stepSize = (initialUpperLim-initialLowerLim)/thisThreshMinus1
-		threshDeviations@values[2:thisThreshMinus1,n] = (initialUpperLim-initialLowerLim)/thisThreshMinus1
-		threshDeviations@labels[2:thisThreshMinus1,n] = paste("ThreshDeviation", 2:thisThreshMinus1, n, sep="_")
-		threshDeviations@free  [2:thisThreshMinus1,n] = TRUE
-		threshDeviations@lbound[2:thisThreshMinus1,n] = .001
+		deviations_for_thresh@values[2:thisThreshMinus1,n] = (initialUpperLim - initialLowerLim) / thisThreshMinus1
+		deviations_for_thresh@labels[2:thisThreshMinus1,n] = paste("ThreshDeviation", 2:thisThreshMinus1, n, sep = "_")
+		deviations_for_thresh@free  [2:thisThreshMinus1,n] = TRUE
+		deviations_for_thresh@lbound[2:thisThreshMinus1,n] = .001
 		if(thisThreshMinus1 < maxThreshMinus1) {
 			# pad the shorter var's excess rows with fixed@99 so humans can see them...
-			threshDeviations@values[(thisThreshMinus1+1):maxThreshMinus1,n] <- (-99)
-			threshDeviations@labels[(thisThreshMinus1+1):maxThreshMinus1,n] <- paste("unusedThresh", min(thisThreshMinus1+1, maxThreshMinus1), n, sep="_")
-			threshDeviations@free  [(thisThreshMinus1+1):maxThreshMinus1,n] <- F
+			deviations_for_thresh@values[(thisThreshMinus1+1):maxThreshMinus1,n] <- (-99)
+			deviations_for_thresh@labels[(thisThreshMinus1+1):maxThreshMinus1,n] <- paste("unusedThresh", min(thisThreshMinus1 + 1, maxThreshMinus1), n, sep = "_")
+			deviations_for_thresh@free  [(thisThreshMinus1+1):maxThreshMinus1,n] <- F
 		}
 	}
 
-	# thresh = mxMatrix("Full", name="thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = F, free = myFree, values= myThreshValues)
-	threshNames = paste("Threshold", 1:maxThreshMinus1, sep='')
-	thresh = mxAlgebra(UnitLower %*% threshDeviations, dimnames=list(threshNames,ordNameList), name="thresh")
+	threshNames = paste("Threshold", 1:maxThreshMinus1, sep = '')
+	thresholdsAlgebra = mxAlgebra(lowerOnes_for_thresh %*% deviations_for_thresh, dimnames = list(threshNames, ordNameList), name = "thresholdsAlgebra")
 	if(verbose){
 		cat("levels in each variable are:")
 		print(levelList)
 		print(paste("maxThresh - 1 = ", maxThreshMinus1))
 	}
-	return(list(UnitLower,threshDeviations, thresh, mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")))
+	return(list(lowerOnes_for_thresh, deviations_for_thresh, thresholdsAlgebra, mxRAMObjective(A="A", S="S", F="F", M="M", thresholds = "thresholdsAlgebra"), mxData(df, type = "raw")))
 }
 
 #' xmuMakeThresholdsMatrices (not a user function)
 #'
 #' You should not be calling this directly.
-#' This is not as a reliable strategy and likely to be superceeded...
+#' This is not as reliable a strategy and likely to be superceeded...
 #'
 #' @param df a \code{\link{data.frame}} containing the data for your \code{\link{mxData}} statement
 #' @param droplevels a binary asking if empty levels should be dropped (defaults to FALSE)
