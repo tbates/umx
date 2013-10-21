@@ -307,15 +307,15 @@ Stouffer.test <- function(p = NULL) {
 #'
 #' @param data A \code{\link{data.frame}} of columns for which to compute heterochoric correlations
 #' @param ML Whether to use Maximum likelihood computation of correlations (default = F)
-#' @param use How to delete missing data
+#' @param use How to delete missing data: "complete.obs", "pairwise.complete.obs" Default is pairwise.complete.obs
 #' @return - A matrix of correlations
 #' @export
 #' @seealso - \code{\link{hetcor}}
 #' @references - 
 #' @examples
 #' \dontrun{
-#' cor_mat_ = umxHetCor(df)
-#' umxHetCor(data, use="pairwise.complete.obs")
+#' cor_df = umxHetCor(df)
+#' cor_df = umxHetCor(df, ML = F, use="pairwise.complete.obs")
 #' }
 
 umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs"){
@@ -1123,4 +1123,68 @@ umxCovData = function(df, columns = manifests, use = "pairwise.complete.obs") {
 	} else {
 		return(mxData(cov( df[,manifests], use = use), type = "cov", numObs = nrow(df)))
 	}	
+}
+
+
+#' umxCov2cor
+#'
+#' Just a version of cov2cor that forces the upper and lower triangles to be identical (rather than really similar)
+#'
+#' @param x something that cov2cor can work on (matrix, df, etc.)
+#' @return - a correlation matrix
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' x_cor = umxCov2cor(x)
+#' }
+
+umxCov2cor <- function(x) {
+	x = cov2cor(x)
+	x[lower.tri(x)] <- t(x)[lower.tri(t(x))]
+	return(x)
+}
+
+#' umx_is_cov
+#'
+#' test if a data frame or matrix is cov or cor data, or is likely to be raw...
+#'
+#' @param data dataframe to test
+#' @return - 0 if raw, 1 if cor, 2 if cov
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umx_is_cov(df)
+#' }
+
+umx_is_cov <- function(data, verbose = F) {
+	if( nrow(data) == ncol(data)) {
+		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
+			if(all(diag(data) == 1)){
+				isCov = 2
+				if(verbose){
+					message("treating data as cor")
+				}
+			} else {
+				isCov = 1
+				if(verbose){
+					message("treating data as cov")
+				}
+			}
+		} else {
+			isCov = 0
+			if(verbose){
+				message("treating data as raw: it's a bit odd that it's square, however")
+			}
+		}
+	} else {
+		isCov = 0
+		if(verbose){
+			message("treating data as raw")
+		}
+	}
+	return(isCov)
 }

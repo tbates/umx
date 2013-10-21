@@ -11,7 +11,8 @@
   \item{ML}{Whether to use Maximum likelihood computation
   of correlations (default = F)}
 
-  \item{use}{How to delete missing data}
+  \item{use}{How to delete missing data: "complete.obs",
+  "pairwise.complete.obs" Default is pairwise.complete.obs}
 }
 \value{
   - A matrix of correlations
@@ -22,8 +23,8 @@
 }
 \examples{
 \dontrun{
-cor_mat_ = umxHetCor(df)
-umxHetCor(data, use="pairwise.complete.obs")
+cor_df = umxHetCor(df)
+cor_df = umxHetCor(df, ML = F, use="pairwise.complete.obs")
 }
 }
 \references{

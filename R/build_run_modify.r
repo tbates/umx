@@ -6,7 +6,7 @@
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxX")
-# show_news()
+# devtools::show_news()
 
 # =================================
 # = Speed  and Efficiency Helpers =
@@ -636,24 +636,7 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 	# m1= mxRun(m1); summary(m1)
 
 	# Warning("If you use this with a dataframe containing ordinal variables, don't forget to call umxAutoThreshRAMObjective(df)")
-	if( nrow(data) == ncol(data)) {
-		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
-			isCov = T
-			if(verbose){
-				message("treating data as cov")
-			}
-		} else {
-			isCov = F
-			if(verbose){
-				message("treating data as raw: it's a bit odd that it's square, however")
-			}
-		}
-	} else {
-		isCov = F
-		if(verbose){
-			message("treating data as raw")
-		}
-	}
+	isCov = umx_is_cov(data)
 	if( any(!is.na(forms)) ) {
 		manifests <- forms
 	}else{
@@ -743,7 +726,7 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 		m1 <- mxModel(model.name, type="RAM", manifestVars=manifests, latentVars=latent, paths)
 		if(isCov){
 			m1 <- mxModel(m1, mxData(cov(df), type="cov", numObs = 100))
-			message("\n\nIMPORTANT: you need to see numObs in the mxData() statement\n\n\n")
+			message("\n\nIMPORTANT: you need to set numObs in the mxData() statement\n\n\n")
 		} else {
 			if(any(manifestOrdVars)){
 				m1 <- mxModel(m1, umxThresholdRAMObjective(data, deviationBased = T, droplevels = T, verbose = T))
