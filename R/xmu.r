@@ -471,5 +471,3 @@ xmuMI <- function(model, vector = T) {
 umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
 	stop("Replace umxGraph_RAM with umxPlot (umxGraph_RAM was deprecated to help people learn umx more quickly)")
 }
-
-

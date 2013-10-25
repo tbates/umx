@@ -1151,7 +1151,7 @@ umxCov2cor <- function(x) {
 #' test if a data frame or matrix is cov or cor data, or is likely to be raw...
 #'
 #' @param data dataframe to test
-#' @return - 0 if raw, 1 if cor, 2 if cov
+#' @return - "raw", "cor", or "cov"
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -1164,27 +1164,56 @@ umx_is_cov <- function(data, verbose = F) {
 	if( nrow(data) == ncol(data)) {
 		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
 			if(all(diag(data) == 1)){
-				isCov = 2
+				isCov = "cor"
 				if(verbose){
 					message("treating data as cor")
 				}
 			} else {
-				isCov = 1
+				isCov = "cov"
 				if(verbose){
 					message("treating data as cov")
 				}
 			}
 		} else {
-			isCov = 0
+			isCov = "raw"
 			if(verbose){
 				message("treating data as raw: it's a bit odd that it's square, however")
 			}
 		}
 	} else {
-		isCov = 0
+		isCov = "raw"
 		if(verbose){
 			message("treating data as raw")
 		}
 	}
 	return(isCov)
+}
+
+#' umx_reorder
+#'
+#' Reorder the variables in a correlation matrix
+#'
+#' @param old a square matrix of correlation or covariances to reorder
+#' @param newOrder The order you'd like the variables to be in
+#' @return - the re-ordered matrix
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' het_dz = umx_reorder(het_dz, newNameOrder)
+#' }
+
+umx_reorder = function(old, newOrder) {
+	dim_names = dimnames(old)[[1]]
+	new = old
+	dimnames(new) = list(newOrder, newOrder)
+	for(r_seq in seq_along(newOrder)) {
+		for(c_seq in seq_along(newOrder)) {
+			r = dim_names[r_seq]
+			c = dim_names[c_seq]
+			new[r, c] = old[r, c]
+		}
+	}
+	return(new)
 }

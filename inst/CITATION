@@ -4,7 +4,7 @@ bibentry("Manual",
    organization = "University of Edinburgh",
    address      = "Edinburgh, UK",
    year   = version$year,
-   note   = "version 0.5",
+   note   = "version 0.6",
    url    = "http://github.com/tbates/umx/",
 
    mheader = "To cite umx in publications use:",
