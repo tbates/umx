@@ -12,14 +12,16 @@
   in}
 }
 \value{
-  - the re-ordered matrix
+  - the re-ordered (and/or resized) matrix
 }
 \description{
-  Reorder the variables in a correlation matrix
+  Reorder the variables in a correlation matrix. Can also
+  remove one or more variables from a matrix using this
+  function
 }
 \examples{
 \dontrun{
-het_dz = umx_reorder(het_dz, newNameOrder)
+reorderedMatrix = umx_reorder(oldMatrix, newOrder)
 }
 }
 \references{

@@ -1191,22 +1191,26 @@ umx_is_cov <- function(data, verbose = F) {
 
 #' umx_reorder
 #'
-#' Reorder the variables in a correlation matrix
+#' Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function
 #'
 #' @param old a square matrix of correlation or covariances to reorder
 #' @param newOrder The order you'd like the variables to be in
-#' @return - the re-ordered matrix
+#' @return - the re-ordered (and/or resized) matrix
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' het_dz = umx_reorder(het_dz, newNameOrder)
+#' reorderedMatrix = umx_reorder(oldMatrix, newOrder)
 #' }
 
 umx_reorder = function(old, newOrder) {
 	dim_names = dimnames(old)[[1]]
-	new = old
+	if(!all(newOrder %in% dim_names)){
+		stop("All variable names must appear in the matrix")
+	}
+	numVarsToRetain = length(newOrder)
+	new = old[1:numVarsToRetain,1:numVarsToRetain]
 	dimnames(new) = list(newOrder, newOrder)
 	for(r_seq in seq_along(newOrder)) {
 		for(c_seq in seq_along(newOrder)) {

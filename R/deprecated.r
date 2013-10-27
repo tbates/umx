@@ -284,3 +284,16 @@ mxAutoThreshRAMObjective <- function(df,  deviationBased = T, droplevels = T, ve
 graphViz_Cholesky <- function(model = NA, dotFilename = "name", accuracy = 2, showMeans=F) {
 	stop("Deprecated: PLease replace graphViz_Cholesky with umxPlotCholesky")
 }
+
+
+summaryACEFit <- function(thisFit, accuracy = accuracy, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs) {
+	stop("Deprecated: Please replace summaryACEFit with umxSummaryACE")
+}
+
+summaryCommonFit <- function(thisFit, accuracy = accuracy, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, parentModel = parentModel, CIs=CIs) {
+	stop("Deprecated: Please replace summaryCommonFit with umxSummaryCP")
+}
+
+umxPlotCholesky <- function(thisFit, accuracy = accuracy, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, parentModel = parentModel, CIs=CIs) {
+	stop("Deprecated: Please replace umxPlotCholesky with umxPlotACE")
+}
