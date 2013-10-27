@@ -531,8 +531,6 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	return(theData)
 }
 
-
-
 rename <- function (x, replace, old = NA) {
 	# add to help: see also gdate::rename.vars(data, from, to)	
 	# rename(x, replace = c(ages = "age"))
@@ -1123,7 +1121,7 @@ umxIsMxModel <- function(obj) {
 #' test if a data frame or matrix is cov or cor data, or is likely to be raw...
 #'
 #' @param data dataframe to test
-#' @return - 0 if raw, 1 if cor, 2 if cov
+#' @return - "raw", "cor", or "cov"
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -1136,24 +1134,24 @@ umx_is_cov <- function(data, verbose = F) {
 	if( nrow(data) == ncol(data)) {
 		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
 			if(all(diag(data) == 1)){
-				isCov = 2
+				isCov = "cor"
 				if(verbose){
 					message("treating data as cor")
 				}
 			} else {
-				isCov = 1
+				isCov = "cov"
 				if(verbose){
 					message("treating data as cov")
 				}
 			}
 		} else {
-			isCov = 0
+			isCov = "raw"
 			if(verbose){
 				message("treating data as raw: it's a bit odd that it's square, however")
 			}
 		}
 	} else {
-		isCov = 0
+		isCov = "raw"
 		if(verbose){
 			message("treating data as raw")
 		}
@@ -1161,6 +1159,7 @@ umx_is_cov <- function(data, verbose = F) {
 	return(isCov)
 }
 
+<<<<<<< HEAD
 #' umxHasCIs
 #'
 #' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
@@ -1296,4 +1295,37 @@ umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", pr
 			print(a)	
 		}
 	}
+}
+
+#' umx_reorder
+#'
+#' Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function
+#'
+#' @param old a square matrix of correlation or covariances to reorder
+#' @param newOrder The order you'd like the variables to be in
+#' @return - the re-ordered (and/or resized) matrix
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' reorderedMatrix = umx_reorder(oldMatrix, newOrder)
+#' }
+
+umx_reorder = function(old, newOrder) {
+	dim_names = dimnames(old)[[1]]
+	if(!all(newOrder %in% dim_names)){
+		stop("All variable names must appear in the matrix")
+	}
+	numVarsToRetain = length(newOrder)
+	new = old[1:numVarsToRetain,1:numVarsToRetain]
+	dimnames(new) = list(newOrder, newOrder)
+	for(r_seq in seq_along(newOrder)) {
+		for(c_seq in seq_along(newOrder)) {
+			r = dim_names[r_seq]
+			c = dim_names[c_seq]
+			new[r, c] = old[r, c]
+		}
+	}
+	return(new)
 }

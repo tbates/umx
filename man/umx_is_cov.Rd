@@ -8,7 +8,7 @@
   \item{data}{dataframe to test}
 }
 \value{
-  - 0 if raw, 1 if cor, 2 if cov
+  - "raw", "cor", or "cov"
 }
 \description{
   test if a data frame or matrix is cov or cor data, or is
