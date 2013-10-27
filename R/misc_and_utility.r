@@ -1159,7 +1159,6 @@ umx_is_cov <- function(data, verbose = F) {
 	return(isCov)
 }
 
-<<<<<<< HEAD
 #' umxHasCIs
 #'
 #' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
