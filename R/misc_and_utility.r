@@ -116,29 +116,6 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 	}
 }
 
-#' umxHasCIs
-#'
-#' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
-#'
-#' @param model The \code{\link{mxModel}} to check for presence of CIs
-#' @return - TRUE or FALSE
-#' @export
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxRun}}, \code{\link{umxReportCIs}}
-#' @references - http://openmx.psyc.virginia.edu/
-#' @examples
-#' \dontrun{
-#' umxHasCIs(model)
-#' }
-
-umxHasCIs <- function(model) {
-	# umxHasCIs(model)
-	if(is.null(model@output$confidenceIntervals)){
-		hasCIs = F
-	} else {
-		hasCIs = dim(model@output$confidenceIntervals)[1] >= 0
-	}
-	return(hasCIs)
-}
 
 # How long did that take?
 #' umxReportTime
@@ -162,65 +139,6 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 	format(.POSIXct(model@output$wallTime,tz), formatStr)
 }
 
-#' umxAnovaReport
-#'
-#' umxAnovaReport is a convenience function to format results for journals. There are others. Bt I made this one.
-#' If you give it the output of an lm, it runs anova() and lm.beta(), and puts that together in a regression table...
-#' Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
-#' @param model1 An \code{\link{lm}} model to make a table from 
-#' @param model2 An (optional) second \code{\link{lm}} model to compare to model 1
-#' @param raw Should the raw table also be output? (allows checking that nothing crazy is going on)
-#' @param format String or markdown format?
-#' @param printDIC A Boolean toggle whether tou want AIC-type fit change table printed
-#' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @export
-#' @examples
-#' model = lm(mpg ~ cyl + disp, data = mtcars)
-#' umxAnovaReport(model)
-
-umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", printDIC = F) {
-	if(!is.null(model2)){
-		# F(-2, 336) =  0.30, p = 0.74
-		a = anova(model1, model2)
-		if(raw){
-			print(a)
-		}
-		if(format == "string"){
-			print( paste0("F(", a[2,"Df"], ",", a[2,"Res.Df"], ") = ",
-					round(a[2,"F"],2), ", p ", umx_u_APA_pval(a[2,"Pr(>F)"])
-				)
-			)
-		} else {
-			print( paste0("| ", a[2,"Df"], " | ", a[2,"Res.Df"], " | ", 
-				round(a[2,"F"],2), " | ", umx_u_APA_pval(a[2,"Pr(>F)"]), " | ")
-			)
-		}		
-
-	} else {
-		a = anova(model1);
-		if(require(QuantPsyc, quietly = T)){
-			a$beta = c(QuantPsyc::lm.beta(model1), NA);
-		} else {
-			a$beta = NA
-			message("To include beta weights\ninstall.packages(\"QuantPsyc\")")
-		}
-
-		x <- c("Df", "beta", "F value", "Pr(>F)");
-		a = a[,x]; 
-		names(a) <- c("df", "beta", "F", "p"); 
-		ci = confint(model1)
-		a$lowerCI = ci[,1]
-		a$upperCI = ci[,2]
-		a <- a[,c("df", "beta", "lowerCI", "upperCI", "F", "p")]; 
-		print(a)
-		if(printDIC){
-			a = drop1(model1); 
-			a$DIC = round(a$AIC - a$AIC[1], 2); 
-			print(a)	
-		}
-	}
-}
 
 #' print.dataframe
 #'
@@ -381,6 +299,10 @@ umxLower2full <- function(lower.data, diag = F, byrow = T) {
 	return(mat)
 }
 
+# ===========
+# = Utility =
+# ===========
+
 #' umx_find_object
 #'
 #' Find objects a certain class, whose name matches a search string.
@@ -397,6 +319,7 @@ umxLower2full <- function(lower.data, diag = F, byrow = T) {
 #' umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
 #  umx_find_object("", "MxModel") # all MxModels
 #' }
+
 
 umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 	# Use case: umxFindObject("Chol*", "MxModel")
@@ -608,59 +531,6 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	return(theData)
 }
 
-#' umx_u_APA_pval
-#'
-#' round a p value so you get < .001 instead of .000000002 or .134E-16
-#'
-#' @param p A p-value to round
-#' @param min Threshold to say < min
-#' @param rounding Number of decimal to round to 
-#' @param addComparison Whether to return the bare number, or to add the appropriate comparison symbol (= <)
-#' @return - a value
-#' @export
-#' @seealso - \code{\link{round}}
-#' @examples
-#' umx_APA_pval(1.23E-3)
-#' umx_APA_pval(c(1.23E-3, .5))
-#' umx_APA_pval(c(1.23E-3, .5), addComparison=F)
-
-umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
-	# addComparison can be NA to only add when needed
-	if(length(p) > 1){
-		o = rep(NA, length(p))
-		for(i in seq_along(p)) {
-		   o[i] = umx_APA_pval(p[i], min = min, rounding = rounding, addComparison = addComparison)
-		}
-		return(o)
-	} else {
-		if(is.nan(p) | is.na(p)){
-			if(is.na(addComparison)){
-				return(p)
-			}else if(addComparison){
-				return(paste0("= ", p))
-			} else {
-				return(p)
-			}
-		}
-		if(p < min){
-			if(is.na(addComparison)){
-				return(paste0("< ", min))
-			}else if(addComparison){
-				return(paste0("< ", min))
-			} else {
-				return(min)
-			}
-		} else {
-			if(is.na(addComparison)){
-				return(format(round(p, rounding), scientific = F, nsmall = rounding))
-			}else if(addComparison){				
-				return(paste0("= ", format(round(p, rounding), scientific = F, nsmall = rounding)))
-			} else {
-				return(round(p, rounding))
-			}
-		}	
-	}
-}
 
 
 rename <- function (x, replace, old = NA) {
@@ -700,11 +570,30 @@ rename <- function (x, replace, old = NA) {
 	setNames(x, ifelse(is.na(new_names), old_names, new_names))
 }
 
-grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
+grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) {stop("Deprecated: used umx_grep_labels()")}
+
+#' umx_grep_labels
+#'
+#' search the labels of an SPSS file
+#'
+#' @param df an \code{\link{data.frame}} to search the labels of
+#' @param grepString the search string
+#' @param output the column name, the label, or both (default)
+#' @param ignore.case whether to be case sensitive or not (default TRUE)
+#' @param useNames whether to search the names as well as the labels
+#' @return - list of matched column name and labels
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umx_grep_labels(df)
+#' umx_grep_labels(relig, "Race", output="both", ignore.case=T) 
+#' umx_grep_labels(relig, "race", output="label") 
+#' umx_grep_labels(relig, "race", output="name") 
+#' }
+umx_grep_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 	# output = "both", "label" or "name"
-	# grepSPSS_labels(relig, "Race", output="both", ignore.case=T) 
-	# grepSPSS_labels(relig, "race", output="label") 
-	# grepSPSS_labels(relig, "race", output="name") 
 	# need to check this exists
 	vLabels = attr(df,"variable.labels") # list of descriptive labels?
 	a       = names(df) 
@@ -778,7 +667,7 @@ umx_greater_than <- function(table, x){
 # =====================
 # = Utility functions =
 # =====================
-round.num <- function(x, digits) { message("Use umx_round()")}
+round.num <- function(x, digits) { stop("Use umx_round()")}
 
 #' umx_round
 #'
@@ -1146,6 +1035,89 @@ umxCov2cor <- function(x) {
 	return(x)
 }
 
+# ===========================================
+# = Functions to check kind: retrun Boolean =
+# ===========================================
+
+#' umxIsOrdinalVar
+#'
+#' return the names of any ordinal variables in a dataframe
+#'
+#' @param df an \code{\link{data.frame}} to look in for ordinal variables
+#' @return - list of variable names
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umxIsOrdinalVar(df)
+#' }
+
+umxIsOrdinalVar <- function(df, names=F) {
+	# Purpose, return which columns are Ordinal
+	# use case: isContinuous = !umxIsOrdinalVar(df)
+	# nb: can optionally return just the names of these
+	nVar = ncol(df);
+	# Which are ordered factors?
+	factorVariable = rep(F,nVar)
+	for(n in 1:nVar) {
+		if(is.ordered(df[,n])) {
+			factorVariable[n]=T
+		}
+	}
+	if(names){
+		return(names(df)[factorVariable])
+	} else {
+		return(factorVariable)
+	}
+}
+
+#' umxIsRAMmodel
+#'
+#' Utility function returning a binary answer to the question "Is this a RAM model?"
+#'
+#' @param obj an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}
+#' @return - Boolean
+#' @export
+#' @seealso - \code{\link{mxModel}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' if(umxIsRAMmodel(fit1)){
+#' 	message("nice RAM model!")
+#' }
+#' }
+
+umxIsRAMmodel <- function(obj) {
+	if(!umxIsMxModel(obj)){
+		return(F)
+	}else{
+		return(class(obj$objective) == "MxRAMObjective")
+	}
+	# TODO: get working on both the old and new objective model...
+	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
+}
+
+#' umxIsMxModel
+#'
+#' Utility function returning a binary answer to the question "Is this an OpenMx model?"
+#'
+#' @param obj an object to be tested to see if it is an OpenMx \code{\link{mxModel}}
+#' @return - Boolean
+#' @export
+#' @seealso - \code{\link{mxModel}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' if(umxIsMxModel(fit1)){
+#' 	message("nice OpenMx model!")
+#' }
+#' }
+umxIsMxModel <- function(obj) {
+	isS4(obj) & is(obj, "MxModel")	
+}
+
+
 #' umx_is_cov
 #'
 #' test if a data frame or matrix is cov or cor data, or is likely to be raw...
@@ -1187,4 +1159,141 @@ umx_is_cov <- function(data, verbose = F) {
 		}
 	}
 	return(isCov)
+}
+
+#' umxHasCIs
+#'
+#' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
+#'
+#' @param model The \code{\link{mxModel}} to check for presence of CIs
+#' @return - TRUE or FALSE
+#' @export
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxRun}}, \code{\link{umxReportCIs}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' \dontrun{
+#' umxHasCIs(model)
+#' }
+
+umxHasCIs <- function(model) {
+	# umxHasCIs(model)
+	if(is.null(model@output$confidenceIntervals)){
+		hasCIs = F
+	} else {
+		hasCIs = dim(model@output$confidenceIntervals)[1] >= 0
+	}
+	return(hasCIs)
+}
+
+#' umx_u_APA_pval
+#'
+#' round a p value so you get < .001 instead of .000000002 or .134E-16
+#'
+#' @param p A p-value to round
+#' @param min Threshold to say < min
+#' @param rounding Number of decimal to round to 
+#' @param addComparison Whether to return the bare number, or to add the appropriate comparison symbol (= <)
+#' @return - a value
+#' @export
+#' @seealso - \code{\link{round}}
+#' @examples
+#' umx_APA_pval(1.23E-3)
+#' umx_APA_pval(c(1.23E-3, .5))
+#' umx_APA_pval(c(1.23E-3, .5), addComparison=F)
+
+umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
+	# addComparison can be NA to only add when needed
+	if(length(p) > 1){
+		o = rep(NA, length(p))
+		for(i in seq_along(p)) {
+		   o[i] = umx_APA_pval(p[i], min = min, rounding = rounding, addComparison = addComparison)
+		}
+		return(o)
+	} else {
+		if(is.nan(p) | is.na(p)){
+			if(is.na(addComparison)){
+				return(p)
+			}else if(addComparison){
+				return(paste0("= ", p))
+			} else {
+				return(p)
+			}
+		}
+		if(p < min){
+			if(is.na(addComparison)){
+				return(paste0("< ", min))
+			}else if(addComparison){
+				return(paste0("< ", min))
+			} else {
+				return(min)
+			}
+		} else {
+			if(is.na(addComparison)){
+				return(format(round(p, rounding), scientific = F, nsmall = rounding))
+			}else if(addComparison){				
+				return(paste0("= ", format(round(p, rounding), scientific = F, nsmall = rounding)))
+			} else {
+				return(round(p, rounding))
+			}
+		}	
+	}
+}
+#' umxAnovaReport
+#'
+#' umxAnovaReport is a convenience function to format results for journals. There are others. Bt I made this one.
+#' If you give it the output of an lm, it runs anova() and lm.beta(), and puts that together in a regression table...
+#' Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
+#' @param model1 An \code{\link{lm}} model to make a table from 
+#' @param model2 An (optional) second \code{\link{lm}} model to compare to model 1
+#' @param raw Should the raw table also be output? (allows checking that nothing crazy is going on)
+#' @param format String or markdown format?
+#' @param printDIC A Boolean toggle whether tou want AIC-type fit change table printed
+#' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @export
+#' @examples
+#' model = lm(mpg ~ cyl + disp, data = mtcars)
+#' umxAnovaReport(model)
+
+umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", printDIC = F) {
+	if(!is.null(model2)){
+		# F(-2, 336) =  0.30, p = 0.74
+		a = anova(model1, model2)
+		if(raw){
+			print(a)
+		}
+		if(format == "string"){
+			print( paste0("F(", a[2,"Df"], ",", a[2,"Res.Df"], ") = ",
+					round(a[2,"F"],2), ", p ", umx_u_APA_pval(a[2,"Pr(>F)"])
+				)
+			)
+		} else {
+			print( paste0("| ", a[2,"Df"], " | ", a[2,"Res.Df"], " | ", 
+				round(a[2,"F"],2), " | ", umx_u_APA_pval(a[2,"Pr(>F)"]), " | ")
+			)
+		}		
+
+	} else {
+		a = anova(model1);
+		if(require(QuantPsyc, quietly = T)){
+			a$beta = c(QuantPsyc::lm.beta(model1), NA);
+		} else {
+			a$beta = NA
+			message("To include beta weights\ninstall.packages(\"QuantPsyc\")")
+		}
+
+		x <- c("Df", "beta", "F value", "Pr(>F)");
+		a = a[,x]; 
+		names(a) <- c("df", "beta", "F", "p"); 
+		ci = confint(model1)
+		a$lowerCI = ci[,1]
+		a$upperCI = ci[,2]
+		a <- a[,c("df", "beta", "lowerCI", "upperCI", "F", "p")]; 
+		print(a)
+		if(printDIC){
+			a = drop1(model1); 
+			a$DIC = round(a$AIC - a$AIC[1], 2); 
+			print(a)	
+		}
+	}
 }

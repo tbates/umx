@@ -12,6 +12,10 @@
   \item{sd}{Optional Standard Deviation for start values}
 
   \item{n}{Optional Mean for start values}
+
+  \item{onlyTouchZeros}{Don't start things that appear to
+  have already been started (useful for speeding
+  \code{\link{umxReRun}})}
 }
 \value{
   - \code{\link{mxModel}} with updated start values

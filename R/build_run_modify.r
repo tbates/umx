@@ -1,7 +1,8 @@
 # https://r-forge.r-project.org/project/admin/?group_id=1745
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# setwd("~/bin/umx"); 
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # require(OpenMx); require(umx); ?umx
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
@@ -9,7 +10,7 @@
 # devtools::show_news()
 
 # =================================
-# = Speed  and Efficiency Helpers =
+# = Run Helpers =
 # =================================
 
 #' umxRun
@@ -149,6 +150,7 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 #' @param obj The RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.
 #' @param sd Optional Standard Deviation for start values
 #' @param n  Optional Mean for start values
+#' @param onlyTouchZeros Don't start things that appear to have already been started (useful for speeding \code{\link{umxReRun}})
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}
@@ -206,6 +208,49 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		}
 		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
 		return(obj)
+	}
+}
+
+#' umxLabel
+#'
+#' umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix based), an \code{\link{mxPath}}, or an \code{\link{mxMatrix}}
+#' This is a core function in umx: Adding labels to paths opens the door to \code{\link{umxEquate}}, as well as \code{\link{omxSetParameters}}
+#'
+#' @param obj An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}
+#' @param suffix String to append to each label (might be used to distinguish, say male and female submodels in a model)
+#' @param baseName String to prepend to labels. Defaults to empty
+#' @param setfree Whether to also 
+#' @param drop The value to fix "drop" paths to (defaults to 0)
+#' @param jiggle How much to jiggle values in a matrix or list of path values
+#' @param boundDiag Whether to bound the diagonal of a matrix
+#' @param verbose How much feedback to give the user (default = F)
+
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @export
+#' @examples
+#' \dontrun{
+#'  model = umxLabel(model)
+#'  umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
+#' }
+
+umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F, overRideExisting = F) {	
+	# TODO !!!! labelling rule for bivariate perhaps should be sort alphabetically, makes it unambiguous...
+	# TODO !!!! implications for umxAdd1 finding the right labels...
+	if (is(obj, "MxMatrix") ) { 
+		# label an mxMatrix
+		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
+	} else if (umxIsRAMmodel(obj)) { 
+		# label a RAM model
+		if(verbose){message("RAM")}
+		return(xmuLabel_RAM_Model(obj, suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting))
+	} else if (umxIsMxModel(obj) ) {
+		# label a non-RAM matrix model
+		return(xmuLabel_MATRIX_Model(obj, suffix))
+	} else {
+		stop("I can only label OpenMx models and mxMatrix types. You gave me a ", typeof(obj))
 	}
 }
 
@@ -300,49 +345,6 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 # ==============================
 # = Label and equate functions =
 # ==============================
-
-#' umxLabel
-#'
-#' umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix based), an \code{\link{mxPath}}, or an \code{\link{mxMatrix}}
-#' This is a core function in umx: Adding labels to paths opens the door to \code{\link{umxEquate}}, as well as \code{\link{omxSetParameters}}
-#'
-#' @param obj An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}
-#' @param suffix String to append to each label (might be used to distinguish, say male and female submodels in a model)
-#' @param baseName String to prepend to labels. Defaults to empty
-#' @param setfree Whether to also 
-#' @param drop The value to fix "drop" paths to (defaults to 0)
-#' @param jiggle How much to jiggle values in a matrix or list of path values
-#' @param boundDiag Whether to bound the diagonal of a matrix
-#' @param verbose How much feedback to give the user (default = F)
-
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @export
-#' @examples
-#' \dontrun{
-#'  model = umxLabel(model)
-#'  umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
-#' }
-
-umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F, overRideExisting = F) {	
-	# TODO !!!! labelling rule for bivariate perhaps should be sort alphabetically, makes it unambiguous...
-	# TODO !!!! implications for umxAdd1 finding the right labels...
-	if (is(obj, "MxMatrix") ) { 
-		# label an mxMatrix
-		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
-	} else if (umxIsRAMmodel(obj)) { 
-		# label a RAM model
-		if(verbose){message("RAM")}
-		return(xmuLabel_RAM_Model(obj, suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting))
-	} else if (umxIsMxModel(obj) ) {
-		# label a non-RAM matrix model
-		return(xmuLabel_MATRIX_Model(obj, suffix))
-	} else {
-		stop("I can only label OpenMx models and mxMatrix types. You gave me a ", typeof(obj))
-	}
-}
 
 #' umxGetParameters
 #'
@@ -612,6 +614,27 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 # ===============
 # = RAM Helpers =
 # ===============
+#' umxLatent
+#'
+#' Helper to ease the creation of latent variables, including reflective variables (where the manifests define the latent, and need wireing up behind)
+#'
+#' @param latent the name of the latent variable (string)
+#' @param formedBy the list of variables forming this latent
+#' @param forms the list of variables which this latent forms (leave blank for formedBy)
+#' @param data the dataframe being used in this model
+#' @param endogenous = FALSE
+#' @param model.name = NA
+#' @param help = FALSE
+#' @param labelSuffix a string to add to the end of each label
+#' @param verbose = T
+#' @return - path list
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
+#' }
 
 umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous = FALSE, model.name = NA, help = FALSE, labelSuffix = "", verbose = T) {
 	# Purpose: make a latent variable formed/or formed by some manifests
@@ -853,85 +876,6 @@ umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbo
 		return(xmuMakeThresholdsMatrices(df, droplevels, verbose))
 	}
 }
-
-#' umxIsOrdinalVar
-#'
-#' return the names of any ordinal variables in a dataframe
-#'
-#' @param df an \code{\link{data.frame}} to look in for ordinal variables
-#' @return - list of variable names
-#' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' \dontrun{
-#' umxIsOrdinalVar(df)
-#' }
-
-umxIsOrdinalVar <- function(df, names=F) {
-	# Purpose, return which columns are Ordinal
-	# use case: isContinuous = !umxIsOrdinalVar(df)
-	# nb: can optionally return just the names of these
-	nVar = ncol(df);
-	# Which are ordered factors?
-	factorVariable = rep(F,nVar)
-	for(n in 1:nVar) {
-		if(is.ordered(df[,n])) {
-			factorVariable[n]=T
-		}
-	}
-	if(names){
-		return(names(df)[factorVariable])
-	} else {
-		return(factorVariable)
-	}
-}
-
-#' umxIsRAMmodel
-#'
-#' Utility function returning a binary answer to the question "Is this a RAM model?"
-#'
-#' @param obj an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}
-#' @return - Boolean
-#' @export
-#' @seealso - \code{\link{mxModel}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' \dontrun{
-#' if(umxIsRAMmodel(fit1)){
-#' 	message("nice RAM model!")
-#' }
-#' }
-
-umxIsRAMmodel <- function(obj) {
-	if(!umxIsMxModel(obj)){
-		return(F)
-	}else{
-		return(class(obj$objective) == "MxRAMObjective")
-	}
-	# TODO: get working on both the old and new objective model...
-	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
-}
-
-#' umxIsMxModel
-#'
-#' Utility function returning a binary answer to the question "Is this an OpenMx model?"
-#'
-#' @param obj an object to be tested to see if it is an OpenMx \code{\link{mxModel}}
-#' @return - Boolean
-#' @export
-#' @seealso - \code{\link{mxModel}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' \dontrun{
-#' if(umxIsMxModel(fit1)){
-#' 	message("nice OpenMx model!")
-#' }
-#' }
-umxIsMxModel <- function(obj) {
-	isS4(obj) & is(obj, "MxModel")	
-}
-
 
 # ==================================
 # = Borrowed for tutorial purposes =

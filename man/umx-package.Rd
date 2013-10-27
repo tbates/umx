@@ -12,7 +12,7 @@ A library of Helper functions for OpenMx. If you are just
 \details{
 \tabular{ll}{
 Package: \tab umx\cr
-Version: \tab 0.5\cr
+Version: \tab 0.6\cr
 License: \tab GPL-3\cr
 URL: \tab \url{http://github.com/tbates/umx}\cr
 Depends: \tab R (>= 2.11.0), OpenMx (>= 1.3.0),\cr
@@ -42,9 +42,9 @@ library("umx")
 
 \code{\link{umxSummary}}              Compact report of model fit
 
-\code{\link{umxReportCIs}}            Report FIML CIs on a model, creating them if necessary
+\code{\link{umxCI}}                  Report FIML CIs on a model, creating them if necessary
 
-\code{\link{umxGraph_RAM}}            Create a Path Diagram from your model!
+\code{\link{umxPlot}}                Create a Path Diagram from your model!
 
 
 \bold{Updating & Modifying}
@@ -156,10 +156,10 @@ umxCompare(fit1, fit2)
 # And make a Figure it dot format!
 # If you have installed GraphViz, the next command will open it for you to see!
 
-umxGraph_RAM(fit1, std = T)
+umxPlot(fit1, std = T)
 
 # Run this instead if you don't have GraphViz
-umxGraph_RAM(fit1, std = T, dotFilename = NA)
+umxPlot(fit1, std = T, dotFilename = NA)
 
 }
 }
