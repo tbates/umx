@@ -1381,3 +1381,18 @@ umxHasSquareBrackets <- function (input) {
     match2 <- grep("]", input, fixed = TRUE)
     return(length(match1) > 0 && length(match2) > 0)
 }
+
+
+
+umx_string_to_Algebra <- function(algString, name = NA, dimnames = NA) {
+	# stringToMxAlgebra(paste(rep("A", nReps), collapse = " %*% "), name="whatever")
+	eval(substitute(mxAlgebra(tExp, name=name, dimnames=dimnames), list(tExp = parse(text=algString)[[1]])))
+	# This is useful because it lets you use paste() and rep() to quickly and easily insert values from R variables into the string, then parse the string as an mxAlgebra argument. The use case this time was to include a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. With this function, the code goes:
+}
+
+# genEpi_EvalQuote(expstring, model, compute, show)
+# Unstrings things - takes algebras as strings, as returns as algebras
+# "a+b" -> a+b
+umxEval <- function(expstring, model, compute = F, show = F) {
+	return(eval(substitute(mxEval(x, model, compute, show), list(x = parse(text=expstring)[[1]]))))
+}

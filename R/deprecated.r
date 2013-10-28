@@ -297,3 +297,12 @@ summaryCommonFit <- function(thisFit, accuracy = accuracy, dotFilename = dotFile
 umxPlotCholesky <- function(thisFit, accuracy = accuracy, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, parentModel = parentModel, CIs=CIs) {
 	stop("Deprecated: Please replace umxPlotCholesky with umxPlotACE")
 }
+
+
+stringToMxAlgebra <- function(algString, name = NA, dimnames = NA) {
+	stop("Deprecated: Please replace stringToMxAlgebra with umx_string_to_Algebra")
+}
+
+genEpi_EvalQuote <- function(expstring, model, compute, show){
+	stop("Deprecated: Please replace genEpi_EvalQuote with umxEval")
+}
