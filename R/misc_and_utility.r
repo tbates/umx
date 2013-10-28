@@ -176,48 +176,55 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 	# print.dataframe(bob, digits=2, zero.print = ".", justify="left")
 }
 
+
+# ===================================
+# = Ordinal/Threshold Model Helpers =
+# ===================================
+
+xmuMaxLevels <- function(data) {
+	anyFactors = F
+	maxLevels = 0
+	vars = names(data)
+	for (i in vars) {
+		if(is.factor(mzData[,i])){
+			nLevels = length(levels(mzData[,i]))
+			if(nLevels > maxLevels){
+			 	maxLevels = nLevels
+				anyFactors = T
+			}
+		}
+	}	
+	if(!anyFactors){
+		stop("No columns were type factor")
+	} else {
+		return(maxLevels)
+	}
+}
+xmuMinLevels <- function(data) {
+	# TODO add check that some columns have levels
+	anyFactors = F
+	minLevels = 1e6 # silly high value
+	vars = names(data)
+	for (i in vars) {
+		if(is.factor(mzData[,i])){
+			nLevels = length(levels(mzData[,i]))
+			if(nLevels < minLevels){
+			 	minLevels = nLevels
+				anyFactors = T
+			}
+		}
+	}
+	if(!anyFactors){
+		stop("No columns were type factor")
+	} else {
+		return(minLevels)
+	}
+}
+
 # ====================
 # = Data and Utility =
 # ====================
 
-#' Stouffer.test
-#'
-#' Runs a Stouffer.test
-#'
-#' @param p A list of p values, i.e., p(.4, .3, .6, .01)
-#' @seealso - 
-#' @references - \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
-#' Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, 
-#' and Robin M. Williams, Jr. (1949). Studies in Social Psychology in World War II: 
-#' The American Soldier. Vol. 1, Adjustment During Army Life. Princeton: Princeton University Press.
-#' 
-#' Bailey TL, Gribskov M (1998). Combining evidence using p-values: application to sequence
-#' homology searches. Bioinformatics, 14(1) 48-54.
-#' Fisher RA (1925). Statistical methods for research workers (13th edition). London: Oliver and Boyd.
-#' Manolov R and Solanas A (2012). Assigning and combining probabilities in single-case studies.
-#' Psychological Methods 17(4) 495-509. Describes various methods for combining p-values including
-#' Stouffer and Fisher and the binomial test.
-#' \url{http://www.burns-stat.com/pages/Working/perfmeasrandport.pdf}
-#' @export
-#' @examples
-#' Stouffer.test(p = c(.01, .2, .3))
-
-Stouffer.test <- function(p = NULL) {
-	pl <- length(p)
-	if (is.null(p) | pl < 2) {
-		stop("There was an empty array of p-values")
-	}
-	erf <- function(x) {
-		2 * pnorm(2 * x/ sqrt(2)) - 1
-	}
-	erfinv <- function(x) {
-		qnorm( (x + 1) / 2 ) / sqrt(2)
-	}
-	pcomb <- function(p) {
-		(1 - erf(sum(sqrt(2) * erfinv(1 - 2 * p)) / sqrt(2 * length(p))))/2
-	}
-	pcomb(p)
-}
 
 #' umxHetCor
 #'
@@ -893,6 +900,46 @@ anova.report.F <- function(model, precision=3) {
 # =====================
 
 
+#' Stouffer.test
+#'
+#' Runs a Stouffer.test
+#'
+#' @param p A list of p values, i.e., p(.4, .3, .6, .01)
+#' @seealso - 
+#' @references - \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
+#' Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, 
+#' and Robin M. Williams, Jr. (1949). Studies in Social Psychology in World War II: 
+#' The American Soldier. Vol. 1, Adjustment During Army Life. Princeton: Princeton University Press.
+#' 
+#' Bailey TL, Gribskov M (1998). Combining evidence using p-values: application to sequence
+#' homology searches. Bioinformatics, 14(1) 48-54.
+#' Fisher RA (1925). Statistical methods for research workers (13th edition). London: Oliver and Boyd.
+#' Manolov R and Solanas A (2012). Assigning and combining probabilities in single-case studies.
+#' Psychological Methods 17(4) 495-509. Describes various methods for combining p-values including
+#' Stouffer and Fisher and the binomial test.
+#' \url{http://www.burns-stat.com/pages/Working/perfmeasrandport.pdf}
+#' @export
+#' @examples
+#' Stouffer.test(p = c(.01, .2, .3))
+
+Stouffer.test <- function(p = NULL) {
+	pl <- length(p)
+	if (is.null(p) | pl < 2) {
+		stop("There was an empty array of p-values")
+	}
+	erf <- function(x) {
+		2 * pnorm(2 * x/ sqrt(2)) - 1
+	}
+	erfinv <- function(x) {
+		qnorm( (x + 1) / 2 ) / sqrt(2)
+	}
+	pcomb <- function(p) {
+		(1 - erf(sum(sqrt(2) * erfinv(1 - 2 * p)) / sqrt(2 * length(p))))/2
+	}
+	pcomb(p)
+}
+
+
 # Test differences in Kurtosis and Skewness
 kurtosisDiff <- function(x, y, B = 1000){
 	require(psych)
@@ -1311,7 +1358,7 @@ umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", pr
 #' reorderedMatrix = umx_reorder(oldMatrix, newOrder)
 #' }
 
-umx_reorder = function(old, newOrder) {
+umx_reorder <- function(old, newOrder) {
 	dim_names = dimnames(old)[[1]]
 	if(!all(newOrder %in% dim_names)){
 		stop("All variable names must appear in the matrix")
@@ -1327,4 +1374,10 @@ umx_reorder = function(old, newOrder) {
 		}
 	}
 	return(new)
+}
+
+umxHasSquareBrackets <- function (input) {
+    match1 <- grep("[", input, fixed = TRUE)
+    match2 <- grep("]", input, fixed = TRUE)
+    return(length(match1) > 0 && length(match2) > 0)
 }

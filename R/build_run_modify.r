@@ -1131,3 +1131,18 @@ umxCheck <- function(fit1){
 	}
 	# Check manifests in dataframe
 }
+
+
+# ====================
+# = Parallel Helpers =
+# ====================
+
+eddie_AddCIbyNumber <- function(model, labelRegex = "") {
+	# eddie_AddCIbyNumber(model, labelRegex="[ace][1-9]")
+	args     = commandArgs(trailingOnly=TRUE)
+	CInumber = as.numeric(args[1]); # get the 1st argument from the cmdline arguments (this is called from a script)
+	CIlist   = umxGetLabels(model ,regex= "[ace][0-9]", verbose=F)
+	thisCI   = CIlist[CInumber]
+	model    = mxModel(model, mxCI(thisCI) )
+	return (model)
+}
