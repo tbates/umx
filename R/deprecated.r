@@ -261,6 +261,10 @@ twoGroupOrdinal <- function(modelName ="Ordinal", selDVs, factorLevels, dzData, 
 	stop("Change \"twoGroupOrdinal\" to: makeOrdinal_2Group")
 }
 
+umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
+	stop("Replace umxGraph_RAM with umxPlot (umxGraph_RAM was deprecated to help people learn umx more quickly)")
+}
+
 tryHard <- function(model, n = 3, calc_SE = F){stop("Use umxRun() in place of umxTryHard() and tryHard()")}
 
 genEpi_ReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F) {message("please call umxReRun()")}
@@ -305,4 +309,9 @@ stringToMxAlgebra <- function(algString, name = NA, dimnames = NA) {
 
 genEpi_EvalQuote <- function(expstring, model, compute, show){
 	stop("Deprecated: Please replace genEpi_EvalQuote with umxEval")
+}
+
+
+umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
+	stop("Deprecated: Please replace umxReportCIs with umxCI")
 }

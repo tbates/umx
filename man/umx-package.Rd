@@ -30,7 +30,7 @@ library("umx")
 
 \bold{Index:}
 
-\bold{Build, Run, and Report}
+\bold{Build and Run a Model}
 
 \code{\link{umxLabel}}                Add labels to all parameters of a model
 
@@ -38,13 +38,22 @@ library("umx")
 
 \code{\link{umxRun}}                  Run a model, adding saturated models if necessary, optionally adds labels and starts
 
-\code{\link{umxCompare}}              Compare one or more models
+\code{\link{umxLatent}}               Create a latent variable, taking care of reflective/formative distinctions automagically
 
-\code{\link{umxSummary}}              Compact report of model fit
+\code{\link{umxSaturated}}            Create saturated and independence models so that reporting works. (called from umxRun for you)
 
-\code{\link{umxCI}}                  Report FIML CIs on a model, creating them if necessary
+\bold{Get reports of model results}
+
+\code{\link{umxSummary}}             Compact report of model fit
 
 \code{\link{umxPlot}}                Create a Path Diagram from your model!
+
+\code{\link{umxCompare}}             Compare one or more models
+
+\code{\link{umxCI}}                  Add and report FIML Confidence Intervals for a model.
+
+\code{\link{extractAIC.MxModel}}     Report the AIC for a model.
+
 
 
 \bold{Updating & Modifying}
@@ -59,11 +68,17 @@ library("umx")
 
 \code{\link{umxMI}}                   Compute modification indices for RAM models
 
+\code{\link{umxGetParameters}}        A regex enabled version of \code{\link{mxGetParameters}}
+
 \bold{High-level reporting}
 
-\code{\link{umxUnexplainedCausalNexus}}
+\code{\link{umxUnexplainedCausalNexus}} Compute the change in an outcome variable that flows from a change in an input
+
+
 
 \bold{Utilities}
+
+\code{\link{umxUpdateOpenMx}}         umxUpdateOpenMx
 
 \code{\link{umxStandardizeModel}}     Standardize a RAM Model
 
@@ -73,23 +88,49 @@ library("umx")
 
 \code{\link{umxJiggle}}               Jiggle values in a list
 
-\code{\link{umxUpdateOpenMx}}         umxUpdateOpenMx
-
 \code{\link{umxHasCIs}}               Utility function to ask a model if it has CIs
 
-\code{\link{umxIsMxModel}}            Utility function to an object "Are you an OpenMx model?"
+\code{\link{umxIsMxModel}}            Utility function to ask an object "Are you an OpenMx model?"
 
-\code{\link{umxIsRAMmodel}}            Utility function to an object "Are you an OpenMx RAM model?"
+\code{\link{umxIsRAMmodel}}           Utility function to ask an object "Are you an OpenMx RAM model?"
+ 
+\code{\link{umxIsOrdinalVar}}         Utility function to ask an object "Are you an ordinal variable?"
+
+\code{\link{umx_find_object}}         Find an OpenMx (or other) object by name
+
+\code{\link{umx_grep_labels}}         Find labels (SPSS-style) which match a regular expression. Useful.
+
+\code{\link{umxCov2cor}}              Convert a covariance matrix to a corelation matrix, guaranteeing the upper and lower triangles are exact equal
+
+\code{\link{umx_is_cov}}              Test if data is a covariance matrix
+
+\code{\link{umx_reorder}}             Reorder the variables in a covariance matrix (including dropping variables)
+
+\code{\link{umxLower2full}}          Take a lower matrix and populate the upper triangle
 
 \bold{Non-SEM helpers}
 
-\code{\link{print.dataframe}}         print dataframe in readable form by supressing NA and rounding 0
+\code{\link{umx_swap_a_block}}        Swap places with one block of data to another
+
+\code{\link{umx_move_file.Rd}}       Flexibly move files on the filesystem
+
+\code{\link{umx_rename_file.Rd}}      Flexibly rename files on the filsystem
+
+\code{\link{umx_greater_than}}        A version of %>% which excludes NA
+
+\code{\link{umx_less_than}}           A version of %<% which excludes NA
+
+\code{\link{umx_cor}}                 Report correlations and their p-values
+
+\code{\link{print.dataframe}}         Print dataframe in readable form by supressing NAs, rounding numbers, and presenting zeros as "0"
 
 \code{\link{umxAnovaReport}}          Format an anova model into an APA-style report
 
 \code{\link{Stouffer.test}}           Run a Stouffer.test (meta-analytic p-value)
 
-\code{\link{umx_u_APA_pval}}          Utility function to format a p-value for APA (three decimals, "<.001" if under that)
+\code{\link{umx_APA_pval}}            Utility function to format a p-value for APA (three decimals, "<.001" if under that)
+
+\code{\link{umx_round}}               Control rounding in ways of more use to scientists than computers
 
 \code{\link{umxDescriptives}}         Utility function to generate participant section for an APA-style article.
 

@@ -54,6 +54,26 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "ret
 	# }
 }
 
+#' extractAIC
+#'
+#' returns the AIC for an OpenMx model
+#'
+#' @param model an \code{\link{mxModel}} to get the AIC for
+#' @return - AIC value
+#' @export
+#' @seealso - \code{\link{umxRun}}, \code{\link{umxCompare}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' x = extractAIC(model)
+#' }
+extractAIC.MxModel <- function(model) {
+	require(umx)
+	a = umx::umxCompare(model)
+	return(a[1,"AIC"])
+}
+
+
 #' umxSummary
 #'
 #' Report the fit of a model in a compact form suitable for a journal. Emits a "warning" not 
@@ -171,9 +191,9 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 	})
 }
 
-#' umxReportCIs
+#' umxCI
 #'
-#' umxReportCIs umxReportCIs adds mxCI() calls for all free parameters in a model, 
+#' umxCI adds mxCI() calls for all free parameters in a model, 
 #' runs the CIs, and reports a neat summary.
 #'
 #' This function also reports any problems computing a CI. The codes are standard OpenMx errors and warnings
@@ -200,10 +220,10 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' umxReportCIs(model)
 #' }
 
-umxReportCIs <- function(model = NA, addCIs = T, runCIs = "if necessary") {
+umxCI <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 	# TODO add code to not-run CIs
 	if(is.na(model)){
-		message("umxReportCIs adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxReportCIs(model)")
+		message("umxCI adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxReportCIs(model)")
 		stop();
 	}
 	message("### CIs for model ", model@name)
