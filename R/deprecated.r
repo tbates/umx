@@ -83,103 +83,8 @@ umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = T
 	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = myLabels, lbound = lbound, ubound = ubound)
 }
 
-#' umxReportFit
-#'
-#' Deprecated: Please use \code{\link{umxSummary}} instead. Both functions report fit in a compact form suitable for a journal. 
-#'
-#' @param model The \code{\link{mxModel}} whose fit will be reported
-#' @param saturatedModels Saturated models if needed for fit indices (see note below: 
-#' Only needed for raw data, and then not if you've run umxRun
-#' @param report The format for the output (currently only a 1-liner is supported)
-#' @param showEstimates Whether to show the raw or standadized estimates.
-#' Options are "none|raw|std|both" (The default is standardized parameters. Choose none just to get the fit statistics)
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#'  - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
-#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles, Los Angeles. Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
-#' @export
-#' @import OpenMx
-#' @examples
-#' \dontrun{
-#' umxSummary(m1)
-#' }
-
 umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEstimates = "std", precision = 2, displayColumns = c("row", "col", "Std.Estimate")){
-	warning("umxReportFit is deprecated now: use umxSummary() in its place")
-	# report = "line|table"
-	# showEstimates = "std|none"
-	# TODO make table take lists of models...
-	# TODO could have a toggle for computing hte saturated models...
-
-	output <- model@output
-	# stop if there is no objective function
-	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
-	# stop if there is no output
-	if ( length(output) < 1 ) stop("Provided model has no output. I can only standardize models that have been mxRun() first!")
-	
-	if(is.null(saturatedModels)){
-		# saturatedModels not passed in from outside, so get them from the model
-		modelSummary = OpenMx::summary(model)
-		
-		if(is.na(modelSummary$SaturatedLikelihood)){
-			message("There is no saturated likelihood: computing that now...")
-			saturatedModels = umxSaturated(model)
-			modelSummary = summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
-		}
-	} else {
-		modelSummary = summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
-	}
-
-	if(showEstimates != "none"){
-		if("Std.Estimate" %in%  names(modelSummary$parameters)){
-			if(showEstimates == "both") {
-				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
-			} else if(showEstimates == "std"){
-				namesToShow = c("name", "matrix", "row", "col", "Std.Estimate", "Std.SE")
-			}else{
-				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")					
-			}
-		} else {
-			namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")
-		}
-		print(modelSummary$parameters[,namesToShow], digits= 3, na.print = "", zero.print = "0", justify = "none")
-	}
-	
-	with(modelSummary, {
-		if(!is.finite(TLI)){			
-			TLI_OK = "OK"
-		} else {
-			if(TLI > .95) {
-				TLI_OK = "OK"
-				} else {
-					TLI_OK = "bad"
-				}
-			}
-			if(!is.finite(RMSEA)) {
-				RMSEA_OK = "OK"
-			} else {
-			if(RMSEA < .06){
-				RMSEA_OK = "OK"
-				} else {
-					RMSEA_OK = "bad"
-				}
-			}
-			if(report == "table"){
-				x = data.frame(cbind(model@name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
-				names(x) = c("model","\u03A7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
-				print(x)
-			} else {
-				x = paste0(
-					"\u03A72\u00B2(", degreesOfFreedom, ") = ", round(Chi,2),
-					", p = "    , formatC(p, format="g"),
-					"; CFI = "  , round(CFI,3),
-					"; TLI = "  , round(TLI,3),
-					"; RMSEA = ", round(RMSEA, 3), 
-					", TLI = "  , TLI_OK,
-					", RMSEA = ", RMSEA_OK)
-					print(x)
-			}
-	})
+	stop("umxReportFit is deprecated: use umxSummary() in its place")
 }
 
 umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
@@ -224,9 +129,7 @@ col.as.numeric <- function(df) {
 
 cor.prob <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {message("Use umx_cor")}
 
-
 umx_u_APA_pval <- function(p, min = .001, rounding = 3, addComparison = T) {stop("umx_u_APA_pval is deprecated: Use umx_APA_pval")}
-
 
 
 # ==========================
