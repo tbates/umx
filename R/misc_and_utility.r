@@ -14,6 +14,39 @@
 # = utility functions =
 # =====================
 
+accumulate <- function(FUN = nlevels, fromEach = "column", of_DataFrame = ordinalColumns) {
+	# accumulate(nlevels, fromEach = "column", of_DataFrame = ordinalColumns)
+	if(! (fromEach %in% c("column", "row"))){
+		stop(paste("fromEach must be either column or row, you gave me", fromEach))
+	}
+	out = c()
+	if(fromEach == "column"){
+		for(n in 1:ncol(of_DataFrame)){
+			out[n] = nlevels(of_DataFrame[,n])
+		}
+	} else {
+		for(n in 1:nrow(of_DataFrame)){
+			out[n] = nlevels(of_DataFrame[n,])
+		}
+	}
+	return(out)
+}
+
+# ====================
+# = Parallel Helpers =
+# ====================
+
+eddie_AddCIbyNumber <- function(model, labelRegex = "") {
+	# eddie_AddCIbyNumber(model, labelRegex="[ace][1-9]")
+	args     = commandArgs(trailingOnly=TRUE)
+	CInumber = as.numeric(args[1]); # get the 1st argument from the cmdline arguments (this is called from a script)
+	CIlist   = umxGetLabels(model ,regex= "[ace][0-9]", verbose=F)
+	thisCI   = CIlist[CInumber]
+	model    = mxModel(model, mxCI(thisCI) )
+	return (model)
+}
+
+
 # ====================
 # = Updating helpers =
 # ====================
@@ -712,7 +745,7 @@ specify_decimal <- function(x, k) format(round(x, k), nsmall = k)
 # R2HTML::HTML(a, file="tables.html"); system("open tables.html")
 
 print.html <- function(x, rounding = 3, title=grep(".*\\b",deparse(substitute(x)),value=T),headings=colnames(x), align = paste0(rep('c',ncol(x)), collapse = ''), halign=paste(rep('c',ncol(x)),collapse=''), cgroup=NULL, n.cgroup=NULL, cgroup.just=rep("c",length(n.cgroup)), rgroup=NULL, n.rgroup=NULL, rowlabel=title, ctable=F, caption=NULL, caption.loc='top', label=title, output = "Rout.html",...) {
-	# usage: htmlTable(x, output = "Rout.html")
+	# usage: print.html(x, output = "Rout.html")
 	# options for output = c("Rout.html","cat","return")
 
     table_str <- "<table class='gmisc_table' style='border-top: 2px solid grey; border-bottom: 2px solid grey;'>"
@@ -1383,16 +1416,48 @@ umxHasSquareBrackets <- function (input) {
 }
 
 
-
-umx_string_to_Algebra <- function(algString, name = NA, dimnames = NA) {
-	# stringToMxAlgebra(paste(rep("A", nReps), collapse = " %*% "), name="whatever")
+#' umx_string_to_algebra
+#'
+#' This is useful because it lets you use paste() and rep() to quickly and easily insert values from R variables into the string, then parse the string as an mxAlgebra argument. The use case this time was to include a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. 
+#'
+#' @param algString a string to turn into an algebra
+#' @param name of the returned algebra
+#' @param dimnames of the returned algebra
+#' @return - \code{\link{mxAlgebra}}
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " %*% "), name = "test_case")
+#' }
+umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 	eval(substitute(mxAlgebra(tExp, name=name, dimnames=dimnames), list(tExp = parse(text=algString)[[1]])))
-	# This is useful because it lets you use paste() and rep() to quickly and easily insert values from R variables into the string, then parse the string as an mxAlgebra argument. The use case this time was to include a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. With this function, the code goes:
 }
 
-# genEpi_EvalQuote(expstring, model, compute, show)
-# Unstrings things - takes algebras as strings, as returns as algebras
-# "a+b" -> a+b
+#' umxEval
+#'
+#' Takes an expression as a string, and evaluates it as an expression in model, optionally computing the result.
+#' # TODO Currently broken...
+#'
+#' @param x an expression string, i.e, "a + b"
+#' @param model an \code{\link{mxModel}} to WITH
+#' @return - an openmx algebra (formula)
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#'	fit = mxModel("fit",
+#'		mxMatrix("Full", nrow=1, ncol=1, free=T, values=1, name="a"),
+#'		mxMatrix("Full", nrow=1, ncol=1, free=T, values=2, name="b"),
+#'		mxAlgebra(a %*% b, name="ab"),
+#'		mxConstraint(ab ==35, name = "maxHours"),
+#'		mxAlgebraObjective(algebra="ab", numObs= NA, numStats=NA)
+#'	)
+#'	fit = mxRun(fit)
+#'	mxEval(list(ab = ab), fit)
+#' }
 umxEval <- function(expstring, model, compute = F, show = F) {
 	return(eval(substitute(mxEval(x, model, compute, show), list(x = parse(text=expstring)[[1]]))))
 }

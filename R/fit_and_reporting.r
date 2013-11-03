@@ -25,13 +25,14 @@
 #' @examples
 #' \dontrun{
 #' umxCompare(model1, model2)
+#' umxCompare(model1, model2, output="tmp.html")
 #' umxCompare(model1, c(model2, model3))
 #' }
 
 umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "return", digits = 3) {
 	# output != "return"is interpreted as a file to write html too...
 	# umxCompare(fit11, fit11, all=F, output="Rout.html")
-	# TODO eliminate this once mxCompare finally updates...
+	# TODO add plain english reporting paste("Test of hypothesis x by dropping modelName was not supported (χ²(1) = C, p = ", umx_APA_pval(p), ")")
 	if(is.null(comparison)){
 		comparison <- base
 	} else if (is.null(base)) {
@@ -39,14 +40,29 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "ret
 	}
 	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
 	# tableOut  = format(tableOut, scientific = F, digits = digits)
-	tableOut  = tableOut[, c(2:1, 3, 6, 7:9)]
-	names(tableOut) <- c("Comparison", "Base", "ep", "AIC", "delta LL", "delta df", "p")
-	tableOut[,"p"] = umx_APA_pval(tableOut[,"p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
-	if(output == "return"){
-		return(tableOut)
-	} else {
-		print.html(tableOut, output = output, rowlabel="")
+	tablePub  = tableOut[, c(2:1, 3, 6, 7:9)]
+	names(tablePub) <- c("Comparison", "Base", "EP", "AIC", "&Delta; -2LL", "&Delta; df", "p")
+	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
+
+	x = dim(tableOut)
+	n_rows = x[1]
+	for (i in 2:n_rows) {
+		
 	}
+
+	if(output == "return"){
+		return(tablePub)
+	} else {
+		R2HTML::HTML(tableOut, file=output, Border = 0, append = F, sortableDF=T); system(paste0("open ", output))
+		# print.html(tableOut, output = output, rowlabel = "")
+		# R2HTML::print(tableOut, output = output, rowlabel = "")
+	}
+	
+	# " em \u2013 dash"
+   # Delta (U+0394)
+   # &chi;
+ 	# "Chi \u03A7"
+	# "chi \u03C7"
 	# if(export){
 	# 	fName= "Model.Fitting.xls"
 	# 	write.table(tableOut,fName, row.names=F,sep="\t", fileEncoding="UTF-8") # macroman UTF-8 UTF-16LE

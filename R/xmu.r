@@ -467,3 +467,52 @@ xmuMI <- function(model, vector = T) {
 	close(bar)
 	return(ret)
 }
+
+xmuHasSquareBrackets <- function (input) {
+    match1 <- grep("[", input, fixed = TRUE)
+    match2 <- grep("]", input, fixed = TRUE)
+    return(length(match1) > 0 && length(match2) > 0)
+}
+
+
+
+xmuMaxLevels <- function(data) {
+	anyFactors = F
+	maxLevels = 0
+	vars = names(data)
+	for (i in vars) {
+		if(is.factor(mzData[,i])){
+			nLevels = length(levels(mzData[,i]))
+			if(nLevels > maxLevels){
+			 	maxLevels = nLevels
+				anyFactors = T
+			}
+		}
+	}	
+	if(!anyFactors){
+		stop("No columns were type factor")
+	} else {
+		return(maxLevels)
+	}
+}
+
+xmuMinLevels <- function(data) {
+	# TODO add check that some columns have levels
+	anyFactors = F
+	minLevels = 1e6 # silly high value
+	vars = names(data)
+	for (i in vars) {
+		if(is.factor(mzData[,i])){
+			nLevels = length(levels(mzData[,i]))
+			if(nLevels < minLevels){
+			 	minLevels = nLevels
+				anyFactors = T
+			}
+		}
+	}
+	if(!anyFactors){
+		stop("No columns were type factor")
+	} else {
+		return(minLevels)
+	}
+}
