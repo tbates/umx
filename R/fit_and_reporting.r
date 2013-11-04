@@ -18,6 +18,8 @@
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
 #' @param output Optionally output to an html table which will open your default browser: handy for getting tables into word
+#' @param digits rounding for p etc.
+#' @param addText Optionally output a verbal sentence for inclusion inline in a paper.
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://openmx.psyc.virginia.edu/}
 #' @export
@@ -25,13 +27,14 @@
 #' @examples
 #' \dontrun{
 #' umxCompare(model1, model2)
+#' umxCompare(model1, model2, output="tmp.html")
 #' umxCompare(model1, c(model2, model3))
 #' }
 
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "return", digits = 3) {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "return", digits = 3, addText = T) {
 	# output != "return"is interpreted as a file to write html too...
 	# umxCompare(fit11, fit11, all=F, output="Rout.html")
-	# TODO eliminate this once mxCompare finally updates...
+	# TODO add plain english reporting paste("Test of hypothesis x by dropping modelName was not supported (χ²(1) = C, p = ", umx_APA_pval(p), ")")
 	if(is.null(comparison)){
 		comparison <- base
 	} else if (is.null(base)) {
@@ -39,14 +42,46 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "ret
 	}
 	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
 	# tableOut  = format(tableOut, scientific = F, digits = digits)
-	tableOut  = tableOut[, c(2:1, 3, 6, 7:9)]
-	names(tableOut) <- c("Comparison", "Base", "ep", "AIC", "delta LL", "delta df", "p")
-	tableOut[,"p"] = umx_APA_pval(tableOut[,"p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
-	if(output == "return"){
-		return(tableOut)
-	} else {
-		print.html(tableOut, output = output, rowlabel="")
+	tablePub  = tableOut[, c(2:1, 3, 6, 7:9)]
+	names(tablePub) <- c("Comparison", "Base", "EP", "AIC", "&Delta; -2LL", "&Delta; df", "p")
+	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
+
+	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
+	# addText = 1
+	if(addText){
+		n_rows = dim(tablePub)[1]
+		for (i in 1:n_rows) {
+			if(!is.na(tablePub[i, "Comparison"])){
+				if(tableOut[i, 9] < .05){
+					did_didnot = ". This caused a significant loss of fit "
+				} else {
+					did_didnot = ". This did not lower fit significantly"
+				}
+				message(
+				"The hypothesis that ", tablePub[i,"Comparison"], 
+				" was tested by dropping ", tablePub[i,"Comparison"],
+				" from ", tablePub[i,"Base"], 
+				did_didnot, 
+				"(χ²(", tablePub[i, 6], ") = ", round(tablePub[i, 5], 2),
+				", p = ", tablePub[i,"p"], ")."
+				)
+			}
+		}
 	}
+	
+	if(output == "return"){
+		return(tablePub)
+	} else {
+		R2HTML::HTML(tablePub, file = output, Border = 0, append = F, sortableDF = T); system(paste0("open ", output))
+		# print.html(tableOut, output = output, rowlabel = "")
+		# R2HTML::print(tableOut, output = output, rowlabel = "")
+	}
+	
+	# " em \u2013 dash"
+   # Delta (U+0394)
+   # &chi;
+ 	# "Chi \u03A7"
+	# "chi \u03C7"
 	# if(export){
 	# 	fName= "Model.Fitting.xls"
 	# 	write.table(tableOut,fName, row.names=F,sep="\t", fileEncoding="UTF-8") # macroman UTF-8 UTF-16LE

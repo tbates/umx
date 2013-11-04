@@ -12,6 +12,7 @@ Imports:
 Suggests:
     testthat,
     roxygen2
+BugReports: http://github.tbates.umx
 Collate:
     'build_run_modify.r'
     'deprecated.r'

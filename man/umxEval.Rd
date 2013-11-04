@@ -1,0 +1,40 @@
+\name{umxEval}
+\alias{umxEval}
+\title{umxEval}
+\usage{
+  umxEval(expstring, model, compute = F, show = F)
+}
+\arguments{
+  \item{x}{an expression string, i.e, "a + b"}
+
+  \item{model}{an \code{\link{mxModel}} to WITH}
+}
+\value{
+  - an openmx algebra (formula)
+}
+\description{
+  Takes an expression as a string, and evaluates it as an
+  expression in model, optionally computing the result. #
+  TODO Currently broken...
+}
+\examples{
+\dontrun{
+	fit = mxModel("fit",
+		mxMatrix("Full", nrow=1, ncol=1, free=T, values=1, name="a"),
+		mxMatrix("Full", nrow=1, ncol=1, free=T, values=2, name="b"),
+		mxAlgebra(a \%*\% b, name="ab"),
+		mxConstraint(ab ==35, name = "maxHours"),
+		mxAlgebraObjective(algebra="ab", numObs= NA, numStats=NA)
+	)
+	fit = mxRun(fit)
+	mxEval(list(ab = ab), fit)
+}
+}
+\references{
+  - \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+  - \code{\link{umxLabel}}, \code{\link{umxRun}},
+  \code{\link{umxStart}}
+}
+

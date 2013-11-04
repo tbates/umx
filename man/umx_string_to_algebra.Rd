@@ -1,0 +1,38 @@
+\name{umx_string_to_algebra}
+\alias{umx_string_to_algebra}
+\title{umx_string_to_algebra}
+\usage{
+  umx_string_to_algebra(algString, name = NA,
+    dimnames = NA)
+}
+\arguments{
+  \item{algString}{a string to turn into an algebra}
+
+  \item{name}{of the returned algebra}
+
+  \item{dimnames}{of the returned algebra}
+}
+\value{
+  - \code{\link{mxAlgebra}}
+}
+\description{
+  This is useful because it lets you use paste() and rep()
+  to quickly and easily insert values from R variables into
+  the string, then parse the string as an mxAlgebra
+  argument. The use case this time was to include a matrix
+  exponent (that is A %*% A %*% A %*% A...) with a variable
+  exponent.
+}
+\examples{
+\dontrun{
+alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " \%*\% "), name = "test_case")
+}
+}
+\references{
+  - \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+  - \code{\link{umxLabel}}, \code{\link{umxRun}},
+  \code{\link{umxStart}}
+}
+

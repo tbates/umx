@@ -28,6 +28,7 @@
 \examples{
 \dontrun{
 umxCompare(model1, model2)
+umxCompare(model1, model2, output="tmp.html")
 umxCompare(model1, c(model2, model3))
 }
 }
