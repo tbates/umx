@@ -742,13 +742,12 @@ umx_round <- function(x, digits, coerce = T) {
 
 specify_decimal <- function(x, k) format(round(x, k), nsmall = k)
 
-# R2HTML::HTML(a, file="tables.html"); system("open tables.html")
-
-print.html <- function(x, rounding = 3, title=grep(".*\\b",deparse(substitute(x)),value=T),headings=colnames(x), align = paste0(rep('c',ncol(x)), collapse = ''), halign=paste(rep('c',ncol(x)),collapse=''), cgroup=NULL, n.cgroup=NULL, cgroup.just=rep("c",length(n.cgroup)), rgroup=NULL, n.rgroup=NULL, rowlabel=title, ctable=F, caption=NULL, caption.loc='top', label=title, output = "Rout.html",...) {
+print.html <- function(x, rounding = 3, file = "tmp.html", title = grep(".*\\b",deparse(substitute(x)), value = T), headings = colnames(x), align = paste0(rep('c',ncol(x)), collapse = ''), halign = paste(rep('c', ncol(x)), collapse = ''), cgroup = NULL, n.cgroup = NULL, cgroup.just = rep("c", length(n.cgroup)), rgroup = NULL, n.rgroup = NULL, rowlabel = title, ctable = F, caption = NULL, caption.loc = 'top', label = title, output = "Rout.html",...) {
 	# usage: print.html(x, output = "Rout.html")
 	# options for output = c("Rout.html","cat","return")
-
-    table_str <- "<table class='gmisc_table' style='border-top: 2px solid grey; border-bottom: 2px solid grey;'>"
+	R2HTML::HTML(x, file = output, Border = 0, append = F, sortableDF=T); system(paste0("open ", output))
+	return()
+  table_str <- "<table class='gmisc_table' style='border-top: 2px solid grey; border-bottom: 2px solid grey;'>"
     
   if (length(label) > 0){ table_str <- sprintf("%s\n\t<a name='%s'></a>", table_str, label) }
 
