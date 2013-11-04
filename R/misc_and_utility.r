@@ -1081,7 +1081,7 @@ umxCov2cor <- function(x) {
 }
 
 # ===========================================
-# = Functions to check kind: retrun Boolean =
+# = Functions to check kind: return Boolean =
 # ===========================================
 
 #' umxIsOrdinalVar

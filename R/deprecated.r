@@ -186,7 +186,7 @@ lower2full               <- function(lower.data, diag = F, byrow = T) {stop("ple
 mxIsOrdinalVar           <- function(df, names = F) {message("replace mxIsOrdinalVar with umxIsOrdinalVar")}
 genEpi_GetLabels         <- function(inputTarget, regex = NA, free = NA, verbose = F) { stop("please replace genEpi_GetLabels with umxGetLabels()")}
 mxMakeThresholdsMatrices <- function(df, deviationBased = T, droplevels = T, verbose = F) {	message("please change to 'umxMakeThresholdMatrix()'")}
-mxAutoThreshRAMObjective <- function(df,  deviationBased = T, droplevels = T, verbose = F) { message("please call umxThresholdRAMObjective()")}
+mxAutoThreshRAMObjective <- function(df, deviationBased = T, droplevels = T, verbose = F) { message("please call umxThresholdRAMObjective()")}
 
 graphViz_Cholesky <- function(model = NA, dotFilename = "name", accuracy = 2, showMeans=F) {
 	stop("Deprecated: PLease replace graphViz_Cholesky with umxPlotCholesky")
