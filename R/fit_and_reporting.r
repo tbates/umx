@@ -909,3 +909,42 @@ goodnessOfFit <- function(indepfit, modelfit) {
 	)
 	return(indices)
 }
+
+
+#' omxRMSEA
+#'
+#' Compute the confidence interval on RMSEA
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @param ci.lower the lower Ci to compute
+#' @param ci.upper the upper Ci to compute
+#' @return - object containing the RMSEA and lower and upper bounds
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' omxRMSEA(model)
+#' }
+
+omxRMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 
+	sm <- summary(model)
+	if (is.na(sm$Chi)) return(NA);
+	X2 <- sm$Chi
+	df <- sm$degreesOfFreedom
+	N  <- sm$numObs 
+	lower.lambda <- function(lambda) {
+		pchisq(X2, df = df, ncp = lambda) - ci.upper
+	}
+	upper.lambda <- function(lambda) {
+		(pchisq(X2, df = df, ncp = lambda) - ci.lower)
+	}
+	lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root, silent = T) 
+ 	N.RMSEA  <- max(N, X2*4) # heuristic of lavaan. TODO: can we improve this? when does this break?
+	lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root, silent = T)
+ 
+	rmsea.lower <- sqrt(lambda.l/(N * df))
+	rmsea.upper <- sqrt(lambda.u/(N * df))
+	RMSEA = sqrt( max( c((X2/N)/df - 1/N, 0) ) )
+	return(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper)) 
+}

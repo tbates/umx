@@ -258,7 +258,6 @@ xmuMinLevels <- function(data) {
 # = Data and Utility =
 # ====================
 
-
 #' umxHetCor
 #'
 #' umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
