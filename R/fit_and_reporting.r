@@ -1,6 +1,7 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# setwd("~/bin/umx"); 
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # setwd("~/bin/umx"); devtools::check()
 # setwd("~/bin/umx"); devtools::release()
 # devtools::load_all()
@@ -17,9 +18,8 @@
 #' @param base The base \code{\link{mxModel}} for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
-#' @param output Optionally output to an html table which will open your default browser: handy for getting tables into word
 #' @param digits rounding for p etc.
-#' @param addText Optionally output a verbal sentence for inclusion inline in a paper.
+#' @param output Optionally sentences for inclusion inline in a paper or output to an html table which will open your default browser: handy for getting tables into word
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://openmx.psyc.virginia.edu/}
 #' @export
@@ -31,7 +31,7 @@
 #' umxCompare(model1, c(model2, model3))
 #' }
 
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "return", digits = 3, addText = T) {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 1) {
 	# output != "return"is interpreted as a file to write html too...
 	# umxCompare(fit11, fit11, all=F, output="Rout.html")
 	# TODO add plain english reporting paste("Test of hypothesis x by dropping modelName was not supported (χ²(1) = C, p = ", umx_APA_pval(p), ")")
@@ -48,7 +48,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "ret
 
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
 	# addText = 1
-	if(addText){
+	if(report > 1){
 		n_rows = dim(tablePub)[1]
 		for (i in 1:n_rows) {
 			if(!is.na(tablePub[i, "Comparison"])){
@@ -69,10 +69,10 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, output = "ret
 		}
 	}
 	
-	if(output == "return"){
-		return(tablePub)
+	if(report == 3){
+		R2HTML::HTML(tablePub, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
 	} else {
-		R2HTML::HTML(tablePub, file = output, Border = 0, append = F, sortableDF = T); system(paste0("open ", output))
+		return(tablePub)
 		# print.html(tableOut, output = output, rowlabel = "")
 		# R2HTML::print(tableOut, output = output, rowlabel = "")
 	}

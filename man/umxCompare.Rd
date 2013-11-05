@@ -3,7 +3,7 @@
 \title{umxCompare}
 \usage{
   umxCompare(base = NULL, comparison = NULL, all = TRUE,
-    output = "return", digits = 3)
+    digits = 3, report = 1)
 }
 \arguments{
   \item{base}{The base \code{\link{mxModel}} for
@@ -16,9 +16,11 @@
   \item{all}{Whether to make all possible comparisons if
   there is more than one base model (defaults to T)}
 
-  \item{output}{Optionally output to an html table which
-  will open your default browser: handy for getting tables
-  into word}
+  \item{digits}{rounding for p etc.}
+
+  \item{output}{Optionally sentences for inclusion inline
+  in a paper or output to an html table which will open
+  your default browser: handy for getting tables into word}
 }
 \description{
   umxCompare compares two or more \code{\link{mxModel}}s.
