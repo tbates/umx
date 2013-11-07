@@ -275,9 +275,18 @@ xmuMinLevels <- function(data) {
 #' cor_df = umxHetCor(df, ML = F, use="pairwise.complete.obs")
 #' }
 
-umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs"){
+umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFactor=F, verbose=F){
+	if(treatAllAsFactor){
+		n = ncol(data)
+		for (i in 1:n) {
+			data[,i] = factor(data[,i])
+		}
+	}
 	if(require(polycor)){
 		hetc = polycor::hetcor(data, ML = ML, use = use, std.err = F)
+		if(verbose){
+			print(hetc)
+		}
 		return(hetc$correlations)
 	} else {
 		# TODO add error message if polycor not found
