@@ -2,7 +2,8 @@
 \alias{umxHetCor}
 \title{umxHetCor}
 \usage{
-  umxHetCor(data, ML = F, use = "pairwise.complete.obs")
+  umxHetCor(data, ML = F, use = "pairwise.complete.obs",
+    treatAllAsFactor = F, verbose = F)
 }
 \arguments{
   \item{data}{A \code{\link{data.frame}} of columns for
