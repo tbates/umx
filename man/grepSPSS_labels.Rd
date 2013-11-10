@@ -1,0 +1,33 @@
+\name{grepSPSS_labels}
+\alias{grepSPSS_labels}
+\title{grepSPSS_labels}
+\usage{
+  grepSPSS_labels(df, grepString, output = "both",
+    ignore.case = T, useNames = F)
+}
+\arguments{
+  \item{df}{an \code{\link{data.frame}} to search the
+  labels of}
+
+  \item{grepString}{the search string}
+
+  \item{output}{the column name, the label, or both
+  (default)}
+
+  \item{ignore.case}{whether to be case sensitive or not
+  (default TRUE)}
+
+  \item{useNames}{whether to search the names as well as
+  the labels}
+}
+\value{
+  - list of matched column name and labels
+}
+\description{
+  Deprecated function to search the labels of an SPSS file
+  use \code{\link{umx_grep_labels}} instead
+}
+\seealso{
+  - \code{\link{umx_grep_labels}}
+}
+

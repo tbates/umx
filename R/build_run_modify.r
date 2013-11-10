@@ -2,6 +2,7 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); 
+# 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # require(OpenMx); require(umx); ?umx
 # devtools::build("~/bin/umx")
@@ -285,7 +286,7 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 	# stop if there is no objective function
 	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
 	# stop if there is no output
-	if (length(output)<1)stop("Provided model has no output. I can only standardize models that have been run!")
+	if (length(output) < 1)stop("Provided model has no output. I can only standardize models that have been run!")
 	# Get the names of the A, S and M matrices 
 	if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
 	if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}

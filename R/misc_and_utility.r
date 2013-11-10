@@ -543,11 +543,21 @@ rowMin <- function(df, na.rm=T) {
 	return(tmp)
 }
 
+#' umx.as.numeric
+#'
+#' convert each column of a dtaframe to numeric
+#'
+#' @param model a \code{\link{data.frame}} to convert
+#' @return - data.frame
+#' @export
+#' @seealso - 
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' df = umx.as.numeric(df)
+#' }
 umx.as.numeric <- function(df) {
-	# TODO umx.as.numeric <- function(df) {
-	# handle case of not being a data.frame...
-	# use case
-	# col.as.numeric(df)
+	# TODO handle case of not being a data.frame...
 	for (i in names(df)) {
 		df[,i] = as.numeric(df[,i])
 	}
@@ -616,7 +626,20 @@ rename <- function (x, replace, old = NA) {
 	setNames(x, ifelse(is.na(new_names), old_names, new_names))
 }
 
-grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) {stop("Deprecated: used umx_grep_labels()")}
+#' grepSPSS_labels
+#'
+#' Deprecated function to search the labels of an SPSS file use \code{\link{umx_grep_labels}} instead
+#'
+#' @param df an \code{\link{data.frame}} to search the labels of
+#' @param grepString the search string
+#' @param output the column name, the label, or both (default)
+#' @param ignore.case whether to be case sensitive or not (default TRUE)
+#' @param useNames whether to search the names as well as the labels
+#' @return - list of matched column name and labels
+#' @export
+#' @seealso - \code{\link{umx_grep_labels}}
+
+grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) { stop("Deprecated: used umx_grep_labels()") }
 
 #' umx_grep_labels
 #'
@@ -1124,6 +1147,37 @@ umxCov2cor <- function(x) {
 # = Functions to check kind: return Boolean =
 # ===========================================
 
+#' umx_has_been_run
+#'
+#' check if an mxModel has been run or not
+#'
+#' @param model an \code{\link{mxModel}} to check
+#' @return - boolean
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umx_has_been_run(model)
+#' }
+
+umx_has_been_run <- function(model, stop = F) {
+	output <- model@output
+	if (is.null(output)){
+		if(stop){
+			stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
+		}else{
+			return(F)
+		}
+	} else if (length(output) < 1){
+		if(stop){
+			stop("Provided model has no output. I can only standardize models that have been run!")		
+		}else{
+			return(F)
+		}
+	}
+}
+
 #' umxIsOrdinalVar
 #'
 #' return the names of any ordinal variables in a dataframe
@@ -1137,7 +1191,6 @@ umxCov2cor <- function(x) {
 #' \dontrun{
 #' umxIsOrdinalVar(df)
 #' }
-
 umxIsOrdinalVar <- function(df, names=F) {
 	# Purpose, return which columns are Ordinal
 	# use case: isContinuous = !umxIsOrdinalVar(df)
