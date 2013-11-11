@@ -773,113 +773,26 @@ umx_round <- function(x, digits, coerce = T) {
 
 specify_decimal <- function(x, k) format(round(x, k), nsmall = k)
 
-print.html <- function(x, rounding = 3, file = "tmp.html", title = grep(".*\\b",deparse(substitute(x)), value = T), headings = colnames(x), align = paste0(rep('c',ncol(x)), collapse = ''), halign = paste(rep('c', ncol(x)), collapse = ''), cgroup = NULL, n.cgroup = NULL, cgroup.just = rep("c", length(n.cgroup)), rgroup = NULL, n.rgroup = NULL, rowlabel = title, ctable = F, caption = NULL, caption.loc = 'top', label = title, output = "Rout.html",...) {
-	# usage: print.html(x, output = "Rout.html")
+#' print.html
+#'
+#' printing method for sending obejcts to html output
+#'
+#' @param x an object to print
+#' @param rounding decimal places (not implemented)
+#' @param output file to write to and open in browser
+#' @return - 
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' print.html(x, output = "Rout.html")
+#' }
+print.html <- function(x, rounding = 3, output = "tmp.html") {
 	# options for output = c("Rout.html","cat","return")
-	R2HTML::HTML(x, file = output, Border = 0, append = F, sortableDF=T); system(paste0("open ", output))
-	return()
-  table_str <- "<table class='gmisc_table' style='border-top: 2px solid grey; border-bottom: 2px solid grey;'>"
-    
-  if (length(label) > 0){ table_str <- sprintf("%s\n\t<a name='%s'></a>", table_str, label) }
-
-  # Not quite as intended but close enough
-  if(length(list(...))) x <- format.df(x, numeric.dollar=FALSE, ...)
-  # Remove some specifics for LaTeX
-  if (is.character(x)){
-  	x <- matrix(str_replace(x, "\\\\%", "%"), ncol=ncol(x))
-  }
-  if (length(caption) > 0){
-    if (caption.loc == "bottom"){
-      table_str <- sprintf("%s\n\t<caption align=bottom>", table_str)
-    }else{
-      table_str <- sprintf("%s\n\t<caption align=top>", table_str)
-    }
-    table_str <- sprintf("%s%s</caption>", table_str, caption)
-  }
-
-  set_rownames = (length(rownames(x)) > 0)
-  # Add the cgroup table header
-  if (length(cgroup) > 0){
-    if (length(n.cgroup) == 0 && ncol(x) %% length(cgroup) == 0){
-      n.cgroup <- rep(ncol(x)/length(cgroup), times=length(cgroup))
-    }else if(sum(n.cgroup) != ncol(x)){
-      stop(sprintf("Your columns don't match in the n.cgroup, i.e. %d != %d", sum(n.cgroup), ncol(x)))
-    }
-    table_str <- sprintf("%s\n\t<tr>", table_str)
-    if (set_rownames && length(rowlabel) > 0){
-      table_str <- sprintf("%s\n\t\t<th style='font-weight: 900;'>%s</th>", table_str, rowlabel)
-    }
-    for (i in 1:length(cgroup)){
-      table_str <- sprintf("%s\n\t\t<th colspan=%d style='font-weight: 900; border-bottom: 1px solid grey;'>%s</th>", table_str, n.cgroup[i], cgroup[i])
-      if (i != length(cgroup))
-        table_str <- sprintf("%s<th>&nbsp;</th>", table_str)
-    }
-    table_str <- sprintf("%s\n\t</tr>", table_str)
-  }
-  addCells <- function(table_str, rowcells, cellcode, align){
-    cgroup_iterator <- 0
-    for (nr in 1:length(rowcells)){
-      if (length(cgroup) > 0){
-        if (cgroup_iterator > 0){
-          if (sum(n.cgroup[1:cgroup_iterator]) < nr ){
-            table_str <- sprintf("%s\n\t\t<%s>&nbsp</%s>", table_str, cellcode, cellcode)
-            cgroup_iterator = cgroup_iterator + 1
-          }
-        }else{
-          cgroup_iterator = cgroup_iterator + 1
-        }
-      }
-      table_str <- sprintf("%s\n\t\t<%s align='%s'>%s</%s>", table_str, cellcode, align, rowcells[nr], cellcode)
-    }
-    return (table_str)
-  }
-
-  # Add the headings
-  if (length(headings) > 0){
-    table_str <- sprintf("%s\n\t<tr style='border-bottom: 1px solid grey;'>", table_str)
-    if (set_rownames && length(cgroup) == 0  && length(rowlabel) > 0){
-      table_str <- sprintf("%s\n\t\t<th style='font-weight: 900;'>%s</th>", table_str, rowlabel)
-    }else if(set_rownames){
-      table_str <- sprintf("%s\n\t\t<th>&nbsp;</th>", table_str)
-    }
-    table_str <- addCells(table_str = table_str, rowcells = headings, cellcode = "th", align="center")
-    table_str <- sprintf("%s\n\t</tr>", table_str)
-  }
-  if (length(rgroup) > 0 && sum(n.rgroup) !=  nrow(x)){
-  	stop(sprintf("Your rows don't match in the n.rgroup, i.e. %d != %d", sum(n.rgroup), nrow(x)))
-  }
-  rgroup_iterator <- 0
-  for (row_nr in 1:nrow(x)){
-    if (length(rgroup) > 0){
-      if (rgroup_iterator == 0){
-        rgroup_iterator = rgroup_iterator + 1
-        table_str <- sprintf("%s\n\t<tr><td colspan=%d style='font-weight: 900'>%s</tr>", table_str, 
-          ncol(x)+set_rownames, rgroup[rgroup_iterator])
-      }else if(row_nr > sum(n.rgroup[1:rgroup_iterator])){
-        rgroup_iterator = rgroup_iterator + 1
-        table_str <- sprintf("%s\n\t<tr><td colspan=%d style='font-weight: 900; border-top: 1px solid grey;'>%s</tr>", table_str, 
-                             ncol(x)+set_rownames, rgroup[rgroup_iterator])
-      }
-    }
-    table_str <- sprintf("%s\n\t<tr>", table_str)
-    if (set_rownames){
-      if (rgroup_iterator > 0)
-        table_str <- sprintf("%s\n\t\t<td style='padding-left: .5em;'>%s</td>", table_str, rowname[row_nr])
-      else
-        table_str <- sprintf("%s\n\t\t<td>%s</td>", table_str, rowname[row_nr])
-    }
-    table_str <- addCells(table_str = table_str, rowcells = round(x[row_nr,],rounding), cellcode = "td", align="right")
-    table_str <- sprintf("%s\n\t</tr>", table_str)
-  }
-  table_str <- sprintf("%s\n</table>", table_str)
-  if (output=="cat"){
-    cat(table_str)
-  }else if (output == "return"){
-    return(table_str)
-  }else{
-	cat(table_str, file = output)
-	system(paste("open '", output, "'", sep=""));
-  }
+	R2HTML::HTML(x, file = output, Border = 0, append = F, sortableDF=T); 
+	system(paste0("open ", output))
+	print("Table opened in browser")
 }
 
 # extracted from Rcmdr
@@ -1468,8 +1381,20 @@ umx_reorder <- function(old, newOrder) {
 	}
 	return(new)
 }
+#' umx_has_square_brackets
+#'
+#' Helper function, checking if a label has sqaure brackets
+#'
+#' @param input 
+#' @return - boolean
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' umx_has_square_brackets("[hello]")
+#' umx_has_square_brackets("goodbye")
 
-umxHasSquareBrackets <- function (input) {
+umx_has_square_brackets <- function (input) {
     match1 <- grep("[", input, fixed = TRUE)
     match2 <- grep("]", input, fixed = TRUE)
     return(length(match1) > 0 && length(match2) > 0)

@@ -1,0 +1,32 @@
+\name{print.html}
+\alias{print.html}
+\title{print.html}
+\usage{
+  print.html(x, rounding = 3, output = "tmp.html")
+}
+\arguments{
+  \item{x}{an object to print}
+
+  \item{rounding}{decimal places (not implemented)}
+
+  \item{output}{file to write to and open in browser}
+}
+\value{
+  -
+}
+\description{
+  printing method for sending obejcts to html output
+}
+\examples{
+\dontrun{
+print.html(x, output = "Rout.html")
+}
+}
+\references{
+  - \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+  - \code{\link{umxLabel}}, \code{\link{umxRun}},
+  \code{\link{umxStart}}
+}
+

@@ -5,10 +5,10 @@
   umx.as.numeric(df)
 }
 \arguments{
-  \item{model}{an \code{\link{data.grame}} to convert}
+  \item{model}{a \code{\link{data.frame}} to convert}
 }
 \value{
-  - numeric data.frame
+  - data.frame
 }
 \description{
   convert each column of a dtaframe to numeric
