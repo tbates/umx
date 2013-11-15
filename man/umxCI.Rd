@@ -45,7 +45,7 @@
 }
 \examples{
 \dontrun{
-umxReportCIs(model)
+umxCI(model)
 }
 }
 \references{
