@@ -381,15 +381,22 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 		}
 	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
 	if( !is.na(regex) ) {
-		if(length(grep("[\\.\\*\\[\\(\\+\\|]+", regex) )<1){ # no grep found: add some anchors for safety
+		if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) )<1){ # no grep found: add some anchors for safety
 			regex = paste("^", regex, "[0-9]*$", sep=""); # anchor to the start of the string
+			anchored = T
 			if(verbose == T) {
-				cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
+				message("note: anchored regex to beginning of string and allowed only numeric follow\n");
 			}
+		}else{
+			anchored=F
 		}
 		theLabels = grep(regex, theLabels, perl = F, value = T) # return more detail
 		if(length(theLabels) == 0){
-			stop("Found no matching labels!");
+			if(anchored == T){
+				stop("Found no matching labels! note: anchored regex to beginning of string and allowed only numeric follow\n", regex);
+			} else {
+				stop("Found no matching labels!");
+			}
 		}
 	}
 	# TODO Be nice to offer a method to handle submodels

@@ -252,13 +252,13 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' @export
 #' @examples
 #' \dontrun{
-#' umxReportCIs(model)
+#' umxCI(model)
 #' }
 
 umxCI <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 	# TODO add code to not-run CIs
 	if(is.na(model)){
-		message("umxCI adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxReportCIs(model)")
+		message("umxCI adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxCI(model)")
 		stop();
 	}
 	message("### CIs for model ", model@name)
@@ -288,7 +288,7 @@ umxCI <- function(model = NA, addCIs = T, runCIs = "if necessary") {
 		'7' = 'The function derivates returned by funcon or funobj', 'appear to be incorrect.',
 		'9' = 'An input parameter was invalid')
 		if(any(model_CI_OK !=0)){
-			echo(npsolMessages)
+			print(npsolMessages)
 		}
 	}
 	invisible(model)

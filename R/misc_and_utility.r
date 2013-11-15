@@ -589,14 +589,31 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	return(theData)
 }
 
-rename <- function (x, replace, old = NA) {
+#' umx_rename
+#'
+#' Returns a dataframe with variables renamed as desired. Checks that the variables exist, and that the new neames are not already used.
+#'
+#' @param x the dataframe in which to rename variables
+#' @param replace a named list of oldName = "newName" pairs OR a list of new names
+#' @param old Optional: a list of names that will be replaced by the contents of replace. defaults to NULL in which case replace must be paired list
+#' @return - the renamed dataframe
+#' @export
+#' @seealso - \code{\link{umx_rename_file}}
+#' @references - 
+#' @examples
+#' \dontrun{
+#' rename ages to "age"
+#' x = rename(x, replace = c(ages = "age"))
+#' alternate style
+#' x = rename(x, old = c("ages"), replace = c("age"))
+#' }
+
+umx_rename <- function (x, replace, old = NULL) {
 	# add to help: see also gdate::rename.vars(data, from, to)	
-	# rename(x, replace = c(ages = "age"))
-	# rename(x, old= c("ages"), replace = c("age"))
-	if(typeof(old)=="character"){
+	if(!is.null(old)){
 		# message("replacing old with replace")
-		if(length(old)!=length(replace)){
-			stop("you are trying to replace ", length(old), " old names with ", length(replace), "new names: Lengths must match")
+		if(length(old) != length(replace)){
+			stop("You are trying to replace ", length(old), " old names with ", length(replace), "new names: Lengths must match")
 		}
 		names_to_replace <- old
 		new_names_to_try <- replace
