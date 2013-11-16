@@ -1,8 +1,8 @@
-\name{umxHasCIs}
-\alias{umxHasCIs}
-\title{umxHasCIs}
+\name{umx_has_CIs}
+\alias{umx_has_CIs}
+\title{umx_has_CIs}
 \usage{
-  umxHasCIs(model)
+  umx_has_CIs(model)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} to check for
@@ -18,7 +18,7 @@
 }
 \examples{
 \dontrun{
-umxHasCIs(model)
+umx_has_CIs(model)
 }
 }
 \references{
@@ -26,6 +26,6 @@ umxHasCIs(model)
 }
 \seealso{
   - \code{\link{mxCI}}, \code{\link{umxRun}},
-  \code{\link{umxReportCIs}}
+  \code{\link{umxCIs}}
 }
 

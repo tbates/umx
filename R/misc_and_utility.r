@@ -1229,26 +1229,25 @@ umx_is_cov <- function(data, verbose = F) {
 	return(isCov)
 }
 
-#' umxHasCIs
+#' umx_has_CIs
 #'
 #' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
 #'
 #' @param model The \code{\link{mxModel}} to check for presence of CIs
 #' @return - TRUE or FALSE
 #' @export
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxRun}}, \code{\link{umxReportCIs}}
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxRun}}, \code{\link{umxCIs}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
 #' \dontrun{
-#' umxHasCIs(model)
+#' umx_has_CIs(model)
 #' }
 
-umxHasCIs <- function(model) {
-	# umxHasCIs(model)
+umx_has_CIs <- function(model) {
 	if(is.null(model@output$confidenceIntervals)){
 		hasCIs = F
 	} else {
-		hasCIs = dim(model@output$confidenceIntervals)[1] >= 0
+		hasCIs = dim(model@output$confidenceIntervals)[1] > 0
 	}
 	return(hasCIs)
 }
