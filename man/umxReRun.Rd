@@ -4,7 +4,7 @@
 \usage{
   umxReRun(lastFit, dropList = NA, regex = NA, free = F,
     value = 0, freeToStart = NA, name = NA, verbose = F,
-    intervals = F, newName = "deprecated")
+    intervals = F, compare = F)
 }
 \arguments{
   \item{lastFit}{The \code{\link{mxModel}} you wish to
@@ -36,8 +36,8 @@
   \item{intervals}{Whether to run confidence intervals (see
   \code{\link{mxRun}})}
 
-  \item{newName}{DEPRECATED! equivalent of name. Use name =
-  to change name of the new model}
+  \item{comparison}{Whether to run umxCompare() after
+  umxRun}
 }
 \value{
   - \code{\link{mxModel}}
@@ -57,7 +57,10 @@
 }
 \examples{
 \dontrun{
-fit2 = umxReRun(fit1, regex = "Cs", name = "drop_cs")
+fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
+fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
+fit2 = umxReRun(fit1, regex = "^E", free=T, value=.2, name = "free_E")
+fit2 = umxReRun(fit1, regex = "Cs", name="AEip", compare = T)
 }
 }
 \references{

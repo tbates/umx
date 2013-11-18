@@ -265,6 +265,8 @@ xmuMinLevels <- function(data) {
 #' @param data A \code{\link{data.frame}} of columns for which to compute heterochoric correlations
 #' @param ML Whether to use Maximum likelihood computation of correlations (default = F)
 #' @param use How to delete missing data: "complete.obs", "pairwise.complete.obs" Default is pairwise.complete.obs
+#' @param treatAllAsFactor Whether to treat all columns as factors, whether they are currently or not.
+#' @param verbose How much to tell the user about what was done.
 #' @return - A matrix of correlations
 #' @export
 #' @seealso - \code{\link{hetcor}}
@@ -547,7 +549,7 @@ rowMin <- function(df, na.rm=T) {
 #'
 #' convert each column of a dtaframe to numeric
 #'
-#' @param model a \code{\link{data.frame}} to convert
+#' @param df a \code{\link{data.frame}} to convert
 #' @return - data.frame
 #' @export
 #' @seealso - 
@@ -760,14 +762,16 @@ round.num <- function(x, digits) { stop("Use umx_round()")}
 #' A version of round() which works on dataframes that contain non-numeric data (or data that cannot be coerced to numeric)
 #' Helpful for dealing with table output that mixes numeric and string types.
 #'
-#' @param model an \code{\link{mxModel}} to WITH
+#' @param x an dataframe to round in
+#' @param digits how many digits to round to
+#' @param coerce whether to make the column numeric if it is not
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' model = umx_round(model)
+#' umx_round(df, coerce=T)
 #' }
 
 umx_round <- function(x, digits, coerce = T) {
@@ -1021,7 +1025,7 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
     }
 
     # The summary; it's not easy to understand...
-    datac <- ddply(data, groupvars, .drop = .drop,
+    datac <- plyr::ddply(data, groupvars, .drop = .drop,
            .fun = function(xx, col, na.rm) {
                    c( N    = length2(xx[,col], na.rm=na.rm),
                       mean = mean   (xx[,col], na.rm=na.rm),
@@ -1032,7 +1036,7 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
             na.rm
     )
     # Rename the "mean" column
-    datac    <- rename(datac, c("mean" = measurevar))
+    datac    <- umx_rename(datac, c("mean" = measurevar))
     datac$se <- datac$sd / sqrt(datac$N) # Calculate standard error of the mean
 
     # Confidence interval multiplier for standard error
@@ -1236,7 +1240,7 @@ umx_is_cov <- function(data, verbose = F) {
 #' @param model The \code{\link{mxModel}} to check for presence of CIs
 #' @return - TRUE or FALSE
 #' @export
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxRun}}, \code{\link{umxCIs}}
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
 #' \dontrun{
@@ -1441,8 +1445,10 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' Takes an expression as a string, and evaluates it as an expression in model, optionally computing the result.
 #' # TODO Currently broken...
 #'
-#' @param x an expression string, i.e, "a + b"
-#' @param model an \code{\link{mxModel}} to WITH
+#' @param expstring an expression string, i.e, "a + b"
+#' @param model an \code{\link{mxModel}} to evaluate in
+#' @param compute 
+#' @param show 
 #' @return - an openmx algebra (formula)
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

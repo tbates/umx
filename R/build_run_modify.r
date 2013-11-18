@@ -6,10 +6,10 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # require(OpenMx); require(umx); ?umx
 # devtools::build("~/bin/umx")
-# devtools::check()
-# devtools::load_all()
+# devtools::check("~/bin/umx")
+# devtools::load_all("~/bin/umx")
 # devtools::dev_help("umxX")
-# devtools::show_news()
+# devtools::show_news("~/bin/umx")
 
 # =================================
 # = Run Helpers =
@@ -26,6 +26,9 @@
 #' @param calc_SE Whether to calculate standard errors (not used when n = 1)
 #' for the summary (they are not very accurate, so if you use \code{\link{mxCI}} you can turn this off)
 #' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s) (defaults to TRUE - why would you want anything else?)
+#' @param setStarts Whether to set the start values (defaults to F)
+#' @param setLabels Whether to set the labels (defaults to F)
+#' @param comparison Whether to run umxCompare() after umxRun
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -37,7 +40,7 @@
 #' model = umxRun(model, n=10) # run, but also re-run if not clean the first time
 #' }
 
-umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLabels = F){
+umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLabels = F, comparison = NULL){
 	# TODO: return change in -2LL for models being re-run
 	# TODO: stash saturated model for re-use
 	# Optimise for speed
@@ -82,6 +85,9 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLa
 		model@output$IndependenceLikelihood = model_sat$IndependenceLikelihood@output$Minus2LogLikelihood
 		model@output$SaturatedLikelihood    = model_sat$SaturatedLikelihood@output$Minus2LogLikelihood
 	}
+	if(!is.null(comparison)){
+		umxCompare(comparison, model)
+	}
 	return(model)
 }
 
@@ -104,22 +110,20 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLa
 #' @param name      The name for the new model
 #' @param verbose   How much feedback to give
 #' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
-#' @param newName   DEPRECATED! equivalent of name. Use name = to change name of the new model
+#' @param comparison Whether to run umxCompare() after umxRun
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{omxGetParameters}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @export
 #' @examples
 #' \dontrun{
-#' fit2 = umxReRun(fit1, regex = "Cs", name = "drop_cs")
+#' fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
+#' fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
+#' fit2 = umxReRun(fit1, regex = "^E", free=T, value=.2, name = "free_E")
+#' fit2 = umxReRun(fit1, regex = "Cs", name="AEip", compare = T)
 #' }
 
-umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, newName = "deprecated") {
-	# fit2 = umxReRun(fit1, regex="Cs", name="AEip")
-	if(newName != "deprecated"){
-		message("newName is deprecated in umxReRun: use name=\"", newName, "\" instead")
-		name = newName
-	}
+umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, compare = F) {
 	if(is.na(name)){
 		name = lastFit@name
 	}
@@ -135,6 +139,9 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 	x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)
 	# x = umxStart(x)
 	x = mxRun(x, intervals = intervals)
+	if(compare){
+		print(umxCompare(lastFit, c(x)))
+	}
 	return(x)
 }
 
@@ -525,13 +532,13 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' Add each of a set of paths you provide to the model, returning a table of theire effect on fit
 #'
 #' @param model an \code{\link{mxModel}} to alter
-#' @param pathList a list of variables to generate a set of paths
+#' @param pathList1 a list of variables to generate a set of paths
 #' @param pathList2 an optional second list: IF set paths will be from pathList1 to members of this list
 #' @param arrows Make paths with one or two arrows
 #' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of fit changes
 #' @export
-#' @seealso - \code{\link{umxDrop1}}, \code{\link{umxModel}}
+#' @seealso - \code{\link{umxDrop1}}, \code{\link{mxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{

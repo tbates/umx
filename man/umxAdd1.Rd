@@ -8,7 +8,7 @@
 \arguments{
   \item{model}{an \code{\link{mxModel}} to alter}
 
-  \item{pathList}{a list of variables to generate a set of
+  \item{pathList1}{a list of variables to generate a set of
   paths}
 
   \item{pathList2}{an optional second list: IF set paths
@@ -35,6 +35,6 @@ model = umxAdd1(model)
   - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxDrop1}}, \code{\link{umxModel}}
+  - \code{\link{umxDrop1}}, \code{\link{mxModel}}
 }
 

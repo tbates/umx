@@ -18,9 +18,10 @@
 
   \item{digits}{rounding for p etc.}
 
-  \item{output}{Optionally sentences for inclusion inline
-  in a paper or output to an html table which will open
-  your default browser: handy for getting tables into word}
+  \item{report}{Optionally add sentences for inclusion
+  inline in a paper or output to an html table which will
+  open your default browser: handy for getting tables into
+  word}
 }
 \description{
   umxCompare compares two or more \code{\link{mxModel}}s.
@@ -30,8 +31,9 @@
 \examples{
 \dontrun{
 umxCompare(model1, model2)
-umxCompare(model1, model2, output="tmp.html")
+umxCompare(model1, model2, report = 2)
 umxCompare(model1, c(model2, model3))
+umxCompare(c(m1, m2), c(m2, m3), all = T)
 }
 }
 \references{

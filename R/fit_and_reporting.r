@@ -19,7 +19,7 @@
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
 #' @param digits rounding for p etc.
-#' @param output Optionally sentences for inclusion inline in a paper or output to an html table which will open your default browser: handy for getting tables into word
+#' @param report Optionally add sentences for inclusion inline in a paper or output to an html table which will open your default browser: handy for getting tables into word
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://openmx.psyc.virginia.edu/}
 #' @export
@@ -27,14 +27,12 @@
 #' @examples
 #' \dontrun{
 #' umxCompare(model1, model2)
-#' umxCompare(model1, model2, output="tmp.html")
+#' umxCompare(model1, model2, report = 2)
 #' umxCompare(model1, c(model2, model3))
+#' umxCompare(c(m1, m2), c(m2, m3), all = T)
 #' }
 
 umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 1) {
-	# output != "return"is interpreted as a file to write html too...
-	# umxCompare(fit11, fit11, all=F, output="Rout.html")
-	# TODO add plain english reporting paste("Test of hypothesis x by dropping modelName was not supported (χ²(1) = C, p = ", umx_APA_pval(p), ")")
 	if(is.null(comparison)){
 		comparison <- base
 	} else if (is.null(base)) {

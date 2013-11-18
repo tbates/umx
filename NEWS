@@ -1,8 +1,6 @@
-umx 0.60-alpha
+umx 0.65-alpha
 --------------
 
-* First release for internal testing
-
-* Release 1 feature complete
-
+* Alpha release
+* 90% feature complete
 * Function naming close to stone: umxMajor xmuNotForUser, umx_utility_function

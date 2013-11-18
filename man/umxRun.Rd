@@ -3,7 +3,7 @@
 \title{umxRun}
 \usage{
   umxRun(model, n = 1, calc_SE = T, calc_sat = T,
-    setStarts = F, setLabels = F)
+    setStarts = F, setLabels = F, comparison = NULL)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} you wish to run.}
@@ -20,6 +20,15 @@
   independence models (for raw \code{\link{mxData}}
   \code{\link{mxModel}}s) (defaults to TRUE - why would you
   want anything else?)}
+
+  \item{setStarts}{Whether to set the start values
+  (defaults to F)}
+
+  \item{setLabels}{Whether to set the labels (defaults to
+  F)}
+
+  \item{comparison}{Whether to run umxCompare() after
+  umxRun}
 }
 \value{
   - \code{\link{mxModel}}

@@ -14,6 +14,12 @@
 
   \item{use}{How to delete missing data: "complete.obs",
   "pairwise.complete.obs" Default is pairwise.complete.obs}
+
+  \item{treatAllAsFactor}{Whether to treat all columns as
+  factors, whether they are currently or not.}
+
+  \item{verbose}{How much to tell the user about what was
+  done.}
 }
 \value{
   - A matrix of correlations

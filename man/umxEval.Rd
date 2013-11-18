@@ -5,9 +5,13 @@
   umxEval(expstring, model, compute = F, show = F)
 }
 \arguments{
-  \item{x}{an expression string, i.e, "a + b"}
+  \item{expstring}{an expression string, i.e, "a + b"}
 
-  \item{model}{an \code{\link{mxModel}} to WITH}
+  \item{model}{an \code{\link{mxModel}} to evaluate in}
+
+  \item{compute}{}
+
+  \item{show}{}
 }
 \value{
   - an openmx algebra (formula)

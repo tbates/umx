@@ -25,7 +25,7 @@ umx_has_CIs(model)
   - http://openmx.psyc.virginia.edu/
 }
 \seealso{
-  - \code{\link{mxCI}}, \code{\link{umxRun}},
-  \code{\link{umxCIs}}
+  - \code{\link{mxCI}}, \code{\link{umxCI}},
+  \code{\link{umxRun}}
 }
 

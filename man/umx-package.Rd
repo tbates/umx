@@ -25,7 +25,7 @@ Built: \tab R 2.15.2; ; 2013-08-22 22:49:22 UTC; unix\cr
 
 install.packages("devtools")
 library("devtools")
-install_github("umx", username = "tbates")
+install_github("tbates/umx")
 library("umx")
 
 \bold{Index:}
@@ -68,7 +68,7 @@ library("umx")
 
 \code{\link{umxMI}}                   Compute modification indices for RAM models
 
-\code{\link{umxGetParameters}}        A regex enabled version of \code{\link{mxGetParameters}}
+\code{\link{umxGetParameters}}        A regex enabled version of \code{\link{omxGetParameters}}
 
 \bold{High-level reporting}
 
@@ -88,19 +88,19 @@ library("umx")
 
 \code{\link{umxJiggle}}               Jiggle values in a list
 
-\code{\link{umxHasCIs}}               Utility function to ask a model if it has CIs
+\code{\link{umx_has_CIs}}             Utility function to ask a model if it has CIs
 
-\code{\link{umxIsMxModel}}            Utility function to ask an object "Are you an OpenMx model?"
+\code{\link{umxIsMxModel}}            Utility function to test if an object is an OpenMx model
 
-\code{\link{umxIsRAMmodel}}           Utility function to ask an object "Are you an OpenMx RAM model?"
+\code{\link{umxIsRAMmodel}}           Utility function to test if an object is an OpenMx RAM model
  
-\code{\link{umxIsOrdinalVar}}         Utility function to ask an object "Are you an ordinal variable?"
+\code{\link{umxIsOrdinalVar}}         Utility function to test if an object is an ordinal variable
 
 \code{\link{umx_find_object}}         Find an OpenMx (or other) object by name
 
 \code{\link{umx_grep_labels}}         Find labels (SPSS-style) which match a regular expression. Useful.
 
-\code{\link{umxCov2cor}}              Convert a covariance matrix to a corelation matrix, guaranteeing the upper and lower triangles are exact equal
+\code{\link{umxCov2cor}}              Convert a covariance matrix to a correlation matrix, guaranteeing the upper and lower triangles are exact equal
 
 \code{\link{umx_is_cov}}              Test if data is a covariance matrix
 
@@ -112,9 +112,9 @@ library("umx")
 
 \code{\link{umx_swap_a_block}}        Swap places with one block of data to another
 
-\code{\link{umx_move_file.Rd}}       Flexibly move files on the filesystem
+\code{\link{umx_move_file}}       Flexibly move files on the filesystem
 
-\code{\link{umx_rename_file.Rd}}      Flexibly rename files on the filsystem
+\code{\link{umx_rename_file}}      Flexibly rename files on the filesystem
 
 \code{\link{umx_greater_than}}        A version of %>% which excludes NA
 

@@ -5,7 +5,12 @@
   umx_round(x, digits, coerce = T)
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to WITH}
+  \item{x}{an dataframe to round in}
+
+  \item{digits}{how many digits to round to}
+
+  \item{coerce}{whether to make the column numeric if it is
+  not}
 }
 \value{
   - \code{\link{mxModel}}
@@ -18,7 +23,7 @@
 }
 \examples{
 \dontrun{
-model = umx_round(model)
+umx_round(df, coerce=T)
 }
 }
 \references{

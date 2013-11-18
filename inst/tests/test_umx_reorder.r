@@ -1,8 +1,8 @@
-# test_file("~/bin/umx/inst/tests/test_umx_is_cov.r") 
 # library(testthat)
 # library(umx)
+# test_file("~/bin/umx/inst/tests/test_umx_reorder.r") 
 # 
-# test_package("umx")
+# testthat::test_package("umx")
 
 test_that("umx_reorder works for different values", {
 	require(OpenMx)
