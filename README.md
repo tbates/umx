@@ -9,6 +9,11 @@ library("devtools")
 install_github("umx", username = "tbates")
 library("umx")
 ?umx
+# on windows you might need
+# install_github("umx", username = "tbates", args = "--no-multiarch")
+# On the newest version of devtools, this will work
+# install_github("tbates/umx")
+?umx
 
 ```
 <!-- source("http://timbates.wdfiles.com/local--files/start/umx.lib.R") -->
@@ -20,12 +25,11 @@ The umx package has a range of useful helpers to help you get things done in SEM
 	* `umxLabel()` *# Add labels to paths: Labels allow you to set, equate, and drop paths by label!*
 	* `umxLatent()` *# Helper for building formative and reflective latent variables from their manifest indicators*
 2. Run models
-	* `umxRun()` *# Use in place of mxRun to: set labels, starts, compute saturated for raw data, run model until it returns green, turn off features that slow model evaluation*
+	* `umxRun()` *# Use in place of mxRun to: set labels, starts, compute saturated for raw data, run model until it returns green*
+	* `umxReRun()` *# Modify a model (drop paths etc), run, and even return the comparison all in 1 line*
 3. Reporting output
 	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA)*
 	* `umxPlot(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
-	* `umxStandardizeModel(model, return = "model")` #* standardize a RAM model*
-		* **nb**:* `summary()` computes standardized paths for RAM models, but this function is still useful, as `omxGraphviz()` does not, and the function `.standardizeRAMModel()` is not exposed in OpenMx.
 	* `umxTime(fit1)`  *# Report the time taken by a model in a compact friendly, programable format*
 3. Modify models
 	* `umxMI()` # Report the top n modification indices
