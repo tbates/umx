@@ -23,8 +23,6 @@
 #' @export
 #' @examples
 #' win()
-#' }
-
 
 win <- function() {
 	message("hi winston")
