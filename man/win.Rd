@@ -14,5 +14,4 @@
 \examples{
 win()
 }
-}
 
