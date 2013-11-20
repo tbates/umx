@@ -15,6 +15,21 @@
 # = Run Helpers =
 # =================================
 
+#' win
+#'
+#' test if install_github detects me, or i need to push a build file
+#'
+#' @return - 
+#' @export
+#' @examples
+#' win()
+#' }
+
+
+win <- function() {
+	message("hi winston")
+}
+
 #' umxRun
 #'
 #' umxRun is a version of \code{\link{mxRun}} which can run multiple times by default
