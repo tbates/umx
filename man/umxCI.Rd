@@ -2,7 +2,7 @@
 \alias{umxCI}
 \title{umxCI}
 \usage{
-  umxCI(model = NA, addCIs = T, runCIs = "if necessary")
+  umxCI(model = NULL, addCIs = T, runCIs = "if necessary")
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} you wish to report
@@ -46,6 +46,10 @@
 \examples{
 \dontrun{
 umxCI(model)
+umxCI(model, addCIs = T) # add Cis for all free parameters if not present
+umxCI(model, runCIs = "yes") # force update of CIs
+umxCI(model, runCIs = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
+umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run them
 }
 }
 \references{
