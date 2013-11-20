@@ -2,9 +2,10 @@
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
-# setwd("~/bin/umx"); devtools::check()
-# setwd("~/bin/umx"); devtools::release()
-# devtools::load_all()
+# devtools::build("~/bin/umx")
+# devtools::check("~/bin/umx")
+# devtools::release("~/bin/umx")
+# devtools::load_all("~/bin/umx")
 # devtools::dev_help("umxReportCIs")
 # devtools::show_news()
 
@@ -251,26 +252,30 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' @examples
 #' \dontrun{
 #' umxCI(model)
+#' umxCI(model, addCIs = T) # add Cis for all free parameters if not present
+#' umxCI(model, runCIs = "yes") # force update of CIs
+#' umxCI(model, runCIs = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
+#' umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run them
+
 #' }
 
-umxCI <- function(model = NA, addCIs = T, runCIs = "if necessary") {
+umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary") {
 	# TODO add code to not-run CIs
-	if(is.na(model)){
-		message("umxCI adds mxCI() calls for all free parameters in a model, runs them, and reports a neat summary. A use example is:\n umxCI(model)")
+	if(is.null(model)){
+		message("You need to give me an MxModel. I can then add mxCI() calls for the free parameters in a model, runs them, and report a neat summary. A use example is:\n umxCI(model)")
 		stop();
 	}
 	message("### CIs for model ", model@name)
 	if(addCIs){
-		CIs   = names(omxGetParameters(model))
+		CIs   = names(omxGetParameters(model, free=T))
 		model = mxModel(model, mxCI(CIs))
 	}
-	runCIs = "yes"
-	
-	if( (runCIs == "yes") | (umxHasCIs(model) & runCIs != "no") ) {
+    
+	if(tolower(runCIs) == "yes" | (!umx_has_CIs(model) & tolower(runCIs) != "no")) {
 		model = mxRun(model, intervals = T)
 	}
 
-	if(umxHasCIs(model)){
+	if(umx_has_CIs(model)){
 		model_summary = summary(model)
 		model_CIs = round(model_summary$CI, 3)
 		model_CI_OK = model@output$confidenceIntervalCodes
