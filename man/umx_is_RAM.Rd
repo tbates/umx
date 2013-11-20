@@ -1,8 +1,8 @@
-\name{umxIsRAMmodel}
-\alias{umxIsRAMmodel}
-\title{umxIsRAMmodel}
+\name{umx_is_RAM}
+\alias{umx_is_RAM}
+\title{umx_is_RAM}
 \usage{
-  umxIsRAMmodel(obj)
+  umx_is_RAM(obj)
 }
 \arguments{
   \item{obj}{an object to be tested to see if it is an
@@ -17,7 +17,7 @@
 }
 \examples{
 \dontrun{
-if(umxIsRAMmodel(fit1)){
+if(umx_is_RAM(fit1)){
 	message("nice RAM model!")
 }
 }

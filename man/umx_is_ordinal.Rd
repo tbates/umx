@@ -1,8 +1,8 @@
-\name{umxIsOrdinalVar}
-\alias{umxIsOrdinalVar}
-\title{umxIsOrdinalVar}
+\name{umx_is_ordinal}
+\alias{umx_is_ordinal}
+\title{umx_is_ordinal}
 \usage{
-  umxIsOrdinalVar(df, names = F)
+  umx_is_ordinal(df, names = F)
 }
 \arguments{
   \item{df}{an \code{\link{data.frame}} to look in for
@@ -16,7 +16,7 @@
 }
 \examples{
 \dontrun{
-umxIsOrdinalVar(df)
+umx_is_ordinal(df)
 }
 }
 \references{

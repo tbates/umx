@@ -40,8 +40,8 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
 	# tableOut  = format(tableOut, scientific = F, digits = digits)
-	tablePub  = tableOut[, c(2:1, 3, 6, 7:9)]
-	names(tablePub) <- c("Comparison", "Base", "EP", "AIC", "&Delta; -2LL", "&Delta; df", "p")
+	tablePub  = tableOut[, c(2, 3, 7:9, 6, 1)]
+	names(tablePub) <- c("Comparison", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
 	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
 
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
@@ -60,7 +60,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				" was tested by dropping ", tablePub[i,"Comparison"],
 				" from ", tablePub[i,"Base"], 
 				did_didnot, 
-				"(χ²(", tablePub[i, 6], ") = ", round(tablePub[i, 5], 2),
+				"(χ²(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2),
 				", p = ", tablePub[i,"p"], ")."
 				)
 			}

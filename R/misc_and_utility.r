@@ -1112,7 +1112,41 @@ umx_has_been_run <- function(model, stop = F) {
 	}
 }
 
-#' umxIsOrdinalVar
+#' umx_check_names
+#'
+#' check if a list of names are in the names() of a dataframe
+#'
+#' @param namesNeeded list of variable names to find
+#' @param data data.frame to search in for names
+#' @return - boolean
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umx_check_names(c("E", data))
+#' }
+
+umx_check_names <- function(namesNeeded, data, die= TRUE){
+	if(!is.data.frame(data)){
+		stop("data has to be a dataframe")
+	}
+	namesFound = (namesNeeded %in% names(data))
+	if(any(!namesFound)){
+		if(die){
+			print(namesFound)
+			stop("Not all names found. Following were missing from data:\n",
+				paste(namesNeeded[!namesFound], collapse="; ")
+			)
+		} else {
+			return(FALSE)
+		}
+	} else {
+		return(TRUE)
+	}
+}
+
+#' umx_is_ordinal
 #'
 #' return the names of any ordinal variables in a dataframe
 #'
@@ -1123,9 +1157,9 @@ umx_has_been_run <- function(model, stop = F) {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' umxIsOrdinalVar(df)
+#' umx_is_ordinal(df)
 #' }
-umxIsOrdinalVar <- function(df, names=F) {
+umx_is_ordinal <- function(df, names=F) {
 	# Purpose, return which columns are Ordinal
 	# use case: isContinuous = !umxIsOrdinalVar(df)
 	# nb: can optionally return just the names of these
@@ -1144,7 +1178,7 @@ umxIsOrdinalVar <- function(df, names=F) {
 	}
 }
 
-#' umxIsRAMmodel
+#' umx_is_RAM
 #'
 #' Utility function returning a binary answer to the question "Is this a RAM model?"
 #'
@@ -1155,13 +1189,13 @@ umxIsOrdinalVar <- function(df, names=F) {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' if(umxIsRAMmodel(fit1)){
+#' if(umx_is_RAM(fit1)){
 #' 	message("nice RAM model!")
 #' }
 #' }
 
-umxIsRAMmodel <- function(obj) {
-	if(!umxIsMxModel(obj)){
+umx_is_RAM <- function(obj) {
+	if(!umx_is_MxModel(obj)){
 		return(F)
 	}else{
 		return(class(obj$objective) == "MxRAMObjective")
@@ -1170,7 +1204,7 @@ umxIsRAMmodel <- function(obj) {
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
 }
 
-#' umxIsMxModel
+#' umx_is_MxModel
 #'
 #' Utility function returning a binary answer to the question "Is this an OpenMx model?"
 #'
@@ -1181,11 +1215,11 @@ umxIsRAMmodel <- function(obj) {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' if(umxIsMxModel(fit1)){
+#' if(umx_is_MxModel(fit1)){
 #' 	message("nice OpenMx model!")
 #' }
 #' }
-umxIsMxModel <- function(obj) {
+umx_is_MxModel <- function(obj) {
 	isS4(obj) & is(obj, "MxModel")	
 }
 
