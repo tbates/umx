@@ -27,30 +27,11 @@
 #' model = xmuLabel_MATRIX_Model(model, suffix = "male")
 #' }
 
-xmuCheckNamesPresent <- function(namesNeeded, data, die=TRUE){
-	if(!is.data.frame(data)){
-		stop("data has to be a dataframe")
-	}
-	namesFound = (namesNeeded %in% names(data))
-	if(any(!namesFound)){
-		if(die){
-			print(namesFound)
-			stop("Not all names found. Following were missing from data:\n",
-				paste(namesNeeded[!namesFound], collapse="; ")
-			)
-		} else {
-			return(FALSE)
-		}
-	} else {
-		return(TRUE)
-	}
-}
-
 xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
-	if(!umxIsMxModel(model) ){
+	if(!umx_is_MxModel(model) ){
 		stop("xmuLabel_MATRIX_Model needs model as input")
 	}
-	if (!umxIsRAMmodel(model)) {
+	if (!umx_is_RAM(model)) {
 		stop("xmuLabel_MATRIX_Model shouldn't be seeing RAM Models")
 	}
 	model = xmuPropagateLabels(model, suffix = "")

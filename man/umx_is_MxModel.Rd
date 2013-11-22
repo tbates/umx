@@ -1,8 +1,8 @@
-\name{umxIsMxModel}
-\alias{umxIsMxModel}
-\title{umxIsMxModel}
+\name{umx_is_MxModel}
+\alias{umx_is_MxModel}
+\title{umx_is_MxModel}
 \usage{
-  umxIsMxModel(obj)
+  umx_is_MxModel(obj)
 }
 \arguments{
   \item{obj}{an object to be tested to see if it is an
@@ -17,7 +17,7 @@
 }
 \examples{
 \dontrun{
-if(umxIsMxModel(fit1)){
+if(umx_is_MxModel(fit1)){
 	message("nice OpenMx model!")
 }
 }

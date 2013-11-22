@@ -179,7 +179,7 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		# Done: Start values in the S at variance on diag, bit less than cov off diag
 		# Done: Start amnifest means in means model
 		# TODO: Start latent means?...		
-		if (!umxIsRAMmodel(obj) ) {
+		if (!umx_is_RAM(obj) ) {
 			stop("'obj' must be a RAM model (or a simple number)")
 		}
 		if (length(obj@submodels) > 0) {
@@ -251,11 +251,11 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 	if (is(obj, "MxMatrix") ) { 
 		# label an mxMatrix
 		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
-	} else if (umxIsRAMmodel(obj)) { 
+	} else if (umx_is_RAM(obj)) { 
 		# label a RAM model
 		if(verbose){message("RAM")}
 		return(xmuLabel_RAM_Model(obj, suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting))
-	} else if (umxIsMxModel(obj) ) {
+	} else if (umx_is_MxModel(obj) ) {
 		# label a non-RAM matrix model
 		return(xmuLabel_MATRIX_Model(obj, suffix))
 	} else {
