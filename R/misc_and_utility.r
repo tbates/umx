@@ -1204,7 +1204,9 @@ umxIsMxModel <- function(obj) {
 #' umx_is_cov(df)
 #' }
 
-umx_is_cov <- function(data, verbose = F) {
+umx_is_cov <- function(data = NULL, boolean = F, verbose = F) {
+	if(is.null(data)) { stop("Error in umx_is_cov: You have to provide the data that you want to check...") }
+
 	if( nrow(data) == ncol(data)) {
 		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
 			if(all(diag(data) == 1)){
@@ -1230,7 +1232,11 @@ umx_is_cov <- function(data, verbose = F) {
 			message("treating data as raw")
 		}
 	}
-	return(isCov)
+	if(boolean){
+		return(isCov %in%  c("cov", "cor"))
+	} else {
+		return(isCov)
+	}
 }
 
 #' umx_has_CIs

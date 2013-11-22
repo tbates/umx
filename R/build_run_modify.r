@@ -632,15 +632,14 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 # ===============
 #' umxLatent
 #'
-#' Helper to ease the creation of latent variables, including reflective variables (where the manifests define the latent, and need wireing up behind)
+#' Helper to ease the creation of latent variables, including formative variables (where the manifests define the latent, and need wiring up behind, and variances setting)
 #'
 #' @param latent the name of the latent variable (string)
 #' @param formedBy the list of variables forming this latent
 #' @param forms the list of variables which this latent forms (leave blank for formedBy)
 #' @param data the dataframe being used in this model
 #' @param endogenous = FALSE
-#' @param model.name = NA
-#' @param help = FALSE
+#' @param model.name = NULL
 #' @param labelSuffix a string to add to the end of each label
 #' @param verbose = T
 #' @return - path list
@@ -650,33 +649,50 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @examples
 #' \dontrun{
 #' umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
+#'
+#' library(OpenMx)
+#' library(umx)
+#' data(demoOneFactor)
+#' latents = c("G")
+#' manifests = names(demoOneFactor) x1-5
+#' theData = cov(demoOneFactor)
+#' m1 = mxModel("reflective", type = "RAM",
+#'     manifestVars = manifests,
+#'     latentVars   = latents,
+#'     # Factor loadings
+#'     umxLatent("G", forms = manifests, data = theData),
+#' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+#' )
+#' m1 = umxRun(m1, setStarts = T, setLabels = T); summary(m1)
+#' umxPlot(m1)
+#' 
+#' m2 = mxModel("formative", type = "RAM",
+#'     manifestVars = manifests,
+#'     latentVars   = latents,
+#'     # Factor loadings
+#'     umxLatent("G", formedBy = manifests, data = theData),
+#' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+#' )
+#' m2 = umxRun(m2, setStarts = T, setLabels = T); summary(m2)
+#' umxPlot(m2)
 #' }
 
-umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous = FALSE, model.name = NA, help = FALSE, labelSuffix = "", verbose = T) {
+umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, endogenous = FALSE, model.name = NULL, labelSuffix = "", verbose = T) {
 	# Purpose: make a latent variable formed/or formed by some manifests
 	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
 	# TODO: delete manifestVariance
 	# Check both forms and formedBy are not defined
-	if( is.na(formedBy) &&  is.na(forms)) { stop("Error in mxLatent: Must define one of forms or formedBy") }
-	if(!is.na(formedBy) && !is.na(forms)) { stop("Error in mxLatent: Only one of forms or formedBy can be set") }
+	if(is.null(latent)) { stop("Error in mxLatent: you have to provide the name of the latent variable you want to create") }
+	if( is.null(formedBy) &&  is.null(forms)) { stop("Error in mxLatent: Must define one of forms or formedBy") }
+	if(!is.null(formedBy) && !is.null(forms)) { stop("Error in mxLatent: Only one of forms or formedBy can be set") }
+	if(is.null(data)) { stop("Error in mxLatent: you have to provide the data that will be used in the model") }
 	# ==========================================================
 	# = NB: If any vars are ordinal, a call to umxMakeThresholdsMatrices
 	# = will fix the mean and variance of ordinal vars to 0 and 1
 	# ==========================================================
-	# manifests <- names(dataFrame)
-	# latents   <- c("G")
-	# m1 <- mxModel("m1", type="RAM",
-	# 	manifestVars = manifests,
-	# 	latentVars   = latents,
-	# 	# Factor loadings
-	# 	mxLatent("Read", forms = readMeasures),
-	# 	mxData(cov(dataFrame), type="cov", numObs=100)
-	# )
-	# m1= mxRun(m1); summary(m1)
-
 	# Warning("If you use this with a dataframe containing ordinal variables, don't forget to call umxAutoThreshRAMObjective(df)")
-	isCov = umx_is_cov(data)
-	if( any(!is.na(forms)) ) {
+	isCov = umx_is_cov(data, boolean = T)
+	if( any(!is.null(forms))) {
 		manifests <- forms
 	}else{
 		manifests <- formedBy
@@ -690,7 +706,7 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 			variances     = rep(1, times = length(manifests))
 			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm = T)
 			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use = "complete"))
-			if( any(!is.na(forms)) ) {
+			if( any(!is.null(forms)) ) {
 				contVariances = contVariances * .1 # hopefully residuals are modest
 			}
 			means[!manifestOrdVars] = contMeans				
@@ -704,65 +720,55 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 		}
 	}
 
-	if( any(!is.na(forms)) ) {
+	if( any(!is.null(forms)) ) {
 		# Handle forms case
-		if(!help) {
-			# p1 = Residual variance on manifests
-			# p2 = Fix latent variance @ 1
-			# p3 = Add paths from latent to manifests
-			p1 = mxPath(from = manifests, arrows = 2, free = T, values = variances)
-			if(endogenous){
-				# Free latent variance so it can do more than just redirect what comes in
-				if(verbose){
-					message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
-				}
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5)
-			} else {
-				# fix variance at 1 - no inputs
-				if(verbose){
-					message(paste("latent '", latent, "' has variance fixed @ 1"))
-				}
-				p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1)
+		# p1 = Residual variance on manifests
+		# p2 = Fix latent variance @ 1
+		# p3 = Add paths from latent to manifests
+		p1 = mxPath(from = manifests, arrows = 2, free = T, values = variances)
+		if(endogenous){
+			# Free latent variance so it can do more than just redirect what comes in
+			if(verbose){
+				message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
 			}
-			p3 = mxPath(from = latent, to = manifests, connect = "single", free = T, values = variances)
-			if(isCov) {
-				# Nothing to do: covariance data don't need means...
-				paths = list(p1, p2, p3)
-			}else{
-				# Add means: fix latent mean @0, and add freely estimated means to manifests
-				p4 = mxPath(from = "one", to = latent   , arrows = 1, free = F, values = 0)
-				p5 = mxPath(from = "one", to = manifests, arrows = 1, free = T, values = means)
-				paths = list(p1, p2, p3, p4, p5)
-			}			
+			p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5)
 		} else {
-			# TODO: display graphVizTextFormed as digraph
-			message("Help not implemented: run graphVizTextFormed")
+			# fix variance at 1 - no inputs
+			if(verbose){
+				message(paste("latent '", latent, "' has variance fixed @ 1"))
+			}
+			p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1)
+		}
+		p3 = mxPath(from = latent, to = manifests, connect = "single", free = T, values = variances)
+		if(isCov) {
+			# Nothing to do: covariance data don't need means...
+			paths = list(p1, p2, p3)
+		}else{
+			# Add means: fix latent mean @0, and add freely estimated means to manifests
+			p4 = mxPath(from = "one", to = latent   , arrows = 1, free = F, values = 0)
+			p5 = mxPath(from = "one", to = manifests, arrows = 1, free = T, values = means)
+			paths = list(p1, p2, p3, p4, p5)
 		}
 	} else {
 		# Handle formedBy case
-		if(!help) {
-			# Add paths from manifests to the latent
-			p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests)) 
-			# In general, manifest variance should be left free...
-			# TODO If the data were correlations... we can inspect for that, and fix the variance to 1
-			p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances)
-			# Allow manifests to intercorrelate
-			p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxStart(.3, n = manifests))
-			if(isCov) {
-				paths = list(p1, p2, p3)
-			}else{
-				# Fix latent mean at 0, and freely estimate manifest means
-				p4 = mxPath(from="one", to=latent   , free = F, values = 0)
-				p5 = mxPath(from="one", to=manifests, free = T, values = means)
-				paths = list(p1, p2, p3, p4, p5)
-			}
-		} else {
-			# TODO: display graphVizTextForms as digraph
-			message("help not implemented: run graphVizTextForms")
+		# Add paths from manifests to the latent
+		p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests)) 
+		# In general, manifest variance should be left free...
+		# TODO If the data were correlations... we can inspect for that, and fix the variance to 1
+		p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances)
+		# Allow manifests to intercorrelate
+		p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxStart(.3, n = manifests))
+		if(isCov) {
+			paths = list(p1, p2, p3)
+		}else{
+			# Fix latent mean at 0, and freely estimate manifest means
+			p4 = mxPath(from="one", to=latent   , free = F, values = 0)
+			p5 = mxPath(from="one", to=manifests, free = T, values = means)
+			paths = list(p1, p2, p3, p4, p5)
 		}
 	}
-	if(!is.na(model.name)) {
-		m1 <- mxModel(model.name, type="RAM", manifestVars=manifests, latentVars=latent, paths)
+	if(!is.null(model.name)) {
+		m1 <- mxModel(model.name, type="RAM", manifestVars = manifests, latentVars = latent, paths)
 		if(isCov){
 			m1 <- mxModel(m1, mxData(cov(df), type="cov", numObs = 100))
 			message("\n\nIMPORTANT: you need to set numObs in the mxData() statement\n\n\n")
@@ -777,6 +783,7 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 	} else {
 		return(paths)
 	}
+	# TODO	shoft this to a test file
 	# readMeasures = paste("test", 1:3, sep="")
 	# bad usages
 	# mxLatent("Read") # no too defined
@@ -786,6 +793,7 @@ umxLatent <- function(latent = NA, formedBy = NA, forms = NA, data, endogenous =
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
 	# umxPlot(m2, std=F, dotFilename="name")
 	# mxLatent("Read", forms = manifestsRead)
+
 }
 
 umxConnect <- function(x) {
@@ -897,7 +905,7 @@ umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbo
 # = Borrowed for tutorial purposes =
 # ==================================
 
-summaryACEFit <- function(fit, accuracy = 2, dotFilename = NA, returnStd = F, extended = F, showRg = F, showStd = T, parentModel = NA, CIs = F, zero.print = ".") {
+summaryACEFit <- function(fit, accuracy = 2, dotFilename = NULL, returnStd = F, extended = F, showRg = F, showStd = T, parentModel = NA, CIs = F, zero.print = ".") {
 	# Purpose: summarise a Cholesky model, as returned by makeACE_2Group
 	# use case: summaryACEFit(fit, dotFilename=NA);
 	# summaryACEFit(safeFit, dotFilename = "name", showStd = T)
@@ -1049,7 +1057,7 @@ Perhaps you'd like to add 'addStd = T' to your makeACE_2Group() call?")
 		stdFit@submodels$top@matrices$a@values = a_std
 		stdFit@submodels$top@matrices$c@values = c_std
 		stdFit@submodels$top@matrices$e@values = e_std
-		if(!is.na(dotFilename)) {
+		if(!is.null(dotFilename)) {
 			message("making dot file")
 			if(showStd){
 				# TODO import this function...
