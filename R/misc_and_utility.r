@@ -645,22 +645,7 @@ umx_rename <- function (x, replace, old = NULL) {
 	setNames(x, ifelse(is.na(new_names), old_names, new_names))
 }
 
-#' grepSPSS_labels
-#'
-#' Deprecated function to search the labels of an SPSS file use \code{\link{umx_grep_labels}} instead
-#'
-#' @param df an \code{\link{data.frame}} to search the labels of
-#' @param grepString the search string
-#' @param output the column name, the label, or both (default)
-#' @param ignore.case whether to be case sensitive or not (default TRUE)
-#' @param useNames whether to search the names as well as the labels
-#' @return - list of matched column name and labels
-#' @export
-#' @seealso - \code{\link{umx_grep_labels}}
-
-grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) { stop("Deprecated: used umx_grep_labels()") }
-
-#' umx_grep_labels
+#' umx_grep
 #'
 #' search the labels of an SPSS file
 #'
@@ -675,43 +660,50 @@ grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNam
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' umx_grep_labels(df)
-#' umx_grep_labels(relig, "Race", output="both", ignore.case=T) 
-#' umx_grep_labels(relig, "race", output="label") 
-#' umx_grep_labels(relig, "race", output="name") 
+#' umx_grep(df)
+#' umx_grep(relig, "Race", output="both", ignore.case=T) 
+#' umx_grep(relig, "race", output="label") 
+#' umx_grep(relig, "race", output="name") 
 #' }
-umx_grep_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
+umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 	# output = "both", "label" or "name"
-	# need to check this exists
-	vLabels = attr(df,"variable.labels") # list of descriptive labels?
-	a       = names(df) 
-	if(is.null(vLabels)){
-		stop("no labels")
-	}
-	if(useNames) {
-		findIndex = grep(grepString,a, value=F, ignore.case=ignore.case)
-		return( as.matrix(vLabels[findIndex]))
-	} else {
-		# need to cope with finding nothing
-		findIndex = grep(grepString,vLabels, value=F, ignore.case=ignore.case)
-		if(output=="both") {
-			theResult <- as.matrix(vLabels[findIndex])
-		} else if(output=="label"){
-			vLabels= as.vector(vLabels[findIndex])
-			theResult <- (vLabels)
-		} else if(output=="name"){
-			theResult <- names(vLabels)[findIndex]
-		}else{
-			stop(paste("bad choice of output:", output))
+	# if(length(grepString > 1)){
+	# 	for (i in grepString) {
+	# 		umx_grep_labels(df, i, output=output, ignore.case=ignore.case, useNames=useNames)
+	# 	}
+	# } else {
+		# need to check this exists
+		vLabels = attr(df,"variable.labels") # list of descriptive labels?
+		a       = names(df) 
+		if(is.null(vLabels)){
+			# message("No labels found")
+			return(grep(grepString, names(df), value=T, ignore.case=T))
 		}
-		if(dim(theResult)[1]==0 |is.null(theResult)){
-			cat("using names!!!!\n")
+		if(useNames) {
 			findIndex = grep(grepString,a, value=F, ignore.case=ignore.case)
-			return(as.matrix(vLabels[findIndex]))
+			return( as.matrix(vLabels[findIndex]))
 		} else {
-			return(theResult)
+			# need to cope with finding nothing
+			findIndex = grep(grepString,vLabels, value=F, ignore.case=ignore.case)
+			if(output=="both") {
+				theResult <- as.matrix(vLabels[findIndex])
+			} else if(output=="label"){
+				vLabels= as.vector(vLabels[findIndex])
+				theResult <- (vLabels)
+			} else if(output=="name"){
+				theResult <- names(vLabels)[findIndex]
+			}else{
+				stop(paste("bad choice of output:", output))
+			}
+			if(dim(theResult)[1]==0 |is.null(theResult)){
+				cat("using names!!!!\n")
+				findIndex = grep(grepString,a, value=F, ignore.case=ignore.case)
+				return(as.matrix(vLabels[findIndex]))
+			} else {
+				return(theResult)
+			}
 		}
-	}
+	# }
 }
 
 # ======================
@@ -1195,13 +1187,13 @@ umx_is_ordinal <- function(df, names=F) {
 #' }
 
 umx_is_RAM <- function(obj) {
-	if(!umx_is_MxModel(obj)){
-		return(F)
-	}else{
-		return(class(obj$objective) == "MxRAMObjective")
-	}
 	# TODO: get working on both the old and new objective model...
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
+	if(!umx_is_MxModel(obj)){
+		return(F)
+	} else {
+		return(class(obj$objective) == "MxRAMObjective")
+	}
 }
 
 #' umx_is_MxModel

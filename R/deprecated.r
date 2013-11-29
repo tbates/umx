@@ -1,6 +1,6 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document(); devtools::install(); 
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxX")
@@ -10,6 +10,34 @@
 # = Deprecated =
 # ==============
 
+#' umx_grep_labels
+#'
+#' Deprecated function to search the labels and names use \code{\link{umx_grep}} instead
+#'
+#' @param df an \code{\link{data.frame}} to search the labels of
+#' @param grepString the search string
+#' @param output the column name, the label, or both (default)
+#' @param ignore.case whether to be case sensitive or not (default TRUE)
+#' @param useNames whether to search the names as well as the labels
+#' @return - list of matched column name and labels
+#' @export
+
+umx_grep_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) { stop("Deprecated: used umx_grep_labels()") }
+
+#' grepSPSS_labels
+#'
+#' Deprecated function to search the labels of an SPSS file use \code{\link{umx_grep_labels}} instead
+#'
+#' @param df an \code{\link{data.frame}} to search the labels of
+#' @param grepString the search string
+#' @param output the column name, the label, or both (default)
+#' @param ignore.case whether to be case sensitive or not (default TRUE)
+#' @param useNames whether to search the names as well as the labels
+#' @return - list of matched column name and labels
+#' @export
+#' @seealso - \code{\link{umx_grep_labels}}
+grepSPSS_labels <- function(df, grepString, output="both", ignore.case=T, useNames=F) { stop("Deprecated: used umx_grep_labels()") }
+
 # umxTryHard
 #
 # umxTryHard Is deprecated: use \code{\link{umxRun}} instead
@@ -17,7 +45,6 @@
 # @export
 # @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 # @references - http://openmx.psyc.virginia.edu/
-
 umxTryHard <- function(model, n=3, calc_SE=F){ stop("Use umxRun() in place of umxTryHard") }
 
 # umxLabels
@@ -27,7 +54,6 @@ umxTryHard <- function(model, n=3, calc_SE=F){ stop("Use umxRun() in place of um
 # @export
 # @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 # @references - http://openmx.psyc.virginia.edu/
-
 umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {stop("please use umxPath in place of umxLabels. To label models or matrices, use umxLabel")}
 
 # genEpi_Jiggle
@@ -36,7 +62,6 @@ umxLabels <- function(from=NA, to=NA, connect="single", prefix="", suffix="") {s
 # @export
 # @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 # @references - http://openmx.psyc.virginia.edu/
-
 genEpi_Jiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {stop("please use umxJiggle in place of genEpi_Jiggle")}
 
 # umxPath
@@ -45,7 +70,6 @@ genEpi_Jiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {stop("ple
 # @export
 # @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 # @references - http://openmx.psyc.virginia.edu/
-
 umxPath <- function(from = NA, to = NA, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, prefix = "", suffix = "",...) {
 	stop("replace umxPath with mxPath, and run umxLabel(model) on the model when you are done to add default labels, plus umxStart(model) to add default start values")
 	# {$|single,all.pairs,all.bivariate,unique.pairs,unique.bivariate|}

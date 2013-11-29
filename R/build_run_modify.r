@@ -50,7 +50,6 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLa
 	if(setStarts){
 		model = umxStart(model)
 	}
-
 	if(n == 1){
 		model = mxRun(model);
 	} else {
@@ -77,7 +76,9 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLa
 			model = mxRun(model)
 		}
 	}
-	if((class(model$objective)[1] == "MxRAMObjective") & model@data@type =="raw"){
+	message("You idiot!")
+
+	if( umx_is_RAM(model) & model@data@type == "raw"){
 		# If we have a RAM model with raw data, compute the satuated and indpeendence models
 		# TODO: Update to omxSaturated() and omxIndependenceModel()
 		# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
@@ -86,13 +87,14 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLa
 		model@output$SaturatedLikelihood    = model_sat$SaturatedLikelihood@output$Minus2LogLikelihood
 	}
 	if(!is.null(comparison)){
+		message("You idiot!")
 		umxCompare(comparison, model)
 	}
 	return(model)
 }
 
 #' umxReRun
-#'
+#' 
 #' umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally dropping parameters
 #' The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
 #' fit2 = umxReRun(fit1, dropList = "Cs", name = "newModelName")
@@ -100,7 +102,7 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLa
 #' If you're a beginner, stick to 
 #' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = F, name = "newModelName")
 #' fit2 = mxRun(fit2)
-#'
+#' 
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
 #' @param regex    A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
@@ -169,7 +171,6 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 #' \dontrun{
 #' model = umxStart(model)
 #' }
-
 umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {
 		xmuStart_value_list(x = obj, sd = NA, n = 1)
@@ -244,7 +245,6 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 #'  model = umxLabel(model)
 #'  umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 #' }
-
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F, overRideExisting = F) {	
 	# TODO !!!! labelling rule for bivariate perhaps should be sort alphabetically, makes it unambiguous...
 	# TODO !!!! implications for umxAdd1 finding the right labels...
@@ -281,7 +281,6 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' \dontrun{
 #'  model = umxStandardizeModel(model, return = "model")
 #' }
-
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
 	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
 	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
@@ -431,7 +430,6 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 #' \dontrun{
 #'  model = umxEquate(model)
 #' }
-
 umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) {
 	# Purpose: to equate parameters by setting of labels (the slave set) = to the labels in a master set
 	# umxEquate(model1, master="am", slave="af", free=T|NA|F")
@@ -544,7 +542,6 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' \dontrun{
 #' model = umxAdd1(model)
 #' }
-
 umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP = 1) {
 	# DONE: RAM paths
 	# TODO add non-RAM
@@ -633,6 +630,10 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' umxLatent
 #'
 #' Helper to ease the creation of latent variables, including formative variables (where the manifests define the latent, and need wiring up behind, and variances setting)
+#' The following figures show how a reflective:
+#' \figure{reflective.png}
+#' and a formative variable are created:
+#' formative\figure{formative.png}
 #'
 #' @param latent the name of the latent variable (string)
 #' @param formedBy the list of variables forming this latent
@@ -676,7 +677,6 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' m2 = umxRun(m2, setStarts = T, setLabels = T); summary(m2)
 #' umxPlot(m2)
 #' }
-
 umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, endogenous = FALSE, model.name = NULL, labelSuffix = "", verbose = T) {
 	# Purpose: make a latent variable formed/or formed by some manifests
 	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
