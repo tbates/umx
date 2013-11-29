@@ -76,20 +76,17 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLa
 			model = mxRun(model)
 		}
 	}
-	message("You idiot!")
-
-	if( umx_is_RAM(model) & model@data@type == "raw"){
-		# If we have a RAM model with raw data, compute the satuated and indpeendence models
-		# TODO: Update to omxSaturated() and omxIndependenceModel()
-		# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
-		model_sat = umxSaturated(model, evaluate = T, verbose = T)
-		model@output$IndependenceLikelihood = model_sat$IndependenceLikelihood@output$Minus2LogLikelihood
-		model@output$SaturatedLikelihood    = model_sat$SaturatedLikelihood@output$Minus2LogLikelihood
+	if( umx_is_RAM(model)){
+		if(model@data@type == "raw"){
+			# If we have a RAM model with raw data, compute the satuated and indpeendence models
+			# TODO: Update to omxSaturated() and omxIndependenceModel()
+			# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
+			model_sat = umxSaturated(model, evaluate = T, verbose = T)
+			model@output$IndependenceLikelihood = model_sat$IndependenceLikelihood@output$Minus2LogLikelihood
+			model@output$SaturatedLikelihood    = model_sat$SaturatedLikelihood@output$Minus2LogLikelihood
+		}
 	}
-	if(!is.null(comparison)){
-		message("You idiot!")
-		umxCompare(comparison, model)
-	}
+	if(!is.null(comparison)){ umxCompare(comparison, model) }
 	return(model)
 }
 
