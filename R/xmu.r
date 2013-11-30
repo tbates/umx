@@ -1,6 +1,8 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document("~/bin/umx"); devtools::build("~/bin/umx"); devtools::install("~/bin/umx"); 
+# setwd("~/bin/umx"); 
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# devtools::build("~/bin/umx"); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxFUNCTION_NAME")
@@ -43,7 +45,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = T, overRide
 	# Use case: model = umxAddLabels(model, suffix = "_male")
 	# TODO label means if data = raw
 	# TODO implement overRideExisting !!!
-	if (!umxIsRAMmodel(model)) {
+	if (!umx_is_RAM(model)) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
 	freeA  = model@matrices$A@free
