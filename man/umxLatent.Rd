@@ -33,7 +33,9 @@
   Helper to ease the creation of latent variables,
   including formative variables (where the manifests define
   the latent, and need wiring up behind, and variances
-  setting)
+  setting) The following figures show how a reflective:
+  \figure{reflective.png} and a formative variable are
+  created: formative\figure{formative.png}
 }
 \examples{
 \dontrun{

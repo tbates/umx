@@ -1,8 +1,8 @@
-\name{umx_grep_labels}
-\alias{umx_grep_labels}
-\title{umx_grep_labels}
+\name{umx_grep}
+\alias{umx_grep}
+\title{umx_grep}
 \usage{
-  umx_grep_labels(df, grepString, output = "both",
+  umx_grep(df, grepString, output = "both",
     ignore.case = T, useNames = F)
 }
 \arguments{
@@ -24,7 +24,21 @@
   - list of matched column name and labels
 }
 \description{
-  Deprecated function to search the labels and names use
-  \code{\link{umx_grep}} instead
+  search the labels of an SPSS file
+}
+\examples{
+\dontrun{
+umx_grep(df)
+umx_grep(relig, "Race", output="both", ignore.case=T)
+umx_grep(relig, "race", output="label")
+umx_grep(relig, "race", output="name")
+}
+}
+\references{
+  - \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+  - \code{\link{umxLabel}}, \code{\link{umxRun}},
+  \code{\link{umxStart}}
 }
 
