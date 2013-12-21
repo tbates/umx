@@ -149,12 +149,13 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
 	# stop if there is no output
 	if ( length(output) < 1 ) stop("Provided model has no output. I can only standardize models that have been mxRun() first!")
-	
-	if(is.null(saturatedModels)){
+	# saturatedModels = NULL
+	if(is.null(saturatedModels)) {
 		# saturatedModels not passed in from outside, so get them from the model
-		modelSummary = OpenMx::summary(model)
-		
-		if(is.na(modelSummary$SaturatedLikelihood)){
+		modelSummary = OpenMx::summary(model)		
+		if(is.null(model@data)){
+			# # TODO model with no data - no saturated solution?
+		} else if(is.na(modelSummary$SaturatedLikelihood)){
 			message("There is no saturated likelihood: computing that now...")
 			saturatedModels = umxSaturated(model)
 			modelSummary = OpenMx::summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
