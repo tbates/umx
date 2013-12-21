@@ -172,16 +172,32 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 			}else if(showEstimates == "both") {
 				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
 			} else if(showEstimates == "std"){
-				namesToShow = c("name", "matrix", "row", "col", "Std.Estimate", "Std.SE")
+				namesToShow = c("name", "matrix", "row", "col", "Std.Estimate", "Std.SE", "CI")
 			}else{
 				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")					
 			}
 		} else {
 			namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")
 		}
-		print(modelSummary$parameters[,namesToShow], digits= precision, na.print = "", zero.print = "0", justify = "none")
+		if("CI" %in% namesToShow){
+			x = modelSummary$parameters
+			x$CI = ""
+			for(i in 1:dim(x)[1]) {
+				# i = 1
+				# x = summary(m1)$parameters
+				# precision = 2
+				est = x[i, "Std.Estimate"]
+				CI95  = x[i, "Std.SE"] * 1.96
+				if(est < 0){
+	 			   x[i, "CI"] = paste0(round(est, precision), " [", round(est - CI95, precision), ", ", round(est + CI95, precision), "]")
+				} else {
+	 			   x[i, "CI"] = paste0(round(est, precision), " [", round(est - CI95, precision), ", ", round(est + CI95, precision), "]")
+				}
+			}
+		}
+		print(x[,namesToShow], digits= precision, na.print = "", zero.print = "0", justify = "none")
 	} else {
-		message("For estimates, add showEstimates = 'raw' or 'std' etc")
+		message("For estimates, add showEstimates = 'raw' 'std' or 'both")
 	}
 
 	with(modelSummary, {
