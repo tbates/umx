@@ -1187,11 +1187,12 @@ umx_is_ordinal <- function(df, names=F) {
 #' }
 
 umx_is_RAM <- function(obj) {
-	# TODO: get working on both the old and new objective model...
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
 	if(!umx_is_MxModel(obj)){
 		return(F)
-	} else {
+	} else if(class(obj) == "MxRAMModel"){
+		return(T)
+	}else{
 		return(class(obj$objective) == "MxRAMObjective")
 	}
 }

@@ -137,7 +137,7 @@ extractAIC.MxModel <- function(model) {
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
 
-umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, precision = 2){
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, precision = 2, RMSEA_CI = F){
 	# report = "line|table"
 	# showEstimates = "NULL|raw|std|both|c("row", "col", "Std.Estimate")"
 	# c("names", "Std.Estimate")
@@ -224,12 +224,17 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				names(x) = c("model","\u03C7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
 				print(x)
 			} else {
+				if(RMSEA_CI){
+					RMSEA_CI = omxRMSEA(model)$txt
+				} else {
+					RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
+				}
 				x = paste0(
 					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi, 2), # was A7
 					", p "      , umx_APA_pval(p, .001, 3),
 					"; CFI = "  , round(CFI,3),
 					"; TLI = "  , round(TLI,3),
-					"; RMSEA = ", round(RMSEA, 3)
+					"; ", RMSEA_CI
 					)
 					print(x)
 					if(TLI_OK != "OK"){
@@ -935,7 +940,7 @@ goodnessOfFit <- function(indepfit, modelfit) {
 #'
 #' Compute the confidence interval on RMSEA
 #'
-#' @param model an \code{\link{mxModel}} to WITH
+#' @param model an \code{\link{mxModel}} to get CIs on RMSEA for
 #' @param ci.lower the lower Ci to compute
 #' @param ci.upper the upper Ci to compute
 #' @return - object containing the RMSEA and lower and upper bounds
@@ -959,12 +964,13 @@ omxRMSEA <- function(model, ci.lower = .05, ci.upper = .95) {
 	upper.lambda <- function(lambda) {
 		(pchisq(X2, df = df, ncp = lambda) - ci.lower)
 	}
-	lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root, silent = T) 
  	N.RMSEA  <- max(N, X2*4) # heuristic of lavaan. TODO: can we improve this? when does this break?
+	lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root, silent = T) 
 	lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root, silent = T)
  
 	rmsea.lower <- sqrt(lambda.l/(N * df))
 	rmsea.upper <- sqrt(lambda.u/(N * df))
 	RMSEA = sqrt( max( c((X2/N)/df - 1/N, 0) ) )
-	return(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper)) 
+	txt = paste0("RMSEA = ", round(RMSEA, 3), " CI", sub("^0?\\.", replace = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "]")	
+	return(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, txt = txt)) 
 }

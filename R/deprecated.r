@@ -221,6 +221,10 @@ summaryACEFit <- function(thisFit, accuracy = accuracy, dotFilename = dotFilenam
 	stop("Deprecated: Please replace summaryACEFit with umxSummaryACE")
 }
 
+umxReportFit <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, precision = 2){
+	stop("Deprecated: Please replace umxReportFit with umxSummary")
+}
+
 summaryCommonFit <- function(thisFit, accuracy = accuracy, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, parentModel = parentModel, CIs=CIs) {
 	stop("Deprecated: Please replace summaryCommonFit with umxSummaryCP")
 }

@@ -279,21 +279,28 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #'  model = umxStandardizeModel(model, return = "model")
 #' }
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
-	if (!(return=="parameters"|return=="matrices"|return=="model"))stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
+	if (!(return=="parameters"|return == "matrices"|return == "model")) stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
 	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
 	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
-	if (class(model@objective)[1] !="MxRAMObjective" & !suppliedNames ){
-		stop("I need either mxRAMObjective or the names of the A and S matrices.")
+
+	if (!umx_is_RAM(model) & !suppliedNames ){
+		stop("I need either type = RAM model or the names of the equivalent of the A and S matrices.")
 	}
 	output <- model@output
-	# stop if there is no objective function
+	# Stop if there is no objective function
 	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
-	# stop if there is no output
+	# Stop if there is no output
 	if (length(output) < 1)stop("Provided model has no output. I can only standardize models that have been run!")
 	# Get the names of the A, S and M matrices 
-	if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
-	if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
-	if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
+	if(!is.null(m1A@expectation)){
+		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@expectation@A}
+		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@expectation@S}
+		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@expectation@M}
+	} else {
+		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
+		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
+		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
+	}
 	# Get the A and S matrices, and make an identity matrix
 	A <- model[[nameA]]
 	S <- model[[nameS]]
