@@ -3,7 +3,8 @@
 \title{umxSummary}
 \usage{
   umxSummary(model, saturatedModels = NULL,
-    report = "line", showEstimates = NULL, precision = 2)
+    report = "line", showEstimates = NULL, precision = 2,
+    RMSEA_CI = F)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} whose fit will be

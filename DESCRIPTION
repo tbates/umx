@@ -6,7 +6,7 @@ License: GPL-3
 Title: umx
 URL: http://github.com/tbates/umx
 Description: A library of Helper functions for OpenMx.
-	 If you are just starting, try typing ?umx
+    If you are just starting, try typing ?umx
 Imports:
     OpenMx
 Suggests:

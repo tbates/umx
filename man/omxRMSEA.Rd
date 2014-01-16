@@ -5,7 +5,8 @@
   omxRMSEA(model, ci.lower = 0.05, ci.upper = 0.95)
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to WITH}
+  \item{model}{an \code{\link{mxModel}} to get CIs on RMSEA
+  for}
 
   \item{ci.lower}{the lower Ci to compute}
 
