@@ -3,4 +3,4 @@ umx 0.65-alpha
 
 * Alpha release
 * 90% feature complete
-* Function naming close to stone: umxMajor xmuNotForUser, umx_utility_function
+* Function prefix reflects usage:: umxMajor, umx_utility_function, xmuNotForUser

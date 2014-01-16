@@ -1,12 +1,12 @@
 Package: umx
 Maintainer: Who to complain to <timothy.c.bates@gmail.com>
 Author: Tim Bates
-Version: 0.65
+Version: 0.75
 License: GPL-3
 Title: umx
 URL: http://github.com/tbates/umx
-Description: A library of Helper functions for OpenMx. If you are just
-    starting, try typing ?umx
+Description: A library of Helper functions for OpenMx.
+	 If you are just starting, try typing ?umx
 Imports:
     OpenMx
 Suggests:
