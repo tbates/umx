@@ -356,7 +356,7 @@ umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pa
 			thisPathVal  = round(model[["A"]]@values[target,source],precision)
 			if(thisPathFree){
 				out = paste(out, ";\n", source, " -> ", target, " [label=\"", thisPathVal, "\"]", sep="")
-			} else if(thisPathVal!=0 & showFixed) {
+			} else if(thisPathVal != 0 & showFixed) {
 				# TODO Might want to fix this !!! comment out
 				out = paste(out, ";\n", source, " -> ", target, " [label=\"@", thisPathVal, "\"]", sep="")
 				# return(list(thisLatent,thisManifest))

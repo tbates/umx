@@ -279,7 +279,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #'  model = umxStandardizeModel(model, return = "model")
 #' }
 umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
-	if (!(return=="parameters"|return == "matrices"|return == "model")) stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
+	if (!(return == "parameters"|return == "matrices"|return == "model")) stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
 	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
 	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
 
@@ -292,7 +292,7 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 	# Stop if there is no output
 	if (length(output) < 1)stop("Provided model has no output. I can only standardize models that have been run!")
 	# Get the names of the A, S and M matrices 
-	if(!is.null(m1A@expectation)){
+	if(!is.null(model@expectation)){
 		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@expectation@A}
 		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@expectation@S}
 		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@expectation@M}
