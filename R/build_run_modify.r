@@ -292,7 +292,8 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 	# Stop if there is no output
 	if (length(output) < 1)stop("Provided model has no output. I can only standardize models that have been run!")
 	# Get the names of the A, S and M matrices 
-	if(!is.null(model@expectation)){
+	if("expectation" %in% slotNames(m1)){
+		# openMx 2
 		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@expectation@A}
 		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@expectation@S}
 		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@expectation@M}
