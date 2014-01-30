@@ -11,141 +11,6 @@
 # devtools::dev_help("umxX")
 # devtools::show_news("~/bin/umx")
 
-# =================================
-# = Run Helpers =
-# =================================
-
-#' umxRun
-#'
-#' umxRun is a version of \code{\link{mxRun}} which can run multiple times by default
-#' The main value for umxRun over mxRun is with raw data. It's slightly faster, but 
-#' can also calculate the saturated and independence likelihoods necessary for most fit indices.
-#'
-#' @param model The \code{\link{mxModel}} you wish to run.
-#' @param n The maximum number of times you want to run the model trying to get a code green run (defaults to 1)
-#' @param calc_SE Whether to calculate standard errors (not used when n = 1)
-#' for the summary (they are not very accurate, so if you use \code{\link{mxCI}} you can turn this off)
-#' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s) (defaults to TRUE - why would you want anything else?)
-#' @param setStarts Whether to set the start values (defaults to F)
-#' @param setLabels Whether to set the labels (defaults to F)
-#' @param comparison Whether to run umxCompare() after umxRun
-#' @return - \code{\link{mxModel}}
-#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @export
-#' @examples
-#' \dontrun{
-#' model = umxRun(model) # just run: will create sturated model if needed
-#' model = umxRun(model, setStarts = T, setLabels = T) # set start values and label all parameters
-#' model = umxRun(model, n=10) # run, but also re-run if not clean the first time
-#' }
-
-umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLabels = F, comparison = NULL){
-	# TODO: return change in -2LL for models being re-run
-	# TODO: stash saturated model for re-use
-	# Optimise for speed
-	if(setLabels){
-		model = umxLabel(model)
-	}
-	if(setStarts){
-		model = umxStart(model)
-	}
-	if(n == 1){
-		model = mxRun(model);
-	} else {
-		model = mxOption(model, "Calculate Hessian", "No")
-		model = mxOption(model, "Standard Errors", "No")
-		# make an initial run
-		model = mxRun(model);
-		n = (n - 1); tries = 0
-		# carry on if we failed
-		while(model@output$status[[1]] == 6 && n > 2 ) {
-			print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
-			model <- mxRun(model)
-			n <- (n - 1)
-			tries = (tries + 1)
-		}
-		if(tries == 0){ 
-			# print("Ran fine first time!")	
-		}
-		# get the SEs for summary (if requested)
-		if(calc_SE){
-			# print("Calculating Hessian & SEs")
-			model = mxOption(model, "Calculate Hessian", "Yes")
-			model = mxOption(model, "Standard Errors", "Yes")
-			model = mxRun(model)
-		}
-	}
-	if( umx_is_RAM(model)){
-		if(model@data@type == "raw"){
-			# If we have a RAM model with raw data, compute the satuated and indpeendence models
-			# TODO: Update to omxSaturated() and omxIndependenceModel()
-			# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
-			model_sat = umxSaturated(model, evaluate = T, verbose = T)
-			model@output$IndependenceLikelihood = model_sat$IndependenceLikelihood@output$Minus2LogLikelihood
-			model@output$SaturatedLikelihood    = model_sat$SaturatedLikelihood@output$Minus2LogLikelihood
-		}
-	}
-	if(!is.null(comparison)){ umxCompare(comparison, model) }
-	return(model)
-}
-
-#' umxReRun
-#' 
-#' umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally dropping parameters
-#' The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
-#' fit2 = umxReRun(fit1, dropList = "Cs", name = "newModelName")
-#' 
-#' If you're a beginner, stick to 
-#' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = F, name = "newModelName")
-#' fit2 = mxRun(fit2)
-#' 
-#' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
-#' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
-#' @param regex    A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
-#' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
-#' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
-#' @param freeToStart Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)
-#' @param name      The name for the new model
-#' @param verbose   How much feedback to give
-#' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
-#' @param comparison Whether to run umxCompare() after umxRun
-#' @return - \code{\link{mxModel}}
-#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{omxGetParameters}}
-#' @references - http://openmx.psyc.virginia.edu/
-#' @export
-#' @examples
-#' \dontrun{
-#' fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
-#' fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
-#' fit2 = umxReRun(fit1, regex = "^E", free=T, value=.2, name = "free_E")
-#' fit2 = umxReRun(fit1, regex = "Cs", name="AEip", compare = T)
-#' }
-
-umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, compare = F) {
-	if(is.na(name)){
-		name = lastFit@name
-	}
-	if(is.na(regex)) {
-		if(any(is.na(dropList))) {
-			stop("Both dropList and regex cannot be empty!")
-		} else {
-			theLabels = dropList
-		}
-	} else {
-		theLabels = umxGetParameters(lastFit, regex = regex, free = freeToStart, verbose = verbose)
-	}
-	x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)
-	# x = umxStart(x)
-	x = mxRun(x, intervals = intervals)
-	if(compare){
-		print(umxCompare(lastFit, c(x)))
-	}
-	return(x)
-}
-
-# Parallel helpers to be added here
-
 # ========================================
 # = Model building and modifying helpers =
 # ========================================
@@ -259,6 +124,141 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 		stop("I can only label OpenMx models and mxMatrix types. You gave me a ", typeof(obj))
 	}
 }
+
+# =================================
+# = Run Helpers =
+# =================================
+
+#' umxRun
+#'
+#' umxRun is a version of \code{\link{mxRun}} which can run also set start values, labels, and run multiple times
+#' It can also calculate the saturated and independence likelihoods necessary for most fit indices.
+#'
+#' @param model The \code{\link{mxModel}} you wish to run.
+#' @param n The maximum number of times you want to run the model trying to get a code green run (defaults to 1)
+#' @param calc_SE Whether to calculate standard errors (not used when n = 1)
+#' for the summary (they are not very accurate, so if you use \code{\link{mxCI}} or \code{\link{umxCI}}, you can turn this off)
+#' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s) (defaults to TRUE - why would you want anything else?)
+#' @param setStarts Whether to set the start values (defaults to F)
+#' @param setLabels Whether to set the labels (defaults to F)
+#' @param comparison Whether to run umxCompare() after umxRun
+#' @return - \code{\link{mxModel}}
+#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @export
+#' @examples
+#' \dontrun{
+#' model = umxRun(model) # just run: will create saturated model if needed
+#' model = umxRun(model, setStarts = T, setLabels = T) # set start values and label all parameters
+#' model = umxRun(model, n=10) # run, but also re-run if not green the first run
+#' }
+
+umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLabels = F, comparison = NULL){
+	# TODO: return change in -2LL for models being re-run
+	# TODO: stash saturated model for re-use
+	# TODO: Optimise for speed
+	if(setLabels){
+		model = umxLabel(model)
+	}
+	if(setStarts){
+		model = umxStart(model)
+	}
+	if(n == 1){
+		model = mxRun(model);
+	} else {
+		model = mxOption(model, "Calculate Hessian", "No")
+		model = mxOption(model, "Standard Errors", "No")
+		# make an initial run
+		model = mxRun(model);
+		n = (n - 1); tries = 0
+		# carry on if we failed
+		while(model@output$status[[1]] == 6 && n > 2 ) {
+			print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
+			model <- mxRun(model)
+			n <- (n - 1)
+			tries = (tries + 1)
+		}
+		if(tries == 0){ 
+			# print("Ran fine first time!")	
+		}
+		# get the SEs for summary (if requested)
+		if(calc_SE){
+			# print("Calculating Hessian & SEs")
+			model = mxOption(model, "Calculate Hessian", "Yes")
+			model = mxOption(model, "Standard Errors", "Yes")
+			model = mxRun(model)
+		}
+	}
+	if( umx_is_RAM(model)){
+		if(model@data@type == "raw"){
+			# If we have a RAM model with raw data, compute the satuated and indpeendence models
+			# TODO: Update to omxSaturated() and omxIndependenceModel()
+			# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
+			model_sat = umxSaturated(model, evaluate = T, verbose = T)
+			model@output$IndependenceLikelihood = model_sat$IndependenceLikelihood@output$Minus2LogLikelihood
+			model@output$SaturatedLikelihood    = model_sat$SaturatedLikelihood@output$Minus2LogLikelihood
+		}
+	}
+	if(!is.null(comparison)){ umxCompare(comparison, model) }
+	return(model)
+}
+
+#' umxReRun
+#' 
+#' umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally dropping parameters
+#' The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
+#' fit2 = umxReRun(fit1, dropList = "Cs", name = "newModelName")
+#' 
+#' If you're a beginner, stick to 
+#' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = F, name = "newModelName")
+#' fit2 = mxRun(fit2)
+#' 
+#' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
+#' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
+#' @param regex    A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
+#' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
+#' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
+#' @param freeToStart Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)
+#' @param name      The name for the new model
+#' @param verbose   How much feedback to give
+#' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
+#' @param comparison Whether to run umxCompare() after umxRun
+#' @return - \code{\link{mxModel}}
+#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{omxGetParameters}}
+#' @references - http://openmx.psyc.virginia.edu/
+#' @export
+#' @examples
+#' \dontrun{
+#' fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
+#' fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
+#' fit2 = umxReRun(fit1, regex = "^E", free=T, value=.2, name = "free_E")
+#' fit2 = umxReRun(fit1, regex = "Cs", name="AEip", compare = T)
+#' }
+
+umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, compare = F) {
+	if(is.na(name)){
+		name = lastFit@name
+	}
+	if(is.na(regex)) {
+		if(any(is.na(dropList))) {
+			stop("Both dropList and regex cannot be empty!")
+		} else {
+			theLabels = dropList
+		}
+	} else {
+		theLabels = umxGetParameters(lastFit, regex = regex, free = freeToStart, verbose = verbose)
+	}
+	x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)
+	# x = umxStart(x)
+	x = mxRun(x, intervals = intervals)
+	if(compare){
+		print(umxCompare(lastFit, c(x)))
+	}
+	return(x)
+}
+
+# Parallel helpers to be added here
+
 
 #' umxStandardizeModel
 #'
@@ -632,22 +632,31 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 # ===============
 # = RAM Helpers =
 # ===============
+
+# =========================
+# = path-oriented helpers =
+# =========================
+
 #' umxLatent
 #'
 #' Helper to ease the creation of latent variables, including formative variables (where the manifests define the latent, and need wiring up behind, and variances setting)
 #' The following figures show how a reflective:
 #' \figure{reflective.png}
+#' 
+#' 
 #' and a formative variable are created:
+#' 
 #' formative\figure{formative.png}
 #'
 #' @param latent the name of the latent variable (string)
 #' @param formedBy the list of variables forming this latent
 #' @param forms the list of variables which this latent forms (leave blank for formedBy)
 #' @param data the dataframe being used in this model
-#' @param endogenous = FALSE
+#' @param type = \"exogenous|endogenous\"
 #' @param model.name = NULL
 #' @param labelSuffix a string to add to the end of each label
 #' @param verbose = T
+#' @param endogenous This is now deprecated. use type= \"exogenous|endogenous\"
 #' @return - path list
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
@@ -660,16 +669,16 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' library(umx)
 #' data(demoOneFactor)
 #' latents = c("G")
-#' manifests = names(demoOneFactor) x1-5
+#' manifests = names(demoOneFactor) # x1-5
 #' theData = cov(demoOneFactor)
 #' m1 = mxModel("reflective", type = "RAM",
 #'     manifestVars = manifests,
 #'     latentVars   = latents,
 #'     # Factor loadings
-#'     umxLatent("G", forms = manifests, data = theData),
+#'     umxLatent("G", forms = manifests, type = "exogenous", data = theData),
 #' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
-#' m1 = umxRun(m1, setStarts = T, setLabels = T); summary(m1)
+#' m1 = umxRun(m1, setStarts = T, setLabels = T); umxSummary(m1, show="std")
 #' umxPlot(m1)
 #' 
 #' m2 = mxModel("formative", type = "RAM",
@@ -679,14 +688,21 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #'     umxLatent("G", formedBy = manifests, data = theData),
 #' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
-#' m2 = umxRun(m2, setStarts = T, setLabels = T); summary(m2)
+#' m2 = umxRun(m2, setStarts = T, setLabels = T); umxSummary(m2, show="std")
 #' umxPlot(m2)
 #' }
-umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, endogenous = FALSE, model.name = NULL, labelSuffix = "", verbose = T) {
+umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  model.name = NULL, labelSuffix = "", verbose = T, endogenous = "deprecated") {
 	# Purpose: make a latent variable formed/or formed by some manifests
 	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
 	# TODO: delete manifestVariance
 	# Check both forms and formedBy are not defined
+	if(!endogenous == "deprecated"){
+		if(endogenous){
+			stop("Error in mxLatent: Use of endogenous=T is deprecated. Remove it and replace with type = \"endogenous\"") 
+		} else {
+			stop("Error in mxLatent: Use of endogenous=F is deprecated. Remove it and replace with type = \"exogenous\"") 
+		}
+	}
 	if(is.null(latent)) { stop("Error in mxLatent: you have to provide the name of the latent variable you want to create") }
 	if( is.null(formedBy) &&  is.null(forms)) { stop("Error in mxLatent: Must define one of forms or formedBy") }
 	if(!is.null(formedBy) && !is.null(forms)) { stop("Error in mxLatent: Only one of forms or formedBy can be set") }
@@ -731,7 +747,8 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 		# p2 = Fix latent variance @ 1
 		# p3 = Add paths from latent to manifests
 		p1 = mxPath(from = manifests, arrows = 2, free = T, values = variances)
-		if(endogenous){
+		if(is.null(type)){ stop("Error in mxLatent: You must set type to either exogenous or endogenous when creating a latent variable with an outgoing path") }
+		if(type == "endogenous"){
 			# Free latent variance so it can do more than just redirect what comes in
 			if(verbose){
 				message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
@@ -788,7 +805,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	} else {
 		return(paths)
 	}
-	# TODO	shoft this to a test file
+	# TODO	shift this to a test file
 	# readMeasures = paste("test", 1:3, sep="")
 	# bad usages
 	# mxLatent("Read") # no too defined
@@ -862,9 +879,6 @@ umxCheckModel <- function(obj, type = "RAM", hasData = NA) {
 	}	
 }
 
-# =========================
-# = path-oriented helpers =
-# =========================
 
 # ===========================
 # = matrix-oriented helpers =
@@ -1108,37 +1122,6 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 	return (matrixIn);
 }
 
-xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
-	a       = combn(pathList, 2)
-	nVar    = dim(a)[2]
-	toAdd   = rep(NA, nVar)
-	n       = 1
-	for (i in 1:nVar) {
-		from = a[1,i]
-		to   = a[2,i]
-		if(match(to, pathList) > match(from, pathList)){
-			labelString = paste0(to, "_with_", from)
-		} else {
-			labelString = paste0(from, "_with_", to)
-		}
-		toAdd[n] = labelString
-		n = n+1
-	}
-	return(toAdd)
-}
-
-xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
-	toAdd   = rep(NA, length(sourceList) * length(destinationList))
-	n       = 1
-	for (from in sourceList) {
-		for (to in destinationList) {
-			labelString = paste0(from, "_to_", to)
-			toAdd[n] = labelString
-			n = n + 1
-		}
-	}
-	return(toAdd)
-}
 
 umxCheck <- function(fit1){
 	# are all the manifests in paths?

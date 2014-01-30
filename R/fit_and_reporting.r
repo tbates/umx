@@ -117,7 +117,7 @@ extractAIC.MxModel <- function(model) {
 #' @param saturatedModels Saturated models if needed for fit indices (see example below: 
 #' Only needed for raw data, and then not if you've run umxRun
 #' @param report The format for the output line or table (default is "line")
-#' @param showEstimates What estimates to show. Options are "raw|std|list|NULL" for raw, standardized, a custom list or (default)
+#' @param showEstimates What estimates to show. Options are "raw | std | list | NULL" for raw, standardized, a custom list or (default)
 #' none (just shows the fit indices)
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 

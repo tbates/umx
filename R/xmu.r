@@ -499,3 +499,35 @@ xmuMinLevels <- function(data) {
 		return(minLevels)
 	}
 }
+
+xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
+	a       = combn(pathList, 2)
+	nVar    = dim(a)[2]
+	toAdd   = rep(NA, nVar)
+	n       = 1
+	for (i in 1:nVar) {
+		from = a[1,i]
+		to   = a[2,i]
+		if(match(to, pathList) > match(from, pathList)){
+			labelString = paste0(to, "_with_", from)
+		} else {
+			labelString = paste0(from, "_with_", to)
+		}
+		toAdd[n] = labelString
+		n = n+1
+	}
+	return(toAdd)
+}
+
+xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
+	toAdd   = rep(NA, length(sourceList) * length(destinationList))
+	n       = 1
+	for (from in sourceList) {
+		for (to in destinationList) {
+			labelString = paste0(from, "_to_", to)
+			toAdd[n] = labelString
+			n = n + 1
+		}
+	}
+	return(toAdd)
+}
