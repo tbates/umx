@@ -2,7 +2,8 @@
 \alias{umxCI}
 \title{umxCI}
 \usage{
-  umxCI(model = NULL, addCIs = T, runCIs = "if necessary")
+  umxCI(model = NULL, addCIs = T, runCIs = "if necessary",
+    showErrorcodes = T)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} you wish to report

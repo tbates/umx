@@ -1,6 +1,7 @@
 export(Stouffer.test)
 export(extractAIC.MxModel)
 export(grepSPSS_labels)
+export(logLik.MxModel)
 export(omxRMSEA)
 export(print.dataframe)
 export(print.html)

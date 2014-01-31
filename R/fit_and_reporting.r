@@ -1,16 +1,3 @@
-End of Watch
-How to Make Love Like an Englishman
-Freelancers
-Fire with Fire
-
-plyr isn't necessary in this case. You can use the following: 
-
-
-library(plyr) 
-pct.colwise <- colwise(pct) 
-df[, cols] <- pct.colwise(df[,colwise]) 
-
-
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); 
@@ -944,18 +931,29 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' extractAIC
 #'
 #' returns the AIC for an OpenMx model
-#' helper function which enables AIC(model)
+#' helper function for \code{\link{logLik.MxModel}} (which enables AIC(model); logLik(model); BIC(model)
 #' Original Author: brandmaier
 #'
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @return - AIC value
 #' @export
-#' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
+#' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
-#' \dontrun{
-#' x = extractAIC(model)
-#' }
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' extractAIC(m1)
+
 extractAIC.MxModel <- function(model) {
 	require(umx)
 	a = umx::umxCompare(model)
@@ -970,15 +968,25 @@ extractAIC.MxModel <- function(model) {
 #' @param latent Whether to select the latent variables (defaults to TRUE)
 #' @param manifest Whether to select the manifest variables (defaults to TRUE)
 #' @return - expected covariance matrix
-#' @keywords manip
 #' @export
-#' @seealso - \code{\link{umxRun}}, \code{\link{umxCIpboot}}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' umxGetExpectedCov(m1)
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
-#' @examples
-#' \dontrun{
-#' model = umxGetExpectedCov(model, manifest = T) # just the manifests
-#' }
+#' @seealso - \code{\link{umxRun}}, \code{\link{umxCIpboot}}
+
 umxGetExpectedCov <- function(model, latent = T, manifest = T){
 	if(!umx_is_RAM(model)){
 		stop("model must be a RAM model")

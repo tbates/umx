@@ -22,9 +22,19 @@
   \code{\link{mxModel}}
 }
 \examples{
-\dontrun{
-model = umxGetExpectedCov(model, manifest = T) # just the manifests
-}
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1, setLabels = T, setStarts = T)
+umxGetExpectedCov(m1)
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu/thread/2598}
@@ -34,5 +44,4 @@ model = umxGetExpectedCov(model, manifest = T) # just the manifests
 \seealso{
   - \code{\link{umxRun}}, \code{\link{umxCIpboot}}
 }
-\keyword{manip}
 

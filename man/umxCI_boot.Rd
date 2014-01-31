@@ -4,7 +4,8 @@
 \usage{
   umxCI_boot(model, rawData = NULL,
     type = c("par.expected", "par.observed", "empirical"),
-    std = TRUE, rep = 1000, conf = 95, dat = FALSE)
+    std = TRUE, rep = 1000, conf = 95, dat = FALSE,
+    round = 3)
 }
 \arguments{
   \item{model}{is an optimized mxModel}
@@ -35,14 +36,15 @@
   - expected covariance matrix
 }
 \description{
-  Extract the expected covariance matrix from an
-  \code{\link{mxModel}} The function creates a sampling
-  distribution for parameters by repeatedly drawing samples
-  with replacement from your data and then computing the
-  statistic for each redrawn sample.
+  Compute boot-strapped Confidence Intervals for parameters
+  in an \code{\link{mxModel}} The function creates a
+  sampling distribution for parameters by repeatedly
+  drawing samples with replacement from your data and then
+  computing the statistic for each redrawn sample.
 }
 \examples{
-require(OpenMx)
+\dontrun{
+	require(OpenMx)
 	data(demoOneFactor)
 	latents  = c("G")
 	manifests = names(demoOneFactor)
@@ -55,6 +57,7 @@ require(OpenMx)
 	)
 	m1 = umxRun(m1, setLabels = T, setStarts = T)
 	umxCI_boot(m1, type = "par.expected")
+}
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu/thread/2598}
