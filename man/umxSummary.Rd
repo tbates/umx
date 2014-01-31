@@ -18,8 +18,8 @@
   (default is "line")}
 
   \item{showEstimates}{What estimates to show. Options are
-  "raw|std|list|NULL" for raw, standardized, a custom list
-  or (default) none (just shows the fit indices)}
+  "raw | std | list | NULL" for raw, standardized, a custom
+  list or (default) none (just shows the fit indices)}
 }
 \description{
   Report the fit of a model in a compact form suitable for

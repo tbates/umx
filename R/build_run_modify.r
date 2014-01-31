@@ -143,10 +143,23 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' @param setLabels Whether to set the labels (defaults to F)
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @return - \code{\link{mxModel}}
-#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{mxModel}}, \code{\link{umxCIboot}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' umxSummary(m1, show = "std")
 #' \dontrun{
 #' model = umxRun(model) # just run: will create saturated model if needed
 #' model = umxRun(model, setStarts = T, setLabels = T) # set start values and label all parameters
@@ -191,15 +204,17 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLa
 	}
 	if( umx_is_RAM(model)){
 		if(model@data@type == "raw"){
-			# If we have a RAM model with raw data, compute the satuated and indpeendence models
+			# If we have a RAM model with raw data, compute the satuated and indpendence models
 			# TODO: Update to omxSaturated() and omxIndependenceModel()
 			# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
 			model_sat = umxSaturated(model, evaluate = T, verbose = T)
-			model@output$IndependenceLikelihood = model_sat$IndependenceLikelihood@output$Minus2LogLikelihood
-			model@output$SaturatedLikelihood    = model_sat$SaturatedLikelihood@output$Minus2LogLikelihood
+			model@output$IndependenceLikelihood = as.numeric(-2*logLik(model_sat$Ind))
+			model@output$SaturatedLikelihood    = as.numeric(-2*logLik(model_sat$Sat))
 		}
 	}
-	if(!is.null(comparison)){ umxCompare(comparison, model) }
+	if(!is.null(comparison)){ 
+		umxCompare(comparison, model) 
+	}
 	return(model)
 }
 

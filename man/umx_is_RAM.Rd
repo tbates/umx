@@ -16,9 +16,25 @@
   question "Is this a RAM model?"
 }
 \examples{
-\dontrun{
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+fit1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+fit1 = umxRun(fit1, setLabels = T, setStarts = T)
+umxSummary(m1, show = "std")
 if(umx_is_RAM(fit1)){
 	message("nice RAM model!")
+}
+\dontrun{
+if(!umx_is_RAM(fit1)){
+	stop("model must be a RAM model")
 }
 }
 }

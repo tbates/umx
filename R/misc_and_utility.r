@@ -4,7 +4,7 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); 
-# devtools::document("~/bin/umx"); devtools::build("~/bin/umx"); devtools::install("~/bin/umx"); 
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxX")
@@ -1180,9 +1180,25 @@ umx_is_ordinal <- function(df, names=F) {
 #' @seealso - \code{\link{mxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' fit1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' fit1 = umxRun(fit1, setLabels = T, setStarts = T)
+#' umxSummary(m1, show = "std")
 #' if(umx_is_RAM(fit1)){
 #' 	message("nice RAM model!")
+#' }
+#' \dontrun{
+#' if(!umx_is_RAM(fit1)){
+#' 	stop("model must be a RAM model")
 #' }
 #' }
 
@@ -1190,10 +1206,10 @@ umx_is_RAM <- function(obj) {
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
 	if(!umx_is_MxModel(obj)){
 		return(F)
-	} else if(class(obj) == "MxRAMModel"){
+	} else if(class(obj)[1] == "MxRAMModel"){
 		return(T)
-	}else{
-		return(class(obj$objective) == "MxRAMObjective")
+	} else {
+		return(class(obj$objective)[1] == "MxRAMObjective")
 	}
 }
 
