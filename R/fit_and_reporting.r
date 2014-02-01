@@ -36,12 +36,23 @@
 #' @export
 #' @import OpenMx
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' umxSummary(m1, show = "std")
 #' \dontrun{
-#' umxSummary(m1)
 #' umxSummary(m1, report = "table")
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-
 umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, precision = 2, RMSEA_CI = F){
 	# report = "line|table"
 	# showEstimates = "NULL|raw|std|both|c("row", "col", "Std.Estimate")"
@@ -228,7 +239,6 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# }
 }
 
-
 #' umxCI
 #'
 #' umxCI adds mxCI() calls for all free parameters in a model, 
@@ -254,8 +264,20 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' @references - http://openmx.psyc.virginia.edu/
 #' @export
 #' @examples
-#' \dontrun{
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
 #' umxCI(model)
+#' \dontrun{
 #' umxCI(model, addCIs = T) # add Cis for all free parameters if not present
 #' umxCI(model, runCIs = "yes") # force update of CIs
 #' umxCI(model, runCIs = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
@@ -343,6 +365,9 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
 
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, round = 3) {
+	require(MASS)
+	require(OpenMx)
+	require(umx)
 	if(type == "par.expected") {
 		exp = umxGetExpectedCov(model, latent = FALSE)
 	} else if(type == "par.observed") {
@@ -378,7 +403,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 		}
 	} else {
 		for(i in 1:rep){
-			bsample = var(mvrnorm(N, rep(0, nrow(exp)), exp))
+			bsample = var(MASS::mvrnorm(N, rep(0, nrow(exp)), exp))
 			mod     = mxRun(mxModel(model, mxData(observed = bsample, type = "cov", numObs = N)), silent = T)
 			pard    = rbind(pard, summary(mod)$parameters[, 5 + 2 * std])
 			rownames(pard)[nrow(pard)] = i
@@ -506,7 +531,19 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' umxPlot(model)
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' umxPlot(m1)
 #' }
 
 umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
@@ -613,6 +650,18 @@ umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pa
 #' @export
 #' @examples
 #' \dontrun{
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
 #' umxMI(model)
 #' umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 #' }
