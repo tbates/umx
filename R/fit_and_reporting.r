@@ -47,7 +47,7 @@
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxSummary(m1, show = "std")
 #' \dontrun{
 #' umxSummary(m1, report = "table")
@@ -274,7 +274,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxCI(model)
 #' \dontrun{
 #' umxCI(model, addCIs = T) # add Cis for all free parameters if not present
@@ -356,7 +356,7 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' 		mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 		mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' 	)
-#' 	m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' 	m1 = umxRun(m1, setLabels = T, setValues = T)
 #' 	umxCI_boot(m1, type = "par.expected")
 #'}
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
@@ -541,7 +541,7 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxPlot(m1)
 #' }
 
@@ -660,7 +660,7 @@ umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pa
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxMI(model)
 #' umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 #' }
@@ -999,7 +999,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' extractAIC(m1)
 
 extractAIC.MxModel <- function(model) {
@@ -1029,7 +1029,7 @@ extractAIC.MxModel <- function(model) {
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxGetExpectedCov(m1)
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}

@@ -1191,7 +1191,7 @@ umx_is_ordinal <- function(df, names=F) {
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' fit1 = umxRun(fit1, setLabels = T, setStarts = T)
+#' fit1 = umxRun(fit1, setLabels = T, setValues = T)
 #' umxSummary(m1, show = "std")
 #' if(umx_is_RAM(fit1)){
 #' 	message("nice RAM model!")
