@@ -56,8 +56,10 @@
 umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, precision = 2, RMSEA_CI = F){
 	# TODO make table take lists of models...
 	# TODO should/could have a toggle for computing the saturated models...
-	if(!(showEstimates %in% c("raw","std","list","NULL") ) ){
-		stop(paste0("showEstimates ", showEstimates , " is not in the valid list: \"raw\",\"std\",\"list\",\"NULL\""))
+	if(!is.null(showEstimates)){
+		if(!(showEstimates %in% c("raw","std","list") ) ){
+			stop(paste0("showEstimates ", showEstimates , " is not in the valid list: \"raw\",\"std\",\"list\""))
+		}
 	}
 	output <- model@output
 	# stop if there is no objective function
