@@ -54,12 +54,11 @@
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
 umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, precision = 2, RMSEA_CI = F){
-	# report = "line|table"
-	# showEstimates = "NULL|raw|std|both|c("row", "col", "Std.Estimate")"
-	# c("names", "Std.Estimate")
 	# TODO make table take lists of models...
 	# TODO should/could have a toggle for computing the saturated models...
-
+	if(!(showEstimates %in% c("raw","std","list","NULL") ) ){
+		stop(paste0("showEstimates ", showEstimates , " is not in the valid list: \"raw\",\"std\",\"list\",\"NULL\""))
+	}
 	output <- model@output
 	# stop if there is no objective function
 	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
@@ -83,7 +82,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 	# displayColumns
 	if(!is.null(showEstimates)){
 		if("Std.Estimate" %in%  names(modelSummary$parameters)){
-			if(length(showEstimates) >1) {
+			if(length(showEstimates) > 1) {
 				namesToShow = showEstimates
 			}else if(showEstimates == "both") {
 				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
@@ -95,8 +94,8 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 		} else {
 			namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")
 		}
+		x = modelSummary$parameters
 		if("CI" %in% namesToShow){
-			x = modelSummary$parameters
 			x$CI = ""
 			for(i in 1:dim(x)[1]) {
 				# i = 1
@@ -552,7 +551,7 @@ umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pa
 	# nb: legal values for "pathLabels" are "both", "none" or "labels"
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap', 'sentence', 'numeric', 'series', and 'arithmet'
-	if(std){ model= umxStandardizeModel(model, return="model") }
+	if(std){ model= umxStandardizeModel(model, return = "model") }
 	out = "";
 	# Get Asymmetric Paths
 	aRows = dimnames(model[["A"]]@free)[[1]]

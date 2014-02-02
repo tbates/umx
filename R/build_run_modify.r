@@ -167,7 +167,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' model = umxRun(model, n=10) # run, but also re-run if not green the first run
 #' }
 
-umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = NULL, setLabels = F, comparison = NULL, setStarts = F){
+umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLabels = F, comparison = NULL, setStarts = NULL){
 	# TODO: return change in -2LL for models being re-run
 	# TODO: stash saturated model for re-use
 	# TODO: Optimise for speed
@@ -178,7 +178,7 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = NULL, se
 	if(setLabels){
 		model = umxLabel(model)
 	}
-	if(setStarts){
+	if(setValues){
 		model = umxStart(model)
 	}
 	if(n == 1){
@@ -312,7 +312,7 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 	# Stop if there is no output
 	if (length(output) < 1)stop("Provided model has no output. I can only standardize models that have been run!")
 	# Get the names of the A, S and M matrices 
-	if("expectation" %in% slotNames(m1)){
+	if("expectation" %in% slotNames(model)){
 		# openMx 2
 		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@expectation@A}
 		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@expectation@S}
@@ -698,7 +698,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #'     umxLatent("G", forms = manifests, type = "exogenous", data = theData),
 #' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
-#' m1 = umxRun(m1, setStarts = T, setLabels = T); umxSummary(m1, show="std")
+#' m1 = umxRun(m1, setValues = T, setLabels = T); umxSummary(m1, show="std")
 #' umxPlot(m1)
 #' 
 #' m2 = mxModel("formative", type = "RAM",
@@ -708,7 +708,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #'     umxLatent("G", formedBy = manifests, data = theData),
 #' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
-#' m2 = umxRun(m2, setStarts = T, setLabels = T); umxSummary(m2, show="std")
+#' m2 = umxRun(m2, setValues = T, setLabels = T); umxSummary(m2, show="std")
 #' umxPlot(m2)
 #' }
 umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  model.name = NULL, labelSuffix = "", verbose = T, endogenous = "deprecated") {

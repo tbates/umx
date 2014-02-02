@@ -3,8 +3,8 @@
 \title{umxRun}
 \usage{
   umxRun(model, n = 1, calc_SE = T, calc_sat = T,
-    setValues = NULL, setLabels = F, comparison = NULL,
-    setStarts = F)
+    setValues = F, setLabels = F, comparison = NULL,
+    setStarts = NULL)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} you wish to run.}

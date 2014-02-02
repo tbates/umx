@@ -45,8 +45,20 @@
   incorrect. \item 9: An input parameter was invalid }
 }
 \examples{
-\dontrun{
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1, setLabels = T, setStarts = T)
 umxCI(model)
+\dontrun{
 umxCI(model, addCIs = T) # add Cis for all free parameters if not present
 umxCI(model, runCIs = "yes") # force update of CIs
 umxCI(model, runCIs = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
