@@ -139,9 +139,10 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' @param calc_SE Whether to calculate standard errors (not used when n = 1)
 #' for the summary (they are not very accurate, so if you use \code{\link{mxCI}} or \code{\link{umxCI}}, you can turn this off)
 #' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s) (defaults to TRUE - why would you want anything else?)
-#' @param setStarts Whether to set the start values (defaults to F)
+#' @param setValues Whether to set the starting values of free parameters (defaults to F)
 #' @param setLabels Whether to set the labels (defaults to F)
 #' @param comparison Whether to run umxCompare() after umxRun
+#' @param setStarts Deprecated way to setValues
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -153,10 +154,14 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' model = umxRun(model, n=10) # run, but also re-run if not green the first run
 #' }
 
-umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setStarts = F, setLabels = F, comparison = NULL){
+umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = NULL, setLabels = F, comparison = NULL, setStarts = F){
 	# TODO: return change in -2LL for models being re-run
 	# TODO: stash saturated model for re-use
 	# TODO: Optimise for speed
+	if(!is.null(setStarts)){
+		message("change setStarts to setValues (easier for beginners to remember)")
+		setValues = setStarts
+	}
 	if(setLabels){
 		model = umxLabel(model)
 	}

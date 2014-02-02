@@ -3,7 +3,8 @@
 \title{umxRun}
 \usage{
   umxRun(model, n = 1, calc_SE = T, calc_sat = T,
-    setStarts = F, setLabels = F, comparison = NULL)
+    setValues = NULL, setLabels = F, comparison = NULL,
+    setStarts = F)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} you wish to run.}
@@ -13,38 +14,39 @@
 
   \item{calc_SE}{Whether to calculate standard errors (not
   used when n = 1) for the summary (they are not very
-  accurate, so if you use \code{\link{mxCI}} you can turn
-  this off)}
+  accurate, so if you use \code{\link{mxCI}} or
+  \code{\link{umxCI}}, you can turn this off)}
 
   \item{calc_sat}{Whether to calculate the saturated and
   independence models (for raw \code{\link{mxData}}
   \code{\link{mxModel}}s) (defaults to TRUE - why would you
   want anything else?)}
 
-  \item{setStarts}{Whether to set the start values
-  (defaults to F)}
+  \item{setValues}{Whether to set the starting values of
+  free parameters (defaults to F)}
 
   \item{setLabels}{Whether to set the labels (defaults to
   F)}
 
   \item{comparison}{Whether to run umxCompare() after
   umxRun}
+
+  \item{setStarts}{Deprecated way to setValues}
 }
 \value{
   - \code{\link{mxModel}}
 }
 \description{
   umxRun is a version of \code{\link{mxRun}} which can run
-  multiple times by default The main value for umxRun over
-  mxRun is with raw data. It's slightly faster, but can
-  also calculate the saturated and independence likelihoods
-  necessary for most fit indices.
+  also set start values, labels, and run multiple times It
+  can also calculate the saturated and independence
+  likelihoods necessary for most fit indices.
 }
 \examples{
 \dontrun{
-model = umxRun(model) # just run: will create sturated model if needed
+model = umxRun(model) # just run: will create saturated model if needed
 model = umxRun(model, setStarts = T, setLabels = T) # set start values and label all parameters
-model = umxRun(model, n=10) # run, but also re-run if not clean the first time
+model = umxRun(model, n=10) # run, but also re-run if not green the first run
 }
 }
 \references{
