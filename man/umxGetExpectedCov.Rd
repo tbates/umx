@@ -1,0 +1,47 @@
+\name{umxGetExpectedCov}
+\alias{umxGetExpectedCov}
+\title{umxGetExpectedCov}
+\usage{
+  umxGetExpectedCov(model, latent = T, manifest = T)
+}
+\arguments{
+  \item{model}{an \code{\link{mxModel}} to get the
+  covariance matrix from}
+
+  \item{latent}{Whether to select the latent variables
+  (defaults to TRUE)}
+
+  \item{manifest}{Whether to select the manifest variables
+  (defaults to TRUE)}
+}
+\value{
+  - expected covariance matrix
+}
+\description{
+  extract the expected covariance matrix from an
+  \code{\link{mxModel}}
+}
+\examples{
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1, setLabels = T, setStarts = T)
+umxGetExpectedCov(m1)
+}
+\references{
+  - \url{http://openmx.psyc.virginia.edu/thread/2598}
+  Original written by
+  \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+}
+\seealso{
+  - \code{\link{umxRun}}, \code{\link{umxCIpboot}}
+}
+

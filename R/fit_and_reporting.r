@@ -12,101 +12,6 @@
 # =============================
 # = Fit and Reporting Helpers =
 # =============================
-#' umxCompare
-#'
-#' umxCompare compares two or more \code{\link{mxModel}}s. If you leave comparison blank, it will just give fit info for the base model
-#'
-#' @param base The base \code{\link{mxModel}} for comparison
-#' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
-#' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
-#' @param digits rounding for p etc.
-#' @param report Optionally add sentences for inclusion inline in a paper or output to an html table which will open your default browser: handy for getting tables into word
-#' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
-#' @references - \url{http://openmx.psyc.virginia.edu/}
-#' @export
-#' @import OpenMx
-#' @examples
-#' \dontrun{
-#' umxCompare(model1, model2)
-#' umxCompare(model1, model2, report = 2)
-#' umxCompare(model1, c(model2, model3))
-#' umxCompare(c(m1, m2), c(m2, m3), all = T)
-#' }
-
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 1) {
-	if(is.null(comparison)){
-		comparison <- base
-	} else if (is.null(base)) {
-		stop("You must provide at least a base model for umxCompare")
-	}
-	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
-	# tableOut  = format(tableOut, scientific = F, digits = digits)
-	tablePub  = tableOut[, c(2, 3, 7:9, 6, 1)]
-	names(tablePub) <- c("Comparison", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
-	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
-
-	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
-	# addText = 1
-	if(report > 1){
-		n_rows = dim(tablePub)[1]
-		for (i in 1:n_rows) {
-			if(!is.na(tablePub[i, "Comparison"])){
-				if(tableOut[i, 9] < .05){
-					did_didnot = ". This caused a significant loss of fit "
-				} else {
-					did_didnot = ". This did not lower fit significantly"
-				}
-				message(
-				"The hypothesis that ", tablePub[i,"Comparison"], 
-				" was tested by dropping ", tablePub[i,"Comparison"],
-				" from ", tablePub[i,"Base"], 
-				did_didnot, 
-				"(χ²(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2),
-				", p = ", tablePub[i,"p"], ")."
-				)
-			}
-		}
-	}
-	
-	if(report == 3){
-		R2HTML::HTML(tablePub, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
-	} else {
-		return(tablePub)
-		# print.html(tableOut, output = output, rowlabel = "")
-		# R2HTML::print(tableOut, output = output, rowlabel = "")
-	}
-	
-	# " em \u2013 dash"
-   # Delta (U+0394)
-   # &chi;
- 	# "Chi \u03A7"
-	# "chi \u03C7"
-	# if(export){
-	# 	fName= "Model.Fitting.xls"
-	# 	write.table(tableOut,fName, row.names=F,sep="\t", fileEncoding="UTF-8") # macroman UTF-8 UTF-16LE
-	# 	system(paste("open", fName));
-	# }
-}
-
-#' extractAIC
-#'
-#' returns the AIC for an OpenMx model
-#'
-#' @param model an \code{\link{mxModel}} to get the AIC for
-#' @return - AIC value
-#' @export
-#' @seealso - \code{\link{umxRun}}, \code{\link{umxCompare}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' \dontrun{
-#' x = extractAIC(model)
-#' }
-extractAIC.MxModel <- function(model) {
-	require(umx)
-	a = umx::umxCompare(model)
-	return(a[1,"AIC"])
-}
-
 
 #' umxSummary
 #'
@@ -131,12 +36,23 @@ extractAIC.MxModel <- function(model) {
 #' @export
 #' @import OpenMx
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' umxSummary(m1, show = "std")
 #' \dontrun{
-#' umxSummary(m1)
 #' umxSummary(m1, report = "table")
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-
 umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, precision = 2, RMSEA_CI = F){
 	# report = "line|table"
 	# showEstimates = "NULL|raw|std|both|c("row", "col", "Std.Estimate")"
@@ -247,6 +163,82 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 	})
 }
 
+#' umxCompare
+#'
+#' umxCompare compares two or more \code{\link{mxModel}}s. If you leave comparison blank, it will just give fit info for the base model
+#'
+#' @param base The base \code{\link{mxModel}} for comparison
+#' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
+#' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
+#' @param digits rounding for p etc.
+#' @param report Optionally add sentences for inclusion inline in a paper or output to an html table which will open your default browser: handy for getting tables into word
+#' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
+#' @references - \url{http://openmx.psyc.virginia.edu/}
+#' @export
+#' @import OpenMx
+#' @examples
+#' \dontrun{
+#' umxCompare(model1, model2)
+#' umxCompare(model1, model2, report = 2)
+#' umxCompare(model1, c(model2, model3))
+#' umxCompare(c(m1, m2), c(m2, m3), all = T)
+#' }
+
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 1) {
+	if(is.null(comparison)){
+		comparison <- base
+	} else if (is.null(base)) {
+		stop("You must provide at least a base model for umxCompare")
+	}
+	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
+	# tableOut  = format(tableOut, scientific = F, digits = digits)
+	tablePub  = tableOut[, c(2, 3, 7:9, 6, 1)]
+	names(tablePub) <- c("Comparison", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
+	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
+
+	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
+	# addText = 1
+	if(report > 1){
+		n_rows = dim(tablePub)[1]
+		for (i in 1:n_rows) {
+			if(!is.na(tablePub[i, "Comparison"])){
+				if(tableOut[i, 9] < .05){
+					did_didnot = ". This caused a significant loss of fit "
+				} else {
+					did_didnot = ". This did not lower fit significantly"
+				}
+				message(
+				"The hypothesis that ", tablePub[i,"Comparison"], 
+				" was tested by dropping ", tablePub[i,"Comparison"],
+				" from ", tablePub[i,"Base"], 
+				did_didnot, 
+				"(χ²(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2),
+				", p = ", tablePub[i,"p"], ")."
+				)
+			}
+		}
+	}
+	
+	if(report == 3){
+		R2HTML::HTML(tablePub, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
+	} else {
+		return(tablePub)
+		# print.html(tableOut, output = output, rowlabel = "")
+		# R2HTML::print(tableOut, output = output, rowlabel = "")
+	}
+	
+	# " em \u2013 dash"
+   # Delta (U+0394)
+   # &chi;
+ 	# "Chi \u03A7"
+	# "chi \u03C7"
+	# if(export){
+	# 	fName= "Model.Fitting.xls"
+	# 	write.table(tableOut,fName, row.names=F,sep="\t", fileEncoding="UTF-8") # macroman UTF-8 UTF-16LE
+	# 	system(paste("open", fName));
+	# }
+}
+
 #' umxCI
 #'
 #' umxCI adds mxCI() calls for all free parameters in a model, 
@@ -272,16 +264,27 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' @references - http://openmx.psyc.virginia.edu/
 #' @export
 #' @examples
-#' \dontrun{
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
 #' umxCI(model)
+#' \dontrun{
 #' umxCI(model, addCIs = T) # add Cis for all free parameters if not present
 #' umxCI(model, runCIs = "yes") # force update of CIs
 #' umxCI(model, runCIs = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
 #' umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run them
-
 #' }
 
-umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary") {
+umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorcodes = T) {
 	# TODO add code to not-run CIs
 	if(is.null(model)){
 		message("You need to give me an MxModel. I can then add mxCI() calls for the free parameters in a model, runs them, and report a neat summary. A use example is:\n umxCI(model)")
@@ -305,20 +308,212 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary") {
 		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
 		print(model_CIs)
 		npsolMessages <- list(
-		'1' = 'The final iterate satisfies', 'the optimality conditions to the accuracy requested,', 'but the sequence of iterates has not yet converged.', 'NPSOL was terminated because no further improvement','could be made in the merit function (Mx status GREEN).',
-		'2' = 'The linear constraints and bounds could not be satisfied.','The problem has no feasible solution.',
-		'3' = 'The nonlinear constraints and bounds could not be satisfied.', 'The problem may have no feasible solution.',
+		'1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
+		'2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
+		'3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
 		'4' = 'The major iteration limit was reached (Mx status BLUE).',
-		'6' = 'The model does not satisfy the first-order optimality conditions', 'to the required accuracy, and no improved point for the', 'merit function could be found during the final linesearch (Mx status RED)',
-		'7' = 'The function derivates returned by funcon or funobj', 'appear to be incorrect.',
+		'5' = 'not used',
+		'6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
+		'7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
+		'8' = 'not used',
 		'9' = 'An input parameter was invalid')
-		if(any(model_CI_OK !=0)){
-			print(npsolMessages)
+		if(any(model_CI_OK !=0) & showErrorcodes){
+			codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
+			relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
+			for(i in relevantCodes) {
+			   print(paste0(i, ": ", npsolMessages[i][[1]]))
+			}
 		}
 	}
 	invisible(model)
 }
 
+#' umxCI_boot
+#'
+#' Compute boot-strapped Confidence Intervals for parameters in an \code{\link{mxModel}}
+#' The function creates a sampling distribution for parameters by repeatedly drawing samples
+#' with replacement from your data and then computing the statistic for each redrawn sample.
+#' @param model is an optimized mxModel
+#' @param rawData is the raw data matrix used to estimate model
+#' @param type is the kind of bootstrap you want to run. "par.expected" and "par.observed" 
+#' use parametric Monte Carlo bootstrapping based on your expected and observed covariance matrices, respectively.
+#' "empirical" uses empirical bootstrapping based on rawData.
+#' @param std specifies whether you want CIs for unstandardized or standardized parameters (default: std = T)
+#' @param rep is the number of bootstrap samples to compute (default = 1000).
+#' @param conf is the confidence value (default = 95)
+#' @param dat specifies whether you want to store the bootstrapped data in the output (useful if you want to do multiple different analyses, such as mediation analyses)
+#' @return - expected covariance matrix
+#' @export
+#' @examples
+#' \dontrun{
+#' 	require(OpenMx)
+#' 	data(demoOneFactor)
+#' 	latents  = c("G")
+#' 	manifests = names(demoOneFactor)
+#' 	m1 <- mxModel("One Factor", type = "RAM", 
+#' 		manifestVars = manifests, latentVars = latents, 
+#' 		mxPath(from = latents, to = manifests),
+#' 		mxPath(from = manifests, arrows = 2),
+#' 		mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 		mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' 	)
+#' 	m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' 	umxCI_boot(m1, type = "par.expected")
+#'}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
+#' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+#' @seealso - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
+
+umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, round = 3) {
+	require(MASS)
+	require(OpenMx)
+	require(umx)
+	if(type == "par.expected") {
+		exp = umxGetExpectedCov(model, latent = FALSE)
+	} else if(type == "par.observed") {
+		if(model$data@type == "raw") {
+			exp = var(mxEval(data, model))
+		} else { 
+			if(model$data@type == "sscp") {
+				exp = mxEval(data, model) / (model$data@numObs - 1)
+			} else {
+				exp = mxEval(data, model)
+			}
+		}
+	}
+	N = round(model@data@numObs)
+	pard = t(data.frame("mod" = summary(model)$parameters[, 5 + 2 * std], row.names = summary(model)$parameters[, 1]))
+	pb   = txtProgressBar(min = 0, max = rep, label = "Computing confidence intervals", style = 3)
+	#####
+	if(type == "empirical") {
+		if(length(rawData) == 0) {
+			if(model$data@type == "raw"){
+				rawData = mxEval(data, model)
+			} else {
+				stop("No raw data supplied for empirical bootstrap.")	
+			}
+		}
+		for(i in 1:rep){
+			bsample.i = sample.int(N, size = N, replace = TRUE)
+			bsample   = var(rawData[bsample.i, ])
+			mod       = mxRun(mxModel(model, mxData(observed = bsample, type = "cov", numObs = N)), silent = TRUE)
+			pard      = rbind(pard, summary(mod)$parameters[, 5 + 2*std])
+			rownames(pard)[nrow(pard)] = i
+			setTxtProgressBar(pb, i)
+		}
+	} else {
+		for(i in 1:rep){
+			bsample = var(MASS::mvrnorm(N, rep(0, nrow(exp)), exp))
+			mod     = mxRun(mxModel(model, mxData(observed = bsample, type = "cov", numObs = N)), silent = T)
+			pard    = rbind(pard, summary(mod)$parameters[, 5 + 2 * std])
+			rownames(pard)[nrow(pard)] = i
+			setTxtProgressBar(pb, i)
+		}
+	}
+	low = (1-conf/100)/2
+	upp = ((1-conf/100)/2) + (conf/100)
+	LL  = apply(pard, 2, FUN = quantile, probs = low) #lower limit of confidence interval
+	UL  = apply(pard, 2, FUN = quantile, probs = upp) #upper quantile for confidence interval
+	LL4 = round(LL, 4)
+	UL4 = round(UL, 4)
+	ci  = cbind(LL4, UL4)
+	colnames(ci) = c(paste((low*100), "%", sep = ""), paste((upp*100), "%", sep = ""))
+	p = summary(model)$parameters[, c(1, 2, 3, 4, c(5:6 + 2*std))]
+	cols <- sapply(p, is.numeric)
+	p[, cols] <- round(p[,cols], round) 
+	
+	if(dat) {
+		return(list("Type" = type, "bootdat" = data.frame(pard), "CI" = cbind(p, ci)))
+	} else {
+		return(list("CI" = cbind(p, ci)))
+	}
+}
+
+#' umxSaturated
+#'
+#' Computes the saturated and independence forms of a RAM model (needed to return most 
+#' fit statistics when using raw data). umxRun calls this automagically.
+#'
+#' @param model an \code{\link{mxModel}} to get independence and saturated fits to
+#' @return - A list of the saturated and independence models, from which fits can be extracted
+#' @export
+#' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' model_sat = umxSaturated(model)
+#' summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)
+#' }
+
+umxSaturated <- function(model, evaluate = T, verbose = T) {
+	# TODO: Update to omxSaturated() and omxIndependenceModel()
+	# TODO: Update IndependenceModel to analytic form
+	if (!(isS4(model) && is(model, "MxModel"))) {
+		stop("'model' must be an mxModel")
+	}
+
+	if (length(model@submodels)>0) {
+		stop("Cannot yet handle submodels")
+	}
+	if(! model@data@type == "raw"){
+		stop("You don't need to run me for cov or cor data - only raw")
+	}
+	theData = model@data@observed
+	if (is.null(theData)) {
+		stop("'model' does not contain any data")
+	}
+	manifests           = model@manifestVars
+	nVar                = length(manifests)
+	dataMeans           = colMeans(theData, na.rm = T)
+	meansLabels         = paste("mean", 1:nVar, sep = "")
+	covData             = cov(theData, use = "pairwise.complete.obs")
+	factorLoadingStarts = t(chol(covData))
+	independenceStarts  = diag(covData)
+	loadingsLabels      = paste0("F", 1:nVar, "loading")
+
+	# Set latents to a new set of 1 per manifest
+	# Set S matrix to an Identity matrix (i.e., variance fixed@1)
+	# Set A matrix to a Cholesky, manifests by manifests in size, free to be estimated 
+	# TODO: start the cholesky at the cov values
+	m2 <- mxModel("sat",
+    	# variances set at 1
+		# mxMatrix(name = "factorVariances", type="Iden" , nrow = nVar, ncol = nVar), # Bunch of Ones on the diagonal
+	    # Bunch of Zeros
+		mxMatrix(name = "factorMeans"   , type = "Zero" , nrow = 1   , ncol = nVar), 
+	    mxMatrix(name = "factorLoadings", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = factorLoadingStarts), 
+		# labels = loadingsLabels),
+	    mxAlgebra(name = "expCov", expression = factorLoadings %*% t(factorLoadings)),
+
+	    mxMatrix(name = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
+	    mxData(theData, type = "raw")
+	)
+	m3 <- mxModel("independence",
+	    # TODO: slightly inefficient, as this has an analytic solution
+	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free=T, values = independenceStarts), 
+		# labels = loadingsLabels),
+	    mxAlgebra(name = "expCov", expression = variableLoadings %*% t(variableLoadings)),
+	    mxMatrix(name  = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
+	    mxData(theData, type = "raw")
+	)
+	m2 <- mxOption(m2, "Calculate Hessian", "No")
+	m2 <- mxOption(m2, "Standard Errors"  , "No")
+	m3 <- mxOption(m3, "Calculate Hessian", "No")
+	m3 <- mxOption(m3, "Standard Errors"  , "No")
+	if(evaluate) {
+		m2 = mxRun(m2)
+		m3 = mxRun(m3)
+	}
+	if(verbose) {
+		message("note: umxRun() will compute saturated for you...")
+	}
+	return(list(Sat = m2, Ind = m3))
+}
+
+# ============
+# = Graphics =
+# ============
 #' umxPlot
 #'
 #' A function to create graphical path diagrams from your OpenMx models!
@@ -336,7 +531,19 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary") {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' umxPlot(model)
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' umxPlot(m1)
 #' }
 
 umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
@@ -443,6 +650,18 @@ umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pa
 #' @export
 #' @examples
 #' \dontrun{
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
 #' umxMI(model)
 #' umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 #' }
@@ -500,87 +719,6 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, 
 	invisible(mi.df)		
 }
 
-#' umxSaturated
-#'
-#' Computes the saturated and independence forms of a RAM model (needed to return most 
-#' fit statistics when using raw data). umxRun calls this automagically.
-#'
-#' @param model an \code{\link{mxModel}} to get independence and saturated fits to
-#' @return - A list of the saturated and independence models, from which fits can be extracted
-#' @export
-#' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' \dontrun{
-#' model_sat = umxSaturated(model)
-#' summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)
-#' }
-
-umxSaturated <- function(model, evaluate = T, verbose = T) {
-	# TODO: Update to omxSaturated() and omxIndependenceModel()
-	# TODO: Update IndependenceModel to analytic form
-	if (!(isS4(model) && is(model, "MxModel"))) {
-		stop("'model' must be an mxModel")
-	}
-
-	if (length(model@submodels)>0) {
-		stop("Cannot yet handle submodels")
-	}
-	if(! model@data@type == "raw"){
-		stop("You don't need to run me for cov or cor data - only raw")
-	}
-	theData = model@data@observed
-	if (is.null(theData)) {
-		stop("'model' does not contain any data")
-	}
-	manifests           = model@manifestVars
-	nVar                = length(manifests)
-	dataMeans           = colMeans(theData, na.rm = T)
-	meansLabels         = paste("mean", 1:nVar, sep = "")
-	covData             = cov(theData, use = "pairwise.complete.obs")
-	factorLoadingStarts = t(chol(covData))
-	independenceStarts  = diag(covData)
-	loadingsLabels      = paste0("F", 1:nVar, "loading")
-
-	# Set latents to a new set of 1 per manifest
-	# Set S matrix to an Identity matrix (i.e., variance fixed@1)
-	# Set A matrix to a Cholesky, manifests by manifests in size, free to be estimated 
-	# TODO: start the cholesky at the cov values
-	m2 <- mxModel("sat",
-    	# variances set at 1
-		# mxMatrix(name = "factorVariances", type="Iden" , nrow = nVar, ncol = nVar), # Bunch of Ones on the diagonal
-	    # Bunch of Zeros
-		mxMatrix(name = "factorMeans"   , type = "Zero" , nrow = 1   , ncol = nVar), 
-	    mxMatrix(name = "factorLoadings", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = factorLoadingStarts), 
-		# labels = loadingsLabels),
-	    mxAlgebra(name = "expCov", expression = factorLoadings %*% t(factorLoadings)),
-
-	    mxMatrix(name = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
-	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
-	    mxData(theData, type = "raw")
-	)
-	m3 <- mxModel("independence",
-	    # TODO: slightly inefficient, as this has an analytic solution
-	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free=T, values = independenceStarts), 
-		# labels = loadingsLabels),
-	    mxAlgebra(name = "expCov", expression = variableLoadings %*% t(variableLoadings)),
-	    mxMatrix(name  = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
-	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
-	    mxData(theData, type = "raw")
-	)
-	m2 <- mxOption(m2, "Calculate Hessian", "No")
-	m2 <- mxOption(m2, "Standard Errors"  , "No")
-	m3 <- mxOption(m3, "Calculate Hessian", "No")
-	m3 <- mxOption(m3, "Standard Errors"  , "No")
-	if(evaluate) {
-		m2 = mxRun(m2)
-		m3 = mxRun(m3)
-	}
-	if(verbose) {
-		message("note: umxRun() will compute saturated for you...")
-	}
-	return(list(Sat = m2, Ind = m3))
-}
 
 # ======================
 # = Path tracing rules =
@@ -834,10 +972,100 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 	
 }
 
-# helper function which enables AIC(model)
-# http://openmx.psyc.virginia.edu/thread/931#comment-4858
-# brandmaier
 
+# =========================
+# = Pull model components =
+# =========================
+
+#' extractAIC
+#'
+#' returns the AIC for an OpenMx model
+#' helper function for \code{\link{logLik.MxModel}} (which enables AIC(model); logLik(model); BIC(model)
+#' Original Author: brandmaier
+#'
+#' @param model an \code{\link{mxModel}} to get the AIC from
+#' @return - AIC value
+#' @export
+#' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' extractAIC(m1)
+
+extractAIC.MxModel <- function(model) {
+	require(umx)
+	a = umx::umxCompare(model)
+	return(a[1, "AIC"])
+}
+
+#' umxGetExpectedCov
+#'
+#' extract the expected covariance matrix from an \code{\link{mxModel}}
+#'
+#' @param model an \code{\link{mxModel}} to get the covariance matrix from
+#' @param latent Whether to select the latent variables (defaults to TRUE)
+#' @param manifest Whether to select the manifest variables (defaults to TRUE)
+#' @return - expected covariance matrix
+#' @export
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' umxGetExpectedCov(m1)
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
+#' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+#' @seealso - \code{\link{umxRun}}, \code{\link{umxCIpboot}}
+
+umxGetExpectedCov <- function(model, latent = T, manifest = T){
+	if(!umx_is_RAM(model)){
+		stop("model must be a RAM model")
+	}
+	mA <- mxEval(A,model)
+	mS <- mxEval(S,model)
+	mI <- diag(1, nrow(mA))
+	mE <- solve(mI - mA)
+	mCov <- (mE) %*% mS %*% t(mE) # The model-implied covariance matrix
+	mV <- NULL
+	if(latent) mV <- model@latentVars 
+	if(manifest) mV <- c(mV,model@manifestVars)
+	return(mCov[mV, mV]) # return only the selected variables
+}
+
+
+#' logLik.MxModel
+#'
+#' returns the log likelihood for an OpenMx model
+#' helper function which enables ACI(model); BIC(model); and logLik(model) functions
+#'
+#' @param model an \code{\link{mxModel}} to get the log likelihood from
+#' @return - the log likelihood
+#' @export
+#' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
+#' @examples
+#' \dontrun{
+#' AIC(model)
+#' }
 logLik.MxModel <- function(model) {
 	Minus2LogLikelihood <- NA
 	if (!is.null(model@output) & !is.null(model@output$Minus2LogLikelihood)){
