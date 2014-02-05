@@ -1032,12 +1032,13 @@ extractAIC.MxModel <- function(model) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umxGetExpectedCov(m1)
+#' umxGetExpectedCov(model = m1)
+#' umxGetExpectedCov(m1, precision = 3)
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxCIpboot}}
 
-umxGetExpectedCov <- function(model, latent = T, manifest = T){
+umxGetExpectedCov <- function(model, latent = T, manifest = T, precision = NULL){
 	if(!umx_is_RAM(model)){
 		stop("model must be a RAM model")
 	}
@@ -1047,9 +1048,18 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T){
 	mE <- solve(mI - mA)
 	mCov <- (mE) %*% mS %*% t(mE) # The model-implied covariance matrix
 	mV <- NULL
-	if(latent) mV <- model@latentVars 
-	if(manifest) mV <- c(mV,model@manifestVars)
-	return(mCov[mV, mV]) # return only the selected variables
+	if(latent) {
+		mV <- model@latentVars 
+	}
+	if(manifest) {
+		mV <- c(mV,model@manifestVars)
+	}
+	# return the selected variables
+	if(is.null(precision)){
+		return(mCov[mV, mV]) 
+	} else {
+		return(round(mCov[mV, mV], precision))
+	}
 }
 
 
