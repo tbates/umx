@@ -193,10 +193,23 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' @export
 #' @import OpenMx
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m2 = umxReRun(m1, dropList = "G_to_x2", name = "dropm1", free = T, value = .1)
+#' umxCompare(m1, m2)
+#' umxCompare(m1, m2, report = 2)
 #' \dontrun{
-#' umxCompare(model1, model2)
-#' umxCompare(model1, model2, report = 2)
-#' umxCompare(model1, c(model2, model3))
+#' umxCompare(m1, c(m2, m3))
 #' umxCompare(c(m1, m2), c(m2, m3), all = T)
 #' }
 
