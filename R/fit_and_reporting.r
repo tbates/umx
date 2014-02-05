@@ -40,7 +40,7 @@
 #' @param report The format for the output line or table (default is "line")
 #' @param showEstimates What estimates to show. Options are "raw | std | list | NULL" for raw, standardized, a custom list or (default)
 #' none (just shows the fit indices)
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}},\code{\link{umxCI_boot}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
 #'
