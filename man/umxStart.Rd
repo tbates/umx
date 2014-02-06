@@ -40,7 +40,8 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1
+mxEval(S,m1) # default variances are 0
+round(mxEval(S,m1), 2) # plausible variances
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

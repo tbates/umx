@@ -43,8 +43,8 @@
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1@matrices$S@values # default variances are 0
-#' round(m1@matrices$S@values,2) # plausible variances
+#' mxEval(S,m1) # default variances are 0
+#' round(mxEval(S,m1), 2) # plausible variances
 umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {
 		xmuStart_value_list(x = obj, sd = NA, n = 1)
