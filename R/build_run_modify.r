@@ -26,13 +26,25 @@
 #' @param onlyTouchZeros Don't start things that appear to have already been started (useful for speeding \code{\link{umxReRun}})
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
-#' \dontrun{
-#' model = umxStart(model)
-#' }
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1@matrices$S@values # default variances are 0
+#' round(m1@matrices$S@values,2) # plausible variances
 umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {
 		xmuStart_value_list(x = obj, sd = NA, n = 1)
