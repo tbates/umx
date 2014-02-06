@@ -46,7 +46,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	return (model)
 }
 
-
 # ====================
 # = Updating helpers =
 # ====================
@@ -209,50 +208,9 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 	# print.dataframe(bob, digits=2, zero.print = ".", justify="left")
 }
 
-
 # ===================================
 # = Ordinal/Threshold Model Helpers =
 # ===================================
-
-xmuMaxLevels <- function(data) {
-	anyFactors = F
-	maxLevels = 0
-	vars = names(data)
-	for (i in vars) {
-		if(is.factor(mzData[,i])){
-			nLevels = length(levels(mzData[,i]))
-			if(nLevels > maxLevels){
-			 	maxLevels = nLevels
-				anyFactors = T
-			}
-		}
-	}	
-	if(!anyFactors){
-		stop("No columns were type factor")
-	} else {
-		return(maxLevels)
-	}
-}
-xmuMinLevels <- function(data) {
-	# TODO add check that some columns have levels
-	anyFactors = F
-	minLevels = 1e6 # silly high value
-	vars = names(data)
-	for (i in vars) {
-		if(is.factor(mzData[,i])){
-			nLevels = length(levels(mzData[,i]))
-			if(nLevels < minLevels){
-			 	minLevels = nLevels
-				anyFactors = T
-			}
-		}
-	}
-	if(!anyFactors){
-		stop("No columns were type factor")
-	} else {
-		return(minLevels)
-	}
-}
 
 # ====================
 # = Data and Utility =
@@ -547,7 +505,7 @@ rowMin <- function(df, na.rm=T) {
 
 #' umx.as.numeric
 #'
-#' convert each column of a dtaframe to numeric
+#' Convert each column of a dataframe to numeric
 #'
 #' @param df a \code{\link{data.frame}} to convert
 #' @return - data.frame

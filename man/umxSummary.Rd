@@ -27,6 +27,29 @@
   than accepted criterion (TLI > .95 and RMSEA < .06; (Hu &
   Bentler, 1999; Yu, 2002).
 }
+\details{
+  notes on CIs and Identification Note, the conventional
+  standard errors reported by OpenMx are used to produce
+  the CIs you see in umxSummary These are used to derive
+  confidence intervals based on the formula 95%CI =
+  estimate +/- 1.96*SE)
+
+  Sometimes they appear NA. This often indicates an model
+  which is not \url{http://identified}. This can include
+  empirical under-identification – for instance two factors
+  that are essentially identical in structure.
+
+  A signature of this would be paths estimated at or close
+  to zero. Fixing one or two of these to zero may fix the
+  standard error calculation, and alleviate the need to
+  estimate likelihood-based or bootstrap CIs
+
+  If factor loadings can flip sign and provide identical
+  fit, this creates another form of under-identification
+  and can break confidence interval estimation, but I think
+  Fixing a factor loading to 1 and estimating factor
+  variances can help here
+}
 \examples{
 require(OpenMx)
 data(demoOneFactor)
@@ -57,11 +80,12 @@ umxSummary(m1, saturatedModels = umxSaturated(m1))
   continuous outcomes. University of California, Los
   Angeles, Los Angeles.  Retrieved from
   \url{http://www.statmodel.com/download/Yudissertation.pdf}
-
   \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
+  - \code{\link{mxCI}},
+  \code{\link{umxCI}},\code{\link{umxCI_boot}},
+  \code{\link{umxLabel}}, \code{\link{umxRun}},
   \code{\link{umxStart}}
 }
 

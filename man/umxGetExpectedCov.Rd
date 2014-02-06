@@ -2,7 +2,8 @@
 \alias{umxGetExpectedCov}
 \title{umxGetExpectedCov}
 \usage{
-  umxGetExpectedCov(model, latent = T, manifest = T)
+  umxGetExpectedCov(model, latent = T, manifest = T,
+    precision = NULL)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to get the
@@ -34,7 +35,8 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-umxGetExpectedCov(m1)
+umxGetExpectedCov(model = m1)
+umxGetExpectedCov(m1, precision = 3)
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu/thread/2598}
@@ -42,6 +44,6 @@ umxGetExpectedCov(m1)
   \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 }
 \seealso{
-  - \code{\link{umxRun}}, \code{\link{umxCIpboot}}
+  - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
 }
 

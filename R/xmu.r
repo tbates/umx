@@ -457,7 +457,9 @@ xmuHasSquareBrackets <- function (input) {
     return(length(match1) > 0 && length(match2) > 0)
 }
 
-
+# ===================================
+# = Ordinal/Threshold Model Helpers =
+# ===================================
 
 xmuMaxLevels <- function(data) {
 	anyFactors = F
