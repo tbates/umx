@@ -11,7 +11,7 @@
   - data.frame
 }
 \description{
-  convert each column of a dtaframe to numeric
+  Convert each column of a dataframe to numeric
 }
 \examples{
 \dontrun{

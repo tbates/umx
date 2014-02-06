@@ -3,8 +3,8 @@
 \title{umxSummary}
 \usage{
   umxSummary(model, saturatedModels = NULL,
-    report = "line", showEstimates = NULL, precision = 2,
-    RMSEA_CI = F)
+    report = "line", showEstimates = NULL, digits = 2,
+    RMSEA_CI = F, precision = NULL)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} whose fit will be
@@ -64,6 +64,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
 umxSummary(m1, show = "std")
+umxSummary(m1, show = "std", digits = 1)
 \dontrun{
 umxSummary(m1, report = "table")
 umxSummary(m1, saturatedModels = umxSaturated(m1))

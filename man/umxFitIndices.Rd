@@ -28,7 +28,8 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setStarts = T)
-umxFitIndices(m1)
+TODO use means and compute independence model here for example...
+umxFitIndices(m1, m1_ind)
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

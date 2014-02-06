@@ -43,6 +43,22 @@
   \code{\link{omxSetParameters}}
 }
 \examples{
+require(OpenMx)
+data(demoOneFactor)
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"
+m1 = umxLabel(m1)
+umxGetParameters(m1, free = T) # now all labeled regularly "G_to_x1", "x4_with_x4", etc.
 \dontrun{
  model = umxLabel(model)
  umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))

@@ -3,7 +3,7 @@
 \title{umxGetExpectedCov}
 \usage{
   umxGetExpectedCov(model, latent = T, manifest = T,
-    precision = NULL)
+    digits = NULL)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to get the
@@ -36,7 +36,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
 umxGetExpectedCov(model = m1)
-umxGetExpectedCov(m1, precision = 3)
+umxGetExpectedCov(m1, digits = 3)
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu/thread/2598}
