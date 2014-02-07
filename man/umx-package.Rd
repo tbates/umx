@@ -12,20 +12,23 @@ A library of Helper functions for OpenMx. If you are just
 \details{
 \tabular{ll}{
 Package: \tab umx\cr
-Version: \tab 0.6\cr
+Version: \tab 0.75\cr
 License: \tab GPL-3\cr
 URL: \tab \url{http://github.com/tbates/umx}\cr
 Depends: \tab R (>= 2.11.0), OpenMx (>= 1.3.0),\cr
 Suggests: \tab \cr
 Collate: \tab 'build_run_modify.r' 'deprecated.r' 'fit_and_reporting.r'
 'umx.lib.R' 'xmu.r' 'model_builders.r' 'misc_and_utility.r'\cr
-Packaged: \tab 2013-08-22 22:49:21 UTC; tim\cr
-Built: \tab R 2.15.2; ; 2013-08-22 22:49:22 UTC; unix\cr
+Packaged: \tab 2014-02-10 22:49:21 UTC; tim\cr
+Built: \tab R 3.0.2; ; 2014-02-10 22:49:22 UTC; unix\cr
 }
 
 install.packages("devtools")
+
 library("devtools")
+
 install_github("tbates/umx")
+
 library("umx")
 
 \bold{Index:}
