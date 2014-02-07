@@ -4,6 +4,7 @@
 # setwd("~/bin/umx"); 
 # 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 # require(OpenMx); require(umx); ?umx
 # devtools::build("~/bin/umx")
 # devtools::check("~/bin/umx")
