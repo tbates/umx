@@ -27,18 +27,40 @@
   - \code{\link{mxModel}}
 }
 \description{
-  umxEquate equates slave labels to a set of master labels
+  Equate parameters by setting one or more labels (the
+  slave set) equal to the labels in a master set. By
+  setting two parameters to have the
+  \code{\link{umxLabel}}, they are then forced to have the
+  same value. In addition to matching labels, you may wish
+  to learn about set the label of a slave parameter to the
+  \"square bracket\" address of the master, i.e.
+  \"model.matrix[r,c]\". tip: to find labels of free
+  parameters use \code{\link{umxGetParameters}} with free =
+  T
 }
 \examples{
-\dontrun{
- model = umxEquate(model)
-}
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1, setLabels = T, setStarts = T)
+m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
+m2 = mxRun(m2) # have to run the model again...
+umxCompare(m1, m2) # not good :-)
+umxSummary(m1, m2) # not good :-)
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+  - \code{\link{umxLabel}}, \code{\link{umxGetParameters}},
+  \code{\link{umxRun}}
 }
 

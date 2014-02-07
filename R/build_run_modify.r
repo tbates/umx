@@ -420,14 +420,27 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #' @seealso - \code{\link{omxGetParameters}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1)
+#' umxGetParameters(m1)
+#' m1 = umxRun(m1, setLabels = T)
+#' umxGetParameters(m1)
 #' \dontrun{
-#' umxGetParameters(model)
-#' umxGetParameters(mxEval("as", model1)) # all labels of matrix "as" in model "model1"
-#' umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T) # get all columns in row 2 of matrix "as"
+#' # Complex regex patterns
+#' umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
 #' }
-
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
-	if(class(inputTarget)[1] %in% c("MxRAMModel","MxModel")) {
+	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(is(inputTarget, "MxMatrix")) {
 		if(is.na(free)) {
@@ -435,9 +448,9 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 		} else {
 			topLabels = inputTarget@labels[inputTarget@free==free]
 		}
-		}else{
-			stop("I am sorry Dave, umxGetLabels needs either a model or a matrix: you offered a ", class(inputTarget)[1])
-		}
+	}else{
+		stop("I am sorry Dave, umxGetParameters needs either a model or an mxMatrix: you offered a ", class(inputTarget)[1])
+	}
 	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
 	if( !is.na(regex) ) {
 		if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) )<1){ # no grep found: add some anchors for safety
@@ -466,8 +479,14 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 
 #' umxEquate
 #'
-#' umxEquate equates slave labels to a set of master labels
-#'
+#' Equate parameters by setting one or more labels (the slave set) equal
+#' to the labels in a master set. By setting two parameters to have the 
+#' \code{\link{umxLabel}}, they are then forced to have the same value.
+#' In addition to matching labels, you may wish to learn about set the 
+#' label of a slave parameter to the \"square bracket\" address of the
+#' master, i.e. \"model.matrix[r,c]\".
+#' tip: to find labels of free parameters use \code{\link{umxGetParameters}} with free = T
+#' 
 #' @param model an \code{\link{mxModel}} within which to equate chosen parameters
 #' @param master A list of labels with which slave labels will be equated
 #' @param slave A list of labels which will be updated to match master labels, thus equating the parameters
@@ -477,34 +496,46 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 #' @param name Optional new name for the returned model
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxGetParameters}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#'  model = umxEquate(model)
-#' }
-umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) {
-	# Purpose: to equate parameters by setting of labels (the slave set) = to the labels in a master set
-	# umxEquate(model1, master="am", slave="af", free=T|NA|F")
-	if(!(class(model)[1] == "MxModel" | class(model)[1] == "MxRAMModel")){
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
+#' m2 = mxRun(m2) # have to run the model again...
+#' umxCompare(m1, m2) # not good :-)
+#' umxSummary(m1, m2) # not good :-)
+umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) {	
+	# add the T|F|NA list stuff to handle free = c(T|F|NA)
+	if(!umx_is_RAM(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])
 		message("A usage example is umxEquate(model, master=\"a_to_b\", slave=\"a_to_c\", name=\"model2\") # equate paths a->b and a->c, in a new model called \"model2\"")
 		stop()
 	}
-	if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", master) )<1){ # no grep found: add some anchors for safety
-		master = paste("^", master, "[0-9]*$", sep=""); # anchor to the start of the string
-		slave  = paste("^", slave,  "[0-9]*$", sep="");
-		if(verbose==T){
-			cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
+	if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", master) ) < 1){ # no grep found: add some anchors
+		master = paste0("^", master, "$"); # anchor to the start of the string
+		slave  = paste0("^", slave,  "$");
+		if(verbose == T){
+			cat("note: matching whole label\n");
 		}
 	}
-	masterLabels = names(omxGetParameters(model, indep=FALSE, free=free))
+	masterLabels = names(omxGetParameters(model, indep = FALSE, free = free))
 	masterLabels = masterLabels[which(!is.na(masterLabels) )]      # exclude NAs
-	masterLabels = grep(master, masterLabels, perl = F, value=T)
+	masterLabels = grep(master, masterLabels, perl = F, value = T)
 	# return(masterLabels)
-	slaveLabels = names(omxGetParameters(model, indep=F, free=free))
+	slaveLabels = names(omxGetParameters(model, indep = F, free = free))
 	slaveLabels = slaveLabels[which(!is.na(slaveLabels))] # exclude NAs
-	slaveLabels = grep(slave, slaveLabels, perl = F, value=T)
+	slaveLabels = grep(slave, slaveLabels, perl = F, value = T)
 	if( length(slaveLabels) != length(masterLabels)) {
 		print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
 		stop("ERROR in umxEquate: master and slave labels not the same length!")
@@ -512,7 +543,7 @@ umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) 
 	if( length(slaveLabels)==0 ) {
 		legal = names(omxGetParameters(model, indep=FALSE, free=free))
 		legal = legal[which(!is.na(legal))]
-		message("Labels available in model are: ",legal)
+		message("Labels available in model are: ", paste(legal, ", "))
 		stop("ERROR in umxEquate: no matching labels found!")
 	}
 	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))

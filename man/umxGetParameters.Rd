@@ -23,10 +23,24 @@
   regular expressions for more power and ease!
 }
 \examples{
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1)
+umxGetParameters(m1)
+m1 = umxRun(m1, setLabels = T)
+umxGetParameters(m1)
 \dontrun{
-umxGetParameters(model)
-umxGetParameters(mxEval("as", model1)) # all labels of matrix "as" in model "model1"
-umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T) # get all columns in row 2 of matrix "as"
+# Complex regex patterns
+umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
 }
 }
 \references{
