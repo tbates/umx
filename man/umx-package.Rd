@@ -93,11 +93,13 @@ library("umx")
 
 \code{\link{umx_has_CIs}}             Utility function to ask a model if it has CIs
 
-\code{\link{umxIsMxModel}}            Utility function to test if an object is an OpenMx model
+\code{\link{umx_is_MxModel}}            Utility function to test if an object is an OpenMx model
 
-\code{\link{umxIsRAMmodel}}           Utility function to test if an object is an OpenMx RAM model
+\code{\link{umx_is_RAM}}           Utility function to test if an object is an OpenMx RAM model
  
-\code{\link{umxIsOrdinalVar}}         Utility function to test if an object is an ordinal variable
+\code{\link{umx_is_Ordinal}}         Utility function to test if an object is an ordinal variable
+
+\code{\link{umx_is_cov}}              Test if data is a covariance matrix
 
 \code{\link{umx_find_object}}         Find an OpenMx (or other) object by name
 
@@ -105,7 +107,6 @@ library("umx")
 
 \code{\link{umxCov2cor}}              Convert a covariance matrix to a correlation matrix, guaranteeing the upper and lower triangles are exact equal
 
-\code{\link{umx_is_cov}}              Test if data is a covariance matrix
 
 \code{\link{umx_reorder}}             Reorder the variables in a covariance matrix (including dropping variables)
 
