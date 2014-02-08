@@ -20,9 +20,9 @@
   function
 }
 \examples{
-\dontrun{
-reorderedMatrix = umx_reorder(oldMatrix, newOrder)
-}
+oldMatrix = cov(mtcars)
+umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
+umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

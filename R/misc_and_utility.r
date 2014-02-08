@@ -617,11 +617,11 @@ umx_rename <- function (x, replace, old = NULL) {
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
+#' umx_grep(mtcars, "hp", output="both", ignore.case=T)
+#' umx_grep(mtcars, "^h.*", output="both", ignore.case=T)
 #' \dontrun{
-#' umx_grep(df)
-#' umx_grep(relig, "Race", output="both", ignore.case=T) 
-#' umx_grep(relig, "race", output="label") 
-#' umx_grep(relig, "race", output="name") 
+#' umx_grep(spss_df, "labeltext", output = "label") 
+#' umx_grep(spss_df, "labeltext", output = "name") 
 #' }
 umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 	# output = "both", "label" or "name"
@@ -720,26 +720,27 @@ round.num <- function(x, digits) { stop("Use umx_round()")}
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' umx_round(df, coerce=T)
-#' }
+#' umx_round(mtcars, coerce = T)
 
-umx_round <- function(x, digits, coerce = T) {
+umx_round <- function(df, digits, coerce = T) {
+	if(!is.data.frame(df)){
+		stop(paste0("umx_round takes a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+	}
 	# for each column, if numeric, round
-	rows = dim(x)[1]
-	cols = dim(x)[2]
+	rows = dim(df)[1]
+	cols = dim(df)[2]
 	for(c in 1:cols) {
 		if(coerce){
 			for(r in 1:rows) {
-				x[r, c] = round(as.numeric(x[r, c]), digits)
+				df[r, c] = round(as.numeric(df[r, c]), digits)
 			}
 		} else {
-			if(is.numeric(x[1, c])){
-				x[ , c] = round(x[ , c], digits)
+			if(is.numeric(df[1, c])){
+				df[ , c] = round(df[ , c], digits)
 			}
 		}
 	}
-	return(x)
+	return(df)
 }
 
 specify_decimal <- function(x, k) format(round(x, k), nsmall = k)
@@ -1073,11 +1074,12 @@ umx_has_been_run <- function(model, stop = F) {
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' umx_check_names(c("E", data))
-#' }
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' umx_check_names(c("x1","x2"), demoOneFactor)
+#' umx_check_names(c("z1","x2"), demoOneFactor, die = F)
 
-umx_check_names <- function(namesNeeded, data, die= TRUE){
+umx_check_names <- function(namesNeeded, data, die = TRUE){
 	if(!is.data.frame(data)){
 		stop("data has to be a dataframe")
 	}
@@ -1277,7 +1279,7 @@ umx_has_CIs <- function(model) {
 #' @examples
 #' umx_APA_pval(1.23E-3)
 #' umx_APA_pval(c(1.23E-3, .5))
-#' umx_APA_pval(c(1.23E-3, .5), addComparison=F)
+#' umx_APA_pval(c(1.23E-3, .5), addComparison = T)
 
 umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 	# addComparison can be NA to only add when needed
@@ -1387,9 +1389,9 @@ umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", pr
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' reorderedMatrix = umx_reorder(oldMatrix, newOrder)
-#' }
+#' oldMatrix = cov(mtcars)
+#' umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
+#' umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 
 umx_reorder <- function(old, newOrder) {
 	dim_names = dimnames(old)[[1]]
@@ -1397,13 +1399,11 @@ umx_reorder <- function(old, newOrder) {
 		stop("All variable names must appear in the matrix")
 	}
 	numVarsToRetain = length(newOrder)
-	new = old[1:numVarsToRetain,1:numVarsToRetain]
+	new = old[1:numVarsToRetain, 1:numVarsToRetain]
 	dimnames(new) = list(newOrder, newOrder)
-	for(r_seq in seq_along(newOrder)) {
-		for(c_seq in seq_along(newOrder)) {
-			r = dim_names[r_seq]
-			c = dim_names[c_seq]
-			new[r, c] = old[r, c]
+	for(r in newOrder) {
+		for(c in newOrder) {
+			new[r, c] <- old[r, c]
 		}
 	}
 	return(new)

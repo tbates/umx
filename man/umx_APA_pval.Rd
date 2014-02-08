@@ -25,7 +25,7 @@
 \examples{
 umx_APA_pval(1.23E-3)
 umx_APA_pval(c(1.23E-3, .5))
-umx_APA_pval(c(1.23E-3, .5), addComparison=F)
+umx_APA_pval(c(1.23E-3, .5), addComparison = T)
 }
 \seealso{
   - \code{\link{round}}

@@ -33,8 +33,6 @@
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
-#' require(OpenMx)
-#' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
 #' m1 <- mxModel("One Factor", type = "RAM", 
@@ -45,7 +43,9 @@
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' mxEval(S,m1) # default variances are 0
-#' round(mxEval(S,m1), 2) # plausible variances
+#' m1 = umxStart(m1)
+#' print.dataframe(mxEval(S,m1), 2, zero.print= ".") # plausible variances
+
 umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {
 		xmuStart_value_list(x = obj, sd = NA, n = 1)
@@ -277,6 +277,21 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLa
 #' @references - http://openmx.psyc.virginia.edu/
 #' @export
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m2 = umxReRun(m1, dropList = "G_to_x1", name = "drop_X1")
+#' umxSummary(m2)
+#' umxCompare(m1,m2)
 #' \dontrun{
 #' fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
 #' fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")

@@ -2,7 +2,7 @@
 \alias{umx_round}
 \title{umx_round}
 \usage{
-  umx_round(x, digits, coerce = T)
+  umx_round(df, digits, coerce = T)
 }
 \arguments{
   \item{x}{an dataframe to round in}
@@ -22,9 +22,7 @@
   mixes numeric and string types.
 }
 \examples{
-\dontrun{
-umx_round(df, coerce=T)
-}
+umx_round(mtcars, coerce = T)
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

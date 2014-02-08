@@ -27,11 +27,11 @@
   search the labels of an SPSS file
 }
 \examples{
+umx_grep(mtcars, "hp", output="both", ignore.case=T)
+umx_grep(mtcars, "^h.*", output="both", ignore.case=T)
 \dontrun{
-umx_grep(df)
-umx_grep(relig, "Race", output="both", ignore.case=T)
-umx_grep(relig, "race", output="label")
-umx_grep(relig, "race", output="name")
+umx_grep(spss_df, "labeltext", output = "label")
+umx_grep(spss_df, "labeltext", output = "name")
 }
 }
 \references{

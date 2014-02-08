@@ -17,9 +17,10 @@
   dataframe
 }
 \examples{
-\dontrun{
-umx_check_names(c("E", data))
-}
+require(OpenMx)
+data(demoOneFactor)
+umx_check_names(c("x1","x2"), demoOneFactor)
+umx_check_names(c("z1","x2"), demoOneFactor, die = F)
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}
