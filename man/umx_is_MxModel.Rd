@@ -16,10 +16,9 @@
   question "Is this an OpenMx model?"
 }
 \examples{
-\dontrun{
-if(umx_is_MxModel(fit1)){
+m1 = mxModel("test")
+if(umx_is_MxModel(m1)){
 	message("nice OpenMx model!")
-}
 }
 }
 \references{

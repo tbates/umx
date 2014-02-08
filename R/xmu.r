@@ -43,7 +43,6 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = T, overRideExisting = F) {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "_male")
-	# TODO label means if data = raw
 	# TODO implement overRideExisting !!!
 	if (!umx_is_RAM(model)) {
 		stop("'model' must be an OpenMx RAM Model")

@@ -6,13 +6,16 @@
 
 test_that("umx_is_cov works for different inputs", {
 	require(OpenMx)
-	cov_data = cov(myFADataRaw[,paste0("x",1:4)], use="pairwise.complete.obs")
-	# data.frame(matrix(1))
+	data(myFADataRaw)
+	df = cov(mtcars)
+	# test cov
+	expect_equal(umx_is_cov(df), "cov")
+	# test cor
+	expect_equal(umx_is_cov(umxCov2cor(df)), "cor")
+	# test raw
 	expect_equal(umx_is_cov(myFADataRaw), "raw")
-	expect_equal(umx_is_cov(cov_data), "cov")
-	expect_equal(umx_is_cov(umxCov2cor(cov_data)), "cor")
-	# expect_that(umx_is_cov(data, verbose = F), matches("= 0.001") )
-	# expect_that(umx_is_cov(data, verbose = F), matches( c("= 0.001", "= 0.5") ) )
-	# expect_that(umx_is_cov(data, verbose = F)Comparison = F), equals(c(0.001, 0.500)) )
+	# test boolean F
+	expect_equal(umx_is_cov(myFADataRaw, boolean = T), FALSE)
+	# test boolean T
+	expect_equal(umx_is_cov(df, boolean = T), TRUE)
 })
-# x1    x2     x3    x4    x5     x6    y1    y2     y3 z1 z2 z3

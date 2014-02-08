@@ -321,8 +321,9 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 	return(x)
 }
 
-# Parallel helpers to be added here
-
+# =====================================
+# = Parallel helpers to be added here =
+# =====================================
 
 #' umxStandardizeModel
 #'
@@ -734,13 +735,12 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 
 #' umxLatent
 #'
-#' Helper to ease the creation of latent variables, including formative variables (where the manifests define the latent, and need wiring up behind, and variances setting)
-#' The following figures show how a reflective:
+#' Helper to ease the creation of latent variables including formative and reflective variables (see below)
+#' For formative variables, the manifests define (form) the latent.
+#' This function takes care of intercorrelating manifests for formatives, and fixing variances correctly
+#' 
+#' The following figures show how a reflective and a formative variable look as path diagrams:
 #' \figure{reflective.png}
-#' 
-#' 
-#' and a formative variable are created:
-#' 
 #' formative\figure{formative.png}
 #'
 #' @param latent the name of the latent variable (string)
@@ -758,8 +758,6 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
-#'
 #' library(OpenMx)
 #' library(umx)
 #' data(demoOneFactor)
@@ -767,21 +765,21 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' manifests = names(demoOneFactor) # x1-5
 #' theData = cov(demoOneFactor)
 #' m1 = mxModel("reflective", type = "RAM",
-#'     manifestVars = manifests,
-#'     latentVars   = latents,
-#'     # Factor loadings
-#'     umxLatent("G", forms = manifests, type = "exogenous", data = theData),
-#' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+#'	manifestVars = manifests,
+#'	latentVars   = latents,
+#'	# Factor loadings
+#'	umxLatent("G", forms = manifests, type = "exogenous", data = theData),
+#'	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
 #' m1 = umxRun(m1, setValues = T, setLabels = T); umxSummary(m1, show="std")
 #' umxPlot(m1)
 #' 
 #' m2 = mxModel("formative", type = "RAM",
-#'     manifestVars = manifests,
-#'     latentVars   = latents,
-#'     # Factor loadings
-#'     umxLatent("G", formedBy = manifests, data = theData),
-#' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+#'	manifestVars = manifests,
+#'	latentVars   = latents,
+#'	# Factor loadings
+#'	umxLatent("G", formedBy = manifests, data = theData),
+#'	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
 #' m2 = umxRun(m2, setValues = T, setLabels = T); umxSummary(m2, show="std")
 #' umxPlot(m2)
@@ -910,11 +908,10 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
 	# umxPlot(m2, std=F, dotFilename="name")
 	# mxLatent("Read", forms = manifestsRead)
-
 }
 
 umxConnect <- function(x) {
-	# TODO handle endogenous	
+	# TODO handle endogenous
 }
 
 umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
@@ -957,24 +954,6 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 	}
 }
 
-umxCheckModel <- function(obj, type = "RAM", hasData = NA) {
-	# TODO hasSubmodels = F
-	if (!isS4(obj) & is(obj, "MxModel")	) {
-		stop("'model' must be an mxModel")
-	}
-	if (!(class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM")	) {
-		stop("'model' must be an RAMModel")
-	}
-	if (length(obj@submodels) > 0) {
-		stop("Cannot yet handle submodels")
-	}
-	theData = obj@data@observed
-	if (is.null(theData)) {
-		stop("'model' does not contain any data")
-	}	
-}
-
-
 # ===========================
 # = matrix-oriented helpers =
 # ===========================
@@ -983,19 +962,34 @@ umxCheckModel <- function(obj, type = "RAM", hasData = NA) {
 # = Ordinal helpers =
 # ===================
 
-# umxThresholdRAMObjective can set the means and variance of the latents to 0 & 1, and build an appropriate thresholds matrix
-# It uses umxIsOrdinalVar, umxMakeThresholdMatrix as helpers
-
-umxThresholdRAMObjective <- function(df,  deviationBased=T, droplevels = T, verbose=F) {
-	# Purpose: add means@0 and variance@1 to each ordinal variable, 
-	# Use case: umxThresholdRAMObjective(df)
+#' umxThresholdRAMObjective
+#'
+#' umxThresholdRAMObjective can set the means to 0 and variance of the latents to 1, 
+#' and build an appropriate thresholds matrix
+#' 
+#' It uses \code{\link{umx_is_ordinal}} and \code{\link{umxMakeThresholdMatrix}} as helpers
+#'
+#' @param df Dataframe to make a threshold matrix for
+#' @param deviationBased whether to use the deviation system to ensure order thresholds (default = T)
+#' @param droplevels whether to also drop unused levels (default = T)
+#' @param verbose whether to say what the function is doing (default = F)
+#' @return - \code{\link{mxModel}}
+#' @keywords manip
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' model = umxThresholdRAMObjective(model)
+#' }
+umxThresholdRAMObjective <- function(df, deviationBased = T, droplevels = T, verbose = F) {
 	# TODO: means = zero & VAR = 1 for ordinal variables
-	# (this is a nice place to do it, as we have the df present...)
-	if(!any(umxIsOrdinalVar(df))){
+	# (This is a nice place to check, as we have the df present...)
+	if(!any(umx_is_ordinal(df))){
 		stop("No ordinal variables in dataframe: no need to call umxThresholdRAMObjective")
 	} 
 	pt1 = mxPath(from = "one", to = umxIsOrdinalVar(df,names = T), connect="single", free=F, values = 0)
-	pt2 = mxPath(from = umxIsOrdinalVar(df,names = T), connect = "single", arrows = 2, free = F, values = 1)
+	pt2 = mxPath(from = umxIsOrdinalVar(df, names = T), connect = "single", arrows = 2, free = F, values = 1)
 	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = T, droplevels = T, verbose = F)))
 }
 
@@ -1019,7 +1013,7 @@ umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbo
 # = Borrowed for tutorial purposes =
 # ==================================
 
-summaryACEFit <- function(fit, accuracy = 2, dotFilename = NULL, returnStd = F, extended = F, showRg = F, showStd = T, parentModel = NA, CIs = F, zero.print = ".") {
+umxSummaryACE <- function(fit, accuracy = 2, dotFilename = NULL, returnStd = F, extended = F, showRg = F, showStd = T, parentModel = NA, CIs = F, zero.print = ".") {
 	# Purpose: summarise a Cholesky model, as returned by makeACE_2Group
 	# use case: summaryACEFit(fit, dotFilename=NA);
 	# summaryACEFit(safeFit, dotFilename = "name", showStd = T)
@@ -1217,7 +1211,6 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 	return (matrixIn);
 }
 
-
 umxCheck <- function(fit1){
 	# are all the manifests in paths?
 	# do the manifests have residuals?
@@ -1237,7 +1230,6 @@ umxCheck <- function(fit1){
 	}
 	# Check manifests in dataframe
 }
-
 
 # ====================
 # = Parallel Helpers =

@@ -6,18 +6,24 @@
 }
 \arguments{
   \item{data}{dataframe to test}
+
+  \item{boolean}{whether to return the type ("cov") or a
+  boolean (default = string)}
 }
 \value{
-  - "raw", "cor", or "cov"
+  - "raw", "cor", or "cov", or, if boolean= T, then T | F
 }
 \description{
   test if a data frame or matrix is cov or cor data, or is
   likely to be raw...
 }
 \examples{
-\dontrun{
+df = cov(mtcars)
 umx_is_cov(df)
-}
+df = cor(mtcars)
+umx_is_cov(df)
+umx_is_cov(df, boolean = T)
+umx_is_cov(mtcars, boolean = T)
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

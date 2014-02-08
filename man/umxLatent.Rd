@@ -34,16 +34,16 @@
   - path list
 }
 \description{
-  Helper to ease the creation of latent variables,
-  including formative variables (where the manifests define
-  the latent, and need wiring up behind, and variances
-  setting) The following figures show how a reflective:
-  \figure{reflective.png}
+  Helper to ease the creation of latent variables including
+  formative and reflective variables (see below) For
+  formative variables, the manifests define (form) the
+  latent. This function takes care of intercorrelating
+  manifests for formatives, and fixing variances correctly
 }
 \details{
-  and a formative variable are created:
-
-  formative\figure{formative.png}
+  The following figures show how a reflective and a
+  formative variable look as path diagrams:
+  \figure{reflective.png} formative\figure{formative.png}
 }
 \examples{
 \dontrun{

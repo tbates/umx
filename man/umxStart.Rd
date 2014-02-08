@@ -29,8 +29,6 @@
 \examples{
 require(OpenMx)
 data(demoOneFactor)
-require(OpenMx)
-data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
 m1 <- mxModel("One Factor", type = "RAM",
@@ -41,7 +39,8 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 mxEval(S,m1) # default variances are 0
-round(mxEval(S,m1), 2) # plausible variances
+m1 = umxStart(m1)
+print.dataframe(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

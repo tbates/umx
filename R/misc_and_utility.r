@@ -767,7 +767,20 @@ print.html <- function(x, rounding = 3, output = "tmp.html") {
 	print("Table opened in browser")
 }
 
-# extracted from Rcmdr
+# extracted from Rcmdr: TODO: fix URL for RCmdr reference
+#' reliability
+#'
+#' Compute and report Coefficient alpha
+#'
+#' @param S A square, symmetric, numeric covariance matrix
+#' @return - 
+#' @keywords manip
+#' @export
+#' @seealso - \code{\link{cov}}
+#' @references - \url{http://Rcmdr}
+#' @examples
+#' treat car aspects as items of a test
+#' reliability(cov(mtcars))
 reliability <-function (S){
      reliab <- function(S, R) {
          k <- dim(S)[1]
@@ -817,18 +830,45 @@ print.reliability <- function (x, digits = 4, ...){
      invisible(x)
 }
 
-anova.report.F <- function(model, precision=3) {
-	# useage
-	# anova.report.F(model) # "F(495,1) = 0.002"
-	# or
-	# 1anova.report.F(anova(m1, m2))
+#' anova.report.F
+#'
+#' Generate a text-format report of the F values in an ANOVA.
+#' Like anova.report.F(model) # "F(495,1) = 0.002"
+#'
+#' @param model an \code{\link{lm}} model to report F for.
+#' @param digits how many numbers after the decimal for F (p-value is APA-style)
+#' @return - F in  text format
+#' @keywords manip
+#' @export
+#' @seealso - \code{\link{lm}}, \code{\link{anova}}, \code{\link{summary}}
+#' @examples
+#' m1 = lm(mpg~ cyl + wt, data = mtcars)
+#' anova.report.F(m1)
+#' m2 = lm(mpg~ cyl, data = mtcars)
+#' anova.report.F(m2)
+#' anova.report.F(anova(m1, m2))
+
+anova.report.F <- function(model, digits = 2) {
+	# anova.report.F(anova(m1, m2))
+	if(is(digits,"lm")){
+		stop(paste0(
+		"digits looks like an lm model: ",
+		"You probably said:\n    anova.report.F(m1, m2)\n",
+		"when you meant\n",
+		"   anova.report.F(anova(m1, m2))"
+		))
+	}
 	tmp = class(model)
 	if(all(tmp=="lm")){
 		a = summary(model)
 		dendf = a$fstatistic["dendf"]
-		numdf  = a$fstatistic["numdf"]
+		numdf = a$fstatistic["numdf"]
 		value = a$fstatistic["value"]
-		return(paste0("F(", dendf, ",",numdf,") = " ,round(value,precision), ",p = ", round(pf(value,numdf,dendf, lower.tail=F),precision)))
+		return(paste0(
+				   "F(", dendf, ",", numdf, ") = " , round(value, digits),
+					", p = ", umx_APA_pval(pf(value, numdf, dendf, lower.tail = F))
+				)
+		)
 	} else {
 		if(model[2, "Res.Df"] > model[1, "Res.Df"]){
 			message("Have you got the models the right way around?")
@@ -837,8 +877,8 @@ anova.report.F <- function(model, precision=3) {
 			"F(", 
 			round(model[2, "Res.Df"]), ",",
 			round(model[2,"Df"]), ") = ",
-			round(model[2,"F"],precision), ", p = ",
-			round(model[2,"Pr(>F)"], precision)
+			round(model[2,"F"], digits), ", p = ",
+			umx_APA_pval(model[2,"Pr(>F)"])
 		)
 	}	
 }
@@ -1103,30 +1143,44 @@ umx_check_names <- function(namesNeeded, data, die = TRUE){
 #' return the names of any ordinal variables in a dataframe
 #'
 #' @param df an \code{\link{data.frame}} to look in for ordinal variables
+#' @param names whether to return the names of ordinal variables, or a binary list (default = F)
+#' @param strict whether to stop when unordered factors are found (default = T)
 #' @return - list of variable names
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' umx_is_ordinal(df)
-#' }
-umx_is_ordinal <- function(df, names=F) {
+#' tmp = mtcars
+#' tmp$cyl = ordered(mtcars$cyl)
+#' umx_is_ordinal(tmp)
+#' isContinuous = !umx_is_ordinal(tmp)
+#' #factors are not necessarily ordered. By default unordered factors cause an error
+#' tmp$cyl = factor(mtcars$cyl)
+#' umx_is_ordinal(tmp)
+
+umx_is_ordinal <- function(df, names = F, strict = T) {
 	# Purpose, return which columns are Ordinal
-	# use case: isContinuous = !umxIsOrdinalVar(df)
+	# use case: 
 	# nb: can optionally return just the names of these
 	nVar = ncol(df);
 	# Which are ordered factors?
-	factorVariable = rep(F,nVar)
+	factorList = rep(F,nVar)
+	orderedList = rep(F,nVar)
 	for(n in 1:nVar) {
 		if(is.ordered(df[,n])) {
-			factorVariable[n]=T
+			orderedList[n] = T
+		}
+		if(is.factor(df[,n])) {
+			factorList[n] = T
 		}
 	}
+	if(any(factorList & ! orderedList) & strict){
+		stop("Dataframe contains at least 1 unordered factor. Set strict = F to allow this")
+	}
 	if(names){
-		return(names(df)[factorVariable])
+		return(names(df)[orderedList])
 	} else {
-		return(factorVariable)
+		return(orderedList)
 	}
 }
 
@@ -1183,29 +1237,51 @@ umx_is_RAM <- function(obj) {
 #' @seealso - \code{\link{mxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' if(umx_is_MxModel(fit1)){
+#' m1 = mxModel("test")
+#' if(umx_is_MxModel(m1)){
 #' 	message("nice OpenMx model!")
-#' }
 #' }
 umx_is_MxModel <- function(obj) {
 	isS4(obj) & is(obj, "MxModel")	
 }
 
+umx_check_model <- function(obj, type = "RAM", hasData = NA) {
+	# TODO hasSubmodels = F
+	if (!umx_is_MxModel(obj)) {
+		stop("'model' must be an mxModel")
+	}
+	if(type=="RAM"){
+		if (!umx_is_RAM(obj)) {
+			stop("'model' must be an RAMModel")
+		}
+	} else {
+		message(paste("type", sQuote(type), "not handled yet"))
+	}
+	if (length(obj@submodels) > 0) {
+		stop("Cannot yet handle submodels")
+	}
+	if (hasData & is.null(obj@data@observed)) {
+		stop("'model' does not contain any data")
+	}	
+}
 
 #' umx_is_cov
 #'
 #' test if a data frame or matrix is cov or cor data, or is likely to be raw...
 #'
 #' @param data dataframe to test
-#' @return - "raw", "cor", or "cov"
+#' @param boolean whether to return the type ("cov") or a boolean (default = string)
+#' @return - "raw", "cor", or "cov", or, if boolean= T, then T | F
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
+#' df = cov(mtcars)
 #' umx_is_cov(df)
-#' }
+#' df = cor(mtcars)
+#' umx_is_cov(df)
+#' umx_is_cov(df, boolean = T)
+#' umx_is_cov(mtcars, boolean = T)
 
 umx_is_cov <- function(data = NULL, boolean = F, verbose = F) {
 	if(is.null(data)) { stop("Error in umx_is_cov: You have to provide the data that you want to check...") }

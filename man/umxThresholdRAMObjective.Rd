@@ -1,0 +1,45 @@
+\name{umxThresholdRAMObjective}
+\alias{umxThresholdRAMObjective}
+\title{umxThresholdRAMObjective}
+\usage{
+  umxThresholdRAMObjective(df, deviationBased = T,
+    droplevels = T, verbose = F)
+}
+\arguments{
+  \item{df}{Dataframe to make a threshold matrix for}
+
+  \item{deviationBased}{whether to use the deviation system
+  to ensure order thresholds (default = T)}
+
+  \item{droplevels}{whether to also drop unused levels
+  (default = T)}
+
+  \item{verbose}{whether to say what the function is doing
+  (default = F)}
+}
+\value{
+  - \code{\link{mxModel}}
+}
+\description{
+  umxThresholdRAMObjective can set the means to 0 and
+  variance of the latents to 1, and build an appropriate
+  thresholds matrix
+}
+\details{
+  It uses \code{\link{umx_is_ordinal}} and
+  \code{\link{umxMakeThresholdMatrix}} as helpers
+}
+\examples{
+\dontrun{
+model = umxThresholdRAMObjective(model)
+}
+}
+\references{
+  - \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+  - \code{\link{umxLabel}}, \code{\link{umxRun}},
+  \code{\link{umxStart}}
+}
+\keyword{manip}
+
