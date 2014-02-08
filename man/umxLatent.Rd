@@ -47,8 +47,6 @@
 }
 \examples{
 \dontrun{
-umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
-
 library(OpenMx)
 library(umx)
 data(demoOneFactor)
@@ -56,20 +54,20 @@ latents = c("G")
 manifests = names(demoOneFactor) # x1-5
 theData = cov(demoOneFactor)
 m1 = mxModel("reflective", type = "RAM",
-    manifestVars = manifests,
-    latentVars   = latents,
-    # Factor loadings
-    umxLatent("G", forms = manifests, type = "exogenous", data = theData),
+	manifestVars = manifests,
+	latentVars   = latents,
+	# Factor loadings
+	umxLatent("G", forms = manifests, type = "exogenous", data = theData),
 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 )
 m1 = umxRun(m1, setValues = T, setLabels = T); umxSummary(m1, show="std")
 umxPlot(m1)
 
 m2 = mxModel("formative", type = "RAM",
-    manifestVars = manifests,
-    latentVars   = latents,
-    # Factor loadings
-    umxLatent("G", formedBy = manifests, data = theData),
+	manifestVars = manifests,
+	latentVars   = latents,
+	# Factor loadings
+	umxLatent("G", formedBy = manifests, data = theData),
 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 )
 m2 = umxRun(m2, setValues = T, setLabels = T); umxSummary(m2, show="std")

@@ -23,7 +23,7 @@
 #' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
 #' 
 #' Sometimes they appear NA. This often indicates an model which is not \url{http://identified}.
-#' This can include empirical under-identification – for instance two factors
+#' This can include empirical under-identification - for instance two factors
 #' that are essentially identical in structure.
 #' 
 #' A signature of this would be paths estimated at or close to
