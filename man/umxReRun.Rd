@@ -3,7 +3,7 @@
 \title{umxReRun}
 \usage{
   umxReRun(lastFit, dropList = NA, regex = NA, free = F,
-    value = 0, freeToStart = NA, name = NA, verbose = F,
+    value = 0, freeToStart = NA, name = NULL, verbose = F,
     intervals = F, compare = F)
 }
 \arguments{

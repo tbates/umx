@@ -379,7 +379,8 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' @param std specifies whether you want CIs for unstandardized or standardized parameters (default: std = T)
 #' @param rep is the number of bootstrap samples to compute (default = 1000).
 #' @param conf is the confidence value (default = 95)
-#' @param dat specifies whether you want to store the bootstrapped data in the output (useful if you want to do multiple different analyses, such as mediation analyses)
+#' @param dat specifies whether you want to store the bootstrapped data in the output (useful for multiple analyses, such as mediation analysis)
+#' @param digits rounding precision
 #' @return - expected covariance matrix
 #' @export
 #' @examples
@@ -402,10 +403,18 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
 
-umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, round = 3) {
+umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
 	require(MASS)
 	require(OpenMx)
 	require(umx)
+	typeOptions = c("par.expected", "par.observed", "empirical")
+	if (identical(type, typeOptions)) {
+	    type = typeOptions[1]
+	}
+	if (length(type) != 1 | !(type %in% typeOptions)) {
+	    stop(paste("argument 'type' must be one of ", paste(sQuote(typeOptions),collapse=", ")))
+	}    
+
 	if(type == "par.expected") {
 		exp = umxGetExpectedCov(model, latent = FALSE)
 	} else if(type == "par.observed") {
@@ -458,7 +467,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 	colnames(ci) = c(paste((low*100), "%", sep = ""), paste((upp*100), "%", sep = ""))
 	p = summary(model)$parameters[, c(1, 2, 3, 4, c(5:6 + 2*std))]
 	cols <- sapply(p, is.numeric)
-	p[, cols] <- round(p[,cols], round) 
+	p[, cols] <- round(p[,cols], digits) 
 	
 	if(dat) {
 		return(list("Type" = type, "bootdat" = data.frame(pard), "CI" = cbind(p, ci)))
@@ -1097,7 +1106,7 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 		mV <- c(mV,model@manifestVars)
 	}
 	# return the selected variables
-	if(is.null(precision)){
+	if(is.null(digits)){
 		return(mCov[mV, mV]) 
 	} else {
 		return(round(mCov[mV, mV], digits))
@@ -1254,10 +1263,19 @@ umxFitIndices <- function(model, indepfit) {
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' omxRMSEA(model)
-#' }
-
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' omxRMSEA(m1)
 omxRMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 
 	# TODO should this be called RMSEA.MxModel?
 	sm <- summary(model)
@@ -1274,7 +1292,6 @@ omxRMSEA <- function(model, ci.lower = .05, ci.upper = .95) {
  	N.RMSEA  <- max(N, X2*4) # heuristic of lavaan. TODO: can we improve this? when does this break?
 	lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root, silent = T) 
 	lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root, silent = T)
- 
 	rmsea.lower <- sqrt(lambda.l/(N * df))
 	rmsea.upper <- sqrt(lambda.u/(N * df))
 	RMSEA = sqrt( max( c((X2/N)/df - 1/N, 0) ) )

@@ -513,9 +513,9 @@ rowMin <- function(df, na.rm=T) {
 #' @seealso - 
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
+#' df = mtcars
+#' df$mpg = c(letters,letters[1:6]); str(df)
 #' df = umx.as.numeric(df)
-#' }
 umx.as.numeric <- function(df) {
 	# TODO handle case of not being a data.frame...
 	for (i in names(df)) {

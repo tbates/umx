@@ -299,10 +299,7 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLa
 #' fit2 = umxReRun(fit1, regex = "Cs", name="AEip", compare = T)
 #' }
 
-umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, compare = F) {
-	if(is.na(name)){
-		name = lastFit@name
-	}
+umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NULL, verbose = F, intervals = F, compare = F) {
 	if(is.na(regex)) {
 		if(any(is.na(dropList))) {
 			stop("Both dropList and regex cannot be empty!")
@@ -312,7 +309,11 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 	} else {
 		theLabels = umxGetParameters(lastFit, regex = regex, free = freeToStart, verbose = verbose)
 	}
-	x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)
+	if(is.null(name)){
+		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value)
+	}else{
+		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)		
+	}
 	# x = umxStart(x)
 	x = mxRun(x, intervals = intervals)
 	if(compare){

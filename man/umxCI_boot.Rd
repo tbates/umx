@@ -5,7 +5,7 @@
   umxCI_boot(model, rawData = NULL,
     type = c("par.expected", "par.observed", "empirical"),
     std = TRUE, rep = 1000, conf = 95, dat = FALSE,
-    round = 3)
+    digits = 3)
 }
 \arguments{
   \item{model}{is an optimized mxModel}
@@ -29,8 +29,10 @@
   \item{conf}{is the confidence value (default = 95)}
 
   \item{dat}{specifies whether you want to store the
-  bootstrapped data in the output (useful if you want to do
-  multiple different analyses, such as mediation analyses)}
+  bootstrapped data in the output (useful for multiple
+  analyses, such as mediation analysis)}
+
+  \item{digits}{rounding precision}
 }
 \value{
   - expected covariance matrix
