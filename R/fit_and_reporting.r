@@ -1132,7 +1132,6 @@ logLik.MxModel <- function(model) {
 	if (!is.null(model@output) & !is.null(model@output$Minus2LogLikelihood)){
 		Minus2LogLikelihood <- (-0.5) * model@output$Minus2LogLikelihood		
 	}
-
 	if (!is.null(model@data)){
 		attr(Minus2LogLikelihood,"nobs") <- model@data@numObs
 	}else{ 

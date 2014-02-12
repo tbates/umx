@@ -705,7 +705,6 @@ umx_greater_than <- function(table, x){
 # =====================
 # = Utility functions =
 # =====================
-round.num <- function(x, digits) { stop("Use umx_round()")}
 
 #' umx_round
 #'
@@ -743,7 +742,7 @@ umx_round <- function(df, digits, coerce = T) {
 	return(df)
 }
 
-specify_decimal <- function(x, k) format(round(x, k), nsmall = k)
+specify_decimal <- function(x, k){ format(round(x, k), nsmall = k)  }
 
 #' print.html
 #'
