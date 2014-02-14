@@ -211,7 +211,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' m2 = umxReRun(m1, dropList = "G_to_x2", name = "dropm1", free = T, value = .1)
 #' umxCompare(m1, m2)
 #' mxCompare(m1, m2) # what OpenMx give by default
@@ -1168,7 +1168,7 @@ logLik.MxModel <- function(model) {
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' TODO use means and compute independence model here for example...
 #' umxFitIndices(m1, m1_ind)
 
@@ -1273,7 +1273,7 @@ umxFitIndices <- function(model, indepfit) {
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setStarts = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' omxRMSEA(m1)
 omxRMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 
 	# TODO should this be called RMSEA.MxModel?

@@ -190,9 +190,11 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' @examples
 #' \dontrun{
 #' print.dataframe(model)
+#' print.dataframe(bob, digits=2, zero.print = ".", justify="left")
 #' }
 print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", ...){
-    xx <- format(x, digits = digits, justify = justify)
+	xx <- umx_round(x, digits = digits, coerce = FALSE)
+    # xx <- format(x, digits = digits, justify = justify)
     if (any(ina <- is.na(x))) 
         xx[ina] <- na.print
 	i0 <- !ina & x == 0
@@ -204,8 +206,6 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
 		print(xx, quote = quote, ...)	
     }
     invisible(x)
-	# use case
-	# print.dataframe(bob, digits=2, zero.print = ".", justify="left")
 }
 
 # ===================================
@@ -719,7 +719,7 @@ umx_greater_than <- function(table, x){
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umx_round(mtcars, coerce = T)
+#' head(umx_round(mtcars, coerce = T))
 
 umx_round <- function(df, digits, coerce = T) {
 	if(!is.data.frame(df)){
@@ -742,14 +742,16 @@ umx_round <- function(df, digits, coerce = T) {
 	return(df)
 }
 
-specify_decimal <- function(x, k){ format(round(x, k), nsmall = k)  }
+specify_decimal <- function(x, k){
+	format(round(x, k), nsmall = k)
+}
 
 #' print.html
 #'
 #' printing method for sending obejcts to html output
 #'
 #' @param x an object to print
-#' @param rounding decimal places (not implemented)
+#' @param digits decimal places (not implemented)
 #' @param output file to write to and open in browser
 #' @return - 
 #' @export
@@ -759,7 +761,7 @@ specify_decimal <- function(x, k){ format(round(x, k), nsmall = k)  }
 #' \dontrun{
 #' print.html(x, output = "Rout.html")
 #' }
-print.html <- function(x, rounding = 3, output = "tmp.html") {
+print.html <- function(x, digits = 3, output = "tmp.html") {
 	# options for output = c("Rout.html","cat","return")
 	R2HTML::HTML(x, file = output, Border = 0, append = F, sortableDF=T); 
 	system(paste0("open ", output))

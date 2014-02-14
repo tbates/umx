@@ -14,9 +14,9 @@
   Convert each column of a dataframe to numeric
 }
 \examples{
-\dontrun{
+df = mtcars
+df$mpg = c(letters,letters[1:6]); str(df)
 df = umx.as.numeric(df)
-}
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

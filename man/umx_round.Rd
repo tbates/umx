@@ -22,7 +22,7 @@
   mixes numeric and string types.
 }
 \examples{
-umx_round(mtcars, coerce = T)
+head(umx_round(mtcars, coerce = T))
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

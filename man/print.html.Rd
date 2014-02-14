@@ -2,12 +2,12 @@
 \alias{print.html}
 \title{print.html}
 \usage{
-  print.html(x, rounding = 3, output = "tmp.html")
+  print.html(x, digits = 3, output = "tmp.html")
 }
 \arguments{
   \item{x}{an object to print}
 
-  \item{rounding}{decimal places (not implemented)}
+  \item{digits}{decimal places (not implemented)}
 
   \item{output}{file to write to and open in browser}
 }

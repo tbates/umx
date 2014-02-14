@@ -50,7 +50,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = umxRun(m1, setLabels = T, setStarts = T)
+m1 = umxRun(m1, setLabels = T, setValues = T)
 m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
 m2 = mxRun(m2) # have to run the model again...
 umxCompare(m1, m2) # not good :-)

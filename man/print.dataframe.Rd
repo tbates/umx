@@ -34,6 +34,7 @@
 \examples{
 \dontrun{
 print.dataframe(model)
+print.dataframe(bob, digits=2, zero.print = ".", justify="left")
 }
 }
 \seealso{
