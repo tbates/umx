@@ -1,7 +1,7 @@
 \name{umx_less_than}
 \alias{\%\%<\%\%}
 \alias{umx_less_than}
-\title{umxLessThan}
+\title{umx_less_than}
 \usage{
   umx_less_than(table, x)
 }
@@ -10,7 +10,9 @@
   (rather than NA)
 }
 \examples{
-c(1:3, NA, 5) = \%<\% 2
+\dontrun{
+c(1:3, NA, 5) \%<\% 2
+}
 }
 \seealso{
   - \code{\link{umx_greater_than}},

@@ -14,7 +14,7 @@
   Compute and report Coefficient alpha
 }
 \examples{
-treat car aspects as items of a test
+# treat vehicle aspects as items of a test
 reliability(cov(mtcars))
 }
 \references{

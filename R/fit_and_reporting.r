@@ -7,7 +7,7 @@
 # devtools::release("~/bin/umx")
 # devtools::load_all("~/bin/umx")
 # devtools::dev_help("umxReportCIs")
-# devtools::show_news()
+# devtools::show_news("~/bin/umx")
 
 # =============================
 # = Fit and Reporting Helpers =
@@ -162,7 +162,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				print(x)
 			} else {
 				if(RMSEA_CI){
-					RMSEA_CI = omxRMSEA(model)$txt
+					RMSEA_CI = RMSEA(model)$txt
 				} else {
 					RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
 				}
@@ -314,7 +314,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umxCI(model)
+#' umxCI(m1)
 #' \dontrun{
 #' umxCI(model, addCIs = T) # add Cis for all free parameters if not present
 #' umxCI(model, runCIs = "yes") # force update of CIs
@@ -1124,9 +1124,19 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
-#' \dontrun{
-#' AIC(model)
-#' }
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' AIC(m1)
 logLik.MxModel <- function(model) {
 	Minus2LogLikelihood <- NA
 	if (!is.null(model@output) & !is.null(model@output$Minus2LogLikelihood)){
@@ -1157,6 +1167,7 @@ logLik.MxModel <- function(model) {
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{summary}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
+#' \dontrun{
 #' require(OpenMx)
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -1169,9 +1180,9 @@ logLik.MxModel <- function(model) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' TODO use means and compute independence model here for example...
 #' umxFitIndices(m1, m1_ind)
-
+#' # TODO use means and compute independence model here for example...
+#' }
 umxFitIndices <- function(model, indepfit) {
 	options(scipen = 3)
 	indepSummary     <- summary(indepfit)
@@ -1250,7 +1261,7 @@ umxFitIndices <- function(model, indepfit) {
 }
 
 
-#' omxRMSEA
+#' RMSEA
 #'
 #' Compute the confidence interval on RMSEA
 #'
@@ -1262,6 +1273,7 @@ umxFitIndices <- function(model, indepfit) {
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
+#' \dontrun{
 #' require(OpenMx)
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -1274,14 +1286,17 @@ umxFitIndices <- function(model, indepfit) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' omxRMSEA(m1)
-omxRMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 
-	# TODO should this be called RMSEA.MxModel?
+#' # RMSEA(m1)
+#' }
+
+RMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 
+	# FIXME should this be called RMSEA.MxModel or omxRMSEA?
 	sm <- summary(model)
 	if (is.na(sm$Chi)) return(NA);
 	X2 <- sm$Chi
 	df <- sm$degreesOfFreedom
 	N  <- sm$numObs 
+
 	lower.lambda <- function(lambda) {
 		pchisq(X2, df = df, ncp = lambda) - ci.upper
 	}
@@ -1297,3 +1312,4 @@ omxRMSEA <- function(model, ci.lower = .05, ci.upper = .95) {
 	txt = paste0("RMSEA = ", round(RMSEA, 3), " CI", sub("^0?\\.", replace = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "]")	
 	return(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, txt = txt)) 
 }
+

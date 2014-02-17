@@ -8,9 +8,17 @@
 # require(OpenMx); require(umx); ?umx
 # devtools::build("~/bin/umx")
 # devtools::check("~/bin/umx")
+# devtools::check_doc(pkg = "~/bin/umx")
 # devtools::load_all("~/bin/umx")
-# devtools::dev_help("umxX")
+# devtools::dev_help("umx-package.Rd")
 # devtools::show_news("~/bin/umx")
+# devtools::run_examples("~/bin/umx")
+
+# devtools::create()
+# devtools::add_travis();
+# devtools::update_version();
+# devtools::news();
+# devtools::create_README()
 
 # ========================================
 # = Model building and modifying helpers =
@@ -44,7 +52,9 @@
 #' )
 #' mxEval(S,m1) # default variances are 0
 #' m1 = umxStart(m1)
-#' print.dataframe(mxEval(S,m1), 2, zero.print= ".") # plausible variances
+#' mxEval(S,m1) # plausible variances
+#' # # TODO get this working
+#' # print.dataframe(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 
 umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {

@@ -22,8 +22,8 @@
 }
 \examples{
 test = data.frame(a=paste("a",1:10,sep=""),b=paste("b",1:10,sep=""), c=paste("c",1:10,sep=""),d=paste("d",1:10,sep=""),stringsAsFactors=F)
-umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
-umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
+umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
+umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
 }
 \seealso{
   - \code{\link{subset}}

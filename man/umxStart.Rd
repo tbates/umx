@@ -40,7 +40,9 @@ m1 <- mxModel("One Factor", type = "RAM",
 )
 mxEval(S,m1) # default variances are 0
 m1 = umxStart(m1)
-print.dataframe(mxEval(S,m1), 2, zero.print= ".") # plausible variances
+mxEval(S,m1) # plausible variances
+# # TODO get this working
+# print.dataframe(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

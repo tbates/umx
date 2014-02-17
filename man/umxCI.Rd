@@ -57,7 +57,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-umxCI(model)
+umxCI(m1)
 \dontrun{
 umxCI(model, addCIs = T) # add Cis for all free parameters if not present
 umxCI(model, runCIs = "yes") # force update of CIs

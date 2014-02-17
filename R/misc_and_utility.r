@@ -4,7 +4,7 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); 
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# sou
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxX")
@@ -152,7 +152,7 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 # How long did that take?
 #' umxReportTime
 #'
-#' A functoin to compactly report how long a model took to execute
+#' A function to compactly report how long a model took to execute
 #'
 #' @param model An \code{\link{mxModel}} from which to get the elapsed time
 #' @param formatStr A format string, defining how to show the time
@@ -161,13 +161,21 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' umxReportTime(model)
-#' }
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umxReportTime(m1)
 
 umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
-	# use case
-	# umxReportTime(fit1)
 	format(.POSIXct(model@output$wallTime,tz), formatStr)
 }
 
@@ -537,8 +545,8 @@ umx.as.numeric <- function(df) {
 #' @seealso - \code{\link{subset}}
 #' @examples
 #' test = data.frame(a=paste("a",1:10,sep=""),b=paste("b",1:10,sep=""), c=paste("c",1:10,sep=""),d=paste("d",1:10,sep=""),stringsAsFactors=F)
-#' umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
-#' umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
+#' umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
+#' umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
 #'
 umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	theRows = theData[rowSelector,]
@@ -668,7 +676,7 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 # = Comparison helpers =
 # ======================
 
-#' umxLessThan
+#' umx_less_than
 #'
 #' A version of less-than which returns FALSE for NAs (rather than NA)
 #'
@@ -677,15 +685,18 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 #' @export
 #' @seealso - \code{\link{umx_greater_than}}, 
 #' @examples
-#' c(1:3, NA, 5) = %<% 2
+#' \dontrun{
+#' c(1:3, NA, 5) %<% 2
+#' }
 
+# TODO currently broken
 umx_less_than <- function(table, x){
 	lessThan = table < x
 	lessThan[is.na(lessThan)] = FALSE
 	return(lessThan)
 }
 
-#' umxGreaterThan
+#' umx_greater_than
 #'
 #' A version of greater-than that excludes NA as a match
 #'
@@ -694,8 +705,11 @@ umx_less_than <- function(table, x){
 #' @export
 #' @seealso - \code{\link{umx_less_than}}, 
 #' @examples
-#' c(1:3,NA,5) = %>% 2 
+#' \dontrun{
+#' c(1:3,NA,5) %>% 2 
+#' }
 
+# TODO currently not being found - alias problem? same for <
 umx_greater_than <- function(table, x){
 	moreThan = table > x
 	moreThan[is.na(moreThan)] = FALSE
@@ -780,7 +794,7 @@ print.html <- function(x, digits = 3, output = "tmp.html") {
 #' @seealso - \code{\link{cov}}
 #' @references - \url{http://Rcmdr}
 #' @examples
-#' treat car aspects as items of a test
+#' # treat vehicle aspects as items of a test
 #' reliability(cov(mtcars))
 reliability <-function (S){
      reliab <- function(S, R) {
@@ -1155,9 +1169,11 @@ umx_check_names <- function(namesNeeded, data, die = TRUE){
 #' tmp$cyl = ordered(mtcars$cyl)
 #' umx_is_ordinal(tmp)
 #' isContinuous = !umx_is_ordinal(tmp)
-#' #factors are not necessarily ordered. By default unordered factors cause an error
+#' # nb: Factors are not necessarily ordered! By default unordered factors cause an error...
+#' \dontrun{
 #' tmp$cyl = factor(mtcars$cyl)
 #' umx_is_ordinal(tmp)
+#' }
 
 umx_is_ordinal <- function(df, names = F, strict = T) {
 	# Purpose, return which columns are Ordinal
@@ -1199,20 +1215,20 @@ umx_is_ordinal <- function(df, names = F, strict = T) {
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' fit1 <- mxModel("One Factor", type = "RAM", 
+#' m1 <- mxModel("One Factor", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' fit1 = umxRun(fit1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxSummary(m1, show = "std")
-#' if(umx_is_RAM(fit1)){
+#' if(umx_is_RAM(m1)){
 #' 	message("nice RAM model!")
 #' }
 #' \dontrun{
-#' if(!umx_is_RAM(fit1)){
+#' if(!umx_is_RAM(m1)){
 #' 	stop("model must be a RAM model")
 #' }
 #' }
@@ -1551,4 +1567,41 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' }
 umxEval <- function(expstring, model, compute = F, show = F) {
 	return(eval(substitute(mxEval(x, model, compute, show), list(x = parse(text=expstring)[[1]]))))
+}
+
+#' umx_scale_wide_twin_data
+#'
+#' scale wide data across all cases: currently twins
+#'
+#' @param df a wide dataframe
+#' @param varsToScale the base names of the variables ("weight" etc)
+#' @param suffixes the suffix that distinguishes each case (T1, T2 etc.)
+#' @return - new dataframe with scaled variables
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' data(twinData) 
+#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffixes = c("1","2") )
+#' plot(wt1 ~ wt2, data= df)
+
+umx_scale_wide_twin_data <- function(df, varsToScale = c("ht", "wt"), suffixes = c("1","2")) {
+	if(length(suffixes)!=2){
+		stop("I need two suffixes, you gave me ", length(suffixes))
+	}
+	namesNeeded = c(paste0(varsToScale, suffixes[1]), paste0(varsToScale, suffixes[2]))
+	umx_check_names(namesNeeded, df)
+	t1Traits = paste0(varsToScale, suffixes[1])
+	t2Traits = paste0(varsToScale, suffixes[2])
+	for (i in 1:length(varsToScale)) {
+		T1 = df[,t1Traits[i]]
+		T2 = df[,t2Traits[i]]
+		totalMean = mean(c(T1, T2), na.rm = T)
+		totalSD   =   sd(c(T1, T2), na.rm = T)
+		T1 = (T1 - totalMean)/totalSD
+		T2 = (T2 - totalMean)/totalSD
+		df[,t1Traits[i] ] = T1
+		df[,t2Traits[i] ] = T2
+	}
+	return(df)
 }

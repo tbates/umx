@@ -1,8 +1,8 @@
-\name{omxRMSEA}
-\alias{omxRMSEA}
-\title{omxRMSEA}
+\name{RMSEA}
+\alias{RMSEA}
+\title{RMSEA}
 \usage{
-  omxRMSEA(model, ci.lower = 0.05, ci.upper = 0.95)
+  RMSEA(model, ci.lower = 0.05, ci.upper = 0.95)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to get CIs on RMSEA
@@ -19,6 +19,7 @@
   Compute the confidence interval on RMSEA
 }
 \examples{
+\dontrun{
 require(OpenMx)
 data(demoOneFactor)
 latents  = c("G")
@@ -31,7 +32,8 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-omxRMSEA(m1)
+# RMSEA(m1)
+}
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

@@ -25,9 +25,11 @@ tmp = mtcars
 tmp$cyl = ordered(mtcars$cyl)
 umx_is_ordinal(tmp)
 isContinuous = !umx_is_ordinal(tmp)
-#factors are not necessarily ordered. By default unordered factors cause an error
+# nb: Factors are not necessarily ordered! By default unordered factors cause an error...
+\dontrun{
 tmp$cyl = factor(mtcars$cyl)
 umx_is_ordinal(tmp)
+}
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}

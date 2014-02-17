@@ -15,13 +15,23 @@
   \item{tz}{The time zone in which the model was executed}
 }
 \description{
-  A functoin to compactly report how long a model took to
+  A function to compactly report how long a model took to
   execute
 }
 \examples{
-\dontrun{
-umxReportTime(model)
-}
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1, setLabels = T, setValues = T)
+umxReportTime(m1)
 }
 \references{
   - \url{http://openmx.psyc.virginia.edu}
