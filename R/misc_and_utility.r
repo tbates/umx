@@ -680,7 +680,7 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 #'
 #' A version of less-than which returns FALSE for NAs (rather than NA)
 #'
-#' @aliases %%<%%
+#' @aliases %<%
 #'
 #' @export
 #' @seealso - \code{\link{umx_greater_than}}, 
@@ -700,14 +700,12 @@ umx_less_than <- function(table, x){
 #'
 #' A version of greater-than that excludes NA as a match
 #'
-#' @aliases %%>%%
+#' @aliases %>%
 #'
 #' @export
 #' @seealso - \code{\link{umx_less_than}}, 
 #' @examples
-#' \dontrun{
 #' c(1:3,NA,5) %>% 2 
-#' }
 
 # TODO currently not being found - alias problem? same for <
 umx_greater_than <- function(table, x){

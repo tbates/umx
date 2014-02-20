@@ -1,5 +1,5 @@
 \name{umx_less_than}
-\alias{\%\%<\%\%}
+\alias{\%<\%}
 \alias{umx_less_than}
 \title{umx_less_than}
 \usage{

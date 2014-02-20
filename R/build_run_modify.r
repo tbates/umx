@@ -1,9 +1,10 @@
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+
 # https://r-forge.r-project.org/project/admin/?group_id=1745
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); 
 # 
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 # require(OpenMx); require(umx); ?umx
 # devtools::build("~/bin/umx")
@@ -468,6 +469,9 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #' umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
 #' }
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
+	# TODO Be nice to offer a method to handle submodels
+	# model@submodels$aSubmodel@matrices$aMatrix@labels
+	# model@submodels$MZ@matrices
 	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(is(inputTarget, "MxMatrix")) {
@@ -492,16 +496,18 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 		}
 		theLabels = grep(regex, theLabels, perl = F, value = T) # return more detail
 		if(length(theLabels) == 0){
+			msg = "Found no matching labels!\n"
 			if(anchored == T){
-				stop("Found no matching labels! note: anchored regex to beginning of string and allowed only numeric follow\n", regex);
-			} else {
-				stop("Found no matching labels!");
+				msg = paste0(msg, "note: anchored regex to beginning of string and allowed only numeric follow:\"", regex, "\"")
 			}
+			if(umx_is_MxModel(inputTarget)){
+				msg = paste0(msg, "\nUse umxGetParameters(", deparse(substitute(inputTarget)), ") to see all parameters in the model")
+			}else{
+				msg = paste0(msg, "\nUse umxGetParameters() without a pattern to see all parameters in the model")
+			}
+			stop(msg);
 		}
 	}
-	# TODO Be nice to offer a method to handle submodels
-	# model@submodels$aSubmodel@matrices$aMatrix@labels
-	# model@submodels$MZ@matrices
 	return(theLabels)
 }
 
