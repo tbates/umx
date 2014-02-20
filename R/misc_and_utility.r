@@ -1,14 +1,17 @@
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
+
+# setwd("~/bin/umx"); 
+# setwd("~/bin/umx"); devtools::check()
+# devtools::load_all()
+# devtools::dev_help("umxX")
+# show_news()
+
 # utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
 # so umx_swap_a_block()
 
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); 
-# sou
-# setwd("~/bin/umx"); devtools::check()
-# devtools::load_all()
-# devtools::dev_help("umxX")
-# show_news()
 
 # =====================
 # = utility functions =
@@ -680,20 +683,23 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 #'
 #' A version of less-than which returns FALSE for NAs (rather than NA)
 #'
-#' @aliases %<%
+#' # @aliases %<%
 #'
 #' @export
 #' @seealso - \code{\link{umx_greater_than}}, 
 #' @examples
-#' \dontrun{
 #' c(1:3, NA, 5) %<% 2
-#' }
-
-# TODO currently broken
 umx_less_than <- function(table, x){
 	lessThan = table < x
 	lessThan[is.na(lessThan)] = FALSE
 	return(lessThan)
+}
+
+
+#' @export
+#' @rdname umx_less_than
+"%<%" <- function(table, x){
+	umx_less_than(table, x)
 }
 
 #' umx_greater_than
@@ -705,13 +711,19 @@ umx_less_than <- function(table, x){
 #' @export
 #' @seealso - \code{\link{umx_less_than}}, 
 #' @examples
-#' c(1:3,NA,5) %>% 2 
+#' c(1:3, NA, 5) %>% 2 
 
-# TODO currently not being found - alias problem? same for <
 umx_greater_than <- function(table, x){
+	# TODO currently not being found - alias problem? same for <
 	moreThan = table > x
 	moreThan[is.na(moreThan)] = FALSE
 	return(moreThan)
+}
+
+#' @export
+#' @rdname umx_greater_than
+"%>%" <- function(table, x){
+	umx_greater_than(table, x)
 }
 
 # =====================

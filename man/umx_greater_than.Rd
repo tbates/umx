@@ -4,6 +4,8 @@
 \title{umx_greater_than}
 \usage{
   umx_greater_than(table, x)
+
+  %>%(table, x)
 }
 \description{
   A version of greater-than that excludes NA as a match

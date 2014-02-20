@@ -1,11 +1,8 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
-# https://r-forge.r-project.org/project/admin/?group_id=1745
-# http://adv-r.had.co.nz/Philosophy.html
-# https://github.com/hadley/devtools
 # setwd("~/bin/umx"); 
 # 
-# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 # require(OpenMx); require(umx); ?umx
 # devtools::build("~/bin/umx")
 # devtools::check("~/bin/umx")
@@ -20,6 +17,10 @@
 # devtools::update_version();
 # devtools::news();
 # devtools::create_README()
+
+# https://r-forge.r-project.org/project/admin/?group_id=1745
+# http://adv-r.had.co.nz/Philosophy.html
+# https://github.com/hadley/devtools
 
 # ========================================
 # = Model building and modifying helpers =

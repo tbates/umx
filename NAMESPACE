@@ -1,3 +1,5 @@
+export("%<%")
+export("%>%")
 export(RMSEA)
 export(Stouffer.test)
 export(anova.report.F)
