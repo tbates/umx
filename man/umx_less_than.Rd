@@ -15,9 +15,7 @@
   #
 }
 \examples{
-\dontrun{
 c(1:3, NA, 5) \%<\% 2
-}
 }
 \seealso{
   - \code{\link{umx_greater_than}},
