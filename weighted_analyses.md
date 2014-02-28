@@ -92,7 +92,7 @@ plot(moderatorVariable, weightVector) # normal-curve yumminess
 
 ```
 
-![a plot](/umx/developer/examples/weighting/normal_window.png "Normal weight window over the data")
+![a plot](/tbates/umx/blob/master/developer/examples/weighting/normal_window.png "Normal weight window over the data")
 
 Now let's apply these weights. What we're going to do is put our model, `m1` inside a container model (I'm calling it "windowed")
 
