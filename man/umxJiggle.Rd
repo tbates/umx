@@ -2,7 +2,7 @@
 \alias{umxJiggle}
 \title{umxJiggle}
 \usage{
-  umxJiggle(matrixIn, mean = 0, sd = 0.1, dontTouch = 0)
+umxJiggle(matrixIn, mean = 0, sd = 0.1, dontTouch = 0)
 }
 \arguments{
   \item{matrixIn}{an \code{\link{mxMatrix}} to jiggle the
@@ -16,10 +16,10 @@
   as-is (defaults to 0)}
 }
 \value{
-  - \code{\link{mxMatrix}}
+- \code{\link{mxMatrix}}
 }
 \description{
-  umxJiggle takes values in a matrix and jiggles them
+umxJiggle takes values in a matrix and jiggles them
 }
 \examples{
 \dontrun{
@@ -27,9 +27,9 @@ mat1 = umxJiggle(mat1)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxStart}}
 }
 

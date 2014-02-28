@@ -2,19 +2,19 @@
 \alias{logLik.MxModel}
 \title{logLik.MxModel}
 \usage{
-  logLik.MxModel(model)
+\method{logLik}{MxModel}(model)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to get the log
   likelihood from}
 }
 \value{
-  - the log likelihood
+- the log likelihood
 }
 \description{
-  returns the log likelihood for an OpenMx model helper
-  function which enables ACI(model); BIC(model); and
-  logLik(model) functions
+returns the log likelihood for an OpenMx model helper
+function which enables ACI(model); BIC(model); and
+logLik(model) functions
 }
 \examples{
 require(OpenMx)
@@ -32,10 +32,10 @@ m1 = umxRun(m1, setLabels = T, setValues = T)
 AIC(m1)
 }
 \references{
-  -
-  \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
+-
+\url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 }
 \seealso{
-  - \code{\link{AIC}}, \code{\link{umxCompare}}
+- \code{\link{AIC}}, \code{\link{umxCompare}}
 }
 

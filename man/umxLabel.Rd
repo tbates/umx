@@ -2,9 +2,9 @@
 \alias{umxLabel}
 \title{umxLabel}
 \usage{
-  umxLabel(obj, suffix = "", baseName = NA, setfree = F,
-    drop = 0, labelFixedCells = T, jiggle = NA,
-    boundDiag = NA, verbose = F, overRideExisting = F)
+umxLabel(obj, suffix = "", baseName = NA, setfree = F, drop = 0,
+  labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F,
+  overRideExisting = F)
 }
 \arguments{
   \item{obj}{An \code{\link{mxModel}} (RAM or matrix
@@ -32,15 +32,15 @@
   (default = F)}
 }
 \value{
-  - \code{\link{mxModel}}
+- \code{\link{mxModel}}
 }
 \description{
-  umxLabel adds labels to things, be it an:
-  \code{\link{mxModel}} (RAM or matrix based), an
-  \code{\link{mxPath}}, or an \code{\link{mxMatrix}} This
-  is a core function in umx: Adding labels to paths opens
-  the door to \code{\link{umxEquate}}, as well as
-  \code{\link{omxSetParameters}}
+umxLabel adds labels to things, be it an:
+\code{\link{mxModel}} (RAM or matrix based), an
+\code{\link{mxPath}}, or an \code{\link{mxMatrix}} This is
+a core function in umx: Adding labels to paths opens the
+door to \code{\link{umxEquate}}, as well as
+\code{\link{omxSetParameters}}
 }
 \examples{
 require(OpenMx)
@@ -65,10 +65,10 @@ umxGetParameters(m1, free = T) # now all labeled regularly "G_to_x1", "x4_with_x
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxGetParameters}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxGetParameters}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

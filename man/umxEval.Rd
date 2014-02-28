@@ -2,7 +2,7 @@
 \alias{umxEval}
 \title{umxEval}
 \usage{
-  umxEval(expstring, model, compute = F, show = F)
+umxEval(expstring, model, compute = F, show = F)
 }
 \arguments{
   \item{expstring}{an expression string, i.e, "a + b"}
@@ -14,12 +14,12 @@
   \item{show}{}
 }
 \value{
-  - an openmx algebra (formula)
+- an openmx algebra (formula)
 }
 \description{
-  Takes an expression as a string, and evaluates it as an
-  expression in model, optionally computing the result. #
-  TODO Currently broken...
+Takes an expression as a string, and evaluates it as an
+expression in model, optionally computing the result. #
+TODO Currently broken...
 }
 \examples{
 \dontrun{
@@ -35,10 +35,10 @@
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

@@ -2,8 +2,8 @@
 \alias{umxStandardizeModel}
 \title{umxStandardizeModel}
 \usage{
-  umxStandardizeModel(model, return = "parameters",
-    Amatrix = NA, Smatrix = NA, Mmatrix = NA)
+umxStandardizeModel(model, return = "parameters", Amatrix = NA,
+  Smatrix = NA, Mmatrix = NA)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} you wish to
@@ -24,12 +24,12 @@
   of the means matrix is (defaults to RAM standard M)}
 }
 \value{
-  - a \code{\link{mxModel}} or else parameters or matrices
-  if you request those
+- a \code{\link{mxModel}} or else parameters or matrices if
+you request those
 }
 \description{
-  umxStandardizeModel takes a RAM-style model, and returns
-  standardized version.
+umxStandardizeModel takes a RAM-style model, and returns
+standardized version.
 }
 \examples{
 \dontrun{
@@ -37,10 +37,10 @@
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+- http://openmx.psyc.virginia.edu/
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

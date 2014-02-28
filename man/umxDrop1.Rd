@@ -2,7 +2,7 @@
 \alias{umxDrop1}
 \title{umxDrop1}
 \usage{
-  umxDrop1(model, regex = NULL, maxP = 1)
+umxDrop1(model, regex = NULL, maxP = 1)
 }
 \arguments{
   \item{model}{An \code{\link{mxModel}} to drop parameters
@@ -16,13 +16,13 @@
   to p==1 - all values)}
 }
 \value{
-  a table of model comparisons
+a table of model comparisons
 }
 \description{
-  Drops each free parameter (selected via regex), returning
-  an \code{\link{mxCompare}} table comparing the effects. A
-  great way to quickly determine which of several
-  parameters can be dropped without excessive cost
+Drops each free parameter (selected via regex), returning
+an \code{\link{mxCompare}} table comparing the effects. A
+great way to quickly determine which of several parameters
+can be dropped without excessive cost
 }
 \examples{
 \dontrun{
@@ -32,10 +32,10 @@ umxDrop1(model, regex="a_r1c1|a_r1c2")
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{grep}}, \code{\link{umxLabel}},
-  \code{\link{umxRun}}
+- \code{\link{grep}}, \code{\link{umxLabel}},
+\code{\link{umxRun}}
 }
 

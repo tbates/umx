@@ -2,19 +2,19 @@
 \alias{extractAIC.MxModel}
 \title{extractAIC}
 \usage{
-  extractAIC.MxModel(model)
+\method{extractAIC}{MxModel}(model)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to get the AIC
   from}
 }
 \value{
-  - AIC value
+- AIC value
 }
 \description{
-  returns the AIC for an OpenMx model helper function for
-  \code{\link{logLik.MxModel}} (which enables AIC(model);
-  logLik(model); BIC(model) Original Author: brandmaier
+returns the AIC for an OpenMx model helper function for
+\code{\link{logLik.MxModel}} (which enables AIC(model);
+logLik(model); BIC(model) Original Author: brandmaier
 }
 \examples{
 require(OpenMx)
@@ -32,11 +32,11 @@ m1 = umxRun(m1, setLabels = T, setValues = T)
 extractAIC(m1)
 }
 \references{
-  -
-  \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
+-
+\url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 }
 \seealso{
-  - \code{\link{AIC}}, \code{\link{umxCompare}},
-  \code{\link{logLik.MxModel}}
+- \code{\link{AIC}}, \code{\link{umxCompare}},
+\code{\link{logLik.MxModel}}
 }
 

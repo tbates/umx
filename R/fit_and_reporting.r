@@ -71,6 +71,7 @@
 #' }
 umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, digits = 2, RMSEA_CI = F, precision = NULL){
 	# TODO make table take lists of models...
+	report = umx_default_option(report, c("line"))	
 	# TODO should/could have a toggle for computing the saturated models...
 	if(!is.null(precision)){
 		warning("precision is deprecated for umxSummary, use digits instead")
@@ -261,7 +262,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		R2HTML::HTML(tablePub, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
 	} else {
 		return(tablePub)
-		# print.html(tableOut, output = output, rowlabel = "")
+		# umx_print(tableOut, file = output, rowlabel = "")
 		# R2HTML::print(tableOut, output = output, rowlabel = "")
 	}
 	
@@ -404,17 +405,8 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
 
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
-	require(MASS)
-	require(OpenMx)
-	require(umx)
-	typeOptions = c("par.expected", "par.observed", "empirical")
-	if (identical(type, typeOptions)) {
-	    type = typeOptions[1]
-	}
-	if (length(type) != 1 | !(type %in% typeOptions)) {
-	    stop(paste("argument 'type' must be one of ", paste(sQuote(typeOptions),collapse=", ")))
-	}    
-
+	require(MASS); require(OpenMx); require(umx)
+	type = umx_default_option(type, c("par.expected", "par.observed", "empirical"))
 	if(type == "par.expected") {
 		exp = umxGetExpectedCov(model, latent = FALSE)
 	} else if(type == "par.observed") {
@@ -1055,7 +1047,6 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' extractAIC(m1)
-
 extractAIC.MxModel <- function(model) {
 	require(umx)
 	a = umx::umxCompare(model)

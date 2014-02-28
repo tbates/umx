@@ -2,8 +2,8 @@
 \alias{umxThresholdRAMObjective}
 \title{umxThresholdRAMObjective}
 \usage{
-  umxThresholdRAMObjective(df, deviationBased = T,
-    droplevels = T, verbose = F)
+umxThresholdRAMObjective(df, deviationBased = T, droplevels = T,
+  verbose = F)
 }
 \arguments{
   \item{df}{Dataframe to make a threshold matrix for}
@@ -18,16 +18,16 @@
   (default = F)}
 }
 \value{
-  - \code{\link{mxModel}}
+- \code{\link{mxModel}}
 }
 \description{
-  umxThresholdRAMObjective can set the means to 0 and
-  variance of the latents to 1, and build an appropriate
-  thresholds matrix
+umxThresholdRAMObjective can set the means to 0 and
+variance of the latents to 1, and build an appropriate
+thresholds matrix
 }
 \details{
-  It uses \code{\link{umx_is_ordinal}} and
-  \code{\link{umxMakeThresholdMatrix}} as helpers
+It uses \code{\link{umx_is_ordinal}} and
+\code{\link{umxMakeThresholdMatrix}} as helpers
 }
 \examples{
 \dontrun{
@@ -35,11 +35,10 @@ model = umxThresholdRAMObjective(model)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
-\keyword{manip}
 

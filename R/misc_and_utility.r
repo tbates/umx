@@ -1,4 +1,4 @@
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
 # setwd("~/bin/umx"); 
@@ -183,7 +183,7 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 }
 
 
-#' print.dataframe
+#' umx_print
 #'
 #' A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
 #' Its most useful characteristic is allowing you to change how NA and zero appear.
@@ -195,15 +195,20 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' @param na.print String to replace NA with (default to blank "")
 #' @param zero.print String to replace 0.000 with  (defaults to "0")
 #' @param justify Parameter passed to print
+#' @param output file to write to and open in browser
 #' @param ... Optional parameters for print
 #' @export
 #' @seealso - \code{\link{print}}
 #' @examples
+#' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 #' \dontrun{
-#' print.dataframe(model)
-#' print.dataframe(bob, digits=2, zero.print = ".", justify="left")
+#' umx_print(model)
+#' umx_print(mtcars[1:10,], file = "Rout.html")
 #' }
-print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", ...){
+
+umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA,"tmp.html"),...){
+	# TODO: Options for file = c("Rout.html","cat","return")
+	file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
 	xx <- umx_round(x, digits = digits, coerce = FALSE)
     # xx <- format(x, digits = digits, justify = justify)
     if (any(ina <- is.na(x))) 
@@ -213,6 +218,10 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
         xx[i0] <- zero.print
     if (is.numeric(x) || is.complex(x)){
         print(xx, quote = quote, right = TRUE, ...)
+	} else if(!is.na(file)){
+		R2HTML::HTML(x, file = file, Border = 0, append = F, sortableDF=T); 
+		system(paste0("open ", file))
+		print("Table opened in browser")
     }else{
 		print(xx, quote = quote, ...)	
     }
@@ -770,28 +779,6 @@ specify_decimal <- function(x, k){
 	format(round(x, k), nsmall = k)
 }
 
-#' print.html
-#'
-#' printing method for sending obejcts to html output
-#'
-#' @param x an object to print
-#' @param digits decimal places (not implemented)
-#' @param output file to write to and open in browser
-#' @return - 
-#' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' \dontrun{
-#' print.html(x, output = "Rout.html")
-#' }
-print.html <- function(x, digits = 3, output = "tmp.html") {
-	# options for output = c("Rout.html","cat","return")
-	R2HTML::HTML(x, file = output, Border = 0, append = F, sortableDF=T); 
-	system(paste0("open ", output))
-	print("Table opened in browser")
-}
-
 # extracted from Rcmdr: TODO: fix URL for RCmdr reference
 #' reliability
 #'
@@ -799,7 +786,6 @@ print.html <- function(x, digits = 3, output = "tmp.html") {
 #'
 #' @param S A square, symmetric, numeric covariance matrix
 #' @return - 
-#' @keywords manip
 #' @export
 #' @seealso - \code{\link{cov}}
 #' @references - \url{http://Rcmdr}
@@ -863,7 +849,6 @@ print.reliability <- function (x, digits = 4, ...){
 #' @param model an \code{\link{lm}} model to report F for.
 #' @param digits how many numbers after the decimal for F (p-value is APA-style)
 #' @return - F in  text format
-#' @keywords manip
 #' @export
 #' @seealso - \code{\link{lm}}, \code{\link{anova}}, \code{\link{summary}}
 #' @examples
@@ -1142,7 +1127,7 @@ umx_has_been_run <- function(model, stop = F) {
 #' require(OpenMx)
 #' data(demoOneFactor)
 #' umx_check_names(c("x1","x2"), demoOneFactor)
-#' umx_check_names(c("z1","x2"), demoOneFactor, die = F)
+#' umx_check_names(c("z1","x2"), data = demoOneFactor, die = F)
 
 umx_check_names <- function(namesNeeded, data, die = TRUE){
 	if(!is.data.frame(data)){
@@ -1430,7 +1415,7 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' @param model2 An (optional) second \code{\link{lm}} model to compare to model 1
 #' @param raw Should the raw table also be output? (allows checking that nothing crazy is going on)
 #' @param format String or markdown format?
-#' @param printDIC A Boolean toggle whether tou want AIC-type fit change table printed
+#' @param printDIC A Boolean toggle whether you want AIC-type fit change table printed
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
@@ -1614,4 +1599,38 @@ umx_scale_wide_twin_data <- function(df, varsToScale = c("ht", "wt"), suffixes =
 		df[,t2Traits[i] ] = T2
 	}
 	return(df)
+}
+
+#' umx_default_option
+#'
+#' handle parameter options given as a default list in a function
+#'
+#' @param x the value chosen (may be a selection, or the default list of options)
+#' @return - the option
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' option_list = c("default", "par.observed", "empirical")
+#' umx_default_option("par.observed", option_list)
+#' umx_default_option("bad", option_list)
+#' umx_default_option("allow me", option_list, check = F)
+#' umx_default_option(option_list, option_list)
+#' option_list = c(NULL, "par.observed", "empirical")
+#' umx_default_option(option_list, option_list) # fails with NULL!!!!!
+#' option_list = c(NA, "par.observed", "empirical")
+#' umx_default_option(option_list, option_list) # use NA instead
+
+#' }
+umx_default_option <- function(x, option_list, check = T){
+	if (identical(x, option_list)) {
+	    x = option_list[1]
+	}
+	if (length(x) != 1){
+	    stop(paste("argument must be ONE of ", paste(sQuote(option_list),collapse=", "), "you tried:", paste(sQuote(x), collapse = ", ")))
+	}else if (!(x %in% option_list) & check) {
+	    stop(paste("argument must be one of ", paste(sQuote(option_list),collapse=", ")))
+	} else {
+		return(x)
+	}
 }

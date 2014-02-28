@@ -2,26 +2,25 @@
 \alias{reliability}
 \title{reliability}
 \usage{
-  reliability(S)
+reliability(S)
 }
 \arguments{
   \item{S}{A square, symmetric, numeric covariance matrix}
 }
 \value{
-  -
+-
 }
 \description{
-  Compute and report Coefficient alpha
+Compute and report Coefficient alpha
 }
 \examples{
 # treat vehicle aspects as items of a test
 reliability(cov(mtcars))
 }
 \references{
-  - \url{http://Rcmdr}
+- \url{http://Rcmdr}
 }
 \seealso{
-  - \code{\link{cov}}
+- \code{\link{cov}}
 }
-\keyword{manip}
 

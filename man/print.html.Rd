@@ -2,7 +2,7 @@
 \alias{print.html}
 \title{print.html}
 \usage{
-  print.html(x, digits = 3, output = "tmp.html")
+print.html(x, digits = 3, output = "tmp.html")
 }
 \arguments{
   \item{x}{an object to print}
@@ -12,10 +12,10 @@
   \item{output}{file to write to and open in browser}
 }
 \value{
-  -
+-
 }
 \description{
-  printing method for sending obejcts to html output
+printing method for sending obejcts to html output
 }
 \examples{
 \dontrun{
@@ -23,10 +23,10 @@ print.html(x, output = "Rout.html")
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

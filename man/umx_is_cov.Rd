@@ -2,7 +2,7 @@
 \alias{umx_is_cov}
 \title{umx_is_cov}
 \usage{
-  umx_is_cov(data = NULL, boolean = F, verbose = F)
+umx_is_cov(data = NULL, boolean = F, verbose = F)
 }
 \arguments{
   \item{data}{dataframe to test}
@@ -11,11 +11,11 @@
   boolean (default = string)}
 }
 \value{
-  - "raw", "cor", or "cov", or, if boolean= T, then T | F
+- "raw", "cor", or "cov", or, if boolean= T, then T | F
 }
 \description{
-  test if a data frame or matrix is cov or cor data, or is
-  likely to be raw...
+test if a data frame or matrix is cov or cor data, or is
+likely to be raw...
 }
 \examples{
 df = cov(mtcars)
@@ -26,10 +26,10 @@ umx_is_cov(df, boolean = T)
 umx_is_cov(mtcars, boolean = T)
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

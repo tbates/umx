@@ -2,8 +2,7 @@
 \alias{umx_update_OpenMx}
 \title{umx_update_OpenMx}
 \usage{
-  umx_update_OpenMx(bleedingEdge = F, loadNew = T,
-    anyOK = F)
+umx_update_OpenMx(bleedingEdge = F, loadNew = T, anyOK = F)
 }
 \arguments{
   \item{bleedingEdge}{A Boolean determining whether to
@@ -17,8 +16,8 @@
   updating}
 }
 \description{
-  This function automates the process of updating OpenMx
-  while it is not a cran package
+This function automates the process of updating OpenMx
+while it is not a cran package
 }
 \examples{
 \dontrun{

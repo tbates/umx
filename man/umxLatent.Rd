@@ -2,10 +2,9 @@
 \alias{umxLatent}
 \title{umxLatent}
 \usage{
-  umxLatent(latent = NULL, formedBy = NULL, forms = NULL,
-    data = NULL, type = NULL, model.name = NULL,
-    labelSuffix = "", verbose = T,
-    endogenous = "deprecated")
+umxLatent(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
+  type = NULL, model.name = NULL, labelSuffix = "", verbose = T,
+  endogenous = "deprecated")
 }
 \arguments{
   \item{latent}{the name of the latent variable (string)}
@@ -31,19 +30,19 @@
   \"exogenous|endogenous\"}
 }
 \value{
-  - path list
+- path list
 }
 \description{
-  Helper to ease the creation of latent variables including
-  formative and reflective variables (see below) For
-  formative variables, the manifests define (form) the
-  latent. This function takes care of intercorrelating
-  manifests for formatives, and fixing variances correctly
+Helper to ease the creation of latent variables including
+formative and reflective variables (see below) For
+formative variables, the manifests define (form) the
+latent. This function takes care of intercorrelating
+manifests for formatives, and fixing variances correctly
 }
 \details{
-  The following figures show how a reflective and a
-  formative variable look as path diagrams:
-  \figure{reflective.png} formative\figure{formative.png}
+The following figures show how a reflective and a formative
+variable look as path diagrams: \figure{reflective.png}
+formative\figure{formative.png}
 }
 \examples{
 \dontrun{
@@ -75,10 +74,10 @@ umxPlot(m2)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

@@ -56,7 +56,7 @@
 #' m1 = umxStart(m1)
 #' mxEval(S,m1) # plausible variances
 #' # # TODO get this working
-#' # print.dataframe(mxEval(S,m1), 2, zero.print= ".") # plausible variances
+#' # umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 
 umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {
@@ -992,7 +992,6 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 #' @param droplevels whether to also drop unused levels (default = T)
 #' @param verbose whether to say what the function is doing (default = F)
 #' @return - \code{\link{mxModel}}
-#' @keywords manip
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -1083,7 +1082,7 @@ umxSummaryACE <- function(fit, accuracy = 2, dotFilename = NULL, returnStd = F, 
 		eClean[upper.tri(eClean)]=NA
 		Estimates = data.frame(cbind(aClean,cClean,eClean), row.names=selDVs[1:nVar]);
 		names(Estimates) = paste(rep(c("a", "c", "e"), each = nVar), rep(1:nVar), sep = "");
-		print.dataframe(Estimates, digits = accuracy, zero.print = ".") # this function is created in genEpi.lib
+		umx_print(Estimates, digits = accuracy, zero.print = ".") # this function is created in genEpi.lib
 		if(extended==TRUE) {
 			message("Unstandardized path coefficients")
 			aClean = a
@@ -1094,7 +1093,7 @@ umxSummaryACE <- function(fit, accuracy = 2, dotFilename = NULL, returnStd = F, 
 			eClean[upper.tri(eClean)]=NA
 			unStandardizedEstimates = data.frame(cbind(aClean,cClean,eClean), row.names=selDVs[1:nVar]);
 			names(unStandardizedEstimates) = paste(rep(c("a", "c", "e"), each=nVar), rep(1:nVar), sep="");
-			print.dataframe(unStandardizedEstimates, digits=accuracy, zero.print = ".")
+			umx_print(unStandardizedEstimates, digits=accuracy, zero.print = ".")
 		}
 
 		# Pre & post multiply covariance matrix by inverse of standard deviations
@@ -1114,7 +1113,7 @@ umxSummaryACE <- function(fit, accuracy = 2, dotFilename = NULL, returnStd = F, 
 			names(genetic_correlations)<-selDVs[1:nVar]
 		 	# Make a nice-ish table
 			names(genetic_correlations)= paste(rep(c("rA", "rC", "rE"), each=nVar), rep(1:nVar), sep="");
-			print.dataframe(genetic_correlations, digits=accuracy, zero.print = ".")
+			umx_print(genetic_correlations, digits=accuracy, zero.print = ".")
 		}
 		stdFit = fit
 		if(CIs) {

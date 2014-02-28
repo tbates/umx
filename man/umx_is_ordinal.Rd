@@ -2,7 +2,7 @@
 \alias{umx_is_ordinal}
 \title{umx_is_ordinal}
 \usage{
-  umx_is_ordinal(df, names = F, strict = T)
+umx_is_ordinal(df, names = F, strict = T)
 }
 \arguments{
   \item{df}{an \code{\link{data.frame}} to look in for
@@ -15,10 +15,10 @@
   found (default = T)}
 }
 \value{
-  - list of variable names
+- list of variable names
 }
 \description{
-  return the names of any ordinal variables in a dataframe
+return the names of any ordinal variables in a dataframe
 }
 \examples{
 tmp = mtcars
@@ -32,10 +32,10 @@ umx_is_ordinal(tmp)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

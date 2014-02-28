@@ -2,8 +2,8 @@
 \alias{umxCompare}
 \title{umxCompare}
 \usage{
-  umxCompare(base = NULL, comparison = NULL, all = TRUE,
-    digits = 3, report = 1)
+umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
+  report = 1)
 }
 \arguments{
   \item{base}{The base \code{\link{mxModel}} for
@@ -24,9 +24,9 @@
   is handy for getting tables into word}
 }
 \description{
-  umxCompare compares two or more \code{\link{mxModel}}s.
-  If you leave comparison blank, it will just give fit info
-  for the base model
+umxCompare compares two or more \code{\link{mxModel}}s. If
+you leave comparison blank, it will just give fit info for
+the base model
 }
 \examples{
 require(OpenMx)
@@ -52,10 +52,10 @@ umxCompare(c(m1, m2), c(m2, m3), all = T)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu/}
+- \url{http://openmx.psyc.virginia.edu/}
 }
 \seealso{
-  - \code{\link{mxCompare}}, \code{\link{umxSummary}},
-  \code{\link{umxRun}},
+- \code{\link{mxCompare}}, \code{\link{umxSummary}},
+\code{\link{umxRun}},
 }
 

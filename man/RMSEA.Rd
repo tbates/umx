@@ -2,7 +2,7 @@
 \alias{RMSEA}
 \title{RMSEA}
 \usage{
-  RMSEA(model, ci.lower = 0.05, ci.upper = 0.95)
+RMSEA(model, ci.lower = 0.05, ci.upper = 0.95)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to get CIs on RMSEA
@@ -13,10 +13,10 @@
   \item{ci.upper}{the upper Ci to compute}
 }
 \value{
-  - object containing the RMSEA and lower and upper bounds
+- object containing the RMSEA and lower and upper bounds
 }
 \description{
-  Compute the confidence interval on RMSEA
+Compute the confidence interval on RMSEA
 }
 \examples{
 \dontrun{
@@ -36,10 +36,10 @@ m1 = umxRun(m1, setLabels = T, setValues = T)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

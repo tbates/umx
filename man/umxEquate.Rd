@@ -2,8 +2,7 @@
 \alias{umxEquate}
 \title{umxEquate}
 \usage{
-  umxEquate(model, master, slave, free = T, verbose = T,
-    name = NULL)
+umxEquate(model, master, slave, free = T, verbose = T, name = NULL)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} within which to
@@ -24,19 +23,18 @@
   \item{name}{Optional new name for the returned model}
 }
 \value{
-  - \code{\link{mxModel}}
+- \code{\link{mxModel}}
 }
 \description{
-  Equate parameters by setting one or more labels (the
-  slave set) equal to the labels in a master set. By
-  setting two parameters to have the
-  \code{\link{umxLabel}}, they are then forced to have the
-  same value. In addition to matching labels, you may wish
-  to learn about set the label of a slave parameter to the
-  \"square bracket\" address of the master, i.e.
-  \"model.matrix[r,c]\". tip: to find labels of free
-  parameters use \code{\link{umxGetParameters}} with free =
-  T
+Equate parameters by setting one or more labels (the slave
+set) equal to the labels in a master set. By setting two
+parameters to have the \code{\link{umxLabel}}, they are
+then forced to have the same value. In addition to matching
+labels, you may wish to learn about set the label of a
+slave parameter to the \"square bracket\" address of the
+master, i.e. \"model.matrix[r,c]\". tip: to find labels of
+free parameters use \code{\link{umxGetParameters}} with
+free = T
 }
 \examples{
 require(OpenMx)
@@ -57,10 +55,10 @@ umxCompare(m1, m2) # not good :-)
 umxSummary(m1, m2) # not good :-)
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxGetParameters}},
-  \code{\link{umxRun}}
+- \code{\link{umxLabel}}, \code{\link{umxGetParameters}},
+\code{\link{umxRun}}
 }
 

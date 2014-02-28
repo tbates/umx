@@ -2,9 +2,8 @@
 \alias{umxDescriptives}
 \title{umxDescriptives}
 \usage{
-  umxDescriptives(data = NULL, measurevar,
-    groupvars = NULL, na.rm = FALSE, conf.interval = 0.95,
-    .drop = TRUE)
+umxDescriptives(data = NULL, measurevar, groupvars = NULL, na.rm = FALSE,
+  conf.interval = 0.95, .drop = TRUE)
 }
 \arguments{
   \item{data}{data.frame to compute descriptive statistics
@@ -22,7 +21,7 @@
   \item{.drop}{Whether to drop TODO}
 }
 \description{
-  Summarize data for an APA style subjects table
+Summarize data for an APA style subjects table
 }
 \examples{
 \dontrun{
@@ -30,10 +29,10 @@ umxDescriptives(data)
 }
 }
 \references{
-  -
-  \url{http://www.cookbook-r.com/Manipulating_data/Summarizing_data}
+-
+\url{http://www.cookbook-r.com/Manipulating_data/Summarizing_data}
 }
 \seealso{
-  - \code{\link{plyr}}
+- \code{\link{plyr}}
 }
 

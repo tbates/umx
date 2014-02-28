@@ -2,8 +2,7 @@
 \alias{xmuMakeThresholdsMatrices}
 \title{xmuMakeThresholdsMatrices (not a user function)}
 \usage{
-  xmuMakeThresholdsMatrices(df, droplevels = F,
-    verbose = F)
+xmuMakeThresholdsMatrices(df, droplevels = F, verbose = F)
 }
 \arguments{
   \item{df}{a \code{\link{data.frame}} containing the data
@@ -16,13 +15,13 @@
   FALSE)}
 }
 \value{
-  - a list containing an \code{\link{mxMatrix}} called
-  "thresh", an \code{\link{mxRAMObjective}} object, and an
-  \code{\link{mxData}} object
+- a list containing an \code{\link{mxMatrix}} called
+"thresh", an \code{\link{mxRAMObjective}} object, and an
+\code{\link{mxData}} object
 }
 \description{
-  You should not be calling this directly. This is not as
-  reliable a strategy and likely to be superceeded...
+You should not be calling this directly. This is not as
+reliable a strategy and likely to be superceeded...
 }
 \examples{
 \dontrun{
@@ -30,10 +29,10 @@ junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose=T)
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+- http://openmx.psyc.virginia.edu/
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

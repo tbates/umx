@@ -2,7 +2,7 @@
 \alias{umxFitIndices}
 \title{umxFitIndices}
 \usage{
-  umxFitIndices(model, indepfit)
+umxFitIndices(model, indepfit)
 }
 \arguments{
   \item{modelfit}{an \code{\link{mxModel}}}
@@ -10,10 +10,10 @@
   \item{indepfit}{an \code{\link{mxModel}}}
 }
 \value{
-  -
+-
 }
 \description{
-  A list of fit indices
+A list of fit indices
 }
 \examples{
 \dontrun{
@@ -34,11 +34,11 @@ umxFitIndices(m1, m1_ind)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxSummary}}, \code{\link{umxCompare}},
-  \code{\link{summary}}, \code{\link{umxLabel}},
-  \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxSummary}}, \code{\link{umxCompare}},
+\code{\link{summary}}, \code{\link{umxLabel}},
+\code{\link{umxRun}}, \code{\link{umxStart}}
 }
 

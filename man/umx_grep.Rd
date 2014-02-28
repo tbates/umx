@@ -2,8 +2,7 @@
 \alias{umx_grep}
 \title{umx_grep}
 \usage{
-  umx_grep(df, grepString, output = "both",
-    ignore.case = T, useNames = F)
+umx_grep(df, grepString, output = "both", ignore.case = T, useNames = F)
 }
 \arguments{
   \item{df}{an \code{\link{data.frame}} to search the
@@ -21,10 +20,10 @@
   the labels}
 }
 \value{
-  - list of matched column name and labels
+- list of matched column name and labels
 }
 \description{
-  search the labels of an SPSS file
+search the labels of an SPSS file
 }
 \examples{
 umx_grep(mtcars, "hp", output="both", ignore.case=T)
@@ -35,10 +34,10 @@ umx_grep(spss_df, "labeltext", output = "name")
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

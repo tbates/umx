@@ -2,8 +2,7 @@
 \alias{umxGetParameters}
 \title{umxGetParameters}
 \usage{
-  umxGetParameters(inputTarget, regex = NA, free = NA,
-    verbose = F)
+umxGetParameters(inputTarget, regex = NA, free = NA, verbose = F)
 }
 \arguments{
   \item{inputTarget}{An object to get parameters from:
@@ -18,9 +17,9 @@
   \item{verbose}{How much feedback to give}
 }
 \description{
-  Get the parameter labels from a model. Like
-  \code{\link{omxGetParameters}}, but supercharged with
-  regular expressions for more power and ease!
+Get the parameter labels from a model. Like
+\code{\link{omxGetParameters}}, but supercharged with
+regular expressions for more power and ease!
 }
 \examples{
 require(OpenMx)
@@ -44,10 +43,10 @@ umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{omxGetParameters}}, \code{\link{umxLabel}},
-  \code{\link{umxRun}}
+- \code{\link{omxGetParameters}}, \code{\link{umxLabel}},
+\code{\link{umxRun}}
 }
 

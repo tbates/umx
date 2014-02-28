@@ -2,8 +2,7 @@
 \alias{umxReportTime}
 \title{umxReportTime}
 \usage{
-  umxReportTime(model, formatStr = "H \%H M \%M S \%OS3",
-    tz = "GMT")
+umxReportTime(model, formatStr = "H \%H M \%M S \%OS3", tz = "GMT")
 }
 \arguments{
   \item{model}{An \code{\link{mxModel}} from which to get
@@ -15,8 +14,8 @@
   \item{tz}{The time zone in which the model was executed}
 }
 \description{
-  A function to compactly report how long a model took to
-  execute
+A function to compactly report how long a model took to
+execute
 }
 \examples{
 require(OpenMx)
@@ -34,9 +33,9 @@ m1 = umxRun(m1, setLabels = T, setValues = T)
 umxReportTime(m1)
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{summary}}, \code{\link{umxRun}}
+- \code{\link{summary}}, \code{\link{umxRun}}
 }
 

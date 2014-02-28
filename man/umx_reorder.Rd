@@ -2,7 +2,7 @@
 \alias{umx_reorder}
 \title{umx_reorder}
 \usage{
-  umx_reorder(old, newOrder)
+umx_reorder(old, newOrder)
 }
 \arguments{
   \item{old}{a square matrix of correlation or covariances
@@ -12,12 +12,12 @@
   in}
 }
 \value{
-  - the re-ordered (and/or resized) matrix
+- the re-ordered (and/or resized) matrix
 }
 \description{
-  Reorder the variables in a correlation matrix. Can also
-  remove one or more variables from a matrix using this
-  function
+Reorder the variables in a correlation matrix. Can also
+remove one or more variables from a matrix using this
+function
 }
 \examples{
 oldMatrix = cov(mtcars)
@@ -25,10 +25,10 @@ umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
 umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 
