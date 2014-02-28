@@ -79,20 +79,11 @@ Still working fine:
 
 # Step 3: Make a windowed version
 
-First, let's make up a weight variable which preferences data in the middle of the dataset.
+First, let's make up a simple ramp-style weight variable which assumes we've want to weight scores proportional to their score for some reason.
 
 ```S
-moderatorVariable = rnorm(nSubs)
-modSD             = sd(moderatorVariable)
-bw                = 2 * nSubs^(-.2) * modSD
-zx                = (moderatorVariable - 0)/bw
-k                 = (1 / sqrt(2 * pi)) * exp((-(zx)^2) / 2)
-weightVector      = k/.399 # plot(moderatorVariable, w) # normal-curve yumminess
-plot(moderatorVariable, weightVector) # normal-curve yumminess
-
+weightVector = seq(0,1, length = nSubs)*2
 ```
-
-![a plot](/developer/examples/weighting/normal_window.png "Normal weight window over the data")
 
 Now let's apply these weights. What we're going to do is put our model, `m1` inside a container model (I'm calling it "windowed")
 
@@ -128,11 +119,11 @@ within(out.all, {
 
 |   | name  | Estimate | Std.Error | weighted_Est | weighted_SE | SE_Percent |
 |:--|:------|:---------|:----------|:-------------|:------------|:-----------|
-| 1 | XX    | 0.994    | 0.044     | 1.011        | 0.068       | 0.21       |
-| 2 | XY    | 0.481    | 0.035     | 0.422        | 0.051       | 0.19       |
-| 3 | YY    | 1.009    | 0.045     | 0.964        | 0.064       | 0.17       |
-| 4 | meanX | -0.005   | 0.032     | -0.014       | 0.048       | 0.20       |
-| 5 | meanY | 0.032    | 0.032     | 0.025        | 0.046       | 0.18       |
+| 1 | XX    | 0.994    | 0.044     | 0.708        | 0.032       | -0.16      |
+| 2 | XY    | 0.481    | 0.035     | 0.363        | 0.029       | -0.09      |
+| 3 | YY    | 1.009    | 0.045     | 0.967        | 0.043       | -0.02      |
+| 4 | meanX | -0.005   | 0.032     | 0.549        | 0.027       | -0.08      |
+| 5 | meanY | 0.032    | 0.032     | 0.302        | 0.031       | -0.02      |
 
 As you can see above, the estimates are similar (but a bit off the population), and the SE has increased. Both these are side effects of not taking account (fully weighting) all the data.
 
