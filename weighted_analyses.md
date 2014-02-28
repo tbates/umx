@@ -8,16 +8,14 @@ Turns out it's pretty straight forward, but does require a little bit of extra w
 The workflow is as follows:
 
 1. Make your model as you would unweighted
-2. set `vector = TRUE` in the mx
+2. set `vector = TRUE` in `mxFitFunctionML()`
+3. Add a container model which weights the fit vector and optimizes on that.
+
+# Setup: load libraries and simulate two variables X and Y, which covary
 
 ```S
 require("OpenMx"); require(MASS); set.seed(200)
 
-```
-
-# Simulate two variables X and Y, which covary
-
-```S
 rs = .5; nSubs = 1000
 selVars <- c('X','Y')
 nVar = length(selVars)
@@ -36,11 +34,25 @@ m1 <- mxModel("vector_is_FALSE",
 	mxData(observed = testData, type = "raw")
 )
 m1 <- mxRun(m1); round(omxGetParameters(m1),2)
-# summary shows all parameters recovered fine.
-round(cov(testData),2)
 ```
 
+| XX   | XY   | YY   | meanX | meanY |
+|:-----|:-----|:-----|:------|:------|
+| 0.99 | 0.48 | 1.01 | 0.00  | 0.03  |
+
+Summary shows all parameters recovered fine.
+
+```S
+round(cov(testData), 2)
+```
+
+|   | X    | Y    |
+|:--|:-----|:-----|
+| X | 0.99 | 0.48 |
+| Y | 0.48 | 1.01 |
+
 # Now: Switch to vector
+
 ```S
 mc <- mxModel("vector_is_TRUE", 
 	mxModel(m1, name = "vector",
@@ -49,13 +61,21 @@ mc <- mxModel("vector_is_TRUE",
 		mxFitFunctionML(vector = T)
 	)
 )
-```S
+
+```
 
 All good! We've now done what OpenMx does for us by default: Assembled a likelihood to optimise against based on the likelihoods of each row given the current parameter estimates.
 
 ```S
-mc <- mxRun(mc); round(omxGetParameters(mc),2)
+mc <- mxRun(mc); round(omxGetParameters(mc), 2)
 ```S
+
+Still working fine:
+
+| XX   | XY   | YY   | meanX | meanY |
+|:-----|:-----|:-----|:------|:------|
+| 0.99 | 0.48 | 1.01 | 0.00  | 0.03  |
+
 
 # Step 3: Make a windowed version
 
@@ -71,6 +91,9 @@ weightVector      = k/.399 # plot(moderatorVariable, w) # normal-curve yumminess
 plot(moderatorVariable, weightVector) # normal-curve yumminess
 
 ```
+
+![a plot](/umx/developer/examples/weighting/normal_window.png "Normal weight window over the data")
+
 Now let's apply these weights. What we're going to do is put our model, `m1` inside a container model (I'm calling it "windowed")
 
 That container model contains a matrix ("*weights*") which is the weightVector we made above, AND an algebra that applies those weights to the logged fits from `m1`
