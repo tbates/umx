@@ -111,16 +111,33 @@ names(out.mw) <- c("weighted_Est", "weighted_SE")
 out.m1 = umx_round(summary(m1)$parameters[,c("name","Estimate", "Std.Error")],3, coerce = F)
 out.all = cbind(out.m1, out.mw)
 ```
-Now, as you can see below, the estimates are similar (but a bit off the population), and the SE has increased. Both these are side effects of not taking account (fully weighting) all the data.
+
+Now, let's pull the estimates and SEs from m1, and from mw (weighted m1) and compare...
+
+```S
+out.mw = umx_round(summary(mw)$parameters[,c("Estimate", "Std.Error")],3, coerce = F)
+names(out.mw) <- c("weighted_Est", "weighted_SE")
+out.m1 = umx_round(summary(m1)$parameters[,c("name","Estimate", "Std.Error")],3, coerce = F)
+out.all = cbind(out.m1, out.mw)
+
+within(out.all, {
+	SE_Percent = round(((weighted_SE - Std.Error)/(weighted_SE + Std.Error)),2)
+	out.all
+})
+```
+
+|   | name  | Estimate | Std.Error | weighted_Est | weighted_SE | SE_Percent |
+|:--|:------|:---------|:----------|:-------------|:------------|:-----------|
+| 1 | XX    | 0.994    | 0.044     | 1.011        | 0.068       | 0.21       |
+| 2 | XY    | 0.481    | 0.035     | 0.422        | 0.051       | 0.19       |
+| 3 | YY    | 1.009    | 0.045     | 0.964        | 0.064       | 0.17       |
+| 4 | meanX | -0.005   | 0.032     | -0.014       | 0.048       | 0.20       |
+| 5 | meanY | 0.032    | 0.032     | 0.025        | 0.046       | 0.18       |
+
+As you can see above, the estimates are similar (but a bit off the population), and the SE has increased. Both these are side effects of not taking account (fully weighting) all the data.
 
 Of course you will use weighting to appropriately weight cases to estimate the population values of your model parameters.
 
 Cool runnings,
 tim
 
-```S
-within(out.all, {
-	SE_Percent = round(((weighted_SE - Std.Error)/(weighted_SE + Std.Error)),2)
-	out.all
-})
-```
