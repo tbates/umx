@@ -844,7 +844,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' anova.report.F
 #'
 #' Generate a text-format report of the F values in an ANOVA.
-#' Like anova.report.F(model) # "F(495,1) = 0.002"
+#' Like anova.report.F(model) # --> "F(495,1) = 0.002"
 #'
 #' @param model an \code{\link{lm}} model to report F for.
 #' @param digits how many numbers after the decimal for F (p-value is APA-style)
@@ -1408,7 +1408,7 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 }
 #' umxAnovaReport
 #'
-#' umxAnovaReport is a convenience function to format results for journals. There are others. Bt I made this one.
+#' umxAnovaReport is a convenience function to format results for journals. There are others. But I made this one.
 #' If you give it the output of an lm, it runs anova() and lm.beta(), and puts that together in a regression table...
 #' Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
 #' @param model1 An \code{\link{lm}} model to make a table from 
@@ -1424,6 +1424,7 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' umxAnovaReport(model)
 
 umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", printDIC = F) {
+	# TODO merge with anova.report.F, deprecate the latter
 	if(!is.null(model2)){
 		# F(-2, 336) =  0.30, p = 0.74
 		a = anova(model1, model2)
