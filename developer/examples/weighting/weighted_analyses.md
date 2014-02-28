@@ -1,13 +1,13 @@
 # Weighted analyses
 Often people have datasets where different rows have different weights: more weight needs to be given to some subjects than others.
 
-So, how do you do this in OpenMx?
+So, how do you do this in [OpenMx](http://openmx.psyc.virginia.edu)?
 
 Turns out it's pretty straight forward, but does require a little bit of extra work. 
 
 The workflow is as follows:
 
-1. Make your model as you would unweighted
+1. Make your model as you would unweighted and…
 2. set `vector = TRUE` in `mxFitFunctionML()`
 3. Add a container model which weights the fit vector and optimizes on that.
 
@@ -15,18 +15,16 @@ The workflow is as follows:
 
 ```S
 require("OpenMx"); require(MASS); set.seed(200)
-
-rs = .5; nSubs = 1000
+r = .5; nSubs = 1000
 selVars <- c('X','Y')
 nVar = length(selVars)
-xy <- mvrnorm (nSubs, c(0,0), matrix(c(1,rs,rs,1),2,2))
-testData <- data.frame(xy) 
-names(testData) <- selVars
-
+xy <- mvrnorm(nSubs, c(0,0), matrix(c(1, r, r, 1), 2 , 2))
+testData <- data.frame(xy); names(testData) <- selVars
 ```
 # Step 1: Make the standard unweighted model
+
 ```S
-m1 <- mxModel("vector_is_FALSE", 
+m1 <- mxModel("regularModel", 
 	mxMatrix(name = "expCov", type = "Symm", nrow = nVar, ncol = nVar, free = T, labels = c("XX","XY","YY"), values = var(testData)),
 	mxMatrix(name = "expMean", type = "Full", nrow = 1, ncol = nVar, free = T, labels = c("meanX","meanY"), values = 0, ubound=1),
 	mxExpectationNormal(covariance = "expCov", means = "expMean", dimnames = selVars),
@@ -53,18 +51,22 @@ round(cov(testData), 2)
 
 # Now: Switch to vector
 
+You'd do this in one go, of course, but for didactic purposes, it's nice to see that a vector FitFunction 
+requires that you also compute a single optimisable number based on that fit vector. In this case
+-2 × the sum of the logged likelihoods.
+
 ```S
 mc <- mxModel("vector_is_TRUE", 
 	mxModel(m1, name = "vector",
-		mxAlgebra(name = "minus2LL", -2 * sum(log(vector.fitfunction)) ),
-		mxFitFunctionAlgebra("minus2LL"),
 		mxFitFunctionML(vector = T)
-	)
+	),
+	mxAlgebra(name = "minus2LL", -2 * sum(log(vector.fitfunction)) ),
+	mxFitFunctionAlgebra("minus2LL")
 )
 
 ```
 
-All good! We've now done what OpenMx does for us by default: Assembled a likelihood to optimise against based on the likelihoods of each row given the current parameter estimates.
+All good! We've now done what OpenMx does for us by default: Assembled a likelihood to optimize against based on the likelihoods of each row given the current parameter estimates.
 
 ```S
 mc <- mxRun(mc); round(omxGetParameters(mc), 2)
@@ -75,7 +77,6 @@ Still working fine:
 | XX   | XY   | YY   | meanX | meanY |
 |:-----|:-----|:-----|:------|:------|
 | 0.99 | 0.48 | 1.01 | 0.00  | 0.03  |
-
 
 # Step 3: Make a windowed version
 
@@ -96,6 +97,7 @@ mw <- mxModel("windowed",
 	mxAlgebra(name = "minus2LL", -2 * sum(weights * log(vector.fitfunction)) ),
 	mxFitFunctionAlgebra("minus2LL")
 )
+
 mw <- mxRun(mw); round(omxGetParameters(mw),4)
 out.mw = umx_round(summary(mw)$parameters[,c("Estimate", "Std.Error")],3, coerce = F)
 names(out.mw) <- c("weighted_Est", "weighted_SE")
@@ -131,4 +133,3 @@ Of course you will use weighting to appropriately weight cases to estimate the p
 
 Cool runnings,
 tim
-
