@@ -80,7 +80,7 @@ Still working fine:
 
 # Step 3: Make a windowed version
 
-First, let's make up a simple ramp-style weight variable which assumes we've want to weight scores proportional to their score for some reason.
+First, let's make up a simple ramp-style weight variable which assumes we've want to weight scores proportional to their position in the dataset for some reason.
 
 ```S
 weightVector = seq(0,1, length = nSubs)*2
@@ -127,7 +127,7 @@ within(out.all, {
 | 4 | meanX | -0.005   | 0.032     | 0.549        | 0.027       | -0.08      |
 | 5 | meanY | 0.032    | 0.032     | 0.302        | 0.031       | -0.02      |
 
-As you can see above, the estimates are similar (but a bit off the population), and the SE has increased. Both these are side effects of not taking account (fully weighting) all the data.
+As you can see above, the estimates are quite a way off (but if our window was a better model of the population, they'd be closer to the truth…), and the SE has shrunk. SE can go up or down after weighting as a side effect of confidence about parameters withing subsets of the data that might be smaller but more homogeneous.
 
 Of course you will use weighting to appropriately weight cases to estimate the population values of your model parameters.
 
