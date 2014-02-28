@@ -68,7 +68,7 @@ All good! We've now done what OpenMx does for us by default: Assembled a likelih
 
 ```S
 mc <- mxRun(mc); round(omxGetParameters(mc), 2)
-```S
+```
 
 Still working fine:
 
