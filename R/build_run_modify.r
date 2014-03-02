@@ -254,8 +254,8 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLa
 			# TODO: Update to omxSaturated() and omxIndependenceModel()
 			# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
 			model_sat = umxSaturated(model, evaluate = T, verbose = F)
-			model@output$IndependenceLikelihood = as.numeric(-2*logLik(model_sat$Ind))
-			model@output$SaturatedLikelihood    = as.numeric(-2*logLik(model_sat$Sat))
+			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(model_sat$Ind))
+			model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(model_sat$Sat))
 		}
 	}
 	if(!is.null(comparison)){ 
@@ -1030,175 +1030,213 @@ umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbo
 # = Borrowed for tutorial purposes =
 # ==================================
 
-umxSummaryACE <- function(fit, accuracy = 2, dotFilename = NULL, returnStd = F, extended = F, showRg = F, showStd = T, parentModel = NA, CIs = F, zero.print = ".") {
-	# Purpose: summarise a Cholesky model, as returned by makeACE_2Group
-	# use case: summaryACEFit(fit, dotFilename=NA);
-	# summaryACEFit(safeFit, dotFilename = "name", showStd = T)
-	# stdFit = summaryACEFit(fit, accuracy=2, dotFilename="name", returnStd=F, extended=F, showRg=T, showStd=T,parentModel=NA, CIs=T);
-	if(length(fit)>1){ # call self recursively
+#' umxSummaryACE
+#'
+#' Summarise a Cholesky model, as returned by umxACE
+#'
+#' @param fit an \code{\link{mxModel}} to summarize
+#' @param accuracy rounding (default = 2)
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param returnStd Whether to return the standardized form of the model (default = F)
+#' @param extended how much to report (F)
+#' @param showRg = whether to show the genetic correlations (F)
+#' @param showStd = whether to show the standardized model (T)
+#' @param comparison you can run mxCompare on a comparison model (NULL)
+#' @param CIs Whether to show Confidence intervals if they exist (T)
+#' @param zero.print How to show zeros (".")
+#' @param report If 3, then open an html table of the results
+#' @return - optional \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxACE}}, \code{\link{umxIP}}, \code{\link{umxCP}},  \code{\link{umxGxE}}, 
+#' \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(twinData)
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' selDVs = c("bmi1","bmi2")
+#' mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
+#' dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' m1 = umxRun(m1)
+#' umxSummaryACE(m1)
+#' \dontrun{
+#' umxSummaryACE(m1, dotFilename = NA);
+#' umxSummaryACE(m1, dotFilename = "name", showStd = T)
+#' stdFit = umxSummaryACE(m1, returnStd = T);
+#' }
+
+umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = F, extended = F, showRg = F, showStd = T, comparison = NULL, CIs = T, zero.print = ".", report = 1, accuracy = NULL) {
+	if(!is.null(accuracy)){
+		message("in umxSummaryACE accuracy parameter is deprecated.. replace with digits = ")
+		digits = accuracy
+	}
+	if(typeof(fit) == "list"){ # call self recursively
 		for(thisFit in fit) {
-			message("Output for Model: ",thisFit@name)
-			summaryACEFit(thisFit, accuracy=accuracy, dotFilename=dotFilename, returnStd=returnStd, extended=extended, showRg=showRg, showStd=showStd, parentModel=NA, CIs=CIs)
+			message("Output for Model: ", thisFit@name)
+			umxSummaryACE(thisFit, digits = digits, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, zero.print = zero.print, report = report)
 		}
 	} else {
-		if(!class(parentModel)=="logical"){
-			message("Comparison of fit")
-			print(mxCompare(parentModel, fit))
-		}
-		logLikelihood = mxEval(objective, fit); 
-		message("-2 \u00d7 log(Likelihood)") # 00d7 is unicode for non-ascii multiplication sign
-		print(logLikelihood[1,1]);
-		selDVs = dimnames(fit$top.mzCov)[[1]]
-		# genEpi_TableFitStatistics(fit, extended=extended)
-		nVar <- length(selDVs)/2;
-		# Calculate standardised variance components
-		a  <- mxEval(top.a, fit); # Path coefficients
-		c  <- mxEval(top.c, fit);
-		e  <- mxEval(top.e, fit);
-		A  <- mxEval(top.A, fit); # Variances
-		C  <- mxEval(top.C, fit);
-		E  <- mxEval(top.E, fit);
-		Vtot = A+C+E;             # Total variance
-		I  <- diag(nVar); # nVar Identity matrix
-		SD <- solve(sqrt(I*Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
-	
-		# Standardized _path_ coefficients ready to be stacked together
-		a_std <- SD %*% a; # Standardized path coefficients
-		c_std <- SD %*% c;
-		e_std <- SD %*% e;
-		if(showStd){
-			message("Standardized solution")
-			aClean = a_std
-			cClean = c_std
-			eClean = e_std
-		} else {
-			message("Raw solution")
-			aClean = a
-			cClean = c
-			eClean = e
-		}
-		aClean[upper.tri(aClean)]=NA
-		cClean[upper.tri(cClean)]=NA
-		eClean[upper.tri(eClean)]=NA
-		Estimates = data.frame(cbind(aClean,cClean,eClean), row.names=selDVs[1:nVar]);
-		names(Estimates) = paste(rep(c("a", "c", "e"), each = nVar), rep(1:nVar), sep = "");
-		umx_print(Estimates, digits = accuracy, zero.print = ".") # this function is created in genEpi.lib
-		if(extended==TRUE) {
-			message("Unstandardized path coefficients")
-			aClean = a
-			cClean = c
-			eClean = e
-			aClean[upper.tri(aClean)]=NA
-			cClean[upper.tri(cClean)]=NA
-			eClean[upper.tri(eClean)]=NA
-			unStandardizedEstimates = data.frame(cbind(aClean,cClean,eClean), row.names=selDVs[1:nVar]);
-			names(unStandardizedEstimates) = paste(rep(c("a", "c", "e"), each=nVar), rep(1:nVar), sep="");
-			umx_print(unStandardizedEstimates, digits=accuracy, zero.print = ".")
-		}
-
-		# Pre & post multiply covariance matrix by inverse of standard deviations
-		if(showRg) {
-			message("Genetic correlations")
-			NAmatrix <- matrix(NA, nVar, nVar);
-			rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error=function(err) return(NAmatrix)); # genetic correlations
-			rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error=function(err) return(NAmatrix)); # shared environmental correlations
-			rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error=function(err) return(NAmatrix)); # Unique environmental correlations
-			rAClean = rA
-			rCClean = rC
-			rEClean = rE
-			rAClean[upper.tri(rAClean)]=NA
-			rCClean[upper.tri(rCClean)]=NA
-			rEClean[upper.tri(rEClean)]=NA
-			genetic_correlations  = data.frame(cbind(rAClean, rCClean, rEClean), row.names=selDVs[1:nVar] );
-			names(genetic_correlations)<-selDVs[1:nVar]
-		 	# Make a nice-ish table
-			names(genetic_correlations)= paste(rep(c("rA", "rC", "rE"), each=nVar), rep(1:nVar), sep="");
-			umx_print(genetic_correlations, digits=accuracy, zero.print = ".")
-		}
-		stdFit = fit
-		if(CIs) {
-			# TODO Need to refactor this into some function calls...
-			if(all(dim(fit@output$confidenceIntervals) == c(0,2))){
-				message("You requested me to print out CIs, but there are none...\n
-Perhaps you'd like to add 'addStd = T' to your makeACE_2Group() call?")
-			} else {
-				message("Computing CI-based diagram!")
-				# get the lower and uppper CIs as a dataframe
-				CIlist = data.frame(fit@output$confidenceIntervals)
-				# Drop rows fixed to zero
-				CIlist = CIlist[(CIlist$lbound!=0 & CIlist$ubound!=0),]
-
-				# These can be names ("top.a_std[1,1]") or labels ("a11")
-				# imxEvalByName finds them both
-				outList = c();
-				for(aName in row.names(CIlist)) {
-					outList <- append(outList, imxEvalByName(aName,fit))
-				}
-				# Add estimates into the CIlist
-				CIlist$estimate = outList
-				# reorder to match summary
-				CIlist <- CIlist[,c("lbound","estimate", "ubound")] 
-				CIlist$fullName = row.names(CIlist)
-				# Initialise empty matrices for the standardized results
-				rows = dim(fit@submodels$top@matrices$a@labels)[1]
-				cols = dim(fit@submodels$top@matrices$a@labels)[2]
-				a_std = c_std = e_std= matrix(NA, rows, cols)
-
-				# iterate over each CI
-				labelList = imxGenerateLabels(fit)			
-				rowCount = dim(CIlist)[1]
-
-				for(n in 1:rowCount) { # n=1
-					thisName = row.names(CIlist)[n] # thisName = "a11"
-					if(!hasSquareBrackets(thisName)) {
-						# upregulate to a bracket name
-						nameParts = labelList[which(row.names(labelList)==thisName),]
-						CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep="")
-					}
-					fullName = CIlist$fullName[n]
-
-					thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
-					thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
-					thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
-					CIparts = round(CIlist[n, c("estimate", "lbound", "ubound")], 2)
-					thisString = paste(CIparts[1], " (",CIparts[2], ":",CIparts[3], ")", sep="")
-					# print(list(CIlist,labelList,rowCount,fullName,thisMatrixName))
-
-					if(grepl("^a", thisMatrixName)) {
-						a_std[thisMatrixRow, thisMatrixCol] = thisString
-					} else if(grepl("^c", thisMatrixName)){
-						c_std[thisMatrixRow, thisMatrixCol] = thisString
-					} else if(grepl("^e", thisMatrixName)){
-						e_std[thisMatrixRow, thisMatrixCol] = thisString
-					} else{
-						stop(paste("illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
-					}
-				}
-				print(a_std)
-				print(c_std)
-				print(e_std)
-			}
-		} #use CIs
-		stdFit@submodels$top@matrices$a@values = a_std
-		stdFit@submodels$top@matrices$c@values = c_std
-		stdFit@submodels$top@matrices$e@values = e_std
-		if(!is.null(dotFilename)) {
-			message("making dot file")
-			if(showStd){
-				# TODO import this function...
-				graphViz_Cholesky(stdFit, selDVs, dotFilename)
-			}else{
-				graphViz_Cholesky(fit, selDVs, dotFilename)
-			}
-		}
-		if(returnStd) {
-			return(stdFit)
-		}
-
-		# MZc = mxEval(MZ.expCov,  fit);
-		# DZc = mxEval(DZ.expCov,  fit);
-		# M   = mxEval(MZ.expMean, fit);
+	umx_has_been_run(fit, stop = T)
+	if(is.null(comparison)){
+		message("-2 \u00d7 log(Likelihood)") # ×
+		print(-2 * logLik(fit));			
+	} else {
+		message("Comparison of fit with parent model:")
+		print(umx::umxCompare(comparison, fit, digits = 3))
 	}
+	selDVs = dimnames(fit$top.mzCov)[[1]]
+	# genEpi_TableFitStatistics(fit, extended=extended)
+	nVar <- length(selDVs)/2;
+	# Calculate standardised variance components
+	a  <- mxEval(top.a, fit); # Path coefficients
+	c  <- mxEval(top.c, fit);
+	e  <- mxEval(top.e, fit);
+
+	A  <- mxEval(top.A, fit); # Variances
+	C  <- mxEval(top.C, fit);
+	E  <- mxEval(top.E, fit);
+	Vtot = A + C + E;         # Total variance
+	I  <- diag(nVar);         # nVar Identity matrix
+	SD <- solve(sqrt(I*Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
+
+	# Standardized _path_ coefficients ready to be stacked together
+	a_std <- SD %*% a; # Standardized path coefficients
+	c_std <- SD %*% c;
+	e_std <- SD %*% e;
+
+	if(showStd){
+		message("Standardized solution")
+		aClean = a_std
+		cClean = c_std
+		eClean = e_std
+	} else {
+		message("Raw solution")
+		aClean = a
+		cClean = c
+		eClean = e
+	}
+
+	aClean[upper.tri(aClean)] = NA
+	cClean[upper.tri(cClean)] = NA
+	eClean[upper.tri(eClean)] = NA
+	Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = selDVs[1:nVar]);
+
+	names(Estimates) = paste(rep(c("a", "c", "e"), each = nVar), rep(1:nVar), sep = "");
+
+	Estimates = umx::umx_print(Estimates, digits = digits, zero.print = ".")
+	if(report == 3){
+		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
+	}else{
+		
+	}
+
+	if(extended == TRUE) {
+		message("Unstandardized path coefficients")
+		aClean = a
+		cClean = c
+		eClean = e
+		aClean[upper.tri(aClean)] = NA
+		cClean[upper.tri(cClean)] = NA
+		eClean[upper.tri(eClean)] = NA
+		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = selDVs[1:nVar]);
+		names(unStandardizedEstimates) = paste(rep(c("a", "c", "e"), each = nVar), rep(1:nVar), sep = "");
+		umx_print(unStandardizedEstimates, digits = digits, zero.print = ".")
+	}
+
+	# Pre & post multiply covariance matrix by inverse of standard deviations
+	if(showRg) {
+		message("Genetic correlations")
+		NAmatrix <- matrix(NA, nVar, nVar);
+		rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error = function(err) return(NAmatrix)); # genetic correlations
+		rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error = function(err) return(NAmatrix)); # shared environmental correlations
+		rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error = function(err) return(NAmatrix)); # Unique environmental correlations
+		rAClean = rA
+		rCClean = rC
+		rEClean = rE
+		rAClean[upper.tri(rAClean)] = NA
+		rCClean[upper.tri(rCClean)] = NA
+		rEClean[upper.tri(rEClean)] = NA
+		genetic_correlations = data.frame(cbind(rAClean, rCClean, rEClean), row.names = selDVs[1:nVar] );
+		names(genetic_correlations) <- selDVs[1:nVar]
+	 	# Make a nice-ish table
+		names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each=nVar), rep(1:nVar));
+		umx_print(genetic_correlations, digits=digits, zero.print = ".")
+	}
+	stdFit = fit
+	hasCIs = umx_has_CIs(fit)
+	if(hasCIs & CIs) {
+		# TODO Need to refactor this into some function calls…
+		# TODO and then add to umxSummaryIP and CP
+		message("Creating CI-based report!")
+		# CIs exist, get the lower and uppper CIs as a dataframe
+		CIlist = data.frame(fit@output$confidenceIntervals)
+		# Drop rows fixed to zero
+		CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
+		# These can be names ("top.a_std[1,1]") or labels ("a11")
+		# imxEvalByName finds them both
+		outList = c();
+		for(aName in row.names(CIlist)) {
+			outList <- append(outList, imxEvalByName(aName, fit))
+		}
+		# Add estimates into the CIlist
+		CIlist$estimate = outList
+		# reorder to match summary
+		CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
+		CIlist$fullName = row.names(CIlist)
+		# Initialise empty matrices for the standardized results
+		rows = dim(fit@submodels$top@matrices$a@labels)[1]
+		cols = dim(fit@submodels$top@matrices$a@labels)[2]
+		a_std = c_std = e_std = matrix(NA, rows, cols)
+
+		# iterate over each CI
+		labelList = imxGenerateLabels(fit)			
+		rowCount = dim(CIlist)[1]
+
+		for(n in 1:rowCount) { # n = 1
+			thisName = row.names(CIlist)[n] # thisName = "a11"
+			# convert labels to [bracket] style
+				if(!umx::umx_has_square_brackets(thisName)) {
+				nameParts = labelList[which(row.names(labelList) == thisName),]
+				CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
+			}
+			fullName = CIlist$fullName[n]
+
+			thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
+			thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
+			thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
+			CIparts = round(CIlist[n, c("estimate", "lbound", "ubound")], 2)
+			thisString = paste(CIparts[1], " (",CIparts[2], ":",CIparts[3], ")", sep="")
+			# print(list(CIlist, labelList, rowCount, fullName, thisMatrixName))
+
+			if(grepl("^a", thisMatrixName)) {
+				a_std[thisMatrixRow, thisMatrixCol] = thisString
+			} else if(grepl("^c", thisMatrixName)){
+				c_std[thisMatrixRow, thisMatrixCol] = thisString
+			} else if(grepl("^e", thisMatrixName)){
+				e_std[thisMatrixRow, thisMatrixCol] = thisString
+			} else{
+				stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
+			}
+		}
+		print(a_std)
+		print(c_std)
+		print(e_std)
+	}
+	} # Use CIs
+	stdFit@submodels$top@matrices$a@values = a_std
+	stdFit@submodels$top@matrices$c@values = c_std
+	stdFit@submodels$top@matrices$e@values = e_std
+	if(!is.null(dotFilename)) {
+		message("making dot file")
+		umxPlotACE(fit, dotFilename, std = showStd)
+	}
+	if(returnStd) {
+		return(stdFit)
+	}
+	# MZc = mxEval(MZ.expCov,  fit);
+	# DZc = mxEval(DZ.expCov,  fit);
+	# M   = mxEval(MZ.expMean, fit);
 }
 
 # ===========

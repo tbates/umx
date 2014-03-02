@@ -1127,6 +1127,7 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' logLik(m1)
 #' AIC(m1)
 logLik.MxModel <- function(model) {
 	Minus2LogLikelihood <- NA
