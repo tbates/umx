@@ -2,8 +2,7 @@
 \alias{umx_cor}
 \title{umx_cor}
 \usage{
-  umx_cor(X, df = nrow(X) - 2,
-    use = "pairwise.complete.obs", digits = 3)
+umx_cor(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3)
 }
 \arguments{
   \item{X}{a matrix or dataframe}
@@ -15,10 +14,10 @@
   \item{digits}{rounding of answers}
 }
 \value{
-  - matrix of correlations and p-values
+- matrix of correlations and p-values
 }
 \description{
-  Report correlations and their p-values
+Report correlations and their p-values
 }
 \examples{
 \dontrun{
@@ -26,10 +25,10 @@ umx_cor(myFADataRaw[1:8,])
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

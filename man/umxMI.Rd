@@ -2,8 +2,8 @@
 \alias{umxMI}
 \title{umxMI}
 \usage{
-  umxMI(model = NA, numInd = 10, typeToShow = "both",
-    decreasing = T, cache = T)
+umxMI(model = NA, numInd = 10, typeToShow = "both", decreasing = T,
+  cache = T)
 }
 \arguments{
   \item{model}{An \code{\link{mxModel}} for which to report
@@ -20,8 +20,8 @@
   time-consuming results}
 }
 \description{
-  umxMI A function to report the top modifications which
-  would improve fit.
+umxMI A function to report the top modifications which
+would improve fit.
 }
 \examples{
 \dontrun{
@@ -42,10 +42,10 @@ umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxAdd1}}, \code{\link{umxDrop1}},
-  \code{\link{umxRun}}, \code{\link{umxSummary}}
+- \code{\link{umxAdd1}}, \code{\link{umxDrop1}},
+\code{\link{umxRun}}, \code{\link{umxSummary}}
 }
 

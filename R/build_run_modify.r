@@ -1,15 +1,26 @@
-# https://r-forge.r-project.org/project/admin/?group_id=1745
-# http://adv-r.had.co.nz/Philosophy.html
-# https://github.com/hadley/devtools
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
+
 # setwd("~/bin/umx"); 
 # 
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # require(OpenMx); require(umx); ?umx
 # devtools::build("~/bin/umx")
 # devtools::check("~/bin/umx")
+# devtools::check_doc(pkg = "~/bin/umx")
 # devtools::load_all("~/bin/umx")
-# devtools::dev_help("umxX")
+# devtools::dev_help("umx-package.Rd")
 # devtools::show_news("~/bin/umx")
+# devtools::run_examples("~/bin/umx")
+
+# devtools::create()
+# devtools::add_travis();
+# devtools::update_version();
+# devtools::news();
+# devtools::create_README()
+
+# https://r-forge.r-project.org/project/admin/?group_id=1745
+# http://adv-r.had.co.nz/Philosophy.html
+# https://github.com/hadley/devtools
 
 # ========================================
 # = Model building and modifying helpers =
@@ -26,13 +37,27 @@
 #' @param onlyTouchZeros Don't start things that appear to have already been started (useful for speeding \code{\link{umxReRun}})
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
-#' \dontrun{
-#' model = umxStart(model)
-#' }
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' mxEval(S,m1) # default variances are 0
+#' m1 = umxStart(m1)
+#' mxEval(S,m1) # plausible variances
+#' # # TODO get this working
+#' # umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
+
 umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {
 		xmuStart_value_list(x = obj, sd = NA, n = 1)
@@ -103,6 +128,22 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"
+#' m1 = umxLabel(m1)
+#' umxGetParameters(m1, free = T) # now all labeled regularly "G_to_x1", "x4_with_x4", etc.
 #' \dontrun{
 #'  model = umxLabel(model)
 #'  umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
@@ -213,8 +254,8 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLa
 			# TODO: Update to omxSaturated() and omxIndependenceModel()
 			# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
 			model_sat = umxSaturated(model, evaluate = T, verbose = F)
-			model@output$IndependenceLikelihood = as.numeric(-2*logLik(model_sat$Ind))
-			model@output$SaturatedLikelihood    = as.numeric(-2*logLik(model_sat$Sat))
+			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(model_sat$Ind))
+			model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(model_sat$Sat))
 		}
 	}
 	if(!is.null(comparison)){ 
@@ -248,6 +289,21 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLa
 #' @references - http://openmx.psyc.virginia.edu/
 #' @export
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m2 = umxReRun(m1, dropList = "G_to_x1", name = "drop_X1")
+#' umxSummary(m2)
+#' umxCompare(m1,m2)
 #' \dontrun{
 #' fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
 #' fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
@@ -255,10 +311,7 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLa
 #' fit2 = umxReRun(fit1, regex = "Cs", name="AEip", compare = T)
 #' }
 
-umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NA, verbose = F, intervals = F, compare = F) {
-	if(is.na(name)){
-		name = lastFit@name
-	}
+umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NULL, verbose = F, intervals = F, compare = F) {
 	if(is.na(regex)) {
 		if(any(is.na(dropList))) {
 			stop("Both dropList and regex cannot be empty!")
@@ -268,7 +321,11 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 	} else {
 		theLabels = umxGetParameters(lastFit, regex = regex, free = freeToStart, verbose = verbose)
 	}
-	x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)
+	if(is.null(name)){
+		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value)
+	}else{
+		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)		
+	}
 	# x = umxStart(x)
 	x = mxRun(x, intervals = intervals)
 	if(compare){
@@ -277,8 +334,9 @@ umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, fr
 	return(x)
 }
 
-# Parallel helpers to be added here
-
+# =====================================
+# = Parallel helpers to be added here =
+# =====================================
 
 #' umxStandardizeModel
 #'
@@ -392,14 +450,30 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #' @seealso - \code{\link{omxGetParameters}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1)
+#' umxGetParameters(m1)
+#' m1 = umxRun(m1, setLabels = T)
+#' umxGetParameters(m1)
 #' \dontrun{
-#' umxGetParameters(model)
-#' umxGetParameters(mxEval("as", model1)) # all labels of matrix "as" in model "model1"
-#' umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T) # get all columns in row 2 of matrix "as"
+#' # Complex regex patterns
+#' umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
 #' }
-
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
-	if(class(inputTarget)[1] %in% c("MxRAMModel","MxModel")) {
+	# TODO Be nice to offer a method to handle submodels
+	# model@submodels$aSubmodel@matrices$aMatrix@labels
+	# model@submodels$MZ@matrices
+	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(is(inputTarget, "MxMatrix")) {
 		if(is.na(free)) {
@@ -407,9 +481,9 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 		} else {
 			topLabels = inputTarget@labels[inputTarget@free==free]
 		}
-		}else{
-			stop("I am sorry Dave, umxGetLabels needs either a model or a matrix: you offered a ", class(inputTarget)[1])
-		}
+	}else{
+		stop("I am sorry Dave, umxGetParameters needs either a model or an mxMatrix: you offered a ", class(inputTarget)[1])
+	}
 	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
 	if( !is.na(regex) ) {
 		if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) )<1){ # no grep found: add some anchors for safety
@@ -423,23 +497,31 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 		}
 		theLabels = grep(regex, theLabels, perl = F, value = T) # return more detail
 		if(length(theLabels) == 0){
+			msg = "Found no matching labels!\n"
 			if(anchored == T){
-				stop("Found no matching labels! note: anchored regex to beginning of string and allowed only numeric follow\n", regex);
-			} else {
-				stop("Found no matching labels!");
+				msg = paste0(msg, "note: anchored regex to beginning of string and allowed only numeric follow:\"", regex, "\"")
 			}
+			if(umx_is_MxModel(inputTarget)){
+				msg = paste0(msg, "\nUse umxGetParameters(", deparse(substitute(inputTarget)), ") to see all parameters in the model")
+			}else{
+				msg = paste0(msg, "\nUse umxGetParameters() without a pattern to see all parameters in the model")
+			}
+			stop(msg);
 		}
 	}
-	# TODO Be nice to offer a method to handle submodels
-	# model@submodels$aSubmodel@matrices$aMatrix@labels
-	# model@submodels$MZ@matrices
 	return(theLabels)
 }
 
 #' umxEquate
 #'
-#' umxEquate equates slave labels to a set of master labels
-#'
+#' Equate parameters by setting one or more labels (the slave set) equal
+#' to the labels in a master set. By setting two parameters to have the 
+#' \code{\link{umxLabel}}, they are then forced to have the same value.
+#' In addition to matching labels, you may wish to learn about set the 
+#' label of a slave parameter to the \"square bracket\" address of the
+#' master, i.e. \"model.matrix[r,c]\".
+#' tip: to find labels of free parameters use \code{\link{umxGetParameters}} with free = T
+#' 
 #' @param model an \code{\link{mxModel}} within which to equate chosen parameters
 #' @param master A list of labels with which slave labels will be equated
 #' @param slave A list of labels which will be updated to match master labels, thus equating the parameters
@@ -449,34 +531,46 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 #' @param name Optional new name for the returned model
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxGetParameters}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#'  model = umxEquate(model)
-#' }
-umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) {
-	# Purpose: to equate parameters by setting of labels (the slave set) = to the labels in a master set
-	# umxEquate(model1, master="am", slave="af", free=T|NA|F")
-	if(!(class(model)[1] == "MxModel" | class(model)[1] == "MxRAMModel")){
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
+#' m2 = mxRun(m2) # have to run the model again...
+#' umxCompare(m1, m2) # not good :-)
+#' umxSummary(m1, m2) # not good :-)
+umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) {	
+	# add the T|F|NA list stuff to handle free = c(T|F|NA)
+	if(!umx_is_RAM(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])
 		message("A usage example is umxEquate(model, master=\"a_to_b\", slave=\"a_to_c\", name=\"model2\") # equate paths a->b and a->c, in a new model called \"model2\"")
 		stop()
 	}
-	if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", master) )<1){ # no grep found: add some anchors for safety
-		master = paste("^", master, "[0-9]*$", sep=""); # anchor to the start of the string
-		slave  = paste("^", slave,  "[0-9]*$", sep="");
-		if(verbose==T){
-			cat("note: anchored regex to beginning of string and allowed only numeric follow\n");
+	if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", master) ) < 1){ # no grep found: add some anchors
+		master = paste0("^", master, "$"); # anchor to the start of the string
+		slave  = paste0("^", slave,  "$");
+		if(verbose == T){
+			cat("note: matching whole label\n");
 		}
 	}
-	masterLabels = names(omxGetParameters(model, indep=FALSE, free=free))
+	masterLabels = names(omxGetParameters(model, indep = FALSE, free = free))
 	masterLabels = masterLabels[which(!is.na(masterLabels) )]      # exclude NAs
-	masterLabels = grep(master, masterLabels, perl = F, value=T)
+	masterLabels = grep(master, masterLabels, perl = F, value = T)
 	# return(masterLabels)
-	slaveLabels = names(omxGetParameters(model, indep=F, free=free))
+	slaveLabels = names(omxGetParameters(model, indep = F, free = free))
 	slaveLabels = slaveLabels[which(!is.na(slaveLabels))] # exclude NAs
-	slaveLabels = grep(slave, slaveLabels, perl = F, value=T)
+	slaveLabels = grep(slave, slaveLabels, perl = F, value = T)
 	if( length(slaveLabels) != length(masterLabels)) {
 		print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
 		stop("ERROR in umxEquate: master and slave labels not the same length!")
@@ -484,7 +578,7 @@ umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) 
 	if( length(slaveLabels)==0 ) {
 		legal = names(omxGetParameters(model, indep=FALSE, free=free))
 		legal = legal[which(!is.na(legal))]
-		message("Labels available in model are: ",legal)
+		message("Labels available in model are: ", paste(legal, ", "))
 		stop("ERROR in umxEquate: no matching labels found!")
 	}
 	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
@@ -659,13 +753,12 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 
 #' umxLatent
 #'
-#' Helper to ease the creation of latent variables, including formative variables (where the manifests define the latent, and need wiring up behind, and variances setting)
-#' The following figures show how a reflective:
+#' Helper to ease the creation of latent variables including formative and reflective variables (see below)
+#' For formative variables, the manifests define (form) the latent.
+#' This function takes care of intercorrelating manifests for formatives, and fixing variances correctly
+#' 
+#' The following figures show how a reflective and a formative variable look as path diagrams:
 #' \figure{reflective.png}
-#' 
-#' 
-#' and a formative variable are created:
-#' 
 #' formative\figure{formative.png}
 #'
 #' @param latent the name of the latent variable (string)
@@ -683,8 +776,6 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
-#'
 #' library(OpenMx)
 #' library(umx)
 #' data(demoOneFactor)
@@ -692,21 +783,21 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' manifests = names(demoOneFactor) # x1-5
 #' theData = cov(demoOneFactor)
 #' m1 = mxModel("reflective", type = "RAM",
-#'     manifestVars = manifests,
-#'     latentVars   = latents,
-#'     # Factor loadings
-#'     umxLatent("G", forms = manifests, type = "exogenous", data = theData),
-#' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+#'	manifestVars = manifests,
+#'	latentVars   = latents,
+#'	# Factor loadings
+#'	umxLatent("G", forms = manifests, type = "exogenous", data = theData),
+#'	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
 #' m1 = umxRun(m1, setValues = T, setLabels = T); umxSummary(m1, show="std")
 #' umxPlot(m1)
 #' 
 #' m2 = mxModel("formative", type = "RAM",
-#'     manifestVars = manifests,
-#'     latentVars   = latents,
-#'     # Factor loadings
-#'     umxLatent("G", formedBy = manifests, data = theData),
-#' 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+#'	manifestVars = manifests,
+#'	latentVars   = latents,
+#'	# Factor loadings
+#'	umxLatent("G", formedBy = manifests, data = theData),
+#'	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
 #' m2 = umxRun(m2, setValues = T, setLabels = T); umxSummary(m2, show="std")
 #' umxPlot(m2)
@@ -835,11 +926,10 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
 	# umxPlot(m2, std=F, dotFilename="name")
 	# mxLatent("Read", forms = manifestsRead)
-
 }
 
 umxConnect <- function(x) {
-	# TODO handle endogenous	
+	# TODO handle endogenous
 }
 
 umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
@@ -882,24 +972,6 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 	}
 }
 
-umxCheckModel <- function(obj, type = "RAM", hasData = NA) {
-	# TODO hasSubmodels = F
-	if (!isS4(obj) & is(obj, "MxModel")	) {
-		stop("'model' must be an mxModel")
-	}
-	if (!(class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM")	) {
-		stop("'model' must be an RAMModel")
-	}
-	if (length(obj@submodels) > 0) {
-		stop("Cannot yet handle submodels")
-	}
-	theData = obj@data@observed
-	if (is.null(theData)) {
-		stop("'model' does not contain any data")
-	}	
-}
-
-
 # ===========================
 # = matrix-oriented helpers =
 # ===========================
@@ -908,19 +980,33 @@ umxCheckModel <- function(obj, type = "RAM", hasData = NA) {
 # = Ordinal helpers =
 # ===================
 
-# umxThresholdRAMObjective can set the means and variance of the latents to 0 & 1, and build an appropriate thresholds matrix
-# It uses umxIsOrdinalVar, umxMakeThresholdMatrix as helpers
-
-umxThresholdRAMObjective <- function(df,  deviationBased=T, droplevels = T, verbose=F) {
-	# Purpose: add means@0 and variance@1 to each ordinal variable, 
-	# Use case: umxThresholdRAMObjective(df)
+#' umxThresholdRAMObjective
+#'
+#' umxThresholdRAMObjective can set the means to 0 and variance of the latents to 1, 
+#' and build an appropriate thresholds matrix
+#' 
+#' It uses \code{\link{umx_is_ordinal}} and \code{\link{umxMakeThresholdMatrix}} as helpers
+#'
+#' @param df Dataframe to make a threshold matrix for
+#' @param deviationBased whether to use the deviation system to ensure order thresholds (default = T)
+#' @param droplevels whether to also drop unused levels (default = T)
+#' @param verbose whether to say what the function is doing (default = F)
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' model = umxThresholdRAMObjective(model)
+#' }
+umxThresholdRAMObjective <- function(df, deviationBased = T, droplevels = T, verbose = F) {
 	# TODO: means = zero & VAR = 1 for ordinal variables
-	# (this is a nice place to do it, as we have the df present...)
-	if(!any(umxIsOrdinalVar(df))){
+	# (This is a nice place to check, as we have the df present...)
+	if(!any(umx_is_ordinal(df))){
 		stop("No ordinal variables in dataframe: no need to call umxThresholdRAMObjective")
 	} 
 	pt1 = mxPath(from = "one", to = umxIsOrdinalVar(df,names = T), connect="single", free=F, values = 0)
-	pt2 = mxPath(from = umxIsOrdinalVar(df,names = T), connect = "single", arrows = 2, free = F, values = 1)
+	pt2 = mxPath(from = umxIsOrdinalVar(df, names = T), connect = "single", arrows = 2, free = F, values = 1)
 	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = T, droplevels = T, verbose = F)))
 }
 
@@ -944,175 +1030,213 @@ umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbo
 # = Borrowed for tutorial purposes =
 # ==================================
 
-summaryACEFit <- function(fit, accuracy = 2, dotFilename = NULL, returnStd = F, extended = F, showRg = F, showStd = T, parentModel = NA, CIs = F, zero.print = ".") {
-	# Purpose: summarise a Cholesky model, as returned by makeACE_2Group
-	# use case: summaryACEFit(fit, dotFilename=NA);
-	# summaryACEFit(safeFit, dotFilename = "name", showStd = T)
-	# stdFit = summaryACEFit(fit, accuracy=2, dotFilename="name", returnStd=F, extended=F, showRg=T, showStd=T,parentModel=NA, CIs=T);
-	if(length(fit)>1){ # call self recursively
+#' umxSummaryACE
+#'
+#' Summarise a Cholesky model, as returned by umxACE
+#'
+#' @param fit an \code{\link{mxModel}} to summarize
+#' @param accuracy rounding (default = 2)
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param returnStd Whether to return the standardized form of the model (default = F)
+#' @param extended how much to report (F)
+#' @param showRg = whether to show the genetic correlations (F)
+#' @param showStd = whether to show the standardized model (T)
+#' @param comparison you can run mxCompare on a comparison model (NULL)
+#' @param CIs Whether to show Confidence intervals if they exist (T)
+#' @param zero.print How to show zeros (".")
+#' @param report If 3, then open an html table of the results
+#' @return - optional \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxACE}}, \code{\link{umxIP}}, \code{\link{umxCP}},  \code{\link{umxGxE}}, 
+#' \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(twinData)
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' selDVs = c("bmi1","bmi2")
+#' mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
+#' dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' m1 = umxRun(m1)
+#' umxSummaryACE(m1)
+#' \dontrun{
+#' umxSummaryACE(m1, dotFilename = NA);
+#' umxSummaryACE(m1, dotFilename = "name", showStd = T)
+#' stdFit = umxSummaryACE(m1, returnStd = T);
+#' }
+
+umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = F, extended = F, showRg = F, showStd = T, comparison = NULL, CIs = T, zero.print = ".", report = 1, accuracy = NULL) {
+	if(!is.null(accuracy)){
+		message("in umxSummaryACE accuracy parameter is deprecated.. replace with digits = ")
+		digits = accuracy
+	}
+	if(typeof(fit) == "list"){ # call self recursively
 		for(thisFit in fit) {
-			message("Output for Model: ",thisFit@name)
-			summaryACEFit(thisFit, accuracy=accuracy, dotFilename=dotFilename, returnStd=returnStd, extended=extended, showRg=showRg, showStd=showStd, parentModel=NA, CIs=CIs)
+			message("Output for Model: ", thisFit@name)
+			umxSummaryACE(thisFit, digits = digits, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, zero.print = zero.print, report = report)
 		}
 	} else {
-		if(!class(parentModel)=="logical"){
-			message("Comparison of fit")
-			print(mxCompare(parentModel, fit))
-		}
-		logLikelihood = mxEval(objective, fit); 
-		message("-2 \u00d7 log(Likelihood)") # 00d7 is unicode for non-ascii multiplication sign
-		print(logLikelihood[1,1]);
-		selDVs = dimnames(fit$top.mzCov)[[1]]
-		# genEpi_TableFitStatistics(fit, extended=extended)
-		nVar <- length(selDVs)/2;
-		# Calculate standardised variance components
-		a  <- mxEval(top.a, fit); # Path coefficients
-		c  <- mxEval(top.c, fit);
-		e  <- mxEval(top.e, fit);
-		A  <- mxEval(top.A, fit); # Variances
-		C  <- mxEval(top.C, fit);
-		E  <- mxEval(top.E, fit);
-		Vtot = A+C+E;             # Total variance
-		I  <- diag(nVar); # nVar Identity matrix
-		SD <- solve(sqrt(I*Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
-	
-		# Standardized _path_ coefficients ready to be stacked together
-		a_std <- SD %*% a; # Standardized path coefficients
-		c_std <- SD %*% c;
-		e_std <- SD %*% e;
-		if(showStd){
-			message("Standardized solution")
-			aClean = a_std
-			cClean = c_std
-			eClean = e_std
-		} else {
-			message("Raw solution")
-			aClean = a
-			cClean = c
-			eClean = e
-		}
-		aClean[upper.tri(aClean)]=NA
-		cClean[upper.tri(cClean)]=NA
-		eClean[upper.tri(eClean)]=NA
-		Estimates = data.frame(cbind(aClean,cClean,eClean), row.names=selDVs[1:nVar]);
-		names(Estimates) = paste(rep(c("a", "c", "e"), each = nVar), rep(1:nVar), sep = "");
-		print.dataframe(Estimates, digits = accuracy, zero.print = ".") # this function is created in genEpi.lib
-		if(extended==TRUE) {
-			message("Unstandardized path coefficients")
-			aClean = a
-			cClean = c
-			eClean = e
-			aClean[upper.tri(aClean)]=NA
-			cClean[upper.tri(cClean)]=NA
-			eClean[upper.tri(eClean)]=NA
-			unStandardizedEstimates = data.frame(cbind(aClean,cClean,eClean), row.names=selDVs[1:nVar]);
-			names(unStandardizedEstimates) = paste(rep(c("a", "c", "e"), each=nVar), rep(1:nVar), sep="");
-			print.dataframe(unStandardizedEstimates, digits=accuracy, zero.print = ".")
-		}
-
-		# Pre & post multiply covariance matrix by inverse of standard deviations
-		if(showRg) {
-			message("Genetic correlations")
-			NAmatrix <- matrix(NA, nVar, nVar);
-			rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error=function(err) return(NAmatrix)); # genetic correlations
-			rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error=function(err) return(NAmatrix)); # shared environmental correlations
-			rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error=function(err) return(NAmatrix)); # Unique environmental correlations
-			rAClean = rA
-			rCClean = rC
-			rEClean = rE
-			rAClean[upper.tri(rAClean)]=NA
-			rCClean[upper.tri(rCClean)]=NA
-			rEClean[upper.tri(rEClean)]=NA
-			genetic_correlations  = data.frame(cbind(rAClean, rCClean, rEClean), row.names=selDVs[1:nVar] );
-			names(genetic_correlations)<-selDVs[1:nVar]
-		 	# Make a nice-ish table
-			names(genetic_correlations)= paste(rep(c("rA", "rC", "rE"), each=nVar), rep(1:nVar), sep="");
-			print.dataframe(genetic_correlations, digits=accuracy, zero.print = ".")
-		}
-		stdFit = fit
-		if(CIs) {
-			# TODO Need to refactor this into some function calls...
-			if(all(dim(fit@output$confidenceIntervals) == c(0,2))){
-				message("You requested me to print out CIs, but there are none...\n
-Perhaps you'd like to add 'addStd = T' to your makeACE_2Group() call?")
-			} else {
-				message("Computing CI-based diagram!")
-				# get the lower and uppper CIs as a dataframe
-				CIlist = data.frame(fit@output$confidenceIntervals)
-				# Drop rows fixed to zero
-				CIlist = CIlist[(CIlist$lbound!=0 & CIlist$ubound!=0),]
-
-				# These can be names ("top.a_std[1,1]") or labels ("a11")
-				# imxEvalByName finds them both
-				outList = c();
-				for(aName in row.names(CIlist)) {
-					outList <- append(outList, imxEvalByName(aName,fit))
-				}
-				# Add estimates into the CIlist
-				CIlist$estimate = outList
-				# reorder to match summary
-				CIlist <- CIlist[,c("lbound","estimate", "ubound")] 
-				CIlist$fullName = row.names(CIlist)
-				# Initialise empty matrices for the standardized results
-				rows = dim(fit@submodels$top@matrices$a@labels)[1]
-				cols = dim(fit@submodels$top@matrices$a@labels)[2]
-				a_std = c_std = e_std= matrix(NA, rows, cols)
-
-				# iterate over each CI
-				labelList = imxGenerateLabels(fit)			
-				rowCount = dim(CIlist)[1]
-
-				for(n in 1:rowCount) { # n=1
-					thisName = row.names(CIlist)[n] # thisName = "a11"
-					if(!hasSquareBrackets(thisName)) {
-						# upregulate to a bracket name
-						nameParts = labelList[which(row.names(labelList)==thisName),]
-						CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep="")
-					}
-					fullName = CIlist$fullName[n]
-
-					thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
-					thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
-					thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
-					CIparts = round(CIlist[n, c("estimate", "lbound", "ubound")], 2)
-					thisString = paste(CIparts[1], " (",CIparts[2], ":",CIparts[3], ")", sep="")
-					# print(list(CIlist,labelList,rowCount,fullName,thisMatrixName))
-
-					if(grepl("^a", thisMatrixName)) {
-						a_std[thisMatrixRow, thisMatrixCol] = thisString
-					} else if(grepl("^c", thisMatrixName)){
-						c_std[thisMatrixRow, thisMatrixCol] = thisString
-					} else if(grepl("^e", thisMatrixName)){
-						e_std[thisMatrixRow, thisMatrixCol] = thisString
-					} else{
-						stop(paste("illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
-					}
-				}
-				print(a_std)
-				print(c_std)
-				print(e_std)
-			}
-		} #use CIs
-		stdFit@submodels$top@matrices$a@values = a_std
-		stdFit@submodels$top@matrices$c@values = c_std
-		stdFit@submodels$top@matrices$e@values = e_std
-		if(!is.null(dotFilename)) {
-			message("making dot file")
-			if(showStd){
-				# TODO import this function...
-				graphViz_Cholesky(stdFit, selDVs, dotFilename)
-			}else{
-				graphViz_Cholesky(fit, selDVs, dotFilename)
-			}
-		}
-		if(returnStd) {
-			return(stdFit)
-		}
-
-		# MZc = mxEval(MZ.expCov,  fit);
-		# DZc = mxEval(DZ.expCov,  fit);
-		# M   = mxEval(MZ.expMean, fit);
+	umx_has_been_run(fit, stop = T)
+	if(is.null(comparison)){
+		message("-2 \u00d7 log(Likelihood)") # ×
+		print(-2 * logLik(fit));			
+	} else {
+		message("Comparison of fit with parent model:")
+		print(umx::umxCompare(comparison, fit, digits = 3))
 	}
+	selDVs = dimnames(fit$top.mzCov)[[1]]
+	# genEpi_TableFitStatistics(fit, extended=extended)
+	nVar <- length(selDVs)/2;
+	# Calculate standardised variance components
+	a  <- mxEval(top.a, fit); # Path coefficients
+	c  <- mxEval(top.c, fit);
+	e  <- mxEval(top.e, fit);
+
+	A  <- mxEval(top.A, fit); # Variances
+	C  <- mxEval(top.C, fit);
+	E  <- mxEval(top.E, fit);
+	Vtot = A + C + E;         # Total variance
+	I  <- diag(nVar);         # nVar Identity matrix
+	SD <- solve(sqrt(I*Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
+
+	# Standardized _path_ coefficients ready to be stacked together
+	a_std <- SD %*% a; # Standardized path coefficients
+	c_std <- SD %*% c;
+	e_std <- SD %*% e;
+
+	if(showStd){
+		message("Standardized solution")
+		aClean = a_std
+		cClean = c_std
+		eClean = e_std
+	} else {
+		message("Raw solution")
+		aClean = a
+		cClean = c
+		eClean = e
+	}
+
+	aClean[upper.tri(aClean)] = NA
+	cClean[upper.tri(cClean)] = NA
+	eClean[upper.tri(eClean)] = NA
+	Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = selDVs[1:nVar]);
+
+	names(Estimates) = paste(rep(c("a", "c", "e"), each = nVar), rep(1:nVar), sep = "");
+
+	Estimates = umx::umx_print(Estimates, digits = digits, zero.print = ".")
+	if(report == 3){
+		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
+	}else{
+		
+	}
+
+	if(extended == TRUE) {
+		message("Unstandardized path coefficients")
+		aClean = a
+		cClean = c
+		eClean = e
+		aClean[upper.tri(aClean)] = NA
+		cClean[upper.tri(cClean)] = NA
+		eClean[upper.tri(eClean)] = NA
+		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = selDVs[1:nVar]);
+		names(unStandardizedEstimates) = paste(rep(c("a", "c", "e"), each = nVar), rep(1:nVar), sep = "");
+		umx_print(unStandardizedEstimates, digits = digits, zero.print = ".")
+	}
+
+	# Pre & post multiply covariance matrix by inverse of standard deviations
+	if(showRg) {
+		message("Genetic correlations")
+		NAmatrix <- matrix(NA, nVar, nVar);
+		rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error = function(err) return(NAmatrix)); # genetic correlations
+		rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error = function(err) return(NAmatrix)); # shared environmental correlations
+		rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error = function(err) return(NAmatrix)); # Unique environmental correlations
+		rAClean = rA
+		rCClean = rC
+		rEClean = rE
+		rAClean[upper.tri(rAClean)] = NA
+		rCClean[upper.tri(rCClean)] = NA
+		rEClean[upper.tri(rEClean)] = NA
+		genetic_correlations = data.frame(cbind(rAClean, rCClean, rEClean), row.names = selDVs[1:nVar] );
+		names(genetic_correlations) <- selDVs[1:nVar]
+	 	# Make a nice-ish table
+		names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each=nVar), rep(1:nVar));
+		umx_print(genetic_correlations, digits=digits, zero.print = ".")
+	}
+	stdFit = fit
+	hasCIs = umx_has_CIs(fit)
+	if(hasCIs & CIs) {
+		# TODO Need to refactor this into some function calls…
+		# TODO and then add to umxSummaryIP and CP
+		message("Creating CI-based report!")
+		# CIs exist, get the lower and uppper CIs as a dataframe
+		CIlist = data.frame(fit@output$confidenceIntervals)
+		# Drop rows fixed to zero
+		CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
+		# These can be names ("top.a_std[1,1]") or labels ("a11")
+		# imxEvalByName finds them both
+		outList = c();
+		for(aName in row.names(CIlist)) {
+			outList <- append(outList, imxEvalByName(aName, fit))
+		}
+		# Add estimates into the CIlist
+		CIlist$estimate = outList
+		# reorder to match summary
+		CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
+		CIlist$fullName = row.names(CIlist)
+		# Initialise empty matrices for the standardized results
+		rows = dim(fit@submodels$top@matrices$a@labels)[1]
+		cols = dim(fit@submodels$top@matrices$a@labels)[2]
+		a_std = c_std = e_std = matrix(NA, rows, cols)
+
+		# iterate over each CI
+		labelList = imxGenerateLabels(fit)			
+		rowCount = dim(CIlist)[1]
+
+		for(n in 1:rowCount) { # n = 1
+			thisName = row.names(CIlist)[n] # thisName = "a11"
+			# convert labels to [bracket] style
+				if(!umx::umx_has_square_brackets(thisName)) {
+				nameParts = labelList[which(row.names(labelList) == thisName),]
+				CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
+			}
+			fullName = CIlist$fullName[n]
+
+			thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
+			thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
+			thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
+			CIparts = round(CIlist[n, c("estimate", "lbound", "ubound")], 2)
+			thisString = paste(CIparts[1], " (",CIparts[2], ":",CIparts[3], ")", sep="")
+			# print(list(CIlist, labelList, rowCount, fullName, thisMatrixName))
+
+			if(grepl("^a", thisMatrixName)) {
+				a_std[thisMatrixRow, thisMatrixCol] = thisString
+			} else if(grepl("^c", thisMatrixName)){
+				c_std[thisMatrixRow, thisMatrixCol] = thisString
+			} else if(grepl("^e", thisMatrixName)){
+				e_std[thisMatrixRow, thisMatrixCol] = thisString
+			} else{
+				stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
+			}
+		}
+		print(a_std)
+		print(c_std)
+		print(e_std)
+	}
+	} # Use CIs
+	stdFit@submodels$top@matrices$a@values = a_std
+	stdFit@submodels$top@matrices$c@values = c_std
+	stdFit@submodels$top@matrices$e@values = e_std
+	if(!is.null(dotFilename)) {
+		message("making dot file")
+		umxPlotACE(fit, dotFilename, std = showStd)
+	}
+	if(returnStd) {
+		return(stdFit)
+	}
+	# MZc = mxEval(MZ.expCov,  fit);
+	# DZc = mxEval(DZ.expCov,  fit);
+	# M   = mxEval(MZ.expMean, fit);
 }
 
 # ===========
@@ -1142,7 +1266,6 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 	return (matrixIn);
 }
 
-
 umxCheck <- function(fit1){
 	# are all the manifests in paths?
 	# do the manifests have residuals?
@@ -1162,7 +1285,6 @@ umxCheck <- function(fit1){
 	}
 	# Check manifests in dataframe
 }
-
 
 # ====================
 # = Parallel Helpers =

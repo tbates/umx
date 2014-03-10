@@ -13,11 +13,3 @@ Suggests:
     testthat,
     roxygen2
 BugReports: http://github.tbates.umx
-Collate:
-    'build_run_modify.r'
-    'deprecated.r'
-    'fit_and_reporting.r'
-    'umx.lib.R'
-    'xmu.r'
-    'model_builders.r'
-    'misc_and_utility.r'

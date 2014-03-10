@@ -2,9 +2,8 @@
 \alias{umx_rename_file}
 \title{umx_rename_file}
 \usage{
-  umx_rename_file(baseFolder = "Finder", findStr = NA,
-    replaceStr = NA, listPattern = NA, test = T,
-    overwrite = F)
+umx_rename_file(baseFolder = "Finder", findStr = NA, replaceStr = NA,
+  listPattern = NA, test = T, overwrite = F)
 }
 \arguments{
   \item{baseFolder}{The folder to search in. If set to
@@ -24,13 +23,12 @@
   \item{overwrite}{Boolean determining}
 }
 \value{
-  -
+-
 }
 \description{
-  rename files. On OS X, the function can access the
-  current frontmost Finder window. The file renaming is
-  fast and, because you can use regular expressions,
-  powerful
+rename files. On OS X, the function can access the current
+frontmost Finder window. The file renaming is fast and,
+because you can use regular expressions, powerful
 }
 \examples{
 \dontrun{
@@ -39,10 +37,10 @@ umx_rename_file(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceS
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{grep}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{grep}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

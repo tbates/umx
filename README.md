@@ -13,11 +13,7 @@ library("umx")
 # install_github("umx", username = "tbates", args = "--no-multiarch")
 # On the newest version of devtools, this will work
 # install_github("tbates/umx")
-?umx
-
 ```
-<!-- source("http://timbates.wdfiles.com/local--files/start/umx.lib.R") -->
-
 The umx package has a range of useful helpers to help you get things done in SEM. This list is not comprehensive: install the package to learn more
 
 1. Building Models

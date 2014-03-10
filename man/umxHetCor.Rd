@@ -2,8 +2,8 @@
 \alias{umxHetCor}
 \title{umxHetCor}
 \usage{
-  umxHetCor(data, ML = F, use = "pairwise.complete.obs",
-    treatAllAsFactor = F, verbose = F)
+umxHetCor(data, ML = F, use = "pairwise.complete.obs",
+  treatAllAsFactor = F, verbose = F)
 }
 \arguments{
   \item{data}{A \code{\link{data.frame}} of columns for
@@ -22,11 +22,11 @@
   done.}
 }
 \value{
-  - A matrix of correlations
+- A matrix of correlations
 }
 \description{
-  umxHetCor Helper to return just the correlations from
-  John Fox's polycor::hetcor function
+umxHetCor Helper to return just the correlations from John
+Fox's polycor::hetcor function
 }
 \examples{
 \dontrun{
@@ -35,9 +35,9 @@ cor_df = umxHetCor(df, ML = F, use="pairwise.complete.obs")
 }
 }
 \references{
-  -
+-
 }
 \seealso{
-  - \code{\link{hetcor}}
+- \code{\link{hetcor}}
 }
 

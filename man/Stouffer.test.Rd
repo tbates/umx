@@ -2,38 +2,38 @@
 \alias{Stouffer.test}
 \title{Stouffer.test}
 \usage{
-  Stouffer.test(p = NULL)
+Stouffer.test(p = NULL)
 }
 \arguments{
   \item{p}{A list of p values, i.e., p(.4, .3, .6, .01)}
 }
 \description{
-  Runs a Stouffer.test
+Runs a Stouffer.test
 }
 \examples{
 Stouffer.test(p = c(.01, .2, .3))
 }
 \references{
-  -
-  \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
-  Stouffer, Samuel A., Edward A. Suchman, Leland C.
-  DeVinney, Shirley A. Star, and Robin M. Williams, Jr.
-  (1949). Studies in Social Psychology in World War II: The
-  American Soldier. Vol. 1, Adjustment During Army Life.
-  Princeton: Princeton University Press.
+-
+\url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
+Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney,
+Shirley A. Star, and Robin M. Williams, Jr. (1949). Studies
+in Social Psychology in World War II: The American Soldier.
+Vol. 1, Adjustment During Army Life. Princeton: Princeton
+University Press.
 
-  Bailey TL, Gribskov M (1998). Combining evidence using
-  p-values: application to sequence homology searches.
-  Bioinformatics, 14(1) 48-54. Fisher RA (1925).
-  Statistical methods for research workers (13th edition).
-  London: Oliver and Boyd. Manolov R and Solanas A (2012).
-  Assigning and combining probabilities in single-case
-  studies. Psychological Methods 17(4) 495-509. Describes
-  various methods for combining p-values including Stouffer
-  and Fisher and the binomial test.
-  \url{http://www.burns-stat.com/pages/Working/perfmeasrandport.pdf}
+Bailey TL, Gribskov M (1998). Combining evidence using
+p-values: application to sequence homology searches.
+Bioinformatics, 14(1) 48-54. Fisher RA (1925). Statistical
+methods for research workers (13th edition). London: Oliver
+and Boyd. Manolov R and Solanas A (2012). Assigning and
+combining probabilities in single-case studies.
+Psychological Methods 17(4) 495-509. Describes various
+methods for combining p-values including Stouffer and
+Fisher and the binomial test.
+\url{http://www.burns-stat.com/pages/Working/perfmeasrandport.pdf}
 }
 \seealso{
-  -
+-
 }
 

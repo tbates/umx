@@ -2,18 +2,18 @@
 \alias{umxCov2cor}
 \title{umxCov2cor}
 \usage{
-  umxCov2cor(x)
+umxCov2cor(x)
 }
 \arguments{
   \item{x}{something that cov2cor can work on (matrix, df,
   etc.)}
 }
 \value{
-  - a correlation matrix
+- a correlation matrix
 }
 \description{
-  Just a version of cov2cor that forces the upper and lower
-  triangles to be identical (rather than really similar)
+Just a version of cov2cor that forces the upper and lower
+triangles to be identical (rather than really similar)
 }
 \examples{
 \dontrun{
@@ -21,10 +21,10 @@ x_cor = umxCov2cor(x)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

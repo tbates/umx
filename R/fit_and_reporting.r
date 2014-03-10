@@ -7,7 +7,7 @@
 # devtools::release("~/bin/umx")
 # devtools::load_all("~/bin/umx")
 # devtools::dev_help("umxReportCIs")
-# devtools::show_news()
+# devtools::show_news("~/bin/umx")
 
 # =============================
 # = Fit and Reporting Helpers =
@@ -17,21 +17,36 @@
 #'
 #' Report the fit of a model in a compact form suitable for a journal. Emits a "warning" not 
 #' when model fit is worse than accepted criterion (TLI > .95 and RMSEA < .06; (Hu & Bentler, 1999; Yu, 2002).
-#'
+#' 
+#' notes on CIs and Identification
+#' Note, the conventional standard errors reported by OpenMx are used to produce the CIs you see in umxSummary
+#' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
+#' 
+#' Sometimes they appear NA. This often indicates an model which is not \url{http://identified}.
+#' This can include empirical under-identification - for instance two factors
+#' that are essentially identical in structure.
+#' 
+#' A signature of this would be paths estimated at or close to
+#' zero. Fixing one or two of these to zero may fix the standard error calculation, 
+#' and alleviate the need to estimate likelihood-based or bootstrap CIs
+#' 
+#' If factor loadings can flip sign and provide identical fit, this creates another form of 
+#' under-identification and can break confidence interval estimation, but I think
+#' Fixing a factor loading to 1 and estimating factor variances can help here
+#'  
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param saturatedModels Saturated models if needed for fit indices (see example below: 
 #' Only needed for raw data, and then not if you've run umxRun
 #' @param report The format for the output line or table (default is "line")
 #' @param showEstimates What estimates to show. Options are "raw | std | list | NULL" for raw, standardized, a custom list or (default)
 #' none (just shows the fit indices)
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}},\code{\link{umxCI_boot}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
 #'
 #'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
 #'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
 #'  Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
-#'  
 #' \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @import OpenMx
@@ -49,13 +64,19 @@
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxSummary(m1, show = "std")
+#' umxSummary(m1, show = "std", digits = 1)
 #' \dontrun{
 #' umxSummary(m1, report = "table")
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, precision = 2, RMSEA_CI = F){
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, digits = 2, RMSEA_CI = F, precision = NULL){
 	# TODO make table take lists of models...
+	report = umx_default_option(report, c("line"))	
 	# TODO should/could have a toggle for computing the saturated models...
+	if(!is.null(precision)){
+		warning("precision is deprecated for umxSummary, use digits instead")
+		digits = precision
+	}
 	if(!is.null(showEstimates)){
 		if(!(showEstimates %in% c("raw","std","list") ) ){
 			stop(paste0("showEstimates ", showEstimates , " is not in the valid list: \"raw\",\"std\",\"list\""))
@@ -102,17 +123,17 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 			for(i in 1:dim(x)[1]) {
 				# i = 1
 				# x = summary(m1)$parameters
-				# precision = 2
+				# digits = 2
 				est = x[i, "Std.Estimate"]
 				CI95  = x[i, "Std.SE"] * 1.96
 				if(est < 0){
-	 			   x[i, "CI"] = paste0(round(est, precision), " [", round(est - CI95, precision), ", ", round(est + CI95, precision), "]")
+	 			   x[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
 				} else {
-	 			   x[i, "CI"] = paste0(round(est, precision), " [", round(est - CI95, precision), ", ", round(est + CI95, precision), "]")
+	 			   x[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
 				}
 			}
 		}
-		print(x[,namesToShow], digits= precision, na.print = "", zero.print = "0", justify = "none")
+		print(x[,namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")
 	} else {
 		message("For estimates, add showEstimates = 'raw' 'std' or 'both")
 	}
@@ -142,7 +163,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				print(x)
 			} else {
 				if(RMSEA_CI){
-					RMSEA_CI = omxRMSEA(model)$txt
+					RMSEA_CI = RMSEA(model)$txt
 				} else {
 					RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
 				}
@@ -172,16 +193,33 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
 #' @param digits rounding for p etc.
-#' @param report Optionally add sentences for inclusion inline in a paper or output to an html table which will open your default browser: handy for getting tables into word
+#' @param report Optionally add sentences for inclusion inline in a paper (report= 2)
+#' and output to an html table which will open your default browser (report = 3).
+#' This is handy for getting tables into word
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://openmx.psyc.virginia.edu/}
 #' @export
 #' @import OpenMx
 #' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m2 = umxReRun(m1, dropList = "G_to_x2", name = "dropm1", free = T, value = .1)
+#' umxCompare(m1, m2)
+#' mxCompare(m1, m2) # what OpenMx give by default
+#' umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
+#' umxCompare(m1, m2, report = 3) # Open table in browser
 #' \dontrun{
-#' umxCompare(model1, model2)
-#' umxCompare(model1, model2, report = 2)
-#' umxCompare(model1, c(model2, model3))
+#' umxCompare(m1, c(m2, m3))
 #' umxCompare(c(m1, m2), c(m2, m3), all = T)
 #' }
 
@@ -224,7 +262,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		R2HTML::HTML(tablePub, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
 	} else {
 		return(tablePub)
-		# print.html(tableOut, output = output, rowlabel = "")
+		# umx_print(tableOut, file = output, rowlabel = "")
 		# R2HTML::print(tableOut, output = output, rowlabel = "")
 	}
 	
@@ -277,7 +315,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umxCI(model)
+#' umxCI(m1)
 #' \dontrun{
 #' umxCI(model, addCIs = T) # add Cis for all free parameters if not present
 #' umxCI(model, runCIs = "yes") # force update of CIs
@@ -342,7 +380,8 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' @param std specifies whether you want CIs for unstandardized or standardized parameters (default: std = T)
 #' @param rep is the number of bootstrap samples to compute (default = 1000).
 #' @param conf is the confidence value (default = 95)
-#' @param dat specifies whether you want to store the bootstrapped data in the output (useful if you want to do multiple different analyses, such as mediation analyses)
+#' @param dat specifies whether you want to store the bootstrapped data in the output (useful for multiple analyses, such as mediation analysis)
+#' @param digits rounding precision
 #' @return - expected covariance matrix
 #' @export
 #' @examples
@@ -365,10 +404,9 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
 
-umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, round = 3) {
-	require(MASS)
-	require(OpenMx)
-	require(umx)
+umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
+	require(MASS); require(OpenMx); require(umx)
+	type = umx_default_option(type, c("par.expected", "par.observed", "empirical"))
 	if(type == "par.expected") {
 		exp = umxGetExpectedCov(model, latent = FALSE)
 	} else if(type == "par.observed") {
@@ -421,7 +459,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 	colnames(ci) = c(paste((low*100), "%", sep = ""), paste((upp*100), "%", sep = ""))
 	p = summary(model)$parameters[, c(1, 2, 3, 4, c(5:6 + 2*std))]
 	cols <- sapply(p, is.numeric)
-	p[, cols] <- round(p[,cols], round) 
+	p[, cols] <- round(p[,cols], digits) 
 	
 	if(dat) {
 		return(list("Type" = type, "bootdat" = data.frame(pard), "CI" = cbind(p, ci)))
@@ -521,12 +559,13 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 #'
 #' @param model an \code{\link{mxModel}} to make a path diagram from
 #' @param std Whether to standardize the model.
-#' @param precision The number of decimal places to add to the path coefficients
+#' @param digits The number of decimal places to add to the path coefficients
 #' @param dotFilename A file to write the path model to. if you leave it at the 
 #' default "name", then the model's internal name will be used
 #' @param pathLabels whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param showFixed whether to show fixed paths (defaults to FALSE)
 #' @param showError whether to show errors
+#' @param precision deprecated for digits
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -547,10 +586,15 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 #' umxPlot(m1)
 #' }
 
-umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
+umxPlot <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T, precision = NULL) {
 	# Purpose: Graphical output of your model using "graphviz":
 	# umxPlot(fit1, std=T, precision=3, dotFilename="name")
 	# nb: legal values for "pathLabels" are "both", "none" or "labels"
+	if(!is.null(precision)){
+		warning("precision is deprecated for umxSummary, use digits instead")
+		digits = precision
+	}
+
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap', 'sentence', 'numeric', 'series', and 'arithmet'
 	if(std){ model= umxStandardizeModel(model, return = "model") }
@@ -561,7 +605,7 @@ umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pa
 	for(target in aRows ) {
 		for(source in aCols) {
 			thisPathFree = model[["A"]]@free[target,source]
-			thisPathVal  = round(model[["A"]]@values[target,source],precision)
+			thisPathVal  = round(model[["A"]]@values[target,source],digits)
 			if(thisPathFree){
 				out = paste(out, ";\n", source, " -> ", target, " [label=\"", thisPathVal, "\"]", sep="")
 			} else if(thisPathVal != 0 & showFixed) {
@@ -583,7 +627,7 @@ umxPlot <- function(model = NA, std = T, precision = 2, dotFilename = "name", pa
 		for(source in lowerVars) { # columns
 			thisPathLabel = Slabels[target,source]
 			thisPathFree  = Sfree[target,source]
-			thisPathVal   = round(Svals[target,source], precision)
+			thisPathVal   = round(Svals[target,source], digits)
 			if(thisPathFree | (!(thisPathFree) & thisPathVal !=0 & showFixed)) {
 				if(thisPathFree){
 					prefix = ""
@@ -1003,7 +1047,6 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' extractAIC(m1)
-
 extractAIC.MxModel <- function(model) {
 	require(umx)
 	a = umx::umxCompare(model)
@@ -1032,12 +1075,12 @@ extractAIC.MxModel <- function(model) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umxGetExpectedCov(m1)
+#' umxGetExpectedCov(model = m1)
+#' umxGetExpectedCov(m1, digits = 3)
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
-#' @seealso - \code{\link{umxRun}}, \code{\link{umxCIpboot}}
-
-umxGetExpectedCov <- function(model, latent = T, manifest = T){
+#' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
+umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 	if(!umx_is_RAM(model)){
 		stop("model must be a RAM model")
 	}
@@ -1047,11 +1090,19 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T){
 	mE <- solve(mI - mA)
 	mCov <- (mE) %*% mS %*% t(mE) # The model-implied covariance matrix
 	mV <- NULL
-	if(latent) mV <- model@latentVars 
-	if(manifest) mV <- c(mV,model@manifestVars)
-	return(mCov[mV, mV]) # return only the selected variables
+	if(latent) {
+		mV <- model@latentVars 
+	}
+	if(manifest) {
+		mV <- c(mV,model@manifestVars)
+	}
+	# return the selected variables
+	if(is.null(digits)){
+		return(mCov[mV, mV]) 
+	} else {
+		return(round(mCov[mV, mV], digits))
+	}
 }
-
 
 #' logLik.MxModel
 #'
@@ -1064,15 +1115,25 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T){
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
-#' \dontrun{
-#' AIC(model)
-#' }
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' logLik(m1)
+#' AIC(m1)
 logLik.MxModel <- function(model) {
 	Minus2LogLikelihood <- NA
 	if (!is.null(model@output) & !is.null(model@output$Minus2LogLikelihood)){
 		Minus2LogLikelihood <- (-0.5) * model@output$Minus2LogLikelihood		
 	}
-
 	if (!is.null(model@data)){
 		attr(Minus2LogLikelihood,"nobs") <- model@data@numObs
 	}else{ 
@@ -1087,28 +1148,55 @@ logLik.MxModel <- function(model) {
 	return(Minus2LogLikelihood);
 }
 
-goodnessOfFit <- function(indepfit, modelfit) {
+#' umxFitIndices
+#'
+#' A list of fit indices
+#'
+#' @param modelfit an \code{\link{mxModel}}
+#' @param indepfit an \code{\link{mxModel}}
+#' @return - 
+#' @export
+#' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{summary}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umxFitIndices(m1, m1_ind)
+#' # TODO use means and compute independence model here for example...
+#' }
+umxFitIndices <- function(model, indepfit) {
 	options(scipen = 3)
-	indep     <- summary(indepfit)
-	model     <- summary(modelfit)
-	N         <- model$numObs
-	N.parms   <- model$estimatedParameters
-	N.manifest <- length(modelfit@manifestVars)
-	deviance  <- model$Minus2LogLikelihood
-	Chi       <- model$Chi
-	df        <- model$degreesOfFreedom
+	indepSummary     <- summary(indepfit)
+	modelSummary <- summary(model)
+	N         <- modelSummary$numObs
+	N.parms   <- modelSummary$estimatedParameters
+	N.manifest <- length(model@manifestVars)
+	deviance  <- modelSummary$Minus2LogLikelihood
+	Chi       <- modelSummary$Chi
+	df        <- modelSummary$degreesOfFreedom
 	p.Chi     <- 1 - pchisq(Chi, df)
 	Chi.df    <- Chi/df
-	indep.chi <- indep$Chi
-	indep.df  <- indep$degreesOfFreedom
+	indep.chi <- indepSummary$Chi
+	indep.df  <- indepSummary$degreesOfFreedom
 	q <- (N.manifest*(N.manifest+1))/2
-	N.latent     <- length(modelfit@latentVars)
-	observed.cov <- modelfit@data@observed
+	N.latent     <- length(model@latentVars)
+	observed.cov <- model@data@observed
 	observed.cor <- cov2cor(observed.cov)
 
-	A <- modelfit@matrices$A@values
-	S <- modelfit@matrices$S@values
-	F <- modelfit@matrices$F@values
+	A <- model@matrices$A@values
+	S <- model@matrices$S@values
+	F <- model@matrices$F@values
 	I <- diag(N.manifest+N.latent)
 	estimate.cov <- F %*% (qr.solve(I-A)) %*% S %*% (t(qr.solve(I-A))) %*% t(F)
 	estimate.cor <- cov2cor(estimate.cov)
@@ -1128,9 +1216,9 @@ goodnessOfFit <- function(indepfit, modelfit) {
 	RMSEA    <- sqrt(F0/df) # need confidence intervals
 	MFI      <- exp(-0.5*(Chi-df)/N)
 	GH       <- N.manifest / (N.manifest+2*((Chi-df)/(N-1)))
-	GFI      <- 1-(
-		sum(diag(((solve(estimate.cor)%*%observed.cor)-Id.manifest)%*%((solve(estimate.cor)%*%observed.cor)-Id.manifest))) /
-	    sum(diag((solve(estimate.cor)%*%observed.cor)%*%(solve(estimate.cor)%*%observed.cor)))
+	GFI      <- 1 - (
+		 sum(diag(((solve(estimate.cor) %*% observed.cor)-Id.manifest) %*% ((solve(estimate.cor) %*% observed.cor) - Id.manifest))) /
+	    sum(diag((solve(estimate.cor) %*% observed.cor) %*% (solve(estimate.cor) %*% observed.cor)))
 	)
 	AGFI     <- 1 - (q/df)*(1-GFI)
 	PGFI     <- GFI * df/q
@@ -1165,7 +1253,7 @@ goodnessOfFit <- function(indepfit, modelfit) {
 }
 
 
-#' omxRMSEA
+#' RMSEA
 #'
 #' Compute the confidence interval on RMSEA
 #'
@@ -1178,15 +1266,29 @@ goodnessOfFit <- function(indepfit, modelfit) {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' omxRMSEA(model)
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' # RMSEA(m1)
 #' }
 
-omxRMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 
+RMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 
+	# FIXME should this be called RMSEA.MxModel or omxRMSEA?
 	sm <- summary(model)
 	if (is.na(sm$Chi)) return(NA);
 	X2 <- sm$Chi
 	df <- sm$degreesOfFreedom
 	N  <- sm$numObs 
+
 	lower.lambda <- function(lambda) {
 		pchisq(X2, df = df, ncp = lambda) - ci.upper
 	}
@@ -1196,10 +1298,10 @@ omxRMSEA <- function(model, ci.lower = .05, ci.upper = .95) {
  	N.RMSEA  <- max(N, X2*4) # heuristic of lavaan. TODO: can we improve this? when does this break?
 	lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root, silent = T) 
 	lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root, silent = T)
- 
 	rmsea.lower <- sqrt(lambda.l/(N * df))
 	rmsea.upper <- sqrt(lambda.u/(N * df))
 	RMSEA = sqrt( max( c((X2/N)/df - 1/N, 0) ) )
 	txt = paste0("RMSEA = ", round(RMSEA, 3), " CI", sub("^0?\\.", replace = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "]")	
 	return(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, txt = txt)) 
 }
+

@@ -2,8 +2,7 @@
 \alias{umxAdd1}
 \title{umxAdd1}
 \usage{
-  umxAdd1(model, pathList1 = NULL, pathList2 = NULL,
-    arrows = 2, maxP = 1)
+umxAdd1(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP = 1)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to alter}
@@ -20,11 +19,11 @@
   to p==1 - all values)}
 }
 \value{
-  a table of fit changes
+a table of fit changes
 }
 \description{
-  Add each of a set of paths you provide to the model,
-  returning a table of theire effect on fit
+Add each of a set of paths you provide to the model,
+returning a table of theire effect on fit
 }
 \examples{
 \dontrun{
@@ -32,9 +31,9 @@ model = umxAdd1(model)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxDrop1}}, \code{\link{mxModel}}
+- \code{\link{umxDrop1}}, \code{\link{mxModel}}
 }
 

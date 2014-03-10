@@ -2,8 +2,8 @@
 \alias{umxCompare}
 \title{umxCompare}
 \usage{
-  umxCompare(base = NULL, comparison = NULL, all = TRUE,
-    digits = 3, report = 1)
+umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
+  report = 1)
 }
 \arguments{
   \item{base}{The base \code{\link{mxModel}} for
@@ -19,28 +19,43 @@
   \item{digits}{rounding for p etc.}
 
   \item{report}{Optionally add sentences for inclusion
-  inline in a paper or output to an html table which will
-  open your default browser: handy for getting tables into
-  word}
+  inline in a paper (report= 2) and output to an html table
+  which will open your default browser (report = 3). This
+  is handy for getting tables into word}
 }
 \description{
-  umxCompare compares two or more \code{\link{mxModel}}s.
-  If you leave comparison blank, it will just give fit info
-  for the base model
+umxCompare compares two or more \code{\link{mxModel}}s. If
+you leave comparison blank, it will just give fit info for
+the base model
 }
 \examples{
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1, setLabels = T, setValues = T)
+m2 = umxReRun(m1, dropList = "G_to_x2", name = "dropm1", free = T, value = .1)
+umxCompare(m1, m2)
+mxCompare(m1, m2) # what OpenMx give by default
+umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
+umxCompare(m1, m2, report = 3) # Open table in browser
 \dontrun{
-umxCompare(model1, model2)
-umxCompare(model1, model2, report = 2)
-umxCompare(model1, c(model2, model3))
+umxCompare(m1, c(m2, m3))
 umxCompare(c(m1, m2), c(m2, m3), all = T)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu/}
+- \url{http://openmx.psyc.virginia.edu/}
 }
 \seealso{
-  - \code{\link{mxCompare}}, \code{\link{umxSummary}},
-  \code{\link{umxRun}},
+- \code{\link{mxCompare}}, \code{\link{umxSummary}},
+\code{\link{umxRun}},
 }
 

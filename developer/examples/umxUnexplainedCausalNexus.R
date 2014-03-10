@@ -40,7 +40,7 @@ MIMIC <- mxModel("MIMIC", type="RAM",
  
     # Correlated formative sources for F1, each with variance = 1
     mxPath(from = sources, connect = "unique.bivariate", arrows = 2),
-    mxPath(from = sources, arrows = 2, values = 1, free=F ),
+    mxPath(from = sources, arrows = 2, values = 1, free = F ),
  
     # Residual variance on receivers
     mxPath(from = receivers, arrows = 2),
@@ -50,6 +50,6 @@ MIMIC <- mxModel("MIMIC", type="RAM",
 MIMIC <- mxRun(MIMIC); summary(MIMIC)
 
 MIMIC = umxLabel(MIMIC)
-umxGetLabels(MIMIC ,regex= ".")
+umxGetLabels(MIMIC , regex = ".")
 umxGraph_RAM(MIMIC, std = T, precision = 2, dotFilename = "name",  pathLabels = "none", showFixed = F)
-umxUnexplainedCausalNexus(from="educ", delta = 1, to= "church", model = MIMIC)
+umxUnexplainedCausalNexus(from = "educ", delta = 1, to = "church", model = MIMIC)

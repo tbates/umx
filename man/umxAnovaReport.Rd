@@ -2,8 +2,8 @@
 \alias{umxAnovaReport}
 \title{umxAnovaReport}
 \usage{
-  umxAnovaReport(model1, model2 = NULL, raw = T,
-    format = "string", printDIC = F)
+umxAnovaReport(model1, model2 = NULL, raw = T, format = "string",
+  printDIC = F)
 }
 \arguments{
   \item{model1}{An \code{\link{lm}} model to make a table
@@ -17,27 +17,26 @@
 
   \item{format}{String or markdown format?}
 
-  \item{printDIC}{A Boolean toggle whether tou want
+  \item{printDIC}{A Boolean toggle whether you want
   AIC-type fit change table printed}
 }
 \description{
-  umxAnovaReport is a convenience function to format
-  results for journals. There are others. Bt I made this
-  one. If you give it the output of an lm, it runs anova()
-  and lm.beta(), and puts that together in a regression
-  table... Alternatively if you fill in the optional second
-  model, it compares them (just like
-  \code{\link{umxCompare}})
+umxAnovaReport is a convenience function to format results
+for journals. There are others. Bt I made this one. If you
+give it the output of an lm, it runs anova() and lm.beta(),
+and puts that together in a regression table...
+Alternatively if you fill in the optional second model, it
+compares them (just like \code{\link{umxCompare}})
 }
 \examples{
 model = lm(mpg ~ cyl + disp, data = mtcars)
 umxAnovaReport(model)
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxSummary}}, \code{\link{umxCompare}},
-  \code{\link{anova}}, \code{\link{lm.beta}}
+- \code{\link{umxSummary}}, \code{\link{umxCompare}},
+\code{\link{anova}}, \code{\link{lm.beta}}
 }
 

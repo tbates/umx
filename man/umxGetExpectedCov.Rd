@@ -2,7 +2,7 @@
 \alias{umxGetExpectedCov}
 \title{umxGetExpectedCov}
 \usage{
-  umxGetExpectedCov(model, latent = T, manifest = T)
+umxGetExpectedCov(model, latent = T, manifest = T, digits = NULL)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to get the
@@ -15,11 +15,11 @@
   (defaults to TRUE)}
 }
 \value{
-  - expected covariance matrix
+- expected covariance matrix
 }
 \description{
-  extract the expected covariance matrix from an
-  \code{\link{mxModel}}
+extract the expected covariance matrix from an
+\code{\link{mxModel}}
 }
 \examples{
 require(OpenMx)
@@ -34,14 +34,15 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-umxGetExpectedCov(m1)
+umxGetExpectedCov(model = m1)
+umxGetExpectedCov(m1, digits = 3)
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu/thread/2598}
-  Original written by
-  \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+- \url{http://openmx.psyc.virginia.edu/thread/2598}
+Original written by
+\url{http://openmx.psyc.virginia.edu/users/bwiernik}
 }
 \seealso{
-  - \code{\link{umxRun}}, \code{\link{umxCIpboot}}
+- \code{\link{umxRun}}, \code{\link{umxCI_boot}}
 }
 

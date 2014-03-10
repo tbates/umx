@@ -1,14 +1,17 @@
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
+
+# setwd("~/bin/umx"); 
+# setwd("~/bin/umx"); devtools::check()
+# devtools::load_all()
+# devtools::dev_help("umxX")
+# show_news()
+
 # utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
 # so umx_swap_a_block()
 
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-# setwd("~/bin/umx"); 
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
-# setwd("~/bin/umx"); devtools::check()
-# devtools::load_all()
-# devtools::dev_help("umxX")
-# show_news()
 
 # =====================
 # = utility functions =
@@ -45,7 +48,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	model    = mxModel(model, mxCI(thisCI) )
 	return (model)
 }
-
 
 # ====================
 # = Updating helpers =
@@ -153,7 +155,7 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 # How long did that take?
 #' umxReportTime
 #'
-#' A functoin to compactly report how long a model took to execute
+#' A function to compactly report how long a model took to execute
 #'
 #' @param model An \code{\link{mxModel}} from which to get the elapsed time
 #' @param formatStr A format string, defining how to show the time
@@ -162,18 +164,26 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' umxReportTime(model)
-#' }
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umxReportTime(m1)
 
 umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
-	# use case
-	# umxReportTime(fit1)
 	format(.POSIXct(model@output$wallTime,tz), formatStr)
 }
 
 
-#' print.dataframe
+#' umx_print
 #'
 #' A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
 #' Its most useful characteristic is allowing you to change how NA and zero appear.
@@ -185,15 +195,22 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' @param na.print String to replace NA with (default to blank "")
 #' @param zero.print String to replace 0.000 with  (defaults to "0")
 #' @param justify Parameter passed to print
+#' @param output file to write to and open in browser
 #' @param ... Optional parameters for print
 #' @export
 #' @seealso - \code{\link{print}}
 #' @examples
+#' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 #' \dontrun{
-#' print.dataframe(model)
+#' umx_print(model)
+#' umx_print(mtcars[1:10,], file = "Rout.html")
 #' }
-print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", ...){
-    xx <- format(x, digits = digits, justify = justify)
+
+umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA,"tmp.html"),...){
+	# TODO: Options for file = c("Rout.html","cat","return")
+	file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
+	xx <- umx_round(x, digits = digits, coerce = FALSE)
+    # xx <- format(x, digits = digits, justify = justify)
     if (any(ina <- is.na(x))) 
         xx[ina] <- na.print
 	i0 <- !ina & x == 0
@@ -201,58 +218,19 @@ print.dataframe <- function (x, digits = getOption("digits"), quote = FALSE, na.
         xx[i0] <- zero.print
     if (is.numeric(x) || is.complex(x)){
         print(xx, quote = quote, right = TRUE, ...)
+	} else if(!is.na(file)){
+		R2HTML::HTML(x, file = file, Border = 0, append = F, sortableDF=T); 
+		system(paste0("open ", file))
+		print("Table opened in browser")
     }else{
 		print(xx, quote = quote, ...)	
     }
     invisible(x)
-	# use case
-	# print.dataframe(bob, digits=2, zero.print = ".", justify="left")
 }
-
 
 # ===================================
 # = Ordinal/Threshold Model Helpers =
 # ===================================
-
-xmuMaxLevels <- function(data) {
-	anyFactors = F
-	maxLevels = 0
-	vars = names(data)
-	for (i in vars) {
-		if(is.factor(mzData[,i])){
-			nLevels = length(levels(mzData[,i]))
-			if(nLevels > maxLevels){
-			 	maxLevels = nLevels
-				anyFactors = T
-			}
-		}
-	}	
-	if(!anyFactors){
-		stop("No columns were type factor")
-	} else {
-		return(maxLevels)
-	}
-}
-xmuMinLevels <- function(data) {
-	# TODO add check that some columns have levels
-	anyFactors = F
-	minLevels = 1e6 # silly high value
-	vars = names(data)
-	for (i in vars) {
-		if(is.factor(mzData[,i])){
-			nLevels = length(levels(mzData[,i]))
-			if(nLevels < minLevels){
-			 	minLevels = nLevels
-				anyFactors = T
-			}
-		}
-	}
-	if(!anyFactors){
-		stop("No columns were type factor")
-	} else {
-		return(minLevels)
-	}
-}
 
 # ====================
 # = Data and Utility =
@@ -547,7 +525,7 @@ rowMin <- function(df, na.rm=T) {
 
 #' umx.as.numeric
 #'
-#' convert each column of a dtaframe to numeric
+#' Convert each column of a dataframe to numeric
 #'
 #' @param df a \code{\link{data.frame}} to convert
 #' @return - data.frame
@@ -555,9 +533,9 @@ rowMin <- function(df, na.rm=T) {
 #' @seealso - 
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
+#' df = mtcars
+#' df$mpg = c(letters,letters[1:6]); str(df)
 #' df = umx.as.numeric(df)
-#' }
 umx.as.numeric <- function(df) {
 	# TODO handle case of not being a data.frame...
 	for (i in names(df)) {
@@ -579,8 +557,8 @@ umx.as.numeric <- function(df) {
 #' @seealso - \code{\link{subset}}
 #' @examples
 #' test = data.frame(a=paste("a",1:10,sep=""),b=paste("b",1:10,sep=""), c=paste("c",1:10,sep=""),d=paste("d",1:10,sep=""),stringsAsFactors=F)
-#' umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
-#' umx_SwapABlock(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
+#' umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
+#' umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
 #'
 umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	theRows = theData[rowSelector,]
@@ -659,11 +637,11 @@ umx_rename <- function (x, replace, old = NULL) {
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
+#' umx_grep(mtcars, "hp", output="both", ignore.case=T)
+#' umx_grep(mtcars, "^h.*", output="both", ignore.case=T)
 #' \dontrun{
-#' umx_grep(df)
-#' umx_grep(relig, "Race", output="both", ignore.case=T) 
-#' umx_grep(relig, "race", output="label") 
-#' umx_grep(relig, "race", output="name") 
+#' umx_grep(spss_df, "labeltext", output = "label") 
+#' umx_grep(spss_df, "labeltext", output = "name") 
 #' }
 umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 	# output = "both", "label" or "name"
@@ -710,44 +688,56 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 # = Comparison helpers =
 # ======================
 
-#' umxLessThan
+#' umx_less_than
 #'
 #' A version of less-than which returns FALSE for NAs (rather than NA)
 #'
-#' @aliases %%<%%
+#' # @aliases %<%
 #'
 #' @export
 #' @seealso - \code{\link{umx_greater_than}}, 
 #' @examples
-#' c(1:3, NA, 5) = %<% 2
-
+#' c(1:3, NA, 5) %<% 2
 umx_less_than <- function(table, x){
 	lessThan = table < x
 	lessThan[is.na(lessThan)] = FALSE
 	return(lessThan)
 }
 
-#' umxGreaterThan
+
+#' @export
+#' @rdname umx_less_than
+"%<%" <- function(table, x){
+	umx_less_than(table, x)
+}
+
+#' umx_greater_than
 #'
 #' A version of greater-than that excludes NA as a match
 #'
-#' @aliases %%>%%
+#' @aliases %>%
 #'
 #' @export
 #' @seealso - \code{\link{umx_less_than}}, 
 #' @examples
-#' c(1:3,NA,5) = %>% 2 
+#' c(1:3, NA, 5) %>% 2 
 
 umx_greater_than <- function(table, x){
+	# TODO currently not being found - alias problem? same for <
 	moreThan = table > x
 	moreThan[is.na(moreThan)] = FALSE
 	return(moreThan)
 }
 
+#' @export
+#' @rdname umx_greater_than
+"%>%" <- function(table, x){
+	umx_greater_than(table, x)
+}
+
 # =====================
 # = Utility functions =
 # =====================
-round.num <- function(x, digits) { stop("Use umx_round()")}
 
 #' umx_round
 #'
@@ -762,53 +752,46 @@ round.num <- function(x, digits) { stop("Use umx_round()")}
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' umx_round(df, coerce=T)
-#' }
+#' head(umx_round(mtcars, coerce = T))
 
-umx_round <- function(x, digits, coerce = T) {
+umx_round <- function(df, digits, coerce = T) {
+	if(!is.data.frame(df)){
+		stop(paste0("umx_round takes a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+	}
 	# for each column, if numeric, round
-	rows = dim(x)[1]
-	cols = dim(x)[2]
+	rows = dim(df)[1]
+	cols = dim(df)[2]
 	for(c in 1:cols) {
 		if(coerce){
 			for(r in 1:rows) {
-				x[r, c] = round(as.numeric(x[r, c]), digits)
+				df[r, c] = round(as.numeric(df[r, c]), digits)
 			}
 		} else {
-			if(is.numeric(x[1, c])){
-				x[ , c] = round(x[ , c], digits)
+			if(is.numeric(df[1, c])){
+				df[ , c] = round(df[ , c], digits)
 			}
 		}
 	}
-	return(x)
+	return(df)
 }
 
-specify_decimal <- function(x, k) format(round(x, k), nsmall = k)
+specify_decimal <- function(x, k){
+	format(round(x, k), nsmall = k)
+}
 
-#' print.html
+# extracted from Rcmdr: TODO: fix URL for RCmdr reference
+#' reliability
 #'
-#' printing method for sending obejcts to html output
+#' Compute and report Coefficient alpha
 #'
-#' @param x an object to print
-#' @param rounding decimal places (not implemented)
-#' @param output file to write to and open in browser
+#' @param S A square, symmetric, numeric covariance matrix
 #' @return - 
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @seealso - \code{\link{cov}}
+#' @references - \url{http://Rcmdr}
 #' @examples
-#' \dontrun{
-#' print.html(x, output = "Rout.html")
-#' }
-print.html <- function(x, rounding = 3, output = "tmp.html") {
-	# options for output = c("Rout.html","cat","return")
-	R2HTML::HTML(x, file = output, Border = 0, append = F, sortableDF=T); 
-	system(paste0("open ", output))
-	print("Table opened in browser")
-}
-
-# extracted from Rcmdr
+#' # treat vehicle aspects as items of a test
+#' reliability(cov(mtcars))
 reliability <-function (S){
      reliab <- function(S, R) {
          k <- dim(S)[1]
@@ -858,18 +841,44 @@ print.reliability <- function (x, digits = 4, ...){
      invisible(x)
 }
 
-anova.report.F <- function(model, precision=3) {
-	# useage
-	# anova.report.F(model) # "F(495,1) = 0.002"
-	# or
-	# 1anova.report.F(anova(m1, m2))
+#' anova.report.F
+#'
+#' Generate a text-format report of the F values in an ANOVA.
+#' Like anova.report.F(model) # --> "F(495,1) = 0.002"
+#'
+#' @param model an \code{\link{lm}} model to report F for.
+#' @param digits how many numbers after the decimal for F (p-value is APA-style)
+#' @return - F in  text format
+#' @export
+#' @seealso - \code{\link{lm}}, \code{\link{anova}}, \code{\link{summary}}
+#' @examples
+#' m1 = lm(mpg~ cyl + wt, data = mtcars)
+#' anova.report.F(m1)
+#' m2 = lm(mpg~ cyl, data = mtcars)
+#' anova.report.F(m2)
+#' anova.report.F(anova(m1, m2))
+
+anova.report.F <- function(model, digits = 2) {
+	# anova.report.F(anova(m1, m2))
+	if(is(digits,"lm")){
+		stop(paste0(
+		"digits looks like an lm model: ",
+		"You probably said:\n    anova.report.F(m1, m2)\n",
+		"when you meant\n",
+		"   anova.report.F(anova(m1, m2))"
+		))
+	}
 	tmp = class(model)
 	if(all(tmp=="lm")){
 		a = summary(model)
 		dendf = a$fstatistic["dendf"]
-		numdf  = a$fstatistic["numdf"]
+		numdf = a$fstatistic["numdf"]
 		value = a$fstatistic["value"]
-		return(paste0("F(", dendf, ",",numdf,") = " ,round(value,precision), ",p = ", round(pf(value,numdf,dendf, lower.tail=F),precision)))
+		return(paste0(
+				   "F(", dendf, ",", numdf, ") = " , round(value, digits),
+					", p = ", umx_APA_pval(pf(value, numdf, dendf, lower.tail = F))
+				)
+		)
 	} else {
 		if(model[2, "Res.Df"] > model[1, "Res.Df"]){
 			message("Have you got the models the right way around?")
@@ -878,8 +887,8 @@ anova.report.F <- function(model, precision=3) {
 			"F(", 
 			round(model[2, "Res.Df"]), ",",
 			round(model[2,"Df"]), ") = ",
-			round(model[2,"F"],precision), ", p = ",
-			round(model[2,"Pr(>F)"], precision)
+			round(model[2,"F"], digits), ", p = ",
+			umx_APA_pval(model[2,"Pr(>F)"])
 		)
 	}	
 }
@@ -1115,11 +1124,12 @@ umx_has_been_run <- function(model, stop = F) {
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' umx_check_names(c("E", data))
-#' }
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' umx_check_names(c("x1","x2"), demoOneFactor)
+#' umx_check_names(c("z1","x2"), data = demoOneFactor, die = F)
 
-umx_check_names <- function(namesNeeded, data, die= TRUE){
+umx_check_names <- function(namesNeeded, data, die = TRUE){
 	if(!is.data.frame(data)){
 		stop("data has to be a dataframe")
 	}
@@ -1143,30 +1153,46 @@ umx_check_names <- function(namesNeeded, data, die= TRUE){
 #' return the names of any ordinal variables in a dataframe
 #'
 #' @param df an \code{\link{data.frame}} to look in for ordinal variables
+#' @param names whether to return the names of ordinal variables, or a binary list (default = F)
+#' @param strict whether to stop when unordered factors are found (default = T)
 #' @return - list of variable names
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
+#' tmp = mtcars
+#' tmp$cyl = ordered(mtcars$cyl)
+#' umx_is_ordinal(tmp)
+#' isContinuous = !umx_is_ordinal(tmp)
+#' # nb: Factors are not necessarily ordered! By default unordered factors cause an error...
 #' \dontrun{
-#' umx_is_ordinal(df)
+#' tmp$cyl = factor(mtcars$cyl)
+#' umx_is_ordinal(tmp)
 #' }
-umx_is_ordinal <- function(df, names=F) {
+
+umx_is_ordinal <- function(df, names = F, strict = T) {
 	# Purpose, return which columns are Ordinal
-	# use case: isContinuous = !umxIsOrdinalVar(df)
+	# use case: 
 	# nb: can optionally return just the names of these
 	nVar = ncol(df);
 	# Which are ordered factors?
-	factorVariable = rep(F,nVar)
+	factorList = rep(F,nVar)
+	orderedList = rep(F,nVar)
 	for(n in 1:nVar) {
 		if(is.ordered(df[,n])) {
-			factorVariable[n]=T
+			orderedList[n] = T
+		}
+		if(is.factor(df[,n])) {
+			factorList[n] = T
 		}
 	}
+	if(any(factorList & ! orderedList) & strict){
+		stop("Dataframe contains at least 1 unordered factor. Set strict = F to allow this")
+	}
 	if(names){
-		return(names(df)[factorVariable])
+		return(names(df)[orderedList])
 	} else {
-		return(factorVariable)
+		return(orderedList)
 	}
 }
 
@@ -1184,20 +1210,20 @@ umx_is_ordinal <- function(df, names=F) {
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' fit1 <- mxModel("One Factor", type = "RAM", 
+#' m1 <- mxModel("One Factor", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' fit1 = umxRun(fit1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxSummary(m1, show = "std")
-#' if(umx_is_RAM(fit1)){
+#' if(umx_is_RAM(m1)){
 #' 	message("nice RAM model!")
 #' }
 #' \dontrun{
-#' if(!umx_is_RAM(fit1)){
+#' if(!umx_is_RAM(m1)){
 #' 	stop("model must be a RAM model")
 #' }
 #' }
@@ -1223,29 +1249,51 @@ umx_is_RAM <- function(obj) {
 #' @seealso - \code{\link{mxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' if(umx_is_MxModel(fit1)){
+#' m1 = mxModel("test")
+#' if(umx_is_MxModel(m1)){
 #' 	message("nice OpenMx model!")
-#' }
 #' }
 umx_is_MxModel <- function(obj) {
 	isS4(obj) & is(obj, "MxModel")	
 }
 
+umx_check_model <- function(obj, type = "RAM", hasData = NA) {
+	# TODO hasSubmodels = F
+	if (!umx_is_MxModel(obj)) {
+		stop("'model' must be an mxModel")
+	}
+	if(type=="RAM"){
+		if (!umx_is_RAM(obj)) {
+			stop("'model' must be an RAMModel")
+		}
+	} else {
+		message(paste("type", sQuote(type), "not handled yet"))
+	}
+	if (length(obj@submodels) > 0) {
+		stop("Cannot yet handle submodels")
+	}
+	if (hasData & is.null(obj@data@observed)) {
+		stop("'model' does not contain any data")
+	}	
+}
 
 #' umx_is_cov
 #'
 #' test if a data frame or matrix is cov or cor data, or is likely to be raw...
 #'
 #' @param data dataframe to test
-#' @return - "raw", "cor", or "cov"
+#' @param boolean whether to return the type ("cov") or a boolean (default = string)
+#' @return - "raw", "cor", or "cov", or, if boolean= T, then T | F
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
+#' df = cov(mtcars)
 #' umx_is_cov(df)
-#' }
+#' df = cor(mtcars)
+#' umx_is_cov(df)
+#' umx_is_cov(df, boolean = T)
+#' umx_is_cov(mtcars, boolean = T)
 
 umx_is_cov <- function(data = NULL, boolean = F, verbose = F) {
 	if(is.null(data)) { stop("Error in umx_is_cov: You have to provide the data that you want to check...") }
@@ -1319,7 +1367,7 @@ umx_has_CIs <- function(model) {
 #' @examples
 #' umx_APA_pval(1.23E-3)
 #' umx_APA_pval(c(1.23E-3, .5))
-#' umx_APA_pval(c(1.23E-3, .5), addComparison=F)
+#' umx_APA_pval(c(1.23E-3, .5), addComparison = T)
 
 umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 	# addComparison can be NA to only add when needed
@@ -1360,14 +1408,14 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 }
 #' umxAnovaReport
 #'
-#' umxAnovaReport is a convenience function to format results for journals. There are others. Bt I made this one.
+#' umxAnovaReport is a convenience function to format results for journals. There are others. But I made this one.
 #' If you give it the output of an lm, it runs anova() and lm.beta(), and puts that together in a regression table...
 #' Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
 #' @param model1 An \code{\link{lm}} model to make a table from 
 #' @param model2 An (optional) second \code{\link{lm}} model to compare to model 1
 #' @param raw Should the raw table also be output? (allows checking that nothing crazy is going on)
 #' @param format String or markdown format?
-#' @param printDIC A Boolean toggle whether tou want AIC-type fit change table printed
+#' @param printDIC A Boolean toggle whether you want AIC-type fit change table printed
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
@@ -1376,6 +1424,7 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' umxAnovaReport(model)
 
 umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", printDIC = F) {
+	# TODO merge with anova.report.F, deprecate the latter
 	if(!is.null(model2)){
 		# F(-2, 336) =  0.30, p = 0.74
 		a = anova(model1, model2)
@@ -1429,9 +1478,9 @@ umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", pr
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' reorderedMatrix = umx_reorder(oldMatrix, newOrder)
-#' }
+#' oldMatrix = cov(mtcars)
+#' umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
+#' umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 
 umx_reorder <- function(old, newOrder) {
 	dim_names = dimnames(old)[[1]]
@@ -1439,13 +1488,11 @@ umx_reorder <- function(old, newOrder) {
 		stop("All variable names must appear in the matrix")
 	}
 	numVarsToRetain = length(newOrder)
-	new = old[1:numVarsToRetain,1:numVarsToRetain]
+	new = old[1:numVarsToRetain, 1:numVarsToRetain]
 	dimnames(new) = list(newOrder, newOrder)
-	for(r_seq in seq_along(newOrder)) {
-		for(c_seq in seq_along(newOrder)) {
-			r = dim_names[r_seq]
-			c = dim_names[c_seq]
-			new[r, c] = old[r, c]
+	for(r in newOrder) {
+		for(c in newOrder) {
+			new[r, c] <- old[r, c]
 		}
 	}
 	return(new)
@@ -1516,4 +1563,75 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' }
 umxEval <- function(expstring, model, compute = F, show = F) {
 	return(eval(substitute(mxEval(x, model, compute, show), list(x = parse(text=expstring)[[1]]))))
+}
+
+#' umx_scale_wide_twin_data
+#'
+#' scale wide data across all cases: currently twins
+#'
+#' @param df a wide dataframe
+#' @param varsToScale the base names of the variables ("weight" etc)
+#' @param suffixes the suffix that distinguishes each case (T1, T2 etc.)
+#' @return - new dataframe with scaled variables
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' data(twinData) 
+#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffixes = c("1","2") )
+#' plot(wt1 ~ wt2, data= df)
+
+umx_scale_wide_twin_data <- function(df, varsToScale = c("ht", "wt"), suffixes = c("1","2")) {
+	if(length(suffixes)!=2){
+		stop("I need two suffixes, you gave me ", length(suffixes))
+	}
+	namesNeeded = c(paste0(varsToScale, suffixes[1]), paste0(varsToScale, suffixes[2]))
+	umx_check_names(namesNeeded, df)
+	t1Traits = paste0(varsToScale, suffixes[1])
+	t2Traits = paste0(varsToScale, suffixes[2])
+	for (i in 1:length(varsToScale)) {
+		T1 = df[,t1Traits[i]]
+		T2 = df[,t2Traits[i]]
+		totalMean = mean(c(T1, T2), na.rm = T)
+		totalSD   =   sd(c(T1, T2), na.rm = T)
+		T1 = (T1 - totalMean)/totalSD
+		T2 = (T2 - totalMean)/totalSD
+		df[,t1Traits[i] ] = T1
+		df[,t2Traits[i] ] = T2
+	}
+	return(df)
+}
+
+#' umx_default_option
+#'
+#' handle parameter options given as a default list in a function
+#'
+#' @param x the value chosen (may be a selection, or the default list of options)
+#' @return - the option
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' option_list = c("default", "par.observed", "empirical")
+#' umx_default_option("par.observed", option_list)
+#' umx_default_option("bad", option_list)
+#' umx_default_option("allow me", option_list, check = F)
+#' umx_default_option(option_list, option_list)
+#' option_list = c(NULL, "par.observed", "empirical")
+#' umx_default_option(option_list, option_list) # fails with NULL!!!!!
+#' option_list = c(NA, "par.observed", "empirical")
+#' umx_default_option(option_list, option_list) # use NA instead
+
+#' }
+umx_default_option <- function(x, option_list, check = T){
+	if (identical(x, option_list)) {
+	    x = option_list[1]
+	}
+	if (length(x) != 1){
+	    stop(paste("argument must be ONE of ", paste(sQuote(option_list),collapse=", "), "you tried:", paste(sQuote(x), collapse = ", ")))
+	}else if (!(x %in% option_list) & check) {
+	    stop(paste("argument must be one of ", paste(sQuote(option_list),collapse=", ")))
+	} else {
+		return(x)
+	}
 }

@@ -2,8 +2,7 @@
 \alias{umx_APA_pval}
 \title{umx_u_APA_pval}
 \usage{
-  umx_APA_pval(p, min = 0.001, rounding = 3,
-    addComparison = NA)
+umx_APA_pval(p, min = 0.001, rounding = 3, addComparison = NA)
 }
 \arguments{
   \item{p}{A p-value to round}
@@ -16,18 +15,18 @@
   or to add the appropriate comparison symbol (= <)}
 }
 \value{
-  - a value
+- a value
 }
 \description{
-  round a p value so you get < .001 instead of .000000002
-  or .134E-16
+round a p value so you get < .001 instead of .000000002 or
+.134E-16
 }
 \examples{
 umx_APA_pval(1.23E-3)
 umx_APA_pval(c(1.23E-3, .5))
-umx_APA_pval(c(1.23E-3, .5), addComparison=F)
+umx_APA_pval(c(1.23E-3, .5), addComparison = T)
 }
 \seealso{
-  - \code{\link{round}}
+- \code{\link{round}}
 }
 

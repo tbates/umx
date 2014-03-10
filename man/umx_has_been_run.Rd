@@ -2,16 +2,16 @@
 \alias{umx_has_been_run}
 \title{umx_has_been_run}
 \usage{
-  umx_has_been_run(model, stop = F)
+umx_has_been_run(model, stop = F)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to check}
 }
 \value{
-  - boolean
+- boolean
 }
 \description{
-  check if an mxModel has been run or not
+check if an mxModel has been run or not
 }
 \examples{
 \dontrun{
@@ -19,10 +19,10 @@ umx_has_been_run(model)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

@@ -2,7 +2,7 @@
 \alias{umxUnexplainedCausalNexus}
 \title{umxUnexplainedCausalNexus}
 \usage{
-  umxUnexplainedCausalNexus(from, delta, to, model)
+umxUnexplainedCausalNexus(from, delta, to, model)
 }
 \arguments{
   \item{from}{A variable in the model that you want to
@@ -17,8 +17,8 @@
   \item{model}{The model containing from and to}
 }
 \description{
-  umxUnexplainedCausalNexus report the effect of a change
-  (delta) in a variable (from) on an output (to)
+umxUnexplainedCausalNexus report the effect of a change
+(delta) in a variable (from) on an output (to)
 }
 \examples{
 \dontrun{
@@ -26,9 +26,9 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+- http://openmx.psyc.virginia.edu/
 }
 \seealso{
-  - \code{\link{umxRun}}, \code{\link{mxCompare}}
+- \code{\link{umxRun}}, \code{\link{mxCompare}}
 }
 

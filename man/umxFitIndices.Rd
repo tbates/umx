@@ -1,21 +1,22 @@
-\name{umx_is_RAM}
-\alias{umx_is_RAM}
-\title{umx_is_RAM}
+\name{umxFitIndices}
+\alias{umxFitIndices}
+\title{umxFitIndices}
 \usage{
-umx_is_RAM(obj)
+umxFitIndices(model, indepfit)
 }
 \arguments{
-  \item{obj}{an object to be tested to see if it is an
-  OpenMx RAM \code{\link{mxModel}}}
+  \item{modelfit}{an \code{\link{mxModel}}}
+
+  \item{indepfit}{an \code{\link{mxModel}}}
 }
 \value{
-- Boolean
+-
 }
 \description{
-Utility function returning a binary answer to the question
-"Is this a RAM model?"
+A list of fit indices
 }
 \examples{
+\dontrun{
 require(OpenMx)
 data(demoOneFactor)
 latents  = c("G")
@@ -28,20 +29,16 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-umxSummary(m1, show = "std")
-if(umx_is_RAM(m1)){
-	message("nice RAM model!")
-}
-\dontrun{
-if(!umx_is_RAM(m1)){
-	stop("model must be a RAM model")
-}
+umxFitIndices(m1, m1_ind)
+# TODO use means and compute independence model here for example...
 }
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{mxModel}}
+- \code{\link{umxSummary}}, \code{\link{umxCompare}},
+\code{\link{summary}}, \code{\link{umxLabel}},
+\code{\link{umxRun}}, \code{\link{umxStart}}
 }
 

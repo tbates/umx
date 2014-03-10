@@ -1,9 +1,9 @@
-\name{print.dataframe}
-\alias{print.dataframe}
-\title{print.dataframe}
+\name{umx_print}
+\alias{umx_print}
+\title{umx_print}
 \usage{
-\method{print}{dataframe}(x, digits = getOption("digits"), quote = FALSE,
-  na.print = "", zero.print = "0", justify = "none", ...)
+umx_print(x, digits = getOption("digits"), quote = FALSE, na.print = "",
+  zero.print = "0", justify = "none", file = c(NA, "tmp.html"), ...)
 }
 \arguments{
   \item{x}{A data.frame to print}
@@ -21,6 +21,8 @@
 
   \item{justify}{Parameter passed to print}
 
+  \item{output}{file to write to and open in browser}
+
   \item{...}{Optional parameters for print}
 }
 \description{
@@ -31,9 +33,10 @@ Zeros have the decimals suppressed, and NAs are suppressed
 altogether.
 }
 \examples{
-print.dataframe(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
+umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 \dontrun{
-print.dataframe(model)
+umx_print(model)
+umx_print(x, output = "Rout.html")
 }
 }
 \seealso{

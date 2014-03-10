@@ -2,9 +2,8 @@
 \alias{umxRun}
 \title{umxRun}
 \usage{
-  umxRun(model, n = 1, calc_SE = T, calc_sat = T,
-    setValues = F, setLabels = F, comparison = NULL,
-    setStarts = NULL)
+umxRun(model, n = 1, calc_SE = T, calc_sat = T, setValues = F,
+  setLabels = F, comparison = NULL, setStarts = NULL)
 }
 \arguments{
   \item{model}{The \code{\link{mxModel}} you wish to run.}
@@ -34,13 +33,13 @@
   \item{setStarts}{Deprecated way to setValues}
 }
 \value{
-  - \code{\link{mxModel}}
+- \code{\link{mxModel}}
 }
 \description{
-  umxRun is a version of \code{\link{mxRun}} which can run
-  also set start values, labels, and run multiple times It
-  can also calculate the saturated and independence
-  likelihoods necessary for most fit indices.
+umxRun is a version of \code{\link{mxRun}} which can run
+also set start values, labels, and run multiple times It
+can also calculate the saturated and independence
+likelihoods necessary for most fit indices.
 }
 \examples{
 require(OpenMx)
@@ -63,11 +62,11 @@ model = umxRun(model, n=10) # run, but also re-run if not green the first run
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{mxRun}}, \code{\link{umxLabel}},
-  \code{\link{umxStart}}, \code{\link{mxModel}},
-  \code{\link{umxCIboot}}
+- \code{\link{mxRun}}, \code{\link{umxLabel}},
+\code{\link{umxStart}}, \code{\link{mxModel}},
+\code{\link{umxCIboot}}
 }
 

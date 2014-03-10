@@ -2,26 +2,26 @@
 \alias{umx.as.numeric}
 \title{umx.as.numeric}
 \usage{
-  umx.as.numeric(df)
+umx.as.numeric(df)
 }
 \arguments{
   \item{df}{a \code{\link{data.frame}} to convert}
 }
 \value{
-  - data.frame
+- data.frame
 }
 \description{
-  convert each column of a dtaframe to numeric
+Convert each column of a dataframe to numeric
 }
 \examples{
-\dontrun{
+df = mtcars
+df$mpg = c(letters,letters[1:6]); str(df)
 df = umx.as.numeric(df)
 }
-}
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  -
+-
 }
 

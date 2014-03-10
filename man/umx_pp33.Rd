@@ -2,7 +2,7 @@
 \alias{umx_pp33}
 \title{umx_pp33}
 \usage{
-  umx_pp33(target_df, x)
+umx_pp33(target_df, x)
 }
 \arguments{
   \item{target_df}{the... TODO}
@@ -10,29 +10,29 @@
   \item{x}{the... TODO}
 }
 \value{
-  - value
+- value
 }
 \description{
-  A utility function to compute the critical value of
-  student (xc) that gives p = .05 when df = df_xc = qt(p =
-  .975, df = target_df)
+A utility function to compute the critical value of student
+(xc) that gives p = .05 when df = df_xc = qt(p = .975, df =
+target_df)
 }
 \details{
-  Find noncentrality parameter (ncp) that leads 33% power
-  to obtain xc The original is published at p-curve
-  \url{http://www.p-curve.com/Supplement/R/pp33.r}
+Find noncentrality parameter (ncp) that leads 33% power to
+obtain xc The original is published at p-curve
+\url{http://www.p-curve.com/Supplement/R/pp33.r}
 
-  Find noncentrality parameter (ncp) that leads 33% power
-  to obtain xc
+Find noncentrality parameter (ncp) that leads 33% power to
+obtain xc
 }
 \examples{
 # To find the pp-value for 33\% power for a t(38)=2.4, execute
 umx_pp33(target_df = 38, x = 2.4)
 }
 \references{
-  - \url{http://www.p-curve.com/Supplement/R/pp33.r}
+- \url{http://www.p-curve.com/Supplement/R/pp33.r}
 }
 \seealso{
-  - \code{\link{pnorm}}
+- \code{\link{pnorm}}
 }
 

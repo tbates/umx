@@ -10,6 +10,9 @@
 # = Deprecated =
 # ==============
 
+print.html <- function(x, digits = 3, output = "tmp.html") {stop("Deprecated: used umx_print()")}
+
+
 #' umx_grep_labels
 #'
 #' Deprecated function to search the labels and names use \code{\link{umx_grep}} instead

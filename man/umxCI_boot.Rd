@@ -2,10 +2,9 @@
 \alias{umxCI_boot}
 \title{umxCI_boot}
 \usage{
-  umxCI_boot(model, rawData = NULL,
-    type = c("par.expected", "par.observed", "empirical"),
-    std = TRUE, rep = 1000, conf = 95, dat = FALSE,
-    round = 3)
+umxCI_boot(model, rawData = NULL, type = c("par.expected", "par.observed",
+  "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE,
+  digits = 3)
 }
 \arguments{
   \item{model}{is an optimized mxModel}
@@ -29,18 +28,20 @@
   \item{conf}{is the confidence value (default = 95)}
 
   \item{dat}{specifies whether you want to store the
-  bootstrapped data in the output (useful if you want to do
-  multiple different analyses, such as mediation analyses)}
+  bootstrapped data in the output (useful for multiple
+  analyses, such as mediation analysis)}
+
+  \item{digits}{rounding precision}
 }
 \value{
-  - expected covariance matrix
+- expected covariance matrix
 }
 \description{
-  Compute boot-strapped Confidence Intervals for parameters
-  in an \code{\link{mxModel}} The function creates a
-  sampling distribution for parameters by repeatedly
-  drawing samples with replacement from your data and then
-  computing the statistic for each redrawn sample.
+Compute boot-strapped Confidence Intervals for parameters
+in an \code{\link{mxModel}} The function creates a sampling
+distribution for parameters by repeatedly drawing samples
+with replacement from your data and then computing the
+statistic for each redrawn sample.
 }
 \examples{
 \dontrun{
@@ -60,11 +61,11 @@
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu/thread/2598}
-  Original written by
-  \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+- \url{http://openmx.psyc.virginia.edu/thread/2598}
+Original written by
+\url{http://openmx.psyc.virginia.edu/users/bwiernik}
 }
 \seealso{
-  - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
+- \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
 }
 

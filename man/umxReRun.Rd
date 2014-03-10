@@ -2,9 +2,9 @@
 \alias{umxReRun}
 \title{umxReRun}
 \usage{
-  umxReRun(lastFit, dropList = NA, regex = NA, free = F,
-    value = 0, freeToStart = NA, name = NA, verbose = F,
-    intervals = F, compare = F)
+umxReRun(lastFit, dropList = NA, regex = NA, free = F, value = 0,
+  freeToStart = NA, name = NULL, verbose = F, intervals = F,
+  compare = F)
 }
 \arguments{
   \item{lastFit}{The \code{\link{mxModel}} you wish to
@@ -40,22 +40,37 @@
   umxRun}
 }
 \value{
-  - \code{\link{mxModel}}
+- \code{\link{mxModel}}
 }
 \description{
-  umxReRun Is a convenience function to re-run an
-  \code{\link{mxModel}}, optionally dropping parameters The
-  main value for umxReRun is compactness. So this one-liner
-  drops a path labelled "Cs", and returns the updated
-  model: fit2 = umxReRun(fit1, dropList = "Cs", name =
-  "newModelName")
+umxReRun Is a convenience function to re-run an
+\code{\link{mxModel}}, optionally dropping parameters The
+main value for umxReRun is compactness. So this one-liner
+drops a path labelled "Cs", and returns the updated model:
+fit2 = umxReRun(fit1, dropList = "Cs", name =
+"newModelName")
 }
 \details{
-  If you're a beginner, stick to fit2 =
-  omxSetParameters(fit1, labels = "Cs", values = 0, free =
-  F, name = "newModelName") fit2 = mxRun(fit2)
+If you're a beginner, stick to fit2 =
+omxSetParameters(fit1, labels = "Cs", values = 0, free = F,
+name = "newModelName") fit2 = mxRun(fit2)
 }
 \examples{
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1, setLabels = T, setValues = T)
+m2 = umxReRun(m1, dropList = "G_to_x1", name = "drop_X1")
+umxSummary(m2)
+umxCompare(m1,m2)
 \dontrun{
 fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
 fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
@@ -64,10 +79,10 @@ fit2 = umxReRun(fit1, regex = "Cs", name="AEip", compare = T)
 }
 }
 \references{
-  - http://openmx.psyc.virginia.edu/
+- http://openmx.psyc.virginia.edu/
 }
 \seealso{
-  - \code{\link{mxRun}}, \code{\link{umxLabel}},
-  \code{\link{omxGetParameters}}
+- \code{\link{mxRun}}, \code{\link{umxLabel}},
+\code{\link{omxGetParameters}}
 }
 

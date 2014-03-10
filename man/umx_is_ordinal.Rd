@@ -2,28 +2,40 @@
 \alias{umx_is_ordinal}
 \title{umx_is_ordinal}
 \usage{
-  umx_is_ordinal(df, names = F)
+umx_is_ordinal(df, names = F, strict = T)
 }
 \arguments{
   \item{df}{an \code{\link{data.frame}} to look in for
   ordinal variables}
+
+  \item{names}{whether to return the names of ordinal
+  variables, or a binary list (default = F)}
+
+  \item{strict}{whether to stop when unordered factors are
+  found (default = T)}
 }
 \value{
-  - list of variable names
+- list of variable names
 }
 \description{
-  return the names of any ordinal variables in a dataframe
+return the names of any ordinal variables in a dataframe
 }
 \examples{
+tmp = mtcars
+tmp$cyl = ordered(mtcars$cyl)
+umx_is_ordinal(tmp)
+isContinuous = !umx_is_ordinal(tmp)
+# nb: Factors are not necessarily ordered! By default unordered factors cause an error...
 \dontrun{
-umx_is_ordinal(df)
+tmp$cyl = factor(mtcars$cyl)
+umx_is_ordinal(tmp)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

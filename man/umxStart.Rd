@@ -2,7 +2,7 @@
 \alias{umxStart}
 \title{umxStart}
 \usage{
-  umxStart(obj = NA, sd = NA, n = 1, onlyTouchZeros = F)
+umxStart(obj = NA, sd = NA, n = 1, onlyTouchZeros = F)
 }
 \arguments{
   \item{obj}{The RAM or matrix \code{\link{mxModel}}, or
@@ -18,23 +18,37 @@
   \code{\link{umxReRun}})}
 }
 \value{
-  - \code{\link{mxModel}} with updated start values
+- \code{\link{mxModel}} with updated start values
 }
 \description{
-  umxStart will set start values for the free parameters in
-  RAM and Matrix \code{\link{mxModel}}s, or even
-  mxMatrices. It will try and be smart in guessing these
-  from the values in your data, and the model type.
+umxStart will set start values for the free parameters in
+RAM and Matrix \code{\link{mxModel}}s, or even mxMatrices.
+It will try and be smart in guessing these from the values
+in your data, and the model type.
 }
 \examples{
-\dontrun{
-model = umxStart(model)
-}
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+mxEval(S,m1) # default variances are 0
+m1 = umxStart(m1)
+mxEval(S,m1) # plausible variances
+# # TODO get this working
+# umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxSummary}}
 }
 

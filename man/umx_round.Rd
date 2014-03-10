@@ -2,7 +2,7 @@
 \alias{umx_round}
 \title{umx_round}
 \usage{
-  umx_round(x, digits, coerce = T)
+umx_round(df, digits, coerce = T)
 }
 \arguments{
   \item{x}{an dataframe to round in}
@@ -13,24 +13,22 @@
   not}
 }
 \value{
-  - \code{\link{mxModel}}
+- \code{\link{mxModel}}
 }
 \description{
-  A version of round() which works on dataframes that
-  contain non-numeric data (or data that cannot be coerced
-  to numeric) Helpful for dealing with table output that
-  mixes numeric and string types.
+A version of round() which works on dataframes that contain
+non-numeric data (or data that cannot be coerced to
+numeric) Helpful for dealing with table output that mixes
+numeric and string types.
 }
 \examples{
-\dontrun{
-umx_round(df, coerce=T)
-}
+head(umx_round(mtcars, coerce = T))
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

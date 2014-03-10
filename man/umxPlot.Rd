@@ -2,9 +2,8 @@
 \alias{umxPlot}
 \title{umxPlot}
 \usage{
-  umxPlot(model = NA, std = T, precision = 2,
-    dotFilename = "name", pathLabels = "none",
-    showFixed = F, showError = T)
+umxPlot(model = NA, std = T, digits = 2, dotFilename = "name",
+  pathLabels = "none", showFixed = F, showError = T, precision = NULL)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to make a path
@@ -12,8 +11,8 @@
 
   \item{std}{Whether to standardize the model.}
 
-  \item{precision}{The number of decimal places to add to
-  the path coefficients}
+  \item{digits}{The number of decimal places to add to the
+  path coefficients}
 
   \item{dotFilename}{A file to write the path model to. if
   you leave it at the default "name", then the model's
@@ -27,10 +26,12 @@
   FALSE)}
 
   \item{showError}{whether to show errors}
+
+  \item{precision}{deprecated for digits}
 }
 \description{
-  A function to create graphical path diagrams from your
-  OpenMx models!
+A function to create graphical path diagrams from your
+OpenMx models!
 }
 \examples{
 \dontrun{
@@ -50,10 +51,10 @@ umxPlot(m1)
 }
 }
 \references{
-  - \url{http://openmx.psyc.virginia.edu}
+- \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-  - \code{\link{umxLabel}}, \code{\link{umxRun}},
-  \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

@@ -2,9 +2,8 @@
 \alias{umx_move_file}
 \title{umx_move_file}
 \usage{
-  umx_move_file(baseFolder = NA, findStr = NA,
-    fileNameList = NA, destFolder = NA, test = T,
-    overwrite = F)
+umx_move_file(baseFolder = NA, findStr = NA, fileNameList = NA,
+  destFolder = NA, test = T, overwrite = F)
 }
 \arguments{
   \item{baseFolder}{The folder to search in. If set to
@@ -24,12 +23,12 @@
   \item{overwrite}{Boolean determining}
 }
 \value{
-  -
+-
 }
 \description{
-  move files. On OS X, the function can access the current
-  frontmost Finder window. The file moves are fast and,
-  because you can use regular expressions, powerful
+move files. On OS X, the function can access the current
+frontmost Finder window. The file moves are fast and,
+because you can use regular expressions, powerful
 }
 \examples{
 \dontrun{
@@ -39,7 +38,6 @@ umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test=
 }
 }
 \seealso{
-  - \code{\link{umx_rename_file}},
-  \code{\link{file.rename}}
+- \code{\link{umx_rename_file}}, \code{\link{file.rename}}
 }
 

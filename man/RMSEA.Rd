@@ -1,21 +1,25 @@
-\name{umx_is_RAM}
-\alias{umx_is_RAM}
-\title{umx_is_RAM}
+\name{RMSEA}
+\alias{RMSEA}
+\title{RMSEA}
 \usage{
-umx_is_RAM(obj)
+RMSEA(model, ci.lower = 0.05, ci.upper = 0.95)
 }
 \arguments{
-  \item{obj}{an object to be tested to see if it is an
-  OpenMx RAM \code{\link{mxModel}}}
+  \item{model}{an \code{\link{mxModel}} to get CIs on RMSEA
+  for}
+
+  \item{ci.lower}{the lower Ci to compute}
+
+  \item{ci.upper}{the upper Ci to compute}
 }
 \value{
-- Boolean
+- object containing the RMSEA and lower and upper bounds
 }
 \description{
-Utility function returning a binary answer to the question
-"Is this a RAM model?"
+Compute the confidence interval on RMSEA
 }
 \examples{
+\dontrun{
 require(OpenMx)
 data(demoOneFactor)
 latents  = c("G")
@@ -28,20 +32,14 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-umxSummary(m1, show = "std")
-if(umx_is_RAM(m1)){
-	message("nice RAM model!")
-}
-\dontrun{
-if(!umx_is_RAM(m1)){
-	stop("model must be a RAM model")
-}
+# RMSEA(m1)
 }
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{mxModel}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}},
+\code{\link{umxStart}}
 }
 

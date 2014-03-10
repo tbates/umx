@@ -2,8 +2,8 @@
 \alias{umx_grep_labels}
 \title{umx_grep_labels}
 \usage{
-  umx_grep_labels(df, grepString, output = "both",
-    ignore.case = T, useNames = F)
+umx_grep_labels(df, grepString, output = "both", ignore.case = T,
+  useNames = F)
 }
 \arguments{
   \item{df}{an \code{\link{data.frame}} to search the
@@ -21,10 +21,10 @@
   the labels}
 }
 \value{
-  - list of matched column name and labels
+- list of matched column name and labels
 }
 \description{
-  Deprecated function to search the labels and names use
-  \code{\link{umx_grep}} instead
+Deprecated function to search the labels and names use
+\code{\link{umx_grep}} instead
 }
 

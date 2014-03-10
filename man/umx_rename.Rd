@@ -2,7 +2,7 @@
 \alias{umx_rename}
 \title{umx_rename}
 \usage{
-  umx_rename(x, replace, old = NULL)
+umx_rename(x, replace, old = NULL)
 }
 \arguments{
   \item{x}{the dataframe in which to rename variables}
@@ -15,12 +15,12 @@
   which case replace must be paired list}
 }
 \value{
-  - the renamed dataframe
+- the renamed dataframe
 }
 \description{
-  Returns a dataframe with variables renamed as desired.
-  Checks that the variables exist, and that the new neames
-  are not already used.
+Returns a dataframe with variables renamed as desired.
+Checks that the variables exist, and that the new neames
+are not already used.
 }
 \examples{
 \dontrun{
@@ -31,9 +31,9 @@ x = rename(x, old = c("ages"), replace = c("age"))
 }
 }
 \references{
-  -
+-
 }
 \seealso{
-  - \code{\link{umx_rename_file}}
+- \code{\link{umx_rename_file}}
 }
 
