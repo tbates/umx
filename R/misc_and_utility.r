@@ -1257,24 +1257,46 @@ umx_is_MxModel <- function(obj) {
 	isS4(obj) & is(obj, "MxModel")	
 }
 
-umx_check_model <- function(obj, type = "RAM", hasData = NA) {
+#' umx_check_model
+#'
+#' Check an OpenMx model
+#'
+#' @param obj an object to check
+#' @param type = what type the model must be (defaults to not checking NULL)
+#' @param hasData whether the model should have data or not (defaults to not checking NULL)
+#' @return - boolean
+#' @export
+#' @seealso - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' umx_check_model(model)
+#' }
+umx_check_model <- function(obj, type = NULL, hasData = NULL, checkSubmodels = F) {
 	# TODO hasSubmodels = F
 	if (!umx_is_MxModel(obj)) {
 		stop("'model' must be an mxModel")
 	}
-	if(type=="RAM"){
+	if(is.null(type)){
+		#no check
+	}else if(type == "RAM"){
 		if (!umx_is_RAM(obj)) {
 			stop("'model' must be an RAMModel")
 		}
 	} else {
 		message(paste("type", sQuote(type), "not handled yet"))
 	}
-	if (length(obj@submodels) > 0) {
-		stop("Cannot yet handle submodels")
+	if(checkSubmodels){
+		if (length(obj@submodels) > 0) {
+			message("Cannot yet handle models with submodels")
+		}
 	}
-	if (hasData & is.null(obj@data@observed)) {
+	if(is.null(hasData)){
+		# no check
+	}else if (hasData & is.null(obj@data@observed)) {
 		stop("'model' does not contain any data")
-	}	
+	}
+	return(T)
 }
 
 #' umx_is_cov
@@ -1567,7 +1589,7 @@ umxEval <- function(expstring, model, compute = F, show = F) {
 
 #' umx_scale_wide_twin_data
 #'
-#' scale wide data across all cases: currently twins
+#' Scale wide data across all cases: currently twins
 #'
 #' @param df a wide dataframe
 #' @param varsToScale the base names of the variables ("weight" etc)
@@ -1612,6 +1634,7 @@ umx_scale_wide_twin_data <- function(df, varsToScale = c("ht", "wt"), suffixes =
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
+#' \dontrun{
 #' option_list = c("default", "par.observed", "empirical")
 #' umx_default_option("par.observed", option_list)
 #' umx_default_option("bad", option_list)
@@ -1621,7 +1644,6 @@ umx_scale_wide_twin_data <- function(df, varsToScale = c("ht", "wt"), suffixes =
 #' umx_default_option(option_list, option_list) # fails with NULL!!!!!
 #' option_list = c(NA, "par.observed", "empirical")
 #' umx_default_option(option_list, option_list) # use NA instead
-
 #' }
 umx_default_option <- function(x, option_list, check = T){
 	if (identical(x, option_list)) {

@@ -29,6 +29,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
+logLik(m1)
 AIC(m1)
 }
 \references{

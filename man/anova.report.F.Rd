@@ -15,7 +15,7 @@
 }
 \description{
 Generate a text-format report of the F values in an ANOVA.
-Like anova.report.F(model) # "F(495,1) = 0.002"
+Like anova.report.F(model) # --> "F(495,1) = 0.002"
 }
 \examples{
 m1 = lm(mpg~ cyl + wt, data = mtcars)

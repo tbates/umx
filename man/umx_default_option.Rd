@@ -16,6 +16,7 @@ handle parameter options given as a default list in a
 function
 }
 \examples{
+\dontrun{
 option_list = c("default", "par.observed", "empirical")
 umx_default_option("par.observed", option_list)
 umx_default_option("bad", option_list)

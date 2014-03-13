@@ -5,25 +5,36 @@
 xmuLabel_MATRIX_Model(model, suffix = "", verbose = T)
 }
 \arguments{
-  \item{model}{a model to label}
+  \item{model}{a matrix-style mxModel to label}
 
   \item{suffix}{a string to append to each label}
 
   \item{verbose}{how much feedback to give}
 }
 \value{
-- \code{\link{mxModel}}
+- The labeled \code{\link{mxModel}}
 }
 \description{
-This function label all the free parameters in a (non-RAM)
-OpenMx \code{\link{mxModel}} nb: We don't assume what each
-matrix is for, and just stick a_r1c1 into each cell
+This function will label all the free parameters in a
+(non-RAM) OpenMx \code{\link{mxModel}} nb: We don't assume
+what each matrix is for. Instead, the function just sticks
+labels like "a_r1c1" into each cell i.e., matrixname _ r
+rowNumber c colNumber
 }
 \examples{
-\dontrun{
-model = xmuLabel_MATRIX_Model(model)
-model = xmuLabel_MATRIX_Model(model, suffix = "male")
-}
+require(OpenMx)
+data(demoOneFactor)
+m2 <- mxModel("One Factor",
+	mxMatrix("Full", 5, 1, values = 0.2, free = T, name = "A"),
+	mxMatrix("Symm", 1, 1, values = 1, free = F, name = "L"),
+	mxMatrix("Diag", 5, 5, values = 1, free = T, name = "U"),
+	mxAlgebra(A \%*\% L \%*\% t(A) + U, name = "R"),
+	mxMLObjective("R", dimnames = names(demoOneFactor)),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m3 = xmuLabel_MATRIX_Model(m2)
+m4 = xmuLabel_MATRIX_Model(m2, suffix = "male")
+# explore these with m2
 }
 \references{
 - http://openmx.psyc.virginia.edu/

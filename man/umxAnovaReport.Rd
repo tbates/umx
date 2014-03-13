@@ -22,7 +22,7 @@ umxAnovaReport(model1, model2 = NULL, raw = T, format = "string",
 }
 \description{
 umxAnovaReport is a convenience function to format results
-for journals. There are others. Bt I made this one. If you
+for journals. There are others. But I made this one. If you
 give it the output of an lm, it runs anova() and lm.beta(),
 and puts that together in a regression table...
 Alternatively if you fill in the optional second model, it

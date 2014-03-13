@@ -18,7 +18,7 @@ umx_scale_wide_twin_data(df, varsToScale = c("ht", "wt"), suffixes = c("1",
 - new dataframe with scaled variables
 }
 \description{
-scale wide data across all cases: currently twins
+Scale wide data across all cases: currently twins
 }
 \examples{
 data(twinData)

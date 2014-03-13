@@ -36,7 +36,7 @@ altogether.
 umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 \dontrun{
 umx_print(model)
-umx_print(x, output = "Rout.html")
+umx_print(mtcars[1:10,], file = "Rout.html")
 }
 }
 \seealso{
