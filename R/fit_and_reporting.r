@@ -1030,7 +1030,6 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #'
 #' @method extractAIC MxModel
 #' @rdname extractAIC
-#' @S3method extractAIC MxModel
 #' @export
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @return - AIC value
@@ -1114,10 +1113,9 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 #'
 #' @method logLik MxModel
 #' @rdname  logLik
-#' @S3method  logLik MxModel
+#' @export
 #' @param model an \code{\link{mxModel}} to get the log likelihood from
 #' @return - the log likelihood
-#' @export
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples

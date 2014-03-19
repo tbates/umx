@@ -37,8 +37,7 @@
 #' )
 #' m3 = xmuLabel_MATRIX_Model(m2)
 #' m4 = xmuLabel_MATRIX_Model(m2, suffix = "male")
-#' # explore these with m2@matrices$A@labels etc.
-#' }
+#' # explore these with omxGetParameters(m4)
 
 xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 	if(!umx_is_MxModel(model) ){

@@ -14,4 +14,5 @@ Imports:
 Suggests:
     testthat,
     roxygen2
-BugReports: http://github.tbates.umx
+BugReports: http://github.com/tbates/umx
+Roxygen: list(wrap = FALSE)
