@@ -1022,15 +1022,18 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 # = Pull model components =
 # =========================
 
-#' extractAIC
+#' extractAIC.MxModel
 #'
-#' returns the AIC for an OpenMx model
+#' Returns the AIC for an OpenMx model
 #' helper function for \code{\link{logLik.MxModel}} (which enables AIC(model); logLik(model); BIC(model)
 #' Original Author: brandmaier
 #'
+#' @method extractAIC MxModel
+#' @rdname extractAIC
+#' @S3method extractAIC MxModel
+#' @export
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @return - AIC value
-#' @export
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
@@ -1106,9 +1109,12 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 
 #' logLik.MxModel
 #'
-#' returns the log likelihood for an OpenMx model
-#' helper function which enables ACI(model); BIC(model); and logLik(model) functions
+#' Returns the log likelihood for an OpenMx model
+#' helper function enabling AIC(model); BIC(model); and logLik(model)
 #'
+#' @method logLik MxModel
+#' @rdname  logLik
+#' @S3method  logLik MxModel
 #' @param model an \code{\link{mxModel}} to get the log likelihood from
 #' @return - the log likelihood
 #' @export
@@ -1154,7 +1160,7 @@ logLik.MxModel <- function(model) {
 #'
 #' @param modelfit an \code{\link{mxModel}}
 #' @param indepfit an \code{\link{mxModel}}
-#' @return - 
+#' @return \code{NULL}
 #' @export
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{summary}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}

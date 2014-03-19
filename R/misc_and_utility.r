@@ -163,6 +163,7 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 #' @export
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
+#' @family umxReporting
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -841,10 +842,10 @@ print.reliability <- function (x, digits = 4, ...){
      invisible(x)
 }
 
-#' anova.report.F
+#' umxAnova
 #'
 #' Generate a text-format report of the F values in an ANOVA.
-#' Like anova.report.F(model) # --> "F(495,1) = 0.002"
+#' Like umxAnova(model) # --> "F(495,1) = 0.002"
 #'
 #' @param model an \code{\link{lm}} model to report F for.
 #' @param digits how many numbers after the decimal for F (p-value is APA-style)
@@ -853,19 +854,18 @@ print.reliability <- function (x, digits = 4, ...){
 #' @seealso - \code{\link{lm}}, \code{\link{anova}}, \code{\link{summary}}
 #' @examples
 #' m1 = lm(mpg~ cyl + wt, data = mtcars)
-#' anova.report.F(m1)
+#' umxAnova(m1)
 #' m2 = lm(mpg~ cyl, data = mtcars)
-#' anova.report.F(m2)
-#' anova.report.F(anova(m1, m2))
+#' umxAnova(m2)
+#' umxAnova(anova(m1, m2))
 
-anova.report.F <- function(model, digits = 2) {
-	# anova.report.F(anova(m1, m2))
+umxAnova <- function(model, digits = 2) {
 	if(is(digits,"lm")){
 		stop(paste0(
 		"digits looks like an lm model: ",
-		"You probably said:\n    anova.report.F(m1, m2)\n",
+		"You probably said:\n    umxAnova(m1, m2)\n",
 		"when you meant\n",
-		"   anova.report.F(anova(m1, m2))"
+		"   umxAnova(anova(m1, m2))"
 		))
 	}
 	tmp = class(model)

@@ -1,8 +1,8 @@
-\name{anova.report.F}
-\alias{anova.report.F}
-\title{anova.report.F}
+\name{umxAnova}
+\alias{umxAnova}
+\title{umxAnova}
 \usage{
-\method{anova}{report.F}(model, digits = 2)
+umxAnova(model, digits = 2)
 }
 \arguments{
   \item{model}{an \code{\link{lm}} model to report F for.}
@@ -15,14 +15,14 @@
 }
 \description{
 Generate a text-format report of the F values in an ANOVA.
-Like anova.report.F(model) # --> "F(495,1) = 0.002"
+Like umxAnova(model) # --> "F(495,1) = 0.002"
 }
 \examples{
 m1 = lm(mpg~ cyl + wt, data = mtcars)
-anova.report.F(m1)
+umxAnova(m1)
 m2 = lm(mpg~ cyl, data = mtcars)
-anova.report.F(m2)
-anova.report.F(anova(m1, m2))
+umxAnova(m2)
+umxAnova(anova(m1, m2))
 }
 \seealso{
 - \code{\link{lm}}, \code{\link{anova}},

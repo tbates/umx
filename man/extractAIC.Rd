@@ -1,22 +1,22 @@
-\name{umxFitIndices}
-\alias{umxFitIndices}
-\title{umxFitIndices}
+\name{extractAIC.MxModel}
+\alias{extractAIC.MxModel}
+\title{extractAIC}
 \usage{
-umxFitIndices(model, indepfit)
+\method{extractAIC}{MxModel}(model)
 }
 \arguments{
-  \item{modelfit}{an \code{\link{mxModel}}}
-
-  \item{indepfit}{an \code{\link{mxModel}}}
+  \item{model}{an \code{\link{mxModel}} to get the AIC
+  from}
 }
 \value{
-\code{NULL}
+- AIC value
 }
 \description{
-A list of fit indices
+Returns the AIC for an OpenMx model helper function for
+\code{\link{logLik.MxModel}} (which enables AIC(model);
+logLik(model); BIC(model) Original Author: brandmaier
 }
 \examples{
-\dontrun{
 require(OpenMx)
 data(demoOneFactor)
 latents  = c("G")
@@ -29,16 +29,14 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-umxFitIndices(m1, m1_ind)
-# TODO use means and compute independence model here for example...
-}
+extractAIC(m1)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+-
+\url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 }
 \seealso{
-- \code{\link{umxSummary}}, \code{\link{umxCompare}},
-\code{\link{summary}}, \code{\link{umxLabel}},
-\code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{AIC}}, \code{\link{umxCompare}},
+\code{\link{logLik.MxModel}}
 }
 

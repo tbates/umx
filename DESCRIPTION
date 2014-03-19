@@ -7,6 +7,8 @@ Title: umx
 URL: http://github.com/tbates/umx
 Description: A library of Helper functions for OpenMx.
     If you are just starting, try typing ?umx
+Depends:
+    OpenMx
 Imports:
     OpenMx
 Suggests:

@@ -1,4 +1,4 @@
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx"); 
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
 # setwd("~/bin/umx"); 

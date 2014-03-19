@@ -2,7 +2,7 @@
 \alias{umx_check_model}
 \title{umx_check_model}
 \usage{
-umx_check_model(obj, type = NULL, hasData = NULL)
+umx_check_model(obj, type = NULL, hasData = NULL, checkSubmodels = F)
 }
 \arguments{
   \item{obj}{an object to check}
