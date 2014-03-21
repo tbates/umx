@@ -7,19 +7,15 @@ umxAnovaReport(model1, model2 = NULL, raw = T, format = "string",
   printDIC = F)
 }
 \arguments{
-  \item{model1}{An \code{\link{lm}} model to make a table
-  from}
+\item{model1}{An \code{\link{lm}} model to make a table from}
 
-  \item{model2}{An (optional) second \code{\link{lm}} model
-  to compare to model 1}
+\item{model2}{An (optional) second \code{\link{lm}} model to compare to model 1}
 
-  \item{raw}{Should the raw table also be output? (allows
-  checking that nothing crazy is going on)}
+\item{raw}{Should the raw table also be output? (allows checking that nothing crazy is going on)}
 
-  \item{format}{String or markdown format?}
+\item{format}{String or markdown format?}
 
-  \item{printDIC}{A Boolean toggle whether you want
-  AIC-type fit change table printed}
+\item{printDIC}{A Boolean toggle whether you want AIC-type fit change table printed}
 }
 \description{
 umxAnovaReport is a convenience function to format results for journals. There are others. But I made this one.

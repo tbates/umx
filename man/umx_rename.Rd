@@ -6,14 +6,11 @@
 umx_rename(x, replace, old = NULL)
 }
 \arguments{
-  \item{x}{the dataframe in which to rename variables}
+\item{x}{the dataframe in which to rename variables}
 
-  \item{replace}{a named list of oldName = "newName" pairs
-  OR a list of new names}
+\item{replace}{a named list of oldName = "newName" pairs OR a list of new names}
 
-  \item{old}{Optional: a list of names that will be
-  replaced by the contents of replace. defaults to NULL in
-  which case replace must be paired list}
+\item{old}{Optional: a list of names that will be replaced by the contents of replace. defaults to NULL in which case replace must be paired list}
 }
 \value{
 - the renamed dataframe
@@ -22,17 +19,16 @@ umx_rename(x, replace, old = NULL)
 Returns a dataframe with variables renamed as desired. Checks that the variables exist, and that the new neames are not already used.
 }
 \examples{
-\dontrun{
-rename ages to "age"
-x = rename(x, replace = c(ages = "age"))
-alternate style
-x = rename(x, old = c("ages"), replace = c("age"))
-}
-}
-\references{
--
+# rename ages to "age"
+x = mtcars
+x = umx_rename(x, replace = c(cyl = "cylinder"))
+# alternate style
+x = umx_rename(x, old = c("disp"), replace = c("displacement"))
+umx_check_names("displacement", data = x, die = T)
 }
 \seealso{
 - \code{\link{umx_rename_file}}
+
+Other res: \code{\link{umxReportTime}}
 }
 

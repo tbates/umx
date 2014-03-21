@@ -6,9 +6,9 @@
 umxFitIndices(model, indepfit)
 }
 \arguments{
-  \item{modelfit}{an \code{\link{mxModel}}}
+\item{modelfit}{an \code{\link{mxModel}}}
 
-  \item{indepfit}{an \code{\link{mxModel}}}
+\item{indepfit}{an \code{\link{mxModel}}}
 }
 \value{
 \code{NULL}

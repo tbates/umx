@@ -7,28 +7,22 @@ umxPlot(model = NA, std = T, digits = 2, dotFilename = "name",
   pathLabels = "none", showFixed = F, showError = T, precision = NULL)
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to make a path
-  diagram from}
+\item{model}{an \code{\link{mxModel}} to make a path diagram from}
 
-  \item{std}{Whether to standardize the model.}
+\item{std}{Whether to standardize the model.}
 
-  \item{digits}{The number of decimal places to add to the
-  path coefficients}
+\item{digits}{The number of decimal places to add to the path coefficients}
 
-  \item{dotFilename}{A file to write the path model to. if
-  you leave it at the default "name", then the model's
-  internal name will be used}
+\item{dotFilename}{A file to write the path model to. if you leave it at the
+default "name", then the model's internal name will be used}
 
-  \item{pathLabels}{whether to show labels on the paths.
-  both will show both the parameter and the label. ("both",
-  "none" or "labels")}
+\item{pathLabels}{whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")}
 
-  \item{showFixed}{whether to show fixed paths (defaults to
-  FALSE)}
+\item{showFixed}{whether to show fixed paths (defaults to FALSE)}
 
-  \item{showError}{whether to show errors}
+\item{showError}{whether to show errors}
 
-  \item{precision}{deprecated for digits}
+\item{precision}{deprecated for digits}
 }
 \description{
 A function to create graphical path diagrams from your OpenMx models!

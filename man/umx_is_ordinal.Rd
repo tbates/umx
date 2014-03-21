@@ -6,14 +6,11 @@
 umx_is_ordinal(df, names = F, strict = T)
 }
 \arguments{
-  \item{df}{an \code{\link{data.frame}} to look in for
-  ordinal variables}
+\item{df}{an \code{\link{data.frame}} to look in for ordinal variables}
 
-  \item{names}{whether to return the names of ordinal
-  variables, or a binary list (default = F)}
+\item{names}{whether to return the names of ordinal variables, or a binary list (default = F)}
 
-  \item{strict}{whether to stop when unordered factors are
-  found (default = T)}
+\item{strict}{whether to stop when unordered factors are found (default = T)}
 }
 \value{
 - list of variable names

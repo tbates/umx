@@ -6,8 +6,7 @@
 umxSaturated(model, evaluate = T, verbose = T)
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to get independence
-  and saturated fits to}
+\item{model}{an \code{\link{mxModel}} to get independence and saturated fits to}
 }
 \value{
 - A list of the saturated and independence models, from which fits can be extracted

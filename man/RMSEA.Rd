@@ -6,12 +6,11 @@
 RMSEA(model, ci.lower = 0.05, ci.upper = 0.95)
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to get CIs on RMSEA
-  for}
+\item{model}{an \code{\link{mxModel}} to get CIs on RMSEA for}
 
-  \item{ci.lower}{the lower Ci to compute}
+\item{ci.lower}{the lower Ci to compute}
 
-  \item{ci.upper}{the upper Ci to compute}
+\item{ci.upper}{the upper Ci to compute}
 }
 \value{
 - object containing the RMSEA and lower and upper bounds

@@ -6,7 +6,6 @@
 # devtools::load_all()
 # devtools::dev_help("umxX")
 # show_news()
-
 # utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
 # so umx_swap_a_block()
 
@@ -580,17 +579,16 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @return - the renamed dataframe
 #' @export
 #' @seealso - \code{\link{umx_rename_file}}
-#' @references - 
+#' @family umx_misc
 #' @examples
-#' \dontrun{
-#' rename ages to "age"
-#' x = rename(x, replace = c(ages = "age"))
-#' alternate style
-#' x = rename(x, old = c("ages"), replace = c("age"))
-#' }
-
+#' # rename ages to "age"
+#' x = mtcars
+#' x = umx_rename(x, replace = c(cyl = "cylinder"))
+#' # alternate style
+#' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
+#' umx_check_names("displacement", data = x, die = T)
 umx_rename <- function (x, replace, old = NULL) {
-	# add to help: see also gdate::rename.vars(data, from, to)	
+	# see also gdate::rename.vars(data, from, to)	
 	if(!is.null(old)){
 		# message("replacing old with replace")
 		if(length(old) != length(replace)){

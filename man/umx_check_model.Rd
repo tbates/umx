@@ -6,13 +6,11 @@
 umx_check_model(obj, type = NULL, hasData = NULL, checkSubmodels = F)
 }
 \arguments{
-  \item{obj}{an object to check}
+\item{obj}{an object to check}
 
-  \item{type}{= what type the model must be (defaults to
-  not checking NULL)}
+\item{type}{= what type the model must be (defaults to not checking NULL)}
 
-  \item{hasData}{whether the model should have data or not
-  (defaults to not checking NULL)}
+\item{hasData}{whether the model should have data or not (defaults to not checking NULL)}
 }
 \value{
 - boolean

@@ -6,9 +6,9 @@
 xmuPropagateLabels(model, suffix = "")
 }
 \arguments{
-  \item{model}{a model to label}
+\item{model}{a model to label}
 
-  \item{suffix}{a string to append to each label}
+\item{suffix}{a string to append to each label}
 }
 \value{
 - \code{\link{mxModel}}

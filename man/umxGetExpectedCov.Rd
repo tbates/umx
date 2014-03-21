@@ -6,14 +6,11 @@
 umxGetExpectedCov(model, latent = T, manifest = T, digits = NULL)
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to get the
-  covariance matrix from}
+\item{model}{an \code{\link{mxModel}} to get the covariance matrix from}
 
-  \item{latent}{Whether to select the latent variables
-  (defaults to TRUE)}
+\item{latent}{Whether to select the latent variables (defaults to TRUE)}
 
-  \item{manifest}{Whether to select the manifest variables
-  (defaults to TRUE)}
+\item{manifest}{Whether to select the manifest variables (defaults to TRUE)}
 }
 \value{
 - expected covariance matrix

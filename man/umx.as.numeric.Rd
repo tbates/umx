@@ -6,7 +6,7 @@
 umx.as.numeric(df)
 }
 \arguments{
-  \item{df}{a \code{\link{data.frame}} to convert}
+\item{df}{a \code{\link{data.frame}} to convert}
 }
 \value{
 - data.frame

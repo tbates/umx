@@ -6,13 +6,11 @@
 umxLower2full(lower.data, diag = F, byrow = T)
 }
 \arguments{
-  \item{lower.data}{An \code{\link{mxMatrix}}}
+\item{lower.data}{An \code{\link{mxMatrix}}}
 
-  \item{diag}{A boolean noting whether the lower matrix
-  includes the diagonal}
+\item{diag}{A boolean noting whether the lower matrix includes the diagonal}
 
-  \item{byrow}{Whether the matrix is to be filled by row or
-  by column}
+\item{byrow}{Whether the matrix is to be filled by row or by column}
 }
 \value{
 - \code{\link{mxMatrix}}

@@ -8,27 +8,23 @@ umxLatent(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
   endogenous = "deprecated")
 }
 \arguments{
-  \item{latent}{the name of the latent variable (string)}
+\item{latent}{the name of the latent variable (string)}
 
-  \item{formedBy}{the list of variables forming this
-  latent}
+\item{formedBy}{the list of variables forming this latent}
 
-  \item{forms}{the list of variables which this latent
-  forms (leave blank for formedBy)}
+\item{forms}{the list of variables which this latent forms (leave blank for formedBy)}
 
-  \item{data}{the dataframe being used in this model}
+\item{data}{the dataframe being used in this model}
 
-  \item{type}{= \"exogenous|endogenous\"}
+\item{type}{= \"exogenous|endogenous\"}
 
-  \item{model.name}{= NULL}
+\item{model.name}{= NULL}
 
-  \item{labelSuffix}{a string to add to the end of each
-  label}
+\item{labelSuffix}{a string to add to the end of each label}
 
-  \item{verbose}{= T}
+\item{verbose}{= T}
 
-  \item{endogenous}{This is now deprecated. use type=
-  \"exogenous|endogenous\"}
+\item{endogenous}{This is now deprecated. use type= \"exogenous|endogenous\"}
 }
 \value{
 - path list

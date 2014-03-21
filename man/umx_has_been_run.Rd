@@ -6,7 +6,7 @@
 umx_has_been_run(model, stop = F)
 }
 \arguments{
-  \item{model}{an \code{\link{mxModel}} to check}
+\item{model}{an \code{\link{mxModel}} to check}
 }
 \value{
 - boolean

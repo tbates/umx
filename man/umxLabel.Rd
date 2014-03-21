@@ -8,29 +8,21 @@ umxLabel(obj, suffix = "", baseName = NA, setfree = F, drop = 0,
   overRideExisting = F)
 }
 \arguments{
-  \item{obj}{An \code{\link{mxModel}} (RAM or matrix
-  based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}}
+\item{obj}{An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}}
 
-  \item{suffix}{String to append to each label (might be
-  used to distinguish, say male and female submodels in a
-  model)}
+\item{suffix}{String to append to each label (might be used to distinguish, say male and female submodels in a model)}
 
-  \item{baseName}{String to prepend to labels. Defaults to
-  empty}
+\item{baseName}{String to prepend to labels. Defaults to empty}
 
-  \item{setfree}{Whether to also}
+\item{setfree}{Whether to also}
 
-  \item{drop}{The value to fix "drop" paths to (defaults to
-  0)}
+\item{drop}{The value to fix "drop" paths to (defaults to 0)}
 
-  \item{jiggle}{How much to jiggle values in a matrix or
-  list of path values}
+\item{jiggle}{How much to jiggle values in a matrix or list of path values}
 
-  \item{boundDiag}{Whether to bound the diagonal of a
-  matrix}
+\item{boundDiag}{Whether to bound the diagonal of a matrix}
 
-  \item{verbose}{How much feedback to give the user
-  (default = F)}
+\item{verbose}{How much feedback to give the user (default = F)}
 }
 \value{
 - \code{\link{mxModel}}

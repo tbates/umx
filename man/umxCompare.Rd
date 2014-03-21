@@ -7,22 +7,17 @@ umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
   report = 1)
 }
 \arguments{
-  \item{base}{The base \code{\link{mxModel}} for
-  comparison}
+\item{base}{The base \code{\link{mxModel}} for comparison}
 
-  \item{comparison}{The model (or list of models) which
-  will be compared for fit with the base model (can be
-  empty)}
+\item{comparison}{The model (or list of models) which will be compared for fit with the base model (can be empty)}
 
-  \item{all}{Whether to make all possible comparisons if
-  there is more than one base model (defaults to T)}
+\item{all}{Whether to make all possible comparisons if there is more than one base model (defaults to T)}
 
-  \item{digits}{rounding for p etc.}
+\item{digits}{rounding for p etc.}
 
-  \item{report}{Optionally add sentences for inclusion
-  inline in a paper (report= 2) and output to an html table
-  which will open your default browser (report = 3). This
-  is handy for getting tables into word}
+\item{report}{Optionally add sentences for inclusion inline in a paper (report= 2)
+and output to an html table which will open your default browser (report = 3).
+This is handy for getting tables into word}
 }
 \description{
 umxCompare compares two or more \code{\link{mxModel}}s. If you leave comparison blank, it will just give fit info for the base model

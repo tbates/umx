@@ -6,8 +6,7 @@
 umx_has_CIs(model)
 }
 \arguments{
-  \item{model}{The \code{\link{mxModel}} to check for
-  presence of CIs}
+\item{model}{The \code{\link{mxModel}} to check for presence of CIs}
 }
 \value{
 - TRUE or FALSE

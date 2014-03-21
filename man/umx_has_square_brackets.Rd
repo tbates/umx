@@ -6,7 +6,7 @@
 umx_has_square_brackets(input)
 }
 \arguments{
-  \item{input}{}
+\item{input}{}
 }
 \value{
 - boolean

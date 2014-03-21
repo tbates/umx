@@ -6,9 +6,9 @@
 umx_check_names(namesNeeded, data, die = TRUE)
 }
 \arguments{
-  \item{namesNeeded}{list of variable names to find}
+\item{namesNeeded}{list of variable names to find}
 
-  \item{data}{data.frame to search in for names}
+\item{data}{data.frame to search in for names}
 }
 \value{
 - boolean

@@ -6,12 +6,11 @@
 umx_round(df, digits, coerce = T)
 }
 \arguments{
-  \item{x}{an dataframe to round in}
+\item{x}{an dataframe to round in}
 
-  \item{digits}{how many digits to round to}
+\item{digits}{how many digits to round to}
 
-  \item{coerce}{whether to make the column numeric if it is
-  not}
+\item{coerce}{whether to make the column numeric if it is not}
 }
 \value{
 - \code{\link{mxModel}}
