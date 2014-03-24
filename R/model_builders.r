@@ -9,11 +9,25 @@
 # ==================
 # = Model Builders =
 # ==================
+#' umxCFA
+#'
+#' A helper for CFA that only requires you to enter your latents and manifests
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @return - \code{\link{mxModel}}
+#' @family super easy helpers
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://github.com/tbates/umx}
+#' @examples
+#' \dontrun{
+#' umxCFA("test", "g", mtcars)
+#' }
 
-umxCFA <- function(name = "", latents, data, report = c("shortTable", "shortLine", "long")){
+umxCFA <- function(name = "", latents, data, report = c("table", "line", "long")){
 	# umxCFA(name="myFirstCFA", latents="g", data = myFAdata)
 	manifests <- names(data)
-	m1 <- mxModel(name, type="RAM",
+	m1 <- mxModel(name, type = "RAM",
 		manifestVars = manifests,
 		latentVars   = latents,
 		# Factor loadings
@@ -22,15 +36,7 @@ umxCFA <- function(name = "", latents, data, report = c("shortTable", "shortLine
 		mxPath(from = latents, arrows = 2, free = F, values = 1), # latents fixed@1
 		mxData(cov(data), type="cov", numObs = nrow(data))
 	)
-	m1 = mxRun(m1); 
-	if(report == "shortTable") {
-		umxSummary(m1, report = "table");
-	} else if(report == "shortLine"){
-		umxSummary(m1, report = "line");
-	} else if (report == "long"){
-		umxSummary(m1, report = "")
-	} else {
-		message("Bad setting for summary, you said", report, "but only \"shortTable\", \"shortLine\", and \"long\" are valid")
-	}
+	m1 = mxRun(m1);
+	umxSummary(m1, report = report);
 	invisible(m1)
 }

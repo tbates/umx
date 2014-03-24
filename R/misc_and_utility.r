@@ -162,7 +162,7 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 #' @export
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
-#' @family umxReporting
+#' @family umx reporting
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -176,9 +176,9 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umxReportTime(m1)
+#' umx_report_time(m1)
 
-umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
+umx_report_time <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 	format(.POSIXct(model@output$wallTime,tz), formatStr)
 }
 
@@ -198,6 +198,7 @@ umxReportTime <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' @param output file to write to and open in browser
 #' @param ... Optional parameters for print
 #' @export
+#' @family umx reporting
 #' @seealso - \code{\link{print}}
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
@@ -246,6 +247,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @param treatAllAsFactor Whether to treat all columns as factors, whether they are currently or not.
 #' @param verbose How much to tell the user about what was done.
 #' @return - A matrix of correlations
+#' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{hetcor}}
 #' @references - 
@@ -283,6 +285,7 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFac
 #' @param diag A boolean noting whether the lower matrix includes the diagonal
 #' @param byrow Whether the matrix is to be filled by row or by column
 #' @return - \code{\link{mxMatrix}}
+#' @family umx utility functions
 #' 
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
@@ -296,8 +299,6 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFac
 #' lower2full(lower.bycol, diag = T, byrow = F)
 #' lower2full(lower.byrow, diag = T, byrow = T)
 #' }
-
-
 umxLower2full <- function(lower.data, diag = F, byrow = T) {
 	len = length(lower.data)
 	if(diag) {
@@ -342,6 +343,7 @@ umxLower2full <- function(lower.data, diag = F, byrow = T) {
 #' @export
 #' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - 
+#' @family umx utility functions
 #' @examples
 #' \dontrun{
 #' umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
@@ -373,6 +375,7 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @param listPattern = A pre-filter for files
 #' @param test Boolean determining whether to chagne the names, or just report on what would have happened
 #' @param overwrite Boolean determining 
+#' @family umx utility functions
 #' @return - 
 #' @export
 #' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}
@@ -433,6 +436,7 @@ umx_rename_file <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA
 #' @param test Boolean determining whether to chagne the names, or just report on what would have happened
 #' @param overwrite Boolean determining 
 #' @return - 
+#' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{umx_rename_file}}, \code{\link{file.rename}}
 #' @examples
@@ -478,15 +482,12 @@ umx_move_file <- function(baseFolder = NA, findStr = NA, fileNameList = NA, dest
 #' @param use how to handle missing data
 #' @param digits rounding of answers
 #' @return - matrix of correlations and p-values
+#' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
 #' umx_cor(myFADataRaw[1:8,])
-#' }
-
-
 umx_cor <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {
 	# see also
 	# hmisc::rcorr( )
@@ -529,6 +530,7 @@ rowMin <- function(df, na.rm=T) {
 #'
 #' @param df a \code{\link{data.frame}} to convert
 #' @return - data.frame
+#' @family umx utility functions
 #' @export
 #' @seealso - 
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -553,6 +555,7 @@ umx.as.numeric <- function(df) {
 #' @param T1Names the first set of columns
 #' @param T2Names the second set of columns
 #' @return - dataframe
+#' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{subset}}
 #' @examples
@@ -579,7 +582,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @return - the renamed dataframe
 #' @export
 #' @seealso - \code{\link{umx_rename_file}}
-#' @family umx_misc
+#' @family umx utility functions
 #' @examples
 #' # rename ages to "age"
 #' x = mtcars
@@ -632,6 +635,7 @@ umx_rename <- function (x, replace, old = NULL) {
 #' @param ignore.case whether to be case sensitive or not (default TRUE)
 #' @param useNames whether to search the names as well as the labels
 #' @return - list of matched column name and labels
+#' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -691,6 +695,7 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 #'
 #' A version of less-than which returns FALSE for NAs (rather than NA)
 #'
+#' @family umx utility functions
 #' # @aliases %<%
 #'
 #' @export
@@ -703,7 +708,6 @@ umx_less_than <- function(table, x){
 	return(lessThan)
 }
 
-
 #' @export
 #' @rdname umx_less_than
 "%<%" <- function(table, x){
@@ -713,6 +717,7 @@ umx_less_than <- function(table, x){
 #' umx_greater_than
 #'
 #' A version of greater-than that excludes NA as a match
+#' @family umx utility functions
 #'
 #' @aliases %>%
 #'
@@ -747,6 +752,7 @@ umx_greater_than <- function(table, x){
 #' @param digits how many digits to round to
 #' @param coerce whether to make the column numeric if it is not
 #' @return - \code{\link{mxModel}}
+#' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -848,6 +854,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @param model an \code{\link{lm}} model to report F for.
 #' @param digits how many numbers after the decimal for F (p-value is APA-style)
 #' @return - F in  text format
+#' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{lm}}, \code{\link{anova}}, \code{\link{summary}}
 #' @examples
@@ -901,6 +908,7 @@ umxAnova <- function(model, digits = 2) {
 #' Runs a Stouffer.test
 #'
 #' @param p A list of p values, i.e., p(.4, .3, .6, .01)
+#' @family umx utility functions
 #' @seealso - 
 #' @references - \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
 #' Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, 
@@ -970,6 +978,7 @@ skewnessDiff<- function(x, y, B = 1000){
 #' @param target_df the... TODO
 #' @param x the... TODO
 #' @return - value
+#' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{pnorm}}
 #' @references - \url{http://www.p-curve.com/Supplement/R/pp33.r}
@@ -992,58 +1001,6 @@ umx_pp33 <- function(target_df, x) {
 	pp = 3 * (p_larger - 2/3)
 	# Print results
 	return(pp)
-}
-
-#' umxDescriptives
-#'
-#' Summarize data for an APA style subjects table
-#'
-#' @param data          data.frame to compute descriptive statistics for
-#' @param measurevar    The data column to summarise
-#' @param groupvars     A list of columns to group the data by
-#' @param na.rm         whether to remove NA from the data
-#' @param conf.interval The size of the CI you request - 95 by default
-#' @param .drop         Whether to drop TODO
-#' @export
-#' @seealso - \code{\link{plyr}}
-#' @references - \url{http://www.cookbook-r.com/Manipulating_data/Summarizing_data}
-#' @examples
-#' \dontrun{
-#' umxDescriptives(data)
-#' }
-
-umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = FALSE, conf.interval = .95, .drop = TRUE) {
-    require(plyr)
-    # New version of length which can handle NA's: if na.rm == T, don't count them
-    length2 <- function (x, na.rm=FALSE) {
-        if (na.rm){
-			sum(!is.na(x))        	
-        } else { 
-            length(x)
-		}
-    }
-
-    # The summary; it's not easy to understand...
-    datac <- plyr::ddply(data, groupvars, .drop = .drop,
-           .fun = function(xx, col, na.rm) {
-                   c( N    = length2(xx[,col], na.rm=na.rm),
-                      mean = mean   (xx[,col], na.rm=na.rm),
-                      sd   = sd     (xx[,col], na.rm=na.rm)
-                      )
-                  },
-            measurevar,
-            na.rm
-    )
-    # Rename the "mean" column
-    datac    <- umx_rename(datac, c("mean" = measurevar))
-    datac$se <- datac$sd / sqrt(datac$N) # Calculate standard error of the mean
-
-    # Confidence interval multiplier for standard error
-    # Calculate t-statistic for confidence interval: 
-    # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
-    ciMult <- qt(conf.interval/2 + .5, datac$N - 1)
-    datac$ci <- datac$se * ciMult
-    return(datac)
 }
 
 umxCovData = function(df, columns = manifests, use = "pairwise.complete.obs") {
@@ -1654,4 +1611,163 @@ umx_default_option <- function(x, option_list, check = T){
 	} else {
 		return(x)
 	}
+}
+
+
+#' umx_fake_data
+#'
+#' This function takes as argument an existing dataset, which 
+#' must be either a matrix or a data frame. Each column of the 
+#' dataset must consist either of numeric variables or ordered 
+#' factors. When one or more ordered factors are included, 
+#' then a heterogeneous correlation matrix is computed using 
+#' John Fox's polycor package. Pairwise complete observations 
+#' are used for all covariances, and the exact pattern of 
+#' missing data present in the input is placed in the output,
+#' provided a new sample size is not requested. Warnings from
+#' the hetcor function are suppressed.
+#'
+#' Author:   Ryne Estabrook
+#' Created:  17 Aug 2010
+#'
+#' @param dataset
+#' @param digits = 2
+#' @param n = NA
+#' @param use.names = T
+#' @param use.levels = T
+#' @param use.miss = T
+#' @param mvt.method = "eigen"
+#' @param het.ML = F
+#' @param het.suppress = T
+#' @return - new dataframe
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @examples
+#' fakeCars = umx_fake_data(mtcars)
+umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = T, use.levels = T, use.miss = T, mvt.method = "eigen", het.ML = F, het.suppress = T){
+  require(mvtnorm)
+  require(polycor)
+  # requires data frame or matrix
+  if((is.data.frame(dataset)+is.matrix(dataset))==0){
+    warning("Data must be a data frame or matrix")
+  }
+  # organization
+  row <- dim(dataset)[1] # number of rows
+  if(is.na(n))(n <- row) # sets unspecified sample size to num rows
+  col <- dim(dataset)[2] # number of columns
+  del <- is.na(dataset)  # records position of NAs in dataset
+  if(n!=row){
+    select <- round(runif(n, 0.5, row+.49),0)
+    del <- del[select,]
+  }
+  num <- rep(NA, col)    # see what's not a factor
+  ord <- rep(NA, col)    # see what's an ordered factor
+
+  # which columns are numeric (the others are factors)?
+  for (i in 1:col){
+    num[i] <- is.numeric(dataset[,i])
+    ord[i] <- is.ordered(dataset[,i])
+  }
+
+  # check for unordered factors
+  location <- !(num|ord)
+  unorder <- sum(location)
+
+  if(unorder>0)warning(
+    paste("Unordered factor detected in variable(s):", 
+      names(dataset)[location]
+    )
+  )
+
+  # if everything is numeric, don't invoke polycor
+  if(sum(!num)==0){
+    # generate data with rmvnorm
+    fake <- rmvnorm(n, 
+      apply(dataset, 2, mean, na.rm=TRUE),
+      cov(dataset, use="pairwise.complete.obs"),
+      mvt.method)
+
+    # round the data to the requested digits
+    fake <- round(fake, digits)
+
+    # insert the missing data, if so requested
+    if(use.miss==TRUE)(fake[del] <- NA)
+
+    # give the variables names, if so requested
+    if(use.names==TRUE)(names(fake) <- names(dataset))
+
+    # return the new data
+    return(fake)
+  }
+
+  # if there are factors, we start here
+
+  # find the variable means (constrain to zero for factors)
+  mixedMeans <- rep(0, col)
+  mixedMeans[num] <- apply(dataset[,num], 2, mean, na.rm=TRUE)
+
+  # estimate a heterogeneous correlation matrix
+  if (het.suppress==TRUE){
+    suppressWarnings(het <- hetcor(dataset, ML=het.ML))
+  } else (het <- hetcor(dataset, ML=het.ML))
+  mixedCov <- het$correlations
+
+  # make a diagonal matrix of standard deviations to turn the 
+  # correlation matrix into a covariance matrix
+  stand <- matrix(0, col, col)
+  diag(stand) <- rep(1, col)
+  diag(stand)[num] <- apply(dataset[,num], 2, sd, na.rm=TRUE)
+  # pre and post multiply hetero cor matrix by diagonal sd matrix
+  mixedCov <- stand %*% mixedCov %*% stand
+
+  # generate the data
+  fake <- as.data.frame(rmvnorm(row, mixedMeans, mixedCov, mvt.method))
+
+  # insert the missing data, if so requested
+  if(use.miss==TRUE)(fake[del] <- NA)
+
+  # turn the required continuous variables into factors
+  for (i in (1:col)[!num]){
+    # the original data for this column
+    old <- dataset[,i]
+   
+    # the new data for this column, omiting NAs
+    new <- fake[!is.na(fake[,i]),i]
+
+    # what are the levels of the original factor?
+    lev <- levels(old)
+
+    # establish cutpoints in new variable from cdf of old factor
+    cut <- cumsum(table(old))/(sum(!is.na(old)))
+
+    # put continuous variable into a matrix, repeating value across columns
+    wide <- matrix(new, length(new), length(lev))
+
+    # put the cutpoints in a matrix, repeating the cut point values across rows
+    crit <- matrix(quantile(new, cut), length(new), length(lev), byrow=TRUE)
+
+    # for each value (row of the wide matrix), 
+    # how many cutpoints is the value greater than?
+    # number of cutpoints surpassed=category
+    fake[!is.na(fake[,i]),i] <- apply(wide>crit, 1, sum)
+
+    # make it a factor
+    fake[,i] <- factor(fake[,i], ordered=TRUE)
+
+    # give the new factor the same levels as the old variable
+    if(length(levels(fake[,i]))!=length(lev))message(
+      paste("Fewer categories in simulated variable", 
+      names(fake)[i], "than in input variable", names(dataset)[i]))
+    if(use.levels==TRUE&(length(levels(fake[,i]))==length(lev))){
+      levels(fake[,i]) <- lev} else (levels(fake[,i]) <- 1:length(lev))
+  }
+
+  # round the data to the requested digits
+  fake[,num] <- round(fake[,num], digits)
+
+  # give the variables names, if so requested
+  if(use.names==TRUE)(names(fake) <- names(dataset))
+  
+  # return the new data
+  return(fake)
 }

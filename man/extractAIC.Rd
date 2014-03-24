@@ -30,6 +30,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
 extractAIC(m1)
+# -2.615998
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}

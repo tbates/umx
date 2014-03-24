@@ -50,5 +50,9 @@ umxCompare(c(m1, m2), c(m2, m3), all = T)
 }
 \seealso{
 - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
+
+Other umx reporting: \code{\link{umxDescriptives}};
+  \code{\link{umxSummary}}; \code{\link{umx_print}};
+  \code{\link{umx_report_time}}
 }
 

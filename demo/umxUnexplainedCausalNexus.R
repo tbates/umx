@@ -1,3 +1,5 @@
+#' @demoTitle Computing one variable’s effect on another in a complex path diagram
+
 require(sem)
 require(OpenMx)
 source("~/bin/omxhelper/genEpi.lib.R")

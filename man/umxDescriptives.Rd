@@ -32,5 +32,9 @@ umxDescriptives(data)
 }
 \seealso{
 - \code{\link{plyr}}
+
+Other umx reporting: \code{\link{umxCompare}};
+  \code{\link{umxSummary}}; \code{\link{umx_print}};
+  \code{\link{umx_report_time}}
 }
 

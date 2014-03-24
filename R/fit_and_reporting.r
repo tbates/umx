@@ -40,6 +40,7 @@
 #' @param report The format for the output line or table (default is "line")
 #' @param showEstimates What estimates to show. Options are "raw | std | list | NULL" for raw, standardized, a custom list or (default)
 #' none (just shows the fit indices)
+#' @family umx reporting
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}},\code{\link{umxCI_boot}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
@@ -198,6 +199,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' This is handy for getting tables into word
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://openmx.psyc.virginia.edu/}
+#' @family umx reporting
 #' @export
 #' @import OpenMx
 #' @examples
@@ -1049,6 +1051,8 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' extractAIC(m1)
+#' # -2.615998
+
 extractAIC.MxModel <- function(model) {
 	require(umx)
 	a = umx::umxCompare(model)
@@ -1309,3 +1313,55 @@ RMSEA <- function(model, ci.lower = .05, ci.upper = .95) {
 	return(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, txt = txt)) 
 }
 
+#' umxDescriptives
+#'
+#' Summarize data for an APA style subjects table
+#'
+#' @param data          data.frame to compute descriptive statistics for
+#' @param measurevar    The data column to summarise
+#' @param groupvars     A list of columns to group the data by
+#' @param na.rm         whether to remove NA from the data
+#' @param conf.interval The size of the CI you request - 95 by default
+#' @param .drop         Whether to drop TODO
+#' @family umx reporting
+#' @export
+#' @seealso - \code{\link{plyr}}
+#' @references - \url{http://www.cookbook-r.com/Manipulating_data/Summarizing_data}
+#' @examples
+#' \dontrun{
+#' umxDescriptives(data)
+#' }
+
+umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = FALSE, conf.interval = .95, .drop = TRUE) {
+    require(plyr)
+    # New version of length which can handle NA's: if na.rm == T, don't count them
+    length2 <- function (x, na.rm=FALSE) {
+        if (na.rm){
+			sum(!is.na(x))        	
+        } else { 
+            length(x)
+		}
+    }
+
+    # The summary; it's not easy to understand...
+    datac <- plyr::ddply(data, groupvars, .drop = .drop,
+           .fun = function(xx, col, na.rm) {
+                   c( N    = length2(xx[,col], na.rm=na.rm),
+                      mean = mean   (xx[,col], na.rm=na.rm),
+                      sd   = sd     (xx[,col], na.rm=na.rm)
+                      )
+                  },
+            measurevar,
+            na.rm
+    )
+    # Rename the "mean" column
+    datac    <- umx_rename(datac, c("mean" = measurevar))
+    datac$se <- datac$sd / sqrt(datac$N) # Calculate standard error of the mean
+
+    # Confidence interval multiplier for standard error
+    # Calculate t-statistic for confidence interval: 
+    # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+    ciMult <- qt(conf.interval/2 + .5, datac$N - 1)
+    datac$ci <- datac$se * ciMult
+    return(datac)
+}

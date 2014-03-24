@@ -1,6 +1,7 @@
 # devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx"); 
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
+# file:///Users/tim/Library/R/3.0/library/roxygen2/doc/rd.html
 # setwd("~/bin/umx"); 
 # 
 # require(OpenMx); require(umx); ?umx
@@ -39,7 +40,6 @@
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
-#' @export
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1087,3 +1087,78 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	model    = mxModel(model, mxCI(thisCI) )
 	return (model)
 }
+
+#' Helper functions for OpenMx
+#'
+#' umx allows you to more easily build, run, modify, and report models using OpenMx
+#' with code.
+#'
+#' Core functions you're likely to need from \pkg{umx} are
+#' explained in the vignette("umx", package = "umx")
+#' All the functions have explainatory examples, so use the help, even if you think it won't help :-)
+#' Have a look, for example at \code{\link{umxRun}}
+#' There's also a working example below and in demo(umx)
+#' 
+#' umx lives on github at present \link{http://github.com/tbates/umx}
+#' The easiest way to install it is
+#' install.packages("devtools")
+#' library("devtools")
+#' install_github("tbates/umx")
+#' library("umx")
+#' 
+#' @aliases umx-package
+#' @references - \url{http://www.github.com/tbates/umx}
+#' 
+#' @examples
+#' require("OpenMx")
+#' require("umx")
+#' data(demoOneFactor)
+#' latents = c("G")
+#' manifests = names(demoOneFactor)
+#' fit1 <- mxModel("One Factor", type="RAM",
+#' 	manifestVars = manifests,
+#' 	latentVars  = latents,
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents  , arrows = 2, free = F, values = 1),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
+#' )
+#' 
+#' omxGetParameters(fit1) # nb: By default, paths have no labels, and starts of 0
+#' 
+#' # umxLabel easily add informative and predictable labels to each free path (works with matrix style as well!)
+#' # and with umxStart, we can easily add sensible guesses for start values...
+#' fit1 = umxLabel(fit1)  
+#' fit1 = umxStart(fit1)  
+#' 
+#' # Re-run omxGetParameters...
+#' omxGetParameters(fit1) # Wow! Now your model has informative labels, & better starts
+#' 
+#' # umxRun the model (calculates saturated models for raw data, & repeats if the model is not code green)
+#' fit1 = umxRun(fit1)    
+#' 
+#' # Let's get some journal-ready fit information
+#' 
+#' umxSummary(fit1) 
+#' 
+#' # Model updating example
+# Can we equate the loading of X5 on g to zero?
+#' fit2 = omxSetParameters(fit1, labels = "G_to_x1", values = 0, free = F, name = "no_effect_of_g_on_X5")
+#' fit2 = mxRun(fit2)
+#' # Model comparison example
+#' umxCompare(fit1, fit2)
+#' 
+#' # Same thing with umxReRun
+#' fit2 = umxReRun(fit1, "x5_with_x5", name = "no_residual_onX5")
+#' 
+#' umxCompare(fit1, fit2)
+#' 
+#' # And make a Figure it dot format!
+#' # If you have installed GraphViz, the next command will open it for you to see!
+#' 
+#' # umxPlot(fit1, std = T)
+#' # Run this instead if you don't have GraphViz
+#' umxPlot(fit1, std = T, dotFilename = NA)
+#' @docType package
+#' @name umx
+NULL

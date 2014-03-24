@@ -21,14 +21,22 @@ umx_cor(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3)
 Report correlations and their p-values
 }
 \examples{
-\dontrun{
 umx_cor(myFADataRaw[1:8,])
-}
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+
+Other umx utility functions: \code{\link{Stouffer.test}};
+  \code{\link{\%>\%}}, \code{\link{\%>\%}},
+  \code{\link{umx_greater_than}};
+  \code{\link{umx.as.numeric}}; \code{\link{umxAnova}};
+  \code{\link{umxHetCor}}; \code{\link{umxLower2full}};
+  \code{\link{umx_find_object}}; \code{\link{umx_grep}};
+  \code{\link{umx_move_file}}; \code{\link{umx_pp33}};
+  \code{\link{umx_rename_file}}; \code{\link{umx_rename}};
+  \code{\link{umx_round}}; \code{\link{umx_swap_a_block}}
 }
 
