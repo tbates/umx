@@ -40,6 +40,7 @@
 #' @param report The format for the output line or table (default is "line")
 #' @param showEstimates What estimates to show. Options are "raw | std | list | NULL" for raw, standardized, a custom list or (default)
 #' none (just shows the fit indices)
+#' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @family umx reporting
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}},\code{\link{umxCI_boot}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
@@ -70,21 +71,32 @@
 #' umxSummary(m1, report = "table")
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, digits = 2, RMSEA_CI = F, precision = NULL){
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, digits = 2, RMSEA_CI = F, precision = NULL, filter = c("ALL","NS","SIG")){
+	validValuesForshowEstimates = c("raw","std","both", "or a list of column names")
+	validValuesForFilter = c("ALL","NS","SIG")
 	# TODO make table take lists of models...
 	report = umx_default_option(report, c("line"))	
-	# TODO should/could have a toggle for computing the saturated models...
+	filter = umx_default_option(filter, validValuesForFilter)	
+
 	if(!is.null(precision)){
 		warning("precision is deprecated for umxSummary, use digits instead")
 		digits = precision
 	}
 	if(!is.null(showEstimates)){
-		if(!(showEstimates %in% c("raw","std","list") ) ){
-			stop(paste0("showEstimates ", showEstimates , " is not in the valid list: \"raw\",\"std\",\"list\""))
+		if(!(showEstimates %in% validValuesForshowEstimates ) & !length(showEstimates) > 1 ){
+			# TODO enquote the validValuesForshowEstimates list
+			stop(paste0("showEstimates ", showEstimates , " is not in the valid list: \"raw\",\"std\",\"both\" or a list of column names"))
 		}
 	}
+
+	# if the filter is off default, the user must want something...
+	if( filter != "ALL" & is.null(showEstimates)){
+		showEstimates = "std"
+	}
+
 	output <- model@output
-	# stop if there is no objective function
+
+	# Stop if there is no objective function
 	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
 	# stop if there is no output
 	if ( length(output) < 1 ) stop("Provided model has no output. I can only standardize models that have been mxRun() first!")
@@ -120,13 +132,18 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 		}
 		x = modelSummary$parameters
 		if("CI" %in% namesToShow){
+			x$sig = T
 			x$CI = ""
 			for(i in 1:dim(x)[1]) {
 				# i = 1
 				# x = summary(m1)$parameters
 				# digits = 2
-				est = x[i, "Std.Estimate"]
+				est   = x[i, "Std.Estimate"]
 				CI95  = x[i, "Std.SE"] * 1.96
+				bounds = c(est - CI95, est + CI95)
+				if (any(bounds < 0) & any(bounds > 0)){
+					x[i, "sig"] = F
+				}
 				if(est < 0){
 	 			   x[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
 				} else {
@@ -134,8 +151,17 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				}
 			}
 		}
-		print(x[,namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")
+		if(filter == "NS"){
+			print(x[x$sig==F, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
+		}else if(filter == "SIG"){
+			print(x[x$sig==T, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")
+		}else{
+			print(x[,namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
+		}
 	} else {
+		# TODO enquote this list (and fix up the whole logic...)
+		# raw, std, both, and any list of column names
+		# validValuesForshowEstimates = c("raw","std","both)
 		message("For estimates, add showEstimates = 'raw' 'std' or 'both")
 	}
 
