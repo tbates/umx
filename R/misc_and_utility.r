@@ -150,7 +150,6 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 	}
 }
 
-
 # How long did that take?
 #' umxReportTime
 #'
@@ -247,7 +246,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @param treatAllAsFactor Whether to treat all columns as factors, whether they are currently or not.
 #' @param verbose How much to tell the user about what was done.
 #' @return - A matrix of correlations
-#' @family umx utility functions
+#' @family umx data helpers
 #' @export
 #' @seealso - \code{\link{hetcor}}
 #' @references - 
@@ -285,7 +284,7 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFac
 #' @param diag A boolean noting whether the lower matrix includes the diagonal
 #' @param byrow Whether the matrix is to be filled by row or by column
 #' @return - \code{\link{mxMatrix}}
-#' @family umx utility functions
+#' @family umx data helpers
 #' 
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
@@ -482,7 +481,7 @@ umx_move_file <- function(baseFolder = NA, findStr = NA, fileNameList = NA, dest
 #' @param use how to handle missing data
 #' @param digits rounding of answers
 #' @return - matrix of correlations and p-values
-#' @family umx utility functions
+#' @family umx data functions
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
@@ -750,7 +749,7 @@ umx_greater_than <- function(table, x){
 #'
 #' @param x an dataframe to round in
 #' @param digits how many digits to round to
-#' @param coerce whether to make the column numeric if it is not
+#' @param coerce whether to make the column numeric if it is not (default = FALSE)
 #' @return - \code{\link{mxModel}}
 #' @family umx utility functions
 #' @export
@@ -759,7 +758,7 @@ umx_greater_than <- function(table, x){
 #' @examples
 #' head(umx_round(mtcars, coerce = T))
 
-umx_round <- function(df, digits, coerce = T) {
+umx_round <- function(df, digits, coerce = F) {
 	if(!is.data.frame(df)){
 		stop(paste0("umx_round takes a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
 	}
@@ -908,7 +907,7 @@ umxAnova <- function(model, digits = 2) {
 #' Runs a Stouffer.test
 #'
 #' @param p A list of p values, i.e., p(.4, .3, .6, .01)
-#' @family umx utility functions
+#' @family umx misc stats functions
 #' @seealso - 
 #' @references - \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
 #' Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, 
@@ -978,7 +977,7 @@ skewnessDiff<- function(x, y, B = 1000){
 #' @param target_df the... TODO
 #' @param x the... TODO
 #' @return - value
-#' @family umx utility functions
+#' @family umx misc stats functions
 #' @export
 #' @seealso - \code{\link{pnorm}}
 #' @references - \url{http://www.p-curve.com/Supplement/R/pp33.r}
@@ -1020,6 +1019,7 @@ umxCovData = function(df, columns = manifests, use = "pairwise.complete.obs") {
 #' @param x something that cov2cor can work on (matrix, df, etc.)
 #' @return - a correlation matrix
 #' @export
+#' @family umx misc stats functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1044,6 +1044,7 @@ umxCov2cor <- function(x) {
 #' @param model an \code{\link{mxModel}} to check
 #' @return - boolean
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1076,6 +1077,7 @@ umx_has_been_run <- function(model, stop = F) {
 #' @param data data.frame to search in for names
 #' @return - boolean
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1112,6 +1114,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE){
 #' @param strict whether to stop when unordered factors are found (default = T)
 #' @return - list of variable names
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1158,6 +1161,7 @@ umx_is_ordinal <- function(df, names = F, strict = T) {
 #' @param obj an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}
 #' @return - Boolean
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{mxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1201,6 +1205,7 @@ umx_is_RAM <- function(obj) {
 #' @param obj an object to be tested to see if it is an OpenMx \code{\link{mxModel}}
 #' @return - Boolean
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{mxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1221,6 +1226,7 @@ umx_is_MxModel <- function(obj) {
 #' @param hasData whether the model should have data or not (defaults to not checking NULL)
 #' @return - boolean
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1262,6 +1268,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, checkSubmodels = F
 #' @param boolean whether to return the type ("cov") or a boolean (default = string)
 #' @return - "raw", "cor", or "cov", or, if boolean= T, then T | F
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1314,6 +1321,7 @@ umx_is_cov <- function(data = NULL, boolean = F, verbose = F) {
 #' @param model The \code{\link{mxModel}} to check for presence of CIs
 #' @return - TRUE or FALSE
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
@@ -1330,7 +1338,7 @@ umx_has_CIs <- function(model) {
 	return(hasCIs)
 }
 
-#' umx_u_APA_pval
+#' umx_APA_pval
 #'
 #' round a p value so you get < .001 instead of .000000002 or .134E-16
 #'
@@ -1338,6 +1346,7 @@ umx_has_CIs <- function(model) {
 #' @param min Threshold to say < min
 #' @param rounding Number of decimal to round to 
 #' @param addComparison Whether to return the bare number, or to add the appropriate comparison symbol (= <)
+#' @family umx misc reporting functions
 #' @return - a value
 #' @export
 #' @seealso - \code{\link{round}}
@@ -1393,6 +1402,7 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' @param raw Should the raw table also be output? (allows checking that nothing crazy is going on)
 #' @param format String or markdown format?
 #' @param printDIC A Boolean toggle whether you want AIC-type fit change table printed
+#' @family umx misc reporting functions
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
@@ -1452,6 +1462,7 @@ umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", pr
 #' @param newOrder The order you'd like the variables to be in
 #' @return - the re-ordered (and/or resized) matrix
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1481,6 +1492,7 @@ umx_reorder <- function(old, newOrder) {
 #' @param input 
 #' @return - boolean
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1503,6 +1515,7 @@ umx_has_square_brackets <- function (input) {
 #' @param dimnames of the returned algebra
 #' @return - \code{\link{mxAlgebra}}
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1524,6 +1537,7 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' @param show 
 #' @return - an openmx algebra (formula)
 #' @export
+#' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1551,6 +1565,7 @@ umxEval <- function(expstring, model, compute = F, show = F) {
 #' @param suffixes the suffix that distinguishes each case (T1, T2 etc.)
 #' @return - new dataframe with scaled variables
 #' @export
+#' @family umx data helpers
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1771,3 +1786,41 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = T, use.levels
   # return the new data
   return(fake)
 }
+
+#' qm
+#'
+#' Quickmatrix function
+#'
+#' @param ... the components of your matrix
+#' @param rowMarker mark the end of each row
+#' @return - matrix
+#' @family umx utility functions
+#' @references \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
+#' @export
+#' @examples
+#' # simple example
+#' qm(0, 1 |
+#'    2, NA)
+#' M <- N <- diag(2)
+#' qm(M,c(4,5) | c(1,2),N | t(1:3))
+#' matrix(1:16, 4)
+qm <- function(..., rowMarker = "|") {
+# Short hard to read version that allows some of the more advanced Matlab capabilities like Matrices as arguments:
+	# turn ... into string
+	args<-deparse(substitute(rbind(cbind(...))))
+	# create "rbind(cbind(.),cbind(.),.)" construct
+	sep = paste0("\\", colsep)
+	args<-gsub(sep, "), cbind(", args)
+	# eval
+	eval(parse(text = args))
+}
+
+# easier to read variant that doesn't accept matrices as arguments...
+# qm <- function(..., colsep = "|") {
+# 	# Get the arguments as a list
+# 	arg <- eval(substitute(alist(...)))
+# 	out <- strsplit(as.character(arg), split = colsep, fixed = T)
+# 	ns <- sapply(out, length)
+# 	ncol <- if(any(ns > 1)){min(which(ns>1))}else{length(ns)}
+# 	matrix(as.numeric(unlist(out)), ncol = ncol, byrow = TRUE)
+# }
