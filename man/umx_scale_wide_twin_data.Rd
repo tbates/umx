@@ -29,5 +29,8 @@ plot(wt1 ~ wt2, data= df)
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+
+Other umx data helpers: \code{\link{umxHetCor}};
+  \code{\link{umxLower2full}}
 }
 

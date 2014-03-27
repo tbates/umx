@@ -197,7 +197,7 @@ umx_report_time <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' @param output file to write to and open in browser
 #' @param ... Optional parameters for print
 #' @export
-#' @family umx reporting
+#' @family umx misc reporting functions
 #' @seealso - \code{\link{print}}
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
@@ -853,7 +853,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @param model an \code{\link{lm}} model to report F for.
 #' @param digits how many numbers after the decimal for F (p-value is APA-style)
 #' @return - F in  text format
-#' @family umx utility functions
+#' @family umx misc reporting functions
 #' @export
 #' @seealso - \code{\link{lm}}, \code{\link{anova}}, \code{\link{summary}}
 #' @examples
@@ -1351,7 +1351,9 @@ umx_has_CIs <- function(model) {
 #' @export
 #' @seealso - \code{\link{round}}
 #' @examples
+#' umx_APA_pval(.052347)
 #' umx_APA_pval(1.23E-3)
+#' umx_APA_pval(1.23E-4)
 #' umx_APA_pval(c(1.23E-3, .5))
 #' umx_APA_pval(c(1.23E-3, .5), addComparison = T)
 

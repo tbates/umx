@@ -38,8 +38,10 @@ umx_print(mtcars[1:10,], file = "Rout.html")
 \seealso{
 - \code{\link{print}}
 
-Other umx reporting: \code{\link{umxCompare}};
-  \code{\link{umxDescriptives}}; \code{\link{umxSummary}};
+Other umx reporting: \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxCompare}};
+  \code{\link{umxDescriptives}};
+  \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
   \code{\link{umx_report_time}}
 }
 

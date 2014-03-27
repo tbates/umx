@@ -36,8 +36,10 @@ umx_report_time(m1)
 \seealso{
 - \code{\link{summary}}, \code{\link{umxRun}}
 
-Other umx reporting: \code{\link{umxCompare}};
-  \code{\link{umxDescriptives}}; \code{\link{umxSummary}};
+Other umx reporting: \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxCompare}};
+  \code{\link{umxDescriptives}};
+  \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
   \code{\link{umx_print}}
 }
 

@@ -11,7 +11,8 @@ umxCI(model = NULL, addCIs = T, runCIs = "if necessary",
 
 \item{addCIs}{Whether or not to add mxCIs if none are found (defaults to TRUE)}
 
-\item{runCIs}{Whether or not to run the CIs: if F, this function can simply add CIs and return the model. Valid values = "no", "yes", "if necessary"
+\item{runCIs}{Whether or not to compute the CIs: if FALSE, this function will simply add the list of
+CIs to be computed and return the model. Valid values = "no", "yes", "if necessary"
 all the CIs and return that model for \code{\link{mxRun}}ning later}
 }
 \value{
@@ -59,5 +60,10 @@ umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run the
 }
 \seealso{
 - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
+
+Other umx reporting: \code{\link{umxCI_boot}};
+  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
+  \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
+  \code{\link{umx_print}}; \code{\link{umx_report_time}}
 }
 

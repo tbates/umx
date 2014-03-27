@@ -31,5 +31,7 @@ umxAnovaReport(model)
 }
 \seealso{
 - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
+
+Other umx misc reporting functions: \code{\link{umx_APA_pval}}
 }
 

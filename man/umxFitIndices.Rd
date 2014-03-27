@@ -39,5 +39,10 @@ umxFitIndices(m1, m1_ind)
 }
 \seealso{
 - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{summary}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+
+Other umx reporting: \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxCompare}};
+  \code{\link{umxDescriptives}}; \code{\link{umxSummary}};
+  \code{\link{umx_print}}; \code{\link{umx_report_time}}
 }
 

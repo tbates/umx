@@ -35,14 +35,7 @@ cor_df = umxHetCor(df, ML = F, use="pairwise.complete.obs")
 \seealso{
 - \code{\link{hetcor}}
 
-Other umx utility functions: \code{\link{Stouffer.test}};
-  \code{\link{\%>\%}}, \code{\link{\%>\%}},
-  \code{\link{umx_greater_than}};
-  \code{\link{umx.as.numeric}}; \code{\link{umxAnova}};
-  \code{\link{umxLower2full}}; \code{\link{umx_cor}};
-  \code{\link{umx_find_object}}; \code{\link{umx_grep}};
-  \code{\link{umx_move_file}}; \code{\link{umx_pp33}};
-  \code{\link{umx_rename_file}}; \code{\link{umx_rename}};
-  \code{\link{umx_round}}; \code{\link{umx_swap_a_block}}
+Other umx data helpers: \code{\link{umxLower2full}};
+  \code{\link{umx_scale_wide_twin_data}}
 }
 

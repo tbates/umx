@@ -1,13 +1,13 @@
-# http://adv-r.had.co.nz/Philosophy.html
-# https://github.com/hadley/devtools
-# setwd("~/bin/umx"); 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# setwd("~/bin/umx"); 
 # devtools::build("~/bin/umx")
 # devtools::check("~/bin/umx")
 # devtools::release("~/bin/umx")
 # devtools::load_all("~/bin/umx")
 # devtools::dev_help("umxReportCIs")
 # devtools::show_news("~/bin/umx")
+# http://adv-r.had.co.nz/Philosophy.html
+# https://github.com/hadley/devtools
 
 # =============================
 # = Fit and Reporting Helpers =
@@ -15,8 +15,8 @@
 
 #' umxSummary
 #'
-#' Report the fit of a model in a compact form suitable for a journal. Emits a "warning" not 
-#' when model fit is worse than accepted criterion (TLI > .95 and RMSEA < .06; (Hu & Bentler, 1999; Yu, 2002).
+#' Report the fit of a model in a compact form suitable for a journal. Emits a "warning" 
+#' when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 #' 
 #' notes on CIs and Identification
 #' Note, the conventional standard errors reported by OpenMx are used to produce the CIs you see in umxSummary
@@ -223,6 +223,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' @param report Optionally add sentences for inclusion inline in a paper (report= 2)
 #' and output to an html table which will open your default browser (report = 3).
 #' This is handy for getting tables into word
+#' @family umx reporting
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://openmx.psyc.virginia.edu/}
 #' @family umx reporting
@@ -324,9 +325,11 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
 #' @param addCIs Whether or not to add mxCIs if none are found (defaults to TRUE)
-#' @param runCIs Whether or not to run the CIs: if F, this function can simply add CIs and return the model. Valid values = "no", "yes", "if necessary"
+#' @param runCIs Whether or not to compute the CIs: if FALSE, this function will simply add the list of 
+#' CIs to be computed and return the model. Valid values = "no", "yes", "if necessary"
 #' all the CIs and return that model for \code{\link{mxRun}}ning later
 #' @return - \code{\link{mxModel}}
+#' @family umx reporting
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @export
@@ -431,6 +434,7 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
+#' @family umx reporting
 
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
 	require(MASS); require(OpenMx); require(umx)
@@ -719,6 +723,7 @@ umxPlot <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathL
 #' @param decreasing How to sort (default = T, decreasing)
 #' @param cache = Future function to cache these time-consuming results
 #' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+#' @family umx modify model
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
@@ -791,7 +796,6 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, 
 	print(mi.df[1:numInd, !(names(mi.df) %in% c("path","copy"))])
 	invisible(mi.df)		
 }
-
 
 # ======================
 # = Path tracing rules =
@@ -1078,7 +1082,6 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' extractAIC(m1)
 #' # -2.615998
-
 extractAIC.MxModel <- function(model) {
 	require(umx)
 	a = umx::umxCompare(model)
@@ -1191,6 +1194,7 @@ logLik.MxModel <- function(model) {
 #' @return \code{NULL}
 #' @export
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{summary}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @family umx reporting
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{

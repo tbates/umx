@@ -23,5 +23,14 @@ umx_has_square_brackets("goodbye")
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+
+Other umx misc functions: \code{\link{umxEval}};
+  \code{\link{umx_check_model}};
+  \code{\link{umx_check_names}}; \code{\link{umx_has_CIs}};
+  \code{\link{umx_has_been_run}};
+  \code{\link{umx_is_MxModel}}; \code{\link{umx_is_RAM}};
+  \code{\link{umx_is_cov}}; \code{\link{umx_is_ordinal}};
+  \code{\link{umx_reorder}};
+  \code{\link{umx_string_to_algebra}}
 }
 
