@@ -21,8 +21,8 @@ none (just shows the fit indices)}
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 }
 \description{
-Report the fit of a model in a compact form suitable for a journal. Emits a "warning" not
-when model fit is worse than accepted criterion (TLI > .95 and RMSEA < .06; (Hu & Bentler, 1999; Yu, 2002).
+Report the fit of a model in a compact form suitable for a journal. Emits a "warning"
+when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 }
 \details{
 notes on CIs and Identification
@@ -76,7 +76,7 @@ umxSummary(m1, saturatedModels = umxSaturated(m1))
 Other umx reporting: \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxCompare}};
   \code{\link{umxDescriptives}};
-  \code{\link{umxFitIndices}}; \code{\link{umx_print}};
+  \code{\link{umxFitIndices}};
   \code{\link{umx_report_time}}
 }
 

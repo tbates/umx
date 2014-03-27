@@ -64,6 +64,6 @@ umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run the
 Other umx reporting: \code{\link{umxCI_boot}};
   \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
   \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
-  \code{\link{umx_print}}; \code{\link{umx_report_time}}
+  \code{\link{umx_report_time}}
 }
 

@@ -54,11 +54,11 @@ umxCompare(c(m1, m2), c(m2, m3), all = T)
 Other umx reporting: \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxDescriptives}};
   \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
-  \code{\link{umx_print}}; \code{\link{umx_report_time}}
+  \code{\link{umx_report_time}}
 
 Other umx reporting: \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxDescriptives}};
   \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
-  \code{\link{umx_print}}; \code{\link{umx_report_time}}
+  \code{\link{umx_report_time}}
 }
 

@@ -42,9 +42,8 @@ umx_rename_file(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceS
 Other umx utility functions: \code{\link{\%>\%}},
   \code{\link{\%>\%}}, \code{\link{umx_greater_than}};
   \code{\link{qm}}; \code{\link{umx.as.numeric}};
-  \code{\link{umxAnova}}; \code{\link{umx_find_object}};
-  \code{\link{umx_grep}}; \code{\link{umx_move_file}};
-  \code{\link{umx_rename}}; \code{\link{umx_round}};
-  \code{\link{umx_swap_a_block}}
+  \code{\link{umx_find_object}}; \code{\link{umx_grep}};
+  \code{\link{umx_move_file}}; \code{\link{umx_rename}};
+  \code{\link{umx_round}}; \code{\link{umx_swap_a_block}}
 }
 

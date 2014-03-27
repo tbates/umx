@@ -21,13 +21,16 @@ umx_APA_pval(p, min = 0.001, rounding = 3, addComparison = NA)
 round a p value so you get < .001 instead of .000000002 or .134E-16
 }
 \examples{
+umx_APA_pval(.052347)
 umx_APA_pval(1.23E-3)
+umx_APA_pval(1.23E-4)
 umx_APA_pval(c(1.23E-3, .5))
 umx_APA_pval(c(1.23E-3, .5), addComparison = T)
 }
 \seealso{
 - \code{\link{round}}
 
-Other umx misc reporting functions: \code{\link{umxAnovaReport}}
+Other umx misc reporting functions: \code{\link{umxAnovaReport}};
+  \code{\link{umxAnova}}; \code{\link{umx_print}}
 }
 

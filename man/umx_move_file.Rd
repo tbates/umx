@@ -40,9 +40,8 @@ umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test=
 Other umx utility functions: \code{\link{\%>\%}},
   \code{\link{\%>\%}}, \code{\link{umx_greater_than}};
   \code{\link{qm}}; \code{\link{umx.as.numeric}};
-  \code{\link{umxAnova}}; \code{\link{umx_find_object}};
-  \code{\link{umx_grep}}; \code{\link{umx_rename_file}};
-  \code{\link{umx_rename}}; \code{\link{umx_round}};
-  \code{\link{umx_swap_a_block}}
+  \code{\link{umx_find_object}}; \code{\link{umx_grep}};
+  \code{\link{umx_rename_file}}; \code{\link{umx_rename}};
+  \code{\link{umx_round}}; \code{\link{umx_swap_a_block}}
 }
 

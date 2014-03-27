@@ -78,11 +78,13 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = T, overRide
 	# =========================
 	# = Add Symmetric labels =
 	# =========================
+	# Bivariate names are sorted alphabetically, makes it unambiguous...
 	theseNames = namesS
 	for(fromCol in seq_along(theseNames)) {
 		for(toRow in seq_along(theseNames)) {
 			if(labelFixedCells | freeS[toRow, fromCol]) {
-			   thisLabel = paste0(theseNames[fromCol], "_with_", theseNames[toRow], suffix)
+			   orderedNames = sort(c(theseNames[fromCol], theseNames[toRow]))
+			   thisLabel = paste0(orderedNames[1], "_with_", orderedNames[2], suffix)
 			   model@matrices$S@labels[toRow,fromCol] = thisLabel
 			}
 		}
@@ -297,7 +299,7 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = F, verbose = F) {
 	)
 }
 
-xmuStart_value_list <- function(x = 1, sd = NA, n = 1) {
+xmuStart_value_list <- function(mean = 1, sd = NA, n = 1) {
 	# Purpose: Create startvalues for OpenMx paths
 	# use cases
 	# umxStart(1) # 1 value, varying around 1, with sd of .1
@@ -308,10 +310,10 @@ xmuStart_value_list <- function(x = 1, sd = NA, n = 1) {
 	if(is.na(sd)){
 		sd = x/6.6
 	}
-	if(length(n)>1){
+	if(length(n) > 1){
 		n = length(n)
 	}
-	return(rnorm(n=n, mean=x, sd=sd))
+	return(rnorm(n = n, mean = mean, sd = sd))
 }
 
 #' xmuPropagateLabels (not a user function)

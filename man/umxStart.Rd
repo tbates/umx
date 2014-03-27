@@ -20,6 +20,7 @@ umxStart(obj = NA, sd = NA, n = 1, onlyTouchZeros = F)
 \description{
 umxStart will set start values for the free parameters in RAM and Matrix \code{\link{mxModel}}s, or even mxMatrices.
 It will try and be smart in guessing these from the values in your data, and the model type.
+If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
 }
 \examples{
 require(OpenMx)
@@ -33,9 +34,10 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-mxEval(S,m1) # default variances are 0
+mxEval(S, m1) # default variances are 0
 m1 = umxStart(m1)
-mxEval(S,m1) # plausible variances
+mxEval(S, m1) # plausible variances
+umxStart(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
 # # TODO get this working
 # umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 }
@@ -44,5 +46,7 @@ mxEval(S,m1) # plausible variances
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+
+Other umx core functions: \code{\link{umxLabel}}
 }
 

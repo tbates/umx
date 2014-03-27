@@ -18,7 +18,7 @@ c(1:3, NA, 5) \%>\% 2
 - \code{\link{umx_less_than}},
 
 Other umx utility functions: \code{\link{qm}};
-  \code{\link{umx.as.numeric}}; \code{\link{umxAnova}};
+  \code{\link{umx.as.numeric}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_move_file}};
   \code{\link{umx_rename_file}}; \code{\link{umx_rename}};

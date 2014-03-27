@@ -47,16 +47,17 @@ m1 <- mxModel("One Factor", type = "RAM",
 )
 umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"
 m1 = umxLabel(m1)
-umxGetParameters(m1, free = T) # now all labeled regularly "G_to_x1", "x4_with_x4", etc.
-\dontrun{
- model = umxLabel(model)
- umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
-}
+umxGetParameters(m1, free = T) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
+# Labeling a matrix
+a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
+a$labels
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+
+Other umx core functions: \code{\link{umxStart}}
 }
 

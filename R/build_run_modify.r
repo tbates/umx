@@ -31,6 +31,7 @@
 #'
 #' umxStart will set start values for the free parameters in RAM and Matrix \code{\link{mxModel}}s, or even mxMatrices.
 #' It will try and be smart in guessing these from the values in your data, and the model type.
+#' If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
 #'
 #' @param obj The RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.
 #' @param sd Optional Standard Deviation for start values
@@ -39,6 +40,7 @@
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+#' @family umx core functions
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -52,21 +54,24 @@
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' mxEval(S,m1) # default variances are 0
+#' mxEval(S, m1) # default variances are 0
 #' m1 = umxStart(m1)
-#' mxEval(S,m1) # plausible variances
+#' mxEval(S, m1) # plausible variances
+#' umxStart(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
 #' # # TODO get this working
 #' # umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 
 umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {
-		xmuStart_value_list(x = obj, sd = NA, n = 1)
+		# use obj as the mean, return a list of length n, with sd = sd
+		xmuStart_value_list(x = obj, sd = sd, n = n)
 	} else {
-		# This is an MxRAM Model: Set sane starting values
-		# TODO: Start values in the A matrix...
+		# This is a RAM Model: Set sane starting values
 		# Done: Start values in the S at variance on diag, bit less than cov off diag
 		# Done: Start amnifest means in means model
+		# TODO: Start values in the A matrix...
 		# TODO: Start latent means?...		
+		# TODO: Handle sub models...
 		if (!umx_is_RAM(obj) ) {
 			stop("'obj' must be a RAM model (or a simple number)")
 		}
@@ -124,6 +129,7 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 
 #' @return - \code{\link{mxModel}}
 #' @export
+#' @family umx core functions
 #' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
@@ -143,23 +149,20 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 #' )
 #' umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"
 #' m1 = umxLabel(m1)
-#' umxGetParameters(m1, free = T) # now all labeled regularly "G_to_x1", "x4_with_x4", etc.
-#' \dontrun{
-#'  model = umxLabel(model)
-#'  umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
-#' }
+#' umxGetParameters(m1, free = T) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
+#' # Labeling a matrix
+#' a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
+#' a$labels
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F, overRideExisting = F) {	
-	# TODO !!!! labelling rule for bivariate perhaps should be sort alphabetically, makes it unambiguous...
-	# TODO !!!! implications for umxAdd1 finding the right labels...
 	if (is(obj, "MxMatrix") ) { 
-		# label an mxMatrix
+		# Label an mxMatrix
 		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
 	} else if (umx_is_RAM(obj)) { 
-		# label a RAM model
+		# Label a RAM model
 		if(verbose){message("RAM")}
 		return(xmuLabel_RAM_Model(obj, suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting))
 	} else if (umx_is_MxModel(obj) ) {
-		# label a non-RAM matrix model
+		# Label a non-RAM matrix model
 		return(xmuLabel_MATRIX_Model(obj, suffix))
 	} else {
 		stop("I can only label OpenMx models and mxMatrix types. You gave me a ", typeof(obj))
