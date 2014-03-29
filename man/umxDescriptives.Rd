@@ -33,9 +33,9 @@ umxDescriptives(data)
 \seealso{
 - \code{\link{plyr}}
 
-Other umx reporting: \code{\link{umxCI_boot}};
-  \code{\link{umxCI}}; \code{\link{umxCompare}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
-  \code{\link{umx_report_time}}
+Other umx reporting: \code{\link{confint.MxModel}};
+  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
+  \code{\link{umxCompare}}; \code{\link{umxFitIndices}};
+  \code{\link{umxSummary}}; \code{\link{umx_report_time}}
 }
 

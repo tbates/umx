@@ -23,6 +23,357 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 
+# ===============================
+# = Highlevel models (ACE, GxE) =
+# ===============================
+#' umxGxE_window
+#'
+#' Makes a model to do a GxE analysis using Local SEM (Hildebrandt, Wilhelm & Robitzsch, 2009, p96)
+#' Local SEM GxE relies on weighting the moderator to allow conducting repeated regular
+#' ACE analyses targeted at sucessive regions of the moderator.
+#' In this sense, you can think of it as nonparametric GxE
+#' 
+#' @param selDVs The dependent variables for T1 and T2, e.g. c("bmi_T1", "bmi_T2")
+#' @param moderator The name of the moderator variable in the dataset e.g. "age", "SES" etc.
+#' @param mzData Dataframe containing the DV and moderator for MZ twins
+#' @param dzData Dataframe containing the DV and moderator for DZ twins
+#' @param weightCov Whether to use cov.wt matrices or FIML default = FIML (FALSE)
+#' @param width An option to widen or narrow the window from its default (of 1)
+#' @param specifiedTargets a user-selected list of moderator values to test (default = NULL = explore the full range)
+#' @param plotWindow whether to plot what the window looks like
+#' @param return  whether to return the last model (useful for specifiedTargets) or the list of estimates (default = "estimates")
+	#' @return - Table of estimates of ACE along the moderator
+#' @export
+#' @examples
+#' library(OpenMx);
+#' # ==============================
+#' # = 1. Open and clean the data =
+#' # ==============================
+#' # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin
+#' moderator = "age"         # The name of the moderator column in the dataset
+#' selDVs = c("bmi1","bmi2") # The DV for twin 1 and twin 2
+#' data(twinData) # Dataset of Australian twins, built into OpenMx! Use help(twinData) for more
+#' # The twinData consist of two cohorts. First we label them
+#' # TODO: Q for openmx team: can I add a cohort column to this dataset?
+#' twinData$cohort = 1; twinData$cohort[twinData$zyg %in% 6:10] = 2
+#' twinData$zyg[twinData$cohort == 2] = twinData$zyg[twinData$cohort == 2]-5
+#' # And set a plain-English label
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' # The model also assumes two groups: MZ and DZ. Moderator can't be missing
+#' # Delete missing moderator rows
+#' twinData = twinData[!is.na(twinData[moderator]),]
+#' mzData = subset(twinData, ZYG == "MZFF", c(selDVs, moderator))
+#' dzData = subset(twinData, ZYG == "DZFF", c(selDVs, moderator))
+#' 
+#' # ======================
+#' # = Run the analyses! =
+#' # ======================
+#' # Run with FIML (default) uses all information
+#' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData);
+#' 
+#' # Run creating weighted covariance matrices (excludes missing data)
+#' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, weightCov = TRUE); 
+#' 
+#' # Run and plot for specified windows (in this case just 1927)
+#' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, specifiedTargets = 1927, plotWindow = T)
+#' 
+#' @seealso - \code{\link{umxGxE}}, \code{\link{umxRun}}
+#' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
+#' Complementary and competing factor analytic approaches for the investigation 
+#' of measurement invariance. \emph{Review of Psychology}, \bold{16}, 87--107. 
+#' 
+#' Briley, D, Bates, T.C., Harden, K Tucker-Drob, E. (2015)
+#' Of mice and men: Local SEM in gene environment analysis. \emph{Behavior Genetics}.
+
+umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, weightCov = F, specifiedTargets = NULL, width = 1, plotWindow = F, return = c("estimates","last_model")) {
+	# TODO want to allow missing moderator?
+	# Check moderator is set and exists in mzData and dzData
+	if(is.null(moderator)){
+		stop("Moderator must be set to the name of the moderator column, e.g, moderator = \"birth_year\"")
+	}
+	# Check DVs exists in mzData and dzData (and nothing else apart from the moderator)
+	umx_check_names(c(selDVs, moderator), data = mzData, die = T, no_others = T)
+	umx_check_names(c(selDVs, moderator), data = dzData, die = T, no_others = T)
+
+	# Add a zygosity column (that way we know what it's called)
+	mzData$ZYG = "MZ"; 
+	dzData$ZYG = "DZ"
+	# If using cov.wt, remove missings
+	if(weightCov){
+		dz.complete = complete.cases(dzData)
+		if(sum(dz.complete) != nrow(dzData)){
+			message("removed ", nrow(dzData) - sum(dz.complete), " cases from DZ data due to missingness. To use incomplete data, set weightCov = FALSE")
+			dzData = dzData[dz.complete, ]
+		}
+		mz.complete = complete.cases(mzData)
+		if(sum(mz.complete) != nrow(mzData)){
+			message("removed ", nrow(mzData) - sum(mz.complete), " cases from MZ data due to missingness. To use incomplete data, set weightCov = FALSE")
+			mzData = mzData[mz.complete, ]
+		}
+	}
+	allData = rbind(mzData, dzData)
+	# Create range of moderator values to iterate over (using the incoming moderator variable name)
+	modVar  = allData[, moderator]
+	if(any(is.na(modVar))){		
+		stop("Moderator \"", moderator, "\" contains ", length(modVar[is.na(modVar)]), "NAs. This is not currently supported.\n",
+			"NA found on rows", paste(which(is.na(modVar)), collapse = ", "), " of the combined data."
+		)
+	}
+
+	if(!is.null(specifiedTargets)){
+		if(specifiedTargets < min(modVar)) {
+			stop("specifiedTarget is below the range in moderator. min(modVar) was ", min(modVar))
+		} else if(specifiedTargets > max(modVar)){
+			stop("specifiedTarget is above the range in moderator. max(modVar) was ", max(modVar))
+		} else {
+			targetLevels = specifiedTargets			
+		}
+	} else {
+		# by default, run across each integer value of the moderator
+		targetLevels = seq(min(modVar), max(modVar))
+	}
+
+	numPairs     = nrow(allData)
+	moderatorSD  = sd(modVar, na.rm = T)
+	bw           = 2 * numPairs^(-.2) * moderatorSD *  width # -.2 == -1/5 
+
+	ACE = c("A","C","E")
+	tmp = rep(NA, length(targetLevels))
+	out = data.frame(modLevel = targetLevels, Astd = tmp, Cstd = tmp, Estd = tmp, A = tmp, C = tmp, E = tmp)
+	n   = 1
+	for (i in targetLevels) {
+		# i = targetLevels[1]
+		message("mod = ", i)
+		zx = (modVar - i)/bw
+		k = (1 / (2 * pi)^.5) * exp((-(zx)^2) / 2)
+		# ======================================================
+		# = Insert the weights into the dataframes as "weight" =
+		# ======================================================
+		allData$weight = k/.399 
+		mzData = subset(allData, ZYG == "MZ", c(selDVs, "weight"))
+		dzData = subset(allData, ZYG == "DZ", c(selDVs, "weight"))
+		if(weightCov){
+			mz.wt = cov.wt(mzData[, selDVs], mzData$weight)
+			dz.wt = cov.wt(dzData[, selDVs], dzData$weight)
+			m1 = umxACE(selDVs = selDVs, dzData = dz.wt$cov, mzData = mz.wt$cov, numObsDZ = dz.wt$n.obs, numObsMZ = mz.wt$n.obs)
+		} else {
+			m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, weightVar = "weight")
+		}
+		m1  = mxRun(m1); 
+		if(plotWindow){
+			plot(allData[,moderator], allData$weight) # normal-curve yumminess
+			umxSummaryACE(m1)
+		}
+		out[n, ] = mxEval(c(i, top.a_std[1,1], top.c_std[1,1],top.e_std[1,1], top.a[1,1], top.c[1,1], top.e[1,1]), m1)
+		n = n + 1
+	}
+	# squaring paths to produce variances
+	out[,ACE] <- out[,ACE]^2
+	# plotting variance components
+	with(out,{
+		plot(A ~ modLevel, main = paste0(selDVs[1], " variance"), ylab = "Variance", xlab=moderator, las = 1, bty = 'l', type = 'l', col = 'red', ylim = c(0, 1), data = out)
+		lines(modLevel, C, col = 'green')
+		lines(modLevel, E, col = 'blue')
+		legend('topright', fill = c('red', 'green', 'blue'), legend = ACE, bty = 'n', cex = .8)
+
+		plot(Astd ~ modLevel, main = paste0(selDVs[1], "std variance"), ylab = "Std Variance", xlab=moderator, las = 1, bty = 'l', type = 'l', col = 'red', ylim = c(0, 1), data = out)
+		lines(modLevel, Cstd, col = 'green')
+		lines(modLevel, Estd, col = 'blue')
+		legend('topright', fill = c('red', 'green', 'blue'), legend = ACE, bty = 'n', cex = .8)
+	})
+	if(return == "last_model"){
+		invisible(m1)
+	} else if(return == "estimates") {
+		invisible(out)
+	}else{
+		warning("You specified a return type that is invalid. Valid options are last_model and estimates. You requested:", return)
+	}
+}
+
+#' umxACE
+#'
+#' Make a 2-group ACE model
+#'
+#' @param name The name of the model (defaults to"ACE")
+#' @param selDVs The variables to include from the data
+#' @param dzData The DZ dataframe
+#' @param mzData The MZ dataframe
+#' @param numObsDZ = Number of DZ twins: Set this if you input covariance data
+#' @param numObsMZ = Number of MZ twins: Set this if you input covariance data
+#' @param wMZ = If provided, a vector objective will be used to weight the data. (default = NULL) 
+#' @param wDZ = If provided, a vector objective will be used to weight the data. (default = NULL) 
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxSummaryACE}}, \code{\link{umxCP}}, \code{\link{umxIP}}, \code{\link{umxGxE}}
+#' @references - \url{http://github.com/tbates/umx}
+#' @examples
+#' require(OpenMx)
+#' require(umx)
+#' data(twinData)
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' selDVs = c("bmi1","bmi2")
+#' mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
+#' dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' m1 = umxRun(m1)
+#' umxSummaryACE(m1)
+umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObsMZ = NULL, weightVar = NULL) {
+	nSib = 2
+	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+equateMeans = T
+dzAr = .5
+dzCr = 1
+addStd = T
+boundDiag = NULL
+	dataType = umx_is_cov(dzData)
+	bVector = FALSE	
+	if(dataType == "raw") {
+		if(!all(is.null(c(numObsMZ, numObsDZ)))){
+			stop("You should not be setting numObs with ", dataType, " data…")
+		}
+		if(!is.null(weightVar)){
+			# weight variable provided: check it exists in each frame
+			if(!umx_check_names(weightVar, data = mzData, die=F) | !umx_check_names(weightVar, data = dzData, die=F)){
+				stop("The weight variable must be included in the mzData and dzData",
+					 " frames passed into umxACE when \"weightVar\" is specified",
+					 "\n mzData contained:", paste(names(mzData), collapse = ", "),
+					 "\n and dzData contain:", paste(names(dzData), collapse = ", "),
+					 "\nbut I was looking for ", weightVar, " as the moderator name"
+				)
+			}
+			mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = F, values = mzData[, weightVar])
+			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = F, values = dzData[, weightVar])
+			mzData = mzData[, selDVs]
+			dzData = dzData[, selDVs]
+			bVector = TRUE
+		} else {
+			# no weights
+		}
+		# Add means matrix to top
+		obsMZmeans = colMeans(mzData[, selDVs], na.rm = T);
+		top = mxModel(name = "top", 
+			# means (not yet equated across twins)
+			umxLabel(mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * 2), free = T, values = obsMZmeans, dimnames = list("means", selDVs)) )
+		)
+		modelMZ = mxModel(name = "MZ", 
+			# TODO swap these back for 2.0...
+			mxFIMLObjective("top.mzCov", "top.expMean", vector = bVector),
+			# mxExpectationNormal("top.mzCov", "top.expMean"), mxFitFunctionFIML(vector = bVector),
+			mxData(mzData, type = "raw")
+		)
+		modelDZ = mxModel(name = "DZ", 
+			# TODO swap these back for 2.0...
+			mxFIMLObjective("top.dzCov", "top.expMean", vector = bVector),
+			# mxExpectationNormal("top.dzCov", "top.expMean"), mxFitFunctionFIML(vector = bVector),
+			mxData(dzData, type = "raw")
+		)
+	} else if(dataType %in% c("cov", "cor")){
+		if(!is.null(weightVar)){
+			stop("You can't set weightVar when you give cov data - use cov.wt to create weighted cov matrices or pass in raw data")
+		}
+		if( is.null(numObsMZ)){ stop(paste0("You must set numObsMZ with ", dataType, " data"))}
+		if( is.null(numObsDZ)){ stop(paste0("You must set numObsDZ with ", dataType, " data"))}
+		het_mz = umx_reorder(mzData, selDVs)		
+		het_dz = umx_reorder(dzData, selDVs)
+
+		top = mxModel(name = "top")
+
+		modelMZ = mxModel(name = "MZ", 
+			mxMLObjective("top.mzCov"),
+			# TODO swap these back for 2.0...
+			# mxExpectationNormal("top.mzCov"), mxFitFunctionML(),			
+			mxData(mzData, type = "cov", numObs = numObsMZ)
+		)
+		modelDZ = mxModel(name = "DZ", 
+			mxMLObjective("top.dzCov"),
+			# TODO swap these back for 2.0...
+			# mxExpectationNormal("top.dzCov"), mxFitFunctionML(),
+			mxData(dzData, type = "cov", numObs = numObsDZ)
+		)
+		message("treating data as ", dataType)
+	} else {
+		stop("Datatype \"", dataType, "\" not understood")
+	}
+	# Finish building top
+	top = mxModel(top,
+		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
+		# NB: top already has the means model added if raw  - see above
+		umxLabel(mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = .6, byrow = T), jiggle = 0.05),  # Additive genetic path 
+		umxLabel(mxMatrix(name = "c", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = .3, byrow = T), jiggle = 0.05),  # Common environmental path 
+		umxLabel(mxMatrix(name = "e", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = .6, byrow = T), jiggle = 0.05),  # Unique environmental path
+		mxMatrix(name = "dzAr", type = "Full", 1, 1, free = F, values = dzAr),
+		mxMatrix(name = "dzCr", type = "Full", 1, 1, free = F, values = dzCr),
+		# Multiply by each path coefficient by its inverse to get variance component
+		# Quadratic multiplication to add common_loadings
+		mxAlgebra(a %*% t(a), name = "A"), # additive genetic variance
+		mxAlgebra(c %*% t(c), name = "C"), # common environmental variance
+		mxAlgebra(e %*% t(e), name = "E"), # unique environmental variance
+		mxAlgebra(A+C+E     , name = "ACE"),
+		mxAlgebra(A+C       , name = "AC" ),
+		mxAlgebra( (dzAr %x% A) + (dzCr %x% C),name = "hAC"),
+		mxAlgebra(rbind (cbind(ACE, AC), 
+		                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name = "mzCov"),
+		mxAlgebra(rbind (cbind(ACE, hAC),
+		                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name = "dzCov")
+	)
+
+	if(!bVector){
+		model = mxModel(name, modelMZ, modelDZ, top,
+			mxAlgebra(MZ.objective + DZ.objective, name = "twin"),
+			# TODO fix this for OpenMx 2
+			mxAlgebraObjective("twin")
+			# mxFitFunctionAlgebra("twin")
+		)
+	} else {
+		# bVector is TRUE!
+		# To weight objective functions in OpenMx, you specify a container model that applies the weights
+		# m1 is the model with no weights, but with "vector = TRUE" option added to the FIML objective.
+		# This option makes FIML return individual likelihoods for each row of the data (rather than a single -2LL value for the model)
+		# You then optimize weighted versions of these likelihoods
+		# by building additional models containing weight data and an algebra that multiplies the likelihoods from the first model by the weight vector
+		model = mxModel(name, modelMZ, modelDZ, top,
+			mxModel("MZw", mzWeightMatrix,
+				mxAlgebra(-2 * sum(mzWeightMatrix * log(MZ.objective) ), name = "mzWeightedCov"),
+				# TODO fix this for OpenMx 2
+				mxAlgebraObjective("mzWeightedCov")
+				# mxFitFunctionAlgebra("mzWeightedCov")
+			),
+			mxModel("DZw", dzWeightMatrix,
+				mxAlgebra(-2 * sum(dzWeightMatrix * log(DZ.objective) ), name = "dzWeightedCov"),
+				# TODO fix this for OpenMx 2
+				mxAlgebraObjective("dzWeightedCov")
+			    # mxFitFunctionAlgebra("dzWeightedCov")
+			),
+			mxAlgebra(MZw.objective + DZw.objective, name = "twin"),
+			# TODO fix this for OpenMx 2
+			mxAlgebraObjective("twin")
+		    # mxFitFunctionAlgebra("twin")
+		)
+	}
+
+	diag(model@submodels$top@matrices$a@lbound) = 0
+	diag(model@submodels$top@matrices$c@lbound) = 0
+	diag(model@submodels$top@matrices$e@lbound) = 0
+	newTop = mxModel(model@submodels$top, 
+		mxMatrix("Iden", nVar, nVar, name = "I"), # nVar Identity matrix
+		mxAlgebra(A+C+E, name = "Vtot"),          # Total variance
+		mxAlgebra(solve(sqrt(I * Vtot)), name = "SD"), # Total variance
+		mxAlgebra(SD %*% a, name = "a_std"), # standardized a
+		mxAlgebra(SD %*% c, name = "c_std"), # standardized c
+		mxAlgebra(SD %*% e, name = "e_std")  # standardized e
+	)
+	model  = mxModel(model, newTop, mxCI(c('top.a_std','top.c_std','top.e_std')))
+	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
+	if(dataType == "raw"){
+		model = omxSetParameters(model,
+			labels  = paste0("expMean_r1c", (nVar+1):(nVar*2)), # c("expMean14", "expMean15", "expMean16"),
+			newlabels = paste0("expMean_r1c", 1:nVar)           # c("expMean11", "expMean12", "expMean13")
+		)
+	}
+	# Just trundle through and make sure values with the same label have the same start value... means for instance.
+	model = omxAssignFirstParameters(model)
+	return(model)
+}
 # ========================================
 # = Model building and modifying helpers =
 # ========================================
@@ -185,6 +536,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s) (defaults to TRUE - why would you want anything else?)
 #' @param setValues Whether to set the starting values of free parameters (defaults to F)
 #' @param setLabels Whether to set the labels (defaults to F)
+#' @param intervals Whether to run mxCI confindence intervals (defaults to F)
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @param setStarts Deprecated way to setValues
 #' @return - \code{\link{mxModel}}
@@ -203,15 +555,14 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umxSummary(m1, show = "std")
-#' \dontrun{
-#' model = umxRun(model) # just run: will create saturated model if needed
+#' m1 = umxRun(m1) # just run: will create saturated model if needed
 #' model = umxRun(model, setValues = T, setLabels = T) # set start values and label all parameters
-#' model = umxRun(model, n=10) # run, but also re-run if not green the first run
-#' }
-
-umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLabels = F, comparison = NULL, setStarts = NULL){
+#' umxSummary(m1, show = "std")
+#' m1 = mxModel(m1, mxCI("G_to_x1"))
+#' m1 = mxRun(m1, intervals = T)
+#' confint(m1)
+#' m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
+umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, comparison = NULL, setStarts = NULL){
 	# TODO: return change in -2LL for models being re-run
 	# TODO: stash saturated model for re-use
 	# TODO: Optimise for speed
@@ -226,7 +577,7 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLa
 		model = umxStart(model)
 	}
 	if(n == 1){
-		model = mxRun(model);
+		model = mxRun(model, intervals = intervals);
 	} else {
 		model = mxOption(model, "Calculate Hessian", "No")
 		model = mxOption(model, "Standard Errors", "No")
@@ -248,7 +599,9 @@ umxRun <- function(model, n = 1, calc_SE = T, calc_sat = T, setValues = F, setLa
 			# print("Calculating Hessian & SEs")
 			model = mxOption(model, "Calculate Hessian", "Yes")
 			model = mxOption(model, "Standard Errors", "Yes")
-			model = mxRun(model)
+		}
+		if(calc_SE | intervals){
+			model = mxRun(model, intervals = intervals)
 		}
 	}
 	if( umx_is_RAM(model)){

@@ -58,8 +58,9 @@ Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 \seealso{
 - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
 
-Other umx reporting: \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
+Other umx reporting: \code{\link{confint.MxModel}};
+  \code{\link{umxCI}}; \code{\link{umxCompare}};
+  \code{\link{umxDescriptives}};
   \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
   \code{\link{umx_report_time}}
 }

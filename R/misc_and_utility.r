@@ -1075,6 +1075,7 @@ umx_has_been_run <- function(model, stop = F) {
 #'
 #' @param namesNeeded list of variable names to find
 #' @param data data.frame to search in for names
+#' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to F)
 #' @return - boolean
 #' @export
 #' @family umx misc functions
@@ -1082,21 +1083,33 @@ umx_has_been_run <- function(model, stop = F) {
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
-#' data(demoOneFactor)
-#' umx_check_names(c("x1","x2"), demoOneFactor)
-#' umx_check_names(c("z1","x2"), data = demoOneFactor, die = F)
-
-umx_check_names <- function(namesNeeded, data, die = TRUE){
+#' data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
+#' umx_check_names(c("x1", "x2"), demoOneFactor)
+#' umx_check_names(c("z1", "x2"), data = demoOneFactor, die = F)
+#' umx_check_names(c("x1", "x2"), data = demoOneFactor, die = F, no_others = T)
+#' umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = F, no_others = T)
+#' dontrun{
+#' umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = T)
+#' }
+umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = F){
 	if(!is.data.frame(data)){
 		stop("data has to be a dataframe")
 	}
-	namesFound = (namesNeeded %in% names(data))
+	namesInData = names(data)
+	namesFound = (namesNeeded %in% namesInData)
 	if(any(!namesFound)){
 		if(die){
 			print(namesFound)
-			stop("Not all names found. Following were missing from data:\n",
-				paste(namesNeeded[!namesFound], collapse="; ")
+			stop("Not all required names were found in the dataframe. Missing were:\n",
+				paste(namesNeeded[!namesFound], collapse = "; ")
 			)
+		} else {
+			return(FALSE)
+		}
+	} else if(no_others & !setequal(namesInData, namesNeeded)){
+		if(die){
+			stop("Data contains columns other than those needed. Superfluous columns were:\n", 
+				paste(namesInData[!namesInData %in% namesNeeded], collapse = "; "))
 		} else {
 			return(FALSE)
 		}

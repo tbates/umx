@@ -3,12 +3,14 @@
 \alias{umx_check_names}
 \title{umx_check_names}
 \usage{
-umx_check_names(namesNeeded, data, die = TRUE)
+umx_check_names(namesNeeded, data, die = TRUE, no_others = F)
 }
 \arguments{
 \item{namesNeeded}{list of variable names to find}
 
 \item{data}{data.frame to search in for names}
+
+\item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to F)}
 }
 \value{
 - boolean
@@ -18,9 +20,14 @@ check if a list of names are in the names() of a dataframe
 }
 \examples{
 require(OpenMx)
-data(demoOneFactor)
-umx_check_names(c("x1","x2"), demoOneFactor)
-umx_check_names(c("z1","x2"), data = demoOneFactor, die = F)
+data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
+umx_check_names(c("x1", "x2"), demoOneFactor)
+umx_check_names(c("z1", "x2"), data = demoOneFactor, die = F)
+umx_check_names(c("x1", "x2"), data = demoOneFactor, die = F, no_others = T)
+umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = F, no_others = T)
+dontrun{
+umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = T)
+}
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}

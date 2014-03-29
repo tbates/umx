@@ -3,8 +3,9 @@
 \alias{umxRun}
 \title{umxRun}
 \usage{
-umxRun(model, n = 1, calc_SE = T, calc_sat = T, setValues = F,
-  setLabels = F, comparison = NULL, setStarts = NULL)
+umxRun(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE,
+  setLabels = FALSE, intervals = FALSE, comparison = NULL,
+  setStarts = NULL)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to run.}
@@ -19,6 +20,8 @@ for the summary (they are not very accurate, so if you use \code{\link{mxCI}} or
 \item{setValues}{Whether to set the starting values of free parameters (defaults to F)}
 
 \item{setLabels}{Whether to set the labels (defaults to F)}
+
+\item{intervals}{Whether to run mxCI confindence intervals (defaults to F)}
 
 \item{comparison}{Whether to run umxCompare() after umxRun}
 

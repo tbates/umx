@@ -73,9 +73,9 @@ umxSummary(m1, saturatedModels = umxSaturated(m1))
 \seealso{
 - \code{\link{mxCI}}, \code{\link{umxCI}},\code{\link{umxCI_boot}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
-Other umx reporting: \code{\link{umxCI_boot}};
-  \code{\link{umxCI}}; \code{\link{umxCompare}};
-  \code{\link{umxDescriptives}};
+Other umx reporting: \code{\link{confint.MxModel}};
+  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
+  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
   \code{\link{umxFitIndices}};
   \code{\link{umx_report_time}}
 }
