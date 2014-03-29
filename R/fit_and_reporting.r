@@ -13,19 +13,26 @@
 # = Fit and Reporting Helpers =
 # =============================
 
-# TODO implement this (works as in lm)
+
 #' confint.MxModel
 #'
 #' Implements confidence interval function
 #'
 #' @method confint MxModel
 #' @rdname  confint.MxModel
+#' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s and already fitted (see \code{\link{mxRun}} with intervals = TRUE))
+#' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
+#' Unlike confint.lm, if parm is missing, only existing computed CIs will be reported (because these can take time to run).
+#' If parm is empty, CIs will be run, allowing a simple confint() call to add and print CIs. 
+#' If parm is set, then CIs will be run only if run is also T, allowing this function to be used to add CIs without automatically having to run them
+#' @param level	the confidence level required.
+#' @param ...	run Whether to fit the CIs (run the model). Defaults to FALSE, Over-ridden by missing parm
+#' @param ...	additional argument(s) for methods.
 #' @export
-#' @param model an \code{\link{mxModel}} with CIs already added and run (see \code{\link{mxCI}}, and \code{\link{mxRun}} with intervals = TRUE)
-#' @return - nothing
+#' @return - \code{\link{mxModel}}
 #' @family umx reporting
 #' @export
-#' @seealso - \code{\link{confint}}, \code{\link{confint.lm}}, \code{\link{mxCI}}, \code{\link{umxCI}}
+#' @seealso - \code{\link{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -37,16 +44,42 @@
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	mxCI("G_to_x1")
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T, intervals = T)
-#' confint(m1)
+#' confint(m1, parm = "existing") # request existing CIs (none added yet...)
+#' m1 = confint(m1, parm = "A", run = T) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
 #' m1 = confint(m1)
-confint.MxModel <-function(model) {
-	if(!umx_has_CIs(model)){
-		message("Model does not yet have CIs. See help(mxCI) on adding these, or use model = umxCI(model) to add, run, and report them for you")
+confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "or leave empty to add all automatically"), level = 0.95, run = T, showErrorcodes = F, ...) {
+	# TODO This will supercede umxCI and work as users know for lm... win-win.
+	defaultParmString = c("existing", "c('vector', 'of' 'names')", "or leave empty to add all automatically")
+	names_in_model = names(omxGetParameters(object, free = T)
+	if(missing(parm){
+		CIs_to_set = names(omxGetParameters(object, free = T))
+	}else if(parm == defaultParmString){
+		CIs_to_set = names(omxGetParameters(object, free = T))
+	}else if(parm == "existing"){
+		if(!umx_has_CIs(object)){
+			# TODO This checks they are computed, not that they exist as requests
+			# need to detect that they exist, but need to be run
+			message("Model does not yet have CIs. perhaps you wanted just confint(model) to add them all? Also see help(mxCI) on adding these, or use model = umxCI(model) to add, run, and report them for you")
+		}else{
+			CIs_to_set = names(omxGetParameters(object, free = T))
+		}
 	}else{
+		CIs_to_set = parm
+		# TODO check that these exist
+	}	
+	if
+	model = mxModel(object, mxCI(CIs))
+	
+	message("### CIs for model ", model@name)
+	if(tolower(run) == "yes" | (!umx_has_CIs(model) & tolower(run) != "no")) {
+		model = mxRun(model, intervals = T)
+	}
+	if(!umx_has_CIs(object)){
+		message("Model does not yet have CIs. See help(mxCI) on adding these, or use model = umxCI(model) to add, run, and report them for you")
+	} else {
 		model_summary = summary(model)
 		model_CIs = round(model_summary$CI, 3)
 		model_CI_OK = model@output$confidenceIntervalCodes
@@ -416,10 +449,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 
 umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorcodes = T) {
 	# TODO add code to not-run CIs
-	if(is.null(model)){
-		message("You need to give me an MxModel. I can then add mxCI() calls for the free parameters in a model, runs them, and report a neat summary. A use example is:\n umxCI(model)")
-		stop();
-	}
+	# TODO superceed this with confint? just need parameters to hold the 95% etc...
 	message("### CIs for model ", model@name)
 	if(addCIs){
 		CIs   = names(omxGetParameters(model, free=T))
@@ -431,7 +461,7 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 	}
 
 	if(umx_has_CIs(model)){
-		confint(model)
+		confint(model, showErrorcodes = showErrorcodes)
 		# model_summary = summary(model)
 		# model_CIs = round(model_summary$CI, 3)
 		# model_CI_OK = model@output$confidenceIntervalCodes
