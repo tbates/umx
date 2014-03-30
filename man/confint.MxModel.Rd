@@ -10,14 +10,11 @@
 \arguments{
 \item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s and already fitted (see \code{\link{mxRun}} with intervals = TRUE))}
 
-\item{parm}{A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
-Unlike confint.lm, if parm is missing, only existing computed CIs will be reported (because these can take time to run).
-If parm is set, then CIs will be run only if run is also TRUE, allowing this function to be used to add CIs without automatically having to run them
-If parm is empty, and run = F, a message will alert you add run = TRUE. Even a few CIs can take too long to make running the default.}
+\item{parm}{A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.}
 
 \item{level}{the confidence level required.}
 
-\item{...}{run Whether to fit the CIs (run the model). Defaults to FALSE}
+\item{run}{Whether to fit the CIs (run the model). Defaults to FALSE}
 
 \item{...}{additional argument(s) for methods.}
 }
@@ -25,7 +22,13 @@ If parm is empty, and run = F, a message will alert you add run = TRUE. Even a f
 - \code{\link{mxModel}}
 }
 \description{
-Implements confidence interval function
+Implements confidence interval function for \code{\link{mxModels}}
+Note: Currently requested CIs are added to existing CIs, and all CIs are run, even if they alrady exist in the output. This might change in the future.
+}
+\details{
+Unlike confint.lm, if parm is missing, all CIs will be added to intervals, but only CIs alrady computed will be reported (because these can take time to run).
+CIs will be run only if run is TRUE, allowing this function to be used to add CIs without automatically having to run them
+If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. Even a few CIs can take too long to make running the default.
 }
 \examples{
 require(OpenMx)
@@ -39,10 +42,10 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = umxRun(m1)
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m2 = confint(m1) # default: CIs added, but user prompted to set run = TRUE
 m2 = confint(m2, run = TRUE) # CIs run and reported
+m1 = confint(m1, parm = "G_to_x1", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
 m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
 confint(m1, parm = "existing") # request existing CIs (none added yet...)
 }

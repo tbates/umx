@@ -14,7 +14,7 @@ umxLabel(obj, suffix = "", baseName = NA, setfree = F, drop = 0,
 
 \item{baseName}{String to prepend to labels. Defaults to empty}
 
-\item{setfree}{Whether to also}
+\item{setfree}{Whether to label only the free paths (defaults to TRUE)}
 
 \item{drop}{The value to fix "drop" paths to (defaults to 0)}
 
@@ -22,7 +22,7 @@ umxLabel(obj, suffix = "", baseName = NA, setfree = F, drop = 0,
 
 \item{boundDiag}{Whether to bound the diagonal of a matrix}
 
-\item{verbose}{How much feedback to give the user (default = F)}
+\item{verbose}{How much feedback to give the user (default = FALSE)}
 }
 \value{
 - \code{\link{mxModel}}
@@ -47,7 +47,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 )
 umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"
 m1 = umxLabel(m1)
-umxGetParameters(m1, free = T) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
+umxGetParameters(m1, free = TRUE) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
 # Labeling a matrix
 a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 a$labels

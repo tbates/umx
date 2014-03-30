@@ -16,10 +16,13 @@ Have a look, for example at \code{\link{umxRun}}
 There's also a working example below and in demo(umx)
 
 umx lives on github at present \link{http://github.com/tbates/umx}
-The easiest way to install it is
+The easiest way to install it is to:
 install.packages("devtools")
+
 library("devtools")
+
 install_github("tbates/umx")
+
 library("umx")
 }
 \examples{
@@ -28,7 +31,7 @@ require("umx")
 data(demoOneFactor)
 latents = c("G")
 manifests = names(demoOneFactor)
-fit1 <- mxModel("One Factor", type="RAM",
+m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests,
 	latentVars  = latents,
 	mxPath(from = latents, to = manifests),
@@ -37,40 +40,48 @@ fit1 <- mxModel("One Factor", type="RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
 )
 
-omxGetParameters(fit1) # nb: By default, paths have no labels, and starts of 0
+omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
 
-# umxLabel easily add informative and predictable labels to each free path (works with matrix style as well!)
-# and with umxStart, we can easily add sensible guesses for start values...
-fit1 = umxLabel(fit1)
-fit1 = umxStart(fit1)
+# With \\code{link{umxLabel}}, you can easily add informative and predictable labels to each free path (works with matrix style as well!)
+# and use \\code{link{umxStart}}, to set sensible guesses for start values...
+m1 = umxLabel(m1)
+m1 = umxStart(m1)
 
 # Re-run omxGetParameters...
-omxGetParameters(fit1) # Wow! Now your model has informative labels, & better starts
+omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
 
 # umxRun the model (calculates saturated models for raw data, & repeats if the model is not code green)
-fit1 = umxRun(fit1)
+m1 = umxRun(m1, setStarts = T, setValues = T) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
 
 # Let's get some journal-ready fit information
 
-umxSummary(fit1)
+umxSummary(m1)
+umxSummary(m1, show = "std") #also display parameter estimates
 
-# Model updating example
-fit2 = omxSetParameters(fit1, labels = "G_to_x1", values = 0, free = F, name = "no_effect_of_g_on_X5")
-fit2 = mxRun(fit2)
-# Model comparison example
-umxCompare(fit1, fit2)
+# ==================
+# = Model updating =
+# ==================
+# Can we set the loading of X5 on G to zero?
+m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = F, name = "no_effect_of_g_on_X5")
+m2 = mxRun(m2)
+# Compare the two models
+umxCompare(m1, m2)
 
-# Same thing with umxReRun
-fit2 = umxReRun(fit1, "x5_with_x5", name = "no_residual_onX5")
+# Use umxReRun to do the same thing in 1-line
+m2 = umxReRun(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = T)
 
-umxCompare(fit1, fit2)
+# =================================
+# = Get some Confidence intervals =
+# =================================
+
+confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
 
 # And make a Figure it dot format!
 # If you have installed GraphViz, the next command will open it for you to see!
 
-# umxPlot(fit1, std = T)
+# umxPlot(m1, std = T)
 # Run this instead if you don't have GraphViz
-umxPlot(fit1, std = T, dotFilename = NA)
+umxPlot(m1, std = T, dotFilename = NA)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
