@@ -450,9 +450,9 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 			covData = theData
 		}
 		dataVariances = diag(covData)
-		# ==========================================================
-		# = Fill the free symetrical matrix with good start values =
-		# ==========================================================
+		# ======================================================
+		# = Fill the symmetrical matrix with good start values =
+		# ======================================================
 		# The diagonal is variances
 		if(onlyTouchZeros) {
 			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE) & obj@matrices$S@values[1:nVar, 1:nVar] == 0
@@ -460,10 +460,20 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE)			
 		}
 		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
+
+		# ==========================================
+		# = Put modest starts into the asymmetrics =
+		# ==========================================
+		if(onlyTouchZeros) {
+			freePaths = (obj@matrices$A@free[1:nVar, 1:nVar] == TRUE) & obj@matrices$A@values[1:nVar, 1:nVar] == 0
+		} else {
+			freePaths = (obj@matrices$A@free[1:nVar, 1:nVar] == TRUE)			
+		}
+		obj@matrices$A@values[1:nVar, 1:nVar][freePaths] = .3
+
 		return(obj)
 	}
 }
-
 #' umxLabel
 #'
 #' umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix based), an \code{\link{mxPath}}, or an \code{\link{mxMatrix}}
@@ -472,12 +482,12 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 #' @param obj An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}
 #' @param suffix String to append to each label (might be used to distinguish, say male and female submodels in a model)
 #' @param baseName String to prepend to labels. Defaults to empty
-#' @param setfree Whether to also 
+#' @param setfree Whether to label only the free paths (defaults to TRUE)
 #' @param drop The value to fix "drop" paths to (defaults to 0)
 #' @param jiggle How much to jiggle values in a matrix or list of path values
 #' @param boundDiag Whether to bound the diagonal of a matrix
-#' @param verbose How much feedback to give the user (default = F)
-
+#' @param verbose How much feedback to give the user (default = FALSE)
+#' 
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx core functions
@@ -500,7 +510,7 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 #' )
 #' umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"
 #' m1 = umxLabel(m1)
-#' umxGetParameters(m1, free = T) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
+#' umxGetParameters(m1, free = TRUE) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
 #' # Labeling a matrix
 #' a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 #' a$labels
@@ -644,7 +654,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{omxGetParameters}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - http://github.com/tbates/umx
 #' @export
 #' @examples
 #' require(OpenMx)
@@ -659,14 +669,15 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' m2 = umxReRun(m1, dropList = "G_to_x1", name = "drop_X1")
-#' umxSummary(m2)
-#' umxCompare(m1,m2)
+#' m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1")
+#' umxSummary(m2); umxCompare(m1, m2)
+#' # 1-line version including comparison
+#' m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = T)
 #' \dontrun{
-#' fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
-#' fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
-#' fit2 = umxReRun(fit1, regex = "^E", free=T, value=.2, name = "free_E")
-#' fit2 = umxReRun(fit1, regex = "Cs", name="AEip", comparison = T)
+#' fit2 = umxReRun(fit1, update = "E_to_heartRate", name = "drop_cs")
+#' fit2 = umxReRun(fit1, update = "^E.*rate", regex = T, name = "drop_hr")
+#' fit2 = umxReRun(fit1, update = "^E", regex = T, free=T, value=.2, name = "free_E")
+#' fit2 = umxReRun(fit1, update = "Cs", regex = T, name="AEip", comparison = T)
 #' }
 
 umxReRun <- function(lastFit, update = NA, regex = F, free = F, value = 0, freeToStart = NA, name = NULL, verbose = F, intervals = F, comparison = F, dropList = "deprecated") {
@@ -694,7 +705,7 @@ umxReRun <- function(lastFit, update = NA, regex = F, free = F, value = 0, freeT
 	newObject = FALSE
 	if(regex) {
 		theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
-	} else if ( typeof(update) == "Character" ){
+	} else if ( typeof(update) == "character"){
 		theLabels = update
 	} else {
 		newObject = TRUE
@@ -705,11 +716,11 @@ umxReRun <- function(lastFit, update = NA, regex = F, free = F, value = 0, freeT
 	} else {
 		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)		
 	}
-
+	# TODO label any new objects, and perhaps set their starts
 	# x = umxStart(x)
 	x = mxRun(x, intervals = intervals)
-	if(compare){
-		print(umxCompare(lastFit, c(x)))
+	if(comparison){
+		print(umxCompare(lastFit, x))
 	}
 	return(x)
 }
@@ -1480,10 +1491,13 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' There's also a working example below and in demo(umx)
 #' 
 #' umx lives on github at present \link{http://github.com/tbates/umx}
-#' The easiest way to install it is
+#' The easiest way to install it is to:
 #' install.packages("devtools")
+#' 
 #' library("devtools")
+#' 
 #' install_github("tbates/umx")
+#' 
 #' library("umx")
 #' 
 #' @aliases umx-package
@@ -1495,7 +1509,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' data(demoOneFactor)
 #' latents = c("G")
 #' manifests = names(demoOneFactor)
-#' fit1 <- mxModel("One Factor", type="RAM",
+#' m1 <- mxModel("One Factor", type = "RAM",
 #' 	manifestVars = manifests,
 #' 	latentVars  = latents,
 #' 	mxPath(from = latents, to = manifests),
@@ -1504,41 +1518,48 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
 #' )
 #' 
-#' omxGetParameters(fit1) # nb: By default, paths have no labels, and starts of 0
+#' omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
 #' 
-#' # umxLabel easily add informative and predictable labels to each free path (works with matrix style as well!)
-#' # and with umxStart, we can easily add sensible guesses for start values...
-#' fit1 = umxLabel(fit1)  
-#' fit1 = umxStart(fit1)  
+#' # With \code{link{umxLabel}}, you can easily add informative and predictable labels to each free path (works with matrix style as well!)
+#' # and use \code{link{umxStart}}, to set sensible guesses for start values...
+#' m1 = umxLabel(m1)  
+#' m1 = umxStart(m1)  
 #' 
 #' # Re-run omxGetParameters...
-#' omxGetParameters(fit1) # Wow! Now your model has informative labels, & better starts
+#' omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
 #' 
 #' # umxRun the model (calculates saturated models for raw data, & repeats if the model is not code green)
-#' fit1 = umxRun(fit1)    
+#' m1 = umxRun(m1, setStarts = T, setValues = T) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
 #' 
 #' # Let's get some journal-ready fit information
 #' 
-#' umxSummary(fit1) 
+#' umxSummary(m1) 
+#' umxSummary(m1, show = "std") #also display parameter estimates 
 #' 
-#' # Model updating example
-# Can we equate the loading of X5 on g to zero?
-#' fit2 = omxSetParameters(fit1, labels = "G_to_x1", values = 0, free = F, name = "no_effect_of_g_on_X5")
-#' fit2 = mxRun(fit2)
-#' # Model comparison example
-#' umxCompare(fit1, fit2)
+#' # ==================
+#' # = Model updating =
+#' # ==================
+#' # Can we set the loading of X5 on G to zero?
+#' m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = F, name = "no_effect_of_g_on_X5")
+#' m2 = mxRun(m2)
+#' # Compare the two models
+#' umxCompare(m1, m2)
 #' 
-#' # Same thing with umxReRun
-#' fit2 = umxReRun(fit1, "x5_with_x5", name = "no_residual_onX5")
+#' # Use umxReRun to do the same thing in 1-line
+#' m2 = umxReRun(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = T)
 #' 
-#' umxCompare(fit1, fit2)
+#' # =================================
+#' # = Get some Confidence intervals =
+#' # =================================
+#' 
+#' confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
 #' 
 #' # And make a Figure it dot format!
 #' # If you have installed GraphViz, the next command will open it for you to see!
 #' 
-#' # umxPlot(fit1, std = T)
+#' # umxPlot(m1, std = T)
 #' # Run this instead if you don't have GraphViz
-#' umxPlot(fit1, std = T, dotFilename = NA)
+#' umxPlot(m1, std = T, dotFilename = NA)
 #' @docType package
 #' @name umx
 NULL
