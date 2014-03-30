@@ -631,7 +631,8 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' fit2 = mxRun(fit2)
 #' 
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
-#' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
+#' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = T) or an object such as mxCI etc.
+#' @param regex Whether to treat update strings as regular expressions or not (defaults to FALSE)
 #' @param regex    A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
 #' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
 #' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
@@ -640,6 +641,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @param verbose   How much feedback to give
 #' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
 #' @param comparison Whether to run umxCompare() after umxRun
+#' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
 #' @return - \code{\link{mxModel}}
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{omxGetParameters}}
 #' @references - http://openmx.psyc.virginia.edu/
@@ -664,24 +666,46 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
 #' fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
 #' fit2 = umxReRun(fit1, regex = "^E", free=T, value=.2, name = "free_E")
-#' fit2 = umxReRun(fit1, regex = "Cs", name="AEip", compare = T)
+#' fit2 = umxReRun(fit1, regex = "Cs", name="AEip", comparison = T)
 #' }
 
-umxReRun <- function(lastFit, dropList = NA, regex = NA, free = F, value = 0, freeToStart = NA, name = NULL, verbose = F, intervals = F, compare = F) {
-	if(is.na(regex)) {
-		if(any(is.na(dropList))) {
-			stop("Both dropList and regex cannot be empty!")
+umxReRun <- function(lastFit, update = NA, regex = F, free = F, value = 0, freeToStart = NA, name = NULL, verbose = F, intervals = F, comparison = F, dropList = "deprecated") {
+	if (dropList != "deprecated" | typeof(regex) != "logical"){
+		if(dropList != "deprecated"){
+			stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
+				"umxReRun(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
+				"becomes\n",
+				"umxReRun(m1, update = ", omxQuotes("E_to_heartRate"), ")\n"
+			)
 		} else {
-			theLabels = dropList
+			stop("hi. Sorry for the change, but to use regex replace ", omxQuotes("regex"), " with ", omxQuotes("update"),
+			 "AND regex =", omxQuotes(F), "e.g.:\n",
+			 "umxReRun(m1, regex = ", omxQuotes("^E_.*"), ")\n",
+			 "becomes\n",
+			 "umxReRun(m1, update = ", omxQuotes("^E_.*"), ", regex = TRUE)\n"
+			 )
 		}
-	} else {
-		theLabels = umxGetParameters(lastFit, regex = regex, free = freeToStart, verbose = verbose)
 	}
+
 	if(is.null(name)){
-		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value)
-	}else{
+		name = lastFit@name
+	}
+
+	newObject = FALSE
+	if(regex) {
+		theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
+	} else if ( typeof(update) == "Character" ){
+		theLabels = update
+	} else {
+		newObject = TRUE
+	}
+
+	if(newObject){
+		x = mxModel(lastFit, update, name = name)
+	} else {
 		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)		
 	}
+
 	# x = umxStart(x)
 	x = mxRun(x, intervals = intervals)
 	if(compare){

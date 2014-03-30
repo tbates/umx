@@ -13,20 +13,22 @@
 # = Fit and Reporting Helpers =
 # =============================
 
-
 #' confint.MxModel
 #'
-#' Implements confidence interval function
+#' Implements confidence interval function for \code{\link{mxModels}}
+#' Note: Currently requested CIs are added to existing CIs, and all CIs are run, even if they alrady exist in the output. This might change in the future.
+#'
+#' @details
+#' Unlike confint.lm, if parm is missing, all CIs will be added to intervals, but only CIs alrady computed will be reported (because these can take time to run).
+#' CIs will be run only if run is TRUE, allowing this function to be used to add CIs without automatically having to run them
+#' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. Even a few CIs can take too long to make running the default.
 #'
 #' @method confint MxModel
-#' @rdname  confint.MxModel
+#' @rdname confint.MxModel
 #' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s and already fitted (see \code{\link{mxRun}} with intervals = TRUE))
 #' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
-#' Unlike confint.lm, if parm is missing, only existing computed CIs will be reported (because these can take time to run).
-#' If parm is empty, CIs will be run, allowing a simple confint() call to add and print CIs. 
-#' If parm is set, then CIs will be run only if run is also T, allowing this function to be used to add CIs without automatically having to run them
 #' @param level	the confidence level required.
-#' @param ...	run Whether to fit the CIs (run the model). Defaults to FALSE, Over-ridden by missing parm
+#' @param run Whether to fit the CIs (run the model). Defaults to FALSE
 #' @param ...	additional argument(s) for methods.
 #' @export
 #' @return - \code{\link{mxModel}}
@@ -46,43 +48,46 @@
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T, intervals = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' m2 = confint(m1) # default: CIs added, but user prompted to set run = TRUE
+#' m2 = confint(m2, run = TRUE) # CIs run and reported
+#' m1 = confint(m1, parm = "G_to_x1", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
+#' m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
 #' confint(m1, parm = "existing") # request existing CIs (none added yet...)
-#' m1 = confint(m1, parm = "A", run = T) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
-#' m1 = confint(m1)
-confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "or leave empty to add all automatically"), level = 0.95, run = T, showErrorcodes = F, ...) {
+confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically"), level = 0.95, run = FALSE, showErrorcodes = TRUE, ...) {
 	# TODO This will supercede umxCI and work as users know for lm... win-win.
-	defaultParmString = c("existing", "c('vector', 'of' 'names')", "or leave empty to add all automatically")
-	names_in_model = names(omxGetParameters(object, free = T)
-	if(missing(parm){
-		CIs_to_set = names(omxGetParameters(object, free = T))
-	}else if(parm == defaultParmString){
-		CIs_to_set = names(omxGetParameters(object, free = T))
-	}else if(parm == "existing"){
-		if(!umx_has_CIs(object)){
-			# TODO This checks they are computed, not that they exist as requests
-			# need to detect that they exist, but need to be run
-			message("Model does not yet have CIs. perhaps you wanted just confint(model) to add them all? Also see help(mxCI) on adding these, or use model = umxCI(model) to add, run, and report them for you")
-		}else{
+	defaultParmString = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically")
+	# 1. Add CIs if needed
+	if (all(parm == defaultParmString)) {
+		if(umx_has_CIs(object, "intervals")) {
+			# TODO add a count for the user
+			message("Existing CIs Will be used (", length(object$intervals), " in total)")
+		} else {
+			message("Adding CIs for all free parameters")
 			CIs_to_set = names(omxGetParameters(object, free = T))
+			object = mxModel(object, mxCI(CIs_to_set, interval = level))			
 		}
-	}else{
-		CIs_to_set = parm
-		# TODO check that these exist
-	}	
-	if
-	model = mxModel(object, mxCI(CIs))
-	
-	message("### CIs for model ", model@name)
-	if(tolower(run) == "yes" | (!umx_has_CIs(model) & tolower(run) != "no")) {
-		model = mxRun(model, intervals = T)
-	}
-	if(!umx_has_CIs(object)){
-		message("Model does not yet have CIs. See help(mxCI) on adding these, or use model = umxCI(model) to add, run, and report them for you")
+	} else if(parm == "existing") {
+		# check there are some in existence
+		if(!umx_has_CIs(object, "intervals")) {
+			message("There are no existing CIs. Perhaps you wanted just confint(model, run = TRUE) to add them all and run them? Or to set a list of named CIs? Also see help(mxCI)")
+		}
 	} else {
-		model_summary = summary(model)
+		# add requested CIs to model
+		# TODO check that these exist
+		object = mxModel(object, mxCI(parm, interval = level))
+	}	
+	# 2. Run CIs if requested
+	if(run) {
+		object = mxRun(object, intervals = T)
+	}
+	# 3. Report CIs if found in output
+	if(!umx_has_CIs(object, "both") & run == FALSE) {
+		message("Some CIs have been requested, but have not yet been run. Add ", omxQuotes("run = TRUE"), " to your confint() call to run them")
+	} else {
+		model_summary = summary(object)
 		model_CIs = round(model_summary$CI, 3)
-		model_CI_OK = model@output$confidenceIntervalCodes
+		model_CI_OK = object@output$confidenceIntervalCodes
 		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
 		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
 		print(model_CIs)
@@ -104,6 +109,7 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 			}
 		}
 	}
+	return(object)
 }
 
 #' umxSummary

@@ -3,16 +3,29 @@
 \alias{confint.MxModel}
 \title{confint.MxModel}
 \usage{
-\method{confint}{MxModel}(model)
+\method{confint}{MxModel}(object, parm = c("existing",
+  "c('vector', 'of' 'names')", "or omit to add all automatically"),
+  level = 0.95, run = FALSE, showErrorcodes = TRUE, ...)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} with CIs already added and run (see \code{\link{mxCI}}, and \code{\link{mxRun}} with intervals = TRUE)}
+\item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s and already fitted (see \code{\link{mxRun}} with intervals = TRUE))}
+
+\item{parm}{A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
+Unlike confint.lm, if parm is missing, only existing computed CIs will be reported (because these can take time to run).
+If parm is set, then CIs will be run only if run is also TRUE, allowing this function to be used to add CIs without automatically having to run them
+If parm is empty, and run = F, a message will alert you add run = TRUE. Even a few CIs can take too long to make running the default.}
+
+\item{level}{the confidence level required.}
+
+\item{...}{run Whether to fit the CIs (run the model). Defaults to FALSE}
+
+\item{...}{additional argument(s) for methods.}
 }
 \value{
-- \code{\link{confint.lm}}
+- \code{\link{mxModel}}
 }
 \description{
-Implements confidence interval function function
+Implements confidence interval function
 }
 \examples{
 require(OpenMx)
@@ -24,17 +37,20 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-	mxCI()
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = umxRun(m1, setLabels = T, setValues = T, intervals = T)
-m1 = confint(m1)
+m1 = umxRun(m1)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+m2 = confint(m1) # default: CIs added, but user prompted to set run = TRUE
+m2 = confint(m2, run = TRUE) # CIs run and reported
+m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
+confint(m1, parm = "existing") # request existing CIs (none added yet...)
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{confint}}, \code{\link{confint.lm}}, \code{\link{mxCI}}, \code{\link{umxCI}}
+- \code{\link{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
 
 Other umx reporting: \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxCompare}};

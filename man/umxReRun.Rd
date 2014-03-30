@@ -3,14 +3,16 @@
 \alias{umxReRun}
 \title{umxReRun}
 \usage{
-umxReRun(lastFit, dropList = NA, regex = NA, free = F, value = 0,
+umxReRun(lastFit, update = NA, regex = F, free = F, value = 0,
   freeToStart = NA, name = NULL, verbose = F, intervals = F,
-  compare = F)
+  comparison = F, dropList = "deprecated")
 }
 \arguments{
 \item{lastFit}{The \code{\link{mxModel}} you wish to update and run.}
 
-\item{dropList}{A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)}
+\item{update}{What to update before re-running. Can be a list of labels, a regular expression (set regex = T) or an object such as mxCI etc.}
+
+\item{regex}{Whether to treat update strings as regular expressions or not (defaults to FALSE)}
 
 \item{regex}{A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)}
 
@@ -27,6 +29,8 @@ umxReRun(lastFit, dropList = NA, regex = NA, free = F, value = 0,
 \item{intervals}{Whether to run confidence intervals (see \code{\link{mxRun}})}
 
 \item{comparison}{Whether to run umxCompare() after umxRun}
+
+\item{dropList}{A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)}
 }
 \value{
 - \code{\link{mxModel}}
@@ -61,7 +65,7 @@ umxCompare(m1,m2)
 fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
 fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
 fit2 = umxReRun(fit1, regex = "^E", free=T, value=.2, name = "free_E")
-fit2 = umxReRun(fit1, regex = "Cs", name="AEip", compare = T)
+fit2 = umxReRun(fit1, regex = "Cs", name="AEip", comparison = T)
 }
 }
 \references{

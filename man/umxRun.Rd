@@ -46,13 +46,13 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = umxRun(m1, setLabels = T, setValues = T)
-umxSummary(m1, show = "std")
-\dontrun{
-model = umxRun(model) # just run: will create saturated model if needed
+m1 = umxRun(m1) # just run: will create saturated model if needed
 model = umxRun(model, setValues = T, setLabels = T) # set start values and label all parameters
-model = umxRun(model, n=10) # run, but also re-run if not green the first run
-}
+umxSummary(m1, show = "std")
+m1 = mxModel(m1, mxCI("G_to_x1"))
+m1 = mxRun(m1, intervals = T)
+confint(m1)
+m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}
