@@ -40,9 +40,11 @@ umxFitIndices(m1, m1_ind)
 \seealso{
 - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{summary}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
-Other umx reporting: \code{\link{confint.MxModel}};
-  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
+Other umx reporting: \code{\link{RMSEA}};
+  \code{\link{confint.MxModel}};
+  \code{\link{logLik.MxModel}}; \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxCompare}};
+  \code{\link{umxDescriptives}}; \code{\link{umxPlot}};
   \code{\link{umxSummary}}; \code{\link{umx_report_time}}
 }
 

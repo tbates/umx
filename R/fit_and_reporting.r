@@ -54,7 +54,7 @@
 #' m1 = confint(m1, parm = "G_to_x1", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
 #' m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
 #' confint(m1, parm = "existing") # request existing CIs (none added yet...)
-confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically"), level = 0.95, run = FALSE, showErrorcodes = TRUE, ...) {
+confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically"), level = 0.95, run = FALSE, showErrorcodes = FALSE, ...) {
 	# TODO This will supercede umxCI and work as users know for lm... win-win.
 	defaultParmString = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically")
 	# 1. Add CIs if needed
@@ -70,7 +70,7 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 	} else if(parm == "existing") {
 		# check there are some in existence
 		if(!umx_has_CIs(object, "intervals")) {
-			message("There are no existing CIs. Perhaps you wanted just confint(model, run = TRUE) to add them all and run them? Or to set a list of named CIs? Also see help(mxCI)")
+			message("This model has no CIs yet. Perhaps you wanted just confint(model, run = TRUE) to add and run CIs on all free parameters? Or set parm to a list of labels you'd like CIs? Also see help(mxCI)")
 		}
 	} else {
 		# add requested CIs to model
@@ -109,7 +109,7 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 			}
 		}
 	}
-	return(object)
+	invisible(object)
 }
 
 #' umxSummary
@@ -341,16 +341,14 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' m2 = umxReRun(m1, dropList = "G_to_x2", name = "dropm1", free = T, value = .1)
+#' m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
 #' umxCompare(m1, m2)
 #' mxCompare(m1, m2) # what OpenMx give by default
 #' umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
 #' umxCompare(m1, m2, report = 3) # Open table in browser
-#' \dontrun{
+#' m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 #' umxCompare(m1, c(m2, m3))
 #' umxCompare(c(m1, m2), c(m2, m3), all = T)
-#' }
-
 umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 1) {
 	if(is.null(comparison)){
 		comparison <- base
@@ -697,6 +695,7 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 #' @param precision deprecated for digits
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @family umx reporting
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
@@ -1247,6 +1246,7 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 #' @param model an \code{\link{mxModel}} to get the log likelihood from
 #' @return - the log likelihood
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
+#' @family umx reporting
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
@@ -1397,7 +1397,9 @@ umxFitIndices <- function(model, indepfit) {
 #' @param ci.upper the upper Ci to compute
 #' @return - object containing the RMSEA and lower and upper bounds
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @family umx reporting
+#' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
@@ -1413,7 +1415,7 @@ umxFitIndices <- function(model, indepfit) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' # RMSEA(m1)
+#' RMSEA(m1)
 #' }
 
 RMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 

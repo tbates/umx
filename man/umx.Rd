@@ -6,14 +6,13 @@
 \title{Helper functions for OpenMx}
 \description{
 umx allows you to more easily build, run, modify, and report models using OpenMx
-with code.
+with code. The core functions are linked below (see "family")
 }
 \details{
-Core functions you're likely to need from \pkg{umx} are
-explained in the vignette("umx", package = "umx")
-All the functions have explainatory examples, so use the help, even if you think it won't help :-)
+All the functions have explanatory examples, so use the help, even if you think it won't help :-)
 Have a look, for example at \code{\link{umxRun}}
 There's also a working example below and in demo(umx)
+When I have a vignette, it will be: vignette("umx", package = "umx")
 
 umx lives on github at present \link{http://github.com/tbates/umx}
 The easiest way to install it is to:
@@ -51,7 +50,7 @@ m1 = umxStart(m1)
 omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
 
 # umxRun the model (calculates saturated models for raw data, & repeats if the model is not code green)
-m1 = umxRun(m1, setStarts = T, setValues = T) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
+m1 = umxRun(m1, setLabels = T, setValues = T) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
 
 # Let's get some journal-ready fit information
 
@@ -85,5 +84,10 @@ umxPlot(m1, std = T, dotFilename = NA)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
+}
+\seealso{
+Other umx core functions: \code{\link{umxGetParameters}};
+  \code{\link{umxLabel}}; \code{\link{umxReRun}};
+  \code{\link{umxRun}}; \code{\link{umxStart}}
 }
 

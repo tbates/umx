@@ -49,15 +49,20 @@ m1 <- mxModel("One Factor", type = "RAM",
 m1 = umxRun(m1) # just run: will create saturated model if needed
 model = umxRun(model, setValues = T, setLabels = T) # set start values and label all parameters
 umxSummary(m1, show = "std")
-m1 = mxModel(m1, mxCI("G_to_x1"))
-m1 = mxRun(m1, intervals = T)
-confint(m1)
+m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
+m1 = mxRun(m1, intervals = TRUE)
+confint(m1, run = TRUE) # get CIs on all free parameters
 m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{mxModel}}, \code{\link{umxCIboot}}
+- \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{umxReRun}}, \code{\link{confint}}
+
+Other umx core functions: \code{\link{umxGetParameters}};
+  \code{\link{umxLabel}}; \code{\link{umxReRun}};
+  \code{\link{umxStart}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

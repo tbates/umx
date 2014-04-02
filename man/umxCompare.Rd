@@ -35,15 +35,14 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-m2 = umxReRun(m1, dropList = "G_to_x2", name = "dropm1", free = T, value = .1)
+m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
 mxCompare(m1, m2) # what OpenMx give by default
 umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
 umxCompare(m1, m2, report = 3) # Open table in browser
-\dontrun{
+m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 umxCompare(m1, c(m2, m3))
 umxCompare(c(m1, m2), c(m2, m3), all = T)
-}
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu/}
@@ -51,16 +50,18 @@ umxCompare(c(m1, m2), c(m2, m3), all = T)
 \seealso{
 - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 
-Other umx reporting: \code{\link{confint.MxModel}};
-  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxDescriptives}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
-  \code{\link{umx_report_time}}
+Other umx reporting: \code{\link{RMSEA}};
+  \code{\link{confint.MxModel}};
+  \code{\link{logLik.MxModel}}; \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxDescriptives}};
+  \code{\link{umxFitIndices}}; \code{\link{umxPlot}};
+  \code{\link{umxSummary}}; \code{\link{umx_report_time}}
 
-Other umx reporting: \code{\link{confint.MxModel}};
-  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxDescriptives}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
-  \code{\link{umx_report_time}}
+Other umx reporting: \code{\link{RMSEA}};
+  \code{\link{confint.MxModel}};
+  \code{\link{logLik.MxModel}}; \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxDescriptives}};
+  \code{\link{umxFitIndices}}; \code{\link{umxPlot}};
+  \code{\link{umxSummary}}; \code{\link{umx_report_time}}
 }
 

@@ -1,4 +1,4 @@
-# devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx"); 
+# devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
 # file:///Users/tim/Library/R/3.0/library/roxygen2/doc/rd.html
@@ -464,13 +464,14 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		# ==========================================
 		# = Put modest starts into the asymmetrics =
 		# ==========================================
+		Arows = nrow(obj@matrices$A@free)
+		Acols = ncol(obj@matrices$A@free)
 		if(onlyTouchZeros) {
-			freePaths = (obj@matrices$A@free[1:nVar, 1:nVar] == TRUE) & obj@matrices$A@values[1:nVar, 1:nVar] == 0
+			freePaths = (obj@matrices$A@free[1:Arows, 1:Acols] == TRUE) & obj@matrices$A@values[1:Arows, 1:Acols] == 0
 		} else {
-			freePaths = (obj@matrices$A@free[1:nVar, 1:nVar] == TRUE)			
+			freePaths = (obj@matrices$A@free[1:Arows, 1:Acols] == TRUE)			
 		}
-		obj@matrices$A@values[1:nVar, 1:nVar][freePaths] = .3
-
+		obj@matrices$A@values[1:Arows, 1:Acols][freePaths] = .3
 		return(obj)
 	}
 }
@@ -550,7 +551,8 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @param setStarts Deprecated way to setValues
 #' @return - \code{\link{mxModel}}
-#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{mxModel}}, \code{\link{umxCIboot}}
+#' @family umx core functions
+#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{umxReRun}}, \code{\link{confint}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @export
 #' @examples
@@ -568,16 +570,16 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' m1 = umxRun(m1) # just run: will create saturated model if needed
 #' model = umxRun(model, setValues = T, setLabels = T) # set start values and label all parameters
 #' umxSummary(m1, show = "std")
-#' m1 = mxModel(m1, mxCI("G_to_x1"))
-#' m1 = mxRun(m1, intervals = T)
-#' confint(m1)
+#' m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
+#' m1 = mxRun(m1, intervals = TRUE)
+#' confint(m1, run = TRUE) # get CIs on all free parameters
 #' m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, comparison = NULL, setStarts = NULL){
 	# TODO: return change in -2LL for models being re-run
 	# TODO: stash saturated model for re-use
 	# TODO: Optimise for speed
 	if(!is.null(setStarts)){
-		message("change setStarts to setValues (easier for beginners to remember)")
+		message("change setStarts to setValues (more consistent)")
 		setValues = setStarts
 	}
 	if(setLabels){
@@ -632,12 +634,16 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 
 #' umxReRun
 #' 
-#' umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally dropping parameters
+#' umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally adding, setting, or dropping parameters.
 #' The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
-#' fit2 = umxReRun(fit1, dropList = "Cs", name = "newModelName")
+#' fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = T)
+#' A powerful feature is regular expression. These let you drop collections of paths by matching patterns
+#' fit2 = umxReRun(fit1, update = "C[sr]", regex = TRUE, name = "drop_Cs_andCr", comparison = T)
 #' 
-#' If you're a beginner, stick to 
+#' If you're just starting out, you might find it easier to be more explicit. Like this: 
+#' 
 #' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = F, name = "newModelName")
+#' 
 #' fit2 = mxRun(fit2)
 #' 
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
@@ -653,8 +659,9 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
 #' @return - \code{\link{mxModel}}
-#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{omxGetParameters}}
-#' @references - http://github.com/tbates/umx
+#' @family umx core functions
+#' @seealso - \code{\link{mxRun}}, \code{\link{umxRun}}, \code{\link{omxGetParameters}}
+#' @references - \url{http://github.com/tbates/umx}
 #' @export
 #' @examples
 #' require(OpenMx)
@@ -673,12 +680,10 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' umxSummary(m2); umxCompare(m1, m2)
 #' # 1-line version including comparison
 #' m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = T)
-#' \dontrun{
-#' fit2 = umxReRun(fit1, update = "E_to_heartRate", name = "drop_cs")
-#' fit2 = umxReRun(fit1, update = "^E.*rate", regex = T, name = "drop_hr")
-#' fit2 = umxReRun(fit1, update = "^E", regex = T, free=T, value=.2, name = "free_E")
-#' fit2 = umxReRun(fit1, update = "Cs", regex = T, name="AEip", comparison = T)
-#' }
+#' m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = T, name = "drop_G_to_x3_x4_and_x5", comparison = T)
+#' m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = T)
+#' m3 = umxReRun(m2, update = "G_to_x1", free=TRUE, name = "free_G_x1_again")
+#' umxCompare(m3, m2)
 
 umxReRun <- function(lastFit, update = NA, regex = F, free = F, value = 0, freeToStart = NA, name = NULL, verbose = F, intervals = F, comparison = F, dropList = "deprecated") {
 	if (dropList != "deprecated" | typeof(regex) != "logical"){
@@ -838,7 +843,8 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #' @param free  A Boolean determining whether to return only free parameters.
 #' @param verbose How much feedback to give
 #' @export
-#' @seealso - \code{\link{omxGetParameters}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
+#' @family umx core functions
+#' @seealso - \code{\link{omxGetParameters}}, \code{\link{omxSetParameters}}, \code{\link{umxLabel}}, \code{\link{umxReRun}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -856,6 +862,8 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #' umxGetParameters(m1)
 #' m1 = umxRun(m1, setLabels = T)
 #' umxGetParameters(m1)
+#' umxGetParameters(m1, free=T) # only the free parameter
+#' umxGetParameters(m1, free=F) # only parameters which are fixed
 #' \dontrun{
 #' # Complex regex patterns
 #' umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
@@ -1482,13 +1490,12 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' Helper functions for OpenMx
 #'
 #' umx allows you to more easily build, run, modify, and report models using OpenMx
-#' with code.
+#' with code. The core functions are linked below (see "family")
 #'
-#' Core functions you're likely to need from \pkg{umx} are
-#' explained in the vignette("umx", package = "umx")
-#' All the functions have explainatory examples, so use the help, even if you think it won't help :-)
+#' All the functions have explanatory examples, so use the help, even if you think it won't help :-)
 #' Have a look, for example at \code{\link{umxRun}}
 #' There's also a working example below and in demo(umx)
+#' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
 #' umx lives on github at present \link{http://github.com/tbates/umx}
 #' The easiest way to install it is to:
@@ -1501,6 +1508,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' library("umx")
 #' 
 #' @aliases umx-package
+#' @family umx core functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' 
 #' @examples
@@ -1529,7 +1537,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
 #' 
 #' # umxRun the model (calculates saturated models for raw data, & repeats if the model is not code green)
-#' m1 = umxRun(m1, setStarts = T, setValues = T) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
+#' m1 = umxRun(m1, setLabels = T, setValues = T) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
 #' 
 #' # Let's get some journal-ready fit information
 #' 

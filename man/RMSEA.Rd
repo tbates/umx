@@ -32,13 +32,20 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-# RMSEA(m1)
+RMSEA(m1)
 }
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxSummary}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+
+Other umx reporting: \code{\link{confint.MxModel}};
+  \code{\link{logLik.MxModel}}; \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxCompare}};
+  \code{\link{umxDescriptives}};
+  \code{\link{umxFitIndices}}; \code{\link{umxPlot}};
+  \code{\link{umxSummary}}; \code{\link{umx_report_time}}
 }
 

@@ -36,13 +36,17 @@ umxReRun(lastFit, update = NA, regex = F, free = F, value = 0,
 - \code{\link{mxModel}}
 }
 \description{
-umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally dropping parameters
+umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally adding, setting, or dropping parameters.
 The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
-fit2 = umxReRun(fit1, dropList = "Cs", name = "newModelName")
+fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = T)
+A powerful feature is regular expression. These let you drop collections of paths by matching patterns
+fit2 = umxReRun(fit1, update = "C[sr]", regex = TRUE, name = "drop_Cs_andCr", comparison = T)
 }
 \details{
-If you're a beginner, stick to
+If you're just starting out, you might find it easier to be more explicit. Like this:
+
 fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = F, name = "newModelName")
+
 fit2 = mxRun(fit2)
 }
 \examples{
@@ -58,20 +62,24 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-m2 = umxReRun(m1, dropList = "G_to_x1", name = "drop_X1")
-umxSummary(m2)
-umxCompare(m1,m2)
-\dontrun{
-fit2 = umxReRun(fit1, dropList = "E_to_heartRate", name = "drop_cs")
-fit2 = umxReRun(fit1, regex = "^E.*rate", name = "drop_hr")
-fit2 = umxReRun(fit1, regex = "^E", free=T, value=.2, name = "free_E")
-fit2 = umxReRun(fit1, regex = "Cs", name="AEip", comparison = T)
-}
+m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1")
+umxSummary(m2); umxCompare(m1, m2)
+# 1-line version including comparison
+m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = T)
+m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = T, name = "drop_G_to_x3_x4_and_x5", comparison = T)
+m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = T)
+m3 = umxReRun(m2, update = "G_to_x1", free=TRUE, name = "free_G_x1_again")
+umxCompare(m3, m2)
 }
 \references{
-- http://openmx.psyc.virginia.edu/
+- \url{http://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{omxGetParameters}}
+- \code{\link{mxRun}}, \code{\link{umxRun}}, \code{\link{omxGetParameters}}
+
+Other umx core functions: \code{\link{umxGetParameters}};
+  \code{\link{umxLabel}}; \code{\link{umxRun}};
+  \code{\link{umxStart}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

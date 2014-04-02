@@ -5,7 +5,7 @@
 \usage{
 \method{confint}{MxModel}(object, parm = c("existing",
   "c('vector', 'of' 'names')", "or omit to add all automatically"),
-  level = 0.95, run = FALSE, showErrorcodes = TRUE, ...)
+  level = 0.95, run = FALSE, showErrorcodes = FALSE, ...)
 }
 \arguments{
 \item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s and already fitted (see \code{\link{mxRun}} with intervals = TRUE))}
@@ -55,10 +55,11 @@ confint(m1, parm = "existing") # request existing CIs (none added yet...)
 \seealso{
 - \code{\link{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
 
-Other umx reporting: \code{\link{umxCI_boot}};
+Other umx reporting: \code{\link{RMSEA}};
+  \code{\link{logLik.MxModel}}; \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxCompare}};
   \code{\link{umxDescriptives}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
-  \code{\link{umx_report_time}}
+  \code{\link{umxFitIndices}}; \code{\link{umxPlot}};
+  \code{\link{umxSummary}}; \code{\link{umx_report_time}}
 }
 
