@@ -28,37 +28,113 @@
         </ul>
       </header>
       <section>
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <h1>
+<a name="umx" class="anchor" href="#umx"><span class="octicon octicon-link"></span></a>umx</h1>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>umx is an R package full of helper functions for doing <a href="http://en.wikipedia.org/wiki/Structural_equation_modeling">Structural Equation Modeling</a> in <a href="http://openmx.psyc.virginia.edu">OpenMx</a>.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<p>It speeds up your ability to write working models in OpenMx while not sacrificing power.</p>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>You can install the most recent version from github as follows</p>
+
+<div class="highlight highlight-S"><pre>install.packages<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
+library<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
+install_github<span class="p">(</span><span class="s">"umx"</span><span class="p">,</span> username <span class="o">=</span> <span class="s">"tbates"</span><span class="p">)</span>
+library<span class="p">(</span><span class="s">"umx"</span><span class="p">)</span>
+<span class="o">?</span>umx
+<span class="c1"># on windows you might need</span>
+<span class="c1"># install_github("umx", username = "tbates", args = "--no-multiarch")</span>
+<span class="c1"># On the newest version of devtools, this will work</span>
+<span class="c1"># install_github("tbates/umx")</span>
+</pre></div>
+
+<p>The umx package has a range of useful helpers to help you get things done in SEM. This list is not comprehensive: install the package to learn more</p>
+
+<ol>
+<li>Building Models
+
+<ul>
+<li>
+<code>umxStart()</code> <em># Add sane start values to a model: **very*</em> helpful*</li>
+<li>
+<code>umxLabel()</code> <em># Add labels to paths: Labels allow you to set, equate, and drop paths by label!</em>
+</li>
+<li>
+<code>umxLatent()</code> <em># Helper for building formative and reflective latent variables from their manifest indicators</em>
+</li>
+</ul>
+</li>
+<li>Run models
+
+<ul>
+<li>
+<code>umxRun()</code> <em># Use in place of mxRun to: set labels, starts, compute saturated for raw data, run model until it returns green</em>
+</li>
+</ul>
+</li>
+<li>Reporting output
+
+<ul>
+<li>
+<code>umxSummary(model)</code> # <em>Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, &amp; RMSEA)</em>
+</li>
+<li>
+<code>umxPlot(fit1, std=T, precision=3, dotFilename="name")</code> # <em>Create a graphical representation of a RAM model (outputs a <a href="http://www.graphviz.org/Gallery.php">GraphViz</a> file)</em>
+</li>
+</ul>
+</li>
+<li>Modify models
+
+<ul>
+<li>
+<code>umxReRun()</code> <em># re-run a model: Quickly drop or free parameters, rename the model, and re-run,and even return the comparison all in 1 line</em>
+</li>
+<li>
+<code>umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T)</code> <em># A powerful assistant to get labels from a model. like <code>omxGetParameters</code> but uses regular expressions.</em>
+</li>
+<li>
+<code>umxMI()</code> # Report the top n modification indices</li>
+<li>
+<code>umxAdd1()</code> # add parameters and return a table of the effect on fit</li>
+<li>
+<code>umxDrop1()</code> # Drop parameters and return a table of the effect on fit</li>
+</ul>
+</li>
+<li>Data and package helpers
+
+<ul>
+<li>
+<code>umxHcor(data, use = "pairwise.complete.obs")</code> <em># Compute appropriate pair-wise correlations for mixed data types.</em>
+</li>
+<li>
+<code>lower2full(lower.no.diag, diag=F, byrow=F)</code>  <em># Create a full matrix from a lower matrix of data</em>
+</li>
+<li>
+<code>umxUpdateOpenMx(bleedingEdge = FALSE, loadNew = TRUE)</code> <em># Update the OpenMx package</em>
+</li>
+<li>
+<code>umxSaturated(model)</code> *# Create a saturated model when raw data are being used. *
+
+<ul>
+<li><code>summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)</code></li>
+<li>
+<strong>nb</strong>:* Saturated solutions are not computable for definition variables and some other models.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol><p>Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.</p>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<ul>
+<li><a href="tim.bates@ed.ac.uk">Tim Bates</a></li>
+<li>
+<a href="">Michael Culbertson</a> (modification index <a href="http://openmx.psyc.virginia.edu/thread/1019">code</a> (based on functions in <a href="http://socserv.mcmaster.ca/jfox/Misc/sem/SEM-paper.pdf">John Fox's</a> <a href="http://cran.r-project.org/web/packages/sem">SEM</a> package))</li>
+<li>
+<a href="">Ryne Estabrook</a> (<a href="http://openmx.psyc.virginia.edu/thread/718">code</a> to Standardize RAM models)</li>
+</ul>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/tbates">tbates</a></p>
