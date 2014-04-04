@@ -58,9 +58,9 @@ a$labels
 \seealso{
 - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
-Other umx core functions: \code{\link{umxGetParameters}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxStart}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
+Other umx core functions: \code{\link{umxReRun}};
+  \code{\link{umxRun}}; \code{\link{umxStart}};
+  \code{\link{umx}}, \code{\link{umx-package}},
+  \code{\link{umx-package}}
 }
 

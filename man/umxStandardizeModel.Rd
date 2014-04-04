@@ -9,8 +9,7 @@ umxStandardizeModel(model, return = "parameters", Amatrix = NA,
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to standardise}
 
-\item{return}{Whether you want a standardize model \code{\link{mxModel}},
-just the parameters (default) or matrices: valid options: "parameters", "matrices", or "model"}
+\item{return}{What to return. Valid options: "parameters", "matrices", or "model"}
 
 \item{Amatrix}{Optionally tell the function what the name of the asymmetric matrix is (defaults to RAM standard A)}
 
@@ -25,14 +24,22 @@ just the parameters (default) or matrices: valid options: "parameters", "matrice
 umxStandardizeModel takes a RAM-style model, and returns standardized version.
 }
 \examples{
-\dontrun{
- model = umxStandardizeModel(model, return = "model")
-}
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1, setLabels = T, setValues = T)
+m1 = umxStandardizeModel(m1, return = "model")
+summary(m1)
 }
 \references{
-- http://openmx.psyc.virginia.edu/
-}
-\seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \url{http://github.com/tbates/umx}
 }
 

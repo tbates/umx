@@ -45,11 +45,11 @@ umxStart(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+- Core functions:
 
-Other umx core functions: \code{\link{umxGetParameters}};
-  \code{\link{umxLabel}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
+Other umx core functions: \code{\link{umxLabel}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umx}}, \code{\link{umx-package}},
+  \code{\link{umx-package}}
 }
 

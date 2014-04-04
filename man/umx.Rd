@@ -86,8 +86,8 @@ umxPlot(m1, std = T, dotFilename = NA)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other umx core functions: \code{\link{umxGetParameters}};
-  \code{\link{umxLabel}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxStart}}
+Other umx core functions: \code{\link{umxLabel}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxStart}}
 }
 

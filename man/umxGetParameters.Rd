@@ -45,11 +45,6 @@ umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{omxGetParameters}}, \code{\link{omxSetParameters}}, \code{\link{umxLabel}}, \code{\link{umxReRun}}
-
-Other umx core functions: \code{\link{umxLabel}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxStart}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
+Other umx model updating and comparison: \code{\link{umxEquate}}
 }
 

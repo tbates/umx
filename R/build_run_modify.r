@@ -77,7 +77,7 @@
 #' # Run and plot for specified windows (in this case just 1927)
 #' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, specifiedTargets = 1927, plotWindow = T)
 #' 
-#' @seealso - \code{\link{umxGxE}}, \code{\link{umxRun}}
+#' @family umx twin modeling
 #' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
 #' Complementary and competing factor analytic approaches for the investigation 
 #' of measurement invariance. \emph{Review of Psychology}, \bold{16}, 87--107. 
@@ -204,7 +204,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param wDZ = If provided, a vector objective will be used to weight the data. (default = NULL) 
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxSummaryACE}}, \code{\link{umxCP}}, \code{\link{umxIP}}, \code{\link{umxGxE}}
+#' @family umx twin modeling
 #' @references - \url{http://github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -220,11 +220,11 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObsMZ = NULL, weightVar = NULL) {
 	nSib = 2
 	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
-equateMeans = T
-dzAr = .5
-dzCr = 1
-addStd = T
-boundDiag = NULL
+	equateMeans = T
+	dzAr = .5
+	dzCr = 1
+	addStd = T
+	boundDiag = NULL
 	dataType = umx_is_cov(dzData)
 	bVector = FALSE	
 	if(dataType == "raw") {
@@ -390,7 +390,7 @@ boundDiag = NULL
 #' @param onlyTouchZeros Don't start things that appear to have already been started (useful for speeding \code{\link{umxReRun}})
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+#' @seealso - Core functions:
 #' @family umx core functions
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -739,20 +739,30 @@ umxReRun <- function(lastFit, update = NA, regex = F, free = F, value = 0, freeT
 #' umxStandardizeModel takes a RAM-style model, and returns standardized version.
 #'
 #' @param model The \code{\link{mxModel}} you wish to standardise
-#' @param return Whether you want a standardize model \code{\link{mxModel}}, 
-#' just the parameters (default) or matrices: valid options: "parameters", "matrices", or "model"
+#' @param return What to return. Valid options: "parameters", "matrices", or "model"
 #' @param Amatrix Optionally tell the function what the name of the asymmetric matrix is (defaults to RAM standard A)
 #' @param Smatrix Optionally tell the function what the name of the symmetric matrix is (defaults to RAM standard S)
 #' @param Mmatrix Optionally tell the function what the name of the means matrix is (defaults to RAM standard M)
 #' @return - a \code{\link{mxModel}} or else parameters or matrices if you request those
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @family umx reporting functions
+#' @references - \url{http://github.com/tbates/umx}
 #' @export
 #' @examples
-#' \dontrun{
-#'  model = umxStandardizeModel(model, return = "model")
-#' }
-umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxStandardizeModel(m1, return = "model")
+#' summary(m1)
+umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smatrix = NA, Mmatrix = NA) {
 	if (!(return == "parameters"|return == "matrices"|return == "model")) stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
 	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
 	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
@@ -843,8 +853,7 @@ umxStandardizeModel <- function(model, return="parameters", Amatrix=NA, Smatrix=
 #' @param free  A Boolean determining whether to return only free parameters.
 #' @param verbose How much feedback to give
 #' @export
-#' @family umx core functions
-#' @seealso - \code{\link{omxGetParameters}}, \code{\link{omxSetParameters}}, \code{\link{umxLabel}}, \code{\link{umxReRun}}
+#' @family umx model updating and comparison
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -917,20 +926,20 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 #' to the labels in a master set. By setting two parameters to have the 
 #' \code{\link{umxLabel}}, they are then forced to have the same value.
 #' In addition to matching labels, you may wish to learn about set the 
-#' label of a slave parameter to the \"square bracket\" address of the
-#' master, i.e. \"model.matrix[r,c]\".
-#' tip: to find labels of free parameters use \code{\link{umxGetParameters}} with free = T
+#' label of a slave parameter to the "square bracket" address of the
+#' master, i.e. model.matrix[r,c].
 #' 
-#' @param model an \code{\link{mxModel}} within which to equate chosen parameters
-#' @param master A list of labels with which slave labels will be equated
-#' @param slave A list of labels which will be updated to match master labels, thus equating the parameters
-#' @param free Boolean determining what the initial state is of master and slave parameters. 
-#' Allows stepping over parameters if they are in a particular state
-#' @param verbose How much feedback will be given
-#' @param name Optional new name for the returned model
+#' Tip: To find labels of free parameters use \code{\link{umxGetParameters}} with free = T
+#' 
+#' @param model   An \code{\link{mxModel}} within which to equate parameters
+#' @param master  A list of "master" labels to which slave labels will be equated
+#' @param slave   A list of slave labels which will be updated to match master labels, thus equating the parameters
+#' @param free    Should parameter(s) initally be free? (default = TRUE)
+#' @param verbose Whether to give verbose feedback (default = TRUE)
+#' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxGetParameters}}, \code{\link{umxRun}}
+#' @family umx model updating and comparison
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -949,7 +958,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 #' m2 = mxRun(m2) # have to run the model again...
 #' umxCompare(m1, m2) # not good :-)
 #' umxSummary(m1, m2) # not good :-)
-umxEquate <- function(model, master, slave, free = T, verbose = T, name = NULL) {	
+umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = NULL) {	
 	# add the T|F|NA list stuff to handle free = c(T|F|NA)
 	if(!umx_is_RAM(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])

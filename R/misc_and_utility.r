@@ -1871,3 +1871,49 @@ qm <- function(..., rowMarker = "|") {
 # 	ncol <- if(any(ns > 1)){min(which(ns>1))}else{length(ns)}
 # 	matrix(as.numeric(unlist(out)), ncol = ncol, byrow = TRUE)
 # }
+
+#  tic()
+# 
+#  toc()
+# 
+# tic <- function(gcFirst = TRUE, type=c("elapsed", "user.self", "sys.self")){
+#    type <- match.arg(type)
+#    assign(".type", type, envir=baseenv())
+#    if(gcFirst) gc(FALSE)
+#    tic <- proc.time()[type]         
+#    assign(".tic", tic, envir=baseenv())
+#    invisible(tic)
+# }
+# 
+# toc <- function(){
+#    type <- get(".type", envir=baseenv())
+#    toc <- proc.time()[type]
+#    tic <- get(".tic", envir=baseenv())
+#    print(toc - tic)
+#    invisible(toc)
+# }
+# 
+# library(rbenchmark)
+# # Example 1
+# # Benchmarking the allocation of one 10^6-element numeric vector,
+# # by default replicated 100 times
+# benchmark(1:10^6)
+# # simple test functions used in subsequent examples
+# random.array = function(rows, cols, dist=rnorm)
+# array(dist(rows*cols), c(rows, cols))
+# random.replicate = function(rows, cols, dist=rnorm)
+# replicate(cols, dist(rows))
+# 
+# library("microbenchmark")
+# library("ggplot2")
+# tm <- microbenchmark(
+# 	rchisq(100, 0),
+# 	rchisq(100, 1),
+# 	rchisq(100, 2),
+# 	rchisq(100, 3),
+# 	rchisq(100, 5), times=1000
+# )
+# boxplot(tm)
+# autoplot(tm)
+# summary(tm)
+# tm <- microbenchmark(1:10^6); autoplot(tm)

@@ -77,9 +77,9 @@ umxCompare(m3, m2)
 \seealso{
 - \code{\link{mxRun}}, \code{\link{umxRun}}, \code{\link{omxGetParameters}}
 
-Other umx core functions: \code{\link{umxGetParameters}};
-  \code{\link{umxLabel}}; \code{\link{umxRun}};
-  \code{\link{umxStart}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
+Other umx core functions: \code{\link{umxLabel}};
+  \code{\link{umxRun}}; \code{\link{umxStart}};
+  \code{\link{umx}}, \code{\link{umx-package}},
+  \code{\link{umx-package}}
 }
 

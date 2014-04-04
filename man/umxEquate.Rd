@@ -3,21 +3,20 @@
 \alias{umxEquate}
 \title{umxEquate}
 \usage{
-umxEquate(model, master, slave, free = T, verbose = T, name = NULL)
+umxEquate(model, master, slave, free = TRUE, verbose = TRUE, name = NULL)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} within which to equate chosen parameters}
+\item{model}{An \code{\link{mxModel}} within which to equate parameters}
 
-\item{master}{A list of labels with which slave labels will be equated}
+\item{master}{A list of "master" labels to which slave labels will be equated}
 
-\item{slave}{A list of labels which will be updated to match master labels, thus equating the parameters}
+\item{slave}{A list of slave labels which will be updated to match master labels, thus equating the parameters}
 
-\item{free}{Boolean determining what the initial state is of master and slave parameters.
-Allows stepping over parameters if they are in a particular state}
+\item{free}{Should parameter(s) initally be free? (default = TRUE)}
 
-\item{verbose}{How much feedback will be given}
+\item{verbose}{Whether to give verbose feedback (default = TRUE)}
 
-\item{name}{Optional new name for the returned model}
+\item{name}{name for the returned model (optional: Leave empty to leave name unchanged)}
 }
 \value{
 - \code{\link{mxModel}}
@@ -27,9 +26,11 @@ Equate parameters by setting one or more labels (the slave set) equal
 to the labels in a master set. By setting two parameters to have the
 \code{\link{umxLabel}}, they are then forced to have the same value.
 In addition to matching labels, you may wish to learn about set the
-label of a slave parameter to the \"square bracket\" address of the
-master, i.e. \"model.matrix[r,c]\".
-tip: to find labels of free parameters use \code{\link{umxGetParameters}} with free = T
+label of a slave parameter to the "square bracket" address of the
+master, i.e. model.matrix[r,c].
+}
+\details{
+Tip: To find labels of free parameters use \code{\link{umxGetParameters}} with free = T
 }
 \examples{
 require(OpenMx)
@@ -53,6 +54,6 @@ umxSummary(m1, m2) # not good :-)
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxGetParameters}}, \code{\link{umxRun}}
+Other umx model updating and comparison: \code{\link{umxGetParameters}}
 }
 

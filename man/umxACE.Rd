@@ -45,6 +45,6 @@ umxSummaryACE(m1)
 - \url{http://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxSummaryACE}}, \code{\link{umxCP}}, \code{\link{umxIP}}, \code{\link{umxGxE}}
+Other umx twin modeling: \code{\link{umxGxE_window}}
 }
 
