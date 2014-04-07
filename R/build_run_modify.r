@@ -1,6 +1,7 @@
 # devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
-
+# devtools::check_doc("~/bin/umx.twin")
+# devtools::check_doc("~/bin/umx")
 # file:///Users/tim/Library/R/3.0/library/roxygen2/doc/rd.html
 # setwd("~/bin/umx"); 
 # 

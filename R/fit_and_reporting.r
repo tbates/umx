@@ -18,8 +18,7 @@
 #' Implements confidence interval function for \code{\link{mxModels}}
 #' Note: Currently requested CIs are added to existing CIs, and all CIs are run, even if they alrady exist in the output. This might change in the future.
 #'
-#' @details
-#' Unlike confint.lm, if parm is missing, all CIs will be added to intervals, but only CIs alrady computed will be reported (because these can take time to run).
+#' @details Unlike confint.lm, if parm is missing, all CIs will be added to intervals, but only CIs alrady computed will be reported (because these can take time to run).
 #' CIs will be run only if run is TRUE, allowing this function to be used to add CIs without automatically having to run them
 #' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. Even a few CIs can take too long to make running the default.
 #'
@@ -29,7 +28,8 @@
 #' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
 #' @param level	the confidence level required.
 #' @param run Whether to fit the CIs (run the model). Defaults to FALSE
-#' @param ...	additional argument(s) for methods.
+#' @param showErrorcodes (default = FALSE)
+#' @param ... Additional argument(s) for methods.
 #' @export
 #' @return - \code{\link{mxModel}}
 #' @family umx reporting
@@ -54,7 +54,7 @@
 #' m1 = confint(m1, parm = "G_to_x1", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
 #' m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
 #' confint(m1, parm = "existing") # request existing CIs (none added yet...)
-confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically"), level = 0.95, run = FALSE, showErrorcodes = FALSE, ...) {
+confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically"), level = 0.95, run = FALSE, showErrorcodes = FALSE,...) {
 	# TODO This will supercede umxCI and work as users know for lm... win-win.
 	defaultParmString = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically")
 	# 1. Add CIs if needed
