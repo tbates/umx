@@ -201,8 +201,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param mzData The MZ dataframe
 #' @param numObsDZ = Number of DZ twins: Set this if you input covariance data
 #' @param numObsMZ = Number of MZ twins: Set this if you input covariance data
-#' @param wMZ = If provided, a vector objective will be used to weight the data. (default = NULL) 
-#' @param wDZ = If provided, a vector objective will be used to weight the data. (default = NULL) 
+#' @param weightVar = If provided, a vector objective used to weight the data. (default = NULL) 
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx twin modeling
@@ -393,7 +392,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 #' @export
 #' @seealso - Core functions:
 #' @family umx core functions
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -483,18 +482,20 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 #'
 #' @param obj An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}
 #' @param suffix String to append to each label (might be used to distinguish, say male and female submodels in a model)
-#' @param baseName String to prepend to labels. Defaults to empty
-#' @param setfree Whether to label only the free paths (defaults to TRUE)
+#' @param baseName String to prepend to labels. Defaults to NA ("")
+#' @param setfree Whether to label only the free paths (defaults to FALSE)
 #' @param drop The value to fix "drop" paths to (defaults to 0)
 #' @param jiggle How much to jiggle values in a matrix or list of path values
+#' @param labelFixedCells = TRUE
 #' @param boundDiag Whether to bound the diagonal of a matrix
 #' @param verbose How much feedback to give the user (default = FALSE)
+#' @param overRideExisting = FALSE
 #' 
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx core functions
 #' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
 #' require(OpenMx)
@@ -554,7 +555,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' @return - \code{\link{mxModel}}
 #' @family umx core functions
 #' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{umxReRun}}, \code{\link{confint}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
 #' require(OpenMx)
@@ -649,8 +650,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' 
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = T) or an object such as mxCI etc.
-#' @param regex Whether to treat update strings as regular expressions or not (defaults to FALSE)
-#' @param regex    A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)
+#' @param regex    Whether or not update is a regular expression (defaults to FALSE)
 #' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
 #' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
 #' @param freeToStart Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)
@@ -686,7 +686,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' m3 = umxReRun(m2, update = "G_to_x1", free=TRUE, name = "free_G_x1_again")
 #' umxCompare(m3, m2)
 
-umxReRun <- function(lastFit, update = NA, regex = F, free = F, value = 0, freeToStart = NA, name = NULL, verbose = F, intervals = F, comparison = F, dropList = "deprecated") {
+umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, dropList = "deprecated") {
 	if (dropList != "deprecated" | typeof(regex) != "logical"){
 		if(dropList != "deprecated"){
 			stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
@@ -855,7 +855,7 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 #' @param verbose How much feedback to give
 #' @export
 #' @family umx model updating and comparison
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -941,7 +941,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx model updating and comparison
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1009,7 +1009,7 @@ umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = 
 #' @return a table of model comparisons
 #' @export
 #' @seealso - \code{\link{grep}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' umxDrop1(fit3) # try dropping each free parameters (default)  
@@ -1065,7 +1065,7 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' @return a table of fit changes
 #' @export
 #' @seealso - \code{\link{umxDrop1}}, \code{\link{mxModel}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' model = umxAdd1(model)
@@ -1182,7 +1182,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @return - path list
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' library(OpenMx)
@@ -1403,7 +1403,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' model = umxThresholdRAMObjective(model)
@@ -1449,7 +1449,7 @@ umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbo
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
 #' @return - \code{\link{mxMatrix}}
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
 #' \dontrun{
@@ -1519,7 +1519,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' @aliases umx-package
 #' @family umx core functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{"http://www.github.com/tbates/umx"}
 #' 
 #' @examples
 #' require("OpenMx")

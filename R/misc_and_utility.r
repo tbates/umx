@@ -76,14 +76,14 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 		message("existing version \"" ,oldV, "\" was detached")
 	}	
 	if (bleedingEdge){
-		install.packages('OpenMx', repos = 'http://openmx.psyc.virginia.edu/testing/');
+		install.packages('OpenMx', repos = 'http://www.github.com/tbates/umx/testing/');
 	} else {
 		if (.Platform$OS.type == "windows") {
 			if (!is.null(.Platform$r_arch) && .Platform$r_arch == "x64") {
 				stop(paste("OpenMx is not yet supported on 64-bit R for Windows.",
 				"Please use 32-bit R in the interim."), call. = FALSE)
 			}
-			repos <- c('http://openmx.psyc.virginia.edu/packages/')
+			repos <- c('http://www.github.com/tbates/umx/packages/')
 			install.packages(pkgs=c('OpenMx'), repos=repos)
 		} else {
 			if (Sys.info()["sysname"] == "Darwin") {
@@ -127,11 +127,11 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 				}
   
 				if (select == 1) {
-					repos <- c('http://openmx.psyc.virginia.edu/sequential/')
+					repos <- c('http://www.github.com/tbates/umx/sequential/')
 					install.packages(pkgs=c('OpenMx'), repos=repos, 
 					configure.args=c('--disable-openmp'))
 				} else if (select == 2) {
-					repos <- c('http://openmx.psyc.virginia.edu/packages/')
+					repos <- c('http://www.github.com/tbates/umx/packages/')
 					install.packages(pkgs=c('OpenMx'), repos=repos)
 				} else {
 					stop(paste("Unknown installation type", select))
@@ -160,7 +160,7 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 #' @param tz The time zone in which the model was executed
 #' @export
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @family umx reporting
 #' @examples
 #' require(OpenMx)
@@ -188,13 +188,14 @@ umx_report_time <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' Its most useful characteristic is allowing you to change how NA and zero appear.
 #' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 #'
+
 #' @param x A data.frame to print
 #' @param digits  The number of decimal places to print (defaults to getOption("digits")
-#' @param quote  Parameter passed to print
+#' @param quote  Parameter passed to print (defaults to FALSE)
 #' @param na.print String to replace NA with (default to blank "")
 #' @param zero.print String to replace 0.000 with  (defaults to "0")
-#' @param justify Parameter passed to print
-#' @param output file to write to and open in browser
+#' @param justify Parameter passed to print (defaults to "none")
+#' @param file whether to write to a file (defaults to NA (no file). Use "tmp.html" to open as tables in browser.
 #' @param ... Optional parameters for print
 #' @export
 #' @family umx misc reporting functions
@@ -248,7 +249,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @return - A matrix of correlations
 #' @family umx data helpers
 #' @export
-#' @seealso - \code{\link{hetcor}}
+#' @seealso - \code{\link{polycor::hetcor}}
 #' @references - 
 #' @examples
 #' \dontrun{
@@ -288,7 +289,7 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFac
 #' 
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' matrix = umxLower2full(matrix)
@@ -378,7 +379,7 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @return - 
 #' @export
 #' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' umx_rename_file(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
@@ -427,13 +428,12 @@ umx_rename_file <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA
 #' move files. On OS X, the function can access the current frontmost Finder window.
 #' The file moves are fast and, because you can use regular expressions, powerful
 #'
-#' @param baseFolder  The folder to search in. If set to "Finder" (and you are 
-#' on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.
-#' @param findStr = The string to find
-#' @param replaceStr = The replacement string
-#' @param listPattern = A pre-filter for files
-#' @param test Boolean determining whether to chagne the names, or just report on what would have happened
-#' @param overwrite Boolean determining 
+#' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.
+#' @param findStr = regex string select files to move (WARNING: NOT IMPLEMENTED YET)
+#' @param fileNameList List of files to move
+#' @param destFolder Folder to move files into
+#' @param test Boolean determining whether to change the names, or just report on what would have happened
+#' @param overwrite Boolean determining whether to overwrite files or not (default = FALSE (safe))
 #' @return - 
 #' @family umx utility functions
 #' @export
@@ -444,7 +444,12 @@ umx_rename_file <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA
 #' dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
 #' umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test=F)
 #' }
-umx_move_file <- function(baseFolder = NA, findStr = NA, fileNameList = NA, destFolder = NA, test = T, overwrite = F) {
+umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, destFolder = NA, test = T, overwrite = F) {
+	# TODO implement findStr
+	if(!is.null(findStr)){
+		stop("Have not implemented findStr yet")
+	}
+
 	if(is.na(destFolder)){
 		stop("destFolder can't be NA")
 	}
@@ -484,7 +489,7 @@ umx_move_file <- function(baseFolder = NA, findStr = NA, fileNameList = NA, dest
 #' @family umx data functions
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_cor(myFADataRaw[1:8,])
 umx_cor <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {
@@ -532,7 +537,7 @@ rowMin <- function(df, na.rm=T) {
 #' @family umx utility functions
 #' @export
 #' @seealso - 
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' df = mtcars
 #' df$mpg = c(letters,letters[1:6]); str(df)
@@ -637,7 +642,7 @@ umx_rename <- function (x, replace, old = NULL) {
 #' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_grep(mtcars, "hp", output="both", ignore.case=T)
 #' umx_grep(mtcars, "^h.*", output="both", ignore.case=T)
@@ -694,6 +699,8 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 #'
 #' A version of less-than which returns FALSE for NAs (rather than NA)
 #'
+#' @param table thing to compare 1
+#' @param x thing to compare 2
 #' @family umx utility functions
 #' # @aliases %<%
 #'
@@ -716,10 +723,10 @@ umx_less_than <- function(table, x){
 #' umx_greater_than
 #'
 #' A version of greater-than that excludes NA as a match
-#' @family umx utility functions
-#'
+#' @param table thing to compare 1
+#' @param x thing to compare 2
 #' @aliases %>%
-#'
+#' @family umx utility functions
 #' @export
 #' @seealso - \code{\link{umx_less_than}}, 
 #' @examples
@@ -747,18 +754,18 @@ umx_greater_than <- function(table, x){
 #' A version of round() which works on dataframes that contain non-numeric data (or data that cannot be coerced to numeric)
 #' Helpful for dealing with table output that mixes numeric and string types.
 #'
-#' @param x an dataframe to round in
-#' @param digits how many digits to round to
+#' @param df a dataframe to round in
+#' @param digits how many digits to round to (defaults to getOption("digits"))
 #' @param coerce whether to make the column numeric if it is not (default = FALSE)
 #' @return - \code{\link{mxModel}}
 #' @family umx utility functions
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
+#' head(umx_round(mtcars, coerce = F))
 #' head(umx_round(mtcars, coerce = T))
 
-umx_round <- function(df, digits, coerce = F) {
+umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 	if(!is.data.frame(df)){
 		stop(paste0("umx_round takes a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
 	}
@@ -1021,7 +1028,7 @@ umxCovData = function(df, columns = manifests, use = "pairwise.complete.obs") {
 #' @export
 #' @family umx misc stats functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' x_cor = umxCov2cor(x)
@@ -1041,30 +1048,31 @@ umxCov2cor <- function(x) {
 #'
 #' check if an mxModel has been run or not
 #'
-#' @param model an \code{\link{mxModel}} to check
+#' @param model The \code{\link{mxModel}} you want to check has been run
+#' @param stop  Whether to stop if the model has not been run (defaults to FALSE)
 #' @return - boolean
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' umx_has_been_run(model)
 #' }
 
-umx_has_been_run <- function(model, stop = F) {
+umx_has_been_run <- function(model, stop = FALSE) {
 	output <- model@output
 	if (is.null(output)){
 		if(stop){
 			stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
 		}else{
-			return(F)
+			return(FALSE)
 		}
 	} else if (length(output) < 1){
 		if(stop){
 			stop("Provided model has no output. I can only standardize models that have been run!")		
 		}else{
-			return(F)
+			return(FALSE)
 		}
 	}
 }
@@ -1075,12 +1083,13 @@ umx_has_been_run <- function(model, stop = F) {
 #'
 #' @param namesNeeded list of variable names to find
 #' @param data data.frame to search in for names
+#' @param die whether to die if the check fails (defaults to TRUE)
 #' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to F)
 #' @return - boolean
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
@@ -1129,7 +1138,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = F){
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' tmp = mtcars
 #' tmp$cyl = ordered(mtcars$cyl)
@@ -1176,7 +1185,7 @@ umx_is_ordinal <- function(df, names = F, strict = T) {
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{mxModel}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1220,7 +1229,7 @@ umx_is_RAM <- function(obj) {
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{mxModel}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' m1 = mxModel("test")
 #' if(umx_is_MxModel(m1)){
@@ -1237,15 +1246,25 @@ umx_is_MxModel <- function(obj) {
 #' @param obj an object to check
 #' @param type = what type the model must be (defaults to not checking NULL)
 #' @param hasData whether the model should have data or not (defaults to not checking NULL)
+#' @param checkSubmodels whether to check submodels (not implemented yet) (default = FALSE)
 #' @return - boolean
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' \dontrun{
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
 #' umx_check_model(model)
-#' }
 umx_check_model <- function(obj, type = NULL, hasData = NULL, checkSubmodels = F) {
 	# TODO hasSubmodels = F
 	if (!umx_is_MxModel(obj)) {
@@ -1276,14 +1295,14 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, checkSubmodels = F
 #' umx_is_cov
 #'
 #' test if a data frame or matrix is cov or cor data, or is likely to be raw...
-#'
 #' @param data dataframe to test
 #' @param boolean whether to return the type ("cov") or a boolean (default = string)
+#' @param verbose How much feedback to give (default = FALSE)
 #' @return - "raw", "cor", or "cov", or, if boolean= T, then T | F
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' df = cov(mtcars)
 #' umx_is_cov(df)
@@ -1292,7 +1311,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, checkSubmodels = F
 #' umx_is_cov(df, boolean = T)
 #' umx_is_cov(mtcars, boolean = T)
 
-umx_is_cov <- function(data = NULL, boolean = F, verbose = F) {
+umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 	if(is.null(data)) { stop("Error in umx_is_cov: You have to provide the data that you want to check...") }
 
 	if( nrow(data) == ncol(data)) {
@@ -1332,13 +1351,12 @@ umx_is_cov <- function(data = NULL, boolean = F, verbose = F) {
 #' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
 #'
 #' @param model The \code{\link{mxModel}} to check for presence of CIs
-#' @param hasIntervals must the model have mxCI intervals specified ? Defaults = T)
-#' @param hasOutput must the model have mxCI output computed ? Defaults = T)
+#' @param check What to check for: "intervals" requested, "output" present, or "both". Defaults to "both"
 #' @return - TRUE or FALSE
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - http://www.github.com/tbates/umx/
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1360,7 +1378,6 @@ umx_is_cov <- function(data = NULL, boolean = F, verbose = F) {
 #' umx_has_CIs(m1, check = "output")  # Still FALSE: Set and Run
 #' m1 = mxRun(m1, intervals = T)
 #' umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
-
 umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 	check = umx_default_option(check, c("both", "intervals", "output"))
 	if(is.null(model@intervals)){
@@ -1442,7 +1459,7 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' umxAnovaReport
 #'
 #' umxAnovaReport is a convenience function to format results for journals. There are others. But I made this one.
-#' If you give it the output of an lm, it runs anova() and lm.beta(), and puts that together in a regression table...
+#' If you give it the output of an lm, it runs anova() and QuantPsyc::lm.beta(), and puts that together in a regression table...
 #' Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
 #' @param model1 An \code{\link{lm}} model to make a table from 
 #' @param model2 An (optional) second \code{\link{lm}} model to compare to model 1
@@ -1450,8 +1467,8 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' @param format String or markdown format?
 #' @param printDIC A Boolean toggle whether you want AIC-type fit change table printed
 #' @family umx misc reporting functions
-#' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
 #' model = lm(mpg ~ cyl + disp, data = mtcars)
@@ -1459,6 +1476,7 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 
 umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", printDIC = F) {
 	# TODO merge with anova.report.F, deprecate the latter
+	# TODO replace lm.beta with normalizing the variables?
 	if(!is.null(model2)){
 		# F(-2, 336) =  0.30, p = 0.74
 		a = anova(model1, model2)
@@ -1511,7 +1529,7 @@ umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", pr
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' oldMatrix = cov(mtcars)
 #' umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
@@ -1532,16 +1550,17 @@ umx_reorder <- function(old, newOrder) {
 	}
 	return(new)
 }
+
 #' umx_has_square_brackets
 #'
 #' Helper function, checking if a label has sqaure brackets
 #'
-#' @param input 
+#' @param input The label to check for square brackets (string input)
 #' @return - boolean
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_has_square_brackets("[hello]")
 #' umx_has_square_brackets("goodbye")
@@ -1564,7 +1583,7 @@ umx_has_square_brackets <- function (input) {
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " %*% "), name = "test_case")
@@ -1580,26 +1599,24 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #'
 #' @param expstring an expression string, i.e, "a + b"
 #' @param model an \code{\link{mxModel}} to evaluate in
-#' @param compute 
-#' @param show 
+#' @param compute Whether to compute the result or not (default = FALSE)
+#' @param show Whether to show??? (default = FALSE)
 #' @return - an openmx algebra (formula)
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' \dontrun{
-#'	fit = mxModel("fit",
-#'		mxMatrix("Full", nrow=1, ncol=1, free=T, values=1, name="a"),
-#'		mxMatrix("Full", nrow=1, ncol=1, free=T, values=2, name="b"),
-#'		mxAlgebra(a %*% b, name="ab"),
-#'		mxConstraint(ab ==35, name = "maxHours"),
-#'		mxAlgebraObjective(algebra="ab", numObs= NA, numStats=NA)
+#' m1 = mxModel("fit",
+#'		mxMatrix("Full", nrow = 1, ncol = 1, free = T, values = 1, name = "a"), 
+#'		mxMatrix("Full", nrow = 1, ncol = 1, free = T, values = 2, name = "b"), 
+#'		mxAlgebra(a %*% b, name = "ab"), 
+#'		mxConstraint(ab == 35, name = "maxHours"), 
+#'		mxAlgebraObjective(algebra = "ab", numObs= NA, numStats = NA)
 #'	)
-#'	fit = mxRun(fit)
-#'	mxEval(list(ab = ab), fit)
-#' }
-umxEval <- function(expstring, model, compute = F, show = F) {
+#' m1 = mxRun(m1)
+#' mxEval(list(ab = ab), m1)
+umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 	return(eval(substitute(mxEval(x, model, compute, show), list(x = parse(text=expstring)[[1]]))))
 }
 
@@ -1614,7 +1631,7 @@ umxEval <- function(expstring, model, compute = F, show = F) {
 #' @export
 #' @family umx data helpers
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
 #' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffixes = c("1","2") )
@@ -1646,10 +1663,12 @@ umx_scale_wide_twin_data <- function(df, varsToScale = c("ht", "wt"), suffixes =
 #' handle parameter options given as a default list in a function
 #'
 #' @param x the value chosen (may be a selection, or the default list of options)
+#' @param option_list TODO fix this documentation
+#' @param check TRUE
 #' @return - the option
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' option_list = c("default", "par.observed", "empirical")
@@ -1687,12 +1706,12 @@ umx_default_option <- function(x, option_list, check = T){
 #' are used for all covariances, and the exact pattern of 
 #' missing data present in the input is placed in the output,
 #' provided a new sample size is not requested. Warnings from
-#' the hetcor function are suppressed.
+#' the polycor::hetcor function are suppressed.
 #'
 #' Author:   Ryne Estabrook
 #' Created:  17 Aug 2010
 #'
-#' @param dataset
+#' @param dataset The original dataset you want to make a simulacrum of
 #' @param digits = 2
 #' @param n = NA
 #' @param use.names = T
@@ -1770,8 +1789,8 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = T, use.levels
 
   # estimate a heterogeneous correlation matrix
   if (het.suppress==TRUE){
-    suppressWarnings(het <- hetcor(dataset, ML=het.ML))
-  } else (het <- hetcor(dataset, ML=het.ML))
+    suppressWarnings(het <- polycor::hetcor(dataset, ML=het.ML))
+  } else (het <- polycor::hetcor(dataset, ML=het.ML))
   mixedCov <- het$correlations
 
   # make a diagonal matrix of standard deviations to turn the 

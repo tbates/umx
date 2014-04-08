@@ -15,27 +15,31 @@
 
 #' confint.MxModel
 #'
-#' Implements confidence interval function for \code{\link{mxModels}}
-#' Note: Currently requested CIs are added to existing CIs, and all CIs are run, even if they alrady exist in the output. This might change in the future.
+#' Implements confidence interval function for OpenMx models.
+#' Note: Currently requested CIs are added to existing CIs, and all CIs are run, 
+#' even if they alrady exist in the output. This might change in the future.
 #'
-#' @details Unlike confint.lm, if parm is missing, all CIs will be added to intervals, but only CIs alrady computed will be reported (because these can take time to run).
-#' CIs will be run only if run is TRUE, allowing this function to be used to add CIs without automatically having to run them
-#' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. Even a few CIs can take too long to make running the default.
+#' @details Unlike confint.lm, if parm is missing, all CIs requested will be added to the model, but
+#' (because these can take time to run) by default only CIs already computed will be reported.
+#' CIs will be run only if run is TRUE, allowing this function to be used to add
+#' CIs without automatically having to run them.
+#' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. 
+#' Even a few CIs can take too long to make running the default.
 #'
-#' @method confint MxModel
 #' @rdname confint.MxModel
-#' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s and already fitted (see \code{\link{mxRun}} with intervals = TRUE))
+#' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s 
+#' that have been \code{\link{mxRun}} with intervals = TRUE))
 #' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
-#' @param level	the confidence level required.
-#' @param run Whether to fit the CIs (run the model). Defaults to FALSE
+#' @param level	The confidence level required (default = .95)
+#' @param run Whether to run the model (defaults to FALSE)
 #' @param showErrorcodes (default = FALSE)
 #' @param ... Additional argument(s) for methods.
 #' @export
 #' @return - \code{\link{mxModel}}
 #' @family umx reporting
 #' @export
-#' @seealso - \code{\link{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @seealso - \code{\link{confint}}, \code{\link{OpenMx::mxCI}}, \code{\link{OpenMx::mxRun}}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -54,9 +58,9 @@
 #' m1 = confint(m1, parm = "G_to_x1", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
 #' m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
 #' confint(m1, parm = "existing") # request existing CIs (none added yet...)
-confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically"), level = 0.95, run = FALSE, showErrorcodes = FALSE,...) {
+confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "add all automatically by default"), level = 0.95, run = FALSE, showErrorcodes = FALSE,...) {
 	# TODO This will supercede umxCI and work as users know for lm... win-win.
-	defaultParmString = c("existing", "c('vector', 'of' 'names')", "or omit to add all automatically")
+	defaultParmString = c("existing", "c('vector', 'of' 'names')", "add all automatically by default")
 	# 1. Add CIs if needed
 	if (all(parm == defaultParmString)) {
 		if(umx_has_CIs(object, "intervals")) {
@@ -76,7 +80,7 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 		# add requested CIs to model
 		# TODO check that these exist
 		object = mxModel(object, mxCI(parm, interval = level))
-	}	
+	}
 	# 2. Run CIs if requested
 	if(run) {
 		object = mxRun(object, intervals = T)
@@ -121,7 +125,7 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 #' Note, the conventional standard errors reported by OpenMx are used to produce the CIs you see in umxSummary
 #' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
 #' 
-#' Sometimes they appear NA. This often indicates an model which is not \url{http://identified}.
+#' Sometimes they appear NA. This often indicates a model which is not identified (see\url{http://davidakenny.net/cm/identify.htm}).
 #' This can include empirical under-identification - for instance two factors
 #' that are essentially identical in structure.
 #' 
@@ -132,23 +136,25 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 #' If factor loadings can flip sign and provide identical fit, this creates another form of 
 #' under-identification and can break confidence interval estimation, but I think
 #' Fixing a factor loading to 1 and estimating factor variances can help here
-#'  
+#'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
-#' @param saturatedModels Saturated models if needed for fit indices (see example below: 
-#' Only needed for raw data, and then not if you've run umxRun
+#' @param saturatedModels Saturated models if needed for fit indices (see example below: Only needed for raw data, and then not if you've run umxRun)
 #' @param report The format for the output line or table (default is "line")
 #' @param showEstimates What estimates to show. Options are "raw | std | list | NULL" for raw, standardized, a custom list or (default)
 #' none (just shows the fit indices)
+#' @param digits How many decimal places to report to (default = 2)
+#' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to F)
+#' @param precision Deprecated in favor of digits (must be NULL)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @family umx reporting
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}},\code{\link{umxCI_boot}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
 #'
 #'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
 #'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
 #'  Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
-#' \url{http://openmx.psyc.virginia.edu}
+#' \url{http://www.github.com/tbates/umx}
 #' @export
 #' @import OpenMx
 #' @examples
@@ -170,7 +176,7 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 #' umxSummary(m1, report = "table")
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, digits = 2, RMSEA_CI = F, precision = NULL, filter = c("ALL","NS","SIG")){
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, digits = 2, RMSEA_CI = FALSE, precision = NULL, filter = c("ALL","NS","SIG")){
 	validValuesForshowEstimates = c("raw","std","both", "or a list of column names")
 	validValuesForFilter = c("ALL","NS","SIG")
 	# TODO make table take lists of models...
@@ -324,7 +330,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' This is handy for getting tables into word
 #' @family umx reporting
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
-#' @references - \url{http://openmx.psyc.virginia.edu/}
+#' @references - \url{http://www.github.com/tbates/umx/}
 #' @family umx reporting
 #' @export
 #' @import OpenMx
@@ -422,13 +428,13 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
 #' @param addCIs Whether or not to add mxCIs if none are found (defaults to TRUE)
-#' @param runCIs Whether or not to compute the CIs: if FALSE, this function will simply add the list of 
-#' CIs to be computed and return the model. Valid values = "no", "yes", "if necessary"
-#' all the CIs and return that model for \code{\link{mxRun}}ning later
+#' @param runCIs Whether or not to compute the CIs. Valid values = "no", "yes", "if necessary".                                                  
+#' @param showErrorcodes Whether to show errors (TRUE)                                              
+#' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 #' @return - \code{\link{mxModel}}
 #' @family umx reporting
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - http://www.github.com/tbates/umx/
 #' @export
 #' @examples
 #' require(OpenMx)
@@ -526,8 +532,8 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' 	m1 = umxRun(m1, setLabels = T, setValues = T)
 #' 	umxCI_boot(m1, type = "par.expected")
 #'}
-#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
-#' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+#' @references - \url{http://www.github.com/tbates/umx/thread/2598}
+#' Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
 #' @family umx reporting
 
@@ -601,17 +607,18 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' fit statistics when using raw data). umxRun calls this automagically.
 #'
 #' @param model an \code{\link{mxModel}} to get independence and saturated fits to
+#' @param evaluate FALSE
+#' @param verbose How much feedback to give.
 #' @return - A list of the saturated and independence models, from which fits can be extracted
 #' @export
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' model_sat = umxSaturated(model)
 #' summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)
 #' }
-
-umxSaturated <- function(model, evaluate = T, verbose = T) {
+umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 	# TODO: Update to omxSaturated() and omxIndependenceModel()
 	# TODO: Update IndependenceModel to analytic form
 	if (!(isS4(model) && is(model, "MxModel"))) {
@@ -696,7 +703,7 @@ umxSaturated <- function(model, evaluate = T, verbose = T) {
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @family umx reporting
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' require(OpenMx)
@@ -820,7 +827,7 @@ umxPlot <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathL
 #' @param cache = Future function to cache these time-consuming results
 #' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
 #' @family umx modify model
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
 #' \dontrun{
@@ -905,7 +912,7 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, 
 #' @param to The dependent variable that you want to watch changing
 #' @param model The model containing from and to
 #' @seealso - \code{\link{umxRun}}, \code{\link{mxCompare}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - http://www.github.com/tbates/umx/
 #' @export
 #' @examples
 #' \dontrun{
@@ -924,8 +931,8 @@ umxUnexplainedCausalNexus <- function(from, delta, to, model) {
 }
 
 umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = F, meanOffsets = F) {
-	# original author: [Timothy Brick](http://openmx.psyc.virginia.edu/users/tbrick)
-	# [history](http://openmx.psyc.virginia.edu/thread/2076)
+	# original author: [Timothy Brick](http://www.github.com/tbates/umx/users/tbrick)
+	# [history](http://www.github.com/tbates/umx/thread/2076)
 	# Called by: umxUnexplainedCausalNexus
 	# TODO:  Special case for latent variables
 	# FIXME: Update for fitfunction/expectation
@@ -1001,8 +1008,8 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = F, mean
 umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 	# Usage: umxComputeConditionals(model, newData)
 	# Result is a replica of the newData data frame with missing values and (if a RAM model) latent variables populated.
-	# original author: [Timothy Brick](http://openmx.psyc.virginia.edu/users/tbrick)
-	# [history](http://openmx.psyc.virginia.edu/thread/2076)
+	# original author: [Timothy Brick](http://www.github.com/tbates/umx/users/tbrick)
+	# [history](http://www.github.com/tbates/umx/thread/2076)
 	# called by umxConditionalsFromModel()
 	if(dim(mu)[1] > dim(mu)[2] ) {
 		mu <- t(mu)
@@ -1162,7 +1169,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @return - AIC value
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
-#' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
+#' @references - \url{http://www.github.com/tbates/umx/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1191,6 +1198,7 @@ extractAIC.MxModel <- function(model) {
 #' @param model an \code{\link{mxModel}} to get the covariance matrix from
 #' @param latent Whether to select the latent variables (defaults to TRUE)
 #' @param manifest Whether to select the manifest variables (defaults to TRUE)
+#' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected covariance matrix
 #' @export
 #' @examples
@@ -1208,10 +1216,10 @@ extractAIC.MxModel <- function(model) {
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxGetExpectedCov(model = m1)
 #' umxGetExpectedCov(m1, digits = 3)
-#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
-#' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+#' @references - \url{http://www.github.com/tbates/umx/thread/2598}
+#' Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
-umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
+umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL{
 	if(!umx_is_RAM(model)){
 		stop("model must be a RAM model")
 	}
@@ -1247,7 +1255,7 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 #' @return - the log likelihood
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
 #' @family umx reporting
-#' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
+#' @references - \url{http://www.github.com/tbates/umx/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1286,15 +1294,13 @@ logLik.MxModel <- function(model) {
 #'
 #' A list of fit indices
 #'
-#' @param modelfit an \code{\link{mxModel}}
-#' @param indepfit an \code{\link{mxModel}}
+#' @param model the \code{\link{mxModel}} you want fit indices for
+#' @param indepfit an (optional) saturated \code{\link{mxModel}}
 #' @return \code{NULL}
 #' @export
-#' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{summary}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @family umx reporting
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' \dontrun{
 #' require(OpenMx)
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -1309,7 +1315,6 @@ logLik.MxModel <- function(model) {
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxFitIndices(m1, m1_ind)
 #' # TODO use means and compute independence model here for example...
-#' }
 umxFitIndices <- function(model, indepfit) {
 	options(scipen = 3)
 	indepSummary     <- summary(indepfit)
@@ -1387,7 +1392,6 @@ umxFitIndices <- function(model, indepfit) {
 	return(indices)
 }
 
-
 #' RMSEA
 #'
 #' Compute the confidence interval on RMSEA
@@ -1400,7 +1404,7 @@ umxFitIndices <- function(model, indepfit) {
 #' @family umx reporting
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' require(OpenMx)
