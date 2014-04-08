@@ -16,7 +16,9 @@
 
 \item{run}{Whether to fit the CIs (run the model). Defaults to FALSE}
 
-\item{...}{additional argument(s) for methods.}
+\item{showErrorcodes}{(default = FALSE)}
+
+\item{...}{Additional argument(s) for methods.}
 }
 \value{
 - \code{\link{mxModel}}
