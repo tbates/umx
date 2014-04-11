@@ -19,6 +19,12 @@
         <p>umx is an R package relentlessly focussed on making <a href="http://openmx.psyc.virginia.edu">OpenMx</a> doing <a href="http://en.wikipedia.org/wiki/Structural_equation_modeling">Structural Equation Modeling</a> in <a href="http://openmx.psyc.virginia.edu">OpenMx</a> <strong>quicker</strong>, <em>easier</em>, and <strong>more powerful</strong>. It's easy to learn and easy to get print-ready results from models. Sweet huh?</p>
 
         <p class="view"><a href="https://github.com/tbates/umx">View the Project on GitHub <small>tbates/umx</small></a></p>
+
+	<ul>
+	  {% for post in site.posts limit: 5 %}
+	    <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+	  {% endfor %}
+	</ul>
       </header>
       <section>
         <h1>
