@@ -42,7 +42,7 @@ umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 Other umx model updating and comparison: \code{\link{umxEquate}}

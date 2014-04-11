@@ -31,7 +31,7 @@ m1 = umxRun(m1, setLabels = T, setValues = T)
 umx_report_time(m1)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{summary}}, \code{\link{umxRun}}

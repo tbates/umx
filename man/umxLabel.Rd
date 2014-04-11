@@ -12,17 +12,21 @@ umxLabel(obj, suffix = "", baseName = NA, setfree = F, drop = 0,
 
 \item{suffix}{String to append to each label (might be used to distinguish, say male and female submodels in a model)}
 
-\item{baseName}{String to prepend to labels. Defaults to empty}
+\item{baseName}{String to prepend to labels. Defaults to NA ("")}
 
-\item{setfree}{Whether to label only the free paths (defaults to TRUE)}
+\item{setfree}{Whether to label only the free paths (defaults to FALSE)}
 
 \item{drop}{The value to fix "drop" paths to (defaults to 0)}
 
 \item{jiggle}{How much to jiggle values in a matrix or list of path values}
 
+\item{labelFixedCells}{= TRUE}
+
 \item{boundDiag}{Whether to bound the diagonal of a matrix}
 
 \item{verbose}{How much feedback to give the user (default = FALSE)}
+
+\item{overRideExisting}{= FALSE}
 }
 \value{
 - \code{\link{mxModel}}
@@ -53,7 +57,7 @@ a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 a$labels
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxStart}}

@@ -23,7 +23,7 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 }
 }
 \references{
-- http://openmx.psyc.virginia.edu/
+- http://www.github.com/tbates/umx/
 }
 \seealso{
 - \code{\link{umxRun}}, \code{\link{mxCompare}}

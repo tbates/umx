@@ -7,6 +7,10 @@ umx_default_option(x, option_list, check = T)
 }
 \arguments{
 \item{x}{the value chosen (may be a selection, or the default list of options)}
+
+\item{option_list}{TODO fix this documentation}
+
+\item{check}{TRUE}
 }
 \value{
 - the option
@@ -28,7 +32,7 @@ umx_default_option(option_list, option_list) # use NA instead
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

@@ -7,6 +7,10 @@ umxSaturated(model, evaluate = T, verbose = T)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get independence and saturated fits to}
+
+\item{evaluate}{FALSE}
+
+\item{verbose}{How much feedback to give.}
 }
 \value{
 - A list of the saturated and independence models, from which fits can be extracted
@@ -22,7 +26,7 @@ summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = mod
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxSummary}}, \code{\link{umxRun}}

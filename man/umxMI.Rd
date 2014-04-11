@@ -39,7 +39,7 @@ umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}

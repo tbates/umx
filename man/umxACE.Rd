@@ -19,9 +19,7 @@ umxACE(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL,
 
 \item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data}
 
-\item{wMZ}{= If provided, a vector objective will be used to weight the data. (default = NULL)}
-
-\item{wDZ}{= If provided, a vector objective will be used to weight the data. (default = NULL)}
+\item{weightVar}{= If provided, a vector objective used to weight the data. (default = NULL)}
 }
 \value{
 - \code{\link{mxModel}}

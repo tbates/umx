@@ -51,7 +51,7 @@ umxCompare(m1, m2) # not good :-)
 umxSummary(m1, m2) # not good :-)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 Other umx model updating and comparison: \code{\link{umxGetParameters}}

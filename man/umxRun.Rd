@@ -55,7 +55,7 @@ confint(m1, run = TRUE) # get CIs on all free parameters
 m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{umxReRun}}, \code{\link{confint}}

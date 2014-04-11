@@ -10,6 +10,8 @@ umx_check_names(namesNeeded, data, die = TRUE, no_others = F)
 
 \item{data}{data.frame to search in for names}
 
+\item{die}{whether to die if the check fails (defaults to TRUE)}
+
 \item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to F)}
 }
 \value{
@@ -30,7 +32,7 @@ umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = T)
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

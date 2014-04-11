@@ -6,9 +6,9 @@
 umxFitIndices(model, indepfit)
 }
 \arguments{
-\item{modelfit}{an \code{\link{mxModel}}}
+\item{model}{the \code{\link{mxModel}} you want fit indices for}
 
-\item{indepfit}{an \code{\link{mxModel}}}
+\item{indepfit}{an (optional) saturated \code{\link{mxModel}}}
 }
 \value{
 \code{NULL}
@@ -17,7 +17,6 @@ umxFitIndices(model, indepfit)
 A list of fit indices
 }
 \examples{
-\dontrun{
 require(OpenMx)
 data(demoOneFactor)
 latents  = c("G")
@@ -33,13 +32,10 @@ m1 = umxRun(m1, setLabels = T, setValues = T)
 umxFitIndices(m1, m1_ind)
 # TODO use means and compute independence model here for example...
 }
-}
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{summary}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-
 Other umx reporting: \code{\link{RMSEA}};
   \code{\link{confint.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{umxCI_boot}};

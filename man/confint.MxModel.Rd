@@ -8,13 +8,14 @@
   level = 0.95, run = FALSE, showErrorcodes = FALSE, ...)
 }
 \arguments{
-\item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s and already fitted (see \code{\link{mxRun}} with intervals = TRUE))}
+\item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s
+that have been \code{\link{mxRun}} with intervals = TRUE))}
 
 \item{parm}{A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.}
 
-\item{level}{the confidence level required.}
+\item{level}{The confidence level required (default = .95)}
 
-\item{run}{Whether to fit the CIs (run the model). Defaults to FALSE}
+\item{run}{Whether to run the model (defaults to FALSE)}
 
 \item{showErrorcodes}{(default = FALSE)}
 
@@ -24,13 +25,17 @@
 - \code{\link{mxModel}}
 }
 \description{
-Implements confidence interval function for \code{\link{mxModels}}
-Note: Currently requested CIs are added to existing CIs, and all CIs are run, even if they alrady exist in the output. This might change in the future.
+Implements confidence interval function for OpenMx models.
+Note: Currently requested CIs are added to existing CIs, and all CIs are run,
+even if they alrady exist in the output. This might change in the future.
 }
 \details{
-Unlike confint.lm, if parm is missing, all CIs will be added to intervals, but only CIs alrady computed will be reported (because these can take time to run).
-CIs will be run only if run is TRUE, allowing this function to be used to add CIs without automatically having to run them
-If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. Even a few CIs can take too long to make running the default.
+Unlike confint.lm, if parm is missing, all CIs requested will be added to the model, but
+(because these can take time to run) by default only CIs already computed will be reported.
+CIs will be run only if run is TRUE, allowing this function to be used to add
+CIs without automatically having to run them.
+If parm is empty, and run = FALSE, a message will alert you to add run = TRUE.
+Even a few CIs can take too long to make running the default.
 }
 \examples{
 require(OpenMx)
@@ -52,10 +57,10 @@ m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM m
 confint(m1, parm = "existing") # request existing CIs (none added yet...)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
+- \code{\link{confint}}, \code{\link{OpenMx::mxCI}}, \code{\link{OpenMx::mxRun}}
 
 Other umx reporting: \code{\link{RMSEA}};
   \code{\link{logLik.MxModel}}; \code{\link{umxCI_boot}};

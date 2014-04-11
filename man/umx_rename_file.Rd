@@ -34,7 +34,7 @@ umx_rename_file(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceS
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}

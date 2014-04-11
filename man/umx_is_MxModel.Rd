@@ -21,7 +21,7 @@ if(umx_is_MxModel(m1)){
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{mxModel}}

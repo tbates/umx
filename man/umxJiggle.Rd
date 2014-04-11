@@ -26,7 +26,7 @@ mat1 = umxJiggle(mat1)
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxStart}}

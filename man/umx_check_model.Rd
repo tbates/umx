@@ -11,6 +11,8 @@ umx_check_model(obj, type = NULL, hasData = NULL, checkSubmodels = F)
 \item{type}{= what type the model must be (defaults to not checking NULL)}
 
 \item{hasData}{whether the model should have data or not (defaults to not checking NULL)}
+
+\item{checkSubmodels}{whether to check submodels (not implemented yet) (default = FALSE)}
 }
 \value{
 - boolean
@@ -19,12 +21,21 @@ umx_check_model(obj, type = NULL, hasData = NULL, checkSubmodels = F)
 Check an OpenMx model
 }
 \examples{
-\dontrun{
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+	manifestVars = manifests, latentVars = latents,
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
 umx_check_model(model)
 }
-}
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxStart}}

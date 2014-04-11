@@ -45,7 +45,7 @@ umxCompare(m1, c(m2, m3))
 umxCompare(c(m1, m2), c(m2, m3), all = T)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu/}
+- \url{http://www.github.com/tbates/umx/}
 }
 \seealso{
 - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},

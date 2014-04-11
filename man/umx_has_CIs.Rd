@@ -8,9 +8,7 @@ umx_has_CIs(model, check = c("both", "intervals", "output"))
 \arguments{
 \item{model}{The \code{\link{mxModel}} to check for presence of CIs}
 
-\item{hasIntervals}{must the model have mxCI intervals specified ? Defaults = T)}
-
-\item{hasOutput}{must the model have mxCI output computed ? Defaults = T)}
+\item{check}{What to check for: "intervals" requested, "output" present, or "both". Defaults to "both"}
 }
 \value{
 - TRUE or FALSE
@@ -41,7 +39,7 @@ m1 = mxRun(m1, intervals = T)
 umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 }
 \references{
-- http://openmx.psyc.virginia.edu/
+- http://www.github.com/tbates/umx/
 }
 \seealso{
 - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}

@@ -25,7 +25,7 @@ df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffixes = 
 plot(wt1 ~ wt2, data= df)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

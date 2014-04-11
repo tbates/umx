@@ -11,9 +11,9 @@ umxCI(model = NULL, addCIs = T, runCIs = "if necessary",
 
 \item{addCIs}{Whether or not to add mxCIs if none are found (defaults to TRUE)}
 
-\item{runCIs}{Whether or not to compute the CIs: if FALSE, this function will simply add the list of
-CIs to be computed and return the model. Valid values = "no", "yes", "if necessary"
-all the CIs and return that model for \code{\link{mxRun}}ning later}
+\item{runCIs}{Whether or not to compute the CIs. Valid values = "no", "yes", "if necessary".}
+
+\item{showErrorcodes}{Whether to show errors (TRUE)}
 }
 \value{
 - \code{\link{mxModel}}
@@ -33,6 +33,8 @@ This function also reports any problems computing a CI. The codes are standard O
 \item 7: The function derivates returned by funcon or funobj appear to be incorrect.
 \item 9: An input parameter was invalid
 }
+
+If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 }
 \examples{
 require(OpenMx)
@@ -56,7 +58,7 @@ umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run the
 }
 }
 \references{
-- http://openmx.psyc.virginia.edu/
+- http://www.github.com/tbates/umx/
 }
 \seealso{
 - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}

@@ -10,13 +10,18 @@ umxSummary(model, saturatedModels = NULL, report = "line",
 \arguments{
 \item{model}{The \code{\link{mxModel}} whose fit will be reported}
 
-\item{saturatedModels}{Saturated models if needed for fit indices (see example below:
-Only needed for raw data, and then not if you've run umxRun}
+\item{saturatedModels}{Saturated models if needed for fit indices (see example below: Only needed for raw data, and then not if you've run umxRun)}
 
 \item{report}{The format for the output line or table (default is "line")}
 
 \item{showEstimates}{What estimates to show. Options are "raw | std | list | NULL" for raw, standardized, a custom list or (default)
 none (just shows the fit indices)}
+
+\item{digits}{How many decimal places to report to (default = 2)}
+
+\item{RMSEA_CI}{Whether to compute the CI on RMSEA (Defaults to F)}
+
+\item{precision}{Deprecated in favor of digits (must be NULL)}
 
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 }
@@ -29,7 +34,7 @@ notes on CIs and Identification
 Note, the conventional standard errors reported by OpenMx are used to produce the CIs you see in umxSummary
 These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
 
-Sometimes they appear NA. This often indicates an model which is not \url{http://identified}.
+Sometimes they appear NA. This often indicates a model which is not identified (see\url{http://davidakenny.net/cm/identify.htm}).
 This can include empirical under-identification - for instance two factors
 that are essentially identical in structure.
 
@@ -68,10 +73,10 @@ umxSummary(m1, saturatedModels = umxSaturated(m1))
  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
  Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
-\url{http://openmx.psyc.virginia.edu}
+\url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{mxCI}}, \code{\link{umxCI}},\code{\link{umxCI_boot}}, \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
 
 Other umx reporting: \code{\link{RMSEA}};
   \code{\link{confint.MxModel}};

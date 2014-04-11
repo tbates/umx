@@ -6,9 +6,9 @@
 umx_round(df, digits, coerce = F)
 }
 \arguments{
-\item{x}{an dataframe to round in}
+\item{df}{a dataframe to round in}
 
-\item{digits}{how many digits to round to}
+\item{digits}{how many digits to round to (defaults to getOption("digits"))}
 
 \item{coerce}{whether to make the column numeric if it is not (default = FALSE)}
 }
@@ -20,14 +20,13 @@ A version of round() which works on dataframes that contain non-numeric data (or
 Helpful for dealing with table output that mixes numeric and string types.
 }
 \examples{
+head(umx_round(mtcars, coerce = F))
 head(umx_round(mtcars, coerce = T))
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-
 Other umx utility functions: \code{\link{\%>\%}},
   \code{\link{\%>\%}}, \code{\link{umx_greater_than}};
   \code{\link{qm}}; \code{\link{umx.as.numeric}};

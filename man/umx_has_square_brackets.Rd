@@ -6,7 +6,7 @@
 umx_has_square_brackets(input)
 }
 \arguments{
-\item{input}{}
+\item{input}{The label to check for square brackets (string input)}
 }
 \value{
 - boolean
@@ -19,7 +19,7 @@ umx_has_square_brackets("[hello]")
 umx_has_square_brackets("goodbye")
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

@@ -19,7 +19,7 @@ umxAnovaReport(model1, model2 = NULL, raw = T, format = "string",
 }
 \description{
 umxAnovaReport is a convenience function to format results for journals. There are others. But I made this one.
-If you give it the output of an lm, it runs anova() and lm.beta(), and puts that together in a regression table...
+If you give it the output of an lm, it runs anova() and QuantPsyc::lm.beta(), and puts that together in a regression table...
 Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
 }
 \examples{
@@ -27,10 +27,10 @@ model = lm(mpg ~ cyl + disp, data = mtcars)
 umxAnovaReport(model)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}, \code{\link{lm.beta}}
+- \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}
 
 Other umx misc reporting functions: \code{\link{umxAnova}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_print}}

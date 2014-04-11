@@ -83,7 +83,7 @@ confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
 umxPlot(m1, std = T, dotFilename = NA)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{"http://www.github.com/tbates/umx"}
 }
 \seealso{
 Other umx core functions: \code{\link{umxLabel}};

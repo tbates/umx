@@ -1,6 +1,5 @@
 # devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
-# devtools::check_doc("~/bin/umx.twin")
 # devtools::check_doc("~/bin/umx")
 # file:///Users/tim/Library/R/3.0/library/roxygen2/doc/rd.html
 # setwd("~/bin/umx"); 
@@ -1402,6 +1401,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 #' @param verbose whether to say what the function is doing (default = F)
 #' @return - \code{\link{mxModel}}
 #' @export
+#' @family advanced umx helpers
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1419,11 +1419,25 @@ umxThresholdRAMObjective <- function(df, deviationBased = T, droplevels = T, ver
 	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = T, droplevels = T, verbose = F)))
 }
 
-umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbose = F) {	
-	# Purpose: return a mxRAMObjective
+#' umxMakeThresholdMatrix
+#'
+#' The purpose of this function is to generate an mxRAMObjective. It is used by \code{\link{umxThresholdRAMObjective}}.
+#' You likely want that, not this.
+#'
+#' @param df Dataframe for which to make a threshold matrix.
+#' @param deviationBased whether to use the deviation system to ensure order thresholds (default = TRUE)
+#' @param droplevels whether to also drop unused levels (default = TRUE)
+#' @param verbose whether to say what the function is doing (default = FALSE)
+#' @return - \code{\link{mxModel}}
+#' @family advanced umx helpers
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' umxMakeThresholdMatrix(mtcars, verbose = T)
+umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbose = F) {
 	# mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
-	# use case:  umxMakeThresholdMatrix(df, verbose = T)
-	# note, called by umxThresholdRAMObjective()
+	# use case:  
 	# TODO: Let the user know if there are any levels dropped...
 	if(droplevels){
 		df = droplevels(df)

@@ -6,7 +6,9 @@
 umx_has_been_run(model, stop = F)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to check}
+\item{model}{The \code{\link{mxModel}} you want to check has been run}
+
+\item{stop}{Whether to stop if the model has not been run (defaults to FALSE)}
 }
 \value{
 - boolean
@@ -20,7 +22,7 @@ umx_has_been_run(model)
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

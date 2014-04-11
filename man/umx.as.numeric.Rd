@@ -20,7 +20,7 @@ df$mpg = c(letters,letters[1:6]); str(df)
 df = umx.as.numeric(df)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 -

@@ -10,9 +10,9 @@ umxEval(expstring, model, compute = F, show = F)
 
 \item{model}{an \code{\link{mxModel}} to evaluate in}
 
-\item{compute}{}
+\item{compute}{Whether to compute the result or not (default = FALSE)}
 
-\item{show}{}
+\item{show}{Whether to show??? (default = FALSE)}
 }
 \value{
 - an openmx algebra (formula)
@@ -22,20 +22,18 @@ Takes an expression as a string, and evaluates it as an expression in model, opt
 # TODO Currently broken...
 }
 \examples{
-\dontrun{
-	fit = mxModel("fit",
-		mxMatrix("Full", nrow=1, ncol=1, free=T, values=1, name="a"),
-		mxMatrix("Full", nrow=1, ncol=1, free=T, values=2, name="b"),
-		mxAlgebra(a \%*\% b, name="ab"),
-		mxConstraint(ab ==35, name = "maxHours"),
-		mxAlgebraObjective(algebra="ab", numObs= NA, numStats=NA)
+m1 = mxModel("fit",
+		mxMatrix("Full", nrow = 1, ncol = 1, free = T, values = 1, name = "a"),
+		mxMatrix("Full", nrow = 1, ncol = 1, free = T, values = 2, name = "b"),
+		mxAlgebra(a \%*\% b, name = "ab"),
+		mxConstraint(ab == 35, name = "maxHours"),
+		mxAlgebraObjective(algebra = "ab", numObs= NA, numStats = NA)
 	)
-	fit = mxRun(fit)
-	mxEval(list(ab = ab), fit)
-}
+m1 = mxRun(m1)
+mxEval(list(ab = ab), m1)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

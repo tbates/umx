@@ -1201,6 +1201,9 @@ extractAIC.MxModel <- function(model) {
 #' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected covariance matrix
 #' @export
+#' @references - \url{http://www.github.com/tbates/umx/thread/2598}
+#' Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
+#' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1216,10 +1219,7 @@ extractAIC.MxModel <- function(model) {
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxGetExpectedCov(model = m1)
 #' umxGetExpectedCov(m1, digits = 3)
-#' @references - \url{http://www.github.com/tbates/umx/thread/2598}
-#' Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
-#' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
-umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL{
+umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 	if(!umx_is_RAM(model)){
 		stop("model must be a RAM model")
 	}

@@ -9,6 +9,8 @@ umx_is_cov(data = NULL, boolean = F, verbose = F)
 \item{data}{dataframe to test}
 
 \item{boolean}{whether to return the type ("cov") or a boolean (default = string)}
+
+\item{verbose}{How much feedback to give (default = FALSE)}
 }
 \value{
 - "raw", "cor", or "cov", or, if boolean= T, then T | F
@@ -25,7 +27,7 @@ umx_is_cov(df, boolean = T)
 umx_is_cov(mtcars, boolean = T)
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

@@ -28,7 +28,7 @@ model = umxAdd1(model)
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxDrop1}}, \code{\link{mxModel}}

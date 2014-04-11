@@ -8,6 +8,11 @@ umx_greater_than(table, x)
 
 table \%>\% x
 }
+\arguments{
+\item{table}{thing to compare 1}
+
+\item{x}{thing to compare 2}
+}
 \description{
 A version of greater-than that excludes NA as a match
 }

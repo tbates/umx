@@ -42,7 +42,7 @@ umxStart(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
 # umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 - Core functions:

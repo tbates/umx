@@ -7,18 +7,17 @@ umx_move_file(baseFolder = NA, findStr = NA, fileNameList = NA,
   destFolder = NA, test = T, overwrite = F)
 }
 \arguments{
-\item{baseFolder}{The folder to search in. If set to "Finder" (and you are
-on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.}
+\item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.}
 
-\item{findStr}{= The string to find}
+\item{findStr}{= regex string select files to move (WARNING: NOT IMPLEMENTED YET)}
 
-\item{replaceStr}{= The replacement string}
+\item{fileNameList}{List of files to move}
 
-\item{listPattern}{= A pre-filter for files}
+\item{destFolder}{Folder to move files into}
 
-\item{test}{Boolean determining whether to chagne the names, or just report on what would have happened}
+\item{test}{Boolean determining whether to change the names, or just report on what would have happened}
 
-\item{overwrite}{Boolean determining}
+\item{overwrite}{Boolean determining whether to overwrite files or not (default = FALSE (safe))}
 }
 \value{
 -

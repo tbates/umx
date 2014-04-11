@@ -12,9 +12,7 @@ umxReRun(lastFit, update = NA, regex = F, free = F, value = 0,
 
 \item{update}{What to update before re-running. Can be a list of labels, a regular expression (set regex = T) or an object such as mxCI etc.}
 
-\item{regex}{Whether to treat update strings as regular expressions or not (defaults to FALSE)}
-
-\item{regex}{A regular expression. If not NA, then all labels matching this expression will be dropped (or set to the value and free state you specify)}
+\item{regex}{Whether or not update is a regular expression (defaults to FALSE)}
 
 \item{free}{The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)}
 

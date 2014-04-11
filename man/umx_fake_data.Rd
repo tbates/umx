@@ -8,7 +8,7 @@ umx_fake_data(dataset, digits = 2, n = NA, use.names = T,
   het.suppress = T)
 }
 \arguments{
-\item{dataset}{}
+\item{dataset}{The original dataset you want to make a simulacrum of}
 
 \item{digits}{= 2}
 
@@ -39,7 +39,7 @@ John Fox's polycor package. Pairwise complete observations
 are used for all covariances, and the exact pattern of
 missing data present in the input is placed in the output,
 provided a new sample size is not requested. Warnings from
-the hetcor function are suppressed.
+the polycor::hetcor function are suppressed.
 }
 \details{
 Author:   Ryne Estabrook

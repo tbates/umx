@@ -52,8 +52,8 @@ with replacement from your data and then computing the statistic for each redraw
 }
 }
 \references{
-- \url{http://openmx.psyc.virginia.edu/thread/2598}
-Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+- \url{http://www.github.com/tbates/umx/thread/2598}
+Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
 }
 \seealso{
 - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}

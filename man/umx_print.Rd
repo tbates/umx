@@ -11,15 +11,15 @@ umx_print(x, digits = getOption("digits"), quote = FALSE, na.print = "",
 
 \item{digits}{The number of decimal places to print (defaults to getOption("digits")}
 
-\item{quote}{Parameter passed to print}
+\item{quote}{Parameter passed to print (defaults to FALSE)}
 
 \item{na.print}{String to replace NA with (default to blank "")}
 
 \item{zero.print}{String to replace 0.000 with  (defaults to "0")}
 
-\item{justify}{Parameter passed to print}
+\item{justify}{Parameter passed to print (defaults to "none")}
 
-\item{output}{file to write to and open in browser}
+\item{file}{whether to write to a file (defaults to NA (no file). Use "tmp.html" to open as tables in browser.}
 
 \item{...}{Optional parameters for print}
 }
