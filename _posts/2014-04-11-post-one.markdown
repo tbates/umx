@@ -1,6 +1,10 @@
 ---
 layout: post
-title: Blogging Like a Hacker
+title: "Zombie Ninjas Attack: A survivor's retrospective"
+date: 2014-04-11 14:50
+comments: true
+external-url:
+categories: models
 ---
 
-what's up?
+First umx Post
