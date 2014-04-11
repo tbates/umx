@@ -1,4 +1,5 @@
 ---
+markdown: kramdown
 title: Lorem Ipsum Dolor Sit Amet
 layout: default
 ---
