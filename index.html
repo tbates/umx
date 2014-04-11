@@ -23,20 +23,23 @@ layout: default
 
         <p class="view"><a href="https://github.com/tbates/umx">View the Project on GitHub <small>tbates/umx</small></a></p>
 
-	<ul>
-	  {% for post in site.posts limit: 5 %}
-	    <li><a href="{{ post.url }}">{{ post.title }}</a></li>
-	  {% endfor %}
-	</ul>
+		  {% for post in site.posts limit: 5 %}
+			<div class="row-fluid">
+			  <div class="span12">
+			    <h2>{{ post.title }}</h2>
+			    <h4>{{ post.date | date_to_long_string }}</h4>
+			    <p>
+			      <a href="{{ post.url }}">Read Post</a>
+			    </p>
+			  </div>
+			</div>
+		  {% endfor %}
+
       </header>
-      <section>
-        <h1>
-<a name="umx" class="anchor" href="#umx"><span class="octicon octicon-link"></span></a>umx</h1>
-
+<section>
+<h1><a name="umx" class="anchor" href="#umx"><span class="octicon octicon-link"></span></a>umx</h1>
 <p>umx adds helpers to <a href="http://openmx.psyc.virginia.edu">OpenMx</a> that take care of repetitive tasks like labeling and start values, and which streamlines the work flow of model comparison and graphing, while not sacrificing power.</p>
-
 <p>You can install the package in <a href="http://cran.r-project.org/">R</a> as follows:</p>
-
 <div class="highlight highlight-S"><pre>install.packages<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
 library<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
 install_github<span class="p">(</span><span class="s">"umx"</span><span class="p">,</span> username <span class="o">=</span> <span class="s">"tbates"</span><span class="p">)</span>
@@ -94,23 +97,21 @@ library<span class="p">(</span><span class="s">"umx"</span><span class="p">)</sp
 </ol>
 
 <p>Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.</p>
-<h3>
-<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
+<h3><a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
 
 <ul>
-<li><a href="tim.bates@ed.ac.uk">Tim Bates</a></li>
-<li>
-<a href="">Michael Culbertson</a> (modification index <a href="http://openmx.psyc.virginia.edu/thread/1019">code</a> (based on functions in <a href="http://socserv.mcmaster.ca/jfox/Misc/sem/SEM-paper.pdf">John Fox's</a> <a href="http://cran.r-project.org/web/packages/sem">SEM</a> package))</li>
-<li>
-<a href="">Ryne Estabrook</a> (<a href="http://openmx.psyc.virginia.edu/thread/718">code</a> to Standardize RAM models)</li>
+	<li><a href="tim.bates@ed.ac.uk">Tim Bates</a></li>
+	<li><a href="">Michael Culbertson</a> (modification index <a href="http://openmx.psyc.virginia.edu/thread/1019">code</a> (based on functions in <a href="http://socserv.mcmaster.ca/jfox/Misc/sem/SEM-paper.pdf">John Fox's</a> <a href="http://cran.r-project.org/web/packages/sem">SEM</a> package))</li>
+	<li><a href="">Ryne Estabrook</a> (<a href="http://openmx.psyc.virginia.edu/thread/718">code</a> to Standardize RAM models)</li>
 </ul>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/tbates">tbates</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
+</section>
+<footer>
+	<p>This project is maintained by <a href="https://github.com/tbates">tbates</a></p>
+	<p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+</footer>
+</div>
+
+<script src="javascripts/scale.fix.js"></script>
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
