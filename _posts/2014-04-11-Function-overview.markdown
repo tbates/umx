@@ -1,10 +1,8 @@
 ---
-markdown: kramdown
 layout: post
 title: "Overview of umx functions: Quickly survey all the umx helpers available to you"
 date: 2014-04-11 14:50
 comments: true
-external-url:
 categories: models
 
 ---

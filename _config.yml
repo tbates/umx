@@ -1,8 +1,7 @@
 name: "umx"
 description: "The umx helper package for structural equation modeling"
-
 paginate: 10
-
 markdown: kramdown
-permalink: pretty
+# permalink: pretty
+permalink: /blog/:title
 pygments: true
