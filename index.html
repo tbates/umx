@@ -1,77 +1,14 @@
 ---
 layout: default
 ---
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>umx by tbates</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-
-<h1><a name="umx" class="anchor" href="#umx"><span class="octicon octicon-link"></span></a>Posts</h1>
-  {% for post in site.posts limit: 15 %}
-	<div class="row-fluid">
-	  <div class="span12">
-	    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-	  </div>
-	</div>
-  {% endfor %}
-
-<div class="row-fluid">
-  <div class="span12">
-    <div class="pagination">
-      <ul>
-        {% if paginator.previous_page %}
-          {% if paginator.previous_page == 1 %}
-          <li><a href="/">Prev</a></li>
-          {% else %}
-          <li><a href="/page{{ paginator.previous_page }}">Prev</a></li>
-          {% endif %}
-        {% else %}
-        <li><span class="disabled">Prev</span></li>
-        {% endif %}
-        {% if paginator.page == 1 %}
-        <li><span class="active">1</span></li>
-        {% else %}
-        <li><a href="/">1</a></li>
-        {% endif %}
-        {% for count in (2..paginator.total_pages) %}
-          {% if count == paginator.page %}
-          <li><span class="active">{{ count }}</span></li>
-          {% else %}
-          <li><a href="/page{{ count }}">{{ count }}</a></li>
-          {% endif %}
-        {% endfor %}
-        {% if paginator.next_page %}
-        <li><a href="/page{{ paginator.next_page }}">Next</a></li>
-        {% else %}
-        <li><span class="disabled">Next</span></li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
-</div>
-
-</header>
+<div class="wrapper">
 <section>
-
-<h1>umx</h1>
-<p>umx is an R package relentlessly focussed on making <a href="http://openmx.psyc.virginia.edu">OpenMx</a> doing <a href="http://en.wikipedia.org/wiki/Structural_equation_modeling">Structural Equation Modeling</a> in <a href="http://openmx.psyc.virginia.edu">OpenMx</a> <strong>quicker</strong>, <em>easier</em>, and <strong>more powerful</strong>. It's easy to learn and easy to get print-ready results from models. Sweet huh?</p>
-<h1>Install it now and run a model!</h1>
-<p>You can install the package in <a href="http://cran.r-project.org/">R</a> as follows:</p>
-<div class="highlight highlight-S">
-<pre>
+	<h1>umx</h1>
+		<p>umx is an R package relentlessly focussed on making <a href="http://openmx.psyc.virginia.edu">OpenMx</a> doing <a href="http://en.wikipedia.org/wiki/Structural_equation_modeling">Structural Equation Modeling</a> in <a href="http://openmx.psyc.virginia.edu">OpenMx</a> <strong>quicker</strong>, <em>easier</em>, and <strong>more powerful</strong>. It's easy to learn and easy to get print-ready results from models. Sweet huh?</p>
+		<h1>Install it now and run a model!</h1>
+		<p>You can install the package in <a href="http://cran.r-project.org/">R</a> as follows:</p>
+		<div class="highlight highlight-S">
+		<pre>
 install.packages<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
 library<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
 install_github<span class="p">(</span><span class="s">"umx"</span><span class="p">,</span> username <span class="o">=</span> <span class="s">"tbates"</span><span class="p">)</span>
@@ -81,36 +18,16 @@ library<span class="p">(</span><span class="s">"umx"</span><span class="p">)</sp
 <span class="c1"># install_github("umx", username = "tbates", args = "--no-multiarch")</span>
 <span class="c1"># On the newest version of devtools, this will work</span>
 <span class="c1"># install_github("tbates/umx")</span>
-</pre>
-</div>
-<p class="view"><a href="https://github.com/tbates/umx">View the Project on GitHub <small>tbates/umx</small></a></p>
+		</pre>
+		</div>
+	<p class="view"><a href="https://github.com/tbates/umx">View the Project on GitHub <small>tbates/umx</small></a></p>
 
-<p>Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.</p>
-<h3><a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
+	<p>Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.</p>
+	<h3><a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
 
-<ul>
-	<li><a href="tim.bates@ed.ac.uk">Tim Bates</a></li>
-	<li><a href="">Michael Culbertson</a> (modification index <a href="http://openmx.psyc.virginia.edu/thread/1019">code</a> (based on functions in <a href="http://socserv.mcmaster.ca/jfox/Misc/sem/SEM-paper.pdf">John Fox's</a> <a href="http://cran.r-project.org/web/packages/sem">SEM</a> package))</li>
-	<li><a href="">Ryne Estabrook</a> (<a href="http://openmx.psyc.virginia.edu/thread/718">code</a> to Standardize RAM models)</li>
-</ul>
+	<ul>
+		<li><a href="tim.bates@ed.ac.uk">Tim Bates</a></li>
+		<li><a href="">Michael Culbertson</a> (modification index <a href="http://openmx.psyc.virginia.edu/thread/1019">code</a> (based on functions in <a href="http://socserv.mcmaster.ca/jfox/Misc/sem/SEM-paper.pdf">John Fox's</a> <a href="http://cran.r-project.org/web/packages/sem">SEM</a> package))</li>
+		<li><a href="">Ryne Estabrook</a> (<a href="http://openmx.psyc.virginia.edu/thread/718">code</a> to Standardize RAM models)</li>
+	</ul>
 </section>
-<footer>
-	<p>This project is maintained by <a href="https://github.com/tbates">tbates</a></p>
-	<p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-</footer>
-</div>
-
-<script src="javascripts/scale.fix.js"></script>
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-49652501-1");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
-
-  </body>
-</html>
