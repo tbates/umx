@@ -4,4 +4,7 @@ paginate: 10
 markdown: kramdown
 # permalink: pretty
 permalink: /blog/:title
-pygments: true
+gems:
+- jekyll-mentions
+- jemoji
+- jekyll-redirect-from
