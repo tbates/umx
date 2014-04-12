@@ -1,9 +1,10 @@
 name: umx
 description: "The umx helper package for structural equation modeling"
 paginate: 10
-markdown: kramdown
+markdown: redcarpet
+pygments: true
 permalink: pretty
-gems:
-- jekyll-mentions
-- jemoji
-- jekyll-redirect-from
+# gems:
+# - jekyll-mentions
+# - jemoji
+# - jekyll-redirect-from
