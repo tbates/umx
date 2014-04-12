@@ -21,76 +21,32 @@ layout: default
         <h1>umx</h1>
         <p>umx is an R package relentlessly focussed on making <a href="http://openmx.psyc.virginia.edu">OpenMx</a> doing <a href="http://en.wikipedia.org/wiki/Structural_equation_modeling">Structural Equation Modeling</a> in <a href="http://openmx.psyc.virginia.edu">OpenMx</a> <strong>quicker</strong>, <em>easier</em>, and <strong>more powerful</strong>. It's easy to learn and easy to get print-ready results from models. Sweet huh?</p>
 
+<p>You can install the package in <a href="http://cran.r-project.org/">R</a> as follows:</p>
+<div class="highlight highlight-S">
+	<pre>install.packages<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
+		library<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
+		install_github<span class="p">(</span><span class="s">"umx"</span><span class="p">,</span> username <span class="o">=</span> <span class="s">"tbates"</span><span class="p">)</span>
+		library<span class="p">(</span><span class="s">"umx"</span><span class="p">)</span>
+		<span class="o">?</span>umx
+		<span class="c1"># on windows you might need</span>
+		<span class="c1"># install_github("umx", username = "tbates", args = "--no-multiarch")</span>
+		<span class="c1"># On the newest version of devtools, this will work</span>
+		<span class="c1"># install_github("tbates/umx")</span>
+	</pre>
+</div>
         <p class="view"><a href="https://github.com/tbates/umx">View the Project on GitHub <small>tbates/umx</small></a></p>
-
-		  {% for post in site.posts limit: 5 %}
-			<div class="row-fluid">
-			  <div class="span12">
-			    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-			  </div>
-			</div>
-		  {% endfor %}
 
       </header>
 <section>
-<h1><a name="umx" class="anchor" href="#umx"><span class="octicon octicon-link"></span></a>umx</h1>
-<p>umx adds helpers to <a href="http://openmx.psyc.virginia.edu">OpenMx</a> that take care of repetitive tasks like labeling and start values, and which streamlines the work flow of model comparison and graphing, while not sacrificing power.</p>
-<p>You can install the package in <a href="http://cran.r-project.org/">R</a> as follows:</p>
-<div class="highlight highlight-S"><pre>install.packages<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
-library<span class="p">(</span><span class="s">"devtools"</span><span class="p">)</span>
-install_github<span class="p">(</span><span class="s">"umx"</span><span class="p">,</span> username <span class="o">=</span> <span class="s">"tbates"</span><span class="p">)</span>
-library<span class="p">(</span><span class="s">"umx"</span><span class="p">)</span>
-<span class="o">?</span>umx
-<span class="c1"># on windows you might need</span>
-<span class="c1"># install_github("umx", username = "tbates", args = "--no-multiarch")</span>
-<span class="c1"># On the newest version of devtools, this will work</span>
-<span class="c1"># install_github("tbates/umx")</span>
-</pre></div>
 
-<p>The umx package has a range of useful helpers to help you get things done in SEM. This list is not comprehensive: install the package to learn more</p>
-
-<ol>
-	<li>Building Models
-		<ul>
-			<li><code>umxStart()</code> <em># Add sane start values to a model: **very*</em> helpful*</li>
-			<li> <code>umxLabel()</code> <em># Add labels to paths: Labels allow you to set, equate, and drop paths by label!</em></li>
-			<li><code>umxLatent()</code> <em># Helper for building formative and reflective latent variables from their manifest indicators</em></li>
-		</ul>
-	</li>
-	<li>Run models
-		<ul>
-			<li><code>umxRun()</code> <em># Use in place of mxRun to: set labels, starts, compute saturated for raw data, run model until it returns green</em></li>
-		</ul>
-	</li>
-	<li>Reporting output
-		<ul>
-			<li><code>umxSummary(model)</code> # <em>Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, &amp; RMSEA)</em></li>
-			<li><code>umxPlot(fit1, std=T, precision=3, dotFilename="name")</code> # <em>Create a graphical representation of a RAM model (outputs a <a href="http://www.graphviz.org/Gallery.php">GraphViz</a> file)</em></li>
-		</ul>
-	</li>
-	<li>Modify models
-		<ul>
-			<li><code>umxReRun()</code> <em># re-run a model: Quickly drop or free parameters, rename the model, and re-run,and even return the comparison all in 1 line</em></li>
-			<li><code>umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T)</code> <em># A powerful assistant to get labels from a model. like <code>omxGetParameters</code> but uses regular expressions.</em></li>
-			<li><code>umxMI()</code> # Report the top n modification indices</li>
-			<li><code>umxAdd1()</code> # add parameters and return a table of the effect on fit</li>
-			<li><code>umxDrop1()</code> # Drop parameters and return a table of the effect on fit</li>
-		</ul>
-	</li>
-	<li>Data and package helpers
-		<ul>
-		<li><code>umxHcor(data, use = "pairwise.complete.obs")</code> <em># Compute appropriate pair-wise correlations for mixed data types.</em></li>
-		<li><code>lower2full(lower.no.diag, diag=F, byrow=F)</code>  <em># Create a full matrix from a lower matrix of data</em></li>
-		<li><code>umxUpdateOpenMx(bleedingEdge = FALSE, loadNew = TRUE)</code> <em># Update the OpenMx package</em></li>
-		<li><code>umxSaturated(model)</code> *# Create a saturated model when raw data are being used. *
-			<ul>
-				<li><code>summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)</code></li>
-				<li><strong>nb</strong>:* Saturated solutions are not computable for definition variables and some other models.</li>
-			</ul>
-		</li>
-	</ul>
-	</li>
-</ol>
+<h1><a name="umx" class="anchor" href="#umx"><span class="octicon octicon-link"></span></a>Posts</h1>
+  {% for post in site.posts limit: 15 %}
+	<div class="row-fluid">
+	  <div class="span12">
+	    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+	  </div>
+	</div>
+  {% endfor %}
 
 <p>Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.</p>
 <h3><a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
