@@ -34,8 +34,6 @@ library("umx")
   </ul>
 </div>
 
-Test
-
 View the Project on [GitHub: tbates/umx](https://github.com/tbates/umx)
 
 Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.
