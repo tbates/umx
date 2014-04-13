@@ -13,9 +13,7 @@ It's easy to learn and easy to get print-ready results from models. Sweet huh?
 
 You can install the package in [R](http://cran.r-project.org) as follows:
 
-```S
 {% highlight R %}
-
 install.packages("devtools")
 library("devtools")
 install_github("umx", username = "tbates")
@@ -26,7 +24,6 @@ library("umx")
 # On the newest version of devtools, this will work
 # install_github("tbates/umx")
 {% endhighlight %}
-```
 
 <div id="home">
   <h1>Blog Posts</h1>

@@ -4,19 +4,17 @@ title: "Overview of umx functions: Quickly survey all the umx helpers available 
 date: 2014-04-11 14:50
 comments: true
 categories: models
-
 ---
-
-<p>umx adds helpers to <a href="http://openmx.psyc.virginia.edu">OpenMx</a> that take care of repetitive tasks like labeling and start values, and which streamlines the work flow of model comparison and graphing, while not sacrificing power.</p>
-
-<p>The umx package has a range of useful helpers to help you get things done in SEM. This list is not comprehensive: install the package to learn more</p>
 
 # umx
 umx stands for "user" mx function, and is a library of helper functions for doing [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in [OpenMx](http://openmx.psyc.virginia.edu).
 
+umx adds helpers to [OpenMx](http://openmx.psyc.virginia.edu) that take care of repetitive tasks like labeling and start values, and which streamlines the work flow of model comparison and graphing, while not sacrificing power.
+
 You can install the most recent version from github as follows
 
-```S
+{% highlight R %}
+
 install.packages("devtools")
 library("devtools")
 install_github("umx", username = "tbates")
@@ -26,8 +24,12 @@ library("umx")
 # install_github("umx", username = "tbates", args = "--no-multiarch")
 # On the newest version of devtools, this will work
 # install_github("tbates/umx")
-```
-The umx package has a range of useful helpers to help you get things done in SEM. This list is not comprehensive: install the package to learn more
+
+{% endhighlight %}
+
+The umx package has many helpers. `?umx` will show them all.
+
+Here are some of the most important.
 
 1. Building Models
 	* `umxStart()` *# Add sane start values to a model: **very** helpful*
@@ -53,10 +55,3 @@ The umx package has a range of useful helpers to help you get things done in SEM
 	* `umxSaturated(model)` *# Create a saturated model when raw data are being used. *
 		* `summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)`
 		* **nb**:* Saturated solutions are not computable for definition variables and some other models.
-
-Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.
-
-### Contributors
-* [Tim Bates](tim.bates@ed.ac.uk)
-* [Michael Culbertson]() (modification index [code](http://openmx.psyc.virginia.edu/thread/1019) (based on functions in [John Fox's](http://socserv.mcmaster.ca/jfox/Misc/sem/SEM-paper.pdf) [SEM](http://cran.r-project.org/web/packages/sem) package))
-* [Ryne Estabrook]() ([code](http://openmx.psyc.virginia.edu/thread/718) to Standardize RAM models)
