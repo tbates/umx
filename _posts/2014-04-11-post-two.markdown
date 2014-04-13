@@ -1,5 +1,5 @@
 ---
-title: First steps: Build and run a Path model in a minute.
+title: "First steps: Build and run a Path model in a minute."
 layout: default
 ---
 
