@@ -288,7 +288,6 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFac
 #' @family umx data helpers
 #' 
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1620,6 +1619,56 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 	return(eval(substitute(mxEval(x, model, compute, show), list(x = parse(text=expstring)[[1]]))))
 }
 
+#' umx_scale
+#'
+#' Scale data columns, skipping ordinal
+#'
+#' @param df a dataframe to scale
+#' @param varsToScale (leave blank for all)
+#' @return - new dataframe with scaled variables
+#' @export
+#' @family umx data helpers
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' data(twinData) 
+#' df = umx_scale(twinData, varsToScale = NULL)
+#' plot(wt1 ~ wt2, data= df)
+
+umx_scale <- function(df, varsToScale = NULL, coerce = FALSE){
+	if(!is.data.frame(df)){
+		stop(paste0("umx_round takes a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+	}
+	# For each column, if numeric, scale
+	if(is.null(varsToScale)){
+		varsToScale = names(df)
+	}
+	if(coerce){
+		stop("coerce not implemented yet")
+	}
+	varsToScale = varsToScale[umx_is_numeric(df[,varsToScale])]
+	message("Vars I will scale are:", paste(varsToScale, ", "))
+	df[ ,varsToScale] = scale(df[ ,varsToScale])
+	return(df)
+}
+
+umx_is_numeric <- function(df, cols = TRUE){
+	if(cols != TRUE){
+		stop(paste0("Can't handle anything by columns yet"))
+	}
+	if(!is.data.frame(df)){
+		stop(paste0("umx_round takes a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+	}
+	colNames = names(df)
+	bIsNumeric = rep(F, length(colNames))
+	i = 1
+	for (n in colNames) {
+		bIsNumeric[i] = is.numeric(df[,n])
+		i = i + 1
+	}
+	return(bIsNumeric)
+}
+
 #' umx_scale_wide_twin_data
 #'
 #' Scale wide data across all cases: currently twins
@@ -1635,10 +1684,10 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @examples
 #' data(twinData) 
 #' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffixes = c("1","2") )
-#' plot(wt1 ~ wt2, data= df)
+#' plot(wt1 ~ wt2, data = df)
 
-umx_scale_wide_twin_data <- function(df, varsToScale = c("ht", "wt"), suffixes = c("1","2")) {
-	if(length(suffixes)!=2){
+umx_scale_wide_twin_data <- function(df, varsToScale, suffixes) {
+	if(length(suffixes) != 2){
 		stop("I need two suffixes, you gave me ", length(suffixes))
 	}
 	namesNeeded = c(paste0(varsToScale, suffixes[1]), paste0(varsToScale, suffixes[2]))

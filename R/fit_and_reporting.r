@@ -140,8 +140,8 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param saturatedModels Saturated models if needed for fit indices (see example below: Only needed for raw data, and then not if you've run umxRun)
 #' @param report The format for the output line or table (default is "line")
-#' @param showEstimates What estimates to show. Options are "raw | std | list | NULL" for raw, standardized, a custom list or (default)
-#' none (just shows the fit indices)
+#' @param showEstimates What estimates to show. Options are c("none", "raw", "std", "both", "list of column names"). 
+#' Default  is "none" (just shows the fit indices)
 #' @param digits How many decimal places to report to (default = 2)
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to F)
 #' @param precision Deprecated in favor of digits (must be NULL)
@@ -176,9 +176,10 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 #' umxSummary(m1, report = "table")
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = NULL, digits = 2, RMSEA_CI = FALSE, precision = NULL, filter = c("ALL","NS","SIG")){
-	validValuesForshowEstimates = c("raw","std","both", "or a list of column names")
-	validValuesForFilter = c("ALL","NS","SIG")
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, precision = NULL, filter = c("ALL","NS","SIG")){
+	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
+	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = TRUE)
+	validValuesForFilter = c("ALL", "NS", "SIG")
 	# TODO make table take lists of models...
 	report = umx_default_option(report, c("line"))	
 	filter = umx_default_option(filter, validValuesForFilter)	

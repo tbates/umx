@@ -818,18 +818,18 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 		matrices <- list(model[[nameA]], model[[nameS]])
 		names(matrices) <- c("A", "S")
 		return(matrices)
-	}else if(return=="parameters"){
+	}else if(return == "parameters"){
 		# return the parameters
 		#recalculate summary based on standardised matrices
 		p <- summary(model)$parameters
-		p <- p[(p[,2]==nameA)|(p[,2]==nameS),]
+		p <- p[(p[,2] == nameA)|(p[,2] == nameS),]
 		## get the rescaling factor
 		# this is for the A matrix
 		rescale <- invSDs[p$row] * 1/invSDs[p$col]
 		# this is for the S matrix
 		rescaleS <- invSDs[p$row] * invSDs[p$col]
 		# put the A and the S together
-		rescale[p$matrix=="S"] <- rescaleS[p$matrix=="S"]
+		rescale[p$matrix == "S"] <- rescaleS[p$matrix == "S"]
 		# rescale
 		p[,5] <- p[,5] * rescale
 		p[,6] <- p[,6] * rescale
