@@ -176,7 +176,7 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 #' umxSummary(m1, report = "table")
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, precision = NULL, filter = c("ALL","NS","SIG")){
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, precision = NULL, matrixAddresses = FALSE, filter = c("ALL","NS","SIG")){
 	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
 	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = TRUE)
 	validValuesForFilter = c("ALL", "NS", "SIG")
@@ -223,18 +223,23 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 
 	# displayColumns
 	if(!is.null(showEstimates)){
+		if(matrixAddresses){
+			nameing = c("name", "matrix", "row", "col")
+		} else {
+			nameing = c("name")
+		}
 		if("Std.Estimate" %in%  names(modelSummary$parameters)){
 			if(length(showEstimates) > 1) {
 				namesToShow = showEstimates
 			}else if(showEstimates == "both") {
-				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
+				namesToShow = c(nameing, "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
 			} else if(showEstimates == "std"){
-				namesToShow = c("name", "matrix", "row", "col", "Std.Estimate", "Std.SE", "CI")
+				namesToShow = c(nameing, "Std.Estimate", "Std.SE", "CI")
 			}else{
-				namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")					
+				namesToShow = c(nameing, "Estimate", "Std.Error")					
 			}
 		} else {
-			namesToShow = c("name", "matrix", "row", "col", "Estimate", "Std.Error")
+			namesToShow = c(nameing, "Estimate", "Std.Error")
 		}
 		x = modelSummary$parameters
 		if("CI" %in% namesToShow){
