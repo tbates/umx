@@ -4,8 +4,9 @@
 \title{umxSummary}
 \usage{
 umxSummary(model, saturatedModels = NULL, report = "line",
-  showEstimates = NULL, digits = 2, RMSEA_CI = F, precision = NULL,
-  filter = c("ALL", "NS", "SIG"))
+  showEstimates = c("none", "raw", "std", "both", "list of column names"),
+  digits = 2, RMSEA_CI = FALSE, precision = NULL,
+  matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG"))
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} whose fit will be reported}
@@ -14,8 +15,8 @@ umxSummary(model, saturatedModels = NULL, report = "line",
 
 \item{report}{The format for the output line or table (default is "line")}
 
-\item{showEstimates}{What estimates to show. Options are "raw | std | list | NULL" for raw, standardized, a custom list or (default)
-none (just shows the fit indices)}
+\item{showEstimates}{What estimates to show. Options are c("none", "raw", "std", "both", "list of column names").
+Default  is "none" (just shows the fit indices)}
 
 \item{digits}{How many decimal places to report to (default = 2)}
 

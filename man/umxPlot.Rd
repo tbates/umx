@@ -4,7 +4,8 @@
 \title{umxPlot}
 \usage{
 umxPlot(model = NA, std = T, digits = 2, dotFilename = "name",
-  pathLabels = "none", showFixed = F, showError = T, precision = NULL)
+  pathLabels = c("none", "labels", "both"), showFixed = F, showError = T,
+  precision = NULL)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to make a path diagram from}
@@ -25,7 +26,7 @@ default "name", then the model's internal name will be used}
 \item{precision}{deprecated for digits}
 }
 \description{
-A function to create graphical path diagrams from your OpenMx models!
+Create graphical path diagrams from your OpenMx models!
 }
 \examples{
 \dontrun{

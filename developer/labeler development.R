@@ -1,23 +1,3 @@
-# =======================
-# = umxLabel unit tests =
-# =======================
-library("OpenMx"); library("MASS")
-
-c("a_r1c1", "a_r2c2", "c_r1c1", "c_r2c1", "c_r2c2", "e_r1c1", "e_r2c1", "e_r2c2", "Mean_r1c1", "Mean_r1c2")
-
-# ========================
-# = 1.  test on matrix   =
-# ========================
-for (i in c("Diag", "Full", "Iden", "Lower", "Stand", "Sdiag", "Symm", "Unit", "Zero")) {
-	message("testing type:" ,i)
-	print(umxLabel(mxMatrix(name = "a", type = i, nrow = 3, ncol = 3))@labels)
-}
-umxLabel(1) # type check
-
-# ========================
-# = 2. test on RAM model =
-# ========================
-
 set.seed(1000)
 myCov = matrix(nrow = 2, ncol = 2, byrow = T, c(1.0, 0.5, 0.5, 1.0));
 xy = MASS::mvrnorm (n = 100, mu = c(0,0), Sigma = myCov);
@@ -29,10 +9,9 @@ m1 <- mxModel("x_predicts_y", type = "RAM", manifestVars = manifests, # add the 
     mxPath(from = "one", to = manifests),                 # manifest means
 	mxData(xy, type = "raw")
 )
+m1 = umxRun(m1, setLabels = T, setValues = T)
+umxSummary(m1, show= "std"); # umxPlot(m1)
 
-omxGetParameters(m1); m1 = umxLabel(m1); omxGetParameters(m1);
-m1 = mxRun(m1); summary(m1)
-umxGraph_RAM(m1, std = T, precision = 3, dotFilename = "name",  pathLabels = "labels", showFixed = T)
 # ==========================================
 # = 3. Test on matrix model with submodels =
 # ==========================================

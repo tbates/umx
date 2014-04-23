@@ -3,7 +3,7 @@
 \alias{umx_round}
 \title{umx_round}
 \usage{
-umx_round(df, digits, coerce = F)
+umx_round(df, digits = getOption("digits"), coerce = FALSE)
 }
 \arguments{
 \item{df}{a dataframe to round in}

@@ -188,15 +188,8 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 		warning("precision is deprecated for umxSummary, use digits instead")
 		digits = precision
 	}
-	if(!is.null(showEstimates)){
-		if(!(showEstimates %in% validValuesForshowEstimates ) & !length(showEstimates) > 1 ){
-			# TODO enquote the validValuesForshowEstimates list
-			stop(paste0("showEstimates ", showEstimates , " is not in the valid list: \"raw\",\"std\",\"both\" or a list of column names"))
-		}
-	}
-
 	# if the filter is off default, the user must want something...
-	if( filter != "ALL" & is.null(showEstimates)){
+	if( filter != "ALL" & showEstimates == "none") {
 		showEstimates = "std"
 	}
 
@@ -222,7 +215,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 	}
 
 	# displayColumns
-	if(!is.null(showEstimates)){
+	if(showEstimates != "none"){
 		if(matrixAddresses){
 			nameing = c("name", "matrix", "row", "col")
 		} else {
@@ -235,7 +228,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				namesToShow = c(nameing, "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
 			} else if(showEstimates == "std"){
 				namesToShow = c(nameing, "Std.Estimate", "Std.SE", "CI")
-			}else{
+			}else{ # must be raw
 				namesToShow = c(nameing, "Estimate", "Std.Error")					
 			}
 		} else {
@@ -244,7 +237,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 		x = modelSummary$parameters
 		if("CI" %in% namesToShow){
 			x$sig = T
-			x$CI = ""
+			x$CI  = ""
 			for(i in 1:dim(x)[1]) {
 				# i = 1
 				# x = summary(m1)$parameters
@@ -252,13 +245,17 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				est   = x[i, "Std.Estimate"]
 				CI95  = x[i, "Std.SE"] * 1.96
 				bounds = c(est - CI95, est + CI95)
-				if (any(bounds < 0) & any(bounds > 0)){
-					x[i, "sig"] = F
-				}
-				if(est < 0){
-	 			   x[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
-				} else {
-	 			   x[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
+
+				if(!any(is.na(bounds))){
+					# protect cases with SE == NA from evaluation for significance
+					if (any(bounds < 0) & any(bounds > 0)){
+						x[i, "sig"] = F
+					}
+					if(est < 0){
+		 			   x[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
+					} else {
+		 			   x[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
+					}
 				}
 			}
 		}
@@ -270,12 +267,8 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 			print(x[,namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
 		}
 	} else {
-		# TODO enquote this list (and fix up the whole logic...)
-		# raw, std, both, and any list of column names
-		# validValuesForshowEstimates = c("raw","std","both)
 		message("For estimates, add showEstimates = 'raw' 'std' or 'both")
 	}
-
 	with(modelSummary, {
 		if(!is.finite(TLI)){
 			TLI_OK = "OK"
@@ -695,7 +688,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 # ============
 #' umxPlot
 #'
-#' A function to create graphical path diagrams from your OpenMx models!
+#' Create graphical path diagrams from your OpenMx models!
 #'
 #' @param model an \code{\link{mxModel}} to make a path diagram from
 #' @param std Whether to standardize the model.
@@ -727,15 +720,15 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' umxPlot(m1)
 #' }
 
-umxPlot <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T, precision = NULL) {
+umxPlot <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = F, showError = T, precision = NULL) {
 	# Purpose: Graphical output of your model using "graphviz":
 	# umxPlot(fit1, std=T, precision=3, dotFilename="name")
-	# nb: legal values for "pathLabels" are "both", "none" or "labels"
 	if(!is.null(precision)){
 		warning("precision is deprecated for umxSummary, use digits instead")
 		digits = precision
 	}
-
+	valid_PathLabels = c("none", "labels", "both")
+	pathLabels = umx_default_option(pathLabels, valid_PathLabels, check = TRUE)
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap', 'sentence', 'numeric', 'series', and 'arithmet'
 	if(std){ model= umxStandardizeModel(model, return = "model") }
@@ -784,12 +777,13 @@ umxPlot <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathL
 						out = paste(out, ";\n", eName, " -> ", target, sep = "")
 					}
 				} else {
-					if(pathLabels=="both"){
-						out = paste(out, ";\n", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "=", prefix, thisPathVal, "\"]", sep="")
-					} else if(pathLabels=="labels"){
-						out = paste(out, ";\n", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "\"]", sep="")
-					}else{
-						out = paste(out, ";\n", source, " -> ", target, " [dir=both, label=\"", prefix, thisPathVal, "\"]", sep="")
+					if(pathLabels == "both"){
+						out = paste0(out, ";\n", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "=", prefix, thisPathVal, "\"]")
+					} else if(pathLabels == "labels"){
+						out = paste0(out, ";\n", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "\"]")
+					}else {
+						# pathLabels = "none"
+						out = paste0(out, ";\n", source, " -> ", target, " [dir=both, label=\"", prefix, thisPathVal, "\"]")
 					}
 				}
 			} else {
@@ -824,7 +818,7 @@ umxPlot <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathL
 
 #' umxMI
 #'
-#' umxMI A function to report the top modifications which would improve fit.
+#' Report modifications which would improve fit.
 #'
 #' @param model An \code{\link{mxModel}} for which to report modification indices
 #' @param numInd How many modifications to report

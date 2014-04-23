@@ -3,7 +3,7 @@
 \alias{umxEval}
 \title{umxEval}
 \usage{
-umxEval(expstring, model, compute = F, show = F)
+umxEval(expstring, model, compute = FALSE, show = FALSE)
 }
 \arguments{
 \item{expstring}{an expression string, i.e, "a + b"}

@@ -3,7 +3,7 @@
 \alias{umx_has_been_run}
 \title{umx_has_been_run}
 \usage{
-umx_has_been_run(model, stop = F)
+umx_has_been_run(model, stop = FALSE)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you want to check has been run}

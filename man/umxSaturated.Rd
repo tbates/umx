@@ -3,7 +3,7 @@
 \alias{umxSaturated}
 \title{umxSaturated}
 \usage{
-umxSaturated(model, evaluate = T, verbose = T)
+umxSaturated(model, evaluate = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get independence and saturated fits to}

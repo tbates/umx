@@ -3,7 +3,7 @@
 \alias{umx_move_file}
 \title{umx_move_file}
 \usage{
-umx_move_file(baseFolder = NA, findStr = NA, fileNameList = NA,
+umx_move_file(baseFolder = NA, findStr = NULL, fileNameList = NA,
   destFolder = NA, test = T, overwrite = F)
 }
 \arguments{

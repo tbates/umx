@@ -35,5 +35,7 @@ model = umxThresholdRAMObjective(model)
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+
+Other advanced umx helpers: \code{\link{umxMakeThresholdMatrix}}
 }
 

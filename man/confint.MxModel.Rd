@@ -4,7 +4,7 @@
 \title{confint.MxModel}
 \usage{
 \method{confint}{MxModel}(object, parm = c("existing",
-  "c('vector', 'of' 'names')", "or omit to add all automatically"),
+  "c('vector', 'of' 'names')", "add all automatically by default"),
   level = 0.95, run = FALSE, showErrorcodes = FALSE, ...)
 }
 \arguments{

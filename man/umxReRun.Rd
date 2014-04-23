@@ -3,9 +3,9 @@
 \alias{umxReRun}
 \title{umxReRun}
 \usage{
-umxReRun(lastFit, update = NA, regex = F, free = F, value = 0,
-  freeToStart = NA, name = NULL, verbose = F, intervals = F,
-  comparison = F, dropList = "deprecated")
+umxReRun(lastFit, update = NA, regex = FALSE, free = FALSE, value = 0,
+  freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE,
+  comparison = FALSE, dropList = "deprecated")
 }
 \arguments{
 \item{lastFit}{The \code{\link{mxModel}} you wish to update and run.}

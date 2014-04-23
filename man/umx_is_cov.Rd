@@ -3,7 +3,7 @@
 \alias{umx_is_cov}
 \title{umx_is_cov}
 \usage{
-umx_is_cov(data = NULL, boolean = F, verbose = F)
+umx_is_cov(data = NULL, boolean = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{data}{dataframe to test}

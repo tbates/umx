@@ -33,9 +33,8 @@ lower2full(lower.byrow, diag = T, byrow = T)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-
 Other umx data helpers: \code{\link{umxHetCor}};
-  \code{\link{umx_scale_wide_twin_data}}
+  \code{\link{umx_scale_wide_twin_data}};
+  \code{\link{umx_scale}}
 }
 

@@ -18,7 +18,7 @@ umxMI(model = NA, numInd = 10, typeToShow = "both", decreasing = T,
 \item{cache}{= Future function to cache these time-consuming results}
 }
 \description{
-umxMI A function to report the top modifications which would improve fit.
+Report modifications which would improve fit.
 }
 \examples{
 \dontrun{
