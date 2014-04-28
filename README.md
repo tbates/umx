@@ -3,7 +3,7 @@ umx stands for "user" mx function, and is a library of helper functions for doin
 
 You can install the most recent version from github as follows
 
-```S
+```splus
 install.packages("devtools")
 library("devtools")
 install_github("umx", username = "tbates")
@@ -14,6 +14,7 @@ library("umx")
 # On the newest version of devtools, this will work
 # install_github("tbates/umx")
 ```
+
 The umx package has a range of useful helpers to help you get things done in SEM. This list is not comprehensive: install the package to learn more
 
 1. Building Models
@@ -35,7 +36,7 @@ The umx package has a range of useful helpers to help you get things done in SEM
 	* `umxReRun()` *# re-run a model: Quickly drop or free parameters, rename the model, and re-run...*
 4. Data and package helpers
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
-	* `lower2full(lower.no.diag, diag=F, byrow=F)`  *# Create a full matrix from a lower matrix of data*
+	* `umx_lower2full(lower.no.diag, diag=F, byrow=F)`  *# Create a full matrix from a lower matrix of data*
 	* `umxUpdateOpenMx(bleedingEdge = FALSE, loadNew = TRUE)` *# Update the OpenMx package*
 	* `umxSaturated(model)` *# Create a saturated model when raw data are being used. *
 		* `summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)`

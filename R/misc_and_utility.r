@@ -249,7 +249,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @return - A matrix of correlations
 #' @family umx data helpers
 #' @export
-#' @seealso - \code{\link{polycor::hetcor}}
+#' @seealso - \code{\link[polycor]{hetcor}}
 #' @references - 
 #' @examples
 #' \dontrun{
@@ -276,10 +276,10 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFac
 	}
 }
 
-#' umxLower2full
+#' umx_lower2full
 #'
-#' Take a lower triangle of data (either from a "lower" \code{\link{mxMatrix}}, or entered from  as you might see in a journal article) 
-#' and turn it into a full matrix
+#' Take a lower triangle of data (either from a "lower" \code{\link{mxMatrix}}, or as you might typed in a journal article) 
+#' and turn it into a full matrix.
 #' 
 #' @param lower.data An \code{\link{mxMatrix}}
 #' @param diag A boolean noting whether the lower matrix includes the diagonal
@@ -290,41 +290,81 @@ umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFac
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' \dontrun{
-#' matrix = umxLower2full(matrix)
-#' lower2full(lower.tri, diag = F)
-#' lower2full(lower.data, diag = T, byrow = F)
-#' lower2full(lower.no.diag, diag = F, byrow = F)
-#' lower2full(lower.bycol, diag = T, byrow = F)
-#' lower2full(lower.byrow, diag = T, byrow = T)
-#' }
-umxLower2full <- function(lower.data, diag = F, byrow = T) {
-	len = length(lower.data)
-	if(diag) {
-		# len*2 = ((x+.5)^2)-.25
-		size = len * 2
-		size = size + .25
-		size = sqrt(size)
-		size = size - .5; size
-	}else{
-		# len = (x*((x+1)/2))-x	
-		# .5*(x-1)*x
-		size = len * 2
-		# (x-.5)^2 - .25
-		size= size + .25
-		size = sqrt(size)
-		size = size + .5; size
+#' 
+#' tmpn = c("ROccAsp", "REdAsp", "FOccAsp", "FEdAsp", "RParAsp", "RIQ", "RSES", "FSES", "FIQ", "FParAsp")
+#' tmp = matrix(nrow = 10, ncol = 10, byrow = TRUE, dimnames = list(tmpn,tmpn), data = 
+#' 	c(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.6247, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.3269, 0.3669, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.4216, 0.3275, 0.6404, 1.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.2137, 0.2742, 0.1124, 0.0839, 1.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.4105, 0.4043, 0.2903, 0.2598, 0.1839, 1.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220, 1.0000,  0.0000, 0.0000, 0,
+#' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707,  1.0000, 0.0000, 0,
+#' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000, 0,
+#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
+#' )
+#' umx_lower2full(tmp)
+#' tmp = c(
+#' 	c(1.0000, 
+#' 	0.6247, 1.0000,
+#' 	0.3269, 0.3669, 1.0000,
+#' 	0.4216, 0.3275, 0.6404, 1.0000,
+#' 	0.2137, 0.2742, 0.1124, 0.0839, 1.0000,
+#' 	0.4105, 0.4043, 0.2903, 0.2598, 0.1839, 1.0000,
+#' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220, 1.0000,
+#' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707,  1.0000,
+#' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000,
+#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
+#' )
+#' umx_lower2full(tmp)
+#' tmp = c(
+#' 	c(0.6247,
+#' 	0.3269, 0.3669,
+#' 	0.4216, 0.3275, 0.6404,
+#' 	0.2137, 0.2742, 0.1124, 0.0839,
+#' 	0.4105, 0.4043, 0.2903, 0.2598, 0.1839,
+#' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220,
+#' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707, 
+#' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950,
+#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087)
+#' )
+#' umx_lower2full(tmp, diag = F)
+umx_lower2full <- function(lower.data, diag = F, byrow = T) {
+	if(is.matrix(lower.data)){
+		# Copy the transpose of the lower triangle to the
+		# upper triangle
+		x = lower.data
+		x[upper.tri(x)] <- t(x)[upper.tri(x)]
+		return(x)
+	} else {
+		len = length(lower.data)
+		if(diag) {
+			# len*2 = ((x+.5)^2)-.25
+			size = len * 2
+			size = size + .25
+			size = sqrt(size)
+			size = size - .5; size
+		}else{
+			# len = (x*((x+1)/2))-x	
+			# .5*(x-1)*x
+			size = len * 2
+			# (x-.5)^2 - .25
+			size= size + .25
+			size = sqrt(size)
+			size = size + .5; size
+		}
+		mat = diag(size)
+		if(byrow){
+			# put  data into upper triangle, then transform to lower
+			mat[upper.tri(mat, diag = diag)] <- lower.data;
+			mat[lower.tri(mat, diag = F)] <- mat[upper.tri(mat, diag = F)]
+		}else{
+			mat[lower.tri(mat, diag = diag)] <- lower.data;
+			mat[upper.tri(mat, diag = F)] <-mat[lower.tri(mat, diag = F)]
+		}
+		return(mat)
 	}
-	mat = diag(size)
-	if(byrow){
-		# put  data into upper triangle, then transform to lower
-		mat[upper.tri(mat, diag = diag)] <- lower.data;
-		mat[lower.tri(mat, diag = F)] <- mat[upper.tri(mat, diag = F)]
-	}else{                            
-		mat[lower.tri(mat, diag = diag)] <- lower.data;
-		mat[upper.tri(mat, diag = F)] <-mat[lower.tri(mat, diag = F)]
-	}
-	return(mat)
 }
 
 # ===========
@@ -1625,6 +1665,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #'
 #' @param df a dataframe to scale
 #' @param varsToScale (leave blank for all)
+#' @param coerce Whether to coerce non-numerics to numeric (Defaults to FALSE)
 #' @return - new dataframe with scaled variables
 #' @export
 #' @family umx data helpers

@@ -1,4 +1,18 @@
+umx 0.80-alpha
+--------------
+
+* Beta
+* Moving to S3 functions: confint(); plot()
+* adding umxRAM() helper
+
 umx 0.75-alpha
+--------------
+
+* Alpha release
+* 90% feature complete
+* lots of name rationalization
+
+umx 0.70-alpha
 --------------
 
 * Alpha release

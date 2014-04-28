@@ -1,3 +1,6 @@
+# omxDetectCores() # cores available
+# getOption('mxOptions')$"Number of Threads" # cores used by OpenMx
+
 # devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 # devtools::check_doc("~/bin/umx")
@@ -26,6 +29,106 @@
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
+
+#' umxRAM
+#'
+#' Making it as simple as possible to create a RAM model
+#'
+#' @param name friendly name for the model
+#' @param ... A list of paths and a data source
+#' @param independent Whether the model is independent (default = NA)
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' thedata = mtcars[,c("mpg", "cyl", "disp")]
+#' a = mxPath(from = "l_power", to = "mpg")
+#' b = mxPath(from = c("cyl","disp"), to = "l_power")
+#' d = mxData(thedata, type = "raw")
+#' e = mxData(cov(thedata), type = "cov", numObs = nrow(thedata))
+#'
+#' m1 = umxRAM("tim", a, b, d)
+#' m1 = umxRAM("tim", a, b, e)
+#' m1 = mxRun(m1)
+#' \dontrun{
+#' plot(m1)
+#' m1 = umxRAM("tim", a, b)
+#' # TODO implement handling a dataframe
+#' umxRAM("tim", a, b, thedata)
+#' }
+umxRAM <- function (name, ..., independent = NA) {
+	dot.items = list(...)
+	foundNames = c()
+	manifestVars = NULL
+	nPaths = 0
+	if(!length(dot.items) > 0){
+		stop("You must specify the data and at least one path")
+	}
+	for (i in dot.items) {
+		thisIs = class(i)[1]
+		if(thisIs == "MxPath"){
+			foundNames = append(foundNames, c(i@from,i@to))
+		} else if(thisIs == "MxNonNullData" ) {
+			# data!
+			if(i@type == "raw"){
+				manifestVars = names(i@observed)
+				isRaw = TRUE
+			} else {
+				isRaw = FALSE
+				manifestVars = colnames(i@observed)
+			}
+		} else if(thisIs == "data.frame" ) {
+			stop("You gave me a '", thisIs, "'\n", "I can't take data frames yet: package it into an mxData(dataName, type= 'raw')")
+			# TODO bundle up data into mxData objects?
+		} else {
+			stop("I can only handle mxPaths and mxData. You gave me a '", thisIs, "'")
+		}
+	}
+	if(is.null(manifestVars)){
+		stop("No manifests found: You need to include an mxData() or dataframe")
+	}
+	message("ManifestVars found in data were: ", paste(manifestVars, collapse = ", "), "\n")
+
+	foundNames = unique(foundNames)
+	latentVars = setdiff(foundNames, manifestVars)
+	nLatent = length(latentVars)
+	if(nLatent == 0){
+		message("No latent variables were created\n")
+		latentVars = NA
+	} else if (nLatent == 1){
+		message("A latent variable '", latentVars[1], "' was created\n")
+	}else{
+		message(nLatent, " latent variables were created:", paste(latentVars, sep=", "), "\n")
+	}
+	unusedManifests = setdiff(manifestVars, foundNames)
+	if(length(unusedManifests) == 0){
+		warning(
+			"There are ", length(unusedManifests), " variables in the dataset that you never refer to!\n",
+			paste(unusedManifests, sep = ", ")
+		)
+		message("No latent variables were created\n")
+	}
+
+	# return(list(...))
+    func.call <- match.call(expand.dots = FALSE)
+	m1 = do.call("mxModel", list(
+		name = name, 
+		type = "RAM", 
+		manifestVars = manifestVars, 
+		latentVars = latentVars, 
+		independent = T, dot.items
+		)
+	)
+	if(isRaw){
+		# add means
+		message("I added a means statement: mxPath('one', to = manifestVars)\n")
+		m1 = mxModel(m1, mxPath("one", manifestVars))
+	}
+	return(m1)
+}
+
+
 #' umxGxE_window
 #'
 #' Makes a model to do a GxE analysis using Local SEM (Hildebrandt, Wilhelm & Robitzsch, 2009, p96)
@@ -774,7 +877,10 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 	# Stop if there is no objective function
 	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
 	# Stop if there is no output
-	if (length(output) < 1)stop("Provided model has no output. I can only standardize models that have been run!")
+	if (length(output) < 1){
+		message("Model has not been run yet")
+		return(model)
+	}
 	# Get the names of the A, S and M matrices 
 	if("expectation" %in% slotNames(model)){
 		# openMx 2
@@ -1521,14 +1627,15 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' There's also a working example below and in demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
-#' umx lives on github at present \link{http://github.com/tbates/umx}
-#' The easiest way to install it is to:
-#' install.packages("devtools")
+#' umx lives on github at present \url{http://github.com/tbates/umx}
 #' 
+#' There is a helpful blog at \url{http://tbates.github.io}
+#' 
+#' To install:
+#' install.packages("devtools")
 #' library("devtools")
 #' 
 #' install_github("tbates/umx")
-#' 
 #' library("umx")
 #' 
 #' @aliases umx-package

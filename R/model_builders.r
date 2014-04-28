@@ -13,7 +13,10 @@
 #'
 #' A helper for CFA that only requires you to enter your latents and manifests
 #'
-#' @param model an \code{\link{mxModel}} to WITH
+#' @param name the name for your new CFA model
+#' @param latents List of factors in your CFA
+#' @param data The dataframe of manifest columns you are modeling
+#' @param report What to report
 #' @return - \code{\link{mxModel}}
 #' @family super easy helpers
 #' @export

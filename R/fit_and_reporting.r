@@ -16,19 +16,19 @@
 #' confint.MxModel
 #'
 #' Implements confidence interval function for OpenMx models.
-#' Note: Currently requested CIs are added to existing CIs, and all CIs are run, 
+#' Note: Currently requested CIs are added to existing CIs, and all are run, 
 #' even if they alrady exist in the output. This might change in the future.
 #'
-#' @details Unlike confint.lm, if parm is missing, all CIs requested will be added to the model, but
-#' (because these can take time to run) by default only CIs already computed will be reported.
+#' @details Unlike \code{\link{confint}}, if parm is missing, all CIs requested will be added to the model, 
+#' but (because these can take time to run) by default only CIs already computed will be reported.
+#' 
 #' CIs will be run only if run is TRUE, allowing this function to be used to add
 #' CIs without automatically having to run them.
 #' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. 
 #' Even a few CIs can take too long to make running the default.
 #'
 #' @rdname confint.MxModel
-#' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s 
-#' that have been \code{\link{mxRun}} with intervals = TRUE))
+#' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))
 #' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
 #' @param level	The confidence level required (default = .95)
 #' @param run Whether to run the model (defaults to FALSE)
@@ -37,13 +37,12 @@
 #' @export
 #' @return - \code{\link{mxModel}}
 #' @family umx reporting
-#' @export
-#' @seealso - \code{\link{confint}}, \code{\link{OpenMx::mxCI}}, \code{\link{OpenMx::mxRun}}
+#' @seealso - \code{\link[stats]{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents = c("G")
 #' manifests = names(demoOneFactor)
 #' m1 <- mxModel("One Factor", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
@@ -58,9 +57,9 @@
 #' m1 = confint(m1, parm = "G_to_x1", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
 #' m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
 #' confint(m1, parm = "existing") # request existing CIs (none added yet...)
-confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'names')", "add all automatically by default"), level = 0.95, run = FALSE, showErrorcodes = FALSE,...) {
-	# TODO This will supercede umxCI and work as users know for lm... win-win.
-	defaultParmString = c("existing", "c('vector', 'of' 'names')", "add all automatically by default")
+#' 
+confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "names"), "default = add all"), level = 0.95, run = FALSE, showErrorcodes = FALSE, ...) {
+	defaultParmString = list("existing", c("vector", "of", "names"), "add all automatically by default")
 	# 1. Add CIs if needed
 	if (all(parm == defaultParmString)) {
 		if(umx_has_CIs(object, "intervals")) {
@@ -145,6 +144,7 @@ confint.MxModel <- function(object, parm = c("existing", "c('vector', 'of' 'name
 #' @param digits How many decimal places to report to (default = 2)
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to F)
 #' @param precision Deprecated in favor of digits (must be NULL)
+#' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @family umx reporting
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
@@ -686,19 +686,20 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 # ============
 # = Graphics =
 # ============
-#' umxPlot
+#' plot.MxModel
 #'
 #' Create graphical path diagrams from your OpenMx models!
 #'
+#' @aliases umxPlot
+#' @rdname plot.MxModel
 #' @param model an \code{\link{mxModel}} to make a path diagram from
 #' @param std Whether to standardize the model.
 #' @param digits The number of decimal places to add to the path coefficients
-#' @param dotFilename A file to write the path model to. if you leave it at the 
-#' default "name", then the model's internal name will be used
-#' @param pathLabels whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
-#' @param showFixed whether to show fixed paths (defaults to FALSE)
-#' @param showError whether to show errors
-#' @param precision deprecated for digits
+#' @param dotFilename A file to write the path model to. if you leave it at the default "name", then the model's internal name will be used
+#' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
+#' @param showFixed Whether to show fixed paths (defaults to FALSE)
+#' @param showError Whether to show errors
+#' @param precision Deprecated use "digits"
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @family umx reporting
@@ -720,7 +721,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' umxPlot(m1)
 #' }
 
-umxPlot <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = F, showError = T, precision = NULL) {
+plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = F, showError = T, precision = NULL) {
 	# Purpose: Graphical output of your model using "graphviz":
 	# umxPlot(fit1, std=T, precision=3, dotFilename="name")
 	if(!is.null(precision)){
@@ -826,7 +827,7 @@ umxPlot <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathL
 #' @param decreasing How to sort (default = T, decreasing)
 #' @param cache = Future function to cache these time-consuming results
 #' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
-#' @family umx modify model
+#' @family umx modify model, umx reporting
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1406,7 +1407,6 @@ umxFitIndices <- function(model, indepfit) {
 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' \dontrun{
 #' require(OpenMx)
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -1420,8 +1420,6 @@ umxFitIndices <- function(model, indepfit) {
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' RMSEA(m1)
-#' }
-
 RMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 
 	# FIXME should this be called RMSEA.MxModel or omxRMSEA?
 	sm <- summary(model)
@@ -1458,7 +1456,6 @@ RMSEA <- function(model, ci.lower = .05, ci.upper = .95) {
 #' @param .drop         Whether to drop TODO
 #' @family umx reporting
 #' @export
-#' @seealso - \code{\link{plyr}}
 #' @references - \url{http://www.cookbook-r.com/Manipulating_data/Summarizing_data}
 #' @examples
 #' \dontrun{

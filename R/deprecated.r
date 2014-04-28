@@ -144,51 +144,34 @@ umxGetLabels <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	return(theLabels)
 }
 
-col.as.numeric <- function(df) {
-	stop("col.as.numeric is deprecated. Please replace with umx.as.numeric()")
-	# use case
-	# col.as.numeric(df)
-	for (i in names(df)) {
-		df[,i] = as.numeric(df[,i])
-	}
-	return(df)
-}
+col.as.numeric <- function(df) {stop("col.as.numeric is deprecated. Please replace with umx_as_numeric()")}
 
 cor.prob <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {message("Use umx_cor")}
 
 umx_u_APA_pval <- function(p, min = .001, rounding = 3, addComparison = T) {stop("umx_u_APA_pval is deprecated: Use umx_APA_pval")}
 
-
-# ==========================
-# = Deprecated from genepi =
-# ==========================
-
-# ==============
-# = Deprecated =
-# ==============
-
 makeACE <-function(modelName="ACE", selDVs, dzData, mzData, nSib=2, equateMeans=T, dzAr=.5, dzCr=1, addStd=F) {
-	stop("don't call makeACE(), it's so... 2009... Use makeACE_2Group() instead")
+	stop("don't call makeACE(), it's so... 2009... Use umxACE()")
 }
 
 twoGroupCommonPath <- function(modelName="CP", selDVs, dzData, mzData, nSib=2) {
-	stop("Change \"twoGroupCommonPath()\" to: makeCP_2Group()")
+	stop("Change \"twoGroupCommonPath()\" to: umxCP()")
 }
 
 twoGroupIndependentPath <- function(modelName="IP", selDVs, dzData, mzData, nSib=2, freeLowerE=F) {
-	stop("Change \"twoGroupIndependentPath\" to: makeIP_2Group")
+	stop("Change \"twoGroupIndependentPath\" to: umxIP")
 }
 
 two_group_G_by_E <- function(modelName = "GbyE", selDVs, selDefs, dzData, mzData, nSib=2) {
-	stop("Change \"two_group_G_by_E\" to: makeGxE_2Group")
+	stop("Change \"two_group_G_by_E\" to: umxGxE")
 }
 
 twoGroupCholesky <-function(modelName = "ACE", selDVs, dzData, mzData, nSib=2, equateMeans=T, dzr=.5, addStd=F) {
-	stop("Change \"twoGroupCholesky\" to: makeACE_2Group")
+	stop("Change \"twoGroupCholesky\" to: umxACE")
 }
 
 twoGroupOrdinal <- function(modelName ="Ordinal", selDVs, factorLevels, dzData, mzData, nSib, lowerBoundZ= -5, aceStart=c(.6,.3,.7)) {
-	stop("Change \"twoGroupOrdinal\" to: makeOrdinal_2Group")
+	stop("Change \"twoGroupOrdinal\" to: umxOrdinal")
 }
 
 umxGraph_RAM <- function(model = NA, std = T, precision = 2, dotFilename = "name", pathLabels = "none", showFixed = F, showError = T) {
@@ -199,7 +182,7 @@ tryHard <- function(model, n = 3, calc_SE = F){stop("Use umxRun() in place of um
 
 genEpi_ReRun <- function(lastFit, dropList=NA, regex=NA, free=F, value=0, freeToStart=NA, newName=NA, verbose=F, intervals=F) {message("please call umxReRun()")}
 
-mxStart        <- function(x=1, sd=NA, n=1){ traceback(); stop("Deprecated: Please use umxStart() instead of mxStart")}
+mxStart        <- function(x=1, sd=NA, n=1){ traceback(); stop("Deprecated: Please use umxValues() instead of mxStart")}
 umxLabeler     <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA) {stop("replace 'umxLabeler' with 'umxLabel'")}
 
 standardizeRAM <- function(model, return="parameters", Amatrix=NA, Smatrix=NA, Mmatrix=NA) {stop("Deprecated: Please use umxStandardizeModel() instead of standardizeRAM")}
@@ -208,17 +191,13 @@ genEpi_Path    <- function(from, to,arrows=1, connect="single", free = T, values
 genEpiCompare  <- function(base = NA, comparison = NA, all = T, excel = T) { stop("deprecated, use umxCompare")}
 mxLatent       <- function(latent=NA, formedBy=NA, forms=NA, data, endogenous=FALSE, model.name=NA, help=FALSE, labelSuffix="") {message("please call umxLatent()")}
 
-hcor                     <- function(data, ML = F, use="pairwise.complete.obs"){message("Please call umxHetCor() instead of hcor")}
-lower2full               <- function(lower.data, diag = F, byrow = T) {stop("please replace lower2full with umxLower2Full()")}
-mxIsOrdinalVar           <- function(df, names = F) {message("replace mxIsOrdinalVar with umxIsOrdinalVar")}
-genEpi_GetLabels         <- function(inputTarget, regex = NA, free = NA, verbose = F) { stop("please replace genEpi_GetLabels with umxGetLabels()")}
+genEpi_GetLabels         <- function(inputTarget, regex = NA, free = NA, verbose = F) { stop("please replace genEpi_GetLabels with umxGetParameters()")}
 mxMakeThresholdsMatrices <- function(df, deviationBased = T, droplevels = T, verbose = F) {	message("please change to 'umxMakeThresholdMatrix()'")}
 mxAutoThreshRAMObjective <- function(df, deviationBased = T, droplevels = T, verbose = F) { message("please call umxThresholdRAMObjective()")}
 
 graphViz_Cholesky <- function(model = NA, dotFilename = "name", accuracy = 2, showMeans=F) {
-	stop("Deprecated: PLease replace graphViz_Cholesky with umxPlotCholesky")
+	stop("Deprecated: PLease replace graphViz_Cholesky with umxPlotACE")
 }
-
 
 summaryACEFit <- function(thisFit, accuracy = accuracy, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs) {
 	stop("Deprecated: Please replace summaryACEFit with umxSummaryACE")
