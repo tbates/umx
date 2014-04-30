@@ -1,16 +1,18 @@
-# omxDetectCores() # cores available
-# getOption('mxOptions')$"Number of Threads" # cores used by OpenMx
+umxParallel <- function(model, what) {
+	stop("umxparallel not implemented")
+	# TODO make it easy to turn parallel on and off
+	# omxDetectCores() # cores available
+	# getOption('mxOptions')$"Number of Threads" # cores used by OpenMx
+	# mxOption(model= yourModel, key="Number of Threads", value= (omxDetectCores() - 1))
+}
 
 # devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
+# devtools::check("~/bin/umx")
 # devtools::check_doc("~/bin/umx")
-# file:///Users/tim/Library/R/3.0/library/roxygen2/doc/rd.html
 # setwd("~/bin/umx"); 
 # 
-# require(OpenMx); require(umx); ?umx
 # devtools::build("~/bin/umx")
-# devtools::check("~/bin/umx")
-# devtools::check_doc(pkg = "~/bin/umx")
 # devtools::load_all("~/bin/umx")
 # devtools::dev_help("umx-package.Rd")
 # devtools::show_news("~/bin/umx")
@@ -30,6 +32,16 @@
 # = Highlevel models (ACE, GxE) =
 # ===============================
 
+umxFixed <- function(correlatedManifests, data){
+	# If the data are raw, compute the variance
+	# Fix variance of exogenous measures
+	a = mxPath(from = correlatedManifests, arrows = 2, free = T, values = 1)
+	# And allow them to covary (formative)
+	b = mxPath(from = correlatedManifests, connect = "unique.bivariate", arrows = 2)
+	return(list(a,b))
+}
+
+
 #' umxRAM
 #'
 #' Making it as simple as possible to create a RAM model
@@ -37,9 +49,10 @@
 #' @param name friendly name for the model
 #' @param ... A list of paths and a data source
 #' @param independent Whether the model is independent (default = NA)
+#' @param fixed A list of exogenous manifests that should be allowed to covary
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' thedata = mtcars[,c("mpg", "cyl", "disp")]
@@ -57,18 +70,22 @@
 #' # TODO implement handling a dataframe
 #' umxRAM("tim", a, b, thedata)
 #' }
-umxRAM <- function (name, ..., independent = NA) {
-	dot.items = list(...)
+umxRAM <- function (name, ..., fixed = NA, independent = NA) {
+	dot.items = list(...) # grab all the dot items: mxPaths, etc...
+	if(!length(dot.items) > 0){
+		stop("You must include one mxData() object, and some mxPath() objects")
+	}
+	# TODO 
+	# latents = NULL
+	# if you set latents, we will check names all appear in either data or latents
+	# if not, we will call anything not in data a latent
+	nPaths = 0 # initialise
 	foundNames = c()
 	manifestVars = NULL
-	nPaths = 0
-	if(!length(dot.items) > 0){
-		stop("You must specify the data and at least one path")
-	}
 	for (i in dot.items) {
 		thisIs = class(i)[1]
 		if(thisIs == "MxPath"){
-			foundNames = append(foundNames, c(i@from,i@to))
+			foundNames = append(foundNames, c(i@from, i@to))
 		} else if(thisIs == "MxNonNullData" ) {
 			# data!
 			if(i@type == "raw"){
@@ -78,6 +95,9 @@ umxRAM <- function (name, ..., independent = NA) {
 				isRaw = FALSE
 				manifestVars = colnames(i@observed)
 			}
+			if(is.null(manifestVars)){
+				stop("there's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
+			}
 		} else if(thisIs == "data.frame" ) {
 			stop("You gave me a '", thisIs, "'\n", "I can't take data frames yet: package it into an mxData(dataName, type= 'raw')")
 			# TODO bundle up data into mxData objects?
@@ -85,49 +105,128 @@ umxRAM <- function (name, ..., independent = NA) {
 			stop("I can only handle mxPaths and mxData. You gave me a '", thisIs, "'")
 		}
 	}
+
+	# ========================
+	# = All items processed  =
+	# ========================
 	if(is.null(manifestVars)){
 		stop("No manifests found: You need to include an mxData() or dataframe")
 	}
 	message("ManifestVars found in data were: ", paste(manifestVars, collapse = ", "), "\n")
 
-	foundNames = unique(foundNames)
+	foundNames = unique(na.omit(foundNames))
 	latentVars = setdiff(foundNames, manifestVars)
-	nLatent = length(latentVars)
+	nLatent    = length(latentVars)
+
+	# Report on which latents were correlated
 	if(nLatent == 0){
-		message("No latent variables were created\n")
+		message("No latent variables were created.\n")
 		latentVars = NA
 	} else if (nLatent == 1){
-		message("A latent variable '", latentVars[1], "' was created\n")
-	}else{
-		message(nLatent, " latent variables were created:", paste(latentVars, sep=", "), "\n")
-	}
-	unusedManifests = setdiff(manifestVars, foundNames)
-	if(length(unusedManifests) == 0){
-		warning(
-			"There are ", length(unusedManifests), " variables in the dataset that you never refer to!\n",
-			paste(unusedManifests, sep = ", ")
-		)
-		message("No latent variables were created\n")
+		message("A latent variable '", latentVars[1], "' was created.\n")
+	} else {
+		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ".\n")
 	}
 
-	# return(list(...))
-    func.call <- match.call(expand.dots = FALSE)
-	m1 = do.call("mxModel", list(
-		name = name, 
-		type = "RAM", 
-		manifestVars = manifestVars, 
-		latentVars = latentVars, 
-		independent = T, dot.items
+	# TODO
+	# if (any(fixed !%in% ) c(manifestVars, latentVars)) ){
+	# 	complain...
+	# }
+	
+	# TODO: Add variance to all variables? and fix fixed at zero?
+	# residuals for exogenous variables
+	# mxPath(from = fixed, arrows = 2),
+
+	# add free variance to latents not in the fixed list?
+	# mxPath(from = latents, arrows = 2),
+	
+	unusedManifests = setdiff(manifestVars, foundNames)
+	if(length(unusedManifests) > 0){
+		warning(
+			"There are ", length(unusedManifests), " variables in the dataset to which you never refer!\n",
+			paste(unusedManifests, collapse = ", ")
 		)
+	}
+
+	m1 = do.call("mxModel", list(name = name, type = "RAM", 
+		manifestVars = manifestVars, 
+		latentVars  = latentVars, 
+		independent = T, 
+		dot.items)
 	)
 	if(isRaw){
 		# add means
-		message("I added a means statement: mxPath('one', to = manifestVars)\n")
+		message("Added a means model: mxPath('one', to = manifestVars)\n")
 		m1 = mxModel(m1, mxPath("one", manifestVars))
 	}
+	m1 = umxLabel(m1)
+	m1 = umxValues(m1, onlyTouchZeros=T)
 	return(m1)
 }
 
+umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("S", "A")) {
+	what = umx_default_option(what, c("values", "free", "labels"), check = TRUE)
+	if(what =="values"){
+		for (w in matrices) {
+			message("Showing ", what, " for:", w, " matrix:")
+			umx_print(data.frame(model@matrices[[w]]@values), zero.print = ".", digits=2)		
+		}
+	}
+}
+
+umxFixFirstLoadings <- function(model, fixedValue = 1, latents = NULL) {
+	message("This needs to add a check that we are not in the latents columns...")
+	if(is.null(latents)){
+		latenVarList = model@latentVars
+	} else {
+		latenVarList = latents
+	}
+	for (i in latenVarList) {
+		# i = "ind60"
+		firstFreeRow = which(model@matrices$A@free[,i])[1]
+		model@matrices$A@free[firstFreeRow, i]   = FALSE
+		model@matrices$A@values[firstFreeRow, i] = fixedValue
+	}
+	return(model)
+}
+
+#' umxFixLatentVariances
+#'
+#' Fix the variance of all, or selected, latents @@ selected values.
+#'
+#' @param model an \code{\link{mxModel}} to set
+#' @param fixedValue (Default <- 1)
+#' @param latents (If NULL then all)
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx build functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' m1 <- umxRAM("One Factor",
+#' 	mxPath(from = "g", to = names(demoOneFactor)),
+#' 	mxPath(from = names(demoOneFactor), arrows = 2),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxFixLatentVariances(m1)
+umxFixLatentVariances <- function(model, fixedValue = 1, latents = NULL) {
+	if(is.null(latents)){
+		latenVarList = model@latentVars
+	} else {
+		latenVarList = latents
+	}
+	message("TODO: Check their manifests are not formative x -> latent")
+	for (i in latenVarList) {
+		# TODO 
+	}
+	for (i in latenVarList) {
+		# message("fixing ", i, ", ", i, " which was ", )
+			model@matrices$S@free[i, i]   = FALSE
+			model@matrices$S@values[i, i] = fixedValue
+	}
+	return(model)
+}
 
 #' umxGxE_window
 #'
@@ -480,9 +579,9 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 # = Model building and modifying helpers =
 # ========================================
 
-#' umxStart
+#' umxValues
 #'
-#' umxStart will set start values for the free parameters in RAM and Matrix \code{\link{mxModel}}s, or even mxMatrices.
+#' umxValues will set start values for the free parameters in RAM and Matrix \code{\link{mxModel}}s, or even mxMatrices.
 #' It will try and be smart in guessing these from the values in your data, and the model type.
 #' If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
 #'
@@ -508,13 +607,13 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' mxEval(S, m1) # default variances are 0
-#' m1 = umxStart(m1)
+#' m1 = umxValues(m1)
 #' mxEval(S, m1) # plausible variances
-#' umxStart(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
+#' umxValues(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
 #' # # TODO get this working
 #' # umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 
-umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
+umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	if(is.numeric(obj) ) {
 		# use obj as the mean, return a list of length n, with sd = sd
 		xmuStart_value_list(x = obj, sd = sd, n = n)
@@ -561,7 +660,10 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		} else {
 			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE)			
 		}
-		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
+		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = (covData[freePaths]/2)
+		offDiag = !diag(nVar)
+		newOffDiags = obj@matrices$S@values[1:nVar, 1:nVar][offDiag & freePaths]/3
+		obj@matrices$S@values[1:nVar, 1:nVar][offDiag & freePaths] = newOffDiags
 
 		# ==========================================
 		# = Put modest starts into the asymmetrics =
@@ -573,10 +675,11 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		} else {
 			freePaths = (obj@matrices$A@free[1:Arows, 1:Acols] == TRUE)			
 		}
-		obj@matrices$A@values[1:Arows, 1:Acols][freePaths] = .3
+		obj@matrices$A@values[1:Arows, 1:Acols][freePaths] = .9
 		return(obj)
 	}
 }
+
 #' umxLabel
 #'
 #' umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix based), an \code{\link{mxPath}}, or an \code{\link{mxMatrix}}
@@ -596,7 +699,7 @@ umxStart <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx core functions
-#' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -656,7 +759,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' @param setStarts Deprecated way to setValues
 #' @return - \code{\link{mxModel}}
 #' @family umx core functions
-#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{umxReRun}}, \code{\link{confint}}
+#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxValues}}, \code{\link{umxReRun}}, \code{\link{confint}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -690,7 +793,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 		model = umxLabel(model)
 	}
 	if(setValues){
-		model = umxStart(model)
+		model = umxValues(model)
 	}
 	if(n == 1){
 		model = mxRun(model, intervals = intervals);
@@ -825,7 +928,7 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)		
 	}
 	# TODO label any new objects, and perhaps set their starts
-	# x = umxStart(x)
+	# x = umxValues(x)
 	x = mxRun(x, intervals = intervals)
 	if(comparison){
 		print(umxCompare(lastFit, x))
@@ -1286,7 +1389,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @param endogenous This is now deprecated. use type= \"exogenous|endogenous\"
 #' @return - path list
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1399,12 +1502,12 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	} else {
 		# Handle formedBy case
 		# Add paths from manifests to the latent
-		p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxStart(.6, n=manifests)) 
+		p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxValues(.6, n=manifests)) 
 		# In general, manifest variance should be left free...
 		# TODO If the data were correlations... we can inspect for that, and fix the variance to 1
 		p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances)
 		# Allow manifests to intercorrelate
-		p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxStart(.3, n = manifests))
+		p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxValues(.3, n = manifests))
 		if(isCov) {
 			paths = list(p1, p2, p3)
 		}else{
@@ -1508,7 +1611,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family advanced umx helpers
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1537,7 +1640,7 @@ umxThresholdRAMObjective <- function(df, deviationBased = T, droplevels = T, ver
 #' @return - \code{\link{mxModel}}
 #' @family advanced umx helpers
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umxMakeThresholdMatrix(mtcars, verbose = T)
@@ -1568,7 +1671,7 @@ umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbo
 #' @param sd the sd of the jiggle noise
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
 #' @return - \code{\link{mxMatrix}}
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1660,9 +1763,9 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
 #' 
 #' # With \code{link{umxLabel}}, you can easily add informative and predictable labels to each free path (works with matrix style as well!)
-#' # and use \code{link{umxStart}}, to set sensible guesses for start values...
+#' # and use \code{link{umxValues}}, to set sensible guesses for start values...
 #' m1 = umxLabel(m1)  
-#' m1 = umxStart(m1)  
+#' m1 = umxValues(m1)  
 #' 
 #' # Re-run omxGetParameters...
 #' omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts

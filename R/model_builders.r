@@ -20,7 +20,7 @@
 #' @return - \code{\link{mxModel}}
 #' @family super easy helpers
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://github.com/tbates/umx}
 #' @examples
 #' \dontrun{

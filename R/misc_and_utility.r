@@ -380,7 +380,7 @@ umx_lower2full <- function(lower.data, diag = F, byrow = T) {
 #' @param requiredClass the class of object that will be matched
 #' @return - a list of objects matching the class and name
 #' @export
-#' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - 
 #' @family umx utility functions
 #' @examples
@@ -417,7 +417,7 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @family umx utility functions
 #' @return - 
 #' @export
-#' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -527,7 +527,7 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 #' @return - matrix of correlations and p-values
 #' @family umx data functions
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_cor(myFADataRaw[1:8,])
@@ -680,7 +680,7 @@ umx_rename <- function (x, replace, old = NULL) {
 #' @return - list of matched column name and labels
 #' @family umx utility functions
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_grep(mtcars, "hp", output="both", ignore.case=T)
@@ -1066,7 +1066,7 @@ umxCovData = function(df, columns = manifests, use = "pairwise.complete.obs") {
 #' @return - a correlation matrix
 #' @export
 #' @family umx misc stats functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1092,7 +1092,7 @@ umxCov2cor <- function(x) {
 #' @return - boolean
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1127,7 +1127,7 @@ umx_has_been_run <- function(model, stop = FALSE) {
 #' @return - boolean
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -1176,7 +1176,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = F){
 #' @return - list of variable names
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' tmp = mtcars
@@ -1289,7 +1289,7 @@ umx_is_MxModel <- function(obj) {
 #' @return - boolean
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -1340,7 +1340,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, checkSubmodels = F
 #' @return - "raw", "cor", or "cov", or, if boolean= T, then T | F
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' df = cov(mtcars)
@@ -1567,7 +1567,7 @@ umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", pr
 #' @return - the re-ordered (and/or resized) matrix
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' oldMatrix = cov(mtcars)
@@ -1598,7 +1598,7 @@ umx_reorder <- function(old, newOrder) {
 #' @return - boolean
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_has_square_brackets("[hello]")
@@ -1621,7 +1621,7 @@ umx_has_square_brackets <- function (input) {
 #' @return - \code{\link{mxAlgebra}}
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1643,7 +1643,7 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' @return - an openmx algebra (formula)
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' m1 = mxModel("fit",
@@ -1669,7 +1669,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @return - new dataframe with scaled variables
 #' @export
 #' @family umx data helpers
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
@@ -1720,7 +1720,7 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' @return - new dataframe with scaled variables
 #' @export
 #' @family umx data helpers
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
@@ -1757,7 +1757,7 @@ umx_scale_wide_twin_data <- function(df, varsToScale, suffixes) {
 #' @param check TRUE
 #' @return - the option
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1812,7 +1812,7 @@ umx_default_option <- function(x, option_list, check = T){
 #' @param het.suppress = T
 #' @return - new dataframe
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @examples
 #' fakeCars = umx_fake_data(mtcars)
 umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = T, use.levels = T, use.miss = T, mvt.method = "eigen", het.ML = F, het.suppress = T){

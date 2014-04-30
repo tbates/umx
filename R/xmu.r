@@ -97,9 +97,10 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = T, overRide
 	# ==============================
 	# = Add means labels if needed =
 	# ==============================
+	# TODO add a test case with raw data but no means...
 	if(model@data@type == "raw"){
 		if(is.null(model@matrices$M)){
-			msg("You are using raw data, but have not yet added paths for the means\n")
+			message("You are using raw data, but have not yet added paths for the means\n")
 			stop("You do this with mxPath(from = 'one', to = 'var')")
 		} else {
 			model@matrices$M@labels = matrix(nrow = 1, paste0(colnames(model@matrices$M@values),"_mean", suffix))
@@ -253,7 +254,7 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 #' @return - a list containing an \code{\link{mxMatrix}} called "thresh", 
 #' an \code{\link{mxRAMObjective}} object, and an \code{\link{mxData}} object
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
 #' \dontrun{
@@ -302,9 +303,9 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = F, verbose = F) {
 xmuStart_value_list <- function(mean = 1, sd = NA, n = 1) {
 	# Purpose: Create startvalues for OpenMx paths
 	# use cases
-	# umxStart(1) # 1 value, varying around 1, with sd of .1
-	# umxStart(1, n=letters) # length(letters) start values, with mean 1 and sd .1
-	# umxStart(100, 15)  # 1 start, with mean 100 and sd 15
+	# umxValues(1) # 1 value, varying around 1, with sd of .1
+	# umxValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
+	# umxValues(100, 15)  # 1 start, with mean 100 and sd 15
 	# TODO: handle connection style
 	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
 	if(is.na(sd)){
@@ -325,7 +326,7 @@ xmuStart_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' @param suffix a string to append to each label
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 
 xmuPropagateLabels <- function(model, suffix = "") {

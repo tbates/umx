@@ -701,7 +701,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' @param showError Whether to show errors
 #' @param precision Deprecated use "digits"
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @family umx reporting
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -718,96 +718,119 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umxPlot(m1)
+#' plot(m1)
 #' }
 
 plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = F, showError = T, precision = NULL) {
-	# Purpose: Graphical output of your model using "graphviz":
-	# umxPlot(fit1, std=T, precision=3, dotFilename="name")
 	if(!is.null(precision)){
-		warning("precision is deprecated for umxSummary, use digits instead")
+		warning("precision is deprecated for plot, use digits instead")
 		digits = precision
 	}
 	valid_PathLabels = c("none", "labels", "both")
 	pathLabels = umx_default_option(pathLabels, valid_PathLabels, check = TRUE)
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
-	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap', 'sentence', 'numeric', 'series', and 'arithmet'
-	if(std){ model= umxStandardizeModel(model, return = "model") }
+	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
+	if(std){ model = umxStandardizeModel(model, return = "model") }
 	out = "";
 	# Get Asymmetric Paths
-	aRows = dimnames(model[["A"]]@free)[[1]]
-	aCols = dimnames(model[["A"]]@free)[[2]]
+	Avals   = model@matrices$A@values
+	Afree   = model@matrices$A@free
+	Alabels = model@matrices$A@labels
+	aRows = dimnames(Afree)[[1]]
+	aCols = dimnames(Afree)[[2]]
+	out = paste0(out, "\n\t# single arrow paths\n")
 	for(target in aRows ) {
 		for(source in aCols) {
-			thisPathFree = model[["A"]]@free[target,source]
-			thisPathVal  = round(model[["A"]]@values[target,source],digits)
-			if(thisPathFree){
-				out = paste(out, ";\n", source, " -> ", target, " [label=\"", thisPathVal, "\"]", sep="")
+			thisPathFree = Afree[target, source]
+			thisPathVal  = round(Avals[target, source], digits)
+			if(thisPathFree) {
+				out = paste0(out, "\t", source, " -> ", target, " [label=\"", thisPathVal, "\"];\n")
 			} else if(thisPathVal != 0 & showFixed) {
 				# TODO Might want to fix this !!! comment out
-				out = paste(out, ";\n", source, " -> ", target, " [label=\"@", thisPathVal, "\"]", sep="")
-				# return(list(thisLatent,thisManifest))
+				out = paste0(out, "\t", source, " -> ", target, " [label=\"@", thisPathVal, "\"];\n")
 			}
 		}
 	}
-	variances = c()
-	varianceNames = c()
-	S <- model[["S"]]
-	Svals   = S@values
-	Sfree   = S@free
-	Slabels = S@labels
+	out = paste0(out, "\n\t# variances\n")
+	variances = varianceNames = c()
+	Svals   = model@matrices$S@values
+	Sfree   = model@matrices$S@free
+	Slabels = model@matrices$S@labels
 	allVars = c(latents, selDVs)
 	for(target in allVars ) { # rows
-		lowerVars  = allVars[1:match(target,allVars)]
+		lowerVars  = allVars[1:match(target, allVars)]
 		for(source in lowerVars) { # columns
-			thisPathLabel = Slabels[target,source]
-			thisPathFree  = Sfree[target,source]
-			thisPathVal   = round(Svals[target,source], digits)
-			if(thisPathFree | (!(thisPathFree) & thisPathVal !=0 & showFixed)) {
+			thisPathLabel = Slabels[target, source]
+			thisPathFree  = Sfree[target, source]
+			thisPathVal   = Svals[target, source]
+			thisPathVal   = round(thisPathVal, digits)
+			if(thisPathFree | (thisPathVal !=0 & showFixed)) {
 				if(thisPathFree){
 					prefix = ""
 				} else {
 					prefix = "@"
 				}
-				if((target==source)) {
+				if((target == source)) {
 					if(showError){
-						eName     = paste(source, '_var', sep="")
-						varToAdd  = paste(eName, ' [label="', prefix, thisPathVal, '", shape = plaintext]', sep="")
+						eName     = paste0(source, '_var')
+						varToAdd  = paste0(eName, ' [label="', prefix, thisPathVal, '", shape = plaintext]')
 						variances = append(variances, varToAdd)
 						varianceNames = append(varianceNames, eName)
-						out = paste(out, ";\n", eName, " -> ", target, sep = "")
+						out = paste0(out, "\t", eName, " -> ", target, ";\n")
 					}
 				} else {
 					if(pathLabels == "both"){
-						out = paste0(out, ";\n", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "=", prefix, thisPathVal, "\"]")
+						out = paste0(out, "\t", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
 					} else if(pathLabels == "labels"){
-						out = paste0(out, ";\n", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "\"]")
+						out = paste0(out, "\t", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "\"];\n")
 					}else {
 						# pathLabels = "none"
-						out = paste0(out, ";\n", source, " -> ", target, " [dir=both, label=\"", prefix, thisPathVal, "\"]")
+						out = paste0(out, "\t", source, " -> ", target, " [dir=both, label=\"", prefix, thisPathVal, "\"];\n")
 					}
 				}
 			} else {
+				# path is fixed and is either zero OR showFixed is FALSE 
 				# return(list(thisFrom,thisTo))
 			}
 		}
 	}
-	preOut= "";
-	for(var in selDVs) {
-	   preOut = paste(preOut, var, " [shape = square];\n", sep="")
-	}
-	for(var in variances) {
-	   preOut = paste(preOut, "\n", var, sep="")
-	}
-	rankVariables = paste("\n{rank=min; ", paste(latents, collapse="; "), "};")
-	rankVariables = paste(rankVariables, "\n{rank=same; ", paste(selDVs, collapse=" "), "};")
-	rankVariables = paste(rankVariables, "\n{rank=max; ", paste(varianceNames, collapse=" "), "};")
 
-	# return(out)
-	digraph = paste("digraph G {\nsplines=\"FALSE\";\n", preOut, out, rankVariables, "\n}", sep="");
+	preOut = "";
+
+	# ============================
+	# = make the manifest shapes =
+	# ============================
+	# x1 [label="E", shape = square];
+	for(var in selDVs) {
+	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
+	}
+
+	# ===========================
+	# = make the variance lines =
+	# ===========================
+	# x1_var [label="0.21", shape = plaintext];
+
+	for(var in variances) {
+	   preOut = paste0(preOut, "\t", var, ";\n")
+	}
+
+	# ======================
+	# = set the ranks e.g. =
+	# ======================
+	# {rank=same; x1 x2 x3 x4 x5 };
+
+	rankVariables = paste0("\t{rank=min ; ", paste(latents, collapse = "; "), "};\n")
+	rankVariables = paste0(rankVariables, "\t{rank=same; ", paste(selDVs, collapse = " "), "};\n")
+	rankVariables = paste0(rankVariables, "\t{rank=max ; ", paste(varianceNames, collapse = " "), "};\n")
+
+	# ===================================
+	# = Assemble full text to write out =
+	# ===================================
+	digraph = paste("digraph G {\n\tsplines=\"FALSE\";\n", preOut, out, rankVariables, "\n}", sep = "\n");
+
 	if(!is.na(dotFilename)){
-		if(dotFilename=="name"){
-			dotFilename = paste(model@name, ".dot", sep="")
+		if(dotFilename == "name"){
+			dotFilename = paste0(model@name, ".dot")
 		}
 		cat(digraph, file = dotFilename) #write to file
 		system(paste("open", shQuote(dotFilename)));
@@ -1403,7 +1426,7 @@ umxFitIndices <- function(model, indepfit) {
 #' @return - object containing the RMSEA and lower and upper bounds
 #' @export
 #' @family umx reporting
-#' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples

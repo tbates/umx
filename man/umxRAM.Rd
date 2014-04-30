@@ -2,7 +2,7 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(name, ..., independent = NA)
+umxRAM(name, ..., fixed = NA, independent = NA)
 }
 \arguments{
   \item{name}{friendly name for the model}
@@ -11,6 +11,9 @@ umxRAM(name, ..., independent = NA)
 
   \item{independent}{Whether the model is independent
   (default = NA)}
+
+  \item{fixed}{A list of exogenous manifests that should be
+  allowed to covary}
 }
 \value{
 - \code{\link{mxModel}}
