@@ -20,7 +20,7 @@ Fix the variance of all, or selected, latents @ selected values.
 \examples{
 require(OpenMx)
 data(demoOneFactor)
-m1 <- mxRAM("One Factor",
+m1 <- umxRAM("One Factor",
 	mxPath(from = "g", to = names(demoOneFactor)),
 	mxPath(from = names(demoOneFactor), arrows = 2),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)

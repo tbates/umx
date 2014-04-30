@@ -55,7 +55,7 @@ plot(m1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx reporting: \code{\link{RMSEA}};
   \code{\link{confint.MxModel}};

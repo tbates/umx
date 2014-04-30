@@ -46,4 +46,8 @@ summary(m1)
 \references{
 - \url{http://github.com/tbates/umx}
 }
+\seealso{
+Other umx reporting functions: \code{\link{residuals.MxModel}},
+  \code{\link{residuals.MxModel}}
+}
 

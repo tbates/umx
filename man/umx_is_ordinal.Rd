@@ -35,7 +35,7 @@ umx_is_ordinal(tmp)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_check_model}};

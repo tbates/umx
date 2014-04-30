@@ -40,7 +40,7 @@ umx_check_model(model)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_check_names}}; \code{\link{umx_has_CIs}};

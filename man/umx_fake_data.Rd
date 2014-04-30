@@ -49,6 +49,6 @@ Created:  17 Aug 2010
 fakeCars = umx_fake_data(mtcars)
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 }
 

@@ -30,6 +30,6 @@ mat1 = umxJiggle(mat1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxValues}}
 }
 

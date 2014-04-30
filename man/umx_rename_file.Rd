@@ -39,7 +39,7 @@ umx_rename_file(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceS
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx utility functions: \code{\link{\%>\%}},
   \code{\link{\%>\%}}, \code{\link{umx_greater_than}};

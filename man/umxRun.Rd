@@ -67,11 +67,11 @@ m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{umxReRun}}, \code{\link{confint}}
+- \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxValues}}, \code{\link{umxReRun}}, \code{\link{confint}}
 
 Other umx core functions: \code{\link{umxLabel}};
-  \code{\link{umxReRun}}; \code{\link{umxStart}};
-  \code{\link{umx}}, \code{\link{umx-package}},
-  \code{\link{umx-package}}
+  \code{\link{umxReRun}}; \code{\link{umxValues}};
+  \code{\link{umx_show}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

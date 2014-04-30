@@ -28,7 +28,7 @@ plot(wt1 ~ wt2, data = df)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx data helpers: \code{\link{umxHetCor}};
   \code{\link{umx_lower2full}}; \code{\link{umx_scale}}

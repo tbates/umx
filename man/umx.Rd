@@ -42,9 +42,9 @@ m1 <- mxModel("One Factor", type = "RAM",
 omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
 
 # With \\code{link{umxLabel}}, you can easily add informative and predictable labels to each free path (works with matrix style as well!)
-# and use \\code{link{umxStart}}, to set sensible guesses for start values...
+# and use \\code{link{umxValues}}, to set sensible guesses for start values...
 m1 = umxLabel(m1)
-m1 = umxStart(m1)
+m1 = umxValues(m1)
 
 # Re-run omxGetParameters...
 omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
@@ -88,6 +88,6 @@ umxPlot(m1, std = T, dotFilename = NA)
 \seealso{
 Other umx core functions: \code{\link{umxLabel}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxStart}}
+  \code{\link{umxValues}}; \code{\link{umx_show}}
 }
 

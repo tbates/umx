@@ -37,7 +37,7 @@ umx_grep(spss_df, "labeltext", output = "name")
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx utility functions: \code{\link{\%>\%}},
   \code{\link{\%>\%}}, \code{\link{umx_greater_than}};

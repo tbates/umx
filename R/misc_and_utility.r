@@ -16,6 +16,35 @@
 # = utility functions =
 # =====================
 
+#' umx_show
+#'
+#' Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
+#'
+#' @param model an \code{\link{mxModel}} to show data from
+#' @param what  legal options are "values" (default), "free", or "labels")
+#' @param matrices to show  (default is c("S", "A"))
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx core functions
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' model = umx_show(model)
+#' }
+umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("S", "A")) {
+	what = umx_default_option(what, c("values", "free", "labels"), check = TRUE)
+	for (w in matrices) {
+		message("Showing ", what, " for:", w, " matrix:")
+		if(what == "values"){
+			umx_print(data.frame(model@matrices[[w]]@values), zero.print = ".", digits = 2)		
+		}else if(what == "free"){
+			umx_print(data.frame(model@matrices[[w]]@free), zero.print = ".", digits = 2)
+		}
+	}
+}
+
+
 accumulate <- function(FUN = nlevels, fromEach = "column", of_DataFrame = ordinalColumns) {
 	# accumulate(nlevels, fromEach = "column", of_DataFrame = ordinalColumns)
 	if(! (fromEach %in% c("column", "row"))){
@@ -196,6 +225,7 @@ umx_report_time <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' @param zero.print String to replace 0.000 with  (defaults to "0")
 #' @param justify Parameter passed to print (defaults to "none")
 #' @param file whether to write to a file (defaults to NA (no file). Use "tmp.html" to open as tables in browser.
+#' @param suppress minimum numeric value to print (default =  NULL, print all values, no matter how small)
 #' @param ... Optional parameters for print
 #' @export
 #' @family umx misc reporting functions
@@ -207,24 +237,27 @@ umx_report_time <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
 #' umx_print(mtcars[1:10,], file = "Rout.html")
 #' }
 
-umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA,"tmp.html"),...){
+umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA,"tmp.html"), suppress = NULL, ...){
 	# TODO: Options for file = c("Rout.html","cat","return")
 	file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
-	xx <- umx_round(x, digits = digits, coerce = FALSE)
-    # xx <- format(x, digits = digits, justify = justify)
+	if(!is.null(suppress)){
+		x[abs(x) < suppress] = 0
+		zero.print = "."
+	}
+	x <- umx_round(x, digits = digits, coerce = FALSE)
     if (any(ina <- is.na(x))) 
-        xx[ina] <- na.print
+        x[ina] <- na.print
 	i0 <- !ina & x == 0
     if (zero.print != "0" && any(i0)) 
-        xx[i0] <- zero.print
+        x[i0] <- zero.print
     if (is.numeric(x) || is.complex(x)){
-        print(xx, quote = quote, right = TRUE, ...)
+        print(x, quote = quote, right = TRUE, ...)
 	} else if(!is.na(file)){
 		R2HTML::HTML(x, file = file, Border = 0, append = F, sortableDF=T); 
 		system(paste0("open ", file))
 		print("Table opened in browser")
     }else{
-		print(xx, quote = quote, ...)	
+		print(x, quote = quote, ...)	
     }
     invisible(x)
 }

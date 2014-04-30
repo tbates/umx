@@ -164,16 +164,6 @@ umxRAM <- function (name, ..., fixed = NA, independent = NA) {
 	return(m1)
 }
 
-umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("S", "A")) {
-	what = umx_default_option(what, c("values", "free", "labels"), check = TRUE)
-	if(what =="values"){
-		for (w in matrices) {
-			message("Showing ", what, " for:", w, " matrix:")
-			umx_print(data.frame(model@matrices[[w]]@values), zero.print = ".", digits=2)		
-		}
-	}
-}
-
 umxFixFirstLoadings <- function(model, fixedValue = 1, latents = NULL) {
 	message("This needs to add a check that we are not in the latents columns...")
 	if(is.null(latents)){

@@ -23,7 +23,7 @@ x_cor = umxCov2cor(x)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx misc stats functions: \code{\link{Stouffer.test}};
   \code{\link{umx_pp33}}

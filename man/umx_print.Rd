@@ -3,7 +3,8 @@
 \title{umx_print}
 \usage{
 umx_print(x, digits = getOption("digits"), quote = FALSE, na.print = "",
-  zero.print = "0", justify = "none", file = c(NA, "tmp.html"), ...)
+  zero.print = "0", justify = "none", file = c(NA, "tmp.html"),
+  suppress = NULL, ...)
 }
 \arguments{
   \item{x}{A data.frame to print}
@@ -25,6 +26,9 @@ umx_print(x, digits = getOption("digits"), quote = FALSE, na.print = "",
 
   \item{file}{whether to write to a file (defaults to NA
   (no file). Use "tmp.html" to open as tables in browser.}
+
+  \item{suppress}{minimum numeric value to print (default =
+  NULL, print all values, no matter how small)}
 
   \item{...}{Optional parameters for print}
 }

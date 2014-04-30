@@ -42,6 +42,6 @@ umxRAM("tim", a, b, thedata)
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 }
 

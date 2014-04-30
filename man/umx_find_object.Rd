@@ -27,7 +27,7 @@ umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
 -
 }
 \seealso{
-- \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx utility functions: \code{\link{\%>\%}},
   \code{\link{\%>\%}}, \code{\link{umx_greater_than}};

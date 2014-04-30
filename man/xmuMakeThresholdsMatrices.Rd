@@ -31,6 +31,6 @@ junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose=T)
 - http://openmx.psyc.virginia.edu/
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 }
 
