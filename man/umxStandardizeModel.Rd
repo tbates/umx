@@ -48,6 +48,6 @@ summary(m1)
 }
 \seealso{
 Other umx reporting functions: \code{\link{residuals.MxModel}},
-  \code{\link{residuals.MxModel}}
+  \code{\link{residuals.MxModel}}; \code{\link{umx_show}}
 }
 

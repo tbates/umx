@@ -32,28 +32,34 @@ umxParallel <- function(model, what) {
 # = Highlevel models (ACE, GxE) =
 # ===============================
 
-umxFixed <- function(correlatedManifests, data){
-	# If the data are raw, compute the variance
-	# Fix variance of exogenous measures
-	a = mxPath(from = correlatedManifests, arrows = 2, free = T, values = 1)
-	# And allow them to covary (formative)
-	b = mxPath(from = correlatedManifests, connect = "unique.bivariate", arrows = 2)
-	return(list(a,b))
-}
-
-
 #' umxRAM
 #'
-#' Making it as simple as possible to create a RAM model
+#' Making it as simple as possible to create a RAM model. It borrows its philosophy and some parameter 
+#' labels from John Fox's sem::specifyModel.
 #'
+#' @details Like mxModel, you list the theoretical causal paths. Unlike mxModel:
+#' \enumerate{
+#' \item{You can request creation of error variances using \code{endog.variances = TRUE} }
+#' \item{You can request creation of variances for exogenous variables (using \code{exog.variances = TRUE})}
+#' \item{For identification, you can request either \code{fix = "latents"} or \code{fix = "firstLoadings"} to fix either the variance of latents or their first factor loading at 1.}
+#' }
+#' Additional conveniences: 
+#' \enumerate{
+#' \item{type defaults to "RAM"}
+#' \item{You don't need to list manifestVars (they are assumed to map onto names in the \code{mxData})}
+#' \item{Any variables you mention that are not found in mxData are assumed to be latents}
+#' }
+#' 
 #' @param name friendly name for the model
 #' @param ... A list of paths and a data source
+#' @param endog.variances If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.
+#' @param exog.variances If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.
+#' @param fix Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings")
 #' @param independent Whether the model is independent (default = NA)
-#' @param fixed A list of exogenous manifests that should be allowed to covary
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' thedata = mtcars[,c("mpg", "cyl", "disp")]
 #' a = mxPath(from = "l_power", to = "mpg")
@@ -66,21 +72,21 @@ umxFixed <- function(correlatedManifests, data){
 #' m1 = mxRun(m1)
 #' \dontrun{
 #' plot(m1)
-#' m1 = umxRAM("tim", a, b)
+#' m1 = umxRAM("tim", a, b) # error: no data
 #' # TODO implement handling a dataframe
 #' umxRAM("tim", a, b, thedata)
 #' }
-umxRAM <- function (name, ..., fixed = NA, independent = NA) {
+umxRAM <- function(name, ..., exog.variances = TRUE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latents = NULL, independent = NA) {
+	# TODO 
+	# If !is.null(latents), we will check names all appear in either data or latents
+	# If not, we will call anything not in data a latent
+	fix = umx_default_option(fix, c("none", "latents", "firstLoadings"), check = TRUE)
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
 		stop("You must include one mxData() object, and some mxPath() objects")
 	}
-	# TODO 
-	# latents = NULL
-	# if you set latents, we will check names all appear in either data or latents
-	# if not, we will call anything not in data a latent
-	nPaths = 0 # initialise
-	foundNames = c()
+	nPaths       = 0 # initialise
+	foundNames   = c()
 	manifestVars = NULL
 	for (i in dot.items) {
 		thisIs = class(i)[1]
@@ -109,16 +115,14 @@ umxRAM <- function (name, ..., fixed = NA, independent = NA) {
 	# ========================
 	# = All items processed  =
 	# ========================
-	if(is.null(manifestVars)){
-		stop("No manifests found: You need to include an mxData() or dataframe")
-	}
+	if(is.null(manifestVars)){ stop("No manifests found: You need to include an mxData() or dataframe") }
 	message("ManifestVars found in data were: ", paste(manifestVars, collapse = ", "), "\n")
 
 	foundNames = unique(na.omit(foundNames))
 	latentVars = setdiff(foundNames, manifestVars)
 	nLatent    = length(latentVars)
 
-	# Report on which latents were correlated
+	# Report on which latents were created
 	if(nLatent == 0){
 		message("No latent variables were created.\n")
 		latentVars = NA
@@ -126,20 +130,7 @@ umxRAM <- function (name, ..., fixed = NA, independent = NA) {
 		message("A latent variable '", latentVars[1], "' was created.\n")
 	} else {
 		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ".\n")
-	}
-
-	# TODO
-	# if (any(fixed !%in% ) c(manifestVars, latentVars)) ){
-	# 	complain...
-	# }
-	
-	# TODO: Add variance to all variables? and fix fixed at zero?
-	# residuals for exogenous variables
-	# mxPath(from = fixed, arrows = 2),
-
-	# add free variance to latents not in the fixed list?
-	# mxPath(from = latents, arrows = 2),
-	
+	}	
 	unusedManifests = setdiff(manifestVars, foundNames)
 	if(length(unusedManifests) > 0){
 		warning(
@@ -154,6 +145,26 @@ umxRAM <- function (name, ..., fixed = NA, independent = NA) {
 		independent = T, 
 		dot.items)
 	)
+	# TODO: Add variance/residuals to all variables except reflective latents
+	# mxPath(from = fixed, arrows = 2),
+	
+	# exog -> endog
+	if(exog.variances){
+		message("Added variances to exogenous variables)\n")
+		m1 = umx_add_variances(m1, umx_is_exogenous(m1, manifests_only = TRUE, verbose = TRUE) )
+	}
+	
+	if(endog.variances){
+		m1 = umx_add_variances(m1, umx_is_endogenous(m1, manifests_only = TRUE, verbose = TRUE))
+	}
+
+	# Fix latents or first paths
+	if(fix == "latents"){
+		m1 = umx_fix_latents(m1)
+	} else if(fix == "firstLoadings"){
+		# add free variance to latents not in the fixed list?
+		m1 = umx_fix_first_loadings(m1)
+	}
 	if(isRaw){
 		# add means
 		message("Added a means model: mxPath('one', to = manifestVars)\n")
@@ -164,59 +175,6 @@ umxRAM <- function (name, ..., fixed = NA, independent = NA) {
 	return(m1)
 }
 
-umxFixFirstLoadings <- function(model, fixedValue = 1, latents = NULL) {
-	message("This needs to add a check that we are not in the latents columns...")
-	if(is.null(latents)){
-		latenVarList = model@latentVars
-	} else {
-		latenVarList = latents
-	}
-	for (i in latenVarList) {
-		# i = "ind60"
-		firstFreeRow = which(model@matrices$A@free[,i])[1]
-		model@matrices$A@free[firstFreeRow, i]   = FALSE
-		model@matrices$A@values[firstFreeRow, i] = fixedValue
-	}
-	return(model)
-}
-
-#' umxFixLatentVariances
-#'
-#' Fix the variance of all, or selected, latents @@ selected values.
-#'
-#' @param model an \code{\link{mxModel}} to set
-#' @param fixedValue (Default <- 1)
-#' @param latents (If NULL then all)
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @family umx build functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' require(OpenMx)
-#' data(demoOneFactor)
-#' m1 <- umxRAM("One Factor",
-#' 	mxPath(from = "g", to = names(demoOneFactor)),
-#' 	mxPath(from = names(demoOneFactor), arrows = 2),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxFixLatentVariances(m1)
-umxFixLatentVariances <- function(model, fixedValue = 1, latents = NULL) {
-	if(is.null(latents)){
-		latenVarList = model@latentVars
-	} else {
-		latenVarList = latents
-	}
-	message("TODO: Check their manifests are not formative x -> latent")
-	for (i in latenVarList) {
-		# TODO 
-	}
-	for (i in latenVarList) {
-		# message("fixing ", i, ", ", i, " which was ", )
-			model@matrices$S@free[i, i]   = FALSE
-			model@matrices$S@values[i, i] = fixedValue
-	}
-	return(model)
-}
 
 #' umxGxE_window
 #'
@@ -713,6 +671,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 #' a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 #' a$labels
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F, overRideExisting = F) {	
+	# TODO change to umxSetLabels?
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
 		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
@@ -990,25 +949,37 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 	S <- model[[nameS]]
 	I <- diag(nrow(S@values))
 	
-	# Calculate the expected covariance matrix
-	IA <- solve(I-A@values)
-	expCov <- IA %*% S@values %*% t(IA)
-	# Return 1/SD to a diagonal matrix
-	invSDs <- 1/sqrt(diag(expCov))
-	# Give the inverse SDs names, because mxSummary treats column names as characters
-	names(invSDs) <- as.character(1:length(invSDs))
-	if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
-	# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
-	diag(I) <- invSDs
-	# Standardize the A, S and M matrices
-	#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
-	#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
-	stdA <- I %*% A@values %*% solve(I)
-	stdS <- I %*% S@values %*% I
-	# Populate the model
-	model[[nameA]]@values[,] <- stdA
-	model[[nameS]]@values[,] <- stdS
-	if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
+	# this can fail (non-invertable etc. so we wrap it in try-catch)
+	tryCatch({	
+		# Calculate the expected covariance matrix
+		IA <- solve(I - A@values)
+		expCov <- IA %*% S@values %*% t(IA)
+		# Return 1/SD to a diagonal matrix
+		invSDs <- 1/sqrt(diag(expCov))
+		# Give the inverse SDs names, because mxSummary treats column names as characters
+		names(invSDs) <- as.character(1:length(invSDs))
+		if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
+		# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
+		diag(I) <- invSDs
+		# Standardize the A, S and M matrices
+		#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
+		#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
+		stdA <- I %*% A@values %*% solve(I)
+		stdS <- I %*% S@values %*% I
+		# Populate the model
+		model[[nameA]]@values[,] <- stdA
+		model[[nameS]]@values[,] <- stdS
+		if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
+	}, warning = function(cond) {
+	    # warning-handler-code
+        message(cond)
+	}, error = function(cond) {
+	    cat("The model could not be standardized")
+        message(cond)
+	}, finally = {
+	    # cleanup-code
+	})
+
 	# Return the model, if asked
 	if(return=="model"){
 		return(model)

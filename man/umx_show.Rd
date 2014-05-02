@@ -30,9 +30,8 @@ model = umx_show(model)
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
-Other umx core functions: \code{\link{umxLabel}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxValues}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
+Other umx reporting functions: \code{\link{residuals.MxModel}},
+  \code{\link{residuals.MxModel}};
+  \code{\link{umxStandardizeModel}}
 }
 

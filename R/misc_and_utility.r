@@ -16,6 +16,237 @@
 # = utility functions =
 # =====================
 
+
+#' umx_is_exogenous
+#'
+#' Return a list of all the exogenous variables (variables with no incoming single-arrow path) in a model. 
+#'
+#' @param model an \code{\link{mxModel}} from which to get exogenous variables
+#' @param manifests_only Whether to check only manifests (default = TRUE)
+#' @return - list of exogenous variables
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- umxRAM("One Factor",
+#' 	mxPath(from = "g", to = names(demoOneFactor)),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' umx_is_exogenous(model, manifests_only = TRUE)
+#' umx_is_exogenous(model, manifests_only = FALSE)
+umx_is_exogenous <- function(model, manifests_only = TRUE) {
+	umx_check_model(model, type = "RAM")
+	checkThese = model@manifestVars
+	if(!manifests_only){
+		checkThese = c(checkThese, model@latentVars)
+	}
+	if(length(checkThese) < 1){
+		return(c())
+	}
+	exog = c()
+	n = 1
+	for (i in checkThese) {
+		if(!any(model@matrices$A@free[i, ])){
+			exog[n] = i
+			n = n + 1
+		}
+	}
+	return(exog)
+}
+
+#' umx_is_endogenous
+#'
+#' Return a list of all the endogenous variables (variables with at least one incoming single-arrow path) in a model.
+#'
+#' @param model an \code{\link{mxModel}} from which to get endogenous variables
+#' @param manifests_only Whether to check only manifests (default = TRUE)
+#' @param verbose Whether to message the user about what was done for them (default = TRUE)
+#' @return - list of endogenous variables
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- umxRAM("One Factor",
+#' 	mxPath(from = "g", to = names(demoOneFactor)),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' umx_is_endogenous(model, manifests_only = TRUE)
+#' umx_is_endogenous(model, manifests_only = FALSE)
+umx_is_endogenous <- function(model, manifests_only = TRUE, verbose = TRUE) {
+	# has_no_incoming_single_arrow
+	umx_check_model(model, type = "RAM")
+	checkThese = model@manifestVars
+	if(!manifests_only){
+		checkThese = c(checkThese, model@latentVars)
+	}
+	if(length(checkThese) < 1){
+		return(c())
+	}
+	exog = c()
+	n = 1
+	for (i in checkThese) {
+		if(!any(model@matrices$A@free[i, ])){
+			exog[n] = i
+			n = n + 1
+		}
+	}
+	if(verbose & n > 1){
+		cat("Found ", (n - 1), " endogenous variables)\n")
+	}
+	return(exog)
+}
+
+#' umx_add_variances
+#'
+#' Convenience function to save the user specifying mxpaths adding variance to each variable
+#'
+#' @param model an \code{\link{mxModel}} to add variances to
+#' @param add.to = c("all", "manifests", "latents")
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM",
+#'  manifestVars = names(demoOneFactor),
+#'  latentVars = "g",
+#' 	mxPath(from = "g", to = names(demoOneFactor), values= .1),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' umx_show(m1, matrices = "S") # variables lack variance :-(
+#' m1 = umx_add_variances(m1)
+#' umx_show(m1, matrices = "S") 
+#' # Note: latent g has been treated like the manifests...
+#' # umxFixLatents() will take care of this for you...
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umxSummary(m1)
+umx_add_variances <- function(model, add.to = c("all", "manifests", "latents")) {
+	umx_check_model(model,type = "RAM")
+	add.to = umx_default_option(add.to, c("all", "manifests", "latents"), check = TRUE)
+	if(add.to == "all"){
+		theList = c(model@latentVars, model@manifestVars)
+	} else if (add.to == "manifests"){
+		theList = model@manifestVars
+	}else{
+		theList = model@latentVars
+	}
+	for (i in theList) {
+		model@matrices$S@free[i, i]   = TRUE
+		model@matrices$S@values[i, i] = .1
+	}
+	return(model)
+}
+
+#' umx_fix_latents
+#'
+#' Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.
+#'
+#' @param model an \code{\link{mxModel}} to set
+#' @param latents (If NULL then all latentVars)
+#' @param exogenous.only only touch exogenous latents (default = TRUE)
+#' @param at (Default = 1)
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx build functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM",
+#'  manifestVars = names(demoOneFactor),
+#'  latentVars = "g",
+#' 	mxPath(from = "g", to = names(demoOneFactor)),
+#' 	mxPath(from = names(demoOneFactor), arrows = 2),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' umx_show(m1, matrices = "S") # variance of g is not set
+#' m1 = umx_fix_latents(m1)
+#' umx_show(m1, matrices = "S") # variance of g is fixed at 1
+umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1) {
+	if(is.null(latents)){
+		latenVarList = model@latentVars
+	} else {
+		latenVarList = latents
+	}
+	exogenous_list = umx_is_exogenous(model, manifests_only = FALSE)
+	for (i in latenVarList) {
+		if(!exogenous.only | i %in% exogenous_list){
+			model@matrices$S@free[i, i]   = FALSE
+			model@matrices$S@values[i, i] = at
+		}
+	}
+	return(model)
+}
+
+#' umx_fix_first_loadings
+#'
+#' Fix the loading of the first path from each latent at selected value (default = 1).
+#'
+#' @param model an \code{\link{mxModel}} to set
+#' @param latents (If NULL then all latentVars in model)
+#' @param at (Default = 1)
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx build functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM",
+#'  manifestVars = names(demoOneFactor),
+#'  latentVars = "g",
+#' 	mxPath(from = "g", to = names(demoOneFactor)),
+#' 	mxPath(from = names(demoOneFactor), arrows = 2),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umx_fix_first_loadings(m1)
+#' umx_show(m1) # variance of g is fixed at 1
+umx_fix_first_loadings <- function(model, latents = NULL, at = 1) {
+	# TODO: SHould this apply when the first loading is a latents?
+	# TODO: Must not apply this twice
+	umx_check_model(model, type = "RAM")
+	if(is.null(latents)){
+		latenVarList = model@latentVars
+	} else {
+		latenVarList = latents
+	}
+	for (i in latenVarList) {
+		# i = "ind60"
+		firstFreeRow = which(model@matrices$A@free[,i])[1]
+		# check that there is not already a factor fixed prior to this one
+		if(firstFreeRow == 1){
+			# must be ok
+			model@matrices$A@free[firstFreeRow, i]   = FALSE
+			model@matrices$A@values[firstFreeRow, i] = at
+		} else {
+			if(any(model@matrices$A@values[1:(firstFreeRow-1), i] == at)){
+				message("I skipped factor '", i, "'. It looks like it already has a loading fixed at ", at)
+			} else {
+				model@matrices$A@free[firstFreeRow, i]   = FALSE
+				model@matrices$A@values[firstFreeRow, i] = at				
+			}
+		}
+	}
+	return(model)
+}
+
+umxFormativeVarianceMess <- function(model){
+	a = mxPath(from = correlatedManifests, arrows = 2, free = T, values = 1)
+	# And allow them to covary (formative)
+	b = mxPath(from = correlatedManifests, connect = "unique.bivariate", arrows = 2)
+	return(list(a,b))
+}
+
 #' umx_show
 #'
 #' Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
@@ -25,7 +256,7 @@
 #' @param matrices to show  (default is c("S", "A"))
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx core functions
+#' @family umx reporting functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples

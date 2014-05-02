@@ -41,6 +41,7 @@ a = residuals(m1); a
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other umx reporting functions: \code{\link{umxStandardizeModel}}
+Other umx reporting functions: \code{\link{umxStandardizeModel}};
+  \code{\link{umx_show}}
 }
 

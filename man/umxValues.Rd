@@ -50,9 +50,37 @@ umxValues(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 
 \seealso{
 - Core functions:
 
-Other umx core functions: \code{\link{umxLabel}};
+Other umx core functions: \code{\link{col.as.numeric}},
+  \code{\link{cor.prob}}, \code{\link{genEpiCompare}},
+  \code{\link{genEpi_EvalQuote}},
+  \code{\link{genEpi_GetLabels}},
+  \code{\link{genEpi_Jiggle}}, \code{\link{genEpi_Path}},
+  \code{\link{genEpi_ReRun}}, \code{\link{genEpi_equate}},
+  \code{\link{graphViz_Cholesky}},
+  \code{\link{grepSPSS_labels}},
+  \code{\link{hasSquareBrackets}}, \code{\link{makeACE}},
+  \code{\link{mxAutoThreshRAMObjective}},
+  \code{\link{mxLatent}},
+  \code{\link{mxMakeThresholdsMatrices}},
+  \code{\link{mxStart}}, \code{\link{standardizeRAM}},
+  \code{\link{stringToMxAlgebra}},
+  \code{\link{summaryACEFit}},
+  \code{\link{summaryCommonFit}}, \code{\link{tryHard}},
+  \code{\link{twoGroupCholesky}},
+  \code{\link{twoGroupCommonPath}},
+  \code{\link{twoGroupIndependentPath}},
+  \code{\link{twoGroupOrdinal}},
+  \code{\link{two_group_G_by_E}},
+  \code{\link{umx-deprecated}}, \code{\link{umxGetLabels}},
+  \code{\link{umxGraph_RAM}}, \code{\link{umxLabeler}},
+  \code{\link{umxLabels}}, \code{\link{umxPath}},
+  \code{\link{umxPlotCholesky}},
+  \code{\link{umxReportCIs}}, \code{\link{umxReportFit}},
+  \code{\link{umxReportFit}}, \code{\link{umxStart}},
+  \code{\link{umxTryHard}}, \code{\link{umx_grep_labels}},
+  \code{\link{umx_u_APA_pval}}; \code{\link{umxLabel}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umx_show}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
+  \code{\link{umx}}, \code{\link{umx-package}},
+  \code{\link{umx-package}}
 }
 
