@@ -1,0 +1,48 @@
+\name{umx_is_exogenous}
+\alias{umx_is_exogenous}
+\title{umx_is_exogenous}
+\usage{
+umx_is_exogenous(model, manifests_only = TRUE)
+}
+\arguments{
+  \item{model}{an \code{\link{mxModel}} from which to get
+  exogenous variables}
+
+  \item{manifests_only}{Whether to check only manifests
+  (default = TRUE)}
+}
+\value{
+- list of exogenous variables
+}
+\description{
+Return a list of all the exogenous variables (variables with no incoming single-arrow path) in a model.
+}
+\examples{
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- umxRAM("One Factor",
+	mxPath(from = "g", to = names(demoOneFactor)),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+umx_is_exogenous(model, manifests_only = TRUE)
+umx_is_exogenous(model, manifests_only = FALSE)
+}
+\references{
+- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+Other umx misc functions: \code{\link{umxEval}};
+  \code{\link{umx_add_variances}};
+  \code{\link{umx_check_model}};
+  \code{\link{umx_check_names}}; \code{\link{umx_has_CIs}};
+  \code{\link{umx_has_been_run}};
+  \code{\link{umx_has_square_brackets}};
+  \code{\link{umx_is_MxModel}}; \code{\link{umx_is_RAM}};
+  \code{\link{umx_is_cov}};
+  \code{\link{umx_is_endogenous}};
+  \code{\link{umx_is_ordinal}}; \code{\link{umx_reorder}};
+  \code{\link{umx_string_to_algebra}}
+}
+

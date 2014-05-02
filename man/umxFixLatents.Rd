@@ -1,0 +1,39 @@
+\name{umxFixLatents}
+\alias{umxFixLatents}
+\title{umxFixLatents}
+\usage{
+umxFixLatents(model, latents = NULL, at = 1)
+}
+\arguments{
+  \item{model}{an \code{\link{mxModel}} to set}
+
+  \item{latents}{(If NULL then all latentVars)}
+
+  \item{at}{(Default = 1)}
+}
+\value{
+- \code{\link{mxModel}}
+}
+\description{
+Fix the variance of all, or selected, latents at selected values. This function adds a variance to the factor if it does not exist.
+}
+\examples{
+require(OpenMx)
+data(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+ manifestVars = names(demoOneFactor),
+ latentVars = "g",
+	mxPath(from = "g", to = names(demoOneFactor)),
+	mxPath(from = names(demoOneFactor), arrows = 2),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+m1 = umxFixLatents(m1)
+umx_show(m1) # variance of g is fixed at 1
+}
+\references{
+- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+Other umx build functions: \code{\link{umxFixFirstPaths}}
+}
+

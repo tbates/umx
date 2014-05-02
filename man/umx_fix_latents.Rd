@@ -1,0 +1,43 @@
+\name{umx_fix_latents}
+\alias{umx_fix_latents}
+\title{umx_fix_latents}
+\usage{
+umx_fix_latents(model, latents = NULL, exogenous.only = TRUE, at = 1)
+}
+\arguments{
+  \item{model}{an \code{\link{mxModel}} to set}
+
+  \item{latents}{(If NULL then all latentVars)}
+
+  \item{exogenous.only}{only touch exogenous latents
+  (default = TRUE)}
+
+  \item{at}{(Default = 1)}
+}
+\value{
+- \code{\link{mxModel}}
+}
+\description{
+Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.
+}
+\examples{
+require(OpenMx)
+data(demoOneFactor)
+m1 <- mxModel("One Factor", type = "RAM",
+ manifestVars = names(demoOneFactor),
+ latentVars = "g",
+	mxPath(from = "g", to = names(demoOneFactor)),
+	mxPath(from = names(demoOneFactor), arrows = 2),
+	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+)
+umx_show(m1, matrices = "S") # variance of g is not set
+m1 = umx_fix_latents(m1)
+umx_show(m1, matrices = "S") # variance of g is fixed at 1
+}
+\references{
+- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+Other umx build functions: \code{\link{umx_fix_first_loadings}}
+}
+

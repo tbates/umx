@@ -1,0 +1,242 @@
+\name{umx-deprecated}
+\alias{col.as.numeric}
+\alias{cor.prob}
+\alias{genEpiCompare}
+\alias{genEpi_EvalQuote}
+\alias{genEpi_GetLabels}
+\alias{genEpi_Jiggle}
+\alias{genEpi_Path}
+\alias{genEpi_ReRun}
+\alias{genEpi_equate}
+\alias{graphViz_Cholesky}
+\alias{grepSPSS_labels}
+\alias{hasSquareBrackets}
+\alias{makeACE}
+\alias{mxAutoThreshRAMObjective}
+\alias{mxLatent}
+\alias{mxMakeThresholdsMatrices}
+\alias{mxStart}
+\alias{standardizeRAM}
+\alias{stringToMxAlgebra}
+\alias{summaryACEFit}
+\alias{summaryCommonFit}
+\alias{tryHard}
+\alias{twoGroupCholesky}
+\alias{twoGroupCommonPath}
+\alias{twoGroupIndependentPath}
+\alias{twoGroupOrdinal}
+\alias{two_group_G_by_E}
+\alias{umx-deprecated}
+\alias{umxGetLabels}
+\alias{umxGraph_RAM}
+\alias{umxLabeler}
+\alias{umxLabels}
+\alias{umxPath}
+\alias{umxPlotCholesky}
+\alias{umxReportCIs}
+\alias{umxReportFit}
+\alias{umxStart}
+\alias{umxTryHard}
+\alias{umx_grep_labels}
+\alias{umx_u_APA_pval}
+\title{List of deprecated umx functions
+These functions are deprecated in umx. They may be dropped entirely in future versions. Many already stop() code and ask to be updated}
+\usage{
+umx_grep_labels(df, grepString, output = "both", ignore.case = T,
+  useNames = F)
+
+grepSPSS_labels(df, grepString, output = "both", ignore.case = T,
+  useNames = F)
+
+umxStart(obj = NA, sd = NA, n = 1, onlyTouchZeros = F)
+
+umxTryHard(model, n = 3, calc_SE = F)
+
+umxLabels(from = NA, to = NA, connect = "single", prefix = "",
+  suffix = "")
+
+genEpi_Jiggle(matrixIn, mean = 0, sd = 0.1, dontTouch = 0)
+
+umxPath(from = NA, to = NA, connect = "single", arrows = 1,
+  free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA,
+  prefix = "", suffix = "", ...)
+
+umxReportFit(model, saturatedModels = NULL, report = "line",
+  showEstimates = NULL, precision = 2)
+
+umxGetLabels(inputTarget, regex = NA, free = NA, verbose = F)
+
+makeACE(modelName = "ACE", selDVs, dzData, mzData, nSib = 2,
+  equateMeans = T, dzAr = 0.5, dzCr = 1, addStd = F)
+
+twoGroupCommonPath(modelName = "CP", selDVs, dzData, mzData, nSib = 2)
+
+twoGroupIndependentPath(modelName = "IP", selDVs, dzData, mzData, nSib = 2,
+  freeLowerE = F)
+
+two_group_G_by_E(modelName = "GbyE", selDVs, selDefs, dzData, mzData,
+  nSib = 2)
+
+twoGroupCholesky(modelName = "ACE", selDVs, dzData, mzData, nSib = 2,
+  equateMeans = T, dzr = 0.5, addStd = F)
+
+col.as.numeric(df)
+
+cor.prob(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3)
+
+umx_u_APA_pval(p, min = 0.001, rounding = 3, addComparison = T)
+
+twoGroupOrdinal(modelName = "Ordinal", selDVs, factorLevels, dzData, mzData,
+  nSib, lowerBoundZ = -5, aceStart = c(0.6, 0.3, 0.7))
+
+umxGraph_RAM(model = NA, std = T, precision = 2, dotFilename = "name",
+  pathLabels = "none", showFixed = F, showError = T)
+
+tryHard(model, n = 3, calc_SE = F)
+
+genEpi_ReRun(lastFit, dropList = NA, regex = NA, free = F, value = 0,
+  freeToStart = NA, newName = NA, verbose = F, intervals = F)
+
+mxStart(x = 1, sd = NA, n = 1)
+
+umxLabeler(mx_matrix = NA, baseName = NA, setfree = F, drop = 0,
+  jiggle = NA, boundDiag = NA)
+
+standardizeRAM(model, return = "parameters", Amatrix = NA, Smatrix = NA,
+  Mmatrix = NA)
+
+genEpi_equate(myModel, master, slave, free = T, verbose = T, name = NA)
+
+genEpi_Path(from, to, arrows = 1, connect = "single", free = T,
+  values = NA, labels = NA, lbound = NA, ubound = NA)
+
+genEpiCompare(base = NA, comparison = NA, all = T, excel = T)
+
+mxLatent(latent = NA, formedBy = NA, forms = NA, data,
+  endogenous = FALSE, model.name = NA, help = FALSE, labelSuffix = "")
+
+genEpi_GetLabels(inputTarget, regex = NA, free = NA, verbose = F)
+
+mxMakeThresholdsMatrices(df, deviationBased = T, droplevels = T,
+  verbose = F)
+
+mxAutoThreshRAMObjective(df, deviationBased = T, droplevels = T,
+  verbose = F)
+
+graphViz_Cholesky(model = NA, dotFilename = "name", accuracy = 2,
+  showMeans = F)
+
+summaryACEFit(thisFit, accuracy = accuracy, dotFilename = dotFilename,
+  returnStd = returnStd, extended = extended, showRg = showRg,
+  showStd = showStd, comparison = comparison, CIs = CIs)
+
+umxReportFit(model, saturatedModels = NULL, report = "line",
+  showEstimates = NULL, precision = 2)
+
+summaryCommonFit(thisFit, accuracy = accuracy, dotFilename = dotFilename,
+  returnStd = returnStd, extended = extended, showRg = showRg,
+  parentModel = parentModel, CIs = CIs)
+
+umxPlotCholesky(thisFit, accuracy = accuracy, dotFilename = dotFilename,
+  returnStd = returnStd, extended = extended, showRg = showRg,
+  parentModel = parentModel, CIs = CIs)
+
+stringToMxAlgebra(algString, name = NA, dimnames = NA)
+
+genEpi_EvalQuote(expstring, model, compute, show)
+
+umxReportCIs(model = NA, addCIs = T, runCIs = "if necessary")
+
+hasSquareBrackets(input)
+}
+\description{
+umx_grep_labels should be replaced with \code{\link{umx_grep}}
+
+grepSPSS_labels should be replaced with \code{\link{umx_grep}}
+
+umxStart should be replaced with \code{\link{umxValues}}
+
+umxTryHard is deprecated: use \code{\link{umxRun}} instead
+
+genEpi_Jiggle is deprecated: use \code{\link{umxJiggle}} instead
+
+umxLabels Is deprecated: use \code{\link{umxLabel}} instead
+
+umxLabels Is deprecated: use \code{\link{umxLabel}} instead
+
+umxPath is deprecated: Use \code{\link{mxPath}} and \code{\link{umxLabel}} instead
+
+umxReportFit is deprecated: use \code{\link{umxSummary}} instead
+
+umxGetLabels is deprecated: use \code{\link{umxGetParameters}} instead
+
+makeACE is deprecated: use \code{\link{umxACE}} instead
+
+umxPlotCholesky is deprecated: please use \code{\link{umxPlotACE}} instead
+
+stringToMxAlgebra is deprecated: please use \code{\link{umx_string_to_Algebra}} instead
+
+genEpi_EvalQuote is deprecated: please use \code{\link{umxEval}} instead
+
+umxReportCIs is deprecated: please use \code{\link{umxCI}} instead
+
+hasSquareBrackets is deprecated: please use \code{\link{xmuHasSquareBrackets}} instead
+
+replace genEpi_GetLabels with \code{\link{umxGetParameters}}
+
+replace mxMakeThresholdsMatrices with \code{\link{umxMakeThresholdMatrix}}
+
+replace mxAutoThreshRAMObjective with \code{\link{umxThresholdRAMObjective}}
+
+replace graphViz_Cholesky with \code{\link{umxPlotACE}}
+
+replace summaryACEFit with \code{\link{umxSummaryACE}}
+
+replace umxReportFit with \code{\link{umxSummary}}
+
+replace summaryCommonFit with \code{\link{umxSummaryCP}}
+
+Replace twoGroupOrdinal with \code{\link{umxOrdinal}}
+
+Replace umxGraph_RAM with \code{\link{plot}}
+
+Replace tryHard with \code{\link{umxRun}}
+
+Replace genEpi_ReRun with \code{\link{umxReRun}}
+
+Replace mxStart with \code{\link{umxValues}}
+
+Replace umxLabeler with \code{\link{umxLabel}}
+
+Replace standardizeRAM with \code{\link{umxStandardizeModel}}
+
+Replace genEpi_equate with \code{\link{umxEquate}}
+
+Replace genEpi_Path with \code{\link{umxPath}}
+
+Replace genEpiCompare with \code{\link{umxCompare}}
+
+Replace mxLatent with \code{\link{umxLatent}}
+
+Change twoGroupCommonPath to \code{\link{umxCP}}
+
+Change twoGroupIndependentPath to \code{\link{umxIP}}
+
+Change twoGroupCholesky to \code{\link{umxACE}}
+
+Change col.as.numeric is deprecated. Please replace with \code{\link{umx_as_numeric}}
+
+Change cor.prob to \code{\link{umx_cor}}
+
+Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
+}
+\references{
+- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+Other umx core functions: \code{\link{umxLabel}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxValues}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
+}
+
