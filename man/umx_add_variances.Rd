@@ -2,13 +2,18 @@
 \alias{umx_add_variances}
 \title{umx_add_variances}
 \usage{
-umx_add_variances(model, add.to = c("all", "manifests", "latents"))
+umx_add_variances(model, add.to, values = NULL, free = NULL)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} to add variances
   to}
 
-  \item{add.to}{= c("all", "manifests", "latents")}
+  \item{add.to}{= List of variables to create variance for}
+
+  \item{free}{= List of variables to create variance for
+  (default = NULL)}
+
+  \item{values}{= List of values (default = NULL)}
 }
 \value{
 - \code{\link{mxModel}}

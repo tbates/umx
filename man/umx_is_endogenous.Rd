@@ -2,7 +2,7 @@
 \alias{umx_is_endogenous}
 \title{umx_is_endogenous}
 \usage{
-umx_is_endogenous(model, manifests_only = TRUE, verbose = TRUE)
+umx_is_endogenous(model, manifests_only = TRUE)
 }
 \arguments{
   \item{model}{an \code{\link{mxModel}} from which to get
@@ -10,9 +10,6 @@ umx_is_endogenous(model, manifests_only = TRUE, verbose = TRUE)
 
   \item{manifests_only}{Whether to check only manifests
   (default = TRUE)}
-
-  \item{verbose}{Whether to message the user about what was
-  done for them (default = TRUE)}
 }
 \value{
 - list of endogenous variables

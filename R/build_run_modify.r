@@ -150,12 +150,19 @@ umxRAM <- function(name, ..., exog.variances = TRUE, endog.variances = FALSE, fi
 	
 	# exog -> endog
 	if(exog.variances){
-		message("Added variances to exogenous variables)\n")
-		m1 = umx_add_variances(m1, umx_is_exogenous(m1, manifests_only = TRUE, verbose = TRUE) )
+		pathList = umx_is_exogenous(m1, manifests_only = TRUE)
+		m1 = umx_add_variances(m1, pathList)
+		message("Added variances to ", length(pathList), " exogenous variables: ", paste(pathList, collapse = ", "), "\n")
 	}
 	
 	if(endog.variances){
-		m1 = umx_add_variances(m1, umx_is_endogenous(m1, manifests_only = TRUE, verbose = TRUE))
+		pathList = umx_is_endogenous(m1, manifests_only = TRUE)
+		if(length(pathList > 0)){
+			m1 = umx_add_variances(m1, pathList)
+			message("Added variances to ", length(pathList), " endogenous variables: ", paste(pathList, collapse = ", "), "\n")
+		} else {
+			message("No endogenous variables found.\n")
+		}
 	}
 
 	# Fix latents or first paths
@@ -174,7 +181,6 @@ umxRAM <- function(name, ..., exog.variances = TRUE, endog.variances = FALSE, fi
 	m1 = umxValues(m1, onlyTouchZeros=T)
 	return(m1)
 }
-
 
 #' umxGxE_window
 #'

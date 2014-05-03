@@ -64,7 +64,6 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #'
 #' @param model an \code{\link{mxModel}} from which to get endogenous variables
 #' @param manifests_only Whether to check only manifests (default = TRUE)
-#' @param verbose Whether to message the user about what was done for them (default = TRUE)
 #' @return - list of endogenous variables
 #' @export
 #' @family umx misc functions
@@ -80,7 +79,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' )
 #' umx_is_endogenous(model, manifests_only = TRUE)
 #' umx_is_endogenous(model, manifests_only = FALSE)
-umx_is_endogenous <- function(model, manifests_only = TRUE, verbose = TRUE) {
+umx_is_endogenous <- function(model, manifests_only = TRUE) {
 	# has_no_incoming_single_arrow
 	umx_check_model(model, type = "RAM")
 	checkThese = model@manifestVars
@@ -90,18 +89,16 @@ umx_is_endogenous <- function(model, manifests_only = TRUE, verbose = TRUE) {
 	if(length(checkThese) < 1){
 		return(c())
 	}
-	exog = c()
+	endog = c()
 	n = 1
 	for (i in checkThese) {
-		if(!any(model@matrices$A@free[i, ])){
-			exog[n] = i
+		# any free paths in this row?
+		if(any(model@matrices$A@free[i, ])){
+			endog[n] = i
 			n = n + 1
 		}
 	}
-	if(verbose & n > 1){
-		cat("Found ", (n - 1), " endogenous variables)\n")
-	}
-	return(exog)
+	return(endog)
 }
 
 #' umx_add_variances
@@ -109,7 +106,9 @@ umx_is_endogenous <- function(model, manifests_only = TRUE, verbose = TRUE) {
 #' Convenience function to save the user specifying mxpaths adding variance to each variable
 #'
 #' @param model an \code{\link{mxModel}} to add variances to
-#' @param add.to = c("all", "manifests", "latents")
+#' @param add.to = List of variables to create variance for
+#' @param free = List of variables to create variance for (default = NULL)
+#' @param values = List of values (default = NULL)
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx misc functions
@@ -130,18 +129,14 @@ umx_is_endogenous <- function(model, manifests_only = TRUE, verbose = TRUE) {
 #' # umxFixLatents() will take care of this for you...
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxSummary(m1)
-umx_add_variances <- function(model, add.to = c("all", "manifests", "latents")) {
-	umx_check_model(model,type = "RAM")
-	add.to = umx_default_option(add.to, c("all", "manifests", "latents"), check = TRUE)
-	if(add.to == "all"){
-		theList = c(model@latentVars, model@manifestVars)
-	} else if (add.to == "manifests"){
-		theList = model@manifestVars
-	}else{
-		theList = model@latentVars
+umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
+	umx_check_model(model, type = "RAM")
+	theList = c(model@latentVars, model@manifestVars)
+	if(!all(add.to %in% theList)){
+		stop("not all names found in model")
 	}
-	for (i in theList) {
-		model@matrices$S@free[i, i]   = TRUE
+	for (i in add.to) {
+		model@matrices$S@free[i, i] = TRUE
 		model@matrices$S@values[i, i] = .1
 	}
 	return(model)
