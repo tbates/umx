@@ -46,7 +46,7 @@
 
 residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 	umx_check_model(model, type = NULL, hasData = T)
-	expCov = m1$objective@info$expCov
+	expCov = model$objective@info$expCov
 	if(model@data@type == "raw"){
 		obsCov = umxHetCor(model@data@observed)
 	} else {
