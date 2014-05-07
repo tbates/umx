@@ -1462,7 +1462,7 @@ umxFitIndices <- function(model, indepfit) {
 	return(indices)
 }
 
-#' RMSEA
+#' RMSEA.MxModel
 #'
 #' Compute the confidence interval on RMSEA
 #'
@@ -1470,11 +1470,11 @@ umxFitIndices <- function(model, indepfit) {
 #' @param ci.lower the lower Ci to compute
 #' @param ci.upper the upper Ci to compute
 #' @return - object containing the RMSEA and lower and upper bounds
+#' @rdname RMSEA.MxModel
 #' @export
 #' @family umx reporting
-#' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @seealso - \code{\link{RMSEA}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1489,8 +1489,7 @@ umxFitIndices <- function(model, indepfit) {
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' RMSEA(m1)
-RMSEA <- function(model, ci.lower = .05, ci.upper = .95) { 
-	# FIXME should this be called RMSEA.MxModel or omxRMSEA?
+RMSEA.MxModel <- function(model, ci.lower = .05, ci.upper = .95) { 
 	sm <- summary(model)
 	if (is.na(sm$Chi)) return(NA);
 	X2 <- sm$Chi
@@ -1503,7 +1502,7 @@ RMSEA <- function(model, ci.lower = .05, ci.upper = .95) {
 	upper.lambda <- function(lambda) {
 		(pchisq(X2, df = df, ncp = lambda) - ci.lower)
 	}
- 	N.RMSEA  <- max(N, X2*4) # heuristic of lavaan. TODO: can we improve this? when does this break?
+ 	N.RMSEA  <- max(N, X2 * 4) # heuristic of lavaan. TODO: can we improve this? when does this break?
 	lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root, silent = T) 
 	lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root, silent = T)
 	rmsea.lower <- sqrt(lambda.l/(N * df))

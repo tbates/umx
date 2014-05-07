@@ -104,7 +104,7 @@ umxRAM <- function(name, ..., exog.variances = TRUE, endog.variances = FALSE, fi
 			if(is.null(manifestVars)){
 				stop("there's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
 			}
-		} else if(thisIs == "data.frame" ) {
+		} else if(thisIs == "data.frame") {
 			stop("You gave me a '", thisIs, "'\n", "I can't take data frames yet: package it into an mxData(dataName, type= 'raw')")
 			# TODO bundle up data into mxData objects?
 		} else {
@@ -148,13 +148,14 @@ umxRAM <- function(name, ..., exog.variances = TRUE, endog.variances = FALSE, fi
 	# TODO: Add variance/residuals to all variables except reflective latents
 	# mxPath(from = fixed, arrows = 2),
 	
-	# exog -> endog
+	# exog == no incoming single arrow paths
 	if(exog.variances){
 		pathList = umx_is_exogenous(m1, manifests_only = TRUE)
 		m1 = umx_add_variances(m1, pathList)
 		message("Added variances to ", length(pathList), " exogenous variables: ", paste(pathList, collapse = ", "), "\n")
 	}
 	
+	# endog == one or more incoming single arrow paths
 	if(endog.variances){
 		pathList = umx_is_endogenous(m1, manifests_only = TRUE)
 		if(length(pathList > 0)){
@@ -730,7 +731,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1) # just run: will create saturated model if needed
-#' model = umxRun(model, setValues = T, setLabels = T) # set start values and label all parameters
+#' model = umxRun(m1, setValues = T, setLabels = T) # set start values and label all parameters
 #' umxSummary(m1, show = "std")
 #' m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
 #' m1 = mxRun(m1, intervals = TRUE)
@@ -864,26 +865,19 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 		}
 	}
 
-	if(is.null(name)){
-		name = lastFit@name
+	if(is.null(name)){ name = lastFit@name
 	}
-
-	newObject = FALSE
-	if(regex) {
-		theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
-	} else if ( typeof(update) == "character"){
-		theLabels = update
-	} else {
-		newObject = TRUE
-	}
-
-	if(newObject){
-		x = mxModel(lastFit, update, name = name)
-	} else {
+	if(regex |typeof(update) == "character")) {
+		if ( typeof(update) == "character"){
+			theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
+		}else {
+			theLabels = update
+		}
 		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)		
+	} else {
+		# TODO Label and start new object new object
+		x = mxModel(lastFit, update, name = name)
 	}
-	# TODO label any new objects, and perhaps set their starts
-	# x = umxValues(x)
 	x = mxRun(x, intervals = intervals)
 	if(comparison){
 		print(umxCompare(lastFit, x))
