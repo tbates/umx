@@ -2,21 +2,21 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(name, ..., exog.variances = TRUE, endog.variances = FALSE,
-  fix = c("none", "latents", "firstLoadings"), latents = NULL,
-  independent = NA)
+umxRAM(name, ..., exog.variances = FALSE, endog.variances = TRUE,
+  fix = c("none", "latents", "firstLoadings"), latentVars = NULL,
+  data = NULL, independent = NA, remove_unused_manifests = TRUE)
 }
 \arguments{
   \item{name}{friendly name for the model}
 
   \item{...}{A list of paths and a data source}
 
-  \item{endog.variances}{If TRUE (the default), free
-  error-variance parameters are added for any endogenous
-  variables that lack them.}
-
   \item{exog.variances}{If TRUE (the default is FALSE),
   free variance parameters are added for exogenous
+  variables that lack them.}
+
+  \item{endog.variances}{If TRUE (the default), free
+  error-variance parameters are added for any endogenous
   variables that lack them.}
 
   \item{fix}{Whether to fix latent or first paths to 1.

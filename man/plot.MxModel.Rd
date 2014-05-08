@@ -57,7 +57,7 @@ plot(m1)
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other umx reporting: \code{\link{RMSEA}};
+Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{confint.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxCompare}};

@@ -1,11 +1,3 @@
-umxParallel <- function(model, what) {
-	stop("umxparallel not implemented")
-	# TODO make it easy to turn parallel on and off
-	# omxDetectCores() # cores available
-	# getOption('mxOptions')$"Number of Threads" # cores used by OpenMx
-	# mxOption(model= yourModel, key="Number of Threads", value= (omxDetectCores() - 1))
-}
-
 # devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 # devtools::check("~/bin/umx")
@@ -52,8 +44,8 @@ umxParallel <- function(model, what) {
 #' 
 #' @param name friendly name for the model
 #' @param ... A list of paths and a data source
-#' @param endog.variances If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.
 #' @param exog.variances If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.
+#' @param endog.variances If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.
 #' @param fix Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings")
 #' @param independent Whether the model is independent (default = NA)
 #' @return - \code{\link{mxModel}}
@@ -76,15 +68,13 @@ umxParallel <- function(model, what) {
 #' # TODO implement handling a dataframe
 #' umxRAM("tim", a, b, thedata)
 #' }
-umxRAM <- function(name, ..., exog.variances = TRUE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latents = NULL, independent = NA) {
-	# TODO 
-	# If !is.null(latents), we will check names all appear in either data or latents
-	# If not, we will call anything not in data a latent
+umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, data = NULL, independent = NA, remove_unused_manifests = TRUE) {
 	fix = umx_default_option(fix, c("none", "latents", "firstLoadings"), check = TRUE)
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
-		stop("You must include one mxData() object, and some mxPath() objects")
+		stop("You must include some mxPath()s")
 	}
+
 	nPaths       = 0 # initialise
 	foundNames   = c()
 	manifestVars = NULL
@@ -92,65 +82,106 @@ umxRAM <- function(name, ..., exog.variances = TRUE, endog.variances = FALSE, fi
 		thisIs = class(i)[1]
 		if(thisIs == "MxPath"){
 			foundNames = append(foundNames, c(i@from, i@to))
-		} else if(thisIs == "MxNonNullData" ) {
-			# data!
-			if(i@type == "raw"){
-				manifestVars = names(i@observed)
-				isRaw = TRUE
-			} else {
-				isRaw = FALSE
-				manifestVars = colnames(i@observed)
-			}
-			if(is.null(manifestVars)){
-				stop("there's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
-			}
-		} else if(thisIs == "data.frame") {
-			stop("You gave me a '", thisIs, "'\n", "I can't take data frames yet: package it into an mxData(dataName, type= 'raw')")
-			# TODO bundle up data into mxData objects?
 		} else {
-			stop("I can only handle mxPaths and mxData. You gave me a '", thisIs, "'")
+			stop("I can only handle mxPaths. To include data in umxRAM, say data = yourData")
 		}
 	}
 
 	# ========================
 	# = All items processed  =
 	# ========================
-	if(is.null(manifestVars)){ stop("No manifests found: You need to include an mxData() or dataframe") }
-	message("ManifestVars found in data were: ", paste(manifestVars, collapse = ", "), "\n")
+	# ===============
+	# = Handle data =
+	# ===============
+	if(is.null(data)){
+		stop("You must include data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...)")
+	} else if(class(data)[1] == "data.frame") {
+		data = mxData(observed = data, type = "raw")
+	}
+
+    if(class(data)[1] == "MxNonNullData" ) {
+		if(data@type == "raw"){
+			manifestVars = names(data@observed)
+			isRaw = TRUE
+		} else {
+			isRaw = FALSE
+			manifestVars = colnames(data@observed)
+		}
+		if(is.null(manifestVars)){
+			stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
+		}
+	} else {
+		stop("There's something wrong with the data - I expected a dataframe or correctly specified mxData, but you gave me a ", class(data)[1])		
+	}
 
 	foundNames = unique(na.omit(foundNames))
-	latentVars = setdiff(foundNames, manifestVars)
-	nLatent    = length(latentVars)
 
-	# Report on which latents were created
-	if(nLatent == 0){
-		message("No latent variables were created.\n")
-		latentVars = NA
-	} else if (nLatent == 1){
-		message("A latent variable '", latentVars[1], "' was created.\n")
+	if(!is.null(latentVars)){
+		nLatent = length(latentVars)
+		message("You specified ", nLatent, " latent variables.")
+		latentsMentioned = setdiff(foundNames, manifestVars)
+		if(any(!(latentVars %in% latentsMentioned))){
+			stop(paste0("You requested the following latents, but never mention them in your path list: ", 
+				paste(latentVars[!(latentVars %in% latentsMentioned)], collapse = ", "))
+			)
+		} else if (any(!latentsMentioned %in% latentVars)){
+			stop(paste0("You defined some latents, but then use the following (additional) latents in path statements: ", 
+					paste(latentsMentioned[!latentsMentioned %in% latentVars], collapse = ", "),"\n",
+					"If you want to create latents on the fly, don't specify a defined list. Otherwise stick to it."
+				)
+			)
+		}
 	} else {
-		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ".\n")
-	}	
+		# Anything not in data -> latent
+		latentVars = setdiff(foundNames, manifestVars)
+		nLatent = length(latentVars)
+		# Report on which latents were created
+		if(nLatent == 0){
+			message("No latent variables were created.\n")
+			latentVars = NA
+		} else if (nLatent == 1){
+			message("A latent variable '", latentVars[1], "' was created.\n")
+		} else {
+			message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ".\n")
+		}
+	}
+
+	# ====================
+	# = Handle Manifests =
+	# ====================
 	unusedManifests = setdiff(manifestVars, foundNames)
 	if(length(unusedManifests) > 0){
 		warning(
-			"There are ", length(unusedManifests), " variables in the dataset to which you never refer!\n",
-			paste(unusedManifests, collapse = ", ")
+			"There were ", length(unusedManifests), " variables in the dataset which were not references in any path\n",
+			paste(unusedManifests, collapse = ", ", "\n")
 		)
+		if(remove_unused_manifests){
+			# trim down the data to include only the used manifests
+			manifestVars = setdiff(manifestVars, unusedManifests)
+			if(data@type =="raw"){
+				data@observed = data@observed[, manifestVars]
+			} else {
+				data@observed = umx_reorder(data@observed, manifestVars)
+			}
+			message("Unused variables were pruned from the dataset")
+		} else {
+			message("I left them in the data. To remove them automatically, next time set remove_unused_manifests = TRUE")
+		}		
 	}
+	message("ManifestVars set to: ", paste(manifestVars, collapse = ", "), "\n")
 
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
-		manifestVars = manifestVars, 
-		latentVars  = latentVars, 
-		independent = T, 
-		dot.items)
+		manifestVars = manifestVars,
+		latentVars  = latentVars,
+		independent = T,
+		data, dot.items)
 	)
 	# TODO: Add variance/residuals to all variables except reflective latents
 	# mxPath(from = fixed, arrows = 2),
 	
 	# exog == no incoming single arrow paths
-	if(exog.variances){
-		pathList = umx_is_exogenous(m1, manifests_only = TRUE)
+	pathList = umx_is_exogenous(m1, manifests_only = TRUE)
+	if(exog.variances & length(pathList) > 0 ){
 		m1 = umx_add_variances(m1, pathList)
 		message("Added variances to ", length(pathList), " exogenous variables: ", paste(pathList, collapse = ", "), "\n")
 	}
@@ -164,6 +195,8 @@ umxRAM <- function(name, ..., exog.variances = TRUE, endog.variances = FALSE, fi
 		} else {
 			message("No endogenous variables found.\n")
 		}
+	}else{
+		message("endogenous variances not added")
 	}
 
 	# Fix latents or first paths
@@ -178,6 +211,7 @@ umxRAM <- function(name, ..., exog.variances = TRUE, endog.variances = FALSE, fi
 		message("Added a means model: mxPath('one', to = manifestVars)\n")
 		m1 = mxModel(m1, mxPath("one", manifestVars))
 	}
+
 	m1 = umxLabel(m1)
 	m1 = umxValues(m1, onlyTouchZeros=T)
 	return(m1)
@@ -865,9 +899,9 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 		}
 	}
 
-	if(is.null(name)){ name = lastFit@name
-	}
-	if(regex |typeof(update) == "character")) {
+	if(is.null(name)){ name = lastFit@name }
+
+	if(regex | typeof(update) == "character") {
 		if ( typeof(update) == "character"){
 			theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
 		}else {
@@ -1766,3 +1800,11 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @docType package
 #' @name umx
 NULL
+
+umxParallel <- function(model, what) {
+	stop("umxparallel not implemented")
+	# TODO make it easy to turn parallel on and off
+	# omxDetectCores() # cores available
+	# getOption('mxOptions')$"Number of Threads" # cores used by OpenMx
+	# mxOption(model= yourModel, key="Number of Threads", value= (omxDetectCores() - 1))
+}

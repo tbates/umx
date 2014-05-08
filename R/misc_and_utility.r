@@ -255,17 +255,32 @@ umxFormativeVarianceMess <- function(model){
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' \dontrun{
-#' model = umx_show(model)
-#' }
-umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("S", "A")) {
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umx_show(m1)
+#' umx_show(m1, digits = 3)
+#' umx_show(m1, matrices = "S")
+#' umx_show(m1, what = "free")
+#' umx_show(m1, what = "labels")
+#' umx_show(m1, what = "free", "A")
+umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("S", "A"), digits = 2) {
 	what = umx_default_option(what, c("values", "free", "labels"), check = TRUE)
 	for (w in matrices) {
 		message("Showing ", what, " for:", w, " matrix:")
 		if(what == "values"){
-			umx_print(data.frame(model@matrices[[w]]@values), zero.print = ".", digits = 2)		
+			umx_print(data.frame(model@matrices[[w]]@values), zero.print = ".", digits = digits)		
 		}else if(what == "free"){
-			umx_print(data.frame(model@matrices[[w]]@free), zero.print = ".", digits = 2)
+			umx_print(data.frame(model@matrices[[w]]@free), zero.print = ".", digits = digits)
 		}
 	}
 }
@@ -1832,7 +1847,6 @@ umxAnovaReport <- function(model1, model2 = NULL, raw = T, format = "string", pr
 #' oldMatrix = cov(mtcars)
 #' umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
 #' umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
-
 umx_reorder <- function(old, newOrder) {
 	dim_names = dimnames(old)[[1]]
 	if(!all(newOrder %in% dim_names)){

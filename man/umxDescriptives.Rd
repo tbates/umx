@@ -32,7 +32,7 @@ umxDescriptives(data)
 - \url{http://www.cookbook-r.com/Manipulating_data/Summarizing_data}
 }
 \seealso{
-Other umx reporting: \code{\link{RMSEA}};
+Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{confint.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI_boot}};

@@ -1,20 +1,22 @@
-\name{umx_report_time}
-\alias{umx_report_time}
-\title{umxReportTime}
+\name{RMSEA.MxModel}
+\alias{RMSEA.MxModel}
+\title{RMSEA.MxModel}
 \usage{
-umx_report_time(model, formatStr = "H \%H M \%M S \%OS3", tz = "GMT")
+RMSEA.MxModel(model, ci.lower = 0.05, ci.upper = 0.95)
 }
 \arguments{
-  \item{model}{An \code{\link{mxModel}} from which to get
-  the elapsed time}
+  \item{model}{an \code{\link{mxModel}} to get CIs on RMSEA
+  for}
 
-  \item{formatStr}{A format string, defining how to show
-  the time}
+  \item{ci.lower}{the lower Ci to compute}
 
-  \item{tz}{The time zone in which the model was executed}
+  \item{ci.upper}{the upper Ci to compute}
+}
+\value{
+- object containing the RMSEA and lower and upper bounds
 }
 \description{
-A function to compactly report how long a model took to execute
+Compute the confidence interval on RMSEA
 }
 \examples{
 require(OpenMx)
@@ -29,20 +31,20 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-umx_report_time(m1)
+RMSEA(m1)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{summary}}, \code{\link{umxRun}}
+- \code{\link{RMSEA}}
 
-Other umx reporting: \code{\link{RMSEA.MxModel}};
-  \code{\link{confint.MxModel}};
+Other umx reporting: \code{\link{confint.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxCompare}};
   \code{\link{umxDescriptives}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSummary}}
+  \code{\link{umxFitIndices}}; \code{\link{umxSummary}};
+  \code{\link{umx_report_time}}
 }
 

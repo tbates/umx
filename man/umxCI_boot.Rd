@@ -65,7 +65,7 @@ Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
 \seealso{
 - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
 
-Other umx reporting: \code{\link{RMSEA}};
+Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{confint.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI}};
