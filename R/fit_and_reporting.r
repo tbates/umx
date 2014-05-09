@@ -1316,17 +1316,19 @@ umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
 
 #' logLik.MxModel
 #'
-#' Returns the log likelihood for an OpenMx model
-#' helper function enabling AIC(model); BIC(model); and logLik(model)
+#' Returns the log likelihood for an OpenMx model. This helper also 
+#' enables \code{\link{AIC}}(model); \code{\link{BIC}}(model).
+#'
+#' hat-tip Andreas Brandmaier
 #'
 #' @method logLik MxModel
 #' @rdname  logLik
 #' @export
-#' @param model an \code{\link{mxModel}} to get the log likelihood from
+#' @param model the \code{\link{mxModel}} from which to get the log likelihood 
 #' @return - the log likelihood
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
 #' @family umx reporting
-#' @references - \url{http://www.github.com/tbates/umx/thread/931#comment-4858}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1353,7 +1355,7 @@ logLik.MxModel <- function(model) {
 		attr(Minus2LogLikelihood,"nobs") <- NA
 	}
 	if (!is.null(model@output)){
-		attr(Minus2LogLikelihood,"df")<- length(model@output$estimate)	
+		attr(Minus2LogLikelihood,"df") <- length(model@output$estimate)	
 	} else {
 		attr(Minus2LogLikelihood, "df") <- NA
 	}
