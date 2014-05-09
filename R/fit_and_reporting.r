@@ -747,6 +747,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' @param showError Whether to show errors
 #' @param precision Deprecated use "digits"
 #' @export
+#' @export plot.MxModel
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @family umx reporting
 #' @references - \url{http://www.github.com/tbates/umx}
