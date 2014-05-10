@@ -1357,7 +1357,7 @@ umxExpCov <- function(model, latents = T, manifests = T, digits = NULL){
 #' umxExpMeans(model = m1)
 #' umxExpMeans(m1, digits = 3)
 umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
-	# umx_check_model(model, beenRun = TRUE)
+	umx_check_model(model, beenRun = TRUE)
 	if(!umx_has_means(model)){
 		stop("Model has no means expectation to get: Are there any means in the data? (type='raw', or type = 'cov' with means?)")
 	}
