@@ -1369,10 +1369,19 @@ umxCov2cor <- function(x) {
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' \dontrun{
-#' umx_has_been_run(model)
-#' }
-
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umx_has_been_run(m1)
 umx_has_been_run <- function(model, stop = FALSE) {
 	output <- model@output
 	if (is.null(output)){
@@ -1388,6 +1397,7 @@ umx_has_been_run <- function(model, stop = FALSE) {
 			return(FALSE)
 		}
 	}
+	return(TRUE)
 }
 
 #' umx_check_names
@@ -1559,6 +1569,7 @@ umx_is_MxModel <- function(obj) {
 #' @param obj an object to check
 #' @param type = what type the model must be (defaults to not checking NULL)
 #' @param hasData whether the model should have data or not (defaults to not checking NULL)
+#' @param hasMeans whether the model should have a means model or not (defaults to not checking NULL)
 #' @param checkSubmodels whether to check submodels (not implemented yet) (default = FALSE)
 #' @return - boolean
 #' @export
@@ -1578,7 +1589,7 @@ umx_is_MxModel <- function(obj) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' umx_check_model(model)
-umx_check_model <- function(obj, type = NULL, hasData = NULL, checkSubmodels = F) {
+umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, hasMeans = NULL, checkSubmodels = FALSE) {
 	# TODO hasSubmodels = F
 	if (!umx_is_MxModel(obj)) {
 		stop("'model' must be an mxModel")
@@ -1602,7 +1613,19 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, checkSubmodels = F
 	}else if (hasData & is.null(obj@data@observed)) {
 		stop("'model' does not contain any data")
 	}
-	return(T)
+	if(is.null(beenRun)){
+		# no check
+	}else {
+		umx_has_been_run(obj)
+	}
+	if(is.null(hasMeans)){
+		# no check
+	}else {
+		# TODO fix all these so they respect true and false...
+		# currently assuming true
+		umx_has_means(obj)
+	}
+	return(TRUE)
 }
 
 #' umx_is_cov
@@ -1657,6 +1680,36 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 	} else {
 		return(isCov)
 	}
+}
+
+#' umx_has_means
+#'
+#' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have a means model?" 
+#'
+#' @param model The \code{\link{mxModel}} to check for presence of means
+#' @return - TRUE or FALSE
+#' @export
+#' @family umx misc functions
+#' @references - http://www.github.com/tbates/umx/
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = "one", to = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umx_has_means(m1)
+umx_has_means <- function(model) {
+	# TODO check for type? check for run
+	expMeans = attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
+	return(!all(dim(expMeans) == 0))
 }
 
 #' umx_has_CIs

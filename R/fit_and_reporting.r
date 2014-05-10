@@ -577,16 +577,15 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' 	m1 = umxRun(m1, setLabels = T, setValues = T)
 #' 	umxCI_boot(m1, type = "par.expected")
 #'}
-#' @references - \url{http://www.github.com/tbates/umx/thread/2598}
-#' Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
-#' @seealso - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
+#' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+#' @seealso - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
 #' @family umx reporting
-
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
 	require(MASS); require(OpenMx); require(umx)
 	type = umx_default_option(type, c("par.expected", "par.observed", "empirical"))
 	if(type == "par.expected") {
-		exp = umxGetExpectedCov(model, latent = FALSE)
+		exp = umxExpCov(model, latent = FALSE)
 	} else if(type == "par.observed") {
 		if(model$data@type == "raw") {
 			exp = var(mxEval(data, model))
@@ -1262,18 +1261,19 @@ extractAIC.MxModel <- function(model) {
 	return(a[1, "AIC"])
 }
 
-#' umxGetExpectedCov
+
+#' umxExpCov
 #'
 #' extract the expected covariance matrix from an \code{\link{mxModel}}
 #'
 #' @param model an \code{\link{mxModel}} to get the covariance matrix from
-#' @param latent Whether to select the latent variables (defaults to TRUE)
-#' @param manifest Whether to select the manifest variables (defaults to TRUE)
+#' @param latents Whether to select the latent variables (defaults to TRUE)
+#' @param manifests Whether to select the manifest variables (defaults to TRUE)
 #' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected covariance matrix
 #' @export
-#' @references - \url{http://www.github.com/tbates/umx/thread/2598}
-#' Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
+#' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
 #' @examples
 #' require(OpenMx)
@@ -1288,30 +1288,98 @@ extractAIC.MxModel <- function(model) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umxGetExpectedCov(model = m1)
-#' umxGetExpectedCov(m1, digits = 3)
-umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
-	if(!umx_is_RAM(model)){
-		stop("model must be a RAM model")
-	}
-	mA <- mxEval(A,model)
-	mS <- mxEval(S,model)
-	mI <- diag(1, nrow(mA))
-	mE <- solve(mI - mA)
-	mCov <- (mE) %*% mS %*% t(mE) # The model-implied covariance matrix
-	mV <- NULL
-	if(latent) {
-		mV <- model@latentVars 
-	}
-	if(manifest) {
-		mV <- c(mV,model@manifestVars)
-	}
-	# return the selected variables
-	if(is.null(digits)){
-		return(mCov[mV, mV]) 
+#' umxExpCov(m1)
+#' umxExpCov(m1, digits = 3)
+umxExpCov <- function(model, latents = T, manifests = T, digits = NULL){
+	if(model@data@type =="raw"){
+		manifestNames = names(model$data@observed)
 	} else {
-		return(round(mCov[mV, mV], digits))
+		manifestNames = dimnames(model$data@observed)[[1]]
 	}
+	if(umx_is_RAM(model)){
+		if(manifests & !latents){
+			expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+			dimnames(expCov) = list(manifestNames, manifestNames)
+		} else {
+			A <- mxEval(A, model)
+			S <- mxEval(S, model)
+			I <- diag(1, nrow(A))
+			E <- solve(I - A)
+			expCov <- (E) %*% S %*% t(E) # The model-implied covariance matrix
+			mV <- NULL
+			if(latents) {
+				mV <- model@latentVars 
+			}
+			if(manifests) {
+				mV <- c(mV, model@manifestVars)
+			}
+			expCov = expCov[mV, mV]
+		}
+	} else {
+		if(latents){
+			stop("I don't know how to reliably get the latents for non-RAM models... Sorry :-(")
+		} else {
+			expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+			dimnames(expCov) = list(manifestNames, manifestNames)
+		}
+	}
+	if(!is.null(digits)){
+		expCov = round(expCov, digits)
+	}
+	return(expCov) 
+}
+#' umxExpMean
+#'
+#' Extract the expected means matrix from an \code{\link{mxModel}}
+#'
+#' @param model an \code{\link{mxModel}} to get the means from
+#' @param latents Whether to select the latent variables (defaults to TRUE)
+#' @param manifests Whether to select the manifest variables (defaults to TRUE)
+#' @param digits precision of reporting. Leave NULL to do no rounding.
+#' @return - expected means
+#' @export
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
+#' @seealso - \code{\link{umxExpCov}}, \code{\link{umxCI_boot}}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umxExpMeans(model = m1)
+#' umxExpMeans(m1, digits = 3)
+umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
+	# umx_check_model(model, beenRun = TRUE)
+	if(!umx_has_means(model)){
+		stop("Model has no means expectation to get: Are there any means in the data? (type='raw', or type = 'cov' with means?)")
+	}
+	
+	if(umx_is_RAM(model)){
+		# TODO something nice to do here?
+	}
+	if(!is.null(latents)){
+		# TODO should a function called expMeans get expected means for latents... why not.
+		stop("I haven't thought about getting means for latents yet... Bug me about it :-)")
+	}
+	expMean <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
+	
+	if(model@data@type == "raw"){
+		manifestNames = names(model$data@observed)
+	} else {
+		manifestNames = dimnames(model$data@observed)[[1]]
+	}
+	dimnames(expMean) = list("mean", manifestNames)
+	if(!is.null(digits)){
+		expMean = round(expMean, digits)
+	}
+	return(expMean)
 }
 
 #' logLik.MxModel
