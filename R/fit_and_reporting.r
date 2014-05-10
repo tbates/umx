@@ -1349,8 +1349,9 @@ umxExpCov <- function(model, latents = T, manifests = T, digits = NULL){
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = "one", to = manifests),
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' 	mxData(demoOneFactor, type = "raw")
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxExpMeans(model = m1)
@@ -1366,7 +1367,7 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 	}
 	if(!is.null(latents)){
 		# TODO should a function called expMeans get expected means for latents... why not.
-		stop("I haven't thought about getting means for latents yet... Bug me about it :-)")
+		stop("Haven't thought about getting means for latents yet... Bug me about it :-)")
 	}
 	expMean <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
 	
