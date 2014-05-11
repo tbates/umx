@@ -46,7 +46,11 @@
 
 residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 	umx_check_model(model, type = NULL, hasData = T)
-	expCov = model$objective@info$expCov
+	if(compareVersion(mxVersion(), "1.5.0")){
+		expCov = attr(model$objective[[2]]$result, "expCov")
+	} else {
+		expCov = model$objective@info$expCov
+	}
 	if(model@data@type == "raw"){
 		obsCov = umxHetCor(model@data@observed)
 	} else {
@@ -768,6 +772,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' }
 
 plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = F, showError = T, precision = NULL) {
+	# TODO enable showing means paths...
 	if(!is.null(precision)){
 		warning("precision is deprecated for plot, use digits instead")
 		digits = precision
@@ -778,6 +783,13 @@ plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	if(std){ model = umxStandardizeModel(model, return = "model") }
 	out = "";
+	
+	# ================
+	# = handle means =
+	# ================
+
+	theMeans = model@matrices$M@values
+
 	# Get Asymmetric Paths
 	Avals   = model@matrices$A@values
 	Afree   = model@matrices$A@free
@@ -880,7 +892,7 @@ plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", 
 		}
 		cat(digraph, file = dotFilename) #write to file
 		system(paste("open", shQuote(dotFilename)));
-		# return(invisible(cat(digraph)))
+		invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
@@ -1291,6 +1303,7 @@ extractAIC.MxModel <- function(model) {
 #' umxExpCov(m1)
 #' umxExpCov(m1, digits = 3)
 umxExpCov <- function(model, latents = T, manifests = T, digits = NULL){
+	# TODO # what does umxExpCov do under 1.4?
 	if(model@data@type =="raw"){
 		manifestNames = names(model$data@observed)
 	} else {
@@ -1357,6 +1370,7 @@ umxExpCov <- function(model, latents = T, manifests = T, digits = NULL){
 #' umxExpMeans(model = m1)
 #' umxExpMeans(m1, digits = 3)
 umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
+	# TODO # what does umxExpMeans do under 1.4?
 	umx_check_model(model, beenRun = TRUE)
 	if(!umx_has_means(model)){
 		stop("Model has no means expectation to get: Are there any means in the data? (type='raw', or type = 'cov' with means?)")

@@ -193,3 +193,37 @@ m1 = mxRAM(latentVars = "eff",
 	data = mtcars
 )
 ```
+
+# ==============
+# = umxRAM fun =
+# ==============
+
+require(OpenMx); data(demoOneFactor)
+latents  = c("G")
+manifests = paste0("x", 1:3)
+latents = "g"
+m1 <- umxRAM("One Factor",
+	manifestVars = manifests,
+	latentVars = latents,
+	mxPath(from = "g"  , arrows = 2, free = F, values = 1.0),
+	mxPath(from = latents, to = manifests),
+	mxPath(from = manifests, arrows = 2),
+	data = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500)
+)
+m1 = umxRun(m1, setLabels = T, setValues = T)
+umxSummary(m1, show = "std")
+
+m2 <- umxRAM("One Factor", fix = "latents",
+	mxPath(from = "g", to = paste0("x", 1:3)),
+	data = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500)
+)
+
+m2 = umxRun(m2); umxSummary(m2, show = "std")
+umxCheck(m2)
+umx_show(m2)
+
+mxCompare(m1,m2)
+
+umxCheck <- function(model) {
+	
+}
