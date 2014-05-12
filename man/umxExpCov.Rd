@@ -3,7 +3,7 @@
 \alias{umxExpCov}
 \title{umxExpCov}
 \usage{
-umxExpCov(model, latents = T, manifests = T, digits = NULL)
+umxExpCov(model, latents = FALSE, manifests = TRUE, digits = NULL)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get the covariance matrix from}

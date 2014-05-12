@@ -34,6 +34,7 @@ m1 = umxRun(m1, setLabels = T, setValues = T)
 residuals(m1)
 residuals(m1, digits = 3)
 residuals(m1, digits = 3, suppress = .005)
+# residuals are returned as an invidible object you can capture in a variable
 a = residuals(m1); a
 }
 \references{

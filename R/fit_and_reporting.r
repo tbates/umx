@@ -42,15 +42,11 @@
 #' residuals(m1)
 #' residuals(m1, digits = 3)
 #' residuals(m1, digits = 3, suppress = .005)
-#' a = residuals(m1); a
-
+#' # residuals are returned as an invidible object you can capture in a variable
+#' a = residuals(m1); a 
 residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 	umx_check_model(model, type = NULL, hasData = T)
-	if(compareVersion(mxVersion(), "1.5.0")){
-		expCov = attr(model$objective[[2]]$result, "expCov")
-	} else {
-		expCov = model$objective@info$expCov
-	}
+	expCov = umxExpCov(model, latents = FALSE)
 	if(model@data@type == "raw"){
 		obsCov = umxHetCor(model@data@observed)
 	} else {
@@ -58,10 +54,11 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 	}
 	resid = cov2cor(obsCov) - cov2cor(expCov)
 	umx_print(data.frame(resid), digits = digits, zero.print = ".", suppress = suppress)
+	if(is.null(suppress)){
+		print("nb: You can zoom in on bad values with suppress, e.g. suppress = .01")
+	}
 	invisible(resid)
 }
-
-
 
 #' confint.MxModel
 #'
@@ -1271,8 +1268,7 @@ extractAIC.MxModel <- function(model) {
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxExpCov(m1)
 #' umxExpCov(m1, digits = 3)
-umxExpCov <- function(model, latents = T, manifests = T, digits = NULL){
-	# TODO # what does umxExpCov do under 1.4?
+umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 	if(model@data@type =="raw"){
 		manifestNames = names(model$data@observed)
 	} else {
@@ -1280,7 +1276,13 @@ umxExpCov <- function(model, latents = T, manifests = T, digits = NULL){
 	}
 	if(umx_is_RAM(model)){
 		if(manifests & !latents){
-			expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+			# TODO # test umxExpCov under 1.4?
+			if(compareVersion(mxVersion(), "1.5.0") == 1){
+				# expCov = attr(model$objective[[2]]$result, "expCov")
+				expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+			} else {
+				expCov = model$objective@info$expCov
+			}
 			dimnames(expCov) = list(manifestNames, manifestNames)
 		} else {
 			A <- mxEval(A, model)
