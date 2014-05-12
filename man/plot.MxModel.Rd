@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{MxModel}(model = NA, std = T, digits = 2,
   dotFilename = "name", pathLabels = c("none", "labels", "both"),
-  showFixed = F, showError = T, precision = NULL)
+  showFixed = FALSE, showError = TRUE, precision = NULL)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to make a path diagram from}

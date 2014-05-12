@@ -20,7 +20,4 @@ This function is called by xmuLabel_MATRIX_Model
 \references{
 - \url{http://openmx.psyc.virginia.edu}
 }
-\seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-}
 

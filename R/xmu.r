@@ -11,6 +11,100 @@
 # = Not Typically used directly by users =
 # ========================================
 
+# list(varianceNames, variances) <- xmu_dot_make_variances(model@matrices$S, style = NULL, showFixed = TRUE, digits = digits)
+xmu_dot_make_variances <- function(mxMat, style = NULL, showFixed = TRUE, digits = 2) {
+	mxMat_vals   = mxMat@values
+	mxMat_free   = mxMat@free
+	mxMat_labels = mxMat@labels
+	mxMat_rows = dimnames(mxMat_free)[[1]]
+	mxMat_cols = dimnames(mxMat_free)[[2]]
+
+	varianceNames = c()
+	variances = c()
+	for(target in mxMat_rows ) { # rows
+		lowerVars  = mxMat_rows[1:match(target, mxMat_rows)]
+		for(source in lowerVars) { # columns
+			thisPathLabel = mxMat_labels[target, source]
+			thisPathFree  = mxMat_free[target, source]
+			thisPathVal   = round(mxMat_vals[target, source], digits)
+
+			if(thisPathFree){ prefix = "" } else { prefix = "@" }
+
+			if(thisPathFree | (thisPathVal !=0 & showFixed)) {
+				if((target == source)) {
+					varianceNames = append(varianceNames, paste0(source, '_var'))
+					variances = append(variances, paste0(source, '_var [label="', prefix, thisPathVal, '", shape = plaintext]'))
+				}
+			}
+		}
+	}
+	return(list(varianceNames = varianceNames, variances = variances))
+}
+
+# xmu_dot_make_paths(mxMat, stringIn, heads = NULL, showFixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2)
+xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2) {
+	if(is.null(heads)){
+		stop("You must set 'heads' to 1 or 2 (was NULL)")
+	}
+	if(!heads %in% 1:2){
+		stop("You must set 'heads' to 1 or 2: was ", heads)
+	}
+	mxMat_vals   = mxMat@values
+	mxMat_free   = mxMat@free
+	mxMat_labels = mxMat@labels
+	mxMat_rows = dimnames(mxMat_free)[[1]]
+	mxMat_cols = dimnames(mxMat_free)[[2]]
+	if(!is.null(comment)){
+		stringIn = paste0(stringIn, "\n\t# ", comment, "\n")
+	}
+	if(heads == 1){
+		for(target in mxMat_rows ) {
+			for(source in mxMat_cols) {
+				thisPathLabel = mxMat_labels[target, source]
+				thisPathFree  = mxMat_free[target, source]
+				thisPathVal   = round(mxMat_vals[target, source], digits)
+
+				if(thisPathFree){ labelStart = ' [label="' } else { labelStart = ' [label="@' }
+
+				if(thisPathFree | ((showFixed & (thisPathVal != 0))) ) {
+					stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStart, thisPathVal, '"];\n')
+				}else{
+					# print(paste0("thisPathFree = ", thisPathFree , "showFixed =", showFixed, "; thisPathVal = ", thisPathVal, "\n"))
+				}
+				
+			}
+		}
+	} else {
+		for(target in mxMat_rows ) { # rows
+			lowerVars  = mxMat_rows[1:match(target, mxMat_rows)]
+			for(source in lowerVars) { # columns
+				thisPathLabel = mxMat_labels[target, source]
+				thisPathFree  = mxMat_free[target, source]
+				thisPathVal   = round(mxMat_vals[target, source], digits)
+
+				if(thisPathFree){ prefix = "" } else { prefix = "@" }
+
+				if(thisPathFree | ((showFixed & (thisPathVal != 0))) ) {
+					if((target == source) & showResiduals) {
+						stringIn = paste0(stringIn, "\t", source, "_var -> ", target, ";\n")
+					} else {
+						if(pathLabels == "both"){
+							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
+						} else if(pathLabels == "labels"){
+							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "\"];\n")
+						}else {
+							# pathLabels = "none"
+							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', prefix, thisPathVal, "\"];\n")
+						}
+					}
+				}
+			}
+		}
+	}
+	return(stringIn)
+}
+
+
 #' xmuLabel_MATRIX_Model (not a user function)
 #'
 #' This function will label all the free parameters in a (non-RAM) OpenMx \code{\link{mxModel}}
@@ -21,7 +115,6 @@
 #' @param suffix a string to append to each label
 #' @param verbose how much feedback to give
 #' @return - The labeled \code{\link{mxModel}}
-#' @export
 #' @seealso - \code{\link{umxLabel}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
@@ -253,8 +346,6 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 #' @param verbose how much feedback to give (defaults to FALSE)
 #' @return - a list containing an \code{\link{mxMatrix}} called "thresh", 
 #' an \code{\link{mxRAMObjective}} object, and an \code{\link{mxData}} object
-#' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
 #' \dontrun{
@@ -325,8 +416,6 @@ xmuStart_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' @param model a model to label
 #' @param suffix a string to append to each label
 #' @return - \code{\link{mxModel}}
-#' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 
 xmuPropagateLabels <- function(model, suffix = "") {
@@ -345,7 +434,6 @@ xmuPropagateLabels <- function(model, suffix = "") {
 #' @param vector = Whether to report the results as a vector default = TRUE
 #' @seealso - \code{\link{umxMI}}, \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
 #' @references - 
-#' @export
 #' @examples
 #' \dontrun{
 #' xmuMI(model)

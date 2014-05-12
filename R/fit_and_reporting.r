@@ -771,114 +771,82 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' plot(m1)
 #' }
 
-plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = F, showError = T, precision = NULL) {
-	# TODO enable showing means paths...
+plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showError = TRUE, precision = NULL) {
+	# ==========
+	# = Setup  =
+	# ==========
 	if(!is.null(precision)){
 		warning("precision is deprecated for plot, use digits instead")
 		digits = precision
 	}
 	valid_PathLabels = c("none", "labels", "both")
 	pathLabels = umx_default_option(pathLabels, valid_PathLabels, check = TRUE)
+
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	if(std){ model = umxStandardizeModel(model, return = "model") }
+
+	# ========================
+	# = Get Symmetric & Asymmetric Paths =
+	# ========================
 	out = "";
-	
-	# ================
-	# = handle means =
-	# ================
-
-	theMeans = model@matrices$M@values
-
-	# Get Asymmetric Paths
-	Avals   = model@matrices$A@values
-	Afree   = model@matrices$A@free
-	Alabels = model@matrices$A@labels
-	aRows = dimnames(Afree)[[1]]
-	aCols = dimnames(Afree)[[2]]
-	out = paste0(out, "\n\t# single arrow paths\n")
-	for(target in aRows ) {
-		for(source in aCols) {
-			thisPathFree = Afree[target, source]
-			thisPathVal  = round(Avals[target, source], digits)
-			if(thisPathFree) {
-				out = paste0(out, "\t", source, " -> ", target, " [label=\"", thisPathVal, "\"];\n")
-			} else if(thisPathVal != 0 & showFixed) {
-				# TODO Might want to fix this !!! comment out
-				out = paste0(out, "\t", source, " -> ", target, " [label=\"@", thisPathVal, "\"];\n")
-			}
-		}
-	}
-	out = paste0(out, "\n\t# variances\n")
-	variances = varianceNames = c()
-	Svals   = model@matrices$S@values
-	Sfree   = model@matrices$S@free
-	Slabels = model@matrices$S@labels
-	allVars = c(latents, selDVs)
-	for(target in allVars ) { # rows
-		lowerVars  = allVars[1:match(target, allVars)]
-		for(source in lowerVars) { # columns
-			thisPathLabel = Slabels[target, source]
-			thisPathFree  = Sfree[target, source]
-			thisPathVal   = Svals[target, source]
-			thisPathVal   = round(thisPathVal, digits)
-			if(thisPathFree | (thisPathVal !=0 & showFixed)) {
-				if(thisPathFree){
-					prefix = ""
-				} else {
-					prefix = "@"
-				}
-				if((target == source)) {
-					if(showError){
-						eName     = paste0(source, '_var')
-						varToAdd  = paste0(eName, ' [label="', prefix, thisPathVal, '", shape = plaintext]')
-						variances = append(variances, varToAdd)
-						varianceNames = append(varianceNames, eName)
-						out = paste0(out, "\t", eName, " -> ", target, ";\n")
-					}
-				} else {
-					if(pathLabels == "both"){
-						out = paste0(out, "\t", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
-					} else if(pathLabels == "labels"){
-						out = paste0(out, "\t", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "\"];\n")
-					}else {
-						# pathLabels = "none"
-						out = paste0(out, "\t", source, " -> ", target, " [dir=both, label=\"", prefix, thisPathVal, "\"];\n")
-					}
-				}
-			} else {
-				# path is fixed and is either zero OR showFixed is FALSE 
-				# return(list(thisFrom,thisTo))
-			}
-		}
-	}
-
-	preOut = "";
-
+	out = xmu_dot_make_paths(mxMat = model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, comment = "Single arrow paths", digits = digits)
+	out = xmu_dot_make_paths(mxMat = model@matrices$S, stringIn = out, heads = 2, showFixed = showFixed, comment = "Variances", digits = digits)
+	tmp = xmu_dot_make_variances(model@matrices$S, style = NULL, showFixed = TRUE, digits = digits)
+	variances = tmp$variances
+	varianceNames = tmp$varianceNames
 	# ============================
-	# = make the manifest shapes =
+	# = Make the manifest shapes =
 	# ============================
 	# x1 [label="E", shape = square];
+	preOut = "";
 	for(var in selDVs) {
 	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
 	}
+	# ================
+	# = handle means =
+	# ================
+	if(umx_has_means(model)){
+		out = paste0(out, "\n\t# Means paths\n")
+		# Add a triangle to the list of shapes
+		preOut = paste0(preOut, "\t one [shape = triangle];\n")
+		mxMat = model@matrices$M
+		mxMat_vals   = mxMat@values
+		mxMat_free   = mxMat@free
+		mxMat_labels = mxMat@labels
+		meanVars = colnames(mxMat@values)
+		for(target in meanVars) {
+			thisPathLabel = mxMat_labels[1, target]
+			thisPathFree  = mxMat_free[1, target]
+			thisPathVal   = round(mxMat_vals[1, target], digits)
+			if(thisPathFree){ labelStart = ' [label="' } else { labelStart = ' [label="@' }
 
+			# TODO find a way of showing means fixed at zero?
+			if(thisPathFree | showFixed ) {
+			# if(thisPathFree | (showFixed & thisPathVal != 0) ) {
+				out = paste0(out, "\tone -> ", target, labelStart, thisPathVal, '"];\n')
+			}else{
+				# cat(paste0(out, "\tone -> ", target, labelStart, thisPathVal, '"];\n'))
+				# return(thisPathVal != 0)
+			}
+		}
+	}
 	# ===========================
-	# = make the variance lines =
+	# = Make the variance lines =
 	# ===========================
 	# x1_var [label="0.21", shape = plaintext];
-
 	for(var in variances) {
 	   preOut = paste0(preOut, "\t", var, ";\n")
 	}
-
 	# ======================
-	# = set the ranks e.g. =
+	# = Set the ranks e.g. =
 	# ======================
 	# {rank=same; x1 x2 x3 x4 x5 };
-
+	# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
 	rankVariables = paste0("\t{rank=min ; ", paste(latents, collapse = "; "), "};\n")
 	rankVariables = paste0(rankVariables, "\t{rank=same; ", paste(selDVs, collapse = " "), "};\n")
+	if(umx_has_means(model)){ append(varianceNames, "one")}
+
 	rankVariables = paste0(rankVariables, "\t{rank=max ; ", paste(varianceNames, collapse = " "), "};\n")
 
 	# ===================================
@@ -886,13 +854,14 @@ plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", 
 	# ===================================
 	digraph = paste("digraph G {\n\tsplines=\"FALSE\";\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
+	print("nb: see ?plot.MxModel for options - digits, dotFilename, pathLabels, showFixed, showError")
 	if(!is.na(dotFilename)){
 		if(dotFilename == "name"){
 			dotFilename = paste0(model@name, ".dot")
 		}
-		cat(digraph, file = dotFilename) #write to file
+		cat(digraph, file = dotFilename) # write to file
 		system(paste("open", shQuote(dotFilename)));
-		invisible(cat(digraph))
+		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
