@@ -91,7 +91,7 @@ umxSummary(m1, saturatedModels = umxSaturated(m1))
 \seealso{
 - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
 
-Other umx reporting: \code{\link{RMSEA}};
+Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{confint.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI_boot}};

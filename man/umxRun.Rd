@@ -57,7 +57,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1) # just run: will create saturated model if needed
-model = umxRun(model, setValues = T, setLabels = T) # set start values and label all parameters
+model = umxRun(m1, setValues = T, setLabels = T) # set start values and label all parameters
 umxSummary(m1, show = "std")
 m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
 m1 = mxRun(m1, intervals = TRUE)
@@ -70,35 +70,7 @@ m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 \seealso{
 - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxValues}}, \code{\link{umxReRun}}, \code{\link{confint}}
 
-Other umx core functions: \code{\link{col.as.numeric}},
-  \code{\link{cor.prob}}, \code{\link{genEpiCompare}},
-  \code{\link{genEpi_EvalQuote}},
-  \code{\link{genEpi_GetLabels}},
-  \code{\link{genEpi_Jiggle}}, \code{\link{genEpi_Path}},
-  \code{\link{genEpi_ReRun}}, \code{\link{genEpi_equate}},
-  \code{\link{graphViz_Cholesky}},
-  \code{\link{grepSPSS_labels}},
-  \code{\link{hasSquareBrackets}}, \code{\link{makeACE}},
-  \code{\link{mxAutoThreshRAMObjective}},
-  \code{\link{mxLatent}},
-  \code{\link{mxMakeThresholdsMatrices}},
-  \code{\link{mxStart}}, \code{\link{standardizeRAM}},
-  \code{\link{stringToMxAlgebra}},
-  \code{\link{summaryACEFit}},
-  \code{\link{summaryCommonFit}}, \code{\link{tryHard}},
-  \code{\link{twoGroupCholesky}},
-  \code{\link{twoGroupCommonPath}},
-  \code{\link{twoGroupIndependentPath}},
-  \code{\link{twoGroupOrdinal}},
-  \code{\link{two_group_G_by_E}},
-  \code{\link{umx-deprecated}}, \code{\link{umxGetLabels}},
-  \code{\link{umxGraph_RAM}}, \code{\link{umxLabeler}},
-  \code{\link{umxLabels}}, \code{\link{umxPath}},
-  \code{\link{umxPlotCholesky}},
-  \code{\link{umxReportCIs}}, \code{\link{umxReportFit}},
-  \code{\link{umxReportFit}}, \code{\link{umxStart}},
-  \code{\link{umxTryHard}}, \code{\link{umx_grep_labels}},
-  \code{\link{umx_u_APA_pval}}; \code{\link{umxLabel}};
+Other umx core functions: \code{\link{umxLabel}};
   \code{\link{umxReRun}}; \code{\link{umxValues}};
   \code{\link{umx}}, \code{\link{umx-package}},
   \code{\link{umx-package}}

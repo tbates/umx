@@ -67,7 +67,7 @@ confint(m1, parm = "existing") # request existing CIs (none added yet...)
 \seealso{
 - \code{\link[stats]{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
 
-Other umx reporting: \code{\link{RMSEA}};
+Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxCompare}};

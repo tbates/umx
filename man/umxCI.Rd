@@ -66,7 +66,7 @@ umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run the
 \seealso{
 - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
 
-Other umx reporting: \code{\link{RMSEA}};
+Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{confint.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI_boot}};

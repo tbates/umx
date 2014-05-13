@@ -865,9 +865,10 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 		}
 	}
 
-	if(is.null(name)){ name = lastFit@name
+	if(is.null(name)){ 
+		name = lastFit@name
 	}
-	if(regex |typeof(update) == "character")) {
+	if(regex | typeof(update) == "character") {
 		if ( typeof(update) == "character"){
 			theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
 		}else {

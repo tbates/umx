@@ -97,7 +97,7 @@ print.html <- function(x, digits = 3, output = "tmp.html") {stop("Deprecated: us
 #' Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
 #'
 #' @name umx-deprecated
-#' @family umx core functions
+#' @family umx deprecated
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 NULL
 

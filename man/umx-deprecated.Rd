@@ -234,10 +234,4 @@ Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
-\seealso{
-Other umx core functions: \code{\link{umxLabel}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxValues}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
-}
 

@@ -38,7 +38,7 @@ AIC(m1)
 \seealso{
 - \code{\link{AIC}}, \code{\link{umxCompare}}
 
-Other umx reporting: \code{\link{RMSEA}};
+Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{confint.MxModel}};
   \code{\link{plot.MxModel}}, \code{\link{umxPlot}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
