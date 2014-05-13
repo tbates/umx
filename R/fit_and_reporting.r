@@ -42,11 +42,11 @@
 #' residuals(m1)
 #' residuals(m1, digits = 3)
 #' residuals(m1, digits = 3, suppress = .005)
-#' a = residuals(m1); a
-
+#' # residuals are returned as an invidible object you can capture in a variable
+#' a = residuals(m1); a 
 residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 	umx_check_model(model, type = NULL, hasData = T)
-	expCov = model$objective@info$expCov
+	expCov = umxExpCov(model, latents = FALSE)
 	if(model@data@type == "raw"){
 		obsCov = umxHetCor(model@data@observed)
 	} else {
@@ -54,10 +54,11 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 	}
 	resid = cov2cor(obsCov) - cov2cor(expCov)
 	umx_print(data.frame(resid), digits = digits, zero.print = ".", suppress = suppress)
+	if(is.null(suppress)){
+		print("nb: You can zoom in on bad values with suppress, e.g. suppress = .01")
+	}
 	invisible(resid)
 }
-
-
 
 #' confint.MxModel
 #'
@@ -577,16 +578,15 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' 	m1 = umxRun(m1, setLabels = T, setValues = T)
 #' 	umxCI_boot(m1, type = "par.expected")
 #'}
-#' @references - \url{http://www.github.com/tbates/umx/thread/2598}
-#' Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
-#' @seealso - \code{\link{umxRun}}, \code{\link{umxGetExpectedCov}}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
+#' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
+#' @seealso - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
 #' @family umx reporting
-
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
 	require(MASS); require(OpenMx); require(umx)
 	type = umx_default_option(type, c("par.expected", "par.observed", "empirical"))
 	if(type == "par.expected") {
-		exp = umxGetExpectedCov(model, latent = FALSE)
+		exp = umxExpCov(model, latent = FALSE)
 	} else if(type == "par.observed") {
 		if(model$data@type == "raw") {
 			exp = var(mxEval(data, model))
@@ -747,6 +747,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' @param showError Whether to show errors
 #' @param precision Deprecated use "digits"
 #' @export
+#' @export plot.MxModel
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @family umx reporting
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -767,106 +768,82 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' plot(m1)
 #' }
 
-plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = F, showError = T, precision = NULL) {
+plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showError = TRUE, precision = NULL) {
+	# ==========
+	# = Setup  =
+	# ==========
 	if(!is.null(precision)){
 		warning("precision is deprecated for plot, use digits instead")
 		digits = precision
 	}
 	valid_PathLabels = c("none", "labels", "both")
 	pathLabels = umx_default_option(pathLabels, valid_PathLabels, check = TRUE)
+
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	if(std){ model = umxStandardizeModel(model, return = "model") }
+
+	# ========================
+	# = Get Symmetric & Asymmetric Paths =
+	# ========================
 	out = "";
-	# Get Asymmetric Paths
-	Avals   = model@matrices$A@values
-	Afree   = model@matrices$A@free
-	Alabels = model@matrices$A@labels
-	aRows = dimnames(Afree)[[1]]
-	aCols = dimnames(Afree)[[2]]
-	out = paste0(out, "\n\t# single arrow paths\n")
-	for(target in aRows ) {
-		for(source in aCols) {
-			thisPathFree = Afree[target, source]
-			thisPathVal  = round(Avals[target, source], digits)
-			if(thisPathFree) {
-				out = paste0(out, "\t", source, " -> ", target, " [label=\"", thisPathVal, "\"];\n")
-			} else if(thisPathVal != 0 & showFixed) {
-				# TODO Might want to fix this !!! comment out
-				out = paste0(out, "\t", source, " -> ", target, " [label=\"@", thisPathVal, "\"];\n")
-			}
-		}
-	}
-	out = paste0(out, "\n\t# variances\n")
-	variances = varianceNames = c()
-	Svals   = model@matrices$S@values
-	Sfree   = model@matrices$S@free
-	Slabels = model@matrices$S@labels
-	allVars = c(latents, selDVs)
-	for(target in allVars ) { # rows
-		lowerVars  = allVars[1:match(target, allVars)]
-		for(source in lowerVars) { # columns
-			thisPathLabel = Slabels[target, source]
-			thisPathFree  = Sfree[target, source]
-			thisPathVal   = Svals[target, source]
-			thisPathVal   = round(thisPathVal, digits)
-			if(thisPathFree | (thisPathVal !=0 & showFixed)) {
-				if(thisPathFree){
-					prefix = ""
-				} else {
-					prefix = "@"
-				}
-				if((target == source)) {
-					if(showError){
-						eName     = paste0(source, '_var')
-						varToAdd  = paste0(eName, ' [label="', prefix, thisPathVal, '", shape = plaintext]')
-						variances = append(variances, varToAdd)
-						varianceNames = append(varianceNames, eName)
-						out = paste0(out, "\t", eName, " -> ", target, ";\n")
-					}
-				} else {
-					if(pathLabels == "both"){
-						out = paste0(out, "\t", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
-					} else if(pathLabels == "labels"){
-						out = paste0(out, "\t", source, " -> ", target, " [dir=both, label=\"", thisPathLabel, "\"];\n")
-					}else {
-						# pathLabels = "none"
-						out = paste0(out, "\t", source, " -> ", target, " [dir=both, label=\"", prefix, thisPathVal, "\"];\n")
-					}
-				}
-			} else {
-				# path is fixed and is either zero OR showFixed is FALSE 
-				# return(list(thisFrom,thisTo))
-			}
-		}
-	}
-
-	preOut = "";
-
+	out = xmu_dot_make_paths(mxMat = model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, comment = "Single arrow paths", digits = digits)
+	out = xmu_dot_make_paths(mxMat = model@matrices$S, stringIn = out, heads = 2, showFixed = showFixed, comment = "Variances", digits = digits)
+	tmp = xmu_dot_make_variances(model@matrices$S, style = NULL, showFixed = TRUE, digits = digits)
+	variances = tmp$variances
+	varianceNames = tmp$varianceNames
 	# ============================
-	# = make the manifest shapes =
+	# = Make the manifest shapes =
 	# ============================
 	# x1 [label="E", shape = square];
+	preOut = "";
 	for(var in selDVs) {
 	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
 	}
+	# ================
+	# = handle means =
+	# ================
+	if(umx_has_means(model)){
+		out = paste0(out, "\n\t# Means paths\n")
+		# Add a triangle to the list of shapes
+		preOut = paste0(preOut, "\t one [shape = triangle];\n")
+		mxMat = model@matrices$M
+		mxMat_vals   = mxMat@values
+		mxMat_free   = mxMat@free
+		mxMat_labels = mxMat@labels
+		meanVars = colnames(mxMat@values)
+		for(target in meanVars) {
+			thisPathLabel = mxMat_labels[1, target]
+			thisPathFree  = mxMat_free[1, target]
+			thisPathVal   = round(mxMat_vals[1, target], digits)
+			if(thisPathFree){ labelStart = ' [label="' } else { labelStart = ' [label="@' }
 
+			# TODO find a way of showing means fixed at zero?
+			if(thisPathFree | showFixed ) {
+			# if(thisPathFree | (showFixed & thisPathVal != 0) ) {
+				out = paste0(out, "\tone -> ", target, labelStart, thisPathVal, '"];\n')
+			}else{
+				# cat(paste0(out, "\tone -> ", target, labelStart, thisPathVal, '"];\n'))
+				# return(thisPathVal != 0)
+			}
+		}
+	}
 	# ===========================
-	# = make the variance lines =
+	# = Make the variance lines =
 	# ===========================
 	# x1_var [label="0.21", shape = plaintext];
-
 	for(var in variances) {
 	   preOut = paste0(preOut, "\t", var, ";\n")
 	}
-
 	# ======================
-	# = set the ranks e.g. =
+	# = Set the ranks e.g. =
 	# ======================
 	# {rank=same; x1 x2 x3 x4 x5 };
-
+	# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
 	rankVariables = paste0("\t{rank=min ; ", paste(latents, collapse = "; "), "};\n")
 	rankVariables = paste0(rankVariables, "\t{rank=same; ", paste(selDVs, collapse = " "), "};\n")
+	if(umx_has_means(model)){ append(varianceNames, "one")}
+
 	rankVariables = paste0(rankVariables, "\t{rank=max ; ", paste(varianceNames, collapse = " "), "};\n")
 
 	# ===================================
@@ -874,13 +851,14 @@ plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", 
 	# ===================================
 	digraph = paste("digraph G {\n\tsplines=\"FALSE\";\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
+	print("nb: see ?plot.MxModel for options - digits, dotFilename, pathLabels, showFixed, showError")
 	if(!is.na(dotFilename)){
 		if(dotFilename == "name"){
 			dotFilename = paste0(model@name, ".dot")
 		}
-		cat(digraph, file = dotFilename) #write to file
+		cat(digraph, file = dotFilename) # write to file
 		system(paste("open", shQuote(dotFilename)));
-		# return(invisible(cat(digraph)))
+		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
@@ -1261,18 +1239,19 @@ extractAIC.MxModel <- function(model) {
 	return(a[1, "AIC"])
 }
 
-#' umxGetExpectedCov
+
+#' umxExpCov
 #'
 #' extract the expected covariance matrix from an \code{\link{mxModel}}
 #'
 #' @param model an \code{\link{mxModel}} to get the covariance matrix from
-#' @param latent Whether to select the latent variables (defaults to TRUE)
-#' @param manifest Whether to select the manifest variables (defaults to TRUE)
+#' @param latents Whether to select the latent variables (defaults to TRUE)
+#' @param manifests Whether to select the manifest variables (defaults to TRUE)
 #' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected covariance matrix
 #' @export
-#' @references - \url{http://www.github.com/tbates/umx/thread/2598}
-#' Original written by \url{http://www.github.com/tbates/umx/users/bwiernik}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
+#' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
 #' @examples
 #' require(OpenMx)
@@ -1287,45 +1266,127 @@ extractAIC.MxModel <- function(model) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umxGetExpectedCov(model = m1)
-#' umxGetExpectedCov(m1, digits = 3)
-umxGetExpectedCov <- function(model, latent = T, manifest = T, digits = NULL){
-	if(!umx_is_RAM(model)){
-		stop("model must be a RAM model")
-	}
-	mA <- mxEval(A,model)
-	mS <- mxEval(S,model)
-	mI <- diag(1, nrow(mA))
-	mE <- solve(mI - mA)
-	mCov <- (mE) %*% mS %*% t(mE) # The model-implied covariance matrix
-	mV <- NULL
-	if(latent) {
-		mV <- model@latentVars 
-	}
-	if(manifest) {
-		mV <- c(mV,model@manifestVars)
-	}
-	# return the selected variables
-	if(is.null(digits)){
-		return(mCov[mV, mV]) 
+#' umxExpCov(m1)
+#' umxExpCov(m1, digits = 3)
+umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
+	if(model@data@type =="raw"){
+		manifestNames = names(model$data@observed)
 	} else {
-		return(round(mCov[mV, mV], digits))
+		manifestNames = dimnames(model$data@observed)[[1]]
 	}
+	if(umx_is_RAM(model)){
+		if(manifests & !latents){
+			# TODO # test umxExpCov under 1.4?
+			if(compareVersion(mxVersion(), "1.5.0") == 1){
+				# expCov = attr(model$objective[[2]]$result, "expCov")
+				expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+			} else {
+				expCov = model$objective@info$expCov
+			}
+			dimnames(expCov) = list(manifestNames, manifestNames)
+		} else {
+			A <- mxEval(A, model)
+			S <- mxEval(S, model)
+			I <- diag(1, nrow(A))
+			E <- solve(I - A)
+			expCov <- E %&% S # The model-implied covariance matrix
+			mV <- NULL
+			if(latents) {
+				mV <- model@latentVars 
+			}
+			if(manifests) {
+				mV <- c(mV, model@manifestVars)
+			}
+			expCov = expCov[mV, mV]
+		}
+	} else {
+		if(latents){
+			stop("I don't know how to reliably get the latents for non-RAM models... Sorry :-(")
+		} else {
+			if(compareVersion(mxVersion(), "1.5.0") == 1){
+				expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+			} else {
+				expCov = model$objective@info$expCov
+			}
+			dimnames(expCov) = list(manifestNames, manifestNames)
+		}
+	}
+	if(!is.null(digits)){
+		expCov = round(expCov, digits)
+	}
+	return(expCov) 
+}
+#' umxExpMean
+#'
+#' Extract the expected means matrix from an \code{\link{mxModel}}
+#'
+#' @param model an \code{\link{mxModel}} to get the means from
+#' @param latents Whether to select the latent variables (defaults to TRUE)
+#' @param manifests Whether to select the manifest variables (defaults to TRUE)
+#' @param digits precision of reporting. Leave NULL to do no rounding.
+#' @return - expected means
+#' @export
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
+#' @seealso - \code{\link{umxExpCov}}, \code{\link{umxCI_boot}}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = "one", to = manifests),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(demoOneFactor, type = "raw")
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umxExpMeans(model = m1)
+#' umxExpMeans(m1, digits = 3)
+umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
+	# TODO # what does umxExpMeans do under 1.4?
+	umx_check_model(model, beenRun = TRUE)
+	if(!umx_has_means(model)){
+		stop("Model has no means expectation to get: Are there any means in the data? (type='raw', or type = 'cov' with means?)")
+	}
+	
+	if(umx_is_RAM(model)){
+		# TODO something nice to do here?
+	}
+	if(!is.null(latents)){
+		# TODO should a function called expMeans get expected means for latents... why not.
+		stop("Haven't thought about getting means for latents yet... Bug me about it :-)")
+	}
+	expMean <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
+	
+	if(model@data@type == "raw"){
+		manifestNames = names(model$data@observed)
+	} else {
+		manifestNames = dimnames(model$data@observed)[[1]]
+	}
+	dimnames(expMean) = list("mean", manifestNames)
+	if(!is.null(digits)){
+		expMean = round(expMean, digits)
+	}
+	return(expMean)
 }
 
 #' logLik.MxModel
 #'
-#' Returns the log likelihood for an OpenMx model
-#' helper function enabling AIC(model); BIC(model); and logLik(model)
+#' Returns the log likelihood for an OpenMx model. This helper also 
+#' enables \code{\link{AIC}}(model); \code{\link{BIC}}(model).
+#'
+#' hat-tip Andreas Brandmaier
 #'
 #' @method logLik MxModel
 #' @rdname  logLik
 #' @export
-#' @param model an \code{\link{mxModel}} to get the log likelihood from
+#' @param model the \code{\link{mxModel}} from which to get the log likelihood 
 #' @return - the log likelihood
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
 #' @family umx reporting
-#' @references - \url{http://www.github.com/tbates/umx/thread/931#comment-4858}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1352,7 +1413,7 @@ logLik.MxModel <- function(model) {
 		attr(Minus2LogLikelihood,"nobs") <- NA
 	}
 	if (!is.null(model@output)){
-		attr(Minus2LogLikelihood,"df")<- length(model@output$estimate)	
+		attr(Minus2LogLikelihood,"df") <- length(model@output$estimate)	
 	} else {
 		attr(Minus2LogLikelihood, "df") <- NA
 	}
