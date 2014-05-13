@@ -431,7 +431,7 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 #' @export
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
 #' @references - \url{http://www.github.com/tbates/umx}
-#' @family umx reporting
+#' @family umx reporting functions
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -799,7 +799,7 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 #' @param use how to handle missing data
 #' @param digits rounding of answers
 #' @return - matrix of correlations and p-values
-#' @family umx data functions
+#' @family umx data helpers
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -2352,3 +2352,22 @@ qm <- function(..., rowMarker = "|") {
 # autoplot(tm)
 # summary(tm)
 # tm <- microbenchmark(1:10^6); autoplot(tm)
+
+
+# ====================
+# = php type helpers =
+# ====================
+#' umxExplode - like php's explode function
+#'
+#' Takes a string and returns each character as an item in an array
+#'
+#' @param model an character string
+#' @return - a collection of characters
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' umxExplode("dog") # "d" "o" "g"
+umxExplode <- function(string) { 
+	strsplit(string, split=character())[[1]] 
+}

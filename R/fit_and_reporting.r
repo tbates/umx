@@ -1289,7 +1289,7 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 			S <- mxEval(S, model)
 			I <- diag(1, nrow(A))
 			E <- solve(I - A)
-			expCov <- (E) %*% S %*% t(E) # The model-implied covariance matrix
+			expCov <- E %&% S # The model-implied covariance matrix
 			mV <- NULL
 			if(latents) {
 				mV <- model@latentVars 
@@ -1303,7 +1303,11 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 		if(latents){
 			stop("I don't know how to reliably get the latents for non-RAM models... Sorry :-(")
 		} else {
-			expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+			if(compareVersion(mxVersion(), "1.5.0") == 1){
+				expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+			} else {
+				expCov = model$objective@info$expCov
+			}
 			dimnames(expCov) = list(manifestNames, manifestNames)
 		}
 	}

@@ -143,17 +143,22 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 	return(model)
 }
 
-xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = T, overRideExisting = F) {
+xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE) {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "_male")
 	# TODO implement overRideExisting !!!
 	if (!umx_is_RAM(model)) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
+	if(overRideExisting){
+		stop("overRideExisting not implemented yet, sorry...")
+	}
 	freeA  = model@matrices$A@free
 	freeS  = model@matrices$S@free
+	freeM  = model@matrices$M@free
 	namesA = dimnames(freeA)[[1]]
 	namesS = dimnames(freeS)[[1]]
+	namesM = dimnames(freeM)[[1]]
 
 	# =========================
 	# = Add asymmetric labels =
@@ -191,13 +196,12 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = T, overRide
 	# = Add means labels if needed =
 	# ==============================
 	# TODO add a test case with raw data but no means...
-	if(model@data@type == "raw"){
-		if(is.null(model@matrices$M)){
-			message("You are using raw data, but have not yet added paths for the means\n")
-			stop("You do this with mxPath(from = 'one', to = 'var')")
-		} else {
-			model@matrices$M@labels = matrix(nrow = 1, paste0(colnames(model@matrices$M@values),"_mean", suffix))
-		}
+	if(model@data@type == "raw" & is.null(model@matrices$M)) {
+		message("You are using raw data, but have not yet added paths for the means\n")
+		message("You do this with mxPath(from = 'one', to = 'var')")
+	}
+	if(!is.null(model@matrices$M)){
+		model@matrices$M@labels[] = paste0("one_to_", colnames(model@matrices$M@values), suffix)
 	}
 	return(model)
 }
