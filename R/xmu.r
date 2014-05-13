@@ -153,12 +153,18 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	if(overRideExisting){
 		stop("overRideExisting not implemented yet, sorry...")
 	}
+	print("test")
 	freeA  = model@matrices$A@free
 	freeS  = model@matrices$S@free
-	freeM  = model@matrices$M@free
+
+	if(umx_has_means(model)){
+		freeM  = model@matrices$M@free
+	}
+
 	namesA = dimnames(freeA)[[1]]
 	namesS = dimnames(freeS)[[1]]
 	namesM = dimnames(freeM)[[1]]
+	print("test2")
 
 	# =========================
 	# = Add asymmetric labels =

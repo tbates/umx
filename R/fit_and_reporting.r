@@ -1269,7 +1269,7 @@ extractAIC.MxModel <- function(model) {
 #' umxExpCov(m1)
 #' umxExpCov(m1, digits = 3)
 umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
-	if(model@data@type =="raw"){
+	if(model@data@type == "raw"){
 		manifestNames = names(model$data@observed)
 	} else {
 		manifestNames = dimnames(model$data@observed)[[1]]
@@ -1281,6 +1281,7 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 				# expCov = attr(model$objective[[2]]$result, "expCov")
 				expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
 			} else {
+				# verion 1.4 or below
 				expCov = model$objective@info$expCov
 			}
 			dimnames(expCov) = list(manifestNames, manifestNames)
