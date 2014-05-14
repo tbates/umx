@@ -3,7 +3,7 @@
 # test_file("~/bin/umx/inst/tests/test_umx_is_RAM.r") 
 # 
 # test_package("umx")
-
+# TODO test under 1.4 and 2.b
 require(OpenMx)
 data(demoOneFactor)
 
