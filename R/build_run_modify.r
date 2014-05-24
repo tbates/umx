@@ -1,12 +1,10 @@
 # devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
-# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 # devtools::check("~/bin/umx")
 # devtools::check_doc("~/bin/umx")
 # setwd("~/bin/umx"); 
-# 
+# system(paste("open", shQuote("/Users/tim/bin/umx/R/misc_and_utility.r")))
 # devtools::build("~/bin/umx")
 # devtools::load_all("~/bin/umx")
-# devtools::dev_help("umx-package.Rd")
 # devtools::show_news("~/bin/umx")
 # devtools::run_examples("~/bin/umx")
 
@@ -15,6 +13,8 @@
 # devtools::update_version();
 # devtools::news();
 # devtools::create_README()
+
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
 # https://r-forge.r-project.org/project/admin/?group_id=1745
 # http://adv-r.had.co.nz/Philosophy.html
@@ -46,7 +46,10 @@
 #' @param ... A list of paths and a data source
 #' @param exog.variances If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.
 #' @param endog.variances If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.
-#' @param fix Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings")
+#' @param fix Whether to fix latent or first paths to 1. Options are: c("latents", "none", "firstLoadings") (defaults to "latents")
+#' @param latentVars (defaults to NULL)
+#' @param data (defaults to NULL)
+#' @param remove_unused_manifests (defaults to TRUE)
 #' @param independent Whether the model is independent (default = NA)
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -609,7 +612,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 	} else {
 		# This is a RAM Model: Set sane starting values
 		# Done: Start values in the S at variance on diag, bit less than cov off diag
-		# Done: Start amnifest means in means model
+		# Done: Start manifest means
 		# TODO: Start values in the A matrix...
 		# TODO: Start latent means?...		
 		# TODO: Handle sub models...
@@ -619,10 +622,10 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		if (length(obj@submodels) > 0) {
 			stop("Cannot yet handle submodels")
 		}
-		theData = obj@data@observed
-		if (is.null(theData)) {
+		if (is.null(obj@data)) {
 			stop("'model' does not contain any data")
 		}
+		theData = obj@data@observed
 		manifests = obj@manifestVars
 		nVar      = length(manifests)
 		if(obj@data@type == "raw"){
@@ -1807,4 +1810,230 @@ umxParallel <- function(model, what) {
 	# omxDetectCores() # cores available
 	# getOption('mxOptions')$"Number of Threads" # cores used by OpenMx
 	# mxOption(model= yourModel, key="Number of Threads", value= (omxDetectCores() - 1))
+}
+
+#' umxPath: Flexible specification of sem paths
+#'
+#' This function returns a standard mxPath, but gives new options for specifying the path. In addition to the normal
+#' from and to, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
+#' There are also verbs for fixing values: "fixedAt" and "fixFirst"
+#' Finally, it also allows sem-style "A->B" string specification.
+#'
+#' @description The goal of this function is to enable quck to write, quick to read, and flexible paths for RAM models in OpenMx.
+#' 
+#' The new key "with" means you no-longer need set arrows = 2 on covariances. So you can say:
+#'    \code{mxPath(A, with = B)} instead of \code{mxPath(from = A, to = B, arrows = 2)}.
+#' 
+#' Dpecify a variance with \code{mxPath(var = A)} (equivalent to \code{mxPath(from = A, to = A, arrows = 2)}).
+#' 
+#' To specify a mean, you say \code{mxPath(mean = A)}, which is equivalent to \code{mxPath(from = "one", to = A)}.
+#' 
+#' To fix a patha at a value, you can say \code{mxPath(var = A, fixedAt = 1)} instead of to \code{mxPath(from = A, to = A, arrows = 2, free = F, values = 1)}.
+#' 
+#' Setting up a latent trait, you can fix the loading of the first path with \code{mxPath(A, to = c(B,C,D), fixFirst = T)} instead of 
+#' \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
+#' 
+#' Finally, you can use the John Fox "sem" package style notation, i.e., "A -> B".
+#' If you want to add multiple paths that way, separate them with a semi-colon or a return (see examples below.)
+#' 
+#' 
+#' @param from either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"
+#' @param to one or more target variables for one-headed paths, e.g "A" or c("A","B") 
+#' @param with same as "to = vars, arrows = 2". nb: from, to= and var=  must be left empty (their default)
+#' @param var equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)
+#' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
+#' @param mean equivalent to setting "from = 'one', to = x. nb: from, to, with and var must be left empty (their default)
+#' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
+#' @param firstAt first value is fixed at 1 (free is ignored: warning if not a single TRUE)
+#' @param connect as in mxPath - nb: Only used when using from and to
+#' @param arrows as in mxPath - nb: Only used when using from and to
+#' @param free whether the value is free to be optimised
+#' @param values default value list
+#' @param labels labels for each path
+#' @param lbound lower bounds for each path value
+#' @param ubound upper bounds for each path value
+#' @return - \code{\link{mxPath}}
+#' @export
+#' @family umx build functions
+#' @seealso - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' # Some examples of paths with umxPath
+#' umxPath("A", to = "B")
+#' umxPath("A", to = "B", fixedAt = 1) 
+#' umxPath("A", to = LETTERS[2:4], firstAt = 1) # Same as "free = FALSE, values = 1"
+#' umxPath("A", with = "B") # using with: same as "to = B, arrows = 2"
+#' umxPath("A", with = "B", fixedAt = .5)
+#' umxPath("A", with = "B", firstAt = 1)
+#' umxPath("A", with = c("B","C"), fixedAt = 1)
+#' umxPath(var = "A") # Give a variance to A
+#' umxPath(var = "A", fixedAt = 1)
+#' umxPath(var = LETTERS[1:5], fixedAt = 1)
+#' umxPath(cov = c("A", "B")) # Covariance A <-> B
+#' umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
+#' umxPath(means = c("A","B"), values = c(pi,exp(1)))
+# These are not yet implemented
+#' umxPath("A <-> B") # same path as above using a string
+#' umxPath("A -> B") # one-headed arrow with string syntax
+#' umxPath("A <> B; A <-- B") # This is ok too
+#' umxPath("A -> B; B>C; C --> D") # two paths. space doesn't matter, hyphens don't matter
+#' umxPath("A -> manifests") # manifests is a reserved word, as is latents. Allows string syntax to use the manifestVars variable
+#' # A worked example
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	umxPath(latents, to = manifests),
+#' 	# umxPath("G -> manifests"),
+#' 	mxPath(var = manifests),
+#' 	mxPath(var = latents, fixedAt = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umxSummary(m1, show = "std")
+
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, fixedAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+	if(!is.null(from)){
+		if(length(from) > 1){
+			isSEMstyle = grepl("[<>]", x = from[1])	
+		} else {
+			isSEMstyle = grepl("[<>]", x = from)				
+		}
+		if(isSEMstyle){
+			stop("sem-style string syntax not yet implemented. In the mean time, try the other features, like with, var, means = , fixedAt = , fixFirst = ")
+			if("from contains an arrow"){
+				# parse into paths
+			} else {
+				if(!is.null(with)){
+					to = with
+					arrows = 2
+					connect = "single"
+				} else {
+					to = to
+					arrows = 1
+					connect = "single"
+				}
+			}	
+			a = "A ->B;A<-B; A>B; A --> B
+			A<->B"
+			# remove newlines, replacing with ;
+			allOneLine = gsub("\n+", ";", a, ignore.case = TRUE)
+			# regularizedArrows = gsub("[ \t]?^<-?>[ \t]?", "->", allOneLine, ignore.case = TRUE)
+			# regularizedArrows = gsub("[ \t]?-?>[ \t]?", "<-", regularizedArrows, ignore.case = TRUE)
+
+			# TODO remove duplicate ; 
+			pathList = umx_explode(";", allOneLine)
+			for (aPath in pathList) {
+				if(length(umx_explode("<->", aPath))==3){
+					# bivariate
+					parts = umx_explode("<->", aPath)
+					mxpath(from = umx_trim(parts[1]))
+				} else if(length(umx_explode("->", aPath))==3){
+					# from to
+				} else if(length(umx_explode("<-", aPath))==3){
+					# to from
+				}else{
+					# bad line
+				}
+			}
+			umx_explode("", a)
+		}
+	}
+	n = 0
+	for (i in list(with, cov, var, means)) {
+		if(!is.null(i)){ n = n + 1}
+	}
+	if(n > 1){
+		stop("At most one of with, cov, var, means can be use at one time")
+	} else if(n==0){
+		# check that from is set?
+		if(is.null(from)){
+			stop("You must set at least from")
+		}	
+	} else {
+		# n = 1
+	}
+
+	# Handle with
+	if(!is.null(with)){
+		if(is.null(from)){
+			stop("To use with, you must set from also")
+		} else {
+			from = from
+			to   = with
+			arrows = 2
+			connect = "single"
+		}
+	} else if(!is.null(cov)){
+		# Handle cov
+		if(!is.null(from) | !is.null(to)){
+			stop("To use cov, from and to must not be set")
+		} else if (length(cov) != 2){
+			stop("cov must consist of two and only two paths. If you want to covary more paths, use from, to, and connect = \"unique.bivariate\"\n",
+			"If you want a variance, use var = \"X\"")
+		} else {
+			from   = cov[1]
+			to     = cov[2]
+			arrows = 2
+			connect = "single"
+		}
+	} else if(!is.null(var)){
+		# handle var
+		if(!is.null(from) | !is.null(to)){
+			stop("To use var, from and to must not be set")
+		} else {
+			from   = var
+			to     = var
+			arrows = 2
+			connect = "single"
+		}
+	} else if(!is.null(means)){
+		# Handle means
+		if(!is.null(from) | !is.null(to)){
+			stop("To use means, from and to must not be set. Just say means = c(\"X\",\"Y\").")
+		} else {
+			from   = "one"
+			to     = means
+			arrows = 1
+			connect = "single"
+		}
+	}else{
+		# assume it is from to
+		from = from
+		to = to
+		arrows = arrows
+		connect = "single"
+	}
+
+	# From and to will be set now...
+	if(!is.null(fixedAt) & !is.null(firstAt)){
+		stop("At most one of fixFirst and fixedAt can be set")
+	}
+
+	# Handle firstAt
+	if(!is.null(firstAt)){
+		if(length(from) > 1){
+			# TODO think about this
+			stop("It's not wise to use firstAt with multiple from sources. I'd like to think about this before implementing it..")
+		} else {
+			free = rep(TRUE, length(to))
+			values = rep(NA, length(to))
+			free[1] = FALSE
+			values[1] = firstAt
+		}
+	}	
+	# Handle fixedAt
+	if(!is.null(fixedAt)){
+		free = FALSE
+		values = fixedAt
+	}
+
+	if(!connect == "single"){
+		message("Connect should be single, it was:", connect)
+	}	
+
+	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound)
+
 }

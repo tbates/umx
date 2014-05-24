@@ -17,12 +17,11 @@
 #'
 #' Return the \code{\link{residuals}} from an OpenMx RAM model
 #'
+#' @rdname residuals.MxModel
 #' @param model a (run) \code{\link{mxModel}} to get residuals from
 #' @param digits rounding (default = 2)
 #' @param suppress smallest deviation to print out (default = NULL = show all)
 #' @return - residual correlation matrix
-#' @rdname residuals.MxModel
-#' @aliases residuals.MxModel
 #' @export
 #' @family umx reporting functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
@@ -42,8 +41,8 @@
 #' residuals(m1)
 #' residuals(m1, digits = 3)
 #' residuals(m1, digits = 3, suppress = .005)
-#' # residuals are returned as an invidible object you can capture in a variable
-#' a = residuals(m1); a 
+#' # residuals are returned as an invisible object you can capture in a variable
+#' a = residuals(m1); a
 residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 	umx_check_model(model, type = NULL, hasData = T)
 	expCov = umxExpCov(model, latents = FALSE)
@@ -849,7 +848,7 @@ plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", 
 	# ===================================
 	# = Assemble full text to write out =
 	# ===================================
-	digraph = paste("digraph G {\n\tsplines=\"FALSE\";\n", preOut, out, rankVariables, "\n}", sep = "\n");
+	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
 	print("nb: see ?plot.MxModel for options - digits, dotFilename, pathLabels, showFixed, showError")
 	if(!is.na(dotFilename)){
@@ -1524,19 +1523,30 @@ umxFitIndices <- function(model, indepfit) {
 	return(indices)
 }
 
-#' RMSEA.MxModel
+# define generic RMSEA...
+#' Generic RMSEA function
+#'
+#' See \code{\link[umx]{RMSEA.MxModel}} to access the RMSEA of MxModels
+#'
+#' @param x an object to get the RMSEA for
+#' @return - RMSEA object containing value (and perhaps a CI)
+#' @export
+#' @seealso - \code{\link[umx]{RMSEA.MxModel}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+RMSEA <- function(x) UseMethod("RMSEA", x)
+
+#' RMSEA function for MxModels
 #'
 #' Compute the confidence interval on RMSEA
 #'
 #' @param model an \code{\link{mxModel}} to get CIs on RMSEA for
-#' @param ci.lower the lower Ci to compute
-#' @param ci.upper the upper Ci to compute
+#' @param ci.lower the lower CI to compute
+#' @param ci.upper the upper CI to compute
 #' @return - object containing the RMSEA and lower and upper bounds
 #' @rdname RMSEA.MxModel
 #' @export
 #' @family umx reporting
-#' @seealso - \code{\link{RMSEA}}
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1557,6 +1567,17 @@ RMSEA.MxModel <- function(model, ci.lower = .05, ci.upper = .95) {
 	X2 <- sm$Chi
 	df <- sm$degreesOfFreedom
 	N  <- sm$numObs 
+    N.RMSEA <- max(N, X2 * 4)
+    G <- max(length(model@submodels), 1)
+
+    if (is.na(X2) || is.na(df)) {
+        RMSEA <- as.numeric(NA)
+    } else if (df > 0) {
+        GG <- 0
+        RMSEA <- sqrt(max(c((X2/N)/df - 1/(N - GG), 0))) *  sqrt(G)
+    } else {
+        RMSEA <- 0
+    }
 
 	lower.lambda <- function(lambda) {
 		pchisq(X2, df = df, ncp = lambda) - ci.upper
@@ -1564,14 +1585,45 @@ RMSEA.MxModel <- function(model, ci.lower = .05, ci.upper = .95) {
 	upper.lambda <- function(lambda) {
 		(pchisq(X2, df = df, ncp = lambda) - ci.lower)
 	}
- 	N.RMSEA  <- max(N, X2 * 4) # heuristic of lavaan. TODO: can we improve this? when does this break?
-	lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root, silent = T) 
-	lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root, silent = T)
-	rmsea.lower <- sqrt(lambda.l/(N * df))
-	rmsea.upper <- sqrt(lambda.u/(N * df))
-	RMSEA = sqrt( max( c((X2/N)/df - 1/N, 0) ) )
-	txt = paste0("RMSEA = ", round(RMSEA, 3), " CI", sub("^0?\\.", replace = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "]")	
-	return(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, txt = txt)) 
+
+	if (is.na(X2) || is.na(df)) {
+		rmsea.lower <- NA
+	} else if (df < 1 || lower.lambda(0) < 0) {
+		rmsea.lower <- 0
+	} else {
+		lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root)
+		if (inherits(lambda.l, "try-error")) {
+			lambda.l <- NA
+		}
+		GG <- 0
+		rmsea.lower <- sqrt(lambda.l/((N - GG) * df)) * sqrt(G)
+	}
+	if (is.na(X2) || is.na(df)) {
+		rmsea.upper <- NA
+	} else if (df < 1 || upper.lambda(N.RMSEA) > 0 || upper.lambda(0) < 0) {
+		rmsea.upper <- 0
+	} else {
+		lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root)
+		if (inherits(lambda.u, "try-error")) {
+			lambda.u <- NA
+		}
+		GG <- 0
+		rmsea.upper <- sqrt(lambda.u/((N - GG) * df)) * sqrt(G)
+	}
+	# compute p-value
+	if (is.na(X2) || is.na(df)) {
+		rmsea.pvalue <- as.numeric(NA)
+	} else if (df > 0) {
+		GG <- 0
+		ncp <- (N - GG) * df * 0.05^2/G
+		rmsea.pvalue <- (1 - pchisq(X2, df = df, ncp = ncp))
+	} else {
+		rmsea.pvalue <- 1
+	}
+	
+	txt = paste0("RMSEA = ", round(RMSEA, 3), " CI", sub("^0?\\.", replace = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "], p = ", umx_APA_pval(rmsea.pvalue))
+	print(txt)
+	invisible(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, RMSEA.pvalue = rmsea.pvalue, txt = txt)) 
 }
 
 #' umxDescriptives

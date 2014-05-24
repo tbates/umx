@@ -249,6 +249,7 @@ umxFormativeVarianceMess <- function(model){
 #' @param model an \code{\link{mxModel}} to show data from
 #' @param what  legal options are "values" (default), "free", or "labels")
 #' @param matrices to show  (default is c("S", "A"))
+#' @param digits precision to report, defaults to rounding to 2 decimal places
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx reporting functions
@@ -841,24 +842,29 @@ rowMin <- function(df, na.rm=T) {
 	return(tmp)
 }
 
-#' umx.as.numeric
-#'
+#' umx_as_numeric
+#' 
 #' Convert each column of a dataframe to numeric
 #'
 #' @param df a \code{\link{data.frame}} to convert
+#' @param force whether to force conversion to numeric for non-numeric columns (defaults to FALSE)
 #' @return - data.frame
 #' @family umx utility functions
 #' @export
-#' @seealso - 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' df = mtcars
 #' df$mpg = c(letters,letters[1:6]); str(df)
-#' df = umx.as.numeric(df)
-umx.as.numeric <- function(df) {
+#' df = umx_as_numeric(df)
+umx_as_numeric <- function(df, force = FALSE) {
 	# TODO handle case of not being a data.frame...
-	for (i in names(df)) {
-		df[,i] = as.numeric(df[,i])
+	if(force){
+		colsToConvert = names(df)
+	} else {
+		colsToConvert = umx_is_numeric(df)
+	}
+	for (i in colsToConvert) {
+		df[ ,i] = as.numeric(df[ ,i])
 	}
 	return(df)
 }
@@ -1567,8 +1573,9 @@ umx_is_MxModel <- function(obj) {
 #' Check an OpenMx model
 #'
 #' @param obj an object to check
-#' @param type = what type the model must be (defaults to not checking NULL)
+#' @param type what type the model must be, i.e., "RAM", "LISREL", etc. (defaults to not checking NULL)
 #' @param hasData whether the model should have data or not (defaults to not checking NULL)
+#' @param beenRun whether the model has been run or not (defaults to not checking NULL)
 #' @param hasMeans whether the model should have a means model or not (defaults to not checking NULL)
 #' @param checkSubmodels whether to check submodels (not implemented yet) (default = FALSE)
 #' @return - boolean
@@ -2024,7 +2031,7 @@ umx_is_numeric <- function(df, cols = TRUE){
 		stop(paste0("Can't handle anything by columns yet"))
 	}
 	if(!is.data.frame(df)){
-		stop(paste0("umx_round takes a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+		stop(paste0("First argument should be a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
 	}
 	colNames = names(df)
 	bIsNumeric = rep(F, length(colNames))
@@ -2286,12 +2293,22 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = T, use.levels
 #' M <- N <- diag(2)
 #' qm(M,c(4,5) | c(1,2),N | t(1:3))
 #' matrix(1:16, 4)
-qm <- function(..., rowMarker = "|") {
-# Short hard to read version that allows some of the more advanced Matlab capabilities like Matrices as arguments:
+
+qm <- function(...){
 	# turn ... into string
 	args<-deparse(substitute(rbind(cbind(...))))
 	# create "rbind(cbind(.),cbind(.),.)" construct
-	sep = paste0("\\", colsep)
+	args<-gsub("\\|","),cbind(",args)
+	# eval
+	eval(parse(text=args))
+}
+
+qm <- function(..., rowMarker = "|") {
+	# Short hard to read version that allows some of the more advanced Matlab capabilities like Matrices as arguments:
+	# turn ... into string
+	args<-deparse(substitute(rbind(cbind(...))))
+	# create "rbind(cbind(.),cbind(.),.)" construct
+	sep = paste0("\\", rowMarker)
 	args<-gsub(sep, "), cbind(", args)
 	# eval
 	eval(parse(text = args))
@@ -2353,21 +2370,47 @@ qm <- function(..., rowMarker = "|") {
 # summary(tm)
 # tm <- microbenchmark(1:10^6); autoplot(tm)
 
-
 # ====================
 # = php type helpers =
 # ====================
-#' umxExplode - like php's explode function
+#' umx_explode - like php's explode function
 #'
 #' Takes a string and returns each character as an item in an array
 #'
-#' @param model an character string
-#' @return - a collection of characters
+#' @param string an character string, e.g. "dog"
+#' @return - a collection of characters, e.g. c("d", "o", "g")
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://www.php.net/}
+#' @examples
+#' umx_explode("", "dog") # "d" "o" "g"
+#' umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
+umx_explode <- function(delimiter = character(), string) { 
+	strsplit(string, split = delimiter)[[1]] 
+}
+
+#' umx_trim
+#'
+#' returns string w/o leading or trailing whitespace
+#'
+#' @param string to trim
+#' @return - string
 #' @export
 #' @family umx misc functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umxExplode("dog") # "d" "o" "g"
-umxExplode <- function(string) { 
-	strsplit(string, split=character())[[1]] 
+#' umx_trim(" dog") # "dog"
+#' umx_trim("dog ") # "dog"
+#' umx_trim("\t dog \n") # "dog"
+
+umx_trim <- function(string) {
+	# http://www.php.net/manual/en/function.trim.php
+	return(gsub("^\\s+|\\s+$", "", string))
+
+	# returns string w/o leading whitespace
+	 # trim.leading <- function (x)  sub("^\\s+", "", x)
+
+	# returns string w/o trailing whitespace
+	 # sub("\\s+$", "", x)
 }
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");

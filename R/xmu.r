@@ -200,9 +200,11 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	# = Add means labels if needed =
 	# ==============================
 	# TODO add a test case with raw data but no means...
-	if(model@data@type == "raw" & is.null(model@matrices$M)) {
-		message("You are using raw data, but have not yet added paths for the means\n")
-		message("You do this with mxPath(from = 'one', to = 'var')")
+	if(!is.null(model@data)){
+		if(model@data@type == "raw" & is.null(model@matrices$M)) {
+			message("You are using raw data, but have not yet added paths for the means\n")
+			message("You do this with mxPath(from = 'one', to = 'var')")
+		}
 	}
 	if(!is.null(model@matrices$M)){
 		model@matrices$M@labels[] = paste0("one_to_", colnames(model@matrices$M@values), suffix)
@@ -559,6 +561,17 @@ xmuMI <- function(model, vector = T) {
 	return(ret)
 }
 
+#' xmuHasSquareBrackets
+#'
+#' Tests if an input has square brackets
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @return - TRUE/FALSE
+#' @export
+#' @family umx non-user functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' xmuHasSquareBrackets("A[1,2]")
 xmuHasSquareBrackets <- function (input) {
     match1 <- grep("[", input, fixed = TRUE)
     match2 <- grep("]", input, fixed = TRUE)

@@ -12,45 +12,12 @@
 | (residual) (co)variance    | from = x, to = y, arrows = 2 | x <-> y | x ~~ y |
 | intercept                  | from="one", to = x           | 1 -> x  | x ~  1 |
 
-```splus
-library(umx); library(lavaan)
-data(PoliticalDemocracy)
-
-m2 = umxRAM("Bollen1989",
-	# Measurement model
-    mxPath(from = "ind60", to = c("x1", "x2", "x3")),
-    mxPath(from = "dem60", to = c("y1", "y2", "y3", "y4")),
-    mxPath(from = "dem65", to = c("y5", "y6", "y7", "y8")),
-  	# Regressions
-    mxPath(from = "ind60", to = "dem60"),
-    mxPath(from = c("ind60", "dem60"), to = "dem65"),
-	# Residual correlations
-    mxPath(from = "y1", to = "y5", arrows = 2),
-    mxPath(from = "y2", to = c("y4", "y6"), arrows = 2),
-    mxPath(from = "y3", to = "y7", arrows = 2),
-    mxPath(from = "y4", to = "y8", arrows = 2),
-    mxPath(from = "y6", to = "y8", arrows = 2),
-	mxData(cov(PoliticalDemocracy), type = "cov", numObs = 500),
-	
-    # things I don't yet add but could
-	# residuals for manifests
-	mxPath(from = names(PoliticalDemocracy), arrows = 2),
-	# variance for latents
-	mxPath(from = c("ind60", "dem60", "dem65"), values = .5, arrows = 2)
-)
-# m2 = umxFixEndogenousLatentVars(m2)
-m2 = umxAddResiduals(m2)
-m2 = umxFixLatents(m2)
-m3 = umxFixFirstLoadings(m2)
-umx_show(m2, matrices = c("A","S"))
-m2 = mxRun(m2)
-plot(m2, showFixed = T)
-umxSummary(m2, show = "std")
-RMSEA(m2)
-```
 ### Using Lavaan: 10 lines excluding comments
 
 ```splus    
+library(lavaan)
+data(PoliticalDemocracy)
+
 model <- '
   # measurement model
     ind60 =~ x1 + x2 + x3
@@ -71,11 +38,48 @@ summary(fit)
 
 ```
 
-### sem package
+The goal of umxRAM was to offer this clarity of expression, plus perhaps more flexibility, while retaining the expressive and compositional power of OpenMx, and without adding things without the user intending them.
 
-```splus
-    
+```splus	  
+library(umx); 
+library(lavaan)
+data(PoliticalDemocracy)
+
+m2 = umxRAM("Bollen1989",
+	# Measurement model
+    mxPath("ind60", to = c("x1", "x2", "x3")),
+    mxPath("dem60", to = c("y1", "y2", "y3", "y4")),
+    mxPath("dem65", to = c("y5", "y6", "y7", "y8")),
+  	# Regressions
+    mxPath("ind60", to = "dem60"),
+    mxPath(c("ind60", "dem60"), to = "dem65"),
+	# Residual correlations
+    mxPath("y1", with = "y5"),
+    mxPath("y2", with = c("y4", "y6")),
+    mxPath("y3", with = "y7"),
+    mxPath("y4", with = "y8"),
+    mxPath("y6", with = "y8"),
+	mxData(cov(PoliticalDemocracy), type = "cov", numObs = 500),
+	
+    # things I don't yet add but could
+	# residuals for manifests
+	mxPath(from = names(PoliticalDemocracy), arrows = 2),
+	# variance for latents
+	mxPath(from = c("ind60", "dem60", "dem65"), values = .5, arrows = 2)
+)
+m2 = umxFixEndogenousLatentVars(m2)
+m2 = umxAddResiduals(m2)
+m2 = umxFixLatents(m2)
+m3 = umxFixFirstLoadings(m2)
+umx_show(m2, matrices = c("A","S"))
+m2 = mxRun(m2)
+plot(m2, showFixed = T)
+umxSummary(m2, show = "std")
+RMSEA(m2)
+
 ```
+
+### sem package
 
 ```splus
     
@@ -115,6 +119,11 @@ m1 = mxModel("Bollen1989", type = "RAM",
     mxPath(from = "ind60", to = c("x1", "x2", "x3")      , free = c(F, T, T)   , values = c(1, .8, .8)),
     mxPath(from = "dem60", to = c("y1", "y2", "y3", "y4"), free = c(F, T, T, T), values = c(1, .8, .8, .8)),
     mxPath(from = "dem65", to = c("y5", "y6", "y7", "y8"), free = c(F, T, T, T), values = c(1, .8, .8, .8)),
+	# OR...
+    umxPath(from = "ind60", to = c("x1", "x2", "x3")      , fixFirst = T),
+    umxPath(from = "dem60", to = c("y1", "y2", "y3", "y4"), fixFirst = T),
+    umxPath(from = "dem65", to = c("y5", "y6", "y7", "y8"), fixFirst = T),
+
   	# Regressions
     mxPath(from = "ind60", to = "dem60", values = 1.5),
     mxPath(from = c("ind60", "dem60"), to = "dem65", values = .7),
@@ -135,23 +144,18 @@ m1 = umxSetValues(m1, onlyTouchZeros = T)
 m1 = umxSetLabels(m1)
 m1 = mxRun(m1)
 
-m1 <- mxModel("m1", 
+m1 <- mxModel("m1", type="RAM",
+	latentVars = "l_power",
+	manifestVars = c("mpg",  "cyl",  "disp"),
 	mxPath(from = c("cyl", "disp"), to = "l_power"),
 	mxPath(from = "l_power", to = "mpg"),
 	mxData(thedata, type = "raw"),
-
-    type="RAM",                
-	latentVars = "l_power",
-	manifestVars = c("mpg",  "cyl",  "disp"),
 	mxPath(from = "one", to = c("mpg",  "cyl",  "disp"), arrows = 1), # manifest means
 	mxPath(from = c("cyl", "disp"), connect = "unique.bivariate", arrows = 2, free = T)
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
 plot(m1, showMeans = T)
 umxSummary(m1)
-
-```
-
 
 # measurement model
 ind60 =~ x1 + x2 + x3
@@ -185,45 +189,103 @@ ind60             0.448    0.087                      1.000    1.000
 dem60             3.956    0.921                      0.800    0.800
 dem65             0.172    0.215                      0.039    0.039
 
-```splus
 library(umx)
 names(mtcars)
 m1 = mxRAM(latentVars = "eff",
 	mxPath(from = c("mpg", "cyl", "disp", "hp") to = "eff")
 	data = mtcars
 )
-```
 
 # ==============
 # = umxRAM fun =
 # ==============
 
 require(OpenMx); data(demoOneFactor)
-latents  = c("G")
 manifests = paste0("x", 1:3)
-latents = "g"
 m1 <- umxRAM("One Factor",
-	manifestVars = manifests,
-	latentVars = latents,
-	mxPath(from = "g"  , arrows = 2, free = F, values = 1.0),
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	data = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500)
+	mxPath(var = "g", fixedAt = 1.0),
+	mxPath(from = "g", to = manifests),
+	mxPath(var = manifests),
+	data = demoOneFactor[, manifests]
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
 umxSummary(m1, show = "std")
 
-m2 <- umxRAM("One Factor", fix = "latents",
-	mxPath(from = "g", to = paste0("x", 1:3)),
-	data = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500)
+m2 <- umxRAM("One Factor", fix = "latents", data = demoOneFactor[, manifests],
+	mxPath(from = "g", to = manifests),
+	mxPath(var = manifests)
 )
 
 m2 = umxRun(m2); umxSummary(m2, show = "std")
-umxCheck(m2)
-umx_show(m2)
 
-mxCompare(m1,m2)
+mxCompare(m1, m2)
 
-umxCheck <- function(model) {
+
+m2 = umxRAM("Bollen1989",
+	# Measurement model
+    umxPath("ind60", to = c("x1", "x2", "x3")),
+    umxPath("dem60", to = c("y1", "y2", "y3", "y4")),
+    umxPath("dem65", to = c("y5", "y6", "y7", "y8")),
+  	# Regressions
+    umxPath("ind60", to = "dem60"),
+    umxPath(c("ind60", "dem60"), to = "dem65"),
+	# Residual correlations
+    umxPath("y1", with = "y5"),
+    umxPath("y2", with = c("y4", "y6")),
+    umxPath("y3", with = "y7"),
+    umxPath("y4", with = "y8"),
+    umxPath("y6", with = "y8"),
+	mxData(cov(PoliticalDemocracy), type = "cov", numObs = 500),
 	
+    # things I don't yet add but could
+	# residuals for manifests
+	umxPath(from = names(PoliticalDemocracy), arrows = 2),
+	# variance for latents
+	umxPath(from = c("ind60", "dem60", "dem65"), values = .5, arrows = 2)
+)
+
+
+umxCheck(m2)
+umxCheck <- function(model) {	
 }
+
+
+require(OpenMx)
+# Path objects for Multiple Groups
+manifestVars = selVars
+latentVars   = aceVars
+
+# Variances of latent variables
+latVariances <- mxPath(var = aceVars, fixedAt = 1) 
+# Means of latent variables & observed variables
+latMeans <- mxPath(mean = aceVars, fixedAt = 0)
+obsMeans <- mxPath(mean = selVars, values = 20)
+# Path coefficients for twin 1 and twin 2
+pathAceT1 <- mxPath(c("A1","C1","E1"), to = "bmi1", values = .5, label = c("a","c","e"))
+pathAceT2 <- mxPath(c("A2","C2","E2"), to = "bmi2", values = .5, label = c("a","c","e"))
+
+# = Covariances =
+# C1 & C2 in both groups
+covC1C2 <- mxPath("C1", with = "C2", fixedAt = 1 )
+# covariance between A1 & A2 in MZ and DZ twins
+covA1A2_MZ  <- mxPath("A1", with = "A2", fixedAt = 1 )
+covA1A2_DZ  <- mxPath("A1", with = "A2", fixedAt = .5 )
+
+data(demoOneFactor)  
+manifests <- names(demoOneFactor) 
+latents <- c("G")
+model <- mxModel(model = "One Factor", type = "RAM",
+    manifestVars = manifests,
+    latentVars = latents,
+    mxPath(from = latents, to = manifests, labels = paste0("b", 1:5)),
+    mxPath(var = manifests, labels = paste0("u", 1:5)),
+    mxPath(var = latents, fixedAt = 1.0),
+    mxPath(means = c(manifests, latents)),
+    mxData(demoOneFactor, type="raw")
+)
+summary(mxRun(model))$wallTime
+
+getOption('mxOptions')$"Number of Threads" # cores used by OpenMx
+summary(mxRun(mxOption(model= model, key="Number of Threads", value= omxDetectCores(-1))))$wallTime
+ 
+```
