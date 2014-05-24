@@ -6,7 +6,7 @@
 reliability(S)
 }
 \arguments{
-\item{S}{A square, symmetric, numeric covariance matrix}
+  \item{S}{A square, symmetric, numeric covariance matrix}
 }
 \value{
 -

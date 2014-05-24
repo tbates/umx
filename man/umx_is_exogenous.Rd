@@ -6,9 +6,11 @@
 umx_is_exogenous(model, manifests_only = TRUE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} from which to get exogenous variables}
+  \item{model}{an \code{\link{mxModel}} from which to get
+  exogenous variables}
 
-\item{manifests_only}{Whether to check only manifests (default = TRUE)}
+  \item{manifests_only}{Whether to check only manifests
+  (default = TRUE)}
 }
 \value{
 - list of exogenous variables

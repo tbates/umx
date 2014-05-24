@@ -6,11 +6,12 @@
 umxSaturated(model, evaluate = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to get independence and saturated fits to}
+  \item{model}{an \code{\link{mxModel}} to get independence
+  and saturated fits to}
 
-\item{evaluate}{FALSE}
+  \item{evaluate}{FALSE}
 
-\item{verbose}{How much feedback to give.}
+  \item{verbose}{How much feedback to give.}
 }
 \value{
 - A list of the saturated and independence models, from which fits can be extracted

@@ -7,15 +7,18 @@ umxMI(model = NA, numInd = 10, typeToShow = "both", decreasing = T,
   cache = T)
 }
 \arguments{
-\item{model}{An \code{\link{mxModel}} for which to report modification indices}
+  \item{model}{An \code{\link{mxModel}} for which to report
+  modification indices}
 
-\item{numInd}{How many modifications to report}
+  \item{numInd}{How many modifications to report}
 
-\item{typeToShow}{Whether to shown additions or deletions (default = "both")}
+  \item{typeToShow}{Whether to shown additions or deletions
+  (default = "both")}
 
-\item{decreasing}{How to sort (default = T, decreasing)}
+  \item{decreasing}{How to sort (default = T, decreasing)}
 
-\item{cache}{= Future function to cache these time-consuming results}
+  \item{cache}{= Future function to cache these
+  time-consuming results}
 }
 \description{
 Report modifications which would improve fit.

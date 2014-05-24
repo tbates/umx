@@ -7,13 +7,16 @@ umxCI(model = NULL, addCIs = T, runCIs = "if necessary",
   showErrorcodes = T)
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on}
+  \item{model}{The \code{\link{mxModel}} you wish to report
+  \code{\link{mxCI}}s on}
 
-\item{addCIs}{Whether or not to add mxCIs if none are found (defaults to TRUE)}
+  \item{addCIs}{Whether or not to add mxCIs if none are
+  found (defaults to TRUE)}
 
-\item{runCIs}{Whether or not to compute the CIs. Valid values = "no", "yes", "if necessary".}
+  \item{runCIs}{Whether or not to compute the CIs. Valid
+  values = "no", "yes", "if necessary".}
 
-\item{showErrorcodes}{Whether to show errors (TRUE)}
+  \item{showErrorcodes}{Whether to show errors (TRUE)}
 }
 \value{
 - \code{\link{mxModel}}

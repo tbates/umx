@@ -6,9 +6,11 @@
 umx_reorder(old, newOrder)
 }
 \arguments{
-\item{old}{a square matrix of correlation or covariances to reorder}
+  \item{old}{a square matrix of correlation or covariances
+  to reorder}
 
-\item{newOrder}{The order you'd like the variables to be in}
+  \item{newOrder}{The order you'd like the variables to be
+  in}
 }
 \value{
 - the re-ordered (and/or resized) matrix

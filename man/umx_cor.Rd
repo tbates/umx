@@ -6,13 +6,13 @@
 umx_cor(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3)
 }
 \arguments{
-\item{X}{a matrix or dataframe}
+  \item{X}{a matrix or dataframe}
 
-\item{df}{the degrees of freedom for the test}
+  \item{df}{the degrees of freedom for the test}
 
-\item{use}{how to handle missing data}
+  \item{use}{how to handle missing data}
 
-\item{digits}{rounding of answers}
+  \item{digits}{rounding of answers}
 }
 \value{
 - matrix of correlations and p-values

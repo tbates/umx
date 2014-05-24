@@ -6,9 +6,11 @@
 umx_has_CIs(model, check = c("both", "intervals", "output"))
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} to check for presence of CIs}
+  \item{model}{The \code{\link{mxModel}} to check for
+  presence of CIs}
 
-\item{check}{What to check for: "intervals" requested, "output" present, or "both". Defaults to "both"}
+  \item{check}{What to check for: "intervals" requested,
+  "output" present, or "both". Defaults to "both"}
 }
 \value{
 - TRUE or FALSE

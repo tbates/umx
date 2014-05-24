@@ -7,13 +7,17 @@ umxMakeThresholdMatrix(df, deviationBased = T, droplevels = F,
   verbose = F)
 }
 \arguments{
-\item{df}{Dataframe for which to make a threshold matrix.}
+  \item{df}{Dataframe for which to make a threshold
+  matrix.}
 
-\item{deviationBased}{whether to use the deviation system to ensure order thresholds (default = TRUE)}
+  \item{deviationBased}{whether to use the deviation system
+  to ensure order thresholds (default = TRUE)}
 
-\item{droplevels}{whether to also drop unused levels (default = TRUE)}
+  \item{droplevels}{whether to also drop unused levels
+  (default = TRUE)}
 
-\item{verbose}{whether to say what the function is doing (default = FALSE)}
+  \item{verbose}{whether to say what the function is doing
+  (default = FALSE)}
 }
 \value{
 - \code{\link{mxModel}}

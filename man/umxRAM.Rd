@@ -8,14 +8,19 @@ umxRAM(name, ..., exog.variances = FALSE, endog.variances = TRUE,
   data = NULL, independent = NA, remove_unused_manifests = TRUE)
 }
 \arguments{
-\item{name}{friendly name for the model}
+  \item{name}{friendly name for the model}
 
-\item{...}{A list of paths and a data source}
+  \item{...}{A list of paths and a data source}
 
-\item{exog.variances}{If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.}
+  \item{exog.variances}{If TRUE (the default is FALSE),
+  free variance parameters are added for exogenous
+  variables that lack them.}
 
-\item{endog.variances}{If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.}
+  \item{endog.variances}{If TRUE (the default), free
+  error-variance parameters are added for any endogenous
+  variables that lack them.}
 
+<<<<<<< HEAD
 \item{fix}{Whether to fix latent or first paths to 1. Options are: c("latents", "none", "firstLoadings") (defaults to "latents")}
 
 \item{latentVars}{(defaults to NULL)}
@@ -23,8 +28,13 @@ umxRAM(name, ..., exog.variances = FALSE, endog.variances = TRUE,
 \item{data}{(defaults to NULL)}
 
 \item{remove_unused_manifests}{(defaults to TRUE)}
+=======
+  \item{fix}{Whether to fix latent or first paths to 1.
+  Options are: c("none", "latents", "firstLoadings")}
+>>>>>>> 03e6f40b71e625bf53c0845285369f7ddc9e6e0c
 
-\item{independent}{Whether the model is independent (default = NA)}
+  \item{independent}{Whether the model is independent
+  (default = NA)}
 }
 \value{
 - \code{\link{mxModel}}

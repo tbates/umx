@@ -6,11 +6,13 @@
 umx_scale_wide_twin_data(df, varsToScale, suffixes)
 }
 \arguments{
-\item{df}{a wide dataframe}
+  \item{df}{a wide dataframe}
 
-\item{varsToScale}{the base names of the variables ("weight" etc)}
+  \item{varsToScale}{the base names of the variables
+  ("weight" etc)}
 
-\item{suffixes}{the suffix that distinguishes each case (T1, T2 etc.)}
+  \item{suffixes}{the suffix that distinguishes each case
+  (T1, T2 etc.)}
 }
 \value{
 - new dataframe with scaled variables

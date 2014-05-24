@@ -6,7 +6,8 @@
 umx_is_RAM(obj)
 }
 \arguments{
-\item{obj}{an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}}
+  \item{obj}{an object to be tested to see if it is an
+  OpenMx RAM \code{\link{mxModel}}}
 }
 \value{
 - Boolean

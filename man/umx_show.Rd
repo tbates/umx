@@ -7,13 +7,18 @@ umx_show(model, what = c("values", "free", "labels"), matrices = c("S",
   "A"), digits = 2)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to show data from}
+  \item{model}{an \code{\link{mxModel}} to show data from}
 
-\item{what}{legal options are "values" (default), "free", or "labels")}
+  \item{what}{legal options are "values" (default), "free",
+  or "labels")}
 
+<<<<<<< HEAD
 \item{matrices}{to show  (default is c("S", "A"))}
 
 \item{digits}{precision to report, defaults to rounding to 2 decimal places}
+=======
+  \item{matrices}{to show (default is c("S", "A"))}
+>>>>>>> 03e6f40b71e625bf53c0845285369f7ddc9e6e0c
 }
 \value{
 - \code{\link{mxModel}}

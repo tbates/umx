@@ -6,12 +6,15 @@
 umxDrop1(model, regex = NULL, maxP = 1)
 }
 \arguments{
-\item{model}{An \code{\link{mxModel}} to drop parameters from}
+  \item{model}{An \code{\link{mxModel}} to drop parameters
+  from}
 
-\item{regex}{A string to select parameters to drop. leave empty to try all.
-This is regular expression enabled. i.e., "^a_" will drop parameters beginning with "a_"}
+  \item{regex}{A string to select parameters to drop. leave
+  empty to try all. This is regular expression enabled.
+  i.e., "^a_" will drop parameters beginning with "a_"}
 
-\item{maxP}{The threshold for returning values (defaults to p==1 - all values)}
+  \item{maxP}{The threshold for returning values (defaults
+  to p==1 - all values)}
 }
 \value{
 a table of model comparisons

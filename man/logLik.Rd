@@ -6,7 +6,8 @@
 \method{logLik}{MxModel}(model)
 }
 \arguments{
-\item{model}{the \code{\link{mxModel}} from which to get the log likelihood}
+  \item{model}{the \code{\link{mxModel}} from which to get
+  the log likelihood}
 }
 \value{
 - the log likelihood

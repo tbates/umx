@@ -6,13 +6,17 @@
 umxValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = F)
 }
 \arguments{
-\item{obj}{The RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.}
+  \item{obj}{The RAM or matrix \code{\link{mxModel}}, or
+  \code{\link{mxMatrix}} that you want to set start values
+  for.}
 
-\item{sd}{Optional Standard Deviation for start values}
+  \item{sd}{Optional Standard Deviation for start values}
 
-\item{n}{Optional Mean for start values}
+  \item{n}{Optional Mean for start values}
 
-\item{onlyTouchZeros}{Don't start things that appear to have already been started (useful for speeding \code{\link{umxReRun}})}
+  \item{onlyTouchZeros}{Don't start things that appear to
+  have already been started (useful for speeding
+  \code{\link{umxReRun}})}
 }
 \value{
 - \code{\link{mxModel}} with updated start values

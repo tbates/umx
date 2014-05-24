@@ -6,11 +6,11 @@
 umx_string_to_algebra(algString, name = NA, dimnames = NA)
 }
 \arguments{
-\item{algString}{a string to turn into an algebra}
+  \item{algString}{a string to turn into an algebra}
 
-\item{name}{of the returned algebra}
+  \item{name}{of the returned algebra}
 
-\item{dimnames}{of the returned algebra}
+  \item{dimnames}{of the returned algebra}
 }
 \value{
 - \code{\link{mxAlgebra}}

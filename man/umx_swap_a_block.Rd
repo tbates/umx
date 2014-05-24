@@ -6,13 +6,13 @@
 umx_swap_a_block(theData, rowSelector, T1Names, T2Names)
 }
 \arguments{
-\item{theData}{a data frame to swap within}
+  \item{theData}{a data frame to swap within}
 
-\item{rowSelector}{rows to swap amongst columns}
+  \item{rowSelector}{rows to swap amongst columns}
 
-\item{T1Names}{the first set of columns}
+  \item{T1Names}{the first set of columns}
 
-\item{T2Names}{the second set of columns}
+  \item{T2Names}{the second set of columns}
 }
 \value{
 - dataframe

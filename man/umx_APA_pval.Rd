@@ -6,13 +6,14 @@
 umx_APA_pval(p, min = 0.001, rounding = 3, addComparison = NA)
 }
 \arguments{
-\item{p}{A p-value to round}
+  \item{p}{A p-value to round}
 
-\item{min}{Threshold to say < min}
+  \item{min}{Threshold to say < min}
 
-\item{rounding}{Number of decimal to round to}
+  \item{rounding}{Number of decimal to round to}
 
-\item{addComparison}{Whether to return the bare number, or to add the appropriate comparison symbol (= <)}
+  \item{addComparison}{Whether to return the bare number,
+  or to add the appropriate comparison symbol (= <)}
 }
 \value{
 - a value

@@ -6,7 +6,8 @@
 umxCov2cor(x)
 }
 \arguments{
-\item{x}{something that cov2cor can work on (matrix, df, etc.)}
+  \item{x}{something that cov2cor can work on (matrix, df,
+  etc.)}
 }
 \value{
 - a correlation matrix

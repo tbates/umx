@@ -6,13 +6,17 @@
 umxExpMeans(model, manifests = TRUE, latents = NULL, digits = NULL)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to get the means from}
+  \item{model}{an \code{\link{mxModel}} to get the means
+  from}
 
-\item{latents}{Whether to select the latent variables (defaults to TRUE)}
+  \item{latents}{Whether to select the latent variables
+  (defaults to TRUE)}
 
-\item{manifests}{Whether to select the manifest variables (defaults to TRUE)}
+  \item{manifests}{Whether to select the manifest variables
+  (defaults to TRUE)}
 
-\item{digits}{precision of reporting. Leave NULL to do no rounding.}
+  \item{digits}{precision of reporting. Leave NULL to do no
+  rounding.}
 }
 \value{
 - expected means

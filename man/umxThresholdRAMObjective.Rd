@@ -7,13 +7,16 @@ umxThresholdRAMObjective(df, deviationBased = T, droplevels = T,
   verbose = F)
 }
 \arguments{
-\item{df}{Dataframe to make a threshold matrix for}
+  \item{df}{Dataframe to make a threshold matrix for}
 
-\item{deviationBased}{whether to use the deviation system to ensure order thresholds (default = T)}
+  \item{deviationBased}{whether to use the deviation system
+  to ensure order thresholds (default = T)}
 
-\item{droplevels}{whether to also drop unused levels (default = T)}
+  \item{droplevels}{whether to also drop unused levels
+  (default = T)}
 
-\item{verbose}{whether to say what the function is doing (default = F)}
+  \item{verbose}{whether to say what the function is doing
+  (default = F)}
 }
 \value{
 - \code{\link{mxModel}}

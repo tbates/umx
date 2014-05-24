@@ -6,11 +6,13 @@
 umx_round(df, digits = getOption("digits"), coerce = FALSE)
 }
 \arguments{
-\item{df}{a dataframe to round in}
+  \item{df}{a dataframe to round in}
 
-\item{digits}{how many digits to round to (defaults to getOption("digits"))}
+  \item{digits}{how many digits to round to (defaults to
+  getOption("digits"))}
 
-\item{coerce}{whether to make the column numeric if it is not (default = FALSE)}
+  \item{coerce}{whether to make the column numeric if it is
+  not (default = FALSE)}
 }
 \value{
 - \code{\link{mxModel}}

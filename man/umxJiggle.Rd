@@ -6,13 +6,15 @@
 umxJiggle(matrixIn, mean = 0, sd = 0.1, dontTouch = 0)
 }
 \arguments{
-\item{matrixIn}{an \code{\link{mxMatrix}} to jiggle the values of}
+  \item{matrixIn}{an \code{\link{mxMatrix}} to jiggle the
+  values of}
 
-\item{mean}{the mean value to add to each value}
+  \item{mean}{the mean value to add to each value}
 
-\item{sd}{the sd of the jiggle noise}
+  \item{sd}{the sd of the jiggle noise}
 
-\item{dontTouch}{A value, which, if found, will be left as-is (defaults to 0)}
+  \item{dontTouch}{A value, which, if found, will be left
+  as-is (defaults to 0)}
 }
 \value{
 - \code{\link{mxMatrix}}

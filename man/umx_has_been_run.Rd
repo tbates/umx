@@ -6,9 +6,11 @@
 umx_has_been_run(model, stop = FALSE)
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} you want to check has been run}
+  \item{model}{The \code{\link{mxModel}} you want to check
+  has been run}
 
-\item{stop}{Whether to stop if the model has not been run (defaults to FALSE)}
+  \item{stop}{Whether to stop if the model has not been run
+  (defaults to FALSE)}
 }
 \value{
 - boolean

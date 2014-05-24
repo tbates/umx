@@ -8,17 +8,22 @@
   showErrorcodes = FALSE, ...)
 }
 \arguments{
-\item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))}
+  \item{object}{An \code{\link{mxModel}}, possibly already
+  containing \code{\link{mxCI}}s that have been
+  \code{\link{mxRun}} with intervals = TRUE))}
 
-\item{parm}{A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.}
+  \item{parm}{A specification of which parameters are to be
+  given confidence intervals. Can be "existing", "all", or
+  a vector of names.}
 
-\item{level}{The confidence level required (default = .95)}
+  \item{level}{The confidence level required (default =
+  .95)}
 
-\item{run}{Whether to run the model (defaults to FALSE)}
+  \item{run}{Whether to run the model (defaults to FALSE)}
 
-\item{showErrorcodes}{(default = FALSE)}
+  \item{showErrorcodes}{(default = FALSE)}
 
-\item{...}{Additional argument(s) for methods.}
+  \item{...}{Additional argument(s) for methods.}
 }
 \value{
 - \code{\link{mxModel}}

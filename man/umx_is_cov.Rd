@@ -6,11 +6,13 @@
 umx_is_cov(data = NULL, boolean = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{data}{dataframe to test}
+  \item{data}{dataframe to test}
 
-\item{boolean}{whether to return the type ("cov") or a boolean (default = string)}
+  \item{boolean}{whether to return the type ("cov") or a
+  boolean (default = string)}
 
-\item{verbose}{How much feedback to give (default = FALSE)}
+  \item{verbose}{How much feedback to give (default =
+  FALSE)}
 }
 \value{
 - "raw", "cor", or "cov", or, if boolean= T, then T | F

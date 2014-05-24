@@ -6,7 +6,8 @@
 \method{extractAIC}{MxModel}(model)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to get the AIC from}
+  \item{model}{an \code{\link{mxModel}} to get the AIC
+  from}
 }
 \value{
 - AIC value

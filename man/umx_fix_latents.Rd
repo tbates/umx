@@ -6,13 +6,14 @@
 umx_fix_latents(model, latents = NULL, exogenous.only = TRUE, at = 1)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to set}
+  \item{model}{an \code{\link{mxModel}} to set}
 
-\item{latents}{(If NULL then all latentVars)}
+  \item{latents}{(If NULL then all latentVars)}
 
-\item{exogenous.only}{only touch exogenous latents (default = TRUE)}
+  \item{exogenous.only}{only touch exogenous latents
+  (default = TRUE)}
 
-\item{at}{(Default = 1)}
+  \item{at}{(Default = 1)}
 }
 \value{
 - \code{\link{mxModel}}

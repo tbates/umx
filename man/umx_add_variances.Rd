@@ -6,13 +6,15 @@
 umx_add_variances(model, add.to, values = NULL, free = NULL)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to add variances to}
+  \item{model}{an \code{\link{mxModel}} to add variances
+  to}
 
-\item{add.to}{= List of variables to create variance for}
+  \item{add.to}{= List of variables to create variance for}
 
-\item{free}{= List of variables to create variance for (default = NULL)}
+  \item{free}{= List of variables to create variance for
+  (default = NULL)}
 
-\item{values}{= List of values (default = NULL)}
+  \item{values}{= List of values (default = NULL)}
 }
 \value{
 - \code{\link{mxModel}}

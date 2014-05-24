@@ -6,13 +6,16 @@
 umxGetParameters(inputTarget, regex = NA, free = NA, verbose = F)
 }
 \arguments{
-\item{inputTarget}{An object to get parameters from: could be a RAM \code{\link{mxModel}}}
+  \item{inputTarget}{An object to get parameters from:
+  could be a RAM \code{\link{mxModel}}}
 
-\item{regex}{A regular expression to filter the labels defaults to NA - just returns all labels)}
+  \item{regex}{A regular expression to filter the labels
+  defaults to NA - just returns all labels)}
 
-\item{free}{A Boolean determining whether to return only free parameters.}
+  \item{free}{A Boolean determining whether to return only
+  free parameters.}
 
-\item{verbose}{How much feedback to give}
+  \item{verbose}{How much feedback to give}
 }
 \description{
 Get the parameter labels from a model. Like \code{\link{omxGetParameters}},

@@ -6,11 +6,11 @@
 umx_fix_first_loadings(model, latents = NULL, at = 1)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to set}
+  \item{model}{an \code{\link{mxModel}} to set}
 
-\item{latents}{(If NULL then all latentVars in model)}
+  \item{latents}{(If NULL then all latentVars in model)}
 
-\item{at}{(Default = 1)}
+  \item{at}{(Default = 1)}
 }
 \value{
 - \code{\link{mxModel}}

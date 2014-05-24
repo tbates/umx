@@ -9,24 +9,34 @@ umxSummary(model, saturatedModels = NULL, report = "line",
   matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG"))
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} whose fit will be reported}
+  \item{model}{The \code{\link{mxModel}} whose fit will be
+  reported}
 
-\item{saturatedModels}{Saturated models if needed for fit indices (see example below: Only needed for raw data, and then not if you've run umxRun)}
+  \item{saturatedModels}{Saturated models if needed for fit
+  indices (see example below: Only needed for raw data, and
+  then not if you've run umxRun)}
 
-\item{report}{The format for the output line or table (default is "line")}
+  \item{report}{The format for the output line or table
+  (default is "line")}
 
-\item{showEstimates}{What estimates to show. Options are c("none", "raw", "std", "both", "list of column names").
-Default  is "none" (just shows the fit indices)}
+  \item{showEstimates}{What estimates to show. Options are
+  c("none", "raw", "std", "both", "list of column names").
+  Default is "none" (just shows the fit indices)}
 
-\item{digits}{How many decimal places to report to (default = 2)}
+  \item{digits}{How many decimal places to report to
+  (default = 2)}
 
-\item{RMSEA_CI}{Whether to compute the CI on RMSEA (Defaults to F)}
+  \item{RMSEA_CI}{Whether to compute the CI on RMSEA
+  (Defaults to F)}
 
-\item{precision}{Deprecated in favor of digits (must be NULL)}
+  \item{precision}{Deprecated in favor of digits (must be
+  NULL)}
 
-\item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
+  \item{matrixAddresses}{Whether to show "matrix address"
+  columns (Default = FALSE)}
 
-\item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
+  \item{filter}{whether to show significant paths (SIG) or
+  NS paths (NS) or all paths (ALL)}
 }
 \description{
 Report the fit of a model in a compact form suitable for a journal. Emits a "warning"
