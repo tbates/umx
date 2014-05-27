@@ -8,42 +8,33 @@ umxRAM(name, ..., exog.variances = FALSE, endog.variances = TRUE,
   data = NULL, independent = NA, remove_unused_manifests = TRUE)
 }
 \arguments{
-  \item{name}{friendly name for the model}
+\item{name}{friendly name for the model}
 
-  \item{...}{A list of paths and a data source}
+\item{...}{A list of paths and a data source}
 
-  \item{exog.variances}{If TRUE (the default is FALSE),
-  free variance parameters are added for exogenous
-  variables that lack them.}
+\item{exog.variances}{If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.}
 
-  \item{endog.variances}{If TRUE (the default), free
-  error-variance parameters are added for any endogenous
-  variables that lack them.}
+\item{endog.variances}{If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.}
 
-<<<<<<< HEAD
-\item{fix}{Whether to fix latent or first paths to 1. Options are: c("latents", "none", "firstLoadings") (defaults to "latents")}
+\item{fix}{Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")}
 
-\item{latentVars}{(defaults to NULL)}
+\item{latentVars}{Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)}
 
-\item{data}{(defaults to NULL)}
+\item{data}{the data for the model. Can be an \code{\link{mxData}} or a data.frame}
 
-\item{remove_unused_manifests}{(defaults to TRUE)}
-=======
-  \item{fix}{Whether to fix latent or first paths to 1.
-  Options are: c("none", "latents", "firstLoadings")}
->>>>>>> 03e6f40b71e625bf53c0845285369f7ddc9e6e0c
+\item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
 
-  \item{independent}{Whether the model is independent
-  (default = NA)}
+\item{independent}{Whether the model is independent (default = NA)}
 }
 \value{
 - \code{\link{mxModel}}
 }
 \description{
-Making it as simple as possible to create a RAM model. It borrows its philosophy and some parameter
-labels from John Fox's sem::specifyModel.
+Making it as simple as possible to create a RAM model, without doing things invisible to the user.
 }
 \details{
+umxRAM borrows its philosophy and some parameter labels from John Fox's sem::specifyModel.
+
 Like mxModel, you list the theoretical causal paths. Unlike mxModel:
 \enumerate{
 \item{You can request creation of error variances using \code{endog.variances = TRUE} }
@@ -75,9 +66,6 @@ umxRAM("tim", a, b, thedata)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
-}
-\seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 }
 

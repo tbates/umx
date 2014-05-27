@@ -6,8 +6,7 @@
 umx_has_square_brackets(input)
 }
 \arguments{
-  \item{input}{The label to check for square brackets
-  (string input)}
+\item{input}{The label to check for square brackets (string input)}
 }
 \value{
 - boolean

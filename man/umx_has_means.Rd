@@ -6,8 +6,7 @@
 umx_has_means(model)
 }
 \arguments{
-  \item{model}{The \code{\link{mxModel}} to check for
-  presence of means}
+\item{model}{The \code{\link{mxModel}} to check for presence of means}
 }
 \value{
 - TRUE or FALSE

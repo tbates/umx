@@ -26,8 +26,9 @@
 
 #' umxRAM
 #'
-#' Making it as simple as possible to create a RAM model. It borrows its philosophy and some parameter 
-#' labels from John Fox's sem::specifyModel.
+#' Making it as simple as possible to create a RAM model, without doing things invisible to the user.
+#' 
+#' umxRAM borrows its philosophy and some parameter labels from John Fox's sem::specifyModel.
 #'
 #' @details Like mxModel, you list the theoretical causal paths. Unlike mxModel:
 #' \enumerate{
@@ -46,15 +47,15 @@
 #' @param ... A list of paths and a data source
 #' @param exog.variances If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.
 #' @param endog.variances If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.
-#' @param fix Whether to fix latent or first paths to 1. Options are: c("latents", "none", "firstLoadings") (defaults to "latents")
-#' @param latentVars (defaults to NULL)
-#' @param data (defaults to NULL)
-#' @param remove_unused_manifests (defaults to TRUE)
+#' @param fix Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")
+#' @param latentVars Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)
+#' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame
+#' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
 #' @param independent Whether the model is independent (default = NA)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @family umx model building functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' thedata = mtcars[,c("mpg", "cyl", "disp")]
 #' a = mxPath(from = "l_power", to = "mpg")
@@ -102,7 +103,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 		data = mxData(observed = data, type = "raw")
 	}
 
-    if(class(data)[1] == "MxNonNullData" ) {
+    if(class(data)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
 		if(data@type == "raw"){
 			manifestVars = names(data@observed)
 			isRaw = TRUE
@@ -114,7 +115,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 			stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
 		}
 	} else {
-		stop("There's something wrong with the data - I expected a dataframe or correctly specified mxData, but you gave me a ", class(data)[1])		
+		stop("There's something wrong with the data - I expected a dataframe or mxData, but you gave me a ", class(data)[1])		
 	}
 
 	foundNames = unique(na.omit(foundNames))
@@ -130,13 +131,13 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 		} else if (any(!latentsMentioned %in% latentVars)){
 			stop(paste0("You defined some latents, but then use the following (additional) latents in path statements: ", 
 					paste(latentsMentioned[!latentsMentioned %in% latentVars], collapse = ", "),"\n",
-					"If you want to create latents on the fly, don't specify a defined list. Otherwise stick to it."
+					"If you want to create latents on the fly, don't specify a defined list."
 				)
 			)
 		}
 	} else {
 		# Anything not in data -> latent
-		latentVars = setdiff(foundNames, manifestVars)
+		latentVars = setdiff(foundNames, c(manifestVars, "one"))
 		nLatent = length(latentVars)
 		# Report on which latents were created
 		if(nLatent == 0){
@@ -154,10 +155,12 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 	# ====================
 	unusedManifests = setdiff(manifestVars, foundNames)
 	if(length(unusedManifests) > 0){
-		warning(
-			"There were ", length(unusedManifests), " variables in the dataset which were not references in any path\n",
-			paste(unusedManifests, collapse = ", ", "\n")
-		)
+		if(length(unusedManifests) > 10){
+			varList = paste0("The first 10 were: ", paste(unusedManifests[1:10], collapse = ", "), "\n")
+		} else {
+			varList = paste0("They were: ", paste(unusedManifests, collapse = ", "), "\n")
+		}
+		message("There were ", length(unusedManifests), " variables in the dataset which were not referenced in any path\n",varList)
 		if(remove_unused_manifests){
 			# trim down the data to include only the used manifests
 			manifestVars = setdiff(manifestVars, unusedManifests)
@@ -166,7 +169,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 			} else {
 				data@observed = umx_reorder(data@observed, manifestVars)
 			}
-			message("Unused variables were pruned from the dataset")
+			message("These were dropped from the dataset")
 		} else {
 			message("I left them in the data. To remove them automatically, next time set remove_unused_manifests = TRUE")
 		}		

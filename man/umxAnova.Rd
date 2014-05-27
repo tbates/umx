@@ -6,10 +6,9 @@
 umxAnova(model, digits = 2)
 }
 \arguments{
-  \item{model}{an \code{\link{lm}} model to report F for.}
+\item{model}{an \code{\link{lm}} model to report F for.}
 
-  \item{digits}{how many numbers after the decimal for F
-  (p-value is APA-style)}
+\item{digits}{how many numbers after the decimal for F (p-value is APA-style)}
 }
 \value{
 - F in  text format

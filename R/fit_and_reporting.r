@@ -54,7 +54,7 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 	resid = cov2cor(obsCov) - cov2cor(expCov)
 	umx_print(data.frame(resid), digits = digits, zero.print = ".", suppress = suppress)
 	if(is.null(suppress)){
-		print("nb: You can zoom in on bad values with suppress, e.g. suppress = .01")
+		print("nb: You can zoom in on bad values with, e.g. suppress = .01, which will hide values smaller than this. Use digits = to round")
 	}
 	invisible(resid)
 }

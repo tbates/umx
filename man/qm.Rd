@@ -6,9 +6,9 @@
 qm(..., rowMarker = "|")
 }
 \arguments{
-  \item{...}{the components of your matrix}
+\item{...}{the components of your matrix}
 
-  \item{rowMarker}{mark the end of each row}
+\item{rowMarker}{mark the end of each row}
 }
 \value{
 - matrix

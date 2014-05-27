@@ -6,14 +6,13 @@
 umxCFA(name = "", latents, data, report = c("table", "line", "long"))
 }
 \arguments{
-  \item{name}{the name for your new CFA model}
+\item{name}{the name for your new CFA model}
 
-  \item{latents}{List of factors in your CFA}
+\item{latents}{List of factors in your CFA}
 
-  \item{data}{The dataframe of manifest columns you are
-  modeling}
+\item{data}{The dataframe of manifest columns you are modeling}
 
-  \item{report}{What to report}
+\item{report}{What to report}
 }
 \value{
 - \code{\link{mxModel}}

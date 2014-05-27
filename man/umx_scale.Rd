@@ -6,12 +6,11 @@
 umx_scale(df, varsToScale = NULL, coerce = FALSE)
 }
 \arguments{
-  \item{df}{a dataframe to scale}
+\item{df}{a dataframe to scale}
 
-  \item{varsToScale}{(leave blank for all)}
+\item{varsToScale}{(leave blank for all)}
 
-  \item{coerce}{Whether to coerce non-numerics to numeric
-  (Defaults to FALSE)}
+\item{coerce}{Whether to coerce non-numerics to numeric (Defaults to FALSE)}
 }
 \value{
 - new dataframe with scaled variables

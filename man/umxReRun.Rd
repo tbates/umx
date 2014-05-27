@@ -8,40 +8,27 @@ umxReRun(lastFit, update = NA, regex = FALSE, free = FALSE, value = 0,
   comparison = FALSE, dropList = "deprecated")
 }
 \arguments{
-  \item{lastFit}{The \code{\link{mxModel}} you wish to
-  update and run.}
+\item{lastFit}{The \code{\link{mxModel}} you wish to update and run.}
 
-  \item{update}{What to update before re-running. Can be a
-  list of labels, a regular expression (set regex = T) or
-  an object such as mxCI etc.}
+\item{update}{What to update before re-running. Can be a list of labels, a regular expression (set regex = T) or an object such as mxCI etc.}
 
-  \item{regex}{Whether or not update is a regular
-  expression (defaults to FALSE)}
+\item{regex}{Whether or not update is a regular expression (defaults to FALSE)}
 
-  \item{free}{The state to set "free" to for the parameters
-  whose labels you specify (defaults to free = FALSE, i.e.,
-  fixed)}
+\item{free}{The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)}
 
-  \item{value}{The value to set the parameters whose labels
-  you specify too (defaults to 0)}
+\item{value}{The value to set the parameters whose labels you specify too (defaults to 0)}
 
-  \item{freeToStart}{Whether to update parameters based on
-  their current free-state. free = c(TRUE, FALSE, NA),
-  (defaults to NA - i.e, not checked)}
+\item{freeToStart}{Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)}
 
-  \item{name}{The name for the new model}
+\item{name}{The name for the new model}
 
-  \item{verbose}{How much feedback to give}
+\item{verbose}{How much feedback to give}
 
-  \item{intervals}{Whether to run confidence intervals (see
-  \code{\link{mxRun}})}
+\item{intervals}{Whether to run confidence intervals (see \code{\link{mxRun}})}
 
-  \item{comparison}{Whether to run umxCompare() after
-  umxRun}
+\item{comparison}{Whether to run umxCompare() after umxRun}
 
-  \item{dropList}{A list of strings. If not NA, then the
-  labels listed here will be dropped (or set to the value
-  and free state you specify)}
+\item{dropList}{A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)}
 }
 \value{
 - \code{\link{mxModel}}

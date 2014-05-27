@@ -6,11 +6,9 @@
 umxFitIndices(model, indepfit)
 }
 \arguments{
-  \item{model}{the \code{\link{mxModel}} you want fit
-  indices for}
+\item{model}{the \code{\link{mxModel}} you want fit indices for}
 
-  \item{indepfit}{an (optional) saturated
-  \code{\link{mxModel}}}
+\item{indepfit}{an (optional) saturated \code{\link{mxModel}}}
 }
 \value{
 \code{NULL}

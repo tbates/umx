@@ -6,7 +6,7 @@
 Stouffer.test(p = NULL)
 }
 \arguments{
-  \item{p}{A list of p values, i.e., p(.4, .3, .6, .01)}
+\item{p}{A list of p values, i.e., p(.4, .3, .6, .01)}
 }
 \description{
 Runs a Stouffer.test

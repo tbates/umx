@@ -6,12 +6,11 @@
 umx_default_option(x, option_list, check = T)
 }
 \arguments{
-  \item{x}{the value chosen (may be a selection, or the
-  default list of options)}
+\item{x}{the value chosen (may be a selection, or the default list of options)}
 
-  \item{option_list}{TODO fix this documentation}
+\item{option_list}{TODO fix this documentation}
 
-  \item{check}{TRUE}
+\item{check}{TRUE}
 }
 \value{
 - the option

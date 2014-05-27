@@ -6,11 +6,11 @@
 xmuLabel_MATRIX_Model(model, suffix = "", verbose = T)
 }
 \arguments{
-  \item{model}{a matrix-style mxModel to label}
+\item{model}{a matrix-style mxModel to label}
 
-  \item{suffix}{a string to append to each label}
+\item{suffix}{a string to append to each label}
 
-  \item{verbose}{how much feedback to give}
+\item{verbose}{how much feedback to give}
 }
 \value{
 - The labeled \code{\link{mxModel}}

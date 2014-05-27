@@ -6,11 +6,9 @@
 umx_find_object(pattern = ".*", requiredClass = "MxModel")
 }
 \arguments{
-  \item{pattern}{the pattern that matching objects must
-  contain}
+\item{pattern}{the pattern that matching objects must contain}
 
-  \item{requiredClass}{the class of object that will be
-  matched}
+\item{requiredClass}{the class of object that will be matched}
 }
 \value{
 - a list of objects matching the class and name
