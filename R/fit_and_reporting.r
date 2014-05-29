@@ -1,3 +1,4 @@
+
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # setwd("~/bin/umx"); 
 # devtools::build("~/bin/umx")
@@ -23,6 +24,7 @@
 #' @param suppress smallest deviation to print out (default = NULL = show all)
 #' @return - residual correlation matrix
 #' @export
+#' @export residuals.MxModel
 #' @family umx reporting functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -73,6 +75,7 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 #' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. 
 #' Even a few CIs can take too long to make running the default.
 #'
+#' @aliases umxConfint
 #' @rdname confint.MxModel
 #' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))
 #' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
@@ -81,6 +84,7 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 #' @param showErrorcodes (default = FALSE)
 #' @param ... Additional argument(s) for methods.
 #' @export
+#' @export confint.MxModel
 #' @return - \code{\link{mxModel}}
 #' @family umx reporting
 #' @seealso - \code{\link[stats]{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
@@ -105,9 +109,9 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 #' confint(m1, parm = "existing") # request existing CIs (none added yet...)
 #' 
 confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "names"), "default = add all"), level = 0.95, run = FALSE, showErrorcodes = FALSE, ...) {
-	defaultParmString = list("existing", c("vector", "of", "names"), "add all automatically by default")
+	defaultParmString = list("existing", c("vector", "of", "names"), "default = add all")
 	# 1. Add CIs if needed
-	if (all(parm == defaultParmString)) {
+	if (isTRUE(all.equal(parm, defaultParmString))) {
 		if(umx_has_CIs(object, "intervals")) {
 			# TODO add a count for the user
 			message("Existing CIs Will be used (", length(object$intervals), " in total)")

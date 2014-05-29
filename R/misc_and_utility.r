@@ -2414,3 +2414,25 @@ umx_trim <- function(string) {
 	 # sub("\\s+$", "", x)
 }
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+
+#' demand a package
+#'
+#' This loads the package, installing it if needed
+#'
+#' @param x The package name as a string.
+#' @export
+#' @family umx misc functions
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}
+#' @examples
+#' \dontrun{
+#' umx_library("numderiv")
+#' }
+umx_library <- function(x) {
+	if(FALSE == x %in% rownames(installed.packages() ) ) {
+		m <- getCRANmirrors(all = FALSE, local.only = FALSE)
+		URL <- m[grepl("Cloud",m$Name),"URL"][1] #get the first repos with "cloud" in the name
+		install.packages(x, repos = URL)
+	}
+	require(x)	
+}

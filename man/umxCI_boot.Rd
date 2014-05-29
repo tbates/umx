@@ -59,7 +59,7 @@ Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
 
 Other umx reporting: \code{\link{RMSEA.MxModel}};
-  \code{\link{confint.MxModel}};
+  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI}};
   \code{\link{umxCompare}}; \code{\link{umxDescriptives}};

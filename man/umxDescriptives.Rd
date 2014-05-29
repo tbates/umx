@@ -32,7 +32,7 @@ umxDescriptives(data)
 }
 \seealso{
 Other umx reporting: \code{\link{RMSEA.MxModel}};
-  \code{\link{confint.MxModel}};
+  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxCompare}};

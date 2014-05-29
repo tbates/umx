@@ -37,11 +37,11 @@ RMSEA(m1)
 - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other umx reporting: \code{\link{confint.MxModel}};
-  \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
-  \code{\link{umxPlot}}; \code{\link{umxCI_boot}};
-  \code{\link{umxCI}}; \code{\link{umxCompare}};
-  \code{\link{umxDescriptives}};
+Other umx reporting: \code{\link{confint.MxModel}},
+  \code{\link{umxConfint}}; \code{\link{logLik.MxModel}};
+  \code{\link{plot.MxModel}}, \code{\link{umxPlot}};
+  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
+  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
   \code{\link{umxFitIndices}}; \code{\link{umxSummary}}
 }
 

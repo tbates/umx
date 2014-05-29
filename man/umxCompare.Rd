@@ -51,14 +51,14 @@ umxCompare(c(m1, m2), c(m2, m3), all = T)
 - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 
 Other umx reporting: \code{\link{RMSEA.MxModel}};
-  \code{\link{confint.MxModel}};
+  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxDescriptives}};
   \code{\link{umxFitIndices}}; \code{\link{umxSummary}}
 
 Other umx reporting: \code{\link{RMSEA.MxModel}};
-  \code{\link{confint.MxModel}};
+  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{umxCI_boot}};
   \code{\link{umxCI}}; \code{\link{umxDescriptives}};
