@@ -20,6 +20,52 @@ umxSummary(m1, show = "raw"); plot(m1, showFixed = T)
 umx_show(m1, what = "values", matrices = "M")
 umx_show(m1, what = "free")
 
+m1@output$matrices               
+m1@output$algebras
+	m1@output$algebras$m1.fitfunction
+	attr(m1@output$algebras$m1.fitfunction,"expCov")
+	attr(,"expCov")
+	attr(,"expMean")
+	attr(,"likelihoods")
+	m1@output$algebras$m1.fitfunction
+m1@output$expectations
+	attr(,"UnfilteredExpCov")
+	attr(,"numStats")
+m1@output$data
+	500
+m1@output$calculatedHessian
+m1@output$gradient               
+m1@output$hessian
+m1@output$computes
+	[[1]]
+	[1] 2
+
+	[[2]]
+	[[2]]$output
+	[[2]]$output$probeCount
+	[1] 360
+m1@output$fit # [1] 3693.424
+m1@output$Minus2LogLikelihood # ] 3693.424
+m1@output$minimum # 3693.424
+m1@output$estimate
+m1@output$standardErrors
+m1@output$infoDefinite
+m1@output$conditionNumber
+m1@output$status                 
+# synonyms?
+	m1@output$iterations
+	m1@output$evaluations
+m1@output$mxVersion
+m1@output$frontendTime
+m1@output$backendTime            
+m1@output$independentTime
+m1@output$wallTime
+m1@output$timestamp
+m1@output$cpuTime
+m1@output$IndependenceLikelihood
+m1@output$SaturatedLikelihood
+
+
 df = myFADataRaw
 m1 = umxRAM("tim", endog.variances = TRUE, data = mxData(df, "raw"),
 	umxPath("B", to = manifests),
