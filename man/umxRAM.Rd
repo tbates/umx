@@ -10,7 +10,7 @@ umxRAM(name, ..., exog.variances = FALSE, endog.variances = TRUE,
 \arguments{
 \item{name}{friendly name for the model}
 
-\item{...}{A list of paths and a data source}
+\item{...}{A list of mxPaths or mxThreshold objects}
 
 \item{exog.variances}{If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.}
 
@@ -33,7 +33,7 @@ umxRAM(name, ..., exog.variances = FALSE, endog.variances = TRUE,
 Making it as simple as possible to create a RAM model, without doing things invisible to the user.
 }
 \details{
-umxRAM borrows its philosophy and some parameter labels from John Fox's sem::specifyModel.
+umxRAM borrows its philosophy and some parameter labels from the John Fox sem::specifyModel function.
 
 Like mxModel, you list the theoretical causal paths. Unlike mxModel:
 \enumerate{

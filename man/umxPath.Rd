@@ -4,9 +4,9 @@
 \title{umxPath: Flexible specification of sem paths}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
-  means = NULL, fixedAt = NULL, firstAt = NULL, connect = "single",
-  arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA,
-  ubound = NA)
+  unique.bivariate = NULL, means = NULL, fixedAt = NULL, firstAt = NULL,
+  connect = "single", arrows = 1, free = TRUE, values = NA,
+  labels = NA, lbound = NA, ubound = NA)
 }
 \arguments{
 \item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
@@ -18,6 +18,8 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 \item{var}{equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)}
 
 \item{cov}{equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)}
+
+\item{unique.bivariate}{equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)}
 
 \item{mean}{equivalent to setting "from = 'one', to = x. nb: from, to, with and var must be left empty (their default)}
 

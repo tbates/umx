@@ -28,7 +28,7 @@
 #'
 #' Making it as simple as possible to create a RAM model, without doing things invisible to the user.
 #' 
-#' umxRAM borrows its philosophy and some parameter labels from John Fox's sem::specifyModel.
+#' umxRAM borrows its philosophy and some parameter labels from the John Fox sem::specifyModel function.
 #'
 #' @details Like mxModel, you list the theoretical causal paths. Unlike mxModel:
 #' \enumerate{
@@ -44,7 +44,7 @@
 #' }
 #' 
 #' @param name friendly name for the model
-#' @param ... A list of paths and a data source
+#' @param ... A list of mxPaths or mxThreshold objects
 #' @param exog.variances If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.
 #' @param endog.variances If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.
 #' @param fix Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")
@@ -87,7 +87,11 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 		if(thisIs == "MxPath"){
 			foundNames = append(foundNames, c(i@from, i@to))
 		} else {
-			stop("I can only handle mxPaths. To include data in umxRAM, say data = yourData")
+			if(class(i[[1]])[1] == "MxThreshold"){
+				# MxThreshold detected
+			}else{
+				stop("I can only handle mxPaths and mxThreshold() objects. To include data in umxRAM, say data = yourData")
+			}
 		}
 	}
 
@@ -149,7 +153,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 			message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ".\n")
 		}
 	}
-
+	# TODO handle when the user adds mxThreshold object: this will be a model where things are not in the data and are not latent...
 	# ====================
 	# = Handle Manifests =
 	# ====================
@@ -205,21 +209,28 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 		message("endogenous variances not added")
 	}
 
-	# Fix latents or first paths
-	if(fix == "latents"){
-		m1 = umx_fix_latents(m1)
-	} else if(fix == "firstLoadings"){
-		# add free variance to latents not in the fixed list?
-		m1 = umx_fix_first_loadings(m1)
+	if(!fix == "none"){
+		stop("fix is not supported any longer: switch to umxPath with firstAt and fixedAt to be more up front about model content")
+		# TODO turn this off, now that umxPath makes it easy...
+		# Fix latents or first paths
+		if(fix == "latents"){
+			m1 = umx_fix_latents(m1)
+		} else if(fix == "firstLoadings"){
+			# add free variance to latents not in the fixed list?
+			m1 = umx_fix_first_loadings(m1)
+		}
 	}
 	if(isRaw){
-		# add means
-		message("Added a means model: mxPath('one', to = manifestVars)\n")
-		m1 = mxModel(m1, mxPath("one", manifestVars))
+		# TODO add means if no means added...
+		if(is.null(m1@matrices$M)){
+			message("Added a means model: mxPath('one', to = manifestVars)\n")
+			m1 = mxModel(m1, mxPath("one", manifestVars))
+		}else{
+			# leave the user's means as the model
+		}
 	}
-
 	m1 = umxLabel(m1)
-	m1 = umxValues(m1, onlyTouchZeros=T)
+	m1 = umxValues(m1, onlyTouchZeros = TRUE)
 	return(m1)
 }
 
@@ -613,20 +624,24 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		# use obj as the mean, return a list of length n, with sd = sd
 		xmuStart_value_list(x = obj, sd = sd, n = n)
 	} else {
-		# This is a RAM Model: Set sane starting values
-		# Done: Start values in the S at variance on diag, bit less than cov off diag
-		# Done: Start manifest means
-		# TODO: Start values in the A matrix...
-		# TODO: Start latent means?...		
-		# TODO: Handle sub models...
 		if (!umx_is_RAM(obj) ) {
 			stop("'obj' must be a RAM model (or a simple number)")
 		}
+		# This is a RAM Model: Set sane starting values
+		# S at variance on diag, bit less than cov off diag
+		# Means at manifest means
+		# TODO: Start values in the A matrix...
+		# TODO: Start latent means?...		
+		# TODO: Handle sub models...
 		if (length(obj@submodels) > 0) {
 			stop("Cannot yet handle submodels")
 		}
 		if (is.null(obj@data)) {
 			stop("'model' does not contain any data")
+		}
+		if(!is.null(m1@matrices$Thresholds)){
+			message("this is a threshold RAM model... I'm not sure how to handle setting values in these yet")
+			return(obj)
 		}
 		theData = obj@data@observed
 		manifests = obj@manifestVars
@@ -823,7 +838,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 		if(model@data@type == "raw"){
 			# If we have a RAM model with raw data, compute the satuated and indpendence models
 			# TODO: Update to omxSaturated() and omxIndependenceModel()
-			# message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
+			message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
 			model_sat = umxSaturated(model, evaluate = T, verbose = F)
 			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(model_sat$Ind))
 			model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(model_sat$Sat))
@@ -1845,6 +1860,7 @@ umxParallel <- function(model, what) {
 #' @param with same as "to = vars, arrows = 2". nb: from, to= and var=  must be left empty (their default)
 #' @param var equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
+#' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param mean equivalent to setting "from = 'one', to = x. nb: from, to, with and var must be left empty (their default)
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
 #' @param firstAt first value is fixed at 1 (free is ignored: warning if not a single TRUE)
@@ -1897,7 +1913,12 @@ umxParallel <- function(model, what) {
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxSummary(m1, show = "std")
 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, fixedAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, means = NULL, fixedAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+
+	if(!is.null(unique.bivariate)){
+		stop("unique.bivariate not implemented in umxPath as yet. use\n",
+		"umxPath(from = vars, connect = \"unique.bivariate\")")
+	}
 	if(!is.null(from)){
 		if(length(from) > 1){
 			isSEMstyle = grepl("[<>]", x = from[1])	
