@@ -11,8 +11,7 @@
 # = Not Typically used directly by users =
 # ========================================
 
-# list(varianceNames, variances) <- xmu_dot_make_variances(model@matrices$S, style = NULL, showFixed = TRUE, digits = digits)
-xmu_dot_make_variances <- function(mxMat, style = NULL, showFixed = TRUE, digits = 2) {
+xmu_dot_make_residuals <- function(mxMat, style = NULL, showFixed = TRUE, digits = 2) {
 	mxMat_vals   = mxMat@values
 	mxMat_free   = mxMat@free
 	mxMat_labels = mxMat@labels
@@ -41,7 +40,6 @@ xmu_dot_make_variances <- function(mxMat, style = NULL, showFixed = TRUE, digits
 	return(list(varianceNames = varianceNames, variances = variances))
 }
 
-# xmu_dot_make_paths(mxMat, stringIn, heads = NULL, showFixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2)
 xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2) {
 	if(is.null(heads)){
 		stop("You must set 'heads' to 1 or 2 (was NULL)")
@@ -75,6 +73,7 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 			}
 		}
 	} else {
+		# heads = 2
 		for(target in mxMat_rows ) { # rows
 			lowerVars  = mxMat_rows[1:match(target, mxMat_rows)]
 			for(source in lowerVars) { # columns

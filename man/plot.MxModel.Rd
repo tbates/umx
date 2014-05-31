@@ -4,9 +4,9 @@
 \alias{umxPlot}
 \title{plot.MxModel}
 \usage{
-\method{plot}{MxModel}(model = NA, std = T, digits = 2,
+\method{plot}{MxModel}(model = NA, std = TRUE, digits = 2,
   dotFilename = "name", pathLabels = c("none", "labels", "both"),
-  showFixed = FALSE, showError = TRUE, precision = NULL)
+  showFixed = FALSE, showMeans = TRUE, showError = TRUE)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to make a path diagram from}
@@ -20,6 +20,8 @@
 \item{pathLabels}{Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")}
 
 \item{showFixed}{Whether to show fixed paths (defaults to FALSE)}
+
+\item{showMeans}{Whether to show means}
 
 \item{showError}{Whether to show errors}
 

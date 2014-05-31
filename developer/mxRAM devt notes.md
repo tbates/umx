@@ -2,8 +2,8 @@
 
 1. With reflective latents, (incoming from manifests)
 * How to automagically intercorrelate them?
-	1. list these manifests as fixed?
-	2. detect them as inputs and correlate them with each other?
+	1. List these manifests as fixed?
+	2. Detect them as inputs and correlate them with each other?
 
 | Formula type               | OpenMx                       | SEM     | Lavaan |
 |:---------------------------|:-----------------------------|:--------|:-------|

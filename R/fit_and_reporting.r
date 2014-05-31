@@ -1,4 +1,3 @@
-
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # setwd("~/bin/umx"); 
 # devtools::build("~/bin/umx")
@@ -193,7 +192,6 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' Default  is "none" (just shows the fit indices)
 #' @param digits How many decimal places to report to (default = 2)
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to F)
-#' @param precision Deprecated in favor of digits (must be NULL)
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @family umx reporting
@@ -226,7 +224,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' umxSummary(m1, report = "table")
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, precision = NULL, matrixAddresses = FALSE, filter = c("ALL","NS","SIG")){
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL","NS","SIG")){
 	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
 	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = TRUE)
 	validValuesForFilter = c("ALL", "NS", "SIG")
@@ -234,17 +232,11 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 	report = umx_default_option(report, c("line"))	
 	filter = umx_default_option(filter, validValuesForFilter)	
 
-	if(!is.null(precision)){
-		warning("precision is deprecated for umxSummary, use digits instead")
-		digits = precision
-	}
 	# if the filter is off default, the user must want something...
 	if( filter != "ALL" & showEstimates == "none") {
 		showEstimates = "std"
 	}
-
 	output <- model@output
-
 	# Stop if there is no objective function
 	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
 	# stop if there is no output
@@ -264,14 +256,24 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 		modelSummary = OpenMx::summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
 	}
 
-	# displayColumns
+	# DisplayColumns
 	if(showEstimates != "none"){
+		if(packageVersion("OpenMx") > 1.4) {
+			parameterTable = mxStandardizeRAMpaths(model, SE = TRUE)
+			#                       name          label matrix  row  col     Raw.Value    Std.Value       Std.SE
+			# 1 big_motor_low_mpg.A[1,2]    disp_to_mpg      A  mpg disp -4.085128e-02 -0.460887806 1.594295e-01
+			names(parameterTable) <- c("label", "name", "matrix", "row", "col", "Estimate", "Std.Estimate", "Std.SE")
+			parameterTable$Std.Error = NA
+			# TODO: Rob to add "Std.Error" to mxStandardizeRAMpaths()
+		}else{
+			parameterTable = modelSummary$parameters			
+		}
 		if(matrixAddresses){
 			nameing = c("name", "matrix", "row", "col")
 		} else {
 			nameing = c("name")
 		}
-		if("Std.Estimate" %in%  names(modelSummary$parameters)){
+		if("Std.Estimate" %in%  names(parameterTable)){
 			if(length(showEstimates) > 1) {
 				namesToShow = showEstimates
 			}else if(showEstimates == "both") {
@@ -284,37 +286,37 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 		} else {
 			namesToShow = c(nameing, "Estimate", "Std.Error")
 		}
-		x = modelSummary$parameters
+		# TODO update for 2.0
 		if("CI" %in% namesToShow){
-			x$sig = T
-			x$CI  = ""
-			for(i in 1:dim(x)[1]) {
+			parameterTable$sig = TRUE
+			parameterTable$CI  = ""
+			for(i in 1:dim(parameterTable)[1]) {
 				# i = 1
 				# x = summary(m1)$parameters
 				# digits = 2
-				est   = x[i, "Std.Estimate"]
-				CI95  = x[i, "Std.SE"] * 1.96
+				est   = parameterTable[i, "Std.Estimate"]
+				CI95  = parameterTable[i, "Std.SE"] * 1.96
 				bounds = c(est - CI95, est + CI95)
 
 				if(!any(is.na(bounds))){
 					# protect cases with SE == NA from evaluation for significance
 					if (any(bounds < 0) & any(bounds > 0)){
-						x[i, "sig"] = F
+						parameterTable[i, "sig"] = F
 					}
 					if(est < 0){
-		 			   x[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
+						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
 					} else {
-		 			   x[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
+						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
 					}
 				}
 			}
 		}
 		if(filter == "NS"){
-			print(x[x$sig==F, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
+			print(parameterTable[parameterTable$sig==F, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
 		}else if(filter == "SIG"){
-			print(x[x$sig==T, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")
+			print(parameterTable[parameterTable$sig==T, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")
 		}else{
-			print(x[,namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
+			print(parameterTable[,namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
 		}
 	} else {
 		message("For estimates, add showEstimates = 'raw' 'std' or 'both")
@@ -351,17 +353,17 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				x = paste0(
 					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi, 2), # was A7
 					", p "      , umx_APA_pval(p, .001, 3),
-					"; CFI = "  , round(CFI,3),
-					"; TLI = "  , round(TLI,3),
+					"; CFI = "  , round(CFI, 3),
+					"; TLI = "  , round(TLI, 3),
 					"; ", RMSEA_CI
 					)
-					print(x)
-					if(TLI_OK != "OK"){
-						message("TLI is worse than desired")
-					}
-					if(RMSEA_OK != "OK"){
-						message("RMSEA is worse than desired")
-					}
+				print(x)
+				if(TLI_OK != "OK"){
+					message("TLI is worse than desired")
+				}
+				if(RMSEA_OK != "OK"){
+					message("RMSEA is worse than desired")
+				}
 			}
 	})
 }
@@ -747,6 +749,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' @param dotFilename A file to write the path model to. if you leave it at the default "name", then the model's internal name will be used
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param showFixed Whether to show fixed paths (defaults to FALSE)
+#' @param showMeans Whether to show means
 #' @param showError Whether to show errors
 #' @param precision Deprecated use "digits"
 #' @export
@@ -771,14 +774,10 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' plot(m1)
 #' }
 
-plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showError = TRUE, precision = NULL) {
+plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, showError = TRUE) {
 	# ==========
 	# = Setup  =
 	# ==========
-	if(!is.null(precision)){
-		warning("precision is deprecated for plot, use digits instead")
-		digits = precision
-	}
 	valid_PathLabels = c("none", "labels", "both")
 	pathLabels = umx_default_option(pathLabels, valid_PathLabels, check = TRUE)
 
@@ -790,10 +789,10 @@ plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", 
 	# = Get Symmetric & Asymmetric Paths =
 	# ========================
 	out = "";
-	out = xmu_dot_make_paths(mxMat = model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, comment = "Single arrow paths", digits = digits)
-	out = xmu_dot_make_paths(mxMat = model@matrices$S, stringIn = out, heads = 2, showFixed = showFixed, comment = "Variances", digits = digits)
-	tmp = xmu_dot_make_variances(model@matrices$S, style = NULL, showFixed = TRUE, digits = digits)
-	variances = tmp$variances
+	out = xmu_dot_make_paths(mxMat = model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
+	out = xmu_dot_make_paths(mxMat = model@matrices$S, stringIn = out, heads = 2, showFixed = showFixed, pathLabels = pathLabels, comment = "Variances", digits = digits)
+	tmp = xmu_dot_make_residuals(model@matrices$S, style = NULL, showFixed = TRUE, digits = digits)
+	variances     = tmp$variances
 	varianceNames = tmp$varianceNames
 	# ============================
 	# = Make the manifest shapes =
@@ -806,7 +805,7 @@ plot.MxModel <- function(model = NA, std = T, digits = 2, dotFilename = "name", 
 	# ================
 	# = handle means =
 	# ================
-	if(umx_has_means(model)){
+	if(umx_has_means(model) & showMeans){
 		out = paste0(out, "\n\t# Means paths\n")
 		# Add a triangle to the list of shapes
 		preOut = paste0(preOut, "\t one [shape = triangle];\n")
