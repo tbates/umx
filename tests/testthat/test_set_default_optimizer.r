@@ -11,6 +11,9 @@ m1 <- mxModel("ind", type = "RAM",
 	mxPath(from = "one", to = manifests),
 	mxData(mtcars[,manifests], type="raw")
 )
+mxOption(m1, "Default optimizer", "CSOLNP")
+# Default optimizer is a global option and cannot be set on models
+
 mxOption(NULL, "Default optimizer", "CSOLNP")
 m1 = mxRun(m1)
 test_that("mxOption set Default optimizer in a model and universally", {
@@ -26,3 +29,5 @@ test_that("mxOption set Default optimizer in a model and universally", {
 	m1 = mxRun(mxOption(m1, "Default optimizer", "CSOLNP"))
 	expect_match(m1@runstate$compute$steps[1][[1]]$engine, "CSOLNP")
 })
+
+m1 = mxRun(m1 <- mxOption(m1, "Default optimizer", "NPSOL"))
