@@ -1,6 +1,6 @@
 # library(testthat)
 # library(umx)
-# test_file("~/bin/umx/inst/tests/test_confint.OpenMx.r") 
+# test_file("~/bin/umx/tests/testthat/test_confint.OpenMx.r") 
 # 
 # test_package("umx")
 test_that("confint works for different inputs", {

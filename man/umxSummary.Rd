@@ -5,8 +5,8 @@
 \usage{
 umxSummary(model, saturatedModels = NULL, report = "line",
   showEstimates = c("none", "raw", "std", "both", "list of column names"),
-  digits = 2, RMSEA_CI = FALSE, precision = NULL,
-  matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG"))
+  digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE,
+  filter = c("ALL", "NS", "SIG"))
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} whose fit will be reported}
@@ -21,8 +21,6 @@ Default  is "none" (just shows the fit indices)}
 \item{digits}{How many decimal places to report to (default = 2)}
 
 \item{RMSEA_CI}{Whether to compute the CI on RMSEA (Defaults to F)}
-
-\item{precision}{Deprecated in favor of digits (must be NULL)}
 
 \item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
 

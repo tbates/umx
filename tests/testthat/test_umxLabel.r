@@ -1,5 +1,5 @@
 # library(testthat); library(devtools)
-# test_file("~/bin/umx/inst/tests/test_umxLabel.r")
+# test_file("~/bin/umx/tests/testthat/test_umxLabel.r")
 # 
 # test_package("umx")
 test_that("umxLabel works for different inputs", {	

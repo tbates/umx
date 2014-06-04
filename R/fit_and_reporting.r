@@ -853,7 +853,7 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 	# ===================================
 	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
-	print("nb: see ?plot.MxModel for options - digits, dotFilename, pathLabels, showFixed, showError")
+	print("nb: see ?plot.MxModel for options - std, digits, dotFilename, pathLabels, showFixed, showMeans, showError")
 	if(!is.na(dotFilename)){
 		if(dotFilename == "name"){
 			dotFilename = paste0(model@name, ".dot")

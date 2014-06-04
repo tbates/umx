@@ -1,6 +1,6 @@
 # library(testthat)
 # library(umx)
-# test_file("~/bin/umx/inst/tests/test_umx_APA_pval.r") 
+# test_file("~/bin/umx/tests/testthat/test_umx_APA_pval.r") 
 # 
 # test_package("umx")
 test_that("umx_APA_pval works for different values", {

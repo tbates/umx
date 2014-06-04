@@ -1,6 +1,6 @@
 # library(testthat)
 # library(umx)
-# testthat::test_file("~/bin/umx/inst/tests/test_umx_is_cov.r")
+# testthat::test_file("~/bin/umx/tests/testthat/test_umx_is_cov.r")
 # 
 # test_package("umx")
 

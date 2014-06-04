@@ -1,7 +1,7 @@
 # library(testthat)
 # library(devtools)
 # library(umx)
-# testthat::test_file("~/bin/umx/inst/tests/test_umx_rename.r") 
+# testthat::test_file("~/bin/umx/tests/testthat/test_umx_rename.r") 
 # 
 # test_package("umx")
 test_that("umx_rename works for different values", {

@@ -16,6 +16,66 @@
 # = utility functions =
 # =====================
 
+#' umx_get_optimizer
+#'
+#' get the optimizer in OpenMx
+#'
+#' @param model an (optional) model to get from. If left NULL, the global option is returned
+#' @return - the optimizer  - a string
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' library(OpenMx)
+#' manifests = c("mpg", "disp", "gear")
+#' m1 <- mxModel("ind", type = "RAM",
+#' 	manifestVars = manifests,
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = "one", to = manifests),
+#' 	mxData(mtcars[,manifests], type="raw")
+#' )
+#' m1 = umx_set_optimizer(m1, opt = "NPSOL")
+#' umx_get_optimiser(m1)
+umx_get_optimizer <- function(model = NULL) {
+	if(is.null(model)){
+		mxOption(NULL, "Default optimizer")
+	} else {
+		mxOption(model, "Default optimizer")
+	}
+}
+
+#' umx_set_optimizer
+#'
+#' set the optimizer in OpenMx
+#'
+#' @param x an (optional) model to set. If left NULL, the global option is updated.
+#' @param opt defaults to "NPSOL". "CSOLNP" is an alternative at present
+#' @return - \code{\link{mxModel}} (if you provided one in x)
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' library(OpenMx)
+#' manifests = c("mpg", "disp", "gear")
+#' m1 <- mxModel("ind", type = "RAM",
+#' 	manifestVars = manifests,
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = "one", to = manifests),
+#' 	mxData(mtcars[, manifests], type = "raw")
+#' )
+#' m1 = umx_set_optimiser(m1, opt = "NPSOL")
+#' m1 = mxRun(m1)
+#' \dontrun{
+#' m1@@runstate$compute$steps[1][[1]]$engine # NPSOL
+#' }
+umx_set_optimizer <- function(x = NULL, opt = "NPSOL") {
+	if(is.null(x)){
+		mxOption(NULL, "Default optimizer", opt)
+	} else {
+		x = mxOption(x, "Default optimizer", opt)
+		invisible(x)
+	}
+}
 
 #' umx_is_exogenous
 #'
@@ -1707,16 +1767,25 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = "one", to = manifests, arrows = 2),
 #' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
+#' umx_has_means(m1)
+#' m1 <- mxModel(m1,
+#' 	mxPath(from = "one", to = manifests),
+#' 	mxData(demoOneFactor, type = "raw")
+#' )
+#' umx_has_means(m1)
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umx_has_means(m1)
 umx_has_means <- function(model) {
 	# TODO check for type? check for run
-	expMeans = attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
-	return(!all(dim(expMeans) == 0))
+	if(!umx_is_RAM(model)){
+		stop("Can only run on RAM models so far")
+	}
+	return(!is.null(m1@matrices$M))
+	# expMeans = attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
+	# return(!all(dim(expMeans) == 0))
 }
 
 #' umx_has_CIs

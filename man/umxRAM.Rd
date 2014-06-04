@@ -3,7 +3,7 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(name, ..., exog.variances = FALSE, endog.variances = TRUE,
+umxRAM(name, ..., exog.variances = FALSE, endog.variances = FALSE,
   fix = c("none", "latents", "firstLoadings"), latentVars = NULL,
   data = NULL, independent = NA, remove_unused_manifests = TRUE)
 }
@@ -12,9 +12,9 @@ umxRAM(name, ..., exog.variances = FALSE, endog.variances = TRUE,
 
 \item{...}{A list of mxPaths or mxThreshold objects}
 
-\item{exog.variances}{If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.}
+\item{exog.variances}{If TRUE, free variance parameters are added for exogenous variables that lack them (the default is FALSE).}
 
-\item{endog.variances}{If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.}
+\item{endog.variances}{If TRUE, free error-variance parameters are added for any endogenous variables that lack them (default is FALSE).}
 
 \item{fix}{Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")}
 

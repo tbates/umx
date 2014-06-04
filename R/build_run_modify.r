@@ -45,8 +45,8 @@
 #' 
 #' @param name friendly name for the model
 #' @param ... A list of mxPaths or mxThreshold objects
-#' @param exog.variances If TRUE (the default is FALSE), free variance parameters are added for exogenous variables that lack them.
-#' @param endog.variances If TRUE (the default), free error-variance parameters are added for any endogenous variables that lack them.
+#' @param exog.variances If TRUE, free variance parameters are added for exogenous variables that lack them (the default is FALSE).
+#' @param endog.variances If TRUE, free error-variance parameters are added for any endogenous variables that lack them (default is FALSE).
 #' @param fix Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")
 #' @param latentVars Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)
 #' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame
@@ -72,7 +72,7 @@
 #' # TODO implement handling a dataframe
 #' umxRAM("tim", a, b, thedata)
 #' }
-umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, data = NULL, independent = NA, remove_unused_manifests = TRUE) {
+umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, data = NULL, independent = NA, remove_unused_manifests = TRUE) {
 	fix = umx_default_option(fix, c("none", "latents", "firstLoadings"), check = TRUE)
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
@@ -203,10 +203,10 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 			m1 = umx_add_variances(m1, pathList)
 			message("Added variances to ", length(pathList), " endogenous variables: ", paste(pathList, collapse = ", "), "\n")
 		} else {
-			message("No endogenous variables found.\n")
+			# message("No endogenous variables found.\n")
 		}
-	}else{
-		message("endogenous variances not added")
+	} else{
+		# message("endogenous variances not added")
 	}
 
 	if(!fix == "none"){
@@ -220,12 +220,16 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = TRUE, fi
 			m1 = umx_fix_first_loadings(m1)
 		}
 	}
+
 	if(isRaw){
 		# TODO add means if no means added...
 		if(is.null(m1@matrices$M)){
 			message("Added a means model: mxPath('one', to = manifestVars)\n")
 			m1 = mxModel(m1, mxPath("one", manifestVars))
-		}else{
+		} else {
+			print("using your means model")
+			umx_show(m1)
+			print(m1@matrices$M@values)
 			# leave the user's means as the model
 		}
 	}

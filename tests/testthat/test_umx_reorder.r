@@ -1,6 +1,6 @@
 # library(testthat)
 # library(umx)
-# test_file("~/bin/umx/inst/tests/test_umx_reorder.r") 
+# test_file("~/bin/umx/tests/testthat/test_umx_reorder.r") 
 # 
 # testthat::test_package("umx")
 

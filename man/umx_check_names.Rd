@@ -40,6 +40,7 @@ umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = T)
 Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_add_variances}};
   \code{\link{umx_check_model}}; \code{\link{umx_explode}};
+  \code{\link{umx_get_optimizer}};
   \code{\link{umx_has_CIs}};
   \code{\link{umx_has_been_run}};
   \code{\link{umx_has_means}};
@@ -50,6 +51,7 @@ Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordinal}}; \code{\link{umx_library}};
   \code{\link{umx_reorder}};
+  \code{\link{umx_set_optimizer}};
   \code{\link{umx_string_to_algebra}};
   \code{\link{umx_trim}}
 }

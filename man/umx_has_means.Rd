@@ -23,10 +23,15 @@ m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents,
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
-	mxPath(from = "one", to = manifests, arrows = 2),
 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
+umx_has_means(m1)
+m1 <- mxModel(m1,
+	mxPath(from = "one", to = manifests),
+	mxData(demoOneFactor, type = "raw")
+)
+umx_has_means(m1)
 m1 = umxRun(m1, setLabels = T, setValues = T)
 umx_has_means(m1)
 }
@@ -38,6 +43,7 @@ Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_add_variances}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_explode}};
+  \code{\link{umx_get_optimizer}};
   \code{\link{umx_has_CIs}};
   \code{\link{umx_has_been_run}};
   \code{\link{umx_has_square_brackets}};
@@ -47,6 +53,7 @@ Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordinal}}; \code{\link{umx_library}};
   \code{\link{umx_reorder}};
+  \code{\link{umx_set_optimizer}};
   \code{\link{umx_string_to_algebra}};
   \code{\link{umx_trim}}
 }
