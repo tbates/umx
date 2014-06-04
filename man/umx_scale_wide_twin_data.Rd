@@ -30,7 +30,7 @@ plot(wt1 ~ wt2, data = df)
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx data helpers: \code{\link{umxHetCor}};
-  \code{\link{umx_cor}}; \code{\link{umx_lower2full}};
-  \code{\link{umx_scale}}
+  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
+  \code{\link{umx_lower2full}}; \code{\link{umx_scale}}
 }
 

@@ -2505,3 +2505,41 @@ umx_library <- function(x) {
 	}
 	require(x)	
 }
+
+
+#' Turn a cov matrix into raw data
+#'
+#' Turn a cov matrix into raw data :-)
+#'
+#' @param myCovariance a covariance matrix
+#' @param n how many rows of data to return
+#' @param means the means of the raw data (defaults to 0)
+#' @return - data.frame
+#' @export
+#' @seealso - \code{\link{cov2cor}}
+#' @family umx data helpers
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+
+#' @examples
+#' covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(v1_6, v1_6),
+#' data = c(0.9223099, 0.1862938, 0.4374359, 0.8959973, 0.9928430, 0.5320662,
+#'            0.1862938, 0.2889364, 0.3927790, 0.3321639, 0.3371594, 0.4476898,
+#'            0.4374359, 0.3927790, 1.0069552, 0.6918755, 0.7482155, 0.9013952,
+#'            0.8959973, 0.3321639, 0.6918755, 1.8059956, 1.6142005, 0.8040448,
+#'            0.9928430, 0.3371594, 0.7482155, 1.6142005, 1.9223567, 0.8777786,
+#'            0.5320662, 0.4476898, 0.9013952, 0.8040448, 0.8777786, 1.3997558))
+#' myData = umx_cov2raw(covData, n = 100, means = 1:6)
+umx_cov2raw <- function(myCovariance, n, means = 0) {
+	# TODO check cov is a cov matrix
+	if(means == 0){
+		means = rep(0,dim(myCovariance)[2])
+	} else {
+		if(length(means) != dim(myCovariance)[2]){
+			stop("means must have the same length as the matrix columns. You gave me ", dim(myCovariance)[2], 
+			 " columns of cov matrix, but ", length(means), " means.")
+		}
+	}
+	out = MASS::mvrnorm (n = n, mu = means, Sigma = myCovariance);
+	out = data.frame(out);  names(out) <- colnames(myCovariance);
+	return(out)
+}
