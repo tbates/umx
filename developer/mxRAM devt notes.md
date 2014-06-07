@@ -47,30 +47,23 @@ data(PoliticalDemocracy)
 
 m2 = umxRAM("Bollen1989",
 	# Measurement model
-    mxPath("ind60", to = c("x1", "x2", "x3")),
-    mxPath("dem60", to = c("y1", "y2", "y3", "y4")),
-    mxPath("dem65", to = c("y5", "y6", "y7", "y8")),
+    umxPath("ind60", to = c("x1", "x2", "x3") ),
+    umxPath("dem60", to = c("y1", "y2", "y3", "y4") ),
+    umxPath("dem65", to = c("y5", "y6", "y7", "y8") ),
   	# Regressions
-    mxPath("ind60", to = "dem60"),
-    mxPath(c("ind60", "dem60"), to = "dem65"),
-	# Residual correlations
-    mxPath("y1", with = "y5"),
-    mxPath("y2", with = c("y4", "y6")),
-    mxPath("y3", with = "y7"),
-    mxPath("y4", with = "y8"),
-    mxPath("y6", with = "y8"),
-	mxData(cov(PoliticalDemocracy), type = "cov", numObs = 500),
-	
-    # things I don't yet add but could
-	# residuals for manifests
-	mxPath(from = names(PoliticalDemocracy), arrows = 2),
-	# variance for latents
-	mxPath(from = c("ind60", "dem60", "dem65"), values = .5, arrows = 2)
+    umxPath(c("ind60", "dem60"), to = "dem65"),
+    umxPath("ind60", to = "dem60"),
+	# Correlations
+    umxPath(cov = c("y1", "y5") ),
+    umxPath(cov = c("y3", "y7") ),
+    umxPath(cov = c("y4", "y8") ),
+    umxPath(cov = c("y6", "y8") ),
+    umxPath("y2", with = c("y4", "y6") ),
+	# variance for latents and residuals
+	umxPath(var = c("ind60", "dem60", "dem65"), fixedAt = 1),
+	umxPath(var = names(PoliticalDemocracy)),
+	data = mxData(cov(PoliticalDemocracy), type = "cov", numObs = 500)
 )
-m2 = umxFixEndogenousLatentVars(m2)
-m2 = umxAddResiduals(m2)
-m2 = umxFixLatents(m2)
-m3 = umxFixFirstLoadings(m2)
 umx_show(m2, matrices = c("A","S"))
 m2 = mxRun(m2)
 plot(m2, showFixed = T)

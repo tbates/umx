@@ -188,6 +188,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 	)
 	# TODO: Add variance/residuals to all variables except reflective latents
 	# mxPath(from = fixed, arrows = 2),
+	message("Created model ", name(m1))
 	
 	# exog == no incoming single arrow paths
 	pathList = umx_is_exogenous(m1, manifests_only = TRUE)
@@ -790,10 +791,11 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1) # just run: will create saturated model if needed
-#' model = umxRun(m1, setValues = T, setLabels = T) # set start values and label all parameters
+#' m1 = umxRun(m1, setValues = T, setLabels = T) # set start values and label all parameters
 #' umxSummary(m1, show = "std")
 #' m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
 #' m1 = mxRun(m1, intervals = TRUE)
+#' residuals(m1, run = TRUE) # get CIs on all free parameters
 #' confint(m1, run = TRUE) # get CIs on all free parameters
 #' m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, comparison = NULL, setStarts = NULL){

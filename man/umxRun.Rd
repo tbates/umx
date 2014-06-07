@@ -47,10 +47,11 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1) # just run: will create saturated model if needed
-model = umxRun(m1, setValues = T, setLabels = T) # set start values and label all parameters
+m1 = umxRun(m1, setValues = T, setLabels = T) # set start values and label all parameters
 umxSummary(m1, show = "std")
 m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
 m1 = mxRun(m1, intervals = TRUE)
+residuals(m1, run = TRUE) # get CIs on all free parameters
 confint(m1, run = TRUE) # get CIs on all free parameters
 m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
