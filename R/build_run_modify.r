@@ -90,7 +90,9 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 			if(class(i[[1]])[1] == "MxThreshold"){
 				# MxThreshold detected
 			}else{
-				stop("I can only handle mxPaths and mxThreshold() objects. To include data in umxRAM, say data = yourData")
+				# stop("I can only handle mxPaths and mxThreshold() objects.\n",
+				# "You have given me a", class(i)[1],"\n",
+				# " To include data in umxRAM, say 'data = yourData'")
 			}
 		}
 	}
@@ -188,7 +190,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 	)
 	# TODO: Add variance/residuals to all variables except reflective latents
 	# mxPath(from = fixed, arrows = 2),
-	message("Created model ", name(m1))
+	# message("Created model ", m1$name)
 	
 	# exog == no incoming single arrow paths
 	pathList = umx_is_exogenous(m1, manifests_only = TRUE)
@@ -633,8 +635,8 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 			stop("'obj' must be a RAM model (or a simple number)")
 		}
 		# This is a RAM Model: Set sane starting values
-		# S at variance on diag, bit less than cov off diag
 		# Means at manifest means
+		# S at variance on diag, quite a bit less than cov off diag
 		# TODO: Start values in the A matrix...
 		# TODO: Start latent means?...		
 		# TODO: Handle sub models...
@@ -650,7 +652,26 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 		}
 		theData = obj@data@observed
 		manifests = obj@manifestVars
+		latents = obj@latentVars
 		nVar      = length(manifests)
+
+		if(length(latents) > 0){
+			lats  =  (nVar+1):(nVar + length(latents))
+			# The diagonal is variances
+			if(onlyTouchZeros) {
+				freePaths = (obj@matrices$S@free[lats, lats] == TRUE) & obj@matrices$S@values[lats, lats] == 0
+			} else {
+				freePaths = (obj@matrices$S@free[lats, lats] == TRUE)			
+			}
+			obj@matrices$S@values[lats, lats][freePaths] = 1
+			offDiag = !diag(length(latents))
+			newOffDiags = obj@matrices$S@values[lats, lats][offDiag & freePaths]/3
+			obj@matrices$S@values[lats, lats][offDiag & freePaths] = newOffDiags			
+		}
+
+		# =============
+		# = Set means =
+		# =============
 		if(obj@data@type == "raw"){
 			# = Set the means =
 			if(is.null(obj@matrices$M)){
@@ -1919,12 +1940,8 @@ umxParallel <- function(model, what) {
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxSummary(m1, show = "std")
 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, means = NULL, fixedAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
 
-	if(!is.null(unique.bivariate)){
-		stop("unique.bivariate not implemented in umxPath as yet. use\n",
-		"umxPath(from = vars, connect = \"unique.bivariate\")")
-	}
 	if(!is.null(from)){
 		if(length(from) > 1){
 			isSEMstyle = grepl("[<>]", x = from[1])	
@@ -1972,24 +1989,33 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		}
 	}
 	n = 0
-	for (i in list(with, cov, var, means)) {
+
+	for (i in list(with, cov, var, means, unique.bivariate, v1m0)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, means can be use at one time")
-	} else if(n==0){
+		stop("At most one of with, cov, var, unique.bivariate, v1m0, and means can be use at one time")
+	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
-			stop("You must set at least from")
+			stop("You must set at least 'from'")
 		}	
 	} else {
 		# n = 1
 	}
 
-	# Handle with
+	if(!is.null(v1m0)){
+		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1)
+		b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0)
+		return(list(a,b))
+	}
+
 	if(!is.null(with)){
+		# ===============
+		# = Handle with =
+		# ===============
 		if(is.null(from)){
-			stop("To use with, you must set from also")
+			stop("To use with, you must set 'from = ' also")
 		} else {
 			from = from
 			to   = with
@@ -1997,12 +2023,16 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			connect = "single"
 		}
 	} else if(!is.null(cov)){
-		# Handle cov
+		# ==============
+		# = Handle cov =
+		# ==============
 		if(!is.null(from) | !is.null(to)){
-			stop("To use cov, from and to must not be set")
+			stop("To use 'cov = ', 'from' and 'to' should be empty")
 		} else if (length(cov) != 2){
-			stop("cov must consist of two and only two paths. If you want to covary more paths, use from, to, and connect = \"unique.bivariate\"\n",
-			"If you want a variance, use var = \"X\"")
+			stop("cov must consist of two and only two variables.\n",
+			"If you want to covary more variables, use: 'unique.bivariate =' \n",
+			"or else use 'from =', 'to=', and 'connect = \"unique.bivariate\"'\n",
+			"If you want to set variances for a list of variables, use 'var = c(\"X\")'")
 		} else {
 			from   = cov[1]
 			to     = cov[2]
@@ -2010,9 +2040,11 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			connect = "single"
 		}
 	} else if(!is.null(var)){
-		# handle var
+		# ==============
+		# = handle var =
+		# ==============
 		if(!is.null(from) | !is.null(to)){
-			stop("To use var, from and to must not be set")
+			stop("To use 'var = ', 'from' and 'to' should be empty")
 		} else {
 			from   = var
 			to     = var
@@ -2020,26 +2052,52 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			connect = "single"
 		}
 	} else if(!is.null(means)){
-		# Handle means
+		# ================
+		# = Handle means =
+		# ================
 		if(!is.null(from) | !is.null(to)){
-			stop("To use means, from and to must not be set. Just say means = c(\"X\",\"Y\").")
+			stop("To use means, from and to should be empty.",
+			"Just say 'means = c(\"X\",\"Y\").'")
 		} else {
 			from   = "one"
 			to     = means
 			arrows = 1
 			connect = "single"
 		}
-	}else{
-		# assume it is from to
-		from = from
-		to = to
-		arrows = arrows
-		connect = "single"
+	} else if(!is.null(unique.bivariate)){
+		# ===========================
+		# = Handle unique.bivariate =
+		# ===========================
+		if(!is.null(from) | !is.null(to)){
+			stop("To use unique.bivariate, 'from=' and 'to=' should be empty.\n",
+			"Just say 'unique.bivariate = c(\"X\",\"Y\").'")
+		} else {
+			from    = unique.bivariate
+			to    = NA
+			arrows  = 2
+			connect = "unique.bivariate"
+		}
+	} else {
+		if(is.null(from) & is.null(to)){
+			stop("You don't seem to have requested any paths.\n",
+			"see help(umxPath) for all the possibilities")
+		} else {
+			# assume it is from to
+			from    = from
+			to      = to
+			arrows  = arrows
+			connect = "single"
+		}
 	}
+	# ==================================
+	# = From and to will be set now... =
+	# ==================================
 
-	# From and to will be set now...
+	# ===============================
+	# =  handle fixedAt and firstAt =
+	# ===============================
 	if(!is.null(fixedAt) & !is.null(firstAt)){
-		stop("At most one of fixFirst and fixedAt can be set")
+		stop("At most one of fixedAt and firstAt can be set: You seem to have tried to set both at once.")
 	}
 
 	# Handle firstAt
@@ -2048,9 +2106,9 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			# TODO think about this
 			stop("It's not wise to use firstAt with multiple from sources. I'd like to think about this before implementing it..")
 		} else {
-			free = rep(TRUE, length(to))
-			values = rep(NA, length(to))
+			free    = rep(TRUE, length(to))
 			free[1] = FALSE
+			values    = rep(NA, length(to))
 			values[1] = firstAt
 		}
 	}	
@@ -2060,10 +2118,9 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		values = fixedAt
 	}
 
-	if(!connect == "single"){
-		message("Connect should be single, it was:", connect)
-	}	
-
+	# TODO check incoming value of connect
+	# if(!connect == "single"){
+	# 	message("Connect should be single, it was:", connect)
+	# }	
 	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound)
-
 }

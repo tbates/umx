@@ -4,9 +4,9 @@
 \title{umxPath: Flexible specification of sem paths}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
-  unique.bivariate = NULL, means = NULL, fixedAt = NULL, firstAt = NULL,
-  connect = "single", arrows = 1, free = TRUE, values = NA,
-  labels = NA, lbound = NA, ubound = NA)
+  unique.bivariate = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL,
+  firstAt = NULL, connect = "single", arrows = 1, free = TRUE,
+  values = NA, labels = NA, lbound = NA, ubound = NA)
 }
 \arguments{
 \item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
