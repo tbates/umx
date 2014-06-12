@@ -170,7 +170,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 		if(remove_unused_manifests){
 			# trim down the data to include only the used manifests
 			manifestVars = setdiff(manifestVars, unusedManifests)
-			if(data@type =="raw"){
+			if(data@type == "raw"){
 				data@observed = data@observed[, manifestVars]
 			} else {
 				data@observed = umx_reorder(data@observed, manifestVars)
@@ -226,14 +226,15 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 
 	if(isRaw){
 		# TODO add means if no means added...
-		if(is.null(m1@matrices$M)){
-			message("Added a means model: mxPath('one', to = manifestVars)\n")
+		if(is.null(m1@matrices$M) ){
+			message("You have raw data, but no means model. I added\n",
+			"mxPath('one', to = manifestVars)")
 			m1 = mxModel(m1, mxPath("one", manifestVars))
 		} else {
-			print("using your means model")
-			umx_show(m1)
-			print(m1@matrices$M@values)
 			# leave the user's means as the model
+			# print("using your means model")
+			# umx_show(m1)
+			# print(m1@matrices$M@values)
 		}
 	}
 	m1 = umxLabel(m1)
@@ -626,10 +627,10 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 #' # # TODO get this working
 #' # umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 
-umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
+umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 	if(is.numeric(obj) ) {
 		# use obj as the mean, return a list of length n, with sd = sd
-		xmuStart_value_list(x = obj, sd = sd, n = n)
+		return(xmuStart_value_list(x = obj, sd = sd, n = n))
 	} else {
 		if (!umx_is_RAM(obj) ) {
 			stop("'obj' must be a RAM model (or a simple number)")
@@ -650,9 +651,9 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = F) {
 			message("this is a threshold RAM model... I'm not sure how to handle setting values in these yet")
 			return(obj)
 		}
-		theData = obj@data@observed
+		theData   = obj@data@observed
 		manifests = obj@manifestVars
-		latents = obj@latentVars
+		latents   = obj@latentVars
 		nVar      = length(manifests)
 
 		if(length(latents) > 0){

@@ -3,7 +3,7 @@
 \alias{umxValues}
 \title{umxValues}
 \usage{
-umxValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = F)
+umxValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 }
 \arguments{
 \item{obj}{The RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.}

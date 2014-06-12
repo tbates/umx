@@ -113,7 +113,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 	if (isTRUE(all.equal(parm, defaultParmString))) {
 		if(umx_has_CIs(object, "intervals")) {
 			# TODO add a count for the user
-			message("Existing CIs Will be used (", length(object$intervals), " in total)")
+			message("Existing CIs Will be used (", length(object@intervals), " in total)")
 		} else {
 			message("Adding CIs for all free parameters")
 			CIs_to_set = names(omxGetParameters(object, free = T))
@@ -135,7 +135,9 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 	}
 	# 3. Report CIs if found in output
 	if(!umx_has_CIs(object, "both") & run == FALSE) {
-		message("Some CIs have been requested, but have not yet been run. Add ", omxQuotes("run = TRUE"), " to your confint() call to run them")
+		message("Some CIs have been requested, but have not yet been run. Add ", omxQuotes("run = TRUE"), " to your confint() call to run them.\n",
+		"To store the model run capture it from confint like this:\n",
+		"m1 = confint(m1, run=TRUE)")
 	} else {
 		model_summary = summary(object)
 		model_CIs = round(model_summary$CI, 3)
@@ -1235,12 +1237,44 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' extractAIC(m1)
 #' # -2.615998
+#' AIC(m1)
 extractAIC.MxModel <- function(model) {
 	require(umx)
 	a = umx::umxCompare(model)
 	return(a[1, "AIC"])
 }
 
+#' coef.MxModel
+#'
+#' Returns the coeficients from an OpenMx RAM model
+#'
+#' @method coef MxModel
+#' @rdname coef.MxModel
+#' @export
+#' @param model an \code{\link{mxModel}} to get the AIC from
+#' @return - coefficients
+#' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{mxStandardizeRAMpaths}}
+#' @references - 
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' coef(m1)
+#' # -2.615998
+coef.MxModel <- function(model) {
+	stop("Not implemented")
+	# TODO implement this
+	# wrapper around mxStandardizeRAMpaths
+}
 
 #' umxExpCov
 #'
