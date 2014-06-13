@@ -2488,7 +2488,7 @@ umx_trim <- function(string) {
 #'
 #' This loads the package, installing it if needed
 #'
-#' @param x The package name as a string.
+#' @param package The package name as a string.
 #' @export
 #' @family umx misc functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
@@ -2497,13 +2497,13 @@ umx_trim <- function(string) {
 #' \dontrun{
 #' umx_library("numderiv")
 #' }
-umx_library <- function(x) {
-	if(FALSE == x %in% rownames(installed.packages() ) ) {
+umx_library <- function(package = "") {
+	if(FALSE == package %in% rownames(installed.packages() ) ) {
 		m <- getCRANmirrors(all = FALSE, local.only = FALSE)
 		URL <- m[grepl("Cloud",m$Name),"URL"][1] #get the first repos with "cloud" in the name
-		install.packages(x, repos = URL)
+		install.packages(package, repos = URL)
 	}
-	require(x)	
+	require(pacakge)	
 }
 
 

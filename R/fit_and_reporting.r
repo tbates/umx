@@ -260,7 +260,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 
 	# DisplayColumns
 	if(showEstimates != "none"){
-		if(packageVersion("OpenMx") > 1.4) {
+		if(packageVersion("OpenMx") > 1.5) {
 			parameterTable = mxStandardizeRAMpaths(model, SE = TRUE)
 			#                       name          label matrix  row  col     Raw.Value    Std.Value       Std.SE
 			# 1 big_motor_low_mpg.A[1,2]    disp_to_mpg      A  mpg disp -4.085128e-02 -0.460887806 1.594295e-01
