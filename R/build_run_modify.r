@@ -647,7 +647,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		if (is.null(obj@data)) {
 			stop("'model' does not contain any data")
 		}
-		if(!is.null(m1@matrices$Thresholds)){
+		if(!is.null(obj@matrices$Thresholds)){
 			message("this is a threshold RAM model... I'm not sure how to handle setting values in these yet")
 			return(obj)
 		}
