@@ -2543,3 +2543,64 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 	out = data.frame(out);  names(out) <- colnames(myCovariance);
 	return(out)
 }
+
+# ==========================
+# = Data Prep and Cleaning =
+# ==========================
+
+#' umxPadAndPruneForDefVars
+#'
+#' Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin
+#'
+#' @param df
+#' @param varNames
+#' @param defNames
+#' @param suffixes
+#' @return - dataframes
+#' @export
+#' @family umx data helpers
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @examples
+#' \dontrun{
+#' df = umxPadAndPruneForDefVars(df, "E", "age", c("_T1", "_T2"))
+#' }
+umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefValue = 99, rm = c("drop_missing_def", "pad_with_mean")) {
+	numTwinsPerFamily = length(suffixes)
+	message("Working with ", numTwinsPerFamily, " twins per family:", paste(suffixes, collapse = ", "))
+	message("Checking varnames: ", paste(varNames, collapse = ", "))
+	# get mean values for each definition Variable
+	meanDefVarValues = colMeans(df[, paste0(defNames, suffixes[1])], na.rm = T)
+	numRows = dim(df)[1]
+
+	for (i in 1:numTwinsPerFamily) {
+		# for twin i
+		defVars = paste0(defNames, suffixes[i])
+		defData = df[, defVars, drop = F]
+		Vars    = paste0(varNames, suffixes[i])
+		varData    = df[, Vars   , drop = F]
+		allDataMissing = rep(FALSE, numRows)
+		missingDefVars = rep(FALSE, numRows)
+		for (n in 1:numRows) {
+			# n = 1
+			allDataMissing[n] = all(is.na(varData[n,]))
+			defsMissing = is.na(defData[n,])
+			missingDefVars[n] = any(defsMissing)
+			if(allDataMissing[n]){
+				if(missingDefVars[n]){
+					df[n, defVars] = highDefValue
+				}
+			} else {
+				if(missingDefVars[n]){
+					df[n, defVars[defsMissing]] = meanDefVarValues[defsMissing]
+				}
+			}
+		}
+		message("Of ", numRows, " families, ", sum(allDataMissing), " were missing all the variables", " for twin ", i, " (", sum(!allDataMissing), " had at least one datapoint).")
+		message("Of these, ", sum(allDataMissing & missingDefVars), " were NA for at least one definition variable and for these subjects, all definition vars were set to highDefValue (", highDefValue, ")")
+		message(sum(!allDataMissing & missingDefVars), " were NA for at least one definition variable but had some measured data.\n")
+		message(" for these subjects, definition vars were set to the mean for the dataset... not perfect but likely adequate response.")
+		warning("I am not yet checking for ordinal vars etc.")
+	}
+	return(df)
+}
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");

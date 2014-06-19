@@ -1940,9 +1940,7 @@ umxParallel <- function(model, what) {
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' umxSummary(m1, show = "std")
-
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
-
 	if(!is.null(from)){
 		if(length(from) > 1){
 			isSEMstyle = grepl("[<>]", x = from[1])	
@@ -2125,3 +2123,45 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	# }	
 	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound)
 }
+
+
+umxMatrix <- function(type = "Full", rc= NULL, fixedAt = NULL,
+	nrow = NA, ncol = NA, free = FALSE, 
+	values = NA, labels = "auto", 
+	lbound = NA, ubound = NA, 
+	byrow = getOption('mxByrow'), 
+	dimnames = NA, name = NA) {
+	if(!is.null(rc)){
+		if(!length(rc)==2){
+			stop("rc must be a collection of two numbers, i.e., rc = c(3,4)")
+		} else if(any(!is.na(list(nrow, ncol)))){
+			stop("if you set rc, nrow and ncol must be left empty")		
+		}
+		nrow = rc[1]
+		ncol = rc[2]
+	} else {
+		alt.expr
+	}
+
+	if(!is.null(fixedAt)){
+		if(!is.na(values)){
+			stop("if you set fixedAt, values must be left empty")
+		}
+		free   = FALSE
+		values = fixedAt
+	}
+
+	if(labels == "auto"){
+		m = mxMatrix(type = "Full", nrow = nrow, ncol = ncol, free = free, values = values, labels = NA, lbound = lbound, ubound = ubound, byrow = getOption('mxByrow'), dimnames = dimnames, name = name)
+		m = umxLabel(m)
+	} else{
+		m = mxMatrix(type = "Full", nrow = nrow, ncol = ncol, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound, byrow = getOption('mxByrow'), dimnames = dimnames, name = name)
+	}
+	return(m)
+}
+
+# nCov = 3
+# umxMatrix(name = "covsT1", rc = c(1, nCov), fixedAt = , labels = data.cov.T1)
+# umxMatrix(name = "covsT2", rc = c(1, nCov), values = 1)
+
+# devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
