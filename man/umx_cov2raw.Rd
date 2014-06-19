@@ -35,6 +35,7 @@ myData = umx_cov2raw(covData, n = 100, means = 1:6)
 - \code{\link{cov2cor}}
 
 Other umx data helpers: \code{\link{umxHetCor}};
+  \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_cor}}; \code{\link{umx_lower2full}};
   \code{\link{umx_scale_wide_twin_data}};
   \code{\link{umx_scale}}

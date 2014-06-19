@@ -35,8 +35,9 @@ cor_df = umxHetCor(df, ML = F, use="pairwise.complete.obs")
 \seealso{
 - \code{\link[polycor]{hetcor}}
 
-Other umx data helpers: \code{\link{umx_cor}};
-  \code{\link{umx_cov2raw}}; \code{\link{umx_lower2full}};
+Other umx data helpers: \code{\link{umxPadAndPruneForDefVars}};
+  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
+  \code{\link{umx_lower2full}};
   \code{\link{umx_scale_wide_twin_data}};
   \code{\link{umx_scale}}
 }
