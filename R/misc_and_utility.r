@@ -16,6 +16,27 @@
 # = utility functions =
 # =====================
 
+#' umx_suffix
+#'
+#' helper to add suffixes to names: useful for expanding twin vars like "bm1" into c("bmi1", "bmi2")
+#'
+#' @param varNames a list of base names (e.g "bmi")
+#' @param suffixes a list of suffixes (e.g c("_T1", "_T2"))
+#' @return - suffixed names e.g c("bmi_T1", "bmi_T2"))
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' umx_suffix("bmi", c("_T1", "_T2"))
+
+umx_suffix <- function(varNames, suffixes) {
+	out = c()
+	for (i in suffixes) {
+		out = c(out, paste0(varNames, i))
+	}
+	return(out)
+}
+
 #' umx_get_optimizer
 #'
 #' get the optimizer in OpenMx
@@ -1146,7 +1167,7 @@ umx_greater_than <- function(table, x){
 
 umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 	if(!is.data.frame(df)){
-		stop(paste0("umx_round takes a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+		stop("df input for umx_round must be a dataframe")
 	}
 	# for each column, if numeric, round
 	rows = dim(df)[1]
@@ -2446,6 +2467,7 @@ qm <- function(..., rowMarker = "|") {
 #'
 #' Takes a string and returns each character as an item in an array
 #'
+#' @param delimiter what to break the string on. Default is empty string ""
 #' @param string an character string, e.g. "dog"
 #' @return - a collection of characters, e.g. c("d", "o", "g")
 #' @export
@@ -2552,10 +2574,12 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #'
 #' Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin
 #'
-#' @param df
-#' @param varNames
-#' @param defNames
-#' @param suffixes
+#' @param df the dataframe to process
+#' @param varNames list of names of the variables being analysed
+#' @param defNames list of covariates
+#' @param suffixes suffixes that map names on columns in df (i.e., c("T1", "T2"))
+#' @param highDefValue What to replace missing definition variables (covariates) with. Default = 99
+#' @param rm = how to handle missing values in the varNames. Default is "drop_missing_def", "pad_with_mean")
 #' @return - dataframes
 #' @export
 #' @family umx data helpers
@@ -2569,7 +2593,7 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 	message("Working with ", numTwinsPerFamily, " twins per family:", paste(suffixes, collapse = ", "))
 	message("Checking varnames: ", paste(varNames, collapse = ", "))
 	# get mean values for each definition Variable
-	meanDefVarValues = colMeans(df[, paste0(defNames, suffixes[1])], na.rm = T)
+	meanDefVarValues = colMeans(df[, paste0(defNames, suffixes[1]), drop=F], na.rm = T)
 	numRows = dim(df)[1]
 
 	for (i in 1:numTwinsPerFamily) {

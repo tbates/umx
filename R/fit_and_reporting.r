@@ -1216,7 +1216,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' Original Author: brandmaier
 #'
 #' @method extractAIC MxModel
-#' @rdname extractAIC
+#' @rdname extractAIC.MxModel
 #' @export
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @return - AIC value

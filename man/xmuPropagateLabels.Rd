@@ -3,7 +3,7 @@
 \alias{xmuPropagateLabels}
 \title{xmuPropagateLabels (not a user function)}
 \usage{
-xmuPropagateLabels(model, suffix = "")
+xmuPropagateLabels(model, suffix = "", verbose = T)
 }
 \arguments{
 \item{model}{a model to label}

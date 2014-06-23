@@ -44,6 +44,7 @@ Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordinal}}; \code{\link{umx_library}};
   \code{\link{umx_reorder}};
-  \code{\link{umx_set_optimizer}}; \code{\link{umx_trim}}
+  \code{\link{umx_set_optimizer}};
+  \code{\link{umx_suffix}}; \code{\link{umx_trim}}
 }
 

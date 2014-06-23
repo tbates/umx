@@ -763,14 +763,14 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 	# TODO change to umxSetLabels?
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
-		xmuLabel_Matrix(obj, baseName, setfree, drop, jiggle, boundDiag, suffix)
+		xmuLabel_Matrix(mx_matrix = obj, baseName = baseName, setfree = setfree, drop = drop, jiggle = jiggle, boundDiag = boundDiag, suffix = suffix, verbose = verbose, labelFixedCells = labelFixedCells)
 	} else if (umx_is_RAM(obj)) { 
 		# Label a RAM model
 		if(verbose){message("RAM")}
-		return(xmuLabel_RAM_Model(obj, suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting))
+		return(xmuLabel_RAM_Model(model = obj, suffix = suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting, verbose = verbose))
 	} else if (umx_is_MxModel(obj) ) {
-		# Label a non-RAM matrix model
-		return(xmuLabel_MATRIX_Model(obj, suffix))
+		# Label a non-RAM matrix lamodel
+		return(xmuLabel_MATRIX_Model(model = obj, suffix = suffix, verbose= verbose))
 	} else {
 		stop("I can only label OpenMx models and mxMatrix types. You gave me a ", typeof(obj))
 	}
@@ -1889,7 +1889,8 @@ umxParallel <- function(model, what) {
 #' @param var equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)
-#' @param mean equivalent to setting "from = 'one', to = x. nb: from, to, with and var must be left empty (their default)
+#' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
+#' @param v1m0 variance of 1 and mean of zero in one call.
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
 #' @param firstAt first value is fixed at 1 (free is ignored: warning if not a single TRUE)
 #' @param connect as in mxPath - nb: Only used when using from and to

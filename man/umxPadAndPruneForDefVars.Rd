@@ -7,13 +7,17 @@ umxPadAndPruneForDefVars(df, varNames, defNames, suffixes, highDefValue = 99,
   rm = c("drop_missing_def", "pad_with_mean"))
 }
 \arguments{
-\item{df}{}
+\item{df}{the dataframe to process}
 
-\item{varNames}{}
+\item{varNames}{list of names of the variables being analysed}
 
-\item{defNames}{}
+\item{defNames}{list of covariates}
 
-\item{suffixes}{}
+\item{suffixes}{suffixes that map names on columns in df (i.e., c("T1", "T2"))}
+
+\item{highDefValue}{What to replace missing definition variables (covariates) with. Default = 99}
+
+\item{rm}{= how to handle missing values in the varNames. Default is "drop_missing_def", "pad_with_mean")}
 }
 \value{
 - dataframes

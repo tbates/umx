@@ -142,7 +142,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 	return(model)
 }
 
-xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE) {
+xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = F) {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "_male")
 	# TODO implement overRideExisting !!!
@@ -215,8 +215,8 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	# Purpose: label the cells of an mxMatrix
 	# Detail: Defaults to the handy "matrixname_r1c1" where 1 is the row or column
 	# Use case: You shouldn't be using this: call umxLabel
-	# xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
-	# xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
+	# umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
+	# umx:::xmuLabel_Matrix(mxMatrix("Symm", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
 	# See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = F, value = 0, name = "drop_a_row1_c1")
 	if (!is(mx_matrix, "MxMatrix")){ # label a mxMatrix
 		stop("I'm sorry Dave... xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want umxLabel()")
@@ -228,7 +228,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 	mirrorLabels = newLabels
 	if(any(grep("^data\\.", newLabels)) ) {
 		if(verbose){
-			message("matrix contains definition variables in the labels already... I'm leaving them alone")
+			message("matrix ", mx_matrix@name, " contains definition variables in the labels already... I'm leaving them alone")
 		}
 		return(mx_matrix)
 	}
@@ -431,13 +431,14 @@ xmuStart_value_list <- function(mean = 1, sd = NA, n = 1) {
 #'
 #' @param model a model to label
 #' @param suffix a string to append to each label
+#' @param verbose whether to say what is being done
 #' @return - \code{\link{mxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
 
-xmuPropagateLabels <- function(model, suffix = "") {
+xmuPropagateLabels <- function(model, suffix = "", verbose = T) {
     # useage: xmuPropagateLabels(model, suffix = "")
-	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix   , suffix = suffix)
-    model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix)
+	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix   , suffix = suffix, verbose = T)
+    model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix, verbose = T)
     return(model)
 }
 
@@ -571,7 +572,7 @@ xmuMI <- function(model, vector = T) {
 #'
 #' Tests if an input has square brackets
 #'
-#' @param model an \code{\link{mxModel}} to WITH
+#' @param input an input to test
 #' @return - TRUE/FALSE
 #' @export
 #' @family umx non-user functions
