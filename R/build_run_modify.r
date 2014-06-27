@@ -2200,8 +2200,8 @@ umx_add_std <- function(model, addCIs = TRUE) {
 		mxAlgebra(name = "stdS"  , invSDs %*% S %*% invSDs, dimnames = dnames)
 	)
 	if(addCIs){
-		freeA = umx_make_bracket_addresses(model@matrices$A, free= TRUE, newName = "stdA")
-		freeS = umx_make_bracket_addresses(model@matrices$S, free= TRUE, newName = "stdS")
+		freeA = umx_get_bracket_addresses(model@matrices$A, free= TRUE, newName = "stdA")
+		freeS = umx_get_bracket_addresses(model@matrices$S, free= TRUE, newName = "stdS")
 		model = mxModel(model, mxCI(c(freeS, freeA)) )
 	}
 	return(model)

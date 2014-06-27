@@ -16,23 +16,23 @@
 # = utility functions =
 # =====================
 
-#' umx_suffix
+#' umx_add_suffixes
 #'
-#' helper to add suffixes to names: useful for expanding twin vars like "bm1" into c("bmi1", "bmi2")
+#' Helper to add suffixes to names: useful for expanding twin vars like "bm1" into c("bmi1", "bmi2")
 #'
-#' @param varNames a list of base names (e.g "bmi")
+#' @param names a list of base names (e.g "bmi")
 #' @param suffixes a list of suffixes (e.g c("_T1", "_T2"))
 #' @return - suffixed names e.g c("bmi_T1", "bmi_T2"))
 #' @export
 #' @family umx misc functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
-#' umx_suffix("bmi", c("_T1", "_T2"))
+#' umx_add_suffixes("bmi", c("_T1", "_T2"))
 
-umx_suffix <- function(varNames, suffixes) {
+umx_add_suffixes <- function(names, suffixes) {
 	out = c()
 	for (i in suffixes) {
-		out = c(out, paste0(varNames, i))
+		out = c(out, paste0(names, i))
 	}
 	return(out)
 }
@@ -978,24 +978,26 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 
 #' umx_rename
 #'
-#' Returns a dataframe with variables renamed as desired. Checks that the variables exist, and that the new neames are not already used.
+#' Returns a dataframe with variables renamed as desired.
+#' Unlike some functions, it checks that the variables exist, and that the new names are not already used.
 #'
 #' @param x the dataframe in which to rename variables
-#' @param replace a named list of oldName = "newName" pairs OR a list of new names
-#' @param old Optional: a list of names that will be replaced by the contents of replace. defaults to NULL in which case replace must be paired list
-#' @return - the renamed dataframe
+#' @param replace a named collection of c(oldName = "newName") pairs (OR, if using old, the list of new names)
+#' @param old Optional list of old names that will be replaced by the contents of replace. defaults to NULL in which case replace must be paired list.
+#' @return - dataframe with columns renamed.
 #' @export
-#' @seealso - \code{\link{umx_rename_file}}
-#' @family umx utility functions
+#' @family umx misc functions
 #' @examples
-#' # rename ages to "age"
+#' # Re-name "cyl" to "cylinder"
 #' x = mtcars
 #' x = umx_rename(x, replace = c(cyl = "cylinder"))
 #' # alternate style
 #' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 #' umx_check_names("displacement", data = x, die = T)
+#' # This will warn that "disp" doesn't exist (anymore)
+#' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 umx_rename <- function (x, replace, old = NULL) {
-	# see also gdate::rename.vars(data, from, to)	
+	# See also gdate::rename.vars(data, from, to)	
 	if(!is.null(old)){
 		# message("replacing old with replace")
 		if(length(old) != length(replace)){
@@ -1498,7 +1500,6 @@ umx_has_been_run <- function(model, stop = FALSE) {
 #' @return - boolean
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -1593,7 +1594,7 @@ umx_is_ordinal <- function(df, names = F, strict = T) {
 #' @param obj an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}
 #' @return - Boolean
 #' @export
-#' @family umx misc functions
+#' @family umx build functions
 #' @seealso - \code{\link{mxModel}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1613,12 +1614,9 @@ umx_is_ordinal <- function(df, names = F, strict = T) {
 #' if(umx_is_RAM(m1)){
 #' 	message("nice RAM model!")
 #' }
-#' \dontrun{
 #' if(!umx_is_RAM(m1)){
-#' 	stop("model must be a RAM model")
+#' 	msg("model must be a RAM model")
 #' }
-#' }
-
 umx_is_RAM <- function(obj) {
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
 	if(!umx_is_MxModel(obj)){
@@ -1736,7 +1734,8 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #' umx_is_cov(mtcars, boolean = T)
 
 umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
-	if(is.null(data)) { stop("Error in umx_is_cov: You have to provide the data that you want to check...") }
+	if(is.null(data)) { stop("Error in umx_is_cov: You have to provide the data = that you want to check...\n",
+		"Or as Jack Nicholson says, 'No ticky, no laundry' :-) ") }
 
 	if( nrow(data) == ncol(data)) {
 		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
@@ -2631,7 +2630,7 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 
 #' get mat[r,c] style cell address from an mxMatrix
 #'
-#' Sometimes you want these :-)
+#' Sometimes you want these :-) This also allows you to change the matrix name: useful for using mxMatrix addresses in an mxAlgebra.
 #'
 #' @param mat an mxMatrix to get address labels from
 #' @param free how to filter on free (default = NA: take all)
@@ -2653,7 +2652,7 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 #' )
 #' umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 # "stdA[1,6]" "stdA[2,6]" "stdA[3,6]" "stdA[4,6]" "stdA[5,6]"
-umx_make_bracket_addresses <- function(mat, free = NA, newName = NA) {
+umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 	# c("stdS[6,7]", "stdS[7,7]")
 	if(is.na(newName)){
 		matName = mat$name
