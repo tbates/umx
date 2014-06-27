@@ -6,7 +6,7 @@
 xmuHasSquareBrackets(input)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to WITH}
+\item{input}{an input to test}
 }
 \value{
 - TRUE/FALSE

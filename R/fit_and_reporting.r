@@ -368,6 +368,10 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				}
 			}
 	})
+	
+	if(!is.null(model@output$confidenceIntervals)){
+		print(model@output$confidenceIntervals)
+	}
 }
 
 #' umxCompare

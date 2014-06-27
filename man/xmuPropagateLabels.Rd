@@ -9,6 +9,8 @@ xmuPropagateLabels(model, suffix = "", verbose = T)
 \item{model}{a model to label}
 
 \item{suffix}{a string to append to each label}
+
+\item{verbose}{whether to say what is being done}
 }
 \value{
 - \code{\link{mxModel}}

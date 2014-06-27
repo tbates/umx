@@ -2166,3 +2166,43 @@ umxMatrix <- function(type = "Full", rc= NULL, fixedAt = NULL,
 # umxMatrix(name = "covsT2", rc = c(1, nCov), values = 1)
 
 # devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
+
+
+#' umx_add_std
+#'
+#' Add algebras to a RAM model so that it can report CIs on standardized paths.
+#' If you just want standardized paths, or SEs on these, call \link[OpenMx]{mxStandardizeRAMpaths}
+#'
+#' @param model an \code{\link{mxModel}} to add standardization algebra to
+#' @param addCIs whether to also add the mxCI calls to use these standardization matrices.
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx build functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @examples
+#' \dontrun{
+#' model = umx_add_std(model)
+#' }
+umx_add_std <- function(model, addCIs = TRUE) {
+	if(!umx_is_RAM(model)){
+		stop("umx_add_std only works on RAM models at present")
+	}
+	nVar = dim(model@matrices$A)[[1]]
+	dnames = dimnames(a1@matrices$S@labels)
+	model <- mxModel(model,
+		mxMatrix( name = "I", type = "Iden", nrow = nVar, ncol = nVar),
+		mxMatrix( name = "unitColumn", type = "Unit", nrow = nVar, ncol = 1),
+		mxAlgebra(name = "IA", solve(I - A)),
+		mxAlgebra(name = "expCov", IA %&% S),
+		# mxAlgebra(name = "invSDs", vec2diag(1/sqrt(diag2vec(expCov))) ),
+		mxAlgebra(name = "invSDs", vec2diag(unitColumn/sqrt(diag2vec(expCov))) ),
+		mxAlgebra(name = "stdA"  , invSDs %*% A %*% solve(invSDs), dimnames = dnames),
+		mxAlgebra(name = "stdS"  , invSDs %*% S %*% invSDs, dimnames = dnames)
+	)
+	if(addCIs){
+		freeA = umx_make_bracket_addresses(model@matrices$A, free= TRUE, newName = "stdA")
+		freeS = umx_make_bracket_addresses(model@matrices$S, free= TRUE, newName = "stdS")
+		model = mxModel(model, mxCI(c(freeS, freeA)) )
+	}
+	return(model)
+}

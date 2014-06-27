@@ -2628,3 +2628,53 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 	return(df)
 }
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+
+#' get mat[r,c] style cell address from an mxMatrix
+#'
+#' Sometimes you want these :-)
+#'
+#' @param mat an mxMatrix to get address labels from
+#' @param free how to filter on free (default = NA: take all)
+#' @return - a list of bracket style labels
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
+# "stdA[1,6]" "stdA[2,6]" "stdA[3,6]" "stdA[4,6]" "stdA[5,6]"
+umx_make_bracket_addresses <- function(mat, free = NA, newName = NA) {
+	# c("stdS[6,7]", "stdS[7,7]")
+	if(is.na(newName)){
+		matName = mat$name
+	} else {
+		matName = newName
+	}
+	rows <- nrow(mat@free)
+	cols <- ncol(mat@free)
+	d1 <- expand.grid(matName, "[", 1:rows, ",", 1:cols, "]", stringsAsFactors = F)	
+	addys = c()
+	for (i in 1:(rows*cols)) {
+		addys = c(addys, paste(d1[i,], collapse = ""))
+	}
+	addys = matrix(addys, rows,cols)
+	if(is.na(free) ){
+		return(addys)
+	} else if (free == T){
+		return(addys[mat@free == TRUE])
+	} else if (free == F){
+		return(addys[mat@free == TRUE])
+	} else {
+		stop("free must be one of NA TRUE or FALSE")	
+	}
+}

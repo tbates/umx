@@ -6,6 +6,8 @@
 umx_explode(delimiter = character(), string)
 }
 \arguments{
+\item{delimiter}{what to break the string on. Default is empty string ""}
+
 \item{string}{an character string, e.g. "dog"}
 }
 \value{
@@ -36,6 +38,7 @@ Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordinal}}; \code{\link{umx_library}};
+  \code{\link{umx_make_bracket_addresses}};
   \code{\link{umx_reorder}};
   \code{\link{umx_set_optimizer}};
   \code{\link{umx_string_to_algebra}};

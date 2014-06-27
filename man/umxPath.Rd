@@ -21,7 +21,9 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 \item{unique.bivariate}{equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)}
 
-\item{mean}{equivalent to setting "from = 'one', to = x. nb: from, to, with and var must be left empty (their default)}
+\item{means}{equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).}
+
+\item{v1m0}{variance of 1 and mean of zero in one call.}
 
 \item{fixedAt}{Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)}
 
@@ -110,7 +112,8 @@ umxSummary(m1, show = "std")
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
 
-Other umx build functions: \code{\link{umx_fix_first_loadings}};
+Other umx build functions: \code{\link{umx_add_std}};
+  \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}
 }
 

@@ -51,6 +51,7 @@ Other umx misc functions: \code{\link{umx_add_variances}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordinal}}; \code{\link{umx_library}};
+  \code{\link{umx_make_bracket_addresses}};
   \code{\link{umx_reorder}};
   \code{\link{umx_set_optimizer}};
   \code{\link{umx_string_to_algebra}};
