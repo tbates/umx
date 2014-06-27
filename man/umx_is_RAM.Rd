@@ -31,10 +31,8 @@ umxSummary(m1, show = "std")
 if(umx_is_RAM(m1)){
 	message("nice RAM model!")
 }
-\dontrun{
 if(!umx_is_RAM(m1)){
-	stop("model must be a RAM model")
-}
+	msg("model must be a RAM model")
 }
 }
 \references{
@@ -43,23 +41,9 @@ if(!umx_is_RAM(m1)){
 \seealso{
 - \code{\link{mxModel}}
 
-Other umx misc functions: \code{\link{umxEval}};
-  \code{\link{umx_add_variances}};
-  \code{\link{umx_check_model}};
-  \code{\link{umx_check_names}}; \code{\link{umx_explode}};
-  \code{\link{umx_get_optimizer}};
-  \code{\link{umx_has_CIs}};
-  \code{\link{umx_has_been_run}};
-  \code{\link{umx_has_means}};
-  \code{\link{umx_has_square_brackets}};
-  \code{\link{umx_is_MxModel}}; \code{\link{umx_is_cov}};
-  \code{\link{umx_is_endogenous}};
-  \code{\link{umx_is_exogenous}};
-  \code{\link{umx_is_ordinal}}; \code{\link{umx_library}};
-  \code{\link{umx_make_bracket_addresses}};
-  \code{\link{umx_reorder}};
-  \code{\link{umx_set_optimizer}};
-  \code{\link{umx_string_to_algebra}};
-  \code{\link{umx_suffix}}; \code{\link{umx_trim}}
+Other umx build functions: \code{\link{umxPath}};
+  \code{\link{umx_add_std}};
+  \code{\link{umx_fix_first_loadings}};
+  \code{\link{umx_fix_latents}}
 }
 

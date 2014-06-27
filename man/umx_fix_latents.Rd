@@ -40,6 +40,7 @@ umx_show(m1, matrices = "S") # variance of g is fixed at 1
 \seealso{
 Other umx build functions: \code{\link{umxPath}};
   \code{\link{umx_add_std}};
-  \code{\link{umx_fix_first_loadings}}
+  \code{\link{umx_fix_first_loadings}};
+  \code{\link{umx_is_RAM}}
 }
 

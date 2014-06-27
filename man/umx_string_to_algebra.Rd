@@ -30,22 +30,21 @@ alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " \%*\% "), name =
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx misc functions: \code{\link{umxEval}};
+  \code{\link{umx_add_suffixes}};
   \code{\link{umx_add_variances}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_explode}};
+  \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_optimizer}};
   \code{\link{umx_has_CIs}};
   \code{\link{umx_has_been_run}};
   \code{\link{umx_has_means}};
   \code{\link{umx_has_square_brackets}};
-  \code{\link{umx_is_MxModel}}; \code{\link{umx_is_RAM}};
-  \code{\link{umx_is_cov}};
+  \code{\link{umx_is_MxModel}}; \code{\link{umx_is_cov}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordinal}}; \code{\link{umx_library}};
-  \code{\link{umx_make_bracket_addresses}};
-  \code{\link{umx_reorder}};
-  \code{\link{umx_set_optimizer}};
-  \code{\link{umx_suffix}}; \code{\link{umx_trim}}
+  \code{\link{umx_rename}}; \code{\link{umx_reorder}};
+  \code{\link{umx_set_optimizer}}; \code{\link{umx_trim}}
 }
 

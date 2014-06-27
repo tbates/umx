@@ -28,6 +28,6 @@ model = umx_add_std(model)
 \seealso{
 Other umx build functions: \code{\link{umxPath}};
   \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}
+  \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}}
 }
 

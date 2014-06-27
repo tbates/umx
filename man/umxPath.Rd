@@ -114,6 +114,6 @@ umxSummary(m1, show = "std")
 
 Other umx build functions: \code{\link{umx_add_std}};
   \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}
+  \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}}
 }
 
