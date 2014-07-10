@@ -17,7 +17,7 @@ umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
 
 \item{report}{Optionally add sentences for inclusion inline in a paper (report= 2)
 and output to an html table which will open your default browser (report = 3).
-This is handy for getting tables into word}
+(This is handy for getting tables into Word, markdown, and other text systems!)}
 }
 \description{
 umxCompare compares two or more \code{\link{mxModel}}s. If you leave comparison blank, it will just give fit info for the base model
@@ -37,7 +37,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 m1 = umxRun(m1, setLabels = T, setValues = T)
 m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
-mxCompare(m1, m2) # what OpenMx give by default
+mxCompare(m1, m2) # what OpenMx gives by default
 umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
 umxCompare(m1, m2, report = 3) # Open table in browser
 m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")

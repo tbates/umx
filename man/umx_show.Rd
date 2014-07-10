@@ -49,6 +49,6 @@ umx_show(m1, what = "free", "A")
 
 Other umx reporting functions: \code{\link{residuals.MxModel}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umx_report_time}}
+  \code{\link{umx_drop_ok}}; \code{\link{umx_report_time}}
 }
 

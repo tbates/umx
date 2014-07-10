@@ -130,7 +130,6 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 #' m3 = xmuLabel_MATRIX_Model(m2)
 #' m4 = xmuLabel_MATRIX_Model(m2, suffix = "male")
 #' # explore these with omxGetParameters(m4)
-
 xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 	if(!umx_is_MxModel(model) ){
 		stop("xmuLabel_MATRIX_Model needs model as input")
@@ -138,7 +137,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 	if (umx_is_RAM(model)) {
 		stop("xmuLabel_MATRIX_Model shouldn't be seeing RAM Models")
 	}
-	model = xmuPropagateLabels(model, suffix = "")
+	model = xmuPropagateLabels(model, suffix = "", verbose = verbose)
 	return(model)
 }
 
@@ -426,7 +425,7 @@ xmuStart_value_list <- function(mean = 1, sd = NA, n = 1) {
 
 #' xmuPropagateLabels (not a user function)
 #'
-#' You should be calling umxLabel.
+#' You should be calling \code{\link{umxLabel}}.
 #' This function is called by xmuLabel_MATRIX_Model
 #'
 #' @param model a model to label
@@ -434,11 +433,23 @@ xmuStart_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' @param verbose whether to say what is being done
 #' @return - \code{\link{mxModel}}
 #' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = xmuPropagateLabels(m1, suffix = "MZ")
 
 xmuPropagateLabels <- function(model, suffix = "", verbose = T) {
-    # useage: xmuPropagateLabels(model, suffix = "")
-	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix   , suffix = suffix, verbose = T)
-    model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix, verbose = T)
+	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix   , suffix = suffix, verbose = verbose)
+    model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix, verbose = verbose)
     return(model)
 }
 

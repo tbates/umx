@@ -54,6 +54,7 @@ m1 = umxLabel(m1)
 umxGetParameters(m1, free = TRUE) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
 # Labeling a matrix
 a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
+umxLabel(mxMatrix(name = "a", "Full", 1,1, labels= "data.a"))
 a$labels
 }
 \references{

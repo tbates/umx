@@ -2588,6 +2588,13 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' df = umxPadAndPruneForDefVars(df, "E", "age", c("_T1", "_T2"))
 #' }
 umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefValue = 99, rm = c("drop_missing_def", "pad_with_mean")) {
+	# df = twinData
+	# varNames = varNames
+	# defNames = covNames
+	# suffixes = suffixes
+	# highDefValue = -100000
+	# rm = "pad_with_mean"
+
 	numTwinsPerFamily = length(suffixes)
 	message("Working with ", numTwinsPerFamily, " twins per family:", paste(suffixes, collapse = ", "))
 	message("Checking varnames: ", paste(varNames, collapse = ", "))
@@ -2596,11 +2603,12 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 	numRows = dim(df)[1]
 
 	for (i in 1:numTwinsPerFamily) {
+		# i = 1
 		# for twin i
 		defVars = paste0(defNames, suffixes[i])
 		defData = df[, defVars, drop = F]
 		Vars    = paste0(varNames, suffixes[i])
-		varData    = df[, Vars   , drop = F]
+		varData = df[, Vars, drop = F]
 		allDataMissing = rep(FALSE, numRows)
 		missingDefVars = rep(FALSE, numRows)
 		for (n in 1:numRows) {
@@ -2618,7 +2626,8 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 				}
 			}
 		}
-		message("Of ", numRows, " families, ", sum(allDataMissing), " were missing all the variables", " for twin ", i, " (", sum(!allDataMissing), " had at least one datapoint).")
+		message(numRows, " families found"
+		message(sum(allDataMissing), " missing all DVs", " for twin ", i, " (", sum(!allDataMissing), " had at least one datapoint).")
 		message("Of these, ", sum(allDataMissing & missingDefVars), " were NA for at least one definition variable and for these subjects, all definition vars were set to highDefValue (", highDefValue, ")")
 		message(sum(!allDataMissing & missingDefVars), " were NA for at least one definition variable but had some measured data.\n")
 		message(" for these subjects, definition vars were set to the mean for the dataset... not perfect but likely adequate response.")

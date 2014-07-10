@@ -1,4 +1,4 @@
-# Weighted analyses
+## Weighted analyses
 Often people have datasets where different rows have different weights: more weight needs to be given to some subjects than others.
 
 So, how do you do this in [OpenMx](http://openmx.psyc.virginia.edu)?
@@ -11,7 +11,9 @@ The workflow is as follows:
 2. set `vector = TRUE` in `mxFitFunctionML()`
 3. Add a container model which weights the fit vector and optimizes on that.
 
-# Setup: load libraries and simulate two variables X and Y, which covary
+### Step 0: Setup
+
+Here, we just load libraries and simulate two correlated variables "X" and "Y"
 
 ```S
 require("OpenMx"); require(MASS); set.seed(200)
@@ -21,7 +23,8 @@ nVar = length(selVars)
 xy <- mvrnorm(nSubs, c(0,0), matrix(c(1, r, r, 1), 2 , 2))
 testData <- data.frame(xy); names(testData) <- selVars
 ```
-# Step 1: Make the standard unweighted model
+
+### Step 1: Make the standard (unweighted) model
 
 ```S
 m1 <- mxModel("regularModel", 
@@ -49,7 +52,7 @@ round(cov(testData), 2)
 | X | 0.99 | 0.48 |
 | Y | 0.48 | 1.01 |
 
-# Now: Switch to vector
+### Step 2: Switch to vector
 
 You'd do this in one go, of course, but for didactic purposes, it's nice to see that a vector FitFunction 
 requires that you also compute a single optimisable number based on that fit vector. In this case
@@ -78,7 +81,7 @@ Still working fine:
 |:-----|:-----|:-----|:------|:------|
 | 0.99 | 0.48 | 1.01 | 0.00  | 0.03  |
 
-# Step 3: Make a windowed version
+### Step 3: Make a weighted version
 
 First, let's make up a simple ramp-style weight variable which assumes we've want to weight scores proportional to their position in the dataset for some reason.
 

@@ -758,6 +758,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxGetParameters(m1, free = TRUE) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
 #' # Labeling a matrix
 #' a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
+#' umxLabel(mxMatrix(name = "a", "Full", 1,1, labels= "data.a"))
 #' a$labels
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F, overRideExisting = F) {	
 	# TODO change to umxSetLabels?
@@ -770,7 +771,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 		return(xmuLabel_RAM_Model(model = obj, suffix = suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting, verbose = verbose))
 	} else if (umx_is_MxModel(obj) ) {
 		# Label a non-RAM matrix lamodel
-		return(xmuLabel_MATRIX_Model(model = obj, suffix = suffix, verbose= verbose))
+		return(xmuLabel_MATRIX_Model(model = obj, suffix = suffix, verbose = verbose))
 	} else {
 		stop("I can only label OpenMx models and mxMatrix types. You gave me a ", typeof(obj))
 	}
@@ -963,7 +964,11 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 	}
 	x = mxRun(x, intervals = intervals)
 	if(comparison){
-		print(umxCompare(lastFit, x))
+		if(free){
+			print(umxCompare(x, lastFit))
+		} else {
+			print(umxCompare(lastFit, x))
+		}
 	}
 	return(x)
 }

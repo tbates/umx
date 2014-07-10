@@ -37,6 +37,7 @@ umx_report_time(m1)
 - \code{\link{summary}}, \code{\link{umxRun}}
 
 Other umx reporting functions: \code{\link{residuals.MxModel}};
-  \code{\link{umxStandardizeModel}}; \code{\link{umx_show}}
+  \code{\link{umxStandardizeModel}};
+  \code{\link{umx_drop_ok}}; \code{\link{umx_show}}
 }
 

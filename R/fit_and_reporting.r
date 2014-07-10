@@ -13,6 +13,37 @@
 # = Fit and Reporting Helpers =
 # =============================
 
+#' umx_drop_ok
+#'
+#' Print a meaningful sentence about a model comparison. SHould be merged with umxCompare
+#'
+#' @param model1 the base code{\link{mxModel}}
+#' @param model2 the nested code{\link{mxModel}}
+#' @param text name of the thing being tested, i.e., "Extraversion" or "variances"
+#' @return - 
+#' @export
+#' @family umx reporting functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @examples
+#' \dontrun{
+#' model = umx_drop_ok(model)
+#' }
+umx_drop_ok <- function(model1, model2, text = "parameter") {
+	a = mxCompare(model1, model2)
+	if(a$diffdf[2] > 1){
+		are = "are"
+	}else{
+		are = "is"
+	}
+	if(a$p[2] < .05){
+		if(!is.null(text)){ print(paste0("The ", text, " ", are, " significant and should be kept (p = ", umx_APA_pval(a$p[2]), ")")) }
+		return(FALSE)
+	} else {
+		if(!is.null(text)){ print(paste0("The ", text, " ", are, " non-significant and can be dropped (p = ", umx_APA_pval(a$p[2]), ")")) }
+		return(TRUE)
+	}
+}
+
 #' residuals.MxModel
 #'
 #' Return the \code{\link{residuals}} from an OpenMx RAM model
@@ -384,7 +415,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' @param digits rounding for p etc.
 #' @param report Optionally add sentences for inclusion inline in a paper (report= 2)
 #' and output to an html table which will open your default browser (report = 3).
-#' This is handy for getting tables into word
+#' (This is handy for getting tables into Word, markdown, and other text systems!)
 #' @family umx reporting
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://www.github.com/tbates/umx/}
@@ -406,7 +437,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
 #' m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
 #' umxCompare(m1, m2)
-#' mxCompare(m1, m2) # what OpenMx give by default
+#' mxCompare(m1, m2) # what OpenMx gives by default
 #' umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
 #' umxCompare(m1, m2, report = 3) # Open table in browser
 #' m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
@@ -419,26 +450,35 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		stop("You must provide at least a base model for umxCompare")
 	}
 	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
-	# tableOut  = format(tableOut, scientific = F, digits = digits)
-	tablePub  = tableOut[, c(2, 3, 7:9, 6, 1)]
-	names(tablePub) <- c("Comparison", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
-	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
 
+	# | 1       |    2          | 3  | 4        | 5   | 6        | 7        | 8      | 9    |
+	# | base    | comparison    | ep | minus2LL | df  | AIC      | diffLL   | diffdf | p    |
+	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
+	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
+
+	# tableOut  = format(tableOut, scientific = F, digits = digits)
+	tablePub  = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
+	names(tablePub)     <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
+	# Fix problem where base model has compare set to its own name, and name set to NA
+	tablePub[1, "Model"] = tablePub[1, "Compare with Model"] 
+	tablePub[1, "Compare with Model"] = NA
+	# digits=3
+	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
 	# addText = 1
 	if(report > 1){
 		n_rows = dim(tablePub)[1]
 		for (i in 1:n_rows) {
-			if(!is.na(tablePub[i, "Comparison"])){
+			if(!is.na(tablePub[i, "p"])){
 				if(tableOut[i, 9] < .05){
 					did_didnot = ". This caused a significant loss of fit "
 				} else {
 					did_didnot = ". This did not lower fit significantly"
 				}
 				message(
-				"The hypothesis that ", tablePub[i,"Comparison"], 
-				" was tested by dropping ", tablePub[i,"Comparison"],
-				" from ", tablePub[i,"Base"], 
+				"The hypothesis that ", tablePub[i,"Model"], 
+				" was tested by dropping ", tablePub[i,"Model"],
+				" from ", tablePub[i,"Compare with Model"], 
 				did_didnot, 
 				"(χ²(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2),
 				", p = ", tablePub[i,"p"], ")."
@@ -450,10 +490,10 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	if(report == 3){
 		R2HTML::HTML(tablePub, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
 	} else {
-		return(tablePub)
-		# umx_print(tableOut, file = output, rowlabel = "")
+		umx_print(tablePub)
 		# R2HTML::print(tableOut, output = output, rowlabel = "")
 	}
+	invisible(tablePub)
 	
 	# " em \u2013 dash"
    # Delta (U+0394)
