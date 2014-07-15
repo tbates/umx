@@ -863,11 +863,11 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 			model = mxRun(model, intervals = intervals)
 		}
 	}
-	if( umx_is_RAM(model)){
+	if(umx_is_RAM(model)){
 		if(model@data@type == "raw"){
 			# If we have a RAM model with raw data, compute the satuated and indpendence models
 			# TODO: Update to omxSaturated() and omxIndependenceModel()
-			message("computing saturated and independence models so you have access to absoute fit indices for this raw-data model")
+			message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
 			model_sat = umxSaturated(model, evaluate = T, verbose = F)
 			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(model_sat$Ind))
 			model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(model_sat$Sat))

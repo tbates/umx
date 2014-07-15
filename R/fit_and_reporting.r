@@ -707,6 +707,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param verbose How much feedback to give.
 #' @return - A list of the saturated and independence models, from which fits can be extracted
 #' @export
+#' @family umx build functions, umx reporting functions
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
