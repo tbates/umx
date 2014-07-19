@@ -928,7 +928,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = T)
 #' m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = T, name = "drop_G_to_x3_x4_and_x5", comparison = T)
 #' m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = T)
-#' m3 = umxReRun(m2, update = "G_to_x1", free=TRUE, name = "free_G_x1_again")
+#' m3 = umxReRun(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again")
 #' umxCompare(m3, m2)
 
 umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, dropList = "deprecated") {
@@ -940,7 +940,7 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 				"umxReRun(m1, update = ", omxQuotes("E_to_heartRate"), ")\n"
 			)
 		} else {
-			stop("hi. Sorry for the change, but to use regex replace ", omxQuotes("regex"), " with ", omxQuotes("update"),
+			stop("hi. Sorry for the change. To use regex replace ", omxQuotes("regex"), " with ", omxQuotes("update"),
 			 "AND regex =", omxQuotes(F), "e.g.:\n",
 			 "umxReRun(m1, regex = ", omxQuotes("^E_.*"), ")\n",
 			 "becomes\n",
@@ -949,7 +949,6 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 		}
 	}
 
-	if(is.null(name)){ name = lastFit@name }
 
 	if(regex | typeof(update) == "character") {
 		if (regex) {
@@ -959,15 +958,16 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 		}
 		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)		
 	} else {
-		# TODO Label and start new object new object
+		# TODO Label and start new object
+		if(is.null(name)){ name = NA }
 		x = mxModel(lastFit, update, name = name)
 	}
 	x = mxRun(x, intervals = intervals)
 	if(comparison){
-		if(free){
-			print(umxCompare(x, lastFit))
+		if(free){ # we added a df
+			umxCompare(x, lastFit)
 		} else {
-			print(umxCompare(lastFit, x))
+			umxCompare(lastFit, x)
 		}
 	}
 	return(x)

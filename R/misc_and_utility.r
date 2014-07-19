@@ -2626,7 +2626,7 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 				}
 			}
 		}
-		message(numRows, " families found"
+		message(numRows, " families found")
 		message(sum(allDataMissing), " missing all DVs", " for twin ", i, " (", sum(!allDataMissing), " had at least one datapoint).")
 		message("Of these, ", sum(allDataMissing & missingDefVars), " were NA for at least one definition variable and for these subjects, all definition vars were set to highDefValue (", highDefValue, ")")
 		message(sum(!allDataMissing & missingDefVars), " were NA for at least one definition variable but had some measured data.\n")

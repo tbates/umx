@@ -66,7 +66,7 @@ umxSummary(m2); umxCompare(m1, m2)
 m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = T)
 m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = T, name = "drop_G_to_x3_x4_and_x5", comparison = T)
 m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = T)
-m3 = umxReRun(m2, update = "G_to_x1", free=TRUE, name = "free_G_x1_again")
+m3 = umxReRun(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again")
 umxCompare(m3, m2)
 }
 \references{
