@@ -83,10 +83,6 @@ NULL
 
 #' @rdname umx-deprecated
 #' @export
-umx_grep_labels <- function(...) { stop("Deprecated: Replace with umx_grep()") }
-
-#' @rdname umx-deprecated
-#' @export
 grepSPSS_labels <- function(...) { stop("Deprecated: used umx_grep()") }
 
 #' @rdname umx-deprecated
@@ -95,27 +91,9 @@ umxStart <- function(...) { stop("Use umxValues() in place of umxStart (makes it
 
 #' @rdname umx-deprecated
 #' @export
-umxTryHard <- function(...) { stop("Use umxRun() in place of umxTryHard") }
-
-#' @rdname umx-deprecated
-#' @export
-umxLabels <- function(...) {stop("Replace 'umxLabels' with 'umxLabel'")}
-
-#' @rdname umx-deprecated
-#' @export
-genEpi_Jiggle <- function(...) {stop("please use umxJiggle in place of genEpi_Jiggle")}
-
-
-#' @rdname umx-deprecated
-#' @export
 umxReportFit <- function(...) {
 	stop("umxReportFit is deprecated: use umxSummary() in its place")
 }
-
-#' @rdname umx-deprecated
-#' @export
-umxGetLabels <- function(...) {stop("Please use umxGetParameters instead of umxGetLabels")}
-
 
 #' @rdname umx-deprecated
 #' @export
@@ -127,72 +105,16 @@ cor.prob <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits
 
 #' @rdname umx-deprecated
 #' @export
-umx_u_APA_pval <- function(...) {stop("umx_u_APA_pval is deprecated: Use umx_APA_pval")}
-
-#' @rdname umx-deprecated
-#' @export
-tryHard <- function(...) {stop("Use umxRun() in place of umxTryHard() and tryHard()")}
-
-#' @rdname umx-deprecated
-#' @export
-genEpi_ReRun <- function(...) {message("please call umxReRun()")}
-
-#' @rdname umx-deprecated
-#' @export
 mxStart <- function(...) { traceback(); stop("Deprecated: Please use umxValues() instead of mxStart")}
 
 #' @rdname umx-deprecated
 #' @export
-umxLabeler <- function(...) {stop("replace 'umxLabeler' with 'umxLabel'")}
-
-#' @rdname umx-deprecated
-#' @export
-standardizeRAM <- function(...) {stop("Deprecated: Please use umxStandardizeModel() instead of standardizeRAM")}
-
-#' @rdname umx-deprecated
-#' @export
-genEpi_equate  <- function(...) {stop("replace genEpi_equate() with umxEquate()") }
-
-#' @rdname umx-deprecated
-#' @export
-genEpi_Path    <- function(...) { message("genEpi_Path is deprecated: replace with umxPath")}
-
-#' @rdname umx-deprecated
-#' @export
-genEpiCompare  <- function(...) { stop("deprecated, use umxCompare")}
-
-#' @rdname umx-deprecated
-#' @export
-mxLatent       <- function(...) {message("please call umxLatent()")}
-
-#' @rdname umx-deprecated
-#' @export
-genEpi_GetLabels <- function(...) { stop("please replace genEpi_GetLabels with umxGetParameters()")}
-
-#' @rdname umx-deprecated
-#' @export
-mxMakeThresholdsMatrices <- function(...) {	message("please change to 'umxMakeThresholdMatrix()'")}
-
-#' @rdname umx-deprecated
-#' @export
-mxAutoThreshRAMObjective <- function(...) { message("please call umxThresholdRAMObjective()")}
+mxLatent       <- function(...) {message("please look at umxRAM() and umxPath")}
 
 #' @rdname umx-deprecated
 #' @export
 umxReportFit <- function(...) {
 	stop("Deprecated: Please replace umxReportFit with umxSummary")
-}
-
-#' @rdname umx-deprecated
-#' @export
-stringToMxAlgebra <- function(...) {
-	stop("Deprecated: Please replace stringToMxAlgebra with umx_string_to_Algebra")
-}
-
-#' @rdname umx-deprecated
-#' @export
-genEpi_EvalQuote <- function(...) {
-	stop("Deprecated: Please replace genEpi_EvalQuote with umxEval")
 }
 
 
@@ -202,12 +124,6 @@ umxReportCIs <- function(...) {
 	stop("Deprecated: Please replace umxReportCIs with umxCI")
 }
 
-
-#' @rdname umx-deprecated
-#' @export
-hasSquareBrackets <- function (input) {
-	stop("Deprecated: Please replace hasSquareBrackets with xmuHasSquareBrackets")
-}
 
 # fit.cov(indepfit,modelfit)
 #      source("http://omxhelper.googlecode.com/svn/trunk/genEpi.lib.R")

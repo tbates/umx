@@ -937,14 +937,20 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 			stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
 				"umxReRun(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
 				"becomes\n",
-				"umxReRun(m1, update = ", omxQuotes("E_to_heartRate"), ")\n"
+				"umxReRun(m1, update = ", omxQuotes("E_to_heartRate"), ")\n",
+   			 "\nThis regular expression will do it for you:\n",
+   			 "find    = regex *= *(\\\"[^\\\"]+\\\"),\n",
+   			 "replace = update = $1, regex = T,"
 			)
 		} else {
 			stop("hi. Sorry for the change. To use regex replace ", omxQuotes("regex"), " with ", omxQuotes("update"),
 			 "AND regex =", omxQuotes(F), "e.g.:\n",
 			 "umxReRun(m1, regex = ", omxQuotes("^E_.*"), ")\n",
 			 "becomes\n",
-			 "umxReRun(m1, update = ", omxQuotes("^E_.*"), ", regex = TRUE)\n"
+			 "umxReRun(m1, update = ", omxQuotes("^E_.*"), ", regex = TRUE)\n",
+			 "\nThis regular expression will do it for you:\n",
+			 "find    = regex *= *(\\\"[^\\\"]+\\\"),\n",
+			 "replace = update = $1, regex = T,"
 			 )
 		}
 	}
@@ -1763,7 +1769,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	# eddie_AddCIbyNumber(model, labelRegex="[ace][1-9]")
 	args     = commandArgs(trailingOnly=TRUE)
 	CInumber = as.numeric(args[1]); # get the 1st argument from the cmdline arguments (this is called from a script)
-	CIlist   = umxGetLabels(model ,regex= "[ace][0-9]", verbose=F)
+	CIlist   = umxGetParameters(model ,regex= "[ace][0-9]", verbose=F)
 	thisCI   = CIlist[CInumber]
 	model    = mxModel(model, mxCI(thisCI) )
 	return (model)

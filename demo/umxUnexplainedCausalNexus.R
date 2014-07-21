@@ -52,6 +52,6 @@ MIMIC <- mxModel("MIMIC", type="RAM",
 MIMIC <- mxRun(MIMIC); summary(MIMIC)
 
 MIMIC = umxLabel(MIMIC)
-umxGetLabels(MIMIC , regex = ".")
-umxGraph_RAM(MIMIC, std = T, precision = 2, dotFilename = "name",  pathLabels = "none", showFixed = F)
+umxGetParameters(MIMIC , regex = ".")
+plot(MIMIC, std = T, precision = 2, dotFilename = "name",  pathLabels = "none", showFixed = F)
 umxUnexplainedCausalNexus(from = "educ", delta = 1, to = "church", model = MIMIC)

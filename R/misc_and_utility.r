@@ -394,7 +394,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	# eddie_AddCIbyNumber(model, labelRegex="[ace][1-9]")
 	args     = commandArgs(trailingOnly=TRUE)
 	CInumber = as.numeric(args[1]); # get the 1st argument from the cmdline arguments (this is called from a script)
-	CIlist   = umxGetLabels(model ,regex= "[ace][0-9]", verbose=F)
+	CIlist   = umxGetParameters(model ,regex= "[ace][0-9]", verbose=F)
 	thisCI   = CIlist[CInumber]
 	model    = mxModel(model, mxCI(thisCI) )
 	return (model)
@@ -1168,6 +1168,10 @@ umx_greater_than <- function(table, x){
 #' head(umx_round(mtcars, coerce = T))
 
 umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
+	if(is.matrix(df)){
+		df = data.frame(df)
+	}
+
 	if(!is.data.frame(df)){
 		stop("df input for umx_round must be a dataframe")
 	}
