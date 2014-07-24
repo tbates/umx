@@ -1350,6 +1350,7 @@ coef.MxModel <- function(model) {
 #' umxExpCov(m1)
 #' umxExpCov(m1, digits = 3)
 umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
+	# umx_has_been_run(m1)
 	if(model@data@type == "raw"){
 		manifestNames = names(model$data@observed)
 	} else {
@@ -1358,11 +1359,12 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 	if(umx_is_RAM(model)){
 		if(manifests & !latents){
 			# TODO # test umxExpCov under 1.4?
-			if(compareVersion(mxVersion(), "1.5.0") == 1){
+			if(mxVersion(verbose = F) > "2.0"){
 				# expCov = attr(model$objective[[2]]$result, "expCov")
-				expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+				thisFit = paste0(model$name, ".fitfunction")
+				expCov <- attr(model@output$algebras[[thisFit]], "expCov")
 			} else {
-				# verion 1.4 or below
+				# version 1.4 or below
 				expCov = model$objective@info$expCov
 			}
 			dimnames(expCov) = list(manifestNames, manifestNames)
@@ -1385,7 +1387,7 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 		if(latents){
 			stop("I don't know how to reliably get the latents for non-RAM models... Sorry :-(")
 		} else {
-			if(compareVersion(mxVersion(), "1.5.0") == 1){
+			if(mxVersion(verbose = F) > "1.5.0"){
 				expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
 			} else {
 				expCov = model$objective@info$expCov

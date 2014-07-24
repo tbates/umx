@@ -2,90 +2,33 @@
 \name{umx-deprecated}
 \alias{col.as.numeric}
 \alias{cor.prob}
-\alias{genEpiCompare}
-\alias{genEpi_EvalQuote}
-\alias{genEpi_GetLabels}
-\alias{genEpi_Jiggle}
-\alias{genEpi_Path}
-\alias{genEpi_ReRun}
-\alias{genEpi_equate}
 \alias{grepSPSS_labels}
-\alias{hasSquareBrackets}
-\alias{mxAutoThreshRAMObjective}
 \alias{mxLatent}
-\alias{mxMakeThresholdsMatrices}
 \alias{mxStart}
-\alias{standardizeRAM}
-\alias{stringToMxAlgebra}
-\alias{tryHard}
 \alias{umx-deprecated}
-\alias{umxGetLabels}
-\alias{umxLabeler}
-\alias{umxLabels}
 \alias{umxReportCIs}
 \alias{umxReportFit}
 \alias{umxStart}
-\alias{umxTryHard}
-\alias{umx_grep_labels}
-\alias{umx_u_APA_pval}
 \title{List of deprecated umx functions
 These functions are deprecated in umx. They may be dropped entirely in future versions. Many already stop() code and ask to be updated}
 \usage{
-umx_grep_labels(...)
-
 grepSPSS_labels(...)
 
 umxStart(...)
 
-umxTryHard(...)
-
-umxLabels(...)
-
-genEpi_Jiggle(...)
-
 umxReportFit(...)
-
-umxGetLabels(...)
 
 col.as.numeric(...)
 
 cor.prob(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3)
 
-umx_u_APA_pval(...)
-
-tryHard(...)
-
-genEpi_ReRun(...)
-
 mxStart(...)
-
-umxLabeler(...)
-
-standardizeRAM(...)
-
-genEpi_equate(...)
-
-genEpi_Path(...)
-
-genEpiCompare(...)
 
 mxLatent(...)
 
-genEpi_GetLabels(...)
-
-mxMakeThresholdsMatrices(...)
-
-mxAutoThreshRAMObjective(...)
-
 umxReportFit(...)
 
-stringToMxAlgebra(...)
-
-genEpi_EvalQuote(...)
-
 umxReportCIs(...)
-
-hasSquareBrackets(input)
 }
 \description{
 umx_grep_labels should be replaced with \code{\link{umx_grep}}
