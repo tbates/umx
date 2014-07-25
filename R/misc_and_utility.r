@@ -1807,7 +1807,7 @@ umx_has_means <- function(model) {
 	if(!umx_is_RAM(model)){
 		stop("Can only run on RAM models so far")
 	}
-	return(!is.null(m1@matrices$M))
+	return(!is.null(model@matrices$M))
 	# expMeans = attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
 	# return(!all(dim(expMeans) == 0))
 }
