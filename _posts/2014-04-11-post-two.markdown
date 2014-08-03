@@ -1,6 +1,0 @@
----
-title: "First steps: Build and run a Path model in a minute."
-layout: default
----
-
-# This will contain a model using data in R. Perhaps a CFA...

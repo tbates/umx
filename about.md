@@ -5,6 +5,4 @@ layout: default
 
 # About
 
-I'm a psychology professor based in Edinburgh...
-
-Aliquam et quam non tellus lacinia adipiscing. Vivamus commodo, sem vitae pretium accumsan, arcu lacus dictum orci, sed ullamcorper risus leo ut ligula. Nulla luctus tristique laoreet. Donec placerat arcu a leo ullamcorper vitae dictum tortor rhoncus. In pulvinar facilisis libero, nec dignissim orci volutpat ac. Etiam eget nunc lacus.
+I'm a psychology professor based in Edinburgh... Learn more at [http://tbates.github.io/](http://tbates.github.io/"umx: Help for Structural Equation Modeling")
