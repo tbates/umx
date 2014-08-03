@@ -503,7 +503,7 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 }
 
 # How long did that take?
-#' umxReportTime
+#' umx_get_time
 #'
 #' A function to compactly report how long a model took to execute
 #'
@@ -527,12 +527,12 @@ umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umx_report_time(m1)
+#' umx_get_time(m1)
 
-umx_report_time <- function(model, formatStr= "H %H M %M S %OS3", tz="GMT"){
+umx_get_time <- function(model, formatStr= "%H hours, %M minutes, and %OS3 seconds", tz = "GMT"){
 	format(.POSIXct(model@output$wallTime,tz), formatStr)
 }
-
+umx_report_time <- umx_get_time
 
 #' umx_print
 #'
@@ -1922,6 +1922,75 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 		}	
 	}
 }
+
+#' umx_get_CI_as_APA_string
+#'
+#' Look up CIs for free parameters in a model, and return as APA-formatted text string
+#'
+#' @param model an \code{\link{mxModel}} to get CIs from
+#' @param prefix This submodel to look in (i.e. "top.")
+#' @param suffix The suffix for algebras ("_std")
+#' @param digits = 2
+#' @param verbose = FALSE
+#' @return - the CI string, e.g. ".73 [-.2, .98]"
+#' @export
+#' @family umx  misc reporting functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @examples
+#' \dontrun{
+#' umx_get_CI_as_APA_string(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")
+#' }
+umx_get_CI_as_APA_string <- function(model, cellLabel, prefix = "top.", suffix = "_std", digits = 2, verbose=F){
+	# umx_addCI_as_APA_string(fit_IP, celllabel = "ai_r1c1", prefix = "top.", suffix = "_std")
+	if(!umx_has_CIs(model)){
+		if(verbose){
+			message("no CIs")
+		}
+		return(NA)
+	} else {
+		# we want "top.ai_std[1,1]" from "ai_r1c1"
+		result = tryCatch({
+			grepStr = '^(.*)_r([0-9]+)c([0-9]+)$' # 1 = matrix names, 2 = row, 3 = column
+			mat = sub(grepStr, '\\1', cellLabel, perl = TRUE);
+			row = sub(grepStr, '\\2', cellLabel, perl = TRUE);
+			col = sub(grepStr, '\\3', cellLabel, perl = TRUE);
+		
+			z = model$output$confidenceIntervals
+			dimIndex = paste0(prefix, mat, suffix, "[", row, ",", col, "]")
+
+			intervalNames = dimnames(z)[[1]]
+			
+			
+			APAstr = paste0(
+				umx_APA_pval(z[dimIndex, "estimate"], min = -1, rounding = digits),
+				" [",
+				umx_APA_pval(z[dimIndex, "lbound"], min = -1, rounding = digits),
+				", ",
+				umx_APA_pval(z[dimIndex, "ubound"], min = -1, rounding = digits),
+				"]"
+			)
+		    return(APAstr) 
+		}, warning = function(cond) {
+			if(verbose){
+				message(paste0("warning ", cond, " for CI ", omxQuotes(cellLabel)))
+			}
+		    return(NA) 
+		}, error = function(cond) {
+			if(verbose){
+				message(paste0("error: ", cond, " for CI ", omxQuotes(cellLabel), "\n",
+				"dimIndex = ", dimIndex))
+				print(intervalNames)
+			}
+		    return(NA) 
+		}, finally = {
+		    # cleanup-code
+		})
+		return(result)
+	}
+	# if estimate differs...
+}
+
+
 #' umxAnovaReport
 #'
 #' umxAnovaReport is a convenience function to format results for journals. There are others. But I made this one.
