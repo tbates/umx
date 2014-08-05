@@ -44,7 +44,7 @@ summary(m1)
 }
 \seealso{
 Other umx reporting functions: \code{\link{residuals.MxModel}};
-  \code{\link{umx_drop_ok}}; \code{\link{umx_report_time}};
+  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
   \code{\link{umx_show}}
 }
 

@@ -4,22 +4,24 @@
 \title{umx_get_CI_as_APA_string}
 \usage{
 umx_get_CI_as_APA_string(model, cellLabel, prefix = "top.", suffix = "_std",
-  digits = 2)
+  digits = 2, verbose = F)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get CIs from}
 
-\item{prefix}{= "top."}
+\item{prefix}{This submodel to look in (i.e. "top.")}
 
-\item{suffix}{= "_std"}
+\item{suffix}{The suffix for algebras ("_std")}
 
 \item{digits}{= 2}
+
+\item{verbose}{= FALSE}
 }
 \value{
 - the CI string, e.g. ".73 [-.2, .98]"
 }
 \description{
-Look up the CI in a model, and return as APA-formatted text string
+Look up CIs for free parameters in a model, and return as APA-formatted text string
 }
 \examples{
 \dontrun{

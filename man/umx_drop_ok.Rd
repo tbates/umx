@@ -29,6 +29,6 @@ model = umx_drop_ok(model)
 \seealso{
 Other umx reporting functions: \code{\link{residuals.MxModel}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umx_report_time}}; \code{\link{umx_show}}
+  \code{\link{umx_get_time}}; \code{\link{umx_show}}
 }
 

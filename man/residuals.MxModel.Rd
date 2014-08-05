@@ -42,7 +42,7 @@ a = residuals(m1); a
 }
 \seealso{
 Other umx reporting functions: \code{\link{umxStandardizeModel}};
-  \code{\link{umx_drop_ok}}; \code{\link{umx_report_time}};
+  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
   \code{\link{umx_show}}
 }
 
