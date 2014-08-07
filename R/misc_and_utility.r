@@ -2455,16 +2455,6 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = T, use.levels
 #' M <- N <- diag(2)
 #' qm(M,c(4,5) | c(1,2),N | t(1:3))
 #' matrix(1:16, 4)
-
-qm <- function(...){
-	# turn ... into string
-	args<-deparse(substitute(rbind(cbind(...))))
-	# create "rbind(cbind(.),cbind(.),.)" construct
-	args<-gsub("\\|","),cbind(",args)
-	# eval
-	eval(parse(text=args))
-}
-
 qm <- function(..., rowMarker = "|") {
 	# Short hard to read version that allows some of the more advanced Matlab capabilities like Matrices as arguments:
 	# turn ... into string

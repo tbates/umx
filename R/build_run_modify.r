@@ -1856,7 +1856,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' # umxPlot(m1, std = T)
 #' # Run this instead if you don't have GraphViz
-#' umxPlot(m1, std = T, dotFilename = NA)
+#' plot(m1, std = T, dotFilename = NA)
 #' @docType package
 #' @name umx
 NULL

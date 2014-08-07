@@ -1316,9 +1316,9 @@ extractAIC.MxModel <- function(model) {
 #' coef(m1)
 #' # -2.615998
 coef.MxModel <- function(model) {
-	stop("Not implemented")
 	# TODO implement this
-	# wrapper around mxStandardizeRAMpaths
+	message("Not implemented")
+	message("TODO implement this using wrapper around mxStandardizeRAMpaths")
 }
 
 #' umxExpCov
