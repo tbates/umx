@@ -406,16 +406,17 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = F, verbose = F) {
 	)
 }
 
-xmuStart_value_list <- function(mean = 1, sd = NA, n = 1) {
+xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 	# Purpose: Create startvalues for OpenMx paths
 	# use cases
+    # umx:::xmuStart_value_list(1)
 	# umxValues(1) # 1 value, varying around 1, with sd of .1
 	# umxValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
 	# umxValues(100, 15)  # 1 start, with mean 100 and sd 15
 	# TODO: handle connection style
 	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
 	if(is.na(sd)){
-		sd = x/6.6
+		sd = mean/6.6
 	}
 	if(length(n) > 1){
 		n = length(n)
@@ -599,47 +600,40 @@ xmuHasSquareBrackets <- function (input) {
 # ===================================
 # = Ordinal/Threshold Model Helpers =
 # ===================================
-
-xmuMaxLevels <- function(data) {
-	anyFactors = F
-	maxLevels = 0
-	vars = names(data)
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+xmuMaxLevels <- function(df) {
+	isOrd = umx_is_ordinal(df)
+	if(!any(isOrd)){
+		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")
+	}
+	vars = names(df)[isOrd]
+	nLevels = rep(NA, length(vars))
+	j = 1
 	for (i in vars) {
-		if(is.factor(mzData[,i])){
-			nLevels = length(levels(mzData[,i]))
-			if(nLevels > maxLevels){
-			 	maxLevels = nLevels
-				anyFactors = T
-			}
-		}
+		nLevels[j] = length(levels(df[,i]))
+		j = j + 1
 	}	
-	if(!anyFactors){
-		stop("No columns were type factor")
-	} else {
-		return(maxLevels)
-	}
+	return(max(nLevels))
 }
 
-xmuMinLevels <- function(data) {
-	# TODO add check that some columns have levels
-	anyFactors = F
-	minLevels = 1e6 # silly high value
-	vars = names(data)
+xmuMinLevels <- function(df) {
+	isOrd = umx_is_ordinal(df)
+	if(!any(isOrd)){
+		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")
+	}
+	vars = names(df)[isOrd]
+	nLevels = rep(NA, length(vars))
+	j = 1
 	for (i in vars) {
-		if(is.factor(mzData[,i])){
-			nLevels = length(levels(mzData[,i]))
-			if(nLevels < minLevels){
-			 	minLevels = nLevels
-				anyFactors = T
-			}
-		}
-	}
-	if(!anyFactors){
-		stop("No columns were type factor")
-	} else {
-		return(minLevels)
-	}
+		nLevels[j] = length(levels(df[,i]))
+		j = j + 1
+	}	
+	return(min(nLevels))
 }
+
+# ===============
+# = RAM helpers =
+# ===============
 
 xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
 	a       = combn(pathList, 2)

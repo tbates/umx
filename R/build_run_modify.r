@@ -57,20 +57,33 @@
 #' @family umx model building functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
-#' thedata = mtcars[,c("mpg", "cyl", "disp")]
-#' a = mxPath(from = "l_power", to = "mpg")
-#' b = mxPath(from = c("cyl","disp"), to = "l_power")
-#' d = mxData(thedata, type = "raw")
-#' e = mxData(cov(thedata), type = "cov", numObs = nrow(thedata))
-#'
-#' m1 = umxRAM("tim", a, b, d)
-#' m1 = umxRAM("tim", a, b, e)
+#' # umxRAM is like qplot(), you give the data in a data =  parameter
+#' # A common error is to include data in the main list, a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
+#' # nb: unlike mxModel, umxRAM needs data at build time.
+#' 
+#' # 1. For convenience, list up the manifests you will be using
+#' selVars = c("mpg", "wt", "disp")
+#' 
+#' # 2. Create an mxData object
+#' myData = cov(mtcars[,selVars], use = "complete")
+#' myCov = mxData(myData, type = "cov", numObs = nrow(mtcars) )
+#' 
+#' # 3. Write the model and paths (see ?umxPath for more options)
+#' m1 = umxRAM("tim", data = myCov,
+#' 	umxPath(c("wt","disp"), to = "mpg"),
+#' 	umxPath(cov = c("wt", "disp")),
+#' 	umxPath(var = c("wt", "disp", "mpg"))
+#' )
+#' 
+#' # 4. Run the model
 #' m1 = mxRun(m1)
+#' 
+#' # 5. Print a nice summary 
+#' umxSummary(m1, show="std")
+#' 
 #' \dontrun{
+#' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
-#' m1 = umxRAM("tim", a, b) # error: no data
-#' # TODO implement handling a dataframe
-#' umxRAM("tim", a, b, thedata)
 #' }
 umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, data = NULL, independent = NA, remove_unused_manifests = TRUE) {
 	fix = umx_default_option(fix, c("none", "latents", "firstLoadings"), check = TRUE)
@@ -623,14 +636,13 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 #' mxEval(S, m1) # default variances are 0
 #' m1 = umxValues(m1)
 #' mxEval(S, m1) # plausible variances
+#' umx_print(mxEval(S,m1), 3, zero.print= ".") # plausible variances
 #' umxValues(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
-#' # # TODO get this working
-#' # umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 
 umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 	if(is.numeric(obj) ) {
 		# use obj as the mean, return a list of length n, with sd = sd
-		return(xmuStart_value_list(x = obj, sd = sd, n = n))
+		return(xmu_start_value_list(mean = obj, sd = sd, n = n))
 	} else {
 		if (!umx_is_RAM(obj) ) {
 			stop("'obj' must be a RAM model (or a simple number)")
@@ -638,7 +650,6 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# This is a RAM Model: Set sane starting values
 		# Means at manifest means
 		# S at variance on diag, quite a bit less than cov off diag
-		# TODO: Start values in the A matrix...
 		# TODO: Start latent means?...		
 		# TODO: Handle sub models...
 		if (length(obj@submodels) > 0) {
@@ -1419,10 +1430,6 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 # = RAM Helpers =
 # ===============
 
-# =========================
-# = path-oriented helpers =
-# =========================
-
 #' umxLatent
 #'
 #' Helper to ease the creation of latent variables including formative and reflective variables (see below)
@@ -1648,71 +1655,206 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 # = matrix-oriented helpers =
 # ===========================
 
-# ===================
-# = Ordinal helpers =
-# ===================
-
-#' umxThresholdRAMObjective
+#' umxThresholdMatrix
 #'
-#' umxThresholdRAMObjective can set the means to 0 and variance of the latents to 1, 
-#' and build an appropriate thresholds matrix
-#' 
-#' It uses \code{\link{umx_is_ordinal}} and \code{\link{umxMakeThresholdMatrix}} as helpers
+#' High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. Big time saver!
 #'
-#' @param df Dataframe to make a threshold matrix for
-#' @param deviationBased whether to use the deviation system to ensure order thresholds (default = T)
-#' @param droplevels whether to also drop unused levels (default = T)
-#' @param verbose whether to say what the function is doing (default = F)
-#' @return - \code{\link{mxModel}}
+#' When modeling ordinal data (sex, low-med-hi, 
+#' depressed/normal, not at all, rarely, often, always), a useful conceptual strategy to handle expectations
+#' is to build a standard-normal model (i.e., a latent model with zero-means, and unit (1.0) variances),
+#' and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
+#' is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
+#' this threshold (1-minus the number of categories).
+#'
+#' @param df the data being modelled (to allow access to the factor levels and quantiles within these for each variable)
+#' @param suffixes e.g. c("T1", "T2") - Use for data with repeated observations in a row (i.e., twin data) (defaults to NA)
+#' @param l_u_bound c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.
+#' @param deviationBased Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)
+#' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
+#' @param verbose (defaults to FALSE))
+#' @return - thresholds matrix
 #' @export
-#' @family advanced umx helpers
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @family umx.twin model builder, umx build functions
+#' @seealso - \code{\link{umxOrdinalObjective}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(twinData)
+#' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' # ==================
+#' # = Binary example =
+#' # ==================
+#' # Cut to form category of 20% obese subjects
+#' cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+#' obesityLevels = c('normal', 'obese')
+#' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' # Step 5: Make the ordinal variables into mxFactors (ensures ordered= TRUE + requires user to confirm levels)
+#' selDVs = c("obese1", "obese2")
+#' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
+#' mzData <- subset(twinData, zyg == "MZFF", selDVs)
+#' umxThresholdMatrix(mzData, suffixes = 1:2)
+#' 
+#' # ======================================
+#' # = Ordinal (n categories > 2) example =
+#' # ======================================
+#' # Cut to form three categories of weight
+#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
+#' obesityLevels = c('normal', 'overweight', 'obese')
+#' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' head(twinData)
+#' selDVs = c("obese1", "obese2")
+#' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
+#' mzData <- subset(twinData, zyg == "MZFF", selDVs)
+#' umxThresholdMatrix(mzData, suffixes = 1:2)
+
+umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE, verbose = TRUE){
+	if(deviationBased){
+		stop("deviation-based not handled yet - not sure it's needed now...")
+	}
+	if(droplevels){
+		stop("Not sure it's wise to drop levels...")
+	}
+
+	isOrd       = umx_is_ordinal(df)
+	ordVarNames = names(df)[isOrd]
+	nOrdVars    = sum(isOrd)
+	nSib        = length(suffixes)
+	if(nOrdVars < 1){
+		message("No ordinal variables in dataframe: no need to call umxThresholdMatrix")
+	} else {
+		if(nSib == 2){
+			message("umxThresholdMatrix found ", nOrdVars/nSib, " pairs of ordinal variables:", omxQuotes(ordVarNames))
+		} else {
+			message("umxThresholdMatrix found ", nOrdVars, " ordinal variables:", omxQuotes(ordVarNames))
+		}
+	}
+	minLevels = umx:::xmuMinLevels(df)
+	maxLevels = umx:::xmuMaxLevels(df)
+	maxThresh = maxLevels - 1
+
+	if(minLevels == 2){
+		if(verbose){
+			message("At least one trait is binary (only 2-levels), so no thresholds are fixed.\n",
+			"Thus you MUST fix or constrain (usually mean @ zero & sd @ 1) the latent traits driving each ordinal variable.\n",
+			"See ?mxThresholdMatrix")
+		}
+	} else if(minLevels > 2){
+		if(verbose){
+			message("All factors have at least three levels. I will use Paras Mehta's 'fix first 2 thresholds' method.\n",
+			"It's essential THAT YOU LEAVE FREE the means and variances of the latent ordinal traits!!!\n",
+			"See ?mxThresholdMatrix")
+		}
+	}else{
+		stop("You seem to have a trait with only one category... makes it a bit futile to model it?")
+	}
+
+	df = df[, ordVarNames]
+
+	if(nSib == 2){
+		# For better precision, copy both halves of the dataframe into each
+		T1 = df[, grep(paste0(suffixes[1], "$"), ordVarNames, value = TRUE), drop = FALSE]
+		T2 = df[, grep(paste0(suffixes[2], "$"), ordVarNames, value = TRUE), drop = FALSE]
+		names(T2) <- names(T1)
+		dfLong = rbind(T1, T2)
+		df = cbind(dfLong, dfLong)
+		names(df) = ordVarNames
+	} else if(nSib == 1){
+		# df is fine as is.		
+	} else {
+		stop("I can only handle 1 and 2 sib models. You gave me ", nSib, " suffixes.")
+	}
+	
+	# size the matrix maxThresh rows * nOrdVars cols
+	threshMat = mxMatrix(name = threshMatName, type = "Full",
+		nrow     = maxThresh,
+		ncol     = nOrdVars,
+		free     = TRUE, values = rep(NA, (maxThresh * nOrdVars)),
+		lbound   = l_u_bound[1],
+		ubound   = l_u_bound[2],
+		dimnames = list(paste0("th_", 1:maxThresh), ordVarNames)
+	)
+
+	# For each ordinal variable
+	for (thisVarName in ordVarNames) {
+		thisCol = df[,thisVarName]
+		
+		tab = table(thisCol)/sum(table(thisCol))
+		cumTab = cumsum(tab)
+		zValues = qnorm(p=cumTab, lower.tail = T)
+		if(any(is.infinite(zValues))){
+			nPlusInf = sum(zValues == (Inf))
+			nMinusInf = sum(zValues == (-Inf))
+			if(nPlusInf){
+				maxOK = max(zValues[!is.infinite(zValues)])
+				padding = seq(from = (maxOK + .1), by = .1, length.out = nPlusInf)
+				zValues[zValues == (Inf)] = padding
+			}
+			if(nMinusInf){
+				minOK = min(zValues[!is.infinite(zValues)])
+				padding = seq(from = (minOK-.1), by = (-.1), length.out = nMinusInf)
+				zValues[zValues == (-Inf)] = padding
+			}
+		}
+		# Set labels
+		nLevelsThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
+		if(nSib == 2){
+			findStr = paste0( "(", paste(suffixes, collapse = "|"), ")$")
+			thisLab = sub(findStr, "", thisVarName)		
+		}else{
+			thisLab = thisVarName
+		}	
+        labels = c(paste0(thisLab, "_thresh", 1:nLevelsThisVar), rep(NA   , (maxThresh - nLevelsThisVar)))
+        free   = c(rep(TRUE                 , nLevelsThisVar)  , rep(FALSE, (maxThresh - nLevelsThisVar)))
+        values = c(zValues[2:(nLevelsThisVar+1)], rep(FALSE, (maxThresh - nLevelsThisVar)))
+		if(minLevels == 2){			
+			# We are all done: user NEEDS to fix the mean and variance
+			# of the latent trait at, say, 0 and 1 for this to work.
+		} else if(minLevels > 2){ # fix the first 2
+			free[1:2] = FALSE
+		}
+
+		threshMat$labels[, thisVarName] = labels
+		threshMat$free[  , thisVarName] = free
+		threshMat$values[, thisVarName] = values
+	}
+	return(threshMat)
+}
+
+#' umxOrdinalObjective
+#'
+#' High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. Big time saver!
+#'
+#' When modeling ordinal data (sex, low-med-hi, 
+#' depressed/normal, not at all, rarely, often, always), a useful conceptual strategy to handle expectations
+#' is to build a standard-normal model (i.e., a latent model with zero-means, and unit (1.0) variances),
+#' and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
+#' is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
+#' this threshold (1-minus the number of categories).
+#'
+#' @param df the data being modelled (to allow access to the factor levels and quantiles within these for each variable)
+#' @param suffixes e.g. c("T1", "T2") - Use for data with repeated observations in a row (i.e., twin data) (defaults to NA)
+#' @param covName is the name of the expected-covariance matrix (Defaults to "expCov")
+#' @param meansName is the name of the expected-means matrix (Defaults to "expMeans") 
+#' @param deviationBased Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)
+#' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
+#' @param verbose (defaults to FALSE))
+#' @return - list of thresh matrix, fit function, and expectation.
+#' @export
+#' @family umx.twin model builder, umx build functions
+#' @seealso - \code{\link{umxThresholdMatrix}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
-#' model = umxThresholdRAMObjective(model)
+#' umxOrdinalObjective(df, suffixes = c("_T1", "_T2"))
 #' }
-umxThresholdRAMObjective <- function(df, deviationBased = T, droplevels = T, verbose = F) {
-	# TODO: means = zero & VAR = 1 for ordinal variables
-	# (This is a nice place to check, as we have the df present...)
-	if(!any(umx_is_ordinal(df))){
-		stop("No ordinal variables in dataframe: no need to call umxThresholdRAMObjective")
-	} 
-	pt1 = mxPath(from = "one", to = umxIsOrdinalVar(df,names = T), connect="single", free=F, values = 0)
-	pt2 = mxPath(from = umxIsOrdinalVar(df, names = T), connect = "single", arrows = 2, free = F, values = 1)
-	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = T, droplevels = T, verbose = F)))
+umxOrdinalObjective <- function(df, suffixes = NA, covName = "expCov", meansName = "expMean", threshMatName = "threshMat", vector = FALSE, deviationBased = FALSE, droplevels = FALSE,  verbose = FALSE){
+	threshMat = umxThresholdMatrix(df, suffixes = suffixes, threshMatName = threshMatName, deviationBased = deviationBased, droplevels = droplevels, verbose = verbose)
+	expect    = mxExpectationNormal(covariance = covName, means = meansName, dimnames = nameList, thresholds = threshMatName)
+	fit       = mxFitFunctionML(vector = vector)
+	list(threshMat, expect, fit)
 }
-
-#' umxMakeThresholdMatrix
-#'
-#' The purpose of this function is to generate an mxRAMObjective. It is used by \code{\link{umxThresholdRAMObjective}}.
-#' You likely want that, not this.
-#'
-#' @param df Dataframe for which to make a threshold matrix.
-#' @param deviationBased whether to use the deviation system to ensure order thresholds (default = TRUE)
-#' @param droplevels whether to also drop unused levels (default = TRUE)
-#' @param verbose whether to say what the function is doing (default = FALSE)
-#' @return - \code{\link{mxModel}}
-#' @family advanced umx helpers
-#' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-#' @references - \url{http://www.github.com/tbates/umx}
-#' @examples
-#' umxMakeThresholdMatrix(mtcars, verbose = T)
-umxMakeThresholdMatrix <- function(df, deviationBased = T, droplevels = F, verbose = F) {
-	# mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
-	# use case:  
-	# TODO: Let the user know if there are any levels dropped...
-	if(droplevels){
-		df = droplevels(df)
-	}
-	if(deviationBased){
-		return(xmuMakeDeviationThresholdsMatrices(df, droplevels, verbose))
-	} else {
-		return(xmuMakeThresholdsMatrices(df, droplevels, verbose))
-	}
-}
-
 
 # ===========
 # = Utility =

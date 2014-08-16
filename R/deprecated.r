@@ -44,9 +44,13 @@
 #' 
 #' replace genEpi_GetLabels with \code{\link{umxGetParameters}}
 #' 
-#' replace mxMakeThresholdsMatrices with \code{\link{umxMakeThresholdMatrix}}
+#' replace mxMakeThresholdsMatrices with \code{\link{umxThresholdMatrix}}
 #' 
 #' replace mxAutoThreshRAMObjective with \code{\link{umxThresholdRAMObjective}}
+#' 
+#' replace umxThresholdRAMObjective with \code{\link{umx_RAM_thresh_Matrix}}
+#' 
+#' replace umxThresholdRAMObjective with \code{\link{umx_RAM_ordinal_objective}}
 #' 
 #' replace umxReportFit with \code{\link{umxSummary}}
 #' 

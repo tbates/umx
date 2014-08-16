@@ -12,36 +12,15 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 
-# =====================
-# = utility functions =
-# =====================
 
-#' umx_add_suffixes
-#'
-#' Helper to add suffixes to names: useful for expanding twin vars like "bm1" into c("bmi1", "bmi2")
-#'
-#' @param names a list of base names (e.g "bmi")
-#' @param suffixes a list of suffixes (e.g c("_T1", "_T2"))
-#' @return - suffixed names e.g c("bmi_T1", "bmi_T2"))
-#' @export
-#' @family umx misc functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
-#' @examples
-#' umx_add_suffixes("bmi", c("_T1", "_T2"))
-
-umx_add_suffixes <- function(names, suffixes) {
-	out = c()
-	for (i in suffixes) {
-		out = c(out, paste0(names, i))
-	}
-	return(out)
-}
-
+# ============================
+# = OpenMx-related functions =
+# ============================
 #' umx_get_optimizer
 #'
 #' get the optimizer in OpenMx
 #'
-#' @param model an (optional) model to get from. If left NULL, the global option is returned
+#' @param model (optional) model to get from. If left NULL, the global option is returned
 #' @return - the optimizer  - a string
 #' @export
 #' @family umx misc functions
@@ -49,13 +28,14 @@ umx_add_suffixes <- function(names, suffixes) {
 #' @examples
 #' library(OpenMx)
 #' manifests = c("mpg", "disp", "gear")
+#' umx_set_optimizer(opt = "CSOLNP")
 #' m1 <- mxModel("ind", type = "RAM",
 #' 	manifestVars = manifests,
 #' 	mxPath(from = manifests, arrows = 2),
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxData(mtcars[,manifests], type="raw")
 #' )
-#' m1 = umx_set_optimizer(m1, opt = "NPSOL")
+#' oldOpt = umx_get_optimizer()
 #' umx_get_optimiser(m1)
 umx_get_optimizer <- function(model = NULL) {
 	if(is.null(model)){
@@ -69,8 +49,8 @@ umx_get_optimizer <- function(model = NULL) {
 #'
 #' set the optimizer in OpenMx
 #'
-#' @param x an (optional) model to set. If left NULL, the global option is updated.
-#' @param opt defaults to "NPSOL". "CSOLNP" is an alternative at present
+#' @param opt defaults to "NPSOL". Current alternatives are "NLOPT" and "CSOLNP"
+#' @param model an (optional) model to set. If left NULL, the global option is updated.
 #' @return - \code{\link{mxModel}} (if you provided one in x)
 #' @export
 #' @family umx misc functions
@@ -84,20 +64,214 @@ umx_get_optimizer <- function(model = NULL) {
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxData(mtcars[, manifests], type = "raw")
 #' )
+#' umx_set_optimiser("NPSOL") # set globally
 #' m1 = umx_set_optimiser(m1, opt = "NPSOL")
 #' m1 = mxRun(m1)
 #' \dontrun{
 #' m1@@runstate$compute$steps[1][[1]]$engine # NPSOL
 #' }
-umx_set_optimizer <- function(x = NULL, opt = "NPSOL") {
-	if(is.null(x)){
+umx_set_optimizer <- function(opt = c("NPSOL","NLOPT","CSOLNP"), model = NULL) {
+	opt = umx_default_option(opt, c("NPSOL","NLOPT","CSOLNP"))
+	if(is.null(model)){
 		mxOption(NULL, "Default optimizer", opt)
 	} else {
-		x = mxOption(x, "Default optimizer", opt)
-		invisible(x)
+		invisible(mxOption(model, "Default optimizer", opt))
 	}
 }
 
+
+#' umx_update_OpenMx
+#'
+#' This function automates the process of updating OpenMx while it is not a cran package
+#'
+#' @param bleedingEdge  A Boolean determining whether to request the beta (TRUE) or relase version (defaults to FALSE)
+#' @param loadNew A Boolean parameter determining whether to load the library after (optionally) updating
+#' @param anyOK The minimum version to accept without updating
+#' @export
+#' @examples
+#' \dontrun{
+#' umx_update_OpenMx()
+#' }
+
+umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
+	if( "OpenMx" %in% .packages() ){
+		oldV = mxVersion();
+		if(anyOK){
+			message("You have version", oldV, "and that's fine")
+			return()
+		}
+		detach(package:OpenMx); # unload existing version
+		message("existing version \"" ,oldV, "\" was detached")
+	}	
+	if (bleedingEdge){
+		install.packages('OpenMx', repos = 'http://www.github.com/tbates/umx/testing/');
+	} else {
+		if (.Platform$OS.type == "windows") {
+			if (!is.null(.Platform$r_arch) && .Platform$r_arch == "x64") {
+				stop(paste("OpenMx is not yet supported on 64-bit R for Windows.",
+				"Please use 32-bit R in the interim."), call. = FALSE)
+			}
+			repos <- c('http://www.github.com/tbates/umx/packages/')
+			install.packages(pkgs=c('OpenMx'), repos=repos)
+		} else {
+			if (Sys.info()["sysname"] == "Darwin") {
+				darwinVers <- as.numeric(substr(Sys.info()['release'], 1, 2))
+				if (darwinVers > 10) {
+					msg <- paste("We have detected that you are running on OS X 10.7 or greater",
+					"whose native version of gcc does not support the OpenMP API.", 
+					"As a result your default installation has been set to single-threaded.",
+					"If you have installed the mac ports version of gcc to address this issue",
+					"please choose the multi-threaded installation option.")
+					cat(msg)
+					cat("1. single-threaded [default]\n")
+					cat("2. multi-threaded \n")
+					select <- readline("Which version of OpenMx should I install? ")
+
+					if (select == "") {
+						select <- 1
+					} 
+
+				} else {
+					cat("1. single-threaded\n")
+					cat("2. multi-threaded [default]\n")
+					select <- readline("Which version of OpenMx should I install? ")
+
+					if (select == "") {
+						select <- 2
+					}
+				}
+				} else {
+					cat("1. single-threaded\n")
+					cat("2. multi-threaded [default]\n")
+					select <- readline("Which version of OpenMx should I install? ")
+
+					if (select == "") {
+						select <- 2
+					}
+				}
+
+				if (!(select %in% c(1,2))) {
+					stop("Please enter '1' or '2'", call. = FALSE)
+				}
+  
+				if (select == 1) {
+					repos <- c('http://www.github.com/tbates/umx/sequential/')
+					install.packages(pkgs=c('OpenMx'), repos=repos, 
+					configure.args=c('--disable-openmp'))
+				} else if (select == 2) {
+					repos <- c('http://www.github.com/tbates/umx/packages/')
+					install.packages(pkgs=c('OpenMx'), repos=repos)
+				} else {
+					stop(paste("Unknown installation type", select))
+				}
+		}
+	}
+	if(loadNew){
+		# detach(package:OpenMx); # unload existing version
+		require("OpenMx")
+		newV = mxVersion();
+		if(!is.na(oldV)){
+			message("Woot: installed the latest and greatest \"", newV, "\" of OpenMx!")
+		} else {
+			message("Woot: you have upgraded from version \"" ,oldV, "\" to the latest and greatest \"", newV, "\"!")
+		}
+	}
+}
+
+# How long did that take?
+#' umx_get_time
+#'
+#' A function to compactly report how long a model took to execute
+#'
+#' @param model An \code{\link{mxModel}} from which to get the elapsed time
+#' @param formatStr A format string, defining how to show the time
+#' @param tz The time zone in which the model was executed
+#' @export
+#' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @family umx reporting functions
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umx_get_time(m1)
+
+umx_get_time <- function(model, formatStr= "%H hours, %M minutes, and %OS3 seconds", tz = "GMT"){
+	lastTime = ""
+	if(length(model)>1){
+		for(i in 1:length(model)) {
+			m = model[[i]]
+			message(format(.POSIXct(m$output$wallTime,tz), paste0(m$name, ": ", formatStr)))
+		}
+	} else {
+		format(.POSIXct(model$output$wallTime,tz), formatStr)
+	}
+}
+umx_report_time <- umx_get_time
+
+#' umx_print
+#'
+#' A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
+#' Its most useful characteristic is allowing you to change how NA and zero appear.
+#' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
+#'
+
+#' @param x A data.frame to print
+#' @param digits  The number of decimal places to print (defaults to getOption("digits")
+#' @param quote  Parameter passed to print (defaults to FALSE)
+#' @param na.print String to replace NA with (default to blank "")
+#' @param zero.print String to replace 0.000 with  (defaults to "0")
+#' @param justify Parameter passed to print (defaults to "none")
+#' @param file whether to write to a file (defaults to NA (no file). Use "tmp.html" to open as tables in browser.
+#' @param suppress minimum numeric value to print (default =  NULL, print all values, no matter how small)
+#' @param ... Optional parameters for print
+#' @export
+#' @family umx misc reporting functions
+#' @seealso - \code{\link{print}}
+#' @examples
+#' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
+#' \dontrun{
+#' umx_print(model)
+#' umx_print(mtcars[1:10,], file = "Rout.html")
+#' }
+
+umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA,"tmp.html"), suppress = NULL, ...){
+	# TODO: Options for file = c("Rout.html","cat","return")
+	file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
+	if(!is.null(suppress)){
+		x[abs(x) < suppress] = 0
+		zero.print = "."
+	}
+	x <- umx_round(x, digits = digits, coerce = FALSE)
+    if (any(ina <- is.na(x))) 
+        x[ina] <- na.print
+	i0 <- !ina & x == 0
+    if (zero.print != "0" && any(i0)) 
+        x[i0] <- zero.print
+    if (is.numeric(x) || is.complex(x)){
+        print(x, quote = quote, right = TRUE, ...)
+	} else if(!is.na(file)){
+		R2HTML::HTML(x, file = file, Border = 0, append = F, sortableDF=T); 
+		system(paste0("open ", file))
+		print("Table opened in browser")
+    }else{
+		print(x, quote = quote, ...)	
+    }
+    invisible(x)
+}
+
+# ===============
+# = RAM helpers =
+# ===============
 #' umx_is_exogenous
 #'
 #' Return a list of all the exogenous variables (variables with no incoming single-arrow path) in a model. 
@@ -323,67 +497,48 @@ umxFormativeVarianceMess <- function(model){
 	return(list(a,b))
 }
 
-#' umx_show
+
+#' umx_apply
 #'
-#' Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
+#' Tries to make apply more readable. Other functions to think of include
+#' \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
 #'
-#' @param model an \code{\link{mxModel}} to show data from
-#' @param what  legal options are "values" (default), "free", or "labels")
-#' @param matrices to show  (default is c("S", "A"))
-#' @param digits precision to report, defaults to rounding to 2 decimal places
+#' @param FUN the function to apply
+#' @param to_each What to apply the function to: columns or rows (default = "column")
+#' @param of_DF the dataframe to work with
+#' @param ... optional arguments to FUN, i.e., na.rm = T
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx reporting functions
+#' @family umx core functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' require(OpenMx)
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umx_show(m1)
-#' umx_show(m1, digits = 3)
-#' umx_show(m1, matrices = "S")
-#' umx_show(m1, what = "free")
-#' umx_show(m1, what = "labels")
-#' umx_show(m1, what = "free", "A")
-umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("S", "A"), digits = 2) {
-	what = umx_default_option(what, c("values", "free", "labels"), check = TRUE)
-	for (w in matrices) {
-		message("Showing ", what, " for:", w, " matrix:")
-		if(what == "values"){
-			umx_print(data.frame(model@matrices[[w]]@values), zero.print = ".", digits = digits)		
-		}else if(what == "free"){
-			umx_print(data.frame(model@matrices[[w]]@free), zero.print = ".", digits = digits)
-		}
-	}
-}
-
-
-accumulate <- function(FUN = nlevels, fromEach = "column", of_DataFrame = ordinalColumns) {
-	# accumulate(nlevels, fromEach = "column", of_DataFrame = ordinalColumns)
-	if(! (fromEach %in% c("column", "row"))){
-		stop(paste("fromEach must be either column or row, you gave me", fromEach))
-	}
-	out = c()
-	if(fromEach == "column"){
-		for(n in 1:ncol(of_DataFrame)){
-			out[n] = nlevels(of_DataFrame[,n])
-		}
+#' umx_apply(mean, to_each = "column", of_DF = mtcars, na.rm=T)
+umx_apply <- function(FUN, to_each = "column", of_DF, ...) {
+	# umx_apply(nlevels, to_each = "column", of_DF = myDF)
+	if(! (to_each %in% c("column", "row"))){
+		stop(paste("fromEach must be either 'column' or 'row', you gave me", to_each))
+	} else if (to_each == "row") {
+		to_each = 1
 	} else {
-		for(n in 1:nrow(of_DataFrame)){
-			out[n] = nlevels(of_DataFrame[n,])
-		}
+		to_each = 2		
 	}
-	return(out)
+	apply(of_DF, to_each, FUN, ...)
+
+	# TODO fix all this...
+	# lapply if list
+	# tapply if vector?
+	# out = c()
+	# if(fromEach == "column"){
+	# 	for(n in 1:ncol(of_DF)){
+	# 		out[n] = nlevels(of_DataFrame[,n])
+	# 	}
+	# } else {
+	# 	for(n in 1:nrow(of_DF)){
+	# 		out[n] = nlevels(of_DataFrame[n,])
+	# 	}
+	# }
+	# return(out)
 }
 
 # ====================
@@ -400,328 +555,73 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	return (model)
 }
 
-# ====================
-# = Updating helpers =
-# ====================
-
-#' umx_update_OpenMx
-#'
-#' This function automates the process of updating OpenMx while it is not a cran package
-#'
-#' @param bleedingEdge  A Boolean determining whether to request the beta (TRUE) or relase version (defaults to FALSE)
-#' @param loadNew A Boolean parameter determining whether to load the library after (optionally) updating
-#' @param anyOK The minimum version to accept without updating
-#' @export
-#' @examples
-#' \dontrun{
-#' umx_update_OpenMx()
-#' }
-
-umx_update_OpenMx <- function(bleedingEdge = F, loadNew = T, anyOK = F) {
-	if( "OpenMx" %in% .packages() ){
-		oldV = mxVersion();
-		if(anyOK){
-			message("You have version", oldV, "and that's fine")
-			return()
-		}
-		detach(package:OpenMx); # unload existing version
-		message("existing version \"" ,oldV, "\" was detached")
-	}	
-	if (bleedingEdge){
-		install.packages('OpenMx', repos = 'http://www.github.com/tbates/umx/testing/');
-	} else {
-		if (.Platform$OS.type == "windows") {
-			if (!is.null(.Platform$r_arch) && .Platform$r_arch == "x64") {
-				stop(paste("OpenMx is not yet supported on 64-bit R for Windows.",
-				"Please use 32-bit R in the interim."), call. = FALSE)
-			}
-			repos <- c('http://www.github.com/tbates/umx/packages/')
-			install.packages(pkgs=c('OpenMx'), repos=repos)
-		} else {
-			if (Sys.info()["sysname"] == "Darwin") {
-				darwinVers <- as.numeric(substr(Sys.info()['release'], 1, 2))
-				if (darwinVers > 10) {
-					msg <- paste("We have detected that you are running on OS X 10.7 or greater",
-					"whose native version of gcc does not support the OpenMP API.", 
-					"As a result your default installation has been set to single-threaded.",
-					"If you have installed the mac ports version of gcc to address this issue",
-					"please choose the multi-threaded installation option.")
-					cat(msg)
-					cat("1. single-threaded [default]\n")
-					cat("2. multi-threaded \n")
-					select <- readline("Which version of OpenMx should I install? ")
-
-					if (select == "") {
-						select <- 1
-					} 
-
-				} else {
-					cat("1. single-threaded\n")
-					cat("2. multi-threaded [default]\n")
-					select <- readline("Which version of OpenMx should I install? ")
-
-					if (select == "") {
-						select <- 2
-					}
-				}
-				} else {
-					cat("1. single-threaded\n")
-					cat("2. multi-threaded [default]\n")
-					select <- readline("Which version of OpenMx should I install? ")
-
-					if (select == "") {
-						select <- 2
-					}
-				}
-
-				if (!(select %in% c(1,2))) {
-					stop("Please enter '1' or '2'", call. = FALSE)
-				}
-  
-				if (select == 1) {
-					repos <- c('http://www.github.com/tbates/umx/sequential/')
-					install.packages(pkgs=c('OpenMx'), repos=repos, 
-					configure.args=c('--disable-openmp'))
-				} else if (select == 2) {
-					repos <- c('http://www.github.com/tbates/umx/packages/')
-					install.packages(pkgs=c('OpenMx'), repos=repos)
-				} else {
-					stop(paste("Unknown installation type", select))
-				}
-		}
-	}
-	if(loadNew){
-		# detach(package:OpenMx); # unload existing version
-		require("OpenMx")
-		newV = mxVersion();
-		if(!is.na(oldV)){
-			message("Woot: installed the latest and greatest \"", newV, "\" of OpenMx!")
-		} else {
-			message("Woot: you have upgraded from version \"" ,oldV, "\" to the latest and greatest \"", newV, "\"!")
-		}
-	}
-}
-
-# How long did that take?
-#' umx_get_time
-#'
-#' A function to compactly report how long a model took to execute
-#'
-#' @param model An \code{\link{mxModel}} from which to get the elapsed time
-#' @param formatStr A format string, defining how to show the time
-#' @param tz The time zone in which the model was executed
-#' @export
-#' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
-#' @references - \url{http://www.github.com/tbates/umx}
-#' @family umx reporting functions
-#' @examples
-#' require(OpenMx)
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
-#' umx_get_time(m1)
-
-umx_get_time <- function(model, formatStr= "%H hours, %M minutes, and %OS3 seconds", tz = "GMT"){
-	format(.POSIXct(model@output$wallTime,tz), formatStr)
-}
-umx_report_time <- umx_get_time
-
-#' umx_print
-#'
-#' A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
-#' Its most useful characteristic is allowing you to change how NA and zero appear.
-#' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
-#'
-
-#' @param x A data.frame to print
-#' @param digits  The number of decimal places to print (defaults to getOption("digits")
-#' @param quote  Parameter passed to print (defaults to FALSE)
-#' @param na.print String to replace NA with (default to blank "")
-#' @param zero.print String to replace 0.000 with  (defaults to "0")
-#' @param justify Parameter passed to print (defaults to "none")
-#' @param file whether to write to a file (defaults to NA (no file). Use "tmp.html" to open as tables in browser.
-#' @param suppress minimum numeric value to print (default =  NULL, print all values, no matter how small)
-#' @param ... Optional parameters for print
-#' @export
-#' @family umx misc reporting functions
-#' @seealso - \code{\link{print}}
-#' @examples
-#' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
-#' \dontrun{
-#' umx_print(model)
-#' umx_print(mtcars[1:10,], file = "Rout.html")
-#' }
-
-umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA,"tmp.html"), suppress = NULL, ...){
-	# TODO: Options for file = c("Rout.html","cat","return")
-	file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
-	if(!is.null(suppress)){
-		x[abs(x) < suppress] = 0
-		zero.print = "."
-	}
-	x <- umx_round(x, digits = digits, coerce = FALSE)
-    if (any(ina <- is.na(x))) 
-        x[ina] <- na.print
-	i0 <- !ina & x == 0
-    if (zero.print != "0" && any(i0)) 
-        x[i0] <- zero.print
-    if (is.numeric(x) || is.complex(x)){
-        print(x, quote = quote, right = TRUE, ...)
-	} else if(!is.na(file)){
-		R2HTML::HTML(x, file = file, Border = 0, append = F, sortableDF=T); 
-		system(paste0("open ", file))
-		print("Table opened in browser")
-    }else{
-		print(x, quote = quote, ...)	
-    }
-    invisible(x)
-}
-
 # ===================================
 # = Ordinal/Threshold Model Helpers =
 # ===================================
 
-# ====================
-# = Data and Utility =
-# ====================
-
-#' umxHetCor
+#' umx_RAM_ordinal_objective
 #'
-#' umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
-#'
-#' @param data A \code{\link{data.frame}} of columns for which to compute heterochoric correlations
-#' @param ML Whether to use Maximum likelihood computation of correlations (default = F)
-#' @param use How to delete missing data: "complete.obs", "pairwise.complete.obs" Default is pairwise.complete.obs
-#' @param treatAllAsFactor Whether to treat all columns as factors, whether they are currently or not.
-#' @param verbose How much to tell the user about what was done.
-#' @return - A matrix of correlations
-#' @family umx data helpers
-#' @export
-#' @seealso - \code{\link[polycor]{hetcor}}
-#' @references - 
-#' @examples
-#' \dontrun{
-#' cor_df = umxHetCor(df)
-#' cor_df = umxHetCor(df, ML = F, use="pairwise.complete.obs")
-#' }
-
-umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFactor=F, verbose=F){
-	if(treatAllAsFactor){
-		n = ncol(data)
-		for (i in 1:n) {
-			data[,i] = factor(data[,i])
-		}
-	}
-	if(require(polycor)){
-		hetc = polycor::hetcor(data, ML = ML, use = use, std.err = F)
-		if(verbose){
-			print(hetc)
-		}
-		return(hetc$correlations)
-	} else {
-		# TODO add error message if polycor not found
-		stop("To run umxHetCor, you must install the polycor package\ninstall.packages('polycor')")
-	}
-}
-
-#' umx_lower2full
-#'
-#' Take a lower triangle of data (either from a "lower" \code{\link{mxMatrix}}, or as you might typed in a journal article) 
-#' and turn it into a full matrix.
+#' umx_RAM_ordinal_objective builds an appropriate thresholds matrix
+#' It also sets latent means and variances to 0 and 1 respectively.
 #' 
-#' @param lower.data An \code{\link{mxMatrix}}
-#' @param diag A boolean noting whether the lower matrix includes the diagonal
-#' @param byrow Whether the matrix is to be filled by row or by column
-#' @return - \code{\link{mxMatrix}}
-#' @family umx data helpers
+#' TODO: more detail about what we are doing here
 #' 
+#' It uses \code{\link{umx_is_ordinal}} and \code{\link{umxMakeThresholdMatrix}} as helpers
+#'
+#' @param df Dataframe to make a threshold matrix for
+#' @param deviationBased whether to use the deviation system to ensure order thresholds (default = T)
+#' @param droplevels whether to also drop unused levels (default = T)
+#' @param verbose whether to say what the function is doing (default = F)
+#' @return - \code{\link{mxModel}}
 #' @export
+#' @family advanced umx helpers
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' 
-#' tmpn = c("ROccAsp", "REdAsp", "FOccAsp", "FEdAsp", "RParAsp", "RIQ", "RSES", "FSES", "FIQ", "FParAsp")
-#' tmp = matrix(nrow = 10, ncol = 10, byrow = TRUE, dimnames = list(tmpn,tmpn), data = 
-#' 	c(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
-#' 	0.6247, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
-#' 	0.3269, 0.3669, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
-#' 	0.4216, 0.3275, 0.6404, 1.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
-#' 	0.2137, 0.2742, 0.1124, 0.0839, 1.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
-#' 	0.4105, 0.4043, 0.2903, 0.2598, 0.1839, 1.0000, 0.0000,  0.0000, 0.0000, 0,
-#' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220, 1.0000,  0.0000, 0.0000, 0,
-#' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707,  1.0000, 0.0000, 0,
-#' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000, 0,
-#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
-#' )
-#' umx_lower2full(tmp)
-#' tmp = c(
-#' 	c(1.0000, 
-#' 	0.6247, 1.0000,
-#' 	0.3269, 0.3669, 1.0000,
-#' 	0.4216, 0.3275, 0.6404, 1.0000,
-#' 	0.2137, 0.2742, 0.1124, 0.0839, 1.0000,
-#' 	0.4105, 0.4043, 0.2903, 0.2598, 0.1839, 1.0000,
-#' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220, 1.0000,
-#' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707,  1.0000,
-#' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000,
-#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
-#' )
-#' umx_lower2full(tmp)
-#' tmp = c(
-#' 	c(0.6247,
-#' 	0.3269, 0.3669,
-#' 	0.4216, 0.3275, 0.6404,
-#' 	0.2137, 0.2742, 0.1124, 0.0839,
-#' 	0.4105, 0.4043, 0.2903, 0.2598, 0.1839,
-#' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220,
-#' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707, 
-#' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950,
-#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087)
-#' )
-#' umx_lower2full(tmp, diag = F)
-umx_lower2full <- function(lower.data, diag = F, byrow = T) {
-	if(is.matrix(lower.data)){
-		# Copy the transpose of the lower triangle to the
-		# upper triangle
-		x = lower.data
-		x[upper.tri(x)] <- t(x)[upper.tri(x)]
-		return(x)
+#' \dontrun{
+#' model = umx_RAM_ordinal_objective(model)
+#' }
+umx_RAM_ordinal_objective <- function(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE) {
+	# TODO: means = zero & VAR = 1 for ordinal variables
+	# (This is a nice place to check, as we have the df present...)
+	if(!any(umx_is_ordinal(df))){
+		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")
+	} 
+	pt1 = umxPath(means = umx_is_ordinal(df, names = T), fixedAt = 0)
+	pt2 = umxPath(var   = umx_is_ordinal(df, names = T), fixedAt = 1)
+	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = T, droplevels = T, verbose = F)))
+}
+
+#' umx_RAM_thresh_Matrix
+#'
+#' The purpose of this function is to generate an mxRAMObjective. It is used by \code{\link{umx_RAM_ordinal_objective}}.
+#' You likely want that, not this.
+#'
+#' @param df Dataframe for which to make a threshold matrix.
+#' @param deviationBased whether to use the deviation system to ensure order thresholds (default = TRUE)
+#' @param droplevels whether to also drop unused levels (default = TRUE)
+#' @param verbose whether to say what the function is doing (default = FALSE)
+#' @return - \code{\link{mxModel}}
+#' @family advanced umx helpers
+#' @export
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' umx_RAM_thresh_Matrix(mtcars, verbose = T)
+umx_RAM_thresh_Matrix <- function(df, deviationBased = T, droplevels = F, verbose = F) {
+	# mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
+	# use case:  
+	# TODO: Let the user know if there are any levels dropped...
+	if(droplevels){
+		df = droplevels(df)
+	}
+	if(deviationBased){
+		return(xmuMakeDeviationThresholdsMatrices(df, droplevels, verbose))
 	} else {
-		len = length(lower.data)
-		if(diag) {
-			# len*2 = ((x+.5)^2)-.25
-			size = len * 2
-			size = size + .25
-			size = sqrt(size)
-			size = size - .5; size
-		}else{
-			# len = (x*((x+1)/2))-x	
-			# .5*(x-1)*x
-			size = len * 2
-			# (x-.5)^2 - .25
-			size= size + .25
-			size = sqrt(size)
-			size = size + .5; size
-		}
-		mat = diag(size)
-		if(byrow){
-			# put  data into upper triangle, then transform to lower
-			mat[upper.tri(mat, diag = diag)] <- lower.data;
-			mat[lower.tri(mat, diag = F)] <- mat[upper.tri(mat, diag = F)]
-		}else{
-			mat[lower.tri(mat, diag = diag)] <- lower.data;
-			mat[upper.tri(mat, diag = F)] <-mat[lower.tri(mat, diag = F)]
-		}
-		return(mat)
+		return(xmuMakeThresholdsMatrices(df, droplevels, verbose))
 	}
 }
+
 
 # ===========
 # = Utility =
@@ -1093,63 +993,60 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames=F) {
 	# }
 }
 
-# ======================
-# = Comparison helpers =
-# ======================
-
-#' umx_less_than
-#'
-#' A version of less-than which returns FALSE for NAs (rather than NA)
-#'
-#' @param table thing to compare 1
-#' @param x thing to compare 2
-#' @family umx utility functions
-#' # @aliases %<%
-#'
-#' @export
-#' @seealso - \code{\link{umx_greater_than}}, 
-#' @examples
-#' c(1:3, NA, 5) %<% 2
-umx_less_than <- function(table, x){
-	lessThan = table < x
-	lessThan[is.na(lessThan)] = FALSE
-	return(lessThan)
-}
-
-#' @export
-#' @rdname umx_less_than
-"%<%" <- function(table, x){
-	umx_less_than(table, x)
-}
-
-#' umx_greater_than
-#'
-#' A version of greater-than that excludes NA as a match
-#' @param table thing to compare 1
-#' @param x thing to compare 2
-#' @aliases %>%
-#' @family umx utility functions
-#' @export
-#' @seealso - \code{\link{umx_less_than}}, 
-#' @examples
-#' c(1:3, NA, 5) %>% 2 
-
-umx_greater_than <- function(table, x){
-	# TODO currently not being found - alias problem? same for <
-	moreThan = table > x
-	moreThan[is.na(moreThan)] = FALSE
-	return(moreThan)
-}
-
-#' @export
-#' @rdname umx_greater_than
-"%>%" <- function(table, x){
-	umx_greater_than(table, x)
-}
 
 # =====================
 # = Utility functions =
 # =====================
+
+#' umxMsg
+#'
+#' helper function to make dumping  message("thing has the value", thing's value) easy
+#'
+#' @param  x the thing you want to print
+#' @return - NULL
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' a = "brian"
+#' umxMsg(a)
+#' a = c("brian", "sally", "jane")
+#' umxMsg(a)
+
+umxMsg <- function(x) {
+    nm <-deparse(substitute(x))	
+	if(length(x) > 1){
+		message(nm, " = ", omxQuotes(x))	
+	} else {
+		message(nm, " = ", x)	
+	}
+}
+
+
+#' umx_paste_names
+#'
+#' Helper to add suffixes to names: useful for expanding twin vars like "bm1" into c("bmi1", "bmi2")
+#' Use textConstant to turning "E" into "E_T1", by adding "_T" and 1.
+#'
+#' @param varNames a list of base names, e.g c("bmi", "HRV")
+#' @param textConstant The suffix that denotes "twin" (defaults to "_T")
+#' @param suffixes a list of suffixes (e.g c("_T1", "_T2"))
+#' @return - vector of names, i.e., c("a_T1","b_T1", "a_T2","b_T2")
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' umx_paste_names("bmi", c("_T1", "_T2"))
+#' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
+
+umx_paste_names <- function(varNames, textConstant = "", suffixes) {
+	nameList = c()
+	for (ID in suffixes) {
+		nameList = c(nameList, paste0(varNames, textConstant, ID))
+	}
+	return(nameList)
+}
+
 
 #' umx_round
 #'
@@ -1308,6 +1205,56 @@ umxAnova <- function(model, digits = 2) {
 			umx_APA_pval(model[2,"Pr(>F)"])
 		)
 	}	
+}
+
+#' umx_less_than
+#'
+#' A version of less-than which returns FALSE for NAs (rather than NA)
+#'
+#' @param table thing to compare 1
+#' @param x thing to compare 2
+#' @family umx utility functions
+#' # @aliases %<%
+#'
+#' @export
+#' @seealso - \code{\link{umx_greater_than}}, 
+#' @examples
+#' c(1:3, NA, 5) %<% 2
+umx_less_than <- function(table, x){
+	lessThan = table < x
+	lessThan[is.na(lessThan)] = FALSE
+	return(lessThan)
+}
+
+#' @export
+#' @rdname umx_less_than
+"%<%" <- function(table, x){
+	umx_less_than(table, x)
+}
+
+#' umx_greater_than
+#'
+#' A version of greater-than that excludes NA as a match
+#' @param table thing to compare 1
+#' @param x thing to compare 2
+#' @aliases %>%
+#' @family umx utility functions
+#' @export
+#' @seealso - \code{\link{umx_less_than}}, 
+#' @examples
+#' c(1:3, NA, 5) %>% 2 
+
+umx_greater_than <- function(table, x){
+	# TODO currently not being found - alias problem? same for <
+	moreThan = table > x
+	moreThan[is.na(moreThan)] = FALSE
+	return(moreThan)
+}
+
+#' @export
+#' @rdname umx_greater_than
+"%>%" <- function(table, x){
+	umx_greater_than(table, x)
 }
 
 # =====================
@@ -1566,8 +1513,8 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = F){
 #' }
 
 umx_is_ordinal <- function(df, names = F, strict = T) {
-	# Purpose, return which columns are Ordinal
-	# use case: 
+	# Purpose, return which columns are ordinal
+	# use case:
 	# nb: can optionally return just the names of these
 	nVar = ncol(df);
 	# Which are ordered factors?
@@ -1582,7 +1529,9 @@ umx_is_ordinal <- function(df, names = F, strict = T) {
 		}
 	}
 	if(any(factorList & ! orderedList) & strict){
-		stop("Dataframe contains at least 1 unordered factor. Set strict = F to allow this")
+		stop("Dataframe contains at least 1 unordered factor. Set strict = FALSE to allow this.\n",
+			  omxQuotes(names(df)[factorList & ! orderedList])
+		)
 	}
 	if(names){
 		return(names(df)[orderedList])
@@ -2632,6 +2581,135 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 # = Data Prep and Cleaning =
 # ==========================
 
+#' umxHetCor
+#'
+#' umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
+#'
+#' @param data A \code{\link{data.frame}} of columns for which to compute heterochoric correlations
+#' @param ML Whether to use Maximum likelihood computation of correlations (default = F)
+#' @param use How to delete missing data: "complete.obs", "pairwise.complete.obs" Default is pairwise.complete.obs
+#' @param treatAllAsFactor Whether to treat all columns as factors, whether they are currently or not.
+#' @param verbose How much to tell the user about what was done.
+#' @return - A matrix of correlations
+#' @family umx data helpers
+#' @export
+#' @seealso - \code{\link[polycor]{hetcor}}
+#' @references - 
+#' @examples
+#' \dontrun{
+#' cor_df = umxHetCor(df)
+#' cor_df = umxHetCor(df, ML = F, use="pairwise.complete.obs")
+#' }
+
+umxHetCor <- function(data, ML = F, use = "pairwise.complete.obs", treatAllAsFactor=F, verbose=F){
+	if(treatAllAsFactor){
+		n = ncol(data)
+		for (i in 1:n) {
+			data[,i] = factor(data[,i])
+		}
+	}
+	if(require(polycor)){
+		hetc = polycor::hetcor(data, ML = ML, use = use, std.err = F)
+		if(verbose){
+			print(hetc)
+		}
+		return(hetc$correlations)
+	} else {
+		# TODO add error message if polycor not found
+		stop("To run umxHetCor, you must install the polycor package\ninstall.packages('polycor')")
+	}
+}
+
+#' umx_lower2full
+#'
+#' Take a lower triangle of data (either from a "lower" \code{\link{mxMatrix}}, or as you might typed in a journal article) 
+#' and turn it into a full matrix.
+#' 
+#' @param lower.data An \code{\link{mxMatrix}}
+#' @param diag A boolean noting whether the lower matrix includes the diagonal
+#' @param byrow Whether the matrix is to be filled by row or by column
+#' @return - \code{\link{mxMatrix}}
+#' @family umx data helpers
+#' 
+#' @export
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' 
+#' tmpn = c("ROccAsp", "REdAsp", "FOccAsp", "FEdAsp", "RParAsp", "RIQ", "RSES", "FSES", "FIQ", "FParAsp")
+#' tmp = matrix(nrow = 10, ncol = 10, byrow = TRUE, dimnames = list(tmpn,tmpn), data = 
+#' 	c(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.6247, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.3269, 0.3669, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.4216, 0.3275, 0.6404, 1.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.2137, 0.2742, 0.1124, 0.0839, 1.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.4105, 0.4043, 0.2903, 0.2598, 0.1839, 1.0000, 0.0000,  0.0000, 0.0000, 0,
+#' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220, 1.0000,  0.0000, 0.0000, 0,
+#' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707,  1.0000, 0.0000, 0,
+#' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000, 0,
+#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
+#' )
+#' umx_lower2full(tmp)
+#' tmp = c(
+#' 	c(1.0000, 
+#' 	0.6247, 1.0000,
+#' 	0.3269, 0.3669, 1.0000,
+#' 	0.4216, 0.3275, 0.6404, 1.0000,
+#' 	0.2137, 0.2742, 0.1124, 0.0839, 1.0000,
+#' 	0.4105, 0.4043, 0.2903, 0.2598, 0.1839, 1.0000,
+#' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220, 1.0000,
+#' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707,  1.0000,
+#' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000,
+#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
+#' )
+#' umx_lower2full(tmp)
+#' tmp = c(
+#' 	c(0.6247,
+#' 	0.3269, 0.3669,
+#' 	0.4216, 0.3275, 0.6404,
+#' 	0.2137, 0.2742, 0.1124, 0.0839,
+#' 	0.4105, 0.4043, 0.2903, 0.2598, 0.1839,
+#' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220,
+#' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707, 
+#' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950,
+#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087)
+#' )
+#' umx_lower2full(tmp, diag = F)
+umx_lower2full <- function(lower.data, diag = F, byrow = T) {
+	if(is.matrix(lower.data)){
+		# Copy the transpose of the lower triangle to the
+		# upper triangle
+		x = lower.data
+		x[upper.tri(x)] <- t(x)[upper.tri(x)]
+		return(x)
+	} else {
+		len = length(lower.data)
+		if(diag) {
+			# len*2 = ((x+.5)^2)-.25
+			size = len * 2
+			size = size + .25
+			size = sqrt(size)
+			size = size - .5; size
+		}else{
+			# len = (x*((x+1)/2))-x	
+			# .5*(x-1)*x
+			size = len * 2
+			# (x-.5)^2 - .25
+			size= size + .25
+			size = sqrt(size)
+			size = size + .5; size
+		}
+		mat = diag(size)
+		if(byrow){
+			# put  data into upper triangle, then transform to lower
+			mat[upper.tri(mat, diag = diag)] <- lower.data;
+			mat[lower.tri(mat, diag = F)] <- mat[upper.tri(mat, diag = F)]
+		}else{
+			mat[lower.tri(mat, diag = diag)] <- lower.data;
+			mat[upper.tri(mat, diag = F)] <-mat[lower.tri(mat, diag = F)]
+		}
+		return(mat)
+	}
+}
 #' umxPadAndPruneForDefVars
 #'
 #' Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin
@@ -2747,5 +2825,50 @@ umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 		return(addys[mat@free == TRUE])
 	} else {
 		stop("free must be one of NA TRUE or FALSE")	
+	}
+}
+
+
+#' umx_show
+#'
+#' Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
+#'
+#' @param model an \code{\link{mxModel}} to show data from
+#' @param what  legal options are "values" (default), "free", or "labels")
+#' @param matrices to show  (default is c("S", "A"))
+#' @param digits precision to report, defaults to rounding to 2 decimal places
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx reporting functions
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' umx_show(m1)
+#' umx_show(m1, digits = 3)
+#' umx_show(m1, matrices = "S")
+#' umx_show(m1, what = "free")
+#' umx_show(m1, what = "labels")
+#' umx_show(m1, what = "free", "A")
+umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("S", "A"), digits = 2) {
+	what = umx_default_option(what, c("values", "free", "labels"), check = TRUE)
+	for (w in matrices) {
+		message("Showing ", what, " for:", w, " matrix:")
+		if(what == "values"){
+			umx_print(data.frame(model@matrices[[w]]@values), zero.print = ".", digits = digits)		
+		}else if(what == "free"){
+			umx_print(data.frame(model@matrices[[w]]@free), zero.print = ".", digits = digits)
+		}
 	}
 }

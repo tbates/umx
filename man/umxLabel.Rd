@@ -65,7 +65,7 @@ a$labels
 
 Other umx core functions: \code{\link{umxReRun}};
   \code{\link{umxRun}}; \code{\link{umxValues}};
-  \code{\link{umx}}, \code{\link{umx-package}},
-  \code{\link{umx-package}}
+  \code{\link{umx_apply}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

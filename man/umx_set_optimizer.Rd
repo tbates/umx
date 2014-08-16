@@ -3,12 +3,12 @@
 \alias{umx_set_optimizer}
 \title{umx_set_optimizer}
 \usage{
-umx_set_optimizer(x = NULL, opt = "NPSOL")
+umx_set_optimizer(opt = c("NPSOL", "NLOPT", "CSOLNP"), model = NULL)
 }
 \arguments{
-\item{x}{an (optional) model to set. If left NULL, the global option is updated.}
+\item{opt}{defaults to "NPSOL". Current alternatives are "NLOPT" and "CSOLNP"}
 
-\item{opt}{defaults to "NPSOL". "CSOLNP" is an alternative at present}
+\item{model}{an (optional) model to set. If left NULL, the global option is updated.}
 }
 \value{
 - \code{\link{mxModel}} (if you provided one in x)
@@ -25,6 +25,7 @@ m1 <- mxModel("ind", type = "RAM",
 	mxPath(from = "one", to = manifests),
 	mxData(mtcars[, manifests], type = "raw")
 )
+umx_set_optimiser("NPSOL") # set globally
 m1 = umx_set_optimiser(m1, opt = "NPSOL")
 m1 = mxRun(m1)
 \dontrun{
@@ -36,8 +37,7 @@ m1@runstate$compute$steps[1][[1]]$engine # NPSOL
 }
 \seealso{
 Other umx misc functions: \code{\link{umxEval}};
-  \code{\link{umx_add_suffixes}};
-  \code{\link{umx_add_variances}};
+  \code{\link{umxMsg}}; \code{\link{umx_add_variances}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
@@ -50,7 +50,8 @@ Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordinal}}; \code{\link{umx_library}};
-  \code{\link{umx_rename}}; \code{\link{umx_reorder}};
+  \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
+  \code{\link{umx_reorder}};
   \code{\link{umx_string_to_algebra}};
   \code{\link{umx_trim}}
 }

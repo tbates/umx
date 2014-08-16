@@ -6,7 +6,7 @@
 umx_get_optimizer(model = NULL)
 }
 \arguments{
-\item{model}{an (optional) model to get from. If left NULL, the global option is returned}
+\item{model}{(optional) model to get from. If left NULL, the global option is returned}
 }
 \value{
 - the optimizer  - a string
@@ -17,13 +17,14 @@ get the optimizer in OpenMx
 \examples{
 library(OpenMx)
 manifests = c("mpg", "disp", "gear")
+umx_set_optimizer(opt = "CSOLNP")
 m1 <- mxModel("ind", type = "RAM",
 	manifestVars = manifests,
 	mxPath(from = manifests, arrows = 2),
 	mxPath(from = "one", to = manifests),
 	mxData(mtcars[,manifests], type="raw")
 )
-m1 = umx_set_optimizer(m1, opt = "NPSOL")
+oldOpt = umx_get_optimizer()
 umx_get_optimiser(m1)
 }
 \references{
@@ -31,8 +32,7 @@ umx_get_optimiser(m1)
 }
 \seealso{
 Other umx misc functions: \code{\link{umxEval}};
-  \code{\link{umx_add_suffixes}};
-  \code{\link{umx_add_variances}};
+  \code{\link{umxMsg}}; \code{\link{umx_add_variances}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
@@ -44,7 +44,8 @@ Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordinal}}; \code{\link{umx_library}};
-  \code{\link{umx_rename}}; \code{\link{umx_reorder}};
+  \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
+  \code{\link{umx_reorder}};
   \code{\link{umx_set_optimizer}};
   \code{\link{umx_string_to_algebra}};
   \code{\link{umx_trim}}

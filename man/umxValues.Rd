@@ -37,9 +37,8 @@ m1 <- mxModel("One Factor", type = "RAM",
 mxEval(S, m1) # default variances are 0
 m1 = umxValues(m1)
 mxEval(S, m1) # plausible variances
+umx_print(mxEval(S,m1), 3, zero.print= ".") # plausible variances
 umxValues(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
-# # TODO get this working
-# umx_print(mxEval(S,m1), 2, zero.print= ".") # plausible variances
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
@@ -49,7 +48,7 @@ umxValues(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 
 
 Other umx core functions: \code{\link{umxLabel}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umx}}, \code{\link{umx-package}},
-  \code{\link{umx-package}}
+  \code{\link{umx_apply}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

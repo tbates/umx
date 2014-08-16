@@ -49,20 +49,33 @@ Additional conveniences:
 }
 }
 \examples{
-thedata = mtcars[,c("mpg", "cyl", "disp")]
-a = mxPath(from = "l_power", to = "mpg")
-b = mxPath(from = c("cyl","disp"), to = "l_power")
-d = mxData(thedata, type = "raw")
-e = mxData(cov(thedata), type = "cov", numObs = nrow(thedata))
+# umxRAM is like qplot(), you give the data in a data =  parameter
+# A common error is to include data in the main list, a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
+# nb: unlike mxModel, umxRAM needs data at build time.
 
-m1 = umxRAM("tim", a, b, d)
-m1 = umxRAM("tim", a, b, e)
+# 1. For convenience, list up the manifests you will be using
+selVars = c("mpg", "wt", "disp")
+
+# 2. Create an mxData object
+myData = cov(mtcars[,selVars], use = "complete")
+myCov = mxData(myData, type = "cov", numObs = nrow(mtcars) )
+
+# 3. Write the model and paths (see ?umxPath for more options)
+m1 = umxRAM("tim", data = myCov,
+	umxPath(c("wt","disp"), to = "mpg"),
+	umxPath(cov = c("wt", "disp")),
+	umxPath(var = c("wt", "disp", "mpg"))
+)
+
+# 4. Run the model
 m1 = mxRun(m1)
+
+# 5. Print a nice summary
+umxSummary(m1, show="std")
+
 \dontrun{
+# 6. Draw a nice path diagram (needs Graphviz)
 plot(m1)
-m1 = umxRAM("tim", a, b) # error: no data
-# TODO implement handling a dataframe
-umxRAM("tim", a, b, thedata)
 }
 }
 \references{
