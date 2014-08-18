@@ -603,32 +603,34 @@ xmuHasSquareBrackets <- function (input) {
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 xmuMaxLevels <- function(df) {
 	isOrd = umx_is_ordinal(df)
-	if(!any(isOrd)){
-		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")
+	if(any(isOrd)){
+		vars = names(df)[isOrd]
+		nLevels = rep(NA, length(vars))
+		j = 1
+		for (i in vars) {
+			nLevels[j] = length(levels(df[,i]))
+			j = j + 1
+		}	
+		return(max(nLevels))
+	} else {
+		return(NA)
 	}
-	vars = names(df)[isOrd]
-	nLevels = rep(NA, length(vars))
-	j = 1
-	for (i in vars) {
-		nLevels[j] = length(levels(df[,i]))
-		j = j + 1
-	}	
-	return(max(nLevels))
 }
 
 xmuMinLevels <- function(df) {
 	isOrd = umx_is_ordinal(df)
-	if(!any(isOrd)){
-		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")
+	if(any(isOrd)){
+		vars = names(df)[isOrd]
+		nLevels = rep(NA, length(vars))
+		j = 1
+		for (i in vars) {
+			nLevels[j] = length(levels(df[,i]))
+			j = j + 1
+		}	
+		return(min(nLevels))
+	} else {
+		return(NA)
 	}
-	vars = names(df)[isOrd]
-	nLevels = rep(NA, length(vars))
-	j = 1
-	for (i in vars) {
-		nLevels[j] = length(levels(df[,i]))
-		j = j + 1
-	}	
-	return(min(nLevels))
 }
 
 # ===============

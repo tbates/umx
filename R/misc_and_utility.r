@@ -72,12 +72,88 @@ umx_get_optimizer <- function(model = NULL) {
 #' }
 umx_set_optimizer <- function(opt = c("NPSOL","NLOPT","CSOLNP"), model = NULL) {
 	opt = umx_default_option(opt, c("NPSOL","NLOPT","CSOLNP"))
-	if(is.null(model)){
-		mxOption(NULL, "Default optimizer", opt)
-	} else {
-		invisible(mxOption(model, "Default optimizer", opt))
+	mxOption(model, "Default optimizer", opt)
+	if(opt == "NPSOL"){
+		mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
+		mxOption(model, 'mvnMaxPointsC', 5e+5) # default is 5000
 	}
 }
+
+#' umx_set_cores
+#'
+#' set the number of cores (threads) used by OpenMx
+#'
+#' @param cores number of cores to use (defaults to max - 1 to preserve UI responsiveness)
+#' @param model an (optional) model to set. If left NULL, the global option is updated.
+#' @return - NULL
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' library(OpenMx)
+#' manifests = c("mpg", "disp", "gear")
+#' m1 <- mxModel("ind", type = "RAM",
+#' 	manifestVars = manifests,
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = "one", to = manifests),
+#' 	mxData(mtcars[, manifests], type = "raw")
+#' )
+#' oldCores = umx_get_cores() # get global value
+#' umx_set_cores(model = m1) # set to default (max - 1)
+#' umx_get_cores() # show new value
+#' umx_set_cores(omxDetectCores()) # set to default (max - 1)
+#' umx_get_cores() # show new value
+#' umx_set_cores(oldCores) $ reset to old value
+umx_set_cores <- function(cores = omxDetectCores() - 1, model = NULL) {
+	mxOption(model, "Number of Threads", cores)
+}
+
+#' umx_get_cores
+#'
+#' get the number of cores (threads) used by OpenMx
+#'
+#' @param model an (optional) model to get from. If left NULL, the global option is returned
+#' @return - number of cores
+#' @export
+#' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' library(OpenMx)
+#' manifests = c("mpg", "disp", "gear")
+#' m1 <- mxModel("ind", type = "RAM",
+#' 	manifestVars = manifests,
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = "one", to = manifests),
+#' 	mxData(mtcars[, manifests], type = "raw")
+#' )
+#' oldCores = umx_get_cores() # get current default value
+#' umx_set_cores(model = m1) # set to default (max - 1)
+#' umx_get_cores(model = m1) # show new value
+#' umx_set_cores(omxDetectCores()) # set to default (max - 1)
+#' umx_get_cores() # show new value
+#' umx_set_cores(oldCores) $ reset to old value
+umx_get_cores <- function(cores = omxDetectCores() - 1, model = NULL) {
+	mxOption(model, "Number of Threads")
+}
+
+#' umx_rot
+#'
+#' rotate a vector (default, rotate by 1)
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx misc functions
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' umx_rot(1:10)
+#' umx_rot(c(3,4,5,6,7))
+#' # [1] 4 5 6 7 3
+umx_rot <- function(vec){
+	ind = (1:length(vec) %% length(vec)) + 1
+	vec[ind]
+} 
 
 
 #' umx_update_OpenMx
@@ -1491,41 +1567,51 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = F){
 
 #' umx_is_ordinal
 #'
-#' return the names of any ordinal variables in a dataframe
+#' Return the names of any ordinal variables in a dataframe
 #'
 #' @param df an \code{\link{data.frame}} to look in for ordinal variables
-#' @param names whether to return the names of ordinal variables, or a binary list (default = F)
-#' @param strict whether to stop when unordered factors are found (default = T)
-#' @return - list of variable names
+#' @param names whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)
+#' @param strict whether to stop when unordered factors are found (default = TRUE)
+#' @param binary.only only count binary factors (2-levels) (default = FALSE)
+#' @return - vector of variable names or Booleans
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' tmp = mtcars
-#' tmp$cyl = ordered(mtcars$cyl)
+#' tmp$cyl = ordered(mtcars$cyl) # ordered factor
+#' tmp$vs = ordered(mtcars$vs) # binary factor
 #' umx_is_ordinal(tmp)
+#' umx_is_ordinal(tmp, names = TRUE)
+#' umx_is_ordinal(tmp, names = TRUE, binary.only = TRUE)
 #' isContinuous = !umx_is_ordinal(tmp)
+#' tmp$gear = factor(mtcars$gear) # unordered factor
 #' # nb: Factors are not necessarily ordered! By default unordered factors cause an error...
 #' \dontrun{
 #' tmp$cyl = factor(mtcars$cyl)
 #' umx_is_ordinal(tmp)
 #' }
-
-umx_is_ordinal <- function(df, names = F, strict = T) {
-	# Purpose, return which columns are ordinal
-	# use case:
-	# nb: can optionally return just the names of these
+umx_is_ordinal <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE) {
 	nVar = ncol(df);
 	# Which are ordered factors?
-	factorList = rep(F,nVar)
-	orderedList = rep(F,nVar)
+	factorList  = rep(FALSE, nVar)
+	orderedList = rep(FALSE, nVar)
 	for(n in 1:nVar) {
 		if(is.ordered(df[,n])) {
-			orderedList[n] = T
+			thisLevels  = length(levels(df[,n]))
+			if(binary.only & (2 == thisLevels) ){
+				orderedList[n] = TRUE				
+			} else if(!binary.only) {
+				orderedList[n] = TRUE
+			}
 		}
 		if(is.factor(df[,n])) {
-			factorList[n] = T
+			thisLevels = length(levels(df[,n]))
+			if(binary.only & (2 == thisLevels) ){
+				factorList[n] = TRUE
+			} else if(!binary.only) {
+				factorList[n] = TRUE
+			}
 		}
 	}
 	if(any(factorList & ! orderedList) & strict){

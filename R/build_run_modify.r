@@ -955,7 +955,7 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 			)
 		} else {
 			stop("hi. Sorry for the change. To use regex replace ", omxQuotes("regex"), " with ", omxQuotes("update"),
-			 "AND regex =", omxQuotes(F), "e.g.:\n",
+			 "AND regex =", omxQuotes(T), "e.g.:\n",
 			 "umxReRun(m1, regex = ", omxQuotes("^E_.*"), ")\n",
 			 "becomes\n",
 			 "umxReRun(m1, update = ", omxQuotes("^E_.*"), ", regex = TRUE)\n",
@@ -1684,7 +1684,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 #' # ==================
 #' # = Binary example =
 #' # ==================
-#' # Cut to form category of 20% obese subjects
+#' # Cut to form category of 80 % obese subjects
 #' cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 #' obesityLevels = c('normal', 'obese')
 #' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
@@ -1694,6 +1694,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' umxThresholdMatrix(mzData, suffixes = 1:2)
+#' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = F) # supress informative messages
 #' 
 #' # ======================================
 #' # = Ordinal (n categories > 2) example =
@@ -1701,13 +1702,28 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 #' # Cut to form three categories of weight
 #' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
 #' obesityLevels = c('normal', 'overweight', 'obese')
-#' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obeseTri1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obeseTri2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' head(twinData)
-#' selDVs = c("obese1", "obese2")
+#' selDVs = c("obeseTri1", "obeseTri2")
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' umxThresholdMatrix(mzData, suffixes = 1:2)
+#'
+#' # ========================================================
+#' # = Mix of all three kinds example (and a 4-level trait) =
+#' # ========================================================
+#' 
+#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
+#' obesityLevels = c('underWeight', 'normal', 'overweight', 'obese')
+#' twinData$obeseQuad1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obeseQuad2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' selDVs = c("obeseQuad1", "obeseQuad2")
+#' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
+#' 
+#' selDVs = c("bmi1", "obese1", "obeseTri1", "obeseQuad1", "bmi2", "obese2", "obeseTri2", "obeseQuad2")
+#' mzData <- subset(twinData, zyg == "MZFF", selDVs)
+#' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 
 umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE, verbose = TRUE){
 	if(deviationBased){
@@ -1718,26 +1734,31 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
 	}
 
 	isOrd       = umx_is_ordinal(df)
-	ordVarNames = names(df)[isOrd]
+	isBin       = umx_is_ordinal(df, binary.only = TRUE)
+	nBinVars    = sum(isBin)
 	nOrdVars    = sum(isOrd)
+	ordVarNames = names(df)[isOrd]
+	binVarNames = names(df)[isBin]
 	nSib        = length(suffixes)
 	if(nOrdVars < 1){
 		message("No ordinal variables in dataframe: no need to call umxThresholdMatrix")
 	} else {
 		if(nSib == 2){
-			message("umxThresholdMatrix found ", nOrdVars/nSib, " pairs of ordinal variables:", omxQuotes(ordVarNames))
+			message("'threshMat' created to handle ", nOrdVars/nSib, " pair(s) of ordinal variables:", omxQuotes(ordVarNames))
 		} else {
-			message("umxThresholdMatrix found ", nOrdVars, " ordinal variables:", omxQuotes(ordVarNames))
+			message("'threshMat' created to handle ", nOrdVars, " ordinal variables:", omxQuotes(ordVarNames))
 		}
 	}
 	minLevels = umx:::xmuMinLevels(df)
 	maxLevels = umx:::xmuMaxLevels(df)
 	maxThresh = maxLevels - 1
 
-	if(minLevels == 2){
+	# TODO simplify for n = bin, n= ord, n= cont msg
+	if(sum(isBin) > 0){
 		if(verbose){
-			message("At least one trait is binary (only 2-levels), so no thresholds are fixed.\n",
-			"Thus you MUST fix or constrain (usually mean @ zero & sd @ 1) the latent traits driving each ordinal variable.\n",
+			message(sum(isBin), " trait(s) are binary (only 2-levels).\n",
+			omxQuotes(binVarNames),
+			"\nFor these, you you MUST fix or constrain (usually @mean=0 & var=1) the latent traits driving each ordinal variable.\n",
 			"See ?mxThresholdMatrix")
 		}
 	} else if(minLevels > 2){
@@ -1798,21 +1819,24 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
 			}
 		}
 		# Set labels
-		nLevelsThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
+		nThreshThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
 		if(nSib == 2){
 			findStr = paste0( "(", paste(suffixes, collapse = "|"), ")$")
 			thisLab = sub(findStr, "", thisVarName)		
 		}else{
 			thisLab = thisVarName
 		}	
-        labels = c(paste0(thisLab, "_thresh", 1:nLevelsThisVar), rep(NA   , (maxThresh - nLevelsThisVar)))
-        free   = c(rep(TRUE                 , nLevelsThisVar)  , rep(FALSE, (maxThresh - nLevelsThisVar)))
-        values = c(zValues[2:(nLevelsThisVar+1)], rep(FALSE, (maxThresh - nLevelsThisVar)))
-		if(minLevels == 2){			
+        labels = c(paste0(thisLab, "_thresh", 1:nThreshThisVar), rep(NA   , (maxThresh - nThreshThisVar)))
+        free   = c(rep(TRUE                 , nThreshThisVar)  , rep(FALSE, (maxThresh - nThreshThisVar)))
+        values = c(zValues[2:(nThreshThisVar+1)], rep(FALSE, (maxThresh - nThreshThisVar)))
+		if(nThreshThisVar == 1){			
 			# We are all done: user NEEDS to fix the mean and variance
 			# of the latent trait at, say, 0 and 1 for this to work.
-		} else if(minLevels > 2){ # fix the first 2
+		} else if(nThreshThisVar > 1){ # fix the first 2
 			free[1:2] = FALSE
+		} else {
+			stop("Should never see < 1 levels in umxThresholdMatrix\n", 
+			thisVarName, " appeared to have ", nThreshThisVar, " levels.")
 		}
 
 		threshMat$labels[, thisVarName] = labels
