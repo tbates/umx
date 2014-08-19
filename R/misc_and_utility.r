@@ -136,24 +136,45 @@ umx_get_cores <- function(cores = omxDetectCores() - 1, model = NULL) {
 	mxOption(model, "Number of Threads")
 }
 
-#' umx_rot
+#' umx_set_checkpointing
 #'
-#' rotate a vector (default, rotate by 1)
+#' Set the checkpoint status for a model or global options
 #'
-#' @param model an \code{\link{mxModel}} to WITH
-#' @return - \code{\link{mxModel}}
+#' @param always defaults to "Yes"
+#' @param count default 1
+#' @param units default "evaluations"
+#' @param model an optional model to get options from (default = NULL)
+#' @return - NULL
 #' @export
 #' @family umx misc functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' umx_set_checkpointing()
+umx_set_checkpointing <- function(always = c("Yes", "No"), count = 1, units = "evaluations", model = NULL) {
+	legalAge = c("Yes", "No")
+	always = umx_default_option(always, legalAge)
+	mxOption(model, "Always Checkpoint", always)
+	mxOption(model, "Checkpoint Count" , count)
+	mxOption(model, "Checkpoint Units" , units)	
+}
+
+#' umx_get_checkpointing
+#'
+#' get the checkpoint status for a model or global options
+#'
+#' @param model an optional model to get options from
+#' @return - NULL
+#' @export
+#' @family umx core functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umx_rot(1:10)
-#' umx_rot(c(3,4,5,6,7))
-#' # [1] 4 5 6 7 3
-umx_rot <- function(vec){
-	ind = (1:length(vec) %% length(vec)) + 1
-	vec[ind]
-} 
+#' umx_get_checkpointing(model)
+umx_get_checkpointing <- function(model = NULL) {
+	message("Always Checkpoint: ", mxOption(model, "Always Checkpoint") )
+	message("Checkpoint  Count: ", mxOption(model, "Checkpoint Count" ) )
+	message("Checkpoint  Units: ", mxOption(model, "Checkpoint Units" ) )
+}
 
 
 #' umx_update_OpenMx
@@ -2552,6 +2573,26 @@ umx_trim <- function(string) {
 }
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 
+
+#' umx_rot
+#'
+#' rotate a vector (default, rotate by 1)
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx misc functions
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' umx_rot(1:10)
+#' umx_rot(c(3,4,5,6,7))
+#' # [1] 4 5 6 7 3
+umx_rot <- function(vec){
+	ind = (1:length(vec) %% length(vec)) + 1
+	vec[ind]
+} 
+
 #' demand a package
 #'
 #' This loads the package, installing it if needed
@@ -2559,16 +2600,15 @@ umx_trim <- function(string) {
 #' @param package The package name as a string.
 #' @export
 #' @family umx misc functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}
 #' @examples
 #' \dontrun{
-#' umx_library("numderiv")
+#' demand("numderiv")
 #' }
-umx_library <- function(package = "") {
+demand <- function(package = "") {
 	if(FALSE == package %in% rownames(installed.packages() ) ) {
 		m <- getCRANmirrors(all = FALSE, local.only = FALSE)
-		URL <- m[grepl("Cloud",m$Name),"URL"][1] #get the first repos with "cloud" in the name
+		URL <- m[grepl("Cloud",m$Name),"URL"][1] # get the first repos with "cloud" in the name
 		install.packages(package, repos = URL)
 	}
 	require(pacakge)	
@@ -2907,3 +2947,10 @@ umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("
 		}
 	}
 }
+
+
+# Poems you should know by heart
+# https://en.wikipedia.org/wiki/O_Captain!_My_Captain!
+# https://en.wikipedia.org/wiki/The_Second_Coming_(poem)
+# https://en.wikipedia.org/wiki/Invictus
+# http://www.poetryfoundation.org/poem/173698get
