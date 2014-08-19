@@ -739,13 +739,12 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' rename files. On OS X, the function can access the current frontmost Finder window.
 #' The file renaming is fast and, because you can use regular expressions, powerful
 #'
-#' @param baseFolder  The folder to search in. If set to "Finder" (and you are 
-#' on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.
-#' @param findStr = The string to find
-#' @param replaceStr = The replacement string
-#' @param listPattern = A pre-filter for files
-#' @param test Boolean determining whether to chagne the names, or just report on what would have happened
-#' @param overwrite Boolean determining 
+#' @param findStr The (regex) string to find, i.e., "c[ao]t"
+#' @param replaceStr The (regex) replacement string "\1 are not dogs"
+#' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.
+#' @param listPattern A pre-filter for files
+#' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
+#' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
 #' @family umx utility functions
 #' @return - 
 #' @export
@@ -754,9 +753,9 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @examples
 #' \dontrun{
 #' umx_rename_file(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
-#' umx_rename_file(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceStr="S\1", test = T)
+#' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = T)
 #' }
-umx_rename_file <- function(baseFolder = "Finder", findStr = NA, replaceStr = NA, listPattern = NA, test = T, overwrite = F) {
+umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", listPattern = NA, test = T, overwrite = F) {
 	# uppercase = u$1
 	if(baseFolder == "Finder"){
 		baseFolder = system(intern = T, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
@@ -1281,56 +1280,6 @@ umxAnova <- function(model, digits = 2) {
 			umx_APA_pval(model[2,"Pr(>F)"])
 		)
 	}	
-}
-
-#' umx_less_than
-#'
-#' A version of less-than which returns FALSE for NAs (rather than NA)
-#'
-#' @param table thing to compare 1
-#' @param x thing to compare 2
-#' @family umx utility functions
-#' # @aliases %<%
-#'
-#' @export
-#' @seealso - \code{\link{umx_greater_than}}, 
-#' @examples
-#' c(1:3, NA, 5) %<% 2
-umx_less_than <- function(table, x){
-	lessThan = table < x
-	lessThan[is.na(lessThan)] = FALSE
-	return(lessThan)
-}
-
-#' @export
-#' @rdname umx_less_than
-"%<%" <- function(table, x){
-	umx_less_than(table, x)
-}
-
-#' umx_greater_than
-#'
-#' A version of greater-than that excludes NA as a match
-#' @param table thing to compare 1
-#' @param x thing to compare 2
-#' @aliases %>%
-#' @family umx utility functions
-#' @export
-#' @seealso - \code{\link{umx_less_than}}, 
-#' @examples
-#' c(1:3, NA, 5) %>% 2 
-
-umx_greater_than <- function(table, x){
-	# TODO currently not being found - alias problem? same for <
-	moreThan = table > x
-	moreThan[is.na(moreThan)] = FALSE
-	return(moreThan)
-}
-
-#' @export
-#' @rdname umx_greater_than
-"%>%" <- function(table, x){
-	umx_greater_than(table, x)
 }
 
 # =====================

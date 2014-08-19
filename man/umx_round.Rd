@@ -27,9 +27,8 @@ head(umx_round(mtcars, coerce = T))
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other umx utility functions: \code{\link{\%>\%}},
-  \code{\link{\%>\%}}, \code{\link{umx_greater_than}};
-  \code{\link{qm}}; \code{\link{umx_as_numeric}};
+Other umx utility functions: \code{\link{qm}};
+  \code{\link{umx_as_numeric}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_move_file}};
   \code{\link{umx_rename_file}};

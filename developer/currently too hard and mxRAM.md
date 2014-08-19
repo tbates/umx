@@ -1,3 +1,54 @@
+
+#' umx_less_than
+#'
+#' A version of less-than which returns FALSE for NAs (rather than NA)
+#'
+#' @param table thing to compare 1
+#' @param x thing to compare 2
+#' @family umx utility functions
+#' # @aliases %<%
+#'
+#' @export
+#' @seealso - \code{\link{umx_greater_than}}, 
+#' @examples
+#' c(1:3, NA, 5) %<% 2
+umx_less_than <- function(table, x){
+	lessThan = table < x
+	lessThan[is.na(lessThan)] = FALSE
+	return(lessThan)
+}
+
+#' @export
+#' @rdname umx_less_than
+"%<%" <- function(table, x){
+	umx_less_than(table, x)
+}
+
+#' umx_greater_than
+#'
+#' A version of greater-than that excludes NA as a match
+#' @param table thing to compare 1
+#' @param x thing to compare 2
+#' @aliases %>%
+#' @family umx utility functions
+#' @export
+#' @seealso - \code{\link{umx_less_than}}, 
+#' @examples
+#' c(1:3, NA, 5) %>% 2 
+
+umx_greater_than <- function(table, x){
+	# TODO currently not being found - alias problem? same for <
+	moreThan = table > x
+	moreThan[is.na(moreThan)] = FALSE
+	return(moreThan)
+}
+
+#' @export
+#' @rdname umx_greater_than
+"%>%" <- function(table, x){
+	umx_greater_than(table, x)
+}
+
 # Questions to answer for mxRAM
 
 1. With reflective latents, (incoming from manifests)

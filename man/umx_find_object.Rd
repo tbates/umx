@@ -28,10 +28,9 @@ umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
 \seealso{
 - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other umx utility functions: \code{\link{\%>\%}},
-  \code{\link{\%>\%}}, \code{\link{umx_greater_than}};
-  \code{\link{qm}}; \code{\link{umx_as_numeric}};
-  \code{\link{umx_grep}}; \code{\link{umx_move_file}};
+Other umx utility functions: \code{\link{qm}};
+  \code{\link{umx_as_numeric}}; \code{\link{umx_grep}};
+  \code{\link{umx_move_file}};
   \code{\link{umx_rename_file}}; \code{\link{umx_round}};
   \code{\link{umx_swap_a_block}}
 }

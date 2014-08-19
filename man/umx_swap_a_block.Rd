@@ -28,9 +28,8 @@ umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names =
 \seealso{
 - \code{\link{subset}}
 
-Other umx utility functions: \code{\link{\%>\%}},
-  \code{\link{\%>\%}}, \code{\link{umx_greater_than}};
-  \code{\link{qm}}; \code{\link{umx_as_numeric}};
+Other umx utility functions: \code{\link{qm}};
+  \code{\link{umx_as_numeric}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_move_file}};
   \code{\link{umx_rename_file}}; \code{\link{umx_round}}

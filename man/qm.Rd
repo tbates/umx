@@ -28,9 +28,7 @@ matrix(1:16, 4)
 \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
 }
 \seealso{
-Other umx utility functions: \code{\link{\%>\%}},
-  \code{\link{\%>\%}}, \code{\link{umx_greater_than}};
-  \code{\link{umx_as_numeric}};
+Other umx utility functions: \code{\link{umx_as_numeric}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_move_file}};
   \code{\link{umx_rename_file}}; \code{\link{umx_round}};

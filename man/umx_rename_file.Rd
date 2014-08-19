@@ -3,22 +3,21 @@
 \alias{umx_rename_file}
 \title{umx_rename_file}
 \usage{
-umx_rename_file(baseFolder = "Finder", findStr = NA, replaceStr = NA,
+umx_rename_file(findStr = NA, replaceStr = NA, baseFolder = "Finder",
   listPattern = NA, test = T, overwrite = F)
 }
 \arguments{
-\item{baseFolder}{The folder to search in. If set to "Finder" (and you are
-on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.}
+\item{findStr}{The (regex) string to find, i.e., "c[ao]t"}
 
-\item{findStr}{= The string to find}
+\item{replaceStr}{The (regex) replacement string "\1 are not dogs"}
 
-\item{replaceStr}{= The replacement string}
+\item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.}
 
-\item{listPattern}{= A pre-filter for files}
+\item{listPattern}{A pre-filter for files}
 
-\item{test}{Boolean determining whether to chagne the names, or just report on what would have happened}
+\item{test}{Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)}
 
-\item{overwrite}{Boolean determining}
+\item{overwrite}{Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)}
 }
 \value{
 -
@@ -30,7 +29,7 @@ The file renaming is fast and, because you can use regular expressions, powerful
 \examples{
 \dontrun{
 umx_rename_file(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
-umx_rename_file(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceStr="S\\1", test = T)
+umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", baseFolder = "Finder", test = T)
 }
 }
 \references{
@@ -39,9 +38,8 @@ umx_rename_file(baseFolder = "Finder", findStr = "[Ss]eason +([0-9]+)", replaceS
 \seealso{
 - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other umx utility functions: \code{\link{\%>\%}},
-  \code{\link{\%>\%}}, \code{\link{umx_greater_than}};
-  \code{\link{qm}}; \code{\link{umx_as_numeric}};
+Other umx utility functions: \code{\link{qm}};
+  \code{\link{umx_as_numeric}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_move_file}}; \code{\link{umx_round}};
   \code{\link{umx_swap_a_block}}
