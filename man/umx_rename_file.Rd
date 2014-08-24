@@ -4,7 +4,7 @@
 \title{umx_rename_file}
 \usage{
 umx_rename_file(findStr = NA, replaceStr = NA, baseFolder = "Finder",
-  listPattern = NA, test = T, overwrite = F)
+  listPattern = NA, test = TRUE, overwrite = FALSE)
 }
 \arguments{
 \item{findStr}{The (regex) string to find, i.e., "c[ao]t"}
@@ -28,8 +28,8 @@ The file renaming is fast and, because you can use regular expressions, powerful
 }
 \examples{
 \dontrun{
-umx_rename_file(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = T)
-umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", baseFolder = "Finder", test = T)
+umx_rename_file(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = TRUE)
+umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", baseFolder = "Finder", test = TRUE)
 }
 }
 \references{

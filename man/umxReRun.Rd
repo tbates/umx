@@ -10,7 +10,7 @@ umxReRun(lastFit, update = NA, regex = FALSE, free = FALSE, value = 0,
 \arguments{
 \item{lastFit}{The \code{\link{mxModel}} you wish to update and run.}
 
-\item{update}{What to update before re-running. Can be a list of labels, a regular expression (set regex = T) or an object such as mxCI etc.}
+\item{update}{What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.}
 
 \item{regex}{Whether or not update is a regular expression (defaults to FALSE)}
 
@@ -36,14 +36,14 @@ umxReRun(lastFit, update = NA, regex = FALSE, free = FALSE, value = 0,
 \description{
 umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally adding, setting, or dropping parameters.
 The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
-fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = T)
+fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = TRUE)
 A powerful feature is regular expression. These let you drop collections of paths by matching patterns
-fit2 = umxReRun(fit1, update = "C[sr]", regex = TRUE, name = "drop_Cs_andCr", comparison = T)
+fit2 = umxReRun(fit1, update = "C[sr]", regex = TRUE, name = "drop_Cs_andCr", comparison = TRUE)
 }
 \details{
 If you're just starting out, you might find it easier to be more explicit. Like this:
 
-fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = F, name = "newModelName")
+fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
 
 fit2 = mxRun(fit2)
 }
@@ -56,16 +56,16 @@ m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents,
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = umxRun(m1, setLabels = T, setValues = T)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1")
 umxSummary(m2); umxCompare(m1, m2)
 # 1-line version including comparison
-m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = T)
-m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = T, name = "drop_G_to_x3_x4_and_x5", comparison = T)
-m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = T)
+m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
+m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "drop_G_to_x3_x4_and_x5", comparison = TRUE)
+m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = TRUE)
 m3 = umxReRun(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again")
 umxCompare(m3, m2)
 }

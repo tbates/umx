@@ -3,13 +3,13 @@
 \alias{umxHetCor}
 \title{umxHetCor}
 \usage{
-umxHetCor(data, ML = F, use = "pairwise.complete.obs",
-  treatAllAsFactor = F, verbose = F)
+umxHetCor(data, ML = FALSE, use = "pairwise.complete.obs",
+  treatAllAsFactor = F, verbose = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of columns for which to compute heterochoric correlations}
 
-\item{ML}{Whether to use Maximum likelihood computation of correlations (default = F)}
+\item{ML}{Whether to use Maximum likelihood computation of correlations (default = FALSE)}
 
 \item{use}{How to delete missing data: "complete.obs", "pairwise.complete.obs" Default is pairwise.complete.obs}
 
@@ -26,7 +26,7 @@ umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor
 \examples{
 \dontrun{
 cor_df = umxHetCor(df)
-cor_df = umxHetCor(df, ML = F, use="pairwise.complete.obs")
+cor_df = umxHetCor(df, ML = FALSE, use="pairwise.complete.obs")
 }
 }
 \references{

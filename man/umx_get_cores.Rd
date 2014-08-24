@@ -3,7 +3,7 @@
 \alias{umx_get_cores}
 \title{umx_get_cores}
 \usage{
-umx_get_cores(cores = omxDetectCores() - 1, model = NULL)
+umx_get_cores(model = NULL)
 }
 \arguments{
 \item{model}{an (optional) model to get from. If left NULL, the global option is returned}
@@ -12,7 +12,7 @@ umx_get_cores(cores = omxDetectCores() - 1, model = NULL)
 - number of cores
 }
 \description{
-get the number of cores (threads) used by OpenMx
+Gets the number of cores (threads) used by OpenMx.
 }
 \examples{
 library(OpenMx)

@@ -34,7 +34,7 @@ m1 = umx_add_variances(m1)
 umx_show(m1, matrices = "S")
 # Note: latent g has been treated like the manifests...
 # umxFixLatents() will take care of this for you...
-m1 = umxRun(m1, setLabels = T, setValues = T)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umxSummary(m1)
 }
 \references{

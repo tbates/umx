@@ -22,7 +22,7 @@ Tries to make apply more readable. Other functions to think of include
 \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
 }
 \examples{
-umx_apply(mean, to_each = "column", of_DF = mtcars, na.rm=T)
+umx_apply(mean, to_each = "column", of_DF = mtcars, na.rm= TRUE)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}

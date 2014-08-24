@@ -3,7 +3,7 @@
 \alias{umx_lower2full}
 \title{umx_lower2full}
 \usage{
-umx_lower2full(lower.data, diag = F, byrow = T)
+umx_lower2full(lower.data, diag = FALSE, byrow = TRUE)
 }
 \arguments{
 \item{lower.data}{An \code{\link{mxMatrix}}}
@@ -58,7 +58,7 @@ tmp = c(
 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950,
 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087)
 )
-umx_lower2full(tmp, diag = F)
+umx_lower2full(tmp, diag = FALSE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

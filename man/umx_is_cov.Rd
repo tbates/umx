@@ -23,8 +23,8 @@ df = cov(mtcars)
 umx_is_cov(df)
 df = cor(mtcars)
 umx_is_cov(df)
-umx_is_cov(df, boolean = T)
-umx_is_cov(mtcars, boolean = T)
+umx_is_cov(df, boolean = TRUE)
+umx_is_cov(mtcars, boolean = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

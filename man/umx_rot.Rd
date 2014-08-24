@@ -6,7 +6,7 @@
 umx_rot(vec)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to WITH}
+\item{vec}{vector to rotate}
 }
 \value{
 - \code{\link{mxModel}}

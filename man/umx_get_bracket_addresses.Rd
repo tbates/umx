@@ -9,6 +9,8 @@ umx_get_bracket_addresses(mat, free = NA, newName = NA)
 \item{mat}{an mxMatrix to get address labels from}
 
 \item{free}{how to filter on free (default = NA: take all)}
+
+\item{newName}{= NA}
 }
 \value{
 - a list of bracket style labels
@@ -25,7 +27,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents,
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 umx_get_bracket_addresses(m1$matrices$A, free= TRUE)

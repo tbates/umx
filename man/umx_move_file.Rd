@@ -4,7 +4,7 @@
 \title{umx_move_file}
 \usage{
 umx_move_file(baseFolder = NA, findStr = NULL, fileNameList = NA,
-  destFolder = NA, test = T, overwrite = F)
+  destFolder = NA, test = TRUE, overwrite = FALSE)
 }
 \arguments{
 \item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.}
@@ -30,7 +30,7 @@ The file moves are fast and, because you can use regular expressions, powerful
 \dontrun{
 base = "/Users/tim/Music/iTunes/iTunes Music/"
 dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
-umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test=F)
+umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= FALSE)
 }
 }
 \seealso{

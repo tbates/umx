@@ -4,7 +4,7 @@
 \title{umxLatent}
 \usage{
 umxLatent(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
-  type = NULL, model.name = NULL, labelSuffix = "", verbose = T,
+  type = NULL, model.name = NULL, labelSuffix = "", verbose = TRUE,
   endogenous = "deprecated")
 }
 \arguments{
@@ -54,7 +54,7 @@ m1 = mxModel("reflective", type = "RAM",
 	umxLatent("G", forms = manifests, type = "exogenous", data = theData),
 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 )
-m1 = umxRun(m1, setValues = T, setLabels = T); umxSummary(m1, show="std")
+m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE); umxSummary(m1, show="std")
 umxPlot(m1)
 
 m2 = mxModel("formative", type = "RAM",
@@ -64,7 +64,7 @@ m2 = mxModel("formative", type = "RAM",
 	umxLatent("G", formedBy = manifests, data = theData),
 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 )
-m2 = umxRun(m2, setValues = T, setLabels = T); umxSummary(m2, show="std")
+m2 = umxRun(m2, setValues = TRUE, setLabels = TRUE); umxSummary(m2, show="std")
 umxPlot(m2)
 }
 }

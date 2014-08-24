@@ -20,8 +20,8 @@ A version of round() which works on dataframes that contain non-numeric data (or
 Helpful for dealing with table output that mixes numeric and string types.
 }
 \examples{
-head(umx_round(mtcars, coerce = F))
-head(umx_round(mtcars, coerce = T))
+head(umx_round(mtcars, coerce = FALSE))
+head(umx_round(mtcars, coerce = TRUE))
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

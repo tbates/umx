@@ -3,8 +3,8 @@
 \alias{umxMI}
 \title{umxMI}
 \usage{
-umxMI(model = NA, numInd = 10, typeToShow = "both", decreasing = T,
-  cache = T)
+umxMI(model = NA, numInd = 10, typeToShow = "both", decreasing = TRUE,
+  cache = TRUE)
 }
 \arguments{
 \item{model}{An \code{\link{mxModel}} for which to report modification indices}
@@ -13,7 +13,7 @@ umxMI(model = NA, numInd = 10, typeToShow = "both", decreasing = T,
 
 \item{typeToShow}{Whether to shown additions or deletions (default = "both")}
 
-\item{decreasing}{How to sort (default = T, decreasing)}
+\item{decreasing}{How to sort (default = TRUE, decreasing)}
 
 \item{cache}{= Future function to cache these time-consuming results}
 }
@@ -30,10 +30,10 @@ m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents,
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = umxRun(m1, setLabels = T, setValues = T)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umxMI(model)
 umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 }

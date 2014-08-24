@@ -3,7 +3,7 @@
 \alias{umxGetParameters}
 \title{umxGetParameters}
 \usage{
-umxGetParameters(inputTarget, regex = NA, free = NA, verbose = F)
+umxGetParameters(inputTarget, regex = NA, free = NA, verbose = FALSE)
 }
 \arguments{
 \item{inputTarget}{An object to get parameters from: could be a RAM \code{\link{mxModel}}}
@@ -27,18 +27,18 @@ m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents,
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1)
 umxGetParameters(m1)
-m1 = umxRun(m1, setLabels = T)
+m1 = umxRun(m1, setLabels = TRUE)
 umxGetParameters(m1)
-umxGetParameters(m1, free=T) # only the free parameter
-umxGetParameters(m1, free=F) # only parameters which are fixed
+umxGetParameters(m1, free = TRUE) # only the free parameter
+umxGetParameters(m1, free = FALSE) # only parameters which are fixed
 \dontrun{
 # Complex regex patterns
-umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
+umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = TRUE) # Column 6 of matrix "as"
 }
 }
 \references{

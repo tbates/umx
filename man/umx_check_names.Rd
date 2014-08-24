@@ -3,7 +3,7 @@
 \alias{umx_check_names}
 \title{umx_check_names}
 \usage{
-umx_check_names(namesNeeded, data, die = TRUE, no_others = F)
+umx_check_names(namesNeeded, data, die = TRUE, no_others = FALSE)
 }
 \arguments{
 \item{namesNeeded}{list of variable names to find}
@@ -24,11 +24,11 @@ check if a list of names are in the names() of a dataframe
 require(OpenMx)
 data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 umx_check_names(c("x1", "x2"), demoOneFactor)
-umx_check_names(c("z1", "x2"), data = demoOneFactor, die = F)
-umx_check_names(c("x1", "x2"), data = demoOneFactor, die = F, no_others = T)
-umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = F, no_others = T)
-dontrun{
-umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = T)
+umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
+umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
+umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
+\dontrun{
+umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = TRUE)
 }
 }
 \references{

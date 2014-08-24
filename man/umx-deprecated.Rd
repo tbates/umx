@@ -20,7 +20,7 @@ umxReportFit(...)
 
 col.as.numeric(...)
 
-cor.prob(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3)
+cor.prob(...)
 
 mxStart(...)
 

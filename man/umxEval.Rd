@@ -23,8 +23,8 @@ Takes an expression as a string, and evaluates it as an expression in model, opt
 }
 \examples{
 m1 = mxModel("fit",
-		mxMatrix("Full", nrow = 1, ncol = 1, free = T, values = 1, name = "a"),
-		mxMatrix("Full", nrow = 1, ncol = 1, free = T, values = 2, name = "b"),
+		mxMatrix("Full", nrow = 1, ncol = 1, free = TRUE, values = 1, name = "a"),
+		mxMatrix("Full", nrow = 1, ncol = 1, free = TRUE, values = 2, name = "b"),
 		mxAlgebra(a \%*\% b, name = "ab"),
 		mxConstraint(ab == 35, name = "maxHours"),
 		mxAlgebraObjective(algebra = "ab", numObs= NA, numStats = NA)

@@ -3,7 +3,7 @@
 \alias{umx_default_option}
 \title{umx_default_option}
 \usage{
-umx_default_option(x, option_list, check = T)
+umx_default_option(x, option_list, check = TRUE)
 }
 \arguments{
 \item{x}{the value chosen (may be a selection, or the default list of options)}
@@ -23,7 +23,7 @@ handle parameter options given as a default list in a function
 option_list = c("default", "par.observed", "empirical")
 umx_default_option("par.observed", option_list)
 umx_default_option("bad", option_list)
-umx_default_option("allow me", option_list, check = F)
+umx_default_option("allow me", option_list, check = FALSE)
 umx_default_option(option_list, option_list)
 option_list = c(NULL, "par.observed", "empirical")
 umx_default_option(option_list, option_list) # fails with NULL!!!!!

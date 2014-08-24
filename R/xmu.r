@@ -120,9 +120,9 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 #' require(OpenMx)
 #' data(demoOneFactor)
 #' m2 <- mxModel("One Factor",
-#' 	mxMatrix("Full", 5, 1, values = 0.2, free = T, name = "A"), 
-#' 	mxMatrix("Symm", 1, 1, values = 1, free = F, name = "L"), 
-#' 	mxMatrix("Diag", 5, 5, values = 1, free = T, name = "U"), 
+#' 	mxMatrix("Full", 5, 1, values = 0.2, free = TRUE, name = "A"), 
+#' 	mxMatrix("Symm", 1, 1, values = 1, free = FALSE, name = "L"), 
+#' 	mxMatrix("Diag", 5, 5, values = 1, free = TRUE, name = "U"), 
 #' 	mxAlgebra(A %*% L %*% t(A) + U, name = "R"), 
 #' 	mxMLObjective("R", dimnames = names(demoOneFactor)), 
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
@@ -130,7 +130,7 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 #' m3 = xmuLabel_MATRIX_Model(m2)
 #' m4 = xmuLabel_MATRIX_Model(m2, suffix = "male")
 #' # explore these with omxGetParameters(m4)
-xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
+xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 	if(!umx_is_MxModel(model) ){
 		stop("xmuLabel_MATRIX_Model needs model as input")
 	}
@@ -141,7 +141,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = T) {
 	return(model)
 }
 
-xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = F) {
+xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = FALSE) {
 	# Purpose: to label all the free parameters of a (RAM) model
 	# Use case: model = umxAddLabels(model, suffix = "_male")
 	# TODO implement overRideExisting !!!
@@ -210,13 +210,13 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	return(model)
 }
 
-xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = T, labelFixedCells = F) {
+xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = TRUE, labelFixedCells = FALSE) {
 	# Purpose: label the cells of an mxMatrix
 	# Detail: Defaults to the handy "matrixname_r1c1" where 1 is the row or column
 	# Use case: You shouldn't be using this: call umxLabel
-	# umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
-	# umx:::xmuLabel_Matrix(mxMatrix("Symm", 3, 3, values = 1, name = "a", byrow = T), jiggle = .05, boundDiag = NA);
-	# See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = F, value = 0, name = "drop_a_row1_c1")
+	# umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
+	# umx:::xmuLabel_Matrix(mxMatrix("Symm", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
+	# See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = FALSE, value = 0, name = "drop_a_row1_c1")
 	if (!is(mx_matrix, "MxMatrix")){ # label a mxMatrix
 		stop("I'm sorry Dave... xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want umxLabel()")
 	}
@@ -250,20 +250,20 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 		}
 	}
 	if(type == "DiagMatrix"){
-		newLabels[lower.tri(newLabels, diag = F)] = NA
-		newLabels[upper.tri(newLabels, diag = F)] = NA
+		newLabels[lower.tri(newLabels, diag = FALSE)] = NA
+		newLabels[upper.tri(newLabels, diag = FALSE)] = NA
 	} else if(type == "FullMatrix"){
 		# newLabels = newLabels
 	} else if(type == "LowerMatrix"){
-		newLabels[upper.tri(newLabels, diag = F)] = NA 
+		newLabels[upper.tri(newLabels, diag = FALSE)] = NA 
 	} else if(type == "SdiagMatrix"){
-		newLabels[upper.tri(newLabels, diag = T)] = NA
+		newLabels[upper.tri(newLabels, diag = TRUE)] = NA
 	} else if(type == "SymmMatrix"){
-		newLabels[lower.tri(newLabels, diag = F)] -> lower.labels;
-		newLabels[upper.tri(newLabels, diag = F)] <- mirrorLabels[upper.tri(mirrorLabels, diag = F)]
+		newLabels[lower.tri(newLabels, diag = FALSE)] -> lower.labels;
+		newLabels[upper.tri(newLabels, diag = FALSE)] <- mirrorLabels[upper.tri(mirrorLabels, diag = FALSE)]
 	} else if(type == "StandMatrix") {
-		newLabels[lower.tri(newLabels, diag = F)] -> lower.labels;
-		newLabels[upper.tri(newLabels, diag = F)] <- mirrorLabels[upper.tri(mirrorLabels, diag = F)]
+		newLabels[lower.tri(newLabels, diag = FALSE)] -> lower.labels;
+		newLabels[upper.tri(newLabels, diag = FALSE)] <- mirrorLabels[upper.tri(mirrorLabels, diag = FALSE)]
 		diag(newLabels) <- NA
 	} else if(type == "IdenMatrix" | type == "UnitMatrix" | type == "ZeroMatrix") {
 		# message("umxLabel Ignored ", type, " matrix ", mx_matrix@name, " - it has no free values!")
@@ -281,8 +281,8 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = F, drop = 0
 		newFree[mx_matrix@values == drop] = F;
 		newFree[mx_matrix@values != drop] = T;
 		if(type=="StandMatrix") {
-			newLabels[lower.tri(newLabels, diag = F)] -> lower.labels;
-			newLabels[upper.tri(newLabels, diag = F)] <- lower.labels;
+			newLabels[lower.tri(newLabels, diag = FALSE)] -> lower.labels;
+			newLabels[upper.tri(newLabels, diag = FALSE)] <- lower.labels;
 		} else {
 			mx_matrix@free <- newFree
 		}
@@ -314,7 +314,7 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	}
 	maxThreshMinus1 = max(levelList) - 1
 	# For Multiplication
-	lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThreshMinus1, ncol = maxThreshMinus1, free = F, values = 1)
+	lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThreshMinus1, ncol = maxThreshMinus1, free = FALSE, values = 1)
 	# Threshold deviation matrix
 	deviations_for_thresh = mxMatrix(name = "deviations_for_thresh", type = "Full", nrow = maxThreshMinus1, ncol = nOrdinal)
 	initialLowerLim  = -1
@@ -364,11 +364,12 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 #' @references - http://openmx.psyc.virginia.edu/
 #' @examples
 #' \dontrun{
-#' junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose=T)
+#' junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose= TRUE)
 #' }
 
-xmuMakeThresholdsMatrices <- function(df, droplevels = F, verbose = F) {
-	isOrdinalVariable = umxIsOrdinalVar(df) 
+xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
+	# TODO delete this function??
+	isOrdinalVariable = umx_is_ordinal(df) 
 	ordinalColumns    = df[,isOrdinalVariable]
 	nOrdinal          = ncol(ordinalColumns);
 	ordNameList       = names(ordinalColumns);
@@ -391,7 +392,7 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = F, verbose = F) {
 	}
 
 	threshNames = paste("Threshold", 1:maxThreshMinus1, sep='')
-	thresh = mxMatrix("Full", name="thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = F, free = T, values= threshValues, dimnames=list(threshNames,ordNameList))
+	thresh = mxMatrix("Full", name="thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = FALSE, free = TRUE, values= threshValues, dimnames=list(threshNames,ordNameList))
 
 	if(verbose){
 		cat("levels in each variable are:")
@@ -443,12 +444,12 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = xmuPropagateLabels(m1, suffix = "MZ")
 
-xmuPropagateLabels <- function(model, suffix = "", verbose = T) {
+xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
 	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix   , suffix = suffix, verbose = verbose)
     model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix, verbose = verbose)
     return(model)
@@ -468,7 +469,7 @@ xmuPropagateLabels <- function(model, suffix = "", verbose = T) {
 #' xmuMI(model)
 #' }
 
-xmuMI <- function(model, vector = T) {
+xmuMI <- function(model, vector = TRUE) {
 	# modification indices
 	# v0.9: written Michael Culbertson
 	# v0.91: up on github; added progress bar, Bates
@@ -509,7 +510,7 @@ xmuMI <- function(model, vector = T) {
 	S <- model$data@observed
 	J <- model$F@values
 	m <- dim(A)[1]
-	which.free <- c(model$A@free, model$S@free & upper.tri(diag(m), diag=T))
+	which.free <- c(model$A@free, model$S@free & upper.tri(diag(m), diag= TRUE))
 	vars       <- colnames(A)
 	parNames   <- c(model$A@labels, model$S@labels)
 	parNames[is.na(parNames)] <- c(outer(vars, vars, paste, sep=' <- '),
@@ -555,8 +556,8 @@ xmuMI <- function(model, vector = T) {
 	names(mod.indices) <- parNames
 	names(par.change)  <- parNames
 	if (vector) {
-		which.ret <- c(!model$A@free & !diag(m), !model$S@free) # & upper.tri(diag(m), diag=T))
-		sel <- order(mod.indices[which.ret], decreasing=T)
+		which.ret <- c(!model$A@free & !diag(m), !model$S@free) # & upper.tri(diag(m), diag= TRUE))
+		sel <- order(mod.indices[which.ret], decreasing= TRUE)
 		ret <- list(mi=mod.indices[which.ret][sel], par.change=par.change[which.ret][sel])
 	} else {
 		mod.A <- matrix(mod.indices[1:(m^2)]   , m, m)

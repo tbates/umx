@@ -9,11 +9,11 @@ umx_RAM_ordinal_objective(df, deviationBased = TRUE, droplevels = TRUE,
 \arguments{
 \item{df}{Dataframe to make a threshold matrix for}
 
-\item{deviationBased}{whether to use the deviation system to ensure order thresholds (default = T)}
+\item{deviationBased}{whether to use the deviation system to ensure order thresholds (default = TRUE)}
 
-\item{droplevels}{whether to also drop unused levels (default = T)}
+\item{droplevels}{whether to also drop unused levels (default = TRUE)}
 
-\item{verbose}{whether to say what the function is doing (default = F)}
+\item{verbose}{whether to say what the function is doing (default = FALSE)}
 }
 \value{
 - \code{\link{mxModel}}

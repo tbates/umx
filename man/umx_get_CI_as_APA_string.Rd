@@ -4,10 +4,12 @@
 \title{umx_get_CI_as_APA_string}
 \usage{
 umx_get_CI_as_APA_string(model, cellLabel, prefix = "top.", suffix = "_std",
-  digits = 2, verbose = F)
+  digits = 2, verbose = FALSE)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get CIs from}
+
+\item{cellLabel}{the label of the cell to interogate for a CI, e.g. "ai_r1c1"}
 
 \item{prefix}{This submodel to look in (i.e. "top.")}
 

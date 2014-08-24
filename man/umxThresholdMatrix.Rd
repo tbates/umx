@@ -12,6 +12,8 @@ umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
 
 \item{suffixes}{e.g. c("T1", "T2") - Use for data with repeated observations in a row (i.e., twin data) (defaults to NA)}
 
+\item{threshMatName}{name of the matrix which is returned. Defaults to "threshMat" - best not to change it.}
+
 \item{l_u_bound}{c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.}
 
 \item{deviationBased}{Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)}
@@ -51,7 +53,7 @@ selDVs = c("obese1", "obese2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 umxThresholdMatrix(mzData, suffixes = 1:2)
-umxThresholdMatrix(mzData, suffixes = 1:2, verbose = F) # supress informative messages
+umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE) # supress informative messages
 
 # ======================================
 # = Ordinal (n categories > 2) example =

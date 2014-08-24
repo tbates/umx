@@ -3,9 +3,9 @@
 \alias{umxLabel}
 \title{umxLabel}
 \usage{
-umxLabel(obj, suffix = "", baseName = NA, setfree = F, drop = 0,
-  labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F,
-  overRideExisting = F)
+umxLabel(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
+  labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE,
+  overRideExisting = FALSE)
 }
 \arguments{
 \item{obj}{An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}}
@@ -46,7 +46,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents,
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"

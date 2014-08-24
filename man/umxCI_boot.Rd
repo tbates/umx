@@ -16,7 +16,7 @@ umxCI_boot(model, rawData = NULL, type = c("par.expected", "par.observed",
 use parametric Monte Carlo bootstrapping based on your expected and observed covariance matrices, respectively.
 "empirical" uses empirical bootstrapping based on rawData.}
 
-\item{std}{specifies whether you want CIs for unstandardized or standardized parameters (default: std = T)}
+\item{std}{specifies whether you want CIs for unstandardized or standardized parameters (default: std = TRUE)}
 
 \item{rep}{is the number of bootstrap samples to compute (default = 1000).}
 
@@ -44,10 +44,10 @@ with replacement from your data and then computing the statistic for each redraw
 		manifestVars = manifests, latentVars = latents,
 		mxPath(from = latents, to = manifests),
 		mxPath(from = manifests, arrows = 2),
-		mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+		mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 		mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 	)
-	m1 = umxRun(m1, setLabels = T, setValues = T)
+	m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 	umxCI_boot(m1, type = "par.expected")
 }
 }

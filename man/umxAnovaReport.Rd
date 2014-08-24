@@ -3,8 +3,8 @@
 \alias{umxAnovaReport}
 \title{umxAnovaReport}
 \usage{
-umxAnovaReport(model1, model2 = NULL, raw = T, format = "string",
-  printDIC = F)
+umxAnovaReport(model1, model2 = NULL, raw = TRUE, format = "string",
+  printDIC = FALSE)
 }
 \arguments{
 \item{model1}{An \code{\link{lm}} model to make a table from}

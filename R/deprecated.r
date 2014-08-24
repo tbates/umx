@@ -105,7 +105,7 @@ col.as.numeric <- function(...) {stop("col.as.numeric is deprecated. Please repl
 
 #' @rdname umx-deprecated
 #' @export
-cor.prob <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {message("Use umx_cor")}
+cor.prob <- function (...) {message("Use umx_cor")}
 
 #' @rdname umx-deprecated
 #' @export
@@ -113,21 +113,15 @@ mxStart <- function(...) { traceback(); stop("Deprecated: Please use umxValues()
 
 #' @rdname umx-deprecated
 #' @export
-mxLatent       <- function(...) {message("please look at umxRAM() and umxPath")}
+mxLatent <- function(...) {message("please look at umxRAM() and umxPath")}
 
 #' @rdname umx-deprecated
 #' @export
-umxReportFit <- function(...) {
-	stop("Deprecated: Please replace umxReportFit with umxSummary")
-}
-
+umxReportFit <- function(...) { stop("Deprecated: Please replace umxReportFit with umxSummary") }
 
 #' @rdname umx-deprecated
 #' @export
-umxReportCIs <- function(...) {
-	stop("Deprecated: Please replace umxReportCIs with umxCI")
-}
-
+umxReportCIs <- function(...) { stop("Deprecated: Please replace umxReportCIs with umxCI") }
 
 # fit.cov(indepfit,modelfit)
 #      source("http://omxhelper.googlecode.com/svn/trunk/genEpi.lib.R")
@@ -227,7 +221,7 @@ graphVizTextFormed = 'digraph G {
 #                 R=500, formula=fm)
 # boot.ci(reg.res, type="bca", index=2) # smoke
 
-# renameFile(findStr="_", replaceStr=" ", listPattern = "", test=T)
+# renameFile(findStr="_", replaceStr=" ", listPattern = "", test= TRUE)
 
 # psych::r.test will test for the difference between independent or dependent correlations
 # psych::r.test(n = 100, r12 = .5, r34 = .4, ) 
@@ -253,7 +247,7 @@ graphVizTextFormed = 'digraph G {
 # 	mxData(cov(data, use = "pair"), type = "cov", numObs = 2000)
 # 	
 # )
-# a = umxRun(a,setLabels=T, setStart = T)
+# a = umxRun(a,setLabels=T, setStart = TRUE)
 # a@matrices$A@labels; a@matrices$S@labels;
 # umxPlot(a,std=T, dotFilename="name",  pathLabels="none", precision=2)
 

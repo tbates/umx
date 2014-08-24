@@ -3,7 +3,8 @@
 \alias{umx_RAM_thresh_Matrix}
 \title{umx_RAM_thresh_Matrix}
 \usage{
-umx_RAM_thresh_Matrix(df, deviationBased = T, droplevels = F, verbose = F)
+umx_RAM_thresh_Matrix(df, deviationBased = TRUE, droplevels = FALSE,
+  verbose = FALSE)
 }
 \arguments{
 \item{df}{Dataframe for which to make a threshold matrix.}
@@ -22,7 +23,7 @@ The purpose of this function is to generate an mxRAMObjective. It is used by \co
 You likely want that, not this.
 }
 \examples{
-umx_RAM_thresh_Matrix(mtcars, verbose = T)
+umx_RAM_thresh_Matrix(mtcars, verbose = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

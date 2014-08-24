@@ -66,17 +66,17 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' residuals(m1)
 #' residuals(m1, digits = 3)
 #' residuals(m1, digits = 3, suppress = .005)
 #' # residuals are returned as an invisible object you can capture in a variable
 #' a = residuals(m1); a
 residuals.MxModel <- function(model, digits = 2, suppress = NULL){
-	umx_check_model(model, type = NULL, hasData = T)
+	umx_check_model(model, type = NULL, hasData = TRUE)
 	expCov = umxExpCov(model, latents = FALSE)
 	if(model@data@type == "raw"){
 		obsCov = umxHetCor(model@data@observed)
@@ -128,7 +128,7 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
@@ -147,7 +147,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 			message("Existing CIs Will be used (", length(object@intervals), " in total)")
 		} else {
 			message("Adding CIs for all free parameters")
-			CIs_to_set = names(omxGetParameters(object, free = T))
+			CIs_to_set = names(omxGetParameters(object, free = TRUE))
 			object = mxModel(object, mxCI(CIs_to_set, interval = level))			
 		}
 	} else if(parm == "existing") {
@@ -162,7 +162,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 	}
 	# 2. Run CIs if requested
 	if(run) {
-		object = mxRun(object, intervals = T)
+		object = mxRun(object, intervals = TRUE)
 	}
 	# 3. Report CIs if found in output
 	if(!umx_has_CIs(object, "both") & run == FALSE) {
@@ -247,10 +247,10 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxSummary(m1, show = "std")
 #' umxSummary(m1, show = "std", digits = 1)
 #' \dontrun{
@@ -334,7 +334,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				if(!any(is.na(bounds))){
 					# protect cases with SE == NA from evaluation for significance
 					if (any(bounds < 0) & any(bounds > 0)){
-						parameterTable[i, "sig"] = F
+						parameterTable[i, "sig"] = FALSE
 					}
 					if(est < 0){
 						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
@@ -345,9 +345,9 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 			}
 		}
 		if(filter == "NS"){
-			print(parameterTable[parameterTable$sig==F, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
+			print(parameterTable[parameterTable$sig == FALSE, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
 		}else if(filter == "SIG"){
-			print(parameterTable[parameterTable$sig==T, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")
+			print(parameterTable[parameterTable$sig == TRUE, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")
 		}else{
 			print(parameterTable[,namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
 		}
@@ -431,10 +431,10 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
 #' umxCompare(m1, m2)
 #' mxCompare(m1, m2) # what OpenMx gives by default
@@ -442,7 +442,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' umxCompare(m1, m2, report = 3) # Open table in browser
 #' m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 #' umxCompare(m1, c(m2, m3))
-#' umxCompare(c(m1, m2), c(m2, m3), all = T)
+#' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 1) {
 	if(is.null(comparison)){
 		comparison <- base
@@ -456,7 +456,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 
-	# tableOut  = format(tableOut, scientific = F, digits = digits)
+	# tableOut  = format(tableOut, scientific = FALSE, digits = digits)
 	tablePub  = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
 	names(tablePub)     <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
 	# Fix problem where base model has compare set to its own name, and name set to NA
@@ -488,7 +488,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	
 	if(report == 3){
-		R2HTML::HTML(tablePub, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
+		R2HTML::HTML(tablePub, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE); system(paste0("open ", "tmp.html"))
 	} else {
 		umx_print(tablePub)
 		# R2HTML::print(tableOut, output = output, rowlabel = "")
@@ -502,7 +502,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# "chi \u03C7"
 	# if(export){
 	# 	fName= "Model.Fitting.xls"
-	# 	write.table(tableOut,fName, row.names=F,sep="\t", fileEncoding="UTF-8") # macroman UTF-8 UTF-16LE
+	# 	write.table(tableOut,fName, row.names = FALSE,sep = "\t", fileEncoding="UTF-8") # macroman UTF-8 UTF-16LE
 	# 	system(paste("open", fName));
 	# }
 }
@@ -542,29 +542,29 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxCI(m1)
 #' \dontrun{
-#' umxCI(model, addCIs = T) # add Cis for all free parameters if not present
+#' umxCI(model, addCIs = TRUE) # add Cis for all free parameters if not present
 #' umxCI(model, runCIs = "yes") # force update of CIs
 #' umxCI(model, runCIs = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
 #' umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run them
 #' }
 
-umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorcodes = T) {
+umxCI <- function(model = NULL, addCIs = TRUE, runCIs = "if necessary", showErrorcodes = TRUE) {
 	# TODO add code to not-run CIs
 	# TODO superceed this with confint? just need parameters to hold the 95% etc...
 	message("### CIs for model ", model@name)
 	if(addCIs){
-		CIs   = names(omxGetParameters(model, free=T))
+		CIs   = names(omxGetParameters(model, free= TRUE))
 		model = mxModel(model, mxCI(CIs))
 	}
     
 	if(tolower(runCIs) == "yes" | (!umx_has_CIs(model) & tolower(runCIs) != "no")) {
-		model = mxRun(model, intervals = T)
+		model = mxRun(model, intervals = TRUE)
 	}
 
 	if(umx_has_CIs(model)){
@@ -606,7 +606,7 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' @param type is the kind of bootstrap you want to run. "par.expected" and "par.observed" 
 #' use parametric Monte Carlo bootstrapping based on your expected and observed covariance matrices, respectively.
 #' "empirical" uses empirical bootstrapping based on rawData.
-#' @param std specifies whether you want CIs for unstandardized or standardized parameters (default: std = T)
+#' @param std specifies whether you want CIs for unstandardized or standardized parameters (default: std = TRUE)
 #' @param rep is the number of bootstrap samples to compute (default = 1000).
 #' @param conf is the confidence value (default = 95)
 #' @param dat specifies whether you want to store the bootstrapped data in the output (useful for multiple analyses, such as mediation analysis)
@@ -623,10 +623,10 @@ umxCI <- function(model = NULL, addCIs = T, runCIs = "if necessary", showErrorco
 #' 		manifestVars = manifests, latentVars = latents, 
 #' 		mxPath(from = latents, to = manifests),
 #' 		mxPath(from = manifests, arrows = 2),
-#' 		mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 		mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 		mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' 	)
-#' 	m1 = umxRun(m1, setLabels = T, setValues = T)
+#' 	m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' 	umxCI_boot(m1, type = "par.expected")
 #'}
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
@@ -637,7 +637,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 	require(MASS); require(OpenMx); require(umx)
 	type = umx_default_option(type, c("par.expected", "par.observed", "empirical"))
 	if(type == "par.expected") {
-		exp = umxExpCov(model, latent = FALSE)
+		exp = umxExpCov(model, latents = FALSE)
 	} else if(type == "par.observed") {
 		if(model$data@type == "raw") {
 			exp = var(mxEval(data, model))
@@ -672,7 +672,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 	} else {
 		for(i in 1:rep){
 			bsample = var(MASS::mvrnorm(N, rep(0, nrow(exp)), exp))
-			mod     = mxRun(mxModel(model, mxData(observed = bsample, type = "cov", numObs = N)), silent = T)
+			mod     = mxRun(mxModel(model, mxData(observed = bsample, type = "cov", numObs = N)), silent = TRUE)
 			pard    = rbind(pard, summary(mod)$parameters[, 5 + 2 * std])
 			rownames(pard)[nrow(pard)] = i
 			setTxtProgressBar(pb, i)
@@ -734,7 +734,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 	}
 	manifests           = model@manifestVars
 	nVar                = length(manifests)
-	dataMeans           = colMeans(theData, na.rm = T)
+	dataMeans           = colMeans(theData, na.rm = TRUE)
 	meansLabels         = paste("mean", 1:nVar, sep = "")
 	covData             = cov(theData, use = "pairwise.complete.obs")
 	factorLoadingStarts = t(chol(covData))
@@ -750,20 +750,20 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 		# mxMatrix(name = "factorVariances", type="Iden" , nrow = nVar, ncol = nVar), # Bunch of Ones on the diagonal
 	    # Bunch of Zeros
 		mxMatrix(name = "factorMeans"   , type = "Zero" , nrow = 1   , ncol = nVar), 
-	    mxMatrix(name = "factorLoadings", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = factorLoadingStarts), 
+	    mxMatrix(name = "factorLoadings", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = factorLoadingStarts), 
 		# labels = loadingsLabels),
 	    mxAlgebra(name = "expCov", expression = factorLoadings %*% t(factorLoadings)),
 
-	    mxMatrix(name = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxMatrix(name = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = TRUE, labels = meansLabels),
 	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
 	    mxData(theData, type = "raw")
 	)
 	m3 <- mxModel("independence",
 	    # TODO: slightly inefficient, as this has an analytic solution
-	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free=T, values = independenceStarts), 
+	    mxMatrix(name = "variableLoadings" , type="Diag", nrow = nVar, ncol = nVar, free = TRUE, values = independenceStarts), 
 		# labels = loadingsLabels),
 	    mxAlgebra(name = "expCov", expression = variableLoadings %*% t(variableLoadings)),
-	    mxMatrix(name  = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = T, labels = meansLabels),
+	    mxMatrix(name  = "expMean", type = "Full", nrow = 1, ncol = nVar, values = dataMeans, free = TRUE, labels = meansLabels),
 	    mxFIMLObjective(covariance = "expCov", means = "expMean", dimnames = manifests),
 	    mxData(theData, type = "raw")
 	)
@@ -798,7 +798,6 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' @param showFixed Whether to show fixed paths (defaults to FALSE)
 #' @param showMeans Whether to show means
 #' @param showError Whether to show errors
-#' @param precision Deprecated use "digits"
 #' @export
 #' @export plot.MxModel
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
@@ -814,10 +813,10 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' plot(m1)
 #' }
 
@@ -920,7 +919,7 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 #' @param model An \code{\link{mxModel}} for which to report modification indices
 #' @param numInd How many modifications to report
 #' @param typeToShow Whether to shown additions or deletions (default = "both")
-#' @param decreasing How to sort (default = T, decreasing)
+#' @param decreasing How to sort (default = TRUE, decreasing)
 #' @param cache = Future function to cache these time-consuming results
 #' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
 #' @family umx modify model, umx reporting
@@ -936,20 +935,20 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxMI(model)
 #' umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 #' }
 
-umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = T, cache = T) {
+umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = TRUE, cache = TRUE) {
 	# depends on xmuMI(model)
 	if(typeof(model) == "list"){
 		mi.df = model
 	} else {
-		mi = xmuMI(model, vector = T)
+		mi = xmuMI(model, vector = TRUE)
 		mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
 		row.names(mi.df) = 1:nrow(mi.df);
 		# TODO: could be a helper: choose direction
@@ -1022,12 +1021,12 @@ umxUnexplainedCausalNexus <- function(from, delta, to, model) {
 	dimnames(partialDataRow) = list("val", manifests)
 	partialDataRow[1, from] <- delta # delta is in raw "from" units
 	partialDataRow[1, to]   <- NA
-	completedRow <- umxConditionalsFromModel(model, partialDataRow, meanOffsets = T)
-	# by default, meanOffsets = F, and the results take expected means into account
+	completedRow <- umxConditionalsFromModel(model, partialDataRow, meanOffsets = TRUE)
+	# by default, meanOffsets = FALSE, and the results take expected means into account
 	return(completedRow[1, to])
 }
 
-umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = F, meanOffsets = F) {
+umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, meanOffsets = FALSE) {
 	# original author: [Timothy Brick](http://www.github.com/tbates/umx/users/tbrick)
 	# [history](http://www.github.com/tbates/umx/thread/2076)
 	# Called by: umxUnexplainedCausalNexus
@@ -1102,7 +1101,7 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = F, mean
 	return(t(outs))
 }
 
-umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
+umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 	# Usage: umxComputeConditionals(model, newData)
 	# Result is a replica of the newData data frame with missing values and (if a RAM model) latent variables populated.
 	# original author: [Timothy Brick](http://www.github.com/tbates/umx/users/tbrick)
@@ -1276,10 +1275,10 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = F) {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' extractAIC(m1)
 #' # -2.615998
 #' AIC(m1)
@@ -1309,10 +1308,10 @@ extractAIC.MxModel <- function(model) {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' coef(m1)
 #' # -2.615998
 coef.MxModel <- function(model) {
@@ -1343,10 +1342,10 @@ coef.MxModel <- function(model) {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxExpCov(m1)
 #' umxExpCov(m1, digits = 3)
 umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
@@ -1359,7 +1358,7 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 	if(umx_is_RAM(model)){
 		if(manifests & !latents){
 			# TODO # test umxExpCov under 1.4?
-			if(mxVersion(verbose = F) > "2.0"){
+			if(mxVersion(verbose = FALSE) > "2.0"){
 				# expCov = attr(model$objective[[2]]$result, "expCov")
 				thisFit = paste0(model$name, ".fitfunction")
 				expCov <- attr(model@output$algebras[[thisFit]], "expCov")
@@ -1387,7 +1386,7 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 		if(latents){
 			stop("I don't know how to reliably get the latents for non-RAM models... Sorry :-(")
 		} else {
-			if(mxVersion(verbose = F) > "1.5.0"){
+			if(mxVersion(verbose = FALSE) > "1.5.0"){
 				expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
 			} else {
 				expCov = model$objective@info$expCov
@@ -1422,10 +1421,10 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
 #' 	mxPath(from = "one", to = manifests),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(demoOneFactor, type = "raw")
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxExpMeans(model = m1)
 #' umxExpMeans(m1, digits = 3)
 umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
@@ -1480,10 +1479,10 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' logLik(m1)
 #' AIC(m1)
 logLik.MxModel <- function(model) {
@@ -1524,10 +1523,10 @@ logLik.MxModel <- function(model) {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxFitIndices(m1, m1_ind)
 #' # TODO use means and compute independence model here for example...
 umxFitIndices <- function(model, indepfit) {
@@ -1640,10 +1639,10 @@ RMSEA <- function(x) UseMethod("RMSEA", x)
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' RMSEA(m1)
 RMSEA.MxModel <- function(model, ci.lower = .05, ci.upper = .95) { 
 	sm <- summary(model)
@@ -1705,7 +1704,7 @@ RMSEA.MxModel <- function(model, ci.lower = .05, ci.upper = .95) {
 		rmsea.pvalue <- 1
 	}
 	
-	txt = paste0("RMSEA = ", round(RMSEA, 3), " CI", sub("^0?\\.", replace = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "], p = ", umx_APA_pval(rmsea.pvalue))
+	txt = paste0("RMSEA = ", round(RMSEA, 3), " CI", sub("^0?\\.", replacement = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "], p = ", umx_APA_pval(rmsea.pvalue))
 	print(txt)
 	invisible(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, RMSEA.pvalue = rmsea.pvalue, txt = txt)) 
 }

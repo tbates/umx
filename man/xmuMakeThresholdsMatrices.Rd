@@ -3,7 +3,7 @@
 \alias{xmuMakeThresholdsMatrices}
 \title{xmuMakeThresholdsMatrices (not a user function)}
 \usage{
-xmuMakeThresholdsMatrices(df, droplevels = F, verbose = F)
+xmuMakeThresholdsMatrices(df, droplevels = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{df}{a \code{\link{data.frame}} containing the data for your \code{\link{mxData}} statement}
@@ -22,7 +22,7 @@ This is not as reliable a strategy and likely to be superceeded...
 }
 \examples{
 \dontrun{
-junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose=T)
+junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose= TRUE)
 }
 }
 \references{

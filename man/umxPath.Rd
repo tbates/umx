@@ -56,9 +56,9 @@ Dpecify a variance with \code{mxPath(var = A)} (equivalent to \code{mxPath(from 
 
 To specify a mean, you say \code{mxPath(mean = A)}, which is equivalent to \code{mxPath(from = "one", to = A)}.
 
-To fix a patha at a value, you can say \code{mxPath(var = A, fixedAt = 1)} instead of to \code{mxPath(from = A, to = A, arrows = 2, free = F, values = 1)}.
+To fix a patha at a value, you can say \code{mxPath(var = A, fixedAt = 1)} instead of to \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)}.
 
-Setting up a latent trait, you can fix the loading of the first path with \code{mxPath(A, to = c(B,C,D), fixFirst = T)} instead of
+Setting up a latent trait, you can fix the loading of the first path with \code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)} instead of
 \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
 
 Finally, you can use the John Fox "sem" package style notation, i.e., "A -> B".
@@ -103,7 +103,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(var = latents, fixedAt = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = umxRun(m1, setLabels = T, setValues = T)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umxSummary(m1, show = "std")
 }
 \references{

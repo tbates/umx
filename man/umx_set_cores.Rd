@@ -26,11 +26,11 @@ m1 <- mxModel("ind", type = "RAM",
 	mxData(mtcars[, manifests], type = "raw")
 )
 oldCores = umx_get_cores() # get global value
-umx_set_cores(model = m1) # set to default (max - 1)
-umx_get_cores() # show new value
+umx_set_cores(model = m1)  # set to default (max - 1)
+umx_get_cores()            # show new value
 umx_set_cores(omxDetectCores()) # set to default (max - 1)
-umx_get_cores() # show new value
-umx_set_cores(oldCores) $ reset to old value
+umx_get_cores()            # show new value
+umx_set_cores(oldCores)    # reset to old value
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}

@@ -3,7 +3,8 @@
 \alias{umx_grep}
 \title{umx_grep}
 \usage{
-umx_grep(df, grepString, output = "both", ignore.case = T, useNames = F)
+umx_grep(df, grepString, output = "both", ignore.case = T,
+  useNames = FALSE)
 }
 \arguments{
 \item{df}{an \code{\link{data.frame}} to search the labels of}
@@ -23,8 +24,8 @@ umx_grep(df, grepString, output = "both", ignore.case = T, useNames = F)
 search the labels of an SPSS file
 }
 \examples{
-umx_grep(mtcars, "hp", output="both", ignore.case=T)
-umx_grep(mtcars, "^h.*", output="both", ignore.case=T)
+umx_grep(mtcars, "hp", output="both", ignore.case= TRUE)
+umx_grep(mtcars, "^h.*", output="both", ignore.case= TRUE)
 \dontrun{
 umx_grep(spss_df, "labeltext", output = "label")
 umx_grep(spss_df, "labeltext", output = "name")

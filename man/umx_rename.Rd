@@ -25,7 +25,7 @@ x = mtcars
 x = umx_rename(x, replace = c(cyl = "cylinder"))
 # alternate style
 x = umx_rename(x, old = c("disp"), replace = c("displacement"))
-umx_check_names("displacement", data = x, die = T)
+umx_check_names("displacement", data = x, die = TRUE)
 # This will warn that "disp" doesn't exist (anymore)
 x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 }

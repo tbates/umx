@@ -3,7 +3,7 @@
 \alias{xmuMI}
 \title{xmuMI}
 \usage{
-xmuMI(model, vector = T)
+xmuMI(model, vector = TRUE)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to derive modification indices for}

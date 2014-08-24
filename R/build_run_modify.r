@@ -198,7 +198,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = manifestVars,
 		latentVars  = latentVars,
-		independent = T,
+		independent = TRUE,
 		data, dot.items)
 	)
 	# TODO: Add variance/residuals to all variables except reflective latents
@@ -304,7 +304,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, weightCov = TRUE); 
 #' 
 #' # Run and plot for specified windows (in this case just 1927)
-#' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, specifiedTargets = 1927, plotWindow = T)
+#' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, specifiedTargets = 1927, plotWindow = TRUE)
 #' 
 #' @family umx twin modeling
 #' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
@@ -314,15 +314,15 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' Briley, D, Bates, T.C., Harden, K Tucker-Drob, E. (2015)
 #' Of mice and men: Local SEM in gene environment analysis. \emph{Behavior Genetics}.
 
-umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, weightCov = F, specifiedTargets = NULL, width = 1, plotWindow = F, return = c("estimates","last_model")) {
+umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, weightCov = FALSE, specifiedTargets = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
 	# TODO want to allow missing moderator?
 	# Check moderator is set and exists in mzData and dzData
 	if(is.null(moderator)){
 		stop("Moderator must be set to the name of the moderator column, e.g, moderator = \"birth_year\"")
 	}
 	# Check DVs exists in mzData and dzData (and nothing else apart from the moderator)
-	umx_check_names(c(selDVs, moderator), data = mzData, die = T, no_others = T)
-	umx_check_names(c(selDVs, moderator), data = dzData, die = T, no_others = T)
+	umx_check_names(c(selDVs, moderator), data = mzData, die = TRUE, no_others = TRUE)
+	umx_check_names(c(selDVs, moderator), data = dzData, die = TRUE, no_others = TRUE)
 
 	# Add a zygosity column (that way we know what it's called)
 	mzData$ZYG = "MZ"; 
@@ -363,7 +363,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	}
 
 	numPairs     = nrow(allData)
-	moderatorSD  = sd(modVar, na.rm = T)
+	moderatorSD  = sd(modVar, na.rm = TRUE)
 	bw           = 2 * numPairs^(-.2) * moderatorSD *  width # -.2 == -1/5 
 
 	ACE = c("A","C","E")
@@ -461,7 +461,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 		}
 		if(!is.null(weightVar)){
 			# weight variable provided: check it exists in each frame
-			if(!umx_check_names(weightVar, data = mzData, die=F) | !umx_check_names(weightVar, data = dzData, die=F)){
+			if(!umx_check_names(weightVar, data = mzData, die= FALSE) | !umx_check_names(weightVar, data = dzData, die= FALSE)){
 				stop("The weight variable must be included in the mzData and dzData",
 					 " frames passed into umxACE when \"weightVar\" is specified",
 					 "\n mzData contained:", paste(names(mzData), collapse = ", "),
@@ -469,8 +469,8 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 					 "\nbut I was looking for ", weightVar, " as the moderator name"
 				)
 			}
-			mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = F, values = mzData[, weightVar])
-			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = F, values = dzData[, weightVar])
+			mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = FALSE, values = mzData[, weightVar])
+			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = FALSE, values = dzData[, weightVar])
 			mzData = mzData[, selDVs]
 			dzData = dzData[, selDVs]
 			bVector = TRUE
@@ -478,10 +478,10 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 			# no weights
 		}
 		# Add means matrix to top
-		obsMZmeans = colMeans(mzData[, selDVs], na.rm = T);
+		obsMZmeans = colMeans(mzData[, selDVs], na.rm = TRUE);
 		top = mxModel(name = "top", 
 			# means (not yet equated across twins)
-			umxLabel(mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * 2), free = T, values = obsMZmeans, dimnames = list("means", selDVs)) )
+			umxLabel(mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * 2), free = TRUE, values = obsMZmeans, dimnames = list("means", selDVs)) )
 		)
 		modelMZ = mxModel(name = "MZ", 
 			# TODO swap these back for 2.0...
@@ -526,11 +526,11 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 	top = mxModel(top,
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 		# NB: top already has the means model added if raw  - see above
-		umxLabel(mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = .6, byrow = T), jiggle = 0.05),  # Additive genetic path 
-		umxLabel(mxMatrix(name = "c", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = .3, byrow = T), jiggle = 0.05),  # Common environmental path 
-		umxLabel(mxMatrix(name = "e", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = .6, byrow = T), jiggle = 0.05),  # Unique environmental path
-		mxMatrix(name = "dzAr", type = "Full", 1, 1, free = F, values = dzAr),
-		mxMatrix(name = "dzCr", type = "Full", 1, 1, free = F, values = dzCr),
+		umxLabel(mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = .6, byrow = TRUE), jiggle = 0.05),  # Additive genetic path 
+		umxLabel(mxMatrix(name = "c", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = .3, byrow = TRUE), jiggle = 0.05),  # Common environmental path 
+		umxLabel(mxMatrix(name = "e", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = .6, byrow = TRUE), jiggle = 0.05),  # Unique environmental path
+		mxMatrix(name = "dzAr", type = "Full", 1, 1, free = FALSE, values = dzAr),
+		mxMatrix(name = "dzCr", type = "Full", 1, 1, free = FALSE, values = dzCr),
 		# Multiply by each path coefficient by its inverse to get variance component
 		# Quadratic multiplication to add common_loadings
 		mxAlgebra(a %*% t(a), name = "A"), # additive genetic variance
@@ -630,7 +630,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' mxEval(S, m1) # default variances are 0
@@ -690,8 +690,8 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 				msg("You are using raw data, but have not yet added paths for the means\n")
 				stop("You do this with mxPath(from = 'one', to = 'var')")
 			} else {			
-				dataMeans = colMeans(theData[,manifests], na.rm = T)
-				freeManifestMeans = (obj@matrices$M@free[1, manifests] == T)
+				dataMeans = colMeans(theData[,manifests], na.rm = TRUE)
+				freeManifestMeans = (obj@matrices$M@free[1, manifests] == TRUE)
 				obj@matrices$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
 				covData = cov(theData, use = "pairwise.complete.obs")
 			}
@@ -761,7 +761,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"
@@ -771,7 +771,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
 #' umxLabel(mxMatrix(name = "a", "Full", 1,1, labels= "data.a"))
 #' a$labels
-umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, labelFixedCells = T, jiggle = NA, boundDiag = NA, verbose = F, overRideExisting = F) {	
+umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE) {	
 	# TODO change to umxSetLabels?
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
@@ -821,11 +821,11 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = F, drop = 0, lab
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1) # just run: will create saturated model if needed
-#' m1 = umxRun(m1, setValues = T, setLabels = T) # set start values and label all parameters
+#' m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE) # set start values and label all parameters
 #' umxSummary(m1, show = "std")
 #' m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
 #' m1 = mxRun(m1, intervals = TRUE)
@@ -879,7 +879,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 			# If we have a RAM model with raw data, compute the satuated and indpendence models
 			# TODO: Update to omxSaturated() and omxIndependenceModel()
 			message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
-			model_sat = umxSaturated(model, evaluate = T, verbose = F)
+			model_sat = umxSaturated(model, evaluate = TRUE, verbose = FALSE)
 			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(model_sat$Ind))
 			model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(model_sat$Sat))
 		}
@@ -894,18 +894,18 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' 
 #' umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally adding, setting, or dropping parameters.
 #' The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
-#' fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = T)
+#' fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = TRUE)
 #' A powerful feature is regular expression. These let you drop collections of paths by matching patterns
-#' fit2 = umxReRun(fit1, update = "C[sr]", regex = TRUE, name = "drop_Cs_andCr", comparison = T)
+#' fit2 = umxReRun(fit1, update = "C[sr]", regex = TRUE, name = "drop_Cs_andCr", comparison = TRUE)
 #' 
 #' If you're just starting out, you might find it easier to be more explicit. Like this: 
 #' 
-#' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = F, name = "newModelName")
+#' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
 #' 
 #' fit2 = mxRun(fit2)
 #' 
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
-#' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = T) or an object such as mxCI etc.
+#' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
 #' @param regex    Whether or not update is a regular expression (defaults to FALSE)
 #' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
 #' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
@@ -929,16 +929,16 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1")
 #' umxSummary(m2); umxCompare(m1, m2)
 #' # 1-line version including comparison
-#' m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = T)
-#' m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = T, name = "drop_G_to_x3_x4_and_x5", comparison = T)
-#' m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = T)
+#' m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
+#' m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "drop_G_to_x3_x4_and_x5", comparison = TRUE)
+#' m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = TRUE)
 #' m3 = umxReRun(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again")
 #' umxCompare(m3, m2)
 
@@ -951,7 +951,7 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 				"umxReRun(m1, update = ", omxQuotes("E_to_heartRate"), ")\n",
    			 "\nThis regular expression will do it for you:\n",
    			 "find    = regex *= *(\\\"[^\\\"]+\\\"),\n",
-   			 "replace = update = $1, regex = T,"
+   			 "replace = update = $1, regex = TRUE,"
 			)
 		} else {
 			stop("hi. Sorry for the change. To use regex replace ", omxQuotes("regex"), " with ", omxQuotes("update"),
@@ -961,7 +961,7 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 			 "umxReRun(m1, update = ", omxQuotes("^E_.*"), ", regex = TRUE)\n",
 			 "\nThis regular expression will do it for you:\n",
 			 "find    = regex *= *(\\\"[^\\\"]+\\\"),\n",
-			 "replace = update = $1, regex = T,"
+			 "replace = update = $1, regex = TRUE,"
 			 )
 		}
 	}
@@ -973,7 +973,7 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 		}else {
 			theLabels = update
 		}
-		x = omxSetParameters(lastFit, labels = theLabels, free = free, value = value, name = name)		
+		x = omxSetParameters(lastFit, labels = theLabels, free = free, values = value, name = name)		
 	} else {
 		# TODO Label and start new object
 		if(is.null(name)){ name = NA }
@@ -1016,10 +1016,10 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' m1 = umxStandardizeModel(m1, return = "model")
 #' summary(m1)
 umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smatrix = NA, Mmatrix = NA) {
@@ -1139,20 +1139,20 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1)
 #' umxGetParameters(m1)
-#' m1 = umxRun(m1, setLabels = T)
+#' m1 = umxRun(m1, setLabels = TRUE)
 #' umxGetParameters(m1)
-#' umxGetParameters(m1, free=T) # only the free parameter
-#' umxGetParameters(m1, free=F) # only parameters which are fixed
+#' umxGetParameters(m1, free = TRUE) # only the free parameter
+#' umxGetParameters(m1, free = FALSE) # only parameters which are fixed
 #' \dontrun{
 #' # Complex regex patterns
-#' umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = T) # Column 6 of matrix "as"
+#' umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = TRUE) # Column 6 of matrix "as"
 #' }
-umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
+umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE) {
 	# TODO Be nice to offer a method to handle submodels
 	# model@submodels$aSubmodel@matrices$aMatrix@labels
 	# model@submodels$MZ@matrices
@@ -1169,19 +1169,19 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 	}
 	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
 	if( !is.na(regex) ) {
-		if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) )<1){ # no grep found: add some anchors for safety
-			regex = paste("^", regex, "[0-9]*$", sep=""); # anchor to the start of the string
-			anchored = T
-			if(verbose == T) {
+		if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
+			regex = paste0("^", regex, "[0-9]*$"); # anchor to the start of the string
+			anchored = TRUE
+			if(verbose == TRUE) {
 				message("note: anchored regex to beginning of string and allowed only numeric follow\n");
 			}
 		}else{
 			anchored=F
 		}
-		theLabels = grep(regex, theLabels, perl = F, value = T) # return more detail
+		theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # return more detail
 		if(length(theLabels) == 0){
 			msg = "Found no matching labels!\n"
-			if(anchored == T){
+			if(anchored == TRUE){
 				msg = paste0(msg, "note: anchored regex to beginning of string and allowed only numeric follow:\"", regex, "\"")
 			}
 			if(umx_is_MxModel(inputTarget)){
@@ -1225,10 +1225,10 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = F) {
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
 #' m2 = mxRun(m2) # have to run the model again...
 #' umxCompare(m1, m2) # not good :-)
@@ -1243,17 +1243,17 @@ umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = 
 	if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", master) ) < 1){ # no grep found: add some anchors
 		master = paste0("^", master, "$"); # anchor to the start of the string
 		slave  = paste0("^", slave,  "$");
-		if(verbose == T){
+		if(verbose == TRUE){
 			cat("note: matching whole label\n");
 		}
 	}
 	masterLabels = names(omxGetParameters(model, indep = FALSE, free = free))
 	masterLabels = masterLabels[which(!is.na(masterLabels) )]      # exclude NAs
-	masterLabels = grep(master, masterLabels, perl = F, value = T)
+	masterLabels = grep(master, masterLabels, perl = FALSE, value = TRUE)
 	# return(masterLabels)
-	slaveLabels = names(omxGetParameters(model, indep = F, free = free))
+	slaveLabels = names(omxGetParameters(model, indep = FALSE, free = free))
 	slaveLabels = slaveLabels[which(!is.na(slaveLabels))] # exclude NAs
-	slaveLabels = grep(slave, slaveLabels, perl = F, value = T)
+	slaveLabels = grep(slave, slaveLabels, perl = FALSE, value = TRUE)
 	if( length(slaveLabels) != length(masterLabels)) {
 		print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
 		stop("ERROR in umxEquate: master and slave labels not the same length!")
@@ -1266,7 +1266,7 @@ umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = 
 	}
 	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
 	model = omxSetParameters(model = model, labels = slaveLabels, newlabels = masterLabels, name = name)
-	model = omxAssignFirstParameters(model, indep = F)
+	model = omxAssignFirstParameters(model, indep = FALSE)
 	return(model)
 }
 
@@ -1292,11 +1292,11 @@ umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = 
 #' }
 umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 	if(is.null(regex)) {
-		toDrop = umxGetParameters(model, free = T)
+		toDrop = umxGetParameters(model, free = TRUE)
 	} else if (length(regex) > 1) {
 		toDrop = regex
 	} else {
-		toDrop = grep(regex, umxGetParameters(model, free = T), value = T, ignore.case = T)
+		toDrop = grep(regex, umxGetParameters(model, free = TRUE), value = TRUE, ignore.case = TRUE)
 	}
 	message("Will drop each of ", length(toDrop), " parameters: ", paste(toDrop, collapse = ", "), ".\nThis might take some time...")
 	out = list(rep(NA, length(toDrop)))
@@ -1360,7 +1360,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 		}else{
 			if(is.null(pathList1)){
 				stop("best to set pathList1!")
-				# toAdd = umxGetParameters(model, free = F)
+				# toAdd = umxGetParameters(model, free = FALSE)
 			} else {
 				toAdd = xmuMakeTwoHeadedPathsFromPathList(pathList1)
 			}
@@ -1378,7 +1378,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 	message("You gave me ", length(pathList1), "source variables. I made ", length(toAdd), " paths from these.")
 
 	# Just keep the ones that are not already free... (if any)
-	toAdd2 = toAdd[toAdd %in% umxGetParameters(model, free = F)]
+	toAdd2 = toAdd[toAdd %in% umxGetParameters(model, free = FALSE)]
 	if(length(toAdd2) == 0){
 		if(length(toAdd[toAdd %in% umxGetParameters(model, free = NA)] == 0)){
 			message("I couldn't find any of those paths in this model.",
@@ -1403,7 +1403,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 	for(i in seq_along(toAdd)){
 		# model = fit1 ; toAdd = c("x2_with_x1"); i=1
 		message("item ", i, " of ", length(toAdd))
-		tmp = omxSetParameters(model, labels = toAdd[i], free = T, value = .01, name = paste0("add_", toAdd[i]))
+		tmp = omxSetParameters(model, labels = toAdd[i], free = TRUE, values = .01, name = paste0("add_", toAdd[i]))
 		tmp = mxRun(tmp)
 		mxc = umxCompare(tmp, model)
 		newRow = mxc[2, row1Cols]
@@ -1419,7 +1419,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 		return(out)
 	} else {
 		good_rows = out$p < maxP
-		message(sum(good_rows, na.rm = T), "of ", length(out$p), " items were beneath your p-threshold of ", maxP)
+		message(sum(good_rows, na.rm = TRUE), "of ", length(out$p), " items were beneath your p-threshold of ", maxP)
 		message(sum(is.na(good_rows)), " was/were NA")
 		good_rows[is.na(good_rows)] = T
 		return(out[good_rows, ])
@@ -1468,7 +1468,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #'	umxLatent("G", forms = manifests, type = "exogenous", data = theData),
 #'	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
-#' m1 = umxRun(m1, setValues = T, setLabels = T); umxSummary(m1, show="std")
+#' m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE); umxSummary(m1, show="std")
 #' umxPlot(m1)
 #' 
 #' m2 = mxModel("formative", type = "RAM",
@@ -1478,10 +1478,10 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #'	umxLatent("G", formedBy = manifests, data = theData),
 #'	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
-#' m2 = umxRun(m2, setValues = T, setLabels = T); umxSummary(m2, show="std")
+#' m2 = umxRun(m2, setValues = TRUE, setLabels = TRUE); umxSummary(m2, show="std")
 #' umxPlot(m2)
 #' }
-umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  model.name = NULL, labelSuffix = "", verbose = T, endogenous = "deprecated") {
+umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  model.name = NULL, labelSuffix = "", verbose = TRUE, endogenous = "deprecated") {
 	# Purpose: make a latent variable formed/or formed by some manifests
 	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
 	# TODO: delete manifestVariance
@@ -1502,7 +1502,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	# = will fix the mean and variance of ordinal vars to 0 and 1
 	# ==========================================================
 	# Warning("If you use this with a dataframe containing ordinal variables, don't forget to call umxAutoThreshRAMObjective(df)")
-	isCov = umx_is_cov(data, boolean = T)
+	isCov = umx_is_cov(data, boolean = TRUE)
 	if( any(!is.null(forms))) {
 		manifests <- forms
 	}else{
@@ -1511,11 +1511,11 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	if(isCov) {
 		variances = diag(data[manifests, manifests])
 	} else {
-		manifestOrdVars = umxIsOrdinalVar(data[,manifests])
+		manifestOrdVars = umx_is_ordinal(data[,manifests])
 		if(any(manifestOrdVars)) {
 			means         = rep(0, times = length(manifests))
 			variances     = rep(1, times = length(manifests))
-			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm = T)
+			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm = TRUE)
 			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use = "complete"))
 			if( any(!is.null(forms)) ) {
 				contVariances = contVariances * .1 # hopefully residuals are modest
@@ -1526,7 +1526,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 			if(verbose){
 				message("No ordinal variables")
 			}
-			means     = colMeans(data[, manifests], na.rm = T)
+			means     = colMeans(data[, manifests], na.rm = TRUE)
 			variances = diag(cov(data[, manifests], use = "complete"))
 		}
 	}
@@ -1536,46 +1536,46 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 		# p1 = Residual variance on manifests
 		# p2 = Fix latent variance @ 1
 		# p3 = Add paths from latent to manifests
-		p1 = mxPath(from = manifests, arrows = 2, free = T, values = variances)
+		p1 = mxPath(from = manifests, arrows = 2, free = TRUE, values = variances)
 		if(is.null(type)){ stop("Error in mxLatent: You must set type to either exogenous or endogenous when creating a latent variable with an outgoing path") }
 		if(type == "endogenous"){
 			# Free latent variance so it can do more than just redirect what comes in
 			if(verbose){
 				message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
 			}
-			p2 = mxPath(from=latent, connect="single", arrows=2, free=T, values=.5)
+			p2 = mxPath(from=latent, connect="single", arrows=2, free= TRUE, values=.5)
 		} else {
 			# fix variance at 1 - no inputs
 			if(verbose){
 				message(paste("latent '", latent, "' has variance fixed @ 1"))
 			}
-			p2 = mxPath(from=latent, connect="single", arrows=2, free=F, values=1)
+			p2 = mxPath(from = latent, connect = "single", arrows = 2, free = Free, values = 1)
 		}
-		p3 = mxPath(from = latent, to = manifests, connect = "single", free = T, values = variances)
+		p3 = mxPath(from = latent, to = manifests, connect = "single", free = TRUE, values = variances)
 		if(isCov) {
 			# Nothing to do: covariance data don't need means...
 			paths = list(p1, p2, p3)
 		}else{
 			# Add means: fix latent mean @0, and add freely estimated means to manifests
-			p4 = mxPath(from = "one", to = latent   , arrows = 1, free = F, values = 0)
-			p5 = mxPath(from = "one", to = manifests, arrows = 1, free = T, values = means)
+			p4 = mxPath(from = "one", to = latent   , arrows = 1, free = FALSE, values = 0)
+			p5 = mxPath(from = "one", to = manifests, arrows = 1, free = TRUE, values = means)
 			paths = list(p1, p2, p3, p4, p5)
 		}
 	} else {
 		# Handle formedBy case
 		# Add paths from manifests to the latent
-		p1 = mxPath(from = manifests, to = latent, connect = "single", free = T, values = umxValues(.6, n=manifests)) 
+		p1 = mxPath(from = manifests, to = latent, connect = "single", free = TRUE, values = umxValues(.6, n=manifests)) 
 		# In general, manifest variance should be left free...
 		# TODO If the data were correlations... we can inspect for that, and fix the variance to 1
-		p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = T, values = variances)
+		p2 = mxPath(from = manifests, connect = "single", arrows = 2, free = TRUE, values = variances)
 		# Allow manifests to intercorrelate
-		p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = T, values = umxValues(.3, n = manifests))
+		p3 = mxPath(from = manifests, connect = "unique.bivariate", arrows = 2, free = TRUE, values = umxValues(.3, n = manifests))
 		if(isCov) {
 			paths = list(p1, p2, p3)
 		}else{
 			# Fix latent mean at 0, and freely estimate manifest means
-			p4 = mxPath(from="one", to=latent   , free = F, values = 0)
-			p5 = mxPath(from="one", to=manifests, free = T, values = means)
+			p4 = mxPath(from="one", to=latent   , free = FALSE, values = 0)
+			p5 = mxPath(from="one", to=manifests, free = TRUE, values = means)
 			paths = list(p1, p2, p3, p4, p5)
 		}
 	}
@@ -1586,7 +1586,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 			message("\n\nIMPORTANT: you need to set numObs in the mxData() statement\n\n\n")
 		} else {
 			if(any(manifestOrdVars)){
-				m1 <- mxModel(m1, umxThresholdRAMObjective(data, deviationBased = T, droplevels = T, verbose = T))
+				m1 <- mxModel(m1, umxThresholdRAMObjective(data, deviationBased = TRUE, droplevels = TRUE, verbose = TRUE))
 			} else {
 				m1 <- mxModel(m1, mxData(data, type = "raw"))
 			}
@@ -1600,10 +1600,10 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	# bad usages
 	# mxLatent("Read") # no too defined
 	# mxLatent("Read", forms=manifestsRead, formedBy=manifestsRead) #both defined
-	# m1 = mxLatent("Read", formedBy = manifestsRead, model.name="base"); umxPlot(m1, std=F, dotFilename="name")
+	# m1 = mxLatent("Read", formedBy = manifestsRead, model.name="base"); umxPlot(m1, std = FALSE, dotFilename="name")
 	# m2 = mxLatent("Read", forms = manifestsRead, as.model="base"); 
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
-	# umxPlot(m2, std=F, dotFilename="name")
+	# umxPlot(m2, std=FALSE, dotFilename="name")
 	# mxLatent("Read", forms = manifestsRead)
 }
 
@@ -1611,7 +1611,7 @@ umxConnect <- function(x) {
 	# TODO handle endogenous
 }
 
-umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
+umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRUE){
 	# use case
 	# mxSingleIndicators(manifests, data)
 	if( nrow(data) == ncol(data) & all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
@@ -1631,20 +1631,20 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 		p1 = mxPath(from=manifests, arrows=2, value=variances)
 		return(p1)
 	} else {
-		manifestOrdVars = umxIsOrdinalVar(data[,manifests])
+		manifestOrdVars = umx_is_ordinal(data[,manifests])
 		if(any(manifestOrdVars)){
 			means         = rep(0, times=length(manifests))
 			variances     = rep(1, times=length(manifests))
-			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm=T)
+			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm= TRUE)
 			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use="complete"))
 			means[!manifestOrdVars] = contMeans				
 			variances[!manifestOrdVars] = contVariances				
 		}else{
-			means     = colMeans(data[,manifests], na.rm = T)
+			means     = colMeans(data[,manifests], na.rm = TRUE)
 			variances = diag(cov(data[,manifests], use = "complete"))
 		}
 		# Add variance to the single manfests
-		p1 = mxPath(from = manifests, arrows = 2, value = variances) # labels = mxLabel(manifests, suffix = paste0("unique", labelSuffix))
+		p1 = mxPath(from = manifests, arrows = 2, values = variances) # labels = mxLabel(manifests, suffix = paste0("unique", labelSuffix))
 		# Add means for the single manfests
 		p2 = mxPath(from="one", to=manifests, values=means) # labels = mxLabel("one", manifests, suffix = labelSuffix)
 		return(list(p1, p2))
@@ -1668,6 +1668,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 #'
 #' @param df the data being modelled (to allow access to the factor levels and quantiles within these for each variable)
 #' @param suffixes e.g. c("T1", "T2") - Use for data with repeated observations in a row (i.e., twin data) (defaults to NA)
+#' @param threshMatName name of the matrix which is returned. Defaults to "threshMat" - best not to change it.
 #' @param l_u_bound c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.
 #' @param deviationBased Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)
 #' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
@@ -1694,7 +1695,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = T){
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' umxThresholdMatrix(mzData, suffixes = 1:2)
-#' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = F) # supress informative messages
+#' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE) # supress informative messages
 #' 
 #' # ======================================
 #' # = Ordinal (n categories > 2) example =
@@ -1737,11 +1738,11 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
 	isBin       = umx_is_ordinal(df, binary.only = TRUE)
 	nBinVars    = sum(isBin)
 	nOrdVars    = sum(isOrd)
-	ordVarNames = names(df)[isOrd]
-	binVarNames = names(df)[isBin]
 	nSib        = length(suffixes)
-	if(nOrdVars < 1){
-		message("No ordinal variables in dataframe: no need to call umxThresholdMatrix")
+	if((nOrdVars + nBinVars) < 1){
+		message("No ordinal or binary variables in dataframe: no need to call umxThresholdMatrix")
+		return(NA) # probably OK to set thresholds matrix to NA in mxExpectation()
+		# TODO check if we should die here instead
 	} else {
 		if(nSib == 2){
 			message("'threshMat' created to handle ", nOrdVars/nSib, " pair(s) of ordinal variables:", omxQuotes(ordVarNames))
@@ -1749,12 +1750,14 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
 			message("'threshMat' created to handle ", nOrdVars, " ordinal variables:", omxQuotes(ordVarNames))
 		}
 	}
+	ordVarNames = names(df)[isOrd]
 	minLevels = umx:::xmuMinLevels(df)
 	maxLevels = umx:::xmuMaxLevels(df)
 	maxThresh = maxLevels - 1
 
 	# TODO simplify for n = bin, n= ord, n= cont msg
 	if(sum(isBin) > 0){
+		binVarNames = names(df)[isBin]
 		if(verbose){
 			message(sum(isBin), " trait(s) are binary (only 2-levels).\n",
 			omxQuotes(binVarNames),
@@ -1803,7 +1806,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
 		
 		tab = table(thisCol)/sum(table(thisCol))
 		cumTab = cumsum(tab)
-		zValues = qnorm(p=cumTab, lower.tail = T)
+		zValues = qnorm(p = cumTab, lower.tail = TRUE)
 		if(any(is.infinite(zValues))){
 			nPlusInf = sum(zValues == (Inf))
 			nMinusInf = sum(zValues == (-Inf))
@@ -1823,7 +1826,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
 		if(nSib == 2){
 			findStr = paste0( "(", paste(suffixes, collapse = "|"), ")$")
 			thisLab = sub(findStr, "", thisVarName)		
-		}else{
+		} else {
 			thisLab = thisVarName
 		}	
         labels = c(paste0(thisLab, "_thresh", 1:nThreshThisVar), rep(NA   , (maxThresh - nThreshThisVar)))
@@ -1831,7 +1834,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
         values = c(zValues[2:(nThreshThisVar+1)], rep(FALSE, (maxThresh - nThreshThisVar)))
 		if(nThreshThisVar == 1){			
 			# We are all done: user NEEDS to fix the mean and variance
-			# of the latent trait at, say, 0 and 1 for this to work.
+			# of the latent trait, say at 0 and 1 for this to work.
 		} else if(nThreshThisVar > 1){ # fix the first 2
 			free[1:2] = FALSE
 		} else {
@@ -1935,7 +1938,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	# eddie_AddCIbyNumber(model, labelRegex="[ace][1-9]")
 	args     = commandArgs(trailingOnly=TRUE)
 	CInumber = as.numeric(args[1]); # get the 1st argument from the cmdline arguments (this is called from a script)
-	CIlist   = umxGetParameters(model ,regex= "[ace][0-9]", verbose=F)
+	CIlist   = umxGetParameters(model ,regex= "[ace][0-9]", verbose= FALSE)
 	thisCI   = CIlist[CInumber]
 	model    = mxModel(model, mxCI(thisCI) )
 	return (model)
@@ -1977,7 +1980,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 	latentVars  = latents,
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents  , arrows = 2, free = F, values = 1),
+#' 	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
 #' )
 #' 
@@ -1992,7 +1995,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
 #' 
 #' # umxRun the model (calculates saturated models for raw data, & repeats if the model is not code green)
-#' m1 = umxRun(m1, setLabels = T, setValues = T) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
 #' 
 #' # Let's get some journal-ready fit information
 #' 
@@ -2003,13 +2006,13 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # = Model updating =
 #' # ==================
 #' # Can we set the loading of X5 on G to zero?
-#' m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = F, name = "no_effect_of_g_on_X5")
+#' m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = FALSE, name = "no_effect_of_g_on_X5")
 #' m2 = mxRun(m2)
 #' # Compare the two models
 #' umxCompare(m1, m2)
 #' 
 #' # Use umxReRun to do the same thing in 1-line
-#' m2 = umxReRun(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = T)
+#' m2 = umxReRun(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = TRUE)
 #' 
 #' # =================================
 #' # = Get some Confidence intervals =
@@ -2020,9 +2023,9 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # And make a Figure it dot format!
 #' # If you have installed GraphViz, the next command will open it for you to see!
 #' 
-#' # umxPlot(m1, std = T)
+#' # umxPlot(m1, std = TRUE)
 #' # Run this instead if you don't have GraphViz
-#' plot(m1, std = T, dotFilename = NA)
+#' plot(m1, std = TRUE, dotFilename = NA)
 #' @docType package
 #' @name umx
 NULL
@@ -2051,9 +2054,9 @@ umxParallel <- function(model, what) {
 #' 
 #' To specify a mean, you say \code{mxPath(mean = A)}, which is equivalent to \code{mxPath(from = "one", to = A)}.
 #' 
-#' To fix a patha at a value, you can say \code{mxPath(var = A, fixedAt = 1)} instead of to \code{mxPath(from = A, to = A, arrows = 2, free = F, values = 1)}.
+#' To fix a patha at a value, you can say \code{mxPath(var = A, fixedAt = 1)} instead of to \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)}.
 #' 
-#' Setting up a latent trait, you can fix the loading of the first path with \code{mxPath(A, to = c(B,C,D), fixFirst = T)} instead of 
+#' Setting up a latent trait, you can fix the loading of the first path with \code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)} instead of 
 #' \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
 #' 
 #' Finally, you can use the John Fox "sem" package style notation, i.e., "A -> B".
@@ -2116,7 +2119,7 @@ umxParallel <- function(model, what) {
 #' 	mxPath(var = latents, fixedAt = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = umxRun(m1, setLabels = T, setValues = T)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxSummary(m1, show = "std")
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
 	if(!is.null(from)){

@@ -31,10 +31,10 @@ m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents,
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = umxRun(m1, setLabels = T, setValues = T)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
 mxCompare(m1, m2) # what OpenMx gives by default
@@ -42,7 +42,7 @@ umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
 umxCompare(m1, m2, report = 3) # Open table in browser
 m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 umxCompare(m1, c(m2, m3))
-umxCompare(c(m1, m2), c(m2, m3), all = T)
+umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx/}

@@ -1,4 +1,4 @@
-#' @demoTitle Computing one variable’s effect on another in a complex path diagram
+#' @demoTitle Computing one variable\u2019s effect on another in a complex path diagram.
 
 require(sem)
 require(OpenMx)

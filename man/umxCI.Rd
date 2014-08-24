@@ -3,8 +3,8 @@
 \alias{umxCI}
 \title{umxCI}
 \usage{
-umxCI(model = NULL, addCIs = T, runCIs = "if necessary",
-  showErrorcodes = T)
+umxCI(model = NULL, addCIs = TRUE, runCIs = "if necessary",
+  showErrorcodes = TRUE)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on}
@@ -45,13 +45,13 @@ m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents,
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = umxRun(m1, setLabels = T, setValues = T)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umxCI(m1)
 \dontrun{
-umxCI(model, addCIs = T) # add Cis for all free parameters if not present
+umxCI(model, addCIs = TRUE) # add Cis for all free parameters if not present
 umxCI(model, runCIs = "yes") # force update of CIs
 umxCI(model, runCIs = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
 umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run them

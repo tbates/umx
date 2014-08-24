@@ -25,7 +25,7 @@ umx_APA_pval(.052347)
 umx_APA_pval(1.23E-3)
 umx_APA_pval(1.23E-4)
 umx_APA_pval(c(1.23E-3, .5))
-umx_APA_pval(c(1.23E-3, .5), addComparison = T)
+umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 }
 \seealso{
 - \code{\link{round}}

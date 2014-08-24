@@ -3,7 +3,7 @@
 \alias{umx_update_OpenMx}
 \title{umx_update_OpenMx}
 \usage{
-umx_update_OpenMx(bleedingEdge = F, loadNew = T, anyOK = F)
+umx_update_OpenMx(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALSE)
 }
 \arguments{
 \item{bleedingEdge}{A Boolean determining whether to request the beta (TRUE) or relase version (defaults to FALSE)}

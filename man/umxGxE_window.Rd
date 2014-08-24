@@ -4,8 +4,8 @@
 \title{umxGxE_window}
 \usage{
 umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
-  dzData = dzData, weightCov = F, specifiedTargets = NULL, width = 1,
-  plotWindow = F, return = c("estimates", "last_model"))
+  dzData = dzData, weightCov = FALSE, specifiedTargets = NULL,
+  width = 1, plotWindow = FALSE, return = c("estimates", "last_model"))
 }
 \arguments{
 \item{selDVs}{The dependent variables for T1 and T2, e.g. c("bmi_T1", "bmi_T2")}
@@ -66,7 +66,7 @@ umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = 
 umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, weightCov = TRUE);
 
 # Run and plot for specified windows (in this case just 1927)
-umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, specifiedTargets = 1927, plotWindow = T)
+umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, specifiedTargets = 1927, plotWindow = TRUE)
 }
 \references{
 - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)

@@ -30,10 +30,10 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
 	mxPath(from = "one", to = manifests),
-	mxPath(from = latents, arrows = 2, free = F, values = 1.0),
+	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(demoOneFactor, type = "raw")
 )
-m1 = umxRun(m1, setLabels = T, setValues = T)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umxExpMeans(model = m1)
 umxExpMeans(m1, digits = 3)
 }
