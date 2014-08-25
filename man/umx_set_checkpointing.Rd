@@ -4,7 +4,7 @@
 \title{umx_set_checkpointing}
 \usage{
 umx_set_checkpointing(always = c("Yes", "No"), count = 1,
-  units = "evaluations", model = NULL)
+  units = c("evaluations", "minutes"), directory = getwd(), model = NULL)
 }
 \arguments{
 \item{always}{defaults to "Yes"}
@@ -22,7 +22,8 @@ umx_set_checkpointing(always = c("Yes", "No"), count = 1,
 Set the checkpoint status for a model or global options
 }
 \examples{
-umx_set_checkpointing()
+umx_set_checkpointing("Yes", 1, "evaluations", "~/Desktop/")
+# m1 = umx_set_checkpointing("Yes", 1, "evaluations", model = m1)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
@@ -43,7 +44,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_MxModel}}; \code{\link{umx_is_cov}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
-  \code{\link{umx_is_ordinal}};
+  \code{\link{umx_is_ordered}};
   \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
   \code{\link{umx_reorder}}; \code{\link{umx_rot}};
   \code{\link{umx_set_cores}};

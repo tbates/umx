@@ -28,13 +28,12 @@
 #'
 #' Making it as simple as possible to create a RAM model, without doing things invisible to the user.
 #' 
-#' umxRAM borrows its philosophy and some parameter labels from the John Fox sem::specifyModel function.
-#'
 #' @details Like mxModel, you list the theoretical causal paths. Unlike mxModel:
 #' \enumerate{
 #' \item{You can request creation of error variances using \code{endog.variances = TRUE} }
 #' \item{You can request creation of variances for exogenous variables (using \code{exog.variances = TRUE})}
-#' \item{For identification, you can request either \code{fix = "latents"} or \code{fix = "firstLoadings"} to fix either the variance of latents or their first factor loading at 1.}
+#' \item{For identification, you can request either \code{fix = "latents"} or \code{fix = "firstLoadings"} 
+#' to fix either the variance of latents or their first factor loading at 1.}
 #' }
 #' Additional conveniences: 
 #' \enumerate{
@@ -57,7 +56,7 @@
 #' @family umx model building functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
-#' # umxRAM is like qplot(), you give the data in a data =  parameter
+#' # umxRAM is like ggplot2::qplot(), you give the data in a data =  parameter
 #' # A common error is to include data in the main list, a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
 #' # nb: unlike mxModel, umxRAM needs data at build time.
 #' 
@@ -423,13 +422,14 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #'
 #' Make a 2-group ACE model
 #'
-#' @param name The name of the model (defaults to"ACE")
+#' @param name The name of the model (defaults to "ACE")
 #' @param selDVs The variables to include from the data
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
 #' @param numObsDZ = Number of DZ twins: Set this if you input covariance data
 #' @param numObsMZ = Number of MZ twins: Set this if you input covariance data
 #' @param weightVar = If provided, a vector objective used to weight the data. (default = NULL) 
+#' @param bVector row-wise likelihoods (defaults to FALSE)
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx twin modeling
@@ -445,16 +445,16 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
 #' umxSummaryACE(m1)
-umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObsMZ = NULL, weightVar = NULL) {
-	nSib = 2
-	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObsMZ = NULL, weightVar = NULL, bVector = FALSE) {
+	nSib        = 2
+	nVar        = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	equateMeans = T
-	dzAr = .5
-	dzCr = 1
-	addStd = T
-	boundDiag = NULL
-	dataType = umx_is_cov(dzData)
-	bVector = FALSE	
+	dzAr        = .5
+	dzCr        = 1
+	addStd      = T
+	boundDiag   = NULL
+	dataType    = umx_is_cov(dzData)
+	
 	if(dataType == "raw") {
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
 			stop("You should not be setting numObs with ", dataType, " data…")
@@ -1511,7 +1511,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	if(isCov) {
 		variances = diag(data[manifests, manifests])
 	} else {
-		manifestOrdVars = umx_is_ordinal(data[,manifests])
+		manifestOrdVars = umx_is_ordered(data[,manifests])
 		if(any(manifestOrdVars)) {
 			means         = rep(0, times = length(manifests))
 			variances     = rep(1, times = length(manifests))
@@ -1631,7 +1631,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 		p1 = mxPath(from=manifests, arrows=2, value=variances)
 		return(p1)
 	} else {
-		manifestOrdVars = umx_is_ordinal(data[,manifests])
+		manifestOrdVars = umx_is_ordered(data[,manifests])
 		if(any(manifestOrdVars)){
 			means         = rep(0, times=length(manifests))
 			variances     = rep(1, times=length(manifests))
@@ -1690,10 +1690,11 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' obesityLevels = c('normal', 'obese')
 #' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' # Step 5: Make the ordinal variables into mxFactors (ensures ordered= TRUE + requires user to confirm levels)
+#' # Step 2: Make the ordinal variables into mxFactors (ensures ordered= TRUE + requires user to confirm levels)
 #' selDVs = c("obese1", "obese2")
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
+#' str(mzData)
 #' umxThresholdMatrix(mzData, suffixes = 1:2)
 #' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE) # supress informative messages
 #' 
@@ -1705,11 +1706,12 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' obesityLevels = c('normal', 'overweight', 'obese')
 #' twinData$obeseTri1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' twinData$obeseTri2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' head(twinData)
 #' selDVs = c("obeseTri1", "obeseTri2")
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
+#' str(mzData)
 #' umxThresholdMatrix(mzData, suffixes = 1:2)
+#' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 #'
 #' # ========================================================
 #' # = Mix of all three kinds example (and a 4-level trait) =
@@ -1722,8 +1724,9 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' selDVs = c("obeseQuad1", "obeseQuad2")
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' 
-#' selDVs = c("bmi1", "obese1", "obeseTri1", "obeseQuad1", "bmi2", "obese2", "obeseTri2", "obeseQuad2")
+#' selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
+#' str(mzData)
 #' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 
 umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE, verbose = TRUE){
@@ -1734,23 +1737,38 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
 		stop("Not sure it's wise to drop levels...")
 	}
 
-	isOrd       = umx_is_ordinal(df)
-	isBin       = umx_is_ordinal(df, binary.only = TRUE)
-	nBinVars    = sum(isBin)
-	nOrdVars    = sum(isOrd)
 	nSib        = length(suffixes)
+	isFactor    = umx_is_ordered(df) # all ordered factors including binary
+	isOrd       = umx_is_ordered(df, ordinal.only = TRUE) # only ordinals
+	isBin       = umx_is_ordered(df, binary.only  = TRUE) # only binaries
+	nFactors    = sum(isFactor)
+	nOrdVars    = sum(isOrd)
+	nBinVars    = sum(isBin)
+	factorVarNames = names(df)[isFactor]
+	ordVarNames    = names(df)[isOrd]
+	binVarNames    = names(df)[isBin]
 	if((nOrdVars + nBinVars) < 1){
 		message("No ordinal or binary variables in dataframe: no need to call umxThresholdMatrix")
 		return(NA) # probably OK to set thresholds matrix to NA in mxExpectation()
 		# TODO check if we should die here instead
 	} else {
+		message("'threshMat' created to handle ")
 		if(nSib == 2){
-			message("'threshMat' created to handle ", nOrdVars/nSib, " pair(s) of ordinal variables:", omxQuotes(ordVarNames))
+			if(nOrdVars > 0){
+				message(nOrdVars/nSib, " pair(s) of ordinal variables:", omxQuotes(ordVarNames), "\n")
+			}
+			if(nBinVars > 0){
+				message(nBinVars/nSib, " pair(s) of binary variables:", omxQuotes(binVarNames), "\n")
+			}
 		} else {
-			message("'threshMat' created to handle ", nOrdVars, " ordinal variables:", omxQuotes(ordVarNames))
+			if(nOrdVars > 0){
+				message(nOrdVars, " ordinal variables:", omxQuotes(ordVarNames), "\n")
+			}
+			if(nBinVars > 0){
+				message(nBinVars, " binary variables:", omxQuotes(binVarNames), "\n")
+			}
 		}
 	}
-	ordVarNames = names(df)[isOrd]
 	minLevels = umx:::xmuMinLevels(df)
 	maxLevels = umx:::xmuMaxLevels(df)
 	maxThresh = maxLevels - 1
@@ -1774,34 +1792,34 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
 		stop("You seem to have a trait with only one category... makes it a bit futile to model it?")
 	}
 
-	df = df[, ordVarNames]
+	df = df[, factorVarNames]
 
 	if(nSib == 2){
 		# For better precision, copy both halves of the dataframe into each
-		T1 = df[, grep(paste0(suffixes[1], "$"), ordVarNames, value = TRUE), drop = FALSE]
-		T2 = df[, grep(paste0(suffixes[2], "$"), ordVarNames, value = TRUE), drop = FALSE]
+		T1 = df[, grep(paste0(suffixes[1], "$"), factorVarNames, value = TRUE), drop = FALSE]
+		T2 = df[, grep(paste0(suffixes[2], "$"), factorVarNames, value = TRUE), drop = FALSE]
 		names(T2) <- names(T1)
 		dfLong = rbind(T1, T2)
 		df = cbind(dfLong, dfLong)
-		names(df) = ordVarNames
+		names(df) = factorVarNames
 	} else if(nSib == 1){
 		# df is fine as is.		
 	} else {
 		stop("I can only handle 1 and 2 sib models. You gave me ", nSib, " suffixes.")
 	}
 	
-	# size the matrix maxThresh rows * nOrdVars cols
+	# size the matrix maxThresh rows * nFactors cols
 	threshMat = mxMatrix(name = threshMatName, type = "Full",
 		nrow     = maxThresh,
-		ncol     = nOrdVars,
-		free     = TRUE, values = rep(NA, (maxThresh * nOrdVars)),
+		ncol     = nFactors,
+		free     = TRUE, values = rep(NA, (maxThresh * nFactors)),
 		lbound   = l_u_bound[1],
 		ubound   = l_u_bound[2],
-		dimnames = list(paste0("th_", 1:maxThresh), ordVarNames)
+		dimnames = list(paste0("th_", 1:maxThresh), factorVarNames)
 	)
 
-	# For each ordinal variable
-	for (thisVarName in ordVarNames) {
+	# For each factor variable
+	for (thisVarName in factorVarNames) {
 		thisCol = df[,thisVarName]
 		
 		tab = table(thisCol)/sum(table(thisCol))
@@ -1834,7 +1852,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l
         values = c(zValues[2:(nThreshThisVar+1)], rep(FALSE, (maxThresh - nThreshThisVar)))
 		if(nThreshThisVar == 1){			
 			# We are all done: user NEEDS to fix the mean and variance
-			# of the latent trait, say at 0 and 1 for this to work.
+			# of the latent trait, (usually at 0 and 1) for this to work.
 		} else if(nThreshThisVar > 1){ # fix the first 2
 			free[1:2] = FALSE
 		} else {

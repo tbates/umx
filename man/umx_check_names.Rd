@@ -49,7 +49,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_MxModel}}; \code{\link{umx_is_cov}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
-  \code{\link{umx_is_ordinal}};
+  \code{\link{umx_is_ordered}};
   \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
   \code{\link{umx_reorder}}; \code{\link{umx_rot}};
   \code{\link{umx_set_checkpointing}};

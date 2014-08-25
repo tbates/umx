@@ -4,10 +4,10 @@
 \title{umxACE}
 \usage{
 umxACE(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL,
-  numObsMZ = NULL, weightVar = NULL)
+  numObsMZ = NULL, weightVar = NULL, bVector = FALSE)
 }
 \arguments{
-\item{name}{The name of the model (defaults to"ACE")}
+\item{name}{The name of the model (defaults to "ACE")}
 
 \item{selDVs}{The variables to include from the data}
 
@@ -20,6 +20,8 @@ umxACE(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL,
 \item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data}
 
 \item{weightVar}{= If provided, a vector objective used to weight the data. (default = NULL)}
+
+\item{bVector}{row-wise likelihoods (defaults to FALSE)}
 }
 \value{
 - \code{\link{mxModel}}

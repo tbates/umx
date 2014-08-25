@@ -33,13 +33,12 @@ umxRAM(name, ..., exog.variances = FALSE, endog.variances = FALSE,
 Making it as simple as possible to create a RAM model, without doing things invisible to the user.
 }
 \details{
-umxRAM borrows its philosophy and some parameter labels from the John Fox sem::specifyModel function.
-
 Like mxModel, you list the theoretical causal paths. Unlike mxModel:
 \enumerate{
 \item{You can request creation of error variances using \code{endog.variances = TRUE} }
 \item{You can request creation of variances for exogenous variables (using \code{exog.variances = TRUE})}
-\item{For identification, you can request either \code{fix = "latents"} or \code{fix = "firstLoadings"} to fix either the variance of latents or their first factor loading at 1.}
+\item{For identification, you can request either \code{fix = "latents"} or \code{fix = "firstLoadings"}
+to fix either the variance of latents or their first factor loading at 1.}
 }
 Additional conveniences:
 \enumerate{
@@ -49,7 +48,7 @@ Additional conveniences:
 }
 }
 \examples{
-# umxRAM is like qplot(), you give the data in a data =  parameter
+# umxRAM is like ggplot2::qplot(), you give the data in a data =  parameter
 # A common error is to include data in the main list, a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
 # nb: unlike mxModel, umxRAM needs data at build time.
 

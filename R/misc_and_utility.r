@@ -74,8 +74,8 @@ umx_set_optimizer <- function(opt = c("NPSOL","NLOPT","CSOLNP"), model = NULL) {
 	opt = umx_default_option(opt, c("NPSOL","NLOPT","CSOLNP"))
 	mxOption(model, "Default optimizer", opt)
 	if(opt == "NPSOL"){
-		mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
-		mxOption(model, 'mvnMaxPointsC', 5e+5) # default is 5000
+		# mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
+		# mxOption(model, 'mvnMaxPointsC', 5e+5) # default is 5000
 	}
 }
 
@@ -149,13 +149,23 @@ umx_get_cores <- function(model = NULL) {
 #' @family umx misc functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umx_set_checkpointing()
-umx_set_checkpointing <- function(always = c("Yes", "No"), count = 1, units = "evaluations", model = NULL) {
-	legalAge = c("Yes", "No")
-	always = umx_default_option(always, legalAge)
-	mxOption(model, "Always Checkpoint", always)
-	mxOption(model, "Checkpoint Count" , count)
-	mxOption(model, "Checkpoint Units" , units)	
+#' umx_set_checkpointing("Yes", 1, "evaluations", "~/Desktop/")
+#' # m1 = umx_set_checkpointing("Yes", 1, "evaluations", model = m1)
+umx_set_checkpointing <- function(always = c("Yes", "No"), count = 1, units = c("evaluations", "minutes"), directory = getwd(), model = NULL) {
+	always = umx_default_option(always, c("Yes", "No"))
+	units = umx_default_option(units, c("evaluations", "minutes"))
+	if(is.null(model)){
+		mxOption(factorModel, "Checkpoint Directory", directory)
+		mxOption(model, "Always Checkpoint", always)
+		mxOption(model, "Checkpoint Count" , count)
+		mxOption(model, "Checkpoint Units" , units)	
+	} else {
+		model = mxOption(model, "Checkpoint Directory", directory)
+		model = mxOption(model, "Always Checkpoint", always)
+		model = mxOption(model, "Checkpoint Count" , count)
+		model = mxOption(model, "Checkpoint Units" , units)
+		return(model)
+	}
 }
 
 #' umx_get_checkpointing
@@ -174,6 +184,7 @@ umx_get_checkpointing <- function(model = NULL) {
 	message("Always Checkpoint: ", mxOption(model, "Always Checkpoint") )
 	message("Checkpoint  Count: ", mxOption(model, "Checkpoint Count" ) )
 	message("Checkpoint  Units: ", mxOption(model, "Checkpoint Units" ) )
+	message("Checkpoint  Directory: ", mxOption(model, "Checkpoint Directory" ) )
 }
 
 
@@ -663,7 +674,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' TODO: more detail about what we are doing here
 #' 
-#' It uses \code{\link{umx_is_ordinal}} and \code{\link{umxMakeThresholdMatrix}} as helpers
+#' It uses \code{\link{umx_is_ordered}} and \code{\link{umxMakeThresholdMatrix}} as helpers
 #'
 #' @param df Dataframe to make a threshold matrix for
 #' @param deviationBased whether to use the deviation system to ensure order thresholds (default = TRUE)
@@ -681,11 +692,11 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 umx_RAM_ordinal_objective <- function(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE) {
 	# TODO: means = zero & VAR = 1 for ordinal variables
 	# (This is a nice place to check, as we have the df present...)
-	if(!any(umx_is_ordinal(df))){
+	if(!any(umx_is_ordered(df))){
 		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")
 	} 
-	pt1 = umxPath(means = umx_is_ordinal(df, names = TRUE), fixedAt = 0)
-	pt2 = umxPath(var   = umx_is_ordinal(df, names = TRUE), fixedAt = 1)
+	pt1 = umxPath(means = umx_is_ordered(df, names = TRUE), fixedAt = 0)
+	pt2 = umxPath(var   = umx_is_ordered(df, names = TRUE), fixedAt = 1)
 	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE)))
 }
 
@@ -1535,7 +1546,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 	}
 }
 
-#' umx_is_ordinal
+#' umx_is_ordered
 #'
 #' Return the names of any ordinal variables in a dataframe
 #'
@@ -1551,27 +1562,33 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' tmp = mtcars
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
 #' tmp$vs = ordered(mtcars$vs) # binary factor
-#' umx_is_ordinal(tmp)
-#' umx_is_ordinal(tmp, names = TRUE)
-#' umx_is_ordinal(tmp, names = TRUE, binary.only = TRUE)
-#' isContinuous = !umx_is_ordinal(tmp)
+#' umx_is_ordered(tmp)
+#' umx_is_ordered(tmp, names = TRUE)
+#' umx_is_ordered(tmp, names = TRUE, binary.only = TRUE)
+#' umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
+#' isContinuous = !umx_is_ordered(tmp)
 #' tmp$gear = factor(mtcars$gear) # unordered factor
-#' # nb: Factors are not necessarily ordered! By default unordered factors cause an error...
+#' # nb: Factors are not necessarily ordered! By default unordered factors cause an message...
 #' \dontrun{
 #' tmp$cyl = factor(mtcars$cyl)
-#' umx_is_ordinal(tmp)
+#' umx_is_ordered(tmp, names=TRUE)
 #' }
-umx_is_ordinal <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE) {
+umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE) {
+	if(binary.only & ordinal.only){
+		stop("Only one of binary.only and ordinal.only can be TRUE")
+	}
 	nVar = ncol(df);
 	# Which are ordered factors?
 	factorList  = rep(FALSE, nVar)
 	orderedList = rep(FALSE, nVar)
 	for(n in 1:nVar) {
-		if(is.ordered(df[,n])) {
-			thisLevels  = length(levels(df[,n]))
+		if(is.ordered(df[, n])) {
+			thisLevels  = length(levels(df[, n]))
 			if(binary.only & (2 == thisLevels) ){
-				orderedList[n] = TRUE				
-			} else if(!binary.only) {
+				orderedList[n] = TRUE
+			} else if(ordinal.only & (thisLevels > 2) ){
+				orderedList[n] = TRUE	
+			} else if(!binary.only & !ordinal.only) {
 				orderedList[n] = TRUE
 			}
 		}
@@ -1579,20 +1596,30 @@ umx_is_ordinal <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 			thisLevels = length(levels(df[,n]))
 			if(binary.only & (2 == thisLevels) ){
 				factorList[n] = TRUE
-			} else if(!binary.only) {
+			} else if(ordinal.only & (thisLevels > 2) ){
+				factorList[n] = TRUE	
+			} else if(!binary.only & !ordinal.only) {
 				factorList[n] = TRUE
 			}
 		}
 	}
 	if(any(factorList & ! orderedList) & strict){
-		stop("Dataframe contains at least 1 unordered factor. Set strict = FALSE to allow this.\n",
+		message("Dataframe contains at least 1 unordered factor. Set strict = FALSE to allow this.\n",
 			  omxQuotes(names(df)[factorList & ! orderedList])
 		)
 	}
 	if(names){
-		return(names(df)[orderedList])
+		if(strict){
+			return(names(df)[orderedList])
+		} else {
+			return(names(df)[factorList])
+		}
 	} else {
-		return(orderedList)
+		if(strict){
+			return(orderedList)
+		} else {
+			return(factorList)
+		}
 	}
 }
 

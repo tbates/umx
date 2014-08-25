@@ -48,10 +48,11 @@ cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 obesityLevels = c('normal', 'obese')
 twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
-# Step 5: Make the ordinal variables into mxFactors (ensures ordered= TRUE + requires user to confirm levels)
+# Step 2: Make the ordinal variables into mxFactors (ensures ordered= TRUE + requires user to confirm levels)
 selDVs = c("obese1", "obese2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
+str(mzData)
 umxThresholdMatrix(mzData, suffixes = 1:2)
 umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE) # supress informative messages
 
@@ -63,11 +64,12 @@ cutPoints <- quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
 obesityLevels = c('normal', 'overweight', 'obese')
 twinData$obeseTri1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
 twinData$obeseTri2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
-head(twinData)
 selDVs = c("obeseTri1", "obeseTri2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
+str(mzData)
 umxThresholdMatrix(mzData, suffixes = 1:2)
+umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 
 # ========================================================
 # = Mix of all three kinds example (and a 4-level trait) =
@@ -80,8 +82,9 @@ twinData$obeseQuad2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labe
 selDVs = c("obeseQuad1", "obeseQuad2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 
-selDVs = c("bmi1", "obese1", "obeseTri1", "obeseQuad1", "bmi2", "obese2", "obeseTri2", "obeseQuad2")
+selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
+str(mzData)
 umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 }
 \references{

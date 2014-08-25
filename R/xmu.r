@@ -369,7 +369,7 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 
 xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
 	# TODO delete this function??
-	isOrdinalVariable = umx_is_ordinal(df) 
+	isOrdinalVariable = umx_is_ordered(df) 
 	ordinalColumns    = df[,isOrdinalVariable]
 	nOrdinal          = ncol(ordinalColumns);
 	ordNameList       = names(ordinalColumns);
@@ -603,7 +603,7 @@ xmuHasSquareBrackets <- function (input) {
 # ===================================
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 xmuMaxLevels <- function(df) {
-	isOrd = umx_is_ordinal(df)
+	isOrd = umx_is_ordered(df)
 	if(any(isOrd)){
 		vars = names(df)[isOrd]
 		nLevels = rep(NA, length(vars))
@@ -619,7 +619,7 @@ xmuMaxLevels <- function(df) {
 }
 
 xmuMinLevels <- function(df) {
-	isOrd = umx_is_ordinal(df)
+	isOrd = umx_is_ordered(df)
 	if(any(isOrd)){
 		vars = names(df)[isOrd]
 		nLevels = rep(NA, length(vars))
