@@ -1683,6 +1683,24 @@ umx_is_MxModel <- function(obj) {
 	isS4(obj) & is(obj, "MxModel")	
 }
 
+#' umx_is_MxMatrix
+#'
+#' Utility function returning a binary answer to the question "Is this an OpenMx mxMatrix?"
+#'
+#' @param obj an object to be tested to see if it is an OpenMx \code{\link{mxMatrix}}
+#' @return - Boolean
+#' @export
+#' @family umx misc functions
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' x = mxMatrix(name="expMean", type="Full", nrow=3, ncol=3, free=T, values=.3, byrow=T)
+#' if(umx_is_MxModel(x)){
+#' 	message("nice OpenMx matrix!")
+#' }
+umx_is_MxMatrix <- function(obj) {
+	isS4(obj) & is(obj, "MxMatrix")	
+}
+
 #' umx_check_model
 #'
 #' Check an OpenMx model

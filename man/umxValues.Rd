@@ -25,7 +25,7 @@ If you give it a numeric input, it will use obj as the mean, return a list of le
 \examples{
 require(OpenMx)
 data(demoOneFactor)
-latents  = c("G")
+latents = c("G")
 manifests = names(demoOneFactor)
 m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents,
@@ -37,8 +37,9 @@ m1 <- mxModel("One Factor", type = "RAM",
 mxEval(S, m1) # default variances are 0
 m1 = umxValues(m1)
 mxEval(S, m1) # plausible variances
-umx_print(mxEval(S,m1), 3, zero.print= ".") # plausible variances
-umxValues(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
+umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
+umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
+x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = T, values = .3, byrow = T)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

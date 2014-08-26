@@ -31,6 +31,7 @@ Other umx misc functions: \code{\link{umxEval}};
   \code{\link{umx_has_been_run}};
   \code{\link{umx_has_means}};
   \code{\link{umx_has_square_brackets}};
+  \code{\link{umx_is_MxMatrix}};
   \code{\link{umx_is_MxModel}}; \code{\link{umx_is_cov}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};

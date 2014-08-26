@@ -624,7 +624,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents = c("G")
 #' manifests = names(demoOneFactor)
 #' m1 <- mxModel("One Factor", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
@@ -636,21 +636,23 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 #' mxEval(S, m1) # default variances are 0
 #' m1 = umxValues(m1)
 #' mxEval(S, m1) # plausible variances
-#' umx_print(mxEval(S,m1), 3, zero.print= ".") # plausible variances
-#' umxValues(14, sd = 1, n = 10) # return vector of length 10, with mean 14 and sd 1
-
-umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
+#' umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
+#' umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
+#' x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = T, values = .3, byrow = T)
+#' umxValues(x) # Return matrix with good start values
+#' 
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE, ) {
 	if(is.numeric(obj) ) {
-		# use obj as the mean, return a list of length n, with sd = sd
+		# Use obj as the mean, return a list of length n, with sd = sd
 		return(xmu_start_value_list(mean = obj, sd = sd, n = n))
-	} else {
-		if (!umx_is_RAM(obj) ) {
-			stop("'obj' must be a RAM model (or a simple number)")
-		}
+	} else if (umx_is_MxMatrix(obj) ) {
+		message("Let's put values into a matrix.")
+	} else if (umx_is_RAM(obj) ) {
 		# This is a RAM Model: Set sane starting values
 		# Means at manifest means
 		# S at variance on diag, quite a bit less than cov off diag
-		# TODO: Start latent means?...		
+		# TODO: Start latent means?...
 		# TODO: Handle sub models...
 		if (length(obj@submodels) > 0) {
 			stop("Cannot yet handle submodels")
@@ -725,6 +727,8 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		}
 		obj@matrices$A@values[1:Arows, 1:Acols][freePaths] = .9
 		return(obj)
+	} else {
+		stop("'obj' must be an mxMatrix, a RAM model, or a simple number")
 	}
 }
 
