@@ -1733,14 +1733,15 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' str(mzData)
 #' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 
-umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE, verbose = TRUE){
+umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE, verbose = TRUE){
 	if(deviationBased){
 		stop("deviation-based not handled yet - not sure it's needed now...")
 	}
 	if(droplevels){
 		stop("Not sure it's wise to drop levels...")
 	}
-
+	# TODO implement ability to manualy choose the method - more flexible and explicit.
+	method = umx_default_option(method, c("auto", "Mehta", "allFree"), check = TRUE)
 	nSib        = length(suffixes)
 	isFactor    = umx_is_ordered(df) # all ordered factors including binary
 	isOrd       = umx_is_ordered(df, ordinal.only = TRUE) # only ordinals
