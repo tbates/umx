@@ -638,11 +638,12 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 #' mxEval(S, m1) # plausible variances
 #' umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 #' umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
+#' # todo: handle complex guided matrix value starts...
 #' x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = T, values = .3, byrow = T)
-#' umxValues(x) # Return matrix with good start values
+#' umxValues(x) # Return matrix with good start values (not yet implemented...)
 #' 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE, ) {
+umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 	if(is.numeric(obj) ) {
 		# Use obj as the mean, return a list of length n, with sd = sd
 		return(xmu_start_value_list(mean = obj, sd = sd, n = n))
@@ -1830,8 +1831,9 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		tab = table(thisCol)/sum(table(thisCol))
 		cumTab = cumsum(tab)
 		zValues = qnorm(p = cumTab, lower.tail = TRUE)
+		# These are the z values for each level, we should ditch one to get thresholds...
 		if(any(is.infinite(zValues))){
-			nPlusInf = sum(zValues == (Inf))
+			nPlusInf  = sum(zValues == (Inf))
 			nMinusInf = sum(zValues == (-Inf))
 			if(nPlusInf){
 				maxOK = max(zValues[!is.infinite(zValues)])
@@ -1847,6 +1849,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		# Set labels
 		nThreshThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
 		if(nSib == 2){
+			# search string to find all sib's versions of a var
 			findStr = paste0( "(", paste(suffixes, collapse = "|"), ")$")
 			thisLab = sub(findStr, "", thisVarName)		
 		} else {
@@ -1854,7 +1857,9 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		}	
         labels = c(paste0(thisLab, "_thresh", 1:nThreshThisVar), rep(NA   , (maxThresh - nThreshThisVar)))
         free   = c(rep(TRUE                 , nThreshThisVar)  , rep(FALSE, (maxThresh - nThreshThisVar)))
-        values = c(zValues[2:(nThreshThisVar+1)], rep(FALSE, (maxThresh - nThreshThisVar)))
+        # TODO which is right?
+		values = c(zValues[1:(nThreshThisVar)], rep(FALSE, (maxThresh - nThreshThisVar)))
+        # values = c(zValues[2:(nThreshThisVar+1)], rep(FALSE, (maxThresh - nThreshThisVar)))
 		if(nThreshThisVar == 1){			
 			# We are all done: user NEEDS to fix the mean and variance
 			# of the latent trait, (usually at 0 and 1) for this to work.

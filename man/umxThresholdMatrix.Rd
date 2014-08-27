@@ -4,8 +4,8 @@
 \title{umxThresholdMatrix}
 \usage{
 umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
-  l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE,
-  verbose = TRUE)
+  method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA),
+  deviationBased = FALSE, droplevels = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{df}{the data being modelled (to allow access to the factor levels and quantiles within these for each variable)}
