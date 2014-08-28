@@ -2097,10 +2097,12 @@ umxParallel <- function(model, what) {
 #' @param var equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)
+#' @param Cholesky Treat the from vars as latent and to as measured, and hook up like an ACE model.
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
 #' @param v1m0 variance of 1 and mean of zero in one call.
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
-#' @param firstAt first value is fixed at 1 (free is ignored: warning if not a single TRUE)
+#' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
+#' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
 #' @param connect as in mxPath - nb: Only used when using from and to
 #' @param arrows as in mxPath - nb: Only used when using from and to
 #' @param free whether the value is free to be optimised
@@ -2149,7 +2151,7 @@ umxParallel <- function(model, what) {
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxSummary(m1, show = "std")
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
 	if(!is.null(from)){
 		if(length(from) > 1){
 			isSEMstyle = grepl("[<>]", x = from[1])	
@@ -2202,7 +2204,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, unique.bivariate, v1m0, and means can be use at one time")
+		stop("At most one of with, cov, var, unique.bivariate, v1m0, and means can be set: Use at one time")
 	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
@@ -2285,6 +2287,12 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			arrows  = 2
 			connect = "unique.bivariate"
 		}
+	} else if(!is.null(Cholesky)){
+		if(is.null(from) | is.null(to)){
+			stop("To use Cholesky, I need both 'from=' and 'to=' to be set.\n")
+		} else {
+			stop("I have not yet implemented Cholesky as a connection - email me a reminder!.\n")
+		}
 	} else {
 		if(is.null(from) & is.null(to)){
 			stop("You don't seem to have requested any paths.\n",
@@ -2304,8 +2312,8 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	# ===============================
 	# =  handle fixedAt and firstAt =
 	# ===============================
-	if(!is.null(fixedAt) & !is.null(firstAt)){
-		stop("At most one of fixedAt and firstAt can be set: You seem to have tried to set both at once.")
+	if(sum(c(is.null(fixedAt), is.null(firstAt), is.null(freeAt))) < 2){
+		stop("At most one of fixedAt freeAt and firstAt can be set: You seem to have tried to set more than one.")
 	}
 
 	# Handle firstAt
@@ -2324,6 +2332,12 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	if(!is.null(fixedAt)){
 		free = FALSE
 		values = fixedAt
+	}
+
+	# Handle freeAt
+	if(!is.null(freeAt)){
+		free = TRUE
+		values = freeAt
 	}
 
 	# TODO check incoming value of connect

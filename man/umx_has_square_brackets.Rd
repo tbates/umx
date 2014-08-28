@@ -25,8 +25,7 @@ umx_has_square_brackets("goodbye")
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx misc functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umxMsg}};
-  \code{\link{umx_add_variances}};
+  \code{\link{umxEval}}; \code{\link{umx_add_variances}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
@@ -39,7 +38,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_MxModel}}; \code{\link{umx_is_cov}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
-  \code{\link{umx_is_ordered}};
+  \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
   \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
   \code{\link{umx_reorder}}; \code{\link{umx_rot}};
   \code{\link{umx_set_checkpointing}};

@@ -4,7 +4,7 @@
 \title{umx_is_ordered}
 \usage{
 umx_is_ordered(df, names = FALSE, strict = TRUE, binary.only = FALSE,
-  ordinal.only = FALSE)
+  ordinal.only = FALSE, continuous.only = FALSE)
 }
 \arguments{
 \item{df}{an \code{\link{data.frame}} to look in for ordinal variables}
@@ -14,6 +14,10 @@ umx_is_ordered(df, names = FALSE, strict = TRUE, binary.only = FALSE,
 \item{strict}{whether to stop when unordered factors are found (default = TRUE)}
 
 \item{binary.only}{only count binary factors (2-levels) (default = FALSE)}
+
+\item{ordinal.only}{only count ordinal factors (3 or more levels) (default = FALSE)}
+
+\item{continuous.only}{use with names = TRUE to get the names of the continuous variables}
 }
 \value{
 - vector of variable names or Booleans
@@ -25,10 +29,12 @@ Return the names of any ordinal variables in a dataframe
 tmp = mtcars
 tmp$cyl = ordered(mtcars$cyl) # ordered factor
 tmp$vs = ordered(mtcars$vs) # binary factor
-umx_is_ordered(tmp)
+umx_is_ordered(tmp) # numeric indices
 umx_is_ordered(tmp, names = TRUE)
 umx_is_ordered(tmp, names = TRUE, binary.only = TRUE)
 umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
+umx_is_ordered(tmp, names = TRUE, continuous.only = TRUE)
+umx_is_ordered(tmp, continuous.only = TRUE)
 isContinuous = !umx_is_ordered(tmp)
 tmp$gear = factor(mtcars$gear) # unordered factor
 # nb: Factors are not necessarily ordered! By default unordered factors cause an message...
@@ -42,8 +48,7 @@ umx_is_ordered(tmp, names=TRUE)
 }
 \seealso{
 Other umx misc functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umxMsg}};
-  \code{\link{umx_add_variances}};
+  \code{\link{umxEval}}; \code{\link{umx_add_variances}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
@@ -56,7 +61,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_MxMatrix}};
   \code{\link{umx_is_MxModel}}; \code{\link{umx_is_cov}};
   \code{\link{umx_is_endogenous}};
-  \code{\link{umx_is_exogenous}};
+  \code{\link{umx_is_exogenous}}; \code{\link{umx_msg}};
   \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
   \code{\link{umx_reorder}}; \code{\link{umx_rot}};
   \code{\link{umx_set_checkpointing}};

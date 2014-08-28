@@ -105,6 +105,9 @@ umx_set_optimizer <- function(opt = c("NPSOL","NLOPT","CSOLNP"), model = NULL) {
 #' umx_get_cores()            # show new value
 #' umx_set_cores(oldCores)    # reset to old value
 umx_set_cores <- function(cores = omxDetectCores() - 1, model = NULL) {
+	if(umx_is_MxModel(cores)){
+		stop("Call this as umx_set_cores(cores, model), not the other way around")
+	}
 	mxOption(model, "Number of Threads", cores)
 }
 
@@ -1105,9 +1108,9 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames= FAL
 # = Utility functions =
 # =====================
 
-#' umxMsg
+#' umx_msg
 #'
-#' helper function to make dumping  message("thing has the value", thing's value) easy
+#' Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy
 #'
 #' @param  x the thing you want to print
 #' @return - NULL
@@ -1116,11 +1119,11 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames= FAL
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' a = "brian"
-#' umxMsg(a)
+#' umx_msg(a)
 #' a = c("brian", "sally", "jane")
-#' umxMsg(a)
+#' umx_msg(a)
 
-umxMsg <- function(x) {
+umx_msg <- function(x) {
     nm <-deparse(substitute(x))	
 	if(length(x) > 1){
 		message(nm, " = ", omxQuotes(x))	
@@ -1546,6 +1549,52 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 	}
 }
 
+#' umx_start_diag
+#'
+#' Helper to get variances from a df that might contain some non-numeric columns. Non numerics are set to whatever ordVar=
+#'
+#' @param df a dataframe of raw data from which to get variances.
+#' @param ordVar = 1
+#' @param return What to return: Defaults to a vector of variances c("vars", "Full", "Lower")
+#' @param use passed to cov - defaults to "complete"
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx core functions
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' tmp = mtcars[,1:4]
+#' tmp$cyl = ordered(mtcars$cyl) # ordered factor
+#' tmp$hp  = ordered(mtcars$hp)  # binary factor
+#' umx_start_diag(tmp)
+#' tmp2 = tmp[, c(1,3)]
+#' umx_start_diag(tmp2)
+#' umx_start_diag(tmp2, format = "Full")
+
+umx_start_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), use = "complete"){
+	format = umx_default_option(format, c("diag", "Full", "Lower"))
+	if(any(umx_is_ordered(df))){
+		nCol = dim(df)[2]
+		starts = diag(ordVar, nCol, nCol)
+		cont = umx_is_ordered(df, continuous.only = TRUE)
+		if(any(cont)){
+			for(i in which(cont)) {
+				starts[i,i] = var(df[,i], use = use)
+			}
+		}
+		starts = diag(starts)
+	} else {
+		starts = diag(var(df, use = use))
+	}
+	umx_msg(format)
+	if(format == "diag"){
+		return(starts)
+	} else {
+		message("only var list implemented")
+		return(starts)	
+	}
+}
+
 #' umx_is_ordered
 #'
 #' Return the names of any ordinal variables in a dataframe
@@ -1554,6 +1603,8 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' @param names whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)
 #' @param strict whether to stop when unordered factors are found (default = TRUE)
 #' @param binary.only only count binary factors (2-levels) (default = FALSE)
+#' @param ordinal.only only count ordinal factors (3 or more levels) (default = FALSE)
+#' @param continuous.only use with names = TRUE to get the names of the continuous variables
 #' @return - vector of variable names or Booleans
 #' @export
 #' @family umx misc functions
@@ -1562,10 +1613,12 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' tmp = mtcars
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
 #' tmp$vs = ordered(mtcars$vs) # binary factor
-#' umx_is_ordered(tmp)
+#' umx_is_ordered(tmp) # numeric indices
 #' umx_is_ordered(tmp, names = TRUE)
 #' umx_is_ordered(tmp, names = TRUE, binary.only = TRUE)
 #' umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
+#' umx_is_ordered(tmp, names = TRUE, continuous.only = TRUE)
+#' umx_is_ordered(tmp, continuous.only = TRUE)
 #' isContinuous = !umx_is_ordered(tmp)
 #' tmp$gear = factor(mtcars$gear) # unordered factor
 #' # nb: Factors are not necessarily ordered! By default unordered factors cause an message...
@@ -1573,52 +1626,59 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' tmp$cyl = factor(mtcars$cyl)
 #' umx_is_ordered(tmp, names=TRUE)
 #' }
-umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE) {
-	if(binary.only & ordinal.only){
-		stop("Only one of binary.only and ordinal.only can be TRUE")
+
+umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE, continuous.only = FALSE) {
+	if(sum(c(binary.only, ordinal.only, continuous.only)) > 1){
+		stop("Only one of binary.only ordinal.only and continuous.only can be TRUE")
 	}
 	nVar = ncol(df);
 	# Which are ordered factors?
-	factorList  = rep(FALSE, nVar)
-	orderedList = rep(FALSE, nVar)
+	isFactor  = rep(FALSE, nVar)
+	isOrdered = rep(FALSE, nVar)
 	for(n in 1:nVar) {
 		if(is.ordered(df[, n])) {
 			thisLevels  = length(levels(df[, n]))
 			if(binary.only & (2 == thisLevels) ){
-				orderedList[n] = TRUE
+				isOrdered[n] = TRUE
 			} else if(ordinal.only & (thisLevels > 2) ){
-				orderedList[n] = TRUE	
+				isOrdered[n] = TRUE	
 			} else if(!binary.only & !ordinal.only) {
-				orderedList[n] = TRUE
+				isOrdered[n] = TRUE
 			}
 		}
 		if(is.factor(df[,n])) {
 			thisLevels = length(levels(df[,n]))
 			if(binary.only & (2 == thisLevels) ){
-				factorList[n] = TRUE
+				isFactor[n] = TRUE
 			} else if(ordinal.only & (thisLevels > 2) ){
-				factorList[n] = TRUE	
+				isFactor[n] = TRUE	
 			} else if(!binary.only & !ordinal.only) {
-				factorList[n] = TRUE
+				isFactor[n] = TRUE
 			}
 		}
 	}
-	if(any(factorList & ! orderedList) & strict){
+	if(any(isFactor & ! isOrdered) & strict){
 		message("Dataframe contains at least 1 unordered factor. Set strict = FALSE to allow this.\n",
-			  omxQuotes(names(df)[factorList & ! orderedList])
+			  omxQuotes(names(df)[isFactor & ! isOrdered])
 		)
 	}
+
+	if(continuous.only){
+		isOrdered = !isOrdered
+		isFactor  = !isFactor
+	}
+
 	if(names){
 		if(strict){
-			return(names(df)[orderedList])
+			return(names(df)[isOrdered])
 		} else {
-			return(names(df)[factorList])
+			return(names(df)[isFactor])
 		}
 	} else {
 		if(strict){
-			return(orderedList)
+			return(isOrdered)
 		} else {
-			return(factorList)
+			return(isFactor)
 		}
 	}
 }

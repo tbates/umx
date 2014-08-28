@@ -26,7 +26,7 @@ umx_get_checkpointing(model)
 Other umx core functions: \code{\link{umxLabel}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
   \code{\link{umxValues}}; \code{\link{umx_apply}};
-  \code{\link{umx}}, \code{\link{umx-package}},
-  \code{\link{umx-package}}
+  \code{\link{umx_start_diag}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

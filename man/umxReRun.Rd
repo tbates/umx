@@ -78,7 +78,8 @@ umxCompare(m3, m2)
 Other umx core functions: \code{\link{umxLabel}};
   \code{\link{umxRun}}; \code{\link{umxValues}};
   \code{\link{umx_apply}};
-  \code{\link{umx_get_checkpointing}}; \code{\link{umx}},
+  \code{\link{umx_get_checkpointing}};
+  \code{\link{umx_start_diag}}; \code{\link{umx}},
   \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 
