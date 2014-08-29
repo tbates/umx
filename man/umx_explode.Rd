@@ -26,7 +26,7 @@ umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 \seealso{
 Other umx misc functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umx_add_variances}};
-  \code{\link{umx_check_model}};
+  \code{\link{umx_apply}}; \code{\link{umx_check_model}};
   \code{\link{umx_check_names}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_cores}};

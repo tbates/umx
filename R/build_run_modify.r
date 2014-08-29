@@ -225,7 +225,8 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 	}
 
 	if(!fix == "none"){
-		stop("fix is not supported any longer: switch to umxPath with firstAt and fixedAt to be more up front about model content")
+		stop("fix is not supported any longer: switch to umxPath with firstAt and fixedAt to be more up front about model content\n",
+		"or use m1 = umx_fix_first_loadings(m1), or m1 = umx_fix_latents(m1)")
 		# TODO turn this off, now that umxPath makes it easy...
 		# Fix latents or first paths
 		if(fix == "latents"){
@@ -233,6 +234,8 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 		} else if(fix == "firstLoadings"){
 			# add free variance to latents not in the fixed list?
 			m1 = umx_fix_first_loadings(m1)
+		}else{
+			stop("Unknown option for fix", fix)
 		}
 	}
 
@@ -692,16 +695,18 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			if(is.null(obj@matrices$M)){
 				msg("You are using raw data, but have not yet added paths for the means\n")
 				stop("You do this with mxPath(from = 'one', to = 'var')")
-			} else {			
-				dataMeans = colMeans(theData[,manifests], na.rm = TRUE)
+			} else {
+				dataMeans = umx_means(theData[, manifests], ordVar = 0, na.rm = TRUE)
 				freeManifestMeans = (obj@matrices$M@free[1, manifests] == TRUE)
 				obj@matrices$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
-				covData = cov(theData, use = "pairwise.complete.obs")
+				# covData = cov(theData, )
+				covData = umx_cov_diag(theData[, manifests], ordVar = 1, format = "diag", use = "pairwise.complete.obs")
+				covData = diag(covData)
 			}
 		} else {
-			covData = theData
+			covData = diag(diag(theData))
 		}
-		dataVariances = diag(covData)
+		# dataVariances = diag(covData)
 		# ======================================================
 		# = Fill the symmetrical matrix with good start values =
 		# ======================================================
@@ -711,10 +716,20 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		} else {
 			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE)			
 		}
-		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = (covData[freePaths]/2)
-		offDiag = !diag(nVar)
-		newOffDiags = obj@matrices$S@values[1:nVar, 1:nVar][offDiag & freePaths]/3
-		obj@matrices$S@values[1:nVar, 1:nVar][offDiag & freePaths] = newOffDiags
+		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
+		# ================
+		# = set off diag =
+		# ================
+		# TODO decide whether to leave this as independence, or see with non-zero covariances...
+		# TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		# TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		# TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		# TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		# TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		# obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = (covData[freePaths]/2)
+		# offDiag = !diag(nVar)
+		# newOffDiags = obj@matrices$S@values[1:nVar, 1:nVar][offDiag & freePaths]/3
+		# obj@matrices$S@values[1:nVar, 1:nVar][offDiag & freePaths] = newOffDiags
 
 		# ==========================================
 		# = Put modest starts into the asymmetrics =
