@@ -620,15 +620,14 @@ umxFormativeVarianceMess <- function(model){
 #' @param ... optional arguments to FUN, i.e., na.rm = T
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx core functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @family umx misc functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umx_apply(mean, to_each = "column", of_DF = mtcars, na.rm= TRUE)
+#' umx_apply(mean, to_each = "column", of_DF = mtcars)
+#' umx_apply(mean, to_each = "row", of_DF = mtcars, na.rm = TRUE)
 umx_apply <- function(FUN, to_each = "column", of_DF, ...) {
-	# umx_apply(nlevels, to_each = "column", of_DF = myDF)
 	if(! (to_each %in% c("column", "row"))){
-		stop(paste("fromEach must be either 'column' or 'row', you gave me", to_each))
+		stop(paste("to_each must be either 'column' or 'row', you gave me", to_each))
 	} else if (to_each == "row") {
 		to_each = 1
 	} else {
@@ -1124,8 +1123,8 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames= FAL
 #' umx_msg(a)
 
 umx_msg <- function(x) {
-    nm <-deparse(substitute(x))	
-	if(length(x) > 1){
+    nm = deparse(substitute(x) )
+	if(length(x) > 1) {
 		message(nm, " = ", omxQuotes(x))	
 	} else {
 		message(nm, " = ", x)	
@@ -1549,7 +1548,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 	}
 }
 
-#' umx_start_diag
+#' umx_cov_diag
 #'
 #' Helper to get variances from a df that might contain some non-numeric columns. Non numerics are set to whatever ordVar=
 #'
@@ -1566,12 +1565,11 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' tmp = mtcars[,1:4]
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
 #' tmp$hp  = ordered(mtcars$hp)  # binary factor
-#' umx_start_diag(tmp)
+#' umx_cov_diag(tmp, ordVar = 1, use = "pair")
 #' tmp2 = tmp[, c(1,3)]
-#' umx_start_diag(tmp2)
-#' umx_start_diag(tmp2, format = "Full")
-
-umx_start_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), use = "complete"){
+#' umx_cov_diag(tmp2)
+#' umx_cov_diag(tmp2, format = "Full")
+umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), use = "complete"){
 	format = umx_default_option(format, c("diag", "Full", "Lower"))
 	if(any(umx_is_ordered(df))){
 		nCol = dim(df)[2]
@@ -1586,13 +1584,42 @@ umx_start_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), 
 	} else {
 		starts = diag(var(df, use = use))
 	}
-	umx_msg(format)
 	if(format == "diag"){
 		return(starts)
 	} else {
 		message("only var list implemented")
 		return(starts)	
 	}
+}
+
+#' umx_means
+#'
+#' Helper to get means from a df that might contain ordered  data. Factor means are set to "ordVar"
+#'
+#' @param df a dataframe of raw data from which to get variances.
+#' @param ordVar value to return for the means of factor data = 0
+#' @param na.rm passed to cov - defaults to "complete"
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family umx data helpers
+#' @examples
+#' tmp = mtcars[,1:4]
+#' tmp$cyl = ordered(mtcars$cyl) # ordered factor
+#' tmp$hp  = ordered(mtcars$hp)  # binary factor
+#' umx_means(tmp, ordVar = 0, na.rm = TRUE)
+umx_means <- function(df, ordVar = 0, na.rm = TRUE){
+	if(any(umx_is_ordered(df))){
+		means = rep(ordVar, times = dim(df)[2])
+		cont = umx_is_ordered(df, continuous.only = TRUE)
+		if(any(cont)){
+			for(i in which(cont)) {
+				means[i] = mean(df[, i], na.rm = na.rm)
+			}
+		}
+	} else {
+		means = umx_apply(mean, to_each = "column", of_DF = df, na.rm = TRUE)
+	}
+	return(means)
 }
 
 #' umx_is_ordered
@@ -1630,6 +1657,9 @@ umx_start_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), 
 umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE, continuous.only = FALSE) {
 	if(sum(c(binary.only, ordinal.only, continuous.only)) > 1){
 		stop("Only one of binary.only ordinal.only and continuous.only can be TRUE")
+	}
+	if(!is.data.frame(df)){
+		stop("df argument to umx_is_ordered must be a dataframe. Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 	}
 	nVar = ncol(df);
 	# Which are ordered factors?

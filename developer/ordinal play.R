@@ -45,10 +45,6 @@ ords      = c("z1", "z2", "z3")
 manifests = c(conts, ords)
 oneFactorJoint <- myFADataRaw[, manifests]
 
-# oneFactorJoint$x1 = oneFactorJoint$x1 *10
-# oneFactorJoint$x2 = oneFactorJoint$x2 *10
-# oneFactorJoint$x3 = oneFactorJoint$x3 *10
-
 oneFactorJoint$z1 <- mxFactor(oneFactorOrd$z1, levels=c(0, 1))
 oneFactorJoint$z2 <- mxFactor(oneFactorOrd$z2, levels=c(0, 1))
 oneFactorJoint$z3 <- mxFactor(oneFactorOrd$z3, levels=c(0, 1, 2))
@@ -78,10 +74,6 @@ m8 <- mxModel("joint", type = "RAM", manifestVars = manifests, latentVars = "F1"
 	mxFitFunctionML(),
 	mxData(oneFactorJoint, type = "raw")
 )
-m8 = umxValues(m8); m8 = umxLabel(m8)
-
-# TODO  Error in colMeans(theData[, manifests], na.rm = TRUE) :'x' must be numeric
-
 m8 <- mxRun(m8)
 umx_show(m8)
 summary(m8)
@@ -91,30 +83,15 @@ round(umxExpCov(m8), 2)
 round(cov2cor(umxExpCov(m8)),2)
 ggplot2::qplot(z3, z2, data = oneFactorJoint, geom = "jitter")
 
+# If we move the variances the model won't start
+oneFactorJoint$x1 = oneFactorJoint$x1 *10
+oneFactorJoint$x2 = oneFactorJoint$x2 *10
+oneFactorJoint$x3 = oneFactorJoint$x3 *10
 
-xmu_cov_factor <- function(df, use) {
-	# Convert factor columns to numeric
-	nCol = dim(df)[2]
-	for (i in 1:nCol) {
-		df[,i] = as.numeric(df[,i])
-	}		
-	return(cov(df, use=use))
-}
+m9 = mxModel(m8, mxData(oneFactorJoint, type = "raw"))
+m9 = mxRun(m9) # fails
+# by applying a value-setting algorithm, the model will fit even if we drag the variances a long way away
+m9 = umxValues(m9);
+m9 <- mxRun(m9)
 
-h = umxHetCor(m8$data$observed, verbose = TRUE)
-d = diag(var(oneFactorJoint, use = "complete"))
-d[umx_is_ordered(oneFactorJoint)] = 1
 
-# Compute the covariance, leaving ordered variables at 1
-covStarts = diag(d) %*% h %*% diag(d)
-
-# knock down the covariances
-covStarts[lower.tri(covStarts)] = covStarts[lower.tri(covStarts)]* .5
-
-a = t(chol(covStarts * .45)) # these are probably OK as start values
-c = t(chol(covStarts * .1))  # these are probably OK as start values
-e = t(chol(covStarts * .45)) # these are probably OK as start values
-
-m8$threshMat$values
-
-http://www.bbc.co.uk/iplayer/episode/p018dvyg/horizon-19811982-9-the-pleasure-of-finding-things-out

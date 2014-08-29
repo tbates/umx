@@ -67,6 +67,7 @@ umx_lower2full(tmp, diag = FALSE)
 Other umx data helpers: \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
+  \code{\link{umx_means}};
   \code{\link{umx_scale_wide_twin_data}};
   \code{\link{umx_scale}}
 }
