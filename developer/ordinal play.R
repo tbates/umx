@@ -1,6 +1,8 @@
 # ===================================================
 # = Model with two binary variables and one ordinal =
 # ===================================================
+library(OpenMx)
+devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 data(myFADataRaw)
 manifests = c("z1", "z2", "z3")
 oneFactorOrd    <- myFADataRaw[,manifests]
@@ -88,6 +90,8 @@ oneFactorJoint$x1 = oneFactorJoint$x1 *10
 oneFactorJoint$x2 = oneFactorJoint$x2 *10
 oneFactorJoint$x3 = oneFactorJoint$x3 *10
 
+# umx_get_optimizer()
+# umx_set_optimizer("CSOLNP")
 m9 = mxModel(m8, mxData(oneFactorJoint, type = "raw"))
 m9 = mxRun(m9) # fails
 # by applying a value-setting algorithm, the model will fit even if we drag the variances a long way away
