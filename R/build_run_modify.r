@@ -225,7 +225,8 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 	}
 
 	if(!fix == "none"){
-		stop("fix is not supported any longer: switch to umxPath with firstAt and fixedAt to be more up front about model content")
+		stop("fix is not supported any longer: switch to umxPath with firstAt and fixedAt to be more up front about model content\n",
+		"or use m1 = umx_fix_first_loadings(m1), or m1 = umx_fix_latents(m1)")
 		# TODO turn this off, now that umxPath makes it easy...
 		# Fix latents or first paths
 		if(fix == "latents"){
@@ -233,6 +234,8 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 		} else if(fix == "firstLoadings"){
 			# add free variance to latents not in the fixed list?
 			m1 = umx_fix_first_loadings(m1)
+		}else{
+			stop("Unknown option for fix", fix)
 		}
 	}
 

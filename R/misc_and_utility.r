@@ -809,7 +809,7 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 		if(findB){
 			fnew = gsub(findStr, replacement = replaceStr, fn) # replace all instances
 			if(test){
-				message("would change ", fn, " to ", fnew)	
+				message("would change ", fn, " to ", fnew)
 			} else {
 				if((!overwrite) & file.exists(paste(baseFolder, fnew, sep = ""))){
 					message("renaming ", fn, "to", fnew, "failed as already exists. To overwrite set T")
@@ -824,7 +824,11 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 			}
 		}
 	}
-	message("changed ", changed)
+	if(test & changed==0){
+		message("add test = FALSE to actually change files.")
+	} else {
+		umx_msg(changed)
+	}
 }
 
 #' umx_move_file
@@ -3073,6 +3077,9 @@ umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 #' umx_show(m1, what = "labels")
 #' umx_show(m1, what = "free", "A")
 umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("S", "A"), digits = 2) {
+	if(!umx_is_RAM(model)){
+		stop("Only RAM models by default: what would you like me to do with this type of model?")
+	}
 	what = umx_default_option(what, c("values", "free", "labels"), check = TRUE)
 	for (w in matrices) {
 		message("Showing ", what, " for:", w, " matrix:")
