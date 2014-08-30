@@ -90,12 +90,10 @@ oneFactorJoint$x1 = oneFactorJoint$x1 *10
 oneFactorJoint$x2 = oneFactorJoint$x2 *10
 oneFactorJoint$x3 = oneFactorJoint$x3 *10
 
-# umx_get_optimizer()
+# umx_set_optimizer("NPSOL")
 # umx_set_optimizer("CSOLNP")
 m9 = mxModel(m8, mxData(oneFactorJoint, type = "raw"))
-m9 = mxRun(m9) # fails
-# by applying a value-setting algorithm, the model will fit even if we drag the variances a long way away
+m9 = mxRun(m9) # may fail
+# By applying a value-setting algorithm, the model will fit even if we drag the variances a long way away
 m9 = umxValues(m9);
 m9 <- mxRun(m9)
-
-
