@@ -240,7 +240,6 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 	}
 
 	if(isRaw){
-		# TODO add means if no means added...
 		if(is.null(m1@matrices$M) ){
 			message("You have raw data, but no means model. I added\n",
 			"mxPath('one', to = manifestVars)")

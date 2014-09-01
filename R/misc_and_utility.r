@@ -72,11 +72,15 @@ umx_get_optimizer <- function(model = NULL) {
 #' }
 umx_set_optimizer <- function(opt = c("NPSOL","NLOPT","CSOLNP"), model = NULL) {
 	opt = umx_default_option(opt, c("NPSOL","NLOPT","CSOLNP"))
-	mxOption(model, "Default optimizer", opt)
-	if(opt == "NPSOL"){
-		# mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
-		# mxOption(model, 'mvnMaxPointsC', 5e+5) # default is 5000
+	if(is.null(model)){
+		mxOption(NULL, "Default optimizer", opt)
+	} else {
+		return(mxOption(model, "Default optimizer", opt))
 	}
+	# if(opt == "NPSOL"){
+	# 	# mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
+	# 	# mxOption(model, 'mvnMaxPointsC', 5e+5) # default is 5000
+	# }
 }
 
 #' umx_set_cores
@@ -316,8 +320,9 @@ umx_update_OpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALS
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umx_get_time(m1)
 
-umx_get_time <- function(model, formatStr= "%H hours, %M minutes, and %OS3 seconds", tz = "GMT"){
+umx_get_time <- function(model, formatStr = c("Wall clock time (HH:MM:SS.hh): %H:%M:%OS2", "%H hours, %M minutes, and %OS3 seconds"), tz = "GMT"){
 	lastTime = ""
+	formatStr = umx_default_option(formatStr, c("Wall clock time (HH:MM:SS.hh): %H:%M:%OS2", "%H hours, %M minutes, and %OS3 seconds"))
 	if(length(model)>1){
 		for(i in 1:length(model)) {
 			m = model[[i]]
@@ -2768,7 +2773,7 @@ demand <- function(package = "") {
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 
 #' @examples
-#' covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(v1_6, v1_6),
+#' covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(paste0("v", 1:6), paste0("v", 1:6)),
 #' data = c(0.9223099, 0.1862938, 0.4374359, 0.8959973, 0.9928430, 0.5320662,
 #'            0.1862938, 0.2889364, 0.3927790, 0.3321639, 0.3371594, 0.4476898,
 #'            0.4374359, 0.3927790, 1.0069552, 0.6918755, 0.7482155, 0.9013952,
@@ -2777,9 +2782,11 @@ demand <- function(package = "") {
 #'            0.5320662, 0.4476898, 0.9013952, 0.8040448, 0.8777786, 1.3997558))
 #' myData = umx_cov2raw(covData, n = 100, means = 1:6)
 umx_cov2raw <- function(myCovariance, n, means = 0) {
-	# TODO check cov is a cov matrix
-	if(means == 0){
-		means = rep(0,dim(myCovariance)[2])
+	if(!umx_is_cov(myCovariance, boolean = TRUE)){
+		stop("myCovariance must be a covariance matrix")
+	}
+	if(length(means) == 0){
+		means = rep(means, dim(myCovariance)[2])
 	} else {
 		if(length(means) != dim(myCovariance)[2]){
 			stop("means must have the same length as the matrix columns. You gave me ", dim(myCovariance)[2], 
