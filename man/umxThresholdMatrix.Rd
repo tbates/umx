@@ -37,6 +37,9 @@ is modeled as a high score on the latent normally distributed trait, with thresh
 this threshold (1-minus the number of categories).
 }
 \examples{
+x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")
+umxThresholdMatrix(x)
+
 require(OpenMx)
 data(twinData)
 twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
