@@ -1,3 +1,4 @@
+http://strawpoll.me/2439218/r
 fixInNamespace("modelModifyFilter", "OpenMx")
 
 # =============
