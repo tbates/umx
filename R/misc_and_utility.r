@@ -13,6 +13,22 @@
 # https://github.com/hadley/devtools
 
 
+# ======================================
+# = how to check the thresholds matrix =
+# ======================================
+# umx_check_thresh_matrix()<- function(model or thresh) {
+# 	x = data.frame(m1$top$threshMat$values)
+# 	x[x == 0] = NA
+# 	diffRows = dim(x)[1] -1
+# 	y = umx_apply(umx_rot, to_each = "column", of_DF = x)
+# 	y[1:diffRows,] - x[1:diffRows,]
+# 	# some threshold differences are zero
+# 	any(y[1:diffRows,] - x[1:diffRows,] == 0, na.rm = T)
+# 	# some threshold differences are inverted!
+# 	any(y[1:diffRows,] - x[1:diffRows,] < 0, na.rm = T)
+# }
+
+
 # ============================
 # = OpenMx-related functions =
 # ============================
@@ -697,7 +713,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' model = umx_RAM_ordinal_objective(model)
 #' }
 umx_RAM_ordinal_objective <- function(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE) {
-	# TODO: means = zero & VAR = 1 for ordinal variables
+	
 	# (This is a nice place to check, as we have the df present...)
 	if(!any(umx_is_ordered(df))){
 		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")

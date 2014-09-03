@@ -1698,6 +1698,9 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @seealso - \code{\link{umxOrdinalObjective}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
+#' x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")
+#' umxThresholdMatrix(x)
+#' 
 #' require(OpenMx)
 #' data(twinData)
 #' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
@@ -1749,14 +1752,10 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 
 umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE, verbose = TRUE){
-	if(deviationBased){
-		stop("deviation-based not handled yet - not sure it's needed now...")
-	}
-	if(droplevels){
-		stop("Not sure it's wise to drop levels...")
-	}
+	if(deviationBased){ stop("deviation-based not handled yet - not sure it's needed now...") }
+	if(droplevels){     stop("Not sure it's wise to drop levels...") }
 	# TODO implement ability to manualy choose the method - more flexible and explicit.
-	method = umx_default_option(method, c("auto", "Mehta", "allFree"), check = TRUE)
+	method      = umx_default_option(method, c("auto", "Mehta", "allFree"), check = TRUE)
 	nSib        = length(suffixes)
 	isFactor    = umx_is_ordered(df) # all ordered factors including binary
 	isOrd       = umx_is_ordered(df, ordinal.only = TRUE) # only ordinals
@@ -1808,11 +1807,11 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 			"It's essential THAT YOU LEAVE FREE the means and variances of the latent ordinal traits!!!\n",
 			"See ?mxThresholdMatrix")
 		}
-	}else{
+	} else {
 		stop("You seem to have a trait with only one category... makes it a bit futile to model it?")
 	}
 
-	df = df[, factorVarNames]
+	df = df[, factorVarNames, drop=FALSE]
 
 	if(nSib == 2){
 		# For better precision, copy both halves of the dataframe into each
@@ -1841,11 +1840,12 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	# For each factor variable
 	for (thisVarName in factorVarNames) {
 		thisCol = df[,thisVarName]
+		nThreshThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
 		
 		tab = table(thisCol)/sum(table(thisCol))
 		cumTab = cumsum(tab)
 		zValues = qnorm(p = cumTab, lower.tail = TRUE)
-		# These are the z values for each level, we should ditch one to get thresholds...
+		# These are the z values for each level, ditch one to get thresholds...
 		if(any(is.infinite(zValues))){
 			nPlusInf  = sum(zValues == (Inf))
 			nMinusInf = sum(zValues == (-Inf))
@@ -1860,8 +1860,33 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 				zValues[zValues == (-Inf)] = padding
 			}
 		}
-		# Set labels
-		nThreshThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
+		if(any(duplicated(zValues))){
+			# http://stats.stackexchange.com/questions/74544/fitting-a-sigmoid-function-why-is-my-fit-so-bad
+			tmp = data.frame(zValues = zValues)
+			tmp$x = c(1:length(zValues))
+			tryCatch({	
+				fit <- nls(zValues ~ theta1/(1 + exp(-(theta2 + theta3*x))), start=list(theta1 = 4, theta2 = 0.09, theta3 = 0.31), data = tmp)
+				zValues = predict(fit)
+			}, warning = function(cond) {
+			    # warning-handler-code
+			    umx_msg(thisVarName)
+		        umx_msg(zValues)
+				message(cond)
+			}, error = function(cond) {
+			    umx_msg(thisVarName)
+		        umx_msg(zValues)
+		        message(cond)
+			}, finally = {
+			    # cleanup-code
+			})
+		}
+        # TODO which is right?
+        # values = c(zValues[2:(nThreshThisVar+1)], rep(FALSE, (maxThresh - nThreshThisVar)))
+		values = c(zValues[1:(nThreshThisVar)], rep(FALSE, (maxThresh - nThreshThisVar)))
+
+		# ==============
+		# = Set labels =
+		# ==============
 		if(nSib == 2){
 			# search string to find all sib's versions of a var
 			findStr = paste0( "(", paste(suffixes, collapse = "|"), ")$")
@@ -1870,20 +1895,16 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 			thisLab = thisVarName
 		}	
         labels = c(paste0(thisLab, "_thresh", 1:nThreshThisVar), rep(NA   , (maxThresh - nThreshThisVar)))
-        free   = c(rep(TRUE                 , nThreshThisVar)  , rep(FALSE, (maxThresh - nThreshThisVar)))
-        # TODO which is right?
-		values = c(zValues[1:(nThreshThisVar)], rep(FALSE, (maxThresh - nThreshThisVar)))
-        # values = c(zValues[2:(nThreshThisVar+1)], rep(FALSE, (maxThresh - nThreshThisVar)))
-		if(nThreshThisVar == 1){			
-			# We are all done: user NEEDS to fix the mean and variance
-			# of the latent trait, (usually at 0 and 1) for this to work.
-		} else if(nThreshThisVar > 1){ # fix the first 2
+        
+		# ============
+		# = Set Free =
+		# ============
+		free   = c(rep(TRUE, nThreshThisVar)  , rep(FALSE, (maxThresh - nThreshThisVar)))
+		
+		if(nThreshThisVar > 1){ # fix the first 2
 			free[1:2] = FALSE
-		} else {
-			stop("Should never see < 1 levels in umxThresholdMatrix\n", 
-			thisVarName, " appeared to have ", nThreshThisVar, " levels.")
 		}
-
+		
 		threshMat$labels[, thisVarName] = labels
 		threshMat$free[  , thisVarName] = free
 		threshMat$values[, thisVarName] = values
