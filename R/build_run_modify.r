@@ -1860,10 +1860,13 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 				zValues[zValues == (-Inf)] = padding
 			}
 		}
+
 		if(any(duplicated(zValues))){
+			umx_msg("You have some empty cells")
 			# http://stats.stackexchange.com/questions/74544/fitting-a-sigmoid-function-why-is-my-fit-so-bad
 			tmp = data.frame(zValues = zValues)
 			tmp$x = c(1:length(zValues))
+			# Anything over 3.3?
 			tryCatch({	
 				fit <- nls(zValues ~ theta1/(1 + exp(-(theta2 + theta3*x))), start=list(theta1 = 4, theta2 = 0.09, theta3 = 0.31), data = tmp)
 				zValues = predict(fit)

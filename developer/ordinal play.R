@@ -86,9 +86,9 @@ round(cov2cor(umxExpCov(m8)),2)
 ggplot2::qplot(z3, z2, data = oneFactorJoint, geom = "jitter")
 
 # If we move the variances the model won't start
-oneFactorJoint$x1 = oneFactorJoint$x1 *10
-oneFactorJoint$x2 = oneFactorJoint$x2 *10
-oneFactorJoint$x3 = oneFactorJoint$x3 *10
+oneFactorJoint$x1 = oneFactorJoint$x1 * 10
+oneFactorJoint$x2 = oneFactorJoint$x2 * 10
+oneFactorJoint$x3 = oneFactorJoint$x3 * 10
 
 # umx_set_optimizer("NPSOL")
 # umx_set_optimizer("CSOLNP")
