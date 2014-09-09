@@ -88,7 +88,9 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 	fix = umx_default_option(fix, c("none", "latents", "firstLoadings"), check = TRUE)
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
-		stop("You must include some mxPath()s")
+	}
+	if(is.null(data)){
+		stop("umxRAM needs some mxData. You set this like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
 	}
 
 	nPaths       = 0 # initialise

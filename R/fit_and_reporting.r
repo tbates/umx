@@ -144,7 +144,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 	if (isTRUE(all.equal(parm, defaultParmString))) {
 		if(umx_has_CIs(object, "intervals")) {
 			# TODO add a count for the user
-			message("Existing CIs Will be used (", length(object@intervals), " in total)")
+			message("Existing CIs Will be used (", length(object@intervals), " in total: may be more cells)")
 		} else {
 			message("Adding CIs for all free parameters")
 			CIs_to_set = names(omxGetParameters(object, free = TRUE))
@@ -165,13 +165,18 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 		object = mxRun(object, intervals = TRUE)
 	}
 	# 3. Report CIs if found in output
-	if(!umx_has_CIs(object, "both") & run == FALSE) {
-		message("Some CIs have been requested, but have not yet been run. Add ", omxQuotes("run = TRUE"), " to your confint() call to run them.\n",
-		"To store the model run capture it from confint like this:\n",
-		"m1 = confint(m1, run=TRUE)")
+	if(!umx_has_CIs(object, "both")) {
+		if(run == FALSE){
+			message("Some CIs have been requested, but have not yet been run. Add ", omxQuotes("run = TRUE"), " to your confint() call to run them.\n",
+			"To store the model run capture it from confint like this:\n",
+			"m1 = confint(m1, run = TRUE)")
+		} else {
+			message("hmmm... you wanted it run, but I don't see any computed CIs despite there being ", length(m2$intervals), " requested...",
+			"\nThat's a bug. Please report it to timothy.c.bates@gmail.com")
+		}
 	} else {
 		model_summary = summary(object)
-		model_CIs = round(model_summary$CI, 3)
+		model_CIs   = round(model_summary$CI[,c("lbound", "estimate", "ubound")], 3)
 		model_CI_OK = object@output$confidenceIntervalCodes
 		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
 		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
