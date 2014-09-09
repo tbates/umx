@@ -6,7 +6,7 @@ You can install the most recent version from github as follows
 ```splus
 install.packages("devtools")
 library("devtools")
-install_github("umx", username = "tbates")
+install_github("tbates/umx")
 library("umx")
 ?umx
 # on windows you might need
@@ -15,32 +15,28 @@ library("umx")
 # install_github("tbates/umx")
 ```
 
-The umx package has a range of useful helpers to help you get things done in SEM. This list is not comprehensive: install the package to learn more
+The umx package has a wide range of functions to get things done in SEM. The best way to learn about what is on offer is to install, and use the help, starting with '?umx'.
+Some highlights are
 
 1. Building Models
-	* `umxStart()` *# Add sane start values to a model: **very** helpful*
-	* `umxLabel()` *# Add labels to paths: Labels allow you to set, equate, and drop paths by label!*
-	* `umxLatent()` *# Helper for building formative and reflective latent variables from their manifest indicators*
-2. Run models
-	* `umxRun()` *# Use in place of mxRun to: set labels, starts, compute saturated for raw data, run model until it returns green*
-	* `umxReRun()` *# Modify a model (drop paths etc), run, and even return the comparison all in 1 line*
+	* `umxStart()` *# Add sane start values to a RAM or matrix model, or any matrix: **very** helpful*
+	* `umxLabel()` *# Add labels to paths and matrix cells. This is great for setting, equating and dropping paths by label!*
+	* `umxPath()` *# mxPath on steroids, with nouns and verbs for var= , mean = Great time save in RAM modelling*
+	* `umxRAM()` *# mxModel with an R like data = parameter, no need to specify type = "RAM", and auto-discovery of manifests and latents from the paths you write*
 3. Reporting output
-	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA)*
-	* `umxPlot(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
-	* `umxTime(fit1)`  *# Report the time taken by a model in a compact friendly, programable format*
+	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA). Optionally show the path loadings*
+	* `plot(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
+	* `umx_get_time(fit1)`  *# Report the time taken by a model in a compact friendly, programable format*
 3. Modify models
+	* `umxReRun()` *# Modify a model (add objects, drop or free paths, including by regex), re-name, re-run, and even return the comparison **all in 1 line** *
+	* `umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. like `omxGetParameters` but uses regular expressions.*
 	* `umxMI()` # Report the top n modification indices
 	* `umxAdd1()` # add parameters and return a table of the effect on fit
 	* `umxDrop1()` # Drop parameters and return a table of the effect on fit
-	* `umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. like `omxGetParameters` but uses regular expressions.*
-	* `umxReRun()` *# re-run a model: Quickly drop or free parameters, rename the model, and re-run...*
 4. Data and package helpers
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
-	* `umx_lower2full(lower.no.diag, diag=F, byrow=F)`  *# Create a full matrix from a lower matrix of data*
-	* `umxUpdateOpenMx(bleedingEdge = FALSE, loadNew = TRUE)` *# Update the OpenMx package*
-	* `umxSaturated(model)` *# Create a saturated model when raw data are being used. *
-		* `summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = model_sat$Ind)`
-		* **nb**:* Saturated solutions are not computable for definition variables and some other models.
+
+There are about 100 functions... have fun!
 
 Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.
 
