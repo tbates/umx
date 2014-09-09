@@ -5,7 +5,7 @@
 \usage{
 umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
   method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA),
-  deviationBased = FALSE, droplevels = FALSE, verbose = TRUE)
+  deviationBased = FALSE, droplevels = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{df}{the data being modelled (to allow access to the factor levels and quantiles within these for each variable)}

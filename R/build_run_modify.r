@@ -1751,7 +1751,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' str(mzData)
 #' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 
-umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE, verbose = TRUE){
+umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE, verbose = FALSE){
 	if(deviationBased){ stop("deviation-based not handled yet - not sure it's needed now...") }
 	if(droplevels){     stop("Not sure it's wise to drop levels...") }
 	# TODO implement ability to manualy choose the method - more flexible and explicit.
@@ -1771,20 +1771,22 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		return(NA) # probably OK to set thresholds matrix to NA in mxExpectation()
 		# TODO check if we should die here instead
 	} else {
-		message("'threshMat' created to handle ")
-		if(nSib == 2){
-			if(nOrdVars > 0){
-				message(nOrdVars/nSib, " pair(s) of ordinal variables:", omxQuotes(ordVarNames), "\n")
-			}
-			if(nBinVars > 0){
-				message(nBinVars/nSib, " pair(s) of binary variables:", omxQuotes(binVarNames), "\n")
-			}
-		} else {
-			if(nOrdVars > 0){
-				message(nOrdVars, " ordinal variables:", omxQuotes(ordVarNames), "\n")
-			}
-			if(nBinVars > 0){
-				message(nBinVars, " binary variables:", omxQuotes(binVarNames), "\n")
+		if(verbose){
+			message("'threshMat' created to handle ")
+			if(nSib == 2){
+				if(nOrdVars > 0){
+					message(nOrdVars/nSib, " pair(s) of ordinal variables:", omxQuotes(ordVarNames), "\n")
+				}
+				if(nBinVars > 0){
+					message(nBinVars/nSib, " pair(s) of binary variables:", omxQuotes(binVarNames), "\n")
+				}
+			} else {
+				if(nOrdVars > 0){
+					message(nOrdVars, " ordinal variables:", omxQuotes(ordVarNames), "\n")
+				}
+				if(nBinVars > 0){
+					message(nBinVars, " binary variables:", omxQuotes(binVarNames), "\n")
+				}
 			}
 		}
 	}
@@ -1811,7 +1813,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		stop("You seem to have a trait with only one category... makes it a bit futile to model it?")
 	}
 
-	df = df[, factorVarNames, drop=FALSE]
+	df = df[, factorVarNames, drop = FALSE]
 
 	if(nSib == 2){
 		# For better precision, copy both halves of the dataframe into each
@@ -1841,11 +1843,46 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	for (thisVarName in factorVarNames) {
 		thisCol = df[,thisVarName]
 		nThreshThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
+
+		# nls is too fragile...
+		# tmp = data.frame(zValues = zValues)
+		# tmp$x = c(1:length(zValues))
+		# fit <- nls(zValues ~ theta1/(1 + exp(-(theta2 + theta3*x))), start=list(theta1 = 4, theta2 = 0.09, theta3 = 0.31), data =tmp)
+		# zValues = predict(fit)
+		# http://stats.stackexchange.com/questions/74544/fitting-a-sigmoid-function-why-is-my-fit-so-bad
+		# tryCatch({
+		# 	# job here is just to interpolate empty cell frequencies..
+		# }, warning = function(cond) {
+		#     # warning-handler-code
+		#     umx_msg(thisVarName)
+		# 	        umx_msg(zValues)
+		# 	message(cond)
+		# }, error = function(cond) {
+		#     umx_msg(thisVarName)
+		# 	        umx_msg(zValues)
+		# 	        message(cond)
+		# }, finally = {
+		#     # cleanup-code
+		# })
+
+		# This approach would work differently from the start...
+		# co = coef(fitdistr(thisCol[!is.na(thisCol)], "normal"))
+		# dnorm(1:(nThreshThisVar+1), co["mean"], co["sd"]))
 		
-		tab = table(thisCol)/sum(table(thisCol))
-		cumTab = cumsum(tab)
+		# ===============================================================
+		# = Work out z-values for thresholds based on simple bin counts =
+		# ===============================================================
+		# Pros: Doesn't assume equal intervals.
+		# Problems = empty bins and noise (equal thresholds (illegal) and higher than realisitic z-values)
+		tab = table(thisCol)/sum(table(thisCol)) # Simple histogram of proportion at each threshold
+		cumTab = cumsum(tab)                     # Convert to a cumulative sum (sigmoid from 0 to 1)
+		# Use quantiles to get z-equivalent for each level: ditch one to get thresholds...
 		zValues = qnorm(p = cumTab, lower.tail = TRUE)
-		# These are the z values for each level, ditch one to get thresholds...
+		# take this table as make a simple vector
+		zValues = as.numeric(zValues)
+		# =======================================================================================
+		# = TODO handle where flows over, say, 3.3... squash the top down or let the user know? =
+		# =======================================================================================
 		if(any(is.infinite(zValues))){
 			nPlusInf  = sum(zValues == (Inf))
 			nMinusInf = sum(zValues == (-Inf))
@@ -1856,37 +1893,50 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 			}
 			if(nMinusInf){
 				minOK = min(zValues[!is.infinite(zValues)])
-				padding = seq(from = (minOK-.1), by = (-.1), length.out = nMinusInf)
+				padding = seq(from = (minOK - .1), by = (- .1), length.out = nMinusInf)
 				zValues[zValues == (-Inf)] = padding
 			}
 		}
-
+		# =================================
+		# = Move duplicates (empty cells) =
+		# =================================
 		if(any(duplicated(zValues))){
-			umx_msg("You have some empty cells")
-			# http://stats.stackexchange.com/questions/74544/fitting-a-sigmoid-function-why-is-my-fit-so-bad
-			tmp = data.frame(zValues = zValues)
-			tmp$x = c(1:length(zValues))
-			# Anything over 3.3?
-			tryCatch({	
-				fit <- nls(zValues ~ theta1/(1 + exp(-(theta2 + theta3*x))), start=list(theta1 = 4, theta2 = 0.09, theta3 = 0.31), data = tmp)
-				zValues = predict(fit)
-			}, warning = function(cond) {
-			    # warning-handler-code
-			    umx_msg(thisVarName)
-		        umx_msg(zValues)
-				message(cond)
-			}, error = function(cond) {
-			    umx_msg(thisVarName)
-		        umx_msg(zValues)
-		        message(cond)
-			}, finally = {
-			    # cleanup-code
-			})
+			# message("You have some empty cells")
+			# Find where the values change:
+			runs         = rle(zValues)
+			runLengths   = runs$lengths
+			runValues    = runs$values
+			distinctCount = length(runValues)
+			indexIntoRLE = indexIntoZ = 1
+			for (i in runLengths) {
+				runLen = i
+				if(runLen != 1){
+					repeatedValue   = runValues[indexIntoRLE]
+					preceedingValue = runValues[(indexIntoRLE - 1)]
+					minimumStep = .01
+					if(indexIntoRLE == distinctCount){
+						newValues = seq(from = (preceedingValue + minimumStep), by = (minimumStep), length.out = runLen)
+						zValues[c(indexIntoZ:(indexIntoZ + runLen - 1))] = rev(newValues)
+					} else {
+						followedBy = runValues[(indexIntoRLE + 1)]
+						minimumStep = min((followedBy - preceedingValue)/(runLen + 1), minimumStep)
+						newValues = seq(from = (followedBy - minimumStep), by = (-minimumStep), length.out = runLen)
+						zValues[c(indexIntoZ:(indexIntoZ + runLen - 1))] = rev(newValues)
+					}
+				}
+				indexIntoZ   = indexIntoZ + runLen
+				indexIntoRLE = indexIntoRLE + 1
+				# Play "The chemistry between them", Dorothy Hodgkin
+				# Copenhagen, Michael Frein
+			}
 		}
-        # TODO which is right?
-        # values = c(zValues[2:(nThreshThisVar+1)], rep(FALSE, (maxThresh - nThreshThisVar)))
-		values = c(zValues[1:(nThreshThisVar)], rep(FALSE, (maxThresh - nThreshThisVar)))
-
+		# return(zValues)
+        # TODO start from 1, right, not 2?
+		values = c(zValues[1:(nThreshThisVar)], rep(NA, (maxThresh - nThreshThisVar)))
+		sortValues <- sort(values, na.last = NA)
+		if (!identical(sortValues, values)) {
+			stop("the thresholds are not in order... oops: that's my fault :-(")
+		}
 		# ==============
 		# = Set labels =
 		# ==============
@@ -1897,12 +1947,12 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		} else {
 			thisLab = thisVarName
 		}	
-        labels = c(paste0(thisLab, "_thresh", 1:nThreshThisVar), rep(NA   , (maxThresh - nThreshThisVar)))
+        labels = c(paste0(thisLab, "_thresh", 1:nThreshThisVar), rep(NA, (maxThresh - nThreshThisVar)))
         
 		# ============
 		# = Set Free =
 		# ============
-		free   = c(rep(TRUE, nThreshThisVar)  , rep(FALSE, (maxThresh - nThreshThisVar)))
+		free = c(rep(TRUE, nThreshThisVar), rep(FALSE, (maxThresh - nThreshThisVar)))
 		
 		if(nThreshThisVar > 1){ # fix the first 2
 			free[1:2] = FALSE
