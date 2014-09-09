@@ -6,7 +6,7 @@ You can install the most recent version from github as follows
 ```splus
 install.packages("devtools")
 library("devtools")
-install_github("umx", username = "tbates")
+install_github("tbates/umx")
 library("umx")
 ?umx
 # on windows you might need
