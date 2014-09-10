@@ -90,6 +90,6 @@ plot(m1, std = TRUE, dotFilename = NA)
 Other umx core functions: \code{\link{umxLabel}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
   \code{\link{umxValues}}; \code{\link{umx_cov_diag}};
-  \code{\link{umx_get_checkpointing}}
+  \code{\link{umx_get_checkpoint}}
 }
 

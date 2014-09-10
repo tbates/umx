@@ -159,29 +159,32 @@ umx_get_cores <- function(model = NULL) {
 	mxOption(model, "Number of Threads")
 }
 
-#' umx_set_checkpointing
+#' umx_set_checkpoint
 #'
 #' Set the checkpoint status for a model or global options
 #'
-#' @param always defaults to "Yes"
-#' @param count default 1
-#' @param units default "evaluations"
-#' @param model an optional model to get options from (default = NULL)
-#' @return - NULL
+#' @param count how many units to elapse betwen checkpoints: Default =  1 (set to zero to set always = 'No')
+#' @param units units to count in: Default unit is 'evaluations' ('minutes' is also legal)
+#' @param model (optional) model to set options in (default = NULL)
+#' @return - mxModel if provided
 #' @export
 #' @family umx misc functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umx_set_checkpointing("Yes", 1, "evaluations", "~/Desktop/")
-#' # m1 = umx_set_checkpointing("Yes", 1, "evaluations", model = m1)
-umx_set_checkpointing <- function(always = c("Yes", "No"), count = 1, units = c("evaluations", "minutes"), directory = getwd(), model = NULL) {
-	always = umx_default_option(always, c("Yes", "No"))
+#' umx_set_checkpoint(count = 1, "evaluations", dir = "~/Desktop/")
+#' # m1 = umx_set_checkpoint(1, "evaluations", model = m1)
+umx_set_checkpoint <- function(count = 1, units = c("evaluations", "minutes"), directory = getwd(), model = NULL) {
+	if(count==0){
+		always = "No"
+	} else {
+		always = "Yes"
+	}
 	units = umx_default_option(units, c("evaluations", "minutes"))
 	if(is.null(model)){
-		mxOption(factorModel, "Checkpoint Directory", directory)
-		mxOption(model, "Always Checkpoint", always)
-		mxOption(model, "Checkpoint Count" , count)
-		mxOption(model, "Checkpoint Units" , units)	
+		mxOption(NULL, "Checkpoint Directory", directory)
+		mxOption(NULL, "Always Checkpoint"   , always)
+		mxOption(NULL, "Checkpoint Count"    , count)
+		mxOption(NULL, "Checkpoint Units"    , units)	
 	} else {
 		model = mxOption(model, "Checkpoint Directory", directory)
 		model = mxOption(model, "Always Checkpoint", always)
@@ -191,7 +194,7 @@ umx_set_checkpointing <- function(always = c("Yes", "No"), count = 1, units = c(
 	}
 }
 
-#' umx_get_checkpointing
+#' umx_get_checkpoint
 #'
 #' get the checkpoint status for a model or global options
 #'
@@ -202,8 +205,8 @@ umx_set_checkpointing <- function(always = c("Yes", "No"), count = 1, units = c(
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umx_get_checkpointing(model)
-umx_get_checkpointing <- function(model = NULL) {
+#' umx_get_checkpoint(model)
+umx_get_checkpoint <- function(model = NULL) {
 	message("Always Checkpoint: ", mxOption(model, "Always Checkpoint") )
 	message("Checkpoint  Count: ", mxOption(model, "Checkpoint Count" ) )
 	message("Checkpoint  Units: ", mxOption(model, "Checkpoint Units" ) )

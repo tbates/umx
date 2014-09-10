@@ -64,7 +64,7 @@ m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 Other umx core functions: \code{\link{umxLabel}};
   \code{\link{umxReRun}}; \code{\link{umxValues}};
   \code{\link{umx_cov_diag}};
-  \code{\link{umx_get_checkpointing}}; \code{\link{umx}},
+  \code{\link{umx_get_checkpoint}}; \code{\link{umx}},
   \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

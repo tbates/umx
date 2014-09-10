@@ -54,7 +54,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
   \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
   \code{\link{umx_reorder}}; \code{\link{umx_rot}};
-  \code{\link{umx_set_checkpointing}};
+  \code{\link{umx_set_checkpoint}};
   \code{\link{umx_set_cores}};
   \code{\link{umx_string_to_algebra}};
   \code{\link{umx_trim}}
