@@ -1,4 +1,4 @@
-# devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::check("~/bin/umx")
 # devtools::check_doc("~/bin/umx")
 # setwd("~/bin/umx"); 
@@ -1935,9 +1935,10 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		# return(zValues)
         # TODO start from 1, right, not 2?
 		values = c(zValues[1:(nThreshThisVar)], rep(NA, (maxThresh - nThreshThisVar)))
-		sortValues <- sort(values, na.last = NA)
+		sortValues <- sort(values, na.last = TRUE)
 		if (!identical(sortValues, values)) {
-			stop("the thresholds are not in order... oops: that's my fault :-(")
+			umx_msg(values)
+			stop("The thresholds for ", thisVarName, " are not in order... oops: that's my fault :-(")
 		}
 		# ==============
 		# = Set labels =
