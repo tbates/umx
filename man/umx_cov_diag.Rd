@@ -4,16 +4,17 @@
 \title{umx_cov_diag}
 \usage{
 umx_cov_diag(df, ordVar = 1, format = c("diag", "Full", "Lower"),
-  use = "complete")
+  use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs",
+  "na.or.complete"))
 }
 \arguments{
 \item{df}{a dataframe of raw data from which to get variances.}
 
 \item{ordVar}{= 1}
 
-\item{return}{What to return: Defaults to a vector of variances c("vars", "Full", "Lower")}
+\item{format}{= What to return: options are c("diag", "Full", "Lower"). Defaults to a vector of variances}
 
-\item{use}{passed to cov - defaults to "complete"}
+\item{use}{passed to \code{\link{cov}} - defaults to "complete.obs" (other options are in the function )}
 }
 \value{
 - \code{\link{mxModel}}

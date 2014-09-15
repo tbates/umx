@@ -13,6 +13,7 @@
 #' List of deprecated umx functions
 #' These functions are deprecated in umx. They may be dropped entirely in future versions. Many already stop() code and ask to be updated
 #'
+#' @param ... the old function's parameters (now stripped out to avoid telling people how to do it the wrong way :-)
 #' @description 
 #' umx_grep_labels should be replaced with \code{\link{umx_grep}}
 #' 
@@ -40,17 +41,9 @@
 #'
 #' umxReportCIs is deprecated: please use \code{\link{umxCI}} instead
 #'
-#' hasSquareBrackets is deprecated: please use \code{\link{xmuHasSquareBrackets}} instead
+#' hasSquareBrackets is deprecated: please use \code{\link{umx_has_square_brackets}} instead
 #' 
-#' replace genEpi_GetLabels with \code{\link{umxGetParameters}}
-#' 
-#' replace mxMakeThresholdsMatrices with \code{\link{umxThresholdMatrix}}
-#' 
-#' replace mxAutoThreshRAMObjective with \code{\link{umxThresholdRAMObjective}}
-#' 
-#' replace umxThresholdRAMObjective with \code{\link{umx_RAM_thresh_Matrix}}
-#' 
-#' replace umxThresholdRAMObjective with \code{\link{umx_RAM_ordinal_objective}}
+#' xmuHasSquareBrackets is deprecated: please use \code{\link{umx_has_square_brackets}} instead
 #' 
 #' replace umxReportFit with \code{\link{umxSummary}}
 #' 

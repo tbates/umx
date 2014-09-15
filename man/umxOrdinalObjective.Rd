@@ -16,6 +16,10 @@ umxOrdinalObjective(df, suffixes = NA, covName = "expCov",
 
 \item{meansName}{is the name of the expected-means matrix (Defaults to "expMeans")}
 
+\item{threshMatName}{= "threshMat"}
+
+\item{vector}{= FALSE}
+
 \item{deviationBased}{Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)}
 
 \item{droplevels}{Whether to drop levels with no observed data (defaults to FALSE)}
@@ -26,11 +30,12 @@ umxOrdinalObjective(df, suffixes = NA, covName = "expCov",
 - list of thresh matrix, fit function, and expectation.
 }
 \description{
-High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. Big time saver!
+High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. I think
+I will deprecate this, as it does too little and hides too much to be worth supporting...
 }
 \details{
-When modeling ordinal data (sex, low-med-hi,
-depressed/normal, not at all, rarely, often, always), a useful conceptual strategy to handle expectations
+When modeling ordinal data (sex, low-med-hi, depressed/normal, not at all, rarely, often, always),
+a useful conceptual strategy to handle expectations
 is to build a standard-normal model (i.e., a latent model with zero-means, and unit (1.0) variances),
 and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
 is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above

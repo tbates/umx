@@ -3,7 +3,8 @@
 \alias{RMSEA.MxModel}
 \title{RMSEA function for MxModels}
 \usage{
-\method{RMSEA}{MxModel}(model, ci.lower = 0.05, ci.upper = 0.95)
+\method{RMSEA}{MxModel}(model, ci.lower = 0.05, ci.upper = 0.95,
+  digits = 3)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get CIs on RMSEA for}
@@ -32,6 +33,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 )
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 RMSEA(m1)
+RMSEA(summary(m1))
 }
 \references{
 - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}

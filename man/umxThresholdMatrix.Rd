@@ -14,6 +14,8 @@ umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
 
 \item{threshMatName}{name of the matrix which is returned. Defaults to "threshMat" - best not to change it.}
 
+\item{method}{How to set the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)}
+
 \item{l_u_bound}{c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.}
 
 \item{deviationBased}{Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)}

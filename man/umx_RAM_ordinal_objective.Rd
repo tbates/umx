@@ -24,8 +24,6 @@ It also sets latent means and variances to 0 and 1 respectively.
 }
 \details{
 TODO: more detail about what we are doing here
-
-It uses \code{\link{umx_is_ordered}} and \code{\link{umxMakeThresholdMatrix}} as helpers
 }
 \examples{
 \dontrun{

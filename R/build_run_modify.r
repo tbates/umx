@@ -1,12 +1,12 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# devtools::check("~/bin/umx")
 # devtools::check_doc("~/bin/umx")
-# setwd("~/bin/umx"); 
+# devtools::run_examples("~/bin/umx")
+# devtools::check("~/bin/umx")
 # system(paste("open", shQuote("/Users/tim/bin/umx/R/misc_and_utility.r")))
 # devtools::build("~/bin/umx")
 # devtools::load_all("~/bin/umx")
 # devtools::show_news("~/bin/umx")
-# devtools::run_examples("~/bin/umx")
+# setwd("~/bin/umx"); 
 
 # devtools::create()
 # devtools::add_travis();
@@ -1690,6 +1690,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @param df the data being modelled (to allow access to the factor levels and quantiles within these for each variable)
 #' @param suffixes e.g. c("T1", "T2") - Use for data with repeated observations in a row (i.e., twin data) (defaults to NA)
 #' @param threshMatName name of the matrix which is returned. Defaults to "threshMat" - best not to change it.
+#' @param method  How to set the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)
 #' @param l_u_bound c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.
 #' @param deviationBased Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)
 #' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
@@ -1970,10 +1971,11 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 
 #' umxOrdinalObjective
 #'
-#' High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. Big time saver!
+#' High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. I think
+#' I will deprecate this, as it does too little and hides too much to be worth supporting...
 #'
-#' When modeling ordinal data (sex, low-med-hi, 
-#' depressed/normal, not at all, rarely, often, always), a useful conceptual strategy to handle expectations
+#' When modeling ordinal data (sex, low-med-hi, depressed/normal, not at all, rarely, often, always),
+#' a useful conceptual strategy to handle expectations
 #' is to build a standard-normal model (i.e., a latent model with zero-means, and unit (1.0) variances),
 #' and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
 #' is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
@@ -1983,6 +1985,8 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 #' @param suffixes e.g. c("T1", "T2") - Use for data with repeated observations in a row (i.e., twin data) (defaults to NA)
 #' @param covName is the name of the expected-covariance matrix (Defaults to "expCov")
 #' @param meansName is the name of the expected-means matrix (Defaults to "expMeans") 
+#' @param threshMatName = "threshMat"
+#' @param vector = FALSE
 #' @param deviationBased Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)
 #' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
 #' @param verbose (defaults to FALSE))

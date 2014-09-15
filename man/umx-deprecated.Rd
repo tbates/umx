@@ -30,6 +30,9 @@ umxReportFit(...)
 
 umxReportCIs(...)
 }
+\arguments{
+\item{...}{the old function's parameters (now stripped out to avoid telling people how to do it the wrong way :-)}
+}
 \description{
 umx_grep_labels should be replaced with \code{\link{umx_grep}}
 
@@ -57,17 +60,9 @@ genEpi_EvalQuote is deprecated: please use \code{\link{umxEval}} instead
 
 umxReportCIs is deprecated: please use \code{\link{umxCI}} instead
 
-hasSquareBrackets is deprecated: please use \code{\link{xmuHasSquareBrackets}} instead
+hasSquareBrackets is deprecated: please use \code{\link{umx_has_square_brackets}} instead
 
-replace genEpi_GetLabels with \code{\link{umxGetParameters}}
-
-replace mxMakeThresholdsMatrices with \code{\link{umxThresholdMatrix}}
-
-replace mxAutoThreshRAMObjective with \code{\link{umxThresholdRAMObjective}}
-
-replace umxThresholdRAMObjective with \code{\link{umx_RAM_thresh_Matrix}}
-
-replace umxThresholdRAMObjective with \code{\link{umx_RAM_ordinal_objective}}
+xmuHasSquareBrackets is deprecated: please use \code{\link{umx_has_square_brackets}} instead
 
 replace umxReportFit with \code{\link{umxSummary}}
 

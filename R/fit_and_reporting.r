@@ -1649,8 +1649,25 @@ RMSEA <- function(x) UseMethod("RMSEA", x)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' RMSEA(m1)
-RMSEA.MxModel <- function(model, ci.lower = .05, ci.upper = .95) { 
-	sm <- summary(model)
+#' RMSEA(summary(m1))
+RMSEA.MxModel <- function(model, ci.lower = .05, ci.upper = .95, digits = 3) { 
+	if(ci.lower != .05 | ci.upper != .95){
+		stop("Setting CI on RMSEA not supported for mxModels as yet...")
+	}
+	if(class(model) == "summary.mxmodel"){
+		sm = model
+	} else {
+		sm <- summary(model)
+	}
+	return(sm)
+	RMSEA = sm$RMSEA
+	rmsea.lower = sm$RMSEACI[1]
+	rmsea.upper = sm$RMSEACI[2]
+	rmsea.pvalue = "not computed yet in OpenMx 2"
+	txt = paste0("RMSEA = ", round(RMSEA, digits), " CI", sub("^0?\\.", replacement = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "], p = ", umx_APA_pval(rmsea.pvalue))
+	print(txt)
+	invisible(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, RMSEA.pvalue = rmsea.pvalue, txt = txt))
+
 	if (is.na(sm$Chi)) return(NA);
 	X2 <- sm$Chi
 	df <- sm$degreesOfFreedom
@@ -1707,12 +1724,10 @@ RMSEA.MxModel <- function(model, ci.lower = .05, ci.upper = .95) {
 		rmsea.pvalue <- (1 - pchisq(X2, df = df, ncp = ncp))
 	} else {
 		rmsea.pvalue <- 1
-	}
-	
-	txt = paste0("RMSEA = ", round(RMSEA, 3), " CI", sub("^0?\\.", replacement = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "], p = ", umx_APA_pval(rmsea.pvalue))
-	print(txt)
-	invisible(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, RMSEA.pvalue = rmsea.pvalue, txt = txt)) 
+	}	
 }
+
+RMSEA.summary.mxmodel <- RMSEA.MxModel
 
 #' umxDescriptives
 #'

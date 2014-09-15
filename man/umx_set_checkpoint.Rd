@@ -11,6 +11,8 @@ umx_set_checkpoint(count = 1, units = c("evaluations", "minutes"),
 
 \item{units}{units to count in: Default unit is 'evaluations' ('minutes' is also legal)}
 
+\item{directory}{a directory, i.e "~/Desktop" (defaults to getwd())}
+
 \item{model}{(optional) model to set options in (default = NULL)}
 }
 \value{

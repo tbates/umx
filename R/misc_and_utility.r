@@ -165,6 +165,7 @@ umx_get_cores <- function(model = NULL) {
 #'
 #' @param count how many units to elapse betwen checkpoints: Default =  1 (set to zero to set always = 'No')
 #' @param units units to count in: Default unit is 'evaluations' ('minutes' is also legal)
+#' @param directory a directory, i.e "~/Desktop" (defaults to getwd())
 #' @param model (optional) model to set options in (default = NULL)
 #' @return - mxModel if provided
 #' @export
@@ -699,8 +700,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' It also sets latent means and variances to 0 and 1 respectively.
 #' 
 #' TODO: more detail about what we are doing here
-#' 
-#' It uses \code{\link{umx_is_ordered}} and \code{\link{umxMakeThresholdMatrix}} as helpers
 #'
 #' @param df Dataframe to make a threshold matrix for
 #' @param deviationBased whether to use the deviation system to ensure order thresholds (default = TRUE)
@@ -716,14 +715,13 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' model = umx_RAM_ordinal_objective(model)
 #' }
 umx_RAM_ordinal_objective <- function(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE) {
-	
 	# (This is a nice place to check, as we have the df present...)
 	if(!any(umx_is_ordered(df))){
 		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")
 	} 
 	pt1 = umxPath(means = umx_is_ordered(df, names = TRUE), fixedAt = 0)
 	pt2 = umxPath(var   = umx_is_ordered(df, names = TRUE), fixedAt = 1)
-	return(list(pt1, pt2, umxMakeThresholdMatrix(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE)))
+	return(list(pt1, pt2, umxThresholdMatrix(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE)))
 }
 
 #' umx_RAM_thresh_Matrix
@@ -1582,8 +1580,8 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #'
 #' @param df a dataframe of raw data from which to get variances.
 #' @param ordVar = 1
-#' @param return What to return: Defaults to a vector of variances c("vars", "Full", "Lower")
-#' @param use passed to cov - defaults to "complete"
+#' @param format = What to return: options are c("diag", "Full", "Lower"). Defaults to a vector of variances
+#' @param use passed to \code{\link{cov}} - defaults to "complete.obs" (other options are in the function )
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx core functions
@@ -1597,8 +1595,9 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' tmp2 = tmp[, c(1,3)]
 #' umx_cov_diag(tmp2)
 #' umx_cov_diag(tmp2, format = "Full")
-umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), use = "complete"){
+umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete")){
 	format = umx_default_option(format, c("diag", "Full", "Lower"))
+	use = umx_default_option(use, c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"))
 	if(any(umx_is_ordered(df))){
 		nCol = dim(df)[2]
 		starts = diag(ordVar, nCol, nCol)
