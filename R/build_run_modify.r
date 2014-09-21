@@ -24,6 +24,36 @@
 # = Highlevel models (ACE, GxE) =
 # ===============================
 
+# ssh -R 52698:localhost:52698 tbates@eddie.ecdf.ed.ac.uk
+# or just eddie
+# https://www.wiki.ed.ac.uk/display/ecdfwiki/Steps+to+run+an+OpenMP+job+on+Eddie
+
+setUpPB <- function(updateAuth = NULL) {
+	if (doesnt exist .rpushbullet.json){
+		if(is.null(updateAuth)){
+			stop(prompt for key with instructions)
+		} else {
+			# create file and store updateAuth
+		}
+	}else{
+		read file
+		if (!is.null(updateAuth){
+			# print the old key to console in case this is a mistake
+			# save updateAuth
+		}
+	} 
+	} if (is.null(updateAuth)){
+		# prompt for key with instructions
+	} else {
+		# have key
+		# populate file.
+		# fix nicknames?
+		# use nicknames?
+	}
+}
+
+
+
 #' umxRAM
 #'
 #' Making it as simple as possible to create a RAM model, without doing things invisible to the user.
