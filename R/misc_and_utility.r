@@ -1597,7 +1597,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' umx_cov_diag(tmp2, format = "Full")
 umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete")){
 	format = umx_default_option(format, c("diag", "Full", "Lower"))
-	use = umx_default_option(use, c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"))
+	use = umx_default_option(use, c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), check=FALSE)
 	if(any(umx_is_ordered(df))){
 		nCol = dim(df)[2]
 		starts = diag(ordVar, nCol, nCol)
@@ -2012,7 +2012,7 @@ umx_has_means <- function(model) {
 #' m1 = mxRun(m1, intervals = TRUE)
 #' umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
-	check = umx_default_option(check, c("both", "intervals", "output"))
+	check = umx_default_option(check, c("both", "intervals", "output"), check=F)
 	if(is.null(model@intervals)){
 		thisModelHasIntervals = FALSE
 	}else{
@@ -2416,7 +2416,7 @@ umx_scale_wide_twin_data <- function(df, varsToScale, suffixes) {
 #'
 #' @param x the value chosen (may be a selection, or the default list of options)
 #' @param option_list TODO fix this documentation
-#' @param check TRUE
+#' @param check Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE) 
 #' @return - the option
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
