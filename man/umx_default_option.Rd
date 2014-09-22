@@ -10,7 +10,7 @@ umx_default_option(x, option_list, check = TRUE)
 
 \item{option_list}{TODO fix this documentation}
 
-\item{check}{TRUE}
+\item{check}{Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE)}
 }
 \value{
 - the option

@@ -1183,6 +1183,45 @@ umx_paste_names <- function(varNames, textConstant = "", suffixes) {
 }
 
 
+#' umx_merge_CIs
+#'
+#' if you compute some CIs in one model and some in another (copy of the same model, perhaps to get some parallelism),
+#' this is a simple helper to cludge them together.
+#'
+#' @param m1 first copy of the model
+#' @param m2 second copy of the model
+#' @return - \code{\link{mxModel}}
+#' @family umx utility functions
+#' @export
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' umx_merge_CIs(m1, m2)
+# # TODO remove duplicates...
+# # TODO (check they are the same as well!)
+# # TODO Support arbitrarily long list of input models with ...
+# # TODO check the models are the same, with same fit
+# # TODO check the models have CIs
+umx_merge_CIs <- function(m1, m2) {
+	# cludge together
+	a  = m1@output$confidenceIntervals
+	b  = m2@output$confidenceIntervals
+	a_names = attr(a, "dimnames")[[1]]
+	b_names = attr(b, "dimnames")[[1]]
+	all_names = c(a_names, b_names)
+	all_CIs = rbind(a,b)
+	if(any(duplicated(all_names))){
+		message("Some CIs appear to be duplicates...")
+		message("I dropped these from the list:")
+		cat(duplicated(all_names))
+		cat(all_names[duplicated(all_names)])
+		cat(all_CIs[duplicated(all_names), ])
+	}
+
+	m1@output$confidenceIntervals = all_CIs
+	return(m1)
+	# return(all_CIs)
+}
+
 #' umx_round
 #'
 #' A version of round() which works on dataframes that contain non-numeric data (or data that cannot be coerced to numeric)
