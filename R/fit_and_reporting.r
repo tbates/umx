@@ -461,16 +461,18 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 
-	# tableOut  = format(tableOut, scientific = FALSE, digits = digits)
 	tablePub  = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
 	names(tablePub)     <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
 	# Fix problem where base model has compare set to its own name, and name set to NA
-	tablePub[1, "Model"] = tablePub[1, "Compare with Model"] 
-	tablePub[1, "Compare with Model"] = NA
-	# digits=3
+	nRows = dim(tablePub)[1]
+	for (i in 1:nRows) {
+		if(is.na(tablePub[i, "Model"])){
+			tablePub[i, "Model"] = tablePub[i, "Compare with Model"] 
+			tablePub[i, "Compare with Model"] = NA
+		}
+	}
 	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
-	# addText = 1
 	if(report > 1){
 		n_rows = dim(tablePub)[1]
 		for (i in 1:n_rows) {
