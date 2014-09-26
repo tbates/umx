@@ -1,4 +1,6 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+# install_github("tbates/umx"); 
+
 # setwd("~/bin/umx"); 
 # devtools::build("~/bin/umx")
 # devtools::check("~/bin/umx")
@@ -569,7 +571,7 @@ umxCI <- function(model = NULL, addCIs = TRUE, runCIs = c("no", "yes", "if neces
 	# TODO superceed this with confint? just need parameters to hold the 95% etc...
 	runCIs = umx_default_option(runCIs, c("no", "yes", "if necessary"), check = FALSE)
 	if(addCIs){
-		# TODO remove existing CIs
+		# TODO remove existing CIs to avoid duplicates?
 		# TODO ensure each CI is added individually
 		# TODO support breaking these out into separate models and reassembling them
 		CIs   = names(omxGetParameters(model, free = TRUE))

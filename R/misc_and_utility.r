@@ -156,7 +156,10 @@ umx_set_cores <- function(cores = omxDetectCores() - 1, model = NULL) {
 #' umx_get_cores() # show new value
 #' umx_set_cores(oldCores) $ reset to old value
 umx_get_cores <- function(model = NULL) {
-	mxOption(model, "Number of Threads")
+	n = mxOption(model, "Number of Threads")
+	message(n, "/", omxDetectCores())
+	invisible(n)
+	
 }
 
 #' umx_set_checkpoint
