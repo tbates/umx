@@ -3,17 +3,17 @@
 \alias{umxCI}
 \title{umxCI}
 \usage{
-umxCI(model = NULL, addCIs = TRUE, runCIs = "if necessary",
-  showErrorcodes = TRUE)
+umxCI(model = NULL, addCIs = TRUE, runCIs = c("no", "yes",
+  "if necessary"), showErrorcodes = TRUE)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on}
 
 \item{addCIs}{Whether or not to add mxCIs if none are found (defaults to TRUE)}
 
-\item{runCIs}{Whether or not to compute the CIs. Valid values = "no", "yes", "if necessary".}
+\item{runCIs}{Whether or not to compute the CIs. Valid values = "no" 9the default), "yes", "if necessary".}
 
-\item{showErrorcodes}{Whether to show errors (TRUE)}
+\item{showErrorcodes}{Whether to show errors (default == TRUE)}
 }
 \value{
 - \code{\link{mxModel}}
@@ -49,12 +49,16 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-umxCI(m1)
+m1$intervals # none yet list()
+m1 = umxCI(m1)
+m1$intervals
+#  $G_to_x1
+#  MxInterval
+#  ...
+m1 = umxCI(m1, addCIs = TRUE) # add CIs for all free parameters, and return model
 \dontrun{
-umxCI(model, addCIs = TRUE) # add Cis for all free parameters if not present
 umxCI(model, runCIs = "yes") # force update of CIs
 umxCI(model, runCIs = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
-umxCI(model, runCIs = "no") # just add the mxCI code to the model, don't run them
 }
 }
 \references{
