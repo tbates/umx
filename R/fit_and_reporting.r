@@ -145,7 +145,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 	if (isTRUE(all.equal(parm, defaultParmString))) {
 		if(umx_has_CIs(object, "intervals")) {
 			# TODO add a count for the user
-			message("Existing CIs Will be used (", length(object@intervals), " in total: may be more cells)")
+			message(length(object@intervals), " CIs found")
 		} else {
 			message("Adding CIs for all free parameters")
 			CIs_to_set = names(omxGetParameters(object, free = TRUE))
@@ -565,7 +565,8 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"), showErrorcodes = TRUE) {
 	# TODO add code to not-run CIs
 	# TODO superceed this with confint? just need parameters to hold the 95% etc...
-	run = umx_default_option(run, c("no", "yes", "if necessary"), check = FALSE)
+	run = umx_default_option(run, c("no", "yes", "if necessary"), check = TRUE)
+	run = tolower(run)
 	if(add){
 		# TODO remove existing CIs to avoid duplicates?
 		# TODO ensure each CI is added individually
@@ -574,7 +575,7 @@ umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary")
 		model = mxModel(model, mxCI(CIs))
 	}
     
-	if(tolower(run) == "yes" | (!umx_has_CIs(model) & tolower(run) == "if necessary")) {
+	if(run == "yes" | (!umx_has_CIs(model) & run == "if necessary")) {
 		model = mxRun(model, intervals = TRUE)
 	}else{
 		message("Not running CIs, run==", run)
