@@ -533,9 +533,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' }
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
-#' @param addCIs Whether or not to add mxCIs if none are found (defaults to TRUE)
-#' @param runCIs Whether or not to compute the CIs. Valid values = "no" 9the default), "yes", "if necessary".                                                  
-#' @param showErrorcodes Whether to show errors (default == TRUE)
+#' @param add Whether or not to add mxCIs if none are found (defaults to TRUE)
+#' @param run Whether or not to compute the CIs. Valid values = "no" 9the default), "yes", "if necessary".                                                  
+#' @param showErrors Whether to show errors (default == TRUE)
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 #' @return - \code{\link{mxModel}}
 #' @family umx reporting
@@ -557,20 +557,17 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' m1$intervals # none yet list()
 #' m1 = umxCI(m1)
-#' m1$intervals
-#' #  $G_to_x1
-#' #  MxInterval 
-#' #  ...
-#' m1 = umxCI(m1, addCIs = TRUE) # add CIs for all free parameters, and return model
+#' m1$intervals # $G_to_x1
+#' m1 = umxCI(m1, add = TRUE) # Add CIs for all free parameters, and return model
 #' \dontrun{
-#' umxCI(model, runCIs = "yes") # force update of CIs
-#' umxCI(model, runCIs = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
+#' umxCI(model, run = "yes") # force update of CIs
+#' umxCI(model, run = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
 #' }
-umxCI <- function(model = NULL, addCIs = TRUE, runCIs = c("no", "yes", "if necessary"), showErrorcodes = TRUE) {
+umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"), showErrorcodes = TRUE) {
 	# TODO add code to not-run CIs
 	# TODO superceed this with confint? just need parameters to hold the 95% etc...
-	runCIs = umx_default_option(runCIs, c("no", "yes", "if necessary"), check = FALSE)
-	if(addCIs){
+	run = umx_default_option(run, c("no", "yes", "if necessary"), check = FALSE)
+	if(add){
 		# TODO remove existing CIs to avoid duplicates?
 		# TODO ensure each CI is added individually
 		# TODO support breaking these out into separate models and reassembling them
@@ -578,7 +575,7 @@ umxCI <- function(model = NULL, addCIs = TRUE, runCIs = c("no", "yes", "if neces
 		model = mxModel(model, mxCI(CIs))
 	}
     
-	if(tolower(runCIs) == "yes" | (!umx_has_CIs(model) & tolower(runCIs) == "if necessary")) {
+	if(tolower(run) == "yes" | (!umx_has_CIs(model) & tolower(run) == "if necessary")) {
 		model = mxRun(model, intervals = TRUE)
 	}
 
