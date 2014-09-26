@@ -1,6 +1,5 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
-# install_github("tbates/umx"); 
-
+# devtools::install_github("tbates/umx"); library(umx);
 # setwd("~/bin/umx"); 
 # devtools::build("~/bin/umx")
 # devtools::check("~/bin/umx")
@@ -577,6 +576,8 @@ umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary")
     
 	if(tolower(run) == "yes" | (!umx_has_CIs(model) & tolower(run) == "if necessary")) {
 		model = mxRun(model, intervals = TRUE)
+	}else{
+		message("Not running CIs, run==", run)
 	}
 
 	if(umx_has_CIs(model)){
