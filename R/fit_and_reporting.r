@@ -576,12 +576,12 @@ umxCI <- function(model = NULL, addCIs = TRUE, runCIs = c("no", "yes", "if neces
 		model = mxModel(model, mxCI(CIs))
 	}
     
-	if(tolower(runCIs) == "yes" | (!umx_has_CIs(model) & tolower(runCIs) != "no")) {
+	if(tolower(runCIs) == "yes" | (!umx_has_CIs(model) & tolower(runCIs) == "if necessary")) {
 		model = mxRun(model, intervals = TRUE)
 	}
 
 	if(umx_has_CIs(model)){
-		# message("### CIs for model ", model@name)
+		message("### CIs for model ", model@name)
 		confint(model, showErrorcodes = showErrorcodes)
 		# model_summary = summary(model)
 		# model_CIs = round(model_summary$CI, 3)
