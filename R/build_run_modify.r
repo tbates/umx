@@ -7,6 +7,7 @@
 # devtools::load_all("~/bin/umx")
 # devtools::show_news("~/bin/umx")
 # setwd("~/bin/umx"); 
+# source('http://openmx.psyc.virginia.edu/getOpenMxBeta.R')
 
 # devtools::create()
 # devtools::add_travis();
