@@ -1,3 +1,4 @@
+# find non-ascii = grep this '[^\x00-\x7F]'
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
@@ -118,12 +119,11 @@ umx_set_optimizer <- function(opt = c("NPSOL","NLOPT","CSOLNP"), model = NULL) {
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxData(mtcars[, manifests], type = "raw")
 #' )
-#' oldCores = umx_get_cores() # get global value
-#' umx_set_cores(model = m1)  # set to default (max - 1)
-#' umx_get_cores()            # show new value
+#' oldCores <- umx_get_cores() # get global value
 #' umx_set_cores(omxDetectCores()) # set to default (max - 1)
 #' umx_get_cores()            # show new value
-#' umx_set_cores(oldCores)    # reset to old value
+#' umx_set_cores(1, m1)  # set m1 useage to 1 core
+#' umx_get_cores(model = m1)  # show new value
 umx_set_cores <- function(cores = omxDetectCores() - 1, model = NULL) {
 	if(umx_is_MxModel(cores)){
 		stop("Call this as umx_set_cores(cores, model), not the other way around")
@@ -1001,7 +1001,11 @@ umx_as_numeric <- function(df, force = FALSE) {
 #' @export
 #' @seealso - \code{\link{subset}}
 #' @examples
-#' test = data.frame(a=paste("a",1:10,sep=""),b=paste("b",1:10,sep=""), c=paste("c",1:10,sep=""),d=paste("d",1:10,sep=""),stringsAsFactors= FALSE)
+#' test = data.frame(
+#' a = paste0("a", 1:10),
+#' b = paste0("b", 1:10),
+#' c = paste0("c", 1:10),
+#' d = paste0("d", 1:10), stringsAsFactors = FALSE)
 #' umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
 #' umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
 #'

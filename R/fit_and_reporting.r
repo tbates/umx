@@ -135,10 +135,11 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' m2 = confint(m1) # default: CIs added, but user prompted to set run = TRUE
 #' m2 = confint(m2, run = TRUE) # CIs run and reported
-#' m1 = confint(m1, parm = "G_to_x1", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
-#' m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
+#' # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
+#' m1 = confint(m1, parm = "G_to_x1", run = TRUE) 
+#' # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
+#' m1 = confint(m1, parm = "A", run = TRUE)
 #' confint(m1, parm = "existing") # request existing CIs (none added yet...)
-#' 
 confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "names"), "default = add all"), level = 0.95, run = FALSE, showErrorcodes = FALSE, ...) {
 	defaultParmString = list("existing", c("vector", "of", "names"), "default = add all")
 	# 1. Add CIs if needed
@@ -488,7 +489,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				" was tested by dropping ", tablePub[i,"Model"],
 				" from ", tablePub[i,"Compare with Model"], 
 				did_didnot, 
-				"(χ²(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2),
+				"(\u03A7\u00B2(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2), # \u03A7 = Chi \u00B2 = superscript 2
 				", p = ", tablePub[i,"p"], ")."
 				)
 			}
@@ -533,7 +534,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
 #' @param add Whether or not to add mxCIs if none are found (defaults to TRUE)
-#' @param run Whether or not to compute the CIs. Valid values = "no" 9the default), "yes", "if necessary".                                                  
+#' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".                                                  
 #' @param showErrors Whether to show errors (default == TRUE)
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 #' @return - \code{\link{mxModel}}
@@ -560,9 +561,10 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' m1 = umxCI(m1, add = TRUE) # Add CIs for all free parameters, and return model
 #' \dontrun{
 #' umxCI(model, run = "yes") # force update of CIs
-#' umxCI(model, run = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
+#' # Don't force update of CIs, but if they were just added, then calculate them
+#' umxCI(model, run = "if necessary")
 #' }
-umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"), showErrorcodes = TRUE) {
+umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"), showErrors = TRUE) {
 	# TODO add code to not-run CIs
 	# TODO superceed this with confint? just need parameters to hold the 95% etc...
 	run = umx_default_option(run, c("no", "yes", "if necessary"), check = TRUE)
@@ -1627,11 +1629,14 @@ umxFitIndices <- function(model, indepfit) {
 #' See \code{\link[umx]{RMSEA.MxModel}} to access the RMSEA of MxModels
 #'
 #' @param x an object to get the RMSEA for
+#' @param ci.lower the lower CI to compute
+#' @param ci.upper the upper CI to compute
+#' @param digits digits to show
 #' @return - RMSEA object containing value (and perhaps a CI)
 #' @export
 #' @seealso - \code{\link[umx]{RMSEA.MxModel}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
-RMSEA <- function(x) UseMethod("RMSEA", x)
+RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 
 #' RMSEA function for MxModels
 #'
@@ -1640,6 +1645,7 @@ RMSEA <- function(x) UseMethod("RMSEA", x)
 #' @param model an \code{\link{mxModel}} to get CIs on RMSEA for
 #' @param ci.lower the lower CI to compute
 #' @param ci.upper the upper CI to compute
+#' @param digits digits to show (defaults to 3)
 #' @return - object containing the RMSEA and lower and upper bounds
 #' @rdname RMSEA.MxModel
 #' @export

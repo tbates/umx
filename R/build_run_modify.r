@@ -1,13 +1,13 @@
+# setwd("~/bin/umx"); 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::check_doc("~/bin/umx")
 # devtools::run_examples("~/bin/umx")
 # devtools::check("~/bin/umx")
-# system(paste("open", shQuote("/Users/tim/bin/umx/R/misc_and_utility.r")))
 # devtools::build("~/bin/umx")
 # devtools::load_all("~/bin/umx")
 # devtools::show_news("~/bin/umx")
-# setwd("~/bin/umx"); 
 # source('http://openmx.psyc.virginia.edu/getOpenMxBeta.R')
+# system(paste("open", shQuote("/Users/tim/bin/umx/R/misc_and_utility.r")))
 
 # devtools::create()
 # devtools::add_travis();
@@ -18,6 +18,7 @@
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
 # https://r-forge.r-project.org/project/admin/?group_id=1745
+# http://r-pkgs.had.co.nz/
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 
@@ -492,7 +493,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL, numObs
 	
 	if(dataType == "raw") {
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
-			stop("You should not be setting numObs with ", dataType, " data…")
+			stop("You should not be setting numObs with ", dataType, " data...")
 		}
 		if(!is.null(weightVar)){
 			# weight variable provided: check it exists in each frame
@@ -989,7 +990,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' umxSummary(m2); umxCompare(m1, m2)
 #' # 1-line version including comparison
 #' m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
-#' m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "drop_G_to_x3_x4_and_x5", comparison = TRUE)
+#' m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "drop_G_to_x3to5", comparison = TRUE)
 #' m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = TRUE)
 #' m3 = umxReRun(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again")
 #' umxCompare(m3, m2)
@@ -1698,7 +1699,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 		# Add variance to the single manfests
 		p1 = mxPath(from = manifests, arrows = 2, values = variances) # labels = mxLabel(manifests, suffix = paste0("unique", labelSuffix))
 		# Add means for the single manfests
-		p2 = mxPath(from="one", to=manifests, values=means) # labels = mxLabel("one", manifests, suffix = labelSuffix)
+		p2 = mxPath(from = "one", to = manifests, values = means) # labels = mxLabel("one", manifests, suffix = labelSuffix)
 		return(list(p1, p2))
 	}
 }
@@ -1824,8 +1825,8 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 			}
 		}
 	}
-	minLevels = umx:::xmuMinLevels(df)
-	maxLevels = umx:::xmuMaxLevels(df)
+	minLevels = xmuMinLevels(df)
+	maxLevels = xmuMaxLevels(df)
 	maxThresh = maxLevels - 1
 
 	# TODO simplify for n = bin, n= ord, n= cont msg
@@ -2140,16 +2141,19 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
 #' 
-#' # With \code{link{umxLabel}}, you can easily add informative and predictable labels to each free path (works with matrix style as well!)
-#' # and use \code{link{umxValues}}, to set sensible guesses for start values...
+#' # With \code{link{umxLabel}}, you can easily add informative and predictable labels to each free
+#' # path (works with matrix style as well!) and use \code{link{umxValues}}, to set 
+#' # sensible guesses for start values...
 #' m1 = umxLabel(m1)  
 #' m1 = umxValues(m1)  
 #' 
 #' # Re-run omxGetParameters...
 #' omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
 #' 
-#' # umxRun the model (calculates saturated models for raw data, & repeats if the model is not code green)
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
+#' # umxRun the model (calculates saturated models for raw data, & repeats
+#' # if the model is not code green)
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE) # not needed given we've done this above.
+#' # But you can see how umxRun enables 1-line setup and run
 #' 
 #' # Let's get some journal-ready fit information
 #' 
@@ -2262,7 +2266,8 @@ umxParallel <- function(model, what) {
 #' umxPath("A -> B") # one-headed arrow with string syntax
 #' umxPath("A <> B; A <-- B") # This is ok too
 #' umxPath("A -> B; B>C; C --> D") # two paths. space doesn't matter, hyphens don't matter
-#' umxPath("A -> manifests") # manifests is a reserved word, as is latents. Allows string syntax to use the manifestVars variable
+#' # manifests is a reserved word, as is latents. It allows the string syntax to use the manifestVars variable
+#' umxPath("A -> manifests") 
 #' # A worked example
 #' data(demoOneFactor)
 #' latents  = c("G")
