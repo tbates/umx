@@ -3,10 +3,16 @@
 \alias{RMSEA}
 \title{Generic RMSEA function}
 \usage{
-RMSEA(x)
+RMSEA(x, ci.lower, ci.upper, digits)
 }
 \arguments{
 \item{x}{an object to get the RMSEA for}
+
+\item{ci.lower}{the lower CI to compute}
+
+\item{ci.upper}{the upper CI to compute}
+
+\item{digits}{digits to show}
 }
 \value{
 - RMSEA object containing value (and perhaps a CI)

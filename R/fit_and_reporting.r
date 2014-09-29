@@ -1642,7 +1642,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #'
 #' Compute the confidence interval on RMSEA
 #'
-#' @param model an \code{\link{mxModel}} to get CIs on RMSEA for
+#' @param x an \code{\link{mxModel}} to get CIs on RMSEA for
 #' @param ci.lower the lower CI to compute
 #' @param ci.upper the upper CI to compute
 #' @param digits digits to show (defaults to 3)
@@ -1665,85 +1665,94 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' RMSEA(m1)
-#' RMSEA(summary(m1))
-RMSEA.MxModel <- function(model, ci.lower = .05, ci.upper = .95, digits = 3) { 
+#' # RMSEA(summary(m1))
+RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) { 
+	# "MxRAMModel"
 	if(ci.lower != .05 | ci.upper != .95){
 		stop("Setting CI on RMSEA not supported for mxModels as yet...")
 	}
-	if(class(model) == "summary.mxmodel"){
-		sm = model
-	} else {
-		sm <- summary(model)
-	}
-	return(sm)
-	RMSEA = sm$RMSEA
-	rmsea.lower = sm$RMSEACI[1]
-	rmsea.upper = sm$RMSEACI[2]
-	rmsea.pvalue = "not computed yet in OpenMx 2"
-	txt = paste0("RMSEA = ", round(RMSEA, digits), " CI", sub("^0?\\.", replacement = "", ci.upper), "[", round(rmsea.lower, 3), ", ", round(rmsea.upper, 3), "], p = ", umx_APA_pval(rmsea.pvalue))
+	sm <- summary(x)
+	# return(sm)
+	RMSEA_Obj = omxRMSEA(x, ci.lower, ci.upper)
+	# lower.rmsea   est.rmsea upper.rmsea
+	#  0.00000000  0.03088043  0.07449389
+	rmsea.est    = RMSEA_Obj["est.rmsea"]
+	rmsea.lower  = RMSEA_Obj["rmsea.lower"]
+	rmsea.upper  = RMSEA_Obj["rmsea.upper"]
+	rmsea.pvalue = "Not computed yet in OpenMx 2"
+	# TODO get pvalue
+	txt = paste0("RMSEA = ", round(rmsea.est, digits), " CI", sub("^0?\\.", replacement = "", ci.upper), 
+		"[", round(rmsea.lower, digits), ", ", round(rmsea.upper, digits), "], p = ", rmsea.pvalue) # umx_APA_pval(rmsea.pvalue)
 	print(txt)
-	invisible(list(RMSEA = RMSEA, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, RMSEA.pvalue = rmsea.pvalue, txt = txt))
+	invisible(list(RMSEA = rmsea.est, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, RMSEA.pvalue = rmsea.pvalue, txt = txt))
 
-	if (is.na(sm$Chi)) return(NA);
-	X2 <- sm$Chi
-	df <- sm$degreesOfFreedom
-	N  <- sm$numObs 
-    N.RMSEA <- max(N, X2 * 4)
-    G <- max(length(model@submodels), 1)
-
-    if (is.na(X2) || is.na(df)) {
-        RMSEA <- as.numeric(NA)
-    } else if (df > 0) {
-        GG <- 0
-        RMSEA <- sqrt(max(c((X2/N)/df - 1/(N - GG), 0))) *  sqrt(G)
-    } else {
-        RMSEA <- 0
-    }
-
-	lower.lambda <- function(lambda) {
-		pchisq(X2, df = df, ncp = lambda) - ci.upper
-	}
-	upper.lambda <- function(lambda) {
-		(pchisq(X2, df = df, ncp = lambda) - ci.lower)
-	}
-
-	if (is.na(X2) || is.na(df)) {
-		rmsea.lower <- NA
-	} else if (df < 1 || lower.lambda(0) < 0) {
-		rmsea.lower <- 0
-	} else {
-		lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root)
-		if (inherits(lambda.l, "try-error")) {
-			lambda.l <- NA
-		}
-		GG <- 0
-		rmsea.lower <- sqrt(lambda.l/((N - GG) * df)) * sqrt(G)
-	}
-	if (is.na(X2) || is.na(df)) {
-		rmsea.upper <- NA
-	} else if (df < 1 || upper.lambda(N.RMSEA) > 0 || upper.lambda(0) < 0) {
-		rmsea.upper <- 0
-	} else {
-		lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root)
-		if (inherits(lambda.u, "try-error")) {
-			lambda.u <- NA
-		}
-		GG <- 0
-		rmsea.upper <- sqrt(lambda.u/((N - GG) * df)) * sqrt(G)
-	}
-	# compute p-value
-	if (is.na(X2) || is.na(df)) {
-		rmsea.pvalue <- as.numeric(NA)
-	} else if (df > 0) {
-		GG <- 0
-		ncp <- (N - GG) * df * 0.05^2/G
-		rmsea.pvalue <- (1 - pchisq(X2, df = df, ncp = ncp))
-	} else {
-		rmsea.pvalue <- 1
-	}	
+	# if (is.na(sm$Chi)){
+	# 	return(NA);
+	# }
+	# X2 <- sm$Chi
+	# df <- sm$degreesOfFreedom
+	# N  <- sm$numObs
+	#     N.RMSEA <- max(N, X2 * 4)
+	#     G <- max(length(model@submodels), 1)
+	#
+	#     if (is.na(X2) || is.na(df)) {
+	#         RMSEA <- as.numeric(NA)
+	#     } else if (df > 0) {
+	#         GG <- 0
+	#         RMSEA <- sqrt(max(c((X2/N)/df - 1/(N - GG), 0))) *  sqrt(G)
+	#     } else {
+	#         RMSEA <- 0
+	#     }
+	#
+	# lower.lambda <- function(lambda) {
+	# 	pchisq(X2, df = df, ncp = lambda) - ci.upper
+	# }
+	# upper.lambda <- function(lambda) {
+	# 	(pchisq(X2, df = df, ncp = lambda) - ci.lower)
+	# }
+	#
+	# if (is.na(X2) || is.na(df)) {
+	# 	rmsea.lower <- NA
+	# } else if (df < 1 || lower.lambda(0) < 0) {
+	# 	rmsea.lower <- 0
+	# } else {
+	# 	lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root)
+	# 	if (inherits(lambda.l, "try-error")) {
+	# 		lambda.l <- NA
+	# 	}
+	# 	GG <- 0
+	# 	rmsea.lower <- sqrt(lambda.l/((N - GG) * df)) * sqrt(G)
+	# }
+	# if (is.na(X2) || is.na(df)) {
+	# 	rmsea.upper <- NA
+	# } else if (df < 1 || upper.lambda(N.RMSEA) > 0 || upper.lambda(0) < 0) {
+	# 	rmsea.upper <- 0
+	# } else {
+	# 	lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root)
+	# 	if (inherits(lambda.u, "try-error")) {
+	# 		lambda.u <- NA
+	# 	}
+	# 	GG <- 0
+	# 	rmsea.upper <- sqrt(lambda.u/((N - GG) * df)) * sqrt(G)
+	# }
+	# # compute p-value
+	# if (is.na(X2) || is.na(df)) {
+	# 	rmsea.pvalue <- as.numeric(NA)
+	# } else if (df > 0) {
+	# 	GG <- 0
+	# 	ncp <- (N - GG) * df * 0.05^2/G
+	# 	rmsea.pvalue <- (1 - pchisq(X2, df = df, ncp = ncp))
+	# } else {
+	# 	rmsea.pvalue <- 1
+	# }
 }
 
-RMSEA.summary.mxmodel <- RMSEA.MxModel
+RMSEA.summary.mxmodel <- function(m_summary, ci.lower = .05, ci.upper = .95, digits = 3){
+	message("TODO reverse these: so summary does all the work...")
+	# TODO reverse these: so summary does all the work...
+	# m_summary
+	# RMSEA.MxModel(model, ci.lower = ci.lower, ci.upper = ci.upper, digits = digits)
+}
 
 #' umxDescriptives
 #'

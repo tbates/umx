@@ -21,7 +21,11 @@ umx_swap_a_block(theData, rowSelector, T1Names, T2Names)
 Swap a block of rows of a datset between two lists variables (typically twin 1 and twin2)
 }
 \examples{
-test = data.frame(a=paste("a",1:10,sep=""),b=paste("b",1:10,sep=""), c=paste("c",1:10,sep=""),d=paste("d",1:10,sep=""),stringsAsFactors= FALSE)
+test = data.frame(
+a = paste0("a", 1:10),
+b = paste0("b", 1:10),
+c = paste0("c", 1:10),
+d = paste0("d", 1:10), stringsAsFactors = FALSE)
 umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
 umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
 }

@@ -53,8 +53,10 @@ m1 <- mxModel("One Factor", type = "RAM",
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m2 = confint(m1) # default: CIs added, but user prompted to set run = TRUE
 m2 = confint(m2, run = TRUE) # CIs run and reported
-m1 = confint(m1, parm = "G_to_x1", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
-m1 = confint(m1, parm = "A", run = TRUE) # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
+# Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
+m1 = confint(m1, parm = "G_to_x1", run = TRUE)
+# Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
+m1 = confint(m1, parm = "A", run = TRUE)
 confint(m1, parm = "existing") # request existing CIs (none added yet...)
 }
 \references{

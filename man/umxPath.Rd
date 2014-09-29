@@ -95,7 +95,8 @@ umxPath("A <-> B") # same path as above using a string
 umxPath("A -> B") # one-headed arrow with string syntax
 umxPath("A <> B; A <-- B") # This is ok too
 umxPath("A -> B; B>C; C --> D") # two paths. space doesn't matter, hyphens don't matter
-umxPath("A -> manifests") # manifests is a reserved word, as is latents. Allows string syntax to use the manifestVars variable
+# manifests is a reserved word, as is latents. It allows the string syntax to use the manifestVars variable
+umxPath("A -> manifests")
 # A worked example
 data(demoOneFactor)
 latents  = c("G")

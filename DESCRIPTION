@@ -15,6 +15,8 @@ Depends:
     OpenMx
 Suggests:
     testthat,
-    roxygen2
+    roxygen2,
+    knitr
 BugReports: http://github.com/tbates/umx
 Roxygen: list(wrap = FALSE)
+VignetteBuilder: knitr

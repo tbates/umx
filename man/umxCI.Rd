@@ -55,7 +55,8 @@ m1$intervals # $G_to_x1
 m1 = umxCI(m1, add = TRUE) # Add CIs for all free parameters, and return model
 \dontrun{
 umxCI(model, run = "yes") # force update of CIs
-umxCI(model, run = "if necessary") # don't force update of CIs, but if they were just added, then calculate them
+# Don't force update of CIs, but if they were just added, then calculate them
+umxCI(model, run = "if necessary")
 }
 }
 \references{

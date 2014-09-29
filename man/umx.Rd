@@ -42,16 +42,19 @@ m1 <- mxModel("One Factor", type = "RAM",
 
 omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
 
-# With \\code{link{umxLabel}}, you can easily add informative and predictable labels to each free path (works with matrix style as well!)
-# and use \\code{link{umxValues}}, to set sensible guesses for start values...
+# With \\code{link{umxLabel}}, you can easily add informative and predictable labels to each free
+# path (works with matrix style as well!) and use \\code{link{umxValues}}, to set
+# sensible guesses for start values...
 m1 = umxLabel(m1)
 m1 = umxValues(m1)
 
 # Re-run omxGetParameters...
 omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
 
-# umxRun the model (calculates saturated models for raw data, & repeats if the model is not code green)
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE) # not needed given we've done this above. But you can see how umxRun enables 1-line setup and run
+# umxRun the model (calculates saturated models for raw data, & repeats
+# if the model is not code green)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE) # not needed given we've done this above.
+# But you can see how umxRun enables 1-line setup and run
 
 # Let's get some journal-ready fit information
 
