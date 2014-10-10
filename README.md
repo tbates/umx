@@ -43,4 +43,3 @@ Feel free to use, and improve: Log suggestions here using the Github comments, w
 ### Contributors
 * [Tim Bates](tim.bates@ed.ac.uk)
 * [Michael Culbertson]() (modification index [code](http://openmx.psyc.virginia.edu/thread/1019) (based on functions in [John Fox's](http://socserv.mcmaster.ca/jfox/Misc/sem/SEM-paper.pdf) [SEM](http://cran.r-project.org/web/packages/sem) package))
-* [Ryne Estabrook]() ([code](http://openmx.psyc.virginia.edu/thread/718) to Standardize RAM models)
