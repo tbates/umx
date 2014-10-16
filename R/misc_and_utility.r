@@ -815,6 +815,13 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = TRUE)
 #' }
 umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", listPattern = NA, test = TRUE, overwrite = FALSE) {
+	# TODO: add recursive support to rename
+	# cd "/Users/tim/Desktop/"
+	# find "The Strain" -name "*.mp4"  -exec mv {} "The Strain" \;
+	if(is.na(replaceStr)){
+		stop("Please set a replacement string")
+	}
+
 	# uppercase = u$1
 	if(baseFolder == "Finder"){
 		baseFolder = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")

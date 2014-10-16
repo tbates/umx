@@ -1,9 +1,15 @@
-umx 0.80-alpha
+umx 0.90-beta
 --------------
 
-* Beta
-* Moving to S3 functions: confint(); plot()
-* adding umxRAM() helper
+* Feature complete
+* Bug squashing
+
+umx 0.80-beta
+--------------
+
+* Beta level!
+* Standard confint(); plot() etc functions implemented
+* Adding umxRAM() and umxPath shortcuts
 
 umx 0.75-alpha
 --------------
