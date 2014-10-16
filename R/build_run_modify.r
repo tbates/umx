@@ -55,7 +55,6 @@
 # }
 
 
-
 #' umxRAM
 #'
 #' Making it as simple as possible to create a RAM model, without doing things invisible to the user.
