@@ -2346,6 +2346,21 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 	eval(substitute(mxAlgebra(tExp, name=name, dimnames=dimnames), list(tExp = parse(text=algString)[[1]])))
 }
 
+#' umx_object_as_string
+#'
+#' Utility to return an object's name as a string
+#'
+#' @param x an object
+#' @return - name as string
+#' @export
+#' @family umx misc functions
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' umx_object_as_str(mtcars) # "mtcars"
+umx_object_as_str<- function(x) {
+  deparse(substitute(x))
+}
+
 #' umxEval
 #'
 #' Takes an expression as a string, and evaluates it as an expression in model, optionally computing the result.
