@@ -264,23 +264,20 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' umxSummary(m1, report = "table")
 #' umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL","NS","SIG")){
+#' devtools::document("~/bin/umx");
+#' devtools::install("~/bin/umx");
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG")){
 	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
-	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = TRUE)
-	validValuesForFilter = c("ALL", "NS", "SIG")
-	# TODO make table take lists of models...
-	report = umx_default_option(report, c("line"))	
-	filter = umx_default_option(filter, validValuesForFilter)	
-
+	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list
+	# showEstimates = match.arg(showEstimates)
+	filter = match.arg(filter)
 	# if the filter is off default, the user must want something...
 	if( filter != "ALL" & showEstimates == "none") {
 		showEstimates = "std"
 	}
-	output <- model@output
-	# Stop if there is no objective function
-	if ( is.null(output) ) stop("Provided model has no objective function, and thus no output. mxRun(model) first")
-	# stop if there is no output
-	if ( length(output) < 1 ) stop("Provided model has no output. I can only standardize models that have been mxRun() first!")
+	# TODO make table take lists of models...
+	report = match.arg(report)
+	umx_has_been_run(model, stop = TRUE)
 	# saturatedModels = NULL
 	if(is.null(saturatedModels)) {
 		# saturatedModels not passed in from outside, so get them from the model
@@ -298,16 +295,12 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 
 	# DisplayColumns
 	if(showEstimates != "none"){
-		if(packageVersion("OpenMx") > 1.5) {
-			parameterTable = mxStandardizeRAMpaths(model, SE = TRUE)
-			#                       name          label matrix  row  col     Raw.Value    Std.Value       Std.SE
-			# 1 big_motor_low_mpg.A[1,2]    disp_to_mpg      A  mpg disp -4.085128e-02 -0.460887806 1.594295e-01
-			names(parameterTable) <- c("label", "name", "matrix", "row", "col", "Estimate", "Std.Estimate", "Std.SE")
-			parameterTable$Std.Error = NA
-			# TODO: Rob to add "Std.Error" to mxStandardizeRAMpaths()
-		}else{
-			parameterTable = modelSummary$parameters			
-		}
+		parameterTable = mxStandardizeRAMpaths(model, SE = TRUE) # compute standard errors
+		#                 name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
+		# 1  no_HRV_Dep.A[6,1]    age    A        mean_sdrr   age   -0.37       0.0284   -0.372350    .028
+		# Raw.SE is new
+		names(parameterTable) <- c("label", "name", "matrix", "row", "col", "Estimate", "SE", "Std.Estimate", "Std.SE")
+
 		if(matrixAddresses){
 			nameing = c("name", "matrix", "row", "col")
 		} else {
@@ -315,18 +308,17 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 		}
 		if("Std.Estimate" %in%  names(parameterTable)){
 			if(length(showEstimates) > 1) {
-				namesToShow = showEstimates
+				namesToShow = showEstimates # user-specified list
 			}else if(showEstimates == "both") {
-				namesToShow = c(nameing, "Estimate", "Std.Error", "Std.Estimate", "Std.SE")
+				namesToShow = c(nameing, "Estimate", "SE", "Std.Estimate", "Std.SE")
 			} else if(showEstimates == "std"){
 				namesToShow = c(nameing, "Std.Estimate", "Std.SE", "CI")
 			}else{ # must be raw
-				namesToShow = c(nameing, "Estimate", "Std.Error")					
+				namesToShow = c(nameing, "Estimate", "SE")					
 			}
 		} else {
-			namesToShow = c(nameing, "Estimate", "Std.Error")
+			namesToShow = c(nameing, "Estimate", "SE")
 		}
-		# TODO update for 2.0
 		if("CI" %in% namesToShow){
 			parameterTable$sig = TRUE
 			parameterTable$CI  = ""
@@ -334,13 +326,15 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 				# i = 1
 				# x = summary(m1)$parameters
 				# digits = 2
+				# # TODO we only show se-based CI for std estimates so far
 				est   = parameterTable[i, "Std.Estimate"]
 				CI95  = parameterTable[i, "Std.SE"] * 1.96
 				bounds = c(est - CI95, est + CI95)
 
-				if(!any(is.na(bounds))){
+				if(any(is.na(bounds))) {
 					# protect cases with SE == NA from evaluation for significance
-					if (any(bounds < 0) & any(bounds > 0)){
+				} else {
+					if (any(bounds <= 0) & any(bounds >= 0)){
 						parameterTable[i, "sig"] = FALSE
 					}
 					if(est < 0){
