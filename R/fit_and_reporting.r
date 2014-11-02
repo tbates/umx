@@ -150,7 +150,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 		} else {
 			message("Adding CIs for all free parameters")
 			CIs_to_set = names(omxGetParameters(object, free = TRUE))
-			object = mxModel(object, mxCI(CIs_to_set, interval = level))			
+			object = mxModel(object, mxCI(CIs_to_set, interval = level))
 		}
 	} else if(parm == "existing") {
 		# check there are some in existence
