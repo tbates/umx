@@ -1030,6 +1030,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' Returns a dataframe with variables renamed as desired.
 #' Unlike some functions, it checks that the variables exist, and that the new names are not already used.
 #'
+#' note: to use replace list, you must say c(old = "new"), not c(old -> "new")
 #' @param x the dataframe in which to rename variables
 #' @param replace a named collection of c(oldName = "newName") pairs (OR, if using old, the list of new names)
 #' @param old Optional list of old names that will be replaced by the contents of replace. defaults to NULL in which case replace must be paired list.

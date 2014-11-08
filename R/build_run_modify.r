@@ -55,6 +55,13 @@
 # }
 
 
+.onLoad <- function(libname, pkgname){
+    packageStartupMessage(paste0("Loading ", omxQuotes("umx") , " package.\n",
+		"For an overview and introduction to the package please type: help(umx)", 
+		domain = NULL, appendLF = TRUE)
+	)
+}
+
 #' umxRAM
 #'
 #' Making it as simple as possible to create a RAM model, without doing things invisible to the user.
