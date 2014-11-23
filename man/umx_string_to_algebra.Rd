@@ -32,7 +32,9 @@ alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " \%*\% "), name =
 Other umx misc functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umx_add_variances}};
   \code{\link{umx_apply}}; \code{\link{umx_check_model}};
-  \code{\link{umx_check_names}}; \code{\link{umx_explode}};
+  \code{\link{umx_check_names}}; \code{\link{umx_check}};
+  \code{\link{umx_default_option}};
+  \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_cores}};
   \code{\link{umx_get_optimizer}};

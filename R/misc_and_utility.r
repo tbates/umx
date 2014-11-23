@@ -120,11 +120,11 @@ umx_set_optimizer <- function(opt = c("NPSOL","NLOPT","CSOLNP"), model = NULL) {
 #' 	mxData(mtcars[, manifests], type = "raw")
 #' )
 #' oldCores <- umx_get_cores() # get global value
-#' umx_set_cores(omxDetectCores()) # set to default (max - 1)
+#' umx_set_cores(detectCores()) # set to default (max - 1)
 #' umx_get_cores()            # show new value
 #' umx_set_cores(1, m1)  # set m1 useage to 1 core
 #' umx_get_cores(model = m1)  # show new value
-umx_set_cores <- function(cores = omxDetectCores() - 1, model = NULL) {
+umx_set_cores <- function(cores = detectCores() - 1, model = NULL) {
 	if(umx_is_MxModel(cores)){
 		stop("Call this as umx_set_cores(cores, model), not the other way around")
 	}
@@ -152,12 +152,12 @@ umx_set_cores <- function(cores = omxDetectCores() - 1, model = NULL) {
 #' oldCores = umx_get_cores() # get current default value
 #' umx_set_cores(model = m1) # set to default (max - 1)
 #' umx_get_cores(model = m1) # show new value
-#' umx_set_cores(omxDetectCores()) # set to default (max - 1)
+#' umx_set_cores(detectCores()) # set to default (max - 1)
 #' umx_get_cores() # show new value
 #' umx_set_cores(oldCores) $ reset to old value
 umx_get_cores <- function(model = NULL) {
 	n = mxOption(model, "Number of Threads")
-	message(n, "/", omxDetectCores())
+	message(n, "/", detectCores())
 	invisible(n)
 	
 }
@@ -1583,10 +1583,37 @@ umx_has_been_run <- function(model, stop = FALSE) {
 #'
 #' check if a list of names are in the names() of a dataframe
 #'
+#' @param boolean.test test evaluating to TRUE or FALSE
+#' @param action One of "stop" (the default), "warning", or "message"
+#' @param message what to tell the user when boolean.test is FALSE
+#' @return - boolean
+#' @export
+#' @family umx misc functions
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' umx_check(length(1:3)==3, "stop", "item must have length == 3")
+umx_check <- function(boolean.test, action = c("stop", "warning", "message"), message = "check failed"){
+	action = match.arg(action)
+	if(!boolean.test){
+		if(action == "stop"){
+			stop(message)
+		} else if(action == "warning"){
+			warning(message)
+		}else{
+			message(message)			
+		}
+	}
+	return(boolean.test)
+}
+
+#' umx_check_names
+#'
+#' check if a list of names are in the names() of a dataframe
+#'
 #' @param namesNeeded list of variable names to find
 #' @param data data.frame to search in for names
 #' @param die whether to die if the check fails (defaults to TRUE)
-#' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to F)
+#' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)
 #' @return - boolean
 #' @export
 #' @family umx misc functions
@@ -2347,7 +2374,7 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 	eval(substitute(mxAlgebra(tExp, name=name, dimnames=dimnames), list(tExp = parse(text=algString)[[1]])))
 }
 
-#' umx_object_as_string
+#' umx_object_as_str
 #'
 #' Utility to return an object's name as a string
 #'
@@ -2481,14 +2508,16 @@ umx_scale_wide_twin_data <- function(df, varsToScale, suffixes) {
 
 #' umx_default_option
 #'
-#' handle parameter options given as a default list in a function
+#' Handle parameter options given as a default list in a function.
+#' This is just a flexible version of match.arg(x)
 #'
 #' @param x the value chosen (may be a selection, or the default list of options)
 #' @param option_list TODO fix this documentation
 #' @param check Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE) 
 #' @return - the option
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+#' @family umx misc functions
+#' @seealso - \code{\link{match.arg}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -2503,6 +2532,8 @@ umx_scale_wide_twin_data <- function(df, varsToScale, suffixes) {
 #' umx_default_option(option_list, option_list) # use NA instead
 #' }
 umx_default_option <- function(x, option_list, check = TRUE){
+	# often the R-built in code will work for you....filter = match.arg(filter)
+
 	if (identical(x, option_list)) {
 	    x = option_list[1]
 	}

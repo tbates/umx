@@ -12,7 +12,7 @@ umx_check_names(namesNeeded, data, die = TRUE, no_others = FALSE)
 
 \item{die}{whether to die if the check fails (defaults to TRUE)}
 
-\item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to F)}
+\item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)}
 }
 \value{
 - boolean
@@ -38,6 +38,8 @@ umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = TRUE)
 Other umx misc functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umx_add_variances}};
   \code{\link{umx_apply}}; \code{\link{umx_check_model}};
+  \code{\link{umx_check}};
+  \code{\link{umx_default_option}};
   \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_cores}};

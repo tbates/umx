@@ -16,7 +16,8 @@ umx_default_option(x, option_list, check = TRUE)
 - the option
 }
 \description{
-handle parameter options given as a default list in a function
+Handle parameter options given as a default list in a function.
+This is just a flexible version of match.arg(x)
 }
 \examples{
 \dontrun{
@@ -35,6 +36,32 @@ umx_default_option(option_list, option_list) # use NA instead
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+- \code{\link{match.arg}}
+
+Other umx misc functions: \code{\link{demand}};
+  \code{\link{umxEval}}; \code{\link{umx_add_variances}};
+  \code{\link{umx_apply}}; \code{\link{umx_check_model}};
+  \code{\link{umx_check_names}}; \code{\link{umx_check}};
+  \code{\link{umx_explode}};
+  \code{\link{umx_get_bracket_addresses}};
+  \code{\link{umx_get_cores}};
+  \code{\link{umx_get_optimizer}};
+  \code{\link{umx_has_CIs}};
+  \code{\link{umx_has_been_run}};
+  \code{\link{umx_has_means}};
+  \code{\link{umx_has_square_brackets}};
+  \code{\link{umx_is_MxMatrix}};
+  \code{\link{umx_is_MxModel}}; \code{\link{umx_is_cov}};
+  \code{\link{umx_is_endogenous}};
+  \code{\link{umx_is_exogenous}};
+  \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
+  \code{\link{umx_object_as_str}};
+  \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
+  \code{\link{umx_reorder}}; \code{\link{umx_rot}};
+  \code{\link{umx_set_checkpoint}};
+  \code{\link{umx_set_cores}};
+  \code{\link{umx_set_optimizer}};
+  \code{\link{umx_string_to_algebra}};
+  \code{\link{umx_trim}}
 }
 
