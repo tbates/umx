@@ -1083,38 +1083,38 @@ umx_rename <- function (x, replace, old = NULL) {
 
 #' umx_grep
 #'
-#' search the labels of an SPSS file
+#' Search for text. Will search names if given a data.frame, or strings if given a vector of strings. 
+#' NOTE: Handy feature is that this can search the labels of data imported from SPSS
 #'
-#' @param df an \code{\link{data.frame}} to search the labels of
+#' @param df The \code{\link{data.frame}} or string to search
 #' @param grepString the search string
 #' @param output the column name, the label, or both (default)
-#' @param ignore.case whether to be case sensitive or not (default TRUE)
-#' @param useNames whether to search the names as well as the labels
-#' @return - list of matched column name and labels
+#' @param ignore.case whether to be case sensitive or not (default TRUE = ignore case)
+#' @param useNames whether to search the names as well as the labels (for SPSS files with label metadata)
+#' @return - list of matched column names and/or labels
 #' @family umx utility functions
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_grep(mtcars, "hp", output="both", ignore.case= TRUE)
+#' umx_grep(c("hp", "ph"), "hp")
 #' umx_grep(mtcars, "^h.*", output="both", ignore.case= TRUE)
 #' \dontrun{
 #' umx_grep(spss_df, "labeltext", output = "label") 
 #' umx_grep(spss_df, "labeltext", output = "name") 
 #' }
-umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames= FALSE) {
-	# output = "both", "label" or "name"
+umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore.case=TRUE, useNames= FALSE) {
+	output = match.arg(output)
 	# if(length(grepString > 1)){
 	# 	for (i in grepString) {
 	# 		umx_grep_labels(df, i, output=output, ignore.case=ignore.case, useNames=useNames)
 	# 	}
-	# } else {
-		# need to check this exists
-		vLabels = attr(df,"variable.labels") # list of descriptive labels?
+	if(is.data.frame(df)){
+		vLabels = attr(df, "variable.labels") # list of descriptive labels?
 		a       = names(df) 
 		if(is.null(vLabels)){
 			# message("No labels found")
-			return(grep(grepString, names(df), value=T, ignore.case= TRUE))
+			return(grep(grepString, names(df), value=TRUE, ignore.case= ignore.case))
 		}
 		if(useNames) {
 			findIndex = grep(grepString,a, value=F, ignore.case=ignore.case)
@@ -1140,7 +1140,10 @@ umx_grep <- function(df, grepString, output="both", ignore.case=T, useNames= FAL
 				return(theResult)
 			}
 		}
-	# }
+	} else {
+		# TODO	assume this is just a string or vector of strings
+		return(grep(grepString, df, value = TRUE, ignore.case = ignore.case))
+	}
 }
 
 
@@ -1579,9 +1582,9 @@ umx_has_been_run <- function(model, stop = FALSE) {
 	return(TRUE)
 }
 
-#' umx_check_names
+#' umx_check
 #'
-#' check if a list of names are in the names() of a dataframe
+#' Check that a test evaluates to TRUE. If not, stop, warn, or message the user
 #'
 #' @param boolean.test test evaluating to TRUE or FALSE
 #' @param action One of "stop" (the default), "warning", or "message"
@@ -1608,10 +1611,10 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 
 #' umx_check_names
 #'
-#' check if a list of names are in the names() of a dataframe
+#' Check if a list of names are in the names() of a dataframe (or the of a matrix)
 #'
 #' @param namesNeeded list of variable names to find
-#' @param data data.frame to search in for names
+#' @param data data.frame (or matrix) to search in for names
 #' @param die whether to die if the check fails (defaults to TRUE)
 #' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)
 #' @return - boolean
@@ -1622,22 +1625,26 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' require(OpenMx)
 #' data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 #' umx_check_names(c("x1", "x2"), demoOneFactor)
+#' umx_check_names(c("x1", "x2"), cov(demoOneFactor[,c("x1","x2")]))
 #' umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 #' umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 #' umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 #' \dontrun{
-#' umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = TRUE)
+#' umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 #' }
 umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
-	if(!is.data.frame(data)){
-		stop("data has to be a dataframe")
+	if(is.data.frame(data)){
+		namesInData = names(data)
+	}else if(is.matrix(data)){
+		namesInData = dimnames(data)[[1]]		
+	} else {
+		stop("data has to be a dataframe or matrix. You gave me a", typeof(data))
 	}
-	namesInData = names(data)
 	namesFound = (namesNeeded %in% namesInData)
 	if(any(!namesFound)){
 		if(die){
-			print(namesFound)
-			stop("Not all required names were found in the dataframe. Missing were:\n",
+			# print(namesInData[namesFound])
+			stop("Not all required names were found in the data. Missing were:\n",
 				paste(namesNeeded[!namesFound], collapse = "; ")
 			)
 		} else {
@@ -1660,8 +1667,8 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' Helper to get variances from a df that might contain some non-numeric columns. Non numerics are set to whatever ordVar=
 #'
 #' @param df a dataframe of raw data from which to get variances.
-#' @param ordVar = 1
-#' @param format = What to return: options are c("diag", "Full", "Lower"). Defaults to a vector of variances
+#' @param ordVar The value to return at any ordinal columns found, i.e., (defaults to 1, i.e., z
+#' @param format to return: options are c("diag", "Full", "Lower"). Defaults to diag: a vector of variances
 #' @param use passed to \code{\link{cov}} - defaults to "complete.obs" (other options are in the function )
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -1677,8 +1684,8 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' umx_cov_diag(tmp2)
 #' umx_cov_diag(tmp2, format = "Full")
 umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete")){
-	format = umx_default_option(format, c("diag", "Full", "Lower"))
-	use = umx_default_option(use, c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), check=FALSE)
+	format = match.arg(format)
+	use    = match.arg(use)
 	if(any(umx_is_ordered(df))){
 		nCol = dim(df)[2]
 		starts = diag(ordVar, nCol, nCol)
@@ -2532,7 +2539,8 @@ umx_scale_wide_twin_data <- function(df, varsToScale, suffixes) {
 #' umx_default_option(option_list, option_list) # use NA instead
 #' }
 umx_default_option <- function(x, option_list, check = TRUE){
-	# often the R-built in code will work for you....filter = match.arg(filter)
+	# often the R-built in code will work...
+	# filter = match.arg(filter)
 
 	if (identical(x, option_list)) {
 	    x = option_list[1]
