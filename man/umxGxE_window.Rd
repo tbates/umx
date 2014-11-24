@@ -73,10 +73,7 @@ umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = 
 Complementary and competing factor analytic approaches for the investigation
 of measurement invariance. \emph{Review of Psychology}, \bold{16}, 87--107.
 
-Briley, D, Bates, T.C., Harden, K Tucker-Drob, E. (2015)
+Briley, D, Bates, T.C., Harden, K., Tucker-Drob, E. (2015)
 Of mice and men: Local SEM in gene environment analysis. \emph{Behavior Genetics}.
-}
-\seealso{
-Other umx twin modeling: \code{\link{umxACE}}
 }
 

@@ -3,28 +3,30 @@
 \alias{umx_grep}
 \title{umx_grep}
 \usage{
-umx_grep(df, grepString, output = "both", ignore.case = T,
-  useNames = FALSE)
+umx_grep(df, grepString, output = c("both", "label", "name"),
+  ignore.case = TRUE, useNames = FALSE)
 }
 \arguments{
-\item{df}{an \code{\link{data.frame}} to search the labels of}
+\item{df}{The \code{\link{data.frame}} or string to search}
 
 \item{grepString}{the search string}
 
 \item{output}{the column name, the label, or both (default)}
 
-\item{ignore.case}{whether to be case sensitive or not (default TRUE)}
+\item{ignore.case}{whether to be case sensitive or not (default TRUE = ignore case)}
 
-\item{useNames}{whether to search the names as well as the labels}
+\item{useNames}{whether to search the names as well as the labels (for SPSS files with label metadata)}
 }
 \value{
-- list of matched column name and labels
+- list of matched column names and/or labels
 }
 \description{
-search the labels of an SPSS file
+Search for text. Will search names if given a data.frame, or strings if given a vector of strings.
+NOTE: Handy feature is that this can search the labels of data imported from SPSS
 }
 \examples{
 umx_grep(mtcars, "hp", output="both", ignore.case= TRUE)
+umx_grep(c("hp", "ph"), "hp")
 umx_grep(mtcars, "^h.*", output="both", ignore.case= TRUE)
 \dontrun{
 umx_grep(spss_df, "labeltext", output = "label")
@@ -35,8 +37,6 @@ umx_grep(spss_df, "labeltext", output = "name")
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-
 Other umx utility functions: \code{\link{qm}};
   \code{\link{umx_as_numeric}};
   \code{\link{umx_find_object}};
