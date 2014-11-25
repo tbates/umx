@@ -1077,7 +1077,6 @@ umxStandardizeACE <- function(fit) {
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' plot(m1)
 #' }
-
 plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, showError = TRUE) {
 	# ==========
 	# = Setup  =
@@ -1174,7 +1173,8 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 #'
 #' Make a graphical display of an ACE model
 #'
-#' @param model \code{\link{mxModel}} to plot
+#' @aliases plot plot.MxModel.ACE
+#' @param model \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
 #' @param dotFilename the name of the file that is created (use "name" to create the file using the model's name parameter)
 #' @param digits How many decimals to include in path loadings (2)
 #' @param showMeans Whether to show means paths (F)
@@ -1194,6 +1194,7 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 #' m1 = umxRun(m1)
 #' \dontrun{
 #' umxPlotACE(model, dotFilename = NA)
+#' plot(model)
 #' umxPlotACE(model)
 #' umxPlotACE(model, std = F)
 #' }
@@ -1261,6 +1262,7 @@ umxPlotACE <- function(model = NA, dotFilename = "name", digits = 2, showMeans =
 	}
 } # end umxPlotACE
 
+plot.MxModel.ACE <- umxPlotACE
 
 #' umxMI
 #'

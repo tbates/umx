@@ -54,6 +54,7 @@
 # 	}
 # }
 
+setClass("MxModel.ACE", contains = "MxModel")
 
 .onLoad <- function(libname, pkgname){
     packageStartupMessage(paste0("Loading ", omxQuotes("umx") , " package.\n",
@@ -850,6 +851,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 	}
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
+	model = as(model, "MxModel.ACE") # change type so that plot() (actually plot.MxModel.ACE) will work.
 	return(model)
 }
 
