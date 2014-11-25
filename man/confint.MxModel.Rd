@@ -63,7 +63,7 @@ confint(m1, parm = "existing") # request existing CIs (none added yet...)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link[stats]{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
+- \code{\link[stats]{confint}}
 
 Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},

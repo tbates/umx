@@ -23,20 +23,21 @@ m1 <- mxModel("ind", type = "RAM",
 	mxPath(from = "one", to = manifests),
 	mxData(mtcars[, manifests], type = "raw")
 )
-oldCores = umx_get_cores() # get current default value
-umx_set_cores(model = m1) # set to default (max - 1)
-umx_get_cores(model = m1) # show new value
+oldCores = umx_get_cores()   # get current default value
+umx_set_cores(model = m1)    # set to default (max - 1)
+umx_get_cores(model = m1)    # show new value
 umx_set_cores(detectCores()) # set to default (max - 1)
-umx_get_cores() # show new value
-umx_set_cores(oldCores) $ reset to old value
+umx_get_cores()              # show new value
+umx_set_cores(oldCores)      # reset to old value
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 Other umx misc functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umx_add_variances}};
-  \code{\link{umx_apply}}; \code{\link{umx_check_model}};
+  \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
+  \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};

@@ -65,7 +65,7 @@ umxSummary(m1, show = "std") #also display parameter estimates
 # = Model updating =
 # ==================
 # Can we set the loading of X5 on G to zero?
-m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = FALSE, name = "no_effect_of_g_on_X5")
+m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = FALSE, name = "no_g_on_X5")
 m2 = mxRun(m2)
 # Compare the two models
 umxCompare(m1, m2)

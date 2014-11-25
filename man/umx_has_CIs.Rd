@@ -45,8 +45,9 @@ umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}
 
 Other umx misc functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umx_add_variances}};
-  \code{\link{umx_apply}}; \code{\link{umx_check_model}};
+  \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
+  \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};

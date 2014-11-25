@@ -39,7 +39,8 @@ Summarise a Cholesky model, as returned by umxACE
 \examples{
 require(OpenMx)
 data(twinData)
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 selDVs = c("bmi1", "bmi2")
 mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
 dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))

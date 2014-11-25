@@ -28,7 +28,8 @@ Make a graphical display of an ACE model
 \examples{
 require(OpenMx)
 data(twinData)
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 selDVs = c("bmi1","bmi2")
 mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
 dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
@@ -45,6 +46,13 @@ umxPlotACE(model, std = F)
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{umxPlotSexLim}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}
+Other umx reporting functions: \code{\link{RMSEA}};
+  \code{\link{coef.MxModel}};
+  \code{\link{extractAIC.MxModel}};
+  \code{\link{residuals.MxModel}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}};
+  \code{\link{umxStandardizeModel}};
+  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
+  \code{\link{umx_show}}
 }
 

@@ -34,6 +34,13 @@ coef(m1)
 -
 }
 \seealso{
-- \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{mxStandardizeRAMpaths}}
+Other umx reporting functions: \code{\link{RMSEA}};
+  \code{\link{extractAIC.MxModel}}; \code{\link{plot}},
+  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
+  \code{\link{residuals.MxModel}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}};
+  \code{\link{umxStandardizeModel}};
+  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
+  \code{\link{umx_show}}
 }
 

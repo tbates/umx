@@ -41,7 +41,7 @@ library(OpenMx);
 # = 1. Open and clean the data =
 # ==============================
 # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin
-moderator = "age"         # The name of the moderator column in the dataset
+mod = "age"         # The name of the moderator column in the dataset
 selDVs = c("bmi1","bmi2") # The DV for twin 1 and twin 2
 data(twinData) # Dataset of Australian twins, built into OpenMx! Use help(twinData) for more
 # The twinData consist of two cohorts. First we label them
@@ -49,24 +49,27 @@ data(twinData) # Dataset of Australian twins, built into OpenMx! Use help(twinDa
 twinData$cohort = 1; twinData$cohort[twinData$zyg \%in\% 6:10] = 2
 twinData$zyg[twinData$cohort == 2] = twinData$zyg[twinData$cohort == 2]-5
 # And set a plain-English label
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 # The model also assumes two groups: MZ and DZ. Moderator can't be missing
 # Delete missing moderator rows
-twinData = twinData[!is.na(twinData[moderator]),]
-mzData = subset(twinData, ZYG == "MZFF", c(selDVs, moderator))
-dzData = subset(twinData, ZYG == "DZFF", c(selDVs, moderator))
+twinData = twinData[!is.na(twinData[mod]),]
+mzData = subset(twinData, ZYG == "MZFF", c(selDVs, mod))
+dzData = subset(twinData, ZYG == "DZFF", c(selDVs, mod))
 
 # ======================
 # = Run the analyses! =
 # ======================
 # Run with FIML (default) uses all information
-umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData);
+umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData);
 
 # Run creating weighted covariance matrices (excludes missing data)
-umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, weightCov = TRUE);
+umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData,
+		weightCov = TRUE);
 
 # Run and plot for specified windows (in this case just 1927)
-umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, specifiedTargets = 1927, plotWindow = TRUE)
+umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData,
+		specifiedTargets = 1927, plotWindow = TRUE)
 }
 \references{
 - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)

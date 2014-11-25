@@ -3,12 +3,14 @@
 \alias{umxDiagnose}
 \title{mxDiagnostic}
 \usage{
-umxDiagnose(model)
+umxDiagnose(model, tryHard = FALSE, diagonalizeExpCov = FALSE)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to diagnose}
 
 \item{tryHard}{whether I should try and fix it? (defaults to FALSE)}
+
+\item{diagonalizeExpCov}{Whether to diagonalize the ExpCov}
 }
 \value{
 - helpful messages and perhaps a modified model

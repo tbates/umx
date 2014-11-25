@@ -61,8 +61,6 @@ a$labels
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-
 Other umx core functions: \code{\link{umxReRun}};
   \code{\link{umxRun}}; \code{\link{umxValues}};
   \code{\link{umx_cov_diag}};

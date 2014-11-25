@@ -41,6 +41,13 @@ umxExpMeans(m1, digits = 3)
 - \url{http://openmx.psyc.virginia.edu/thread/2598}
 }
 \seealso{
-- \code{\link{umxExpCov}}, \code{\link{umxCI_boot}}
+Other umx reporting functions: \code{\link{RMSEA}};
+  \code{\link{coef.MxModel}};
+  \code{\link{extractAIC.MxModel}}; \code{\link{plot}},
+  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
+  \code{\link{residuals.MxModel}}; \code{\link{umxExpCov}};
+  \code{\link{umxStandardizeModel}};
+  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
+  \code{\link{umx_show}}
 }
 

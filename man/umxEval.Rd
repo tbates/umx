@@ -39,8 +39,8 @@ mxEval(list(ab = ab), m1)
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other umx misc functions: \code{\link{demand}};
-  \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
-  \code{\link{umx_check_model}};
+  \code{\link{umxJiggle}}; \code{\link{umx_add_variances}};
+  \code{\link{umx_apply}}; \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};

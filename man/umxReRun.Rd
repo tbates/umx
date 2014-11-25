@@ -64,8 +64,8 @@ m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1")
 umxSummary(m2); umxCompare(m1, m2)
 # 1-line version including comparison
 m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
-m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "drop_G_to_x3to5", comparison = TRUE)
-m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = TRUE)
+m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
+m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1", comp = TRUE)
 m3 = umxReRun(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again")
 umxCompare(m3, m2)
 }
@@ -73,8 +73,6 @@ umxCompare(m3, m2)
 - \url{http://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{mxRun}}, \code{\link{umxRun}}, \code{\link{omxGetParameters}}
-
 Other umx core functions: \code{\link{umxLabel}};
   \code{\link{umxRun}}; \code{\link{umxValues}};
   \code{\link{umx_cov_diag}};

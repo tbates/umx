@@ -43,8 +43,12 @@ summary(m1)
 - \url{http://github.com/tbates/umx}
 }
 \seealso{
-Other umx reporting functions: \code{\link{residuals.MxModel}};
-  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
-  \code{\link{umx_show}}
+Other umx reporting functions: \code{\link{RMSEA}};
+  \code{\link{coef.MxModel}};
+  \code{\link{extractAIC.MxModel}}; \code{\link{plot}},
+  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
+  \code{\link{residuals.MxModel}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}}; \code{\link{umx_drop_ok}};
+  \code{\link{umx_get_time}}; \code{\link{umx_show}}
 }
 

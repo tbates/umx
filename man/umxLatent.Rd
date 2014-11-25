@@ -72,6 +72,6 @@ umxPlot(m2)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+Other umx model building functions: \code{\link{umxRAM}}
 }
 

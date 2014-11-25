@@ -46,8 +46,10 @@ Make a 2-group ACE model
 }
 \examples{
 # Height, weight, and BMI data from Australian twins.
-# The total sample has been subdivided into a young cohort, aged 18-30 years, and an older cohort aged 31 and above.
-# Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
+# The total sample has been subdivided into a young cohort, aged 18-30 years,
+# and an older cohort aged 31 and above.
+# Cohort 1 Zygosity is coded as follows:
+# 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
 # tip: ?twinData to learn more about this data set
 require(OpenMx)
 require(umx.twin)
@@ -56,10 +58,12 @@ names(twinData)
 # "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
 
 # Set the zygosity to a factor
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 # Pick the variable the zygosity to a factor
-selDVs = c("bmi1", "bmi2") # note, you can also just list the base name here, i.e., "bmi", and set "suffix = '' ".
-# the function will then make the varnames for each twin using c(paste0("bmi", suffix, 1), paste0("bmi", suffix, 2))
+selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
+# the function will then make the varnames for each twin using
+# c(paste0("bmi", suffix, 1), paste0("bmi", suffix, 2))
 mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
@@ -75,7 +79,8 @@ umxSummaryACE(m2) # nb: though this is ADE, it's labeled ACE
 # Ordinal example
 require(OpenMx)
 data(twinData)
-twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
 # Cut weight to to form ordinal obesity
 ordDVs = c("obese1", "obese2")
 selDVs = c("obese")
@@ -91,7 +96,7 @@ str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 m1 = umxRun(m1)
 umxSummaryACE(m1)
-dontrun{
+\dontrun{
 # umxPlotACE(m1)
 }
 
@@ -107,7 +112,8 @@ umxSummaryACE(m1)
 # Mixed continuous and binary example
 require(OpenMx)
 data(twinData)
-twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
 ordDVs = c("obese1", "obese2")
 selDVs = c("wt", "obese")
 obesityLevels = c('normal', 'obese')
@@ -122,9 +128,9 @@ dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
 str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 m1 = umxRun(m1)
-umxSummaryACE(m1)
-dontrun{
-umxPlotACE(m1)
+umxSummary(m1)
+\dontrun{
+plot(m1)
 }
 }
 \references{

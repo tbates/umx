@@ -37,8 +37,9 @@ umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 }
 \seealso{
 Other umx misc functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umx_add_variances}};
-  \code{\link{umx_apply}}; \code{\link{umx_check_model}};
+  \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
+  \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}}; \code{\link{umx_get_cores}};

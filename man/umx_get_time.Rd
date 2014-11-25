@@ -41,7 +41,12 @@ umx_get_time(c(m1,m2))
 \seealso{
 - \code{\link{summary}}, \code{\link{umxRun}}
 
-Other umx reporting functions: \code{\link{residuals.MxModel}};
+Other umx reporting functions: \code{\link{RMSEA}};
+  \code{\link{coef.MxModel}};
+  \code{\link{extractAIC.MxModel}}; \code{\link{plot}},
+  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
+  \code{\link{residuals.MxModel}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}};
   \code{\link{umxStandardizeModel}};
   \code{\link{umx_drop_ok}}; \code{\link{umx_show}}
 }

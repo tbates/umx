@@ -49,7 +49,8 @@ Additional conveniences:
 }
 \examples{
 # umxRAM is like ggplot2::qplot(), you give the data in a data =  parameter
-# A common error is to include data in the main list, a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
+# A common error is to include data in the main list,
+# a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
 # nb: unlike mxModel, umxRAM needs data at build time.
 
 # 1. For convenience, list up the manifests you will be using
@@ -79,5 +80,8 @@ plot(m1)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+}
+\seealso{
+Other umx model building functions: \code{\link{umxLatent}}
 }
 

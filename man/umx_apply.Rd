@@ -30,7 +30,8 @@ umx_apply(mean, to_each = "row", of_DF = mtcars, na.rm = TRUE)
 }
 \seealso{
 Other umx misc functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umx_add_variances}};
+  \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umx_add_variances}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};
   \code{\link{umx_default_option}};

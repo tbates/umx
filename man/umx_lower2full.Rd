@@ -20,7 +20,8 @@ Take a lower triangle of data (either from a "lower" \code{\link{mxMatrix}}, or 
 and turn it into a full matrix.
 }
 \examples{
-tmpn = c("ROccAsp", "REdAsp", "FOccAsp", "FEdAsp", "RParAsp", "RIQ", "RSES", "FSES", "FIQ", "FParAsp")
+tmpn = c("ROccAsp", "REdAsp", "FOccAsp", "FEdAsp", "RParAsp",
+         "RIQ", "RSES", "FSES", "FIQ", "FParAsp")
 tmp = matrix(nrow = 10, ncol = 10, byrow = TRUE, dimnames = list(tmpn,tmpn), data =
 	c(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
 	0.6247, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,

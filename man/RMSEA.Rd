@@ -24,6 +24,13 @@ See \code{\link[umx]{RMSEA.MxModel}} to access the RMSEA of MxModels
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link[umx]{RMSEA.MxModel}}
+Other umx reporting functions: \code{\link{coef.MxModel}};
+  \code{\link{extractAIC.MxModel}}; \code{\link{plot}},
+  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
+  \code{\link{residuals.MxModel}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}};
+  \code{\link{umxStandardizeModel}};
+  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
+  \code{\link{umx_show}}
 }
 

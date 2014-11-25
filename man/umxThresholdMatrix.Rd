@@ -44,7 +44,8 @@ umxThresholdMatrix(x)
 
 require(OpenMx)
 data(twinData)
-twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
 # ==================
 # = Binary example =
 # ==================
@@ -53,7 +54,8 @@ cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 obesityLevels = c('normal', 'obese')
 twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
-# Step 2: Make the ordinal variables into mxFactors (ensures ordered= TRUE + requires user to confirm levels)
+# Step 2: Make the ordinal variables into mxFactors
+# this ensures ordered= TRUE + requires user to confirm levels
 selDVs = c("obese1", "obese2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
