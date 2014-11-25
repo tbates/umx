@@ -146,12 +146,12 @@ umx_set_cores <- function(cores = detectCores() - 1, model = NULL) {
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxData(mtcars[, manifests], type = "raw")
 #' )
-#' oldCores = umx_get_cores() # get current default value
-#' umx_set_cores(model = m1) # set to default (max - 1)
-#' umx_get_cores(model = m1) # show new value
+#' oldCores = umx_get_cores()   # get current default value
+#' umx_set_cores(model = m1)    # set to default (max - 1)
+#' umx_get_cores(model = m1)    # show new value
 #' umx_set_cores(detectCores()) # set to default (max - 1)
-#' umx_get_cores() # show new value
-#' umx_set_cores(oldCores) $ reset to old value
+#' umx_get_cores()              # show new value
+#' umx_set_cores(oldCores)      # reset to old value
 umx_get_cores <- function(model = NULL) {
 	n = mxOption(model, "Number of Threads")
 	message(n, "/", detectCores())
@@ -2995,7 +2995,8 @@ umxHetCor <- function(data, ML = FALSE, use = "pairwise.complete.obs", treatAllA
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' 
-#' tmpn = c("ROccAsp", "REdAsp", "FOccAsp", "FEdAsp", "RParAsp", "RIQ", "RSES", "FSES", "FIQ", "FParAsp")
+#' tmpn = c("ROccAsp", "REdAsp", "FOccAsp", "FEdAsp", "RParAsp", 
+#'          "RIQ", "RSES", "FSES", "FIQ", "FParAsp")
 #' tmp = matrix(nrow = 10, ncol = 10, byrow = TRUE, dimnames = list(tmpn,tmpn), data = 
 #' 	c(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,
 #' 	0.6247, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,  0.0000, 0.0000, 0,

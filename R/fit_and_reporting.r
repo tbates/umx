@@ -1,12 +1,12 @@
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
-# devtools::install_github("tbates/umx"); library(umx);
+# library(devtools)
+# document("~/bin/umx"); install("~/bin/umx");
 # setwd("~/bin/umx"); 
-# devtools::build("~/bin/umx")
-# devtools::check("~/bin/umx")
-# devtools::release("~/bin/umx")
-# devtools::load_all("~/bin/umx")
-# devtools::dev_help("umxReportCIs")
-# devtools::show_news("~/bin/umx")
+# build("~/bin/umx")
+# check("~/bin/umx")
+# release("~/bin/umx")
+# load_all("~/bin/umx")
+# show_news("~/bin/umx")
+# install_github("tbates/umx"); library(umx);
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 
@@ -20,6 +20,7 @@
 #'
 #' @param model an \code{\link{mxModel}} to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
+#' @param diagonalizeExpCov Whether to diagonalize the ExpCov
 #' @return - helpful messages and perhaps a modified model
 #' @export
 #' @family umx build functions
@@ -38,7 +39,7 @@
 #' m1 = mxRun(m1)
 #' umxSummary(m1, show = "std")
 #' umxDiagnose(m1)
-umxDiagnose <- function(model, diagonalizeExpCov = FALSE){
+umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 	# 1. First thing to check is whether the covariance matrix is positive definite.
 	minEigen = min(eigen(umxExpCov(model))$values)
 	if(minEigen<0){
@@ -54,6 +55,7 @@ umxDiagnose <- function(model, diagonalizeExpCov = FALSE){
   # umx_any_ordinal()
   # more tricky - we should really report the variances and the standardized thresholds.
   # The guidance would be to try starting with unit variances and thresholds that are within +/- 2SD of the mean.
+  # [bivariate outliers %p](http://openmx.psyc.virginia.edu/thread/3899)
 }
 
 # =============================
@@ -99,6 +101,7 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #' @param model a (run) \code{\link{mxModel}} to get residuals from
 #' @param digits rounding (default = 2)
 #' @param suppress smallest deviation to print out (default = NULL = show all)
+#' @param ... Optional parameters
 #' @return - residual correlation matrix
 #' @export
 #' @export residuals.MxModel
@@ -122,7 +125,7 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #' residuals(m1, digits = 3, suppress = .005)
 #' # residuals are returned as an invisible object you can capture in a variable
 #' a = residuals(m1); a
-residuals.MxModel <- function(model, digits = 2, suppress = NULL){
+residuals.MxModel <- function(model, digits = 2, suppress = NULL, ...){
 	umx_check_model(model, type = NULL, hasData = TRUE)
 	expCov = umxExpCov(model, latents = FALSE)
 	if(model@data@type == "raw"){
@@ -136,6 +139,126 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 		print("nb: You can zoom in on bad values with, e.g. suppress = .01, which will hide values smaller than this. Use digits = to round")
 	}
 	invisible(resid)
+}
+
+#' umxStandardizeModel
+#'
+#' umxStandardizeModel takes a RAM-style model, and returns standardized version.
+#'
+#' @param model The \code{\link{mxModel}} you wish to standardise
+#' @param return What to return. Valid options: "parameters", "matrices", or "model"
+#' @param Amatrix Optionally tell the function what the name of the asymmetric matrix is (defaults to RAM standard A)
+#' @param Smatrix Optionally tell the function what the name of the symmetric matrix is (defaults to RAM standard S)
+#' @param Mmatrix Optionally tell the function what the name of the means matrix is (defaults to RAM standard M)
+#' @return - a \code{\link{mxModel}} or else parameters or matrices if you request those
+#' @family umx reporting functions
+#' @references - \url{http://github.com/tbates/umx}
+#' @export
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' m1 = umxStandardizeModel(m1, return = "model")
+#' summary(m1)
+umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smatrix = NA, Mmatrix = NA) {
+	if (!(return == "parameters"|return == "matrices"|return == "model")) stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
+	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
+	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
+
+	if (!umx_is_RAM(model) & !suppliedNames ){
+		stop("I need either type = RAM model or the names of the equivalent of the A and S matrices.")
+	}
+	output <- model@output
+	# Stop if there is no objective function
+	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
+	# Stop if there is no output
+	if (length(output) < 1){
+		message("Model has not been run yet")
+		return(model)
+	}
+	# Get the names of the A, S and M matrices 
+	if("expectation" %in% slotNames(model)){
+		# openMx 2
+		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@expectation@A}
+		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@expectation@S}
+		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@expectation@M}
+	} else {
+		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
+		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
+		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
+	}
+	# Get the A and S matrices, and make an identity matrix
+	A <- model[[nameA]]
+	S <- model[[nameS]]
+	I <- diag(nrow(S@values))
+	
+	# this can fail (non-invertable etc. so we wrap it in try-catch)
+	tryCatch({	
+		# Calculate the expected covariance matrix
+		IA <- solve(I - A@values)
+		expCov <- IA %*% S@values %*% t(IA)
+		# Return 1/SD to a diagonal matrix
+		invSDs <- 1/sqrt(diag(expCov))
+		# Give the inverse SDs names, because mxSummary treats column names as characters
+		names(invSDs) <- as.character(1:length(invSDs))
+		if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
+		# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
+		diag(I) <- invSDs
+		# Standardize the A, S and M matrices
+		#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
+		#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
+		stdA <- I %*% A@values %*% solve(I)
+		stdS <- I %*% S@values %*% I
+		# Populate the model
+		model[[nameA]]@values[,] <- stdA
+		model[[nameS]]@values[,] <- stdS
+		if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
+	}, warning = function(cond) {
+	    # warning-handler-code
+        message(cond)
+	}, error = function(cond) {
+	    cat("The model could not be standardized")
+        message(cond)
+	}, finally = {
+	    # cleanup-code
+	})
+
+	# Return the model, if asked
+	if(return=="model"){
+		return(model)
+	}else if(return=="matrices"){
+		# return the matrices, if asked
+		matrices <- list(model[[nameA]], model[[nameS]])
+		names(matrices) <- c("A", "S")
+		return(matrices)
+	}else if(return == "parameters"){
+		# return the parameters
+		#recalculate summary based on standardised matrices
+		p <- summary(model)$parameters
+		p <- p[(p[,2] == nameA)|(p[,2] == nameS),]
+		## get the rescaling factor
+		# this is for the A matrix
+		rescale <- invSDs[p$row] * 1/invSDs[p$col]
+		# this is for the S matrix
+		rescaleS <- invSDs[p$row] * invSDs[p$col]
+		# put the A and the S together
+		rescale[p$matrix == "S"] <- rescaleS[p$matrix == "S"]
+		# rescale
+		p[,5] <- p[,5] * rescale
+		p[,6] <- p[,6] * rescale
+		# rename the columns
+		# names(p)[5:6] <- c("Std. Estimate", "Std.Std.Error")
+		return(p)		
+	}
 }
 
 #' confint.MxModel
@@ -164,7 +287,7 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL){
 #' @export confint.MxModel
 #' @return - \code{\link{mxModel}}
 #' @family umx reporting
-#' @seealso - \code{\link[stats]{confint}}, \code{\link{mxCI}}, \code{\link{mxRun}}
+#' @seealso - \code{\link[stats]{confint}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -475,7 +598,8 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' @examples
 #' require(OpenMx)
 #' data(twinData)
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' selDVs = c("bmi1", "bmi2")
 #' mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
 #' dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
@@ -1102,6 +1226,7 @@ umxStandardizeACE <- function(fit) {
 #' @param showFixed Whether to show fixed paths (defaults to FALSE)
 #' @param showMeans Whether to show means
 #' @param showError Whether to show errors
+#' @param ... Optional parameters
 #' @export
 #' @export plot.MxModel
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
@@ -1123,7 +1248,7 @@ umxStandardizeACE <- function(fit) {
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' plot(m1)
 #' }
-plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, showError = TRUE) {
+plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, showError = TRUE, ...) {
 	# ==========
 	# = Setup  =
 	# ==========
@@ -1227,12 +1352,13 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 #' @param std whether to standardize the model (T)
 #' @return - optionally return the dot code
 #' @export
-#' @seealso - \code{\link{umxPlotSexLim}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}
+#' @family umx reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
 #' data(twinData)
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' selDVs = c("bmi1","bmi2")
 #' mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
 #' dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
@@ -1406,6 +1532,7 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = TRU
 #' @param to The dependent variable that you want to watch changing
 #' @param model The model containing from and to
 #' @seealso - \code{\link{umxRun}}, \code{\link{mxCompare}}
+#' @family umx modification functions
 #' @references - http://www.github.com/tbates/umx/
 #' @export
 #' @examples
@@ -1663,6 +1790,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @return - AIC value
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
+#' @family umx reporting functions
 #' @references - \url{http://www.github.com/tbates/umx/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
@@ -1694,8 +1822,9 @@ extractAIC.MxModel <- function(model) {
 #' @rdname coef.MxModel
 #' @export
 #' @param model an \code{\link{mxModel}} to get the AIC from
+#' @param ... Optional parameters
 #' @return - coefficients
-#' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{mxStandardizeRAMpaths}}
+#' @family umx reporting functions
 #' @references - 
 #' @examples
 #' require(OpenMx)
@@ -1712,7 +1841,7 @@ extractAIC.MxModel <- function(model) {
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' coef(m1)
 #' # -2.615998
-coef.MxModel <- function(model) {
+coef.MxModel <- function(model, ...) {
 	# TODO implement this
 	message("Not implemented")
 	message("TODO implement this using wrapper around mxStandardizeRAMpaths")
@@ -1728,6 +1857,7 @@ coef.MxModel <- function(model) {
 #' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected covariance matrix
 #' @export
+#' @family umx reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
@@ -1797,8 +1927,8 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 #' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected means
 #' @export
+#' @family umx reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
-#' @seealso - \code{\link{umxExpCov}}, \code{\link{umxCI_boot}}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1853,7 +1983,8 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' @method logLik MxModel
 #' @rdname  logLik
 #' @export
-#' @param model the \code{\link{mxModel}} from which to get the log likelihood 
+#' @param model the \code{\link{mxModel}} from which to get the log likelihood
+#' @param ... Optional parameters
 #' @return - the log likelihood
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
 #' @family umx reporting
@@ -1873,7 +2004,7 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' logLik(m1)
 #' AIC(m1)
-logLik.MxModel <- function(model) {
+logLik.MxModel <- function(model, ...) {
 	Minus2LogLikelihood <- NA
 	if (!is.null(model@output) & !is.null(model@output$Minus2LogLikelihood)){
 		Minus2LogLikelihood <- (-0.5) * model@output$Minus2LogLikelihood		
@@ -1915,7 +2046,7 @@ logLik.MxModel <- function(model) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' umxFitIndices(m1, m1_ind)
+#' umxFitIndices(m1)
 #' # TODO use means and compute independence model here for example...
 umxFitIndices <- function(model, indepfit) {
 	options(scipen = 3)
@@ -2005,7 +2136,7 @@ umxFitIndices <- function(model, indepfit) {
 #' @param digits digits to show
 #' @return - RMSEA object containing value (and perhaps a CI)
 #' @export
-#' @seealso - \code{\link[umx]{RMSEA.MxModel}}
+#' @family umx reporting functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 

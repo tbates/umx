@@ -14,6 +14,7 @@ Depends:
     R (>= 2.0.2),
     OpenMx
 Suggests:
+    R2HTML,
     testthat,
     roxygen2,
     knitr

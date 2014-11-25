@@ -1,21 +1,22 @@
-# setwd("~/bin/umx"); 
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# devtools::check_doc("~/bin/umx")
-# devtools::run_examples("~/bin/umx")
-# devtools::check("~/bin/umx")
-# devtools::build("~/bin/umx")
-# devtools::load_all("~/bin/umx")
-# devtools::show_news("~/bin/umx")
+# library(devtools)
+# setwd("~/bin/umx");
+# document("~/bin/umx"); install("~/bin/umx");
+# check_doc("~/bin/umx")
+# run_examples("~/bin/umx")
+# check("~/bin/umx")
+# build("~/bin/umx")
+# load_all("~/bin/umx")
+# show_news("~/bin/umx")
 # source('http://openmx.psyc.virginia.edu/getOpenMxBeta.R')
 # system(paste("open", shQuote("/Users/tim/bin/umx/R/misc_and_utility.r")))
 
-# devtools::create()
-# devtools::add_travis();
-# devtools::update_version();
-# devtools::news();
-# devtools::create_README()
+# create()
+# add_travis();
+# update_version();
+# news();
+# create_README()
 
-# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
+# document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
 # https://r-forge.r-project.org/project/admin/?group_id=1745
 # http://r-pkgs.had.co.nz/
@@ -57,10 +58,7 @@
 setClass("MxModel.ACE", contains = "MxModel")
 
 .onLoad <- function(libname, pkgname){
-    packageStartupMessage(paste0("Loading ", omxQuotes("umx") , " package.\n",
-		"For an overview and introduction to the package please type: help(umx)", 
-		domain = NULL, appendLF = TRUE)
-	)
+    packageStartupMessage("For an overview type '?umx'")
 }
 
 #' umxRAM
@@ -96,7 +94,8 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' # umxRAM is like ggplot2::qplot(), you give the data in a data =  parameter
-#' # A common error is to include data in the main list, a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
+#' # A common error is to include data in the main list,
+#' # a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
 #' # nb: unlike mxModel, umxRAM needs data at build time.
 #' 
 #' # 1. For convenience, list up the manifests you will be using
@@ -321,7 +320,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' # = 1. Open and clean the data =
 #' # ==============================
 #' # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin
-#' moderator = "age"         # The name of the moderator column in the dataset
+#' mod = "age"         # The name of the moderator column in the dataset
 #' selDVs = c("bmi1","bmi2") # The DV for twin 1 and twin 2
 #' data(twinData) # Dataset of Australian twins, built into OpenMx! Use help(twinData) for more
 #' # The twinData consist of two cohorts. First we label them
@@ -329,24 +328,27 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' twinData$cohort = 1; twinData$cohort[twinData$zyg %in% 6:10] = 2
 #' twinData$zyg[twinData$cohort == 2] = twinData$zyg[twinData$cohort == 2]-5
 #' # And set a plain-English label
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' # The model also assumes two groups: MZ and DZ. Moderator can't be missing
 #' # Delete missing moderator rows
-#' twinData = twinData[!is.na(twinData[moderator]),]
-#' mzData = subset(twinData, ZYG == "MZFF", c(selDVs, moderator))
-#' dzData = subset(twinData, ZYG == "DZFF", c(selDVs, moderator))
+#' twinData = twinData[!is.na(twinData[mod]),]
+#' mzData = subset(twinData, ZYG == "MZFF", c(selDVs, mod))
+#' dzData = subset(twinData, ZYG == "DZFF", c(selDVs, mod))
 #' 
 #' # ======================
 #' # = Run the analyses! =
 #' # ======================
 #' # Run with FIML (default) uses all information
-#' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData);
+#' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData);
 #' 
 #' # Run creating weighted covariance matrices (excludes missing data)
-#' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, weightCov = TRUE); 
+#' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
+#' 		weightCov = TRUE); 
 #' 
 #' # Run and plot for specified windows (in this case just 1927)
-#' umxGxE_window(selDVs = selDVs, moderator = moderator, mzData = mzData, dzData = dzData, specifiedTargets = 1927, plotWindow = TRUE)
+#' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
+#' 		specifiedTargets = 1927, plotWindow = TRUE)
 #' 
 #' @family umx twin modeling
 #' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
@@ -486,8 +488,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' # Height, weight, and BMI data from Australian twins. 
-#' # The total sample has been subdivided into a young cohort, aged 18-30 years, and an older cohort aged 31 and above.
-#' # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
+#' # The total sample has been subdivided into a young cohort, aged 18-30 years,
+#' # and an older cohort aged 31 and above.
+#' # Cohort 1 Zygosity is coded as follows: 
+#' # 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
 #' # tip: ?twinData to learn more about this data set
 #' require(OpenMx)
 #' require(umx.twin)
@@ -496,10 +500,12 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
 #' 
 #' # Set the zygosity to a factor
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' # Pick the variable the zygosity to a factor
-#' selDVs = c("bmi1", "bmi2") # note, you can also just list the base name here, i.e., "bmi", and set "suffix = '' ".
-#' # the function will then make the varnames for each twin using c(paste0("bmi", suffix, 1), paste0("bmi", suffix, 2))
+#' selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
+#' # the function will then make the varnames for each twin using 
+#' # c(paste0("bmi", suffix, 1), paste0("bmi", suffix, 2))
 #' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 #' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
@@ -515,7 +521,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # Ordinal example
 #' require(OpenMx)
 #' data(twinData)
-#' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' # Cut weight to to form ordinal obesity
 #' ordDVs = c("obese1", "obese2")
 #' selDVs = c("obese")
@@ -531,7 +538,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' m1 = umxRun(m1)
 #' umxSummaryACE(m1)
-#' dontrun{
+#' \dontrun{
 #' # umxPlotACE(m1)
 #' }
 #' 
@@ -547,7 +554,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # Mixed continuous and binary example
 #' require(OpenMx)
 #' data(twinData)
-#' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' ordDVs = c("obese1", "obese2")
 #' selDVs = c("wt", "obese")
 #' obesityLevels = c('normal', 'obese')
@@ -562,9 +570,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' m1 = umxRun(m1)
-#' umxSummaryACE(m1)
-#' dontrun{
-#' umxPlotACE(m1)
+#' umxSummary(m1)
+#' \dontrun{
+#' plot(m1)
 #' }
 umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL, equateMeans = T, bVector = FALSE) {
 	nSib     = 2 # number of siblings in a twin pair
@@ -1017,7 +1025,6 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx core functions
-#' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1079,7 +1086,6 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param setStarts Deprecated way to setValues
 #' @return - \code{\link{mxModel}}
 #' @family umx core functions
-#' @seealso - \code{\link{mxRun}}, \code{\link{umxLabel}}, \code{\link{umxValues}}, \code{\link{umxReRun}}, \code{\link{confint}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1187,7 +1193,6 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
 #' @return - \code{\link{mxModel}}
 #' @family umx core functions
-#' @seealso - \code{\link{mxRun}}, \code{\link{umxRun}}, \code{\link{omxGetParameters}}
 #' @references - \url{http://github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1207,8 +1212,8 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' umxSummary(m2); umxCompare(m1, m2)
 #' # 1-line version including comparison
 #' m2 = umxReRun(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
-#' m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "drop_G_to_x3to5", comparison = TRUE)
-#' m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comparison = TRUE)
+#' m2 = umxReRun(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
+#' m2 = umxReRun(m1, update = "G_to_x1", value = .2, name = "fix_G_x1", comp = TRUE)
 #' m3 = umxReRun(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again")
 #' umxCompare(m3, m2)
 
@@ -1260,129 +1265,6 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 	return(x)
 }
 
-# =====================================
-# = Parallel helpers to be added here =
-# =====================================
-
-#' umxStandardizeModel
-#'
-#' umxStandardizeModel takes a RAM-style model, and returns standardized version.
-#'
-#' @param model The \code{\link{mxModel}} you wish to standardise
-#' @param return What to return. Valid options: "parameters", "matrices", or "model"
-#' @param Amatrix Optionally tell the function what the name of the asymmetric matrix is (defaults to RAM standard A)
-#' @param Smatrix Optionally tell the function what the name of the symmetric matrix is (defaults to RAM standard S)
-#' @param Mmatrix Optionally tell the function what the name of the means matrix is (defaults to RAM standard M)
-#' @return - a \code{\link{mxModel}} or else parameters or matrices if you request those
-#' @family umx reporting functions
-#' @references - \url{http://github.com/tbates/umx}
-#' @export
-#' @examples
-#' require(OpenMx)
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' m1 = umxStandardizeModel(m1, return = "model")
-#' summary(m1)
-umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smatrix = NA, Mmatrix = NA) {
-	if (!(return == "parameters"|return == "matrices"|return == "model")) stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
-	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
-	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
-
-	if (!umx_is_RAM(model) & !suppliedNames ){
-		stop("I need either type = RAM model or the names of the equivalent of the A and S matrices.")
-	}
-	output <- model@output
-	# Stop if there is no objective function
-	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
-	# Stop if there is no output
-	if (length(output) < 1){
-		message("Model has not been run yet")
-		return(model)
-	}
-	# Get the names of the A, S and M matrices 
-	if("expectation" %in% slotNames(model)){
-		# openMx 2
-		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@expectation@A}
-		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@expectation@S}
-		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@expectation@M}
-	} else {
-		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
-		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
-		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
-	}
-	# Get the A and S matrices, and make an identity matrix
-	A <- model[[nameA]]
-	S <- model[[nameS]]
-	I <- diag(nrow(S@values))
-	
-	# this can fail (non-invertable etc. so we wrap it in try-catch)
-	tryCatch({	
-		# Calculate the expected covariance matrix
-		IA <- solve(I - A@values)
-		expCov <- IA %*% S@values %*% t(IA)
-		# Return 1/SD to a diagonal matrix
-		invSDs <- 1/sqrt(diag(expCov))
-		# Give the inverse SDs names, because mxSummary treats column names as characters
-		names(invSDs) <- as.character(1:length(invSDs))
-		if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
-		# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
-		diag(I) <- invSDs
-		# Standardize the A, S and M matrices
-		#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
-		#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
-		stdA <- I %*% A@values %*% solve(I)
-		stdS <- I %*% S@values %*% I
-		# Populate the model
-		model[[nameA]]@values[,] <- stdA
-		model[[nameS]]@values[,] <- stdS
-		if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
-	}, warning = function(cond) {
-	    # warning-handler-code
-        message(cond)
-	}, error = function(cond) {
-	    cat("The model could not be standardized")
-        message(cond)
-	}, finally = {
-	    # cleanup-code
-	})
-
-	# Return the model, if asked
-	if(return=="model"){
-		return(model)
-	}else if(return=="matrices"){
-		# return the matrices, if asked
-		matrices <- list(model[[nameA]], model[[nameS]])
-		names(matrices) <- c("A", "S")
-		return(matrices)
-	}else if(return == "parameters"){
-		# return the parameters
-		#recalculate summary based on standardised matrices
-		p <- summary(model)$parameters
-		p <- p[(p[,2] == nameA)|(p[,2] == nameS),]
-		## get the rescaling factor
-		# this is for the A matrix
-		rescale <- invSDs[p$row] * 1/invSDs[p$col]
-		# this is for the S matrix
-		rescaleS <- invSDs[p$row] * invSDs[p$col]
-		# put the A and the S together
-		rescale[p$matrix == "S"] <- rescaleS[p$matrix == "S"]
-		# rescale
-		p[,5] <- p[,5] * rescale
-		p[,6] <- p[,6] * rescale
-		# rename the columns
-		# names(p)[5:6] <- c("Std. Estimate", "Std.Std.Error")
-		return(p)		
-	}
-}
 
 # ==============================
 # = Label and equate functions =
@@ -1552,7 +1434,7 @@ umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = 
 #' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of model comparisons
 #' @export
-#' @seealso - \code{\link{grep}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
+#' @family umx modification functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1608,7 +1490,7 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of fit changes
 #' @export
-#' @seealso - \code{\link{umxDrop1}}, \code{\link{mxModel}}
+#' @family umx model modification functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1721,7 +1603,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @param endogenous This is now deprecated. use type= \"exogenous|endogenous\"
 #' @return - path list
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+#' @family umx model building functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1955,7 +1837,8 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' 
 #' require(OpenMx)
 #' data(twinData)
-#' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' # ==================
 #' # = Binary example =
 #' # ==================
@@ -1964,7 +1847,8 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' obesityLevels = c('normal', 'obese')
 #' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' # Step 2: Make the ordinal variables into mxFactors (ensures ordered= TRUE + requires user to confirm levels)
+#' # Step 2: Make the ordinal variables into mxFactors
+#' # this ensures ordered= TRUE + requires user to confirm levels
 #' selDVs = c("obese1", "obese2")
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
@@ -2267,7 +2151,7 @@ umxOrdinalObjective <- function(df, suffixes = NA, covName = "expCov", meansName
 #' @param sd the sd of the jiggle noise
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
 #' @return - \code{\link{mxMatrix}}
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxValues}}
+#' @family umx misc functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -2385,8 +2269,9 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath("A <-> B") # same path as above using a string
 #' umxPath("A -> B") # one-headed arrow with string syntax
 #' umxPath("A <> B; A <-- B") # This is ok too
-#' umxPath("A -> B; B>C; C --> D") # two paths. space doesn't matter, hyphens don't matter
-#' # manifests is a reserved word, as is latents. It allows the string syntax to use the manifestVars variable
+#' umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
+#' # manifests is a reserved word, as is latents.
+#' # It allows the string syntax to use the manifestVars variable
 #' umxPath("A -> manifests") 
 #' # A worked example
 #' data(demoOneFactor)
@@ -2745,7 +2630,7 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #' # = Model updating =
 #' # ==================
 #' # Can we set the loading of X5 on G to zero?
-#' m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = FALSE, name = "no_effect_of_g_on_X5")
+#' m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = FALSE, name = "no_g_on_X5")
 #' m2 = mxRun(m2)
 #' # Compare the two models
 #' umxCompare(m1, m2)
@@ -2768,3 +2653,8 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #' @docType package
 #' @name umx
 NULL
+
+
+# =====================================
+# = Parallel helpers to be added here =
+# =====================================
