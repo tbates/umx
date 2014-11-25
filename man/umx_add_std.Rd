@@ -26,7 +26,8 @@ model = umx_add_std(model)
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 }
 \seealso{
-Other umx build functions: \code{\link{umxPath}};
+Other umx build functions: \code{\link{umxDiagnose}};
+  \code{\link{umxPath}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}}
 }

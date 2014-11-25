@@ -1,8 +1,6 @@
 # find non-ascii = grep this '[^\x00-\x7F]'
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
-
-# setwd("~/bin/umx"); 
 # setwd("~/bin/umx"); devtools::check()
 # devtools::load_all()
 # devtools::dev_help("umxX")
@@ -12,7 +10,6 @@
 
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
-
 
 # ======================================
 # = how to check the thresholds matrix =
@@ -320,6 +317,7 @@ umx_update_OpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALS
 #' umx_get_time
 #'
 #' A function to compactly report how long a model took to execute
+#' If model is a list, time deltas will be reported also.
 #'
 #' @param model An \code{\link{mxModel}} from which to get the elapsed time
 #' @param formatStr A format string, defining how to show the time
@@ -342,16 +340,31 @@ umx_update_OpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALS
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umx_get_time(m1)
-
+#' m2 = umxRun(m1)
+#' umx_get_time(c(m1,m2))
 umx_get_time <- function(model, formatStr = c("Wall clock time (HH:MM:SS.hh): %H:%M:%OS2", "%H hours, %M minutes, and %OS3 seconds"), tz = "GMT"){
-	lastTime = ""
-	formatStr = umx_default_option(formatStr, c("Wall clock time (HH:MM:SS.hh): %H:%M:%OS2", "%H hours, %M minutes, and %OS3 seconds"))
+	# TODO output a nicely formated table
+	formatStr = umx_default_option(formatStr, c("Wall clock time (HH:MM:SS.hh): %H:%M:%OS2", "%H hours, %M minutes, and %OS3 seconds"), check = FALSE)
 	if(length(model)>1){
-		for(i in 1:length(model)) {
+		for(i in 1:length(model)) {			
 			m = model[[i]]
-			message(format(.POSIXct(m$output$wallTime,tz), paste0(m$name, ": ", formatStr)))
+			if(!umx_has_been_run(m)){
+				message("You must run the model before asking for the elapsed run time")
+			}else{
+				thisTime = m$output$wallTime
+				if(i==1){
+					lastTime = thisTime
+					timeDelta = ""
+				} else {
+					timeDelta = paste0("(\u2206: ", round(thisTime - lastTime,3), ")")
+				}
+				message(format(.POSIXct(m$output$wallTime,tz), paste0(m$name, ": ", formatStr, timeDelta)))
+			}
 		}
 	} else {
+		if(!umx_has_been_run(model)){
+			stop("You must run the model before asking for the elapsed run time")
+		}
 		format(.POSIXct(model$output$wallTime,tz), formatStr)
 	}
 }

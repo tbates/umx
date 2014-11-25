@@ -10,6 +10,52 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 
+# =====================
+# = MOdel Diagnostics =
+# =====================
+
+#' mxDiagnostic
+#'
+#' Diagnose problems in a model
+#'
+#' @param model an \code{\link{mxModel}} to diagnose
+#' @param tryHard whether I should try and fix it? (defaults to FALSE)
+#' @return - helpful messages and perhaps a modified model
+#' @export
+#' @family umx build functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("OneFactor", data = myData,
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#' m1 = mxRun(m1)
+#' umxSummary(m1, show = "std")
+#' umxDiagnose(m1)
+umxDiagnose <- function(model, diagonalizeExpCov = FALSE){
+	# 1. First thing to check is whether the covariance matrix is positive definite.
+	minEigen = min(eigen(umxExpCov(model))$values)
+	if(minEigen<0){
+		message("The expected covariance matrix is not positive definite")
+		# now what?
+	}
+  # Best diagnostics are
+  # 1. observed data variances and means
+  # 2. expected variances and means
+  # 3 Difference of these?
+  # try
+  # diagonalizeExpCov diagonal.
+  # umx_any_ordinal()
+  # more tricky - we should really report the variances and the standardized thresholds.
+  # The guidance would be to try starting with unit variances and thresholds that are within +/- 2SD of the mean.
+}
+
 # =============================
 # = Fit and Reporting Helpers =
 # =============================
@@ -1374,15 +1420,9 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 	}
 	if(umx_is_RAM(model)){
 		if(manifests & !latents){
-			# TODO # test umxExpCov under 1.4?
-			if(mxVersion(verbose = FALSE) > "2.0"){
-				# expCov = attr(model$objective[[2]]$result, "expCov")
-				thisFit = paste0(model$name, ".fitfunction")
-				expCov <- attr(model@output$algebras[[thisFit]], "expCov")
-			} else {
-				# version 1.4 or below
-				expCov = model$objective@info$expCov
-			}
+			# expCov = attr(model$objective[[2]]$result, "expCov")
+			thisFit = paste0(model$name, ".fitfunction")
+			expCov <- attr(model@output$algebras[[thisFit]], "expCov")
 			dimnames(expCov) = list(manifestNames, manifestNames)
 		} else {
 			A <- mxEval(A, model)
@@ -1403,11 +1443,7 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 		if(latents){
 			stop("I don't know how to reliably get the latents for non-RAM models... Sorry :-(")
 		} else {
-			if(mxVersion(verbose = FALSE) > "1.5.0"){
-				expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
-			} else {
-				expCov = model$objective@info$expCov
-			}
+			expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
 			dimnames(expCov) = list(manifestNames, manifestNames)
 		}
 	}

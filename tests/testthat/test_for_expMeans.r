@@ -29,11 +29,11 @@ m1 <- mxModel("bivariate Heterogeneity RAM", model1, model2,
 	mxFitFunctionAlgebra("h12")
 )
 
-m1 = mxRun(m1) # 10909.32
-testthat::expect_less_than(abs(mxEval(fitfunction, m1)- 10909.32), .01)
+m1 = mxRun(m1) # 10833.11
+testthat::expect_less_than(abs(mxEval(fitfunction, m1)- 10833.11), .01)
 
 m2 <- mxModel("Bivar_Heterogeneity_RAM", model1, model2,
 	mxFitFunctionMultigroup(c("group1.fitfunction", "group2.fitfunction"))
 )
 m2 <- mxRun(m2)
-testthat::expect_less_than(abs(mxEval(fitfunction, m2)- 10909.32), .01)
+testthat::expect_less_than(abs(mxEval(fitfunction, m2)- 10833.11), .01)

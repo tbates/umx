@@ -118,7 +118,8 @@ umxSummary(m1, show = "std")
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
 
-Other umx build functions: \code{\link{umx_add_std}};
+Other umx build functions: \code{\link{umxDiagnose}};
+  \code{\link{umx_add_std}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}}
 }
