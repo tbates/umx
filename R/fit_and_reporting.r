@@ -2046,9 +2046,12 @@ logLik.MxModel <- function(model, ...) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' \dontrun{
 #' umxFitIndices(m1)
-#' # TODO use means and compute independence model here for example...
+#' }
 umxFitIndices <- function(model, indepfit) {
+	# TODO fix umxFitIndices requirement for indepence if model doesn't need it!
+    # TODO use means and compute independence model here for example...
 	options(scipen = 3)
 	indepSummary     <- summary(indepfit)
 	modelSummary <- summary(model)

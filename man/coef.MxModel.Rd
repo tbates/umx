@@ -3,10 +3,12 @@
 \alias{coef.MxModel}
 \title{coef.MxModel}
 \usage{
-\method{coef}{MxModel}(model)
+\method{coef}{MxModel}(model, ...)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get the AIC from}
+
+\item{...}{Optional parameters}
 }
 \value{
 - coefficients

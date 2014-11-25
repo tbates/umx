@@ -29,8 +29,9 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+\dontrun{
 umxFitIndices(m1)
-# TODO use means and compute independence model here for example...
+}
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

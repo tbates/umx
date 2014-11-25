@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{MxModel}(model = NA, std = TRUE, digits = 2,
   dotFilename = "name", pathLabels = c("none", "labels", "both"),
-  showFixed = FALSE, showMeans = TRUE, showError = TRUE)
+  showFixed = FALSE, showMeans = TRUE, showError = TRUE, ...)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to make a path diagram from}
@@ -24,6 +24,8 @@
 \item{showMeans}{Whether to show means}
 
 \item{showError}{Whether to show errors}
+
+\item{...}{Optional parameters}
 }
 \description{
 Create graphical path diagrams from your OpenMx models!

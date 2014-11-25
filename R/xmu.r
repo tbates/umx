@@ -303,7 +303,7 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	# Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
 	# usecase see: umxMakeThresholdMatrix
 	# junk[1]; 	junk[[2]]@values; 	junk[3]
-	isOrdinalVariable = umx_is_ordinal(df) 
+	isOrdinalVariable = umx_is_ordered(df) 
 	ordinalColumns    = df[,isOrdinalVariable]
 	ordNameList       = names(ordinalColumns);
 	nOrdinal          = ncol(ordinalColumns);

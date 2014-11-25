@@ -3,7 +3,7 @@
 \alias{residuals.MxModel}
 \title{residuals.MxModel}
 \usage{
-\method{residuals}{MxModel}(model, digits = 2, suppress = NULL)
+\method{residuals}{MxModel}(model, digits = 2, suppress = NULL, ...)
 }
 \arguments{
 \item{model}{a (run) \code{\link{mxModel}} to get residuals from}
@@ -11,6 +11,8 @@
 \item{digits}{rounding (default = 2)}
 
 \item{suppress}{smallest deviation to print out (default = NULL = show all)}
+
+\item{...}{Optional parameters}
 }
 \value{
 - residual correlation matrix

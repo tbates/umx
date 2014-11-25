@@ -91,6 +91,7 @@ umxPath(var = LETTERS[1:5], fixedAt = 1)
 umxPath(cov = c("A", "B")) # Covariance A <-> B
 umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
 umxPath(means = c("A","B"), values = c(pi,exp(1)))
+\dontrun{
 umxPath("A <-> B") # same path as above using a string
 umxPath("A -> B") # one-headed arrow with string syntax
 umxPath("A <> B; A <-- B") # This is ok too
@@ -98,19 +99,19 @@ umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
 # manifests is a reserved word, as is latents.
 # It allows the string syntax to use the manifestVars variable
 umxPath("A -> manifests")
+}
 # A worked example
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM",
-	manifestVars = manifests, latentVars = latents,
+myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = myData,
 	umxPath(latents, to = manifests),
 	# umxPath("G -> manifests"),
-	mxPath(var = manifests),
-	mxPath(var = latents, fixedAt = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+m1 = mxRun(m1)
 umxSummary(m1, show = "std")
 }
 \references{

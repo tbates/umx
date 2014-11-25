@@ -4,8 +4,8 @@
 \title{umxGxE_window}
 \usage{
 umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
-  dzData = dzData, weightCov = FALSE, specifiedTargets = NULL,
-  width = 1, plotWindow = FALSE, return = c("estimates", "last_model"))
+  dzData = dzData, weightCov = FALSE, target = NULL, width = 1,
+  plotWindow = FALSE, return = c("estimates", "last_model"))
 }
 \arguments{
 \item{selDVs}{The dependent variables for T1 and T2, e.g. c("bmi_T1", "bmi_T2")}
@@ -18,7 +18,7 @@ umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
 
 \item{weightCov}{Whether to use cov.wt matrices or FIML default = FIML (FALSE)}
 
-\item{specifiedTargets}{a user-selected list of moderator values to test (default = NULL = explore the full range)}
+\item{target}{A user-selected list of moderator values to test (default = NULL = explore the full range)}
 
 \item{width}{An option to widen or narrow the window from its default (of 1)}
 
@@ -42,8 +42,8 @@ library(OpenMx);
 # ==============================
 # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin
 mod = "age"         # The name of the moderator column in the dataset
-selDVs = c("bmi1","bmi2") # The DV for twin 1 and twin 2
-data(twinData) # Dataset of Australian twins, built into OpenMx! Use help(twinData) for more
+selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
+data(twinData) # Dataset of Australian twins, built into OpenMx
 # The twinData consist of two cohorts. First we label them
 # TODO: Q for openmx team: can I add a cohort column to this dataset?
 twinData$cohort = 1; twinData$cohort[twinData$zyg \%in\% 6:10] = 2
@@ -69,7 +69,7 @@ umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData
 
 # Run and plot for specified windows (in this case just 1927)
 umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData,
-		specifiedTargets = 1927, plotWindow = TRUE)
+		target = 40, plotWindow = TRUE)
 }
 \references{
 - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)

@@ -3,10 +3,12 @@
 \alias{logLik.MxModel}
 \title{logLik.MxModel}
 \usage{
-\method{logLik}{MxModel}(model)
+\method{logLik}{MxModel}(model, ...)
 }
 \arguments{
 \item{model}{the \code{\link{mxModel}} from which to get the log likelihood}
+
+\item{...}{Optional parameters}
 }
 \value{
 - the log likelihood

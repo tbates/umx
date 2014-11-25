@@ -57,7 +57,7 @@
 
 setClass("MxModel.ACE", contains = "MxModel")
 
-.onLoad <- function(libname, pkgname){
+.onAttach <- function(libname, pkgname){
     packageStartupMessage("For an overview type '?umx'")
 }
 
@@ -309,7 +309,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' @param dzData Dataframe containing the DV and moderator for DZ twins
 #' @param weightCov Whether to use cov.wt matrices or FIML default = FIML (FALSE)
 #' @param width An option to widen or narrow the window from its default (of 1)
-#' @param specifiedTargets a user-selected list of moderator values to test (default = NULL = explore the full range)
+#' @param target A user-selected list of moderator values to test (default = NULL = explore the full range)
 #' @param plotWindow whether to plot what the window looks like
 #' @param return  whether to return the last model (useful for specifiedTargets) or the list of estimates (default = "estimates")
 	#' @return - Table of estimates of ACE along the moderator
@@ -321,8 +321,8 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' # ==============================
 #' # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin
 #' mod = "age"         # The name of the moderator column in the dataset
-#' selDVs = c("bmi1","bmi2") # The DV for twin 1 and twin 2
-#' data(twinData) # Dataset of Australian twins, built into OpenMx! Use help(twinData) for more
+#' selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
+#' data(twinData) # Dataset of Australian twins, built into OpenMx
 #' # The twinData consist of two cohorts. First we label them
 #' # TODO: Q for openmx team: can I add a cohort column to this dataset?
 #' twinData$cohort = 1; twinData$cohort[twinData$zyg %in% 6:10] = 2
@@ -348,7 +348,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' 
 #' # Run and plot for specified windows (in this case just 1927)
 #' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
-#' 		specifiedTargets = 1927, plotWindow = TRUE)
+#' 		target = 40, plotWindow = TRUE)
 #' 
 #' @family umx twin modeling
 #' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
@@ -358,7 +358,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' Briley, D, Bates, T.C., Harden, K., Tucker-Drob, E. (2015)
 #' Of mice and men: Local SEM in gene environment analysis. \emph{Behavior Genetics}.
 
-umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, weightCov = FALSE, specifiedTargets = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
+umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
 	# TODO want to allow missing moderator?
 	# Check moderator is set and exists in mzData and dzData
 	if(is.null(moderator)){
@@ -393,13 +393,13 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		)
 	}
 
-	if(!is.null(specifiedTargets)){
-		if(specifiedTargets < min(modVar)) {
+	if(!is.null(target)){
+		if(target < min(modVar)) {
 			stop("specifiedTarget is below the range in moderator. min(modVar) was ", min(modVar))
-		} else if(specifiedTargets > max(modVar)){
+		} else if(target > max(modVar)){
 			stop("specifiedTarget is above the range in moderator. max(modVar) was ", max(modVar))
 		} else {
-			targetLevels = specifiedTargets			
+			targetLevels = target
 		}
 	} else {
 		# by default, run across each integer value of the moderator
@@ -2265,6 +2265,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath(cov = c("A", "B")) # Covariance A <-> B
 #' umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
 #' umxPath(means = c("A","B"), values = c(pi,exp(1)))
+#' \dontrun{
 # These are not yet implemented
 #' umxPath("A <-> B") # same path as above using a string
 #' umxPath("A -> B") # one-headed arrow with string syntax
@@ -2273,19 +2274,19 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # manifests is a reserved word, as is latents.
 #' # It allows the string syntax to use the manifestVars variable
 #' umxPath("A -> manifests") 
+#' }
 #' # A worked example
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
+#' myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = myData,
 #' 	umxPath(latents, to = manifests),
 #' 	# umxPath("G -> manifests"),
-#' 	mxPath(var = manifests),
-#' 	mxPath(var = latents, fixedAt = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' m1 = mxRun(m1)
 #' umxSummary(m1, show = "std")
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
 	if(!is.null(from)){
