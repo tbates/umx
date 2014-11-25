@@ -3,11 +3,12 @@
 \alias{umxACE}
 \title{umxACE}
 \usage{
-umxACE(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL,
-  numObsMZ = NULL, weightVar = NULL, bVector = FALSE)
+umxACE(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = 0.5,
+  dzCr = 1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL,
+  boundDiag = NULL, weightVar = NULL, equateMeans = T, bVector = FALSE)
 }
 \arguments{
-\item{name}{The name of the model (defaults to "ACE")}
+\item{name}{The name of the model (defaults to"ACE")}
 
 \item{selDVs}{The variables to include from the data}
 
@@ -15,13 +16,27 @@ umxACE(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL,
 
 \item{mzData}{The MZ dataframe}
 
+\item{suffix}{The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) If you use this, omit it from SelDVs}
+
+\item{dzAr}{The DZ genetic correlation (defaults to .5, set to .25 for dominance model)}
+
+\item{dzCr}{The DZ genetic correlation (defaults to 1,  vary to examine assortative mating)}
+
+\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE)}
+
+\item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE)}
+
 \item{numObsDZ}{= Number of DZ twins: Set this if you input covariance data}
 
 \item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data}
 
-\item{weightVar}{= If provided, a vector objective used to weight the data. (default = NULL)}
+\item{boundDiag}{= whether to bound the diagonal of the a, c, and e matrices}
 
-\item{bVector}{row-wise likelihoods (defaults to FALSE)}
+\item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL)}
+
+\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE)}
+
+\item{bVector}{whether to compute row-wise likelihoods (defaults to FALSE)}
 }
 \value{
 - \code{\link{mxModel}}
@@ -30,21 +45,89 @@ umxACE(name = "ACE", selDVs, dzData, mzData, numObsDZ = NULL,
 Make a 2-group ACE model
 }
 \examples{
+# Height, weight, and BMI data from Australian twins.
+# The total sample has been subdivided into a young cohort, aged 18-30 years, and an older cohort aged 31 and above.
+# Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
+# tip: ?twinData to learn more about this data set
 require(OpenMx)
-require(umx)
+require(umx.twin)
 data(twinData)
+names(twinData)
+# "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
+
+# Set the zygosity to a factor
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
-selDVs = c("bmi1","bmi2")
-mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
-dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
+# Pick the variable the zygosity to a factor
+selDVs = c("bmi1", "bmi2") # note, you can also just list the base name here, i.e., "bmi", and set "suffix = '' ".
+# the function will then make the varnames for each twin using c(paste0("bmi", suffix, 1), paste0("bmi", suffix, 2))
+mzData <- subset(twinData, ZYG == "MZFF", selDVs)
+dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 umxSummaryACE(m1)
+# ADE model (DZ correlation set to .25)
+m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
+m2 = umxRun(m2)
+mxCompare(m2, m1) # ADE is better
+umxSummaryACE(m2) # nb: though this is ADE, it's labeled ACE
+
+
+# Ordinal example
+require(OpenMx)
+data(twinData)
+twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+# Cut weight to to form ordinal obesity
+ordDVs = c("obese1", "obese2")
+selDVs = c("obese")
+obesityLevels = c('normal', 'overweight', 'obese')
+cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+# Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
+twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+mzData <- subset(twinData, zyg == "MZFF", umx_paste_names(selDVs, "", 1:2))
+dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
+str(mzData)
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+m1 = umxRun(m1)
+umxSummaryACE(m1)
+dontrun{
+# umxPlotACE(m1)
+}
+
+# Bivariate continuous and ordinal example (assumes examples above have been run)
+selDVs = c("wt", "obese")
+mzData <- subset(twinData, zyg == "MZFF", umx_paste_names(selDVs, "", 1:2))
+dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+m1 = umxRun(m1)
+umxSummaryACE(m1)
+
+
+# Mixed continuous and binary example
+require(OpenMx)
+data(twinData)
+twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS"))
+ordDVs = c("obese1", "obese2")
+selDVs = c("wt", "obese")
+obesityLevels = c('normal', 'obese')
+# Cut to form category of 20\% obese subjects
+cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+# Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
+twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+mzData <- subset(twinData, zyg == "MZFF", umx_paste_names(selDVs, "", 1:2))
+dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
+str(mzData)
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+m1 = umxRun(m1)
+umxSummaryACE(m1)
+dontrun{
+umxPlotACE(m1)
+}
 }
 \references{
-- \url{http://github.com/tbates/umx}
-}
-\seealso{
-Other umx twin modeling: \code{\link{umxGxE_window}}
+- \url{http://www.github.com/tbates/umx}
 }
 

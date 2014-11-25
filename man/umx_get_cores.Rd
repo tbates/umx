@@ -26,7 +26,7 @@ m1 <- mxModel("ind", type = "RAM",
 oldCores = umx_get_cores() # get current default value
 umx_set_cores(model = m1) # set to default (max - 1)
 umx_get_cores(model = m1) # show new value
-umx_set_cores(omxDetectCores()) # set to default (max - 1)
+umx_set_cores(detectCores()) # set to default (max - 1)
 umx_get_cores() # show new value
 umx_set_cores(oldCores) $ reset to old value
 }
@@ -37,7 +37,9 @@ umx_set_cores(oldCores) $ reset to old value
 Other umx misc functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umx_add_variances}};
   \code{\link{umx_apply}}; \code{\link{umx_check_model}};
-  \code{\link{umx_check_names}}; \code{\link{umx_explode}};
+  \code{\link{umx_check_names}}; \code{\link{umx_check}};
+  \code{\link{umx_default_option}};
+  \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_optimizer}};
   \code{\link{umx_has_CIs}};
@@ -49,6 +51,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
+  \code{\link{umx_object_as_str}};
   \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
   \code{\link{umx_reorder}}; \code{\link{umx_rot}};
   \code{\link{umx_set_checkpoint}};

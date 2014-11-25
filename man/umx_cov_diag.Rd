@@ -10,9 +10,9 @@ umx_cov_diag(df, ordVar = 1, format = c("diag", "Full", "Lower"),
 \arguments{
 \item{df}{a dataframe of raw data from which to get variances.}
 
-\item{ordVar}{= 1}
+\item{ordVar}{The value to return at any ordinal columns found, i.e., (defaults to 1, i.e., z}
 
-\item{format}{= What to return: options are c("diag", "Full", "Lower"). Defaults to a vector of variances}
+\item{format}{to return: options are c("diag", "Full", "Lower"). Defaults to diag: a vector of variances}
 
 \item{use}{passed to \code{\link{cov}} - defaults to "complete.obs" (other options are in the function )}
 }

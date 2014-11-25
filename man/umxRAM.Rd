@@ -70,7 +70,7 @@ m1 = umxRAM("tim", data = myCov,
 m1 = mxRun(m1)
 
 # 5. Print a nice summary
-umxSummary(m1, show="std")
+umxSummary(m1, show = "std")
 
 \dontrun{
 # 6. Draw a nice path diagram (needs Graphviz)

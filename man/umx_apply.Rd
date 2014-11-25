@@ -32,7 +32,9 @@ umx_apply(mean, to_each = "row", of_DF = mtcars, na.rm = TRUE)
 Other umx misc functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umx_add_variances}};
   \code{\link{umx_check_model}};
-  \code{\link{umx_check_names}}; \code{\link{umx_explode}};
+  \code{\link{umx_check_names}}; \code{\link{umx_check}};
+  \code{\link{umx_default_option}};
+  \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_cores}};
   \code{\link{umx_get_optimizer}};
@@ -45,6 +47,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
+  \code{\link{umx_object_as_str}};
   \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
   \code{\link{umx_reorder}}; \code{\link{umx_rot}};
   \code{\link{umx_set_checkpoint}};

@@ -19,6 +19,9 @@ umx_rename(x, replace, old = NULL)
 Returns a dataframe with variables renamed as desired.
 Unlike some functions, it checks that the variables exist, and that the new names are not already used.
 }
+\details{
+note: to use replace list, you must say c(old = "new"), not c(old -> "new")
+}
 \examples{
 # Re-name "cyl" to "cylinder"
 x = mtcars
@@ -33,7 +36,9 @@ x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 Other umx misc functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umx_add_variances}};
   \code{\link{umx_apply}}; \code{\link{umx_check_model}};
-  \code{\link{umx_check_names}}; \code{\link{umx_explode}};
+  \code{\link{umx_check_names}}; \code{\link{umx_check}};
+  \code{\link{umx_default_option}};
+  \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_cores}};
   \code{\link{umx_get_optimizer}};
@@ -46,6 +51,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
+  \code{\link{umx_object_as_str}};
   \code{\link{umx_paste_names}}; \code{\link{umx_reorder}};
   \code{\link{umx_rot}}; \code{\link{umx_set_checkpoint}};
   \code{\link{umx_set_cores}};

@@ -3,7 +3,7 @@
 \alias{umx_set_cores}
 \title{umx_set_cores}
 \usage{
-umx_set_cores(cores = omxDetectCores() - 1, model = NULL)
+umx_set_cores(cores = detectCores() - 1, model = NULL)
 }
 \arguments{
 \item{cores}{number of cores to use (defaults to max - 1 to preserve UI responsiveness)}
@@ -26,7 +26,7 @@ m1 <- mxModel("ind", type = "RAM",
 	mxData(mtcars[, manifests], type = "raw")
 )
 oldCores <- umx_get_cores() # get global value
-umx_set_cores(omxDetectCores()) # set to default (max - 1)
+umx_set_cores(detectCores()) # set to default (max - 1)
 umx_get_cores()            # show new value
 umx_set_cores(1, m1)  # set m1 useage to 1 core
 umx_get_cores(model = m1)  # show new value
@@ -38,7 +38,9 @@ umx_get_cores(model = m1)  # show new value
 Other umx misc functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umx_add_variances}};
   \code{\link{umx_apply}}; \code{\link{umx_check_model}};
-  \code{\link{umx_check_names}}; \code{\link{umx_explode}};
+  \code{\link{umx_check_names}}; \code{\link{umx_check}};
+  \code{\link{umx_default_option}};
+  \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_cores}};
   \code{\link{umx_get_optimizer}};
@@ -51,6 +53,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
+  \code{\link{umx_object_as_str}};
   \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
   \code{\link{umx_reorder}}; \code{\link{umx_rot}};
   \code{\link{umx_set_checkpoint}};

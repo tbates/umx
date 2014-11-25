@@ -20,3 +20,4 @@ Suggests:
 BugReports: http://github.com/tbates/umx
 Roxygen: list(wrap = FALSE)
 VignetteBuilder: knitr
+LazyData: true

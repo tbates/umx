@@ -8,27 +8,28 @@ umx_check_names(namesNeeded, data, die = TRUE, no_others = FALSE)
 \arguments{
 \item{namesNeeded}{list of variable names to find}
 
-\item{data}{data.frame to search in for names}
+\item{data}{data.frame (or matrix) to search in for names}
 
 \item{die}{whether to die if the check fails (defaults to TRUE)}
 
-\item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to F)}
+\item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)}
 }
 \value{
 - boolean
 }
 \description{
-check if a list of names are in the names() of a dataframe
+Check if a list of names are in the names() of a dataframe (or the of a matrix)
 }
 \examples{
 require(OpenMx)
 data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 umx_check_names(c("x1", "x2"), demoOneFactor)
+umx_check_names(c("x1", "x2"), cov(demoOneFactor[,c("x1","x2")]))
 umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 \dontrun{
-umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = TRUE)
+umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 }
 }
 \references{
@@ -38,6 +39,8 @@ umx_check_names(c("not_in_the_frame", "x2"), data = demoOneFactor, die = TRUE)
 Other umx misc functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umx_add_variances}};
   \code{\link{umx_apply}}; \code{\link{umx_check_model}};
+  \code{\link{umx_check}};
+  \code{\link{umx_default_option}};
   \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_cores}};
@@ -51,6 +54,7 @@ Other umx misc functions: \code{\link{demand}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
+  \code{\link{umx_object_as_str}};
   \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
   \code{\link{umx_reorder}}; \code{\link{umx_rot}};
   \code{\link{umx_set_checkpoint}};
