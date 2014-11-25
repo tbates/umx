@@ -511,6 +511,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
 #' umxSummaryACE(m1)
+#' umxSummary(m1)
 #' # ADE model (DZ correlation set to .25)
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' m2 = umxRun(m2)

@@ -601,8 +601,8 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
-#' dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
+#' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
+#' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
 #' umxSummaryACE(m1)
@@ -1360,14 +1360,13 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' selDVs = c("bmi1","bmi2")
-#' mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
-#' dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
+#' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
+#' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
 #' \dontrun{
-#' umxPlotACE(model, dotFilename = NA)
 #' plot(model)
-#' umxPlotACE(model)
+#' umxPlotACE(model, dotFilename = NA)
 #' umxPlotACE(model, std = F)
 #' }
 umxPlotACE <- function(model = NA, dotFilename = "name", digits = 2, showMeans = F, std = T) {
