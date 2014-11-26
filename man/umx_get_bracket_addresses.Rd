@@ -36,7 +36,7 @@ umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 }
 \seealso{
-Other umx misc functions: \code{\link{demand}};
+Other umx misc: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};

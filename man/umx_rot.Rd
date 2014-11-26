@@ -25,7 +25,7 @@ umx_rot(c(3,4,5,6,7))
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
-Other umx misc functions: \code{\link{demand}};
+Other umx misc: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};

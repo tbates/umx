@@ -26,7 +26,7 @@ if(umx_is_MxModel(m1)){
 \seealso{
 - \code{\link{mxModel}}
 
-Other umx misc functions: \code{\link{demand}};
+Other umx misc: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};

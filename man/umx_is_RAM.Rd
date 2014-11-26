@@ -41,7 +41,7 @@ if(!umx_is_RAM(m1)){
 \seealso{
 - \code{\link{mxModel}}
 
-Other umx build functions: \code{\link{umxDiagnose}};
+Other umx build: \code{\link{umxDiagnose}};
   \code{\link{umxPath}}; \code{\link{umx_add_std}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}

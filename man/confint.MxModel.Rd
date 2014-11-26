@@ -66,10 +66,18 @@ confint(m1, parm = "existing") # request existing CIs (none added yet...)
 - \code{\link[stats]{confint}}
 
 Other umx reporting: \code{\link{RMSEA.MxModel}};
+  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
+  \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
-  \code{\link{umxPlot}}; \code{\link{umxCI_boot}};
-  \code{\link{umxCI}}; \code{\link{umxCompare}};
-  \code{\link{umxDescriptives}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSummary}}
+  \code{\link{umxPlot}}; \code{\link{plot}},
+  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
+  \code{\link{residuals.MxModel}};
+  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
+  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
+  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
+  \code{\link{umxFitIndices}};
+  \code{\link{umxStandardizeModel}};
+  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}};
+  \code{\link{umx_get_time}}; \code{\link{umx_show}}
 }
 

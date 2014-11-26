@@ -32,7 +32,7 @@ umx_is_cov(mtcars, boolean = TRUE)
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other umx misc functions: \code{\link{demand}};
+Other umx misc: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
