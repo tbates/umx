@@ -55,6 +55,7 @@
 # 	}
 # }
 
+# Create a subclass of MxModel for ACE models (twin implements .CP .IP .GxE)
 setClass("MxModel.ACE", contains = "MxModel")
 
 .onAttach <- function(libname, pkgname){
@@ -575,10 +576,19 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' \dontrun{
 #' plot(m1)
 #' }
-umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL, equateMeans = T, bVector = FALSE) {
-	nSib     = 2 # number of siblings in a twin pair
+umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE) {
+	nSib = 2 # number of siblings in a twin pair
+	if(!is.null(suffix)){
+		if(length(suffix) > 1){
+			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
+		}
+		selDVs = umx_paste_names(selDVs, suffix, 1:2)
+	}
 	umx_check_names(selDVs, mzData)
 	umx_check_names(selDVs, dzData)
+	message("selDVs: ", omxQuotes(selDVs))
+	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	# look for name conflicts
 	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
 	if(!identical(character(0), badNames)){
@@ -615,15 +625,6 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		"suffix is just one word, appearing in all variables (e.g. '_T').\n",
 		"This is assumed to be followed by '1' '2' etc...")
 	}
-	if(!is.null(suffix)){
-		if(length(suffix) > 1){
-			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
-		}
-		selDVs = umx_paste_names(selDVs, suffix, 1:2)
-	}
-	message("selDVs: ", omxQuotes(selDVs))
-	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
 
 	if(dataType == "raw") {
@@ -901,7 +902,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #' umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 #' umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
 #' # todo: handle complex guided matrix value starts...
-#' x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = T, values = .3, byrow = T)
+#' x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = TRUE, values = .3, byrow = TRUE)
 #' umxValues(x) # Return matrix with good start values (not yet implemented...)
 #' 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");

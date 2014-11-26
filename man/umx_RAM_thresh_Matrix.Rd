@@ -9,11 +9,11 @@ umx_RAM_thresh_Matrix(df, deviationBased = TRUE, droplevels = FALSE,
 \arguments{
 \item{df}{Dataframe for which to make a threshold matrix.}
 
-\item{deviationBased}{whether to use the deviation system to ensure order thresholds (default = TRUE)}
+\item{deviationBased}{Whether to use the deviation system to ensure ordered thresholds (default = FALSE)}
 
-\item{droplevels}{whether to also drop unused levels (default = TRUE)}
+\item{droplevels}{Whether to also drop unused levels (default = TRUE)}
 
-\item{verbose}{whether to say what the function is doing (default = FALSE)}
+\item{verbose}{Whether to say what the function is doing (default = FALSE)}
 }
 \value{
 - \code{\link{mxModel}}
@@ -23,14 +23,14 @@ The purpose of this function is to generate an mxRAMObjective. It is used by \co
 You likely want that, not this.
 }
 \examples{
-umx_RAM_thresh_Matrix(mtcars, verbose = TRUE)
+x = mtcars
+x$cyl = mxFactor(x$cyl, levels = c(4,6,8))
+umx_RAM_thresh_Matrix(x, verbose = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-
 Other advanced umx helpers: \code{\link{umx_RAM_ordinal_objective}}
 }
 

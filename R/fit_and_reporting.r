@@ -430,11 +430,9 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' umxSummary(m1, show = "std")
 #' umxSummary(m1, show = "std", digits = 1)
 #' \dontrun{
-#' umxSummary(m1, report = "table")
-#' umxSummary(m1, saturatedModels = umxSaturated(m1))
+#' # umxSummary(m1, report = "table") # not yet implemented
+#' # umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-#' devtools::document("~/bin/umx");
-#' devtools::install("~/bin/umx");
 umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG")){
 	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
 	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list

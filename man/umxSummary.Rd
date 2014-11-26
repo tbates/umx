@@ -63,11 +63,9 @@ m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umxSummary(m1, show = "std")
 umxSummary(m1, show = "std", digits = 1)
 \dontrun{
-umxSummary(m1, report = "table")
-umxSummary(m1, saturatedModels = umxSaturated(m1))
+# umxSummary(m1, report = "table") # not yet implemented
+# umxSummary(m1, saturatedModels = umxSaturated(m1))
 }
-devtools::document("~/bin/umx");
-devtools::install("~/bin/umx");
 }
 \references{
 - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance

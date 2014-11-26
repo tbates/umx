@@ -40,7 +40,7 @@ mxEval(S, m1) # plausible variances
 umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
 # todo: handle complex guided matrix value starts...
-x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = T, values = .3, byrow = T)
+x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = TRUE, values = .3, byrow = TRUE)
 umxValues(x) # Return matrix with good start values (not yet implemented...)
 }
 \references{
