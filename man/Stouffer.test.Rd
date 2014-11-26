@@ -31,7 +31,7 @@ Stouffer and Fisher and the binomial test.
 \seealso{
 -
 
-Other umx misc stats functions: \code{\link{umxCov2cor}};
+Other umx misc stats: \code{\link{umxCov2cor}};
   \code{\link{umx_pp33}}
 }
 

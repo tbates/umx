@@ -6,7 +6,7 @@
 \title{Helper functions for OpenMx}
 \description{
 umx allows you to more easily build, run, modify, and report models using OpenMx
-with code. The core functions are linked below (see "family")
+with code. The core functions are linked below under \strong{See Also}
 }
 \details{
 All the functions have explanatory examples, so use the help, even if you think it won't help :-)
@@ -88,11 +88,5 @@ plot(m1, std = TRUE, dotFilename = NA)
 }
 \references{
 - \url{"http://www.github.com/tbates/umx"}
-}
-\seealso{
-Other umx core functions: \code{\link{umxLabel}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxValues}}; \code{\link{umx_cov_diag}};
-  \code{\link{umx_get_checkpoint}}
 }
 

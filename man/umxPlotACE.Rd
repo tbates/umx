@@ -31,14 +31,13 @@ data(twinData)
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 selDVs = c("bmi1","bmi2")
-mzData <- as.matrix(subset(twinData, ZYG == "MZFF", selDVs))
-dzData <- as.matrix(subset(twinData, ZYG == "DZFF", selDVs))
+mzData <- subset(twinData, ZYG == "MZFF", selDVs)
+dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 \dontrun{
-umxPlotACE(model, dotFilename = NA)
 plot(model)
-umxPlotACE(model)
+umxPlotACE(model, dotFilename = NA)
 umxPlotACE(model, std = F)
 }
 }
@@ -46,13 +45,18 @@ umxPlotACE(model, std = F)
 - \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other umx reporting functions: \code{\link{RMSEA}};
-  \code{\link{coef.MxModel}};
+Other umx reporting: \code{\link{RMSEA.MxModel}};
+  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
+  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
-  \code{\link{residuals.MxModel}}; \code{\link{umxExpCov}};
-  \code{\link{umxExpMeans}};
+  \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
+  \code{\link{umxPlot}}; \code{\link{residuals.MxModel}};
+  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
+  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
+  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
+  \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
-  \code{\link{umx_show}}
+  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}};
+  \code{\link{umx_get_time}}; \code{\link{umx_show}}
 }
 

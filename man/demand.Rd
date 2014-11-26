@@ -20,7 +20,7 @@ demand("numderiv")
 - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}
 }
 \seealso{
-Other umx misc functions: \code{\link{umxEval}};
+Other umx misc: \code{\link{umxEval}};
   \code{\link{umxJiggle}}; \code{\link{umx_add_variances}};
   \code{\link{umx_apply}}; \code{\link{umx_check_model}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};

@@ -21,7 +21,7 @@ umx_object_as_str(mtcars) # "mtcars"
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other umx misc functions: \code{\link{demand}};
+Other umx misc: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};

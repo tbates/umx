@@ -1435,7 +1435,7 @@ umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = 
 #' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of model comparisons
 #' @export
-#' @family umx modification functions
+#' @family umx modify
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1829,7 +1829,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @param verbose (defaults to FALSE))
 #' @return - thresholds matrix
 #' @export
-#' @family umx.twin model builder, umx build functions
+#' @family umx.twin model builder, umx build
 #' @seealso - \code{\link{umxOrdinalObjective}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -2126,7 +2126,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 #' @param verbose (defaults to FALSE))
 #' @return - list of thresh matrix, fit function, and expectation.
 #' @export
-#' @family umx.twin model builder, umx build functions
+#' @family umx.twin model builder, umx build
 #' @seealso - \code{\link{umxThresholdMatrix}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -2152,7 +2152,7 @@ umxOrdinalObjective <- function(df, suffixes = NA, covName = "expCov", meansName
 #' @param sd the sd of the jiggle noise
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
 #' @return - \code{\link{mxMatrix}}
-#' @family umx misc functions
+#' @family umx misc
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -2247,7 +2247,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param ubound upper bounds for each path value
 #' @return - \code{\link{mxPath}}
 #' @export
-#' @family umx build functions
+#' @family umx build
 #' @seealso - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -2537,7 +2537,7 @@ umxMatrix <- function(type = "Full", rc= NULL, fixedAt = NULL,
 #' @param addCIs whether to also add the mxCI calls to use these standardization matrices.
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx build functions
+#' @family umx build
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -2570,7 +2570,7 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #' Helper functions for OpenMx
 #'
 #' umx allows you to more easily build, run, modify, and report models using OpenMx
-#' with code. The core functions are linked below (see "family")
+#' with code. The core functions are linked below under \strong{See Also}
 #'
 #' All the functions have explanatory examples, so use the help, even if you think it won't help :-)
 #' Have a look, for example at \code{\link{umxRun}}
@@ -2589,7 +2589,7 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #' library("umx")
 #' 
 #' @aliases umx-package
-#' @family umx core functions
+#' @family umx core functions, umx build, umx reporting, umx modify, umx misc, umx misc stats
 #' @references - \url{"http://www.github.com/tbates/umx"}
 #' 
 #' @examples

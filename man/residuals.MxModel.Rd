@@ -43,13 +43,19 @@ a = residuals(m1); a
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other umx reporting functions: \code{\link{RMSEA}};
-  \code{\link{coef.MxModel}};
-  \code{\link{extractAIC.MxModel}}; \code{\link{plot}},
+Other umx reporting: \code{\link{RMSEA.MxModel}};
+  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
+  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
+  \code{\link{extractAIC.MxModel}};
+  \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
+  \code{\link{umxPlot}}; \code{\link{plot}},
   \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
+  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
+  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
   \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
+  \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
-  \code{\link{umx_show}}
+  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}};
+  \code{\link{umx_get_time}}; \code{\link{umx_show}}
 }
 

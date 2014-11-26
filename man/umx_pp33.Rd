@@ -34,7 +34,7 @@ umx_pp33(target_df = 38, x = 2.4)
 \seealso{
 - \code{\link{pnorm}}
 
-Other umx misc stats functions: \code{\link{Stouffer.test}};
+Other umx misc stats: \code{\link{Stouffer.test}};
   \code{\link{umxCov2cor}}
 }
 

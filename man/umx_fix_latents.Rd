@@ -38,7 +38,7 @@ umx_show(m1, matrices = "S") # variance of g is fixed at 1
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other umx build functions: \code{\link{umxDiagnose}};
+Other umx build: \code{\link{umxDiagnose}};
   \code{\link{umxPath}}; \code{\link{umx_add_std}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_is_RAM}}

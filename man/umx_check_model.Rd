@@ -45,7 +45,7 @@ umx_check_model(model)
 \seealso{
 - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other umx misc functions: \code{\link{demand}};
+Other umx misc: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};

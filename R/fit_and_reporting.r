@@ -23,7 +23,7 @@
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
 #' @return - helpful messages and perhaps a modified model
 #' @export
-#' @family umx build functions
+#' @family umx build
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' require(OpenMx)
@@ -71,7 +71,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @param text name of the thing being tested, i.e., "Extraversion" or "variances"
 #' @return - 
 #' @export
-#' @family umx reporting functions
+#' @family umx reporting
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -105,7 +105,7 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #' @return - residual correlation matrix
 #' @export
 #' @export residuals.MxModel
-#' @family umx reporting functions
+#' @family umx reporting
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -151,7 +151,7 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL, ...){
 #' @param Smatrix Optionally tell the function what the name of the symmetric matrix is (defaults to RAM standard S)
 #' @param Mmatrix Optionally tell the function what the name of the means matrix is (defaults to RAM standard M)
 #' @return - a \code{\link{mxModel}} or else parameters or matrices if you request those
-#' @family umx reporting functions
+#' @family umx reporting
 #' @references - \url{http://github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1089,7 +1089,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param verbose How much feedback to give.
 #' @return - A list of the saturated and independence models, from which fits can be extracted
 #' @export
-#' @family umx build functions, umx reporting functions
+#' @family umx build, umx reporting
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1352,7 +1352,7 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 #' @param std whether to standardize the model (T)
 #' @return - optionally return the dot code
 #' @export
-#' @family umx reporting functions
+#' @family umx reporting
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -1531,7 +1531,7 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = TRU
 #' @param to The dependent variable that you want to watch changing
 #' @param model The model containing from and to
 #' @seealso - \code{\link{umxRun}}, \code{\link{mxCompare}}
-#' @family umx modification functions
+#' @family umx modify
 #' @references - http://www.github.com/tbates/umx/
 #' @export
 #' @examples
@@ -1789,7 +1789,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @return - AIC value
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
-#' @family umx reporting functions
+#' @family umx reporting
 #' @references - \url{http://www.github.com/tbates/umx/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
@@ -1823,7 +1823,7 @@ extractAIC.MxModel <- function(model) {
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @param ... Optional parameters
 #' @return - coefficients
-#' @family umx reporting functions
+#' @family umx reporting
 #' @references - 
 #' @examples
 #' require(OpenMx)
@@ -1856,7 +1856,7 @@ coef.MxModel <- function(model, ...) {
 #' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected covariance matrix
 #' @export
-#' @family umx reporting functions
+#' @family umx reporting
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
@@ -1926,7 +1926,7 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 #' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected means
 #' @export
-#' @family umx reporting functions
+#' @family umx reporting
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' @examples
 #' require(OpenMx)
@@ -2138,7 +2138,7 @@ umxFitIndices <- function(model, indepfit) {
 #' @param digits digits to show
 #' @return - RMSEA object containing value (and perhaps a CI)
 #' @export
-#' @family umx reporting functions
+#' @family umx reporting
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 
