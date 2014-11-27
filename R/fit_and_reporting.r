@@ -23,7 +23,7 @@
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
 #' @return - helpful messages and perhaps a modified model
 #' @export
-#' @family umx_build
+#' @family model building functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' require(OpenMx)
@@ -1089,7 +1089,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param verbose How much feedback to give.
 #' @return - A list of the saturated and independence models, from which fits can be extracted
 #' @export
-#' @family umx_build, umx_reporting
+#' @family model building functions, umx_reporting
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples

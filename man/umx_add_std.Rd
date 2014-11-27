@@ -26,11 +26,14 @@ model = umx_add_std(model)
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 }
 \seealso{
-Other umx_build: \code{\link{umxDiagnose}};
-  \code{\link{umxPath}};
+Other model building functions: \code{\link{umxDiagnose}};
+  \code{\link{umxLabel}}; \code{\link{umxPath}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxValues}}; \code{\link{umx_cov_diag}};
   \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}};
-  \code{\link{umx}}, \code{\link{umx-package}},
-  \code{\link{umx-package}}
+  \code{\link{umx_fix_latents}};
+  \code{\link{umx_get_checkpoint}};
+  \code{\link{umx_is_RAM}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

@@ -41,10 +41,14 @@ if(!umx_is_RAM(m1)){
 \seealso{
 - \code{\link{mxModel}}
 
-Other umx_build: \code{\link{umxDiagnose}};
-  \code{\link{umxPath}}; \code{\link{umx_add_std}};
+Other model building functions: \code{\link{umxDiagnose}};
+  \code{\link{umxLabel}}; \code{\link{umxPath}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxValues}}; \code{\link{umx_add_std}};
+  \code{\link{umx_cov_diag}};
   \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}; \code{\link{umx}},
+  \code{\link{umx_fix_latents}};
+  \code{\link{umx_get_checkpoint}}; \code{\link{umx}},
   \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

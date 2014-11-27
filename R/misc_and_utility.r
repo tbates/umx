@@ -26,6 +26,27 @@
 # 	any(y[1:diffRows,] - x[1:diffRows,] < 0, na.rm = T)
 # }
 
+#' umx_check_multi_core
+#'
+#' Shows how many cores you are using, and runs a test script so user can check CPU usage
+#'
+#' @return - NULL
+#' @export
+#' @family umx_misc
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @examples
+#' \dontrun{
+#' model = umx_check_multi_core(model)
+#' }
+umx_check_multi_core <- function() {
+	oldCores = umx_get_cores()
+	message("You are using ", oldCores, " of ", detectCores(), " available cores (0 means all)")
+	message("I will now set cores to max (they will be reset after) and run a script that hits multiple cores if possible.\n",
+	"Check CPU while it's running and see if R is pegging the processor.")
+	umx_set_cores(detectCores())
+	source("~/bin/OpenMx/trunk/models/nightly/3LatentMultiRegWithContinuousModerator-c.R")
+	umx_set_cores(oldCores)
+}
 
 # ============================
 # = OpenMx-related functions =
@@ -202,7 +223,7 @@ umx_set_checkpoint <- function(count = 1, units = c("evaluations", "minutes"), d
 #' @param model an optional model to get options from
 #' @return - NULL
 #' @export
-#' @family umx_core
+#' @family model building functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -559,7 +580,7 @@ umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 #' @param at (Default = 1)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx_build
+#' @family model building functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -599,7 +620,7 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 #' @param at (Default = 1)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx_build
+#' @family model building functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -1685,7 +1706,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' @param use passed to \code{\link{cov}} - defaults to "complete.obs" (other options are in the function )
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx_core
+#' @family model building functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1848,7 +1869,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' @param obj an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}
 #' @return - Boolean
 #' @export
-#' @family umx_build
+#' @family model building functions
 #' @seealso - \code{\link{mxModel}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples

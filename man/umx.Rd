@@ -90,20 +90,21 @@ plot(m1, std = TRUE, dotFilename = NA)
 - \url{"http://www.github.com/tbates/umx"}
 }
 \seealso{
-Other umx_build: \code{\link{umxDiagnose}};
-  \code{\link{umxPath}}; \code{\link{umx_add_std}};
-  \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}}
-
-Other umx_core: \code{\link{umxLabel}};
+Other model building functions: \code{\link{umxDiagnose}};
+  \code{\link{umxLabel}}; \code{\link{umxPath}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxValues}}; \code{\link{umx_cov_diag}};
-  \code{\link{umx_get_checkpoint}}
+  \code{\link{umxValues}}; \code{\link{umx_add_std}};
+  \code{\link{umx_cov_diag}};
+  \code{\link{umx_fix_first_loadings}};
+  \code{\link{umx_fix_latents}};
+  \code{\link{umx_get_checkpoint}};
+  \code{\link{umx_is_RAM}}
 
 Other umx_misc: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
+  \code{\link{umx_check_multi_core}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};

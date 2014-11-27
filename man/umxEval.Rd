@@ -41,6 +41,7 @@ mxEval(list(ab = ab), m1)
 Other umx_misc: \code{\link{demand}};
   \code{\link{umxJiggle}}; \code{\link{umx_add_variances}};
   \code{\link{umx_apply}}; \code{\link{umx_check_model}};
+  \code{\link{umx_check_multi_core}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};

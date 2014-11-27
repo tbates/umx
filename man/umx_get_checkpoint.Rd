@@ -23,9 +23,13 @@ umx_get_checkpoint(model)
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
-Other umx_core: \code{\link{umxLabel}};
+Other model building functions: \code{\link{umxDiagnose}};
+  \code{\link{umxLabel}}; \code{\link{umxPath}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxValues}}; \code{\link{umx_cov_diag}};
+  \code{\link{umxValues}}; \code{\link{umx_add_std}};
+  \code{\link{umx_cov_diag}};
+  \code{\link{umx_fix_first_loadings}};
+  \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}};
   \code{\link{umx}}, \code{\link{umx-package}},
   \code{\link{umx-package}}
 }
