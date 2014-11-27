@@ -52,6 +52,6 @@ umxOrdinalObjective(df, suffixes = c("_T1", "_T2"))
 \seealso{
 - \code{\link{umxThresholdMatrix}}
 
-Other umx.twin model builder, umx build: \code{\link{umxThresholdMatrix}}
+Other umx.twin model builder, umx_build: \code{\link{umxThresholdMatrix}}
 }
 

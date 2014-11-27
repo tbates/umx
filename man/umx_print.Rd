@@ -41,7 +41,7 @@ umx_print(mtcars[1:10,], file = "Rout.html")
 \seealso{
 - \code{\link{print}}
 
-Other umx misc reporting functions: \code{\link{umxAnovaReport}};
+Other umx_misc reporting functions: \code{\link{umxAnovaReport}};
   \code{\link{umxAnova}}; \code{\link{umx_APA_pval}}
 }
 

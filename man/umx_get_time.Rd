@@ -41,7 +41,7 @@ umx_get_time(c(m1,m2))
 \seealso{
 - \code{\link{summary}}, \code{\link{umxRun}}
 
-Other umx reporting: \code{\link{RMSEA.MxModel}};
+Other umx_reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
@@ -55,6 +55,7 @@ Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
   \code{\link{umxSummary}}; \code{\link{umx_drop_ok}};
-  \code{\link{umx_show}}
+  \code{\link{umx_show}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

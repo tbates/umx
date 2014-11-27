@@ -35,7 +35,7 @@ umx_get_cores(model = m1)  # show new value
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other umx misc: \code{\link{demand}};
+Other umx_misc: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
@@ -60,6 +60,7 @@ Other umx misc: \code{\link{demand}};
   \code{\link{umx_set_checkpoint}};
   \code{\link{umx_set_optimizer}};
   \code{\link{umx_string_to_algebra}};
-  \code{\link{umx_trim}}
+  \code{\link{umx_trim}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

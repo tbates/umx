@@ -120,9 +120,11 @@ umxSummary(m1, show = "std")
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
 
-Other umx build: \code{\link{umxDiagnose}};
+Other umx_build: \code{\link{umxDiagnose}};
   \code{\link{umx_add_std}};
   \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}}
+  \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}};
+  \code{\link{umx}}, \code{\link{umx-package}},
+  \code{\link{umx-package}}
 }
 

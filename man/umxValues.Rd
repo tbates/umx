@@ -49,9 +49,10 @@ umxValues(x) # Return matrix with good start values (not yet implemented...)
 \seealso{
 - Core functions:
 
-Other umx core functions: \code{\link{umxLabel}};
+Other umx_core: \code{\link{umxLabel}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
   \code{\link{umx_cov_diag}};
-  \code{\link{umx_get_checkpoint}}
+  \code{\link{umx_get_checkpoint}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

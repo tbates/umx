@@ -37,7 +37,7 @@ umxFitIndices(m1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other umx reporting: \code{\link{RMSEA.MxModel}};
+Other umx_reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
@@ -50,6 +50,8 @@ Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
   \code{\link{umxStandardizeModel}};
   \code{\link{umxSummary}}; \code{\link{umx_drop_ok}};
-  \code{\link{umx_get_time}}; \code{\link{umx_show}}
+  \code{\link{umx_get_time}}; \code{\link{umx_show}};
+  \code{\link{umx}}, \code{\link{umx-package}},
+  \code{\link{umx-package}}
 }
 

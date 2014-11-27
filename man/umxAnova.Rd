@@ -27,7 +27,7 @@ umxAnova(anova(m1, m2))
 \seealso{
 - \code{\link{lm}}, \code{\link{anova}}, \code{\link{summary}}
 
-Other umx misc reporting functions: \code{\link{umxAnovaReport}};
+Other umx_misc reporting functions: \code{\link{umxAnovaReport}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_print}}
 }
 
