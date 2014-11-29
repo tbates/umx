@@ -32,7 +32,7 @@ umxAnovaReport(model)
 \seealso{
 - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}
 
-Other umx misc reporting functions: \code{\link{umxAnova}};
+Other umx_misc reporting functions: \code{\link{umxAnova}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_print}}
 }
 

@@ -100,6 +100,6 @@ umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 \seealso{
 - \code{\link{umxOrdinalObjective}}
 
-Other umx.twin model builder, umx build: \code{\link{umxOrdinalObjective}}
+Other umx.twin model builder, model building functions: \code{\link{umxOrdinalObjective}}
 }
 

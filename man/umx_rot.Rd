@@ -25,10 +25,11 @@ umx_rot(c(3,4,5,6,7))
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
-Other umx misc: \code{\link{demand}};
+Other umx_misc: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
+  \code{\link{umx_check_multi_core}};
   \code{\link{umx_check_names}}; \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};
@@ -51,6 +52,7 @@ Other umx misc: \code{\link{demand}};
   \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}};
   \code{\link{umx_string_to_algebra}};
-  \code{\link{umx_trim}}
+  \code{\link{umx_trim}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

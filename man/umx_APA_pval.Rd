@@ -30,7 +30,7 @@ umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 \seealso{
 - \code{\link{round}}
 
-Other umx misc reporting functions: \code{\link{umxAnovaReport}};
+Other umx_misc reporting functions: \code{\link{umxAnovaReport}};
   \code{\link{umxAnova}}; \code{\link{umx_print}}
 }
 

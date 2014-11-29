@@ -79,7 +79,7 @@ umxSummary(m1, show = "std", digits = 1)
 \seealso{
 - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
 
-Other umx reporting: \code{\link{RMSEA.MxModel}};
+Other umx_reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
@@ -93,6 +93,7 @@ Other umx reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
   \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
-  \code{\link{umx_show}}
+  \code{\link{umx_show}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

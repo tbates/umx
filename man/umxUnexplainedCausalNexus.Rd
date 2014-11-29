@@ -28,6 +28,8 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 \seealso{
 - \code{\link{umxRun}}, \code{\link{mxCompare}}
 
-Other umx modify: \code{\link{umxDrop1}}
+Other umx_modify: \code{\link{umxDrop1}};
+  \code{\link{umx}}, \code{\link{umx-package}},
+  \code{\link{umx-package}}
 }
 

@@ -49,9 +49,14 @@ umxValues(x) # Return matrix with good start values (not yet implemented...)
 \seealso{
 - Core functions:
 
-Other umx core functions: \code{\link{umxLabel}};
+Other model building functions: \code{\link{umxDiagnose}};
+  \code{\link{umxLabel}}; \code{\link{umxPath}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umx_cov_diag}};
-  \code{\link{umx_get_checkpoint}}
+  \code{\link{umx_add_std}}; \code{\link{umx_cov_diag}};
+  \code{\link{umx_fix_first_loadings}};
+  \code{\link{umx_fix_latents}};
+  \code{\link{umx_get_checkpoint}};
+  \code{\link{umx_is_RAM}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

@@ -37,9 +37,14 @@ umxDiagnose(m1)
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 }
 \seealso{
-Other umx build: \code{\link{umxPath}};
-  \code{\link{umx_add_std}};
+Other model building functions: \code{\link{umxLabel}};
+  \code{\link{umxPath}}; \code{\link{umxReRun}};
+  \code{\link{umxRun}}; \code{\link{umxValues}};
+  \code{\link{umx_add_std}}; \code{\link{umx_cov_diag}};
   \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}; \code{\link{umx_is_RAM}}
+  \code{\link{umx_fix_latents}};
+  \code{\link{umx_get_checkpoint}};
+  \code{\link{umx_is_RAM}}; \code{\link{umx}},
+  \code{\link{umx-package}}, \code{\link{umx-package}}
 }
 

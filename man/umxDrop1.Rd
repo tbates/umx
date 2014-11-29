@@ -32,6 +32,8 @@ umxDrop1(model, regex="a_r1c1|a_r1c2")
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other umx modify: \code{\link{umxUnexplainedCausalNexus}}
+Other umx_modify: \code{\link{umxUnexplainedCausalNexus}};
+  \code{\link{umx}}, \code{\link{umx-package}},
+  \code{\link{umx-package}}
 }
 
