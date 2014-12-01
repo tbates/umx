@@ -30,34 +30,5 @@ summary(model, SaturatedLikelihood = model_sat$Sat, IndependenceLikelihood = mod
 }
 \seealso{
 - \code{\link{umxSummary}}, \code{\link{umxRun}}
-
-Other Model Building Functions: \code{\link{umxLabel}};
-  \code{\link{umxLatent}};
-  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
-  \code{\link{umxRAM}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxValues}};
-  \code{\link{umx_add_std}};
-  \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}; \code{\link{umx}},
-  \code{\link{umx-package}}
-
-Other Reporting Functions: \code{\link{RMSEA.MxModel}};
-  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
-  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
-  \code{\link{extractAIC.MxModel}};
-  \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
-  \code{\link{umxPlot}}; \code{\link{plot}},
-  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
-  \code{\link{residuals.MxModel}};
-  \code{\link{umxAnovaReport}}; \code{\link{umxCI_boot}};
-  \code{\link{umxCI}}; \code{\link{umxCompare}};
-  \code{\link{umxDescriptives}}; \code{\link{umxExpCov}};
-  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
-  \code{\link{umxMI}}; \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary.MxModel}};
-  \code{\link{umxSummary}}; \code{\link{umx_APA_pval}};
-  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
-  \code{\link{umx_print}}; \code{\link{umx_show}};
-  \code{\link{umx}}, \code{\link{umx-package}}
 }
 
