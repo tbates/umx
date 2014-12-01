@@ -379,6 +379,33 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 	invisible(object)
 }
 
+#' umxSummary.default
+#'
+#' Report the fit of a OpenMx model or specialized model class (such as ACE, CP etc.)
+#' in a compact form suitable for a journal.
+#'
+#' @param model The \code{\link{mxModel}} whose fit will be reported
+#' @param ... Other parameters to control model summary
+#' @family Reporting Functions
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
+#' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
+#'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
+#'
+#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
+#'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
+#'  Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
+#' \url{http://www.github.com/tbates/umx}
+#' @export
+umxSummary <- function(model, ...){
+	UseMethod("umxSummary", model)
+}
+
+#' @export
+umxSummary.default <- function(model, ...){
+	print("umxSummary is not defined for objects of class:", class(model))
+	invisible(object)
+}
+
 #' umxSummary
 #'
 #' Report the fit of a model in a compact form suitable for a journal. Emits a "warning" 
@@ -401,7 +428,8 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' Fixing a factor loading to 1 and estimating factor variances can help here
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
-#' @param saturatedModels Saturated models if needed for fit indices (see example below: Only needed for raw data, and then not if you've run umxRun)
+#' @param saturatedModels Saturated models if needed for fit indices (see example below:
+#' 	Only needed for raw data. nb also, umxRun takes care of this for you)
 #' @param report The format for the output line or table (default is "line")
 #' @param showEstimates What estimates to show. Options are c("none", "raw", "std", "both", "list of column names"). 
 #' Default  is "none" (just shows the fit indices)
@@ -439,7 +467,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' # umxSummary(m1, report = "table") # not yet implemented
 #' # umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG")){
+umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG")){
 	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
 	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list
 	# showEstimates = match.arg(showEstimates)
@@ -583,6 +611,7 @@ umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstim
 #'
 #' Summarise a Cholesky model, as returned by umxACE
 #'
+#' @aliases umxSummary.MxModel.ACE
 #' @param fit an \code{\link{mxModel}} to summarize
 #' @param digits rounding (default = 2)
 #' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
@@ -781,9 +810,13 @@ umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = F, ex
 	}
 }
 
+#' @export
+umxSummary.MxModel.ACE <- umxSummaryACE
+
 #' umxCompare
 #'
-#' umxCompare compares two or more \code{\link{mxModel}}s. If you leave comparison blank, it will just give fit info for the base model
+#' umxCompare compares two or more \code{\link{mxModel}}s.
+#' If you leave comparison blank, it will just give fit info for the base model
 #'
 #' @param base The base \code{\link{mxModel}} for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
@@ -795,7 +828,6 @@ umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = F, ex
 #' @family Reporting functions
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://www.github.com/tbates/umx/}
-#' @family Reporting functions
 #' @export
 #' @import OpenMx
 #' @examples
@@ -1070,7 +1102,8 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param verbose How much feedback to give.
 #' @return - A list of the saturated and independence models, from which fits can be extracted
 #' @export
-#' @family model building functions, Reporting functions
+#' @family Model building functions
+#' @family Reporting functions
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1151,7 +1184,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' @param fit an \code{\link{mxModel}} to standardize
 #' @return - standardized ACE \code{\link{mxModel}}
 #' @export
-#' @family umx.twin model report
+#' @family Model reporting functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
@@ -1414,6 +1447,7 @@ umxPlotACE <- function(model = NA, dotFilename = "name", digits = 2, showMeans =
 	}
 } # end umxPlotACE
 
+#' @export
 plot.MxModel.ACE <- umxPlotACE
 
 #' umxMI
@@ -1426,7 +1460,7 @@ plot.MxModel.ACE <- umxPlotACE
 #' @param decreasing How to sort (default = TRUE, decreasing)
 #' @param cache = Future function to cache these time-consuming results
 #' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
-#' @family Modify model 
+#' @family Model Updating and Comparison
 #' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
@@ -1513,7 +1547,7 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = TRU
 #' @param to The dependent variable that you want to watch changing
 #' @param model The model containing from and to
 #' @seealso - \code{\link{umxRun}}, \code{\link{mxCompare}}
-#' @family umx_modify
+#' @family Model Updating and Comparison
 #' @references - http://www.github.com/tbates/umx/
 #' @export
 #' @examples

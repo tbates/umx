@@ -770,7 +770,7 @@ umx_RAM_ordinal_objective <- function(df, deviationBased = TRUE, droplevels = TR
 #' You likely want that, not this.
 #'
 #' @param df Dataframe for which to make a threshold matrix.
-#' @param deviationBased Whether to use the deviation system to ensure ordered thresholds (default = FALSE)
+#' @param deviationBased Whether to use the deviation system to ensure ordered thresholds (default = TRUE)
 #' @param droplevels Whether to also drop unused levels (default = TRUE)
 #' @param verbose Whether to say what the function is doing (default = FALSE)
 #' @return - \code{\link{mxModel}}
