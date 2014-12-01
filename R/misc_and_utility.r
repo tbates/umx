@@ -1,7 +1,7 @@
 # find non-ascii = grep this '[^\x00-\x7F]'
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
-# setwd("~/bin/umx"); devtools::check()
+# devtools::check("~/bin/umx");
 # devtools::load_all()
 # devtools::dev_help("umxX")
 # show_news()
@@ -531,7 +531,7 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 
 #' umx_add_variances
 #'
-#' Convenience function to save the user specifying mxpaths adding variance to each variable
+#' Convenience function to save the user specifying mxPaths adding variance to each variable
 #'
 #' @param model an \code{\link{mxModel}} to add variances to
 #' @param add.to = List of variables to create variance for
@@ -551,7 +551,8 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' umx_show(m1, matrices = "S") # variables lack variance :-(
-#' m1 = umx_add_variances(m1)
+#' m1 = umx_add_variances(m1, add.to = names(demoOneFactor))
+#' m1 = umx_add_variances(m1, add.to = "g", FALSE, 1)
 #' umx_show(m1, matrices = "S") 
 #' # Note: latent g has been treated like the manifests...
 #' # umxFixLatents() will take care of this for you...

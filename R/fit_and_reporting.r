@@ -11,7 +11,7 @@
 # https://github.com/hadley/devtools
 
 # =====================
-# = MOdel Diagnostics =
+# = Model Diagnostics =
 # =====================
 
 #' mxDiagnostic
@@ -331,6 +331,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 		# TODO check that these exist
 		object = mxModel(object, mxCI(parm, interval = level))
 	}
+
 	# 2. Run CIs if requested
 	if(run) {
 		object = mxRun(object, intervals = TRUE)
@@ -347,26 +348,31 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 		}
 	} else {
 		model_summary = summary(object)
-		model_CIs   = round(model_summary$CI[,c("lbound", "estimate", "ubound")], 3)
-		model_CI_OK = object@output$confidenceIntervalCodes
-		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
-		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
-		print(model_CIs)
-		npsolMessages <- list(
-		'1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
-		'2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
-		'3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
-		'4' = 'The major iteration limit was reached (Mx status BLUE).',
-		'5' = 'not used',
-		'6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
-		'7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
-		'8' = 'not used',
-		'9' = 'An input parameter was invalid')
-		if(any(model_CI_OK !=0) & showErrorcodes){
-			codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
-			relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
-			for(i in relevantCodes) {
-			   print(paste0(i, ": ", npsolMessages[i][[1]]))
+		CIs = model_summary$CI
+		if(is.null(CIs)){
+			# 
+		} else {
+			model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
+			model_CI_OK = object@output$confidenceIntervalCodes
+			colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
+			model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
+			print(model_CIs)
+			npsolMessages <- list(
+			'1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
+			'2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
+			'3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
+			'4' = 'The major iteration limit was reached (Mx status BLUE).',
+			'5' = 'not used',
+			'6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
+			'7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
+			'8' = 'not used',
+			'9' = 'An input parameter was invalid')
+			if(any(model_CI_OK !=0) & showErrorcodes){
+				codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
+				relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
+				for(i in relevantCodes) {
+				   print(paste0(i, ": ", npsolMessages[i][[1]]))
+				}
 			}
 		}
 	}
@@ -949,29 +955,6 @@ umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary")
 	if(umx_has_CIs(model)){
 		message("### CIs for model ", model@name)
 		confint(model, showErrorcodes = showErrorcodes)
-		# model_summary = summary(model)
-		# model_CIs = round(model_summary$CI, 3)
-		# model_CI_OK = model@output$confidenceIntervalCodes
-		# colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
-		# model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
-		# print(model_CIs)
-		# npsolMessages <- list(
-		# '1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
-		# '2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
-		# '3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
-		# '4' = 'The major iteration limit was reached (Mx status BLUE).',
-		# '5' = 'not used',
-		# '6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
-		# '7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
-		# '8' = 'not used',
-		# '9' = 'An input parameter was invalid')
-		# if(any(model_CI_OK !=0) & showErrorcodes){
-		# 	codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
-		# 	relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
-		# 	for(i in relevantCodes) {
-		# 	   print(paste0(i, ": ", npsolMessages[i][[1]]))
-		# 	}
-		# }
 	}
 	invisible(model)
 }
