@@ -19,13 +19,14 @@ The umx package has a wide range of functions (about 100) to get things done in 
 Some highlights include:
 
 1. Building Models
+	* `umxRAM()` *# mxModel with an R-like `data =` parameter, no need to specify type = "RAM", + auto-discovery of manifests and latents from the paths you write*
+	* `umxPath()` *# mxPath on steroids: one-parameter settings for `var=` , `mean =` `cov=` and more. Great time-saver in RAM modelling*
+	* `umxACE()` *# 1-line twin modeling*
 	* `umxStart()` *# Add sane start values to RAM or matrix models, or matrices: **very** helpful*
 	* `umxLabel()` *# Add systematic labels to paths and matrix cells. This is great for setting, equating and dropping paths by label!*
-	* `umxPath()` *# mxPath on steroids, with one-parameter settings for `var=` , `mean =` `cov=` and more. Great time save in RAM modelling*
-	* `umxRAM()` *# mxModel with an R-like `data =` parameter, no need to specify type = "RAM", and auto-discovery of manifests and latents from the paths you write*
 3. Reporting output
 	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA). Optionally show the path loadings*
-	* `plot(fit1, std=T, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
+	* `plot(model, std=TRUE, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
 	* `umx_get_time(fit1)`  *# Report the time taken by a model in a compact friendly, programable format*
 3. Modify models
 	* `umxReRun()` *# Modify and run a model. You can add objects, drop or add paths, including by regular expression label matching), re-name the model, re-run, and even return the comparison all in 1 line *
@@ -35,7 +36,6 @@ Some highlights include:
 	* `umxDrop1()` *# Drop parameters and return a table of the effect on fit*
 4. Data and package helpers
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
-
 
 Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.
 

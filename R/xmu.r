@@ -1,6 +1,7 @@
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
 # setwd("~/bin/umx"); 
+# library("devtools")
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
 # devtools::build("~/bin/umx"); 
 # setwd("~/bin/umx"); devtools::check()
@@ -298,16 +299,75 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 	return(mx_matrix)
 }
 
+#' xmuMakeThresholdsMatrices (not a user function)
+#'
+#' You should not be calling this directly.
+#' This is not as reliable a strategy and likely to be superceeded...
+#'
+#' @param df a \code{\link{data.frame}} containing the data for your \code{\link{mxData}} statement
+#' @param droplevels a binary asking if empty levels should be dropped (defaults to FALSE)
+#' @param verbose how much feedback to give (defaults to FALSE)
+#' @return - a list containing an \code{\link{mxMatrix}} called "thresh", 
+#' an \code{\link{mxRAMObjective}} object, and an \code{\link{mxData}} object
+#' @references - http://openmx.psyc.virginia.edu/
+#' @examples
+#' # x = mtcars
+#' # x$cyl = mxFactor(x$cyl, levels = c(4,6,8))
+#' # umx:::xmuMakeThresholdsMatrices(df = x, droplevels=FALSE, verbose= TRUE)
+xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
+	# TODO delete this function??
+	isOrdinalVariable = umx_is_ordered(df) 
+	if(sum(isOrdinalVariable) == 0){
+		stop("no ordinal variables found")
+	}
+	ordinalColumns = df[,isOrdinalVariable, drop = FALSE]
+	nOrdinal = ncol(ordinalColumns);
+	ordNameList = names(ordinalColumns);
+	levelList   = 1:nOrdinal
+	for(n in 1:nOrdinal){
+		levelList[n] = nlevels(ordinalColumns[,n])
+	}
+	maxThreshMinus1 = max(levelList)-1
+	threshValues = c() # initialise values 
+	for(n in 1:nOrdinal){
+		thisLen = levelList[n] -1
+		lim = 1.5 # (thisLen/2)
+		newValues = seq(from = (-lim), to = (lim), length = thisLen)
+		if(thisLen < maxThreshMinus1){
+			newValues = c(newValues, rep(NA,times=maxThreshMinus1-thisLen))
+		}
+		threshValues = c(threshValues, newValues)
+		# threshLbounds[j] <- .001
+	}
+
+	threshNames = paste("Threshold", 1:maxThreshMinus1, sep='')
+	thresh = mxMatrix("Full", name="thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = FALSE, free = TRUE, values= threshValues, dimnames=list(threshNames,ordNameList))
+
+	if(verbose){
+		cat("levels in each variable are:")
+		print(levelList)
+		print(paste("maxThresh - 1 = ", maxThreshMinus1))
+	}
+	return(list(
+		thresh, 
+		mxRAMObjective(A="A", S="S", F="F", M="M", thresholds="thresh"), 
+		mxData(df, type="raw")
+		)
+	)
+}
+
 # TODO document xmuMakeDeviationThresholdsMatrices
 xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	# Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
 	# usecase see: umxMakeThresholdMatrix
-	# junk[1]; 	junk[[2]]@values; 	junk[3]
+	# TODO delete this function??
 	isOrdinalVariable = umx_is_ordered(df) 
-	ordinalColumns    = df[,isOrdinalVariable]
-	ordNameList       = names(ordinalColumns);
-	nOrdinal          = ncol(ordinalColumns);
-
+	if(sum(isOrdinalVariable) == 0){
+		stop("no ordinal variables found")
+	}
+	ordinalColumns = df[,isOrdinalVariable, drop = FALSE]
+	nOrdinal = ncol(ordinalColumns);
+	ordNameList = names(ordinalColumns);
 	levelList = rep(NA, nOrdinal)
 	for(n in 1:nOrdinal) {
 		levelList[n] = nlevels(ordinalColumns[, n])
@@ -351,61 +411,6 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	return(list(lowerOnes_for_thresh, deviations_for_thresh, thresholdsAlgebra, mxRAMObjective(A="A", S="S", F="F", M="M", thresholds = "thresholdsAlgebra"), mxData(df, type = "raw")))
 }
 
-#' xmuMakeThresholdsMatrices (not a user function)
-#'
-#' You should not be calling this directly.
-#' This is not as reliable a strategy and likely to be superceeded...
-#'
-#' @param df a \code{\link{data.frame}} containing the data for your \code{\link{mxData}} statement
-#' @param droplevels a binary asking if empty levels should be dropped (defaults to FALSE)
-#' @param verbose how much feedback to give (defaults to FALSE)
-#' @return - a list containing an \code{\link{mxMatrix}} called "thresh", 
-#' an \code{\link{mxRAMObjective}} object, and an \code{\link{mxData}} object
-#' @references - http://openmx.psyc.virginia.edu/
-#' @examples
-#' \dontrun{
-#' junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose= TRUE)
-#' }
-
-xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
-	# TODO delete this function??
-	isOrdinalVariable = umx_is_ordered(df) 
-	ordinalColumns    = df[,isOrdinalVariable]
-	nOrdinal          = ncol(ordinalColumns);
-	ordNameList       = names(ordinalColumns);
-	levelList         = 1:nOrdinal
-	for(n in 1:nOrdinal){
-		levelList[n] = nlevels(ordinalColumns[,n])
-	}
-	maxThreshMinus1 = max(levelList)-1
-	threshValues = c() # initialise values 
-
-	for(n in 1:nOrdinal){
-		thisLen = levelList[n] -1
-		lim = 1.5 # (thisLen/2)
-		newValues = seq(from = (-lim), to = (lim), length = thisLen)
-		if(thisLen < maxThreshMinus1){
-			newValues = c(newValues, rep(NA,times=maxThreshMinus1-thisLen))
-		}
-		threshValues = c(threshValues, newValues)
-		# threshLbounds[j] <- .001
-	}
-
-	threshNames = paste("Threshold", 1:maxThreshMinus1, sep='')
-	thresh = mxMatrix("Full", name="thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = FALSE, free = TRUE, values= threshValues, dimnames=list(threshNames,ordNameList))
-
-	if(verbose){
-		cat("levels in each variable are:")
-		print(levelList)
-		print(paste("maxThresh - 1 = ", maxThreshMinus1))
-	}
-	return(list(
-		thresh, 
-		mxRAMObjective(A="A", S="S", F="F", M="M", thresholds="thresh"), 
-		mxData(df, type="raw")
-		)
-	)
-}
 
 xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 	# Purpose: Create startvalues for OpenMx paths

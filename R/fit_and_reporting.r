@@ -23,7 +23,7 @@
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
 #' @return - helpful messages and perhaps a modified model
 #' @export
-#' @family Model Reporting Functions
+#' @family model building functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' require(OpenMx)
@@ -71,7 +71,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @param text name of the thing being tested, i.e., "Extraversion" or "variances"
 #' @return - 
 #' @export
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -105,7 +105,7 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #' @return - residual correlation matrix
 #' @export
 #' @export residuals.MxModel
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -151,7 +151,7 @@ residuals.MxModel <- function(model, digits = 2, suppress = NULL, ...){
 #' @param Smatrix Optionally tell the function what the name of the symmetric matrix is (defaults to RAM standard S)
 #' @param Mmatrix Optionally tell the function what the name of the means matrix is (defaults to RAM standard M)
 #' @return - a \code{\link{mxModel}} or else parameters or matrices if you request those
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{http://github.com/tbates/umx}
 #' @export
 #' @examples
@@ -286,7 +286,7 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 #' @export
 #' @export confint.MxModel
 #' @return - \code{\link{mxModel}}
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @seealso - \code{\link[stats]{confint}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -331,6 +331,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 		# TODO check that these exist
 		object = mxModel(object, mxCI(parm, interval = level))
 	}
+
 	# 2. Run CIs if requested
 	if(run) {
 		object = mxRun(object, intervals = TRUE)
@@ -347,57 +348,35 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 		}
 	} else {
 		model_summary = summary(object)
-		model_CIs   = round(model_summary$CI[,c("lbound", "estimate", "ubound")], 3)
-		model_CI_OK = object@output$confidenceIntervalCodes
-		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
-		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
-		print(model_CIs)
-		npsolMessages <- list(
-		'1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
-		'2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
-		'3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
-		'4' = 'The major iteration limit was reached (Mx status BLUE).',
-		'5' = 'not used',
-		'6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
-		'7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
-		'8' = 'not used',
-		'9' = 'An input parameter was invalid')
-		if(any(model_CI_OK !=0) & showErrorcodes){
-			codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
-			relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
-			for(i in relevantCodes) {
-			   print(paste0(i, ": ", npsolMessages[i][[1]]))
+		CIs = model_summary$CI
+		if(is.null(CIs)){
+			# 
+		} else {
+			model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
+			model_CI_OK = object@output$confidenceIntervalCodes
+			colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
+			model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
+			print(model_CIs)
+			npsolMessages <- list(
+			'1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
+			'2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
+			'3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
+			'4' = 'The major iteration limit was reached (Mx status BLUE).',
+			'5' = 'not used',
+			'6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
+			'7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
+			'8' = 'not used',
+			'9' = 'An input parameter was invalid')
+			if(any(model_CI_OK !=0) & showErrorcodes){
+				codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
+				relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
+				for(i in relevantCodes) {
+				   print(paste0(i, ": ", npsolMessages[i][[1]]))
+				}
 			}
 		}
 	}
 	invisible(object)
-}
-
-
-#' umxSummary.default
-#'
-#' Report the fit of a OpenMx model or specialized model class (such as ACE, CP etc.)
-#' in a compact form suitable for a journal.
-#'
-#' @param model The \code{\link{mxModel}} whose fit will be reported
-#' @param ... Other parameters to control model summary
-#' @family Reporting Functions
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
-#' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
-#'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
-#'
-#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
-#'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
-#'  Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
-#' \url{http://www.github.com/tbates/umx}
-#' @export
-umxSummary <- function(model, ...){
-	UseMethod("umxSummary", model)
-}
-
-#' @export
-umxSummary.default <- function(model, ...){
-	print("umxSummary is not defined for objects of class:", class(model))
 }
 
 #' umxSummary
@@ -422,8 +401,7 @@ umxSummary.default <- function(model, ...){
 #' Fixing a factor loading to 1 and estimating factor variances can help here
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
-#' @param saturatedModels Saturated models if needed for fit indices (see example below:
-#'	Only needed for raw data, and then not if you've run umxRun)
+#' @param saturatedModels Saturated models if needed for fit indices (see example below: Only needed for raw data, and then not if you've run umxRun)
 #' @param report The format for the output line or table (default is "line")
 #' @param showEstimates What estimates to show. Options are c("none", "raw", "std", "both", "list of column names"). 
 #' Default  is "none" (just shows the fit indices)
@@ -431,7 +409,7 @@ umxSummary.default <- function(model, ...){
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to F)
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
@@ -458,10 +436,10 @@ umxSummary.default <- function(model, ...){
 #' umxSummary(m1, show = "std")
 #' umxSummary(m1, show = "std", digits = 1)
 #' \dontrun{
-#' umxSummary(m1, report = "table")
-#' umxSummary(m1, saturatedModels = umxSaturated(m1))
+#' # umxSummary(m1, report = "table") # not yet implemented
+#' # umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG")){
+umxSummary <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG")){
 	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
 	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list
 	# showEstimates = match.arg(showEstimates)
@@ -605,7 +583,6 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 #'
 #' Summarise a Cholesky model, as returned by umxACE
 #'
-#' @aliases umxSummary.MxModel.ACE
 #' @param fit an \code{\link{mxModel}} to summarize
 #' @param digits rounding (default = 2)
 #' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
@@ -619,7 +596,7 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 #' @param report If 3, then open an html table of the results
 #' @return - optional \code{\link{mxModel}}
 #' @export
-#' @family twin model reporting functions
+#' @family umx.twin model report
 #' @seealso - \code{\link{umxACE}} 
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -804,13 +781,9 @@ umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = F, ex
 	}
 }
 
-#' @export
-umxSummary.MxModel.ACE <- umxSummaryACE
-
 #' umxCompare
 #'
-#' umxCompare compares two or more \code{\link{mxModel}}s.
-#' If you leave comparison blank, it will just give fit info for the base model
+#' umxCompare compares two or more \code{\link{mxModel}}s. If you leave comparison blank, it will just give fit info for the base model
 #'
 #' @param base The base \code{\link{mxModel}} for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
@@ -819,10 +792,10 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' @param report Optionally add sentences for inclusion inline in a paper (report= 2)
 #' and output to an html table which will open your default browser (report = 3).
 #' (This is handy for getting tables into Word, markdown, and other text systems!)
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://www.github.com/tbates/umx/}
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @export
 #' @import OpenMx
 #' @examples
@@ -934,7 +907,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' @param showErrors Whether to show errors (default == TRUE)
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 #' @return - \code{\link{mxModel}}
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
 #' @references - http://www.github.com/tbates/umx/
 #' @export
@@ -982,29 +955,6 @@ umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary")
 	if(umx_has_CIs(model)){
 		message("### CIs for model ", model@name)
 		confint(model, showErrorcodes = showErrorcodes)
-		# model_summary = summary(model)
-		# model_CIs = round(model_summary$CI, 3)
-		# model_CI_OK = model@output$confidenceIntervalCodes
-		# colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
-		# model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
-		# print(model_CIs)
-		# npsolMessages <- list(
-		# '1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
-		# '2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
-		# '3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
-		# '4' = 'The major iteration limit was reached (Mx status BLUE).',
-		# '5' = 'not used',
-		# '6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
-		# '7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
-		# '8' = 'not used',
-		# '9' = 'An input parameter was invalid')
-		# if(any(model_CI_OK !=0) & showErrorcodes){
-		# 	codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
-		# 	relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
-		# 	for(i in relevantCodes) {
-		# 	   print(paste0(i, ": ", npsolMessages[i][[1]]))
-		# 	}
-		# }
 	}
 	invisible(model)
 }
@@ -1045,7 +995,7 @@ umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary")
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
-#' @family Reporting Functions
+#' @family Reporting functions
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
 	require(MASS); require(OpenMx); require(umx)
 	type = umx_default_option(type, c("par.expected", "par.observed", "empirical"))
@@ -1120,8 +1070,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param verbose How much feedback to give.
 #' @return - A list of the saturated and independence models, from which fits can be extracted
 #' @export
-#' @family Model Building Functions
-#' @family Reporting Functions
+#' @family model building functions, Reporting functions
 #' @seealso - \code{\link{umxSummary}}, \code{\link{umxRun}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1202,7 +1151,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' @param fit an \code{\link{mxModel}} to standardize
 #' @return - standardized ACE \code{\link{mxModel}}
 #' @export
-#' @family twin model reporting functions
+#' @family umx.twin model report
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
@@ -1262,7 +1211,7 @@ umxStandardizeACE <- function(fit) {
 #' @export
 #' @export plot.MxModel
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1384,7 +1333,7 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 #' @param std whether to standardize the model (T)
 #' @return - optionally return the dot code
 #' @export
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
@@ -1465,7 +1414,6 @@ umxPlotACE <- function(model = NA, dotFilename = "name", digits = 2, showMeans =
 	}
 } # end umxPlotACE
 
-#' @export
 plot.MxModel.ACE <- umxPlotACE
 
 #' umxMI
@@ -1478,8 +1426,8 @@ plot.MxModel.ACE <- umxPlotACE
 #' @param decreasing How to sort (default = TRUE, decreasing)
 #' @param cache = Future function to cache these time-consuming results
 #' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
-#' @family Model Updating and Comparison
-#' @family Reporting Functions
+#' @family Modify model 
+#' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1565,7 +1513,7 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = TRU
 #' @param to The dependent variable that you want to watch changing
 #' @param model The model containing from and to
 #' @seealso - \code{\link{umxRun}}, \code{\link{mxCompare}}
-#' @family Model Updating and Comparison
+#' @family umx_modify
 #' @references - http://www.github.com/tbates/umx/
 #' @export
 #' @examples
@@ -1823,7 +1771,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @return - AIC value
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
@@ -1857,7 +1805,7 @@ extractAIC.MxModel <- function(model) {
 #' @param model an \code{\link{mxModel}} to get the AIC from
 #' @param ... Optional parameters
 #' @return - coefficients
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - 
 #' @examples
 #' require(OpenMx)
@@ -1890,7 +1838,7 @@ coef.MxModel <- function(model, ...) {
 #' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected covariance matrix
 #' @export
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
@@ -1960,7 +1908,7 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 #' @param digits precision of reporting. Leave NULL to do no rounding.
 #' @return - expected means
 #' @export
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' @examples
 #' require(OpenMx)
@@ -2020,7 +1968,7 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' @param ... Optional parameters
 #' @return - the log likelihood
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
@@ -2064,7 +2012,7 @@ logLik.MxModel <- function(model, ...) {
 #' @param indepfit an (optional) saturated \code{\link{mxModel}}
 #' @return \code{NULL}
 #' @export
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -2172,7 +2120,7 @@ umxFitIndices <- function(model, indepfit) {
 #' @param digits digits to show
 #' @return - RMSEA object containing value (and perhaps a CI)
 #' @export
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 
@@ -2187,7 +2135,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' @return - object containing the RMSEA and lower and upper bounds
 #' @rdname RMSEA.MxModel
 #' @export
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @references - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -2302,7 +2250,7 @@ RMSEA.summary.mxmodel <- function(m_summary, ci.lower = .05, ci.upper = .95, dig
 #' @param na.rm         whether to remove NA from the data
 #' @param conf.interval The size of the CI you request - 95 by default
 #' @param .drop         Whether to drop TODO
-#' @family Reporting Functions
+#' @family Reporting functions
 #' @export
 #' @references - \url{http://www.cookbook-r.com/Manipulating_data/Summarizing_data}
 #' @examples

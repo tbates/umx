@@ -3,12 +3,10 @@
 %\VignetteIndexEntry{Text formatting}
 -->
 
-
-
-
 # Text formatting reference sheet
 
-Within roxygen tags, you use `.Rd` syntax to format text. This vignette shows you examples of the most important commands. The full details are described in [R extensions](http://cran.r-project.org/doc/manuals/R-exts.html#Marking-text).
+Within roxygen tags, you use `.Rd` syntax to format text. This vignette shows you examples of the most important commands. The 
+full details are described in [R extensions](http://cran.r-project.org/doc/manuals/R-exts.html#Marking-text).
 
 ## Character formatting
 

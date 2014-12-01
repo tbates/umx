@@ -21,9 +21,9 @@ You should not be calling this directly.
 This is not as reliable a strategy and likely to be superceeded...
 }
 \examples{
-\dontrun{
-junk = xmuMakeThresholdsMatrices(df, droplevels=F, verbose= TRUE)
-}
+# x = mtcars
+# x$cyl = mxFactor(x$cyl, levels = c(4,6,8))
+# umx:::xmuMakeThresholdsMatrices(df = x, droplevels=FALSE, verbose= TRUE)
 }
 \references{
 - http://openmx.psyc.virginia.edu/

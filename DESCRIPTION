@@ -1,9 +1,9 @@
 Package: umx
-Version: 0.80
+Version: 0.90
 Date: 2014-08-01
 Title: umx
-Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"), email =
-    "timothy.c.bates@gmail.com"))
+Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
+    email = "timothy.c.bates@gmail.com"))
 Author: Tim Bates
 Maintainer: Who to complain to <timothy.c.bates@gmail.com>
 License: GPL-3
