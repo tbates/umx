@@ -28,10 +28,11 @@ matrix(1:16, 4)
 \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
 }
 \seealso{
-Other umx utility functions: \code{\link{umx_as_numeric}};
+Other Miscellaneous Utility Functions: \code{\link{umx_as_numeric}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
   \code{\link{umx_rename_file}}; \code{\link{umx_round}};
-  \code{\link{umx_swap_a_block}}
+  \code{\link{umx_swap_a_block}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

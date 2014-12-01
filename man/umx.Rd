@@ -90,25 +90,19 @@ plot(m1, std = TRUE, dotFilename = NA)
 - \url{"http://www.github.com/tbates/umx"}
 }
 \seealso{
-Other model building functions: \code{\link{umxDiagnose}};
-  \code{\link{umxLabel}}; \code{\link{umxPath}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxValues}}; \code{\link{umx_add_std}};
-  \code{\link{umx_cov_diag}};
-  \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}};
-  \code{\link{umx_get_checkpoint}};
-  \code{\link{umx_is_RAM}}
-
-Other umx_misc: \code{\link{demand}};
+Other Miscellaneous Helpers: \code{\link{demand}};
+  \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umxThresholdMatrix}};
+  \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};
-  \code{\link{umx_check_names}}; \code{\link{umx_check}};
+  \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};
   \code{\link{umx_get_bracket_addresses}};
+  \code{\link{umx_get_checkpoint}};
   \code{\link{umx_get_cores}};
   \code{\link{umx_get_optimizer}};
   \code{\link{umx_has_CIs}};
@@ -116,26 +110,48 @@ Other umx_misc: \code{\link{demand}};
   \code{\link{umx_has_means}};
   \code{\link{umx_has_square_brackets}};
   \code{\link{umx_is_MxMatrix}};
-  \code{\link{umx_is_MxModel}}; \code{\link{umx_is_cov}};
+  \code{\link{umx_is_MxModel}}; \code{\link{umx_is_RAM}};
+  \code{\link{umx_is_cov}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
   \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
   \code{\link{umx_object_as_str}};
-  \code{\link{umx_paste_names}}; \code{\link{umx_rename}};
-  \code{\link{umx_reorder}}; \code{\link{umx_rot}};
-  \code{\link{umx_set_checkpoint}};
+  \code{\link{umx_paste_names}}; \code{\link{umx_print}};
+  \code{\link{umx_rename}}; \code{\link{umx_reorder}};
+  \code{\link{umx_rot}}; \code{\link{umx_set_checkpoint}};
   \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}};
   \code{\link{umx_string_to_algebra}};
-  \code{\link{umx_trim}}
+  \code{\link{umx_trim}}; \code{\link{umx_update_OpenMx}}
 
-Other umx_misc_stats: \code{\link{Stouffer.test}};
+Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
   \code{\link{umxCov2cor}}; \code{\link{umx_pp33}}
 
-Other umx_modify: \code{\link{umxDrop1}};
+Other Miscellaneous Utility Functions: \code{\link{qm}};
+  \code{\link{umx_as_numeric}};
+  \code{\link{umx_find_object}}; \code{\link{umx_grep}};
+  \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
+  \code{\link{umx_rename_file}}; \code{\link{umx_round}};
+  \code{\link{umx_swap_a_block}}
+
+Other Model Building Functions: \code{\link{umxLabel}};
+  \code{\link{umxLatent}};
+  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
+  \code{\link{umxRAM}}; \code{\link{umxReRun}};
+  \code{\link{umxRun}}; \code{\link{umxSaturated}};
+  \code{\link{umxValues}}; \code{\link{umx_add_std}};
+  \code{\link{umx_fix_first_loadings}};
+  \code{\link{umx_fix_latents}}
+
+Other Model Updating and Comparison: \code{\link{umxAdd1}};
+  \code{\link{umxDrop1}}; \code{\link{umxEquate}};
+  \code{\link{umxGetParameters}}; \code{\link{umxMI}};
   \code{\link{umxUnexplainedCausalNexus}}
 
-Other umx_reporting: \code{\link{RMSEA.MxModel}};
+Other Non-SEM Functions: \code{\link{reliability}};
+  \code{\link{umxAnova}}
+
+Other Reporting Functions: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
@@ -143,12 +159,32 @@ Other umx_reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{umxPlot}}; \code{\link{plot}},
   \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
   \code{\link{residuals.MxModel}};
-  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
-  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
-  \code{\link{umxFitIndices}};
+  \code{\link{umxAnovaReport}}; \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxCompare}};
+  \code{\link{umxDescriptives}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
+  \code{\link{umxMI}}; \code{\link{umxSaturated}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}};
-  \code{\link{umx_get_time}}; \code{\link{umx_show}}
+  \code{\link{umxSummary.MxModel}};
+  \code{\link{umxSummary}}; \code{\link{umx_APA_pval}};
+  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
+  \code{\link{umx_print}}; \code{\link{umx_show}}
+
+Other twin modeling functions: \code{\link{umxACE}};
+  \code{\link{umxGxE_window}}
+
+Other umx data helpers: \code{\link{umxHetCor}};
+  \code{\link{umxPadAndPruneForDefVars}};
+  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
+  \code{\link{umx_lower2full}}; \code{\link{umx_means}};
+  \code{\link{umx_scale_wide_twin_data}};
+  \code{\link{umx_scale}}
+
+Other umx deprecated: \code{\link{col.as.numeric}},
+  \code{\link{cor.prob}}, \code{\link{grepSPSS_labels}},
+  \code{\link{mxLatent}}, \code{\link{mxStart}},
+  \code{\link{umx-deprecated}}, \code{\link{umxReportCIs}},
+  \code{\link{umxReportFit}}, \code{\link{umxReportFit}},
+  \code{\link{umxStart}}; \code{\link{umxOrdinalObjective}}
 }
 

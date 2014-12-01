@@ -52,6 +52,21 @@ umxOrdinalObjective(df, suffixes = c("_T1", "_T2"))
 \seealso{
 - \code{\link{umxThresholdMatrix}}
 
-Other umx.twin model builder, model building functions: \code{\link{umxThresholdMatrix}}
+Other Model Building Functions: \code{\link{umxLabel}};
+  \code{\link{umxLatent}}; \code{\link{umxPath}};
+  \code{\link{umxRAM}}; \code{\link{umxReRun}};
+  \code{\link{umxRun}}; \code{\link{umxSaturated}};
+  \code{\link{umxValues}}; \code{\link{umx_add_std}};
+  \code{\link{umx_fix_first_loadings}};
+  \code{\link{umx_fix_latents}}; \code{\link{umx}},
+  \code{\link{umx-package}}
+
+Other umx deprecated: \code{\link{col.as.numeric}},
+  \code{\link{cor.prob}}, \code{\link{grepSPSS_labels}},
+  \code{\link{mxLatent}}, \code{\link{mxStart}},
+  \code{\link{umx-deprecated}}, \code{\link{umxReportCIs}},
+  \code{\link{umxReportFit}}, \code{\link{umxReportFit}},
+  \code{\link{umxStart}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

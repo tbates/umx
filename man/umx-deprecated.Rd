@@ -9,8 +9,7 @@
 \alias{umxReportCIs}
 \alias{umxReportFit}
 \alias{umxStart}
-\title{List of deprecated umx functions
-These functions are deprecated in umx. They may be dropped entirely in future versions. Many already stop() code and ask to be updated}
+\title{Deprecated. May already stop() code and ask to be updated. May be dropped entirely in future.}
 \usage{
 grepSPSS_labels(...)
 
@@ -94,5 +93,9 @@ Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+}
+\seealso{
+Other umx deprecated: \code{\link{umxOrdinalObjective}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

@@ -72,6 +72,13 @@ umxPlot(m2)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other umx model building functions: \code{\link{umxRAM}}
+Other Model Building Functions: \code{\link{umxLabel}};
+  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
+  \code{\link{umxRAM}}; \code{\link{umxReRun}};
+  \code{\link{umxRun}}; \code{\link{umxSaturated}};
+  \code{\link{umxValues}}; \code{\link{umx_add_std}};
+  \code{\link{umx_fix_first_loadings}};
+  \code{\link{umx_fix_latents}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

@@ -54,6 +54,10 @@ umxSummary(m1, m2) # not good :-)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other umx model updating and comparison: \code{\link{umxGetParameters}}
+Other Model Updating and Comparison: \code{\link{umxAdd1}};
+  \code{\link{umxDrop1}}; \code{\link{umxGetParameters}};
+  \code{\link{umxMI}};
+  \code{\link{umxUnexplainedCausalNexus}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

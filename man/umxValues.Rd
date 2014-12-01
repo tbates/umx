@@ -40,7 +40,7 @@ mxEval(S, m1) # plausible variances
 umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
 # todo: handle complex guided matrix value starts...
-x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = T, values = .3, byrow = T)
+x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = TRUE, values = .3, byrow = TRUE)
 umxValues(x) # Return matrix with good start values (not yet implemented...)
 }
 \references{
@@ -49,14 +49,14 @@ umxValues(x) # Return matrix with good start values (not yet implemented...)
 \seealso{
 - Core functions:
 
-Other model building functions: \code{\link{umxDiagnose}};
-  \code{\link{umxLabel}}; \code{\link{umxPath}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umx_add_std}}; \code{\link{umx_cov_diag}};
+Other Model Building Functions: \code{\link{umxLabel}};
+  \code{\link{umxLatent}};
+  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
+  \code{\link{umxRAM}}; \code{\link{umxReRun}};
+  \code{\link{umxRun}}; \code{\link{umxSaturated}};
+  \code{\link{umx_add_std}};
   \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}};
-  \code{\link{umx_get_checkpoint}};
-  \code{\link{umx_is_RAM}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
+  \code{\link{umx_fix_latents}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

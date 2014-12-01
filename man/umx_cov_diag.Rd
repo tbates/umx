@@ -37,14 +37,6 @@ umx_cov_diag(tmp2, format = "Full")
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
-Other model building functions: \code{\link{umxDiagnose}};
-  \code{\link{umxLabel}}; \code{\link{umxPath}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxValues}}; \code{\link{umx_add_std}};
-  \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}};
-  \code{\link{umx_get_checkpoint}};
-  \code{\link{umx_is_RAM}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
+Other Miscellaneous Building Functions: \code{\link{umx_check_names}}
 }
 

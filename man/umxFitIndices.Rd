@@ -37,7 +37,7 @@ umxFitIndices(m1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other umx_reporting: \code{\link{RMSEA.MxModel}};
+Other Reporting Functions: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
@@ -45,13 +45,16 @@ Other umx_reporting: \code{\link{RMSEA.MxModel}};
   \code{\link{umxPlot}}; \code{\link{plot}},
   \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
   \code{\link{residuals.MxModel}};
-  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
-  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
+  \code{\link{umxAnovaReport}}; \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxCompare}};
+  \code{\link{umxDescriptives}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}}; \code{\link{umxMI}};
+  \code{\link{umxSaturated}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}};
-  \code{\link{umx_get_time}}; \code{\link{umx_show}};
-  \code{\link{umx}}, \code{\link{umx-package}},
-  \code{\link{umx-package}}
+  \code{\link{umxSummary.MxModel}};
+  \code{\link{umxSummary}}; \code{\link{umx_APA_pval}};
+  \code{\link{umx_drop_ok}}; \code{\link{umx_get_time}};
+  \code{\link{umx_print}}; \code{\link{umx_show}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

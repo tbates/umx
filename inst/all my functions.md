@@ -1,3 +1,18 @@
+#' @family Model Building Functions
+#' @family Model Updating and Comparison
+#' @family Reporting Functions
+
+#' @family Non-SEM Functions
+#' @family Miscellaneous Helpers
+#' @family Miscellaneous Stats Helpers
+#' @family umx utility functions
+#' @family umx data helpers
+#' @family miscellaneous model building functions
+#' @family twin modeling functions
+#' @family twin model building functions
+#' @family umx deprecated
+
+
 ## umx_build
 umxDiagnose
 umxPath

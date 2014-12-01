@@ -10,8 +10,7 @@
 # = Deprecated =
 # ==============
 
-#' List of deprecated umx functions
-#' These functions are deprecated in umx. They may be dropped entirely in future versions. Many already stop() code and ask to be updated
+#' Deprecated. May already stop() code and ask to be updated. May be dropped entirely in future.
 #'
 #' @param ... the old function's parameters (now stripped out to avoid telling people how to do it the wrong way :-)
 #' @description 

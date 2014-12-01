@@ -23,6 +23,7 @@ fit = umxStandardizeACE(fit)
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other umx.twin model report: \code{\link{umxSummaryACE}}
+Other twin model reporting functions: \code{\link{umxSummary.MxModel.ACE}},
+  \code{\link{umxSummaryACE}}
 }
 

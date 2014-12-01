@@ -23,5 +23,8 @@ reliability(cov(mtcars))
 }
 \seealso{
 - \code{\link{cov}}
+
+Other Non-SEM Functions: \code{\link{umxAnova}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

@@ -4,8 +4,9 @@
 \title{umxACE}
 \usage{
 umxACE(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = 0.5,
-  dzCr = 1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL,
-  boundDiag = NULL, weightVar = NULL, equateMeans = T, bVector = FALSE)
+  dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
+  numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
+  equateMeans = TRUE, bVector = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE")}
@@ -70,6 +71,9 @@ m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 umxSummaryACE(m1)
 umxSummary(m1)
+\dontrun{
+plot(m1)
+}
 # ADE model (DZ correlation set to .25)
 m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 m2 = umxRun(m2)
@@ -95,10 +99,10 @@ mzData <- subset(twinData, zyg == "MZFF", umx_paste_names(selDVs, "", 1:2))
 dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
 str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-m1 = umxRun(m1)
+m1 = mxRun(m1)
 umxSummaryACE(m1)
 \dontrun{
-# umxPlotACE(m1)
+# plot(m1)
 }
 
 # Bivariate continuous and ordinal example (assumes examples above have been run)
@@ -136,5 +140,9 @@ plot(m1)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
+}
+\seealso{
+Other twin modeling functions: \code{\link{umxGxE_window}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

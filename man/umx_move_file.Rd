@@ -36,11 +36,12 @@ umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test=
 \seealso{
 - \code{\link{umx_rename_file}}, \code{\link{file.rename}}
 
-Other umx utility functions: \code{\link{qm}};
+Other Miscellaneous Utility Functions: \code{\link{qm}};
   \code{\link{umx_as_numeric}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_merge_CIs}};
   \code{\link{umx_rename_file}}; \code{\link{umx_round}};
-  \code{\link{umx_swap_a_block}}
+  \code{\link{umx_swap_a_block}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

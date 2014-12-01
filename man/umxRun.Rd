@@ -59,14 +59,14 @@ m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other model building functions: \code{\link{umxDiagnose}};
-  \code{\link{umxLabel}}; \code{\link{umxPath}};
-  \code{\link{umxReRun}}; \code{\link{umxValues}};
-  \code{\link{umx_add_std}}; \code{\link{umx_cov_diag}};
+Other Model Building Functions: \code{\link{umxLabel}};
+  \code{\link{umxLatent}};
+  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
+  \code{\link{umxRAM}}; \code{\link{umxReRun}};
+  \code{\link{umxSaturated}}; \code{\link{umxValues}};
+  \code{\link{umx_add_std}};
   \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}};
-  \code{\link{umx_get_checkpoint}};
-  \code{\link{umx_is_RAM}}; \code{\link{umx}},
-  \code{\link{umx-package}}, \code{\link{umx-package}}
+  \code{\link{umx_fix_latents}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

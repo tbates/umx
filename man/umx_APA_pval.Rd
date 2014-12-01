@@ -30,7 +30,58 @@ umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 \seealso{
 - \code{\link{round}}
 
-Other umx_misc reporting functions: \code{\link{umxAnovaReport}};
-  \code{\link{umxAnova}}; \code{\link{umx_print}}
+Other Miscellaneous Helpers: \code{\link{demand}};
+  \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
+  \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umxThresholdMatrix}};
+  \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
+  \code{\link{umx_check_model}};
+  \code{\link{umx_check_multi_core}};
+  \code{\link{umx_check}};
+  \code{\link{umx_default_option}};
+  \code{\link{umx_explode}};
+  \code{\link{umx_get_bracket_addresses}};
+  \code{\link{umx_get_checkpoint}};
+  \code{\link{umx_get_cores}};
+  \code{\link{umx_get_optimizer}};
+  \code{\link{umx_has_CIs}};
+  \code{\link{umx_has_been_run}};
+  \code{\link{umx_has_means}};
+  \code{\link{umx_has_square_brackets}};
+  \code{\link{umx_is_MxMatrix}};
+  \code{\link{umx_is_MxModel}}; \code{\link{umx_is_RAM}};
+  \code{\link{umx_is_cov}};
+  \code{\link{umx_is_endogenous}};
+  \code{\link{umx_is_exogenous}};
+  \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
+  \code{\link{umx_object_as_str}};
+  \code{\link{umx_paste_names}}; \code{\link{umx_print}};
+  \code{\link{umx_rename}}; \code{\link{umx_reorder}};
+  \code{\link{umx_rot}}; \code{\link{umx_set_checkpoint}};
+  \code{\link{umx_set_cores}};
+  \code{\link{umx_set_optimizer}};
+  \code{\link{umx_string_to_algebra}};
+  \code{\link{umx_trim}}; \code{\link{umx_update_OpenMx}};
+  \code{\link{umx}}, \code{\link{umx-package}}
+
+Other Reporting Functions: \code{\link{RMSEA.MxModel}};
+  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
+  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
+  \code{\link{extractAIC.MxModel}};
+  \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
+  \code{\link{umxPlot}}; \code{\link{plot}},
+  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
+  \code{\link{residuals.MxModel}};
+  \code{\link{umxAnovaReport}}; \code{\link{umxCI_boot}};
+  \code{\link{umxCI}}; \code{\link{umxCompare}};
+  \code{\link{umxDescriptives}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
+  \code{\link{umxMI}}; \code{\link{umxSaturated}};
+  \code{\link{umxStandardizeModel}};
+  \code{\link{umxSummary.MxModel}};
+  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}};
+  \code{\link{umx_get_time}}; \code{\link{umx_print}};
+  \code{\link{umx_show}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

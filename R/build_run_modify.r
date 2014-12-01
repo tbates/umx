@@ -1,9 +1,9 @@
 # library(devtools)
 # setwd("~/bin/umx");
-# document("~/bin/umx"); install("~/bin/umx");
+# document("~/bin/umx"); install("~/bin/umx"); ?umx
 # check_doc("~/bin/umx")
 # run_examples("~/bin/umx")
-# check("~/bin/umx")
+# ?umxACE
 # build("~/bin/umx")
 # load_all("~/bin/umx")
 # show_news("~/bin/umx")
@@ -55,6 +55,9 @@
 # 	}
 # }
 
+# =====================================================================================================
+# = create a class for ACE models so we can subclass plot and umxSummary to handle them automagically =
+# =====================================================================================================
 setClass("MxModel.ACE", contains = "MxModel")
 
 .onAttach <- function(libname, pkgname){
@@ -90,7 +93,7 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' @param independent Whether the model is independent (default = NA)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx model building functions
+#' @family Model Building Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' # umxRAM is like ggplot2::qplot(), you give the data in a data =  parameter
@@ -350,7 +353,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
 #' 		target = 40, plotWindow = TRUE)
 #' 
-#' @family umx twin modeling
+#' @family twin modeling functions
 #' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
 #' Complementary and competing factor analytic approaches for the investigation 
 #' of measurement invariance. \emph{Review of Psychology}, \bold{16}, 87--107. 
@@ -484,7 +487,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param bVector whether to compute row-wise likelihoods (defaults to FALSE)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx.twin model functions
+#' @family twin modeling functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' # Height, weight, and BMI data from Australian twins. 
@@ -512,6 +515,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxRun(m1)
 #' umxSummaryACE(m1)
 #' umxSummary(m1)
+#' \dontrun{
+#' plot(m1)
+#' }
 #' # ADE model (DZ correlation set to .25)
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' m2 = umxRun(m2)
@@ -537,10 +543,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-#' m1 = umxRun(m1)
+#' m1 = mxRun(m1)
 #' umxSummaryACE(m1)
 #' \dontrun{
-#' # umxPlotACE(m1)
+#' # plot(m1)
 #' }
 #' 
 #' # Bivariate continuous and ordinal example (assumes examples above have been run)
@@ -575,10 +581,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' \dontrun{
 #' plot(m1)
 #' }
-umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL, equateMeans = T, bVector = FALSE) {
+umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE) {
 	nSib     = 2 # number of siblings in a twin pair
-	umx_check_names(selDVs, mzData)
-	umx_check_names(selDVs, dzData)
 	# look for name conflicts
 	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
 	if(!identical(character(0), badNames)){
@@ -622,6 +626,8 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		}
 		selDVs = umx_paste_names(selDVs, suffix, 1:2)
 	}
+	umx_check_names(selDVs, mzData)
+	umx_check_names(selDVs, dzData)
 	message("selDVs: ", omxQuotes(selDVs))
 	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
@@ -881,7 +887,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export
 #' @seealso - Core functions:
-#' @family model building functions
+#' @family Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -901,10 +907,6 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #' umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 #' umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
 #' # todo: handle complex guided matrix value starts...
-#' x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = T, values = .3, byrow = T)
-#' umxValues(x) # Return matrix with good start values (not yet implemented...)
-#' 
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 	if(is.numeric(obj) ) {
 		# Use obj as the mean, return a list of length n, with sd = sd
@@ -1025,7 +1027,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' 
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family model building functions
+#' @family Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1086,7 +1088,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @param setStarts Deprecated way to setValues
 #' @return - \code{\link{mxModel}}
-#' @family model building functions
+#' @family Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1193,7 +1195,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @param dropList A list of strings. If not NA, then the labels listed here will be dropped (or set to the value and free state you specify)
 #' @return - \code{\link{mxModel}}
-#' @family model building functions
+#' @family Model Building Functions
 #' @references - \url{http://github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1281,7 +1283,7 @@ umxReRun <- function(lastFit, update = NA, regex = FALSE, free = FALSE, value = 
 #' @param free  A Boolean determining whether to return only free parameters.
 #' @param verbose How much feedback to give
 #' @export
-#' @family umx model updating and comparison
+#' @family Model Updating and Comparison
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -1367,7 +1369,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family umx model updating and comparison
+#' @family Model Updating and Comparison
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -1435,7 +1437,7 @@ umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = 
 #' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of model comparisons
 #' @export
-#' @family umx_modify
+#' @family Model Updating and Comparison
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1491,7 +1493,7 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of fit changes
 #' @export
-#' @family umx model modification functions
+#' @family Model Updating and Comparison
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1604,7 +1606,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @param endogenous This is now deprecated. use type= \"exogenous|endogenous\"
 #' @return - path list
 #' @export
-#' @family umx model building functions
+#' @family Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1829,7 +1831,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @param verbose (defaults to FALSE))
 #' @return - thresholds matrix
 #' @export
-#' @family umx.twin model builder, model building functions
+#' @family Miscellaneous Helpers
 #' @seealso - \code{\link{umxOrdinalObjective}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -2126,7 +2128,8 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 #' @param verbose (defaults to FALSE))
 #' @return - list of thresh matrix, fit function, and expectation.
 #' @export
-#' @family umx.twin model builder, model building functions
+#' @family Model Building Functions
+#' @family umx deprecated
 #' @seealso - \code{\link{umxThresholdMatrix}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -2143,29 +2146,7 @@ umxOrdinalObjective <- function(df, suffixes = NA, covName = "expCov", meansName
 # ===========
 # = Utility =
 # ===========
-#' umxJiggle
-#'
-#' umxJiggle takes values in a matrix and jiggles them
-#'
-#' @param matrixIn an \code{\link{mxMatrix}} to jiggle the values of
-#' @param mean the mean value to add to each value
-#' @param sd the sd of the jiggle noise
-#' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
-#' @return - \code{\link{mxMatrix}}
-#' @family umx_misc
-#' @references - \url{http://www.github.com/tbates/umx}
-#' @export
-#' @examples
-#' \dontrun{
-#' mat1 = umxJiggle(mat1)
-#' }
 
-umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
-	mask = (matrixIn != dontTouch);
-	newValues = mask;
-	matrixIn[mask == TRUE] = matrixIn[mask == TRUE] + rnorm(length(mask[mask == TRUE]), mean = mean, sd = sd);
-	return (matrixIn);
-}
 
 umxCheck <- function(fit1){
 	# are all the manifests in paths?
@@ -2247,7 +2228,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param ubound upper bounds for each path value
 #' @return - \code{\link{mxPath}}
 #' @export
-#' @family model building functions
+#' @family Model Building Functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -2537,7 +2518,7 @@ umxMatrix <- function(type = "Full", rc= NULL, fixedAt = NULL,
 #' @param addCIs whether to also add the mxCI calls to use these standardization matrices.
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family model building functions
+#' @family Model Building Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -2566,6 +2547,9 @@ umx_add_std <- function(model, addCIs = TRUE) {
 	}
 	return(model)
 }
+# =====================================
+# = Parallel helpers to be added here =
+# =====================================
 
 #' Helper functions for OpenMx
 #'
@@ -2588,12 +2572,18 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #' install_github("tbates/umx")
 #' library("umx")
 #' 
-#' @aliases umx-package
-#' @family model building functions
-#' @family umx_reporting
-#' @family umx_modify
-#' @family umx_misc
-#' @family umx_misc_stats
+#' @family Model Building Functions
+#' @family Reporting Functions
+#' @family Model Updating and Comparison
+#' @family Miscellaneous Helpers
+#' @family Non-SEM Functions
+#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Utility Functions
+#' @family umx data helpers
+#' @family miscellaneous model building functions
+#' @family twin modeling functions
+#' @family twin model building functions
+#' @family umx deprecated
 #' @references - \url{"http://www.github.com/tbates/umx"}
 #' 
 #' @examples
@@ -2659,8 +2649,3 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #' @docType package
 #' @name umx
 NULL
-
-
-# =====================================
-# = Parallel helpers to be added here =
-# =====================================

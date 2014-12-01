@@ -24,11 +24,12 @@ umx_merge_CIs(m1, m2)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other umx utility functions: \code{\link{qm}};
+Other Miscellaneous Utility Functions: \code{\link{qm}};
   \code{\link{umx_as_numeric}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_move_file}};
   \code{\link{umx_rename_file}}; \code{\link{umx_round}};
-  \code{\link{umx_swap_a_block}}
+  \code{\link{umx_swap_a_block}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

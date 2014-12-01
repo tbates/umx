@@ -32,10 +32,11 @@ umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names =
 \seealso{
 - \code{\link{subset}}
 
-Other umx utility functions: \code{\link{qm}};
+Other Miscellaneous Utility Functions: \code{\link{qm}};
   \code{\link{umx_as_numeric}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
-  \code{\link{umx_rename_file}}; \code{\link{umx_round}}
+  \code{\link{umx_rename_file}}; \code{\link{umx_round}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 
