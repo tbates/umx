@@ -26,6 +26,15 @@
 # 	any(y[1:diffRows,] - x[1:diffRows,] < 0, na.rm = T)
 # }
 
+# use this or not?
+umxFIML <- function(covariance, means, dimnames = NA, thresholds = NA, threshnames = dimnames, vector = FALSE) {
+    # replaces mxFIMLObjective
+	mxExp = mxExpectationNormal(covariance= covariance, means = means, dimnames = dimnames, thresholds)
+	mxFit = mxFitFunctionML(vector = vector)
+	return(list(mxExp, mxFit))
+}
+
+
 #' umx_check_multi_core
 #'
 #' Shows how many cores you are using, and runs a test script so user can check CPU usage
