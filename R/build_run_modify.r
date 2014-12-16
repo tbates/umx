@@ -1,3 +1,8 @@
+options('mxCondenseMatrixSlots'= FALSE)
+# svn update; make clean; make install; osascript -e 'quit app "R"'; open /Applications/R.app; osascript -e 'tell app "R"'; osascript -e 'tell app "R" to cmd "library(OpenMx)” '
+
+# osascript -e 'quit app "R"'; open /Applications/R.app; osascript -e 'tell app "R" to cmd "library(devtools)" '; osascript -e 'tell app "R" to cmd "document(\"~/bin/umx\"); install(\"~/bin/umx\"); ?umx" '
+
 # library(devtools)
 # setwd("~/bin/umx");
 # document("~/bin/umx"); install("~/bin/umx"); ?umx
@@ -353,7 +358,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
 #' 		target = 40, plotWindow = TRUE)
 #' 
-#' @family twin modeling functions
+#' @family Twin Modeling Functions
 #' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
 #' Complementary and competing factor analytic approaches for the investigation 
 #' of measurement invariance. \emph{Review of Psychology}, \bold{16}, 87--107. 
@@ -487,7 +492,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param bVector whether to compute row-wise likelihoods (defaults to FALSE)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family twin modeling functions
+#' @family Twin Modeling Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' # Height, weight, and BMI data from Australian twins. 
@@ -1041,17 +1046,23 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"
+#' umxGetParameters(m1) # Default "matrix address" labels, i.e "One Factor.S[2,2]"
 #' m1 = umxLabel(m1)
-#' umxGetParameters(m1, free = TRUE) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
+#' umxGetParameters(m1, free = TRUE) # Informative labels: "G_to_x1", "x4_with_x4", etc.
 #' # Labeling a matrix
-#' a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
-#' umxLabel(mxMatrix(name = "a", "Full", 1,1, labels= "data.a"))
+#' a = umxLabel(mxMatrix(name = "a", "Full", 3, 3, values = 1:9))
 #' a$labels
+#' # labels with "data." in the name are left alone
+#' a = mxMatrix(name = "a", "Full", 1,3, labels = c("data.a", "test", NA))
+#' umxLabel(a, verbose = TRUE)
+#' umxLabel(a), verbose = TRUE, overRideExisting = FALSE)
+#' umxLabel(a), verbose = TRUE, overRideExisting = TRUE)
+#' umxLabel(a), verbose = TRUE, overRideExisting = TRUE)
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE) {	
+	# TODO check that arguments not used by a particular class are not set away from their defaults
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
-		xmuLabel_Matrix(mx_matrix = obj, baseName = baseName, setfree = setfree, drop = drop, jiggle = jiggle, boundDiag = boundDiag, suffix = suffix, verbose = verbose, labelFixedCells = labelFixedCells)
+		xmuLabel_Matrix(mx_matrix = obj, baseName = baseName, setfree = setfree, drop = drop, labelFixedCells = labelFixedCells, jiggle = jiggle, boundDiag = boundDiag, suffix = suffix, verbose = verbose, overRideExisting = overRideExisting)
 	} else if (umx_is_RAM(obj)) { 
 		# Label a RAM model
 		if(verbose){message("RAM")}
@@ -1827,7 +1838,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @param verbose (defaults to FALSE))
 #' @return - thresholds matrix
 #' @export
-#' @family Miscellaneous Helpers
+#' @family Miscellaneous Functions
 #' @seealso - \code{\link{umxOrdinalObjective}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -2180,26 +2191,53 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 
 #' umxPath: Flexible specification of sem paths
 #'
-#' This function returns a standard mxPath, but gives new options for specifying the path. In addition to the normal
+#' @details This function returns a standard mxPath, but gives new options for specifying the path. In addition to the normal
 #' from and to, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
 #' There are also verbs for fixing values: "fixedAt" and "fixFirst"
 #' Finally, it also allows sem-style "A->B" string specification.
 #'
-#' @description The goal of this function is to enable quck to write, quick to read, and flexible paths for RAM models in OpenMx.
+#' @description The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
+#' 
+#' It introduces 10 new verbs: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{Cholesky}, \strong{means}, \strong{v1m0}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
 #' 
 #' The new key "with" means you no-longer need set arrows = 2 on covariances. So you can say:
-#'    \code{mxPath(A, with = B)} instead of \code{mxPath(from = A, to = B, arrows = 2)}.
+#'
+#'    \code{umxPath(A, with = B)} instead of \code{mxPath(from = A, to = B, arrows = 2)}.
 #' 
-#' Dpecify a variance with \code{mxPath(var = A)} (equivalent to \code{mxPath(from = A, to = A, arrows = 2)}).
+#' Specify a variance for A with
 #' 
-#' To specify a mean, you say \code{mxPath(mean = A)}, which is equivalent to \code{mxPath(from = "one", to = A)}.
+#' \code{umxPath(var = A)}.
 #' 
-#' To fix a patha at a value, you can say \code{mxPath(var = A, fixedAt = 1)} instead of to \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)}.
+#' This is equivalent to \code{mxPath(from = A, to = A, arrows = 2)}.
 #' 
-#' Setting up a latent trait, you can fix the loading of the first path with \code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)} instead of 
-#' \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
+#' To specify a mean, you just say
 #' 
-#' Finally, you can use the John Fox "sem" package style notation, i.e., "A -> B".
+#' \code{umxPath(mean = A)}, which is equivalent to \code{mxPath(from = "one", to = A)}.
+#' 
+#' To fix a path at a value, instead of to \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)} you can say:
+#' 
+#' \code{umxPath(var = A, fixedAt = 1)} .
+#' 
+#' The common task of creating a variable with variance fixed at 1 and mean at 0, you can simply say:
+#' 
+#' \code{umxPath(v1m0 = A)}
+#' 
+#' umxPath exposes unique.parameter as a parameter so you don't have remember how to fill in connect= in mxPath
+#' All unique bivariate paths can be specified using unique.bivariate
+#' 
+#' \code{umxPath(c('A',"B","C"), unique.bivariate = TRUE)} to create paths A<->B, B<->C, and A<->C.
+#' 
+#' Finally, you can create \emph{Cholesky} form paths (see \code{\link{umxACE}})
+#'
+#' \code{umxPath(c("A1", "A2"), to c("var1", "var2"), Cholesky = TURE)}
+#' 
+#' Setting up a latent trait, you can fix the loading of the first path with
+#' 
+#' \code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)}  
+#' 
+#' This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
+#' 
+#' Finally, in the future I will implement the John Fox "sem" package style notation, i.e., "A -> B".
 #' If you want to add multiple paths that way, separate them with a semi-colon or a return (see examples below.)
 #' 
 #' 
@@ -2209,7 +2247,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param var equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)
-#' @param Cholesky Treat the from vars as latent and to as measured, and hook up like an ACE model.
+#' @param Cholesky Treat the \strong{from} vars as latent and \strong{to} as measured, and connect up as in an ACE model.
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
 #' @param v1m0 variance of 1 and mean of zero in one call.
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
@@ -2243,16 +2281,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath(cov = c("A", "B")) # Covariance A <-> B
 #' umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
 #' umxPath(means = c("A","B"), values = c(pi,exp(1)))
-#' \dontrun{
-# These are not yet implemented
-#' umxPath("A <-> B") # same path as above using a string
-#' umxPath("A -> B") # one-headed arrow with string syntax
-#' umxPath("A <> B; A <-- B") # This is ok too
-#' umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
-#' # manifests is a reserved word, as is latents.
-#' # It allows the string syntax to use the manifestVars variable
-#' umxPath("A -> manifests") 
-#' }
 #' # A worked example
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -2266,6 +2294,16 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' )
 #' m1 = mxRun(m1)
 #' umxSummary(m1, show = "std")
+
+# # These are not yet implemented!!
+# #' umxPath("A <-> B") # same path as above using a string
+# #' umxPath("A -> B") # one-headed arrow with string syntax
+# #' umxPath("A <> B; A <-- B") # This is ok too
+# #' umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
+# #' # manifests is a reserved word, as is latents.
+# #' # It allows the string syntax to use the manifestVars variable
+# #' umxPath("A -> manifests") 
+
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
 	if(!is.null(from)){
 		if(length(from) > 1){
@@ -2571,14 +2609,12 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #' @family Model Building Functions
 #' @family Reporting Functions
 #' @family Model Updating and Comparison
-#' @family Miscellaneous Helpers
-#' @family Non-SEM Functions
-#' @family Miscellaneous Stats Helpers
+#' @family Advanced Helpers
+#' @family Miscellaneous Functions
 #' @family Miscellaneous Utility Functions
-#' @family umx data helpers
-#' @family miscellaneous model building functions
-#' @family twin modeling functions
-#' @family twin model building functions
+#' @family Miscellaneous Stats Helpers
+#' @family Twin Modeling Functions
+#' @family Twin Reporting Functions
 #' @family umx deprecated
 #' @references - \url{"http://www.github.com/tbates/umx"}
 #' 

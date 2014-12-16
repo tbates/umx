@@ -625,7 +625,7 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 #' @param report If 3, then open an html table of the results
 #' @return - optional \code{\link{mxModel}}
 #' @export
-#' @family umx.twin model report
+#' @family Twin Reporting Functions
 #' @seealso - \code{\link{umxACE}} 
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -1184,7 +1184,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' @param fit an \code{\link{mxModel}} to standardize
 #' @return - standardized ACE \code{\link{mxModel}}
 #' @export
-#' @family Model reporting functions
+#' @family Reporting Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
@@ -1377,11 +1377,11 @@ plot.MxModel <- function(model = NA, std = TRUE, digits = 2, dotFilename = "name
 #' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 #' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' m1 = umxRun(m1)
+#' m1 = mxRun(m1)
 #' \dontrun{
-#' plot(model)
-#' umxPlotACE(model, dotFilename = NA)
-#' umxPlotACE(model, std = F)
+#' plot(m1)
+#' umxPlotACE(m1, dotFilename = NA)
+#' plot(m1, std = F)
 #' }
 umxPlotACE <- function(model = NA, dotFilename = "name", digits = 2, showMeans = F, std = T) {
 	if(std){

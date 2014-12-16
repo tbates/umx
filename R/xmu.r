@@ -13,9 +13,9 @@
 # ========================================
 
 xmu_dot_make_residuals <- function(mxMat, style = NULL, showFixed = TRUE, digits = 2) {
-	mxMat_vals   = mxMat@values
-	mxMat_free   = mxMat@free
-	mxMat_labels = mxMat@labels
+	mxMat_vals   = mxMat$values
+	mxMat_free   = mxMat$free
+	mxMat_labels = mxMat$labels
 	mxMat_rows = dimnames(mxMat_free)[[1]]
 	mxMat_cols = dimnames(mxMat_free)[[2]]
 
@@ -152,10 +152,10 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	if(overRideExisting){
 		stop("overRideExisting not implemented yet, sorry...")
 	}
-	freeA  = model@matrices$A@free
+	freeA  = model$matrices$A$free
 	namesA = dimnames(freeA)[[1]]
 
-	freeS  = model@matrices$S@free
+	freeS  = model$matrices$S$free
 	namesS = dimnames(freeS)[[1]]
 
 	# if(umx_has_means(model)){
@@ -190,8 +190,8 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 			}
 		}
 	}
-	model@matrices$S@labels[lower.tri(model@matrices$S@labels)] = t(model@matrices$S@labels[upper.tri(t(model@matrices$S@labels))])
-	toGet = model@matrices$S@labels
+	model@matrices$S@labels[lower.tri(model$S$labels)] = t(model$S$labels[upper.tri(t(model$S$labels))])
+	toGet = model$S$labels
 	transpose_toGet = t(toGet)
 	model@matrices$S@labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
 
@@ -200,56 +200,65 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	# ==============================
 	# TODO add a test case with raw data but no means...
 	if(!is.null(model@data)){
-		if(model@data@type == "raw" & is.null(model@matrices$M)) {
+		if(model@data@type == "raw" & is.null(model$M)) {
 			message("You are using raw data, but have not yet added paths for the means\n")
 			message("You do this with mxPath(from = 'one', to = 'var')")
 		}
 	}
-	if(!is.null(model@matrices$M)){
-		model@matrices$M@labels[] = paste0("one_to_", colnames(model@matrices$M@values), suffix)
+	if(!is.null(model$M)){
+		model$M@labels[] = paste0("one_to_", colnames(model$M$values), suffix)
 	}
 	return(model)
 }
 
-xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = TRUE, labelFixedCells = FALSE) {
+xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = TRUE, labelFixedCells = FALSE, overRideExisting = FALSE) {
 	# Purpose: label the cells of an mxMatrix
 	# Detail: Defaults to the handy "matrixname_r1c1" where 1 is the row or column
 	# Use case: You shouldn't be using this: call umxLabel
 	# umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
-	# umx:::xmuLabel_Matrix(mxMatrix("Symm", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
+	# umx:::xmuLabel_Matrix(mxMatrix("Full" , 3, 3, values = 1, name = "a", byrow = TRUE));
+    # umx:::xmuLabel_Matrix(mxMatrix("Symm" , 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
+    # umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "data.a"));
+    # umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "data.a"), overRideExisting=TRUE);
+    # umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "test"), overRideExisting=TRUE);
 	# See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = FALSE, value = 0, name = "drop_a_row1_c1")
 	if (!is(mx_matrix, "MxMatrix")){ # label a mxMatrix
 		stop("I'm sorry Dave... xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want umxLabel()")
 	}
 	type = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
-	nrow = nrow(mx_matrix);
-	ncol = ncol(mx_matrix);
-	newLabels    = mx_matrix@labels;
+	nrows = nrow(mx_matrix);
+	ncols = ncol(mx_matrix);
+	newLabels    = mx_matrix$labels;
 	mirrorLabels = newLabels
-	if(any(grep("^data\\.", newLabels)) ) {
-		if(verbose){
-			message("matrix ", mx_matrix@name, " contains definition variables in the labels already... I'm leaving them alone")
-		}
-		return(mx_matrix)
-	}
-	
-	
 	if(is.na(baseName)) { 
-		baseName = mx_matrix@name
+		baseName = mx_matrix$name
 	}
 	if(suffix != "") {
 		baseName = paste(baseName, suffix, sep = "_")
 	}
 
-	# Make a matrix of labels in the form "baseName_rRcC"
-	for (r in 1:nrow) {
-		for (c in 1:ncol) {
-			newLabels[r,c] = paste(baseName,"_r", r, "c", c, sep = "")
-			if(nrow == ncol) { # Should include all square forms type == "StandMatrix" | type == "SymmMatrix"
-				mirrorLabels[c,r] = paste(baseName, "_r", r, "c", c, sep = "")
-			}
+	if(any(grep("^data\\.", newLabels)) ) {
+		if(verbose){
+			message("matrix ", mx_matrix$name, " contains definition variables in the labels already... I'm leaving them alone")
 		}
 	}
+
+	# Make a matrix of labels in the form "baseName_rRcC"	
+	for (r in 1:nrows) {
+		for (c in 1:ncols) {		
+			if(grepl("^data\\.", newLabels[r, c])){
+				# definition variable, leave it alone
+			} else if (overRideExisting | is.na(newLabels[r, c])){
+				newLabels[r, c] = paste0(baseName, "_r", r, "c", c)
+				if(nrows == ncols) {
+					# Used below if needed.
+					# Should include all square forms type == "StandMatrix" | type == "SymmMatrix"
+					mirrorLabels[c,r] = paste0(baseName, "_r", r, "c", c)
+				}
+			}			
+		}
+	}
+
 	if(type == "DiagMatrix"){
 		newLabels[lower.tri(newLabels, diag = FALSE)] = NA
 		newLabels[upper.tri(newLabels, diag = FALSE)] = NA
@@ -270,17 +279,17 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 		# message("umxLabel Ignored ", type, " matrix ", mx_matrix@name, " - it has no free values!")
 		return(mx_matrix)
 	} else {
-		return(paste("You tried to set type ", "to '", type, "'", sep = ""));
+		return(paste0("You tried to set type ", "to ", omxQuotes(type)));
 	}
 	# Set labels
 	mx_matrix@labels <- newLabels;
 	if(setfree == FALSE) {
 		# return("Matrix Specification not used: leave free as set in mx_matrix") 
 	} else {
-		newFree = mx_matrix@free
+		newFree = mx_matrix$free
 		# return(newFree)
-		newFree[mx_matrix@values == drop] = F;
-		newFree[mx_matrix@values != drop] = T;
+		newFree[mx_matrix$values == drop] = FALSE;
+		newFree[mx_matrix$values != drop] = TRUE;
 		if(type=="StandMatrix") {
 			newLabels[lower.tri(newLabels, diag = FALSE)] -> lower.labels;
 			newLabels[upper.tri(newLabels, diag = FALSE)] <- lower.labels;
@@ -290,7 +299,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 		# newFree[is.na(newLabels)]=NA; # (validated by mxMatrix???)
 	}
 	if(!is.na(jiggle)){
-		mx_matrix@values <- umxJiggle(mx_matrix@values, mean = 0, sd = jiggle, dontTouch = drop) # Expecting sd
+		mx_matrix@values <- umxJiggle(mx_matrix$values, mean = 0, sd = jiggle, dontTouch = drop) # Expecting sd
 	}
 	# TODO this might want something to equate values after jiggling around equal labels?
 	if(!is.na(boundDiag)){

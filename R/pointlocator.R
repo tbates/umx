@@ -2,13 +2,12 @@
 #'
 #' Locate points on a graph by clicking!
 #'
-#' @param model an \code{\link{mxModel}} to WITH
 #' @param n = 1
-#' @param x
-#' @param y
+#' @param x the x data (to allow the locate function to find your points)
+#' @param y the y data 
 #' @param col = rgb(1,0,0,0.5)
 #' @param pch = 20
-#' @param ...
+#' @param ... Additional parameters (passed into points())
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family umx miscellaneous
