@@ -22,7 +22,7 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 \item{unique.bivariate}{equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)}
 
-\item{Cholesky}{Treat the from vars as latent and to as measured, and hook up like an ACE model.}
+\item{Cholesky}{Treat the \strong{from} vars as latent and \strong{to} as measured, and connect up as in an ACE model.}
 
 \item{means}{equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).}
 
@@ -52,21 +52,48 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 - \code{\link{mxPath}}
 }
 \description{
-The goal of this function is to enable quck to write, quick to read, and flexible paths for RAM models in OpenMx.
+The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
+
+It introduces 10 new verbs: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{Cholesky}, \strong{means}, \strong{v1m0}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
 
 The new key "with" means you no-longer need set arrows = 2 on covariances. So you can say:
-   \code{mxPath(A, with = B)} instead of \code{mxPath(from = A, to = B, arrows = 2)}.
 
-Dpecify a variance with \code{mxPath(var = A)} (equivalent to \code{mxPath(from = A, to = A, arrows = 2)}).
+   \code{umxPath(A, with = B)} instead of \code{mxPath(from = A, to = B, arrows = 2)}.
 
-To specify a mean, you say \code{mxPath(mean = A)}, which is equivalent to \code{mxPath(from = "one", to = A)}.
+Specify a variance for A with
 
-To fix a patha at a value, you can say \code{mxPath(var = A, fixedAt = 1)} instead of to \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)}.
+\code{umxPath(var = A)}.
 
-Setting up a latent trait, you can fix the loading of the first path with \code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)} instead of
-\code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
+This is equivalent to \code{mxPath(from = A, to = A, arrows = 2)}.
 
-Finally, you can use the John Fox "sem" package style notation, i.e., "A -> B".
+To specify a mean, you just say
+
+\code{umxPath(mean = A)}, which is equivalent to \code{mxPath(from = "one", to = A)}.
+
+To fix a path at a value, instead of to \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)} you can say:
+
+\code{umxPath(var = A, fixedAt = 1)} .
+
+The common task of creating a variable with variance fixed at 1 and mean at 0, you can simply say:
+
+\code{umxPath(v1m0 = A)}
+
+umxPath exposes unique.parameter as a parameter so you don't have remember how to fill in connect= in mxPath
+All unique bivariate paths can be specified using unique.bivariate
+
+\code{umxPath(c('A',"B","C"), unique.bivariate = TRUE)} to create paths A<->B, B<->C, and A<->C.
+
+Finally, you can create \emph{Cholesky} form paths (see \code{\link{umxACE}})
+
+\code{umxPath(c("A1", "A2"), to c("var1", "var2"), Cholesky = TURE)}
+
+Setting up a latent trait, you can fix the loading of the first path with
+
+\code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)}
+
+This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
+
+Finally, in the future I will implement the John Fox "sem" package style notation, i.e., "A -> B".
 If you want to add multiple paths that way, separate them with a semi-colon or a return (see examples below.)
 }
 \details{
@@ -91,15 +118,6 @@ umxPath(var = LETTERS[1:5], fixedAt = 1)
 umxPath(cov = c("A", "B")) # Covariance A <-> B
 umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
 umxPath(means = c("A","B"), values = c(pi,exp(1)))
-\dontrun{
-umxPath("A <-> B") # same path as above using a string
-umxPath("A -> B") # one-headed arrow with string syntax
-umxPath("A <> B; A <-- B") # This is ok too
-umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
-# manifests is a reserved word, as is latents.
-# It allows the string syntax to use the manifestVars variable
-umxPath("A -> manifests")
-}
 # A worked example
 data(demoOneFactor)
 latents  = c("G")
@@ -113,6 +131,13 @@ m1 <- umxRAM("One Factor", data = myData,
 )
 m1 = mxRun(m1)
 umxSummary(m1, show = "std")
+#umxPath("A <-> B") # same path as above using a string
+#umxPath("A -> B") # one-headed arrow with string syntax
+#umxPath("A <> B; A <-- B") # This is ok too
+#umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
+## manifests is a reserved word, as is latents.
+## It allows the string syntax to use the manifestVars variable
+#umxPath("A -> manifests")
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}

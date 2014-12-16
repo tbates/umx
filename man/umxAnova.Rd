@@ -27,7 +27,7 @@ umxAnova(anova(m1, m2))
 \seealso{
 - \code{\link{lm}}, \code{\link{anova}}, \code{\link{summary}}
 
-Other Miscellaneous Helpers: \code{\link{demand}};
+Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxAnovaReport}}; \code{\link{umxEval}};
   \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
@@ -38,6 +38,7 @@ Other Miscellaneous Helpers: \code{\link{demand}};
   \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};
+  \code{\link{umx_get_CI_as_APA_string}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_checkpoint}};
   \code{\link{umx_get_cores}};
@@ -62,7 +63,9 @@ Other Miscellaneous Helpers: \code{\link{demand}};
   \code{\link{umx_trim}}; \code{\link{umx_update_OpenMx}};
   \code{\link{umx}}, \code{\link{umx-package}}
 
-Other Non-SEM Functions: \code{\link{reliability}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
+  \code{\link{reliability}}; \code{\link{umxCov2cor}};
+  \code{\link{umx_pp33}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

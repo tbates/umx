@@ -20,7 +20,8 @@ and output to an html table which will open your default browser (report = 3).
 (This is handy for getting tables into Word, markdown, and other text systems!)}
 }
 \description{
-umxCompare compares two or more \code{\link{mxModel}}s. If you leave comparison blank, it will just give fit info for the base model
+umxCompare compares two or more \code{\link{mxModel}}s.
+If you leave comparison blank, it will just give fit info for the base model
 }
 \examples{
 require(OpenMx)
@@ -61,21 +62,9 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
   \code{\link{umxDescriptives}}; \code{\link{umxExpCov}};
   \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
-  \code{\link{umxMI}}; \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}}
-
-Other Reporting functions: \code{\link{RMSEA.MxModel}};
-  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
-  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
-  \code{\link{extractAIC.MxModel}};
-  \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
-  \code{\link{umxPlot}}; \code{\link{plot}},
-  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
-  \code{\link{residuals.MxModel}};
-  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxDescriptives}}; \code{\link{umxExpCov}};
-  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
-  \code{\link{umxMI}}; \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}}
+  \code{\link{umxMI}}; \code{\link{umxSaturated}};
+  \code{\link{umxStandardizeModel}};
+  \code{\link{umxSummary.MxModel}};
+  \code{\link{umx_drop_ok}}
 }
 

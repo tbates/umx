@@ -35,11 +35,16 @@ cor_df = umxHetCor(df, ML = FALSE, use="pairwise.complete.obs")
 \seealso{
 - \code{\link[polycor]{hetcor}}
 
-Other umx data helpers: \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
-  \code{\link{umx_lower2full}}; \code{\link{umx_means}};
+Other Miscellaneous Utility Functions: \code{\link{qm}};
+  \code{\link{umxPadAndPruneForDefVars}};
+  \code{\link{umx_as_numeric}}; \code{\link{umx_cor}};
+  \code{\link{umx_cov2raw}}; \code{\link{umx_find_object}};
+  \code{\link{umx_grep}}; \code{\link{umx_lower2full}};
+  \code{\link{umx_means}}; \code{\link{umx_merge_CIs}};
+  \code{\link{umx_move_file}};
+  \code{\link{umx_rename_file}}; \code{\link{umx_round}};
   \code{\link{umx_scale_wide_twin_data}};
-  \code{\link{umx_scale}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+  \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

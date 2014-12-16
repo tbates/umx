@@ -42,8 +42,9 @@ umx_get_time(c(m1,m2))
 - \code{\link{summary}}, \code{\link{umxRun}}
 
 Other Reporting Functions: \code{\link{umxAnovaReport}};
-  \code{\link{umx_APA_pval}}; \code{\link{umx_print}};
-  \code{\link{umx_show}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+  \code{\link{umxStandardizeACE}};
+  \code{\link{umxSummary}}; \code{\link{umx_APA_pval}};
+  \code{\link{umx_print}}; \code{\link{umx_show}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

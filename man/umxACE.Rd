@@ -142,7 +142,7 @@ plot(m1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other twin modeling functions: \code{\link{umxGxE_window}};
+Other Twin Modeling Functions: \code{\link{umxGxE_window}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }
 

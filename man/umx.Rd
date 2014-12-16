@@ -90,7 +90,10 @@ plot(m1, std = TRUE, dotFilename = NA)
 - \url{"http://www.github.com/tbates/umx"}
 }
 \seealso{
-Other Miscellaneous Helpers: \code{\link{demand}};
+Other Advanced Helpers: \code{\link{umx_RAM_ordinal_objective}};
+  \code{\link{umx_RAM_thresh_Matrix}}
+
+Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
@@ -101,6 +104,7 @@ Other Miscellaneous Helpers: \code{\link{demand}};
   \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};
+  \code{\link{umx_get_CI_as_APA_string}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_checkpoint}};
   \code{\link{umx_get_cores}};
@@ -125,14 +129,20 @@ Other Miscellaneous Helpers: \code{\link{demand}};
   \code{\link{umx_trim}}; \code{\link{umx_update_OpenMx}}
 
 Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
+  \code{\link{reliability}}; \code{\link{umxAnova}};
   \code{\link{umxCov2cor}}; \code{\link{umx_pp33}}
 
 Other Miscellaneous Utility Functions: \code{\link{qm}};
-  \code{\link{umx_as_numeric}};
-  \code{\link{umx_find_object}}; \code{\link{umx_grep}};
-  \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
+  \code{\link{umxHetCor}};
+  \code{\link{umxPadAndPruneForDefVars}};
+  \code{\link{umx_as_numeric}}; \code{\link{umx_cor}};
+  \code{\link{umx_cov2raw}}; \code{\link{umx_find_object}};
+  \code{\link{umx_grep}}; \code{\link{umx_lower2full}};
+  \code{\link{umx_means}}; \code{\link{umx_merge_CIs}};
+  \code{\link{umx_move_file}};
   \code{\link{umx_rename_file}}; \code{\link{umx_round}};
-  \code{\link{umx_swap_a_block}}
+  \code{\link{umx_scale_wide_twin_data}};
+  \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}}
 
 Other Model Building Functions: \code{\link{umxLabel}};
   \code{\link{umxLatent}};
@@ -145,24 +155,20 @@ Other Model Building Functions: \code{\link{umxLabel}};
 
 Other Model Updating and Comparison: \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxEquate}};
-  \code{\link{umxGetParameters}}
-
-Other Non-SEM Functions: \code{\link{reliability}};
-  \code{\link{umxAnova}}
+  \code{\link{umxGetParameters}}; \code{\link{umxMI}};
+  \code{\link{umxUnexplainedCausalNexus}}
 
 Other Reporting Functions: \code{\link{umxAnovaReport}};
-  \code{\link{umx_APA_pval}}; \code{\link{umx_get_time}};
-  \code{\link{umx_print}}; \code{\link{umx_show}}
+  \code{\link{umxStandardizeACE}};
+  \code{\link{umxSummary}}; \code{\link{umx_APA_pval}};
+  \code{\link{umx_get_time}}; \code{\link{umx_print}};
+  \code{\link{umx_show}}
 
-Other twin modeling functions: \code{\link{umxACE}};
+Other Twin Modeling Functions: \code{\link{umxACE}};
   \code{\link{umxGxE_window}}
 
-Other umx data helpers: \code{\link{umxHetCor}};
-  \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
-  \code{\link{umx_lower2full}}; \code{\link{umx_means}};
-  \code{\link{umx_scale_wide_twin_data}};
-  \code{\link{umx_scale}}
+Other Twin Reporting Functions: \code{\link{umxSummary.MxModel.ACE}},
+  \code{\link{umxSummaryACE}}
 
 Other umx deprecated: \code{\link{col.as.numeric}},
   \code{\link{cor.prob}}, \code{\link{grepSPSS_labels}},

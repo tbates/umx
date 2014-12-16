@@ -35,6 +35,7 @@ umx_pp33(target_df = 38, x = 2.4)
 - \code{\link{pnorm}}
 
 Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
+  \code{\link{reliability}}; \code{\link{umxAnova}};
   \code{\link{umxCov2cor}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }

@@ -49,13 +49,18 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-umxGetParameters(m1) # Only "matrix address" labels: "One Factor.S[2,2]" "One Factor.S[3,3]"
+umxGetParameters(m1) # Default "matrix address" labels, i.e "One Factor.S[2,2]"
 m1 = umxLabel(m1)
-umxGetParameters(m1, free = TRUE) # Infomative labels: "G_to_x1", "x4_with_x4", etc.
+umxGetParameters(m1, free = TRUE) # Informative labels: "G_to_x1", "x4_with_x4", etc.
 # Labeling a matrix
-a = umxLabel(mxMatrix("Full", 3,3, values = 1:9, name = "a"))
-umxLabel(mxMatrix(name = "a", "Full", 1,1, labels= "data.a"))
+a = umxLabel(mxMatrix(name = "a", "Full", 3, 3, values = 1:9))
 a$labels
+# labels with "data." in the name are left alone
+a = mxMatrix(name = "a", "Full", 1,2, labels = c("data.a", "test"))
+umxLabel(a, verbose = TRUE)
+umxLabel(mxMatrix(name = "a", "Full", 1,2, labels = c("data.a", "test")), overRideExisting= FALSE)
+umxLabel(mxMatrix(name = "a", "Full", 1,2, labels = c("data.a", "test")), overRideExisting= TRUE)
+umxLabel(mxMatrix(name = "a", "Full", 1,3, labels = c("data.a", "test", NA)), overRideExisting = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

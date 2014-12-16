@@ -38,7 +38,7 @@ mxEval(list(ab = ab), m1)
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other Miscellaneous Helpers: \code{\link{demand}};
+Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
@@ -49,6 +49,7 @@ Other Miscellaneous Helpers: \code{\link{demand}};
   \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};
+  \code{\link{umx_get_CI_as_APA_string}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_checkpoint}};
   \code{\link{umx_get_cores}};

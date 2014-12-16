@@ -3,7 +3,7 @@
 \alias{residuals.MxModel}
 \title{residuals.MxModel}
 \usage{
-residuals.MxModel(model, digits = 2, suppress = NULL, ...)
+\method{residuals}{MxModel}(model, digits = 2, suppress = NULL, ...)
 }
 \arguments{
 \item{model}{a (run) \code{\link{mxModel}} to get residuals from}
@@ -54,7 +54,9 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
   \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
   \code{\link{umxFitIndices}}; \code{\link{umxMI}};
+  \code{\link{umxSaturated}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}}
+  \code{\link{umxSummary.MxModel}};
+  \code{\link{umx_drop_ok}}
 }
 

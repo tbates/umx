@@ -34,11 +34,11 @@ selDVs = c("bmi1","bmi2")
 mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-m1 = umxRun(m1)
+m1 = mxRun(m1)
 \dontrun{
-plot(model)
-umxPlotACE(model, dotFilename = NA)
-umxPlotACE(model, std = F)
+plot(m1)
+umxPlotACE(m1, dotFilename = NA)
+plot(m1, std = F)
 }
 }
 \references{
@@ -55,7 +55,9 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
   \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
   \code{\link{umxFitIndices}}; \code{\link{umxMI}};
+  \code{\link{umxSaturated}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}}; \code{\link{umx_drop_ok}}
+  \code{\link{umxSummary.MxModel}};
+  \code{\link{umx_drop_ok}}
 }
 

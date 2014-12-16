@@ -9,7 +9,7 @@ umx_RAM_thresh_Matrix(df, deviationBased = TRUE, droplevels = FALSE,
 \arguments{
 \item{df}{Dataframe for which to make a threshold matrix.}
 
-\item{deviationBased}{Whether to use the deviation system to ensure ordered thresholds (default = FALSE)}
+\item{deviationBased}{Whether to use the deviation system to ensure ordered thresholds (default = TRUE)}
 
 \item{droplevels}{Whether to also drop unused levels (default = TRUE)}
 
@@ -31,6 +31,7 @@ umx_RAM_thresh_Matrix(x, verbose = TRUE)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other advanced umx helpers: \code{\link{umx_RAM_ordinal_objective}}
+Other Advanced Helpers: \code{\link{umx_RAM_ordinal_objective}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

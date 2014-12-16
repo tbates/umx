@@ -80,7 +80,7 @@ Briley, D, Bates, T.C., Harden, K., Tucker-Drob, E. (2015)
 Of mice and men: Local SEM in gene environment analysis. \emph{Behavior Genetics}.
 }
 \seealso{
-Other twin modeling functions: \code{\link{umxACE}};
+Other Twin Modeling Functions: \code{\link{umxACE}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }
 

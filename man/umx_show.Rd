@@ -48,8 +48,9 @@ umx_show(m1, what = "free", "A")
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 
 Other Reporting Functions: \code{\link{umxAnovaReport}};
-  \code{\link{umx_APA_pval}}; \code{\link{umx_get_time}};
-  \code{\link{umx_print}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+  \code{\link{umxStandardizeACE}};
+  \code{\link{umxSummary}}; \code{\link{umx_APA_pval}};
+  \code{\link{umx_get_time}}; \code{\link{umx_print}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 
