@@ -56,11 +56,11 @@ umxGetParameters(m1, free = TRUE) # Informative labels: "G_to_x1", "x4_with_x4",
 a = umxLabel(mxMatrix(name = "a", "Full", 3, 3, values = 1:9))
 a$labels
 # labels with "data." in the name are left alone
-a = mxMatrix(name = "a", "Full", 1,2, labels = c("data.a", "test"))
+a = mxMatrix(name = "a", "Full", 1,3, labels = c("data.a", "test", NA))
 umxLabel(a, verbose = TRUE)
-umxLabel(mxMatrix(name = "a", "Full", 1,2, labels = c("data.a", "test")), overRideExisting= FALSE)
-umxLabel(mxMatrix(name = "a", "Full", 1,2, labels = c("data.a", "test")), overRideExisting= TRUE)
-umxLabel(mxMatrix(name = "a", "Full", 1,3, labels = c("data.a", "test", NA)), overRideExisting = TRUE)
+umxLabel(a), verbose = TRUE, overRideExisting = FALSE)
+umxLabel(a), verbose = TRUE, overRideExisting = TRUE)
+umxLabel(a), verbose = TRUE, overRideExisting = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

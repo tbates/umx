@@ -3,14 +3,14 @@
 \alias{umx_scale_wide_twin_data}
 \title{umx_scale_wide_twin_data}
 \usage{
-umx_scale_wide_twin_data(df, varsToScale, suffixes)
+umx_scale_wide_twin_data(varsToScale, suffixes, df)
 }
 \arguments{
-\item{df}{a wide dataframe}
-
 \item{varsToScale}{the base names of the variables ("weight" etc)}
 
 \item{suffixes}{the suffix that distinguishes each case (T1, T2 etc.)}
+
+\item{df}{a wide dataframe}
 }
 \value{
 - new dataframe with scaled variables
@@ -37,7 +37,8 @@ Other Miscellaneous Utility Functions: \code{\link{qm}};
   \code{\link{umx_grep}}; \code{\link{umx_lower2full}};
   \code{\link{umx_means}}; \code{\link{umx_merge_CIs}};
   \code{\link{umx_move_file}};
-  \code{\link{umx_rename_file}}; \code{\link{umx_round}};
+  \code{\link{umx_rename_file}};
+  \code{\link{umx_residualize}}; \code{\link{umx_round}};
   \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }

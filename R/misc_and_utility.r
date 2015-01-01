@@ -773,37 +773,6 @@ umx_RAM_ordinal_objective <- function(df, deviationBased = TRUE, droplevels = TR
 	return(list(pt1, pt2, umxThresholdMatrix(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE)))
 }
 
-#' umx_RAM_thresh_Matrix
-#'
-#' The purpose of this function is to generate an mxRAMObjective. It is used by \code{\link{umx_RAM_ordinal_objective}}.
-#' You likely want that, not this.
-#'
-#' @param df Dataframe for which to make a threshold matrix.
-#' @param deviationBased Whether to use the deviation system to ensure ordered thresholds (default = TRUE)
-#' @param droplevels Whether to also drop unused levels (default = TRUE)
-#' @param verbose Whether to say what the function is doing (default = FALSE)
-#' @return - \code{\link{mxModel}}
-#' @family Advanced Helpers
-#' @export
-#' @references - \url{http://www.github.com/tbates/umx}
-#' @examples
-#' x = mtcars
-#' x$cyl = mxFactor(x$cyl, levels = c(4,6,8))
-#' umx_RAM_thresh_Matrix(x, verbose = TRUE)
-umx_RAM_thresh_Matrix <- function(df, deviationBased = TRUE, droplevels = FALSE, verbose = FALSE) {
-	# mxRAMObjective(A = "A", S="S", F="F", M="M", thresholds = "thresh"), mxData(df, type="raw")
-	# use case:  
-	# TODO: Let the user know if there are any levels dropped...
-	if(droplevels){
-		df = droplevels(df)
-	}
-	if(deviationBased){
-		return(xmuMakeDeviationThresholdsMatrices(df, droplevels, verbose))
-	} else {
-		return(xmuMakeThresholdsMatrices(df, droplevels, verbose))
-	}
-}
-
 
 # ===========
 # = Utility =
@@ -1222,23 +1191,22 @@ umx_msg <- function(x) {
 	}
 }
 
-
 #' umx_paste_names
 #'
-#' Helper to add suffixes to names: useful for expanding twin vars like "bm1" into c("bmi1", "bmi2")
-#' Use textConstant to turning "E" into "E_T1", by adding "_T" and 1.
+#' Helper to add suffixes to names: useful for expanding twin vars like "bmi" into c("bmi_T1", "bmi_T2")
+#' Use textConstant to turning add a constant"E_T1", by adding "_T" and 1.
 #'
-#' @param varNames a list of base names, e.g c("bmi", "HRV")
-#' @param textConstant The suffix that denotes "twin" (defaults to "_T")
-#' @param suffixes a list of suffixes (e.g c("_T1", "_T2"))
-#' @return - vector of names, i.e., c("a_T1","b_T1", "a_T2","b_T2")
+#' @param varNames a list of base names, e.g c("bmi", "IQ")
+#' @param textConstant The suffix added to all names, e.g. "_T" (the default)
+#' @param suffixes a list of terminal suffixes differentiating the var names (e.g c("1", "2"))
+#' @return - vector of suffixed var names, i.e., c("a_T1", "b_T1", "a_T2", "b_T2")
 #' @export
 #' @family Miscellaneous Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
-#' umx_paste_names("bmi", c("_T1", "_T2"))
+#' umx_paste_names("bmi", "_T", 1:2)
+#' umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
 #' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
-
 umx_paste_names <- function(varNames, textConstant = "", suffixes) {
 	nameList = c()
 	for (ID in suffixes) {
@@ -1246,7 +1214,6 @@ umx_paste_names <- function(varNames, textConstant = "", suffixes) {
 	}
 	return(nameList)
 }
-
 
 #' umx_merge_CIs
 #'
@@ -2552,13 +2519,101 @@ umx_is_numeric <- function(df, cols = TRUE){
 	return(bIsNumeric)
 }
 
+#' umx_residualize
+#'
+#' Return one or more variables residualised against covs.
+#' This is the same as 
+#' \code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
+#'
+#' Optionally, this also works on wide (ie., twin) data. Just supply suffixes to identify
+#' the paired-wide columns!
+#'
+#' @param var The base name of the variable you want to residualize
+#' @param covs Covariates to residualize on.
+#' @param suffixes Suffixes that identify the variable for each twin, i.e. c("_T1", "_T2")
+#' @param form A convenience for cases where you want to use a complex formula.
+#' Up to you to check all variables are present!
+#' @param data The dataframe containing all the variables
+#' @return - dataframe with var residualized in place (i.e under its original column name)
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @examples
+#' tmp = mtcars
+#' # Residualise mpg on cylinders and displacement
+#' r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)$mpg
+#' r1 = umx_residualize("mpg", c("cyl", "disp"), form = "mpg ~ cyl + I(cyl^2) + disp ", data = tmp)$mpg
+#' r2 = residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))
+#' all(r1 ==r2)
+#' # plot(r1~r2)
+#' # Same again, but now on wide data (i.e. with family data on each row)
+#' tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
+#' tmp$cyl_T1  = tmp$cyl_T2  = tmp$cyl
+#' tmp$disp_T1 = tmp$disp_T2 = tmp$disp
+#' umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)
+umx_residualize <- function(var, covs, suffixes = NULL, form = NULL, data){
+	# Check names
+	if(!is.null(form)){
+		# form is a formula containing var on the lhs, and covs on the rhs
+		umx_check(!is.null(var), "stop", "when using form, leave var and covs empty")
+		var  = formula.tools::all.vars(formula.tools::lhs(form))
+		covs = formula.tools::all.vars(formula.tools::rhs(form))
+	}
+	if(is.null(suffixes)){
+		vars = c(var,covs)
+	} else {
+		# wide vars provided: expand names
+		vars = umx_paste_names(c(var,covs), suffixes=suffixes)
+	}
+	umx_check_names(vars, data = data, die = T)
+	nVar = length(c(var,covs))
+
+	if(!is.null(suffixes)){
+		# make a long version of the vars we want
+		for (i in 1:length(suffixes)) {
+			vars = umx_paste_names(c(var,covs), suffixes=suffixes[i])
+			if(i==1){
+				tmp = data[,vars]
+				names(tmp) = c(var, covs)
+			} else {
+				tmp2 = data[,vars]
+				names(tmp2) = c(var, covs)
+				tmp = rbind(tmp, tmp2)
+			}
+		}
+	}else{
+		tmp = data[,vars]
+	}
+	oldNAs = sum(is.na(tmp[,var]))
+	if(!is.null(form)){
+		form = paste0(var, " ~ ", paste(covs, collapse = " + "))
+		form = as.formula(form)
+	}
+	tmp <- residuals(lm(form, data = tmp, na.action = na.exclude))
+	newNAs = sum(is.na(tmp))
+	if(newNAs > oldNAs){
+		message(newNAs - oldNAs, "cases of var ", omxQuotes(var), "lost due to missing covariates")
+	}
+	if(!is.null(suffixes)){
+		i = 1
+		nRows = nrow(data)
+		for (suff in suffixes) {
+			data[, paste0(var, suff)] = tmp[i:(i+nRows-1)]
+			i = i + nRows
+		}
+	} else {
+		data[, var] = tmp
+	}
+	return(data)
+}
+
 #' umx_scale_wide_twin_data
 #'
 #' Scale wide data across all cases: currently twins
 #'
-#' @param df a wide dataframe
 #' @param varsToScale the base names of the variables ("weight" etc)
 #' @param suffixes the suffix that distinguishes each case (T1, T2 etc.)
+#' @param df a wide dataframe
 #' @return - new dataframe with scaled variables
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -2569,7 +2624,7 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffixes = c("1","2") )
 #' plot(wt1 ~ wt2, data = df)
 
-umx_scale_wide_twin_data <- function(df, varsToScale, suffixes) {
+umx_scale_wide_twin_data <- function(varsToScale, suffixes, df) {
 	if(length(suffixes) != 2){
 		stop("I need two suffixes, you gave me ", length(suffixes))
 	}
@@ -2911,7 +2966,6 @@ umx_explode <- function(delimiter = character(), string) {
 umx_trim <- function(string) {
 	# http://www.php.net/manual/en/function.trim.php
 	return(gsub("^\\s+|\\s+$", "", string))
-
 	# returns string w/o leading whitespace
 	 # trim.leading <- function (x)  sub("^\\s+", "", x)
 

@@ -6,25 +6,26 @@
 umx_paste_names(varNames, textConstant = "", suffixes)
 }
 \arguments{
-\item{varNames}{a list of base names, e.g c("bmi", "HRV")}
+\item{varNames}{a list of base names, e.g c("bmi", "IQ")}
 
-\item{textConstant}{The suffix that denotes "twin" (defaults to "_T")}
+\item{textConstant}{The suffix added to all names, e.g. "_T" (the default)}
 
-\item{suffixes}{a list of suffixes (e.g c("_T1", "_T2"))}
+\item{suffixes}{a list of terminal suffixes differentiating the var names (e.g c("1", "2"))}
 }
 \value{
-- vector of names, i.e., c("a_T1","b_T1", "a_T2","b_T2")
+- vector of suffixed var names, i.e., c("a_T1", "b_T1", "a_T2", "b_T2")
 }
 \description{
-Helper to add suffixes to names: useful for expanding twin vars like "bm1" into c("bmi1", "bmi2")
-Use textConstant to turning "E" into "E_T1", by adding "_T" and 1.
+Helper to add suffixes to names: useful for expanding twin vars like "bmi" into c("bmi_T1", "bmi_T2")
+Use textConstant to turning add a constant"E_T1", by adding "_T" and 1.
 }
 \examples{
-umx_paste_names("bmi", c("_T1", "_T2"))
+umx_paste_names("bmi", "_T", 1:2)
+umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
 varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};

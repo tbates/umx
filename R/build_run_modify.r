@@ -61,7 +61,7 @@ options('mxCondenseMatrixSlots'= FALSE)
 # }
 
 # =====================================================================================================
-# = create a class for ACE models so we can subclass plot and umxSummary to handle them automagically =
+# = Create a class for ACE models so we can subclass plot and umxSummary to handle them automagically =
 # =====================================================================================================
 setClass("MxModel.ACE", contains = "MxModel")
 
@@ -594,26 +594,6 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
 		"BadNames included: ", omxQuotes(badNames) )
 	}
-	dataType = umx_is_cov(dzData, boolean = FALSE)
-	if(dataType == "raw"){
-		isFactor = umx_is_ordered(mzData)                      # T/F list of factor columns
-		isOrd    = umx_is_ordered(mzData, ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
-		isBin    = umx_is_ordered(mzData, binary.only  = TRUE) # T/F list of binary columns
-		nFactors = sum(isFactor)
-		nOrdVars = sum(isOrd) # total number of ordinal columns
-		nBinVars = sum(isBin) # total number of binary columns
-
-		factorVarNames = names(mzData)[isFactor]
-		ordVarNames    = names(mzData)[isOrd]
-		binVarNames    = names(mzData)[isBin]
-
-		contVarNames   = names(mzData)[!isFactor]
-	} else {
-		# summary data
-		isFactor = isOrd = isBin = c()
-		nFactors = nOrdVars = nBinVars = 0
-		factorVarNames = ordVarNames = binVarNames = contVarNames = c()
-	}
 
 	if(nFactors > 0 & is.null(suffix)){
 		stop("Please set suffix.\n",
@@ -636,6 +616,29 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 	message("selDVs: ", omxQuotes(selDVs))
 	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
+	dataType = umx_is_cov(dzData, boolean = FALSE)
+	if(dataType == "raw"){
+		# Drop any unused columns from mz and dzData
+		mzData = mzData[, selDVs]
+		dzData = dzData[, selDVs]
+
+		isFactor = umx_is_ordered(mzData)                      # T/F list of factor columns
+		isOrd    = umx_is_ordered(mzData, ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
+		isBin    = umx_is_ordered(mzData, binary.only  = TRUE) # T/F list of binary columns
+		nFactors = sum(isFactor)
+		nOrdVars = sum(isOrd) # total number of ordinal columns
+		nBinVars = sum(isBin) # total number of binary columns
+
+		factorVarNames = names(mzData)[isFactor]
+		ordVarNames    = names(mzData)[isOrd]
+		binVarNames    = names(mzData)[isBin]
+		contVarNames   = names(mzData)[!isFactor]
+	} else {
+		# summary data
+		isFactor = isOrd = isBin = c()
+		nFactors = nOrdVars = nBinVars = 0
+		factorVarNames = ordVarNames = binVarNames = contVarNames = c()
+	}
 
 	if(dataType == "raw") {
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
@@ -724,12 +727,12 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 			# ===========================================================================
 			# Fill with zeros: default for ordinals and binary...
 			meansFree = (!isBin) # fix the binary variables at zero
-			meansMatrix  = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = obsMZmeans, dimnames = meanDimNames)
+			meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = obsMZmeans, dimnames = meanDimNames)
 
 			# ==============
 			# = Thresholds =
 			# ==============
-			# for better guessing with low-freq cells
+			# For better guessing with low-freq cells
 			allData = rbind(mzData, dzData)
 			threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), verbose = FALSE)
 			mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
@@ -762,10 +765,9 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		if(!is.null(weightVar)){
 			stop("You can't set weightVar when you give cov data - use cov.wt to create weighted cov matrices, or pass in raw data")
 		}
-		if( is.null(numObsMZ)){ stop(paste0("You must set numObsMZ with ", dataType, " data"))}
-		if( is.null(numObsDZ)){ stop(paste0("You must set numObsDZ with ", dataType, " data"))}
-
-		# TODO should keep this just as mxData?
+		umx_check(!is.null(numObsMZ), paste0("You must set numObsMZ with ", dataType, " data")
+		umx_check(!is.null(numObsDZ), paste0("You must set numObsDZ with ", dataType, " data")
+		# TODO should keep this just as mzData?
 		het_mz = umx_reorder(mzData, selDVs)		
 		het_dz = umx_reorder(dzData, selDVs)
 		varStarts = diag(het_mz)
@@ -823,7 +825,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 			mxFitFunctionMultigroup(c("MZ", "DZ"))
 		)
 	} else {
-		# bVector is TRUE!
+		# bVector is TRUE
 		# To weight objective functions in OpenMx, you specify a container model that applies the weights
 		# m1 is the model with no weights, but with "vector = TRUE" option added to the FIML objective.
 		# This option makes FIML return individual likelihoods for each row of the data (rather than a single -2LL value for the model)
@@ -1897,10 +1899,10 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' str(mzData)
 #' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 
-umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = FALSE, droplevels = FALSE, verbose = FALSE){
-	if(deviationBased){ stop("deviation-based not handled yet - not sure it's needed now...") }
-	if(droplevels){     stop("Not sure it's wise to drop levels...") }
-	# TODO implement ability to manualy choose the method - more flexible and explicit.
+umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE){
+	# if(deviationBased){ stop("deviation-based not handled yet - not sure it's needed now...") }
+	if(droplevels){ stop("Not sure it's wise to drop levels...") }
+	# TODO implement manual choice of method - more flexible and explicit.
 	method      = umx_default_option(method, c("auto", "Mehta", "allFree"), check = TRUE)
 	nSib        = length(suffixes)
 	isFactor    = umx_is_ordered(df) # all ordered factors including binary

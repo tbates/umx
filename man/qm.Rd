@@ -35,7 +35,8 @@ Other Miscellaneous Utility Functions: \code{\link{umxHetCor}};
   \code{\link{umx_grep}}; \code{\link{umx_lower2full}};
   \code{\link{umx_means}}; \code{\link{umx_merge_CIs}};
   \code{\link{umx_move_file}};
-  \code{\link{umx_rename_file}}; \code{\link{umx_round}};
+  \code{\link{umx_rename_file}};
+  \code{\link{umx_residualize}}; \code{\link{umx_round}};
   \code{\link{umx_scale_wide_twin_data}};
   \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}};
   \code{\link{umx}}, \code{\link{umx-package}}
