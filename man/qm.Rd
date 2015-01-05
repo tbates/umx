@@ -20,9 +20,11 @@ Quickmatrix function
 # simple example
 qm(0, 1 |
    2, NA)
-M <- N <- diag(2)
-qm(M,c(4,5) | c(1,2),N | t(1:3))
-matrix(1:16, 4)
+\dontrun{
+# clever example
+M1 = M2 = diag(2)
+qm(M1,c(4,5) | c(1,2),M2 | t(1:3))
+}
 }
 \references{
 \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}

@@ -3,16 +3,15 @@
 \alias{umx_residualize}
 \title{umx_residualize}
 \usage{
-umx_residualize(var, covs, suffixes = NULL, form = NULL, data)
+umx_residualize(var, covs = NULL, suffixes = NULL, data)
 }
 \arguments{
-\item{var}{The base name of the variable you want to residualize}
+\item{var}{The base name of the variable you want to residualize. Alternatively, a
+regression \code{\link{formula}} containing var on the lhs, and covs on the rhs}
 
 \item{covs}{Covariates to residualize on.}
 
-\item{suffixes}{Suffixes that identify the variable for each twin, i.e. c("_T1", "_T2")}
-
-\item{form}{A convenience for cases where you want to use a complex formula.
+\item{suffixes}{Suffixes that identify the variable for each twin, i.e. c("_T1", "_T2")
 Up to you to check all variables are present!}
 
 \item{data}{The dataframe containing all the variables}
@@ -33,10 +32,11 @@ the paired-wide columns!
 tmp = mtcars
 # Residualise mpg on cylinders and displacement
 r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)$mpg
-r1 = umx_residualize("mpg", c("cyl", "disp"), form = "mpg ~ cyl + I(cyl^2) + disp ", data = tmp)$mpg
-r2 = residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))
-all(r1 ==r2)
+r2 = residuals(lm(mpg ~ cyl + disp, data = tmp, na.action = na.exclude))
+all(r1 == r2)
 # plot(r1~r2)
+# formula interface
+r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = tmp)$mpg
 # Same again, but now on wide data (i.e. with family data on each row)
 tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
 tmp$cyl_T1  = tmp$cyl_T2  = tmp$cyl

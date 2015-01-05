@@ -5,7 +5,7 @@
 \usage{
 umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
   method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA),
-  deviationBased = FALSE, droplevels = FALSE, verbose = FALSE)
+  deviationBased = TRUE, droplevels = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{df}{the data being modelled (to allow access to the factor levels and quantiles within these for each variable)}
@@ -18,7 +18,7 @@ umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
 
 \item{l_u_bound}{c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.}
 
-\item{deviationBased}{Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)}
+\item{deviationBased}{Whether to build a helper matrix to keep the thresholds in order (defaults to = TRUE)}
 
 \item{droplevels}{Whether to drop levels with no observed data (defaults to FALSE)}
 
@@ -37,6 +37,10 @@ is to build a standard-normal model (i.e., a latent model with zero-means, and u
 and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
 is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
 this threshold (1-minus the number of categories).
+
+For \strong{deviation methods}, it returns a list of lowerOnes_for_thresh, deviations_for_thresh & thresholdsAlgebra (named threshMatName)
+
+For \strong{direct}, it returns a thresholdsMatrix (named threshMatName)
 }
 \examples{
 x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")

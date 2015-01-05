@@ -53,7 +53,7 @@ umx_check_multi_core <- function() {
 	message("I will now set cores to max (they will be reset after) and run a script that hits multiple cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
 	umx_set_cores(detectCores())
-	source("~/bin/OpenMx/trunk/models/nightly/3LatentMultiRegWithContinuousModerator-c.R")
+	source("~/bin/OpenMx/models/nightly/3LatentMultiRegWithContinuousModerator-c.R")
 	umx_set_cores(oldCores)
 }
 
@@ -1584,14 +1584,14 @@ umx_has_been_run <- function(model, stop = FALSE) {
 	output <- model@output
 	if (is.null(output)){
 		if(stop){
-			stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
+			stop("Provided model has no objective function, and thus no output to process further")
 		}else{
 			return(FALSE)
 		}
 	} else if (length(output) < 1){
 		if(stop){
-			stop("Provided model has no output. I can only standardize models that have been run!")		
-		}else{
+			stop("Provided model has no output. , and thus no output to process further")
+		} else {
 			return(FALSE)
 		}
 	}
@@ -2528,10 +2528,10 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' Optionally, this also works on wide (ie., twin) data. Just supply suffixes to identify
 #' the paired-wide columns!
 #'
-#' @param var The base name of the variable you want to residualize
+#' @param var The base name of the variable you want to residualize. Alternatively, a 
+#' regression \code{\link{formula}} containing var on the lhs, and covs on the rhs
 #' @param covs Covariates to residualize on.
 #' @param suffixes Suffixes that identify the variable for each twin, i.e. c("_T1", "_T2")
-#' @param form A convenience for cases where you want to use a complex formula.
 #' Up to you to check all variables are present!
 #' @param data The dataframe containing all the variables
 #' @return - dataframe with var residualized in place (i.e under its original column name)
@@ -2542,37 +2542,42 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' tmp = mtcars
 #' # Residualise mpg on cylinders and displacement
 #' r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)$mpg
-#' r1 = umx_residualize("mpg", c("cyl", "disp"), form = "mpg ~ cyl + I(cyl^2) + disp ", data = tmp)$mpg
-#' r2 = residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))
-#' all(r1 ==r2)
+#' r2 = residuals(lm(mpg ~ cyl + disp, data = tmp, na.action = na.exclude))
+#' all(r1 == r2)
 #' # plot(r1~r2)
+#' # formula interface
+#' r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = tmp)$mpg
 #' # Same again, but now on wide data (i.e. with family data on each row)
 #' tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
 #' tmp$cyl_T1  = tmp$cyl_T2  = tmp$cyl
 #' tmp$disp_T1 = tmp$disp_T2 = tmp$disp
 #' umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)
-umx_residualize <- function(var, covs, suffixes = NULL, form = NULL, data){
+umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	# Check names
-	if(!is.null(form)){
-		# form is a formula containing var on the lhs, and covs on the rhs
-		umx_check(!is.null(var), "stop", "when using form, leave var and covs empty")
-		var  = formula.tools::all.vars(formula.tools::lhs(form))
-		covs = formula.tools::all.vars(formula.tools::rhs(form))
+	if(class(var) == "formula"){
+		umx_check(is.null(covs), "stop", "when using formula, leave covs empty")
+		require(formula.tools)
+		form <- var
+		var  = all.vars(lhs(form))
+		covs = all.vars(rhs(form))
+	}else{
+		form = NULL # so we catch this and create it below
 	}
+	
 	if(is.null(suffixes)){
-		vars = c(var,covs)
+		vars = c(var, covs)
 	} else {
-		# wide vars provided: expand names
-		vars = umx_paste_names(c(var,covs), suffixes=suffixes)
+		# Wide vars provided: expand names
+		vars = umx_paste_names(c(var, covs), suffixes = suffixes)
 	}
-	umx_check_names(vars, data = data, die = T)
-	nVar = length(c(var,covs))
+	umx_check_names(vars, data = data, die = TRUE)
+	nVar = length(c(var, covs))
 
 	if(!is.null(suffixes)){
-		# make a long version of the vars we want
+		# Make a long version of the vars we want
 		for (i in 1:length(suffixes)) {
-			vars = umx_paste_names(c(var,covs), suffixes=suffixes[i])
-			if(i==1){
+			vars = umx_paste_names(c(var, covs), suffixes = suffixes[i])
+			if(i == 1){
 				tmp = data[,vars]
 				names(tmp) = c(var, covs)
 			} else {
@@ -2581,18 +2586,19 @@ umx_residualize <- function(var, covs, suffixes = NULL, form = NULL, data){
 				tmp = rbind(tmp, tmp2)
 			}
 		}
-	}else{
+	} else {
 		tmp = data[,vars]
 	}
 	oldNAs = sum(is.na(tmp[,var]))
-	if(!is.null(form)){
+	# If formula not provided, construct it from var and covs
+	if(is.null(form)){
 		form = paste0(var, " ~ ", paste(covs, collapse = " + "))
 		form = as.formula(form)
 	}
 	tmp <- residuals(lm(form, data = tmp, na.action = na.exclude))
 	newNAs = sum(is.na(tmp))
 	if(newNAs > oldNAs){
-		message(newNAs - oldNAs, "cases of var ", omxQuotes(var), "lost due to missing covariates")
+		message(newNAs - oldNAs, " cases of var ", omxQuotes(var), "lost due to missing covariates")
 	}
 	if(!is.null(suffixes)){
 		i = 1
@@ -2859,9 +2865,11 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.lev
 #' # simple example
 #' qm(0, 1 |
 #'    2, NA)
-#' M <- N <- diag(2)
-#' qm(M,c(4,5) | c(1,2),N | t(1:3))
-#' matrix(1:16, 4)
+#' \dontrun{
+#' # clever example
+#' M1 = M2 = diag(2)
+#' qm(M1,c(4,5) | c(1,2),M2 | t(1:3))
+#' }
 qm <- function(..., rowMarker = "|") {
 	# Short hard to read version that allows some of the more advanced Matlab capabilities like Matrices as arguments:
 	# turn ... into string

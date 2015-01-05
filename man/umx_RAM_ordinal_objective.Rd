@@ -36,7 +36,7 @@ model = umx_RAM_ordinal_objective(model)
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other Advanced Helpers: \code{\link{umx_RAM_thresh_Matrix}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+Other Advanced Helpers: \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

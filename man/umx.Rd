@@ -90,8 +90,7 @@ plot(m1, std = TRUE, dotFilename = NA)
 - \url{"http://www.github.com/tbates/umx"}
 }
 \seealso{
-Other Advanced Helpers: \code{\link{umx_RAM_ordinal_objective}};
-  \code{\link{umx_RAM_thresh_Matrix}}
+Other Advanced Helpers: \code{\link{umx_RAM_ordinal_objective}}
 
 Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};

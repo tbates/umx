@@ -40,7 +40,7 @@ umxACE(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = 0.5,
 \item{bVector}{whether to compute row-wise likelihoods (defaults to FALSE)}
 }
 \value{
-- \code{\link{mxModel}}
+- \code{\link{mxModel}} of subclass mxModel.ACE
 }
 \description{
 Make a 2-group ACE model

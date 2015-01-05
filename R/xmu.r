@@ -349,8 +349,8 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
 		# threshLbounds[j] <- .001
 	}
 
-	threshNames = paste("Threshold", 1:maxThreshMinus1, sep='')
-	thresh = mxMatrix("Full", name="thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = FALSE, free = TRUE, values= threshValues, dimnames=list(threshNames,ordNameList))
+	threshNames = paste0("Threshold", 1:maxThreshMinus1)
+	thresh = mxMatrix("Full", name = "thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = FALSE, free = TRUE, values = threshValues, dimnames = list(threshNames,ordNameList))
 
 	if(verbose){
 		cat("levels in each variable are:")
@@ -358,9 +358,9 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
 		print(paste("maxThresh - 1 = ", maxThreshMinus1))
 	}
 	return(list(
-		thresh, 
-		mxRAMObjective(A="A", S="S", F="F", M="M", thresholds="thresh"), 
-		mxData(df, type="raw")
+		thresh,
+		mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), 
+		mxData(df, type = "raw")
 		)
 	)
 }
@@ -405,12 +405,13 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 		if(thisThreshMinus1 < maxThreshMinus1) {
 			# pad the shorter var's excess rows with fixed@99 so humans can see them...
 			deviations_for_thresh@values[(thisThreshMinus1+1):maxThreshMinus1,n] <- (-99)
+
 			deviations_for_thresh@labels[(thisThreshMinus1+1):maxThreshMinus1,n] <- paste("unusedThresh", min(thisThreshMinus1 + 1, maxThreshMinus1), n, sep = "_")
 			deviations_for_thresh@free  [(thisThreshMinus1+1):maxThreshMinus1,n] <- F
 		}
 	}
 
-	threshNames = paste("Threshold", 1:maxThreshMinus1, sep = '')
+	threshNames = paste0("Threshold", 1:maxThreshMinus1)
 	thresholdsAlgebra = mxAlgebra(lowerOnes_for_thresh %*% deviations_for_thresh, dimnames = list(threshNames, ordNameList), name = "thresholdsAlgebra")
 	if(verbose){
 		cat("levels in each variable are:")

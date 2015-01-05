@@ -3,7 +3,7 @@
 \alias{umxReRun}
 \title{umxReRun}
 \usage{
-umxReRun(lastFit, update = NA, regex = FALSE, free = FALSE, value = 0,
+umxReRun(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0,
   freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE,
   comparison = FALSE, dropList = "deprecated")
 }

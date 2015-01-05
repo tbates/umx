@@ -58,9 +58,9 @@ a$labels
 # labels with "data." in the name are left alone
 a = mxMatrix(name = "a", "Full", 1,3, labels = c("data.a", "test", NA))
 umxLabel(a, verbose = TRUE)
-umxLabel(a), verbose = TRUE, overRideExisting = FALSE)
-umxLabel(a), verbose = TRUE, overRideExisting = TRUE)
-umxLabel(a), verbose = TRUE, overRideExisting = TRUE)
+umxLabel(a, verbose = TRUE, overRideExisting = FALSE)
+umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
+umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

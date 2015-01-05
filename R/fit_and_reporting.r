@@ -347,32 +347,29 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 			"\nThat's a bug. Please report it to timothy.c.bates@gmail.com")
 		}
 	} else {
-		model_summary = summary(object)
+		# model has CIs and they have been run
+		model_summary = OpenMx::summary(object)
 		CIs = model_summary$CI
-		if(is.null(CIs)){
-			# 
-		} else {
-			model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
-			model_CI_OK = object@output$confidenceIntervalCodes
-			colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
-			model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
-			print(model_CIs)
-			npsolMessages <- list(
-			'1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
-			'2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
-			'3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
-			'4' = 'The major iteration limit was reached (Mx status BLUE).',
-			'5' = 'not used',
-			'6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
-			'7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
-			'8' = 'not used',
-			'9' = 'An input parameter was invalid')
-			if(any(model_CI_OK !=0) & showErrorcodes){
-				codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
-				relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
-				for(i in relevantCodes) {
-				   print(paste0(i, ": ", npsolMessages[i][[1]]))
-				}
+		model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
+		model_CI_OK = object@output$confidenceIntervalCodes
+		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
+		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
+		print(model_CIs)
+		npsolMessages <- list(
+		'1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
+		'2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
+		'3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
+		'4' = 'The major iteration limit was reached (Mx status BLUE).',
+		'5' = 'not used',
+		'6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
+		'7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
+		'8' = 'not used',
+		'9' = 'An input parameter was invalid')
+		if(any(model_CI_OK !=0) & showErrorcodes){
+			codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
+			relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
+			for(i in relevantCodes) {
+			   print(paste0(i, ": ", npsolMessages[i][[1]]))
 			}
 		}
 	}
@@ -606,12 +603,11 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 		print(model@output$confidenceIntervals)
 	}
 }
-
 #' umxSummaryACE
 #'
 #' Summarise a Cholesky model, as returned by umxACE
 #'
-#' @aliases umxSummary.MxModel.ACE
+#' @aliases umxSummaryACE umxSummary.MxModel.ACE
 #' @param fit an \code{\link{mxModel}} to summarize
 #' @param digits rounding (default = 2)
 #' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
@@ -627,7 +623,7 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso - \code{\link{umxACE}} 
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
 #' require(OpenMx)
 #' data(twinData)
@@ -857,14 +853,24 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	} else if (is.null(base)) {
 		stop("You must provide at least a base model for umxCompare")
 	}
-	tableOut  = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
+	if(length(comparison) == 1) {
+		if(!umx_has_been_run(base)){
+			warning("base model has not been run!")		
+		}
+	}
+	if(length(comparison) == 1) {
+		if(!umx_has_been_run(comparison)){
+			warning("comparison model has not been run!")		
+		}
+	}
+	tableOut = OpenMx::mxCompare(base = base, comparison = comparison, all = all)
 
 	# | 1       |    2          | 3  | 4        | 5   | 6        | 7        | 8      | 9    |
 	# | base    | comparison    | ep | minus2LL | df  | AIC      | diffLL   | diffdf | p    |
 	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 
-	tablePub  = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
+	tablePub = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
 	names(tablePub)     <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
 	# Fix problem where base model has compare set to its own name, and name set to NA
 	nRows = dim(tablePub)[1]
