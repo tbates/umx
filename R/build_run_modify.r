@@ -5,15 +5,15 @@ options('mxCondenseMatrixSlots'= FALSE)
 
 # library(devtools)
 # setwd("~/bin/umx");
-# document("~/bin/umx"); install("~/bin/umx"); ?umx
-# check_doc("~/bin/umx")
-# run_examples("~/bin/umx")
-# build("~/bin/umx")
-# load_all("~/bin/umx")
-# show_news("~/bin/umx")
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+# devtools::check_doc("~/bin/umx")
+# devtools::run_examples("~/bin/umx")
+# devtools::build("~/bin/umx")
+# devtools::load_all("~/bin/umx")
+# devtools::show_news("~/bin/umx")
 # source('http://openmx.psyc.virginia.edu/getOpenMxBeta.R')
 # system(paste("open", shQuote("/Users/tim/bin/umx/R/misc_and_utility.r")))
-
+# install.packages("OpenMx", "~/Dropbox/shared folders/OpenMx_binaries/OpenMx2.0.1/3.1.1-snowleopard/OpenMx_2.0.1-4133.tgz")
 # create()
 # add_travis();
 # update_version();
@@ -478,7 +478,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param selDVs The variables to include from the data
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) If you use this, omit it from SelDVs
+#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
+#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param dzAr The DZ genetic correlation (defaults to .5, set to .25 for dominance model)
 #' @param dzCr The DZ genetic correlation (defaults to 1,  vary to examine assortative mating)
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
@@ -609,6 +610,9 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 	dataType = umx_is_cov(dzData, boolean = FALSE)
 
 	if(dataType == "raw"){
+		if(!all(is.null(c(numObsMZ, numObsDZ)))){
+			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
+		}
 		# Drop any unused columns from mz and dzData
 		mzData = mzData[, selDVs]
 		dzData = dzData[, selDVs]
@@ -640,9 +644,6 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 	}
 
 	if(dataType == "raw") {
-		if(!all(is.null(c(numObsMZ, numObsDZ)))){
-			stop("You should not be setting numObs with ", dataType, " data...")
-		}
 		if(!is.null(weightVar)){
 			# weight variable provided: check it exists in each frame
 			if(!umx_check_names(weightVar, data = mzData, die=F) | !umx_check_names(weightVar, data = dzData, die=F)){
@@ -1181,7 +1182,9 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' 
 #' umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally adding, setting, or dropping parameters.
 #' The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
-#' fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = TRUE)
+#' 
+#' \code{fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
+#' 
 #' A powerful feature is regular expression. These let you drop collections of paths by matching patterns
 #' fit2 = umxReRun(fit1, update = "C[sr]", regex = TRUE, name = "drop_Cs_andCr", comparison = TRUE)
 #' 

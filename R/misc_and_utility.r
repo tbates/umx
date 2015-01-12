@@ -1,9 +1,9 @@
 # find non-ascii = grep this '[^\x00-\x7F]'
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 # devtools::check("~/bin/umx");
 # devtools::load_all()
 # devtools::dev_help("umxX")
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 # show_news()
 # utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
 # so umx_swap_a_block()
@@ -2955,6 +2955,35 @@ qm <- function(..., rowMarker = "|") {
 #' umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 umx_explode <- function(delimiter = character(), string) { 
 	strsplit(string, split = delimiter)[[1]] 
+}
+
+#' umx_names
+#'
+#' Convenient equivalent of grep("fa[rl].*", names(df), value=T, ignore.case=T)
+#'
+#' @param df dataframe to get names from
+#' @param pattern = "find.*"
+#' @param ignore.case default = TRUE (opposite default to grep)
+#' @param perl = FALSE
+#' @param value = default = TRUE (opposite default to grep)
+#' @param fixed = FALSE
+#' @param useBytes = FALSE
+#' @param invert = FALSE
+#' @return - vector of matches
+#' @export
+#' @family Miscellaneous Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @examples
+#' umx_names(mtcars, "mpg") # "mpg"  "cyl"  "disp" "hp"   "drat" "wt"   "qsec" "vs"   "am"   "gear" "carb"
+#' umx_names(mtcars, "^d") # "disp", drat
+#' umx_names(mtcars, "r[ab]") # "drat", "carb"
+umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
+	nameVector = names(df)
+	if(is.null(nameVector)){
+		stop(paste0("umx_names requires a dataframe or something else with names(), ", umx_object_as_str(df), " is a ", typeof(df)))
+	}
+	grep(pattern = pattern, x = names(df), ignore.case = ignore.case, perl = perl, value = value,
+	     fixed = fixed, useBytes = useBytes, invert = invert)
 }
 
 #' umx_trim
