@@ -3,7 +3,7 @@
 \alias{demand}
 \title{demand a package}
 \usage{
-demand(package = "")
+demand(package)
 }
 \arguments{
 \item{package}{The package name as a string.}
@@ -12,9 +12,7 @@ demand(package = "")
 This loads the package, installing it if needed
 }
 \examples{
-\dontrun{
 demand("numderiv")
-}
 }
 \references{
 - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}

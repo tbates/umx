@@ -3011,16 +3011,14 @@ umx_rot <- function(vec){
 #' @family Miscellaneous Functions
 #' @references - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}
 #' @examples
-#' \dontrun{
 #' demand("numderiv")
-#' }
-demand <- function(package = "") {
+demand <- function(package) {
 	if(FALSE == package %in% rownames(installed.packages() ) ) {
 		m <- getCRANmirrors(all = FALSE, local.only = FALSE)
 		URL <- m[grepl("Cloud",m$Name),"URL"][1] # get the first repos with "cloud" in the name
 		install.packages(package, repos = URL)
 	}
-	require(pacakge)	
+	library(package = package, character.only = TRUE)
 }
 
 
