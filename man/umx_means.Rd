@@ -10,10 +10,10 @@ umx_means(df, ordVar = 0, na.rm = TRUE)
 
 \item{ordVar}{value to return for the means of factor data = 0}
 
-\item{na.rm}{passed to cov - defaults to "complete"}
+\item{na.rm}{passed to mean - defaults to "na.rm"}
 }
 \value{
-- \code{\link{mxModel}}
+- frame of means
 }
 \description{
 Helper to get means from a df that might contain ordered  data. Factor means are set to "ordVar"
@@ -25,17 +25,9 @@ tmp$hp  = ordered(mtcars$hp)  # binary factor
 umx_means(tmp, ordVar = 0, na.rm = TRUE)
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{qm}};
-  \code{\link{umxHetCor}};
-  \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_as_numeric}}; \code{\link{umx_cor}};
-  \code{\link{umx_cov2raw}}; \code{\link{umx_find_object}};
-  \code{\link{umx_grep}}; \code{\link{umx_lower2full}};
-  \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
-  \code{\link{umx_rename_file}};
-  \code{\link{umx_residualize}}; \code{\link{umx_round}};
-  \code{\link{umx_scale_wide_twin_data}};
-  \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}};
+Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
+  \code{\link{reliability}}; \code{\link{umxAnova}};
+  \code{\link{umxCov2cor}}; \code{\link{umx_pp33}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }
 

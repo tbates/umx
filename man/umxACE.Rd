@@ -17,7 +17,8 @@ umxACE(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = 0.5,
 
 \item{mzData}{The MZ dataframe}
 
-\item{suffix}{The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) If you use this, omit it from SelDVs}
+\item{suffix}{The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
+omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, set to .25 for dominance model)}
 

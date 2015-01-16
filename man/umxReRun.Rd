@@ -36,11 +36,13 @@ umxReRun(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0,
 \description{
 umxReRun Is a convenience function to re-run an \code{\link{mxModel}}, optionally adding, setting, or dropping parameters.
 The main value for umxReRun is compactness. So this one-liner drops a path labelled "Cs", and returns the updated model:
-fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = TRUE)
-A powerful feature is regular expression. These let you drop collections of paths by matching patterns
-fit2 = umxReRun(fit1, update = "C[sr]", regex = TRUE, name = "drop_Cs_andCr", comparison = TRUE)
 }
 \details{
+\code{fit2 = umxReRun(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
+
+A powerful feature is regular expression. These let you drop collections of paths by matching patterns
+fit2 = umxReRun(fit1, update = "C[sr]", regex = TRUE, name = "drop_Cs_andCr", comparison = TRUE)
+
 If you're just starting out, you might find it easier to be more explicit. Like this:
 
 fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")

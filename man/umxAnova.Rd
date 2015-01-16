@@ -65,7 +65,7 @@ Other Miscellaneous Functions: \code{\link{demand}};
 
 Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
   \code{\link{reliability}}; \code{\link{umxCov2cor}};
-  \code{\link{umx_pp33}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+  \code{\link{umx_means}}; \code{\link{umx_pp33}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

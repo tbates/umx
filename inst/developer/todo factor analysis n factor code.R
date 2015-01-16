@@ -75,8 +75,7 @@ EFA.Comp.Data <- function(Data, F.Max, N.Pop = 10000, N.Samples = 500, Alpha = .
 
 
 ################################################################################################################
-GenData <- function(Supplied.Data, N.Factors, N, Max.Trials = 5, Initial.Multiplier = 1)
-{
+GenData <- function(Supplied.Data, N.Factors, N, Max.Trials = 5, Initial.Multiplier = 1) {
     # Steps refer to description in the following article:
     # Ruscio, J., & Kaczetow, W. (2008). Simulating multivariate nonnormal data using an iterative algorithm. 
     # Multivariate Behavioral Research, 43(3), 355-381.

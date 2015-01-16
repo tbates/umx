@@ -71,7 +71,7 @@ umxSaturatedRAM <- function(model, evaluate = T, verbose=F) {
 # ================
 # = SET THIS!!!! =
 # ================
-fit = # set this to the girl1 model
-
-a = umxSaturatedRAM(fit)
-summary(a)
+# fit = # set this to the girl1 model
+#
+# a = umxSaturatedRAM(fit)
+# summary(a)

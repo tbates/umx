@@ -18,7 +18,7 @@
 # 	x = data.frame(m1$top$threshMat$values)
 # 	x[x == 0] = NA
 # 	diffRows = dim(x)[1] -1
-# 	y = umx_apply(umx_rot, to_each = "column", of_DF = x)
+# 	y = umx_apply(umx_rot, of_DF = x, by = "columns")
 # 	y[1:diffRows,] - x[1:diffRows,]
 # 	# some threshold differences are zero
 # 	any(y[1:diffRows,] - x[1:diffRows,] == 0, na.rm = T)
@@ -689,25 +689,26 @@ umxFormativeVarianceMess <- function(model){
 #' \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
 #'
 #' @param FUN the function to apply
-#' @param to_each What to apply the function to: columns or rows (default = "column")
 #' @param of_DF the dataframe to work with
+#' @param by What to apply the function to: columns or rows (default = "columns")
 #' @param ... optional arguments to FUN, i.e., na.rm = T
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Miscellaneous Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umx_apply(mean, to_each = "column", of_DF = mtcars)
-#' umx_apply(mean, to_each = "row", of_DF = mtcars, na.rm = TRUE)
-umx_apply <- function(FUN, to_each = "column", of_DF, ...) {
-	if(! (to_each %in% c("column", "row"))){
-		stop(paste("to_each must be either 'column' or 'row', you gave me", to_each))
-	} else if (to_each == "row") {
-		to_each = 1
+#' umx_apply(mean, mtcars, by = "columns")
+#' umx_apply(mean, of_DF = mtcars, by = "columns")
+#' umx_apply(mean, by = "rows", of_DF = mtcars, na.rm = TRUE)
+umx_apply <- function(FUN, of_DF, by = "columns", ...) {
+	if(! (by %in% c("columns", "rows"))){
+		stop(paste("by must be either 'columns' or 'rows', you gave me", by))
+	} else if (by == "rows") {
+		by = 1
 	} else {
-		to_each = 2		
+		by = 2		
 	}
-	apply(of_DF, to_each, FUN, ...)
+	apply(of_DF, by, FUN, ...)
 
 	# TODO fix all this...
 	# lapply if list
@@ -1729,18 +1730,20 @@ umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), us
 #'
 #' @param df a dataframe of raw data from which to get variances.
 #' @param ordVar value to return for the means of factor data = 0
-#' @param na.rm passed to cov - defaults to "complete"
-#' @return - \code{\link{mxModel}}
+#' @param na.rm passed to mean - defaults to "na.rm"
+#' @return - frame of means
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family Miscellaneous Stats Helpers
 #' @examples
 #' tmp = mtcars[,1:4]
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
 #' tmp$hp  = ordered(mtcars$hp)  # binary factor
 #' umx_means(tmp, ordVar = 0, na.rm = TRUE)
-umx_means <- function(df, ordVar = 0, na.rm = TRUE){
+umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 	if(any(umx_is_ordered(df))){
+		# Set the default outcome
 		means = rep(ordVar, times = dim(df)[2])
+		# Get variables where mean makes snes
 		cont = umx_is_ordered(df, continuous.only = TRUE)
 		if(any(cont)){
 			for(i in which(cont)) {
@@ -1748,7 +1751,7 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE){
 			}
 		}
 	} else {
-		means = umx_apply(mean, to_each = "column", of_DF = df, na.rm = TRUE)
+		means = umx_apply(mean, df, by = "columns", na.rm = TRUE)
 	}
 	return(means)
 }

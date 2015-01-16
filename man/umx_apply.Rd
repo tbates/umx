@@ -3,14 +3,14 @@
 \alias{umx_apply}
 \title{umx_apply}
 \usage{
-umx_apply(FUN, to_each = "column", of_DF, ...)
+umx_apply(FUN, of_DF, by = "columns", ...)
 }
 \arguments{
 \item{FUN}{the function to apply}
 
-\item{to_each}{What to apply the function to: columns or rows (default = "column")}
-
 \item{of_DF}{the dataframe to work with}
+
+\item{by}{What to apply the function to: columns or rows (default = "columns")}
 
 \item{...}{optional arguments to FUN, i.e., na.rm = T}
 }
@@ -22,8 +22,9 @@ Tries to make apply more readable. Other functions to think of include
 \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
 }
 \examples{
-umx_apply(mean, to_each = "column", of_DF = mtcars)
-umx_apply(mean, to_each = "row", of_DF = mtcars, na.rm = TRUE)
+umx_apply(mean, mtcars, by = "columns")
+umx_apply(mean, of_DF = mtcars, by = "columns")
+umx_apply(mean, by = "rows", of_DF = mtcars, na.rm = TRUE)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
