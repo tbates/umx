@@ -4,7 +4,7 @@
 \title{umxCompare}
 \usage{
 umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
-  report = 1)
+  report = 1, file = "tmp.html")
 }
 \arguments{
 \item{base}{The base \code{\link{mxModel}} for comparison}
@@ -18,6 +18,8 @@ umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
 \item{report}{Optionally add sentences for inclusion inline in a paper (report= 2)
 and output to an html table which will open your default browser (report = 3).
 (This is handy for getting tables into Word, markdown, and other text systems!)}
+
+\item{file}{file to write html too if report=3 (defaults to "tmp.html")}
 }
 \description{
 umxCompare compares two or more \code{\link{mxModel}}s.

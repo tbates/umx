@@ -1,5 +1,5 @@
 # library(devtools)
-# document("~/bin/umx"); install("~/bin/umx");
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # setwd("~/bin/umx"); 
 # build("~/bin/umx")
 # check("~/bin/umx")
@@ -13,6 +13,54 @@
 # =====================
 # = Model Diagnostics =
 # =====================
+
+#' umxReduce
+#'
+#' Reduce a model - this is a work in progress
+#'
+#' @param m1 an \code{\link{mxModel}} to reduce
+#' @param report how to report the results table. 3 = html file
+#' @param baseFileName file to use when report = 3 (defaults to "tmp.html", I add the html)
+#' @return - 
+#' @export
+#' @family umx core functions
+#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' model = umxReduce(model)
+#' }
+umxReduce <- function(m1, report = 3, baseFileName = "tmp") {
+	# umxReduce(m1, report = 3)
+	umx_is_MxModel(m1)
+	if(class(m1) == "MxModel.GxE"){
+		# Reduce GxE Model
+		no_c   = umxReRun(m1, "c_r1c1" , name = "no_c"   )
+		no_a   = umxReRun(m1, "a_r1c1" , name = "no_a"   )
+		no_em  = umxReRun(m1, "em_r1c1", name = "no_em"  )
+		no_cm  = umxReRun(m1, "cm_r1c1", name = "no_cm"  )
+		no_am  = umxReRun(m1, "am_r1c1", name = "no_am"  )
+		no_lin = umxReRun(m1, "lin11"  , name = "no_lin" )  # big linear effect of ses on brain size
+		no_sq  = umxReRun(m1, "quad11" , name = "no_quad")  # no ^2 effect of ses on brain size
+		# good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
+
+		no_c_cm   = umxReRun(no_c    , "cm_r1c1", name = "no_c_no_cm")
+		no_c_cem  = umxReRun(no_c_cm , "em_r1c1", name = "no_c_no_em")
+		no_c_acem = umxReRun(no_c_cem, "am_r1c1", name = "no_a_c_or_em")
+		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report=1)
+		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report=report, file = paste0(baseFileName, ".html"))
+		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report=1)
+		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report=report, file=paste0(baseFileName, 2, ".html"))
+		# return(result)
+	} else {
+		stop("only GxE implemented so far. Open build twin and add what you want..")
+		# TODO if we get an MxModel.ACE, lets 
+		# 1. make umxCP, and umxIP
+		# 2. also relaxed CP/IP?
+		# 3 report fit table
+	}
+}
+
 
 #' mxDiagnostic
 #'
@@ -821,6 +869,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' @param report Optionally add sentences for inclusion inline in a paper (report= 2)
 #' and output to an html table which will open your default browser (report = 3).
 #' (This is handy for getting tables into Word, markdown, and other text systems!)
+#' @param file file to write html too if report=3 (defaults to "tmp.html")
 #' @family Reporting functions
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
 #' @references - \url{http://www.github.com/tbates/umx/}
@@ -847,7 +896,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 #' umxCompare(m1, c(m2, m3))
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 1) {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 1, file = "tmp.html") {
 	if(is.null(comparison)){
 		comparison <- base
 	} else if (is.null(base)) {
@@ -904,7 +953,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	
 	if(report == 3){
-		R2HTML::HTML(tablePub, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE); system(paste0("open ", "tmp.html"))
+		R2HTML::HTML(tablePub, file = file, Border = 0, append = FALSE, sortableDF = TRUE); system(paste0("open ", file))
 	} else {
 		umx_print(tablePub)
 		# R2HTML::print(tableOut, output = output, rowlabel = "")
