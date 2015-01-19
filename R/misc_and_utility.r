@@ -1049,8 +1049,12 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #'
 #' note: to use replace list, you must say c(old = "new"), not c(old -> "new")
 #' @param x the dataframe in which to rename variables
-#' @param replace a named collection of c(oldName = "newName") pairs (OR, if using old, the list of new names)
-#' @param old Optional list of old names that will be replaced by the contents of replace. defaults to NULL in which case replace must be paired list.
+#' @param replace If used alone, a named collection of c(oldName = "newName") pairs
+#' OR, if "old" is a list of existing names, the list of new names)
+#' OR, if "grep" is a regular expression, the replace string)
+#' @param old Optional list of old names that will be found and replaced by the contents of replace. Defaults to NULL
+#' @param grep Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL
+#' @param ... additional parameters passed into ?gsub if using grep
 #' @return - dataframe with columns renamed.
 #' @export
 #' @family Miscellaneous Functions
@@ -1063,8 +1067,26 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' umx_check_names("displacement", data = x, die = TRUE)
 #' # This will warn that "disp" doesn't exist (anymore)
 #' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
-umx_rename <- function (x, replace, old = NULL) {
+#' x = umx_rename(x, grep = "lacement", replace = "") # use grep to set it back
+#' umx_names(x, "^d")
+umx_rename <- function (x, replace = NULL, old = NULL, grep = NULL, ...) {
 	# See also gdate::rename.vars(data, from, to)	
+	if(!is.null(old) && !is.null(grep)){
+		stop("Only one of old and grep can be used")
+	}
+	if(!is.null(grep)){
+		if(is.null(replace)){
+			stop("Please set replace to a valid replacement string!")
+		}
+	    nameVector = names(x)
+	    if (is.null(nameVector)) {
+	        stop(paste0("umx_names requires a dataframe or something else with names(), ", 
+	            umx_object_as_str(x), " is a ", typeof(x)))
+	    }
+		new_names = gsub(grep, replace, nameVector)
+		names(x) = new_names
+		return(x)
+	}
 	if(!is.null(old)){
 		# message("replacing old with replace")
 		if(length(old) != length(replace)){
@@ -1095,7 +1117,7 @@ umx_rename <- function (x, replace, old = NULL) {
 	  stop(err)
 	}
 	new_names <- new_names_to_try[match(old_names, names_to_replace)]  
-	setNames(x, ifelse(is.na(new_names), old_names, new_names))
+	setNames(x, ifelse(is.na(new_names), old_names, new_names)) # also returns the new object
 }
 
 #' umx_grep

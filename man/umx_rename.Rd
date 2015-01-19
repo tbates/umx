@@ -3,14 +3,20 @@
 \alias{umx_rename}
 \title{umx_rename}
 \usage{
-umx_rename(x, replace, old = NULL)
+umx_rename(x, replace = NULL, old = NULL, grep = NULL, ...)
 }
 \arguments{
 \item{x}{the dataframe in which to rename variables}
 
-\item{replace}{a named collection of c(oldName = "newName") pairs (OR, if using old, the list of new names)}
+\item{replace}{If used alone, a named collection of c(oldName = "newName") pairs
+OR, if "old" is a list of existing names, the list of new names)
+OR, if "grep" is a regular expression, the replace string)}
 
-\item{old}{Optional list of old names that will be replaced by the contents of replace. defaults to NULL in which case replace must be paired list.}
+\item{old}{Optional list of old names that will be found and replaced by the contents of replace. Defaults to NULL}
+
+\item{grep}{Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL}
+
+\item{...}{additional parameters passed into ?gsub if using grep}
 }
 \value{
 - dataframe with columns renamed.
@@ -31,6 +37,8 @@ x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 umx_check_names("displacement", data = x, die = TRUE)
 # This will warn that "disp" doesn't exist (anymore)
 x = umx_rename(x, old = c("disp"), replace = c("displacement"))
+x = umx_rename(x, grep = "lacement", replace = "") # use grep to set it back
+umx_names(x, "^d")
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
