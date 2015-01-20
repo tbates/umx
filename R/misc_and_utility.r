@@ -3421,17 +3421,25 @@ umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 #' umx_show(m1, what = "free")
 #' umx_show(m1, what = "labels")
 #' umx_show(m1, what = "free", "A")
-umx_show <- function(model, what = c("values", "free", "labels"), matrices = c("S", "A"), digits = 2) {
+umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), matrices = c("S", "A"), digits = 2) {
 	if(!umx_is_RAM(model)){
 		stop("Only RAM models by default: what would you like me to do with this type of model?")
 	}
-	what = umx_default_option(what, c("values", "free", "labels"), check = TRUE)
+	what = match.arg(what)
 	for (w in matrices) {
 		message("Showing ", what, " for:", w, " matrix:")
 		if(what == "values"){
-			umx_print(data.frame(model@matrices[[w]]@values), zero.print = ".", digits = digits)		
+			umx_print(data.frame(model$matrices[[w]]$values), zero.print = ".", digits = digits)		
 		}else if(what == "free"){
-			umx_print(data.frame(model@matrices[[w]]@free), zero.print = ".", digits = digits)
+			umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
+		}else if(what == "labels"){
+			umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
+		}else if(what == "nonzero_or_free"){
+			message("99 means the value is fixed, but is non-zero")
+			values = model$matrices[[w]]$values
+			Free   = model$matrices[[w]]$free
+			values[!Free & values !=0] = 99
+			umx_print(data.frame(values) , zero.print = ".", digits = digits)
 		}
 	}
 }

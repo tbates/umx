@@ -2323,6 +2323,8 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param var equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)
+#' @param formative Paired with to, this will build a formative variable, from the formatives, allowing these to
+#' covary, and to the latent "to" variable, fixing its variance to zero.
 #' @param Cholesky Treat the \strong{from} vars as latent and \strong{to} as measured, and connect up as in an ACE model.
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
 #' @param v1m0 variance of 1 and mean of zero in one call.
@@ -2380,7 +2382,10 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 # #' # It allows the string syntax to use the manifestVars variable
 # #' umxPath("A -> manifests") 
 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, formative = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+	if(!is.null(formative)){
+		stop("I haven't implemented formative yet... still thinking about whether its a good idea or a bad idea")
+	}
 	if(!is.null(from)){
 		if(length(from) > 1){
 			isSEMstyle = grepl("[<>]", x = from[1])	
