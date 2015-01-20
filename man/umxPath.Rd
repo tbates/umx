@@ -4,10 +4,10 @@
 \title{umxPath: Flexible specification of sem paths}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
-  unique.bivariate = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL,
-  fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single",
-  arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA,
-  ubound = NA)
+  unique.bivariate = NULL, formative = NULL, Cholesky = NULL,
+  means = NULL, v1m0 = NULL, fixedAt = NULL, freeAt = NULL,
+  firstAt = NULL, connect = "single", arrows = 1, free = TRUE,
+  values = NA, labels = NA, lbound = NA, ubound = NA)
 }
 \arguments{
 \item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
@@ -21,6 +21,9 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 \item{cov}{equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)}
 
 \item{unique.bivariate}{equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)}
+
+\item{formative}{Paired with to, this will build a formative variable, from the formatives, allowing these to
+covary, and to the latent "to" variable, fixing its variance to zero.}
 
 \item{Cholesky}{Treat the \strong{from} vars as latent and \strong{to} as measured, and connect up as in an ACE model.}
 

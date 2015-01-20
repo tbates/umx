@@ -3,8 +3,8 @@
 \alias{umx_show}
 \title{umx_show}
 \usage{
-umx_show(model, what = c("values", "free", "labels"), matrices = c("S",
-  "A"), digits = 2)
+umx_show(model, what = c("values", "free", "labels", "nonzero_or_free"),
+  matrices = c("S", "A"), digits = 2)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to show data from}
