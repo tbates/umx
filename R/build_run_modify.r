@@ -59,14 +59,15 @@ options('mxCondenseMatrixSlots'= FALSE)
 # 	}
 # }
 
+.onAttach <- function(libname, pkgname){
+    packageStartupMessage("For an overview type '?umx'")
+}
+
 # =====================================================================================================
 # = Create a class for ACE models so we can subclass plot and umxSummary to handle them automagically =
 # =====================================================================================================
 setClass("MxModel.ACE", contains = "MxModel")
 
-.onAttach <- function(libname, pkgname){
-    packageStartupMessage("For an overview type '?umx'")
-}
 
 #' umxRAM
 #'

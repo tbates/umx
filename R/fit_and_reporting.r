@@ -427,18 +427,16 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' umxSummary.default
 #'
 #' Report the fit of a OpenMx model or specialized model class (such as ACE, CP etc.)
-#' in a compact form suitable for a journal.
+#' in a compact form suitable for a journal. Because this same function is needed in umx, 
+#' it gets defined twice currently.
+#'
+#' You can view documentation on \code{\link{umxSummary.MxModel.ACE}}, \code{\link{umxSummary.MxModel.CP}}
+#' or \code{\link{umxSummary.MxModel.IP}}, \code{\link{umxSummary.MxModel.GxE}}
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param ... Other parameters to control model summary
 #' @family Reporting Functions
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
-#' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
-#'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
-#'
-#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
-#'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
-#'  Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
 #' \url{http://www.github.com/tbates/umx}
 #' @export
 umxSummary <- function(model, ...){
