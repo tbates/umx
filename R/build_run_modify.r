@@ -2507,12 +2507,17 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		# ===========================
 		# = Handle unique.bivariate =
 		# ===========================
-		if(!is.null(from) | !is.null(to)){
-			stop("To use unique.bivariate, 'from=' and 'to=' should be empty.\n",
-			"Just say 'unique.bivariate = c(\"X\",\"Y\").'")
+		if(!is.null(from)){
+			stop("To use unique.bivariate, 'from=' should be empty.\n",
+			"Just say 'unique.bivariate = c(\"X\",\"Y\").'\n",
+			"or 'unique.bivariate = c(\"X\",\"Y\"), to = \"Z\"")
 		} else {
+			if(is.null(to)){
+				to = NA				
+			} else {
+				to = to	
+			}
 			from    = unique.bivariate
-			to    = NA
 			arrows  = 2
 			connect = "unique.bivariate"
 		}
@@ -2547,13 +2552,14 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 	# Handle firstAt
 	if(!is.null(firstAt)){
-		if(length(from) > 1){
+		if(length(from) > 1 && length(to) > 1){
 			# TODO think about this
-			stop("It's not wise to use firstAt with multiple from sources. I'd like to think about this before implementing it..")
+			stop("It's not wise to use firstAt with multiple from sources AND multiple to targets. I'd like to think about this before implementing it..")
 		} else {
-			free    = rep(TRUE, length(to))
+			numPaths = max(length(from), length(to))
+			free    = rep(TRUE, numPaths)
 			free[1] = FALSE
-			values    = rep(NA, length(to))
+			values    = rep(NA, numPaths)
 			values[1] = firstAt
 		}
 	}	

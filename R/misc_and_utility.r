@@ -1054,7 +1054,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' OR, if "grep" is a regular expression, the replace string)
 #' @param old Optional list of old names that will be found and replaced by the contents of replace. Defaults to NULL
 #' @param grep Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL
-#' @param ... additional parameters passed into ?gsub if using grep
+#' @param test whether to report a "dry run" - and not actually change anything (defaults to false)
 #' @return - dataframe with columns renamed.
 #' @export
 #' @family Miscellaneous Functions
@@ -1069,7 +1069,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 #' x = umx_rename(x, grep = "lacement", replace = "") # use grep to set it back
 #' umx_names(x, "^d")
-umx_rename <- function (x, replace = NULL, old = NULL, grep = NULL, ...) {
+umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE) {
 	# See also gdate::rename.vars(data, from, to)	
 	if(!is.null(old) && !is.null(grep)){
 		stop("Only one of old and grep can be used")
@@ -1084,40 +1084,60 @@ umx_rename <- function (x, replace = NULL, old = NULL, grep = NULL, ...) {
 	            umx_object_as_str(x), " is a ", typeof(x)))
 	    }
 		new_names = gsub(grep, replace, nameVector)
-		names(x) = new_names
-		return(x)
-	}
-	if(!is.null(old)){
+		if(test){
+			message("The following changes would be made (set test =FALSE to actually make them)")
+			message("Was")
+			print(nameVector)
+			message("New:")
+			print(new_names)
+		} else {
+			names(x) = new_names
+		}
+		invisible(x)		
+	} else {
+		if(!is.null(old)){
 		# message("replacing old with replace")
 		if(length(old) != length(replace)){
 			stop("You are trying to replace ", length(old), " old names with ", length(replace), "new names: Lengths must match")
 		}
 		names_to_replace <- old
 		new_names_to_try <- replace
-	} else {
-		names_to_replace <- names(replace)
-		new_names_to_try <- unname(replace)
-	}
-	old_names <- names(x)
+		} else {
+			names_to_replace <- names(replace)
+			new_names_to_try <- unname(replace)
+		}
+		old_names <- names(x)
 
-	if(!all(names_to_replace %in% old_names)) {
-		warning("The following names did not appear in the dataframe:", 
-		paste(names_to_replace[!names_to_replace %in% old_names], collapse=", "), "\nperhaps you already updated them")
-	}
+		if(!all(names_to_replace %in% old_names)) {
+			warning("The following names did not appear in the dataframe:", 
+			paste(names_to_replace[!names_to_replace %in% old_names], collapse=", "), "\nperhaps you already updated them")
+		}
 
-	if(anyDuplicated(names_to_replace)) {
-	  err <- paste("You are trying to update the following names more than once:", 
-	           paste(names_to_replace[duplicated(names_to_replace)], collapse=", "))
-	  stop(err)
-	}
+		if(anyDuplicated(names_to_replace)) {
+		  err <- paste("You are trying to update the following names more than once:", 
+		           paste(names_to_replace[duplicated(names_to_replace)], collapse=", "))
+		  stop(err)
+		}
 
-	if(anyDuplicated(new_names_to_try)) {
-	  err <- paste("You have the following duplicates in your replace list:", 
-	         	paste(new_names_to_try[duplicated(new_names_to_try)], collapse=", "))
-	  stop(err)
+		if(anyDuplicated(new_names_to_try)) {
+		  err <- paste("You have the following duplicates in your replace list:", 
+		         	paste(new_names_to_try[duplicated(new_names_to_try)], collapse=", ")
+		)
+		  stop(err)
+		}
+		new_names <- new_names_to_try[match(old_names, names_to_replace)]  
+		if(test){
+			message("The following changes would be made (set test =FALSE to actually make them")
+			message("Names to be replaced")
+			print(names_to_replace)
+			message("replacement names:")
+			print(new_names)
+			invisible(x)
+		} else {
+			names(x) = new_names
+			setNames(x, ifelse(is.na(new_names), old_names, new_names)) # also returns the new object
+		}
 	}
-	new_names <- new_names_to_try[match(old_names, names_to_replace)]  
-	setNames(x, ifelse(is.na(new_names), old_names, new_names)) # also returns the new object
 }
 
 #' umx_grep

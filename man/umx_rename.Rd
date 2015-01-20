@@ -3,7 +3,7 @@
 \alias{umx_rename}
 \title{umx_rename}
 \usage{
-umx_rename(x, replace = NULL, old = NULL, grep = NULL, ...)
+umx_rename(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 }
 \arguments{
 \item{x}{the dataframe in which to rename variables}
@@ -16,7 +16,7 @@ OR, if "grep" is a regular expression, the replace string)}
 
 \item{grep}{Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL}
 
-\item{...}{additional parameters passed into ?gsub if using grep}
+\item{test}{whether to report a "dry run" - and not actually change anything (defaults to false)}
 }
 \value{
 - dataframe with columns renamed.
