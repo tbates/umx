@@ -54,6 +54,7 @@ Other Reporting functions: \code{\link{RMSEA}};
   \code{\link{umxFitIndices}}; \code{\link{umxMI}};
   \code{\link{umxSaturated}};
   \code{\link{umxStandardizeModel}};
+  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }

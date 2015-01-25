@@ -95,6 +95,7 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' @param latentVars Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)
 #' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
+#' @param setValues Whether to try and guess good start values (Defults to TRUE, set them)
 #' @param independent Whether the model is independent (default = NA)
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -130,7 +131,7 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' }
-umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, data = NULL, independent = NA, remove_unused_manifests = TRUE) {
+umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, data = NULL, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
 	fix = umx_default_option(fix, c("none", "latents", "firstLoadings"), check = TRUE)
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
@@ -245,7 +246,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = manifestVars,
 		latentVars  = latentVars,
-		independent = TRUE,
+		independent = independent,
 		data, dot.items)
 	)
 	# TODO: Add variance/residuals to all variables except reflective latents
@@ -300,7 +301,9 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 		}
 	}
 	m1 = umxLabel(m1)
-	m1 = umxValues(m1, onlyTouchZeros = TRUE)
+	if(setValues){
+		m1 = umxValues(m1, onlyTouchZeros = TRUE)
+	}
 	return(m1)
 }
 

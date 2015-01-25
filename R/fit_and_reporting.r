@@ -449,7 +449,7 @@ umxSummary.default <- function(model, ...){
 	invisible(object)
 }
 
-#' umxSummary
+#' umxSummary.MxModel
 #'
 #' Report the fit of a model in a compact form suitable for a journal. Emits a "warning" 
 #' when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
@@ -470,6 +470,7 @@ umxSummary.default <- function(model, ...){
 #' under-identification and can break confidence interval estimation, but I think
 #' Fixing a factor loading to 1 and estimating factor variances can help here
 #'
+#' @aliases umxSummary umxSummary.MxModel
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param saturatedModels Saturated models if needed for fit indices (see example below:
 #' 	Only needed for raw data. nb also, umxRun takes care of this for you)
@@ -480,6 +481,7 @@ umxSummary.default <- function(model, ...){
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to F)
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
+#' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
 #' @family Reporting functions
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
@@ -510,19 +512,18 @@ umxSummary.default <- function(model, ...){
 #' # umxSummary(m1, report = "table") # not yet implemented
 #' # umxSummary(m1, saturatedModels = umxSaturated(m1))
 #' }
-umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG")){
+umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG"), SE=TRUE){
 	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
 	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list
 	# showEstimates = match.arg(showEstimates)
+	report = match.arg(report)
 	filter = match.arg(filter)
-	# if the filter is off default, the user must want something...
+	# if the filter is off default, the user must want something, let's assume it's std ...
 	if( filter != "ALL" & showEstimates == "none") {
 		showEstimates = "std"
 	}
 	# TODO make table take lists of models...
-	report = match.arg(report)
 	umx_has_been_run(model, stop = TRUE)
-	# saturatedModels = NULL
 	if(is.null(saturatedModels)) {
 		# saturatedModels not passed in from outside, so get them from the model
 		modelSummary = OpenMx::summary(model)		
@@ -530,6 +531,7 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 			# # TODO model with no data - no saturated solution?
 		} else if(is.na(modelSummary$SaturatedLikelihood)){
 			message("There is no saturated likelihood: computing that now...")
+			# TODO update to use new built-in support for saturated....
 			saturatedModels = umxSaturated(model)
 			modelSummary = OpenMx::summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
 		}
@@ -539,7 +541,7 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 
 	# DisplayColumns
 	if(showEstimates != "none"){
-		parameterTable = mxStandardizeRAMpaths(model, SE = TRUE) # compute standard errors
+		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # compute standard errors
 		#                 name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
 		# 1  no_HRV_Dep.A[6,1]    age    A        mean_sdrr   age   -0.37       0.0284   -0.372350    .028
 		# Raw.SE is new
@@ -550,18 +552,14 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 		} else {
 			nameing = c("name")
 		}
-		if("Std.Estimate" %in%  names(parameterTable)){
-			if(length(showEstimates) > 1) {
-				namesToShow = showEstimates # user-specified list
-			}else if(showEstimates == "both") {
-				namesToShow = c(nameing, "Estimate", "SE", "Std.Estimate", "Std.SE")
-			} else if(showEstimates == "std"){
-				namesToShow = c(nameing, "Std.Estimate", "Std.SE", "CI")
-			}else{ # must be raw
-				namesToShow = c(nameing, "Estimate", "SE")					
-			}
-		} else {
-			namesToShow = c(nameing, "Estimate", "SE")
+		if(length(showEstimates) > 1) {
+			namesToShow = showEstimates # user-specified list
+		}else if(showEstimates == "both") {
+			namesToShow = c(nameing, "Estimate", "SE", "Std.Estimate", "Std.SE")
+		} else if(showEstimates == "std"){
+			namesToShow = c(nameing, "Std.Estimate", "Std.SE", "CI")
+		}else{ # must be raw
+			namesToShow = c(nameing, "Estimate", "SE")					
 		}
 		if("CI" %in% namesToShow){
 			parameterTable$sig = TRUE

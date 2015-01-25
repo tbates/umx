@@ -50,6 +50,7 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
   \code{\link{umxMI}}; \code{\link{umxSaturated}};
   \code{\link{umxStandardizeModel}};
+  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }

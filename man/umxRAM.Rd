@@ -5,7 +5,8 @@
 \usage{
 umxRAM(name, ..., exog.variances = FALSE, endog.variances = FALSE,
   fix = c("none", "latents", "firstLoadings"), latentVars = NULL,
-  data = NULL, independent = NA, remove_unused_manifests = TRUE)
+  data = NULL, setValues = TRUE, independent = NA,
+  remove_unused_manifests = TRUE)
 }
 \arguments{
 \item{name}{friendly name for the model}
@@ -21,6 +22,8 @@ umxRAM(name, ..., exog.variances = FALSE, endog.variances = FALSE,
 \item{latentVars}{Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)}
 
 \item{data}{the data for the model. Can be an \code{\link{mxData}} or a data.frame}
+
+\item{setValues}{Whether to try and guess good start values (Defults to TRUE, set them)}
 
 \item{independent}{Whether the model is independent (default = NA)}
 

@@ -4,9 +4,9 @@
 \alias{umxPlot}
 \title{plot.MxModel}
 \usage{
-\method{plot}{MxModel}(model = NA, std = TRUE, digits = 2,
-  dotFilename = "name", pathLabels = c("none", "labels", "both"),
-  showFixed = FALSE, showMeans = TRUE, showError = TRUE, ...)
+plot.MxModel(model = NA, std = TRUE, digits = 2, dotFilename = "name",
+  pathLabels = c("none", "labels", "both"), showFixed = FALSE,
+  showMeans = TRUE, showError = TRUE, ...)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to make a path diagram from}
@@ -66,6 +66,7 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{umxFitIndices}}; \code{\link{umxMI}};
   \code{\link{umxSaturated}};
   \code{\link{umxStandardizeModel}};
+  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }
