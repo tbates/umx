@@ -30,6 +30,9 @@ Default  is "none" (just shows the fit indices)}
 
 \item{SE}{Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.}
 }
+\value{
+- parameterTable returned invisibly, if estimates requested
+}
 \description{
 Report the fit of a model in a compact form suitable for a journal. Emits a "warning"
 when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).

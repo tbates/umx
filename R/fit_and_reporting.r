@@ -493,6 +493,7 @@ umxSummary.default <- function(model, ...){
 #' \url{http://www.github.com/tbates/umx}
 #' @export
 #' @import OpenMx
+#' @return - parameterTable returned invisibly, if estimates requested
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -646,7 +647,17 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 	if(!is.null(model@output$confidenceIntervals)){
 		print(model@output$confidenceIntervals)
 	}
+	if(showEstimates != "none"){ # return these as  invisible for the user to filer, sort etc.
+		if(filter == "NS"){
+			invisible(parameterTable[parameterTable$sig == FALSE, namesToShow])
+		}else if(filter == "SIG"){
+			invisible(parameterTable[parameterTable$sig == TRUE, namesToShow])
+		}else{
+			invisible(parameterTable[,namesToShow])
+		}
+	}
 }
+
 #' umxSummaryACE
 #'
 #' Summarise a Cholesky model, as returned by umxACE
