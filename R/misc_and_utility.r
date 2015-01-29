@@ -26,7 +26,7 @@
 # 	any(y[1:diffRows,] - x[1:diffRows,] < 0, na.rm = T)
 # }
 
-# use this or not?
+# Use this or not?
 umxFIML <- function(covariance, means, dimnames = NA, thresholds = NA, threshnames = dimnames, vector = FALSE) {
     # replaces mxFIMLObjective
 	mxExp = mxExpectationNormal(covariance= covariance, means = means, dimnames = dimnames, thresholds)
@@ -2566,12 +2566,13 @@ umx_is_numeric <- function(df, cols = TRUE){
 
 #' umx_residualize
 #'
-#' Return one or more variables residualised against covs.
-#' This is the same as 
+#' @description Return one or more variables residualised against covs.
+#' @details This is the same as 
+#' 
 #' \code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
 #'
 #' Optionally, this also works on wide (ie., twin) data. Just supply suffixes to identify
-#' the paired-wide columns!
+#' the paired-wide columns (see examples)
 #'
 #' @param var The base name of the variable you want to residualize. Alternatively, a 
 #' regression \code{\link{formula}} containing var on the lhs, and covs on the rhs

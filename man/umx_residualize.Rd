@@ -21,12 +21,14 @@ Up to you to check all variables are present!}
 }
 \description{
 Return one or more variables residualised against covs.
-This is the same as
-\code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
 }
 \details{
+This is the same as
+
+\code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
+
 Optionally, this also works on wide (ie., twin) data. Just supply suffixes to identify
-the paired-wide columns!
+the paired-wide columns (see examples)
 }
 \examples{
 tmp = mtcars
