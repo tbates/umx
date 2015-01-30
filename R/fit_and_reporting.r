@@ -909,9 +909,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	} else if (is.null(base)) {
 		stop("You must provide at least a base model for umxCompare")
 	}
-	if(length(comparison) == 1) {
+	if(length(base) == 1) {
 		if(!umx_has_been_run(base)){
-			warning("base model has not been run!")		
+			warning("base model not run yet!")		
 		}
 	}
 	if(length(comparison) == 1) {
