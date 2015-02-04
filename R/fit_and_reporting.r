@@ -910,11 +910,17 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		stop("You must provide at least a base model for umxCompare")
 	}
 	if(length(base) == 1) {
+		if(typeof(base) == "list"){
+			base = base[[1]]
+		}
 		if(!umx_has_been_run(base)){
 			warning("base model not run yet!")		
 		}
 	}
 	if(length(comparison) == 1) {
+		if(typeof(comparison)=="list"){
+			comparison = comparison[[1]]
+		}
 		if(!umx_has_been_run(comparison)){
 			warning("comparison model has not been run!")		
 		}
