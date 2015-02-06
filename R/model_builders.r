@@ -18,7 +18,7 @@
 #' @param data The dataframe of manifest columns you are modeling
 #' @param report What to report
 #' @return - \code{\link{mxModel}}
-#' @family super easy helpers
+#' @family Super-easy helpers
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://github.com/tbates/umx}

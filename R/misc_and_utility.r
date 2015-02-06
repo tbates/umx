@@ -880,6 +880,43 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 	}
 }
 
+# ===========================
+# = File handling functions =
+# ===========================
+
+
+#' dl_from_dropbox
+#'
+#' Download a file from Dropbox, given either the url, or the name and key
+#'
+#' Improvements would include error handling...
+#' @param x 
+#' @param key  
+#' @return - NULL
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @references - \url{http://thebiobucket.blogspot.kr/2013/04/download-files-from-dropbox.html}
+#' @examples
+#' \dontrun{
+#' dl_from_dropbox("https://dl.dropboxusercontent.com/s/7kauod48r9cfhwc/tinytwinData.rda")
+#' dl_from_dropbox("tinytwinData.rda", key = "7kauod48r9cfhwc")
+#' }
+dl_from_dropbox <- function(x, key) {
+	require(RCurl)
+	if(is.null(key)){
+		bin <- getBinaryURL(x), ssl.verifypeer = FALSE)
+		x = sub("^.+/(.*)$", "\\1", x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
+	} else {
+		bin <- getBinaryURL(paste0("https://dl.dropboxusercontent.com/s/", key, "/", x), ssl.verifypeer = FALSE)
+	}
+	con <- file(x, open = "wb")
+	writeBin(bin, con)
+	close(con)
+	message(noquote(paste(x, "read into", getwd())))                        
+}
+
+
+
 #' umx_move_file
 #'
 #' move files. On OS X, the function can access the current frontmost Finder window.
