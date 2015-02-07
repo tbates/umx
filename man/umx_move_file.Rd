@@ -36,8 +36,8 @@ umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test=
 \seealso{
 - \code{\link{umx_rename_file}}, \code{\link{file.rename}}
 
-Other Miscellaneous Utility Functions: \code{\link{qm}};
-  \code{\link{umxHetCor}};
+Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
+  \code{\link{qm}}; \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}}; \code{\link{umx_cor}};
   \code{\link{umx_cov2raw}}; \code{\link{umx_find_object}};

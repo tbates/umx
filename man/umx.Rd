@@ -132,8 +132,8 @@ Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
   \code{\link{umxCov2cor}}; \code{\link{umx_means}};
   \code{\link{umx_pp33}}
 
-Other Miscellaneous Utility Functions: \code{\link{qm}};
-  \code{\link{umxHetCor}};
+Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
+  \code{\link{qm}}; \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}}; \code{\link{umx_cor}};
   \code{\link{umx_cov2raw}}; \code{\link{umx_find_object}};

@@ -29,8 +29,8 @@ umx_cor(myFADataRaw[1:8,])
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other Miscellaneous Utility Functions: \code{\link{qm}};
-  \code{\link{umxHetCor}};
+Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
+  \code{\link{qm}}; \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}}; \code{\link{umx_cov2raw}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};

@@ -3,9 +3,8 @@
 \alias{umx_get_time}
 \title{umx_get_time}
 \usage{
-umx_get_time(model,
-  formatStr = c("Wall clock time (HH:MM:SS.hh): \%H:\%M:\%OS2",
-  "\%H hours, \%M minutes, and \%OS3 seconds"), tz = "GMT")
+umx_get_time(model, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
+  tz = "GMT")
 }
 \arguments{
 \item{model}{An \code{\link{mxModel}} from which to get the elapsed time}
@@ -15,8 +14,13 @@ umx_get_time(model,
 \item{tz}{The time zone in which the model was executed}
 }
 \description{
-A function to compactly report how long a model took to execute
-If model is a list, time deltas will be reported also.
+A function to compactly report how long a model took to execute. User can set the format, with some
+preset styles, or c-style string formatting.
+}
+\details{
+The default is "simple", which gives only the biggest unit used. i.e., if time is in seconds < 60 seconds elapsed.
+"std" uses the format adopted in OpenMx 2.0 e.g. "Wall clock time (HH:MM:SS.hh): 00:00:01.16"
+If a list of models is provided, time deltas will be reported also.
 }
 \examples{
 require(OpenMx)

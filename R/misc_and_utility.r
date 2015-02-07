@@ -347,8 +347,12 @@ umx_update_OpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALS
 # How long did that take?
 #' umx_get_time
 #'
-#' A function to compactly report how long a model took to execute
-#' If model is a list, time deltas will be reported also.
+#' A function to compactly report how long a model took to execute. User can set the format, with some
+#' preset styles, or c-style string formatting.
+#'
+#' The default is "simple", which gives only the biggest unit used. i.e., if time is in seconds < 60 seconds elapsed.
+#' "std" uses the format adopted in OpenMx 2.0 e.g. "Wall clock time (HH:MM:SS.hh): 00:00:01.16"
+#' If a list of models is provided, time deltas will be reported also.
 #'
 #' @param model An \code{\link{mxModel}} from which to get the elapsed time
 #' @param formatStr A format string, defining how to show the time
@@ -372,34 +376,44 @@ umx_update_OpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALS
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umx_get_time(m1)
 #' m2 = umxRun(m1)
-#' umx_get_time(c(m1,m2))
-umx_get_time <- function(model, formatStr = c("Wall clock time (HH:MM:SS.hh): %H:%M:%OS2", "%H hours, %M minutes, and %OS3 seconds"), tz = "GMT"){
+#' umx_get_time(c(m1, m2))
+umx_get_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT"){
 	# TODO output a nicely formated table
-	formatStr = umx_default_option(formatStr, c("Wall clock time (HH:MM:SS.hh): %H:%M:%OS2", "%H hours, %M minutes, and %OS3 seconds"), check = FALSE)
-	if(length(model)>1){
-		for(i in 1:length(model)) {			
+	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
+	for(i in 1:length(model)) {			
+		if(length(model) > 1) {
 			m = model[[i]]
-			if(!umx_has_been_run(m)){
-				message("You must run the model before asking for the elapsed run time")
-			}else{
-				thisTime = m$output$wallTime
-				if(i==1){
-					lastTime = thisTime
-					timeDelta = ""
-				} else {
-					timeDelta = paste0("(\u2206: ", round(thisTime - lastTime,3), ")")
-				}
-				message(format(.POSIXct(m$output$wallTime,tz), paste0(m$name, ": ", formatStr, timeDelta)))
+		}else{
+			m = model
+		}
+		if(!umx_has_been_run(m)){
+			message("You must run the model before asking for the elapsed run time")
+		}else{
+			thisTime = m$output$wallTime
+			if(i == 1){
+				lastTime = thisTime
+				timeDelta = ""
+			} else {
+				timeDelta = paste0("(\u2206: ", round(thisTime - lastTime, 3), ")")
 			}
+			if(formatStr == "std"){
+				formatStr = "Wall clock time (HH:MM:SS.hh): %H:%M:%OS2"
+			} else if(formatStr == "simple"){
+				if(thisTime > 3600 * 2){ # hours
+					formatStr = "%H hours, %M minute(s), %OS2 seconds"
+				} else if(thisTime > 3600){ # hours
+					formatStr = "%H hour, %M minute(s), %OS2 seconds"
+				} else if(thisTime > 60){ # minutes
+					formatStr = "%M minute(s),  %OS2 seconds"
+				} else { # seconds
+					formatStr = "%OS2 seconds"
+				}
+			}
+			message(paste0(m$name, ": ", formatStr, timeDelta))
+			message(format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta)))
 		}
-	} else {
-		if(!umx_has_been_run(model)){
-			stop("You must run the model before asking for the elapsed run time")
-		}
-		format(.POSIXct(model$output$wallTime,tz), formatStr)
 	}
 }
-umx_report_time <- umx_get_time
 
 #' umx_print
 #'
@@ -904,7 +918,7 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 dl_from_dropbox <- function(x, key) {
 	require(RCurl)
 	if(is.null(key)){
-		bin <- getBinaryURL(x), ssl.verifypeer = FALSE)
+		bin <- getBinaryURL(x, ssl.verifypeer = FALSE)
 		x = sub("^.+/(.*)$", "\\1", x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
 	} else {
 		bin <- getBinaryURL(paste0("https://dl.dropboxusercontent.com/s/", key, "/", x), ssl.verifypeer = FALSE)
@@ -914,8 +928,6 @@ dl_from_dropbox <- function(x, key) {
 	close(con)
 	message(noquote(paste(x, "read into", getwd())))                        
 }
-
-
 
 #' umx_move_file
 #'
@@ -3481,7 +3493,6 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 		}
 	}
 }
-
 
 # Poems you should know by heart
 # https://en.wikipedia.org/wiki/O_Captain!_My_Captain!
