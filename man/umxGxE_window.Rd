@@ -16,7 +16,7 @@ umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
 
 \item{dzData}{Dataframe containing the DV and moderator for DZ twins}
 
-\item{weightCov}{Whether to use cov.wt matrices or FIML default = FIML (FALSE)}
+\item{weightCov}{Whether to use cov.wt matrices or FIML default = FALSE, i.e., FIML}
 
 \item{target}{A user-selected list of moderator values to test (default = NULL = explore the full range)}
 
@@ -45,7 +45,7 @@ mod = "age"         # The name of the moderator column in the dataset
 selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 data(twinData) # Dataset of Australian twins, built into OpenMx
 # The twinData consist of two cohorts. First we label them
-# TODO: Q for openmx team: can I add a cohort column to this dataset?
+# TODO: Q for OpenMx team: can I add a cohort column to this dataset?
 twinData$cohort = 1; twinData$cohort[twinData$zyg \%in\% 6:10] = 2
 twinData$zyg[twinData$cohort == 2] = twinData$zyg[twinData$cohort == 2]-5
 # And set a plain-English label
@@ -57,9 +57,9 @@ twinData = twinData[!is.na(twinData[mod]),]
 mzData = subset(twinData, ZYG == "MZFF", c(selDVs, mod))
 dzData = subset(twinData, ZYG == "DZFF", c(selDVs, mod))
 
-# ======================
-# = Run the analyses! =
-# ======================
+# ========================
+# = 2. Run the analyses! =
+# ========================
 # Run with FIML (default) uses all information
 umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData);
 

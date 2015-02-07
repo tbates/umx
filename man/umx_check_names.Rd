@@ -24,6 +24,7 @@ Check if a list of names are in the names() of a dataframe (or the of a matrix)
 require(OpenMx)
 data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 umx_check_names(c("x1", "x2"), demoOneFactor)
+umx_check_names(c("x1", "x2"), as.matrix(demoOneFactor))
 umx_check_names(c("x1", "x2"), cov(demoOneFactor[,c("x1","x2")]))
 umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)

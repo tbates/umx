@@ -12,7 +12,9 @@ demand(package)
 This loads the package, installing it if needed
 }
 \examples{
-demand("numderiv")
+\dontrun{
+demand("numDeriv")
+}
 }
 \references{
 - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}

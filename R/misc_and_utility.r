@@ -49,10 +49,10 @@ umxFIML <- function(covariance, means, dimnames = NA, thresholds = NA, threshnam
 #' }
 umx_check_multi_core <- function() {
 	oldCores = umx_get_cores()
-	message("You are using ", oldCores, " of ", detectCores(), " available cores (0 means all)")
+	message("You are using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means all)")
 	message("I will now set cores to max (they will be reset after) and run a script that hits multiple cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
-	umx_set_cores(detectCores())
+	umx_set_cores(parallel::detectCores())
 	source("~/bin/OpenMx/models/nightly/3LatentMultiRegWithContinuousModerator-c.R")
 	umx_set_cores(oldCores)
 }
@@ -147,11 +147,11 @@ umx_set_optimizer <- function(opt = c("NPSOL","NLOPT","CSOLNP"), model = NULL) {
 #' 	mxData(mtcars[, manifests], type = "raw")
 #' )
 #' oldCores <- umx_get_cores() # get global value
-#' umx_set_cores(detectCores()) # set to default (max - 1)
-#' umx_get_cores()            # show new value
+#' umx_set_cores() # set to default (max - 1)
+#' umx_get_cores() # show new value
 #' umx_set_cores(1, m1)  # set m1 useage to 1 core
 #' umx_get_cores(model = m1)  # show new value
-umx_set_cores <- function(cores = detectCores() - 1, model = NULL) {
+umx_set_cores <- function(cores = parallel::detectCores() - 1, model = NULL) {
 	if(umx_is_MxModel(cores)){
 		stop("Call this as umx_set_cores(cores, model), not the other way around")
 	}
@@ -179,12 +179,12 @@ umx_set_cores <- function(cores = detectCores() - 1, model = NULL) {
 #' oldCores = umx_get_cores()   # get current default value
 #' umx_set_cores(model = m1)    # set to default (max - 1)
 #' umx_get_cores(model = m1)    # show new value
-#' umx_set_cores(detectCores()) # set to default (max - 1)
+#' umx_set_cores() # set to default (max - 1)
 #' umx_get_cores()              # show new value
 #' umx_set_cores(oldCores)      # reset to old value
 umx_get_cores <- function(model = NULL) {
 	n = mxOption(model, "Number of Threads")
-	message(n, "/", detectCores())
+	message(n, "/", parallel::detectCores())
 	invisible(n)
 	
 }
@@ -903,8 +903,8 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 #' Download a file from Dropbox, given either the url, or the name and key
 #'
 #' Improvements would include error handling...
-#' @param x 
-#' @param key  
+#' @param x Either the file name, or full dropbox URL (see example below)
+#' @param key the code after s/ and before the file name in the dropbox url
 #' @return - NULL
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -917,11 +917,11 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 dl_from_dropbox <- function(x, key){
 	require(RCurl)
 	if(is.null(key)){
-		bin <- getBinaryURL(x, ssl.verifypeer = FALSE)
+		bin <- RCurl::getBinaryURL(x, ssl.verifypeer = FALSE)
 		x = sub("^.+/(.*)$", "\\1", x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
 	} else {
 		# user has provided key and file name, so concatenate with https...
-		bin <- getBinaryURL(paste0("https://dl.dropboxusercontent.com/s/", key, "/", x), ssl.verifypeer = FALSE)
+		bin <- RCurl::getBinaryURL(paste0("https://dl.dropboxusercontent.com/s/", key, "/", x), ssl.verifypeer = FALSE)
 	}
 	con <- file(x, open = "wb")
 	writeBin(bin, con)
@@ -1733,6 +1733,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' require(OpenMx)
 #' data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 #' umx_check_names(c("x1", "x2"), demoOneFactor)
+#' umx_check_names(c("x1", "x2"), as.matrix(demoOneFactor))
 #' umx_check_names(c("x1", "x2"), cov(demoOneFactor[,c("x1","x2")]))
 #' umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 #' umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
@@ -1744,7 +1745,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 	if(is.data.frame(data)){
 		namesInData = names(data)
 	}else if(is.matrix(data)){
-		namesInData = dimnames(data)[[1]]		
+		namesInData = dimnames(data)[[2]]
 	} else {
 		stop("data has to be a dataframe or matrix. You gave me a", typeof(data))
 	}
@@ -3069,7 +3070,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' @family Miscellaneous Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 #' @examples
-#' umx_names(mtcars, "mpg") # "mpg"  "cyl"  "disp" "hp"   "drat" "wt"   "qsec" "vs"   "am"   "gear" "carb"
+#' umx_names(mtcars, "mpg") #"mpg" "cyl" "disp" "hp" "drat" "wt" "qsec" "vs" "am" "gear" "carb"
 #' umx_names(mtcars, "^d") # "disp", drat
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
 umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
@@ -3135,7 +3136,10 @@ umx_rot <- function(vec){
 #' @family Miscellaneous Functions
 #' @references - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}
 #' @examples
-#' demand("numderiv")
+#' \dontrun{
+#' demand("numDeriv")
+#' }
+
 demand <- function(package) {
 	if(FALSE == package %in% rownames(installed.packages() ) ) {
 		m <- getCRANmirrors(all = FALSE, local.only = FALSE)

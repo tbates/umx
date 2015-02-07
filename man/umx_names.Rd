@@ -30,7 +30,7 @@ umx_names(df, pattern = ".*", ignore.case = TRUE, perl = FALSE,
 Convenient equivalent of grep("fa[rl].*", names(df), value=T, ignore.case=T)
 }
 \examples{
-umx_names(mtcars, "mpg") # "mpg"  "cyl"  "disp" "hp"   "drat" "wt"   "qsec" "vs"   "am"   "gear" "carb"
+umx_names(mtcars, "mpg") #"mpg" "cyl" "disp" "hp" "drat" "wt" "qsec" "vs" "am" "gear" "carb"
 umx_names(mtcars, "^d") # "disp", drat
 umx_names(mtcars, "r[ab]") # "drat", "carb"
 }

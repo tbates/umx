@@ -6,9 +6,9 @@
 dl_from_dropbox(x, key)
 }
 \arguments{
-\item{x}{}
+\item{x}{Either the file name, or full dropbox URL (see example below)}
 
-\item{key}{}
+\item{key}{the code after s/ and before the file name in the dropbox url}
 }
 \value{
 - NULL

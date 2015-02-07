@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require(OpenMx)
 #
 # Define function for computing polychoric/polyserial/pearson correlations
 #

@@ -37,7 +37,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umx_get_time(m1)
 m2 = umxRun(m1)
-umx_get_time(c(m1,m2))
+umx_get_time(c(m1, m2))
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

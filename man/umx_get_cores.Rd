@@ -26,7 +26,7 @@ m1 <- mxModel("ind", type = "RAM",
 oldCores = umx_get_cores()   # get current default value
 umx_set_cores(model = m1)    # set to default (max - 1)
 umx_get_cores(model = m1)    # show new value
-umx_set_cores(detectCores()) # set to default (max - 1)
+umx_set_cores() # set to default (max - 1)
 umx_get_cores()              # show new value
 umx_set_cores(oldCores)      # reset to old value
 }

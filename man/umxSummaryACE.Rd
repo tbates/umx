@@ -4,9 +4,9 @@
 \alias{umxSummaryACE}
 \title{umxSummaryACE}
 \usage{
-umxSummaryACE(fit, digits = 2, dotFilename = NULL, returnStd = F,
-  extended = F, showRg = F, showStd = T, comparison = NULL, CIs = T,
-  zero.print = ".", report = 1)
+umxSummaryACE(fit, digits = 2, dotFilename = NULL, returnStd = FALSE,
+  extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL,
+  CIs = TRUE, zero.print = ".", report = 1)
 }
 \arguments{
 \item{fit}{an \code{\link{mxModel}} to summarize}
@@ -50,8 +50,8 @@ m1 = umxRun(m1)
 umxSummaryACE(m1)
 \dontrun{
 umxSummaryACE(m1, dotFilename = NA);
-umxSummaryACE(m1, dotFilename = "name", showStd = T)
-stdFit = umxSummaryACE(m1, returnStd = T);
+umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
+stdFit = umxSummaryACE(m1, returnStd = TRUE);
 }
 }
 \references{

@@ -318,12 +318,12 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' @param moderator The name of the moderator variable in the dataset e.g. "age", "SES" etc.
 #' @param mzData Dataframe containing the DV and moderator for MZ twins
 #' @param dzData Dataframe containing the DV and moderator for DZ twins
-#' @param weightCov Whether to use cov.wt matrices or FIML default = FIML (FALSE)
+#' @param weightCov Whether to use cov.wt matrices or FIML default = FALSE, i.e., FIML
 #' @param width An option to widen or narrow the window from its default (of 1)
 #' @param target A user-selected list of moderator values to test (default = NULL = explore the full range)
 #' @param plotWindow whether to plot what the window looks like
 #' @param return  whether to return the last model (useful for specifiedTargets) or the list of estimates (default = "estimates")
-	#' @return - Table of estimates of ACE along the moderator
+#' @return - Table of estimates of ACE along the moderator
 #' @export
 #' @examples
 #' library(OpenMx);
@@ -335,7 +335,7 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 #' data(twinData) # Dataset of Australian twins, built into OpenMx
 #' # The twinData consist of two cohorts. First we label them
-#' # TODO: Q for openmx team: can I add a cohort column to this dataset?
+#' # TODO: Q for OpenMx team: can I add a cohort column to this dataset?
 #' twinData$cohort = 1; twinData$cohort[twinData$zyg %in% 6:10] = 2
 #' twinData$zyg[twinData$cohort == 2] = twinData$zyg[twinData$cohort == 2]-5
 #' # And set a plain-English label
@@ -347,9 +347,9 @@ umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, f
 #' mzData = subset(twinData, ZYG == "MZFF", c(selDVs, mod))
 #' dzData = subset(twinData, ZYG == "DZFF", c(selDVs, mod))
 #' 
-#' # ======================
-#' # = Run the analyses! =
-#' # ======================
+#' # ========================
+#' # = 2. Run the analyses! =
+#' # ========================
 #' # Run with FIML (default) uses all information
 #' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData);
 #' 
@@ -380,7 +380,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	umx_check_names(c(selDVs, moderator), data = dzData, die = TRUE, no_others = TRUE)
 
 	# Add a zygosity column (that way we know what it's called)
-	mzData$ZYG = "MZ"; 
+	mzData$ZYG = "MZ";
 	dzData$ZYG = "DZ"
 	# If using cov.wt, remove missings
 	if(weightCov){
@@ -395,7 +395,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 			mzData = mzData[mz.complete, ]
 		}
 	}
+	# bind the MZ nd DZ data into one frame so we can work with it repeatedly over weight iterations
 	allData = rbind(mzData, dzData)
+
 	# Create range of moderator values to iterate over (using the incoming moderator variable name)
 	modVar  = allData[, moderator]
 	if(any(is.na(modVar))){		
@@ -421,7 +423,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	moderatorSD  = sd(modVar, na.rm = TRUE)
 	bw           = 2 * numPairs^(-.2) * moderatorSD *  width # -.2 == -1/5 
 
-	ACE = c("A","C","E")
+	ACE = c("A", "C", "E")
 	tmp = rep(NA, length(targetLevels))
 	out = data.frame(modLevel = targetLevels, Astd = tmp, Cstd = tmp, Estd = tmp, A = tmp, C = tmp, E = tmp)
 	n   = 1
@@ -430,10 +432,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		message("mod = ", i)
 		zx = (modVar - i)/bw
 		k = (1 / (2 * pi)^.5) * exp((-(zx)^2) / 2)
-		# ======================================================
-		# = Insert the weights into the dataframes as "weight" =
-		# ======================================================
-		allData$weight = k/.399 
+		# ===========================================================
+		# = Insert the weights variable into dataframes as "weight" =
+		# ===========================================================
+		allData$weight = k/.399
 		mzData = subset(allData, ZYG == "MZ", c(selDVs, "weight"))
 		dzData = subset(allData, ZYG == "DZ", c(selDVs, "weight"))
 		if(weightCov){
@@ -451,7 +453,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		out[n, ] = mxEval(c(i, top.a_std[1,1], top.c_std[1,1],top.e_std[1,1], top.a[1,1], top.c[1,1], top.e[1,1]), m1)
 		n = n + 1
 	}
-	# squaring paths to produce variances
+	# Squaring paths to produce variances
 	out[,ACE] <- out[,ACE]^2
 	# plotting variance components
 	with(out,{
@@ -613,16 +615,14 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 
 	dataType = umx_is_cov(dzData, boolean = FALSE)
 
+	# compute numbers of ordinal and binary variables
 	if(dataType == "raw"){
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
 			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 		}
-		# Drop any unused columns from mz and dzData
-		mzData = mzData[, selDVs]
-		dzData = dzData[, selDVs]
-		isFactor = umx_is_ordered(mzData)                      # T/F list of factor columns
-		isOrd    = umx_is_ordered(mzData, ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
-		isBin    = umx_is_ordered(mzData, binary.only  = TRUE) # T/F list of binary columns
+		isFactor = umx_is_ordered(mzData[, selDVs])                      # T/F list of factor columns
+		isOrd    = umx_is_ordered(mzData[, selDVs], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
+		isBin    = umx_is_ordered(mzData[, selDVs], binary.only  = TRUE) # T/F list of binary columns
 		nFactors = sum(isFactor)
 		nOrdVars = sum(isOrd) # total number of ordinal columns
 		nBinVars = sum(isBin) # total number of binary columns
@@ -647,10 +647,18 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		"This is assumed to be followed by '1' '2' etc...")
 	}
 
+	used = selDVs
+	if(!is.null(weightVar)){
+		used = c(used,weightVar)
+	}
+	# Drop unused columns from mz and dzData
+	mzData = mzData[, used]
+	dzData = dzData[, used]
+
 	if(dataType == "raw") {
 		if(!is.null(weightVar)){
 			# weight variable provided: check it exists in each frame
-			if(!umx_check_names(weightVar, data = mzData, die=F) | !umx_check_names(weightVar, data = dzData, die=F)){
+			if(!umx_check_names(weightVar, data = mzData, die = FALSE) | !umx_check_names(weightVar, data = dzData, die = FALSE)){
 				stop("The weight variable must be included in the mzData and dzData",
 					 " frames passed into umxACE when \"weightVar\" is specified",
 					 "\n mzData contained:", paste(names(mzData), collapse = ", "),
@@ -1803,7 +1811,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 	if(isCov){
 		variances = diag(data[manifests,manifests])
 		# Add variance to the single manfests
-		p1 = mxPath(from=manifests, arrows=2, value=variances)
+		p1 = mxPath(from = manifests, arrows = 2, values = variances)
 		return(p1)
 	} else {
 		manifestOrdVars = umx_is_ordered(data[,manifests])

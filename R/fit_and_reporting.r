@@ -692,17 +692,17 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 #' umxSummaryACE(m1)
 #' \dontrun{
 #' umxSummaryACE(m1, dotFilename = NA);
-#' umxSummaryACE(m1, dotFilename = "name", showStd = T)
-#' stdFit = umxSummaryACE(m1, returnStd = T);
+#' umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
+#' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = F, extended = F, showRg = F, showStd = T, comparison = NULL, CIs = T, zero.print = ".", report = 1) {
+umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = 1) {
 	if(typeof(fit) == "list"){ # call self recursively
 		for(thisFit in fit) {
 			message("Output for Model: ", thisFit$name)
 			umxSummaryACE(thisFit, digits = digits, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, zero.print = zero.print, report = report)
 		}
 	} else {
-	umx_has_been_run(fit, stop = T)
+	umx_has_been_run(fit, stop = TRUE)
 	if(is.null(comparison)){
 		message("-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
 		print(-2 * logLik(fit));			
@@ -745,15 +745,14 @@ umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = F, ex
 	aClean[upper.tri(aClean)] = NA
 	cClean[upper.tri(cClean)] = NA
 	eClean[upper.tri(eClean)] = NA
-	Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = selDVs[1:nVar]);
+	rowNames = sub("_.1$", "", selDVs[1:nVar])
+	Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
 
 	names(Estimates) = paste0(rep(c("a", "c", "e"), each = nVar), rep(1:nVar));
 
-	Estimates = umx::umx_print(Estimates, digits = digits, zero.print = ".")
+	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
 	if(report == 3){
 		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
-	}else{
-		
 	}
 
 	if(extended == TRUE) {
@@ -764,9 +763,9 @@ umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = F, ex
 		aClean[upper.tri(aClean)] = NA
 		cClean[upper.tri(cClean)] = NA
 		eClean[upper.tri(eClean)] = NA
-		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = selDVs[1:nVar]);
-		names(unStandardizedEstimates) = paste(rep(c("a", "c", "e"), each = nVar), rep(1:nVar), sep = "");
-		umx_print(unStandardizedEstimates, digits = digits, zero.print = ".")
+		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
+		names(unStandardizedEstimates) = paste0(rep(c("a", "c", "e"), each = nVar), rep(1:nVar));
+		umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
 	}
 
 	# Pre & post multiply covariance matrix by inverse of standard deviations
@@ -782,11 +781,11 @@ umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = F, ex
 		rAClean[upper.tri(rAClean)] = NA
 		rCClean[upper.tri(rCClean)] = NA
 		rEClean[upper.tri(rEClean)] = NA
-		genetic_correlations = data.frame(cbind(rAClean, rCClean, rEClean), row.names = selDVs[1:nVar] );
-		names(genetic_correlations) <- selDVs[1:nVar]
+		genetic_correlations = data.frame(cbind(rAClean, rCClean, rEClean), row.names = rowNames);
+		names(genetic_correlations) <- rowNames
 	 	# Make a nice-ish table
 		names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each=nVar), rep(1:nVar));
-		umx_print(genetic_correlations, digits=digits, zero.print = ".")
+		umx_print(genetic_correlations, digits=digits, zero.print = zero.print)
 	}
 	stdFit = fit
 	hasCIs = umx_has_CIs(fit)
