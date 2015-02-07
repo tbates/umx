@@ -409,7 +409,6 @@ umx_get_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS
 					formatStr = "%OS2 seconds"
 				}
 			}
-			message(paste0(m$name, ": ", formatStr, timeDelta))
 			message(format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta)))
 		}
 	}
