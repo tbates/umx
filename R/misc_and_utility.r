@@ -914,12 +914,13 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 #' dl_from_dropbox("https://dl.dropboxusercontent.com/s/7kauod48r9cfhwc/tinytwinData.rda")
 #' dl_from_dropbox("tinytwinData.rda", key = "7kauod48r9cfhwc")
 #' }
-dl_from_dropbox <- function(x, key) {
+dl_from_dropbox <- function(x, key){
 	require(RCurl)
 	if(is.null(key)){
 		bin <- getBinaryURL(x, ssl.verifypeer = FALSE)
 		x = sub("^.+/(.*)$", "\\1", x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
 	} else {
+		# user has provided key and file name, so concatenate with https...
 		bin <- getBinaryURL(paste0("https://dl.dropboxusercontent.com/s/", key, "/", x), ssl.verifypeer = FALSE)
 	}
 	con <- file(x, open = "wb")
