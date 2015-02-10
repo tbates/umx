@@ -15,8 +15,8 @@ umx_is_MxMatrix(obj)
 Utility function returning a binary answer to the question "Is this an OpenMx mxMatrix?"
 }
 \examples{
-x = mxMatrix(name="expMean", type="Full", nrow=3, ncol=3, free=T, values=.3, byrow=T)
-if(umx_is_MxModel(x)){
+x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = TRUE, values = .3, byrow = TRUE)
+if(umx_is_MxMatrix(x)){
 	message("nice OpenMx matrix!")
 }
 }

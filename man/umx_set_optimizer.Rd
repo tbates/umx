@@ -17,17 +17,9 @@ umx_set_optimizer(opt = c("NPSOL", "NLOPT", "CSOLNP"), model = NULL)
 set the optimizer in OpenMx
 }
 \examples{
-library(OpenMx)
-manifests = c("mpg", "disp", "gear")
-m1 <- mxModel("ind", type = "RAM",
-	manifestVars = manifests,
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = "one", to = manifests),
-	mxData(mtcars[, manifests], type = "raw")
-)
-umx_set_optimiser("NPSOL") # set globally
-m1 = umx_set_optimiser(m1, opt = "NPSOL")
-m1 = mxRun(m1)
+old = umx_get_optimizer() # get the existing state
+umx_set_optimizer("NPSOL") # update globally
+umx_set_optimizer(old) # set back
 \dontrun{
 m1@runstate$compute$steps[1][[1]]$engine # NPSOL
 }

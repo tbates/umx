@@ -37,7 +37,13 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-umx_check_model(model)
+umx_check_model(m1)
+umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
+umx_check_model(m1, hasData = TRUE)
+\dontrun{
+umx_check_model(m1, hasMeans = TRUE)
+umx_check_model(m1, beenRun = FALSE)
+}
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

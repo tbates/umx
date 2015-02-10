@@ -19,14 +19,11 @@ Return a list of all the exogenous variables (variables with no incoming single-
 \examples{
 require(OpenMx)
 data(demoOneFactor)
-latents  = c("G")
-manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor",
-	mxPath(from = "g", to = names(demoOneFactor)),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	mxPath(from = "g", to = names(demoOneFactor))
 )
-umx_is_exogenous(model, manifests_only = TRUE)
-umx_is_exogenous(model, manifests_only = FALSE)
+umx_is_exogenous(m1, manifests_only = TRUE)
+umx_is_exogenous(m1, manifests_only = FALSE)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}

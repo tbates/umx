@@ -25,7 +25,7 @@ m1 <- mxModel("ind", type = "RAM",
 	mxData(mtcars[,manifests], type="raw")
 )
 oldOpt = umx_get_optimizer()
-umx_get_optimiser(m1)
+umx_get_optimizer(m1)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}

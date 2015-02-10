@@ -80,7 +80,7 @@ umx_check_multi_core <- function() {
 #' 	mxData(mtcars[,manifests], type="raw")
 #' )
 #' oldOpt = umx_get_optimizer()
-#' umx_get_optimiser(m1)
+#' umx_get_optimizer(m1)
 umx_get_optimizer <- function(model = NULL) {
 	if(is.null(model)){
 		mxOption(NULL, "Default optimizer")
@@ -100,17 +100,9 @@ umx_get_optimizer <- function(model = NULL) {
 #' @family Miscellaneous Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' library(OpenMx)
-#' manifests = c("mpg", "disp", "gear")
-#' m1 <- mxModel("ind", type = "RAM",
-#' 	manifestVars = manifests,
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = "one", to = manifests),
-#' 	mxData(mtcars[, manifests], type = "raw")
-#' )
-#' umx_set_optimiser("NPSOL") # set globally
-#' m1 = umx_set_optimiser(m1, opt = "NPSOL")
-#' m1 = mxRun(m1)
+#' old = umx_get_optimizer() # get the existing state
+#' umx_set_optimizer("NPSOL") # update globally
+#' umx_set_optimizer(old) # set back
 #' \dontrun{
 #' m1@@runstate$compute$steps[1][[1]]$engine # NPSOL
 #' }
@@ -119,6 +111,7 @@ umx_set_optimizer <- function(opt = c("NPSOL","NLOPT","CSOLNP"), model = NULL) {
 	if(is.null(model)){
 		mxOption(NULL, "Default optimizer", opt)
 	} else {
+		# todo: this is illegal
 		return(mxOption(model, "Default optimizer", opt))
 	}
 	# if(opt == "NPSOL"){
@@ -203,14 +196,15 @@ umx_get_cores <- function(model = NULL) {
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' umx_set_checkpoint(count = 1, "evaluations", dir = "~/Desktop/")
+#' umx_set_checkpoint(count = 0, "evaluations", dir = ".")
 #' # m1 = umx_set_checkpoint(1, "evaluations", model = m1)
 umx_set_checkpoint <- function(count = 1, units = c("evaluations", "minutes"), directory = getwd(), model = NULL) {
-	if(count==0){
+	if(count == 0){
 		always = "No"
 	} else {
 		always = "Yes"
 	}
-	units = umx_default_option(units, c("evaluations", "minutes"))
+	units = match.arg(units)
 	if(is.null(model)){
 		mxOption(NULL, "Checkpoint Directory", directory)
 		mxOption(NULL, "Always Checkpoint"   , always)
@@ -236,7 +230,7 @@ umx_set_checkpoint <- function(count = 1, units = c("evaluations", "minutes"), d
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umx_get_checkpoint(model)
+#' umx_get_checkpoint()
 umx_get_checkpoint <- function(model = NULL) {
 	message("Always Checkpoint: ", mxOption(model, "Always Checkpoint") )
 	message("Checkpoint  Count: ", mxOption(model, "Checkpoint Count" ) )
@@ -482,14 +476,11 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor",
-#' 	mxPath(from = "g", to = names(demoOneFactor)),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	mxPath(from = "g", to = names(demoOneFactor))
 #' )
-#' umx_is_exogenous(model, manifests_only = TRUE)
-#' umx_is_exogenous(model, manifests_only = FALSE)
+#' umx_is_exogenous(m1, manifests_only = TRUE)
+#' umx_is_exogenous(m1, manifests_only = FALSE)
 umx_is_exogenous <- function(model, manifests_only = TRUE) {
 	umx_check_model(model, type = "RAM")
 	checkThese = model@manifestVars
@@ -523,14 +514,11 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor",
-#' 	mxPath(from = "g", to = names(demoOneFactor)),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	mxPath(from = "g", to = names(demoOneFactor))
 #' )
-#' umx_is_endogenous(model, manifests_only = TRUE)
-#' umx_is_endogenous(model, manifests_only = FALSE)
+#' umx_is_endogenous(m1, manifests_only = TRUE)
+#' umx_is_endogenous(m1, manifests_only = FALSE)
 umx_is_endogenous <- function(model, manifests_only = TRUE) {
 	# has_no_incoming_single_arrow
 	umx_check_model(model, type = "RAM")
@@ -545,7 +533,7 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 	n = 1
 	for (i in checkThese) {
 		# any free paths in this row?
-		if(any(model@matrices$A@free[i, ])){
+		if(any(model$matrices$A$free[i, ])){
 			endog[n] = i
 			n = n + 1
 		}
@@ -1046,14 +1034,15 @@ rowMin <- function(df, na.rm= TRUE) {
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' df = mtcars
+#' # make one variable non-numeric
 #' df$mpg = c(letters,letters[1:6]); str(df)
 #' df = umx_as_numeric(df)
 umx_as_numeric <- function(df, force = FALSE) {
 	# TODO handle case of not being a data.frame...
-	if(force){
-		colsToConvert = names(df)
-	} else {
-		colsToConvert = umx_is_numeric(df)
+	colsToConvert = names(df)
+	if(!force){
+		# just the numeric names
+		colsToConvert = colsToConvert[umx_is_numeric(df)]
 	}
 	for (i in colsToConvert) {
 		df[ ,i] = as.numeric(df[ ,i])
@@ -1319,12 +1308,14 @@ umx_paste_names <- function(varNames, textConstant = "", suffixes) {
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
+#' \dontrun{
 #' umx_merge_CIs(m1, m2)
-# # TODO remove duplicates...
-# # TODO (check they are the same as well!)
-# # TODO Support arbitrarily long list of input models with ...
-# # TODO check the models are the same, with same fit
-# # TODO check the models have CIs
+#' # TODO remove duplicates...
+#' # TODO (check they are the same as well!)
+#' # TODO Support arbitrarily long list of input models with ...
+#' # TODO check the models are the same, with same fit
+#' # TODO check the models have CIs
+#' }
 umx_merge_CIs <- function(m1, m2) {
 	# cludge together
 	a  = m1@output$confidenceIntervals
@@ -2008,14 +1999,13 @@ umx_is_MxModel <- function(obj) {
 #' @family Miscellaneous Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' x = mxMatrix(name="expMean", type="Full", nrow=3, ncol=3, free=T, values=.3, byrow=T)
-#' if(umx_is_MxModel(x)){
+#' x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = TRUE, values = .3, byrow = TRUE)
+#' if(umx_is_MxMatrix(x)){
 #' 	message("nice OpenMx matrix!")
 #' }
 umx_is_MxMatrix <- function(obj) {
 	isS4(obj) & is(obj, "MxMatrix")	
 }
-
 
 #' umx_is_cov
 #'
@@ -2193,9 +2183,16 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' umx_check_model(model)
+#' umx_check_model(m1)
+#' umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
+#' umx_check_model(m1, hasData = TRUE)
+#' \dontrun{
+#' umx_check_model(m1, hasMeans = TRUE)
+#' umx_check_model(m1, beenRun = FALSE)
+#' }
 umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, hasMeans = NULL, checkSubmodels = FALSE) {
-	# TODO hasSubmodels = F
+	# TODO hasSubmodels = FALSE
+	# TODO fix all these so they respect true and false...
 	if (!umx_is_MxModel(obj)) {
 		stop("'model' must be an mxModel")
 	}
@@ -2213,22 +2210,20 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 			message("Cannot yet handle models with submodels")
 		}
 	}
-	if(is.null(hasData)){
-		# no check
-	}else if (hasData & is.null(obj@data@observed)) {
-		stop("'model' does not contain any data")
+	if(!is.null(hasData)){
+		if (hasData & is.null(obj@data@observed)) {
+			stop("'model' does not contain any data")
+		}
 	}
-	if(is.null(beenRun)){
-		# no check
-	}else {
-		umx_has_been_run(obj)
+	if(!is.null(beenRun)){
+		if(!(umx_has_been_run(obj) == beenRun)){
+			stop("'model' run state != ", beenRun)		
+		}
 	}
-	if(is.null(hasMeans)){
-		# no check
-	}else {
-		# TODO fix all these so they respect true and false...
-		# currently assuming true
-		umx_has_means(obj)
+	if(!is.null(hasMeans)){
+		if (!(hasMeans == umx_has_means(obj))) {
+			stop("'model' does or does not have means")
+		}
 	}
 	return(TRUE)
 }
@@ -3487,7 +3482,7 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 		}else if(what == "free"){
 			umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
 		}else if(what == "labels"){
-			umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
+			umx_print(data.frame(model$matrices[[w]]$labels) , zero.print = ".", digits = digits)
 		}else if(what == "nonzero_or_free"){
 			message("99 means the value is fixed, but is non-zero")
 			values = model$matrices[[w]]$values

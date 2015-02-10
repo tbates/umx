@@ -31,7 +31,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m1 = xmuPropagateLabels(m1, suffix = "MZ")
+m1 = umx:::xmuPropagateLabels(m1, suffix = "MZ")
 }
 \references{
 - \url{http://openmx.psyc.virginia.edu}

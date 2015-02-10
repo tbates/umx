@@ -18,6 +18,7 @@ Convert each column of a dataframe to numeric
 }
 \examples{
 df = mtcars
+# make one variable non-numeric
 df$mpg = c(letters,letters[1:6]); str(df)
 df = umx_as_numeric(df)
 }

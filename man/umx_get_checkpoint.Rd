@@ -15,7 +15,7 @@ umx_get_checkpoint(model = NULL)
 get the checkpoint status for a model or global options
 }
 \examples{
-umx_get_checkpoint(model)
+umx_get_checkpoint()
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}

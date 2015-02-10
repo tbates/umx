@@ -125,11 +125,12 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 #' 	mxMatrix("Symm", 1, 1, values = 1, free = FALSE, name = "L"), 
 #' 	mxMatrix("Diag", 5, 5, values = 1, free = TRUE, name = "U"), 
 #' 	mxAlgebra(A %*% L %*% t(A) + U, name = "R"), 
-#' 	mxMLObjective("R", dimnames = names(demoOneFactor)), 
+#' 	mxExpectationNormal("R", dimnames = names(demoOneFactor)),
+#' 	mxFitFunctionML(),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m3 = xmuLabel_MATRIX_Model(m2)
-#' m4 = xmuLabel_MATRIX_Model(m2, suffix = "male")
+#' m3 = umx:::xmuLabel_MATRIX_Model(m2)
+#' m4 = umx:::xmuLabel_MATRIX_Model(m2, suffix = "male")
 #' # explore these with omxGetParameters(m4)
 xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 	if(!umx_is_MxModel(model) ){
@@ -462,10 +463,9 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
-#' m1 = xmuPropagateLabels(m1, suffix = "MZ")
-
+#' m1 = umx:::xmuPropagateLabels(m1, suffix = "MZ")
 xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
-	model@matrices  <- lapply(model@matrices , xmuLabel_Matrix   , suffix = suffix, verbose = verbose)
+	model@matrices  <- lapply(model$matrices , xmuLabel_Matrix   , suffix = suffix, verbose = verbose)
     model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix, verbose = verbose)
     return(model)
 }

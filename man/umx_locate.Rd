@@ -6,7 +6,7 @@
 umx_locate(n = 1, x, y, col = rgb(1, 0, 0, 0.5), pch = 20, ...)
 }
 \arguments{
-\item{n}{= 1}
+\item{n}{number of points to locate (default = 1)}
 
 \item{x}{the x data (to allow the locate function to find your points)}
 
@@ -19,12 +19,13 @@ umx_locate(n = 1, x, y, col = rgb(1, 0, 0, 0.5), pch = 20, ...)
 \item{...}{Additional parameters (passed into points())}
 }
 \value{
-- \code{\link{mxModel}}
+- vector of points clicked on
 }
 \description{
 Locate points on a graph by clicking!
 }
 \examples{
+\dontrun{
 n <- 200
 x <- sort(runif(n, min = 0, max = 10 * pi))
 y <- sin(x) + rnorm(n, sd = 0.2)
@@ -35,6 +36,7 @@ plot(x, y, cex = 2)
 pos <- umx_locate(10, x, y, col = rgb(1, .2, .2, .75), cex = 2)
 par(op)
 pos
+}
 }
 \references{
 - http://menugget.blogspot.co.uk/2014/12/point-locator-function.html

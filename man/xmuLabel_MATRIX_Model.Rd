@@ -28,11 +28,12 @@ m2 <- mxModel("One Factor",
 	mxMatrix("Symm", 1, 1, values = 1, free = FALSE, name = "L"),
 	mxMatrix("Diag", 5, 5, values = 1, free = TRUE, name = "U"),
 	mxAlgebra(A \%*\% L \%*\% t(A) + U, name = "R"),
-	mxMLObjective("R", dimnames = names(demoOneFactor)),
+	mxExpectationNormal("R", dimnames = names(demoOneFactor)),
+	mxFitFunctionML(),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
-m3 = xmuLabel_MATRIX_Model(m2)
-m4 = xmuLabel_MATRIX_Model(m2, suffix = "male")
+m3 = umx:::xmuLabel_MATRIX_Model(m2)
+m4 = umx:::xmuLabel_MATRIX_Model(m2, suffix = "male")
 # explore these with omxGetParameters(m4)
 }
 \references{

@@ -589,6 +589,13 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' m1 = umxRun(m1)
 #' umxSummary(m1)
+#' # example with covariance data only
+#' selDVs = c("wt1", "wt2")
+#' dz = cov(dzData[,selDVs], use = "complete")
+#' mz = cov(mzData[,selDVs], use = "pairwise")
+#' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ = nrow(dzData), numObsMZ = nrow(mzData))
+#' m1 = mxRun(m1)
+#' summary(m1)
 #' \dontrun{
 #' plot(m1)
 #' }
@@ -614,7 +621,6 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
 	dataType = umx_is_cov(dzData, boolean = FALSE)
-
 	# compute numbers of ordinal and binary variables
 	if(dataType == "raw"){
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
@@ -777,8 +783,8 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		if(!is.null(weightVar)){
 			stop("You can't set weightVar when you give cov data - use cov.wt to create weighted cov matrices, or pass in raw data")
 		}
-		umx_check(!is.null(numObsMZ), paste0("You must set numObsMZ with ", dataType, " data"))
-		umx_check(!is.null(numObsDZ), paste0("You must set numObsDZ with ", dataType, " data"))
+		umx_check(!is.null(numObsMZ), "stop", paste0("You must set numObsMZ with ", dataType, " data"))
+		umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with ", dataType, " data"))
 		# TODO should keep this just as mzData?
 		het_mz = umx_reorder(mzData, selDVs)		
 		het_dz = umx_reorder(dzData, selDVs)

@@ -2,17 +2,18 @@
 #'
 #' Locate points on a graph by clicking!
 #'
-#' @param n = 1
+#' @param n number of points to locate (default = 1)
 #' @param x the x data (to allow the locate function to find your points)
 #' @param y the y data 
 #' @param col = rgb(1,0,0,0.5)
 #' @param pch = 20
 #' @param ... Additional parameters (passed into points())
-#' @return - \code{\link{mxModel}}
+#' @return - vector of points clicked on
 #' @export
 #' @family umx miscellaneous
 #' @references - http://menugget.blogspot.co.uk/2014/12/point-locator-function.html
 #' @examples
+#' \dontrun{
 #' n <- 200
 #' x <- sort(runif(n, min = 0, max = 10 * pi))
 #' y <- sin(x) + rnorm(n, sd = 0.2)
@@ -23,6 +24,7 @@
 #' pos <- umx_locate(10, x, y, col = rgb(1, .2, .2, .75), cex = 2)
 #' par(op)
 #' pos
+#' }
 umx_locate <- function(n=1, x, y, col=rgb(1,0,0,0.5), pch=20, ...){
   xsc <- scale(x)
   ysc <- scale(y)

@@ -19,14 +19,11 @@ Return a list of all the endogenous variables (variables with at least one incom
 \examples{
 require(OpenMx)
 data(demoOneFactor)
-latents  = c("G")
-manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor",
-	mxPath(from = "g", to = names(demoOneFactor)),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	mxPath(from = "g", to = names(demoOneFactor))
 )
-umx_is_endogenous(model, manifests_only = TRUE)
-umx_is_endogenous(model, manifests_only = FALSE)
+umx_is_endogenous(m1, manifests_only = TRUE)
+umx_is_endogenous(m1, manifests_only = FALSE)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}

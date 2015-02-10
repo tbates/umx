@@ -23,6 +23,7 @@ Set the checkpoint status for a model or global options
 }
 \examples{
 umx_set_checkpoint(count = 1, "evaluations", dir = "~/Desktop/")
+umx_set_checkpoint(count = 0, "evaluations", dir = ".")
 # m1 = umx_set_checkpoint(1, "evaluations", model = m1)
 }
 \references{
