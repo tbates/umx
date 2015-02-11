@@ -17,18 +17,21 @@ get the optimizer in OpenMx
 \examples{
 library(OpenMx)
 manifests = c("mpg", "disp", "gear")
-umx_set_optimizer(opt = "CSOLNP")
-m1 <- mxModel("ind", type = "RAM",
-	manifestVars = manifests,
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = "one", to = manifests),
-	mxData(mtcars[,manifests], type="raw")
-)
 oldOpt = umx_get_optimizer()
-umx_get_optimizer(m1)
+m1 <- umxRAM("ind", data = mxData(mtcars[,manifests], type = "raw"),
+	umxPath(var = manifests),
+	umxPath(means = manifests)
+)
+umx_set_optimizer(opt = "CSOLNP")
+m2 = mxRun(mxModel(m1, name="CSOLNP")); umx_get_time(m2)
+umx_set_optimizer(opt = "NPSOL")
+m3 = mxRun(mxModel(m1, name="NPSOL")); umx_get_time(m3)
+umx_set_optimizer(opt = "NLOPT")
+m4 = mxRun(mxModel(m4, name="NLOPT")); umx_get_time(m4)
+umx_set_optimizer(oldOpt)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
