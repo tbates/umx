@@ -34,7 +34,6 @@ umxFIML <- function(covariance, means, dimnames = NA, thresholds = NA, threshnam
 	return(list(mxExp, mxFit))
 }
 
-
 #' umx_check_multi_core
 #'
 #' Shows how many cores you are using, and runs a test script so user can check CPU usage
