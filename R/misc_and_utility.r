@@ -77,11 +77,11 @@ umx_check_multi_core <- function() {
 #' 	umxPath(means = manifests)
 #' )
 #' umx_set_optimizer(opt = "CSOLNP")
-#' m2 = mxRun(mxModel(m1, name="CSOLNP")); umx_get_time(m2)
+#' m2 = mxRun(mxModel(m1, name = "CSOLNP")); umx_get_time(m2)
 #' umx_set_optimizer(opt = "NPSOL")
-#' m3 = mxRun(mxModel(m1, name="NPSOL")); umx_get_time(m3)
-#' umx_set_optimizer(opt = "NLOPT")
-#' m4 = mxRun(mxModel(m4, name="NLOPT")); umx_get_time(m4)
+#' m3 = mxRun(mxModel(m1, name = "NPSOL")); umx_get_time(m3)
+#' # umx_set_optimizer(opt = "NLOPT")
+#' # m4 = mxRun(mxModel(m1, name = "NLOPT")); umx_get_time(m4)
 #' umx_set_optimizer(oldOpt)
 umx_get_optimizer <- function(model = NULL) {
 	if(is.null(model)){
@@ -117,8 +117,8 @@ umx_get_optimizer <- function(model = NULL) {
 #' m2 = mxRun(mxModel(m1, name="CSOLNP")); umx_get_time(m2)
 #' umx_set_optimizer(opt = "NPSOL")
 #' m3 = mxRun(mxModel(m1, name="NPSOL")); umx_get_time(m3)
-#' umx_set_optimizer(opt = "NLOPT")
-#' m4 = mxRun(mxModel(m4, name="NLOPT")); umx_get_time(m4)
+#' # umx_set_optimizer(opt = "NLOPT")
+#' # m4 = mxRun(mxModel(m1, name="NLOPT")); umx_get_time(m4)
 #' umx_set_optimizer(oldOpt)
 #' \dontrun{
 #' m1@@runstate$compute$steps[1][[1]]$engine # NPSOL
@@ -2843,9 +2843,9 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.lev
   if(is.na(n))(n <- row) # sets unspecified sample size to num rows
   col <- dim(dataset)[2] # number of columns
   del <- is.na(dataset)  # records position of NAs in dataset
-  if(n!=row){
+  if(n != row){
     select <- round(runif(n, 0.5, row+.49),0)
-    del <- del[select,]
+    del    <- del[select,]
   }
   num <- rep(NA, col)    # see what's not a factor
   ord <- rep(NA, col)    # see what's an ordered factor
@@ -2858,7 +2858,7 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.lev
 
   # check for unordered factors
   location <- !(num|ord)
-  unorder <- sum(location)
+  unorder  <- sum(location)
 
   if(unorder>0)warning(
     paste("Unordered factor detected in variable(s):", 
@@ -2867,21 +2867,19 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.lev
   )
 
   # if everything is numeric, don't invoke polycor
-  if(sum(!num)==0){
+  if(sum(!num) == 0){
     # generate data with rmvnorm
-    fake <- rmvnorm(n, 
-      apply(dataset, 2, mean, na.rm=TRUE),
-      cov(dataset, use="pairwise.complete.obs"),
-      mvt.method)
+    fake <- mvtnorm::rmvnorm(n, apply(dataset, 2, mean, na.rm = TRUE),
+		cov(dataset, use = "pairwise.complete.obs"), mvt.method)
 
     # round the data to the requested digits
     fake <- round(fake, digits)
 
     # insert the missing data, if so requested
-    if(use.miss==TRUE)(fake[del] <- NA)
+    if(use.miss == TRUE)(fake[del] <- NA)
 
     # give the variables names, if so requested
-    if(use.names==TRUE)(names(fake) <- names(dataset))
+    if(use.names == TRUE)(names(fake) <- names(dataset))
 
     # return the new data
     return(fake)
@@ -2891,12 +2889,14 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.lev
 
   # find the variable means (constrain to zero for factors)
   mixedMeans <- rep(0, col)
-  mixedMeans[num] <- apply(dataset[,num], 2, mean, na.rm=TRUE)
+  mixedMeans[num] <- apply(dataset[, num], 2, mean, na.rm = TRUE)
 
   # estimate a heterogeneous correlation matrix
-  if (het.suppress==TRUE){
-    suppressWarnings(het <- polycor::hetcor(dataset, ML=het.ML))
-  } else (het <- polycor::hetcor(dataset, ML=het.ML))
+  if (het.suppress == TRUE){
+	  suppressWarnings(het <- polycor::hetcor(dataset, ML = het.ML))
+  } else {
+	  het <- polycor::hetcor(dataset, ML = het.ML)	
+  }
   mixedCov <- het$correlations
 
   # make a diagonal matrix of standard deviations to turn the 
@@ -2911,7 +2911,7 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.lev
   fake <- as.data.frame(rmvnorm(row, mixedMeans, mixedCov, mvt.method))
 
   # insert the missing data, if so requested
-  if(use.miss==TRUE)(fake[del] <- NA)
+  if(use.miss == TRUE)(fake[del] <- NA)
 
   # turn the required continuous variables into factors
   for (i in (1:col)[!num]){
@@ -2949,13 +2949,13 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.lev
       levels(fake[,i]) <- lev} else (levels(fake[,i]) <- 1:length(lev))
   }
 
-  # round the data to the requested digits
+  # Round the data to the requested digits
   fake[,num] <- round(fake[,num], digits)
 
-  # give the variables names, if so requested
+  # Give the variables names, if so requested
   if(use.names==TRUE)(names(fake) <- names(dataset))
   
-  # return the new data
+  # Return the new data
   return(fake)
 }
 
