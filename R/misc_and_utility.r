@@ -2662,6 +2662,7 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)
 umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	# Check names
+	# TODO remove dependency on formula.tools
 	if(class(var) == "formula"){
 		umx_check(is.null(covs), "stop", "when using formula, leave covs empty")
 		require(formula.tools)
