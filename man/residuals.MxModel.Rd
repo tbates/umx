@@ -41,7 +41,7 @@ residuals(m1, digits = 3, suppress = .005)
 a = residuals(m1); a
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}};

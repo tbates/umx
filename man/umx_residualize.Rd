@@ -47,7 +47,7 @@ tmp$disp_T1 = tmp$disp_T2 = tmp$disp
 umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};

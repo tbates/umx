@@ -100,7 +100,7 @@ str(mzData)
 umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 - \code{\link{umxOrdinalObjective}}

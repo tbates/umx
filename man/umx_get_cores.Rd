@@ -32,7 +32,7 @@ umx_get_cores()              # show new value
 umx_set_cores(oldCores)      # reset to old value
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};

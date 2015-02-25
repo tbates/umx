@@ -4,13 +4,16 @@
 \alias{umx_set_checkpoint}
 \title{umx_set_checkpoint}
 \usage{
-umx_set_checkpoint(count = 1, units = c("evaluations", "minutes"),
-  directory = getwd(), model = NULL)
+umx_set_checkpoint(interval = 1, units = c("evaluations", "iterations",
+  "minutes"), prefix = "", directory = getwd(), model = NULL)
 }
 \arguments{
-\item{count}{how many units to elapse betwen checkpoints: Default =  1 (set to zero to set always = 'No')}
+\item{interval}{How many units between checkpoints: Default =  1.
+A value of zero sets always to No (i.e., do not checkpoint all models during optimization)}
 
 \item{units}{units to count in: Default unit is 'evaluations' ('minutes' is also legal)}
+
+\item{prefix}{string prefix to add to all checkpoint filenames (default = "")}
 
 \item{directory}{a directory, i.e "~/Desktop" (defaults to getwd())}
 
@@ -23,12 +26,13 @@ umx_set_checkpoint(count = 1, units = c("evaluations", "minutes"),
 Set the checkpoint status for a model or global options
 }
 \examples{
-umx_set_checkpoint(count = 1, "evaluations", dir = "~/Desktop/")
-umx_set_checkpoint(count = 0, "evaluations", dir = ".")
+umx_set_checkpoint(interval = 1, "evaluations", dir = "~/Desktop/")
+# turn off checkpointing with interval = 0
+umx_set_checkpoint(interval = 0)
 # m1 = umx_set_checkpoint(1, "evaluations", model = m1)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};

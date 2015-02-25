@@ -18,7 +18,7 @@ model = umx_check_multi_core(model)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};

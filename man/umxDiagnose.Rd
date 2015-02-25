@@ -35,6 +35,6 @@ umxSummary(m1, show = "std")
 umxDiagnose(m1)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 

@@ -25,7 +25,7 @@ model = umx_drop_ok(model)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}};

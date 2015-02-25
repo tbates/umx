@@ -41,7 +41,7 @@ m1@runstate$compute$steps[1][[1]]$engine # NPSOL
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};

@@ -48,7 +48,7 @@ umxOrdinalObjective(df, suffixes = c("_T1", "_T2"))
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 - \code{\link{umxThresholdMatrix}}

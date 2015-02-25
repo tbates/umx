@@ -31,6 +31,8 @@ option_list = c(NULL, "par.observed", "empirical")
 umx_default_option(option_list, option_list) # fails with NULL!!!!!
 option_list = c(NA, "par.observed", "empirical")
 umx_default_option(option_list, option_list) # use NA instead
+option_list = c(TRUE, FALSE, NA)
+umx_default_option(option_list, option_list) # works with non character
 }
 }
 \references{

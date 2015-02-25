@@ -21,7 +21,7 @@ umx_rot(c(3,4,5,6,7))
 # [1] 4 5 6 7 3
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

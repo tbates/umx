@@ -25,7 +25,7 @@
 #' @export
 #' @family umx core functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
 #' model = umxReduce(model)
@@ -72,7 +72,7 @@ umxReduce <- function(m1, report = 3, baseFileName = "tmp") {
 #' @return - helpful messages and perhaps a modified model
 #' @export
 #' @family model building functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -120,7 +120,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @return - 
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
 #' model = umx_drop_ok(model)
@@ -154,7 +154,7 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #' @export
 #' @export residuals.MxModel
 #' @family Reporting functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -678,7 +678,7 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso - \code{\link{umxACE}} 
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' require(OpenMx)
 #' data(twinData)
@@ -1252,7 +1252,7 @@ umxSaturated <- function(model, evaluate = TRUE, verbose = TRUE) {
 #' @return - standardized ACE \code{\link{mxModel}}
 #' @export
 #' @family Reporting Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
 #' fit = umxStandardizeACE(fit)
@@ -2222,7 +2222,7 @@ umxFitIndices <- function(model, indepfit) {
 #' @return - RMSEA object containing value (and perhaps a CI)
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 
 #' RMSEA function for MxModels

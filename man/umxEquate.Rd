@@ -4,7 +4,8 @@
 \alias{umxEquate}
 \title{umxEquate}
 \usage{
-umxEquate(model, master, slave, free = TRUE, verbose = TRUE, name = NULL)
+umxEquate(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE,
+  name = NULL)
 }
 \arguments{
 \item{model}{An \code{\link{mxModel}} within which to equate parameters}

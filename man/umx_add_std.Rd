@@ -24,7 +24,7 @@ model = umx_add_std(model)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
 Other Model Building Functions: \code{\link{umxLabel}};

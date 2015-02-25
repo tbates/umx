@@ -19,6 +19,6 @@ Tests if an input has square brackets
 xmuHasSquareBrackets("A[1,2]")
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 

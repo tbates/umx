@@ -34,7 +34,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};

@@ -33,7 +33,7 @@ umx_cov_diag(tmp2)
 umx_cov_diag(tmp2, format = "Full")
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

@@ -20,7 +20,7 @@ options('mxCondenseMatrixSlots'= FALSE)
 # news();
 # create_README()
 
-# document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
 # https://r-forge.r-project.org/project/admin/?group_id=1745
 # http://r-pkgs.had.co.nz/
@@ -100,7 +100,7 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' # umxRAM is like ggplot2::qplot(), you give the data in a data =  parameter
 #' # A common error is to include data in the main list,
@@ -1424,9 +1424,9 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 #' m2 = mxRun(m2) # have to run the model again...
 #' umxCompare(m1, m2) # not good :-)
 #' umxSummary(m1, m2) # not good :-)
-umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = NULL) {	
-	# add the T|F|NA list stuff to handle free = c(T|F|NA)
-	if(!umx_is_RAM(model)){
+umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE, name = NULL) {	
+	free = umx_default_option(free, c(TRUE, FALSE, NA))
+	if(!umx_is_MxModel(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])
 		message("A usage example is umxEquate(model, master=\"a_to_b\", slave=\"a_to_c\", name=\"model2\") # equate paths a->b and a->c, in a new model called \"model2\"")
 		stop()
@@ -1438,22 +1438,18 @@ umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = 
 			cat("note: matching whole label\n");
 		}
 	}
-	masterLabels = names(omxGetParameters(model, indep = FALSE, free = free))
-	masterLabels = masterLabels[which(!is.na(masterLabels) )]      # exclude NAs
-	masterLabels = grep(master, masterLabels, perl = FALSE, value = TRUE)
-	# return(masterLabels)
-	slaveLabels = names(omxGetParameters(model, indep = FALSE, free = free))
-	slaveLabels = slaveLabels[which(!is.na(slaveLabels))] # exclude NAs
-	slaveLabels = grep(slave, slaveLabels, perl = FALSE, value = TRUE)
-	if( length(slaveLabels) != length(masterLabels)) {
+	masterLabels = umxGetParameters(model, regex = master, free = free, verbose = verbose)
+	slaveLabels  = umxGetParameters(model, regex = slave , free = free, verbose = verbose)
+	if( length(slaveLabels) != length(masterLabels) && (length(masterLabels)!=1)) {
 		print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
-		stop("ERROR in umxEquate: master and slave labels not the same length!")
+		stop("ERROR in umxEquate: master and slave labels not the same length!\n",
+		length(slaveLabels), " slavelabels found, and ", length(masterLabels), " masters")
 	}
-	if( length(slaveLabels)==0 ) {
+	if(length(slaveLabels) == 0) {
 		legal = names(omxGetParameters(model, indep=FALSE, free=free))
 		legal = legal[which(!is.na(legal))]
 		message("Labels available in model are: ", paste(legal, ", "))
-		stop("ERROR in umxEquate: no matching labels found!")
+		stop("ERROR in umxEquate: no slave labels found or none requested!")
 	}
 	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
 	model = omxSetParameters(model = model, labels = slaveLabels, newlabels = masterLabels, name = name)
@@ -1873,7 +1869,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - \code{\link{umxOrdinalObjective}}
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")
 #' umxThresholdMatrix(x)
@@ -2234,7 +2230,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 #' @family Model Building Functions
 #' @family umx deprecated
 #' @seealso - \code{\link{umxThresholdMatrix}}
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
 #' umxOrdinalObjective(df, suffixes = c("_T1", "_T2"))
@@ -2362,7 +2358,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @export
 #' @family Model Building Functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
 #' # Some examples of paths with umxPath
@@ -2660,7 +2656,7 @@ umxMatrix <- function(type = "Full", rc= NULL, fixedAt = NULL,
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
 #' model = umx_add_std(model)

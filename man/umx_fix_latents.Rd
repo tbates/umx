@@ -36,7 +36,7 @@ m1 = umx_fix_latents(m1)
 umx_show(m1, matrices = "S") # variance of g is fixed at 1
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 Other Model Building Functions: \code{\link{umxLabel}};

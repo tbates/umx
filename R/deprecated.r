@@ -74,7 +74,7 @@
 #'
 #' @name umx-deprecated
 #' @family umx deprecated
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 NULL
 
 #' @rdname umx-deprecated

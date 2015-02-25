@@ -32,7 +32,7 @@ m3 = mxRun(mxModel(m1, name = "NPSOL")); umx_get_time(m3)
 umx_set_optimizer(oldOpt)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
