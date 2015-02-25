@@ -38,6 +38,8 @@ Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};
+  \code{\link{umx_checkpoint}},
+  \code{\link{umx_set_checkpoint}};
   \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_explode}};
@@ -59,8 +61,7 @@ Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umx_names}}; \code{\link{umx_object_as_str}};
   \code{\link{umx_paste_names}}; \code{\link{umx_print}};
   \code{\link{umx_rename}}; \code{\link{umx_reorder}};
-  \code{\link{umx_rot}}; \code{\link{umx_set_checkpoint}};
-  \code{\link{umx_set_cores}};
+  \code{\link{umx_rot}}; \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}}; \code{\link{umx_trim}};
   \code{\link{umx_update_OpenMx}}; \code{\link{umx}},
   \code{\link{umx-package}}

@@ -4,15 +4,17 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(name, ..., exog.variances = FALSE, endog.variances = FALSE,
-  fix = c("none", "latents", "firstLoadings"), latentVars = NULL,
-  data = NULL, setValues = TRUE, independent = NA,
+umxRAM(name, data = NULL, ..., exog.variances = FALSE,
+  endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"),
+  latentVars = NULL, setValues = TRUE, independent = NA,
   remove_unused_manifests = TRUE)
 }
 \arguments{
 \item{name}{friendly name for the model}
 
-\item{...}{A list of mxPaths or mxThreshold objects}
+\item{data}{the data for the model. Can be an \code{\link{mxData}} or a data.frame}
+
+\item{...}{A list of mxPath, umxPath, or mxThreshold objects}
 
 \item{exog.variances}{If TRUE, free variance parameters are added for exogenous variables that lack them (the default is FALSE).}
 
@@ -21,8 +23,6 @@ umxRAM(name, ..., exog.variances = FALSE, endog.variances = FALSE,
 \item{fix}{Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")}
 
 \item{latentVars}{Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)}
-
-\item{data}{the data for the model. Can be an \code{\link{mxData}} or a data.frame}
 
 \item{setValues}{Whether to try and guess good start values (Defults to TRUE, set them)}
 
@@ -61,12 +61,11 @@ Additional conveniences:
 selVars = c("mpg", "wt", "disp")
 
 # 2. Create an mxData object
-myData = cov(mtcars[,selVars], use = "complete")
-myCov = mxData(myData, type = "cov", numObs = nrow(mtcars) )
+myCov = mxData(cov(mtcars[,selVars]), type = "cov", numObs = nrow(mtcars) )
 
-# 3. Write the model and paths (see ?umxPath for more options)
+# 3. Write the model and paths (see ?umxPath for LOTS more neat options)
 m1 = umxRAM("tim", data = myCov,
-	umxPath(c("wt","disp"), to = "mpg"),
+	umxPath(c("wt", "disp"), to = "mpg"),
 	umxPath(cov = c("wt", "disp")),
 	umxPath(var = c("wt", "disp", "mpg"))
 )

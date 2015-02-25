@@ -203,8 +203,9 @@ umx_get_cores <- function(model = NULL) {
 #'
 #' Set the checkpoint status for a model or global options
 #'
+#' @aliases umx_set_checkpoint umx_checkpoint
 #' @param interval How many units between checkpoints: Default =  1.
-#' A value of zero sets always to No (i.e., do not checkpoint all models during optimization)
+#' A value of zero sets always to 'No' (i.e., do not checkpoint all models during optimization)
 #' @param units units to count in: Default unit is 'evaluations' ('minutes' is also legal)
 #' @param prefix string prefix to add to all checkpoint filenames (default = "")
 #' @param directory a directory, i.e "~/Desktop" (defaults to getwd())
@@ -217,26 +218,41 @@ umx_get_cores <- function(model = NULL) {
 #' umx_set_checkpoint(interval = 1, "evaluations", dir = "~/Desktop/")
 #' # turn off checkpointing with interval = 0
 #' umx_set_checkpoint(interval = 0)
-#' # m1 = umx_set_checkpoint(1, "evaluations", model = m1)
+#' umx_set_checkpoint(2, "evaluations", prefix="SNP_1")
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- umxRAM("One Factor", mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#' m1 = umx_set_checkpoint(model = m1)
+#' m1 = mxRun(m1)
+#' umx_checkpoint(0)
 umx_set_checkpoint <- function(interval = 1, units = c("evaluations", "iterations", "minutes"), prefix = "", directory = getwd(), model = NULL) {
+	if(umx_is_MxModel(interval)){
+		stop("You passed in a model as the first parameter. You probably want:\n",
+		"umx_is_MxModel(model=yourModel)")
+	}
 	units = match.arg(units)
-	interval = match.arg(interval)
-	if(count == 0){
+	if(interval == 0){
 		always = "No"
 	} else {
 		always = "Yes"
 	}
 	if(is.null(model)){
-		# whether to checkpoint all models during optimization.
+		# Whether to checkpoint all models during optimization.
 		mxOption(NULL, "Always Checkpoint"   , always)
 
-		# the number of units between checkpoint intervals
+		# The number of units between checkpoint intervals
 		mxOption(NULL, "Checkpoint Count"    , interval)
 
-		# the type of units for checkpointing: 'minutes', 'iterations', or 'evaluations'.
+		# The type of units for checkpointing: 'minutes', 'iterations', or 'evaluations'.
 		mxOption(NULL, "Checkpoint Units"    , units)	
 
-		# the string prefix to add to all checkpoint filenames.
+		# The string prefix to add to all checkpoint filenames.
 		mxOption(NULL, "Checkpoint Prefix"   , prefix)
 
 		# the directory into which checkpoint files are written.
@@ -250,6 +266,9 @@ umx_set_checkpoint <- function(interval = 1, units = c("evaluations", "iteration
 		return(model)
 	}
 }
+
+#' @export
+umx_checkpoint <- umx_set_checkpoint
 
 #' umx_get_checkpoint
 #'
