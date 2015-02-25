@@ -1456,6 +1456,54 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 	return(model)
 }
 
+#' umxFixAll
+#'
+#' Fix all free parameters in a model using omxGetParameters()
+#'
+#' @param model an \code{\link{mxModel}} within which to fix free parameters
+#' @param verbose whether to mention how many paths were fixed (default is FALSE)
+#' @param name optional new name for the model. if you begin with a _ it will be made a suffix
+#' @param run  whether to fix and re-run the model, or just return it (defaults to FALSE)
+#' @return - the fixed \code{\link{mxModel}}
+#' @export
+#' @family Model Updating and Comparison
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- umxRAM("OneFactor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
+#' )
+#' m1 = mxRun(m1)
+#' umxSummary(m1)
+#' m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
+#' mxCompare(m1, m2)
+umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
+	if(!umx_is_MxModel(model)){
+		message("ERROR in umxFixAll: model must be a model, you gave me a ", class(model)[1])
+		message("A usage example is umxFixAll(model)")
+		stop()
+	}
+	if(is.null(name)){
+		name = model$name
+	} else if("_" == substring(name, 1, 1)){
+		name = paste0(model$name, name)
+	}
+	oldFree = names(omxGetParameters(model, indep = TRUE, free = TRUE))
+	if(verbose){
+		message("fixed ", length(oldFree), " paths")
+	}
+	model = omxSetParameters(model, oldFree, free = FALSE, strict = TRUE, name = name)
+	if(run){
+		model = mxRun(model)
+	}
+	return(model)
+}
+
 #' umxDrop1
 #'
 #' Drops each free parameter (selected via regex), returning an \code{\link{mxCompare}}

@@ -157,7 +157,8 @@ Other Model Building Functions: \code{\link{umxLabel}};
 
 Other Model Updating and Comparison: \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxEquate}};
-  \code{\link{umxGetParameters}}; \code{\link{umxMI}};
+  \code{\link{umxFixAll}}; \code{\link{umxGetParameters}};
+  \code{\link{umxMI}};
   \code{\link{umxUnexplainedCausalNexus}}
 
 Other Reporting Functions: \code{\link{umxAnovaReport}};

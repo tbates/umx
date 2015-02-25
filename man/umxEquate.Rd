@@ -57,8 +57,8 @@ umxSummary(m1, m2) # not good :-)
 }
 \seealso{
 Other Model Updating and Comparison: \code{\link{umxAdd1}};
-  \code{\link{umxDrop1}}; \code{\link{umxGetParameters}};
-  \code{\link{umxMI}};
+  \code{\link{umxDrop1}}; \code{\link{umxFixAll}};
+  \code{\link{umxGetParameters}}; \code{\link{umxMI}};
   \code{\link{umxUnexplainedCausalNexus}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }

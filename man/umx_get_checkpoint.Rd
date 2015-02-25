@@ -16,7 +16,18 @@ umx_get_checkpoint(model = NULL)
 get the checkpoint status for a model or global options
 }
 \examples{
-umx_get_checkpoint()
+umx_get_checkpoint() # current global default
+require(OpenMx)
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+m1 <- umxRAM("One Factor", mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
+)
+m1 = umx_set_checkpoint(interval = 2, model = m1)
+umx_get_checkpoint(model = m1)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}

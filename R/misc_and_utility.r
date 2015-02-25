@@ -281,14 +281,25 @@ umx_checkpoint <- umx_set_checkpoint
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' umx_get_checkpoint()
+#' umx_get_checkpoint() # current global default
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- umxRAM("One Factor", mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#' m1 = umx_set_checkpoint(interval = 2, model = m1)
+#' umx_get_checkpoint(model = m1)
 umx_get_checkpoint <- function(model = NULL) {
-	message("Always Checkpoint: ", mxOption(model, "Always Checkpoint") )
-	message("Checkpoint  Count: ", mxOption(model, "Checkpoint Count" ) )
-	message("Checkpoint  Units: ", mxOption(model, "Checkpoint Units" ) )
+	message("Always Checkpoint: "    , mxOption(model, "Always Checkpoint") )
+	message("Checkpoint  Count: "    , mxOption(model, "Checkpoint Count" ) )
+	message("Checkpoint  Units: "    , mxOption(model, "Checkpoint Units" ) )
+	message("Checkpoint  Prefix: "   , mxOption(model, "Checkpoint Prefix" ) )	
 	message("Checkpoint  Directory: ", mxOption(model, "Checkpoint Directory" ) )
 }
-
 
 #' umx_update_OpenMx
 #'
