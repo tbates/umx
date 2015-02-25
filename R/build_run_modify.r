@@ -1479,7 +1479,6 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
 #' m1 = mxRun(m1)
-#' umxSummary(m1)
 #' m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 #' mxCompare(m1, m2)
 umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
