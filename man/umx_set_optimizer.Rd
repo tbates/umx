@@ -4,15 +4,13 @@
 \alias{umx_set_optimizer}
 \title{umx_set_optimizer}
 \usage{
-umx_set_optimizer(opt = c("NPSOL", "NLOPT", "CSOLNP"), model = NULL)
+umx_set_optimizer(opt = c("NPSOL", "NLOPT", "CSOLNP"))
 }
 \arguments{
 \item{opt}{defaults to "NPSOL". Current alternatives are "NLOPT" and "CSOLNP"}
-
-\item{model}{an (optional) model to set. If left NULL, the global option is updated.}
 }
 \value{
-- \code{\link{mxModel}} (if you provided one in x)
+-
 }
 \description{
 set the optimizer in OpenMx

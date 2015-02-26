@@ -29,5 +29,7 @@ model = umxReduce(model)
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+
+Other umx core functions: \code{\link{mxTryHarder}}
 }
 
