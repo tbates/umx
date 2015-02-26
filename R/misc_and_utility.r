@@ -96,8 +96,7 @@ umx_get_optimizer <- function(model = NULL) {
 #' set the optimizer in OpenMx
 #'
 #' @param opt defaults to "NPSOL". Current alternatives are "NLOPT" and "CSOLNP"
-#' @param model an (optional) model to set. If left NULL, the global option is updated.
-#' @return - \code{\link{mxModel}} (if you provided one in x)
+#' @return - 
 #' @export
 #' @family Miscellaneous Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
@@ -123,14 +122,30 @@ umx_get_optimizer <- function(model = NULL) {
 #' \dontrun{
 #' m1@@runstate$compute$steps[1][[1]]$engine # NPSOL
 #' }
-umx_set_optimizer <- function(opt = c("NPSOL", "NLOPT", "CSOLNP"), model = NULL) {
-	opt = match.arg(opt)
-	if(is.null(model)){
-		mxOption(NULL, "Default optimizer", opt)
-	} else {
-		# todo: this is illegal
-		return(mxOption(model, "Default optimizer", opt))
-	}
+umx_set_optimizer <- function(opt = c("NPSOL", "NLOPT", "CSOLNP")) {
+	opt = umx_default_option(opt, c("NPSOL", "NLOPT", "CSOLNP"), check = FALSE)
+	# opt = match.arg(opt)
+	oldOpt = umx_get_optimizer()
+	# set the new choice
+	mxOption(NULL, "Default optimizer", opt)
+	
+	# try it out
+	# manifests = c("disp", "mpg")
+	# m1 <- umxRAM("sat", data = mxData(mtcars[, manifests], type = "raw"),
+	# 	umxPath(var   = manifests),
+	# 	umxPath(cov   = manifests),
+	# 	umxPath(means = manifests)
+	# )
+	#
+	# tryCatch(
+	# 	mxRun(m1),
+	# 	error = function(err) {
+	# 		umx_set_optimizer(oldOpt)
+	#     	message(err)
+	#     	message("remained with old optimizer", oldOpt)
+	# 	}
+	# )
+	
 	# if(opt == "NPSOL"){
 	# 	# mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
 	# 	# mxOption(model, 'mvnMaxPointsC', 5e+5) # default is 5000
