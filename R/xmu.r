@@ -604,7 +604,7 @@ xmuMI <- function(model, vector = TRUE) {
 #' @return - TRUE/FALSE
 #' @export
 #' @family umx non-user functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' xmuHasSquareBrackets("A[1,2]")
 xmuHasSquareBrackets <- function (input) {

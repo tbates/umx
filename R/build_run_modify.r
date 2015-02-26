@@ -20,7 +20,7 @@ options('mxCondenseMatrixSlots'= FALSE)
 # news();
 # create_README()
 
-# document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
 # https://r-forge.r-project.org/project/admin/?group_id=1745
 # http://r-pkgs.had.co.nz/
@@ -88,19 +88,19 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' }
 #' 
 #' @param name friendly name for the model
-#' @param ... A list of mxPaths or mxThreshold objects
+#' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame
+#' @param ... A list of mxPath, umxPath, or mxThreshold objects
 #' @param exog.variances If TRUE, free variance parameters are added for exogenous variables that lack them (the default is FALSE).
 #' @param endog.variances If TRUE, free error-variance parameters are added for any endogenous variables that lack them (default is FALSE).
 #' @param fix Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")
 #' @param latentVars Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)
-#' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
 #' @param setValues Whether to try and guess good start values (Defults to TRUE, set them)
 #' @param independent Whether the model is independent (default = NA)
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' # umxRAM is like ggplot2::qplot(), you give the data in a data =  parameter
 #' # A common error is to include data in the main list,
@@ -111,12 +111,11 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' selVars = c("mpg", "wt", "disp")
 #' 
 #' # 2. Create an mxData object
-#' myData = cov(mtcars[,selVars], use = "complete")
-#' myCov = mxData(myData, type = "cov", numObs = nrow(mtcars) )
+#' myCov = mxData(cov(mtcars[,selVars]), type = "cov", numObs = nrow(mtcars) )
 #' 
-#' # 3. Write the model and paths (see ?umxPath for more options)
+#' # 3. Write the model and paths (see ?umxPath for LOTS more neat options)
 #' m1 = umxRAM("tim", data = myCov,
-#' 	umxPath(c("wt","disp"), to = "mpg"),
+#' 	umxPath(c("wt", "disp"), to = "mpg"),
 #' 	umxPath(cov = c("wt", "disp")),
 #' 	umxPath(var = c("wt", "disp", "mpg"))
 #' )
@@ -131,7 +130,7 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' }
-umxRAM <- function(name, ..., exog.variances = FALSE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, data = NULL, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
+umxRAM <- function(name, data = NULL, ..., exog.variances = FALSE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
 	fix = umx_default_option(fix, c("none", "latents", "firstLoadings"), check = TRUE)
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
@@ -533,7 +532,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' m2 = umxRun(m2)
 #' mxCompare(m2, m1) # ADE is better
-#' umxSummaryACE(m2) # nb: though this is ADE, it's labeled ACE
+#' umxSummary(m2) # nb: though this is ADE, it's labeled ACE
 #' 
 #' 
 #' # Ordinal example
@@ -555,7 +554,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' m1 = mxRun(m1)
-#' umxSummaryACE(m1)
+#' umxSummary(m1)
 #' \dontrun{
 #' # plot(m1)
 #' }
@@ -566,7 +565,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' m1 = umxRun(m1)
-#' umxSummaryACE(m1)
+#' umxSummary(m1)
 #' 
 #' 
 #' # Mixed continuous and binary example
@@ -574,26 +573,28 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' data(twinData)
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
-#' ordDVs = c("obese1", "obese2")
-#' selDVs = c("wt", "obese")
-#' obesityLevels = c('normal', 'obese')
 #' # Cut to form category of 20% obese subjects
 #' cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+#' obesityLevels = c('normal', 'obese')
 #' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
+#' ordDVs = c("obese1", "obese2")
 #' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+#' selDVs = c("wt", "obese")
 #' mzData <- subset(twinData, zyg == "MZFF", umx_paste_names(selDVs, "", 1:2))
 #' dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
-#' str(mzData)
+#' str(dzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' m1 = umxRun(m1)
 #' umxSummary(m1)
-#' # example with covariance data only
+#' # ===================================
+#' # Example with covariance data only =
+#' # ===================================
 #' selDVs = c("wt1", "wt2")
-#' dz = cov(dzData[,selDVs], use = "complete")
-#' mz = cov(mzData[,selDVs], use = "pairwise")
-#' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ = nrow(dzData), numObsMZ = nrow(mzData))
+#' dz = cov(dzData[, selDVs], use = "complete")
+#' mz = cov(mzData[, selDVs], use = "complete")
+#' m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 #' m1 = mxRun(m1)
 #' summary(m1)
 #' \dontrun{
@@ -1422,9 +1423,9 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 #' m2 = mxRun(m2) # have to run the model again...
 #' umxCompare(m1, m2) # not good :-)
 #' umxSummary(m1, m2) # not good :-)
-umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = NULL) {	
-	# add the T|F|NA list stuff to handle free = c(T|F|NA)
-	if(!umx_is_RAM(model)){
+umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE, name = NULL) {	
+	free = umx_default_option(free, c(TRUE, FALSE, NA))
+	if(!umx_is_MxModel(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])
 		message("A usage example is umxEquate(model, master=\"a_to_b\", slave=\"a_to_c\", name=\"model2\") # equate paths a->b and a->c, in a new model called \"model2\"")
 		stop()
@@ -1436,26 +1437,69 @@ umxEquate <- function(model, master, slave, free = TRUE, verbose = TRUE, name = 
 			cat("note: matching whole label\n");
 		}
 	}
-	masterLabels = names(omxGetParameters(model, indep = FALSE, free = free))
-	masterLabels = masterLabels[which(!is.na(masterLabels) )]      # exclude NAs
-	masterLabels = grep(master, masterLabels, perl = FALSE, value = TRUE)
-	# return(masterLabels)
-	slaveLabels = names(omxGetParameters(model, indep = FALSE, free = free))
-	slaveLabels = slaveLabels[which(!is.na(slaveLabels))] # exclude NAs
-	slaveLabels = grep(slave, slaveLabels, perl = FALSE, value = TRUE)
-	if( length(slaveLabels) != length(masterLabels)) {
+	masterLabels = umxGetParameters(model, regex = master, free = free, verbose = verbose)
+	slaveLabels  = umxGetParameters(model, regex = slave , free = free, verbose = verbose)
+	if( length(slaveLabels) != length(masterLabels) && (length(masterLabels)!=1)) {
 		print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
-		stop("ERROR in umxEquate: master and slave labels not the same length!")
+		stop("ERROR in umxEquate: master and slave labels not the same length!\n",
+		length(slaveLabels), " slavelabels found, and ", length(masterLabels), " masters")
 	}
-	if( length(slaveLabels)==0 ) {
+	if(length(slaveLabels) == 0) {
 		legal = names(omxGetParameters(model, indep=FALSE, free=free))
 		legal = legal[which(!is.na(legal))]
 		message("Labels available in model are: ", paste(legal, ", "))
-		stop("ERROR in umxEquate: no matching labels found!")
+		stop("ERROR in umxEquate: no slave labels found or none requested!")
 	}
 	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
 	model = omxSetParameters(model = model, labels = slaveLabels, newlabels = masterLabels, name = name)
 	model = omxAssignFirstParameters(model, indep = FALSE)
+	return(model)
+}
+
+#' umxFixAll
+#'
+#' Fix all free parameters in a model using omxGetParameters()
+#'
+#' @param model an \code{\link{mxModel}} within which to fix free parameters
+#' @param verbose whether to mention how many paths were fixed (default is FALSE)
+#' @param name optional new name for the model. if you begin with a _ it will be made a suffix
+#' @param run  whether to fix and re-run the model, or just return it (defaults to FALSE)
+#' @return - the fixed \code{\link{mxModel}}
+#' @export
+#' @family Model Updating and Comparison
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- umxRAM("OneFactor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
+#' )
+#' m1 = mxRun(m1)
+#' m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
+#' mxCompare(m1, m2)
+umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
+	if(!umx_is_MxModel(model)){
+		message("ERROR in umxFixAll: model must be a model, you gave me a ", class(model)[1])
+		message("A usage example is umxFixAll(model)")
+		stop()
+	}
+	if(is.null(name)){
+		name = model$name
+	} else if("_" == substring(name, 1, 1)){
+		name = paste0(model$name, name)
+	}
+	oldFree = names(omxGetParameters(model, indep = TRUE, free = TRUE))
+	if(verbose){
+		message("fixed ", length(oldFree), " paths")
+	}
+	model = omxSetParameters(model, oldFree, free = FALSE, strict = TRUE, name = name)
+	if(run){
+		model = mxRun(model)
+	}
 	return(model)
 }
 
@@ -1871,7 +1915,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - \code{\link{umxOrdinalObjective}}
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")
 #' umxThresholdMatrix(x)
@@ -2232,7 +2276,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 #' @family Model Building Functions
 #' @family umx deprecated
 #' @seealso - \code{\link{umxThresholdMatrix}}
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
 #' umxOrdinalObjective(df, suffixes = c("_T1", "_T2"))
@@ -2360,7 +2404,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @export
 #' @family Model Building Functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
 #' # Some examples of paths with umxPath
@@ -2658,7 +2702,7 @@ umxMatrix <- function(type = "Full", rc= NULL, fixedAt = NULL,
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
 #' model = umx_add_std(model)
