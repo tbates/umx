@@ -3291,6 +3291,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 	}else{
 		longVars = vars		
 	}
+	# TODO work here today
 	umx_check_names(longVars, data = data, die = TRUE)
 	umx_msg(longVars)
 	if(!is.null(suffixes)){
