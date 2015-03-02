@@ -3268,6 +3268,66 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 # = Data Prep and Cleaning =
 # ==========================
 
+#' umx_make_bin_cont_pair_data
+#'
+#' Takes a dataframe of left-censored variables (vars with a floor effect) and does two things to it:
+#' 1. It creates new binary (1/0) copies of each column (with the suffix "bin"). These contain 0 where
+#'    the variable is below the minimum and NA otherwise.
+#' 2. In each existing variable, it sets all instances of min for that var to NA
+#' @param df a \code{\link{data.frmae}} to convert
+#' @return - copy of the dataframe with new binary variables and censoring
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{umxACE}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
+#' tmp = mtcars; tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
+#' df = umx_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes=c("_T1", "_T2"))
+umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
+	if(!is.null(suffixes)){
+		umx_check(length(suffixes) < 3, "stop", "suffixes must have length == 2")
+		longVars = umx_paste_names(vars, suffixes = suffixes)
+	}else{
+		longVars = vars		
+	}
+	umx_check_names(longVars, data = data, die = TRUE)
+	umx_msg(longVars)
+	if(!is.null(suffixes)){
+		# Get mins from a long version of the vars
+		for (i in 1:length(suffixes)) {
+			vars_i = umx_paste_names(vars, suffixes = suffixes[i])
+			umx_msg(vars_i)
+			if(i == 1){
+				tmp = data[, vars_i, drop = FALSE]
+				names(tmp) = vars
+			} else {
+				tmp2 = data[, vars_i, drop = FALSE]
+				names(tmp2) = vars
+				tmp = rbind(tmp, tmp2)
+			}
+		}
+		listOfMins = umx_apply(min, tmp, by = "columns", na.rm = TRUE)
+	} else {
+		listOfMins = umx_apply(min, data[, vars, drop = FALSE], by = "columns", na.rm = TRUE)
+	}
+	# blank suffix to make this work when there is none
+	if(is.null(suffixes)){ suffixes = ""}
+	for (var in vars) {
+		for (thisSuffix in suffixes) {
+			thisVarName = paste0(var, thisSuffix)
+			thisBinName = paste0(var, "bin", thisSuffix)
+			df[,thisBinName] = (df[,thisVarName] <= thisMin)
+			df[,thisBinName] = mxFactor(df[,thisBinName], c(TRUE, FALSE), c("low", "high"))
+			# Set NA if FALSE
+			lowScores = df[,thisBinName] == "low"
+			df[lowScores , thisVarName] = NA
+			df[!lowScores, thisBinName] = NA
+		}
+	}
+	return(df)
+}
+
 #' umxHetCor
 #'
 #' umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
