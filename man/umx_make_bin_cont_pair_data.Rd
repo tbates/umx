@@ -21,7 +21,7 @@ Takes a dataframe of left-censored variables (vars with a floor effect) and does
 \examples{
 df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
 tmp = mtcars; tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
-df = umx_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes=c("_T1", "_T2"))
+df = umx_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"))
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
