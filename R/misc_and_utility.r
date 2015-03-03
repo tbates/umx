@@ -3274,7 +3274,8 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' 1. It creates new binary (1/0) copies of each column (with the suffix "bin"). These contain 0 where
 #'    the variable is below the minimum and NA otherwise.
 #' 2. In each existing variable, it sets all instances of min for that var to NA
-#' @param df a \code{\link{data.frmae}} to convert
+#' 
+#' @param df a \code{\link{data.frame}} to convert
 #' @return - copy of the dataframe with new binary variables and censoring
 #' @export
 #' @family Miscellaneous Utility Functions
