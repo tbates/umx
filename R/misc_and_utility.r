@@ -3283,8 +3283,10 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
-#' tmp = mtcars; tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
+#' tmp = mtcars; tmp$mpg[tmp$mpg<=15]=15
+#' tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
 #' df = umx_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"))
+#' df[order(df$mpg), 12:15]
 umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 	if(!is.null(suffixes)){
 		umx_check(length(suffixes) < 3, "stop", "suffixes must have length == 2")
@@ -3296,13 +3298,12 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 	if(!is.null(suffixes)){
 		# Get minimum scores from a long version of the vars
 		for (i in 1:length(suffixes)) {
-			vars_i = umx_paste_names(vars, suffixes = suffixes[i])
-			umx_msg(vars_i)
+			vars_Ti = umx_paste_names(vars, suffixes = suffixes[i])
 			if(i == 1){
-				tmp = data[, vars_i, drop = FALSE]
+				tmp = data[, vars_Ti, drop = FALSE]
 				names(tmp) = vars
 			} else {
-				tmp2 = data[, vars_i, drop = FALSE]
+				tmp2 = data[, vars_Ti, drop = FALSE]
 				names(tmp2) = vars
 				tmp = rbind(tmp, tmp2)
 			}

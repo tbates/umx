@@ -7,7 +7,7 @@
 umx_make_bin_cont_pair_data(data, vars = NULL, suffixes = NULL)
 }
 \arguments{
-\item{df}{a \code{\link{data.frmae}} to convert}
+\item{df}{a \code{\link{data.frame}} to convert}
 }
 \value{
 - copy of the dataframe with new binary variables and censoring
@@ -20,8 +20,10 @@ Takes a dataframe of left-censored variables (vars with a floor effect) and does
 }
 \examples{
 df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
-tmp = mtcars; tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
+tmp = mtcars; tmp$mpg[tmp$mpg<=15]=15
+tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
 df = umx_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"))
+df[order(df$mpg), 12:15]
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
