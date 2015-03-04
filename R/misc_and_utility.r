@@ -3283,6 +3283,9 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
+#' str(df)
+#' df[order(df$mpg), c(1,12)]
+#' # Introduce a floor effect
 #' tmp = mtcars; tmp$mpg[tmp$mpg<=15]=15
 #' tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
 #' df = umx_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"))
