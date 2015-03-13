@@ -4,10 +4,10 @@
 \alias{demand}
 \title{demand a package}
 \usage{
-demand(package)
+demand(pack)
 }
 \arguments{
-\item{package}{The package name as a string.}
+\item{pack}{The package name as a string.}
 }
 \description{
 This loads the package, installing it if needed
