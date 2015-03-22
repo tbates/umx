@@ -1,6 +1,6 @@
 Package: umx
-Version: 0.90
-Date: 2014-08-01
+Version: 1.00
+Date: 2015-03-23
 Title: umx
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))

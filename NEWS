@@ -1,8 +1,16 @@
+umx 1.0-beta
+--------------
+
+* Ensuring edge cases work
+* Improving help files and feedback
+* Optimizing fn names for memorability and typing
+
 umx 0.90-beta
 --------------
 
 * Feature complete
 * Bug squashing
+* Optimizing fn names for memorability and typing
 
 umx 0.80-beta
 --------------

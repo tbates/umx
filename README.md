@@ -1,5 +1,5 @@
 # umx
-umx stands for "user" mx function, and is a library of helper functions for doing [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in [OpenMx](http://openmx.psyc.virginia.edu).
+umx stands for "user" mx function, and is a comprehensive library of helper functions for doing [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in [OpenMx](http://openmx.psyc.virginia.edu).
 
 You can install the most recent version from github as follows
 
@@ -20,16 +20,16 @@ Some highlights include:
 
 1. Building Models
 	* `umxRAM()` *# mxModel with an R-like `data =` parameter, no need to specify type = "RAM", + auto-discovery of manifests and latents from the paths you write*
-	* `umxPath()` *# mxPath on steroids: one-parameter settings for `var=` , `mean =` `cov=` and more. Great time-saver in RAM modelling*
+	* `umxPath()` *# mxPath on steroids: one-parameter settings for `var=` , `mean =` `cov=`, `fixedAt` and more. Great time-saver in RAM modelling*
 	* `umxACE()` *# 1-line twin modeling*
-	* `umxStart()` *# Add sane start values to RAM or matrix models, or matrices: **very** helpful*
-	* `umxLabel()` *# Add systematic labels to paths and matrix cells. This is great for setting, equating and dropping paths by label!*
+	* `umxStart()` *# Add plausible start values to RAM or matrix models, or matrices: **very** helpful*
+	* `umxLabel()` *# Add systematic labels to paths ("var1_to_var2") and matrix cells ("a_r1c1"). This is great for setting, equating and dropping paths by label!*
 3. Reporting output
 	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA). Optionally show the path loadings*
-	* `plot(model, std=TRUE, precision=3, dotFilename="name")` # *Create a graphical representation of a RAM model (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
-	* `umx_get_time(fit1)`  *# Report the time taken by a model in a compact friendly, programable format*
+	* `plot(model, std=TRUE, precision=3, dotFilename="name")` # *Create a graphical representation of models (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
+	* `umx_time(fit1)`  *# Report the time taken by a model in a compact programable format*
 3. Modify models
-	* `umxReRun()` *# Modify and run a model. You can add objects, drop or add paths, including by regular expression label matching), re-name the model, re-run, and even return the comparison all in 1 line *
+	* `umxReRun()` *# Modify and run a model. You can add objects, drop or add paths, including by regular-expression label matching), re-name the model, re-run, and even return the comparison. All in 1 line *
 	* `umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. like `omxGetParameters` but uses regular expressions.*
 	* `umxMI()` *# Report the top n modification indices*
 	* `umxAdd1()` *# add parameters and return a table of the effect on fit*

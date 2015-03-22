@@ -27,6 +27,6 @@ m1 = mxRun(m1)
 testthat::expect_true(umx_has_means(m1))
 
 m2 <- mxModel(m1, mxData(rbind(demoOneFactor,NA), type = "raw"))
-umx_get_time(c(mxRun(m1), mxRun(m2)), "%H:%M:%OS2")
+umx_time(c(mxRun(m1), mxRun(m2)), "%H:%M:%OS2")
 
 
