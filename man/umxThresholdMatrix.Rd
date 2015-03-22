@@ -46,6 +46,9 @@ For \strong{direct}, it returns a thresholdsMatrix (named threshMatName)
 \examples{
 x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")
 umxThresholdMatrix(x)
+x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
+x = data.frame(ordered(x)); names(x)<-c("x")
+umxThresholdMatrix(x)
 
 require(OpenMx)
 data(twinData)

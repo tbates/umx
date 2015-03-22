@@ -1933,6 +1933,9 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @examples
 #' x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")
 #' umxThresholdMatrix(x)
+#' x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
+#' x = data.frame(ordered(x)); names(x)<-c("x")
+#' umxThresholdMatrix(x)
 #' 
 #' require(OpenMx)
 #' data(twinData)
@@ -2067,7 +2070,8 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	threshMat = mxMatrix(name = threshMatName, type = "Full",
 		nrow     = maxThresh,
 		ncol     = nFactors,
-		free     = TRUE, values = rep(NA, (maxThresh * nFactors)),
+		free     = TRUE, 
+		values = rep(NA, (maxThresh * nFactors)),
 		lbound   = l_u_bound[1],
 		ubound   = l_u_bound[2],
 		dimnames = list(paste0("th_", 1:maxThresh), factorVarNames)
@@ -2107,7 +2111,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		# = Work out z-values for thresholds based on simple bin counts =
 		# ===============================================================
 		# Pros: Doesn't assume equal intervals.
-		# Problems = empty bins and noise (equal thresholds (illegal) and higher than realisitic z-values)
+		# Problems = empty bins and noise (equal thresholds (illegal) and higher than realistic z-values)
 		tab = table(thisCol)/sum(table(thisCol)) # Simple histogram of proportion at each threshold
 		cumTab = cumsum(tab)                     # Convert to a cumulative sum (sigmoid from 0 to 1)
 		# Use quantiles to get z-equivalent for each level: ditch one to get thresholds...
@@ -2165,12 +2169,14 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 			}
 		}
         # TODO start from 1, right, not 2?
-		values = c(zValues[1:(nThreshThisVar)], rep(NA, (maxThresh - nThreshThisVar)))
-		sortValues <- sort(values, na.last = TRUE)
-		if (!identical(sortValues, values)) {
+		# note 2015-03-22: rep(0) was rep(NA). But with deviation-based, the matrix can't contain NAs as it gets %*% by lowerones
+		values = c(zValues[1:(nThreshThisVar)], rep(.001, (maxThresh - nThreshThisVar)))
+		sortValues <- sort(zValues[1:(nThreshThisVar)], na.last = TRUE)
+		if (!identical(sortValues, zValues[1:(nThreshThisVar)])) {
 			umx_msg(values)
 			stop("The thresholds for ", thisVarName, " are not in order... oops: that's my fault :-(")
 		}
+
 		# ==============
 		# = Set labels =
 		# ==============

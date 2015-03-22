@@ -142,9 +142,9 @@ umxSummary(m1)
 selDVs = c("wt1", "wt2")
 dz = cov(dzData[, selDVs], use = "complete")
 mz = cov(mzData[, selDVs], use = "complete")
-m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
+m1 = umxACE(selDVs= selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 m1 = mxRun(m1)
-summary(m1)
+umxSummary(m1)
 \dontrun{
 plot(m1)
 }
