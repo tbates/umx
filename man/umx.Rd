@@ -156,10 +156,10 @@ Other Model Building Functions: \code{\link{umxLabel}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}
 
-Other Model Updating and Comparison: \code{\link{umxAdd1}};
+Other Model Updating and Comparison: \code{\link{parameters}},
+  \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxEquate}};
-  \code{\link{umxFixAll}}; \code{\link{umxGetParameters}};
-  \code{\link{umxMI}};
+  \code{\link{umxFixAll}}; \code{\link{umxMI}};
   \code{\link{umxUnexplainedCausalNexus}}
 
 Other Reporting Functions: \code{\link{umxAnovaReport}};

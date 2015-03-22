@@ -507,7 +507,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
 #' # tip: ?twinData to learn more about this data set
 #' require(OpenMx)
-#' require(umx.twin)
+#' require(umx)
 #' data(twinData)
 #' names(twinData)
 #' # "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
@@ -518,13 +518,13 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # Pick the variable the zygosity to a factor
 #' selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
 #' # the function will then make the varnames for each twin using 
-#' # c(paste0("bmi", suffix, 1), paste0("bmi", suffix, 2))
+#' # i.e. "VarSuffix1"" "VarSuffix2""
 #' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 #' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
-#' umxSummaryACE(m1)
 #' umxSummary(m1)
+#' umxSummaryACE(m1)
 #' \dontrun{
 #' plot(m1)
 #' }
@@ -594,9 +594,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' selDVs = c("wt1", "wt2")
 #' dz = cov(dzData[, selDVs], use = "complete")
 #' mz = cov(mzData[, selDVs], use = "complete")
-#' m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
+#' m1 = umxACE(selDVs= selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 #' m1 = mxRun(m1)
-#' summary(m1)
+#' umxSummary(m1)
 #' \dontrun{
 #' plot(m1)
 #' }
@@ -653,7 +653,6 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		"suffix is just one word, appearing in all variables (e.g. '_T').\n",
 		"This is assumed to be followed by '1' '2' etc...")
 	}
-
 	used = selDVs
 	if(!is.null(weightVar)){
 		used = c(used,weightVar)
@@ -722,6 +721,10 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 			# =======================================================
 			# = Handle some 1 or more ordinal variables (no binary) =
 			# =======================================================
+			message("umxACE found ", (nOrdVars/nSib), " pairs of ordinal variables:", omxQuotes(ordVarNames))			
+			if(length(contVarNames) > 0){
+				message("There were also ", length(contVarNames)/nSib, " pairs of continuous variables:", omxQuotes(contVarNames))	
+			}
 			# Means: all free, start cont at the measured value, ord @0
 			meansMatrix  = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
 			# Thresholds
@@ -742,6 +745,13 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 
 			message("umxACE found ", sum(isBin)/nSib, " pairs of binary variables:", omxQuotes(binVarNames))
 			message("\nI am fixing the latent means and variances of these variables to 0 and 1")
+			if(nOrdVars > 0){
+				message("There were also ", nOrdVars/nSib, " pairs of ordinal variables:", omxQuotes(ordVarNames))			
+			}
+			if(length(contVarNames) > 0){
+				message("\nand ", length(contVarNames)/nSib, " pairs of continuous variables:", omxQuotes(contVarNames))	
+			}
+			
 			# ===========================================================================
 			# = Means: bin fixed, others free, start cont at the measured value, ord @0 =
 			# ===========================================================================
@@ -1384,6 +1394,10 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 	}
 	return(theLabels)
 }
+
+#' @rdname umxGetParameters
+#' @export
+parameters <- umxGetParameters
 
 #' umxEquate
 #'

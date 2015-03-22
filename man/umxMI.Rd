@@ -45,9 +45,10 @@ umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 \seealso{
 - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
 
-Other Model Updating and Comparison: \code{\link{umxAdd1}};
+Other Model Updating and Comparison: \code{\link{parameters}},
+  \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxEquate}};
-  \code{\link{umxFixAll}}; \code{\link{umxGetParameters}};
+  \code{\link{umxFixAll}};
   \code{\link{umxUnexplainedCausalNexus}};
   \code{\link{umx}}, \code{\link{umx-package}}
 

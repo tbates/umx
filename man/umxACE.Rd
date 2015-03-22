@@ -55,7 +55,7 @@ Make a 2-group ACE model
 # 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
 # tip: ?twinData to learn more about this data set
 require(OpenMx)
-require(umx.twin)
+require(umx)
 data(twinData)
 names(twinData)
 # "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
@@ -66,13 +66,13 @@ twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 # Pick the variable the zygosity to a factor
 selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
 # the function will then make the varnames for each twin using
-# c(paste0("bmi", suffix, 1), paste0("bmi", suffix, 2))
+# i.e. "VarSuffix1"" "VarSuffix2""
 mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
-umxSummaryACE(m1)
 umxSummary(m1)
+umxSummaryACE(m1)
 \dontrun{
 plot(m1)
 }

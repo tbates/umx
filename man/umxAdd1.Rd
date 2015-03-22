@@ -32,9 +32,10 @@ model = umxAdd1(model)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Model Updating and Comparison: \code{\link{umxDrop1}};
+Other Model Updating and Comparison: \code{\link{parameters}},
+  \code{\link{umxGetParameters}}; \code{\link{umxDrop1}};
   \code{\link{umxEquate}}; \code{\link{umxFixAll}};
-  \code{\link{umxGetParameters}}; \code{\link{umxMI}};
+  \code{\link{umxMI}};
   \code{\link{umxUnexplainedCausalNexus}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }
