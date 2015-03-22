@@ -416,18 +416,18 @@ umx_update_OpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALS
 }
 
 # How long did that take?
-#' umx_get_time
+#' umx_time
 #'
 #' A function to compactly report how long a model took to execute. User can set the format, with some
 #' preset styles, or c-style string formatting.
 #'
-#' The default is "simple", which gives only the biggest unit used. i.e., if time is in seconds < 60 seconds elapsed.
-#' "std" uses the format adopted in OpenMx 2.0 e.g. "Wall clock time (HH:MM:SS.hh): 00:00:01.16"
-#' If a list of models is provided, time deltas will be reported also.
+#' The default is "simple", which gives only the biggest unit used. i.e., "x seconds" for times under 1 minute.
+#' "std" shows time in the format adopted in OpenMx 2.0 e.g. "Wall clock time (HH:MM:SS.hh): 00:00:01.16"
+#' If a list of models is provided, time deltas will also be reported.
 #'
 #' @param model An \code{\link{mxModel}} from which to get the elapsed time
-#' @param formatStr A format string, defining how to show the time
-#' @param tz The time zone in which the model was executed
+#' @param formatStr A format string, defining how to show the time (defaults to human readable)
+#' @param tz time zone in which the model was executed (defaults to "GMT")
 #' @export
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -445,10 +445,10 @@ umx_update_OpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALS
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' umx_get_time(m1)
+#' umx_time(m1)
 #' m2 = umxRun(m1)
-#' umx_get_time(c(m1, m2))
-umx_get_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT"){
+#' umx_time(c(m1, m2))
+umx_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT"){
 	# TODO output a nicely formated table
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	for(i in 1:length(model)) {			
@@ -470,12 +470,16 @@ umx_get_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS
 			if(formatStr == "std"){
 				formatStr = "Wall clock time (HH:MM:SS.hh): %H:%M:%OS2"
 			} else if(formatStr == "simple"){
-				if(thisTime > 3600 * 2){ # hours
+				if(thisTime > (3600 * 2)-1){ # hours
 					formatStr = "%H hours, %M minute(s), %OS2 seconds"
 				} else if(thisTime > 3600){ # hours
 					formatStr = "%H hour, %M minute(s), %OS2 seconds"
 				} else if(thisTime > 60){ # minutes
-					formatStr = "%M minute(s),  %OS2 seconds"
+					if(thisTime > 119){ # minutes
+						formatStr = "%M minutes,  %OS2 seconds"
+					}else{
+						formatStr = "%M minute,  %OS2 seconds"	
+					}					
 				} else { # seconds
 					formatStr = "%OS2 seconds"
 				}

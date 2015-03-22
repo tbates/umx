@@ -602,6 +602,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' }
 umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE) {
 	nSib = 2 # number of siblings in a twin pair
+	if(dzCr == .25 && name == "ACE"){
+		name = "ADE"
+	}
 	# look for name conflicts
 	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
 	if(!identical(character(0), badNames)){

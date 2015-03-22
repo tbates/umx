@@ -82,7 +82,7 @@ Other Miscellaneous Functions: \code{\link{demand}};
 Other Reporting Functions: \code{\link{umxAnovaReport}};
   \code{\link{umxStandardizeACE}};
   \code{\link{umxSummary}}; \code{\link{umx_APA_pval}};
-  \code{\link{umx_get_time}}; \code{\link{umx_show}};
+  \code{\link{umx_show}}; \code{\link{umx_time}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }
 

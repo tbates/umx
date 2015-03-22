@@ -708,7 +708,7 @@ umxSummaryACE <- function(fit, digits = 2, dotFilename = NULL, returnStd = FALSE
 		print(-2 * logLik(fit));			
 	} else {
 		message("Comparison of fit with parent model:")
-		print(umx::umxCompare(comparison, fit, digits = 3))
+		umx::umxCompare(comparison, fit, digits = 3)
 	}
 	selDVs = dimnames(fit$top.expCovMZ)[[1]]
 	# genEpi_TableFitStatistics(fit, extended=extended)
