@@ -3214,7 +3214,6 @@ umx_rot <- function(vec){
 #' \dontrun{
 #' demand("numDeriv")
 #' }
-
 demand <- function(package) {
 	if(FALSE == package %in% rownames(installed.packages() ) ) {
 		m <- getCRANmirrors(all = FALSE, local.only = FALSE)
