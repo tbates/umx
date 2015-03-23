@@ -998,6 +998,43 @@ dl_from_dropbox <- function(x, key){
 	message(noquote(paste(x, "read into", getwd())))                        
 }
 
+#' push_note
+#'
+#' use the pushbullet service to push a note.
+#'
+#' @param title of the note
+#' @param body of the note
+#' @param auth_key optional authkey
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{umx_msg}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' push_note("done!", umx_time(m1))
+#' }
+push_note <- function(title="test", body="default body", auth_key=NULL) {
+	# if you supply auth_key, I will write it to ~.pushbulletkey
+	# once it exists there, you don't need to store it in code, which is helpful'
+	# you can get yours at
+	# https://www.pushbullet.com/account
+	auth_key_file = "~/.pushbulletkey"
+	if(is.null(auth_key)){
+		auth_key = read.table(auth_key_file, stringsAsFactors=FALSE)[1,1]
+	} else {
+		fileConn <- file(auth_key_file)
+		writeLines(auth_key, fileConn)
+		close(fileConn)
+	}
+	# umx_check(exists(auth_key_file)
+	cmd = paste0("curl -s --header 'Authorization: Bearer ", auth_key, "'", 
+	" -X POST https://api.pushbullet.com/v2/pushes ",
+	"--header 'Content-Type: application/json' ",
+    "--data-binary '{\"type\": \"note\", \"title\": \"",title, "\", \"body\": \"", body, "\"}'"
+	)
+	invisible(system(cmd, intern=TRUE))
+}
+
 #' umx_move_file
 #'
 #' move files. On OS X, the function can access the current frontmost Finder window.
