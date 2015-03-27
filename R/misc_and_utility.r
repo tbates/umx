@@ -2618,7 +2618,7 @@ umx_recode_deciles <- function(var, verbose=FALSE){
 	var = cut(var, breaks = decileCuts, labels = decileLabels); # str(var); levels(var); length(levels(var)); length(decileCuts); 
 	var = mxFactor(var, levels = decileLabels)
 	if(verbose){
-		message("Scores ranged from ", decileCuts[1], " to ", decileCuts[length(decileCuts)], ". Cuts made at ", omxQuotes(decileLabels), ". ", decileCuts[length(decileCuts)])
+		message("Scores ranged from ", decileCuts[1], " to ", decileCuts[length(decileCuts)], ". Cuts made at ", omxQuotes(decileLabels))
 	}
 	return(var)
 }
