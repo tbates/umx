@@ -28,11 +28,11 @@ m1 <- umxRAM("ind", data = mxData(mtcars[,manifests], type = "raw"),
 	umxPath(means = manifests)
 )
 umx_set_optimizer(opt = "CSOLNP")
-m2 = mxRun(mxModel(m1, name="CSOLNP")); umx_get_time(m2)
+m2 = mxRun(mxModel(m1, name="CSOLNP")); umx_time(m2)
 umx_set_optimizer(opt = "NPSOL")
-m3 = mxRun(mxModel(m1, name="NPSOL")); umx_get_time(m3)
+m3 = mxRun(mxModel(m1, name="NPSOL")); umx_time(m3)
 # umx_set_optimizer(opt = "NLOPT")
-# m4 = mxRun(mxModel(m1, name="NLOPT")); umx_get_time(m4)
+# m4 = mxRun(mxModel(m1, name="NLOPT")); umx_time(m4)
 umx_set_optimizer(oldOpt)
 \dontrun{
 m1@runstate$compute$steps[1][[1]]$engine # NPSOL

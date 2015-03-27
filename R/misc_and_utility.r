@@ -998,9 +998,16 @@ dl_from_dropbox <- function(x, key){
 	message(noquote(paste(x, "read into", getwd())))                        
 }
 
-#' push_note
+
+#' umx_pb_note
 #'
-#' use the pushbullet service to push a note.
+#' Use the pushbullet service to push a note. You can also initialise this
+#' service by providing your autho_key one time
+#'
+#' If you supply auth_key, It will be writen to "~/.pushbulletkey"
+#' once it exists there, you dont need to store it in code, so code is sharable.
+#' 
+#' You can get your autho code at \url{https://www.pushbullet.com/account}
 #'
 #' @param title of the note
 #' @param body of the note
@@ -1011,13 +1018,9 @@ dl_from_dropbox <- function(x, key){
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' push_note("done!", umx_time(m1))
+#' umx_pb_note("done!", umx_time(m1))
 #' }
-push_note <- function(title="test", body="default body", auth_key=NULL) {
-	# if you supply auth_key, I will write it to ~.pushbulletkey
-	# once it exists there, you don't need to store it in code, which is helpful'
-	# you can get yours at
-	# https://www.pushbullet.com/account
+umx_pb_note <- function(title="test", body="default body", auth_key=NULL) {
 	auth_key_file = "~/.pushbulletkey"
 	if(is.null(auth_key)){
 		auth_key = read.table(auth_key_file, stringsAsFactors=FALSE)[1,1]
@@ -2590,6 +2593,34 @@ umx_reorder <- function(old, newOrder) {
 		}
 	}
 	return(new)
+}
+
+#' umx_recode_deciles
+#'
+#' Recode a variable into decile levels, returning an mxFactor.
+#' 
+#' \strong{Note}: redundant deciles are merged. i.e., if the same score identifies the
+#' 0, 10th, 20th, and 30th decile, then these are merged into one category.
+#'
+#' @param var a variable to recode as deciles
+#' @param verbose report the min, max, and decile cuts used (default = FALSE)
+#' @return - recoded mxFactor
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' str(umx_recode_deciles(rnorm(1000), TRUE))
+umx_recode_deciles <- function(var, verbose=FALSE){
+	# var = ocd$OCI_TOTAL
+	decileCuts = quantile(var, seq(0, 1, length = 11), type = 5, na.rm=T)
+	decileCuts = unique(decileCuts)
+	decileLabels = decileCuts[(-length(decileCuts))]
+	var = cut(var, breaks = decileCuts, labels = decileLabels); # str(var); levels(var); length(levels(var)); length(decileCuts); 
+	var = mxFactor(var, levels = decileLabels)
+	if(verbose){
+		message("Scores ranged from ", decileCuts[1], " to ", decileCuts[length(decileCuts)], ". Cuts made at ", omxQuotes(decileLabels), ". ", decileCuts[length(decileCuts)])
+	}
+	return(var)
 }
 
 #' umx_has_square_brackets

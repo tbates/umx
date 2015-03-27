@@ -36,6 +36,8 @@ Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
   \code{\link{umx_grep}}; \code{\link{umx_lower2full}};
   \code{\link{umx_make_bin_cont_pair_data}};
   \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
+  \code{\link{umx_pb_note}};
+  \code{\link{umx_recode_deciles}};
   \code{\link{umx_rename_file}};
   \code{\link{umx_residualize}};
   \code{\link{umx_scale_wide_twin_data}};
