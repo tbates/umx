@@ -15,7 +15,7 @@ umx_recode_deciles(var, verbose = FALSE)
 - recoded mxFactor
 }
 \description{
-recode a variable into decile levels, returning an mxFactor.
+Recode a variable into decile levels, returning an mxFactor.
 }
 \details{
 \strong{Note}: redundant deciles are merged. i.e., if the same score identifies the

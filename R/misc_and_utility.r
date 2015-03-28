@@ -172,11 +172,12 @@ umx_set_optimizer <- function(opt = c("NPSOL", "NLOPT", "CSOLNP")) {
 #' 	mxData(mtcars[, manifests], type = "raw")
 #' )
 #' oldCores <- umx_get_cores() # get global value
-#' umx_set_cores() # set to default (max - 1)
+#' umx_set_cores() # set to default (max)
+#' umx_set_cores(detectCores() - 1) # set to max - 1
 #' umx_get_cores() # show new value
 #' umx_set_cores(1, m1)  # set m1 useage to 1 core
 #' umx_get_cores(model = m1)  # show new value
-umx_set_cores <- function(cores = parallel::detectCores() - 1, model = NULL) {
+umx_set_cores <- function(cores = parallel::detectCores(), model = NULL) {
 	if(umx_is_MxModel(cores)){
 		stop("Call this as umx_set_cores(cores, model), not the other way around")
 	}
@@ -428,6 +429,7 @@ umx_update_OpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALS
 #' @param model An \code{\link{mxModel}} from which to get the elapsed time
 #' @param formatStr A format string, defining how to show the time (defaults to human readable)
 #' @param tz time zone in which the model was executed (defaults to "GMT")
+#' @return - invisible time string
 #' @export
 #' @seealso - \code{\link{summary}}, \code{\link{umxRun}}
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -484,9 +486,11 @@ umx_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"),
 					formatStr = "%OS2 seconds"
 				}
 			}
-			message(format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta)))
+			timeString = format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta))
+			message(timeString)
 		}
 	}
+	invisible(timeString)
 }
 
 #' umx_print
@@ -1005,13 +1009,16 @@ dl_from_dropbox <- function(x, key){
 #' service by providing your autho_key one time
 #'
 #' If you supply auth_key, It will be writen to "~/.pushbulletkey"
+#' \code{\link{umx_pb_note}}(auth_key="mykeystring")
 #' once it exists there, you dont need to store it in code, so code is sharable.
 #' 
 #' You can get your autho code at \url{https://www.pushbullet.com/account}
+#' 
+#' \strong{Note}: You can show the existing stored key using "GET"
 #'
 #' @param title of the note
 #' @param body of the note
-#' @param auth_key optional authkey
+#' @param auth_key optional authkey (default = NA, set to value of your key to store key.
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{umx_msg}}
@@ -1020,16 +1027,20 @@ dl_from_dropbox <- function(x, key){
 #' \dontrun{
 #' umx_pb_note("done!", umx_time(m1))
 #' }
-umx_pb_note <- function(title="test", body="default body", auth_key=NULL) {
+umx_pb_note <- function(title="test", body="default body", auth_key=NA) {
 	auth_key_file = "~/.pushbulletkey"
-	if(is.null(auth_key)){
+	helpMsg = "auth_key not found. You need to call umx_pb_note one time with auth_key set. see ?umx_pb_note"
+	if(is.na(auth_key)){
+		umx_check(file.exists(auth_key_file), "message", helpMsg)
 		auth_key = read.table(auth_key_file, stringsAsFactors=FALSE)[1,1]
-	} else {
+	} else if(auth_key == "GET"){
+		umx_check(file.exists(auth_key_file), "message", helpMsg)
+		return(read.table(auth_key_file, stringsAsFactors=FALSE)[1,1])
+	}else {
 		fileConn <- file(auth_key_file)
 		writeLines(auth_key, fileConn)
 		close(fileConn)
 	}
-	# umx_check(exists(auth_key_file)
 	cmd = paste0("curl -s --header 'Authorization: Bearer ", auth_key, "'", 
 	" -X POST https://api.pushbullet.com/v2/pushes ",
 	"--header 'Content-Type: application/json' ",

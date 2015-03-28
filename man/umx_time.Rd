@@ -14,6 +14,9 @@ umx_time(model, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
 
 \item{tz}{time zone in which the model was executed (defaults to "GMT")}
 }
+\value{
+- invisible time string
+}
 \description{
 A function to compactly report how long a model took to execute. User can set the format, with some
 preset styles, or c-style string formatting.
