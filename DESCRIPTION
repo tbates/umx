@@ -18,7 +18,7 @@ Suggests:
     testthat,
     roxygen2,
     knitr
-BugReports: http://github.com/tbates/umx
+BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 VignetteBuilder: knitr
 LazyData: true
