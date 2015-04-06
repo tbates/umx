@@ -4,7 +4,7 @@
 \alias{umx_set_cores}
 \title{umx_set_cores}
 \usage{
-umx_set_cores(cores = parallel::detectCores() - 1, model = NULL)
+umx_set_cores(cores = parallel::detectCores(), model = NULL)
 }
 \arguments{
 \item{cores}{number of cores to use (defaults to max - 1 to preserve UI responsiveness)}
@@ -27,7 +27,8 @@ m1 <- mxModel("ind", type = "RAM",
 	mxData(mtcars[, manifests], type = "raw")
 )
 oldCores <- umx_get_cores() # get global value
-umx_set_cores() # set to default (max - 1)
+umx_set_cores() # set to default (max)
+umx_set_cores(detectCores() - 1) # set to max - 1
 umx_get_cores() # show new value
 umx_set_cores(1, m1)  # set m1 useage to 1 core
 umx_get_cores(model = m1)  # show new value

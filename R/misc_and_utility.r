@@ -2384,7 +2384,6 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 	return (matrixIn);
 }
 
-
 #' umx_APA_pval
 #'
 #' round a p value so you get < .001 instead of .000000002 or .134E-16
@@ -2440,6 +2439,38 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 				return(round(p, rounding))
 			}
 		}	
+	}
+}
+
+#' umx_APA_CI
+#'
+#' Given an lm, will return a nicely-formated string with the 95% CI,
+#' like: \dQuote{𝛽 = -0.089 [2.5\%, 97.5\%], p = .649}.
+#' Given b and se will return \dQuote{𝛽 = b [2.5\%,95\%]}
+#'
+#' @param b either a linear model, or a beta-value
+#' @param se either the name of the parameter of interest, or the SE (standard-error)
+#' @return - string
+#' @export
+#' @family Reporting Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' m1 = lm(mpg~wt, mtcars)
+#' umx_APA_CI(m1, "wt")
+#' # 𝛽 = -5.344 [-6.486, -4.203], p< 0.001
+
+umx_APA_CI <- function(b, se, digits = 3) {
+	if("lm" == class(b)){
+		conf    = confint(b)
+		lower   = conf[se, 1]
+		upper   = conf[se, 2]
+		b_and_p = summary(m1)$coefficients[se,]
+		b       = b_and_p["Estimate"]
+		tval    = b_and_p["t value"]
+		pval    = b_and_p["Pr(>|t|)"]
+		paste0("𝛽 = ", round(b, digits), " [", round(lower, digits), ", ", round(upper, digits), "], p ", umx_APA_pval(pval, addC=T))
+	} else {
+		paste0("𝛽 = ", round(b, digits), " [", round(b - (1.96 * se), digits), ", ", round(b + (1.96 * se), digits), "]")
 	}
 }
 
