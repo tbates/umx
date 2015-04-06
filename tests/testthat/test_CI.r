@@ -10,9 +10,8 @@ m1 <- mxModel("m1", type="RAM",
 	mxPath(from = "one", to = manifests, arrows = 1), # manifest means
 	mxData(myFADataRaw, type = "raw")
 )
-
-mxOption(NULL, "Default optimizer", "NPSOL")
-mxOption(NULL, "Default optimizer", "CSOLNP")
+umx_set_optimizer("NPSOL")
+umx_set_optimizer("CSOLNP")
 m1 = mxRun(m1)
 m2 = mxRun(mxModel(m1, mxCI("A[2,13]"), name="by_bracket"), intervals = TRUE)
 summary(m2)$CI # worked
@@ -23,7 +22,6 @@ summary(m2)$CI # worked
 m3 = m1; m3$A@labels[2,13] = "myLabel"
 m3 = mxRun(mxModel(m3, mxCI("myLabel"), name = "bylabel"), intervals = TRUE)
 summary(m3)$CI # reports by bracket address, but did work
-
 
 # =========================
 # = Does it work for cov? =

@@ -566,10 +566,7 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 			parameterTable$sig = TRUE
 			parameterTable$CI  = ""
 			for(i in 1:dim(parameterTable)[1]) {
-				# i = 1
-				# x = summary(m1)$parameters
-				# digits = 2
-				# # TODO we only show se-based CI for std estimates so far
+				# # TODO we only show SE-based CI for std estimates so far
 				est   = parameterTable[i, "Std.Estimate"]
 				CI95  = parameterTable[i, "Std.SE"] * 1.96
 				bounds = c(est - CI95, est + CI95)

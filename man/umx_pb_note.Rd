@@ -4,14 +4,14 @@
 \alias{umx_pb_note}
 \title{umx_pb_note}
 \usage{
-umx_pb_note(title = "test", body = "default body", auth_key = NULL)
+umx_pb_note(title = "test", body = "default body", auth_key = NA)
 }
 \arguments{
 \item{title}{of the note}
 
 \item{body}{of the note}
 
-\item{auth_key}{optional authkey}
+\item{auth_key}{optional authkey (default = NA, set to value of your key to store key.}
 }
 \description{
 Use the pushbullet service to push a note. You can also initialise this
@@ -19,9 +19,12 @@ service by providing your autho_key one time
 }
 \details{
 If you supply auth_key, It will be writen to "~/.pushbulletkey"
+\code{\link{umx_pb_note}}(auth_key="mykeystring")
 once it exists there, you dont need to store it in code, so code is sharable.
 
 You can get your autho code at \url{https://www.pushbullet.com/account}
+
+\strong{Note}: You can show the existing stored key using "GET"
 }
 \examples{
 \dontrun{
