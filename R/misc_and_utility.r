@@ -784,9 +784,9 @@ umxFormativeVarianceMess <- function(model){
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' umx_apply(mean, mtcars, by = "columns")
-#' umx_apply(mean, of_DF = mtcars, by = "columns")
-#' umx_apply(mean, by = "rows", of_DF = mtcars, na.rm = TRUE)
-umx_apply <- function(FUN, of_DF, by = "columns", ...) {
+#' umx_apply(mean, of = mtcars, by = "columns")
+#' umx_apply(mean, by = "rows", of = mtcars, na.rm = TRUE)
+umx_apply <- function(FUN, of, by = "columns", ...) {
 	if(! (by %in% c("columns", "rows"))){
 		stop(paste("by must be either 'columns' or 'rows', you gave me", by))
 	} else if (by == "rows") {
@@ -794,7 +794,7 @@ umx_apply <- function(FUN, of_DF, by = "columns", ...) {
 	} else {
 		by = 2		
 	}
-	apply(of_DF, by, FUN, ...)
+	apply(of, by, FUN, ...)
 
 	# TODO fix all this...
 	# lapply if list
