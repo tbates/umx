@@ -7,7 +7,7 @@
 umxACE(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = 0.5,
   dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
   numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
-  equateMeans = TRUE, bVector = FALSE)
+  equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"))
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE")}
@@ -40,6 +40,8 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE)}
 
 \item{bVector}{whether to compute row-wise likelihoods (defaults to FALSE)}
+
+\item{hint}{an analysis hint. Options include "none", (default) "left_censored". Default does nothing.}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACE

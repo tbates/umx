@@ -38,12 +38,13 @@ myData = umx_cov2raw(covData, n = 100, means = 1:6)
 Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
   \code{\link{qm}}; \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_as_numeric}}; \code{\link{umx_cor}};
+  \code{\link{umx_as_numeric}};
+  \code{\link{umx_check_mac}}; \code{\link{umx_cor}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_lower2full}};
   \code{\link{umx_make_bin_cont_pair_data}};
   \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
-  \code{\link{umx_pb_note}};
+  \code{\link{umx_open}}; \code{\link{umx_pb_note}};
   \code{\link{umx_recode_deciles}};
   \code{\link{umx_rename_file}};
   \code{\link{umx_residualize}}; \code{\link{umx_round}};

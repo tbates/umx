@@ -87,9 +87,10 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' \item{Any variables you mention that are not found in mxData are assumed to be latents}
 #' }
 #' 
-#' @param name friendly name for the model
+#' @param name A friendly name for the model
 #' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame
 #' @param ... A list of mxPath, umxPath, or mxThreshold objects
+#' @param run Whether to mxRun the model (defaults to TRUE: the estimated model will be returned)
 #' @param exog.variances If TRUE, free variance parameters are added for exogenous variables that lack them (the default is FALSE).
 #' @param endog.variances If TRUE, free error-variance parameters are added for any endogenous variables that lack them (default is FALSE).
 #' @param fix Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")
@@ -130,7 +131,7 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' }
-umxRAM <- function(name, data = NULL, ..., exog.variances = FALSE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
+umxRAM <- function(name, data = NULL, ..., run = TRUE, exog.variances = FALSE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
 	fix = umx_default_option(fix, c("none", "latents", "firstLoadings"), check = TRUE)
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
@@ -303,7 +304,11 @@ umxRAM <- function(name, data = NULL, ..., exog.variances = FALSE, endog.varianc
 	if(setValues){
 		m1 = umxValues(m1, onlyTouchZeros = TRUE)
 	}
-	return(m1)
+	if(run){
+		return(mxRun(m1))
+	} else {
+		return(m1)
+	}
 }
 
 #' umxGxE_window
@@ -495,6 +500,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param weightVar = If provided, a vector objective will be used to weight the data. (default = NULL) 
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE)
 #' @param bVector whether to compute row-wise likelihoods (defaults to FALSE)
+#' @param hint an analysis hint. Options include "none", (default) "left_censored". Default does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
@@ -600,7 +606,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' \dontrun{
 #' plot(m1)
 #' }
-umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE) {
+umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored")) {
+	hint = match.arg(hint)
 	nSib = 2 # number of siblings in a twin pair
 	if(dzCr == .25 && name == "ACE"){
 		name = "ADE"
@@ -687,10 +694,17 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		# ===============================
 		# = Notes: Ordinal requires:    =
 		# ===============================
-		# 1. Means of binary vars fixedAt 0
-		# 2. A+C+E for binary vars is constrained to 1 
-		# 3. First 2 thresholds fixed for ordinal mxFactors
-
+		# 1. Set to mxFactor
+		# 2. For Binary vars:
+		#   1. Means of binary vars fixedAt 0
+		#   2. A+C+E for binary vars is constrained to 1 
+		# 4. For Ordinal vars, first 2 thresholds fixed
+		# 5. Option to fix all but the first 2thresholds for left-censored data
+        #   # TODO
+		# 		1. Simple experiment seeing if the results are similar for an ACE model of 1 variable
+		# 		2. create interface: perhaps hint = "left_censored"
+		# 		3. That's it.. it should then scale out: need to verify speedup.
+		
 		# ===========================
 		# = Add means matrix to top =
 		# ===========================
@@ -711,7 +725,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		# smarter but not guaranteed
 		# a_val = e_val = t(chol(xmu_cov_factor(mzData, use = "pair"))) * .6
 		# c_val = t(chol(cov(mzData, use = "pair"))) * .1
-		if(nFactors == 0) {
+		if(nFactors == 0) {			
 			# =======================================================
 			# = Handle all continuous case                          =
 			# =======================================================
@@ -733,8 +747,8 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 			# Thresholds
 			# for better guessing with low-freq cells
 			allData = rbind(mzData, dzData)
-			# threshMat may be a three item list of matrices and algebra
-			threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), verbose = FALSE)
+			# threshMat is a three-item list of matrices and algebra
+			threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), verbose = FALSE, hint = hint)
 			# return(threshMat)
 			mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 			dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
@@ -1928,6 +1942,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @param deviationBased Whether to build a helper matrix to keep the thresholds in order (defaults to = TRUE)
 #' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
 #' @param verbose (defaults to FALSE))
+#' @param hint currently used for "left_censored" data (defaults to "none"))
 #' @return - thresholds matrix
 #' @export
 #' @family Miscellaneous Functions
@@ -1959,7 +1974,7 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' str(mzData)
 #' umxThresholdMatrix(mzData, suffixes = 1:2)
-#' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE) # supress informative messages
+#' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE) # suppress informative messages
 #' 
 #' # ======================================
 #' # = Ordinal (n categories > 2) example =
@@ -1991,8 +2006,17 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' str(mzData)
 #' umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
-
-umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE){
+#' 
+#' # ===================
+#' # = "left_censored" =
+#' # ===================
+#' 
+#' x = round(10*rnorm(1000, mean=-.2))
+#' x[x<0] = 0
+#' x = mxFactor(x, levels = sort(unique(x)))
+#' x = data.frame(x)
+#' umxThresholdMatrix(x, deviation=FALSE), hint="left_censored")
+umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE, hint = "none"){
 	if(droplevels){ stop("Not sure it's wise to drop levels...") }
 	# TODO implement manual choice of method - more flexible and explicit.
 	method      = umx_default_option(method, c("auto", "Mehta", "allFree"), check = TRUE)
@@ -2268,6 +2292,10 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		thresholdsAlgebra = mxAlgebra(name = threshMatName, lowerOnes_for_thresh %*% deviations_for_thresh, dimnames = threshDimNames)
 
 		return(list(lowerOnes_for_thresh, deviations_for_thresh, thresholdsAlgebra))
+	} else if (hint == "left_censored"){
+		# ignore everything above...
+		message("hint")
+		return(threshMat)
 	} else {
 		return(threshMat)
 	}

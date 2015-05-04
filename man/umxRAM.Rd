@@ -4,7 +4,7 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(name, data = NULL, ..., exog.variances = FALSE,
+umxRAM(name, data = NULL, ..., run = TRUE, exog.variances = FALSE,
   endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"),
   latentVars = NULL, setValues = TRUE, independent = NA,
   remove_unused_manifests = TRUE)

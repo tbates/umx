@@ -1103,6 +1103,48 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 	message("moved (or would have moved)", moved)
 }
 
+#' umx_open
+#'
+#' Open a file or folder. So far only works on OS X
+#'
+#' @param filepath 
+#' @return - 
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' umx_open(getwd())
+#' }
+umx_open <- function(filepath = getwd()) {
+	umx_check_mac(die=TRUE)
+	if(file.exists(filepath)){
+		system(paste("open", shQuote(filepath)))	
+	} else {
+		warning("file ", omxQuotes(filepath), " doesn't exist")
+	}
+}
+
+#' umx_check_mac
+#'
+#' Check is we are running on OS X
+#'
+#' @param die whether to die on failure
+#' @return - TRUE if on OS X
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' umx_check_mac()
+umx_check_mac <- function(die = FALSE){
+	isMac = as.character(Sys.info()["sysname"]) == "Darwin"
+	if(!isMac && die){
+		stop("Must be running on mac for this to work")
+	} else {
+		return(isMac)
+	}
+}
+
 #' umx_cor
 #'
 #' Report correlations and their p-values
@@ -2964,14 +3006,13 @@ umx_scale_wide_twin_data <- function(varsToScale, suffixes, df) {
 umx_default_option <- function(x, option_list, check = TRUE){
 	# often the R-built in code will work...
 	# filter = match.arg(filter)
-
 	if (identical(x, option_list)) {
 	    x = option_list[1]
 	}
 	if (length(x) != 1){
-	    stop(paste("argument must be ONE of ", paste(sQuote(option_list),collapse=", "), "you tried:", paste(sQuote(x), collapse = ", ")))
+	    stop(paste("argument must be ONE of ", paste(sQuote(option_list), collapse = ", "), "you tried:", paste(sQuote(x), collapse = ", ")))
 	}else if (!(x %in% option_list) & check) {
-	    stop(paste("argument must be one of ", paste(sQuote(option_list),collapse=", ")))
+	    stop(paste("argument must be one of ", paste(sQuote(option_list), collapse = ", ")))
 	} else {
 		return(x)
 	}

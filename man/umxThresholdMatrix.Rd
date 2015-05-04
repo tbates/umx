@@ -6,7 +6,8 @@
 \usage{
 umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
   method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA),
-  deviationBased = TRUE, droplevels = FALSE, verbose = FALSE)
+  deviationBased = TRUE, droplevels = FALSE, verbose = FALSE,
+  hint = "none")
 }
 \arguments{
 \item{df}{the data being modelled (to allow access to the factor levels and quantiles within these for each variable)}
@@ -24,6 +25,8 @@ umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
 \item{droplevels}{Whether to drop levels with no observed data (defaults to FALSE)}
 
 \item{verbose}{(defaults to FALSE))}
+
+\item{hint}{currently used for "left_censored" data (defaults to "none"))}
 }
 \value{
 - thresholds matrix
@@ -69,7 +72,7 @@ twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
 umxThresholdMatrix(mzData, suffixes = 1:2)
-umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE) # supress informative messages
+umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE) # suppress informative messages
 
 # ======================================
 # = Ordinal (n categories > 2) example =
@@ -101,6 +104,16 @@ selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
 umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
+
+# ===================
+# = "left_censored" =
+# ===================
+
+x = round(10*rnorm(1000, mean=-.2))
+x[x<0] = 0
+x = mxFactor(x, levels = sort(unique(x)))
+x = data.frame(x)
+umxThresholdMatrix(x, deviation=FALSE), hint="left_censored")
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
