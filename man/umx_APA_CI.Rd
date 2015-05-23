@@ -31,8 +31,8 @@ umx_APA_CI(m1, "wt")
 Other Reporting Functions: \code{\link{umxAnovaReport}};
   \code{\link{umxStandardizeACE}};
   \code{\link{umxSummary}}; \code{\link{umx_APA_pval}};
-  \code{\link{umx_print}}; \code{\link{umx_show}};
-  \code{\link{umx_time}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+  \code{\link{umx_aggregate}}; \code{\link{umx_print}};
+  \code{\link{umx_show}}; \code{\link{umx_time}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

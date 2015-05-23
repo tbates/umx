@@ -2389,3 +2389,45 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
     datac$ci <- datac$se * ciMult
     return(datac)
 }
+
+#' umx_aggregate
+#'
+#' umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions
+#'
+#' @param formula the formula to aggregate on, e.g., DV ~ condition
+#' @param data
+#' @param what function to use. Defaults to = c("mean_sd"))
+#' @return - table
+#' @export
+#' @family Reporting Functions
+#' @seealso - \code{\link{aggregate}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' x = umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
+#' x = aggregate(moodAvg ~ condition, FUN= mean, na.rm=T, data = study1)
+#' x
+#' str(x)
+#' t(x)
+umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd")) {
+	mean_sd = function(x){
+		paste0(round(mean(x, na.rm=TRUE),2), " (",
+			   round(sd(x, na.rm=TRUE),2), ")"
+		)
+	}
+	x_n = function(x){sum(!is.na(x))}
+
+	what = match.arg(what)
+	if(what == "mean_sd"){
+		FUN = mean_sd
+	} else if(what == "n"){
+		FUN = mean_sd
+	}else{
+		FUN = FUN
+	}
+
+	tmp = aggregate(formula, FUN= mean_sd, data = data)
+	n_s = aggregate(formula, FUN= x_n, data = data)
+	row.names(tmp) = paste0(tmp[,1], " (n = ", n_s[,2], ")")
+	tmp = tmp[,-1]
+	return(tmp)
+}
