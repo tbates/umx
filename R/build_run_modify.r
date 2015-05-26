@@ -148,10 +148,10 @@ umxRAM <- function(name, data = NULL, ..., run = TRUE, exog.variances = FALSE, e
 		if(thisIs == "MxPath"){
 			foundNames = append(foundNames, c(i@from, i@to))
 		} else {
-			if(class(i[[1]])[1] == "MxThreshold"){
+			if(thisIs == "MxThreshold"){
 				# MxThreshold detected
-			}else{
-				# stop("I can only handle mxPaths and mxThreshold() objects.\n",
+			} else {
+				# stop("I can only handle mxPaths, mxConstraints, and mxThreshold() objects.\n",
 				# "You have given me a", class(i)[1],"\n",
 				# " To include data in umxRAM, say 'data = yourData'")
 			}

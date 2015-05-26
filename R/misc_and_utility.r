@@ -95,7 +95,7 @@ umx_get_optimizer <- function(model = NULL) {
 #'
 #' set the optimizer in OpenMx
 #'
-#' @param opt defaults to "NPSOL". Current alternatives are "NLOPT" and "CSOLNP"
+#' @param opt defaults to "NPSOL". Current alternatives are "SLSQP" and "CSOLNP"
 #' @return - 
 #' @export
 #' @family Miscellaneous Functions
@@ -112,39 +112,23 @@ umx_get_optimizer <- function(model = NULL) {
 #' 	umxPath(var = manifests),
 #' 	umxPath(means = manifests)
 #' )
-#' umx_set_optimizer(opt = "CSOLNP")
-#' m2 = mxRun(mxModel(m1, name="CSOLNP")); umx_time(m2)
 #' umx_set_optimizer(opt = "NPSOL")
-#' m3 = mxRun(mxModel(m1, name="NPSOL")); umx_time(m3)
-#' # umx_set_optimizer(opt = "NLOPT")
-#' # m4 = mxRun(mxModel(m1, name="NLOPT")); umx_time(m4)
+#' m2 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m2)
+#' umx_set_optimizer(opt = "CSOLNP")
+#' m3 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m3)
+#' umx_set_optimizer(opt = "SLSQP")
+#' m4 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m4)
 #' umx_set_optimizer(oldOpt)
 #' \dontrun{
 #' m1@@runstate$compute$steps[1][[1]]$engine # NPSOL
 #' }
-umx_set_optimizer <- function(opt = c("NPSOL", "NLOPT", "CSOLNP")) {
-	opt = umx_default_option(opt, c("NPSOL", "NLOPT", "CSOLNP"), check = FALSE)
+umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
+	opt = umx_default_option(opt, c("NPSOL", "SLSQP", "CSOLNP"), check = FALSE)
 	# opt = match.arg(opt)
 	oldOpt = umx_get_optimizer()
 	# set the new choice
 	mxOption(NULL, "Default optimizer", opt)
-	
-	# try it out
-	# manifests = c("disp", "mpg")
-	# m1 <- umxRAM("sat", data = mxData(mtcars[, manifests], type = "raw"),
-	# 	umxPath(var   = manifests),
-	# 	umxPath(cov   = manifests),
-	# 	umxPath(means = manifests)
-	# )
-	#
-	# tryCatch(
-	# 	mxRun(m1),
-	# 	error = function(err) {
-	# 		umx_set_optimizer(oldOpt)
-	#     	message(err)
-	#     	message("remained with old optimizer", oldOpt)
-	# 	}
-	# )
+	# TODO check offering is in valid list
 	
 	# if(opt == "NPSOL"){
 	# 	# mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
