@@ -33,11 +33,10 @@ fsModel$fitfunction <- mxFitFunctionML(vector=TRUE)
 fsModel$data <- mxData(exampleData[1,], "raw")
 
 # make the weighted factor score model
-fullModel <- mxModel("Weighted Factor Score Model",
-	fsModel,
-	mxAlgebra(1 / (sqrt(2*pi)) * sqrt(det(FactorScore.phi))) *
-		exp(-.5*(FactorScore.mu %&% solve(FactorScore.phi))),
-		name="weight"),
+fullModel <- mxModel("Weighted Factor Score Model", fsModel, name="weight",
+		mxAlgebra(1 / (sqrt(2*pi)) * sqrt(det(FactorScore.phi))) *
+		exp(-.5 * (FactorScore.mu %&% solve(FactorScore.phi)))
+	),
 	mxAlgebra(-2*log(weight %x% FactorScore.fitfunction), name="alg"),
 	mxFitFunctionAlgebra("alg")
 )
