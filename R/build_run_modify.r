@@ -75,17 +75,21 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' 
 #' @details Like mxModel, you list the theoretical causal paths. Unlike mxModel:
 #' \enumerate{
-#' \item{You can request creation of error variances using \code{endog.variances = TRUE} }
-#' \item{You can request creation of variances for exogenous variables (using \code{exog.variances = TRUE})}
-#' \item{For identification, you can request either \code{fix = "latents"} or \code{fix = "firstLoadings"} 
-#' to fix either the variance of latents or their first factor loading at 1.}
-#' }
-#' Additional conveniences: 
-#' \enumerate{
 #' \item{type defaults to "RAM"}
 #' \item{You don't need to list manifestVars (they are assumed to map onto names in the \code{mxData})}
-#' \item{Any variables you mention that are not found in mxData are assumed to be latents}
+#' \item{You don't need to list latentVars (they are assumed to be things not in the \code{mxData})}
+#' \item{You add data like you do in \code{lm}, with \strong{data = }}
+#' \item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
 #' }
+#'
+#' Comparison with other software
+#' Some software has massive behind-the-scenes defaulting and path addition. I've played with some
+#' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
+#' and \code{exog.variances = TRUE}). Also identification helpers likey \code{fix = "latents"} 
+#' and \code{fix = "firstLoadings"} 
+#' 
+#' To be honest, these are not just more trouble than they are worth, they encourage errors and 
+#' poor modelling. I suggest just learning the nifty umxPath short cuts and staying clean and explicit!
 #' 
 #' @param name A friendly name for the model
 #' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame
@@ -114,15 +118,12 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' # 2. Create an mxData object
 #' myCov = mxData(cov(mtcars[,selVars]), type = "cov", numObs = nrow(mtcars) )
 #' 
-#' # 3. Write the model and paths (see ?umxPath for LOTS more neat options)
+#' # 3. Create the model (see ?umxPath for LOTS more neat options)
 #' m1 = umxRAM("tim", data = myCov,
 #' 	umxPath(c("wt", "disp"), to = "mpg"),
 #' 	umxPath(cov = c("wt", "disp")),
 #' 	umxPath(var = c("wt", "disp", "mpg"))
 #' )
-#' 
-#' # 4. Run the model
-#' m1 = mxRun(m1)
 #' 
 #' # 5. Print a nice summary 
 #' umxSummary(m1, show = "std")
