@@ -124,12 +124,10 @@ umx_get_optimizer <- function(model = NULL) {
 #' }
 umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
 	opt = umx_default_option(opt, c("NPSOL", "SLSQP", "CSOLNP"), check = FALSE)
-	# opt = match.arg(opt)
-	oldOpt = umx_get_optimizer()
-	# set the new choice
-	mxOption(NULL, "Default optimizer", opt)
-	# TODO check offering is in valid list
-	
+	if(!opt %in% mxAvailableOptimizers()){
+		stop("The Optimizer ", quote(opt), " is not legal. legal values are:", omxQuotes(mxAvailableOptimizers()))
+	}
+	mxOption(NULL, "Default optimizer", opt)	
 	# if(opt == "NPSOL"){
 	# 	# mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
 	# 	# mxOption(model, 'mvnMaxPointsC', 5e+5) # default is 5000
