@@ -699,12 +699,10 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		#   1. Means of binary vars fixedAt 0
 		#   2. A+C+E for binary vars is constrained to 1 
 		# 4. For Ordinal vars, first 2 thresholds fixed
-		# 5. Option to fix all but the first 2thresholds for left-censored data
+		# 5. Option to fix all (or all but the first 2??) thresholds for left-censored data.
         #   # TODO
 		# 		1. Simple experiment seeing if the results are similar for an ACE model of 1 variable
-		# 		2. create interface: perhaps hint = "left_censored"
-		# 		3. That's it.. it should then scale out: need to verify speedup.
-		
+		# 		✓. create interface: perhaps hint = "left_censored"		
 		# ===========================
 		# = Add means matrix to top =
 		# ===========================
@@ -2016,10 +2014,10 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' x = mxFactor(x, levels = sort(unique(x)))
 #' x = data.frame(x)
 #' umxThresholdMatrix(x, deviation=FALSE), hint="left_censored")
-umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE, hint = "none"){
+umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE, hint = c("none", "left_censored")){
 	if(droplevels){ stop("Not sure it's wise to drop levels...") }
-	# TODO implement manual choice of method - more flexible and explicit.
-	method      = umx_default_option(method, c("auto", "Mehta", "allFree"), check = TRUE)
+	hint        = match.arg(hint)
+	method      = match.arg(method)
 	nSib        = length(suffixes)
 	isFactor    = umx_is_ordered(df) # all ordered factors including binary
 	isOrd       = umx_is_ordered(df, ordinal.only = TRUE) # only ordinals
@@ -2109,31 +2107,6 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		thisCol = df[,thisVarName]
 		nThreshThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
 
-		# nls is too fragile...
-		# tmp = data.frame(zValues = zValues)
-		# tmp$x = c(1:length(zValues))
-		# fit <- nls(zValues ~ theta1/(1 + exp(-(theta2 + theta3*x))), start=list(theta1 = 4, theta2 = 0.09, theta3 = 0.31), data =tmp)
-		# zValues = predict(fit)
-		# http://stats.stackexchange.com/questions/74544/fitting-a-sigmoid-function-why-is-my-fit-so-bad
-		# tryCatch({
-		# 	# job here is just to interpolate empty cell frequencies..
-		# }, warning = function(cond) {
-		#     # warning-handler-code
-		#     umx_msg(thisVarName)
-		# 	        umx_msg(zValues)
-		# 	message(cond)
-		# }, error = function(cond) {
-		#     umx_msg(thisVarName)
-		# 	        umx_msg(zValues)
-		# 	        message(cond)
-		# }, finally = {
-		#     # cleanup-code
-		# })
-
-		# This approach would work differently from the start...
-		# co = coef(fitdistr(thisCol[!is.na(thisCol)], "normal"))
-		# dnorm(1:(nThreshThisVar+1), co["mean"], co["sd"]))
-		
 		# ===============================================================
 		# = Work out z-values for thresholds based on simple bin counts =
 		# ===============================================================
@@ -2230,6 +2203,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		threshMat$values[, thisVarName] = values
 	} # end for each factor variable
 	
+	# TODO describe what we have at this point
 	
 	if(deviationBased) {
 		# ==========================
@@ -2251,7 +2225,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		# 3. Make a lower matrix of 1s called "lowerOnes_for_thresh"
 		# 4. Create thresholdsAlgebra named threshMatName
 		# 5. Return a package of lowerOnes_for_thresh, deviations_for_thresh & thresholdsAlgebra (named threshMatName)
-# 1
+		# 1
 		# startDeviations
 		startDeviations = threshMat$values
 		nrows = dim(threshMat$values)[1]
@@ -2277,7 +2251,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		# th_2  FALSE     FALSE      FALSE  FALSE     FALSE      FALSE
 		# th_3  FALSE     FALSE       TRUE  FALSE     FALSE       TRUE
 	
-# 2
+		# 2
 		deviations_for_thresh = mxMatrix(name = "deviations_for_thresh", type = "Full",
 			nrow     = maxThresh, ncol = nFactors,
 			free     = threshMat$free, values = startDeviations,
@@ -2285,21 +2259,47 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 			ubound   = NA,
 			dimnames = list(paste0("dev_", 1:maxThresh), factorVarNames)
 		)
-# 2
+		# 2
 		lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThresh, free = FALSE, values = 1)
-# 3
+		# 3
 		threshDimNames = list(paste0("th_", 1:maxThresh), factorVarNames)
 		thresholdsAlgebra = mxAlgebra(name = threshMatName, lowerOnes_for_thresh %*% deviations_for_thresh, dimnames = threshDimNames)
 
 		return(list(lowerOnes_for_thresh, deviations_for_thresh, thresholdsAlgebra))
 	} else if (hint == "left_censored"){
 		# ignore everything above...
-		message("hint")
+		message("using ", hint, " fixed thresholds")
 		return(threshMat)
 	} else {
 		return(threshMat)
 	}
 }
+
+# nls is too fragile...
+# tmp = data.frame(zValues = zValues)
+# tmp$x = c(1:length(zValues))
+# fit <- nls(zValues ~ theta1/(1 + exp(-(theta2 + theta3*x))), start=list(theta1 = 4, theta2 = 0.09, theta3 = 0.31), data =tmp)
+# zValues = predict(fit)
+# http://stats.stackexchange.com/questions/74544/fitting-a-sigmoid-function-why-is-my-fit-so-bad
+# tryCatch({
+# 	# job here is just to interpolate empty cell frequencies..
+# }, warning = function(cond) {
+#     # warning-handler-code
+#     umx_msg(thisVarName)
+# 	        umx_msg(zValues)
+# 	message(cond)
+# }, error = function(cond) {
+#     umx_msg(thisVarName)
+# 	        umx_msg(zValues)
+# 	        message(cond)
+# }, finally = {
+#     # cleanup-code
+# })
+
+# This approach would work differently from the start...
+# co = coef(fitdistr(thisCol[!is.na(thisCol)], "normal"))
+# dnorm(1:(nThreshThisVar+1), co["mean"], co["sd"]))
+
 
 #' umxOrdinalObjective
 #'
