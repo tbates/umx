@@ -7,22 +7,28 @@
 umx_APA_CI(b, se, digits = 3)
 }
 \arguments{
-\item{b}{either a linear model, or a beta-value}
+\item{b}{Either a model (\link{lm}), or a beta-value}
 
-\item{se}{either the name of the parameter of interest, or the SE (standard-error)}
+\item{se}{If b is a model, then name of the parameter of interest, else the SE (standard-error)}
+
+\item{digits}{How many digits to use in rounding values}
 }
 \value{
 - string
 }
 \description{
-Given an lm, will return a nicely-formated string with the 95% CI,
-like: \dQuote{𝛽 = -0.089 [2.5\%, 97.5\%], p = .649}.
-Given b and se will return \dQuote{𝛽 = b [2.5\%,95\%]}
+Given an lm, will return a nicely-formated effect including 95\% CI
+in square brackets, for one of the effects (specified by name in se). e.g.:
+
+umx_APA_CI(m1, "wt")
+\eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
+
+Given b and se will return a CI based on 1.96 times the se.
 }
 \examples{
-m1 = lm(mpg~wt, mtcars)
+m1 = lm(mpg ~ wt, mtcars)
 umx_APA_CI(m1, "wt")
-# 𝛽 = -5.344 [-6.486, -4.203], p< 0.001
+umx_APA_CI(.4, .3)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
@@ -30,9 +36,9 @@ umx_APA_CI(m1, "wt")
 \seealso{
 Other Reporting Functions: \code{\link{umxAnovaReport}};
   \code{\link{umxStandardizeACE}};
-  \code{\link{umxSummary}}; \code{\link{umx_APA_pval}};
-  \code{\link{umx_aggregate}}; \code{\link{umx_print}};
-  \code{\link{umx_show}}; \code{\link{umx_time}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
+  \code{\link{umx_print}}; \code{\link{umx_show}};
+  \code{\link{umx_time}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

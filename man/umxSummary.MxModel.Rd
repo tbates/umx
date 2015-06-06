@@ -5,16 +5,13 @@
 \alias{umxSummary.MxModel}
 \title{umxSummary.MxModel}
 \usage{
-\method{umxSummary}{MxModel}(model, saturatedModels = NULL, report = "line",
+\method{umxSummary}{MxModel}(model, refModels = NULL, report = "line",
   showEstimates = c("none", "raw", "std", "both", "list of column names"),
   digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE,
   filter = c("ALL", "NS", "SIG"), SE = TRUE)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} whose fit will be reported}
-
-\item{saturatedModels}{Saturated models if needed for fit indices (see example below:
-Only needed for raw data. nb also, umxRun takes care of this for you)}
 
 \item{report}{The format for the output line or table (default is "line")}
 
@@ -30,6 +27,9 @@ Default  is "none" (just shows the fit indices)}
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 
 \item{SE}{Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.}
+
+\item{saturatedModels}{Saturated models if needed for fit indices (see example below:
+Only needed for raw data. nb also, umxRun takes care of this for you)}
 }
 \value{
 - parameterTable returned invisibly, if estimates requested
@@ -60,20 +60,22 @@ require(OpenMx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM",
-	manifestVars = manifests, latentVars = latents,
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor",
+	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umxSummary(m1, show = "std")
-umxSummary(m1, show = "std", digits = 1)
-\dontrun{
+umxSummary(m1, show = "raw")
+m1 <- mxModel(m1,
+  mxData(demoOneFactor, type = "raw"),
+  umxPath(mean = manifests),
+  umxPath(mean = latents, fixedAt = 0)
+)
+m1 <- mxRun(m1)
+umxSummary(m1, show = "std")
 # umxSummary(m1, report = "table") # not yet implemented
-# umxSummary(m1, saturatedModels = umxSaturated(m1))
-}
 }
 \references{
 - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance
@@ -88,7 +90,8 @@ umxSummary(m1, show = "std", digits = 1)
 - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
-  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
+  \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
+  \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},

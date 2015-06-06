@@ -7,7 +7,7 @@
 umx_open(filepath = getwd())
 }
 \arguments{
-\item{filepath}{}
+\item{filepath}{The file to open}
 }
 \value{
 -

@@ -7,7 +7,11 @@
 umx_make_bin_cont_pair_data(data, vars = NULL, suffixes = NULL)
 }
 \arguments{
-\item{df}{a \code{\link{data.frame}} to convert}
+\item{data}{A \code{\link{data.frame}} to convert}
+
+\item{vars}{The variables to process}
+
+\item{suffixes}{Suffixes if the data are family (wide, more than one persona on a row)}
 }
 \value{
 - copy of the dataframe with new binary variables and censoring

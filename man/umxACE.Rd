@@ -33,15 +33,15 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data}
 
-\item{boundDiag}{= whether to bound the diagonal of the a, c, and e matrices}
+\item{boundDiag}{= Whether to bound the diagonal of the a, c, and e matrices}
 
 \item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL)}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE)}
 
-\item{bVector}{whether to compute row-wise likelihoods (defaults to FALSE)}
+\item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE)}
 
-\item{hint}{an analysis hint. Options include "none", (default) "left_censored". Default does nothing.}
+\item{hint}{An analysis hint. Options include "none", (default) "left_censored". Default does nothing.}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACE
@@ -59,18 +59,20 @@ Make a 2-group ACE model
 require(OpenMx)
 require(umx)
 data(twinData)
-names(twinData)
+tmpTwin <- twinData
+names(tmpTwin)
 # "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
 
-# Set the zygosity to a factor
+# Set zygosity to a factor
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
-# Pick the variable the zygosity to a factor
+tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
+
+# Pick the variables
 selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
-# the function will then make the varnames for each twin using
-# i.e. "VarSuffix1"" "VarSuffix2""
-mzData <- subset(twinData, ZYG == "MZFF", selDVs)
-dzData <- subset(twinData, ZYG == "DZFF", selDVs)
+# the function will then make the varnames for each twin using this:
+# for example. "VarSuffix1" "VarSuffix2"
+mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", selDVs]
+dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", selDVs]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 umxSummary(m1)
@@ -85,22 +87,30 @@ mxCompare(m2, m1) # ADE is better
 umxSummary(m2) # nb: though this is ADE, it's labeled ACE
 
 
-# Ordinal example
+# ===================
+# = Ordinal example =
+# ===================
 require(OpenMx)
 data(twinData)
+tmpTwin <- twinData
+names(tmpTwin)
+# "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
+
+# Set zygosity to a factor
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
-# Cut weight to to form ordinal obesity
+tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
+
+# Cut bmi colum to form ordinal obesity variables
 ordDVs = c("obese1", "obese2")
 selDVs = c("obese")
 obesityLevels = c('normal', 'overweight', 'obese')
-cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
-twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+cutPoints <- quantile(tmpTwin[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+tmpTwin$obese1 <- cut(tmpTwin$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+tmpTwin$obese2 <- cut(tmpTwin$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
-twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-mzData <- subset(twinData, zyg == "MZFF", umx_paste_names(selDVs, "", 1:2))
-dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
+tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
+mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", umx_paste_names(selDVs, "", 1:2)]
+dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", umx_paste_names(selDVs, "", 1:2)]
 str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 m1 = mxRun(m1)
@@ -109,41 +119,69 @@ umxSummary(m1)
 # plot(m1)
 }
 
-# Bivariate continuous and ordinal example (assumes examples above have been run)
+# ============================================
+# = Bivariate continuous and ordinal example =
+# ============================================
+data(twinData)
+tmpTwin <- twinData
 selDVs = c("wt", "obese")
-mzData <- subset(twinData, zyg == "MZFF", umx_paste_names(selDVs, "", 1:2))
-dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
+# Set zygosity to a factor
+labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
+
+# Cut bmi colum to form ordinal obesity variables
+ordDVs = c("obese1", "obese2")
+obesityLevels = c('normal', 'overweight', 'obese')
+cutPoints <- quantile(tmpTwin[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+tmpTwin$obese1 <- cut(tmpTwin$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+tmpTwin$obese2 <- cut(tmpTwin$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+# Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
+tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
+mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", umx_paste_names(selDVs, "", 1:2)]
+dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", umx_paste_names(selDVs, "", 1:2)]
+str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 m1 = umxRun(m1)
 umxSummary(m1)
 
 
-# Mixed continuous and binary example
+# =======================================
+# = Mixed continuous and binary example =
+# =======================================
 require(OpenMx)
 data(twinData)
+tmpTwin <- twinData
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
+tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
 # Cut to form category of 20\% obese subjects
-cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+cutPoints <- quantile(tmpTwin[, "bmi1"], probs = .2, na.rm = TRUE)
 obesityLevels = c('normal', 'obese')
-twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
-twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+tmpTwin$obese1 <- cut(tmpTwin$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
+tmpTwin$obese2 <- cut(tmpTwin$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels)
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 ordDVs = c("obese1", "obese2")
-twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
 selDVs = c("wt", "obese")
-mzData <- subset(twinData, zyg == "MZFF", umx_paste_names(selDVs, "", 1:2))
-dzData <- subset(twinData, zyg == "DZFF", umx_paste_names(selDVs, "", 1:2))
-str(dzData)
+mzData <- tmpTwin[tmpTwin$zyg == "MZFF", umx_paste_names(selDVs, "", 1:2)]
+dzData <- tmpTwin[tmpTwin$zyg == "DZFF", umx_paste_names(selDVs, "", 1:2)]
+str(mzData)
+umx_paste_names(selDVs, "", 1:2)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 m1 = umxRun(m1)
 umxSummary(m1)
+
 # ===================================
 # Example with covariance data only =
 # ===================================
+
+require(OpenMx)
+data(twinData)
+tmpTwin <- twinData
+labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
 selDVs = c("wt1", "wt2")
-dz = cov(dzData[, selDVs], use = "complete")
-mz = cov(mzData[, selDVs], use = "complete")
+dz = cov(tmpTwin[tmpTwin$zyg == "MZFF", selDVs], use = "complete")
+mz = cov(tmpTwin[tmpTwin$zyg == "DZFF", selDVs], use = "complete")
 m1 = umxACE(selDVs= selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 m1 = mxRun(m1)
 umxSummary(m1)

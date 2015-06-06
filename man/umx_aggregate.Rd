@@ -7,9 +7,9 @@
 umx_aggregate(formula = DV ~ condition, data, what = c("mean_sd"))
 }
 \arguments{
-\item{formula}{the formula to aggregate on, e.g., DV ~ condition}
+\item{formula}{the aggregation formula. e.g., DV ~ condition}
 
-\item{data}{}
+\item{data}{the dataframe to aggregate with}
 
 \item{what}{function to use. Defaults to = c("mean_sd"))}
 }
@@ -20,11 +20,12 @@ umx_aggregate(formula = DV ~ condition, data, what = c("mean_sd"))
 umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions
 }
 \examples{
-x = umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
-x = aggregate(moodAvg ~ condition, FUN= mean, na.rm=T, data = study1)
-x
-str(x)
-t(x)
+aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
+umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars)
+t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
+\dontrun{
+umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
+}
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
@@ -34,9 +35,9 @@ t(x)
 
 Other Reporting Functions: \code{\link{umxAnovaReport}};
   \code{\link{umxStandardizeACE}};
-  \code{\link{umxSummary}}; \code{\link{umx_APA_CI}};
-  \code{\link{umx_APA_pval}}; \code{\link{umx_print}};
-  \code{\link{umx_show}}; \code{\link{umx_time}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
+  \code{\link{umx_print}}; \code{\link{umx_show}};
+  \code{\link{umx_time}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

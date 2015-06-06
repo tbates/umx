@@ -7,7 +7,7 @@
 \method{RMSEA}{MxModel}(x, ci.lower = 0.05, ci.upper = 0.95, digits = 3)
 }
 \arguments{
-\item{x}{an \code{\link{mxModel}} to get CIs on RMSEA for}
+\item{x}{an \code{\link{mxModel}} from which to get RMSEA}
 
 \item{ci.lower}{the lower CI to compute}
 
@@ -26,23 +26,19 @@ require(OpenMx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM",
-	manifestVars = manifests, latentVars = latents,
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 RMSEA(m1)
-# RMSEA(summary(m1))
 }
 \references{
 - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Reporting functions: \code{\link{RMSEA}};
-  \code{\link{coef.MxModel}};
+Other Reporting functions: \code{\link{RMSEA.summary.mxmodel}};
+  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},

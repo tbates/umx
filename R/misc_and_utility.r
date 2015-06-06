@@ -124,9 +124,9 @@ umx_get_optimizer <- function(model = NULL) {
 #' }
 umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
 	opt = umx_default_option(opt, c("NPSOL", "SLSQP", "CSOLNP"), check = FALSE)
-	if(!opt %in% mxAvailableOptimizers()){
-		stop("The Optimizer ", quote(opt), " is not legal. legal values are:", omxQuotes(mxAvailableOptimizers()))
-	}
+	# if(!opt %in% mxAvailableOptimizers()){
+	# 	stop("The Optimizer ", quote(opt), " is not legal. legal values are:", omxQuotes(mxAvailableOptimizers()))
+	# }
 	mxOption(NULL, "Default optimizer", opt)	
 	# if(opt == "NPSOL"){
 	# 	# mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
@@ -756,8 +756,8 @@ umxFormativeVarianceMess <- function(model){
 #' Tries to make apply more readable. Other functions to think of include
 #' \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
 #'
-#' @param FUN the function to apply
-#' @param of_DF the dataframe to work with
+#' @param FUN The function to apply
+#' @param of The dataframe to work with
 #' @param by What to apply the function to: columns or rows (default = "columns")
 #' @param ... optional arguments to FUN, i.e., na.rm = T
 #' @return - \code{\link{mxModel}}
@@ -767,7 +767,7 @@ umxFormativeVarianceMess <- function(model){
 #' @examples
 #' umx_apply(mean, mtcars, by = "columns")
 #' umx_apply(mean, of = mtcars, by = "columns")
-#' umx_apply(mean, by = "rows", of = mtcars, na.rm = TRUE)
+#' umx_apply(mean, by = "rows", of = mtcars[1:3,], na.rm = TRUE)
 umx_apply <- function(FUN, of, by = "columns", ...) {
 	if(! (by %in% c("columns", "rows"))){
 		stop(paste("by must be either 'columns' or 'rows', you gave me", by))
@@ -1089,7 +1089,7 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 #'
 #' Open a file or folder. So far only works on OS X
 #'
-#' @param filepath 
+#' @param filepath The file to open
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -1920,10 +1920,11 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 
 #' umx_cov_diag
 #'
-#' Helper to get variances from a df that might contain some non-numeric columns. Non numerics are set to whatever ordVar=
+#' Helper to get variances from a df that might contain some non-numeric columns.
+#' Values at non-numeric columns are set to the value passed in as ordVar.
 #'
 #' @param df a dataframe of raw data from which to get variances.
-#' @param ordVar The value to return at any ordinal columns found, i.e., (defaults to 1, i.e., z
+#' @param ordVar The value to return at any ordinal columns (defaults to 1)
 #' @param format to return: options are c("diag", "Full", "Lower"). Defaults to diag: a vector of variances
 #' @param use passed to \code{\link{cov}} - defaults to "complete.obs" (other options are in the function )
 #' @return - \code{\link{mxModel}}
@@ -2468,33 +2469,39 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 
 #' umx_APA_CI
 #'
-#' Given an lm, will return a nicely-formated string with the 95% CI,
-#' like: \dQuote{𝛽 = -0.089 [2.5\%, 97.5\%], p = .649}.
-#' Given b and se will return \dQuote{𝛽 = b [2.5\%,95\%]}
-#'
-#' @param b either a linear model, or a beta-value
-#' @param se either the name of the parameter of interest, or the SE (standard-error)
+#' @description
+#' Given an lm, will return a nicely-formated effect including 95\% CI 
+#' in square brackets, for one of the effects (specified by name in se). e.g.:
+#' 
+#' umx_APA_CI(m1, "wt")
+#' \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
+#' 
+#' Given b and se will return a CI based on 1.96 times the se.
+#' 
+#' @param b Either a model (\link{lm}), or a beta-value
+#' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)
+#' @param digits How many digits to use in rounding values
 #' @return - string
 #' @export
 #' @family Reporting Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' m1 = lm(mpg~wt, mtcars)
+#' m1 = lm(mpg ~ wt, mtcars)
 #' umx_APA_CI(m1, "wt")
-#' # 𝛽 = -5.344 [-6.486, -4.203], p< 0.001
-
+#' umx_APA_CI(.4, .3)
 umx_APA_CI <- function(b, se, digits = 3) {
 	if("lm" == class(b)){
 		conf    = confint(b)
 		lower   = conf[se, 1]
 		upper   = conf[se, 2]
-		b_and_p = summary(m1)$coefficients[se,]
+		model_coefficients = summary(m1)$coefficients
+		b_and_p = model_coefficients[se, ]
 		b       = b_and_p["Estimate"]
 		tval    = b_and_p["t value"]
 		pval    = b_and_p["Pr(>|t|)"]
-		paste0("𝛽 = ", round(b, digits), " [", round(lower, digits), ", ", round(upper, digits), "], p ", umx_APA_pval(pval, addC=T))
+		paste0("\u03B2 = ", round(b, digits), " [", round(lower, digits), ", ", round(upper, digits), "], p ", umx_APA_pval(pval, addC = TRUE))
 	} else {
-		paste0("𝛽 = ", round(b, digits), " [", round(b - (1.96 * se), digits), ", ", round(b + (1.96 * se), digits), "]")
+		paste0("\u03B2 = ", round(b, digits), " [", round(b - (1.96 * se), digits), ", ", round(b + (1.96 * se), digits), "]")
 	}
 }
 
@@ -3411,7 +3418,9 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #'    the variable is below the minimum and NA otherwise.
 #' 2. In each existing variable, it sets all instances of min for that var to NA
 #' 
-#' @param df a \code{\link{data.frame}} to convert
+#' @param data A \code{\link{data.frame}} to convert
+#' @param vars The variables to process
+#' @param suffixes Suffixes if the data are family (wide, more than one persona on a row)
 #' @return - copy of the dataframe with new binary variables and censoring
 #' @export
 #' @family Miscellaneous Utility Functions

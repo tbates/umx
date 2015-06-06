@@ -11,7 +11,7 @@ umx_cov_diag(df, ordVar = 1, format = c("diag", "Full", "Lower"),
 \arguments{
 \item{df}{a dataframe of raw data from which to get variances.}
 
-\item{ordVar}{The value to return at any ordinal columns found, i.e., (defaults to 1, i.e., z}
+\item{ordVar}{The value to return at any ordinal columns (defaults to 1)}
 
 \item{format}{to return: options are c("diag", "Full", "Lower"). Defaults to diag: a vector of variances}
 
@@ -21,7 +21,8 @@ umx_cov_diag(df, ordVar = 1, format = c("diag", "Full", "Lower"),
 - \code{\link{mxModel}}
 }
 \description{
-Helper to get variances from a df that might contain some non-numeric columns. Non numerics are set to whatever ordVar=
+Helper to get variances from a df that might contain some non-numeric columns.
+Values at non-numeric columns are set to the value passed in as ordVar.
 }
 \examples{
 tmp = mtcars[,1:4]

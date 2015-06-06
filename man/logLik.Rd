@@ -44,7 +44,8 @@ AIC(m1)
 - \code{\link{AIC}}, \code{\link{umxCompare}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
-  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
+  \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
+  \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{plot.MxModel}}, \code{\link{umxPlot}};

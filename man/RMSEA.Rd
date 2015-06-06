@@ -7,7 +7,7 @@
 RMSEA(x, ci.lower, ci.upper, digits)
 }
 \arguments{
-\item{x}{an object to get the RMSEA for}
+\item{x}{an object from which to get the RMSEA}
 
 \item{ci.lower}{the lower CI to compute}
 
@@ -26,6 +26,7 @@ See \code{\link[umx]{RMSEA.MxModel}} to access the RMSEA of MxModels
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
+  \code{\link{RMSEA.summary.mxmodel}};
   \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};

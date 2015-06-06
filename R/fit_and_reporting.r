@@ -430,13 +430,12 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' in a compact form suitable for a journal. Because this same function is needed in umx, 
 #' it gets defined twice currently.
 #'
-#' You can view documentation on \code{\link{umxSummary.MxModel.ACE}}, \code{\link{umxSummary.MxModel.CP}}
-#' or \code{\link{umxSummary.MxModel.IP}}, \code{\link{umxSummary.MxModel.GxE}}
+#' You can view documentation on the twin model subclass 
+#' \code{\link{umxSummary.MxModel.ACE}}, 
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param ... Other parameters to control model summary
 #' @family Reporting Functions
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
 #' \url{http://www.github.com/tbates/umx}
 #' @export
 umxSummary <- function(model, ...){
@@ -499,21 +498,23 @@ umxSummary.default <- function(model, ...){
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor",
+#' 	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxSummary(m1, show = "std")
-#' umxSummary(m1, show = "std", digits = 1)
-#' \dontrun{
+#' umxSummary(m1, show = "raw")
+#' m1 <- mxModel(m1,
+#'   mxData(demoOneFactor, type = "raw"),
+#'   umxPath(mean = manifests),
+#'   umxPath(mean = latents, fixedAt = 0)
+#' )
+#' m1 <- mxRun(m1)
+#' umxSummary(m1, show = "std")
 #' # umxSummary(m1, report = "table") # not yet implemented
-#' # umxSummary(m1, saturatedModels = umxSaturated(m1))
-#' }
-umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG"), SE=TRUE){
+umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG"), SE=TRUE){
 	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
 	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list
 	# showEstimates = match.arg(showEstimates)
@@ -525,20 +526,17 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 	}
 	# TODO make table take lists of models...
 	umx_has_been_run(model, stop = TRUE)
-	if(is.null(saturatedModels)) {
+	if(is.null(refModels)) {
 		# saturatedModels not passed in from outside, so get them from the model
 		modelSummary = OpenMx::summary(model)		
 		if(is.null(model@data)){
 			# # TODO model with no data - no saturated solution?
 		} else if(is.na(modelSummary$SaturatedLikelihood)){
-			message("There is no saturated likelihood: computing that now...")
-			# TODO update to use new built-in support for saturated....
-			saturatedModels = umxSaturated(model)
-			modelSummary = OpenMx::summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
+			message("Computing ?mxRefModels ...")
+			reModels = mxRefModels(model, run=TRUE)
 		}
-	} else {
-		modelSummary = OpenMx::summary(model, SaturatedLikelihood = saturatedModels$Sat, IndependenceLikelihood = saturatedModels$Ind)
 	}
+	modelSummary = OpenMx::summary(model, refModels= refModels)
 
 	# DisplayColumns
 	if(showEstimates != "none"){
@@ -620,7 +618,7 @@ umxSummary.MxModel <- function(model, saturatedModels = NULL, report = "line", s
 				print(x)
 			} else {
 				if(RMSEA_CI){
-					RMSEA_CI = RMSEA(model)$txt
+					RMSEA_CI = RMSEA(modelSummary)$txt
 				} else {
 					RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
 				}
@@ -2212,7 +2210,7 @@ umxFitIndices <- function(model, indepfit) {
 #'
 #' See \code{\link[umx]{RMSEA.MxModel}} to access the RMSEA of MxModels
 #'
-#' @param x an object to get the RMSEA for
+#' @param x an object from which to get the RMSEA 
 #' @param ci.lower the lower CI to compute
 #' @param ci.upper the upper CI to compute
 #' @param digits digits to show
@@ -2226,7 +2224,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #'
 #' Compute the confidence interval on RMSEA
 #'
-#' @param x an \code{\link{mxModel}} to get CIs on RMSEA for
+#' @param x an \code{\link{mxModel}} from which to get RMSEA
 #' @param ci.lower the lower CI to compute
 #' @param ci.upper the upper CI to compute
 #' @param digits digits to show (defaults to 3)
@@ -2240,102 +2238,54 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' RMSEA(m1)
-#' # RMSEA(summary(m1))
 RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) { 
-	# "MxRAMModel"
-	if(ci.lower != .05 | ci.upper != .95){
-		stop("Setting CI on RMSEA not supported for mxModels as yet...")
-	}
 	sm <- summary(x)
-	# return(sm)
-	RMSEA_Obj = omxRMSEA(x, ci.lower, ci.upper)
-	# lower.rmsea   est.rmsea upper.rmsea
-	#  0.00000000  0.03088043  0.07449389
-	rmsea.est    = RMSEA_Obj["est.rmsea"]
-	rmsea.lower  = RMSEA_Obj["rmsea.lower"]
-	rmsea.upper  = RMSEA_Obj["rmsea.upper"]
-	rmsea.pvalue = "Not computed yet in OpenMx 2"
-	# TODO get pvalue
-	txt = paste0("RMSEA = ", round(rmsea.est, digits), " CI", sub("^0?\\.", replacement = "", ci.upper), 
-		"[", round(rmsea.lower, digits), ", ", round(rmsea.upper, digits), "], p = ", rmsea.pvalue) # umx_APA_pval(rmsea.pvalue)
-	print(txt)
-	invisible(list(RMSEA = rmsea.est, RMSEA.lower = rmsea.lower, RMSEA.upper = rmsea.upper, CI.lower = ci.lower, CI.upper = ci.upper, RMSEA.pvalue = rmsea.pvalue, txt = txt))
-
-	# if (is.na(sm$Chi)){
-	# 	return(NA);
-	# }
-	# X2 <- sm$Chi
-	# df <- sm$degreesOfFreedom
-	# N  <- sm$numObs
-	#     N.RMSEA <- max(N, X2 * 4)
-	#     G <- max(length(model@submodels), 1)
-	#
-	#     if (is.na(X2) || is.na(df)) {
-	#         RMSEA <- as.numeric(NA)
-	#     } else if (df > 0) {
-	#         GG <- 0
-	#         RMSEA <- sqrt(max(c((X2/N)/df - 1/(N - GG), 0))) *  sqrt(G)
-	#     } else {
-	#         RMSEA <- 0
-	#     }
-	#
-	# lower.lambda <- function(lambda) {
-	# 	pchisq(X2, df = df, ncp = lambda) - ci.upper
-	# }
-	# upper.lambda <- function(lambda) {
-	# 	(pchisq(X2, df = df, ncp = lambda) - ci.lower)
-	# }
-	#
-	# if (is.na(X2) || is.na(df)) {
-	# 	rmsea.lower <- NA
-	# } else if (df < 1 || lower.lambda(0) < 0) {
-	# 	rmsea.lower <- 0
-	# } else {
-	# 	lambda.l <- try(uniroot(f = lower.lambda, lower = 0, upper = X2)$root)
-	# 	if (inherits(lambda.l, "try-error")) {
-	# 		lambda.l <- NA
-	# 	}
-	# 	GG <- 0
-	# 	rmsea.lower <- sqrt(lambda.l/((N - GG) * df)) * sqrt(G)
-	# }
-	# if (is.na(X2) || is.na(df)) {
-	# 	rmsea.upper <- NA
-	# } else if (df < 1 || upper.lambda(N.RMSEA) > 0 || upper.lambda(0) < 0) {
-	# 	rmsea.upper <- 0
-	# } else {
-	# 	lambda.u <- try(uniroot(f = upper.lambda, lower = 0, upper = N.RMSEA)$root)
-	# 	if (inherits(lambda.u, "try-error")) {
-	# 		lambda.u <- NA
-	# 	}
-	# 	GG <- 0
-	# 	rmsea.upper <- sqrt(lambda.u/((N - GG) * df)) * sqrt(G)
-	# }
-	# # compute p-value
-	# if (is.na(X2) || is.na(df)) {
-	# 	rmsea.pvalue <- as.numeric(NA)
-	# } else if (df > 0) {
-	# 	GG <- 0
-	# 	ncp <- (N - GG) * df * 0.05^2/G
-	# 	rmsea.pvalue <- (1 - pchisq(X2, df = df, ncp = ncp))
-	# } else {
-	# 	rmsea.pvalue <- 1
-	# }
+	RMSEA.summary.mxmodel(x= sm, ci.lower = ci.lower, ci.upper = ci.upper, digits = digits)
 }
 
-RMSEA.summary.mxmodel <- function(m_summary, ci.lower = .05, ci.upper = .95, digits = 3){
-	message("TODO reverse these: so summary does all the work...")
-	# TODO reverse these: so summary does all the work...
-	# m_summary
-	# RMSEA.MxModel(model, ci.lower = ci.lower, ci.upper = ci.upper, digits = digits)
+#' RMSEA function for MxModels
+#'
+#' Compute the confidence interval on RMSEA
+#'
+#' @param x an \code{\link{mxModel}} summary from which to get RMSEA
+#' @param ci.lower the lower CI to compute
+#' @param ci.upper the upper CI to compute
+#' @param digits digits to show (defaults to 3)
+#' @return - object containing the RMSEA and lower and upper bounds
+#' @rdname RMSEA.summary.mxmodel
+#' @export
+#' @family Reporting functions
+#' @references - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#' RMSEA(m1)
+RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3){
+	if(ci.lower != .05 | ci.upper != .95){
+		stop("only 95% CI on RMSEA supported as yet...")
+	}
+	txt = paste0("RMSEA = ", round(x$RMSEA, digits))
+	txt = paste0(txt, " CI", sub("^0?\\.", replacement = "", ci.upper))
+	txt = paste0(txt, "[", round(x$RMSEACI["lower"], digits), ", ")
+	txt = paste0(txt, round(x$RMSEACI["upper"], digits), "], ")
+	txt = paste0(txt, "Prob(RMSEA <= 0.05) = ", umx_APA_pval(x$RMSEAClose))
+	print(txt)
+	invisible(list(RMSEA = x$RMSEA, CI.lower = x$RMSEACI["lower"], 
+		CI.upper = x$RMSEACI["upper"], RMSEA.pvalue = x$RMSEAClose, txt = txt)
+	)
 }
 
 #' umxDescriptives
@@ -2394,8 +2344,8 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
 #'
 #' umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions
 #'
-#' @param formula the formula to aggregate on, e.g., DV ~ condition
-#' @param data
+#' @param formula the aggregation formula. e.g., DV ~ condition
+#' @param data the dataframe to aggregate with
 #' @param what function to use. Defaults to = c("mean_sd"))
 #' @return - table
 #' @export
@@ -2403,11 +2353,12 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
 #' @seealso - \code{\link{aggregate}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' x = umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
-#' x = aggregate(moodAvg ~ condition, FUN= mean, na.rm=T, data = study1)
-#' x
-#' str(x)
-#' t(x)
+#' aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
+#' umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars)
+#' t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
+#' \dontrun{
+#' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
+#' }
 umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd")) {
 	mean_sd = function(x){
 		paste0(round(mean(x, na.rm=TRUE),2), " (",

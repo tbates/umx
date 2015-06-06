@@ -71,10 +71,9 @@ Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umx}}, \code{\link{umx-package}}
 
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
-  \code{\link{umxSummary}}; \code{\link{umx_APA_CI}};
-  \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
-  \code{\link{umx_print}}; \code{\link{umx_show}};
-  \code{\link{umx_time}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+  \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
+  \code{\link{umx_aggregate}}; \code{\link{umx_print}};
+  \code{\link{umx_show}}; \code{\link{umx_time}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

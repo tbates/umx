@@ -17,18 +17,7 @@ in a compact form suitable for a journal. Because this same function is needed i
 it gets defined twice currently.
 }
 \details{
-You can view documentation on \code{\link{umxSummary.MxModel.ACE}}, \code{\link{umxSummary.MxModel.CP}}
-or \code{\link{umxSummary.MxModel.IP}}, \code{\link{umxSummary.MxModel.GxE}}
-}
-\seealso{
-- \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
-\url{http://www.github.com/tbates/umx}
-
-Other Reporting Functions: \code{\link{umxAnovaReport}};
-  \code{\link{umxStandardizeACE}};
-  \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
-  \code{\link{umx_aggregate}}; \code{\link{umx_print}};
-  \code{\link{umx_show}}; \code{\link{umx_time}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+You can view documentation on the twin model subclass
+\code{\link{umxSummary.MxModel.ACE}},
 }
 

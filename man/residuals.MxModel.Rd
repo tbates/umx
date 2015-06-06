@@ -45,7 +45,8 @@ a = residuals(m1); a
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
-  \code{\link{RMSEA}}; \code{\link{coef.MxModel}};
+  \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
+  \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
