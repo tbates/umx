@@ -1,5 +1,11 @@
 # umx
-umx stands for "user" mx function, and is a comprehensive library of helper functions for doing [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in [OpenMx](http://openmx.psyc.virginia.edu).
+
+The umx package provides functions which build on the foundation of OpenMx() to support a range of strucutral equation modelling tasks.
+These include all stages from building models rapidly, to plotting output graphically.
+
+umx stands for "user" OpenMx functions. It consists of a large (around 100 functions) library of helper-functions building on
+[OpenMx](http://openmx.psyc.virginia.edu), and designed to help users 
+doing [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in R.
 
 You can install the most recent version from github as follows
 
@@ -20,10 +26,8 @@ Some highlights include:
 
 1. Building Models
 	* `umxRAM()` *# mxModel with an R-like `data =` parameter, no need to specify type = "RAM", + auto-discovery of manifests and latents from the paths you write*
-	* `umxPath()` *# mxPath on steroids: one-parameter settings for `var=` , `mean =` `cov=`, `fixedAt` and more. Great time-saver in RAM modelling*
-	* `umxACE()` *# 1-line twin modeling*
-	* `umxStart()` *# Add plausible start values to RAM or matrix models, or matrices: **very** helpful*
-	* `umxLabel()` *# Add systematic labels to paths ("var1_to_var2") and matrix cells ("a_r1c1"). This is great for setting, equating and dropping paths by label!*
+	* `umxPath()` *# mxPath on steroids: one-word settings for `var` , `mean` `cov`, `fixedAt` and more. Great time-saver!*
+	* `umxACE()` *# 1-line function handling twin ACE modeling with aplomb* paths are labeled, and works with `plot()` and `umxSummary`
 3. Reporting output
 	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA). Optionally show the path loadings*
 	* `plot(model, std=TRUE, precision=3, dotFilename="name")` # *Create a graphical representation of models (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
@@ -34,11 +38,15 @@ Some highlights include:
 	* `umxMI()` *# Report the top n modification indices*
 	* `umxAdd1()` *# add parameters and return a table of the effect on fit*
 	* `umxDrop1()` *# Drop parameters and return a table of the effect on fit*
-4. Data and package helpers
+4. Lower level helpers, data helpers, etc.
+	* `umxStart()` *# Add plausible start values to RAM or matrix models, or matrices: **very** helpful*
+	* `umxLabel()` *# Add systematic labels to paths ("var1_to_var2") and matrix cells ("a_r1c1"). This is great for setting, equating and dropping paths by label!*
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
+4. Miscellaneous helpers
+	* `umx_get_optimizer()`
+	* `umx_set_optimizer()`
 
-Feel free to use, and improve: Log suggestions here using the Github comments, wiki, or git.
+Dozens more (?umx to see them all). Check out the "family links" in any help file also!
 
-### Contributors
-* [Tim Bates](tim.bates@ed.ac.uk)
-* [Michael Culbertson]() (modification index [code](http://openmx.psyc.virginia.edu/thread/1019) (based on functions in [John Fox's](http://socserv.mcmaster.ca/jfox/Misc/sem/SEM-paper.pdf) [SEM](http://cran.r-project.org/web/packages/sem) package))
+Feel free to use, and improve: Log suggestions using the Github comments! Tell your friends! Get awesome publications and cite umx!
+
