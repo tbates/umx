@@ -3411,6 +3411,73 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 # = Data Prep and Cleaning =
 # ==========================
 
+#' Read lower-triangle of data matrix from console or file
+#'
+#' umx_read_lower will read a lower triangle of data, either from the 
+#' console, or from file, and return a full matrix, optionally coerced to
+#' positive definite. This is useful, especially when copying data from a paper
+#' that includes just the lower triangle of a correlation matrix.
+#'
+#' @param file Path to a file to read (Default "" will read from user input)
+#' @param diag Whether the data unclude the diagonal or not: Defaults to TRUE
+#' @param names The default names for the variables.
+#' Defaults to as.character(paste("X", 1:n, sep=""))
+#' @param ensurePD Whether to coerce the resultant matrix to positive definite (Defaults to FALSE)
+#' @return - \code{\link{matrix}}
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' require(umx) # for umxRAM
+#' require(Matrix) # for nearPD
+#' df = umx_read_lower(file = "", diag = F, ensurePD=TRUE)
+#' 0.38
+#' 0.86	0.30
+#' 0.42	0.12	0.27
+#' 0.66	0.21	0.38	0.18
+#' 0.80	0.13	0.50	0.25	0.43
+#' 0.19	0.11	0.19	0.12	-0.06	0.22
+#' 0.27	0.09	0.33	0.05	-0.04	0.28	.73
+#' 0.52	0.17	0.38	0.37	0.39	0.44	0.18	0.13
+#' 
+#' IQtests = c("brainstorm", "matrix", "moral", "shopping", "typing")
+#' n       = c("C", IQtests, "avgIQ", "maxIQ", "video")
+#' 
+#' dimnames(df) = list(n,n)
+#' 
+#' m1 = umxRAM("wooley", data = mxData(df, type="cov", numObs = 90),
+#' 	umxPath("g", to = IQtests),
+#' 	umxPath(var = "g", fixedAt=1),
+#' 	umxPath(var = IQtests)
+#' )
+#' summary(m1)
+umx_read_lower <- function(file="", diag=TRUE, names=as.character(paste("X", 1:n, sep="")), ensurePD=FALSE){
+	# modified from John Fox's sem package, to remove dependency on X11
+    elements <- scan(file=file)
+    m <- length(elements)
+    d <- if (diag) 1 else -1
+    n <- floor((sqrt(1 + 8*m) - d)/2)
+    if (m != n*(n + d)/2) 
+        stop("wrong number of elements (cannot make square matrix)")
+    if (length(names) != n) stop("wrong number of variable names")
+    X <- diag(n)
+    X[upper.tri(X, diag=diag)] <- elements
+    rownames(X) <- colnames(X) <- names
+	X = t(X)
+	otherTri <- t(X)
+	X[upper.tri(X, diag=F)] <- otherTri[upper.tri(otherTri, diag=F)]
+	if(ensurePD){
+		# move to positive definite if not already there
+		if(all(eigen(X)$values>0)){
+			# already positive definite
+		} else {
+			message("matrix modified to be to positive definite")
+			X = as.matrix(Matrix::nearPD(X)$mat)
+		}
+	}
+	return(X)
+}
+    
 #' umx_make_bin_cont_pair_data
 #'
 #' Takes a dataframe of left-censored variables (vars with a floor effect) and does two things to it:
