@@ -1920,7 +1920,8 @@ extractAIC.MxModel <- function(model) {
 #' # -2.615998
 coef.MxModel <- function(model, ...) {
 	# TODO implement this
-	message("Not implemented")
+	omxGetParameters(model)
+	message("Not fully implemented")
 	message("TODO implement this using wrapper around mxStandardizeRAMpaths")
 }
 
