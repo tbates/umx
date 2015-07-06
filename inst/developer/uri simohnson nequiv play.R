@@ -1,3 +1,6 @@
+# http://opim.wharton.upenn.edu/~uws/BlogAppendix/PET-PEESE/R%20-%20p-curve%20result%20for%20Gervais%20simulations.R
+# also this code
+
 #R Code behind Figure 2 in DataColada[39] "Power Naps"
 #www.datacolada.org
 #Written by:Uri Simonsohn
