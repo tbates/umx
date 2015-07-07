@@ -1099,32 +1099,46 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 #' umx_open(getwd())
 #' }
 umx_open <- function(filepath = getwd()) {
-	umx_check_mac(die=TRUE)
-	if(file.exists(filepath)){
-		system(paste("open", shQuote(filepath)))	
+	if(umx_check_OS("OSX")){
+		if(file.exists(filepath)){
+			system(paste("open", shQuote(filepath)))	
+		} else {
+			warning("file ", omxQuotes(filepath), " doesn't exist")
+		}
 	} else {
-		warning("file ", omxQuotes(filepath), " doesn't exist")
+		message("Sorry, only OS X supports opening files")
 	}
 }
 
-#' umx_check_mac
+#' umx_check_OS
 #'
-#' Check is we are running on OS X
+#' Check what OS we are running on (current default is OS X). Returns a boolean.
+#' Optionally warn or die on failure of the test
 #'
-#' @param die whether to die on failure
-#' @return - TRUE if on OS X
+#' @param target Which OS(s) you wish to check for (default = "OSX")
+#' @param action What to do on failure of the test: nothing (default), warn or die
+#' @return - TRUE if on the specified OS (else FALSE)
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' umx_check_mac()
-umx_check_mac <- function(die = FALSE){
-	isMac = as.character(Sys.info()["sysname"]) == "Darwin"
-	if(!isMac && die){
-		stop("Must be running on mac for this to work")
+#' umx_check_OS()
+umx_check_OS <- function(target=c("OSX", "unix", "win"), action = c("ignore", "warn", "die")) {
+	action = match.arg(action)
+	target = match.arg(target)
+	if(target=="OSX"){
+		isTarget = as.character(Sys.info()["sysname"]) == "Darwin"
 	} else {
-		return(isMac)
+		message("only mac tested for currently: let developer know you want this fn finished")
 	}
+	if(!isTarget){
+		if(action == "die"){
+			stop("Must be running on mac for this to work")
+		} else if(action == "warn"){
+			message("Sorry, this OS is not: ", target)
+		}
+	}
+	return(isTarget)
 }
 
 #' umx_cor

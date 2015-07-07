@@ -25,14 +25,17 @@ umxEquate(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE,
 }
 \description{
 Equate parameters by setting one or more labels (the slave set) equal
-to the labels in a master set. By setting two parameters to have the
-\code{\link{umxLabel}}, they are then forced to have the same value.
-In addition to matching labels, you may wish to learn about set the
-label of a slave parameter to the "square bracket" address of the
-master, i.e. model.matrix[r,c].
+to the labels in a master set.
+Setting two or more parameters to have the same
+\code{\link{umxLabel}} constrains them to take the same value.
 }
 \details{
+note: In addition to using this method to equating parameters, you can
+also equate one parameter to another by setting its label to the
+"square bracket" address of the master, i.e. model.matrix[r,c].
+
 Tip: To find labels of free parameters use \code{\link{umxGetParameters}} with free = T
+Tip: To find labels by name, use the regex parameter of \code{\link{umxGetParameters}}
 }
 \examples{
 require(OpenMx)

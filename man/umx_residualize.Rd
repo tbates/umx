@@ -53,10 +53,10 @@ umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)
 Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
   \code{\link{qm}}; \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_as_numeric}};
-  \code{\link{umx_check_mac}}; \code{\link{umx_cor}};
-  \code{\link{umx_cov2raw}}; \code{\link{umx_find_object}};
-  \code{\link{umx_grep}}; \code{\link{umx_lower2full}};
+  \code{\link{umx_as_numeric}}; \code{\link{umx_check_OS}};
+  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
+  \code{\link{umx_find_object}}; \code{\link{umx_grep}};
+  \code{\link{umx_lower2full}};
   \code{\link{umx_make_bin_cont_pair_data}};
   \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
   \code{\link{umx_open}}; \code{\link{umx_pb_note}};
