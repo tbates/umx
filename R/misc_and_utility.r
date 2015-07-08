@@ -1,3 +1,4 @@
+# http://cran.r-project.org/submit.html
 # find non-ascii = grep this '[^\x00-\x7F]'
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::check("~/bin/umx");
