@@ -4,8 +4,8 @@
 \alias{umx_check_OS}
 \title{umx_check_OS}
 \usage{
-umx_check_OS(target = c("OSX", "unix", "win"), action = c("ignore", "warn",
-  "die"))
+umx_check_OS(target = c("OSX", "SunOS", "Linux", "Windows"),
+  action = c("ignore", "warn", "die"))
 }
 \arguments{
 \item{target}{Which OS(s) you wish to check for (default = "OSX")}

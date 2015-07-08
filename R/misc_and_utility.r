@@ -1123,19 +1123,29 @@ umx_open <- function(filepath = getwd()) {
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umx_check_OS()
-umx_check_OS <- function(target=c("OSX", "unix", "win"), action = c("ignore", "warn", "die")) {
+umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = c("ignore", "warn", "die")) {
 	action = match.arg(action)
 	target = match.arg(target)
-	if(target=="OSX"){
-		isTarget = as.character(Sys.info()["sysname"]) == "Darwin"
+	# OSX == Darwin
+	# Solaris == SunOS
+	sysinfo <- Sys.info()
+	if (!is.null(sysinfo)){
+		os <- sysinfo['sysname']
+		if (os == 'Darwin'){
+			os <- "OSX"    	
+		}
 	} else {
-		message("only mac tested for currently: let developer know you want this fn finished")
+		os <- .Platform$OS.type
+		if (grepl("linux-gnu", R.version$os)){
+		  os <- "Linux"	    	
+		}
 	}
+	isTarget = (target == os)
 	if(!isTarget){
 		if(action == "die"){
-			stop("Must be running on mac for this to work")
+			stop("Sorry: You must be running on ", target, " OS. You're on ", os)
 		} else if(action == "warn"){
-			message("Sorry, this OS is not: ", target)
+			message("i was expecting the OS to be ", target, " not ", os)
 		}
 	}
 	return(isTarget)
