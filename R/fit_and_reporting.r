@@ -528,15 +528,18 @@ umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEst
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(refModels)) {
 		# saturatedModels not passed in from outside, so get them from the model
+		# TODO improve efficiency here: compute summary only once by detecting when SaturatedLikelihood is missing
 		modelSummary = OpenMx::summary(model)		
 		if(is.null(model@data)){
 			# # TODO model with no data - no saturated solution?
 		} else if(is.na(modelSummary$SaturatedLikelihood)){
-			message("Computing ?mxRefModels ...")
-			reModels = mxRefModels(model, run=TRUE)
+			# no SaturatedLikelihood, compute refModels
+			refModels = mxRefModels(model, run = TRUE)
+			modelSummary = OpenMx::summary(model, refModels = refModels)
 		}
+	} else {
+		modelSummary = OpenMx::summary(model, refModels = refModels) # use user-supplied refModels		
 	}
-	modelSummary = OpenMx::summary(model, refModels= refModels)
 
 	# DisplayColumns
 	if(showEstimates != "none"){
