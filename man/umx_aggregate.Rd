@@ -4,14 +4,14 @@
 \alias{umx_aggregate}
 \title{umx_aggregate}
 \usage{
-umx_aggregate(formula = DV ~ condition, data, what = c("mean_sd"))
+umx_aggregate(formula = DV ~ condition, data, what = c("mean_sd", "n"))
 }
 \arguments{
 \item{formula}{the aggregation formula. e.g., DV ~ condition}
 
 \item{data}{the dataframe to aggregate with}
 
-\item{what}{function to use. Defaults to = c("mean_sd"))}
+\item{what}{function to use. Defaults to a built-in "smart" mean (sd)}
 }
 \value{
 - table
@@ -21,6 +21,7 @@ umx_aggregate Aggregate based on a formula, using a function. Has some handy bas
 }
 \examples{
 aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
+umx_aggregate(mpg ~ cyl, data = mtcars)
 umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars)
 t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
 \dontrun{
@@ -33,11 +34,10 @@ umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 \seealso{
 - \code{\link{aggregate}}
 
-Other Reporting Functions: \code{\link{umxAnovaReport}};
-  \code{\link{umxStandardizeACE}};
+Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
-  \code{\link{umx_print}}; \code{\link{umx_show}};
-  \code{\link{umx_time}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+  \code{\link{umx_print}}; \code{\link{umx_report_Anova}};
+  \code{\link{umx_show}}; \code{\link{umx_time}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

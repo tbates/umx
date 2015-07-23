@@ -17,7 +17,8 @@ umx_drop_ok(model1, model2, text = "parameter")
 -
 }
 \description{
-Print a meaningful sentence about a model comparison. SHould be merged with umxCompare
+Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
+merged with \code{\link{umxCompare}}() :-)
 }
 \examples{
 \dontrun{

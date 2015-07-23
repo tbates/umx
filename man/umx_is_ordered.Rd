@@ -49,7 +49,6 @@ umx_is_ordered(tmp, names=TRUE)
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};

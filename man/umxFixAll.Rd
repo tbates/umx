@@ -42,7 +42,7 @@ mxCompare(m1, m2)
 Other Model Updating and Comparison: \code{\link{parameters}},
   \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxEquate}};
-  \code{\link{umxMI}};
+  \code{\link{umxMI}}; \code{\link{umxSetParameters}};
   \code{\link{umxUnexplainedCausalNexus}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }

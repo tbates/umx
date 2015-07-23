@@ -32,7 +32,7 @@ Setting two or more parameters to have the same
 \details{
 note: In addition to using this method to equating parameters, you can
 also equate one parameter to another by setting its label to the
-"square bracket" address of the master, i.e. model.matrix[r,c].
+"square bracket" address of the master, e.g. "a[r,c]".
 
 Tip: To find labels of free parameters use \code{\link{umxGetParameters}} with free = T
 Tip: To find labels by name, use the regex parameter of \code{\link{umxGetParameters}}
@@ -62,7 +62,7 @@ umxSummary(m1, m2) # not good :-)
 Other Model Updating and Comparison: \code{\link{parameters}},
   \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxFixAll}};
-  \code{\link{umxMI}};
+  \code{\link{umxMI}}; \code{\link{umxSetParameters}};
   \code{\link{umxUnexplainedCausalNexus}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }

@@ -94,7 +94,6 @@ plot(m1, std = TRUE, dotFilename = NA)
 Other Advanced Helpers: \code{\link{umx_RAM_ordinal_objective}}
 
 Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};
@@ -130,9 +129,8 @@ Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umx_trim}}; \code{\link{umx_update_OpenMx}}
 
 Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
-  \code{\link{reliability}}; \code{\link{umxAnova}};
-  \code{\link{umxCov2cor}}; \code{\link{umx_means}};
-  \code{\link{umx_pp33}}
+  \code{\link{reliability}}; \code{\link{umxCov2cor}};
+  \code{\link{umx_means}}; \code{\link{umx_pp33}}
 
 Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
   \code{\link{qm}}; \code{\link{umxHetCor}};
@@ -164,13 +162,14 @@ Other Model Updating and Comparison: \code{\link{parameters}},
   \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxEquate}};
   \code{\link{umxFixAll}}; \code{\link{umxMI}};
+  \code{\link{umxSetParameters}};
   \code{\link{umxUnexplainedCausalNexus}}
 
-Other Reporting Functions: \code{\link{umxAnovaReport}};
-  \code{\link{umxStandardizeACE}};
+Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_aggregate}}; \code{\link{umx_print}};
-  \code{\link{umx_show}}; \code{\link{umx_time}}
+  \code{\link{umx_report_Anova}}; \code{\link{umx_show}};
+  \code{\link{umx_time}}
 
 Other Twin Modeling Functions: \code{\link{umxACE}};
   \code{\link{umxGxE_window}}

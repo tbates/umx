@@ -28,7 +28,6 @@ umx_check(length(1:3)==3, "stop", "item must have length == 3")
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};

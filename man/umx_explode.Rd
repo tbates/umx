@@ -26,7 +26,6 @@ umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};

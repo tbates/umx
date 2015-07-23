@@ -31,7 +31,6 @@ mat1 = umxJiggle(mat1)
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxEval}}; \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};

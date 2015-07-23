@@ -21,8 +21,7 @@ demand("numDeriv")
 - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{umxAnovaReport}};
-  \code{\link{umxAnova}}; \code{\link{umxEval}};
+Other Miscellaneous Functions: \code{\link{umxEval}};
   \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};

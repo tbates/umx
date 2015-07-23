@@ -53,7 +53,6 @@ umx_check_model(m1, beenRun = FALSE)
 - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};

@@ -27,8 +27,8 @@ x_cor = umxCov2cor(x)
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
-  \code{\link{reliability}}; \code{\link{umxAnova}};
-  \code{\link{umx_means}}; \code{\link{umx_pp33}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{reliability}}; \code{\link{umx_means}};
+  \code{\link{umx_pp33}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

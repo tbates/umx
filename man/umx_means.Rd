@@ -27,8 +27,8 @@ umx_means(tmp, ordVar = 0, na.rm = TRUE)
 }
 \seealso{
 Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
-  \code{\link{reliability}}; \code{\link{umxAnova}};
-  \code{\link{umxCov2cor}}; \code{\link{umx_pp33}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{reliability}}; \code{\link{umxCov2cor}};
+  \code{\link{umx_pp33}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

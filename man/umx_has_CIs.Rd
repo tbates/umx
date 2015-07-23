@@ -46,7 +46,6 @@ umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}
 
 Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxAnovaReport}}; \code{\link{umxAnova}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};

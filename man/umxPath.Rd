@@ -60,7 +60,7 @@ covary, and to the latent "to" variable, fixing its variance to zero.}
 \description{
 The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 
-It introduces 10 new verbs: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{Cholesky}, \strong{means}, \strong{v1m0}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
+It introduces 11 new verbs: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{Cholesky}, \strong{means}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
 
 The new key "with" means you no-longer need set arrows = 2 on covariances. So you can say:
 
@@ -84,8 +84,13 @@ The common task of creating a variable with variance fixed at 1 and mean at 0, y
 
 \code{umxPath(v1m0 = A)}
 
-umxPath exposes unique.parameter as a parameter so you don't have remember how to fill in connect= in mxPath
-All unique bivariate paths can be specified using unique.bivariate
+To just add estimates of variance and means to a variable use : \code{umxPath(v.m. = A)}
+
+
+umxPath exposes \dQuote{unique.parameter} as a parameter so you don't have remember
+how to fill in connect= in mxPath
+
+All unique bivariate paths can be specified using unique.bivariate. So say:
 
 \code{umxPath(c('A',"B","C"), unique.bivariate = TRUE)} to create paths A<->B, B<->C, and A<->C.
 
