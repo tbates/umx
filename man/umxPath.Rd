@@ -6,9 +6,9 @@
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
   unique.bivariate = NULL, formative = NULL, Cholesky = NULL,
-  means = NULL, v1m0 = NULL, fixedAt = NULL, freeAt = NULL,
-  firstAt = NULL, connect = "single", arrows = 1, free = TRUE,
-  values = NA, labels = NA, lbound = NA, ubound = NA)
+  means = NULL, v1m0 = NULL, v.m. = NULL, fixedAt = NULL,
+  freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1,
+  free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA)
 }
 \arguments{
 \item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
@@ -31,6 +31,8 @@ covary, and to the latent "to" variable, fixing its variance to zero.}
 \item{means}{equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).}
 
 \item{v1m0}{variance of 1 and mean of zero in one call.}
+
+\item{v.m.}{variance and mean added, both free.}
 
 \item{fixedAt}{Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)}
 

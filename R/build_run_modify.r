@@ -2485,6 +2485,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param Cholesky Treat the \strong{from} vars as latent and \strong{to} as measured, and connect up as in an ACE model.
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
 #' @param v1m0 variance of 1 and mean of zero in one call.
+#' @param v.m. variance and mean added, both free.
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
 #' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
 #' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
@@ -2539,7 +2540,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 # #' # It allows the string syntax to use the manifestVars variable
 # #' umxPath("A -> manifests") 
 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, formative = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, formative = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
 	if(!is.null(formative)){
 		stop("I haven't implemented formative yet... still thinking about whether its a good idea or a bad idea")
 	}
@@ -2591,11 +2592,11 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 	n = 0
 
-	for (i in list(with, cov, var, means, unique.bivariate, v1m0)) {
+	for (i in list(with, cov, var, means, unique.bivariate, v.m. , v1m0)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, unique.bivariate, v1m0, and means can be set: Use at one time")
+		stop("At most one of with, cov, var, means, unique.bivariate, v1m0, or v.m. can be set: Use at one time")
 	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
@@ -2606,8 +2607,14 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 
 	if(!is.null(v1m0)){
-		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1)
-		b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0)
+		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels, lbound = lbound, ubound = ubound)
+		b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
+		return(list(a,b))
+	}
+
+	if(!is.null(v.m.)){
+		a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, labels = labels, lbound = lbound, ubound = ubound)
+		b = mxPath(from = "one", to = v.m., free = TRUE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
 		return(list(a,b))
 	}
 
