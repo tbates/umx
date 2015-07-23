@@ -1,5 +1,5 @@
 # library(devtools)
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+# path
 # setwd("~/bin/umx"); 
 # build("~/bin/umx")
 # check("~/bin/umx")
@@ -112,7 +112,8 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 
 #' umx_drop_ok
 #'
-#' Print a meaningful sentence about a model comparison. SHould be merged with umxCompare
+#' Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
+#' merged with \code{\link{umxCompare}}() :-)
 #'
 #' @param model1 the base code{\link{mxModel}}
 #' @param model2 the nested code{\link{mxModel}}
@@ -1619,7 +1620,6 @@ umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = TRU
 #' \dontrun{
 #' umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 #' }
-
 umxUnexplainedCausalNexus <- function(from, delta, to, model) {
 	manifests = model@manifestVars
 	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to support string varnames 
@@ -2292,6 +2292,58 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 	)
 }
 
+
+# ===================================
+# = Regular stats and table helpers =
+# ===================================
+
+#' umx_aggregate
+#'
+#' umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions
+#'
+#' @param formula the aggregation formula. e.g., DV ~ condition
+#' @param data the dataframe to aggregate with
+#' @param what function to use. Defaults to a built-in "smart" mean (sd)
+#' @return - table
+#' @export
+#' @family Reporting Functions
+#' @seealso - \code{\link{aggregate}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
+#' umx_aggregate(mpg ~ cyl, data = mtcars)
+#' umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars)
+#' t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
+#' \dontrun{
+#' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
+#' }
+umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n")) {
+	# TODO N doesn't seem needed here?
+	# TODO other handy aggregating functions?
+	mean_sd = function(x){
+		paste0(round(mean(x, na.rm=TRUE),2), " (",
+			   round(sd(x, na.rm=TRUE),2), ")"
+		)
+	}
+	x_n = function(x){sum(!is.na(x))}
+
+	what = umx_default_option(what, c("mean_sd", "n"), check=FALSE)
+	if(what == "mean_sd"){
+		FUN = mean_sd
+	} else if(what == "n"){
+		FUN = x_n
+	}else{
+		FUN = what
+	}
+	tmp = aggregate(formula, FUN= FUN, data = data)
+	n_s = aggregate(formula, FUN= x_n, data = data)
+	row.names(tmp) = paste0(as.character(tmp[,1]), " (n = ", n_s[,2], ")")
+	# tmp = data.frame(tmp)
+	tmp = tmp[,-1, drop=FALSE]
+	return(tmp)
+}
+
+
 #' umxDescriptives
 #'
 #' Summarize data for an APA style subjects table
@@ -2309,7 +2361,6 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' \dontrun{
 #' umxDescriptives(data)
 #' }
-
 umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = FALSE, conf.interval = .95, .drop = TRUE) {
     require(plyr)
     # New version of length which can handle NA's: if na.rm == T, don't count them
@@ -2344,45 +2395,249 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
     return(datac)
 }
 
-#' umx_aggregate
+#' umx_report_Anova
 #'
-#' umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions
+#' umx_report_Anova is a convenience function to format results for journals. There are others. But I made this one.
+#' If you give it the output of an lm, it runs anova() and QuantPsyc::lm.beta(), and
+#' generates a text-format report of the F values in an ANOVA. e.g. "F(495,1) = 0.002"
+#' Along with a a regression table...
+#' 
+#' Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
+#' @param model1 An \code{\link{lm}} model to make a table from 
+#' @param model2 An (optional) second \code{\link{lm}} model to compare to model 1
+#' @param raw Should the raw table also be output? (allows checking that nothing crazy is going on: default = TRUE)
+#' @param format markdown (kable) or plain text output
+#' @param printDIC A Boolean toggle whether you want AIC-type fit change table printed
+#' @family Reporting Functions
+#' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @export
+#' @examples
+#' m1 = lm(mpg ~ cyl + disp, data = mtcars)
+#' umx_report_Anova(m1)
+#' m1 = lm(mpg~ cyl + wt, data = mtcars)
+#' umxAnova(m1)
+#' m2 = lm(mpg~ cyl, data = mtcars)
+#' umxAnova(m2)
+#' umxAnova(anova(m1, m2))
+umx_report_Anova <- function(model1, model2 = NULL, raw = TRUE, format = c("kable", "plain"), printDIC = FALSE) {
+	# TODO replace lm.beta with normalizing the variables?
+	format = match.arg(format)
+	if(!is.null(model2)){
+		# two models given: compare them
+		a = anova(model1, model2)
+		if(a[2, "Res.Df"] > a[1, "Res.Df"]){
+			message("Have you got the models the right way around?")
+		}
+		fString = paste0(
+			"F(", round(a[2, "Res.Df"]), ",", round(a[2, "Df"]),
+			") = ", round(a[2, "F"], digits), ", ",,
+			"p = ", umx_APA_pval(a[2, "Pr(>F)"])
+		)
+		print(fString)
+		if(raw){
+			print(a)
+		}
+	} else { 
+		a = summary(model1)
+		dendf = a$fstatistic["dendf"]
+		numdf = a$fstatistic["numdf"]
+		value = a$fstatistic["value"]
+		fString = paste0("F(", dendf, ",", numdf, ") = " ,
+			round(value, 2),
+			", p = ", umx_APA_pval(pf(value, numdf, dendf, lower.tail = FALSE)) )
+		print(fString)
+		a = anova(model1);
+		if(require(QuantPsyc, quietly = TRUE)){
+			a$beta = c(QuantPsyc::lm.beta(model1), NA);
+		} else {
+			a$beta = NA
+			message("To include beta weights\ninstall.packages(\"QuantPsyc\")")
+		}
+		x <- c("Df", "beta", "F value", "Pr(>F)");
+		a = a[,x]; 
+		names(a) <- c("df", "beta", "F", "p"); 
+		ci = confint(model1)
+		a$lowerCI = ci[,1]
+		a$upperCI = ci[,2]
+
+		a <- a[,c("df", "beta", "lowerCI", "upperCI", "F", "p")]; 
+		if(printDIC){
+			a = drop1(model1); 
+			a$DIC = round(a$AIC - a$AIC[1], 2); 
+		}
+		if(format == "kable"){
+			print(knitr::kable(a))
+		} else {
+			print(a)
+		}
+	}
+}
+
+#' umx_APA_pval
 #'
-#' @param formula the aggregation formula. e.g., DV ~ condition
-#' @param data the dataframe to aggregate with
-#' @param what function to use. Defaults to = c("mean_sd"))
-#' @return - table
+#' round a p value so you get < .001 instead of .000000002 or .134E-16
+#'
+#' @param p A p-value to round
+#' @param min Threshold to say < min
+#' @param rounding Number of decimal to round to 
+#' @param addComparison Whether to return the bare number, or to add the appropriate comparison symbol (= <)
+#' @family Miscellaneous Functions
+#' @family Reporting Functions
+#' @return - a value
+#' @export
+#' @seealso - \code{\link{round}}
+#' @examples
+#' umx_APA_pval(.052347)
+#' umx_APA_pval(1.23E-3)
+#' umx_APA_pval(1.23E-4)
+#' umx_APA_pval(c(1.23E-3, .5))
+#' umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
+
+umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
+	# addComparison can be NA to only add when needed
+	if(length(p) > 1){
+		o = rep(NA, length(p))
+		for(i in seq_along(p)) {
+		   o[i] = umx_APA_pval(p[i], min = min, rounding = rounding, addComparison = addComparison)
+		}
+		return(o)
+	} else {
+		if(is.nan(p) | is.na(p)){
+			if(is.na(addComparison)){
+				return(p)
+			}else if(addComparison){
+				return(paste0("= ", p))
+			} else {
+				return(p)
+			}
+		}
+		if(p < min){
+			if(is.na(addComparison)){
+				return(paste0("< ", min))
+			}else if(addComparison){
+				return(paste0("< ", min))
+			} else {
+				return(min)
+			}
+		} else {
+			if(is.na(addComparison)){
+				return(format(round(p, rounding), scientific = FALSE, nsmall = rounding))
+			}else if(addComparison){				
+				return(paste0("= ", format(round(p, rounding), scientific = FALSE, nsmall = rounding)))
+			} else {
+				return(round(p, rounding))
+			}
+		}	
+	}
+}
+
+#' umx_APA_CI
+#'
+#' @description
+#' Given an lm, will return a nicely-formated effect including 95\% CI 
+#' in square brackets, for one of the effects (specified by name in se). e.g.:
+#' 
+#' umx_APA_CI(m1, "wt")
+#' \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
+#' 
+#' Given b and se will return a CI based on 1.96 times the se.
+#' 
+#' @param b Either a model (\link{lm}), or a beta-value
+#' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)
+#' @param digits How many digits to use in rounding values
+#' @return - string
 #' @export
 #' @family Reporting Functions
-#' @seealso - \code{\link{aggregate}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
-#' umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars)
-#' t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
-#' \dontrun{
-#' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
-#' }
-umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd")) {
-	mean_sd = function(x){
-		paste0(round(mean(x, na.rm=TRUE),2), " (",
-			   round(sd(x, na.rm=TRUE),2), ")"
-		)
+#' m1 = lm(mpg ~ wt, mtcars)
+#' umx_APA_CI(m1, "wt")
+#' umx_APA_CI(.4, .3)
+umx_APA_CI <- function(b, se, digits = 3) {
+	if("lm" == class(b)){
+		conf    = confint(b)
+		lower   = conf[se, 1]
+		upper   = conf[se, 2]
+		model_coefficients = summary(m1)$coefficients
+		b_and_p = model_coefficients[se, ]
+		b       = b_and_p["Estimate"]
+		tval    = b_and_p["t value"]
+		pval    = b_and_p["Pr(>|t|)"]
+		paste0("\u03B2 = ", round(b, digits), " [", round(lower, digits), ", ", round(upper, digits), "], p ", umx_APA_pval(pval, addC = TRUE))
+	} else {
+		paste0("\u03B2 = ", round(b, digits), " [", round(b - (1.96 * se), digits), ", ", round(b + (1.96 * se), digits), "]")
 	}
-	x_n = function(x){sum(!is.na(x))}
-
-	what = match.arg(what)
-	if(what == "mean_sd"){
-		FUN = mean_sd
-	} else if(what == "n"){
-		FUN = mean_sd
-	}else{
-		FUN = FUN
-	}
-
-	tmp = aggregate(formula, FUN= mean_sd, data = data)
-	n_s = aggregate(formula, FUN= x_n, data = data)
-	row.names(tmp) = paste0(tmp[,1], " (n = ", n_s[,2], ")")
-	tmp = tmp[,-1]
-	return(tmp)
 }
+
+#' umx_get_CI_as_APA_string
+#'
+#' Look up CIs for free parameters in a model, and return as APA-formatted text string
+#'
+#' @param model an \code{\link{mxModel}} to get CIs from
+#' @param cellLabel the label of the cell to interogate for a CI, e.g. "ai_r1c1"
+#' @param prefix This submodel to look in (i.e. "top.")
+#' @param suffix The suffix for algebras ("_std")
+#' @param digits = 2
+#' @param verbose = FALSE
+#' @return - the CI string, e.g. ".73 [-.2, .98]"
+#' @export
+#' @family Miscellaneous Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' umx_get_CI_as_APA_string(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")
+#' }
+umx_get_CI_as_APA_string <- function(model, cellLabel, prefix = "top.", suffix = "_std", digits = 2, verbose= FALSE){
+	if(!umx_has_CIs(model)){
+		if(verbose){
+			message("no CIs")
+		}
+		return(NA)
+	} else {
+		# we want "top.ai_std[1,1]" from "ai_r1c1"
+		result = tryCatch({
+			grepStr = '^(.*)_r([0-9]+)c([0-9]+)$' # 1 = matrix names, 2 = row, 3 = column
+			mat = sub(grepStr, '\\1', cellLabel, perl = TRUE);
+			row = sub(grepStr, '\\2', cellLabel, perl = TRUE);
+			col = sub(grepStr, '\\3', cellLabel, perl = TRUE);
+		
+			z = model$output$confidenceIntervals
+			dimIndex = paste0(prefix, mat, suffix, "[", row, ",", col, "]")
+
+			intervalNames = dimnames(z)[[1]]
+			
+			
+			APAstr = paste0(
+				umx_APA_pval(z[dimIndex, "estimate"], min = -1, rounding = digits),
+				" [",
+				umx_APA_pval(z[dimIndex, "lbound"], min = -1, rounding = digits),
+				", ",
+				umx_APA_pval(z[dimIndex, "ubound"], min = -1, rounding = digits),
+				"]"
+			)
+		    return(APAstr) 
+		}, warning = function(cond) {
+			if(verbose){
+				message(paste0("warning ", cond, " for CI ", omxQuotes(cellLabel)))
+			}
+		    return(NA) 
+		}, error = function(cond) {
+			if(verbose){
+				message(paste0("error: ", cond, " for CI ", omxQuotes(cellLabel), "\n",
+				"dimIndex = ", dimIndex))
+				print(intervalNames)
+			}
+		    return(NA) 
+		}, finally = {
+		    # cleanup-code
+		})
+		return(result)
+	}
+	# if estimate differs...
+}
+
+
+# ==========================
+# = Data filter and re-org =
+# ==========================

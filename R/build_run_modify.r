@@ -1147,6 +1147,8 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE) {	
 	# TODO check that arguments not used by a particular class are not set away from their defaults
+	# TODO perhaps make "A_with_A" → "var_A"
+	# TODO perhaps make "one_to_x2" → "mean_x2" 
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
 		xmuLabel_Matrix(mx_matrix = obj, baseName = baseName, setfree = setfree, drop = drop, labelFixedCells = labelFixedCells, jiggle = jiggle, boundDiag = boundDiag, suffix = suffix, verbose = verbose, overRideExisting = overRideExisting)
@@ -1455,6 +1457,56 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 #' @export
 parameters <- umxGetParameters
 
+#' umxSetParameters
+#'
+#' umxSetParameters currently just a wrapper to omxSetParameters to ease user discovery.
+#' this also underlies to update, allowing homology with \code{\link{update}}()
+#' for lm models by freeing or fixing labeled parameters.
+#' It also set starts for parameters which now have identical labels
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @param labels = labels to find
+#' @param free = new value for free
+#' @param values = new values
+#' @param newlabels = newlabels
+#' @param lbound = value for lbound
+#' @param ubound = value for ubound
+#' @param indep = whether to look in indep models
+#' @param strict whether to complain if labels not found
+#' @param name = new name for the returned model
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Model Updating and Comparison
+#' @seealso - \code{\link{umxLabel}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' model = umxSetParameters(model)
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
+#' 	umxPath(from = latents, to = manifests),
+#' 	umxPath(v.m. = manifests),
+#' 	umxPath(v1m0 = latents)
+#' )
+#' parameters(m1, free=TRUE)
+#' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2")
+umxSetParameters <- function(model, labels, free = NULL, values = NULL,
+	    newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE,
+	    strict = TRUE, name = NULL) {
+	nothingDoing = all(is.null(c(free, values, newlabels)))
+	if(nothingDoing){
+		warning("you're not setting anything: set one or more of free, values, or newLabels to update a parameter")
+	}
+	a = omxSetParameters(model = model, labels = labels, free = free, values = values,
+	    newlabels = newlabels, lbound = lbound, ubound = ubound, indep = indep,
+	    strict = strict, name = name)
+	return(omxAssignFirstParameters(a, indep = FALSE))
+}
+# TODO add update function?
+# update()
+
 #' umxEquate
 #'
 #' Equate parameters by setting one or more labels (the slave set) equal
@@ -1464,7 +1516,7 @@ parameters <- umxGetParameters
 #' 
 #' note: In addition to using this method to equating parameters, you can
 #' also equate one parameter to another by setting its label to the 
-#' "square bracket" address of the master, i.e. model.matrix[r,c].
+#' "square bracket" address of the master, e.g. "a[r,c]".
 #' 
 #' Tip: To find labels of free parameters use \code{\link{umxGetParameters}} with free = T
 #' Tip: To find labels by name, use the regex parameter of \code{\link{umxGetParameters}}
@@ -2431,7 +2483,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #'
 #' @description The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 #' 
-#' It introduces 10 new verbs: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{Cholesky}, \strong{means}, \strong{v1m0}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
+#' It introduces 11 new verbs: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{Cholesky}, \strong{means}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
 #' 
 #' The new key "with" means you no-longer need set arrows = 2 on covariances. So you can say:
 #'
@@ -2455,8 +2507,13 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' \code{umxPath(v1m0 = A)}
 #' 
-#' umxPath exposes unique.parameter as a parameter so you don't have remember how to fill in connect= in mxPath
-#' All unique bivariate paths can be specified using unique.bivariate
+#' To just add estimates of variance and means to a variable use : \code{umxPath(v.m. = A)}
+#' 
+#' 
+#' umxPath exposes \dQuote{unique.parameter} as a parameter so you don't have remember
+#' how to fill in connect= in mxPath
+#' 
+#' All unique bivariate paths can be specified using unique.bivariate. So say:
 #' 
 #' \code{umxPath(c('A',"B","C"), unique.bivariate = TRUE)} to create paths A<->B, B<->C, and A<->C.
 #' 
@@ -2541,6 +2598,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 # #' umxPath("A -> manifests") 
 
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, formative = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+	# TODO add auto-label so that paths have their labels added.
 	if(!is.null(formative)){
 		stop("I haven't implemented formative yet... still thinking about whether its a good idea or a bad idea")
 	}

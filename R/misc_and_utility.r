@@ -125,9 +125,9 @@ umx_get_optimizer <- function(model = NULL) {
 #' }
 umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
 	opt = umx_default_option(opt, c("NPSOL", "SLSQP", "CSOLNP"), check = FALSE)
-	# if(!opt %in% mxAvailableOptimizers()){
-	# 	stop("The Optimizer ", quote(opt), " is not legal. legal values are:", omxQuotes(mxAvailableOptimizers()))
-	# }
+	if(!opt %in% mxAvailableOptimizers()){
+		stop("The Optimizer ", omxQuotes(opt), " is not legal. legal values are:", omxQuotes(mxAvailableOptimizers()))
+	}
 	mxOption(NULL, "Default optimizer", opt)	
 	# if(opt == "NPSOL"){
 	# 	# mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
@@ -1626,58 +1626,6 @@ print.reliability <- function (x, digits = 4, ...){
      invisible(x)
 }
 
-#' umxAnova
-#'
-#' Generate a text-format report of the F values in an ANOVA.
-#' Like umxAnova(model) # --> "F(495,1) = 0.002"
-#'
-#' @param model an \code{\link{lm}} model to report F for.
-#' @param digits how many numbers after the decimal for F (p-value is APA-style)
-#' @return - F in  text format
-#' @family Miscellaneous Functions
-#' @family Miscellaneous Stats Helpers
-#' @export
-#' @seealso - \code{\link{lm}}, \code{\link{anova}}, \code{\link{summary}}
-#' @examples
-#' m1 = lm(mpg~ cyl + wt, data = mtcars)
-#' umxAnova(m1)
-#' m2 = lm(mpg~ cyl, data = mtcars)
-#' umxAnova(m2)
-#' umxAnova(anova(m1, m2))
-
-umxAnova <- function(model, digits = 2) {
-	if(is(digits,"lm")){
-		stop(paste0(
-		"digits looks like an lm model: ",
-		"You probably said:\n    umxAnova(m1, m2)\n",
-		"when you meant\n",
-		"   umxAnova(anova(m1, m2))"
-		))
-	}
-	tmp = class(model)
-	if(all(tmp=="lm")){
-		a = summary(model)
-		dendf = a$fstatistic["dendf"]
-		numdf = a$fstatistic["numdf"]
-		value = a$fstatistic["value"]
-		return(paste0(
-				   "F(", dendf, ",", numdf, ") = " , round(value, digits),
-					", p = ", umx_APA_pval(pf(value, numdf, dendf, lower.tail = FALSE))
-				)
-		)
-	} else {
-		if(model[2, "Res.Df"] > model[1, "Res.Df"]){
-			message("Have you got the models the right way around?")
-		}
-		paste0(
-			"F(", 
-			round(model[2, "Res.Df"]), ",",
-			round(model[2,"Df"]), ") = ",
-			round(model[2,"F"], digits), ", p = ",
-			umx_APA_pval(model[2,"Pr(>F)"])
-		)
-	}	
-}
 
 # =====================
 # = Statistical tools =
@@ -2434,234 +2382,6 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 	return (matrixIn);
 }
 
-#' umx_APA_pval
-#'
-#' round a p value so you get < .001 instead of .000000002 or .134E-16
-#'
-#' @param p A p-value to round
-#' @param min Threshold to say < min
-#' @param rounding Number of decimal to round to 
-#' @param addComparison Whether to return the bare number, or to add the appropriate comparison symbol (= <)
-#' @family Miscellaneous Functions
-#' @family Reporting Functions
-#' @return - a value
-#' @export
-#' @seealso - \code{\link{round}}
-#' @examples
-#' umx_APA_pval(.052347)
-#' umx_APA_pval(1.23E-3)
-#' umx_APA_pval(1.23E-4)
-#' umx_APA_pval(c(1.23E-3, .5))
-#' umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
-
-umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
-	# addComparison can be NA to only add when needed
-	if(length(p) > 1){
-		o = rep(NA, length(p))
-		for(i in seq_along(p)) {
-		   o[i] = umx_APA_pval(p[i], min = min, rounding = rounding, addComparison = addComparison)
-		}
-		return(o)
-	} else {
-		if(is.nan(p) | is.na(p)){
-			if(is.na(addComparison)){
-				return(p)
-			}else if(addComparison){
-				return(paste0("= ", p))
-			} else {
-				return(p)
-			}
-		}
-		if(p < min){
-			if(is.na(addComparison)){
-				return(paste0("< ", min))
-			}else if(addComparison){
-				return(paste0("< ", min))
-			} else {
-				return(min)
-			}
-		} else {
-			if(is.na(addComparison)){
-				return(format(round(p, rounding), scientific = FALSE, nsmall = rounding))
-			}else if(addComparison){				
-				return(paste0("= ", format(round(p, rounding), scientific = FALSE, nsmall = rounding)))
-			} else {
-				return(round(p, rounding))
-			}
-		}	
-	}
-}
-
-#' umx_APA_CI
-#'
-#' @description
-#' Given an lm, will return a nicely-formated effect including 95\% CI 
-#' in square brackets, for one of the effects (specified by name in se). e.g.:
-#' 
-#' umx_APA_CI(m1, "wt")
-#' \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
-#' 
-#' Given b and se will return a CI based on 1.96 times the se.
-#' 
-#' @param b Either a model (\link{lm}), or a beta-value
-#' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)
-#' @param digits How many digits to use in rounding values
-#' @return - string
-#' @export
-#' @family Reporting Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-#' @examples
-#' m1 = lm(mpg ~ wt, mtcars)
-#' umx_APA_CI(m1, "wt")
-#' umx_APA_CI(.4, .3)
-umx_APA_CI <- function(b, se, digits = 3) {
-	if("lm" == class(b)){
-		conf    = confint(b)
-		lower   = conf[se, 1]
-		upper   = conf[se, 2]
-		model_coefficients = summary(m1)$coefficients
-		b_and_p = model_coefficients[se, ]
-		b       = b_and_p["Estimate"]
-		tval    = b_and_p["t value"]
-		pval    = b_and_p["Pr(>|t|)"]
-		paste0("\u03B2 = ", round(b, digits), " [", round(lower, digits), ", ", round(upper, digits), "], p ", umx_APA_pval(pval, addC = TRUE))
-	} else {
-		paste0("\u03B2 = ", round(b, digits), " [", round(b - (1.96 * se), digits), ", ", round(b + (1.96 * se), digits), "]")
-	}
-}
-
-#' umx_get_CI_as_APA_string
-#'
-#' Look up CIs for free parameters in a model, and return as APA-formatted text string
-#'
-#' @param model an \code{\link{mxModel}} to get CIs from
-#' @param cellLabel the label of the cell to interogate for a CI, e.g. "ai_r1c1"
-#' @param prefix This submodel to look in (i.e. "top.")
-#' @param suffix The suffix for algebras ("_std")
-#' @param digits = 2
-#' @param verbose = FALSE
-#' @return - the CI string, e.g. ".73 [-.2, .98]"
-#' @export
-#' @family Miscellaneous Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
-#' @examples
-#' \dontrun{
-#' umx_get_CI_as_APA_string(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")
-#' }
-umx_get_CI_as_APA_string <- function(model, cellLabel, prefix = "top.", suffix = "_std", digits = 2, verbose= FALSE){
-	if(!umx_has_CIs(model)){
-		if(verbose){
-			message("no CIs")
-		}
-		return(NA)
-	} else {
-		# we want "top.ai_std[1,1]" from "ai_r1c1"
-		result = tryCatch({
-			grepStr = '^(.*)_r([0-9]+)c([0-9]+)$' # 1 = matrix names, 2 = row, 3 = column
-			mat = sub(grepStr, '\\1', cellLabel, perl = TRUE);
-			row = sub(grepStr, '\\2', cellLabel, perl = TRUE);
-			col = sub(grepStr, '\\3', cellLabel, perl = TRUE);
-		
-			z = model$output$confidenceIntervals
-			dimIndex = paste0(prefix, mat, suffix, "[", row, ",", col, "]")
-
-			intervalNames = dimnames(z)[[1]]
-			
-			
-			APAstr = paste0(
-				umx_APA_pval(z[dimIndex, "estimate"], min = -1, rounding = digits),
-				" [",
-				umx_APA_pval(z[dimIndex, "lbound"], min = -1, rounding = digits),
-				", ",
-				umx_APA_pval(z[dimIndex, "ubound"], min = -1, rounding = digits),
-				"]"
-			)
-		    return(APAstr) 
-		}, warning = function(cond) {
-			if(verbose){
-				message(paste0("warning ", cond, " for CI ", omxQuotes(cellLabel)))
-			}
-		    return(NA) 
-		}, error = function(cond) {
-			if(verbose){
-				message(paste0("error: ", cond, " for CI ", omxQuotes(cellLabel), "\n",
-				"dimIndex = ", dimIndex))
-				print(intervalNames)
-			}
-		    return(NA) 
-		}, finally = {
-		    # cleanup-code
-		})
-		return(result)
-	}
-	# if estimate differs...
-}
-
-
-#' umxAnovaReport
-#'
-#' umxAnovaReport is a convenience function to format results for journals. There are others. But I made this one.
-#' If you give it the output of an lm, it runs anova() and QuantPsyc::lm.beta(), and puts that together in a regression table...
-#' Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
-#' @param model1 An \code{\link{lm}} model to make a table from 
-#' @param model2 An (optional) second \code{\link{lm}} model to compare to model 1
-#' @param raw Should the raw table also be output? (allows checking that nothing crazy is going on)
-#' @param format String or markdown format?
-#' @param printDIC A Boolean toggle whether you want AIC-type fit change table printed
-#' @family Miscellaneous Functions
-#' @family Reporting Functions
-#' @seealso - \code{\link{umxSummary}}, \code{\link{umxCompare}}, \code{\link{anova}}
-#' @references - \url{http://www.github.com/tbates/umx}
-#' @export
-#' @examples
-#' model = lm(mpg ~ cyl + disp, data = mtcars)
-#' umxAnovaReport(model)
-
-umxAnovaReport <- function(model1, model2 = NULL, raw = TRUE, format = "string", printDIC = FALSE) {
-	# TODO merge with anova.report.F, deprecate the latter
-	# TODO replace lm.beta with normalizing the variables?
-	if(!is.null(model2)){
-		# F(-2, 336) =  0.30, p = 0.74
-		a = anova(model1, model2)
-		if(raw){
-			print(a)
-		}
-		if(format == "string"){
-			print( paste0("F(", a[2,"Df"], ",", a[2,"Res.Df"], ") = ",
-					round(a[2,"F"],2), ", p ", umx_APA_pval(a[2,"Pr(>F)"])
-				)
-			)
-		} else {
-			print( paste0("| ", a[2,"Df"], " | ", a[2,"Res.Df"], " | ", 
-				round(a[2,"F"],2), " | ", umx_APA_pval(a[2,"Pr(>F)"]), " | ")
-			)
-		}		
-
-	} else {
-		a = anova(model1);
-		if(require(QuantPsyc, quietly = TRUE)){
-			a$beta = c(QuantPsyc::lm.beta(model1), NA);
-		} else {
-			a$beta = NA
-			message("To include beta weights\ninstall.packages(\"QuantPsyc\")")
-		}
-
-		x <- c("Df", "beta", "F value", "Pr(>F)");
-		a = a[,x]; 
-		names(a) <- c("df", "beta", "F", "p"); 
-		ci = confint(model1)
-		a$lowerCI = ci[,1]
-		a$upperCI = ci[,2]
-		a <- a[,c("df", "beta", "lowerCI", "upperCI", "F", "p")]; 
-		print(a)
-		if(printDIC){
-			a = drop1(model1); 
-			a$DIC = round(a$AIC - a$AIC[1], 2); 
-			print(a)	
-		}
-	}
-}
-
 #' umx_reorder
 #'
 #' Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function
@@ -3018,6 +2738,7 @@ umx_scale_wide_twin_data <- function(varsToScale, suffixes, df) {
 #' umx_default_option(option_list, option_list) # works with non character
 #' }
 umx_default_option <- function(x, option_list, check = TRUE){
+	# TODO rename to umx_match.arg ??
 	# often the R-built in code will work...
 	# filter = match.arg(filter)
 	if (identical(x, option_list)) {
