@@ -2412,14 +2412,16 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
-#' m1 = lm(mpg ~ cyl + disp, data = mtcars)
+#' m1 = lm(mpg ~ cyl + wt, data = mtcars)
 #' umx_report_Anova(m1)
 #' m2 = lm(mpg ~ cyl, data = mtcars)
 #' umx_report_Anova(m1, m2)
-#' m2 = lm(mpg ~ cyl + wt, data = mtcars)
 #' umx_report_Anova(m2)
 umx_report_Anova <- function(model1, model2 = NULL, raw = TRUE, format = c("kable", "plain"), printDIC = FALSE) {
-	# TODO replace lm.beta with normalizing the variables?
+	# TODO replace lm.beta with normalizing the variables, thn can get CIs in std form also??
+ 	message("Note, for standardized model, umx_scale() the dataframe")
+ 	message("Warning: Not yet fully implemented, use with caution, and check against anova, confint etc.")
+
 	format = match.arg(format)
 	if(!is.null(model2)){
 		# two models given: compare them
@@ -2428,8 +2430,8 @@ umx_report_Anova <- function(model1, model2 = NULL, raw = TRUE, format = c("kabl
 			message("Have you got the models the right way around?")
 		}
 		fString = paste0(
-			"F(", round(a[2, "Res.Df"]), ",", round(a[2, "Df"]),
-			") = ", round(a[2, "F"], digits = 2), ", ",,
+			"F(", round(a[2, "Res.Df"], digits=2), ",", round(a[2, "Df"], digits=2),
+			") = ", round(a[2, "F"], digits = 3), ", ",
 			"p = ", umx_APA_pval(a[2, "Pr(>F)"])
 		)
 		print(fString)
@@ -2437,27 +2439,27 @@ umx_report_Anova <- function(model1, model2 = NULL, raw = TRUE, format = c("kabl
 			print(a)
 		}
 	} else { 
-		a = summary(model1)
-		dendf = a$fstatistic["dendf"]
-		numdf = a$fstatistic["numdf"]
-		value = a$fstatistic["value"]
-		fString = paste0("F(", dendf, ",", numdf, ") = " ,
+		s = summary(model1)
+		dendf = s$fstatistic["dendf"]
+		numdf = s$fstatistic["numdf"]
+		value = s$fstatistic["value"]
+		fString = paste0("Overall model: F(", dendf, ",", numdf, ") = " ,
 			round(value, 2),
 			", p = ", umx_APA_pval(pf(value, numdf, dendf, lower.tail = FALSE)) )
 		print(fString)
 		a = anova(model1);
 		if(require(QuantPsyc, quietly = TRUE)){
-			a$beta = c(QuantPsyc::lm.beta(model1), NA);
+			a$beta = c(lm.beta(model1), NA);
 		} else {
 			a$beta = NA
 			message("To include beta weights\ninstall.packages(\"QuantPsyc\")")
 		}
 		x <- c("Df", "beta", "F value", "Pr(>F)");
-		a = a[,x]; 
+		a = a[, x]; 
 		names(a) <- c("df", "beta", "F", "p"); 
 		ci = confint(model1)
-		a$lowerCI = ci[,1]
-		a$upperCI = ci[,2]
+		a$lowerCI = rbind(ci[-1,1, drop = FALSE], NA)
+		a$upperCI = rbind(ci[-1,2, drop = FALSE], NA)
 
 		a <- a[,c("df", "beta", "lowerCI", "upperCI", "F", "p")]; 
 		if(printDIC){
