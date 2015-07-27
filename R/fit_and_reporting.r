@@ -1,11 +1,11 @@
 # library(devtools)
 # path
 # setwd("~/bin/umx"); 
-# build("~/bin/umx")
-# check("~/bin/umx")
-# release("~/bin/umx")
-# load_all("~/bin/umx")
-# show_news("~/bin/umx")
+# devtools::build("~/bin/umx")
+# devtools::check("~/bin/umx")
+# devtools::release("~/bin/umx")
+# devtools::load_all("~/bin/umx")
+# devtools::show_news("~/bin/umx")
 # install_github("tbates/umx"); library(umx);
 # http://adv-r.had.co.nz/Philosophy.html
 # https://github.com/hadley/devtools
@@ -1095,7 +1095,7 @@ umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary")
 #' @seealso - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
 #' @family Reporting functions
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
-	require(MASS); require(OpenMx); require(umx)
+	# relies on MASS; OpenMx and umx functions
 	type = umx_default_option(type, c("par.expected", "par.observed", "empirical"))
 	if(type == "par.expected") {
 		exp = umxExpCov(model, latents = FALSE)
@@ -1889,8 +1889,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' # -2.615998
 #' AIC(m1)
 extractAIC.MxModel <- function(model) {
-	require(umx)
-	a = umx::umxCompare(model)
+	a = umxCompare(model)
 	return(a[1, "AIC"])
 }
 
@@ -2362,7 +2361,7 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 #' umxDescriptives(data)
 #' }
 umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = FALSE, conf.interval = .95, .drop = TRUE) {
-    require(plyr)
+    # replies on plyr
     # New version of length which can handle NA's: if na.rm == T, don't count them
     length2 <- function (x, na.rm=FALSE) {
         if (na.rm){
@@ -2372,8 +2371,8 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
 		}
     }
 
-    # The summary; it's not easy to understand...
-    datac <- plyr::ddply(data, groupvars, .drop = .drop,
+    # The summary; it's not easy to understand... uses plyr::ddply
+    datac <- ddply(data, groupvars, .drop = .drop,
            .fun = function(xx, col, na.rm) {
                    c( N    = length2(xx[,col], na.rm=na.rm),
                       mean = mean   (xx[,col], na.rm=na.rm),
@@ -2415,11 +2414,10 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
 #' @examples
 #' m1 = lm(mpg ~ cyl + disp, data = mtcars)
 #' umx_report_Anova(m1)
-#' m1 = lm(mpg~ cyl + wt, data = mtcars)
-#' umxAnova(m1)
-#' m2 = lm(mpg~ cyl, data = mtcars)
-#' umxAnova(m2)
-#' umxAnova(anova(m1, m2))
+#' m2 = lm(mpg ~ cyl, data = mtcars)
+#' umx_report_Anova(m1, m2)
+#' m2 = lm(mpg ~ cyl + wt, data = mtcars)
+#' umx_report_Anova(m2)
 umx_report_Anova <- function(model1, model2 = NULL, raw = TRUE, format = c("kable", "plain"), printDIC = FALSE) {
 	# TODO replace lm.beta with normalizing the variables?
 	format = match.arg(format)
@@ -2431,7 +2429,7 @@ umx_report_Anova <- function(model1, model2 = NULL, raw = TRUE, format = c("kabl
 		}
 		fString = paste0(
 			"F(", round(a[2, "Res.Df"]), ",", round(a[2, "Df"]),
-			") = ", round(a[2, "F"], digits), ", ",,
+			") = ", round(a[2, "F"], digits = 2), ", ",,
 			"p = ", umx_APA_pval(a[2, "Pr(>F)"])
 		)
 		print(fString)

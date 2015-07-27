@@ -12,14 +12,13 @@ Description: A library of Helper functions for OpenMx.
     If you are just starting, try typing ?umx
 Depends:
     R (>= 3.0.3),
-    OpenMx,
+    OpenMx (>= 2.2.0),
     R2HTML,
 	formula.tools,
-	polycor
-Suggests:
-    testthat,
-    roxygen2,
+	polycor,
+	mvtnorm,
     knitr
+Suggests:
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 VignetteBuilder: knitr

@@ -56,8 +56,7 @@ Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umx_rename}}; \code{\link{umx_reorder}};
   \code{\link{umx_rot}}; \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}};
-  \code{\link{umx_string_to_algebra}};
-  \code{\link{umx_update_OpenMx}}; \code{\link{umx}},
+  \code{\link{umx_string_to_algebra}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }
 

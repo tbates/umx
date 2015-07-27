@@ -126,7 +126,7 @@ Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umx_rot}}; \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}};
   \code{\link{umx_string_to_algebra}};
-  \code{\link{umx_trim}}; \code{\link{umx_update_OpenMx}}
+  \code{\link{umx_trim}}
 
 Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
   \code{\link{reliability}}; \code{\link{umxCov2cor}};
