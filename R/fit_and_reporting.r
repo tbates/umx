@@ -1,14 +1,4 @@
-# library(devtools)
-# path
-# setwd("~/bin/umx"); 
-# devtools::build("~/bin/umx")
-# devtools::check("~/bin/umx")
-# devtools::release("~/bin/umx")
-# devtools::load_all("~/bin/umx")
-# devtools::show_news("~/bin/umx")
-# install_github("tbates/umx"); library(umx);
-# http://adv-r.had.co.nz/Philosophy.html
-# https://github.com/hadley/devtools
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 
 # =====================
 # = Model Diagnostics =
@@ -1519,15 +1509,16 @@ plot.MxModel.ACE <- umxPlotACE
 #' umxMI
 #'
 #' Report modifications which would improve fit.
-#'
+#' nb: Runs much fast with full = FALSE (but this doesn't allow the model to re-fit around the newly-
+#' parameter). Also, see requirements for post-hoc modeling in \code{\link{mxMI}}
 #' @param model An \code{\link{mxModel}} for which to report modification indices
-#' @param numInd How many modifications to report
+#' @param matrices which matrices to test. The default (NA) will test A & S for RAM models
+#' @param full Change in fit allowing all parameters to move. If FALSE only the parameter under test can move.
+#' @param numInd How many modifications to report. Use -1 for all. Default (NA) will report all over 6.63 (p = .01)
 #' @param typeToShow Whether to shown additions or deletions (default = "both")
 #' @param decreasing How to sort (default = TRUE, decreasing)
-#' @param cache = Future function to cache these time-consuming results
-#' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+#' @seealso - \code{\link{mxMI}}
 #' @family Model Updating and Comparison
-#' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1547,58 +1538,81 @@ plot.MxModel.ACE <- umxPlotACE
 #' umxMI(model)
 #' umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 #' }
-
-umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = TRUE, cache = TRUE) {
-	# depends on xmuMI(model)
-	if(typeof(model) == "list"){
-		mi.df = model
-	} else {
-		mi = xmuMI(model, vector = TRUE)
-		mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
-		row.names(mi.df) = 1:nrow(mi.df);
-		# TODO: could be a helper: choose direction
-		mi.df$from = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\1", mi.df$path)
-		mi.df$to   = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\3", mi.df$path)
-		mi.df$arrows = 1
-		mi.df$arrows[grepl("<->", mi.df$path)]= 2		
-
-		mi.df$action = NA 
-		mi.df  = mi.df[order(abs(mi.df[,2]), decreasing = decreasing),] 
-		mi.df$copy = 1:nrow(mi.df)
-		for(n in 1:(nrow(mi.df)-1)) {
-			if(grepl(" <- ", mi.df$path[n])){
-				tmp = mi.df$from[n]; mi.df$from[n] = mi.df$to[n]; mi.df$to[n] = tmp 
-			}
-			from = mi.df$from[n]
-			to   = mi.df$to[n]
-			a = (model@matrices$S@free[to,from] |model@matrices$A@free[to,from])
-			b = (model@matrices$S@values[to,from]!=0 |model@matrices$A@values[to,from] !=0)
-			if(a|b){
-				mi.df$action[n]="delete"
-			} else {
-				mi.df$action[n]="add"
-			}
-			inc= min(4,nrow(mi.df)-(n))
-			for (i in 1:inc) {
-				if((mi.df$copy[(n)])!=n){
-					# already dirty
-				}else{
-					# could be a helper: swap two 
-					from1 = mi.df[n,"from"]     ; to1   = mi.df[n,"to"]
-					from2 = mi.df[(n+i),"from"] ; to2   = mi.df[(n+i),'to']
-					if((from1==from2 & to1==to2) | (from1==to2 & to1==from2)){
-						mi.df$copy[(n+i)]<-n
-					}
-				}		
-			}
+umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToShow = "both", decreasing = TRUE) {
+	if(is.na(matrices)){
+		if(umx_is_RAM(model)){
+			matrices = c("A", "S")
 		}
 	}
-	mi.df = mi.df[unique(mi.df$copy),] # c("copy")
-	if(typeToShow != "both"){
-		mi.df = mi.df[mi.df$action == typeToShow,]
+	# e.g. MI = mxMI(model = m1, matrices = c("A", "S"), full = TRUE)
+	MI = mxMI(model = model, matrices = matrices, full = full)
+	if(full){
+		MIlist = MI$MI.Full
+	} else {
+		MIlist = MI$MI
 	}
-	print(mi.df[1:numInd, !(names(mi.df) %in% c("path","copy"))])
-	invisible(mi.df)		
+	if(is.na(numInd)){
+		thresh = qchisq(p = (1 - 0.01), df = 1) # 6.63
+		suggestions = sort(MIlist[MIlist > thresh], decreasing = TRUE)
+	} else {
+		suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
+	}
+	print(suggestions)
+	invisible(MI)
+
+	# MI: The restricted modification index.
+	# MI.Full: The full modification index.
+	# plusOneParamModels: A list of models with one additional free parameter
+
+	# if(typeof(model) == "list"){
+	# 	mi.df = model
+	# } else {
+	# 	mi = xmuMI(model, vector = TRUE)
+	# 	mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
+	# 	row.names(mi.df) = 1:nrow(mi.df);
+	# 	# TODO: could be a helper: choose direction
+	# 	mi.df$from = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\1", mi.df$path)
+	# 	mi.df$to   = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\3", mi.df$path)
+	# 	mi.df$arrows = 1
+	# 	mi.df$arrows[grepl("<->", mi.df$path)]= 2
+	#
+	# 	mi.df$action = NA
+	# 	mi.df  = mi.df[order(abs(mi.df[,2]), decreasing = decreasing),]
+	# 	mi.df$copy = 1:nrow(mi.df)
+	# 	for(n in 1:(nrow(mi.df)-1)) {
+	# 		if(grepl(" <- ", mi.df$path[n])){
+	# 			tmp = mi.df$from[n]; mi.df$from[n] = mi.df$to[n]; mi.df$to[n] = tmp
+	# 		}
+	# 		from = mi.df$from[n]
+	# 		to   = mi.df$to[n]
+	# 		a = (model@matrices$S@free[to,from] |model@matrices$A@free[to,from])
+	# 		b = (model@matrices$S@values[to,from]!=0 |model@matrices$A@values[to,from] !=0)
+	# 		if(a|b){
+	# 			mi.df$action[n]="delete"
+	# 		} else {
+	# 			mi.df$action[n]="add"
+	# 		}
+	# 		inc= min(4,nrow(mi.df)-(n))
+	# 		for (i in 1:inc) {
+	# 			if((mi.df$copy[(n)])!=n){
+	# 				# already dirty
+	# 			}else{
+	# 				# could be a helper: swap two
+	# 				from1 = mi.df[n,"from"]     ; to1   = mi.df[n,"to"]
+	# 				from2 = mi.df[(n+i),"from"] ; to2   = mi.df[(n+i),'to']
+	# 				if((from1==from2 & to1==to2) | (from1==to2 & to1==from2)){
+	# 					mi.df$copy[(n+i)]<-n
+	# 				}
+	# 			}
+	# 		}
+	# 	}
+	# }
+	# mi.df = mi.df[unique(mi.df$copy),] # c("copy")
+	# if(typeToShow != "both"){
+	# 	mi.df = mi.df[mi.df$action == typeToShow,]
+	# }
+	# print(mi.df[1:numInd, !(names(mi.df) %in% c("path","copy"))])
+	# invisible(mi.df)
 }
 
 # ======================
