@@ -1509,8 +1509,12 @@ plot.MxModel.ACE <- umxPlotACE
 #' umxMI
 #'
 #' Report modifications which would improve fit.
-#' nb: Runs much fast with full = FALSE (but this doesn't allow the model to re-fit around the newly-
-#' parameter). Also, see requirements for post-hoc modeling in \code{\link{mxMI}}
+#' Notes:
+#' 1. Runs much fast with full = FALSE (but this doesn't allow the model to re-fit around the newly-
+#' freed parameter).
+#' 2. Compared to mxMI, this function returns top changes, and also suppresses the run message.
+#' 3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link{mxMI}}
+#' You are almost certainly doing better science when testing competing models rather than modifying a model to fit.
 #' @param model An \code{\link{mxModel}} for which to report modification indices
 #' @param matrices which matrices to test. The default (NA) will test A & S for RAM models
 #' @param full Change in fit allowing all parameters to move. If FALSE only the parameter under test can move.
@@ -1545,7 +1549,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 		}
 	}
 	# e.g. MI = mxMI(model = m1, matrices = c("A", "S"), full = TRUE)
-	MI = mxMI(model = model, matrices = matrices, full = full)
+	suppressMessages({MI = mxMI(model = model, matrices = matrices, full = full)})
 	if(full){
 		MIlist = MI$MI.Full
 	} else {
