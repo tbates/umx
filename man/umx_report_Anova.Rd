@@ -28,13 +28,11 @@ Along with a a regression table...
 Alternatively if you fill in the optional second model, it compares them (just like \code{\link{umxCompare}})
 }
 \examples{
-m1 = lm(mpg ~ cyl + disp, data = mtcars)
+m1 = lm(mpg ~ cyl + wt, data = mtcars)
 umx_report_Anova(m1)
-m1 = lm(mpg~ cyl + wt, data = mtcars)
-umxAnova(m1)
-m2 = lm(mpg~ cyl, data = mtcars)
-umxAnova(m2)
-umxAnova(anova(m1, m2))
+m2 = lm(mpg ~ cyl, data = mtcars)
+umx_report_Anova(m1, m2)
+umx_report_Anova(m2)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

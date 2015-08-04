@@ -4,22 +4,30 @@
 \alias{umxMI}
 \title{umxMI}
 \usage{
-umxMI(model = NA, numInd = 10, typeToShow = "both", decreasing = TRUE,
-  cache = TRUE)
+umxMI(model = NA, matrices = NA, full = TRUE, numInd = NA,
+  typeToShow = "both", decreasing = TRUE)
 }
 \arguments{
 \item{model}{An \code{\link{mxModel}} for which to report modification indices}
 
-\item{numInd}{How many modifications to report}
+\item{matrices}{which matrices to test. The default (NA) will test A & S for RAM models}
+
+\item{full}{Change in fit allowing all parameters to move. If FALSE only the parameter under test can move.}
+
+\item{numInd}{How many modifications to report. Use -1 for all. Default (NA) will report all over 6.63 (p = .01)}
 
 \item{typeToShow}{Whether to shown additions or deletions (default = "both")}
 
 \item{decreasing}{How to sort (default = TRUE, decreasing)}
-
-\item{cache}{= Future function to cache these time-consuming results}
 }
 \description{
 Report modifications which would improve fit.
+Notes:
+1. Runs much fast with full = FALSE (but this doesn't allow the model to re-fit around the newly-
+freed parameter).
+2. Compared to mxMI, this function returns top changes, and also suppresses the run message.
+3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link{mxMI}}
+You are almost certainly doing better science when testing competing models rather than modifying a model to fit.
 }
 \examples{
 \dontrun{
@@ -43,7 +51,7 @@ umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+- \code{\link{mxMI}}
 
 Other Model Updating and Comparison: \code{\link{parameters}},
   \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
@@ -51,23 +59,5 @@ Other Model Updating and Comparison: \code{\link{parameters}},
   \code{\link{umxFixAll}}; \code{\link{umxSetParameters}};
   \code{\link{umxUnexplainedCausalNexus}};
   \code{\link{umx}}, \code{\link{umx-package}}
-
-Other Reporting functions: \code{\link{RMSEA.MxModel}};
-  \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
-  \code{\link{coef.MxModel}};
-  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
-  \code{\link{extractAIC.MxModel}};
-  \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
-  \code{\link{umxPlot}}; \code{\link{plot}},
-  \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
-  \code{\link{residuals.MxModel}};
-  \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
-  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSaturated}};
-  \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}},
-  \code{\link{umxSummary.MxModel}};
-  \code{\link{umx_drop_ok}}
 }
 

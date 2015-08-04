@@ -56,8 +56,7 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
   \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
   \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
-  \code{\link{umxFitIndices}}; \code{\link{umxMI}};
-  \code{\link{umxSaturated}};
+  \code{\link{umxFitIndices}}; \code{\link{umxSaturated}};
   \code{\link{umxStandardizeModel}};
   \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};

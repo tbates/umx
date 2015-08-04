@@ -300,105 +300,6 @@ umx_get_checkpoint <- function(model = NULL) {
 	message("Checkpoint  Directory: ", mxOption(model, "Checkpoint Directory" ) )
 }
 
-#' umx_update_OpenMx
-#'
-#' This function automates the process of updating OpenMx while it is not a cran package
-#'
-#' @param bleedingEdge  A Boolean determining whether to request the beta (TRUE) or relase version (defaults to FALSE)
-#' @param loadNew A Boolean parameter determining whether to load the library after (optionally) updating
-#' @param anyOK The minimum version to accept without updating
-#' @family Miscellaneous Functions
-#' @export
-#' @examples
-#' \dontrun{
-#' umx_update_OpenMx()
-#' }
-
-umx_update_OpenMx <- function(bleedingEdge = FALSE, loadNew = TRUE, anyOK = FALSE) {
-	if( "OpenMx" %in% .packages() ){
-		oldV = mxVersion();
-		if(anyOK){
-			message("You have version", oldV, "and that's fine")
-			return()
-		}
-		detach(package:OpenMx); # unload existing version
-		message("existing version \"" ,oldV, "\" was detached")
-	}	
-	if (bleedingEdge){
-		install.packages('OpenMx', repos = 'http://www.github.com/tbates/umx/testing/');
-	} else {
-		if (.Platform$OS.type == "windows") {
-			if (!is.null(.Platform$r_arch) && .Platform$r_arch == "x64") {
-				stop(paste("OpenMx is not yet supported on 64-bit R for Windows.",
-				"Please use 32-bit R in the interim."), call. = FALSE)
-			}
-			repos <- c('http://www.github.com/tbates/umx/packages/')
-			install.packages(pkgs=c('OpenMx'), repos=repos)
-		} else {
-			if (Sys.info()["sysname"] == "Darwin") {
-				darwinVers <- as.numeric(substr(Sys.info()['release'], 1, 2))
-				if (darwinVers > 10) {
-					msg <- paste("We have detected that you are running on OS X 10.7 or greater",
-					"whose native version of gcc does not support the OpenMP API.", 
-					"As a result your default installation has been set to single-threaded.",
-					"If you have installed the mac ports version of gcc to address this issue",
-					"please choose the multi-threaded installation option.")
-					cat(msg)
-					cat("1. single-threaded [default]\n")
-					cat("2. multi-threaded \n")
-					select <- readline("Which version of OpenMx should I install? ")
-
-					if (select == "") {
-						select <- 1
-					} 
-
-				} else {
-					cat("1. single-threaded\n")
-					cat("2. multi-threaded [default]\n")
-					select <- readline("Which version of OpenMx should I install? ")
-
-					if (select == "") {
-						select <- 2
-					}
-				}
-				} else {
-					cat("1. single-threaded\n")
-					cat("2. multi-threaded [default]\n")
-					select <- readline("Which version of OpenMx should I install? ")
-
-					if (select == "") {
-						select <- 2
-					}
-				}
-
-				if (!(select %in% c(1,2))) {
-					stop("Please enter '1' or '2'", call. = FALSE)
-				}
-  
-				if (select == 1) {
-					repos <- c('http://www.github.com/tbates/umx/sequential/')
-					install.packages(pkgs=c('OpenMx'), repos=repos, 
-					configure.args=c('--disable-openmp'))
-				} else if (select == 2) {
-					repos <- c('http://www.github.com/tbates/umx/packages/')
-					install.packages(pkgs=c('OpenMx'), repos=repos)
-				} else {
-					stop(paste("Unknown installation type", select))
-				}
-		}
-	}
-	if(loadNew){
-		# detach(package:OpenMx); # unload existing version
-		require("OpenMx")
-		newV = mxVersion();
-		if(!is.na(oldV)){
-			message("Woot: installed the latest and greatest \"", newV, "\" of OpenMx!")
-		} else {
-			message("Woot: you have upgraded from version \"" ,oldV, "\" to the latest and greatest \"", newV, "\"!")
-		}
-	}
-}
-
 # How long did that take?
 #' umx_time
 #'
@@ -971,13 +872,13 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 #' dl_from_dropbox("tinytwinData.rda", key = "7kauod48r9cfhwc")
 #' }
 dl_from_dropbox <- function(x, key){
-	require(RCurl)
+	# depends on RCurl::getBinaryURL
 	if(is.null(key)){
-		bin <- RCurl::getBinaryURL(x, ssl.verifypeer = FALSE)
+		bin <- getBinaryURL(x, ssl.verifypeer = FALSE)
 		x = sub("^.+/(.*)$", "\\1", x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
 	} else {
 		# user has provided key and file name, so concatenate with https...
-		bin <- RCurl::getBinaryURL(paste0("https://dl.dropboxusercontent.com/s/", key, "/", x), ssl.verifypeer = FALSE)
+		bin <- getBinaryURL(paste0("https://dl.dropboxusercontent.com/s/", key, "/", x), ssl.verifypeer = FALSE)
 	}
 	con <- file(x, open = "wb")
 	writeBin(bin, con)
@@ -1675,14 +1576,14 @@ Stouffer.test <- function(p = NULL) {
 
 # Test differences in Kurtosis and Skewness
 kurtosisDiff <- function(x, y, B = 1000){
-	require(psych)
+	# requires psych for kurtosi
 	kx <- replicate(B, kurtosi(sample(x, replace = TRUE)))
 	ky <- replicate(B, kurtosi(sample(y, replace = TRUE)))
 	return(kx - ky)	
 }
 # Skew
 skewnessDiff<- function(x, y, B = 1000){
-	require(psych)
+	# requires psych for skew
 	sx <- replicate(B, skew(sample(x, replace = TRUE)))
 	sy <- replicate(B, skew(sample(y, replace = TRUE)))
 	return(sx - sy)	
@@ -2613,9 +2514,9 @@ umx_is_numeric <- function(df, cols = TRUE){
 umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	# Check names
 	# TODO remove dependency on formula.tools
+		# lhs etc requires formula.tools
 	if(class(var) == "formula"){
 		umx_check(is.null(covs), "stop", "when using formula, leave covs empty")
-		require(formula.tools)
 		form <- var
 		var  = all.vars(lhs(form))
 		covs = all.vars(rhs(form))
@@ -2785,8 +2686,7 @@ umx_default_option <- function(x, option_list, check = TRUE){
 #' @examples
 #' fakeCars = umx_fake_data(mtcars)
 umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.levels = TRUE, use.miss = TRUE, mvt.method = "eigen", het.ML = FALSE, het.suppress = TRUE){
-  require(mvtnorm)
-  require(polycor)
+  # requires mvtnorm & polycor
   # requires data frame or matrix
   if((is.data.frame(dataset)+is.matrix(dataset))==0){
     warning("Data must be a data frame or matrix")
@@ -3320,16 +3220,12 @@ umxHetCor <- function(data, ML = FALSE, use = "pairwise.complete.obs", treatAllA
 			data[,i] = factor(data[,i])
 		}
 	}
-	if(require(polycor)){
-		hetc = polycor::hetcor(data, ML = ML, use = use, std.err = FALSE)
-		if(verbose){
-			print(hetc)
-		}
-		return(hetc$correlations)
-	} else {
-		# TODO add error message if polycor not found
-		stop("To run umxHetCor, you must install the polycor package\ninstall.packages('polycor')")
+	# polycor::hetcor
+	hetc = hetcor(data, ML = ML, use = use, std.err = FALSE)
+	if(verbose){
+		print(hetc)
 	}
+	return(hetc$correlations)
 }
 
 #' umx_lower2full

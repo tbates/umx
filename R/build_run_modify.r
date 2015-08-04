@@ -1125,15 +1125,13 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
-#' require(OpenMx)
-#' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
 #' m1 <- mxModel("One Factor", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' umxGetParameters(m1) # Default "matrix address" labels, i.e "One Factor.S[2,2]"

@@ -1,14 +1,4 @@
-# library(devtools)
-# path
-# setwd("~/bin/umx"); 
-# build("~/bin/umx")
-# check("~/bin/umx")
-# release("~/bin/umx")
-# load_all("~/bin/umx")
-# show_news("~/bin/umx")
-# install_github("tbates/umx"); library(umx);
-# http://adv-r.had.co.nz/Philosophy.html
-# https://github.com/hadley/devtools
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 
 # =====================
 # = Model Diagnostics =
@@ -1095,7 +1085,7 @@ umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary")
 #' @seealso - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
 #' @family Reporting functions
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
-	require(MASS); require(OpenMx); require(umx)
+	# relies on MASS; OpenMx and umx functions
 	type = umx_default_option(type, c("par.expected", "par.observed", "empirical"))
 	if(type == "par.expected") {
 		exp = umxExpCov(model, latents = FALSE)
@@ -1519,15 +1509,20 @@ plot.MxModel.ACE <- umxPlotACE
 #' umxMI
 #'
 #' Report modifications which would improve fit.
-#'
+#' Notes:
+#' 1. Runs much fast with full = FALSE (but this doesn't allow the model to re-fit around the newly-
+#' freed parameter).
+#' 2. Compared to mxMI, this function returns top changes, and also suppresses the run message.
+#' 3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link{mxMI}}
+#' You are almost certainly doing better science when testing competing models rather than modifying a model to fit.
 #' @param model An \code{\link{mxModel}} for which to report modification indices
-#' @param numInd How many modifications to report
+#' @param matrices which matrices to test. The default (NA) will test A & S for RAM models
+#' @param full Change in fit allowing all parameters to move. If FALSE only the parameter under test can move.
+#' @param numInd How many modifications to report. Use -1 for all. Default (NA) will report all over 6.63 (p = .01)
 #' @param typeToShow Whether to shown additions or deletions (default = "both")
 #' @param decreasing How to sort (default = TRUE, decreasing)
-#' @param cache = Future function to cache these time-consuming results
-#' @seealso - \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
+#' @seealso - \code{\link{mxMI}}
 #' @family Model Updating and Comparison
-#' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -1547,58 +1542,81 @@ plot.MxModel.ACE <- umxPlotACE
 #' umxMI(model)
 #' umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
 #' }
-
-umxMI <- function(model = NA, numInd = 10, typeToShow = "both", decreasing = TRUE, cache = TRUE) {
-	# depends on xmuMI(model)
-	if(typeof(model) == "list"){
-		mi.df = model
-	} else {
-		mi = xmuMI(model, vector = TRUE)
-		mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
-		row.names(mi.df) = 1:nrow(mi.df);
-		# TODO: could be a helper: choose direction
-		mi.df$from = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\1", mi.df$path)
-		mi.df$to   = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\3", mi.df$path)
-		mi.df$arrows = 1
-		mi.df$arrows[grepl("<->", mi.df$path)]= 2		
-
-		mi.df$action = NA 
-		mi.df  = mi.df[order(abs(mi.df[,2]), decreasing = decreasing),] 
-		mi.df$copy = 1:nrow(mi.df)
-		for(n in 1:(nrow(mi.df)-1)) {
-			if(grepl(" <- ", mi.df$path[n])){
-				tmp = mi.df$from[n]; mi.df$from[n] = mi.df$to[n]; mi.df$to[n] = tmp 
-			}
-			from = mi.df$from[n]
-			to   = mi.df$to[n]
-			a = (model@matrices$S@free[to,from] |model@matrices$A@free[to,from])
-			b = (model@matrices$S@values[to,from]!=0 |model@matrices$A@values[to,from] !=0)
-			if(a|b){
-				mi.df$action[n]="delete"
-			} else {
-				mi.df$action[n]="add"
-			}
-			inc= min(4,nrow(mi.df)-(n))
-			for (i in 1:inc) {
-				if((mi.df$copy[(n)])!=n){
-					# already dirty
-				}else{
-					# could be a helper: swap two 
-					from1 = mi.df[n,"from"]     ; to1   = mi.df[n,"to"]
-					from2 = mi.df[(n+i),"from"] ; to2   = mi.df[(n+i),'to']
-					if((from1==from2 & to1==to2) | (from1==to2 & to1==from2)){
-						mi.df$copy[(n+i)]<-n
-					}
-				}		
-			}
+umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToShow = "both", decreasing = TRUE) {
+	if(is.na(matrices)){
+		if(umx_is_RAM(model)){
+			matrices = c("A", "S")
 		}
 	}
-	mi.df = mi.df[unique(mi.df$copy),] # c("copy")
-	if(typeToShow != "both"){
-		mi.df = mi.df[mi.df$action == typeToShow,]
+	# e.g. MI = mxMI(model = m1, matrices = c("A", "S"), full = TRUE)
+	suppressMessages({MI = mxMI(model = model, matrices = matrices, full = full)})
+	if(full){
+		MIlist = MI$MI.Full
+	} else {
+		MIlist = MI$MI
 	}
-	print(mi.df[1:numInd, !(names(mi.df) %in% c("path","copy"))])
-	invisible(mi.df)		
+	if(is.na(numInd)){
+		thresh = qchisq(p = (1 - 0.01), df = 1) # 6.63
+		suggestions = sort(MIlist[MIlist > thresh], decreasing = TRUE)
+	} else {
+		suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
+	}
+	print(suggestions)
+	invisible(MI)
+
+	# MI: The restricted modification index.
+	# MI.Full: The full modification index.
+	# plusOneParamModels: A list of models with one additional free parameter
+
+	# if(typeof(model) == "list"){
+	# 	mi.df = model
+	# } else {
+	# 	mi = xmuMI(model, vector = TRUE)
+	# 	mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
+	# 	row.names(mi.df) = 1:nrow(mi.df);
+	# 	# TODO: could be a helper: choose direction
+	# 	mi.df$from = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\1", mi.df$path)
+	# 	mi.df$to   = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\3", mi.df$path)
+	# 	mi.df$arrows = 1
+	# 	mi.df$arrows[grepl("<->", mi.df$path)]= 2
+	#
+	# 	mi.df$action = NA
+	# 	mi.df  = mi.df[order(abs(mi.df[,2]), decreasing = decreasing),]
+	# 	mi.df$copy = 1:nrow(mi.df)
+	# 	for(n in 1:(nrow(mi.df)-1)) {
+	# 		if(grepl(" <- ", mi.df$path[n])){
+	# 			tmp = mi.df$from[n]; mi.df$from[n] = mi.df$to[n]; mi.df$to[n] = tmp
+	# 		}
+	# 		from = mi.df$from[n]
+	# 		to   = mi.df$to[n]
+	# 		a = (model@matrices$S@free[to,from] |model@matrices$A@free[to,from])
+	# 		b = (model@matrices$S@values[to,from]!=0 |model@matrices$A@values[to,from] !=0)
+	# 		if(a|b){
+	# 			mi.df$action[n]="delete"
+	# 		} else {
+	# 			mi.df$action[n]="add"
+	# 		}
+	# 		inc= min(4,nrow(mi.df)-(n))
+	# 		for (i in 1:inc) {
+	# 			if((mi.df$copy[(n)])!=n){
+	# 				# already dirty
+	# 			}else{
+	# 				# could be a helper: swap two
+	# 				from1 = mi.df[n,"from"]     ; to1   = mi.df[n,"to"]
+	# 				from2 = mi.df[(n+i),"from"] ; to2   = mi.df[(n+i),'to']
+	# 				if((from1==from2 & to1==to2) | (from1==to2 & to1==from2)){
+	# 					mi.df$copy[(n+i)]<-n
+	# 				}
+	# 			}
+	# 		}
+	# 	}
+	# }
+	# mi.df = mi.df[unique(mi.df$copy),] # c("copy")
+	# if(typeToShow != "both"){
+	# 	mi.df = mi.df[mi.df$action == typeToShow,]
+	# }
+	# print(mi.df[1:numInd, !(names(mi.df) %in% c("path","copy"))])
+	# invisible(mi.df)
 }
 
 # ======================
@@ -1889,8 +1907,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' # -2.615998
 #' AIC(m1)
 extractAIC.MxModel <- function(model) {
-	require(umx)
-	a = umx::umxCompare(model)
+	a = umxCompare(model)
 	return(a[1, "AIC"])
 }
 
@@ -2362,7 +2379,7 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 #' umxDescriptives(data)
 #' }
 umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = FALSE, conf.interval = .95, .drop = TRUE) {
-    require(plyr)
+    # replies on plyr
     # New version of length which can handle NA's: if na.rm == T, don't count them
     length2 <- function (x, na.rm=FALSE) {
         if (na.rm){
@@ -2372,8 +2389,8 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
 		}
     }
 
-    # The summary; it's not easy to understand...
-    datac <- plyr::ddply(data, groupvars, .drop = .drop,
+    # The summary; it's not easy to understand... uses plyr::ddply
+    datac <- ddply(data, groupvars, .drop = .drop,
            .fun = function(xx, col, na.rm) {
                    c( N    = length2(xx[,col], na.rm=na.rm),
                       mean = mean   (xx[,col], na.rm=na.rm),
@@ -2413,13 +2430,11 @@ umxDescriptives <- function(data = NULL, measurevar, groupvars = NULL, na.rm = F
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
-#' m1 = lm(mpg ~ cyl + disp, data = mtcars)
-#' umx_report_Anova(m1)
 #' m1 = lm(mpg ~ cyl + wt, data = mtcars)
 #' umx_report_Anova(m1)
 #' m2 = lm(mpg ~ cyl, data = mtcars)
-#' umx_report_Anova(m2)
 #' umx_report_Anova(m1, m2)
+#' umx_report_Anova(m2)
 umx_report_Anova <- function(model1, model2 = NULL, raw = TRUE, format = c("kable", "plain"), printDIC = FALSE) {
 	# TODO replace lm.beta with normalizing the variables, thn can get CIs in std form also??
  	message("Note, for standardized model, umx_scale() the dataframe")
