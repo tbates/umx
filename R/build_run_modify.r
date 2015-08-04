@@ -3,9 +3,16 @@ options('mxCondenseMatrixSlots'= FALSE)
 
 # osascript -e 'quit app "R"'; open /Applications/R.app; osascript -e 'tell app "R" to cmd "library(devtools)" '; osascript -e 'tell app "R" to cmd "document(\"~/bin/umx\"); install(\"~/bin/umx\"); ?umx" '
 
+# ==========================
+# = test new OpenMx builds =
+# ==========================
+# install.packages("OpenMx", "~/Dropbox/shared folders/OpenMx_binaries/OpenMx2.0.1/3.1.1-snowleopard/OpenMx_2.0.1-4133.tgz")
+# umx_set_optimizer(); umx_set_cores(2); source("~/bin/OpenMx/inst/models/nightly/brooke.R")
+
 # library(devtools)
 # setwd("~/bin/umx");
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 # devtools::check_doc("~/bin/umx")
 # devtools::run_examples("~/bin/umx")
 # devtools::build("~/bin/umx")
@@ -13,14 +20,10 @@ options('mxCondenseMatrixSlots'= FALSE)
 # devtools::show_news("~/bin/umx")
 # source('http://openmx.psyc.virginia.edu/getOpenMxBeta.R')
 # system(paste("open", shQuote("/Users/tim/bin/umx/R/misc_and_utility.r")))
-# install.packages("OpenMx", "~/Dropbox/shared folders/OpenMx_binaries/OpenMx2.0.1/3.1.1-snowleopard/OpenMx_2.0.1-4133.tgz")
 # create()
-# add_travis();
 # update_version();
 # news();
 # create_README()
-
-# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
 
 # https://r-forge.r-project.org/project/admin/?group_id=1745
 # http://r-pkgs.had.co.nz/
