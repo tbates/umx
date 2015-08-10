@@ -871,7 +871,7 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 #' dl_from_dropbox("https://dl.dropboxusercontent.com/s/7kauod48r9cfhwc/tinytwinData.rda")
 #' dl_from_dropbox("tinytwinData.rda", key = "7kauod48r9cfhwc")
 #' }
-dl_from_dropbox <- function(x, key){
+dl_from_dropbox <- function(x, key=NULL){
 	# depends on RCurl::getBinaryURL
 	if(is.null(key)){
 		bin <- getBinaryURL(x, ssl.verifypeer = FALSE)
@@ -883,9 +883,8 @@ dl_from_dropbox <- function(x, key){
 	con <- file(x, open = "wb")
 	writeBin(bin, con)
 	close(con)
-	message(noquote(paste(x, "read into", getwd())))                        
+	message(noquote(paste(x, "read into", getwd())))
 }
-
 
 #' umx_pb_note
 #'
