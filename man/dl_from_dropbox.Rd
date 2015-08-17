@@ -4,7 +4,7 @@
 \alias{dl_from_dropbox}
 \title{dl_from_dropbox}
 \usage{
-dl_from_dropbox(x, key)
+dl_from_dropbox(x, key = NULL)
 }
 \arguments{
 \item{x}{Either the file name, or full dropbox URL (see example below)}
