@@ -4,8 +4,7 @@ Date: 2015-08-23
 Title: umx
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))
-Author: Timothy C. Bates
-Maintainer: Who to complain to <timothy.c.bates@gmail.com>
+Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
 License: GPL-3
 URL: http://github.com/tbates/umx
 Description: A library of Helper functions for OpenMx.
