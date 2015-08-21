@@ -1,5 +1,3 @@
-options('mxCondenseMatrixSlots'= FALSE)
-
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 
 # ===============================
@@ -7,35 +5,43 @@ options('mxCondenseMatrixSlots'= FALSE)
 # ===============================
 
 .onAttach <- function(libname, pkgname){
+	options('mxCondenseMatrixSlots'= FALSE)
     packageStartupMessage("For an overview type '?umx'")
 }
 
 # =====================================================================================================
 # = Create a class for ACE models so we can subclass plot and umxSummary to handle them automagically =
 # =====================================================================================================
+# methods::setClass is called during build not package source code.
+# suppress NOTE with a spurious importFrom in the namespace
+
+#' @importFrom methods setClass
 methods::setClass("MxModel.ACE", contains = "MxModel")
+
 
 #' umxRAM
 #'
-#' Making it as simple as possible to create a RAM model, without doing things invisible to the user.
+#' Making it as simple as possible to create a RAM model, without doing invisible things to the user.
 #' 
-#' @details Like mxModel, you list the theoretical causal paths. Unlike mxModel:
+#' @details Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
 #' \enumerate{
 #' \item{type defaults to "RAM"}
-#' \item{You don't need to list manifestVars (they are assumed to map onto names in the \code{mxData})}
-#' \item{You don't need to list latentVars (they are assumed to be things not in the \code{mxData})}
-#' \item{You add data like you do in \code{lm}, with \strong{data = }}
+#' \item{You don\U2019t need to list manifestVars (they are detected from path usage)}
+#' \item{You don\U2019t need to list latentVars (detected as anything in paths but not in \code{mxData})}
+#' \item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
 #' \item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
 #' }
 #'
-#' Comparison with other software
-#' Some software has massive behind-the-scenes defaulting and path addition. I've played with some
-#' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
-#' and \code{exog.variances = TRUE}). Also identification helpers likey \code{fix = "latents"} 
-#' and \code{fix = "firstLoadings"} 
+#' \strong{Comparison with other software}
 #' 
-#' To be honest, these are not just more trouble than they are worth, they encourage errors and 
-#' poor modelling. I suggest just learning the nifty umxPath short cuts and staying clean and explicit!
+#' Some software has massive behind-the-scenes defaulting and path addition. I\U2019ve played with some
+#' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
+#' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
+#' and \code{fix = "firstLoadings"}
+#' 
+#' To be honest, these are not only more trouble than they are worth, they encourage errors and 
+#' poor modelling. I suggest user learn the handful of \code{\link{umxPath}}
+#' short cuts and stay clean and explicit!
 #' 
 #' @param name A friendly name for the model
 #' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame

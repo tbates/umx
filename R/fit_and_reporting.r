@@ -142,7 +142,7 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #' @param suppress smallest deviation to print out (default = NULL = show all)
 #' @param ... Optional parameters
 #' @return - matrix of residuals
-#' @export residuals.MxModel
+#' @export
 #' @family Reporting functions
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
@@ -320,7 +320,7 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 #' @param run Whether to run the model (defaults to FALSE)
 #' @param showErrorCodes (default = FALSE)
 #' @param ... Additional argument(s) for umxConfint.
-#' @export confint.MxModel
+#' @export
 #' @return - \code{\link{mxModel}}
 #' @family Reporting functions
 #' @seealso - \code{\link[stats]{confint}}
@@ -1214,7 +1214,6 @@ umxStandardizeACE <- function(fit) {
 #' @param showError Whether to show errors
 #' @param ... Optional parameters
 #' @export
-#' @export plot.MxModel
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}

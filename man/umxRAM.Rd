@@ -35,26 +35,28 @@ umxRAM(name, data = NULL, ..., run = TRUE, exog.variances = FALSE,
 - \code{\link{mxModel}}
 }
 \description{
-Making it as simple as possible to create a RAM model, without doing things invisible to the user.
+Making it as simple as possible to create a RAM model, without doing invisible things to the user.
 }
 \details{
-Like mxModel, you list the theoretical causal paths. Unlike mxModel:
+Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
 \enumerate{
 \item{type defaults to "RAM"}
-\item{You don't need to list manifestVars (they are assumed to map onto names in the \code{mxData})}
-\item{You don't need to list latentVars (they are assumed to be things not in the \code{mxData})}
-\item{You add data like you do in \code{lm}, with \strong{data = }}
+\item{You don\U2019t need to list manifestVars (they are detected from path usage)}
+\item{You don\U2019t need to list latentVars (detected as anything in paths but not in \code{mxData})}
+\item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
 \item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
 }
 
-Comparison with other software
-Some software has massive behind-the-scenes defaulting and path addition. I've played with some
+\strong{Comparison with other software}
+
+Some software has massive behind-the-scenes defaulting and path addition. I\U2019ve played with some
 similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
-and \code{exog.variances = TRUE}). Also identification helpers likey \code{fix = "latents"}
+and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"}
 and \code{fix = "firstLoadings"}
 
-To be honest, these are not just more trouble than they are worth, they encourage errors and
-poor modelling. I suggest just learning the nifty umxPath short cuts and staying clean and explicit!
+To be honest, these are not only more trouble than they are worth, they encourage errors and
+poor modelling. I suggest user learn the handful of \code{\link{umxPath}}
+short cuts and stay clean and explicit!
 }
 \examples{
 # umxRAM is like ggplot2::qplot(), you give the data in a data =  parameter
