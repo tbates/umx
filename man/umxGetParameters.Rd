@@ -49,11 +49,10 @@ umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = TRUE) # Column 6 of matrix "
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Model Updating and Comparison: \code{\link{umxAdd1}};
+Other Modify or Compare Models: \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxEquate}};
   \code{\link{umxFixAll}}; \code{\link{umxMI}};
   \code{\link{umxSetParameters}};
-  \code{\link{umxUnexplainedCausalNexus}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umxUnexplainedCausalNexus}}
 }
 

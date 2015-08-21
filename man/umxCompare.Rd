@@ -43,7 +43,9 @@ m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
 mxCompare(m1, m2) # what OpenMx gives by default
 umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
+\dontrun{
 umxCompare(m1, m2, report = 3) # Open table in browser
+}
 m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 umxCompare(m1, c(m2, m3))
 umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
@@ -57,18 +59,16 @@ umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
   \code{\link{coef.MxModel}};
-  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
+  \code{\link{confint.MxModel}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{plot}},
   \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
   \code{\link{residuals.MxModel}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxDescriptives}}; \code{\link{umxExpCov}};
-  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
-  \code{\link{umxSaturated}};
+  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
+  \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }

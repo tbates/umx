@@ -13,12 +13,10 @@ umxCov2cor(x)
 - a correlation matrix
 }
 \description{
-Just a version of cov2cor that forces the upper and lower triangles to be identical (rather than really similar)
+Version of cov2cor that forces upper and lower triangles to be identical (rather than nearly identical)
 }
 \examples{
-\dontrun{
-x_cor = umxCov2cor(x)
-}
+umxCov2cor(cov(mtcars))
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
@@ -26,9 +24,9 @@ x_cor = umxCov2cor(x)
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
-  \code{\link{reliability}}; \code{\link{umx_means}};
-  \code{\link{umx_pp33}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+Other Miscellaneous Stats Functions: \code{\link{Stouffer.test}};
+  \code{\link{reliability}}; \code{\link{umx_cor}};
+  \code{\link{umx_means}}; \code{\link{umx_pp33}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

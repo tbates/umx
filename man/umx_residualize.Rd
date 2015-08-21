@@ -24,7 +24,7 @@ Up to you to check all variables are present!}
 Return one or more variables residualised against covs.
 }
 \details{
-This is the same as
+This is the same as:
 
 \code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
 
@@ -32,12 +32,13 @@ Optionally, this also works on wide (ie., twin) data. Just supply suffixes to id
 the paired-wide columns (see examples)
 }
 \examples{
+library(formula.tools)
 tmp = mtcars
 # Residualise mpg on cylinders and displacement
 r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)$mpg
 r2 = residuals(lm(mpg ~ cyl + disp, data = tmp, na.action = na.exclude))
 all(r1 == r2)
-# plot(r1~r2)
+# plot(r1 ~ r2)
 # formula interface
 r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = tmp)$mpg
 # Same again, but now on wide data (i.e. with family data on each row)
@@ -50,19 +51,14 @@ umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
-  \code{\link{qm}}; \code{\link{umxHetCor}};
+Other Miscellaneous Data Functions: \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_as_numeric}}; \code{\link{umx_check_OS}};
-  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
-  \code{\link{umx_find_object}}; \code{\link{umx_grep}};
-  \code{\link{umx_lower2full}};
+  \code{\link{umx_as_numeric}};
+  \code{\link{umx_cont_2_ordinal}};
+  \code{\link{umx_cov2raw}}; \code{\link{umx_lower2full}};
   \code{\link{umx_make_bin_cont_pair_data}};
-  \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
-  \code{\link{umx_open}}; \code{\link{umx_pb_note}};
-  \code{\link{umx_read_lower}};
-  \code{\link{umx_recode_deciles}};
-  \code{\link{umx_rename_file}}; \code{\link{umx_round}};
+  \code{\link{umx_merge_CIs}};
+  \code{\link{umx_read_lower}}; \code{\link{umx_round}};
   \code{\link{umx_scale_wide_twin_data}};
   \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}};
   \code{\link{umx}}, \code{\link{umx-package}}

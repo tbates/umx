@@ -5,9 +5,8 @@
 \title{umxRAM}
 \usage{
 umxRAM(name, data = NULL, ..., run = TRUE, exog.variances = FALSE,
-  endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"),
-  latentVars = NULL, setValues = TRUE, independent = NA,
-  remove_unused_manifests = TRUE)
+  endog.variances = FALSE, latentVars = NULL, setValues = TRUE,
+  independent = NA, remove_unused_manifests = TRUE, fix = "deprecated")
 }
 \arguments{
 \item{name}{A friendly name for the model}
@@ -22,8 +21,6 @@ umxRAM(name, data = NULL, ..., run = TRUE, exog.variances = FALSE,
 
 \item{endog.variances}{If TRUE, free error-variance parameters are added for any endogenous variables that lack them (default is FALSE).}
 
-\item{fix}{Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")}
-
 \item{latentVars}{Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)}
 
 \item{setValues}{Whether to try and guess good start values (Defults to TRUE, set them)}
@@ -31,6 +28,8 @@ umxRAM(name, data = NULL, ..., run = TRUE, exog.variances = FALSE,
 \item{independent}{Whether the model is independent (default = NA)}
 
 \item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
+
+\item{fix}{deprecated. use umxPath(fixedAt = etc.}
 }
 \value{
 - \code{\link{mxModel}}
@@ -69,7 +68,7 @@ selVars = c("mpg", "wt", "disp")
 # 2. Create an mxData object
 myCov = mxData(cov(mtcars[,selVars]), type = "cov", numObs = nrow(mtcars) )
 
-# 3. Create the model (see ?umxPath for LOTS more neat options)
+# 3. Create the model (see ?umxPath for more nifty options)
 m1 = umxRAM("tim", data = myCov,
 	umxPath(c("wt", "disp"), to = "mpg"),
 	umxPath(cov = c("wt", "disp")),
@@ -89,10 +88,10 @@ plot(m1)
 }
 \seealso{
 Other Model Building Functions: \code{\link{umxLabel}};
-  \code{\link{umxLatent}};
-  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
+  \code{\link{umxLatent}}; \code{\link{umxPath}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxValues}}; \code{\link{umx_add_std}};
+  \code{\link{umxThresholdMatrix}};
+  \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}; \code{\link{umx}},
   \code{\link{umx-package}}

@@ -18,7 +18,8 @@ umx_default_option(x, option_list, check = TRUE)
 }
 \description{
 Handle parameter options given as a default list in a function.
-This is just a flexible version of match.arg(x)
+This is just a version of x = \code{\link{match.arg}}(x) which
+allows items not in the list.
 }
 \examples{
 \dontrun{
@@ -43,7 +44,6 @@ umx_default_option(option_list, option_list) # works with non character
 
 Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};

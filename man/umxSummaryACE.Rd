@@ -5,12 +5,12 @@
 \alias{umxSummaryACE}
 \title{umxSummaryACE}
 \usage{
-umxSummaryACE(fit, digits = 2, dotFilename = NULL, returnStd = FALSE,
+umxSummaryACE(model, digits = 2, dotFilename = NULL, returnStd = FALSE,
   extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL,
-  CIs = TRUE, zero.print = ".", report = 1)
+  CIs = TRUE, zero.print = ".", report = 1, ...)
 }
 \arguments{
-\item{fit}{an \code{\link{mxModel}} to summarize}
+\item{model}{an \code{\link{mxModel}} to summarize}
 
 \item{digits}{rounding (default = 2)}
 
@@ -31,6 +31,8 @@ umxSummaryACE(fit, digits = 2, dotFilename = NULL, returnStd = FALSE,
 \item{zero.print}{How to show zeros (".")}
 
 \item{report}{If 3, then open an html table of the results}
+
+\item{...}{Other parameters to control model summary}
 }
 \value{
 - optional \code{\link{mxModel}}

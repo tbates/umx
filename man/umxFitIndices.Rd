@@ -41,18 +41,16 @@ umxFitIndices(m1)
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
   \code{\link{coef.MxModel}};
-  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
+  \code{\link{confint.MxModel}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{plot}},
   \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
   \code{\link{residuals.MxModel}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
-  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
-  \code{\link{umxSaturated}};
+  \code{\link{umxCompare}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }

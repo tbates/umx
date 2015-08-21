@@ -4,17 +4,17 @@
 \alias{umxHetCor}
 \title{umxHetCor}
 \usage{
-umxHetCor(data, ML = FALSE, use = "pairwise.complete.obs",
-  treatAllAsFactor = F, verbose = FALSE)
+umxHetCor(data, ML = FALSE, use = "complete.obs",
+  treatAllAsFactor = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of columns for which to compute heterochoric correlations}
 
 \item{ML}{Whether to use Maximum likelihood computation of correlations (default = FALSE)}
 
-\item{use}{How to delete missing data: "complete.obs", "pairwise.complete.obs" Default is pairwise.complete.obs}
+\item{use}{How to handle missing data: "complete.obs", "pairwise.complete.obs" Default is complete.obs}
 
-\item{treatAllAsFactor}{Whether to treat all columns as factors, whether they are currently or not.}
+\item{treatAllAsFactor}{Whether to treat all columns as factors, whether they are or not.}
 
 \item{verbose}{How much to tell the user about what was done.}
 }
@@ -25,10 +25,8 @@ umxHetCor(data, ML = FALSE, use = "pairwise.complete.obs",
 umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
 }
 \examples{
-\dontrun{
-cor_df = umxHetCor(df)
-cor_df = umxHetCor(df, ML = FALSE, use="pairwise.complete.obs")
-}
+umxHetCor(mtcars[,c("mpg", "am")])
+umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = FALSE, verbose = TRUE)
 }
 \references{
 -
@@ -36,18 +34,13 @@ cor_df = umxHetCor(df, ML = FALSE, use="pairwise.complete.obs")
 \seealso{
 - \code{\link[polycor]{hetcor}}
 
-Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
-  \code{\link{qm}}; \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_as_numeric}}; \code{\link{umx_check_OS}};
-  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
-  \code{\link{umx_find_object}}; \code{\link{umx_grep}};
-  \code{\link{umx_lower2full}};
+Other Miscellaneous Data Functions: \code{\link{umxPadAndPruneForDefVars}};
+  \code{\link{umx_as_numeric}};
+  \code{\link{umx_cont_2_ordinal}};
+  \code{\link{umx_cov2raw}}; \code{\link{umx_lower2full}};
   \code{\link{umx_make_bin_cont_pair_data}};
-  \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
-  \code{\link{umx_open}}; \code{\link{umx_pb_note}};
+  \code{\link{umx_merge_CIs}};
   \code{\link{umx_read_lower}};
-  \code{\link{umx_recode_deciles}};
-  \code{\link{umx_rename_file}};
   \code{\link{umx_residualize}}; \code{\link{umx_round}};
   \code{\link{umx_scale_wide_twin_data}};
   \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}};

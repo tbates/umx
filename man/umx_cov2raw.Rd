@@ -17,7 +17,7 @@ umx_cov2raw(myCovariance, n, means = 0)
 - data.frame
 }
 \description{
-Turn a cov matrix into raw data :-)
+Turns a covariance matrix into comparable raw data :-)
 }
 \examples{
 covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(paste0("v", 1:6), paste0("v", 1:6)),
@@ -35,18 +35,14 @@ myData = umx_cov2raw(covData, n = 100, means = 1:6)
 \seealso{
 - \code{\link{cov2cor}}
 
-Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
-  \code{\link{qm}}; \code{\link{umxHetCor}};
+Other Miscellaneous Data Functions: \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_as_numeric}}; \code{\link{umx_check_OS}};
-  \code{\link{umx_cor}}; \code{\link{umx_find_object}};
-  \code{\link{umx_grep}}; \code{\link{umx_lower2full}};
+  \code{\link{umx_as_numeric}};
+  \code{\link{umx_cont_2_ordinal}};
+  \code{\link{umx_lower2full}};
   \code{\link{umx_make_bin_cont_pair_data}};
-  \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
-  \code{\link{umx_open}}; \code{\link{umx_pb_note}};
+  \code{\link{umx_merge_CIs}};
   \code{\link{umx_read_lower}};
-  \code{\link{umx_recode_deciles}};
-  \code{\link{umx_rename_file}};
   \code{\link{umx_residualize}}; \code{\link{umx_round}};
   \code{\link{umx_scale_wide_twin_data}};
   \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}};

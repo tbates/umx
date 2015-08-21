@@ -37,7 +37,6 @@ umx_get_CI_as_APA_string(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix 
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};

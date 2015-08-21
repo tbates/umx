@@ -31,22 +31,9 @@ qm(M1,c(4,5) | c(1,2),M2 | t(1:3))
 \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
-  \code{\link{umxHetCor}};
-  \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_as_numeric}}; \code{\link{umx_check_OS}};
-  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
+Other Miscellaneous Utility Functions: \code{\link{umx_check_OS}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
-  \code{\link{umx_lower2full}};
-  \code{\link{umx_make_bin_cont_pair_data}};
-  \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
-  \code{\link{umx_open}}; \code{\link{umx_pb_note}};
-  \code{\link{umx_read_lower}};
-  \code{\link{umx_recode_deciles}};
-  \code{\link{umx_rename_file}};
-  \code{\link{umx_residualize}}; \code{\link{umx_round}};
-  \code{\link{umx_scale_wide_twin_data}};
-  \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umx_pb_note}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

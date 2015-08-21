@@ -51,7 +51,7 @@ umx_show(m1, what = "free", "A")
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_aggregate}}; \code{\link{umx_print}};
-  \code{\link{umx_report_Anova}}; \code{\link{umx_time}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umx_time}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

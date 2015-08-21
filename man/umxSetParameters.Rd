@@ -39,7 +39,6 @@ for lm models by freeing or fixing labeled parameters.
 It also set starts for parameters which now have identical labels
 }
 \examples{
-model = umxSetParameters(model)
 require(OpenMx)
 data(demoOneFactor)
 latents  = c("G")
@@ -58,11 +57,10 @@ m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2")
 \seealso{
 - \code{\link{umxLabel}}
 
-Other Model Updating and Comparison: \code{\link{parameters}},
+Other Modify or Compare Models: \code{\link{parameters}},
   \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxEquate}};
   \code{\link{umxFixAll}}; \code{\link{umxMI}};
-  \code{\link{umxUnexplainedCausalNexus}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umxUnexplainedCausalNexus}}
 }
 

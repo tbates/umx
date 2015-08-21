@@ -2,12 +2,11 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{confint.MxModel}
 \alias{confint.MxModel}
-\alias{umxConfint}
-\title{confint.MxModel}
+\title{Get confidence intervals from an MxModel}
 \usage{
 \method{confint}{MxModel}(object, parm = list("existing", c("vector", "of",
   "names"), "default = add all"), level = 0.95, run = FALSE,
-  showErrorcodes = FALSE, ...)
+  showErrorCodes = FALSE, ...)
 }
 \arguments{
 \item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))}
@@ -18,9 +17,9 @@
 
 \item{run}{Whether to run the model (defaults to FALSE)}
 
-\item{showErrorcodes}{(default = FALSE)}
+\item{showErrorCodes}{(default = FALSE)}
 
-\item{...}{Additional argument(s) for methods.}
+\item{...}{Additional argument(s) for umxConfint.}
 }
 \value{
 - \code{\link{mxModel}}
@@ -75,11 +74,9 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
   \code{\link{residuals.MxModel}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
-  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSaturated}};
+  \code{\link{umxCompare}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }

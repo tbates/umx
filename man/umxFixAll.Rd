@@ -39,11 +39,10 @@ mxCompare(m1, m2)
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
-Other Model Updating and Comparison: \code{\link{parameters}},
+Other Modify or Compare Models: \code{\link{parameters}},
   \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxEquate}};
   \code{\link{umxMI}}; \code{\link{umxSetParameters}};
-  \code{\link{umxUnexplainedCausalNexus}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umxUnexplainedCausalNexus}}
 }
 

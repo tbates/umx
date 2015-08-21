@@ -61,24 +61,27 @@ dzData = subset(twinData, ZYG == "DZFF", c(selDVs, mod))
 # ========================
 # = 2. Run the analyses! =
 # ========================
+# Run and plot for specified windows (in this case just 1927)
+umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData,
+		target = 40, plotWindow = TRUE)
+
+\dontrun{
 # Run with FIML (default) uses all information
 umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData);
 
 # Run creating weighted covariance matrices (excludes missing data)
 umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData,
 		weightCov = TRUE);
-
-# Run and plot for specified windows (in this case just 1927)
-umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData,
-		target = 40, plotWindow = TRUE)
+}
 }
 \references{
 - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
 Complementary and competing factor analytic approaches for the investigation
 of measurement invariance. \emph{Review of Psychology}, \bold{16}, 87--107.
 
-Briley, D, Bates, T.C., Harden, K., Tucker-Drob, E. (2015)
-Of mice and men: Local SEM in gene environment analysis. \emph{Behavior Genetics}.
+Briley, D.A., Harden, K.P., Bates, T.C.,  Tucker-Drob, E.M. (2015).
+Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
+\emph{Behavior Genetics}.
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{umxACE}};

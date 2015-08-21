@@ -40,11 +40,10 @@ umx_show(m1, matrices = "S") # variance of g is fixed at 1
 }
 \seealso{
 Other Model Building Functions: \code{\link{umxLabel}};
-  \code{\link{umxLatent}};
-  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
+  \code{\link{umxLatent}}; \code{\link{umxPath}};
   \code{\link{umxRAM}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxValues}};
-  \code{\link{umx_add_std}};
+  \code{\link{umxRun}}; \code{\link{umxThresholdMatrix}};
+  \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }

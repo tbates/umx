@@ -16,7 +16,7 @@ umx_is_MxMatrix(obj)
 Utility function returning a binary answer to the question "Is this an OpenMx mxMatrix?"
 }
 \examples{
-x = mxMatrix(name = "expMean", type = "Full", nrow = 3, ncol = 3, free = TRUE, values = .3, byrow = TRUE)
+x = mxMatrix(name = "eg", type = "Full", nrow = 3, ncol = 3, values = .3)
 if(umx_is_MxMatrix(x)){
 	message("nice OpenMx matrix!")
 }
@@ -27,7 +27,6 @@ if(umx_is_MxMatrix(x)){
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};

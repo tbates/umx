@@ -28,7 +28,7 @@ m1 <- mxModel("ind", type = "RAM",
 )
 oldCores <- umx_get_cores() # get global value
 umx_set_cores() # set to default (max)
-umx_set_cores(detectCores() - 1) # set to max - 1
+umx_set_cores(parallel::detectCores() - 1) # set to max - 1
 umx_get_cores() # show new value
 umx_set_cores(1, m1)  # set m1 useage to 1 core
 umx_get_cores(model = m1)  # show new value
@@ -39,7 +39,6 @@ umx_get_cores(model = m1)  # show new value
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};

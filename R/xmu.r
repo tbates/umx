@@ -1,13 +1,3 @@
-# http://adv-r.had.co.nz/Philosophy.html
-# https://github.com/hadley/devtools
-# setwd("~/bin/umx"); 
-# library("devtools")
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
-# devtools::build("~/bin/umx"); 
-# setwd("~/bin/umx"); devtools::check()
-# devtools::load_all()
-# devtools::dev_help("umxFUNCTION_NAME")
-# devtools::show_news()
 # ========================================
 # = Not Typically used directly by users =
 # ========================================

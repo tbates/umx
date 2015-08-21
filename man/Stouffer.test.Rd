@@ -32,9 +32,9 @@ Stouffer and Fisher and the binomial test.
 \seealso{
 -
 
-Other Miscellaneous Stats Helpers: \code{\link{reliability}};
-  \code{\link{umxCov2cor}}; \code{\link{umx_means}};
-  \code{\link{umx_pp33}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+Other Miscellaneous Stats Functions: \code{\link{reliability}};
+  \code{\link{umxCov2cor}}; \code{\link{umx_cor}};
+  \code{\link{umx_means}}; \code{\link{umx_pp33}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

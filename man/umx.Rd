@@ -12,17 +12,17 @@ with code. The core functions are linked below under \strong{See Also}
 \details{
 All the functions have explanatory examples, so use the help, even if you think it won't help :-)
 Have a look, for example at \code{\link{umxRun}}
-There's also a working example below and in demo(umx)
+
+There are working examples below and in demo(umx)
 When I have a vignette, it will be: vignette("umx", package = "umx")
 
-umx lives on github at present \url{http://github.com/tbates/umx}
+The development version of umx is github \url{http://github.com/tbates/umx}
 
 There is a helpful blog at \url{http://tbates.github.io}
 
-To install:
+To install from github, you need:
 install.packages("devtools")
 library("devtools")
-
 install_github("tbates/umx")
 library("umx")
 }
@@ -30,6 +30,7 @@ library("umx")
 require("OpenMx")
 require("umx")
 data(demoOneFactor)
+myData = mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
 latents = c("G")
 manifests = names(demoOneFactor)
 m1 <- mxModel("One Factor", type = "RAM",
@@ -38,7 +39,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
 	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1),
-	mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
+	myData
 )
 
 omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
@@ -48,6 +49,8 @@ omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
 # sensible guesses for start values...
 m1 = umxLabel(m1)
 m1 = umxValues(m1)
+
+# nb: ?mxRAM simplifies model making in several ways. Check it out!
 
 # Re-run omxGetParameters...
 omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
@@ -93,9 +96,24 @@ plot(m1, std = TRUE, dotFilename = NA)
 \seealso{
 Other Advanced Helpers: \code{\link{umx_RAM_ordinal_objective}}
 
+Other Miscellaneous Data Functions: \code{\link{umxHetCor}};
+  \code{\link{umxPadAndPruneForDefVars}};
+  \code{\link{umx_as_numeric}};
+  \code{\link{umx_cont_2_ordinal}};
+  \code{\link{umx_cov2raw}}; \code{\link{umx_lower2full}};
+  \code{\link{umx_make_bin_cont_pair_data}};
+  \code{\link{umx_merge_CIs}};
+  \code{\link{umx_read_lower}};
+  \code{\link{umx_residualize}}; \code{\link{umx_round}};
+  \code{\link{umx_scale_wide_twin_data}};
+  \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}}
+
+Other Miscellaneous File Functions: \code{\link{dl_from_dropbox}};
+  \code{\link{umx_move_file}}; \code{\link{umx_open}};
+  \code{\link{umx_rename_file}}
+
 Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
@@ -128,60 +146,33 @@ Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umx_string_to_algebra}};
   \code{\link{umx_trim}}
 
-Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
+Other Miscellaneous Stats Functions: \code{\link{Stouffer.test}};
   \code{\link{reliability}}; \code{\link{umxCov2cor}};
-  \code{\link{umx_means}}; \code{\link{umx_pp33}}
+  \code{\link{umx_cor}}; \code{\link{umx_means}};
+  \code{\link{umx_pp33}}
 
-Other Miscellaneous Utility Functions: \code{\link{dl_from_dropbox}};
-  \code{\link{qm}}; \code{\link{umxHetCor}};
-  \code{\link{umxPadAndPruneForDefVars}};
-  \code{\link{umx_as_numeric}}; \code{\link{umx_check_OS}};
-  \code{\link{umx_cor}}; \code{\link{umx_cov2raw}};
+Other Miscellaneous Utility Functions: \code{\link{qm}};
+  \code{\link{umx_check_OS}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
-  \code{\link{umx_lower2full}};
-  \code{\link{umx_make_bin_cont_pair_data}};
-  \code{\link{umx_merge_CIs}}; \code{\link{umx_move_file}};
-  \code{\link{umx_open}}; \code{\link{umx_pb_note}};
-  \code{\link{umx_read_lower}};
-  \code{\link{umx_recode_deciles}};
-  \code{\link{umx_rename_file}};
-  \code{\link{umx_residualize}}; \code{\link{umx_round}};
-  \code{\link{umx_scale_wide_twin_data}};
-  \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}}
+  \code{\link{umx_pb_note}}
 
 Other Model Building Functions: \code{\link{umxLabel}};
-  \code{\link{umxLatent}};
-  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
+  \code{\link{umxLatent}}; \code{\link{umxPath}};
   \code{\link{umxRAM}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxValues}};
-  \code{\link{umx_add_std}};
+  \code{\link{umxRun}}; \code{\link{umxThresholdMatrix}};
+  \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}
-
-Other Model Updating and Comparison: \code{\link{parameters}},
-  \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
-  \code{\link{umxDrop1}}; \code{\link{umxEquate}};
-  \code{\link{umxFixAll}}; \code{\link{umxMI}};
-  \code{\link{umxSetParameters}};
-  \code{\link{umxUnexplainedCausalNexus}}
 
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_aggregate}}; \code{\link{umx_print}};
-  \code{\link{umx_report_Anova}}; \code{\link{umx_show}};
-  \code{\link{umx_time}}
+  \code{\link{umx_show}}; \code{\link{umx_time}}
 
 Other Twin Modeling Functions: \code{\link{umxACE}};
   \code{\link{umxGxE_window}}
 
 Other Twin Reporting Functions: \code{\link{umxSummary.MxModel.ACE}},
   \code{\link{umxSummaryACE}}
-
-Other umx deprecated: \code{\link{col.as.numeric}},
-  \code{\link{cor.prob}}, \code{\link{grepSPSS_labels}},
-  \code{\link{mxLatent}}, \code{\link{mxStart}},
-  \code{\link{umx-deprecated}}, \code{\link{umxReportCIs}},
-  \code{\link{umxReportFit}}, \code{\link{umxReportFit}},
-  \code{\link{umxStart}}; \code{\link{umxOrdinalObjective}}
 }
 

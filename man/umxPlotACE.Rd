@@ -6,19 +6,21 @@
 \alias{umxPlotACE}
 \title{umxPlotACE}
 \usage{
-umxPlotACE(model = NA, dotFilename = "name", digits = 2, showMeans = F,
-  std = T)
+umxPlotACE(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE,
+  std = TRUE, ...)
 }
 \arguments{
-\item{model}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
+\item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
 
 \item{dotFilename}{the name of the file that is created (use "name" to create the file using the model's name parameter)}
 
-\item{digits}{How many decimals to include in path loadings (2)}
+\item{digits}{How many decimals to include in path loadings (default is 2)}
 
-\item{showMeans}{Whether to show means paths (F)}
+\item{showMeans}{Whether to show means paths (default is FALSE)}
 
-\item{std}{whether to standardize the model (T)}
+\item{std}{Whether to standardize the model (default is TRUE)}
+
+\item{...}{Additional (optional) parameters}
 }
 \value{
 - optionally return the dot code
@@ -38,8 +40,8 @@ m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = mxRun(m1)
 \dontrun{
 plot(m1)
-umxPlotACE(m1, dotFilename = NA)
-plot(m1, std = F)
+umxPlotACE(m1, dotFilename = "override_model_name")
+plot(m1, std = FALSE) # don't standardize
 }
 }
 \references{
@@ -49,16 +51,14 @@ plot(m1, std = F)
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
   \code{\link{coef.MxModel}};
-  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
+  \code{\link{confint.MxModel}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{residuals.MxModel}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
-  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSaturated}};
+  \code{\link{umxCompare}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }

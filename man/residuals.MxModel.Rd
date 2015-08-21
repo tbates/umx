@@ -2,12 +2,12 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{residuals.MxModel}
 \alias{residuals.MxModel}
-\title{residuals.MxModel}
+\title{Get residuals from an MxModel}
 \usage{
-\method{residuals}{MxModel}(model, digits = 2, suppress = NULL, ...)
+\method{residuals}{MxModel}(object, digits = 2, suppress = NULL, ...)
 }
 \arguments{
-\item{model}{a (run) \code{\link{mxModel}} to get residuals from}
+\item{object}{An fitted \code{\link{mxModel}} from which to get residuals}
 
 \item{digits}{rounding (default = 2)}
 
@@ -16,7 +16,7 @@
 \item{...}{Optional parameters}
 }
 \value{
-- residual correlation matrix
+- matrix of residuals
 }
 \description{
 Return the \code{\link{residuals}} from an OpenMx RAM model
@@ -41,23 +41,21 @@ residuals(m1, digits = 3, suppress = .005)
 a = residuals(m1); a
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
   \code{\link{coef.MxModel}};
-  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
+  \code{\link{confint.MxModel}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{plot}},
   \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
-  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSaturated}};
+  \code{\link{umxCompare}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }

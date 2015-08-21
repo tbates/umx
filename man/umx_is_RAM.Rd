@@ -33,7 +33,7 @@ if(umx_is_RAM(m1)){
 	message("nice RAM model!")
 }
 if(!umx_is_RAM(m1)){
-	msg("model must be a RAM model")
+	message("model must be a RAM model")
 }
 }
 \references{
@@ -42,7 +42,6 @@ if(!umx_is_RAM(m1)){
 \seealso{
 Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};

@@ -2,12 +2,12 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{coef.MxModel}
 \alias{coef.MxModel}
-\title{coef.MxModel}
+\title{Get the coefficients of an MxModel}
 \usage{
-\method{coef}{MxModel}(model, ...)
+\method{coef}{MxModel}(object, ...)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to get the AIC from}
+\item{object}{an \code{\link{mxModel}} from which to get the AIC}
 
 \item{...}{Optional parameters}
 }
@@ -15,7 +15,7 @@
 - coefficients
 }
 \description{
-Returns the coeficients from an OpenMx RAM model
+Returns the coefficients from an OpenMx RAM model
 }
 \examples{
 require(OpenMx)
@@ -39,18 +39,16 @@ coef(m1)
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
-  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
+  \code{\link{confint.MxModel}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{plot}},
   \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
   \code{\link{residuals.MxModel}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
-  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSaturated}};
+  \code{\link{umxCompare}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }

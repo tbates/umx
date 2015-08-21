@@ -66,10 +66,10 @@ umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 }
 \seealso{
 Other Model Building Functions: \code{\link{umxLatent}};
-  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
-  \code{\link{umxRAM}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxValues}};
-  \code{\link{umx_add_std}};
+  \code{\link{umxPath}}; \code{\link{umxRAM}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxThresholdMatrix}};
+  \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}; \code{\link{umx}},
   \code{\link{umx-package}}

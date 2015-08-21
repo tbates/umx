@@ -1,63 +1,10 @@
 options('mxCondenseMatrixSlots'= FALSE)
-# svn update; make clean; make install; osascript -e 'quit app "R"'; open /Applications/R.app; osascript -e 'tell app "R"'; osascript -e 'tell app "R" to cmd "library(OpenMx)” '
 
-# osascript -e 'quit app "R"'; open /Applications/R.app; osascript -e 'tell app "R" to cmd "library(devtools)" '; osascript -e 'tell app "R" to cmd "document(\"~/bin/umx\"); install(\"~/bin/umx\"); ?umx" '
-
-# library(devtools)
-# setwd("~/bin/umx");
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# devtools::check_doc("~/bin/umx")
-# devtools::run_examples("~/bin/umx")
-# devtools::build("~/bin/umx")
-# devtools::load_all("~/bin/umx")
-# devtools::show_news("~/bin/umx")
-# source('http://openmx.psyc.virginia.edu/getOpenMxBeta.R')
-# system(paste("open", shQuote("/Users/tim/bin/umx/R/misc_and_utility.r")))
-# install.packages("OpenMx", "~/Dropbox/shared folders/OpenMx_binaries/OpenMx2.0.1/3.1.1-snowleopard/OpenMx_2.0.1-4133.tgz")
-# create()
-# add_travis();
-# update_version();
-# news();
-# create_README()
-
-# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin"); 
-
-# https://r-forge.r-project.org/project/admin/?group_id=1745
-# http://r-pkgs.had.co.nz/
-# http://adv-r.had.co.nz/Philosophy.html
-# https://github.com/hadley/devtools
 
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
-
-# ssh -R 52698:localhost:52698 tbates@eddie.ecdf.ed.ac.uk
-# or just eddie
-# https://www.wiki.ed.ac.uk/display/ecdfwiki/Steps+to+run+an+OpenMP+job+on+Eddie
-
-# setUpPB <- function(updateAuth = NULL) {
-# 	if (doesnt exist .rpushbullet.json){
-# 		if(is.null(updateAuth)){
-# 			stop(prompt for key with instructions)
-# 		} else {
-# 			# create file and store updateAuth
-# 		}
-# 	}else{
-# 		read file
-# 		if (!is.null(updateAuth){
-# 			# print the old key to console in case this is a mistake
-# 			# save updateAuth
-# 		}
-# 	}
-# 	} if (is.null(updateAuth)){
-# 		# prompt for key with instructions
-# 	} else {
-# 		# have key
-# 		# populate file.
-# 		# fix nicknames?
-# 		# use nicknames?
-# 	}
-# }
 
 .onAttach <- function(libname, pkgname){
     packageStartupMessage("For an overview type '?umx'")
@@ -66,8 +13,7 @@ options('mxCondenseMatrixSlots'= FALSE)
 # =====================================================================================================
 # = Create a class for ACE models so we can subclass plot and umxSummary to handle them automagically =
 # =====================================================================================================
-setClass("MxModel.ACE", contains = "MxModel")
-
+methods::setClass("MxModel.ACE", contains = "MxModel")
 
 #' umxRAM
 #'
@@ -97,11 +43,11 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' @param run Whether to mxRun the model (defaults to TRUE: the estimated model will be returned)
 #' @param exog.variances If TRUE, free variance parameters are added for exogenous variables that lack them (the default is FALSE).
 #' @param endog.variances If TRUE, free error-variance parameters are added for any endogenous variables that lack them (default is FALSE).
-#' @param fix Whether to fix latent or first paths to 1. Options are: c("none", "latents", "firstLoadings") (defaults to "none")
 #' @param latentVars Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
 #' @param setValues Whether to try and guess good start values (Defults to TRUE, set them)
 #' @param independent Whether the model is independent (default = NA)
+#' @param fix deprecated. use umxPath(fixedAt = etc.
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
@@ -118,7 +64,7 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' # 2. Create an mxData object
 #' myCov = mxData(cov(mtcars[,selVars]), type = "cov", numObs = nrow(mtcars) )
 #' 
-#' # 3. Create the model (see ?umxPath for LOTS more neat options)
+#' # 3. Create the model (see ?umxPath for more nifty options)
 #' m1 = umxRAM("tim", data = myCov,
 #' 	umxPath(c("wt", "disp"), to = "mpg"),
 #' 	umxPath(cov = c("wt", "disp")),
@@ -132,8 +78,7 @@ setClass("MxModel.ACE", contains = "MxModel")
 #' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' }
-umxRAM <- function(name, data = NULL, ..., run = TRUE, exog.variances = FALSE, endog.variances = FALSE, fix = c("none", "latents", "firstLoadings"), latentVars = NULL, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
-	fix = umx_default_option(fix, c("none", "latents", "firstLoadings"), check = TRUE)
+umxRAM <- function(name, data = NULL, ..., run = TRUE, exog.variances = FALSE, endog.variances = FALSE, latentVars = NULL, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, fix = "deprecated") {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
 	}
@@ -274,19 +219,9 @@ umxRAM <- function(name, data = NULL, ..., run = TRUE, exog.variances = FALSE, e
 		# message("endogenous variances not added")
 	}
 
-	if(!fix == "none"){
+	if(!fix == "deprecated"){
 		stop("fix is not supported any longer: switch to umxPath with firstAt and fixedAt to be more up front about model content\n",
 		"or use m1 = umx_fix_first_loadings(m1), or m1 = umx_fix_latents(m1)")
-		# TODO turn this off, now that umxPath makes it easy...
-		# Fix latents or first paths
-		if(fix == "latents"){
-			m1 = umx_fix_latents(m1)
-		} else if(fix == "firstLoadings"){
-			# add free variance to latents not in the fixed list?
-			m1 = umx_fix_first_loadings(m1)
-		}else{
-			stop("Unknown option for fix", fix)
-		}
 	}
 
 	if(isRaw){
@@ -355,25 +290,27 @@ umxRAM <- function(name, data = NULL, ..., run = TRUE, exog.variances = FALSE, e
 #' # ========================
 #' # = 2. Run the analyses! =
 #' # ========================
+#' # Run and plot for specified windows (in this case just 1927)
+#' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
+#' 		target = 40, plotWindow = TRUE)
+#' 
+#' \dontrun{
 #' # Run with FIML (default) uses all information
 #' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData);
 #' 
 #' # Run creating weighted covariance matrices (excludes missing data)
 #' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
 #' 		weightCov = TRUE); 
-#' 
-#' # Run and plot for specified windows (in this case just 1927)
-#' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
-#' 		target = 40, plotWindow = TRUE)
+#' }
 #' 
 #' @family Twin Modeling Functions
 #' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
 #' Complementary and competing factor analytic approaches for the investigation 
 #' of measurement invariance. \emph{Review of Psychology}, \bold{16}, 87--107. 
 #' 
-#' Briley, D, Bates, T.C., Harden, K., Tucker-Drob, E. (2015)
-#' Of mice and men: Local SEM in gene environment analysis. \emph{Behavior Genetics}.
-
+#' Briley, D.A., Harden, K.P., Bates, T.C.,  Tucker-Drob, E.M. (2015).
+#' Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
+#' \emph{Behavior Genetics}.
 umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
 	# TODO want to allow missing moderator?
 	# Check moderator is set and exists in mzData and dzData
@@ -958,7 +895,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 	}
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
-	model = as(model, "MxModel.ACE") # change type so that plot() (actually plot.MxModel.ACE) will work.
+	model = as(model, "MxModel.ACE") # set class so that S3 plot() dispatches.
 	return(model)
 }
 
@@ -1046,7 +983,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		if(obj@data@type == "raw"){
 			# = Set the means =
 			if(is.null(obj@matrices$M)){
-				msg("You are using raw data, but have not yet added paths for the means\n")
+				message("You are using raw data, but have not yet added paths for the means\n")
 				stop("You do this with mxPath(from = 'one', to = 'var')")
 			} else {
 				dataMeans = umx_means(theData[, manifests], ordVar = 0, na.rm = TRUE)
@@ -1252,9 +1189,9 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 			# If we have a RAM model with raw data, compute the satuated and indpendence models
 			# TODO: Update to omxSaturated() and omxIndependenceModel()
 			message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
-			model_sat = umxSaturated(model, evaluate = TRUE, verbose = FALSE)
-			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(model_sat$Ind))
-			model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(model_sat$Sat))
+			ref_models = mxRefModels(model, run = TRUE)
+			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
+			model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(ref_models$Saturated))
 		}
 	}
 	if(!is.null(comparison)){ 
@@ -1384,7 +1321,7 @@ umxReRun <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value 
 #' @param free  A Boolean determining whether to return only free parameters.
 #' @param verbose How much feedback to give
 #' @export
-#' @family Model Updating and Comparison
+#' @family Modify or Compare Models
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -1474,11 +1411,10 @@ parameters <- umxGetParameters
 #' @param name = new name for the returned model
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Model Updating and Comparison
+#' @family Modify or Compare Models
 #' @seealso - \code{\link{umxLabel}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' model = umxSetParameters(model)
 #' require(OpenMx)
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -1527,7 +1463,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL,
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Model Updating and Comparison
+#' @family Modify or Compare Models
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -1545,7 +1481,6 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL,
 #' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
 #' m2 = mxRun(m2) # have to run the model again...
 #' umxCompare(m1, m2) # not good :-)
-#' umxSummary(m1, m2) # not good :-)
 umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE, name = NULL) {	
 	free = umx_default_option(free, c(TRUE, FALSE, NA))
 	if(!umx_is_MxModel(model)){
@@ -1589,7 +1524,7 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' @param run  whether to fix and re-run the model, or just return it (defaults to FALSE)
 #' @return - the fixed \code{\link{mxModel}}
 #' @export
-#' @family Model Updating and Comparison
+#' @family Modify or Compare Models
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' require(OpenMx)
@@ -1638,7 +1573,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of model comparisons
 #' @export
-#' @family Model Updating and Comparison
+#' @family Modify or Compare Models
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1694,7 +1629,7 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' @param maxP The threshold for returning values (defaults to p==1 - all values)
 #' @return a table of fit changes
 #' @export
-#' @family Model Updating and Comparison
+#' @family Modify or Compare Models
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1801,9 +1736,9 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @param forms the list of variables which this latent forms (leave blank for formedBy)
 #' @param data the dataframe being used in this model
 #' @param type = \"exogenous|endogenous\"
-#' @param model.name = NULL
-#' @param labelSuffix a string to add to the end of each label
-#' @param verbose = T
+#' @param name A name for the path NULL
+#' @param labelSuffix a suffix string to append to each label
+#' @param verbose  Default is TRUE as this function does quite a lot
 #' @param endogenous This is now deprecated. use type= \"exogenous|endogenous\"
 #' @return - path list
 #' @export
@@ -1825,7 +1760,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #'	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
 #' m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE); umxSummary(m1, show="std")
-#' umxPlot(m1)
+#' plot(m1)
 #' 
 #' m2 = mxModel("formative", type = "RAM",
 #'	manifestVars = manifests,
@@ -1834,10 +1769,11 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #'	umxLatent("G", formedBy = manifests, data = theData),
 #'	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 #' )
-#' m2 = umxRun(m2, setValues = TRUE, setLabels = TRUE); umxSummary(m2, show="std")
-#' umxPlot(m2)
+#' m2 = umxRun(m2, setValues = TRUE, setLabels = TRUE);
+#' umxSummary(m2, show = "std")
+#' plot(m2)
 #' }
-umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  model.name = NULL, labelSuffix = "", verbose = TRUE, endogenous = "deprecated") {
+umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  name = NULL, labelSuffix = "", verbose = TRUE, endogenous = "deprecated") {
 	# Purpose: make a latent variable formed/or formed by some manifests
 	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
 	# TODO: delete manifestVariance
@@ -1899,13 +1835,13 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 			if(verbose){
 				message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
 			}
-			p2 = mxPath(from=latent, connect="single", arrows=2, free= TRUE, values=.5)
+			p2 = mxPath(from=latent, connect="single", arrows = 2, free = TRUE, values = .5)
 		} else {
 			# fix variance at 1 - no inputs
 			if(verbose){
 				message(paste("latent '", latent, "' has variance fixed @ 1"))
 			}
-			p2 = mxPath(from = latent, connect = "single", arrows = 2, free = Free, values = 1)
+			p2 = mxPath(from = latent, connect = "single", arrows = 2, free = FALSE, values = 1)
 		}
 		p3 = mxPath(from = latent, to = manifests, connect = "single", free = TRUE, values = variances)
 		if(isCov) {
@@ -1935,14 +1871,15 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 			paths = list(p1, p2, p3, p4, p5)
 		}
 	}
-	if(!is.null(model.name)) {
-		m1 <- mxModel(model.name, type="RAM", manifestVars = manifests, latentVars = latent, paths)
+	if(!is.null(name)) {
+		m1 <- mxModel(name, type="RAM", manifestVars = manifests, latentVars = latent, paths)
 		if(isCov){
 			m1 <- mxModel(m1, mxData(cov(df), type="cov", numObs = 100))
 			message("\n\nIMPORTANT: you need to set numObs in the mxData() statement\n\n\n")
 		} else {
 			if(any(manifestOrdVars)){
-				m1 <- mxModel(m1, umxThresholdRAMObjective(data, deviationBased = TRUE, droplevels = TRUE, verbose = TRUE))
+				stop("Sorry, I can't yet handle ordinal manifests automatically :-(.")
+				# m1 <- mxModel(m1, umxThresholdRAMObjective(data, deviationBased = TRUE, droplevels = TRUE, verbose = TRUE))
 			} else {
 				m1 <- mxModel(m1, mxData(data, type = "raw"))
 			}
@@ -1961,50 +1898,6 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
 	# umxPlot(m2, std=FALSE, dotFilename="name")
 	# mxLatent("Read", forms = manifestsRead)
-}
-
-umxConnect <- function(x) {
-	# TODO handle endogenous
-}
-
-umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRUE){
-	# use case
-	# mxSingleIndicators(manifests, data)
-	if( nrow(data) == ncol(data) & all(data[lower.tri(data)] == t(data)[lower.tri(t(data))]) ) {
-		isCov = T
-		if(verbose){
-			message("treating data as cov")
-		}
-	} else {
-		isCov = F
-		if(verbose){
-			message("treating data as raw")
-		}
-	}
-	if(isCov){
-		variances = diag(data[manifests,manifests])
-		# Add variance to the single manfests
-		p1 = mxPath(from = manifests, arrows = 2, values = variances)
-		return(p1)
-	} else {
-		manifestOrdVars = umx_is_ordered(data[,manifests])
-		if(any(manifestOrdVars)){
-			means         = rep(0, times=length(manifests))
-			variances     = rep(1, times=length(manifests))
-			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = F], na.rm= TRUE)
-			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = F], use="complete"))
-			means[!manifestOrdVars] = contMeans				
-			variances[!manifestOrdVars] = contVariances				
-		}else{
-			means     = colMeans(data[,manifests], na.rm = TRUE)
-			variances = diag(cov(data[,manifests], use = "complete"))
-		}
-		# Add variance to the single manfests
-		p1 = mxPath(from = manifests, arrows = 2, values = variances) # labels = mxLabel(manifests, suffix = paste0("unique", labelSuffix))
-		# Add means for the single manfests
-		p2 = mxPath(from = "one", to = manifests, values = means) # labels = mxLabel("one", manifests, suffix = labelSuffix)
-		return(list(p1, p2))
-	}
 }
 
 # ===========================
@@ -2037,9 +1930,8 @@ umxSingleIndicators <- function(manifests, data, labelSuffix = "", verbose = TRU
 #' @param hint currently used for "left_censored" data (defaults to "none"))
 #' @return - thresholds matrix
 #' @export
-#' @family Miscellaneous Functions
-#' @seealso - \code{\link{umxOrdinalObjective}}
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @family Model Building Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")
 #' umxThresholdMatrix(x)
@@ -2369,74 +2261,9 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	}
 }
 
-# nls is too fragile...
-# tmp = data.frame(zValues = zValues)
-# tmp$x = c(1:length(zValues))
-# fit <- nls(zValues ~ theta1/(1 + exp(-(theta2 + theta3*x))), start=list(theta1 = 4, theta2 = 0.09, theta3 = 0.31), data =tmp)
-# zValues = predict(fit)
-# http://stats.stackexchange.com/questions/74544/fitting-a-sigmoid-function-why-is-my-fit-so-bad
-# tryCatch({
-# 	# job here is just to interpolate empty cell frequencies..
-# }, warning = function(cond) {
-#     # warning-handler-code
-#     umx_msg(thisVarName)
-# 	        umx_msg(zValues)
-# 	message(cond)
-# }, error = function(cond) {
-#     umx_msg(thisVarName)
-# 	        umx_msg(zValues)
-# 	        message(cond)
-# }, finally = {
-#     # cleanup-code
-# })
-
-# This approach would work differently from the start...
-# co = coef(fitdistr(thisCol[!is.na(thisCol)], "normal"))
-# dnorm(1:(nThreshThisVar+1), co["mean"], co["sd"]))
-
-
-#' umxOrdinalObjective
-#'
-#' High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. I think
-#' I will deprecate this, as it does too little and hides too much to be worth supporting...
-#'
-#' When modeling ordinal data (sex, low-med-hi, depressed/normal, not at all, rarely, often, always),
-#' a useful conceptual strategy to handle expectations
-#' is to build a standard-normal model (i.e., a latent model with zero-means, and unit (1.0) variances),
-#' and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
-#' is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
-#' this threshold (1-minus the number of categories).
-#'
-#' @param df the data being modelled (to allow access to the factor levels and quantiles within these for each variable)
-#' @param suffixes e.g. c("T1", "T2") - Use for data with repeated observations in a row (i.e., twin data) (defaults to NA)
-#' @param covName is the name of the expected-covariance matrix (Defaults to "expCov")
-#' @param meansName is the name of the expected-means matrix (Defaults to "expMeans") 
-#' @param threshMatName = "threshMat"
-#' @param vector = FALSE
-#' @param deviationBased Whether to build a helper matrix to keep the thresholds in order (defaults to = FALSE)
-#' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
-#' @param verbose (defaults to FALSE))
-#' @return - list of thresh matrix, fit function, and expectation.
-#' @export
-#' @family Model Building Functions
-#' @family umx deprecated
-#' @seealso - \code{\link{umxThresholdMatrix}}
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' \dontrun{
-#' umxOrdinalObjective(df, suffixes = c("_T1", "_T2"))
-#' }
-umxOrdinalObjective <- function(df, suffixes = NA, covName = "expCov", meansName = "expMean", threshMatName = "threshMat", vector = FALSE, deviationBased = FALSE, droplevels = FALSE,  verbose = FALSE){
-	threshMat = umxThresholdMatrix(df, suffixes = suffixes, threshMatName = threshMatName, deviationBased = deviationBased, droplevels = droplevels, verbose = verbose)
-	expect    = mxExpectationNormal(covariance = covName, means = meansName, dimnames = nameList, thresholds = threshMatName)
-	fit       = mxFitFunctionML(vector = vector)
-	list(threshMat, expect, fit)
-}
-
 # ===========
 # = Utility =
 # ===========
-
 
 umxCheck <- function(fit1){
 	# are all the manifests in paths?
@@ -2634,7 +2461,8 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 				if(length(umx_explode("<->", aPath))==3){
 					# bivariate
 					parts = umx_explode("<->", aPath)
-					mxpath(from = umx_trim(parts[1]))
+					# not finished, obviously...
+					mxPath(from = umx_trim(parts[1]))
 				} else if(length(umx_explode("->", aPath))==3){
 					# from to
 				} else if(length(umx_explode("<-", aPath))==3){
@@ -2793,13 +2621,11 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		free = FALSE
 		values = fixedAt
 	}
-
 	# Handle freeAt
 	if(!is.null(freeAt)){
 		free = TRUE
 		values = freeAt
 	}
-
 	# TODO check incoming value of connect
 	# if(!connect == "single"){
 	# 	message("Connect should be single, it was:", connect)
@@ -2807,87 +2633,6 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound)
 }
 
-
-umxMatrix <- function(type = "Full", rc= NULL, fixedAt = NULL,
-	nrow = NA, ncol = NA, free = FALSE, 
-	values = NA, labels = "auto", 
-	lbound = NA, ubound = NA, 
-	byrow = getOption('mxByrow'), 
-	dimnames = NA, name = NA) {
-	if(!is.null(rc)){
-		if(!length(rc)==2){
-			stop("rc must be a collection of two numbers, i.e., rc = c(3,4)")
-		} else if(any(!is.na(list(nrow, ncol)))){
-			stop("if you set rc, nrow and ncol must be left empty")		
-		}
-		nrow = rc[1]
-		ncol = rc[2]
-	} else {
-		alt.expr
-	}
-
-	if(!is.null(fixedAt)){
-		if(!is.na(values)){
-			stop("if you set fixedAt, values must be left empty")
-		}
-		free   = FALSE
-		values = fixedAt
-	}
-
-	if(labels == "auto"){
-		m = mxMatrix(type = "Full", nrow = nrow, ncol = ncol, free = free, values = values, labels = NA, lbound = lbound, ubound = ubound, byrow = getOption('mxByrow'), dimnames = dimnames, name = name)
-		m = umxLabel(m)
-	} else{
-		m = mxMatrix(type = "Full", nrow = nrow, ncol = ncol, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound, byrow = getOption('mxByrow'), dimnames = dimnames, name = name)
-	}
-	return(m)
-}
-
-# nCov = 3
-# umxMatrix(name = "covsT1", rc = c(1, nCov), fixedAt = , labels = data.cov.T1)
-# umxMatrix(name = "covsT2", rc = c(1, nCov), values = 1)
-
-# devtools::document("~/bin/umx")     ; devtools::install("~/bin/umx");
-
-
-#' umx_add_std
-#'
-#' Add algebras to a RAM model so that it can report CIs on standardized paths.
-#' If you just want standardized paths, or SEs on these, call \link[OpenMx]{mxStandardizeRAMpaths}
-#'
-#' @param model an \code{\link{mxModel}} to add standardization algebra to
-#' @param addCIs whether to also add the mxCI calls to use these standardization matrices.
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @family Model Building Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
-#' @examples
-#' \dontrun{
-#' model = umx_add_std(model)
-#' }
-umx_add_std <- function(model, addCIs = TRUE) {
-	if(!umx_is_RAM(model)){
-		stop("umx_add_std only works on RAM models at present")
-	}
-	nVar = dim(model@matrices$A)[[1]]
-	dnames = dimnames(a1@matrices$S@labels)
-	model <- mxModel(model,
-		mxMatrix( name = "I", type = "Iden", nrow = nVar, ncol = nVar),
-		mxMatrix( name = "unitColumn", type = "Unit", nrow = nVar, ncol = 1),
-		mxAlgebra(name = "IA", solve(I - A)),
-		mxAlgebra(name = "expCov", IA %&% S),
-		# mxAlgebra(name = "invSDs", vec2diag(1/sqrt(diag2vec(expCov))) ),
-		mxAlgebra(name = "invSDs", vec2diag(unitColumn/sqrt(diag2vec(expCov))) ),
-		mxAlgebra(name = "stdA"  , invSDs %*% A %*% solve(invSDs), dimnames = dnames),
-		mxAlgebra(name = "stdS"  , invSDs %*% S %*% invSDs, dimnames = dnames)
-	)
-	if(addCIs){
-		freeA = umx_get_bracket_addresses(model@matrices$A, free= TRUE, newName = "stdA")
-		freeS = umx_get_bracket_addresses(model@matrices$S, free= TRUE, newName = "stdS")
-		model = mxModel(model, mxCI(c(freeS, freeA)) )
-	}
-	return(model)
-}
 # =====================================
 # = Parallel helpers to be added here =
 # =====================================
@@ -2899,36 +2644,38 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #'
 #' All the functions have explanatory examples, so use the help, even if you think it won't help :-)
 #' Have a look, for example at \code{\link{umxRun}}
-#' There's also a working example below and in demo(umx)
+#' 
+#' There are working examples below and in demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
-#' umx lives on github at present \url{http://github.com/tbates/umx}
+#' The development version of umx is github \url{http://github.com/tbates/umx}
 #' 
 #' There is a helpful blog at \url{http://tbates.github.io}
 #' 
-#' To install:
+#' To install from github, you need:
 #' install.packages("devtools")
 #' library("devtools")
-#' 
 #' install_github("tbates/umx")
 #' library("umx")
 #' 
 #' @family Model Building Functions
 #' @family Reporting Functions
 #' @family Model Updating and Comparison
-#' @family Advanced Helpers
 #' @family Miscellaneous Functions
+#' @family Miscellaneous Data Functions
 #' @family Miscellaneous Utility Functions
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @family Twin Modeling Functions
 #' @family Twin Reporting Functions
-#' @family umx deprecated
+#' @family Advanced Helpers
+#' @family Miscellaneous File Functions
 #' @references - \url{"http://www.github.com/tbates/umx"}
 #' 
 #' @examples
 #' require("OpenMx")
 #' require("umx")
 #' data(demoOneFactor)
+#' myData = mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
 #' latents = c("G")
 #' manifests = names(demoOneFactor)
 #' m1 <- mxModel("One Factor", type = "RAM",
@@ -2937,7 +2684,7 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
 #' 	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
+#' 	myData
 #' )
 #' 
 #' omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
@@ -2947,6 +2694,8 @@ umx_add_std <- function(model, addCIs = TRUE) {
 #' # sensible guesses for start values...
 #' m1 = umxLabel(m1)  
 #' m1 = umxValues(m1)  
+#'
+#' # nb: ?mxRAM simplifies model making in several ways. Check it out!
 #' 
 #' # Re-run omxGetParameters...
 #' omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts

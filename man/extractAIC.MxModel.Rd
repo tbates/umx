@@ -2,12 +2,18 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{extractAIC.MxModel}
 \alias{extractAIC.MxModel}
-\title{extractAIC.MxModel}
+\title{extractAIC from MxModel}
 \usage{
-\method{extractAIC}{MxModel}(model)
+\method{extractAIC}{MxModel}(fit, scale, k, ...)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to get the AIC from}
+\item{fit}{an fitted \code{\link{mxModel}} from which to get the AIC}
+
+\item{scale}{not used}
+
+\item{k}{not used}
+
+\item{...}{any other parameters (not used)}
 }
 \value{
 - AIC value
@@ -43,17 +49,15 @@ AIC(m1)
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
   \code{\link{coef.MxModel}};
-  \code{\link{confint.MxModel}}, \code{\link{umxConfint}};
+  \code{\link{confint.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
   \code{\link{umxPlot}}; \code{\link{plot}},
   \code{\link{plot.MxModel.ACE}}, \code{\link{umxPlotACE}};
   \code{\link{residuals.MxModel}};
   \code{\link{umxCI_boot}}; \code{\link{umxCI}};
-  \code{\link{umxCompare}}; \code{\link{umxDescriptives}};
-  \code{\link{umxExpCov}}; \code{\link{umxExpMeans}};
-  \code{\link{umxFitIndices}}; \code{\link{umxSaturated}};
+  \code{\link{umxCompare}}; \code{\link{umxExpCov}};
+  \code{\link{umxExpMeans}}; \code{\link{umxFitIndices}};
   \code{\link{umxStandardizeModel}};
-  \code{\link{umxSummary}},
   \code{\link{umxSummary.MxModel}};
   \code{\link{umx_drop_ok}}
 }

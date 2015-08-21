@@ -18,13 +18,16 @@ umx_time(model, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
 - invisible time string
 }
 \description{
-A function to compactly report how long a model took to execute. User can set the format, with some
-preset styles, or c-style string formatting.
+A function to compactly report how long a model took to execute. Comes with some preset styles
+User can set the format with C-style string formatting.
 }
 \details{
 The default is "simple", which gives only the biggest unit used. i.e., "x seconds" for times under 1 minute.
 "std" shows time in the format adopted in OpenMx 2.0 e.g. "Wall clock time (HH:MM:SS.hh): 00:00:01.16"
+
 If a list of models is provided, time deltas will also be reported.
+
+If the model hasn't been run, this function will run it for you.
 }
 \examples{
 require(OpenMx)
@@ -47,12 +50,10 @@ umx_time(c(m1, m2))
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{summary}}, \code{\link{umxRun}}
-
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_aggregate}}; \code{\link{umx_print}};
-  \code{\link{umx_report_Anova}}; \code{\link{umx_show}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umx_show}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

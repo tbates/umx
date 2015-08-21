@@ -1,6 +1,6 @@
 Package: umx
-Version: 1.00
-Date: 2015-03-23
+Version: 0.50
+Date: 2015-08-23
 Title: umx
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))
@@ -9,16 +9,22 @@ Maintainer: Who to complain to <timothy.c.bates@gmail.com>
 License: GPL-3
 URL: http://github.com/tbates/umx
 Description: A library of Helper functions for OpenMx.
-    If you are just starting, try typing ?umx
+    If you are just starting, try typing ?umx.
 Depends:
     R (>= 3.0.3),
-    OpenMx (>= 2.2.0),
-    R2HTML,
+	OpenMx (>= 2.2.0)
+Imports:
 	formula.tools,
-	polycor,
+    MASS,
+	Matrix,
+	methods,
 	mvtnorm,
-    knitr
+	polycor,
+	psych,
+    R2HTML,
+	RCurl
 Suggests:
+    knitr
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 VignetteBuilder: knitr

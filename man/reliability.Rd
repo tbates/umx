@@ -25,9 +25,9 @@ reliability(cov(mtcars))
 \seealso{
 - \code{\link{cov}}
 
-Other Miscellaneous Stats Helpers: \code{\link{Stouffer.test}};
-  \code{\link{umxCov2cor}}; \code{\link{umx_means}};
-  \code{\link{umx_pp33}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+Other Miscellaneous Stats Functions: \code{\link{Stouffer.test}};
+  \code{\link{umxCov2cor}}; \code{\link{umx_cor}};
+  \code{\link{umx_means}}; \code{\link{umx_pp33}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

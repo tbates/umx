@@ -1,19 +1,11 @@
-# http://adv-r.had.co.nz/Philosophy.html
-# https://github.com/hadley/devtools
-# setwd("~/bin/umx"); devtools::document(); devtools::install();
-# setwd("~/bin/umx"); devtools::check()
-# devtools::load_all()
-# devtools::dev_help("umxX")
-# show_news()
-
 # ==================
 # = Model Builders =
 # ==================
-#' umxCFA
+#' umxEFA
 #'
-#' A helper for CFA that only requires you to enter your latents and manifests
+#' A helper for EFA that only requires you to enter your latents and manifests
 #'
-#' @param name the name for your new CFA model
+#' @param name the name for your new EFA model
 #' @param latents List of factors in your CFA
 #' @param data The dataframe of manifest columns you are modeling
 #' @param report What to report
@@ -24,11 +16,10 @@
 #' @references - \url{http://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' umxCFA("test", "g", mtcars)
+#' umxEFA("test", latents = "g", data = mtcars[, c("mpg", "disp", "hp", "wt")])
 #' }
 
-umxCFA <- function(name = "", latents, data, report = c("table", "line", "long")){
-	# umxCFA(name="myFirstCFA", latents="g", data = myFAdata)
+umxEFA <- function(name = "", latents, data, report = c("table", "line", "long")){
 	manifests <- names(data)
 	m1 <- mxModel(name, type = "RAM",
 		manifestVars = manifests,
@@ -40,6 +31,6 @@ umxCFA <- function(name = "", latents, data, report = c("table", "line", "long")
 		mxData(cov(data), type="cov", numObs = nrow(data))
 	)
 	m1 = mxRun(m1);
-	umxSummary(m1, report = report);
+	umxSummary(m1, show = "std", report = report);
 	invisible(m1)
 }

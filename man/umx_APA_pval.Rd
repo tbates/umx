@@ -7,19 +7,19 @@
 umx_APA_pval(p, min = 0.001, rounding = 3, addComparison = NA)
 }
 \arguments{
-\item{p}{A p-value to round}
+\item{p}{The p-value to round}
 
-\item{min}{Threshold to say < min}
+\item{min}{Values below min reported as "< min"}
 
-\item{rounding}{Number of decimal to round to}
+\item{rounding}{Number of decimal to which to round}
 
-\item{addComparison}{Whether to return the bare number, or to add the appropriate comparison symbol (= <)}
+\item{addComparison}{Whether to add '=' '<' etc. (NA adds when needed)}
 }
 \value{
-- a value
+- formatted p-value
 }
 \description{
-round a p value so you get < .001 instead of .000000002 or .134E-16
+round a p value so you get < .001 instead of .000000002 or 1.00E-09
 }
 \examples{
 umx_APA_pval(.052347)
@@ -33,7 +33,6 @@ umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 
 Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umxThresholdMatrix}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};
@@ -68,8 +67,8 @@ Other Miscellaneous Functions: \code{\link{demand}};
 
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_CI}}; \code{\link{umx_aggregate}};
-  \code{\link{umx_print}}; \code{\link{umx_report_Anova}};
-  \code{\link{umx_show}}; \code{\link{umx_time}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umx_print}}; \code{\link{umx_show}};
+  \code{\link{umx_time}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

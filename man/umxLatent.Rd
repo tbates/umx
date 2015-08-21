@@ -5,7 +5,7 @@
 \title{umxLatent}
 \usage{
 umxLatent(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
-  type = NULL, model.name = NULL, labelSuffix = "", verbose = TRUE,
+  type = NULL, name = NULL, labelSuffix = "", verbose = TRUE,
   endogenous = "deprecated")
 }
 \arguments{
@@ -19,11 +19,11 @@ umxLatent(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 
 \item{type}{= \"exogenous|endogenous\"}
 
-\item{model.name}{= NULL}
+\item{name}{A name for the path NULL}
 
-\item{labelSuffix}{a string to add to the end of each label}
+\item{labelSuffix}{a suffix string to append to each label}
 
-\item{verbose}{= T}
+\item{verbose}{Default is TRUE as this function does quite a lot}
 
 \item{endogenous}{This is now deprecated. use type= \"exogenous|endogenous\"}
 }
@@ -56,7 +56,7 @@ m1 = mxModel("reflective", type = "RAM",
 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 )
 m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE); umxSummary(m1, show="std")
-umxPlot(m1)
+plot(m1)
 
 m2 = mxModel("formative", type = "RAM",
 	manifestVars = manifests,
@@ -65,8 +65,9 @@ m2 = mxModel("formative", type = "RAM",
 	umxLatent("G", formedBy = manifests, data = theData),
 	mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
 )
-m2 = umxRun(m2, setValues = TRUE, setLabels = TRUE); umxSummary(m2, show="std")
-umxPlot(m2)
+m2 = umxRun(m2, setValues = TRUE, setLabels = TRUE);
+umxSummary(m2, show = "std")
+plot(m2)
 }
 }
 \references{
@@ -74,10 +75,10 @@ umxPlot(m2)
 }
 \seealso{
 Other Model Building Functions: \code{\link{umxLabel}};
-  \code{\link{umxOrdinalObjective}}; \code{\link{umxPath}};
-  \code{\link{umxRAM}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxValues}};
-  \code{\link{umx_add_std}};
+  \code{\link{umxPath}}; \code{\link{umxRAM}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxThresholdMatrix}};
+  \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}; \code{\link{umx}},
   \code{\link{umx-package}}

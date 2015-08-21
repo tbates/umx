@@ -9,9 +9,12 @@
 \alias{umx-deprecated}
 \alias{umxReportCIs}
 \alias{umxReportFit}
+\alias{umxSaturated}
 \alias{umxStart}
 \title{Deprecated. May already stop() code and ask to be updated. May be dropped entirely in future.}
 \usage{
+umxSaturated(...)
+
 grepSPSS_labels(...)
 
 umxStart(...)
@@ -34,6 +37,8 @@ umxReportCIs(...)
 \item{...}{the old function's parameters (now stripped out to avoid telling people how to do it the wrong way :-)}
 }
 \description{
+umxSaturated should be replaced with \code{\link{mxRefModels}}
+
 umx_grep_labels should be replaced with \code{\link{umx_grep}}
 
 grepSPSS_labels should be replaced with \code{\link{umx_grep}}
@@ -94,9 +99,5 @@ Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
-}
-\seealso{
-Other umx deprecated: \code{\link{umxOrdinalObjective}};
-  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

@@ -157,10 +157,10 @@ umxSummary(m1, show = "std")
 - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
 
 Other Model Building Functions: \code{\link{umxLabel}};
-  \code{\link{umxLatent}};
-  \code{\link{umxOrdinalObjective}}; \code{\link{umxRAM}};
+  \code{\link{umxLatent}}; \code{\link{umxRAM}};
   \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxValues}}; \code{\link{umx_add_std}};
+  \code{\link{umxThresholdMatrix}};
+  \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}; \code{\link{umx}},
   \code{\link{umx-package}}

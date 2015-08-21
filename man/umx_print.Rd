@@ -44,7 +44,6 @@ umx_print(mtcars[1:10,], file = "Rout.html")
 
 Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umxThresholdMatrix}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
@@ -80,8 +79,7 @@ Other Miscellaneous Functions: \code{\link{demand}};
 
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
-  \code{\link{umx_aggregate}};
-  \code{\link{umx_report_Anova}}; \code{\link{umx_show}};
+  \code{\link{umx_aggregate}}; \code{\link{umx_show}};
   \code{\link{umx_time}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }

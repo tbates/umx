@@ -20,7 +20,7 @@ umx_APA_CI(b, se, digits = 3)
 Given an lm, will return a nicely-formated effect including 95\% CI
 in square brackets, for one of the effects (specified by name in se). e.g.:
 
-umx_APA_CI(m1, "wt")
+\code{\link{umx_APA_CI}}(m1, "wt")
 \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 
 Given b and se will return a CI based on 1.96 times the se.
@@ -36,8 +36,8 @@ umx_APA_CI(.4, .3)
 \seealso{
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
-  \code{\link{umx_print}}; \code{\link{umx_report_Anova}};
-  \code{\link{umx_show}}; \code{\link{umx_time}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umx_print}}; \code{\link{umx_show}};
+  \code{\link{umx_time}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

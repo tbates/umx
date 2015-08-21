@@ -53,17 +53,15 @@ m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
 m2 = mxRun(m2) # have to run the model again...
 umxCompare(m1, m2) # not good :-)
-umxSummary(m1, m2) # not good :-)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Model Updating and Comparison: \code{\link{parameters}},
+Other Modify or Compare Models: \code{\link{parameters}},
   \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxFixAll}};
   \code{\link{umxMI}}; \code{\link{umxSetParameters}};
-  \code{\link{umxUnexplainedCausalNexus}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+  \code{\link{umxUnexplainedCausalNexus}}
 }
 
