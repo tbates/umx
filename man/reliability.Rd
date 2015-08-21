@@ -20,14 +20,13 @@ Compute and report Coefficient alpha
 reliability(cov(mtcars))
 }
 \references{
-- \url{http://Rcmdr}
+- \url{https://cran.r-project.org/package=Rcmdr}
 }
 \seealso{
 - \code{\link{cov}}
 
-Other Miscellaneous Stats Functions: \code{\link{Stouffer.test}};
-  \code{\link{umxCov2cor}}; \code{\link{umx_cor}};
-  \code{\link{umx_means}}; \code{\link{umx_pp33}};
+Other Miscellaneous Stats Functions: \code{\link{umxCov2cor}};
+  \code{\link{umx_cor}}; \code{\link{umx_means}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }
 

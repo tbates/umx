@@ -1355,7 +1355,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 	# model@submodels$MZ@matrices
 	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
-	} else if(is(inputTarget, "MxMatrix")) {
+	} else if(methods::is(inputTarget, "MxMatrix")) {
 		if(is.na(free)) {
 			topLabels = inputTarget@labels
 		} else {
@@ -2741,4 +2741,3 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @docType package
 #' @name umx
 NULL
-

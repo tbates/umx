@@ -1220,7 +1220,7 @@ specify_decimal <- function(x, k){
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @seealso - \code{\link{cov}}
-#' @references - \url{http://Rcmdr}
+#' @references - \url{https://cran.r-project.org/package=Rcmdr}
 #' @examples
 #' # treat vehicle aspects as items of a test
 #' reliability(cov(mtcars))
@@ -1375,100 +1375,6 @@ umx_merge_CIs <- function(m1, m2) {
 # =====================
 
 
-#' Stouffer.test
-#'
-#' Runs a Stouffer.test
-#'
-#' @param p A list of p values, i.e., p(.4, .3, .6, .01)
-#' @family Miscellaneous Stats Functions
-#' @seealso - 
-#' @references - \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
-#' Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, 
-#' and Robin M. Williams, Jr. (1949). Studies in Social Psychology in World War II: 
-#' The American Soldier. Vol. 1, Adjustment During Army Life. Princeton: Princeton University Press.
-#' 
-#' Bailey TL, Gribskov M (1998). Combining evidence using p-values: application to sequence
-#' homology searches. Bioinformatics, 14(1) 48-54.
-#' Fisher RA (1925). Statistical methods for research workers (13th edition). London: Oliver and Boyd.
-#' Manolov R and Solanas A (2012). Assigning and combining probabilities in single-case studies.
-#' Psychological Methods 17(4) 495-509. Describes various methods for combining p-values including
-#' Stouffer and Fisher and the binomial test.
-#' \url{http://www.burns-stat.com/pages/Working/perfmeasrandport.pdf}
-#' @export
-#' @examples
-#' Stouffer.test(p = c(.01, .2, .3))
-
-Stouffer.test <- function(p = NULL) {
-	pl <- length(p)
-	if (is.null(p) | pl < 2) {
-		stop("There was an empty array of p-values")
-	}
-	erf <- function(x) {
-		2 * pnorm(2 * x/ sqrt(2)) - 1
-	}
-	erfinv <- function(x) {
-		qnorm( (x + 1) / 2 ) / sqrt(2)
-	}
-	pcomb <- function(p) {
-		(1 - erf(sum(sqrt(2) * erfinv(1 - 2 * p)) / sqrt(2 * length(p))))/2
-	}
-	pcomb(p)
-}
-
-# Test differences in Kurtosis and Skewness
-kurtosisDiff <- function(x, y, B = 1000){
-	# depends on psych for kurtosi
-	kx <- replicate(B, psych::kurtosi(sample(x, replace = TRUE)))
-	ky <- replicate(B, psych::kurtosi(sample(y, replace = TRUE)))
-	return(kx - ky)	
-}
-# Skew
-skewnessDiff<- function(x, y, B = 1000){
-	# requires psych for skew
-	sx <- replicate(B, psych::skew(sample(x, replace = TRUE)))
-	sy <- replicate(B, psych::skew(sample(y, replace = TRUE)))
-	return(sx - sy)	
-}
-
-#' @title umx_pp33
-#' @description
-#' A utility function to compute the critical value of student (xc) that
-#' gives p = .05 when df = df_xc = qt(p = .975, df = target_df)
-#' 
-#' @details
-#' Find noncentrality parameter (ncp) that leads 33% power to obtain xc
-#' The original is published at p-curve
-#' \url{http://www.p-curve.com/Supplement/R/pp33.r} 
-#' 
-#' Find noncentrality parameter (ncp) that leads 33% power to obtain xc
-#'
-#' @param target_df the... TODO
-#' @param x the... TODO
-#' @return - value
-#' @family Miscellaneous Stats Functions
-#' @export
-#' @seealso - \code{\link{pnorm}}
-#' @references - \url{http://www.p-curve.com/Supplement/R/pp33.r}
-#' @examples
-#' # To find the pp-value for 33% power for a t(38)=2.4, execute 
-#' umx_pp33(target_df = 38, x = 2.4)
-
-umx_pp33 <- function(target_df, x) {
-	f <- function(delta, pr, x, df){
-		pt(x, df = df, ncp = delta) - pr
-	}
-	# Find critical value of student (xc) that gives p=.05 when df = target_df
-	xc = qt(p = .975, df = target_df)		
-	# Find noncentrality parameter (ncp) that leads 33% power to obtain xc
-	out <- uniroot(f, c(0, 37.62), pr =2/3, x = xc, df = target_df)	
-	ncp_ = out$root	
-	# Find probability of getting x_ or larger given ncp
-	p_larger = pt(x, df = target_df, ncp = ncp_)
-	# Condition on p < .05 (i.e., get pp-value)
-	pp = 3 * (p_larger - 2/3)
-	# Print results
-	return(pp)
-}
 
 #' umxCovData
 #'
@@ -2856,27 +2762,6 @@ umx_rot <- function(vec){
 	vec[ind]
 } 
 
-#' demand a package
-#'
-#' This loads the package, installing it if needed
-#'
-#' @param package The package name as a string.
-#' @export
-#' @family Miscellaneous Functions
-#' @references - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}
-#' @examples
-#' \dontrun{
-#' demand("numDeriv")
-#' }
-demand <- function(package) {
-	if(FALSE == package %in% rownames(installed.packages() ) ) {
-		m <- getCRANmirrors(all = FALSE, local.only = FALSE)
-		URL <- m[grepl("Cloud",m$Name),"URL"][1] # get the first repos with "cloud" in the name
-		install.packages(package, repos = URL)
-	}
-	library(package = package, character.only = TRUE)
-}
-
 
 # =================================
 # = Data: Read, Prep, Clean, Fake =
@@ -3545,8 +3430,6 @@ umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 		stop("free must be one of NA TRUE or FALSE")	
 	}
 }
-
-
 
 # Poems you should know by heart
 # https://en.wikipedia.org/wiki/O_Captain!_My_Captain!

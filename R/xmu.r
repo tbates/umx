@@ -483,7 +483,7 @@ xmuMI <- function(model, vector = TRUE) {
 	# http://openmx.psyc.virginia.edu/sites/default/files/mi-new.r
 	steps <- 5
 	bar <- txtProgressBar (min=0, max=steps, style=3)
-    setTxtProgressBar(bar, 1)
+    utils::setTxtProgressBar(bar, 1)
 	accumulate <- function(A, B, C, D, d) {
 		res <- matrix(0, d^2, d^2)    
 		for (ii in 1:(d^2)){
@@ -533,11 +533,11 @@ xmuMI <- function(model, vector = TRUE) {
 	grad   <- c(grad.A, grad.P) * NM
 	names(grad) <- parNames
 	dF.dBdB <- accumulate(AA %*% Cinv %*% t(AA), t(BB) %*% Cinv %*% BB, AA %*% Cinv %*% BB, t(BB) %*% Cinv %*% t(AA), m)
-    setTxtProgressBar(bar, 2)
+    utils::setTxtProgressBar(bar, 2)
 	dF.dPdP <- accumulate(AA %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), m)
-    setTxtProgressBar(bar, 3)
+    utils::setTxtProgressBar(bar, 3)
 	dF.dBdP <- accumulate.asym(AA %*% Cinv %*% t(AA), t(BB) %*% Cinv %*% t(AA), AA %*% Cinv %*% t(AA), t(BB) %*% Cinv %*% t(AA), m)
-    setTxtProgressBar(bar, 4)
+    utils::setTxtProgressBar(bar, 4)
 	correct.BB <- correct.PP <- correct.BP <- matrix(1, m^2, m^2)
 	correct.BB[diag(m)==0, diag(m)==0] <- 2
 	correct.PP[diag(m)==1, diag(m)==1] <- 0.5
@@ -581,7 +581,7 @@ xmuMI <- function(model, vector = TRUE) {
 		par.P[model$S@free] <- NA
 		ret <- list(mod.A=mod.A, par.A=par.A, mod.S=mod.P, par.S=par.P)
 	}
-    setTxtProgressBar(bar, 5)
+    utils::setTxtProgressBar(bar, 5)
 	close(bar)
 	return(ret)
 }

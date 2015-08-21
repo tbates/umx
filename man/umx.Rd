@@ -112,9 +112,8 @@ Other Miscellaneous File Functions: \code{\link{dl_from_dropbox}};
   \code{\link{umx_move_file}}; \code{\link{umx_open}};
   \code{\link{umx_rename_file}}
 
-Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umx_APA_pval}};
+Other Miscellaneous Functions: \code{\link{umxEval}};
+  \code{\link{umxJiggle}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};
@@ -146,10 +145,9 @@ Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umx_string_to_algebra}};
   \code{\link{umx_trim}}
 
-Other Miscellaneous Stats Functions: \code{\link{Stouffer.test}};
-  \code{\link{reliability}}; \code{\link{umxCov2cor}};
-  \code{\link{umx_cor}}; \code{\link{umx_means}};
-  \code{\link{umx_pp33}}
+Other Miscellaneous Stats Functions: \code{\link{reliability}};
+  \code{\link{umxCov2cor}}; \code{\link{umx_cor}};
+  \code{\link{umx_means}}
 
 Other Miscellaneous Utility Functions: \code{\link{qm}};
   \code{\link{umx_check_OS}};

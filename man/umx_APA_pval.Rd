@@ -31,10 +31,9 @@ umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 \seealso{
 - \code{\link{round}}
 
-Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
-  \code{\link{umx_check_model}};
+Other Miscellaneous Functions: \code{\link{umxEval}};
+  \code{\link{umxJiggle}}; \code{\link{umx_add_variances}};
+  \code{\link{umx_apply}}; \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};
   \code{\link{umx_checkpoint}},
   \code{\link{umx_set_checkpoint}};
