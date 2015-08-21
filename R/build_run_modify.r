@@ -18,7 +18,6 @@
 #' @importFrom methods setClass
 methods::setClass("MxModel.ACE", contains = "MxModel")
 
-
 #' umxRAM
 #'
 #' Making it as simple as possible to create a RAM model, without doing invisible things to the user.
@@ -26,15 +25,15 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' @details Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
 #' \enumerate{
 #' \item{type defaults to "RAM"}
-#' \item{You don\U2019t need to list manifestVars (they are detected from path usage)}
-#' \item{You don\U2019t need to list latentVars (detected as anything in paths but not in \code{mxData})}
+#' \item{You don't need to list manifestVars (they are detected from path usage)}
+#' \item{You don't need to list latentVars (detected as anything in paths but not in \code{mxData})}
 #' \item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
 #' \item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
 #' }
 #'
 #' \strong{Comparison with other software}
 #' 
-#' Some software has massive behind-the-scenes defaulting and path addition. I\U2019ve played with some
+#' Some software has massive behind-the-scenes defaulting and path addition. I've played with some
 #' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 #' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
 #' and \code{fix = "firstLoadings"}
@@ -686,7 +685,6 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		# 5. Option to fix all (or all but the first 2??) thresholds for left-censored data.
         #   # TODO
 		# 		1. Simple experiment seeing if the results are similar for an ACE model of 1 variable
-		# 		✓. create interface: perhaps hint = "left_censored"		
 		# ===========================
 		# = Add means matrix to top =
 		# ===========================
@@ -1088,8 +1086,8 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE) {	
 	# TODO check that arguments not used by a particular class are not set away from their defaults
-	# TODO perhaps make "A_with_A" → "var_A"
-	# TODO perhaps make "one_to_x2" → "mean_x2" 
+	# TODO perhaps make "A_with_A" --> "var_A"
+	# TODO perhaps make "one_to_x2" --> "mean_x2" 
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
 		xmuLabel_Matrix(mx_matrix = obj, baseName = baseName, setfree = setfree, drop = drop, labelFixedCells = labelFixedCells, jiggle = jiggle, boundDiag = boundDiag, suffix = suffix, verbose = verbose, overRideExisting = overRideExisting)
