@@ -4,7 +4,7 @@
 \name{umx}
 \alias{umx}
 \alias{umx-package}
-\title{Helper functions for OpenMx}
+\title{Helper Functions for Structural Equation Modelling in OpenMx}
 \description{
 umx allows you to more easily build, run, modify, and report models using OpenMx
 with code. The core functions are linked below under \strong{See Also}
@@ -15,7 +15,7 @@ The functions are organized into families: Have a read of these below, click to 
 All the functions have explanatory examples, so use the help, even if you think it won't help :-)
 Have a look, for example at \code{\link{umxRAM}}
 
-An intorductory working examples is below. You can run all demos with demo(umx)
+Introductory working examples are below. You can run all demos with demo(umx)
 When I have a vignette, it will be: vignette("umx", package = "umx")
 
 The development version of umx is github \url{http://github.com/tbates/umx}
@@ -93,7 +93,7 @@ confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
 plot(m1, std = TRUE, dotFilename = NA)
 }
 \references{
-- \url{"http://www.github.com/tbates/umx"}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 Other Advanced Helpers: \code{\link{umx_RAM_ordinal_objective}}

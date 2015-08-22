@@ -2651,7 +2651,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 # = Parallel helpers to be added here =
 # =====================================
 
-#' Helper functions for OpenMx
+#' Helper Functions for Structural Equation Modelling in OpenMx
 #'
 #' umx allows you to more easily build, run, modify, and report models using OpenMx
 #' with code. The core functions are linked below under \strong{See Also}
@@ -2661,7 +2661,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' All the functions have explanatory examples, so use the help, even if you think it won't help :-)
 #' Have a look, for example at \code{\link{umxRAM}}
 #' 
-#' An intorductory working examples is below. You can run all demos with demo(umx)
+#' Introductory working examples are below. You can run all demos with demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
 #' The development version of umx is github \url{http://github.com/tbates/umx}
@@ -2685,7 +2685,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family Twin Reporting Functions
 #' @family Advanced Helpers
 #' @family Miscellaneous File Functions
-#' @references - \url{"http://www.github.com/tbates/umx"}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' 
 #' @examples
 #' require("OpenMx")

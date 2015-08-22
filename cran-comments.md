@@ -18,7 +18,7 @@ In this version I have addressed each request as follows:
    From: man/umx.Rd
    Message: Invalid URI scheme
 
-*Response*: This URL is valid. I added a trailing / 
+*Response*: Fixed (removed quotes)
 
 ## The Title field is just the package name: provide a real title.
 
