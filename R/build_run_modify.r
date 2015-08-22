@@ -12,11 +12,20 @@
 # =====================================================================================================
 # = Create a class for ACE models so we can subclass plot and umxSummary to handle them automagically =
 # =====================================================================================================
+
+#' @importFrom graphics plot
+#' @importFrom methods as getSlots is slotNames
+#' @importFrom stats C aggregate as.formula complete.cases
+#' @importFrom stats confint cor cov cov.wt cov2cor df lm
+#' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
+#' @importFrom stats qnorm quantile residuals rnorm runif sd
+#' @importFrom stats setNames var
+#' @importFrom utils combn data flush.console read.table txtProgressBar
+#' @importFrom numDeriv jacobian
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
-
-#' @importFrom numDeriv jacobian
 #' @importFrom methods setClass
+
 methods::setClass("MxModel.ACE", contains = "MxModel")
 
 #' umxRAM
@@ -2647,10 +2656,12 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' umx allows you to more easily build, run, modify, and report models using OpenMx
 #' with code. The core functions are linked below under \strong{See Also}
 #'
-#' All the functions have explanatory examples, so use the help, even if you think it won't help :-)
-#' Have a look, for example at \code{\link{umxRun}}
+#' The functions are organized into families: Have a read of these below, click to explore.
 #' 
-#' There are working examples below and in demo(umx)
+#' All the functions have explanatory examples, so use the help, even if you think it won't help :-)
+#' Have a look, for example at \code{\link{umxRAM}}
+#' 
+#' An intorductory working examples is below. You can run all demos with demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
 #' The development version of umx is github \url{http://github.com/tbates/umx}

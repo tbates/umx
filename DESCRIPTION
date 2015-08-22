@@ -1,7 +1,7 @@
 Package: umx
 Version: 0.50
 Date: 2015-08-23
-Title: umx
+Title: Helper functions for Structural Equation Modelling in OpenMx
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))
 Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
@@ -26,5 +26,4 @@ Suggests:
     knitr
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
-VignetteBuilder: knitr
 LazyData: true
