@@ -3,29 +3,12 @@ This is a resubmission (of a New submission).
 
 In this version I have addressed each request as follows:
 
-## Possibly mis-spelled words in DESCRIPTION:
- OpenMx (10:48)
- umx (4:8, 11:43)
-
-*Response*: These are correctly spelled package names.
-
-## Package has a VignetteBuilder field but no prebuilt vignette index.
-
-*Response*: removed VignetteBuilder field
-
-## Found the following (possibly) invalid URLs:
- URL: "http://www.github.com/tbates/umx"
-   From: man/umx.Rd
-   Message: Invalid URI scheme
-
-*Response*: Fixed (removed quotes)
-
-## The Title field is just the package name: provide a real title.
-
-*Response*: changed to "Helper functions for Structural Equation Modelling in OpenMx"
-
-## Undefined global functions or variables:
-I added 
+* Checked Possibly mis-spelled words in DESCRIPTION: OpenMx & umx
+ * These are correctly spelled package names.
+* Removed VignetteBuilder field
+* Corrected invalid URL "http://www.github.com/tbates/umx" (removed quotes)
+* Provided a real title: "Helper functions for Structural Equation Modelling in OpenMx"
+* Added 
  importFrom("graphics", "plot")
  importFrom("methods", "as", "getSlots", "is", "slotNames")
  importFrom("stats", "C", "aggregate", "as.formula", "complete.cases",
@@ -36,7 +19,7 @@ I added
  importFrom("utils", "combn", "data", "flush.console", "read.table",
             "txtProgressBar")
 
-My DESCRIPTION Imports field contains 'methods'
+* My DESCRIPTION Imports field contains 'methods'
 
 Best wishes, tim
 

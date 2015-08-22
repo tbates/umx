@@ -1765,7 +1765,11 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 		stop("Only one of binary.only ordinal.only and continuous.only can be TRUE")
 	}
 	if(!is.data.frame(df)){
-		stop("df argument to umx_is_ordered must be a dataframe. Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+		if(is.matrix(df)){
+			stop("df argument to umx_is_ordered must be a dataframe. You gave me a matrix")
+		} else {
+			stop("df argument to umx_is_ordered must be a dataframe. Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+		}
 	}
 	nVar = ncol(df);
 	# Which are ordered factors?
