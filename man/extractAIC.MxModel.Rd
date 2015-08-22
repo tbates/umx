@@ -41,7 +41,7 @@ extractAIC(m1)
 AIC(m1)
 }
 \references{
-- \url{https://github.com/tbates/umx/thread/931#comment-4858}
+- \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 }
 \seealso{
 - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}

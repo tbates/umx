@@ -1809,7 +1809,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @return - AIC value
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
 #' @family Reporting functions
-#' @references - \url{https://github.com/tbates/umx/thread/931#comment-4858}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)

@@ -18,6 +18,7 @@ Imports:
 	Matrix,
 	methods,
 	mvtnorm,
+	numDeriv,
 	polycor,
     R2HTML,
 	RCurl

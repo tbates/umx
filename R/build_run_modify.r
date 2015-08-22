@@ -15,6 +15,7 @@
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
 
+#' @importFrom numDeriv jacobian
 #' @importFrom methods setClass
 methods::setClass("MxModel.ACE", contains = "MxModel")
 
@@ -76,10 +77,10 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' 	umxPath(var = c("wt", "disp", "mpg"))
 #' )
 #' 
+#' \dontrun{
 #' # 5. Print a nice summary 
 #' umxSummary(m1, show = "std")
 #' 
-#' \dontrun{
 #' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' }

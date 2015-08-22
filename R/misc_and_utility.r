@@ -45,20 +45,7 @@ umx_check_multi_core <- function() {
 #' @family Miscellaneous Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
-#' library(OpenMx)
-#' manifests = c("mpg", "disp", "gear")
-#' oldOpt = umx_get_optimizer()
-#' m1 <- umxRAM("ind", data = mxData(mtcars[,manifests], type = "raw"),
-#' 	umxPath(var = manifests),
-#' 	umxPath(means = manifests)
-#' )
-#' umx_set_optimizer(opt = "CSOLNP")
-#' m2 = mxRun(mxModel(m1, name = "CSOLNP")); umx_time(m2)
-#' umx_set_optimizer(opt = "NPSOL")
-#' m3 = mxRun(mxModel(m1, name = "NPSOL")); umx_time(m3)
-#' # umx_set_optimizer(opt = "NLOPT")
-#' # m4 = mxRun(mxModel(m1, name = "NLOPT")); umx_time(m4)
-#' umx_set_optimizer(oldOpt)
+#' umx_get_optimizer() # current optimizer
 umx_get_optimizer <- function(model = NULL) {
 	if(is.null(model)){
 		mxOption(NULL, "Default optimizer")
@@ -79,25 +66,8 @@ umx_get_optimizer <- function(model = NULL) {
 #' @examples
 #' library(umx)
 #' old = umx_get_optimizer() # get the existing state
-#' umx_set_optimizer("NPSOL") # update globally
+#' umx_set_optimizer("SLSQP") # update globally
 #' umx_set_optimizer(old) # set back
-#' 
-#' manifests = c("mpg", "disp", "gear")
-#' oldOpt = umx_get_optimizer()
-#' m1 <- umxRAM("ind", data = mxData(mtcars[,manifests], type = "raw"),
-#' 	umxPath(var = manifests),
-#' 	umxPath(means = manifests)
-#' )
-#' umx_set_optimizer(opt = "NPSOL")
-#' m2 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m2)
-#' umx_set_optimizer(opt = "CSOLNP")
-#' m3 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m3)
-#' umx_set_optimizer(opt = "SLSQP")
-#' m4 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m4)
-#' umx_set_optimizer(oldOpt)
-#' \dontrun{
-#' m1@@runstate$compute$steps[1][[1]]$engine # NPSOL
-#' }
 umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
 	opt = umx_default_option(opt, c("NPSOL", "SLSQP", "CSOLNP"), check = FALSE)
 	if(!opt %in% mxAvailableOptimizers()){
