@@ -9,7 +9,7 @@ umx_paste_names(varNames, textConstant = "", suffixes)
 \arguments{
 \item{varNames}{a list of base names, e.g c("bmi", "IQ")}
 
-\item{textConstant}{The suffix added to all names, e.g. "_T" (the default)}
+\item{textConstant}{The suffix added to all names, e.g. "_T" (default is "")}
 
 \item{suffixes}{a list of terminal suffixes differentiating the var names (e.g c("1", "2"))}
 }

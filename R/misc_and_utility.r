@@ -1278,7 +1278,7 @@ umx_msg <- function(x) {
 #' Use textConstant to turning add a constant"E_T1", by adding "_T" and 1.
 #'
 #' @param varNames a list of base names, e.g c("bmi", "IQ")
-#' @param textConstant The suffix added to all names, e.g. "_T" (the default)
+#' @param textConstant The suffix added to all names, e.g. "_T" (default is "")
 #' @param suffixes a list of terminal suffixes differentiating the var names (e.g c("1", "2"))
 #' @return - vector of suffixed var names, i.e., c("a_T1", "b_T1", "a_T2", "b_T2")
 #' @export
