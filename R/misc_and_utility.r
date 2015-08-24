@@ -22,16 +22,17 @@
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' model = umx_check_multi_core(model)
+#' model = umx_check_multi_core()
 #' }
-umx_check_multi_core <- function() {
+umx_check_multi_core <- function(pathToDemos = "~/bin/OpenMx/inst/models/nightly/") {
 	# depends on parallel::detectCores
 	oldCores = umx_get_cores()
+	maxCores = parallel::detectCores()
 	message("You are using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means all)")
 	message("I will now set cores to max (they will be reset after) and run a script that hits multiple cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
-	umx_set_cores(parallel::detectCores())
-	source("~/bin/OpenMx/models/nightly/3LatentMultiRegWithContinuousModerator-c.R")
+	umx_set_cores(maxCores)
+	source(paste0(pathToDemos, "3LatentMultiRegWithContinuousModerator-c.R"))
 	umx_set_cores(oldCores)
 }
 
