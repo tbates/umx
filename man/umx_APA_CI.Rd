@@ -26,8 +26,7 @@ in square brackets, for one of the effects (specified by name in se). e.g.:
 Given b and se will return a CI based on 1.96 times the se.
 }
 \examples{
-m1 = lm(mpg ~ wt, mtcars)
-umx_APA_CI(m1, "wt")
+umx_APA_CI(lm(mpg ~ wt, mtcars), "wt")
 umx_APA_CI(.4, .3)
 }
 \references{

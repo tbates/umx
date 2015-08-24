@@ -2,7 +2,16 @@
 # = Not Typically used directly by users =
 # ========================================
 
-xmu_dot_make_residuals <- function(mxMat, style = NULL, showFixed = TRUE, digits = 2) {
+#' xmu_dot_make_residuals (not for end users)
+#'
+#'
+#' @param mxMat an MxMatrix
+#' @param showFixed to show fixed values or not
+#' @param digits how many digits to report
+#' @return - list of variance names and variances
+#' @export
+#' @family xmu internal not for end user
+xmu_dot_make_residuals <- function(mxMat, showFixed = TRUE, digits = 2) {
 	mxMat_vals   = mxMat$values
 	mxMat_free   = mxMat$free
 	mxMat_labels = mxMat$labels
@@ -31,6 +40,20 @@ xmu_dot_make_residuals <- function(mxMat, style = NULL, showFixed = TRUE, digits
 	return(list(varianceNames = varianceNames, variances = variances))
 }
 
+#' xmu_dot_make_paths (not for end users)
+#'
+#'
+#' @param mxMat an MxMatrix
+#' @param stringIn input string
+#' @param heads 1 or 2
+#' @param showFixed to show fixed values or not
+#' @param comment a comment to include
+#' @param showResiduals Whether to show residuals
+#' @param pathLabels labels
+#' @param digits how many digits to report
+#' @return - string
+#' @export
+#' @family xmu internal not for end user
 xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2) {
 	if(is.null(heads)){
 		stop("You must set 'heads' to 1 or 2 (was NULL)")
@@ -100,13 +123,16 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 #' This function will label all the free parameters in a (non-RAM) OpenMx \code{\link{mxModel}}
 #' nb: We don't assume what each matrix is for. Instead, the function just sticks labels like "a_r1c1" into each cell
 #' i.e., matrixname _ r rowNumber c colNumber
+#' 
+#' End users should just call \code{\link{umxLabel}}
+#' 
 #'
 #' @param model a matrix-style mxModel to label
 #' @param suffix a string to append to each label
 #' @param verbose how much feedback to give
 #' @return - The labeled \code{\link{mxModel}}
-#' @seealso - \code{\link{umxLabel}}
-#' @references - http://openmx.psyc.virginia.edu/
+#' @family xmu internal not for end user
+#' @export
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -133,9 +159,21 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 	return(model)
 }
 
+#' xmuLabel_RAM_Model (not a user function)
+#'
+#' This function will label all the free parameters in a RAM \code{\link{mxModel}}
+#' 
+#' End users should just call \code{\link{umxLabel}}
+#'
+#' @param model a RAM mxModel to label
+#' @param suffix a string to append to each label
+#' @param labelFixedCells Whether to labelFixedCells (Default TRUE)
+#' @param overRideExisting Whether to overRideExisting (Default FALSE)
+#' @param verbose how much feedback to give
+#' @return - The labeled \code{\link{mxModel}}
+#' @family xmu internal not for end user
+#' @export
 xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = FALSE) {
-	# Purpose: to label all the free parameters of a (RAM) model
-	# Use case: model = umxAddLabels(model, suffix = "_male")
 	# TODO implement overRideExisting !!!
 	if (!umx_is_RAM(model)) {
 		stop("'model' must be an OpenMx RAM Model")
@@ -202,17 +240,37 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	return(model)
 }
 
+#' xmuLabel_Matrix (not a user function)
+#'
+#' This function will label all the free parameters in an \code{\link{mxMatrix}}
+#' 
+#' End users should just call \code{\link{umxLabel}}
+#'
+#' Purpose: label the cells of an mxMatrix
+#' Detail: Defaults to the handy "matrixname_r1c1" where 1 is the row or column
+#' Use case: You should not use this: call umxLabel
+#' umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
+#' umx:::xmuLabel_Matrix(mxMatrix("Full" , 3, 3, values = 1, name = "a", byrow = TRUE));
+#' umx:::xmuLabel_Matrix(mxMatrix("Symm" , 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
+#' umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "data.a"));
+#' umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "data.a"), overRideExisting=TRUE);
+#' umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "test"), overRideExisting=TRUE);
+#' See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = FALSE, value = 0, name = "drop_a_row1_c1")
+#' 
+#' @param mx_matrix an mxMatrix
+#' @param baseName A base name for the labels NA
+#' @param setfree Whether to set free cells FALSE
+#' @param drop What values to drop 0
+#' @param jiggle = whether to jiggle start values
+#' @param boundDiag whether to add bounds to the diagonal
+#' @param suffix a string to append to each label
+#' @param verbose how much feedback to give
+#' @param labelFixedCells = FALSE
+#' @param overRideExisting Whether to overRideExisting (Default FALSE)
+#' @return - The labeled \code{\link{mxMatrix}}
+#' @family xmu internal not for end user
+#' @export
 xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = TRUE, labelFixedCells = FALSE, overRideExisting = FALSE) {
-	# Purpose: label the cells of an mxMatrix
-	# Detail: Defaults to the handy "matrixname_r1c1" where 1 is the row or column
-	# Use case: You shouldn't be using this: call umxLabel
-	# umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
-	# umx:::xmuLabel_Matrix(mxMatrix("Full" , 3, 3, values = 1, name = "a", byrow = TRUE));
-    # umx:::xmuLabel_Matrix(mxMatrix("Symm" , 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
-    # umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "data.a"));
-    # umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "data.a"), overRideExisting=TRUE);
-    # umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "test"), overRideExisting=TRUE);
-	# See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = FALSE, value = 0, name = "drop_a_row1_c1")
 	if (!is(mx_matrix, "MxMatrix")){ # label a mxMatrix
 		stop("I'm sorry Dave... xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want umxLabel()")
 	}
@@ -366,9 +424,7 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
 #' @param verbose how verbose to be
 #' @return - list of matrices
 #' @export
-#' @family 
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-#' @examples
+#' @family xmu internal not for end user
 xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	# TODO delete this function??
 	isOrdinalVariable = umx_is_ordered(df) 
@@ -423,13 +479,22 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 }
 
 
+#' Make start values
+#'
+#' Purpose: Create startvalues for OpenMx paths
+#' use cases
+#' umx:::xmuStart_value_list(1)
+#' umxValues(1) # 1 value, varying around 1, with sd of .1
+#' umxValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
+#' umxValues(100, 15)  # 1 start, with mean 100 and sd 15
+#'
+#' @param mean the mean start value
+#' @param sd the sd of values
+#' @param n how many to generate
+#' @return - start value list
+#' @export
+#' @family xmu internal not for end user
 xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
-	# Purpose: Create startvalues for OpenMx paths
-	# use cases
-    # umx:::xmuStart_value_list(1)
-	# umxValues(1) # 1 value, varying around 1, with sd of .1
-	# umxValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
-	# umxValues(100, 15)  # 1 start, with mean 100 and sd 15
 	# TODO: handle connection style
 	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
 	if(is.na(sd)){
@@ -450,7 +515,8 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' @param suffix a string to append to each label
 #' @param verbose whether to say what is being done
 #' @return - \code{\link{mxModel}}
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @export
+#' @family xmu internal not for end user
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -477,13 +543,8 @@ xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
 #'
 #' @param model an \code{\link{mxModel}} to derive modification indices for
 #' @param vector = Whether to report the results as a vector default = TRUE
-#' @seealso - \code{\link{umxMI}}, \code{\link{umxAdd1}}, \code{\link{umxDrop1}}, \code{\link{umxRun}}, \code{\link{umxSummary}}
-#' @references - 
-#' @examples
-#' \dontrun{
-#' xmuMI(model)
-#' }
-
+#' @family xmu internal not for end user
+#' @export
 xmuMI <- function(model, vector = TRUE) {
 	# modification indices
 	# v0.9: written Michael Culbertson
@@ -603,8 +664,7 @@ xmuMI <- function(model, vector = TRUE) {
 #' @param input an input to test
 #' @return - TRUE/FALSE
 #' @export
-#' @family umx non-user functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @family xmu internal not for end user
 #' @examples
 #' xmuHasSquareBrackets("A[1,2]")
 xmuHasSquareBrackets <- function (input) {
@@ -616,7 +676,15 @@ xmuHasSquareBrackets <- function (input) {
 # ===================================
 # = Ordinal/Threshold Model Helpers =
 # ===================================
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx"); 
+
+#' xmuMaxLevels
+#'
+#' Get the max levels from df
+#'
+#' @param df Dataframe to search through
+#' @return - max number of levels in frame
+#' @export
+#' @family xmu internal not for end user
 xmuMaxLevels <- function(df) {
 	isOrd = umx_is_ordered(df)
 	if(any(isOrd)){
@@ -633,6 +701,14 @@ xmuMaxLevels <- function(df) {
 	}
 }
 
+#' xmuMinLevels
+#'
+#' Get the min levels from df
+#'
+#' @param df Dataframe to search through
+#' @return - min number of levels in frame
+#' @export
+#' @family xmu internal not for end user
 xmuMinLevels <- function(df) {
 	isOrd = umx_is_ordered(df)
 	if(any(isOrd)){
@@ -653,6 +729,14 @@ xmuMinLevels <- function(df) {
 # = RAM helpers =
 # ===============
 
+#' xmuMakeTwoHeadedPathsFromPathList
+#'
+#' Make two-headed paths
+#'
+#' @param pathList A pathlist
+#' @return - added items
+#' @export
+#' @family xmu internal not for end user
 xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
 	a       = combn(pathList, 2)
 	nVar    = dim(a)[2]
@@ -672,6 +756,15 @@ xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
 	return(toAdd)
 }
 
+#' xmuMakeOneHeadedPathsFromPathList
+#'
+#' Make one-headed paths
+#'
+#' @param sourceList A sourceList
+#' @param destinationList A destinationList
+#' @return - added items
+#' @export
+#' @family xmu internal not for end user
 xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	toAdd   = rep(NA, length(sourceList) * length(destinationList))
 	n       = 1

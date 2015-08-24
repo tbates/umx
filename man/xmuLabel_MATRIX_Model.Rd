@@ -21,6 +21,9 @@ This function will label all the free parameters in a (non-RAM) OpenMx \code{\li
 nb: We don't assume what each matrix is for. Instead, the function just sticks labels like "a_r1c1" into each cell
 i.e., matrixname _ r rowNumber c colNumber
 }
+\details{
+End users should just call \code{\link{umxLabel}}
+}
 \examples{
 require(OpenMx)
 data(demoOneFactor)
@@ -37,10 +40,17 @@ m3 = umx:::xmuLabel_MATRIX_Model(m2)
 m4 = umx:::xmuLabel_MATRIX_Model(m2, suffix = "male")
 # explore these with omxGetParameters(m4)
 }
-\references{
-- http://openmx.psyc.virginia.edu/
-}
 \seealso{
-- \code{\link{umxLabel}}
+Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}};
+  \code{\link{xmuLabel_Matrix}};
+  \code{\link{xmuLabel_RAM_Model}}; \code{\link{xmuMI}};
+  \code{\link{xmuMakeDeviationThresholdsMatrices}};
+  \code{\link{xmuMakeOneHeadedPathsFromPathList}};
+  \code{\link{xmuMakeTwoHeadedPathsFromPathList}};
+  \code{\link{xmuMaxLevels}}; \code{\link{xmuMinLevels}};
+  \code{\link{xmuPropagateLabels}};
+  \code{\link{xmu_dot_make_paths}};
+  \code{\link{xmu_dot_make_residuals}};
+  \code{\link{xmu_start_value_list}}
 }
 

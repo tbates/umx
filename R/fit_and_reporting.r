@@ -1250,7 +1250,8 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	out = "";
 	out = xmu_dot_make_paths(mxMat = model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
 	out = xmu_dot_make_paths(mxMat = model@matrices$S, stringIn = out, heads = 2, showFixed = showFixed, pathLabels = pathLabels, comment = "Variances", digits = digits)
-	tmp = xmu_dot_make_residuals(model@matrices$S, style = NULL, showFixed = TRUE, digits = digits)
+	# TODO should xmu_dot_make_residuals handle showFixed or not necessary?
+	tmp = xmu_dot_make_residuals(model@matrices$S, style = NULL, digits = digits)
 	variances     = tmp$variances
 	varianceNames = tmp$varianceNames
 	# ============================
