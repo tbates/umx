@@ -2357,15 +2357,14 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' @family Reporting Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' m1 = lm(mpg ~ wt, mtcars)
-#' umx_APA_CI(m1, "wt")
+#' umx_APA_CI(lm(mpg ~ wt, mtcars), "wt")
 #' umx_APA_CI(.4, .3)
 umx_APA_CI <- function(b, se, digits = 3) {
 	if("lm" == class(b)){
 		conf    = confint(b)
 		lower   = conf[se, 1]
 		upper   = conf[se, 2]
-		model_coefficients = summary(m1)$coefficients
+		model_coefficients = summary(b)$coefficients
 		b_and_p = model_coefficients[se, ]
 		b       = b_and_p["Estimate"]
 		tval    = b_and_p["t value"]

@@ -356,10 +356,20 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
 	)
 }
 
-# TODO document xmuMakeDeviationThresholdsMatrices
+#' Make deviation threshold matrics
+#'
+#' Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
+#' usecase see: umxMakeThresholdMatrix
+#'
+#' @param df a dataframe
+#' @param droplevels whether to droplevels or not
+#' @param verbose how verbose to be
+#' @return - list of matrices
+#' @export
+#' @family 
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
 xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
-	# Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
-	# usecase see: umxMakeThresholdMatrix
 	# TODO delete this function??
 	isOrdinalVariable = umx_is_ordered(df) 
 	if(sum(isOrdinalVariable) == 0){

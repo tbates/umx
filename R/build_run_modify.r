@@ -393,8 +393,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		# = Insert the weights variable into dataframes as "weight" =
 		# ===========================================================
 		allData$weight = k/.399
-		mzData = subset(allData, ZYG == "MZ", c(selDVs, "weight"))
-		dzData = subset(allData, ZYG == "DZ", c(selDVs, "weight"))
+		mzData = allData[allData$ZYG == "MZ", c(selDVs, "weight")]
+		dzData = allData[allData$ZYG == "DZ", c(selDVs, "weight")]
 		if(weightCov){
 			mz.wt = cov.wt(mzData[, selDVs], mzData$weight)
 			dz.wt = cov.wt(dzData[, selDVs], dzData$weight)
