@@ -25,9 +25,8 @@ umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://www.php.net/}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umx_APA_pval}};
+Other Miscellaneous Functions: \code{\link{umxEval}};
+  \code{\link{umxJiggle}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};

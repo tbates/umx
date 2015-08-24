@@ -45,20 +45,7 @@ umx_check_multi_core <- function() {
 #' @family Miscellaneous Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
-#' library(OpenMx)
-#' manifests = c("mpg", "disp", "gear")
-#' oldOpt = umx_get_optimizer()
-#' m1 <- umxRAM("ind", data = mxData(mtcars[,manifests], type = "raw"),
-#' 	umxPath(var = manifests),
-#' 	umxPath(means = manifests)
-#' )
-#' umx_set_optimizer(opt = "CSOLNP")
-#' m2 = mxRun(mxModel(m1, name = "CSOLNP")); umx_time(m2)
-#' umx_set_optimizer(opt = "NPSOL")
-#' m3 = mxRun(mxModel(m1, name = "NPSOL")); umx_time(m3)
-#' # umx_set_optimizer(opt = "NLOPT")
-#' # m4 = mxRun(mxModel(m1, name = "NLOPT")); umx_time(m4)
-#' umx_set_optimizer(oldOpt)
+#' umx_get_optimizer() # current optimizer
 umx_get_optimizer <- function(model = NULL) {
 	if(is.null(model)){
 		mxOption(NULL, "Default optimizer")
@@ -79,25 +66,8 @@ umx_get_optimizer <- function(model = NULL) {
 #' @examples
 #' library(umx)
 #' old = umx_get_optimizer() # get the existing state
-#' umx_set_optimizer("NPSOL") # update globally
+#' umx_set_optimizer("SLSQP") # update globally
 #' umx_set_optimizer(old) # set back
-#' 
-#' manifests = c("mpg", "disp", "gear")
-#' oldOpt = umx_get_optimizer()
-#' m1 <- umxRAM("ind", data = mxData(mtcars[,manifests], type = "raw"),
-#' 	umxPath(var = manifests),
-#' 	umxPath(means = manifests)
-#' )
-#' umx_set_optimizer(opt = "NPSOL")
-#' m2 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m2)
-#' umx_set_optimizer(opt = "CSOLNP")
-#' m3 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m3)
-#' umx_set_optimizer(opt = "SLSQP")
-#' m4 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m4)
-#' umx_set_optimizer(oldOpt)
-#' \dontrun{
-#' m1@@runstate$compute$steps[1][[1]]$engine # NPSOL
-#' }
 umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
 	opt = umx_default_option(opt, c("NPSOL", "SLSQP", "CSOLNP"), check = FALSE)
 	if(!opt %in% mxAvailableOptimizers()){
@@ -1220,7 +1190,7 @@ specify_decimal <- function(x, k){
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @seealso - \code{\link{cov}}
-#' @references - \url{http://Rcmdr}
+#' @references - \url{https://cran.r-project.org/package=Rcmdr}
 #' @examples
 #' # treat vehicle aspects as items of a test
 #' reliability(cov(mtcars))
@@ -1308,7 +1278,7 @@ umx_msg <- function(x) {
 #' Use textConstant to turning add a constant"E_T1", by adding "_T" and 1.
 #'
 #' @param varNames a list of base names, e.g c("bmi", "IQ")
-#' @param textConstant The suffix added to all names, e.g. "_T" (the default)
+#' @param textConstant The suffix added to all names, e.g. "_T" (default is "")
 #' @param suffixes a list of terminal suffixes differentiating the var names (e.g c("1", "2"))
 #' @return - vector of suffixed var names, i.e., c("a_T1", "b_T1", "a_T2", "b_T2")
 #' @export
@@ -1375,100 +1345,6 @@ umx_merge_CIs <- function(m1, m2) {
 # =====================
 
 
-#' Stouffer.test
-#'
-#' Runs a Stouffer.test
-#'
-#' @param p A list of p values, i.e., p(.4, .3, .6, .01)
-#' @family Miscellaneous Stats Functions
-#' @seealso - 
-#' @references - \url{http://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/CombiningPvalues}
-#' Stouffer, Samuel A., Edward A. Suchman, Leland C. DeVinney, Shirley A. Star, 
-#' and Robin M. Williams, Jr. (1949). Studies in Social Psychology in World War II: 
-#' The American Soldier. Vol. 1, Adjustment During Army Life. Princeton: Princeton University Press.
-#' 
-#' Bailey TL, Gribskov M (1998). Combining evidence using p-values: application to sequence
-#' homology searches. Bioinformatics, 14(1) 48-54.
-#' Fisher RA (1925). Statistical methods for research workers (13th edition). London: Oliver and Boyd.
-#' Manolov R and Solanas A (2012). Assigning and combining probabilities in single-case studies.
-#' Psychological Methods 17(4) 495-509. Describes various methods for combining p-values including
-#' Stouffer and Fisher and the binomial test.
-#' \url{http://www.burns-stat.com/pages/Working/perfmeasrandport.pdf}
-#' @export
-#' @examples
-#' Stouffer.test(p = c(.01, .2, .3))
-
-Stouffer.test <- function(p = NULL) {
-	pl <- length(p)
-	if (is.null(p) | pl < 2) {
-		stop("There was an empty array of p-values")
-	}
-	erf <- function(x) {
-		2 * pnorm(2 * x/ sqrt(2)) - 1
-	}
-	erfinv <- function(x) {
-		qnorm( (x + 1) / 2 ) / sqrt(2)
-	}
-	pcomb <- function(p) {
-		(1 - erf(sum(sqrt(2) * erfinv(1 - 2 * p)) / sqrt(2 * length(p))))/2
-	}
-	pcomb(p)
-}
-
-# Test differences in Kurtosis and Skewness
-kurtosisDiff <- function(x, y, B = 1000){
-	# depends on psych for kurtosi
-	kx <- replicate(B, psych::kurtosi(sample(x, replace = TRUE)))
-	ky <- replicate(B, psych::kurtosi(sample(y, replace = TRUE)))
-	return(kx - ky)	
-}
-# Skew
-skewnessDiff<- function(x, y, B = 1000){
-	# requires psych for skew
-	sx <- replicate(B, psych::skew(sample(x, replace = TRUE)))
-	sy <- replicate(B, psych::skew(sample(y, replace = TRUE)))
-	return(sx - sy)	
-}
-
-#' @title umx_pp33
-#' @description
-#' A utility function to compute the critical value of student (xc) that
-#' gives p = .05 when df = df_xc = qt(p = .975, df = target_df)
-#' 
-#' @details
-#' Find noncentrality parameter (ncp) that leads 33% power to obtain xc
-#' The original is published at p-curve
-#' \url{http://www.p-curve.com/Supplement/R/pp33.r} 
-#' 
-#' Find noncentrality parameter (ncp) that leads 33% power to obtain xc
-#'
-#' @param target_df the... TODO
-#' @param x the... TODO
-#' @return - value
-#' @family Miscellaneous Stats Functions
-#' @export
-#' @seealso - \code{\link{pnorm}}
-#' @references - \url{http://www.p-curve.com/Supplement/R/pp33.r}
-#' @examples
-#' # To find the pp-value for 33% power for a t(38)=2.4, execute 
-#' umx_pp33(target_df = 38, x = 2.4)
-
-umx_pp33 <- function(target_df, x) {
-	f <- function(delta, pr, x, df){
-		pt(x, df = df, ncp = delta) - pr
-	}
-	# Find critical value of student (xc) that gives p=.05 when df = target_df
-	xc = qt(p = .975, df = target_df)		
-	# Find noncentrality parameter (ncp) that leads 33% power to obtain xc
-	out <- uniroot(f, c(0, 37.62), pr =2/3, x = xc, df = target_df)	
-	ncp_ = out$root	
-	# Find probability of getting x_ or larger given ncp
-	p_larger = pt(x, df = target_df, ncp = ncp_)
-	# Condition on p < .05 (i.e., get pp-value)
-	pp = 3 * (p_larger - 2/3)
-	# Print results
-	return(pp)
-}
 
 #' umxCovData
 #'
@@ -1644,49 +1520,6 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 		print(x, quote = quote, ...)	
     }
     invisible(x)
-}
-
-#' umx_locate
-#'
-#' Locate points on a graph by clicking!
-#'
-#' @param n number of points to locate (default = 1)
-#' @param x the x data (to allow the locate function to find your points)
-#' @param y the y data 
-#' @param col = rgb(1,0,0,0.5)
-#' @param pch = 20
-#' @param ... Additional parameters (passed into points())
-#' @return - vector of points clicked on
-#' @export
-#' @family umx miscellaneous
-#' @references - http://menugget.blogspot.co.uk/2014/12/point-locator-function.html
-#' @examples
-#' \dontrun{
-#' n <- 200
-#' x <- sort(runif(n, min = 0, max = 10 * pi))
-#' y <- sin(x) + rnorm(n, sd = 0.2)
-#'  
-#' # Select 10 points at maxima and minima
-#' op <- par(mar = c(4, 4, 1, 1))
-#' plot(x, y, cex = 2)
-#' pos <- umx_locate(10, x, y, col = rgb(1, .2, .2, .75), cex = 2)
-#' par(op)
-#' pos
-#' }
-umx_locate <- function(n=1, x, y, col=rgb(1,0,0,0.5), pch=20, ...){
-  xsc <- scale(x)
-  ysc <- scale(y)
-  pos <- seq(n)*NaN
-  for(i in seq(n)){
-    print(paste("choose point", i))
-    pt <- locator(1)
-    ptxsc <- scale(pt$x, center = attr(xsc, "scaled:center"), scale = attr(xsc, "scaled:scale"))
-    ptysc <- scale(pt$y, center = attr(ysc, "scaled:center"), scale = attr(ysc, "scaled:scale"))
-    pos.i <- which.min(sqrt((c(ptxsc) - c(xsc))^2 + (c(ptysc) - c(ysc))^2))
-    points(x[pos.i], y[pos.i], col = col, pch = pch, ...)
-    pos[i] <- pos.i
-  }
-  pos    
 }
 
 # ===========================
@@ -1932,7 +1765,11 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 		stop("Only one of binary.only ordinal.only and continuous.only can be TRUE")
 	}
 	if(!is.data.frame(df)){
-		stop("df argument to umx_is_ordered must be a dataframe. Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+		if(is.matrix(df)){
+			stop("df argument to umx_is_ordered must be a dataframe. You gave me a matrix")
+		} else {
+			stop("df argument to umx_is_ordered must be a dataframe. Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+		}
 	}
 	nVar = ncol(df);
 	# Which are ordered factors?
@@ -2856,27 +2693,6 @@ umx_rot <- function(vec){
 	vec[ind]
 } 
 
-#' demand a package
-#'
-#' This loads the package, installing it if needed
-#'
-#' @param package The package name as a string.
-#' @export
-#' @family Miscellaneous Functions
-#' @references - \url{https://github.com/drknexus/repsych/blob/master/R/glibrary.r}
-#' @examples
-#' \dontrun{
-#' demand("numDeriv")
-#' }
-demand <- function(package) {
-	if(FALSE == package %in% rownames(installed.packages() ) ) {
-		m <- getCRANmirrors(all = FALSE, local.only = FALSE)
-		URL <- m[grepl("Cloud",m$Name),"URL"][1] # get the first repos with "cloud" in the name
-		install.packages(package, repos = URL)
-	}
-	library(package = package, character.only = TRUE)
-}
-
 
 # =================================
 # = Data: Read, Prep, Clean, Fake =
@@ -3545,8 +3361,6 @@ umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 		stop("free must be one of NA TRUE or FALSE")	
 	}
 }
-
-
 
 # Poems you should know by heart
 # https://en.wikipedia.org/wiki/O_Captain!_My_Captain!

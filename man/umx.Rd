@@ -4,16 +4,18 @@
 \name{umx}
 \alias{umx}
 \alias{umx-package}
-\title{Helper functions for OpenMx}
+\title{Helper Functions for Structural Equation Modelling in OpenMx}
 \description{
 umx allows you to more easily build, run, modify, and report models using OpenMx
 with code. The core functions are linked below under \strong{See Also}
 }
 \details{
-All the functions have explanatory examples, so use the help, even if you think it won't help :-)
-Have a look, for example at \code{\link{umxRun}}
+The functions are organized into families: Have a read of these below, click to explore.
 
-There are working examples below and in demo(umx)
+All the functions have explanatory examples, so use the help, even if you think it won't help :-)
+Have a look, for example at \code{\link{umxRAM}}
+
+Introductory working examples are below. You can run all demos with demo(umx)
 When I have a vignette, it will be: vignette("umx", package = "umx")
 
 The development version of umx is github \url{http://github.com/tbates/umx}
@@ -91,7 +93,7 @@ confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
 plot(m1, std = TRUE, dotFilename = NA)
 }
 \references{
-- \url{"http://www.github.com/tbates/umx"}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 Other Advanced Helpers: \code{\link{umx_RAM_ordinal_objective}}
@@ -112,9 +114,8 @@ Other Miscellaneous File Functions: \code{\link{dl_from_dropbox}};
   \code{\link{umx_move_file}}; \code{\link{umx_open}};
   \code{\link{umx_rename_file}}
 
-Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umx_APA_pval}};
+Other Miscellaneous Functions: \code{\link{umxEval}};
+  \code{\link{umxJiggle}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};
@@ -146,10 +147,9 @@ Other Miscellaneous Functions: \code{\link{demand}};
   \code{\link{umx_string_to_algebra}};
   \code{\link{umx_trim}}
 
-Other Miscellaneous Stats Functions: \code{\link{Stouffer.test}};
-  \code{\link{reliability}}; \code{\link{umxCov2cor}};
-  \code{\link{umx_cor}}; \code{\link{umx_means}};
-  \code{\link{umx_pp33}}
+Other Miscellaneous Stats Functions: \code{\link{reliability}};
+  \code{\link{umxCov2cor}}; \code{\link{umx_cor}};
+  \code{\link{umx_means}}
 
 Other Miscellaneous Utility Functions: \code{\link{qm}};
   \code{\link{umx_check_OS}};

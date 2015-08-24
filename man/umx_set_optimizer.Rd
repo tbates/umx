@@ -18,33 +18,15 @@ set the optimizer in OpenMx
 \examples{
 library(umx)
 old = umx_get_optimizer() # get the existing state
-umx_set_optimizer("NPSOL") # update globally
+umx_set_optimizer("SLSQP") # update globally
 umx_set_optimizer(old) # set back
-
-manifests = c("mpg", "disp", "gear")
-oldOpt = umx_get_optimizer()
-m1 <- umxRAM("ind", data = mxData(mtcars[,manifests], type = "raw"),
-	umxPath(var = manifests),
-	umxPath(means = manifests)
-)
-umx_set_optimizer(opt = "NPSOL")
-m2 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m2)
-umx_set_optimizer(opt = "CSOLNP")
-m3 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m3)
-umx_set_optimizer(opt = "SLSQP")
-m4 = mxRun(mxModel(m1, name=umx_get_optimizer())); umx_time(m4)
-umx_set_optimizer(oldOpt)
-\dontrun{
-m1@runstate$compute$steps[1][[1]]$engine # NPSOL
-}
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{demand}};
-  \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umx_APA_pval}};
+Other Miscellaneous Functions: \code{\link{umxEval}};
+  \code{\link{umxJiggle}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};

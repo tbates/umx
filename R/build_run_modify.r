@@ -11,12 +11,21 @@
 # =====================================================================================================
 # = Create a class for ACE models so we can subclass plot and umxSummary to handle them automagically =
 # =====================================================================================================
+
+#' @importFrom graphics plot
+#' @importFrom methods as getSlots is slotNames
+#' @importFrom stats C aggregate as.formula complete.cases
+#' @importFrom stats confint cor cov cov.wt cov2cor df lm
+#' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
+#' @importFrom stats qnorm quantile residuals rnorm runif sd
+#' @importFrom stats setNames var
+#' @importFrom utils combn data flush.console read.table txtProgressBar
+#' @importFrom numDeriv jacobian
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
-
 #' @importFrom methods setClass
-methods::setClass("MxModel.ACE", contains = "MxModel")
 
+methods::setClass("MxModel.ACE", contains = "MxModel")
 
 #' umxRAM
 #'
@@ -25,15 +34,15 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' @details Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
 #' \enumerate{
 #' \item{type defaults to "RAM"}
-#' \item{You don\U2019t need to list manifestVars (they are detected from path usage)}
-#' \item{You don\U2019t need to list latentVars (detected as anything in paths but not in \code{mxData})}
+#' \item{You don't need to list manifestVars (they are detected from path usage)}
+#' \item{You don't need to list latentVars (detected as anything in paths but not in \code{mxData})}
 #' \item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
 #' \item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
 #' }
 #'
 #' \strong{Comparison with other software}
 #' 
-#' Some software has massive behind-the-scenes defaulting and path addition. I\U2019ve played with some
+#' Some software has massive behind-the-scenes defaulting and path addition. I've played with some
 #' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 #' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
 #' and \code{fix = "firstLoadings"}
@@ -76,10 +85,10 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' 	umxPath(var = c("wt", "disp", "mpg"))
 #' )
 #' 
+#' \dontrun{
 #' # 5. Print a nice summary 
 #' umxSummary(m1, show = "std")
 #' 
-#' \dontrun{
 #' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' }
@@ -383,8 +392,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		# = Insert the weights variable into dataframes as "weight" =
 		# ===========================================================
 		allData$weight = k/.399
-		mzData = subset(allData, ZYG == "MZ", c(selDVs, "weight"))
-		dzData = subset(allData, ZYG == "DZ", c(selDVs, "weight"))
+		mzData = allData[allData$ZYG == "MZ", c(selDVs, "weight")]
+		dzData = allData[allData$ZYG == "DZ", c(selDVs, "weight")]
 		if(weightCov){
 			mz.wt = cov.wt(mzData[, selDVs], mzData$weight)
 			dz.wt = cov.wt(dzData[, selDVs], dzData$weight)
@@ -685,7 +694,6 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		# 5. Option to fix all (or all but the first 2??) thresholds for left-censored data.
         #   # TODO
 		# 		1. Simple experiment seeing if the results are similar for an ACE model of 1 variable
-		# 		✓. create interface: perhaps hint = "left_censored"		
 		# ===========================
 		# = Add means matrix to top =
 		# ===========================
@@ -1087,8 +1095,8 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE) {	
 	# TODO check that arguments not used by a particular class are not set away from their defaults
-	# TODO perhaps make "A_with_A" → "var_A"
-	# TODO perhaps make "one_to_x2" → "mean_x2" 
+	# TODO perhaps make "A_with_A" --> "var_A"
+	# TODO perhaps make "one_to_x2" --> "mean_x2" 
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
 		xmuLabel_Matrix(mx_matrix = obj, baseName = baseName, setfree = setfree, drop = drop, labelFixedCells = labelFixedCells, jiggle = jiggle, boundDiag = boundDiag, suffix = suffix, verbose = verbose, overRideExisting = overRideExisting)
@@ -1356,7 +1364,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 	# model@submodels$MZ@matrices
 	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
-	} else if(is(inputTarget, "MxMatrix")) {
+	} else if(methods::is(inputTarget, "MxMatrix")) {
 		if(is.na(free)) {
 			topLabels = inputTarget@labels
 		} else {
@@ -2642,15 +2650,17 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 # = Parallel helpers to be added here =
 # =====================================
 
-#' Helper functions for OpenMx
+#' Helper Functions for Structural Equation Modelling in OpenMx
 #'
 #' umx allows you to more easily build, run, modify, and report models using OpenMx
 #' with code. The core functions are linked below under \strong{See Also}
 #'
-#' All the functions have explanatory examples, so use the help, even if you think it won't help :-)
-#' Have a look, for example at \code{\link{umxRun}}
+#' The functions are organized into families: Have a read of these below, click to explore.
 #' 
-#' There are working examples below and in demo(umx)
+#' All the functions have explanatory examples, so use the help, even if you think it won't help :-)
+#' Have a look, for example at \code{\link{umxRAM}}
+#' 
+#' Introductory working examples are below. You can run all demos with demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
 #' The development version of umx is github \url{http://github.com/tbates/umx}
@@ -2674,7 +2684,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family Twin Reporting Functions
 #' @family Advanced Helpers
 #' @family Miscellaneous File Functions
-#' @references - \url{"http://www.github.com/tbates/umx"}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' 
 #' @examples
 #' require("OpenMx")
@@ -2742,4 +2752,3 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @docType package
 #' @name umx
 NULL
-

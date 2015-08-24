@@ -1119,7 +1119,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 			mod       = mxRun(mxModel(model, mxData(observed = bsample, type = "cov", numObs = N)), silent = TRUE)
 			pard      = rbind(pard, summary(mod)$parameters[, 5 + 2*std])
 			rownames(pard)[nrow(pard)] = i
-			setTxtProgressBar(pb, i)
+			utils::setTxtProgressBar(pb, i)
 		}
 	} else {
 		for(i in 1:rep){
@@ -1127,7 +1127,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 			mod     = mxRun(mxModel(model, mxData(observed = bsample, type = "cov", numObs = N)), silent = TRUE)
 			pard    = rbind(pard, summary(mod)$parameters[, 5 + 2 * std])
 			rownames(pard)[nrow(pard)] = i
-			setTxtProgressBar(pb, i)
+			utils::setTxtProgressBar(pb, i)
 		}
 	}
 	low = (1-conf/100)/2
@@ -1809,7 +1809,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @return - AIC value
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
 #' @family Reporting functions
-#' @references - \url{http://www.github.com/tbates/umx/thread/931#comment-4858}
+#' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -2357,15 +2357,14 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' @family Reporting Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' m1 = lm(mpg ~ wt, mtcars)
-#' umx_APA_CI(m1, "wt")
+#' umx_APA_CI(lm(mpg ~ wt, mtcars), "wt")
 #' umx_APA_CI(.4, .3)
 umx_APA_CI <- function(b, se, digits = 3) {
 	if("lm" == class(b)){
 		conf    = confint(b)
 		lower   = conf[se, 1]
 		upper   = conf[se, 2]
-		model_coefficients = summary(m1)$coefficients
+		model_coefficients = summary(b)$coefficients
 		b_and_p = model_coefficients[se, ]
 		b       = b_and_p["Estimate"]
 		tval    = b_and_p["t value"]

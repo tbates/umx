@@ -41,15 +41,15 @@ Making it as simple as possible to create a RAM model, without doing invisible t
 Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
 \enumerate{
 \item{type defaults to "RAM"}
-\item{You don\U2019t need to list manifestVars (they are detected from path usage)}
-\item{You don\U2019t need to list latentVars (detected as anything in paths but not in \code{mxData})}
+\item{You don't need to list manifestVars (they are detected from path usage)}
+\item{You don't need to list latentVars (detected as anything in paths but not in \code{mxData})}
 \item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
 \item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
 }
 
 \strong{Comparison with other software}
 
-Some software has massive behind-the-scenes defaulting and path addition. I\U2019ve played with some
+Some software has massive behind-the-scenes defaulting and path addition. I've played with some
 similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"}
 and \code{fix = "firstLoadings"}
@@ -77,10 +77,10 @@ m1 = umxRAM("tim", data = myCov,
 	umxPath(var = c("wt", "disp", "mpg"))
 )
 
+\dontrun{
 # 5. Print a nice summary
 umxSummary(m1, show = "std")
 
-\dontrun{
 # 6. Draw a nice path diagram (needs Graphviz)
 plot(m1)
 }

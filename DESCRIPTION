@@ -1,14 +1,13 @@
 Package: umx
 Version: 0.50
 Date: 2015-08-23
-Title: umx
+Title: Helper Functions for Structural Equation Modelling in OpenMx
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))
-Author: Tim Bates
-Maintainer: Who to complain to <timothy.c.bates@gmail.com>
+Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
 License: GPL-3
 URL: http://github.com/tbates/umx
-Description: A library of Helper functions for OpenMx.
+Description: Helper functions for making, running, and reporting SEM models in OpenMx.
     If you are just starting, try typing ?umx.
 Depends:
     R (>= 3.0.3),
@@ -19,13 +18,12 @@ Imports:
 	Matrix,
 	methods,
 	mvtnorm,
+	numDeriv,
 	polycor,
-	psych,
     R2HTML,
 	RCurl
 Suggests:
     knitr
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
-VignetteBuilder: knitr
 LazyData: true
