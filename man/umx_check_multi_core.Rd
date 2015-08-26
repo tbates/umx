@@ -4,7 +4,7 @@
 \alias{umx_check_multi_core}
 \title{umx_check_multi_core}
 \usage{
-umx_check_multi_core()
+umx_check_multi_core(pathToDemos = "~/bin/OpenMx/inst/models/nightly/")
 }
 \value{
 - NULL
@@ -14,7 +14,7 @@ Shows how many cores you are using, and runs a test script so user can check CPU
 }
 \examples{
 \dontrun{
-model = umx_check_multi_core(model)
+model = umx_check_multi_core()
 }
 }
 \references{
