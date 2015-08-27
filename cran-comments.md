@@ -8,25 +8,17 @@ In this version I have addressed each request as follows:
 * Removed VignetteBuilder field
 * Corrected invalid URL "http://www.github.com/tbates/umx" (removed quotes)
 * Provided a real title: "Helper functions for Structural Equation Modelling in OpenMx"
-* Added 
- importFrom("graphics", "plot")
+* now import all methods from base packages e.g. ("graphics", "plot")
  importFrom("methods", "as", "getSlots", "is", "slotNames")
- importFrom("stats", "C", "aggregate", "as.formula", "complete.cases",
-            "confint", "cor", "cov", "cov.wt", "cov2cor", "df", "lm",
-            "logLik", "na.exclude", "na.omit", "pchisq", "pf", "qchisq",
-            "qnorm", "quantile", "residuals", "rnorm", "runif", "sd",
-            "setNames", "var")
- importFrom("utils", "combn", "data", "flush.console", "read.table",
-            "txtProgressBar")
-
-* My DESCRIPTION Imports field contains 'methods'
+ importFrom("stats", "C"); 
+ importFrom("utils", "combn", "data", "flush.console", "read.table", "txtProgressBar")
 
 Best wishes, tim
 
 ## Test environments
 * local OS X install, R version 3.2.2 (2015-08-14)
-* 64-bit Linux (Scientific Linux 6), R 3.2.0
 * Win x86_64-w64-mingw32, R Under development (unstable) (2015-08-20 r69138)
+* 64-bit Linux (Scientific Linux 6), R 3.2.0
 
 ## R CMD check results
 
