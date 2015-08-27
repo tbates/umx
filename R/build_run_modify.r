@@ -20,7 +20,7 @@
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
 #' @importFrom stats setNames var
 #' @importFrom utils combn data flush.console read.table txtProgressBar
-#' @importFrom utils suppressForeignCheck
+#' @importFrom utils globalVariables
 #' @importFrom numDeriv jacobian
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
@@ -493,6 +493,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # for example. "VarSuffix1" "VarSuffix2"
 #' mzData <- tmpTwin[tmpTwin$zyg %in% "MZFF", selDVs]
 #' dzData <- tmpTwin[tmpTwin$zyg %in% "DZFF", selDVs]
+#' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
+#' dzData <- dzData[1:200,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
 #' umxSummary(m1)
@@ -531,6 +533,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
 #' mzData <- tmpTwin[tmpTwin$zyg %in% "MZFF", umx_paste_names(selDVs, "", 1:2)]
 #' dzData <- tmpTwin[tmpTwin$zyg %in% "DZFF", umx_paste_names(selDVs, "", 1:2)]
+#' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
+#' dzData <- dzData[1:200,]
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' m1 = mxRun(m1)
@@ -559,6 +563,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
 #' mzData <- tmpTwin[tmpTwin$zyg %in% "MZFF", umx_paste_names(selDVs, "", 1:2)]
 #' dzData <- tmpTwin[tmpTwin$zyg %in% "DZFF", umx_paste_names(selDVs, "", 1:2)]
+#' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
+#' dzData <- dzData[1:200,]
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' m1 = umxRun(m1)
@@ -584,6 +590,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' selDVs = c("wt", "obese")
 #' mzData <- tmpTwin[tmpTwin$zyg == "MZFF", umx_paste_names(selDVs, "", 1:2)]
 #' dzData <- tmpTwin[tmpTwin$zyg == "DZFF", umx_paste_names(selDVs, "", 1:2)]
+#' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
+#' dzData <- dzData[1:200,]
 #' str(mzData)
 #' umx_paste_names(selDVs, "", 1:2)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')

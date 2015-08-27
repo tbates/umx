@@ -73,6 +73,8 @@ selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set 
 # for example. "VarSuffix1" "VarSuffix2"
 mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", selDVs]
 dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", selDVs]
+mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
+dzData <- dzData[1:200,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 umxSummary(m1)
@@ -111,6 +113,8 @@ tmpTwin$obese2 <- cut(tmpTwin$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = o
 tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
 mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", umx_paste_names(selDVs, "", 1:2)]
 dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", umx_paste_names(selDVs, "", 1:2)]
+mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
+dzData <- dzData[1:200,]
 str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 m1 = mxRun(m1)
@@ -139,6 +143,8 @@ tmpTwin$obese2 <- cut(tmpTwin$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = o
 tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
 mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", umx_paste_names(selDVs, "", 1:2)]
 dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", umx_paste_names(selDVs, "", 1:2)]
+mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
+dzData <- dzData[1:200,]
 str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 m1 = umxRun(m1)
@@ -164,6 +170,8 @@ tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
 selDVs = c("wt", "obese")
 mzData <- tmpTwin[tmpTwin$zyg == "MZFF", umx_paste_names(selDVs, "", 1:2)]
 dzData <- tmpTwin[tmpTwin$zyg == "DZFF", umx_paste_names(selDVs, "", 1:2)]
+mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
+dzData <- dzData[1:200,]
 str(mzData)
 umx_paste_names(selDVs, "", 1:2)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
