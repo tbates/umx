@@ -4,7 +4,13 @@
 \alias{umx_check_multi_core}
 \title{umx_check_multi_core}
 \usage{
-umx_check_multi_core(pathToDemos = "~/bin/OpenMx/inst/models/nightly/")
+umx_check_multi_core(pathToDemos = "~/bin/OpenMx/inst/models/nightly/",
+  demoScript = "3LatentMultiRegWithContinuousModerator-c.R")
+}
+\arguments{
+\item{pathToDemos}{where to look for demo scripts (Default "~/bin/OpenMx/inst/models/nightly/")}
+
+\item{demoScript}{which demo script to use (Default ""3LatentMultiRegWithContinuousModerator-c.R"")}
 }
 \value{
 - NULL
@@ -18,7 +24,7 @@ model = umx_check_multi_core()
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{umxEval}};

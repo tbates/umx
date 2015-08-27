@@ -86,7 +86,7 @@ plot(m1)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Model Building Functions: \code{\link{umxLabel}};

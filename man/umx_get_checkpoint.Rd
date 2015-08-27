@@ -30,7 +30,7 @@ m1 = umx_set_checkpoint(interval = 2, model = m1)
 umx_get_checkpoint(model = m1)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}

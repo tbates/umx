@@ -15,7 +15,7 @@
 #' @export
 #' @family umx core functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
 #' model = umxReduce(model)
@@ -62,7 +62,7 @@ umxReduce <- function(m1, report = 3, baseFileName = "tmp") {
 #' @return - helpful messages and perhaps a modified model
 #' @export
 #' @family model building functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -111,7 +111,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @return - 
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' model = umx_drop_ok(model)
@@ -144,7 +144,7 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #' @return - matrix of residuals
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -665,7 +665,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEst
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso - \code{\link{umxACE}} 
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(twinData)
@@ -994,8 +994,8 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
 #' @param add Whether or not to add mxCIs if none are found (defaults to TRUE)
-#' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".                                                  
-#' @param showErrors Whether to show errors (default == TRUE)
+#' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary". 
+#' @param showErrorCodes Whether to show errors (default == TRUE)
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 #' @return - \code{\link{mxModel}}
 #' @family Reporting functions
@@ -1024,7 +1024,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' # Don't force update of CIs, but if they were just added, then calculate them
 #' umxCI(model, run = "if necessary")
 #' }
-umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"), showErrors = TRUE) {
+umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"), showErrorCodes = TRUE) {
 	# TODO superceed this with confint? just need parameters to hold the 95% etc...
 	run = match.arg(run)
 	if(add){
@@ -1157,7 +1157,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @return - standardized ACE \code{\link{mxModel}}
 #' @export
 #' @family Reporting Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
 #' fit = umxStandardizeACE(fit)
@@ -2160,7 +2160,7 @@ umxFitIndices <- function(model, indepfit) {
 #' @return - RMSEA object containing value (and perhaps a CI)
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 
 #' RMSEA function for MxModels
@@ -2392,7 +2392,7 @@ umx_APA_CI <- function(b, se, digits = 3) {
 #' @return - the CI string, e.g. ".73 [-.2, .98]"
 #' @export
 #' @family Miscellaneous Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' umx_get_CI_as_APA_string(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")

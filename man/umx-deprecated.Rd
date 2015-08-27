@@ -98,6 +98,6 @@ Change cor.prob to \code{\link{umx_cor}}
 Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 

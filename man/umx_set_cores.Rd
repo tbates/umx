@@ -34,7 +34,7 @@ umx_set_cores(1, m1)  # set m1 useage to 1 core
 umx_get_cores(model = m1)  # show new value
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{umxEval}};

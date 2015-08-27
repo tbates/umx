@@ -48,7 +48,7 @@ tmp$disp_T1 = tmp$disp_T2 = tmp$disp
 umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Miscellaneous Data Functions: \code{\link{umxHetCor}};

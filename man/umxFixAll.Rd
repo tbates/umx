@@ -36,7 +36,7 @@ m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 mxCompare(m1, m2)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Modify or Compare Models: \code{\link{parameters}},

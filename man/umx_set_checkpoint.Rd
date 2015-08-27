@@ -45,7 +45,7 @@ m1 = mxRun(m1)
 umx_checkpoint(0)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{umxEval}};

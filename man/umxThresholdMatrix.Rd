@@ -116,7 +116,7 @@ x = data.frame(x)
 umxThresholdMatrix(x, deviation = FALSE, hint = "left_censored")
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Model Building Functions: \code{\link{umxLabel}};

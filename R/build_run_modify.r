@@ -20,10 +20,22 @@
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
 #' @importFrom stats setNames var
 #' @importFrom utils combn data flush.console read.table txtProgressBar
+#' @importFrom utils suppressForeignCheck
 #' @importFrom numDeriv jacobian
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
 #' @importFrom methods setClass
+
+utils::globalVariables(c(
+	'A', 'E',
+	'a', 'e',
+	'binLabels', 'Unit_nBinx1',
+	'ACE', 'AC', 'hAC',
+	'MZ.objective', 'DZ.objective', 'Vtot', 'SD',
+	'top.a', 'top.c', 'top.e',
+	'top.A', 'top.C', 'top.E',
+	'top.a_std', 'top.c_std', 'top.e_std')
+)
 
 methods::setClass("MxModel.ACE", contains = "MxModel")
 
@@ -65,7 +77,7 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' # umxRAM is like ggplot2::qplot(), you give the data in a data =  parameter
 #' # A common error is to include data in the main list,
@@ -1538,7 +1550,7 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' @return - the fixed \code{\link{mxModel}}
 #' @export
 #' @family Modify or Compare Models
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -1944,7 +1956,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' @return - thresholds matrix
 #' @export
 #' @family Model Building Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")
 #' umxThresholdMatrix(x)
@@ -2395,7 +2407,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @export
 #' @family Model Building Functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
-#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(OpenMx)
 #' # Some examples of paths with umxPath

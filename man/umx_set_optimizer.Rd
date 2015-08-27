@@ -22,7 +22,7 @@ umx_set_optimizer("SLSQP") # update globally
 umx_set_optimizer(old) # set back
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{umxEval}};

@@ -36,7 +36,7 @@ umx_names(mtcars, "^d") # "disp", drat
 umx_names(mtcars, "r[ab]") # "drat", "carb"
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{umxEval}};

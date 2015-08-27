@@ -14,7 +14,8 @@ Depends:
 	OpenMx (>= 2.2.0)
 Imports:
 	formula.tools,
-    MASS,
+    utils,
+	MASS,
 	Matrix,
 	methods,
 	mvtnorm,

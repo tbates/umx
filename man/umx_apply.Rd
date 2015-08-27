@@ -28,7 +28,7 @@ umx_apply(mean, of = mtcars, by = "columns")
 umx_apply(mean, by = "rows", of = mtcars[1:3,], na.rm = TRUE)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{umxEval}};

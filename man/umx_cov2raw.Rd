@@ -30,7 +30,7 @@ data = c(0.9223099, 0.1862938, 0.4374359, 0.8959973, 0.9928430, 0.5320662,
 myData = umx_cov2raw(covData, n = 100, means = 1:6)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{cov2cor}}

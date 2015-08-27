@@ -5,7 +5,7 @@
 \title{umxCI}
 \usage{
 umxCI(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"),
-  showErrors = TRUE)
+  showErrorCodes = TRUE)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on}
@@ -14,7 +14,7 @@ umxCI(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"),
 
 \item{run}{Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".}
 
-\item{showErrors}{Whether to show errors (default == TRUE)}
+\item{showErrorCodes}{Whether to show errors (default == TRUE)}
 }
 \value{
 - \code{\link{mxModel}}

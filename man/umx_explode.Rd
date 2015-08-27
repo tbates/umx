@@ -22,7 +22,7 @@ umx_explode("", "dog") # "d" "o" "g"
 umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}, \url{http://www.php.net/}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://www.php.net/}
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{umxEval}};

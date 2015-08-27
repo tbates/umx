@@ -32,7 +32,7 @@ df = umxPadAndPruneForDefVars(df, "E", "age", c("_T1", "_T2"))
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Miscellaneous Data Functions: \code{\link{umxHetCor}};
