@@ -1832,40 +1832,6 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 	return(a[1, "AIC"])
 }
 
-#' Get the coefficients of an MxModel
-#'
-#' Returns the coefficients from an OpenMx RAM model
-#'
-#' @method coef MxModel
-#' @rdname coef.MxModel
-#' @export
-#' @param object an \code{\link{mxModel}} from which to get the AIC
-#' @param ... Optional parameters
-#' @return - coefficients
-#' @family Reporting functions
-#' @references - 
-#' @examples
-#' require(OpenMx)
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' coef(m1)
-#' # -2.615998
-coef.MxModel <- function(object, ...) {
-	# TODO implement this
-	omxGetParameters(object)
-	message("Not fully implemented")
-	message("TODO implement this using wrapper around mxStandardizeRAMpaths")
-}
-
 #' umxExpCov
 #'
 #' extract the expected covariance matrix from an \code{\link{mxModel}}
