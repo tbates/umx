@@ -525,8 +525,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param verbose whether to say what the function is doing (default = FALSE)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Advanced Helpers
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+#' @family zAdvanced Helpers
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{

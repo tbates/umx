@@ -2702,8 +2702,8 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family Miscellaneous Stats Functions
 #' @family Twin Modeling Functions
 #' @family Twin Reporting Functions
-#' @family Advanced Helpers
 #' @family Miscellaneous File Functions
+#' @family zAdvanced Helpers
 #' @references - \url{http://www.github.com/tbates/umx}
 #' 
 #' @examples
