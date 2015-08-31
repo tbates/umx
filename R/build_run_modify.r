@@ -67,13 +67,9 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame
 #' @param ... A list of mxPath, umxPath, or mxThreshold objects
 #' @param run Whether to mxRun the model (defaults to TRUE: the estimated model will be returned)
-#' @param exog.variances If TRUE, free variance parameters are added for exogenous variables that lack them (the default is FALSE).
-#' @param endog.variances If TRUE, free error-variance parameters are added for any endogenous variables that lack them (default is FALSE).
-#' @param latentVars Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
-#' @param setValues Whether to try and guess good start values (Defults to TRUE, set them)
+#' @param setValues Whether to generate likely good start values (Defaults to TRUE)
 #' @param independent Whether the model is independent (default = NA)
-#' @param fix deprecated. use umxPath(fixedAt = etc.
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
@@ -104,12 +100,17 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' }
-umxRAM <- function(name, data = NULL, ..., run = TRUE, exog.variances = FALSE, endog.variances = FALSE, latentVars = NULL, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, fix = "deprecated") {
+umxRAM <- function(name, data = NULL, ..., run = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
+	# TODO allow model to be given as input
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
 	}
 	if(is.null(data)){
-		stop("umxRAM needs some mxData. You set this like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
+		if(umx_is_RAM(data)){
+			stop("I have not yet implemented the ability to pass in a model for modification, email if this would be valuable!")
+		} else {
+			stop("umxRAM needs some mxData. You set this like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
+		}
 	}
 
 	nPaths       = 0 # initialise
@@ -221,35 +222,6 @@ umxRAM <- function(name, data = NULL, ..., run = TRUE, exog.variances = FALSE, e
 		independent = independent,
 		data, dot.items)
 	)
-	# TODO: Add variance/residuals to all variables except reflective latents
-	# mxPath(from = fixed, arrows = 2),
-	# message("Created model ", m1$name)
-	
-	# exog == no incoming single arrow paths
-	pathList = umx_is_exogenous(m1, manifests_only = TRUE)
-	if(exog.variances & length(pathList) > 0 ){
-		m1 = umx_add_variances(m1, pathList)
-		message("Added variances to ", length(pathList), " exogenous variables: ", paste(pathList, collapse = ", "), "\n")
-	}
-	
-	# endog == one or more incoming single arrow paths
-	if(endog.variances){
-		pathList = umx_is_endogenous(m1, manifests_only = TRUE)
-		if(length(pathList > 0)){
-			m1 = umx_add_variances(m1, pathList)
-			message("Added variances to ", length(pathList), " endogenous variables: ", paste(pathList, collapse = ", "), "\n")
-		} else {
-			# message("No endogenous variables found.\n")
-		}
-	} else{
-		# message("endogenous variances not added")
-	}
-
-	if(!fix == "deprecated"){
-		stop("fix is not supported any longer: switch to umxPath with firstAt and fixedAt to be more up front about model content\n",
-		"or use m1 = umx_fix_first_loadings(m1), or m1 = umx_fix_latents(m1)")
-	}
-
 	if(isRaw){
 		if(is.null(m1@matrices$M) ){
 			message("You have raw data, but no means model. I added\n",

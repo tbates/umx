@@ -1,4 +1,14 @@
 
+
+umx 0.70.0
+--------------
+
+* Dropped "features" to set endogenous & exogenous variables in umxRAM
+* Incremental improvements to the help.
+* Minor improvement the organization of functions into families in the help.
+* No bugs reported for the first CRAN release
+
+
 umx 0.50.0
 --------------
 
