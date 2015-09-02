@@ -4,9 +4,8 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(name, data = NULL, ..., run = TRUE, exog.variances = FALSE,
-  endog.variances = FALSE, latentVars = NULL, setValues = TRUE,
-  independent = NA, remove_unused_manifests = TRUE, fix = "deprecated")
+umxRAM(name, data = NULL, ..., run = TRUE, setValues = TRUE,
+  independent = NA, remove_unused_manifests = TRUE)
 }
 \arguments{
 \item{name}{A friendly name for the model}
@@ -17,19 +16,11 @@ umxRAM(name, data = NULL, ..., run = TRUE, exog.variances = FALSE,
 
 \item{run}{Whether to mxRun the model (defaults to TRUE: the estimated model will be returned)}
 
-\item{exog.variances}{If TRUE, free variance parameters are added for exogenous variables that lack them (the default is FALSE).}
-
-\item{endog.variances}{If TRUE, free error-variance parameters are added for any endogenous variables that lack them (default is FALSE).}
-
-\item{latentVars}{Latents you want in your model (defaults to NULL, in which case any variable not in the data is assumed to be a latent variable)}
-
-\item{setValues}{Whether to try and guess good start values (Defults to TRUE, set them)}
+\item{setValues}{Whether to generate likely good start values (Defaults to TRUE)}
 
 \item{independent}{Whether the model is independent (default = NA)}
 
 \item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
-
-\item{fix}{deprecated. use umxPath(fixedAt = etc.}
 }
 \value{
 - \code{\link{mxModel}}

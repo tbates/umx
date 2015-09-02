@@ -57,15 +57,14 @@ m1 = umxValues(m1)
 # Re-run omxGetParameters...
 omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
 
-# umxRun the model (calculates saturated models for raw data, & repeats
-# if the model is not code green)
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE) # not needed given we've done this above.
-# But you can see how umxRun enables 1-line setup and run
+m1 = mxRun(m1) # not needed given we've done this above.
 
 # Let's get some journal-ready fit information
 
 umxSummary(m1)
 umxSummary(m1, show = "std") #also display parameter estimates
+# You can get the coefficients of an MxModel with coef(), just like for lm etc.
+coef(m1)
 
 # ==================
 # = Model updating =
@@ -96,8 +95,6 @@ plot(m1, std = TRUE, dotFilename = NA)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Advanced Helpers: \code{\link{umx_RAM_ordinal_objective}}
-
 Other Miscellaneous Data Functions: \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};
@@ -174,5 +171,7 @@ Other Twin Modeling Functions: \code{\link{umxACE}};
 
 Other Twin Reporting Functions: \code{\link{umxSummary.MxModel.ACE}},
   \code{\link{umxSummaryACE}}
+
+Other zAdvanced Helpers: \code{\link{umx_RAM_ordinal_objective}}
 }
 

@@ -40,7 +40,6 @@ umxFitIndices(m1)
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}};
   \code{\link{RMSEA.summary.mxmodel}}; \code{\link{RMSEA}};
-  \code{\link{coef.MxModel}};
   \code{\link{confint.MxModel}};
   \code{\link{extractAIC.MxModel}};
   \code{\link{logLik.MxModel}}; \code{\link{plot.MxModel}},
