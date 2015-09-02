@@ -1211,7 +1211,8 @@ umxStandardizeACE <- function(fit) {
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param showFixed Whether to show fixed paths (defaults to FALSE)
 #' @param showMeans Whether to show means
-#' @param showError Whether to show errors
+#' @param resid how to show residuals and variances default is "circle". Options are "line" & "none"
+#' @param showError deprecated: use resid instead
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
@@ -1233,7 +1234,17 @@ umxStandardizeACE <- function(fit) {
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' plot(m1)
 #' }
-plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, showError = TRUE, ...) {
+plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, resid = c("circle", "line", "none"), showError = "deprecated", ...) {
+	if(showError != "deprecated"){
+		message(omxQuotes("showError") " is deprecated: in future, use resid =")
+		if(showError){
+			resid = "circle"
+		} else {
+			resid = "none"
+		}
+	} else {
+		resid = match.arg(resid)
+	}
 	# ==========
 	# = Setup  =
 	# ==========
@@ -1249,7 +1260,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	# ========================
 	out = "";
 	out = xmu_dot_make_paths(mxMat = model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
-	out = xmu_dot_make_paths(mxMat = model@matrices$S, stringIn = out, heads = 2, showFixed = showFixed, pathLabels = pathLabels, comment = "Variances", digits = digits)
+	out = xmu_dot_make_paths(mxMat = model@matrices$S, stringIn = out, heads = 2, showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
 	# TODO should xmu_dot_make_residuals handle showFixed or not necessary?
 	tmp = xmu_dot_make_residuals(model@matrices$S, digits = digits)
 	variances     = tmp$variances

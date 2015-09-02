@@ -8,10 +8,11 @@
 #' @param mxMat an MxMatrix
 #' @param showFixed to show fixed values or not
 #' @param digits how many digits to report
+#' @param resid how to show residuals and variances default is "circle". Other option is "line"
 #' @return - list of variance names and variances
 #' @export
 #' @family xmu internal not for end user
-xmu_dot_make_residuals <- function(mxMat, showFixed = TRUE, digits = 2) {
+xmu_dot_make_residuals <- function(mxMat, showFixed = TRUE, digits = 2, resid = c("circle", "line")) {
 	mxMat_vals   = mxMat$values
 	mxMat_free   = mxMat$free
 	mxMat_labels = mxMat$labels
@@ -28,7 +29,8 @@ xmu_dot_make_residuals <- function(mxMat, showFixed = TRUE, digits = 2) {
 			thisPathVal   = round(mxMat_vals[target, source], digits)
 
 			if(thisPathFree){ prefix = "" } else { prefix = "@" }
-
+				# TODO currently all variances are labeled "a_with_a"
+				# could diversifty to  "a_with_a", "var_a" & "resid_a"
 			if(thisPathFree | (thisPathVal !=0 & showFixed)) {
 				if((target == source)) {
 					varianceNames = append(varianceNames, paste0(source, '_var'))
@@ -42,6 +44,7 @@ xmu_dot_make_residuals <- function(mxMat, showFixed = TRUE, digits = 2) {
 
 #' xmu_dot_make_paths (not for end users)
 #'
+#' Makes graphviz paths
 #'
 #' @param mxMat an MxMatrix
 #' @param stringIn input string

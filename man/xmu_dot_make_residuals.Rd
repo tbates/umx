@@ -4,7 +4,8 @@
 \alias{xmu_dot_make_residuals}
 \title{xmu_dot_make_residuals (not for end users)}
 \usage{
-xmu_dot_make_residuals(mxMat, showFixed = TRUE, digits = 2)
+xmu_dot_make_residuals(mxMat, showFixed = TRUE, digits = 2,
+  resid = c("circle", "line"))
 }
 \arguments{
 \item{mxMat}{an MxMatrix}
@@ -12,6 +13,8 @@ xmu_dot_make_residuals(mxMat, showFixed = TRUE, digits = 2)
 \item{showFixed}{to show fixed values or not}
 
 \item{digits}{how many digits to report}
+
+\item{resid}{how to show residuals and variances default is "circle". Other option is "line"}
 }
 \value{
 - list of variance names and variances
