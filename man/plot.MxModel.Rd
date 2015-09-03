@@ -7,7 +7,8 @@
 \usage{
 \method{plot}{MxModel}(x = NA, std = TRUE, digits = 2,
   dotFilename = "name", pathLabels = c("none", "labels", "both"),
-  showFixed = FALSE, showMeans = TRUE, showError = TRUE, ...)
+  showFixed = FALSE, showMeans = TRUE, resid = c("circle", "line",
+  "none"), showError = "deprecated", ...)
 }
 \arguments{
 \item{x}{an \code{\link{mxModel}} from which to make a path diagram}
@@ -24,7 +25,9 @@
 
 \item{showMeans}{Whether to show means}
 
-\item{showError}{Whether to show errors}
+\item{resid}{how to show residuals and variances default is "circle". Options are "line" & "none"}
+
+\item{showError}{deprecated: use resid instead}
 
 \item{...}{Optional parameters}
 }

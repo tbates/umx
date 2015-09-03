@@ -60,9 +60,9 @@ covary, and to the latent "to" variable, fixing its variance to zero.}
 \description{
 The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 
-It introduces 11 new verbs: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{Cholesky}, \strong{means}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
+It introduces 11 new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{Cholesky}, \strong{means}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
 
-The new key "with" means you no-longer need set arrows = 2 on covariances. So you can say:
+The new preposition \dQuote{with} means you no-longer need set arrows = 2 on covariances. Instead, you can say:
 
    \code{umxPath(A, with = B)} instead of \code{mxPath(from = A, to = B, arrows = 2)}.
 
@@ -72,6 +72,10 @@ Specify a variance for A with
 
 This is equivalent to \code{mxPath(from = A, to = A, arrows = 2)}.
 
+Of course you can use vectors anywhere:
+
+\code{umxPath(var = c('N','E', 'O'))}
+
 To specify a mean, you just say
 
 \code{umxPath(mean = A)}, which is equivalent to \code{mxPath(from = "one", to = A)}.
@@ -80,23 +84,20 @@ To fix a path at a value, instead of to \code{mxPath(from = A, to = A, arrows = 
 
 \code{umxPath(var = A, fixedAt = 1)} .
 
-The common task of creating a variable with variance fixed at 1 and mean at 0, you can simply say:
+The common task of creating a variable with variance fixed at 1 and mean at 0 is done thus:
 
 \code{umxPath(v1m0 = A)}
 
-To just add estimates of variance and means to a variable use : \code{umxPath(v.m. = A)}
+For concenience, you can add estimated variance and means with \code{umxPath(v.m. = A)}
 
 
-umxPath exposes \dQuote{unique.parameter} as a parameter so you don't have remember
-how to fill in connect= in mxPath
+umxPath exposes \dQuote{unique.bivariate} so you don't have to remember
+how to fill in connect = in mxPath (you can still use connect if you wish).
 
-All unique bivariate paths can be specified using unique.bivariate. So say:
+So, to create paths A<->B, B<->C, and A<->C, you would say:
 
-\code{umxPath(c('A',"B","C"), unique.bivariate = TRUE)} to create paths A<->B, B<->C, and A<->C.
+\code{umxPath(unique.bivariate = c('A',"B","C"))}
 
-Finally, you can create \emph{Cholesky} form paths (see \code{\link{umxACE}})
-
-\code{umxPath(c("A1", "A2"), to c("var1", "var2"), Cholesky = TURE)}
 
 Setting up a latent trait, you can fix the loading of the first path with
 
@@ -104,14 +105,21 @@ Setting up a latent trait, you can fix the loading of the first path with
 
 This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
 
-Finally, in the future I will implement the John Fox "sem" package style notation, i.e., "A -> B".
-If you want to add multiple paths that way, separate them with a semi-colon or a return (see examples below.)
+Finally, there are two promised features, not implemented in this release.
+
+\emph{Cholesky} form paths (see \code{\link{umxACE}}) will be created by:
+
+\code{umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))}
+
+I will also implement John Fox "sem"-package style notation,
+i.e., "A -> B; X <-> B; " (see examples below.)
 }
 \details{
 This function returns a standard mxPath, but gives new options for specifying the path. In addition to the normal
-from and to, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
-There are also verbs for fixing values: "fixedAt" and "fixFirst"
-Finally, it also allows sem-style "A->B" string specification.
+\dQuote{from} and \dQuote{to}, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
+There are also new terms to describe fixing values: \dQuote{fixedAt} and \dQuote{fixFirst}.
+
+Finally, (in future) it will allow sem-style \dQuote{A->B} string specification.
 }
 \examples{
 require(OpenMx)

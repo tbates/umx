@@ -4,20 +4,21 @@
 \alias{umx_lower2full}
 \title{umx_lower2full}
 \usage{
-umx_lower2full(lower.data, diag = FALSE, byrow = TRUE)
+umx_lower2full(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL)
 }
 \arguments{
 \item{lower.data}{An \code{\link{mxMatrix}}}
 
-\item{diag}{A boolean noting whether the lower matrix includes the diagonal}
+\item{diag}{A boolean specifying whether the lower.data includes the diagonal}
 
-\item{byrow}{Whether the matrix is to be filled by row or by column}
+\item{byrow}{Whether the matrix is to be filled by row or by column (default = TRUE)}
 }
 \value{
 - \code{\link{mxMatrix}}
 }
 \description{
-Take a lower triangle of data (either from a "lower" \code{\link{mxMatrix}}, or as you might typed in a journal article)
+Take a lower triangle of data (for instance from a "lower" \code{\link{mxMatrix}}, or
+as you might find in a journal article),
 and turn it into a full matrix.
 }
 \examples{
@@ -35,9 +36,9 @@ tmp = matrix(nrow = 10, ncol = 10, byrow = TRUE, dimnames = list(tmpn,tmpn), dat
 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000, 0,
 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
 )
-umx_lower2full(tmp)
+umx_lower2full(tmp, diag= TRUE)
 tmp = c(
-	c(1.0000,
+	1.0000,
 	0.6247, 1.0000,
 	0.3269, 0.3669, 1.0000,
 	0.4216, 0.3275, 0.6404, 1.0000,
@@ -46,11 +47,11 @@ tmp = c(
 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220, 1.0000,
 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707,  1.0000,
 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000,
-	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
+	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1.000
 )
-umx_lower2full(tmp)
+umx_lower2full(tmp, diag = TRUE)
 tmp = c(
-	c(0.6247,
+	0.6247,
 	0.3269, 0.3669,
 	0.4216, 0.3275, 0.6404,
 	0.2137, 0.2742, 0.1124, 0.0839,
@@ -58,7 +59,7 @@ tmp = c(
 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220,
 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707,
 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950,
-	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087)
+	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087
 )
 umx_lower2full(tmp, diag = FALSE)
 }

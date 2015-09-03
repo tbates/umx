@@ -29,7 +29,7 @@ xmu_dot_make_paths(mxMat, stringIn, heads = NULL, showFixed = TRUE,
 - string
 }
 \description{
-xmu_dot_make_paths (not for end users)
+Makes graphviz paths
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}};

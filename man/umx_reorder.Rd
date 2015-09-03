@@ -31,13 +31,13 @@ umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 Other Miscellaneous Functions: \code{\link{umxEval}};
   \code{\link{umxJiggle}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
+  \code{\link{umx_check_OS}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};
   \code{\link{umx_checkpoint}},
   \code{\link{umx_set_checkpoint}};
   \code{\link{umx_check}};
   \code{\link{umx_default_option}};
-  \code{\link{umx_explode}};
   \code{\link{umx_get_CI_as_APA_string}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_checkpoint}};
@@ -52,14 +52,11 @@ Other Miscellaneous Functions: \code{\link{umxEval}};
   \code{\link{umx_is_cov}};
   \code{\link{umx_is_endogenous}};
   \code{\link{umx_is_exogenous}};
-  \code{\link{umx_is_ordered}}; \code{\link{umx_msg}};
-  \code{\link{umx_names}}; \code{\link{umx_object_as_str}};
-  \code{\link{umx_paste_names}}; \code{\link{umx_print}};
-  \code{\link{umx_rename}}; \code{\link{umx_rot}};
+  \code{\link{umx_is_ordered}};
+  \code{\link{umx_object_as_str}};
   \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}};
-  \code{\link{umx_string_to_algebra}};
-  \code{\link{umx_trim}}; \code{\link{umx}},
+  \code{\link{umx_string_to_algebra}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }
 
