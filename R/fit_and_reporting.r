@@ -1236,7 +1236,8 @@ umxStandardizeACE <- function(fit) {
 #' }
 plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, resid = c("circle", "line", "none"), showError = "deprecated", ...) {
 	if(showError != "deprecated"){
-		message(omxQuotes("showError") " is deprecated: in future, use resid =")
+		message(omxQuotes("showError"), " is deprecated: in future, use ", 
+			omxQuotes("resid"), " and one of ", omxQuotes(c("circle", "line", "none")))
 		if(showError){
 			resid = "circle"
 		} else {
@@ -1262,7 +1263,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	out = xmu_dot_make_paths(mxMat = model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
 	out = xmu_dot_make_paths(mxMat = model@matrices$S, stringIn = out, heads = 2, showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
 	# TODO should xmu_dot_make_residuals handle showFixed or not necessary?
-	tmp = xmu_dot_make_residuals(model@matrices$S, digits = digits)
+	tmp = xmu_dot_make_residuals(model@matrices$S, digits = digits, resid = resid)
 	variances     = tmp$variances
 	varianceNames = tmp$varianceNames
 	# ============================

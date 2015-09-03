@@ -1,6 +1,6 @@
 Package: umx
-Version: 0.50
-Date: 2015-08-27
+Version: 0.70
+Date: 2015-09-25
 Title: Helper Functions for Structural Equation Modelling in OpenMx
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))

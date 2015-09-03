@@ -661,7 +661,8 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @param test whether to report a "dry run" - and not actually change anything (defaults to false)
 #' @return - dataframe with columns renamed.
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
+
 #' @examples
 #' # Re-name "cyl" to "cylinder"
 #' x = mtcars
@@ -1048,7 +1049,7 @@ umx_open <- function(filepath = getwd()) {
 #' @param action What to do on failure of the test: nothing (default), warn or die
 #' @return - TRUE if on the specified OS (else FALSE)
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family Miscellaneous Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umx_check_OS()
@@ -1256,7 +1257,8 @@ print.reliability <- function (x, digits = 4, ...){
 #' @param  x the thing you want to print
 #' @return - NULL
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
+
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' a = "brian"
@@ -1283,7 +1285,8 @@ umx_msg <- function(x) {
 #' @param suffixes a list of terminal suffixes differentiating the var names (e.g c("1", "2"))
 #' @return - vector of suffixed var names, i.e., c("a_T1", "b_T1", "a_T2", "b_T2")
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
+
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' umx_paste_names("bmi", "_T", 1:2)
@@ -1487,7 +1490,8 @@ umx_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"),
 #' @param suppress minimum numeric value to print (default =  NULL, print all values, no matter how small)
 #' @param ... Optional parameters for print
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
+
 #' @family Reporting Functions
 #' @seealso - \code{\link{print}}
 #' @examples
@@ -2614,7 +2618,8 @@ qm <- function(..., rowMarker = "|") {
 #' @param string an character string, e.g. "dog"
 #' @return - a collection of characters, e.g. c("d", "o", "g")
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
+
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://www.php.net/}
 #' @examples
 #' umx_explode("", "dog") # "d" "o" "g"
@@ -2637,7 +2642,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' @param invert = FALSE
 #' @return - vector of matches
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' umx_names(mtcars, "mpg") #"mpg" "cyl" "disp" "hp" "drat" "wt" "qsec" "vs" "am" "gear" "carb"
@@ -2659,7 +2664,8 @@ umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, valu
 #' @param string to trim
 #' @return - string
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
+
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' umx_trim(" dog") # "dog"
@@ -2682,7 +2688,8 @@ umx_trim <- function(string) {
 #' @param vec vector to rotate
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
+
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
@@ -3157,12 +3164,13 @@ umxHetCor <- function(data, ML = FALSE, use = "complete.obs", treatAllAsFactor =
 
 #' umx_lower2full
 #'
-#' Take a lower triangle of data (either from a "lower" \code{\link{mxMatrix}}, or as you might typed in a journal article) 
+#' Take a lower triangle of data (for instance from a "lower" \code{\link{mxMatrix}}, or
+#' as you might find in a journal article), 
 #' and turn it into a full matrix.
 #' 
 #' @param lower.data An \code{\link{mxMatrix}}
-#' @param diag A boolean noting whether the lower matrix includes the diagonal
-#' @param byrow Whether the matrix is to be filled by row or by column
+#' @param diag A boolean specifying whether the lower.data includes the diagonal
+#' @param byrow Whether the matrix is to be filled by row or by column (default = TRUE)
 #' @return - \code{\link{mxMatrix}}
 #' @family Miscellaneous Data Functions
 #' @export
@@ -3183,9 +3191,9 @@ umxHetCor <- function(data, ML = FALSE, use = "complete.obs", treatAllAsFactor =
 #' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000, 0,
 #' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
 #' )
-#' umx_lower2full(tmp)
+#' umx_lower2full(tmp, diag= TRUE)
 #' tmp = c(
-#' 	c(1.0000, 
+#' 	1.0000, 
 #' 	0.6247, 1.0000,
 #' 	0.3269, 0.3669, 1.0000,
 #' 	0.4216, 0.3275, 0.6404, 1.0000,
@@ -3194,11 +3202,11 @@ umxHetCor <- function(data, ML = FALSE, use = "complete.obs", treatAllAsFactor =
 #' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220, 1.0000,
 #' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707,  1.0000,
 #' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950, 1.0000,
-#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1)
+#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087, 1.000
 #' )
-#' umx_lower2full(tmp)
+#' umx_lower2full(tmp, diag = TRUE)
 #' tmp = c(
-#' 	c(0.6247,
+#' 	0.6247,
 #' 	0.3269, 0.3669,
 #' 	0.4216, 0.3275, 0.6404,
 #' 	0.2137, 0.2742, 0.1124, 0.0839,
@@ -3206,16 +3214,29 @@ umxHetCor <- function(data, ML = FALSE, use = "complete.obs", treatAllAsFactor =
 #' 	0.3240, 0.4047, 0.3054, 0.2786, 0.0489, 0.2220,
 #' 	0.2930, 0.2407, 0.4105, 0.3607, 0.0186, 0.1861, 0.2707, 
 #' 	0.2995, 0.2863, 0.5191, 0.5007, 0.0782, 0.3355, 0.2302,  0.2950,
-#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087)
+#' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087
 #' )
 #' umx_lower2full(tmp, diag = FALSE)
-umx_lower2full <- function(lower.data, diag = FALSE, byrow = TRUE) {
+umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL) {
+	if(is.null(diag)){
+		stop("please set diag explicitly to TRUE or FALSE")
+	}
+	if( !diag %in% c(TRUE, FALSE) ){
+		stop("diag must be one of TRUE or FALSE.")
+	}
+
 	if(is.matrix(lower.data)){
 		# Copy the transpose of the lower triangle to the
 		# upper triangle
-		x = lower.data
-		x[upper.tri(x)] <- t(x)[upper.tri(x)]
-		return(x)
+		mat = lower.data
+		mat[upper.tri(mat)] <- t(mat)[upper.tri(mat)]
+		if(!is.null(dimnames)){
+			if(typeof(dimnames)=="list"){
+				dimnames(mat) = dimnames
+			} else {
+				dimnames(mat) = list(dimnames, dimnames)
+			}
+		}
 	} else {
 		len = length(lower.data)
 		if(diag) {
@@ -3223,7 +3244,7 @@ umx_lower2full <- function(lower.data, diag = FALSE, byrow = TRUE) {
 			size = len * 2
 			size = size + .25
 			size = sqrt(size)
-			size = size - .5; size
+			size = size - .5;
 		}else{
 			# len = (x*((x+1)/2))-x	
 			# .5*(x-1)*x
@@ -3231,20 +3252,32 @@ umx_lower2full <- function(lower.data, diag = FALSE, byrow = TRUE) {
 			# (x-.5)^2 - .25
 			size= size + .25
 			size = sqrt(size)
-			size = size + .5; size
+			size = size + .5;
 		}
+		# mat = diag(10)
 		mat = diag(size)
 		if(byrow){
-			# put  data into upper triangle, then transform to lower
-			mat[upper.tri(mat, diag = diag)] <- lower.data;
-			mat[lower.tri(mat, diag = FALSE)] <- mat[upper.tri(mat, diag = FALSE)]
+			# oddly enough, flow data into upper triangle, then transform to lower
+			mat[upper.tri(mat, diag = diag)] <- lower.data
+			tmat = t(mat)
+			mat[lower.tri(mat, diag = FALSE)] <- tmat[lower.tri(tmat, diag = FALSE)]
 		}else{
-			mat[lower.tri(mat, diag = diag)] <- lower.data;
-			mat[upper.tri(mat, diag = FALSE)] <-mat[lower.tri(mat, diag = FALSE)]
+			# bycolumn: flow data into columns of lower triangle, then transform to upper
+			mat[lower.tri(mat, diag = diag)] <- lower.data
+			tmat = t(mat)
+			mat[upper.tri(mat, diag = FALSE)] <-tmat[upper.tri(tmat, diag = FALSE)]
 		}
-		return(mat)
 	}
+	if(!is.null(dimnames)){
+		if(typeof(dimnames) == "list"){
+			dimnames(mat) = dimnames
+		} else {
+			dimnames(mat) = list(dimnames, dimnames)
+		}
+	}
+	return(mat)
 }
+
 #' umxPadAndPruneForDefVars
 #'
 #' Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin

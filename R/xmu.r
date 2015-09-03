@@ -1,3 +1,4 @@
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # ========================================
 # = Not Typically used directly by users =
 # ========================================
@@ -21,20 +22,25 @@ xmu_dot_make_residuals <- function(mxMat, showFixed = TRUE, digits = 2, resid = 
 
 	varianceNames = c()
 	variances = c()
-	for(target in mxMat_rows ) { # rows
-		lowerVars  = mxMat_rows[1:match(target, mxMat_rows)]
-		for(source in lowerVars) { # columns
-			thisPathLabel = mxMat_labels[target, source]
-			thisPathFree  = mxMat_free[target, source]
-			thisPathVal   = round(mxMat_vals[target, source], digits)
+	for(to in mxMat_rows ) { # rows
+		lowerVars  = mxMat_rows[1:match(to, mxMat_rows)]
+		for(from in lowerVars) { # columns
+			thisPathLabel = mxMat_labels[to, from]
+			thisPathFree  = mxMat_free[to, from]
+			thisPathVal   = round(mxMat_vals[to, from], digits)
 
 			if(thisPathFree){ prefix = "" } else { prefix = "@" }
-				# TODO currently all variances are labeled "a_with_a"
-				# could diversifty to  "a_with_a", "var_a" & "resid_a"
-			if(thisPathFree | (thisPathVal !=0 & showFixed)) {
-				if((target == source)) {
-					varianceNames = append(varianceNames, paste0(source, '_var'))
-					variances = append(variances, paste0(source, '_var [label="', prefix, thisPathVal, '", shape = plaintext]'))
+			# TODO currently all variances are labeled "a_with_a"
+			# Could diversify to "a_with_a", "var_a" & "resid_a"
+			if(thisPathFree | (thisPathVal !=0 && showFixed)) {
+				if((to == from)) {
+					varianceNames = append(varianceNames, paste0(from, '_var'))
+					if(resid =="circle"){
+						# TODO refactor based on mxGraphviz to support latents north
+						variances = append(variances, "[dir=both, headport=s, tailport=s]")
+					} else {
+						variances = append(variances, paste0(from, '_var [label="', prefix, thisPathVal, '", shape = plaintext]'))
+					}					
 				}
 			}
 		}

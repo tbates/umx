@@ -3,11 +3,12 @@
 umx 0.70.0
 --------------
 
+* Add support for circles as well as lines for residuals
+* Improved help text. Thanks Mike Neale esp.!
+* Improved organization of functions into families in the help.
+* Fixed bad example in umx_lower2full()
 * Dropped "features" to set endogenous & exogenous variables in umxRAM
-* Incremental improvements to the help.
-* Minor improvement the organization of functions into families in the help.
-* No bugs reported for the first CRAN release
-
+* Dropped a dozen deprecated functions as no-one reported using them any longer.
 
 umx 0.50.0
 --------------
