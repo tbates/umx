@@ -1198,9 +1198,15 @@ umxStandardizeACE <- function(fit) {
 # ============
 # = Graphics =
 # ============
+
 #' Create a figure from an MxModel
 #'
 #' Create graphical path diagrams from your OpenMx models!
+#' \emph{Note:} On systems with Word installed, a \sQuote{.dot} file extension gets opened (uselessly) by M$ wurd. 
+#' You may, therefore, need to set the default app for .dot to Graphviz.
+#' 
+#' On mac, get info, choose \dQuote{open with}, select Graphviz.app (or omnigraffle professional),
+#' then set \dQuote{change all}.
 #'
 #' @aliases umxPlot
 #' @rdname plot.MxModel
