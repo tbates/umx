@@ -54,7 +54,7 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #'
 #' \strong{Comparison with other software}
 #' 
-#' Some software has massive behind-the-scenes defaulting and path addition. I've played with some
+#' Some software has massive behind-the-scenes defaulting and path addition. I've played with 
 #' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 #' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
 #' and \code{fix = "firstLoadings"}
@@ -63,13 +63,14 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' poor modelling. I suggest user learn the handful of \code{\link{umxPath}}
 #' short cuts and stay clean and explicit!
 #' 
-#' @param name A friendly name for the model
-#' @param data the data for the model. Can be an \code{\link{mxData}} or a data.frame
-#' @param ... A list of mxPath, umxPath, or mxThreshold objects
-#' @param run Whether to mxRun the model (defaults to TRUE: the estimated model will be returned)
-#' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
+#' @param model A model to update (or set to string to use as name for new model)
+#' @param data data for the model. Can be an \code{\link{mxData}} or a data.frame
+#' @param ... mx or umxPaths, mxThreshold objects, etc.
+#' @param run Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @param setValues Whether to generate likely good start values (Defaults to TRUE)
 #' @param independent Whether the model is independent (default = NA)
+#' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
+#' @param name A friendly name for the model
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
@@ -100,17 +101,22 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' }
-umxRAM <- function(name, data = NULL, ..., run = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
-	# TODO allow model to be given as input
+umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, name= NA) {
+	if(typeof(model) == "character"){
+		if(is.na(name)){
+			name = model
+		} else {
+			stop("Don't set model to a string && pass in name as a string as well…")
+		}
+	} else {
+		# TODO allow model to be given as input
+		stop("My next job is to implement allowing umxRAM to take an existing model and update it, but not there yet, sorry :-(")
+	}
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
 	}
 	if(is.null(data)){
-		if(umx_is_RAM(data)){
-			stop("I have not yet implemented the ability to pass in a model for modification, email if this would be valuable!")
-		} else {
-			stop("umxRAM needs some mxData. You set this like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
-		}
+		stop("umxRAM needs some mxData. You set this like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
 	}
 
 	nPaths       = 0 # initialise
@@ -160,34 +166,17 @@ umxRAM <- function(name, data = NULL, ..., run = TRUE, setValues = TRUE, indepen
 
 	foundNames = unique(na.omit(foundNames))
 
-	if(!is.null(latentVars)){
-		nLatent = length(latentVars)
-		message("You specified ", nLatent, " latent variables.")
-		latentsMentioned = setdiff(foundNames, manifestVars)
-		if(any(!(latentVars %in% latentsMentioned))){
-			stop(paste0("You requested the following latents, but never mention them in your path list: ", 
-				paste(latentVars[!(latentVars %in% latentsMentioned)], collapse = ", "))
-			)
-		} else if (any(!latentsMentioned %in% latentVars)){
-			stop(paste0("You defined some latents, but then use the following (additional) latents in path statements: ", 
-					paste(latentsMentioned[!latentsMentioned %in% latentVars], collapse = ", "),"\n",
-					"If you want to create latents on the fly, don't specify a defined list."
-				)
-			)
-		}
+	# Anything not in data -> latent
+	latentVars = setdiff(foundNames, c(manifestVars, "one"))
+	nLatent = length(latentVars)
+	# Report on which latents were created
+	if(nLatent == 0){
+		message("No latent variables were created.\n")
+		latentVars = NA
+	} else if (nLatent == 1){
+		message("A latent variable '", latentVars[1], "' was created.\n")
 	} else {
-		# Anything not in data -> latent
-		latentVars = setdiff(foundNames, c(manifestVars, "one"))
-		nLatent = length(latentVars)
-		# Report on which latents were created
-		if(nLatent == 0){
-			message("No latent variables were created.\n")
-			latentVars = NA
-		} else if (nLatent == 1){
-			message("A latent variable '", latentVars[1], "' was created.\n")
-		} else {
-			message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ".\n")
-		}
+		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ".\n")
 	}
 	# TODO handle when the user adds mxThreshold object: this will be a model where things are not in the data and are not latent...
 	# ====================

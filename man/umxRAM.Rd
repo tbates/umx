@@ -4,23 +4,25 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(name, data = NULL, ..., run = TRUE, setValues = TRUE,
-  independent = NA, remove_unused_manifests = TRUE)
+umxRAM(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE,
+  independent = NA, remove_unused_manifests = TRUE, name = NA)
 }
 \arguments{
-\item{name}{A friendly name for the model}
+\item{model}{A model to update (or set to string to use as name for new model)}
 
-\item{data}{the data for the model. Can be an \code{\link{mxData}} or a data.frame}
+\item{data}{data for the model. Can be an \code{\link{mxData}} or a data.frame}
 
-\item{...}{A list of mxPath, umxPath, or mxThreshold objects}
+\item{...}{mx or umxPaths, mxThreshold objects, etc.}
 
-\item{run}{Whether to mxRun the model (defaults to TRUE: the estimated model will be returned)}
+\item{run}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 
 \item{setValues}{Whether to generate likely good start values (Defaults to TRUE)}
 
 \item{independent}{Whether the model is independent (default = NA)}
 
 \item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
+
+\item{name}{A friendly name for the model}
 }
 \value{
 - \code{\link{mxModel}}
@@ -40,7 +42,7 @@ Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxMode
 
 \strong{Comparison with other software}
 
-Some software has massive behind-the-scenes defaulting and path addition. I've played with some
+Some software has massive behind-the-scenes defaulting and path addition. I've played with
 similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"}
 and \code{fix = "firstLoadings"}
