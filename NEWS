@@ -3,6 +3,7 @@
 umx 0.70.0
 --------------
 
+* Fixed limitation in umxPath where to was not being set.
 * Add support for circles as well as lines for residualvariance
 * Improve help text. Thanks Mike Neale esp.!
 * Improved organization of functions into families in the help.

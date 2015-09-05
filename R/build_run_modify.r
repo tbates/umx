@@ -110,7 +110,7 @@ umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, i
 		}
 	} else {
 		# TODO allow model to be given as input
-		stop("My next job is to implement allowing umxRAM to take an existing model and update it, but not there yet, sorry :-(")
+		stop("Looks like you didn't pass in the model name as the first item.\nMy next job is to implement allowing umxRAM to take an existing model and update it, but not there yet, sorry :-(")
 	}
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
@@ -2380,27 +2380,29 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param labels labels for each path
 #' @param lbound lower bounds for each path value
 #' @param ubound upper bounds for each path value
-#' @return - \code{\link{mxPath}}
+#' @return - 1 or more \code{\link{mxPath}}s
 #' @export
 #' @family Model Building Functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{mxMatrix}}, \code{\link{umxStart}}
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @seealso - \code{\link{mxPath}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{mxMatrix}}
+#' @references - \url{http://tbates.github.io}
 #' @examples
 #' require(OpenMx)
 #' # Some examples of paths with umxPath
-#' umxPath("A", to = "B")
-#' umxPath("A", to = "B", fixedAt = 1) 
-#' umxPath("A", to = LETTERS[2:4], firstAt = 1) # Same as "free = FALSE, values = 1"
+#' umxPath("A", to = "B") # One-headed path from A to B
+#' umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @@1
+#' umxPath("A", to = LETTERS[2:4], firstAt = 1) # Fix only the first path, others free
+#' umxPath(var = "A") # Give a variance to A
+#' umxPath(var = "A", fixedAt = 1) # Give a variance, fixed at 1
+#' umxPath(var = LETTERS[1:5], fixedAt = 1)
+#' umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
+#' umxPath(v1m0 = "A") # Give "A" variance and a mean, fixed at 1 and 0 respectively
+#' umxPath(v.m. = "A") # Give "A" variance and a mean, leaving both free.
 #' umxPath("A", with = "B") # using with: same as "to = B, arrows = 2"
 #' umxPath("A", with = "B", fixedAt = .5)
 #' umxPath("A", with = "B", firstAt = 1)
 #' umxPath("A", with = c("B","C"), fixedAt = 1)
-#' umxPath(var = "A") # Give a variance to A
-#' umxPath(var = "A", fixedAt = 1)
-#' umxPath(var = LETTERS[1:5], fixedAt = 1)
-#' umxPath(cov = c("A", "B")) # Covariance A <-> B
-#' umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
-#' umxPath(means = c("A","B"), values = c(pi,exp(1)))
+#' umxPath(cov = c("A", "B"))  # Covariance A <-> B
+#' umxPath(unique.bivariate = letters[1:4] # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 #' # A worked example
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -2414,21 +2416,17 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' )
 #' m1 = mxRun(m1)
 #' umxSummary(m1, show = "std")
-
-# # These are not yet implemented!!
-# #' umxPath("A <-> B") # same path as above using a string
-# #' umxPath("A -> B") # one-headed arrow with string syntax
-# #' umxPath("A <> B; A <-- B") # This is ok too
-# #' umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
-# #' # manifests is a reserved word, as is latents.
-# #' # It allows the string syntax to use the manifestVars variable
-# #' umxPath("A -> manifests") 
-
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, formative = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = "single", arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
-	# TODO add auto-label so that paths have their labels added.
-	if(!is.null(formative)){
-		stop("I haven't implemented formative yet... still thinking about whether its a good idea or a bad idea")
-	}
+#'
+#' # The following NOT YET implemented!!
+#' # umxPath("A <-> B") # same path as above using a string
+#' # umxPath("A -> B") # one-headed arrow with string syntax
+#' # umxPath("A <> B; A <-- B") # This is ok too
+#' # umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
+#' # # manifests is a reserved word, as is latents.
+#' # # It allows the string syntax to use the manifestVars variable
+#' # umxPath("A -> manifests") 
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, formative = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+	connect = match.arg(connect) # set to single if not overridden by user.
 	if(!is.null(from)){
 		if(length(from) > 1){
 			isSEMstyle = grepl("[<>]", x = from[1])	
@@ -2580,17 +2578,21 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			connect = "unique.bivariate"
 		}
 	} else if(!is.null(Cholesky)){
+		stop("I have not yet implemented Cholesky as a connection - email me a reminder!.\n")
 		if(is.null(from) | is.null(to)){
 			stop("To use Cholesky, I need both 'from=' and 'to=' to be set.\n")
 		} else {
 			stop("I have not yet implemented Cholesky as a connection - email me a reminder!.\n")
 		}
 	} else {
-		if(is.null(from) & is.null(to)){
+		if(is.null(from) && is.null(to)){
 			stop("You don't seem to have requested any paths.\n",
 			"see help(umxPath) for all the possibilities")
 		} else {
 			# assume it is from to
+			if(is.null(to)){
+				to = NA
+			}
 			from    = from
 			to      = to
 			arrows  = arrows
