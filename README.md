@@ -1,13 +1,24 @@
 # umx
 
-The umx package provides functions which build on the foundation of OpenMx() to support a range of strucutral equation modelling tasks.
+The umx package provides functions which build on the foundation of OpenMx() to support your structural equation modelling needs.
+
 These include all stages from building models rapidly, to plotting output graphically.
 
 umx stands for "user" OpenMx functions. It consists of a large (100+ functions) library of helper-functions building on
 [OpenMx](http://openmx.psyc.virginia.edu), and designed to help users 
 doing [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in R.
 
-The umx package has a wide range of functions (about 100) to get things done in SEM. The best way to learn about what is on offer is to install, and use the help, starting with '?umx'.
+The umx package has a wide range of functions (about 100) to get things done. The best way to learn what is on offer is to install, and use the help, starting with '?umx'.
+
+Grab it from CRAN with
+
+```splus
+install.packages("umx")
+library(umx)
+?umx
+
+```
+
 Some highlights include:
 
 1. Building Models
