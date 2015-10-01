@@ -1,5 +1,5 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-
+# devtools::check("~/bin/umx")
 # =====================
 # = Model Diagnostics =
 # =====================
@@ -14,8 +14,7 @@
 #' @return - 
 #' @export
 #' @family umx core functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
 #' model = umxReduce(model)
@@ -51,7 +50,6 @@ umxReduce <- function(m1, report = 3, baseFileName = "tmp") {
 	}
 }
 
-
 #' mxDiagnostic
 #'
 #' Diagnose problems in a model
@@ -61,7 +59,7 @@ umxReduce <- function(m1, report = 3, baseFileName = "tmp") {
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
 #' @return - helpful messages and perhaps a modified model
 #' @export
-#' @family model building functions
+#' @family Model Building Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(OpenMx)
@@ -1266,17 +1264,21 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	# = Get Symmetric & Asymmetric Paths =
 	# ========================
 	out = "";
-	out = xmu_dot_make_paths(mxMat = model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
-	out = xmu_dot_make_paths(mxMat = model@matrices$S, stringIn = out, heads = 2, showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
+	out = xmu_dot_make_paths(model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
+	if(resid == "circle"){
+		out = xmu_dot_make_paths(model@matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
+	} else {
+		out = xmu_dot_make_paths(model@matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
+	}
 	# TODO should xmu_dot_make_residuals handle showFixed or not necessary?
-	tmp = xmu_dot_make_residuals(model@matrices$S, digits = digits, resid = resid)
-	variances     = tmp$variances
-	varianceNames = tmp$varianceNames
+	tmp = xmu_dot_make_residuals(model@matrices$S, latents = latents, digits = digits, resid = resid)
+	variances     = tmp$variances  #either "var_var textbox" or "var -> var port circles"
+	varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
 	# ============================
 	# = Make the manifest shapes =
 	# ============================
 	# x1 [label="E", shape = square];
-	preOut = "";
+	preOut = "\t# Manifests\n"
 	for(var in selDVs) {
 	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
 	}
@@ -1292,26 +1294,34 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 		mxMat_free   = mxMat@free
 		mxMat_labels = mxMat@labels
 		meanVars = colnames(mxMat@values)
-		for(target in meanVars) {
-			thisPathLabel = mxMat_labels[1, target]
-			thisPathFree  = mxMat_free[1, target]
-			thisPathVal   = round(mxMat_vals[1, target], digits)
-			if(thisPathFree){ labelStart = ' [label="' } else { labelStart = ' [label="@' }
+		for(to in meanVars) {
+			thisPathLabel = mxMat_labels[1, to]
+			thisPathFree  = mxMat_free[1, to]
+			thisPathVal   = round(mxMat_vals[1, to], digits)
+			if(thisPathFree){
+				labelStart = ' [label="' 
+			} else {
+				labelStart = ' [label="@'
+			}
 
 			# TODO find a way of showing means fixed at zero?
 			if(thisPathFree | showFixed ) {
 			# if(thisPathFree | (showFixed & thisPathVal != 0) ) {
-				out = paste0(out, "\tone -> ", target, labelStart, thisPathVal, '"];\n')
+				out = paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n')
 			}else{
-				# cat(paste0(out, "\tone -> ", target, labelStart, thisPathVal, '"];\n'))
+				# cat(paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n'))
 				# return(thisPathVal != 0)
 			}
 		}
 	}
+
 	# ===========================
 	# = Make the variance lines =
 	# ===========================
 	# x1_var [label="0.21", shape = plaintext];
+	# or (circles)
+	# x1 -> x1 [label="0.21", direction = both];
+	preOut = paste0(preOut, "\n\t#Variances/residuals\n")
 	for(var in variances) {
 	   preOut = paste0(preOut, "\t", var, ";\n")
 	}
@@ -1322,16 +1332,19 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
 	rankVariables = paste0("\t{rank=min ; ", paste(latents, collapse = "; "), "};\n")
 	rankVariables = paste0(rankVariables, "\t{rank=same; ", paste(selDVs, collapse = " "), "};\n")
+	
 	if(umx_has_means(model)){ append(varianceNames, "one")}
 
-	rankVariables = paste0(rankVariables, "\t{rank=max ; ", paste(varianceNames, collapse = " "), "};\n")
+	if(length(varianceNames) > 0){
+		rankVariables = paste0(rankVariables, "\t{rank=max ; ", paste(varianceNames, collapse = " "), "};\n")
+	}
 
 	# ===================================
 	# = Assemble full text to write out =
 	# ===================================
 	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
-	print("nb: see ?plot.MxModel for options - std, digits, dotFilename, pathLabels, showFixed, showMeans, showError")
+	print("nb: see ?plot.MxModel for options - std, digits, dotFilename, pathLabels, resid, showFixed, showMeans")
 	if(!is.na(dotFilename)){
 		if(dotFilename == "name"){
 			dotFilename = paste0(model@name, ".dot")

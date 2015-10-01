@@ -100,13 +100,14 @@ methods::setClass("MxModel.ACE", contains = "MxModel")
 #' 
 #' # 6. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
+#' plot(m1, resid = "line") # I find it easier to work with stick-residuals
 #' }
 umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, name= NA) {
 	if(typeof(model) == "character"){
 		if(is.na(name)){
 			name = model
 		} else {
-			stop("Don't set model to a string && pass in name as a string as well…")
+			stop("Don't set model to a string && pass in name as a string as well...")
 		}
 	} else {
 		# TODO allow model to be given as input
@@ -2383,7 +2384,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @return - 1 or more \code{\link{mxPath}}s
 #' @export
 #' @family Model Building Functions
-#' @seealso - \code{\link{mxPath}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{mxMatrix}}
+#' @seealso - \code{\link{mxPath}}, \code{\link{umxLabel}}, \code{\link{umxLabel}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' require(OpenMx)
@@ -2402,7 +2403,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath("A", with = "B", firstAt = 1)
 #' umxPath("A", with = c("B","C"), fixedAt = 1)
 #' umxPath(cov = c("A", "B"))  # Covariance A <-> B
-#' umxPath(unique.bivariate = letters[1:4] # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
+#' umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 #' # A worked example
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -2410,11 +2411,9 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' m1 <- umxRAM("One Factor", data = myData,
 #' 	umxPath(latents, to = manifests),
-#' 	# umxPath("G -> manifests"),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = mxRun(m1)
 #' umxSummary(m1, show = "std")
 #'
 #' # The following NOT YET implemented!!
@@ -2669,14 +2668,15 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' @family Model Building Functions
 #' @family Reporting Functions
-#' @family Model Updating and Comparison
+#' @family Modify or Compare Models
+#' @family Super-easy helpers
 #' @family Miscellaneous Functions
 #' @family Miscellaneous Data Functions
 #' @family Miscellaneous Utility Functions
 #' @family Miscellaneous Stats Functions
+#' @family Miscellaneous File Functions
 #' @family Twin Modeling Functions
 #' @family Twin Reporting Functions
-#' @family Miscellaneous File Functions
 #' @family zAdvanced Helpers
 #' @references - \url{http://www.github.com/tbates/umx}
 #' 

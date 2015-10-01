@@ -95,7 +95,8 @@ plot(m1, std = TRUE, dotFilename = NA)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Data Functions: \code{\link{umxHetCor}};
+Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+  \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};
   \code{\link{umx_cont_2_ordinal}};
@@ -153,18 +154,28 @@ Other Miscellaneous Utility Functions: \code{\link{qm}};
   \code{\link{umx_rename}}; \code{\link{umx_rot}};
   \code{\link{umx_trim}}
 
-Other Model Building Functions: \code{\link{umxLabel}};
-  \code{\link{umxLatent}}; \code{\link{umxPath}};
-  \code{\link{umxRAM}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxThresholdMatrix}};
+Other Model Building Functions: \code{\link{umxDiagnose}};
+  \code{\link{umxLabel}}; \code{\link{umxLatent}};
+  \code{\link{umxPath}}; \code{\link{umxRAM}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxThresholdMatrix}};
   \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}
+
+Other Modify or Compare Models: \code{\link{parameters}},
+  \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
+  \code{\link{umxDrop1}}; \code{\link{umxEquate}};
+  \code{\link{umxFixAll}}; \code{\link{umxMI}};
+  \code{\link{umxSetParameters}};
+  \code{\link{umxUnexplainedCausalNexus}}
 
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_aggregate}}; \code{\link{umx_print}};
   \code{\link{umx_show}}; \code{\link{umx_time}}
+
+Other Super-easy helpers: \code{\link{umxEFA}}
 
 Other Twin Modeling Functions: \code{\link{umxACE}};
   \code{\link{umxGxE_window}}

@@ -30,11 +30,9 @@ m1 = umx_set_checkpoint(interval = 2, model = m1)
 umx_get_checkpoint(model = m1)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-
 Other Miscellaneous Functions: \code{\link{umxEval}};
   \code{\link{umxJiggle}}; \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};

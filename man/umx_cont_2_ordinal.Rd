@@ -39,7 +39,8 @@ str(umx_cont_2_ordinal(rnorm(10000), nlevels = 4, verbose = TRUE))
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Data Functions: \code{\link{umxHetCor}};
+Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+  \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}}; \code{\link{umx_cov2raw}};
   \code{\link{umx_lower2full}};

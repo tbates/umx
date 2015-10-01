@@ -31,5 +31,8 @@ umxEFA("test", latents = "g", data = mtcars[, c("mpg", "disp", "hp", "wt")])
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+
+Other Super-easy helpers: \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

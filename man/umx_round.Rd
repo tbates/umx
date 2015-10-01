@@ -28,7 +28,8 @@ head(umx_round(mtcars, coerce = TRUE))
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Data Functions: \code{\link{umxHetCor}};
+Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+  \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};
   \code{\link{umx_cont_2_ordinal}};

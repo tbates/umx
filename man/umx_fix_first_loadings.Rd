@@ -36,10 +36,11 @@ umx_show(m1) # variance of g is fixed at 1
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other Model Building Functions: \code{\link{umxLabel}};
-  \code{\link{umxLatent}}; \code{\link{umxPath}};
-  \code{\link{umxRAM}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxThresholdMatrix}};
+Other Model Building Functions: \code{\link{umxDiagnose}};
+  \code{\link{umxLabel}}; \code{\link{umxLatent}};
+  \code{\link{umxPath}}; \code{\link{umxRAM}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxThresholdMatrix}};
   \code{\link{umxValues}}; \code{\link{umx_fix_latents}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }

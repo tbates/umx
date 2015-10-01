@@ -25,9 +25,6 @@ model = umxReduce(model)
 }
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
-}
-\seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
+- \url{http://tbates.github.io}
 }
 

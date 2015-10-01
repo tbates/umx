@@ -225,8 +225,7 @@ umx_checkpoint <- umx_set_checkpoint
 #' @return - NULL
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}
 #' @examples
 #' umx_get_checkpoint() # current global default
 #' require(OpenMx)
@@ -1341,14 +1340,9 @@ umx_merge_CIs <- function(m1, m2) {
 	# return(all_CIs)
 }
 
-
-
-
 # =====================
 # = Statistical tools =
 # =====================
-
-
 
 #' umxCovData
 #'
@@ -1359,7 +1353,7 @@ umx_merge_CIs <- function(m1, m2) {
 #' @param use = Default is "complete.obs"
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Data Functions
+#' @family Miscellaneous Data Functions
 #' @seealso - \code{\link{umxHetCor}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -1667,8 +1661,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Miscellaneous Building Functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}
 #' @examples
 #' tmp = mtcars[,1:4]
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
@@ -2689,9 +2682,7 @@ umx_trim <- function(string) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Miscellaneous Utility Functions
-
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}
 #' @examples
 #' umx_rot(1:10)
 #' umx_rot(c(3,4,5,6,7))
@@ -2718,8 +2709,7 @@ umx_rot <- function(vec){
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Reporting Functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}
 #' @examples
 #' require(OpenMx)
 #' data(demoOneFactor)
@@ -3171,6 +3161,7 @@ umxHetCor <- function(data, ML = FALSE, use = "complete.obs", treatAllAsFactor =
 #' @param lower.data An \code{\link{mxMatrix}}
 #' @param diag A boolean specifying whether the lower.data includes the diagonal
 #' @param byrow Whether the matrix is to be filled by row or by column (default = TRUE)
+#' @param dimnames Optional dimnames for the matrix (defaults to NULL)
 #' @return - \code{\link{mxMatrix}}
 #' @family Miscellaneous Data Functions
 #' @export

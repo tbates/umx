@@ -9,10 +9,10 @@ License: GPL-3
 URL: http://github.com/tbates/umx
 Description: Helper functions for making, running, and reporting SEM models in OpenMx.
     If you are just starting, try typing ?umx.
-Depends:
+Depends: 
     R (>= 3.0.3),
 	OpenMx (>= 2.2.0)
-Imports:
+Imports: 
 	formula.tools,
     utils,
 	MASS,
@@ -23,8 +23,9 @@ Imports:
 	polycor,
     R2HTML,
 	RCurl
-Suggests:
-    knitr
+Suggests: 
+    knitr,
+    testthat
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 LazyData: true

@@ -4,17 +4,19 @@
 \alias{xmu_dot_make_residuals}
 \title{xmu_dot_make_residuals (not for end users)}
 \usage{
-xmu_dot_make_residuals(mxMat, showFixed = TRUE, digits = 2,
-  resid = c("circle", "line"))
+xmu_dot_make_residuals(mxMat, latents = NULL, showFixed = TRUE,
+  digits = 2, resid = c("circle", "line"))
 }
 \arguments{
-\item{mxMat}{an MxMatrix}
+\item{mxMat}{An A or S MxMatrix}
 
-\item{showFixed}{to show fixed values or not}
+\item{latents}{optional list of latents to alter location of circles (defaults to NULL)}
 
-\item{digits}{how many digits to report}
+\item{showFixed}{Whether to show fixed values or not}
 
-\item{resid}{how to show residuals and variances default is "circle". Other option is "line"}
+\item{digits}{How many digits to report}
+
+\item{resid}{How to show residuals and variances default is "circle". Other option is "line"}
 }
 \value{
 - list of variance names and variances

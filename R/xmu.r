@@ -6,22 +6,23 @@
 #' xmu_dot_make_residuals (not for end users)
 #'
 #'
-#' @param mxMat an MxMatrix
-#' @param showFixed to show fixed values or not
-#' @param digits how many digits to report
-#' @param resid how to show residuals and variances default is "circle". Other option is "line"
+#' @param mxMat An A or S MxMatrix 
+#' @param latents optional list of latents to alter location of circles (defaults to NULL)
+#' @param showFixed Whether to show fixed values or not
+#' @param digits How many digits to report
+#' @param resid How to show residuals and variances default is "circle". Other option is "line"
 #' @return - list of variance names and variances
 #' @export
 #' @family xmu internal not for end user
-xmu_dot_make_residuals <- function(mxMat, showFixed = TRUE, digits = 2, resid = c("circle", "line")) {
+xmu_dot_make_residuals <- function(mxMat, latents = NULL, showFixed = TRUE, digits = 2, resid = c("circle", "line")) {
 	mxMat_vals   = mxMat$values
 	mxMat_free   = mxMat$free
 	mxMat_labels = mxMat$labels
 	mxMat_rows = dimnames(mxMat_free)[[1]]
 	mxMat_cols = dimnames(mxMat_free)[[2]]
 
-	varianceNames = c()
 	variances = c()
+	varianceNames = c()
 	for(to in mxMat_rows ) { # rows
 		lowerVars  = mxMat_rows[1:match(to, mxMat_rows)]
 		for(from in lowerVars) { # columns
@@ -34,11 +35,16 @@ xmu_dot_make_residuals <- function(mxMat, showFixed = TRUE, digits = 2, resid = 
 			# Could diversify to "a_with_a", "var_a" & "resid_a"
 			if(thisPathFree | (thisPathVal !=0 && showFixed)) {
 				if((to == from)) {
-					varianceNames = append(varianceNames, paste0(from, '_var'))
 					if(resid =="circle"){
 						# TODO refactor based on mxGraphviz to support latents north
-						variances = append(variances, "[dir=both, headport=s, tailport=s]")
-					} else {
+						if(from %in% latents){
+							circleString = paste0(from, ' -> ', from, '[label="', prefix, thisPathVal, '", dir=both, headport=n, tailport=n]')
+						} else {
+							circleString = paste0(from, ' -> ', from, '[label="', prefix, thisPathVal, '", dir=both, headport=s, tailport=s]')
+						}
+						variances = append(variances, circleString)
+					} else if(resid =="line"){
+						varianceNames = append(varianceNames, paste0(from, '_var'))
 						variances = append(variances, paste0(from, '_var [label="', prefix, thisPathVal, '", shape = plaintext]'))
 					}					
 				}
@@ -107,8 +113,10 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 				if(thisPathFree){ prefix = "" } else { prefix = "@" }
 
 				if(thisPathFree | ((showFixed & (thisPathVal != 0))) ) {
-					if((target == source) & showResiduals) {
-						stringIn = paste0(stringIn, "\t", source, "_var -> ", target, ";\n")
+					if(target == source) {
+						if(showResiduals){
+							stringIn = paste0(stringIn, "\t", source, "_var -> ", target, ";\n")
+						}
 					} else {
 						if(pathLabels == "both"){
 							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "=", prefix, thisPathVal, "\"];\n")

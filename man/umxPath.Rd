@@ -139,7 +139,7 @@ umxPath("A", with = "B", fixedAt = .5)
 umxPath("A", with = "B", firstAt = 1)
 umxPath("A", with = c("B","C"), fixedAt = 1)
 umxPath(cov = c("A", "B"))  # Covariance A <-> B
-umxPath(unique.bivariate = letters[1:4] # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
+umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 # A worked example
 data(demoOneFactor)
 latents  = c("G")
@@ -147,11 +147,9 @@ manifests = names(demoOneFactor)
 myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 m1 <- umxRAM("One Factor", data = myData,
 	umxPath(latents, to = manifests),
-	# umxPath("G -> manifests"),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1.0)
 )
-m1 = mxRun(m1)
 umxSummary(m1, show = "std")
 
 # The following NOT YET implemented!!
@@ -167,12 +165,12 @@ umxSummary(m1, show = "std")
 - \url{http://tbates.github.io}
 }
 \seealso{
-- \code{\link{mxPath}}, \code{\link{umxLabel}}, \code{\link{umxStart}}, \code{\link{mxMatrix}}
+- \code{\link{mxPath}}, \code{\link{umxLabel}}, \code{\link{umxLabel}}
 
-Other Model Building Functions: \code{\link{umxLabel}};
-  \code{\link{umxLatent}}; \code{\link{umxRAM}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxThresholdMatrix}};
+Other Model Building Functions: \code{\link{umxDiagnose}};
+  \code{\link{umxLabel}}; \code{\link{umxLatent}};
+  \code{\link{umxRAM}}; \code{\link{umxReRun}};
+  \code{\link{umxRun}}; \code{\link{umxThresholdMatrix}};
   \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}; \code{\link{umx}},

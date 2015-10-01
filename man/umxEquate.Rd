@@ -62,6 +62,7 @@ Other Modify or Compare Models: \code{\link{parameters}},
   \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};
   \code{\link{umxDrop1}}; \code{\link{umxFixAll}};
   \code{\link{umxMI}}; \code{\link{umxSetParameters}};
-  \code{\link{umxUnexplainedCausalNexus}}
+  \code{\link{umxUnexplainedCausalNexus}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

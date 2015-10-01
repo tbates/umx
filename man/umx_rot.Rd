@@ -21,11 +21,9 @@ umx_rot(c(3,4,5,6,7))
 # [1] 4 5 6 7 3
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxStart}}
-
 Other Miscellaneous Utility Functions: \code{\link{qm}};
   \code{\link{umx_explode}}; \code{\link{umx_find_object}};
   \code{\link{umx_grep}}; \code{\link{umx_msg}};

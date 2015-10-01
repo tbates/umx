@@ -12,6 +12,8 @@ umx_lower2full(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL)
 \item{diag}{A boolean specifying whether the lower.data includes the diagonal}
 
 \item{byrow}{Whether the matrix is to be filled by row or by column (default = TRUE)}
+
+\item{dimnames}{Optional dimnames for the matrix (defaults to NULL)}
 }
 \value{
 - \code{\link{mxMatrix}}
@@ -67,7 +69,8 @@ umx_lower2full(tmp, diag = FALSE)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Data Functions: \code{\link{umxHetCor}};
+Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+  \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};
   \code{\link{umx_cont_2_ordinal}};
