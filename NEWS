@@ -3,13 +3,13 @@
 umx 1.0.0
 --------------
 
-* Fixed limitation in umxPath where to was not being set.
+* Fixed limitation in umxPath where "to" was not being set.
 * Add support for circles as well as lines for residualvariance
 * Improve help text. Thanks Mike Neale esp.!
-* Improved organization of functions into families in the help.
-* Fixed bad example in umx_lower2full()
-* Dropped "features" to set endogenous, exogenous, and latents in umxRAM
-* Dropped a dozen deprecated functions as no-one reported using them.
+* Improved organization of functions into @families in the help.
+* Improved example for umx_lower2full()
+* Dropped umxRAM functionality to set endogenous, exogenous, and latent traits
+* Dropped a dozen deprecated functions.
 
 umx 0.50.0
 --------------
