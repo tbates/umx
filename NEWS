@@ -1,6 +1,6 @@
 
 
-umx 0.6.0
+umx 0.60.0
 --------------
 
 * Fixed limitation in umxPath where to was not being set.
