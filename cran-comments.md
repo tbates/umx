@@ -1,5 +1,6 @@
 ## Changes
 This update updates umx for OpenMx 2.3.1, adds new plot features, & improves help.
+Version jumps to 1.0.0 based on lack of any bug or incompatibility reports.
 
 ## Test environments
 * OS X 10.11, R version 3.2.2 (2015-10-07)
