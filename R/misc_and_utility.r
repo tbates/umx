@@ -2,11 +2,9 @@
 # utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
 # so umx_swap_a_block()
 
-
 # ===================
 # = OpenMx wrappers =
 # ===================
-
 
 # ==============================
 # = Get and set OpenMx options =

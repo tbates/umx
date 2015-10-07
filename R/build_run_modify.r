@@ -1,4 +1,6 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+# devtools::release("~/bin/umx", check = TRUE)
+
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
