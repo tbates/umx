@@ -412,12 +412,14 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 
 #' umxSummary.default
 #'
+#' @description
 #' Report the fit of a OpenMx model or specialized model class (such as ACE, CP etc.)
 #' in a compact form suitable for a journal. Because this same function is needed in umx, 
 #' it gets defined twice currently.
 #'
-#' You can view documentation on the twin model subclass 
-#' \code{\link{umxSummary.MxModel.ACE}}, 
+#' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
+#' 
+#' View documentation on the twin model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param ... Other parameters to control model summary
@@ -501,16 +503,19 @@ umxSummary.default <- function(model, ...){
 #' umxSummary(m1, show = "std")
 #' # umxSummary(m1, report = "table") # not yet implemented
 umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG"), SE=TRUE, ...){
-	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
-	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list
-	# showEstimates = match.arg(showEstimates)
+	# TODO make table take lists of models...
 	report = match.arg(report)
 	filter = match.arg(filter)
+	# showEstimates = match.arg(showEstimates)
+	validValuesForshowEstimates = c("none", "raw", "std", "both", "list of column names")
+	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list
 	# if the filter is off default, the user must want something, let's assume it's std ...
 	if( filter != "ALL" & showEstimates == "none") {
 		showEstimates = "std"
+	}else if(showEstimates =="std" && SE==FALSE){
+		message("SE must be TRUE to show std, overriding to set SE =TRUE")
+		SE = TRUE
 	}
-	# TODO make table take lists of models...
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(refModels)) {
 		# saturatedModels not passed in from outside, so get them from the model
@@ -553,7 +558,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEst
 			parameterTable$sig = TRUE
 			parameterTable$CI  = ""
 			for(i in 1:dim(parameterTable)[1]) {
-				# # TODO we only show SE-based CI for std estimates so far
+				# TODO we only show SE-based CI for std estimates so far
 				est   = parameterTable[i, "Std.Estimate"]
 				CI95  = parameterTable[i, "Std.SE"] * 1.96
 				bounds = c(est - CI95, est + CI95)

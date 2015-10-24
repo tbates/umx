@@ -38,8 +38,8 @@ x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 umx_check_names("displacement", data = x, die = TRUE)
 # This will warn that "disp" doesn't exist (anymore)
 x = umx_rename(x, old = c("disp"), replace = c("displacement"))
-x = umx_rename(x, grep = "lacement", replace = "") # use grep to set it back
-umx_names(x, "^d")
+x = umx_rename(x, grep = "lacement", replace = "") # using grep to revert to disp
+umx_names(x, "^d") # all names begining with a d
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{qm}};

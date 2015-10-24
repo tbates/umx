@@ -1078,7 +1078,8 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE) {	
-	# TODO check that arguments not used by a particular class are not set away from their defaults
+	# TODO change these to an S3 method with three classes...
+	# TODO test that arguments not used by a particular class are not set away from their defaults
 	# TODO perhaps make "A_with_A" --> "var_A"
 	# TODO perhaps make "one_to_x2" --> "mean_x2" 
 	if (is(obj, "MxMatrix") ) { 

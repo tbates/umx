@@ -669,8 +669,8 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' umx_check_names("displacement", data = x, die = TRUE)
 #' # This will warn that "disp" doesn't exist (anymore)
 #' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
-#' x = umx_rename(x, grep = "lacement", replace = "") # use grep to set it back
-#' umx_names(x, "^d")
+#' x = umx_rename(x, grep = "lacement", replace = "") # using grep to revert to disp
+#' umx_names(x, "^d") # all names begining with a d
 umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE) {
 	# See also gdate::rename.vars(data, from, to)	
 	if(!is.null(old) && !is.null(grep)){
@@ -688,10 +688,11 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 		new_names = gsub(grep, replace, nameVector)
 		if(test){
 			message("The following changes would be made (set test =FALSE to actually make them)")
-			message("Was")
-			print(nameVector)
+			message(length(nameVector), " names found. ",
+			length(nameVector[!(nameVector == new_names)]), " changed. Old Was:")
+			print(nameVector[!(nameVector == new_names)])
 			message("New:")
-			print(new_names)
+			print(new_names[!(nameVector == new_names)])
 		} else {
 			names(x) = new_names
 		}
