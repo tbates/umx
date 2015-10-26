@@ -2379,7 +2379,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 		form <- var
 		var  = all.vars(formula.tools::lhs(form))
 		covs = all.vars(formula.tools::rhs(form))
-	}else{
+	} else {
 		form = NULL # so we catch this and create it below
 	}
 	
