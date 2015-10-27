@@ -4,7 +4,6 @@
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
-
 .onAttach <- function(libname, pkgname){
 	options('mxCondenseMatrixSlots'= FALSE)
     packageStartupMessage("For an overview type '?umx'")

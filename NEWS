@@ -3,6 +3,9 @@
 umx 1.0.0
 --------------
 
+* Full support (create, plot, summary) for CP twin models!
+* Full support (create, plot, summary) for IP twin models!
+* Full support (create, plot, summary) for GxE twin models!
 * Fixed limitation in umxPath where "to" was not being set.
 * Add support for circles as well as lines for residualvariance
 * Improve help text. Thanks Mike Neale esp.!
