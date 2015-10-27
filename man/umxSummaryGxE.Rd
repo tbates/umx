@@ -69,6 +69,6 @@ umxSummaryGxE(m1, separateGraphs = FALSE)
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
-- \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+- \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
 }
 

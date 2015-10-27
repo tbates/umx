@@ -53,6 +53,6 @@ umxSummaryIP(m1, digits = 2, dotFilename = "Figure3", showRg = FALSE, CIs = TRUE
 - \url{http://github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
-- \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+- \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 }
 

@@ -61,7 +61,7 @@ umxSummary(m1, separateGraphs = FALSE)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+- \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
 Other Model Building Functions: \code{\link{umxCP}};
   \code{\link{umxDiagnose}}; \code{\link{umxIP}};

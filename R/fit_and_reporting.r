@@ -874,14 +874,14 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param extended how much to report (FALSE)
 #' @param showRg Whether to show the genetic correlations (FALSE) (Not implemented!)
-#' @param showStd Whether to show the standardized model (TREU) (Not implemented!)
+#' @param showStd Whether to show the standardized model (TRUE) (Not implemented!)
 #' @param comparison Whether to run mxCompare on a comparison model (NULL)
 #' @param CIs Confidence intervals (F)
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @export
 #' @family Reporting Functions
-#' @seealso - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+#' @seealso - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://www.github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' require(OpenMx)
@@ -1034,7 +1034,7 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+#' @seealso - \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' require(OpenMx)
@@ -1170,7 +1170,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @export
-#' @seealso - \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+#' @seealso - \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' # The total sample has been subdivided into a young cohort, 
@@ -1861,7 +1861,7 @@ plot.MxModel.ACE <- umxPlotACE
 #' @param ... Optional additional parameters
 #' @return - 
 #' @export
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxGxE}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
@@ -1935,7 +1935,6 @@ plot.MxModel.GxE <- umxPlotGxE
 #' @return - Optionally return the dot code
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' \code{\link{umxTestAssumptions}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -2031,7 +2030,7 @@ plot.MxModel.CP <- umxPlotCP
 #' 
 #' @return - optionally return the dot code
 #' @export
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()}, \code{\link{umxTestAssumptions}}
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()}
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{

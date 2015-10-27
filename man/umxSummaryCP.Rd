@@ -24,7 +24,7 @@ umxSummaryCP(model, digits = 2, dotFilename = "name", returnStd = FALSE,
 
 \item{comparison}{Whether to run mxCompare on a comparison model (NULL)}
 
-\item{showStd}{Whether to show the standardized model (TREU) (Not implemented!)}
+\item{showStd}{Whether to show the standardized model (TRUE) (Not implemented!)}
 
 \item{CIs}{Confidence intervals (F)}
 
@@ -60,7 +60,7 @@ umxSummaryCP(fit, dotFilename = "Figure 3", showStd = TRUE)
 - \url{http://www.github.com/tbates/umx}, \url{http://tbates.github.io}
 }
 \seealso{
-- \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+- \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
   \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};

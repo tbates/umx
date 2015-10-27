@@ -37,7 +37,7 @@ umxPlotGxE(x = model, xlab = "SES", location = "topleft") # mainTitle="Moderatio
 - \url{http://tbates.github.io}
 }
 \seealso{
-- \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+- \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
 - \code{\link{umxGxE}}
 }

@@ -71,7 +71,7 @@ umxCompare(m1, m2)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+- \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
 Other Model Building Functions: \code{\link{umxDiagnose}};
   \code{\link{umxGxE}}; \code{\link{umxIP}};

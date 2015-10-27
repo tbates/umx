@@ -39,6 +39,5 @@ umxPlotCP(model, dotFilename = "MyPreferredName.dot")
 }
 \seealso{
 - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-\code{\link{umxTestAssumptions}}
 }
 

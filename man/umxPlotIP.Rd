@@ -38,6 +38,6 @@ umxPlotIP(model, dotFilename = NA)
 - \url{http://tbates.github.io}
 }
 \seealso{
-- \code{\link{plot}()}, \code{\link{umxSummary}()}, \code{\link{umxTestAssumptions}}
+- \code{\link{plot}()}, \code{\link{umxSummary}()}
 }
 
