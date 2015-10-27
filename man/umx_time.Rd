@@ -51,9 +51,10 @@ umx_time(c(m1, m2))
 }
 \seealso{
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
-  \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
-  \code{\link{umx_aggregate}}; \code{\link{umx_print}};
-  \code{\link{umx_show}}; \code{\link{umx}},
-  \code{\link{umx-package}}
+  \code{\link{umxSummary.MxModel.CP}},
+  \code{\link{umxSummaryCP}}; \code{\link{umx_APA_CI}};
+  \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
+  \code{\link{umx_print}}; \code{\link{umx_show}};
+  \code{\link{umx}}, \code{\link{umx-package}}
 }
 

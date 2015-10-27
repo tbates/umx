@@ -154,11 +154,12 @@ Other Miscellaneous Utility Functions: \code{\link{qm}};
   \code{\link{umx_rename}}; \code{\link{umx_rot}};
   \code{\link{umx_trim}}
 
-Other Model Building Functions: \code{\link{umxDiagnose}};
-  \code{\link{umxLabel}}; \code{\link{umxLatent}};
-  \code{\link{umxPath}}; \code{\link{umxRAM}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxThresholdMatrix}};
+Other Model Building Functions: \code{\link{umxCP}};
+  \code{\link{umxDiagnose}}; \code{\link{umxGxE}};
+  \code{\link{umxIP}}; \code{\link{umxLabel}};
+  \code{\link{umxLatent}}; \code{\link{umxPath}};
+  \code{\link{umxRAM}}; \code{\link{umxReRun}};
+  \code{\link{umxRun}}; \code{\link{umxThresholdMatrix}};
   \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}
@@ -171,9 +172,11 @@ Other Modify or Compare Models: \code{\link{parameters}},
   \code{\link{umxUnexplainedCausalNexus}}
 
 Other Reporting Functions: \code{\link{umxStandardizeACE}};
-  \code{\link{umx_APA_CI}}; \code{\link{umx_APA_pval}};
-  \code{\link{umx_aggregate}}; \code{\link{umx_print}};
-  \code{\link{umx_show}}; \code{\link{umx_time}}
+  \code{\link{umxSummary.MxModel.CP}},
+  \code{\link{umxSummaryCP}}; \code{\link{umx_APA_CI}};
+  \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
+  \code{\link{umx_print}}; \code{\link{umx_show}};
+  \code{\link{umx_time}}
 
 Other Super-easy helpers: \code{\link{umxEFA}}
 

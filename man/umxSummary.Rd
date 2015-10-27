@@ -18,6 +18,12 @@ it gets defined twice currently.
 
 See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 
+View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+
+View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+
+View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+
 View documentation on the twin model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
 }
 

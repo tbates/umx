@@ -167,10 +167,12 @@ umxSummary(m1, show = "std")
 \seealso{
 - \code{\link{mxPath}}, \code{\link{umxLabel}}, \code{\link{umxLabel}}
 
-Other Model Building Functions: \code{\link{umxDiagnose}};
-  \code{\link{umxLabel}}; \code{\link{umxLatent}};
-  \code{\link{umxRAM}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxThresholdMatrix}};
+Other Model Building Functions: \code{\link{umxCP}};
+  \code{\link{umxDiagnose}}; \code{\link{umxGxE}};
+  \code{\link{umxIP}}; \code{\link{umxLabel}};
+  \code{\link{umxLatent}}; \code{\link{umxRAM}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxThresholdMatrix}};
   \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}; \code{\link{umx}},

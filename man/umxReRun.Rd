@@ -76,10 +76,12 @@ umxCompare(m3, m2)
 - \url{http://github.com/tbates/umx}
 }
 \seealso{
-Other Model Building Functions: \code{\link{umxDiagnose}};
-  \code{\link{umxLabel}}; \code{\link{umxLatent}};
-  \code{\link{umxPath}}; \code{\link{umxRAM}};
-  \code{\link{umxRun}}; \code{\link{umxThresholdMatrix}};
+Other Model Building Functions: \code{\link{umxCP}};
+  \code{\link{umxDiagnose}}; \code{\link{umxGxE}};
+  \code{\link{umxIP}}; \code{\link{umxLabel}};
+  \code{\link{umxLatent}}; \code{\link{umxPath}};
+  \code{\link{umxRAM}}; \code{\link{umxRun}};
+  \code{\link{umxThresholdMatrix}};
   \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}; \code{\link{umx}},

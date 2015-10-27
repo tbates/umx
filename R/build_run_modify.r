@@ -27,19 +27,77 @@
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
 #' @importFrom methods setClass
+NULL
 
 utils::globalVariables(c(
 	'A', 'E',
-	'a', 'e',
-	'binLabels', 'Unit_nBinx1',
-	'ACE', 'AC', 'hAC',
-	'MZ.objective', 'DZ.objective', 'Vtot', 'SD',
+	'a', 'c', 'e', 
+	'Am', 'Cm', 'Em',
+	'am', "cm",'em',
+	'Af', 'Cf', 'Ef',
+	'af', 'cf', 'ef',
+	"as", 'cs', 'es',
+	'ai', 'ci', 'ei',
+
+	'a_cp', 'c_cp', 'e_cp',
+	'A_cp', 'C_cp', 'E_cp', 
+
+	'ACE', 'AC', "ACf", "ACm", 'hAC', 'hACf', 'hACm',
+	'ACEf', "ACEm",
+	'A11', 'A12', 'A21', 'A22', 'E11', 'E22','C11', 'C12', 'C21', 'C22', 
+
+	'ACE.Af', 'ACE.Am', 'ACE.Cf', 'ACE.Cm', 'ACE.Ef', 'ACE.Em',
+	"ACE.af", "ACE.am", "ACE.cf", "ACE.cm", "ACE.ef", "ACE.em", 
+	'ACE.Vf', 'ACE.Vm',
+
+	'top.betaLin', 'top.betaQuad',
 	'top.a', 'top.c', 'top.e',
 	'top.A', 'top.C', 'top.E',
-	'top.a_std', 'top.c_std', 'top.e_std')
+	'top.a_std', 'top.c_std', 'top.e_std',
+	'top.A', 'top.a', 'top.af', 'top.ai', 'top.am', 'top.as', 'top.a_cp',
+	'top.C', 'top.c', 'top.cf', 'top.ci', 'top.cm', 'top.cs', 'top.c_cp', 
+	'top.E', 'top.e', 'top.ef', 'top.ei', 'top.em', 'top.es', 'top.e_cp', 
+
+	'top.expCovDZ', 'top.expCovMZ', 'top.expMeanDZ', 'top.expMeanMZ',
+	'top.Means', 'top.nSib', 'top.nVar', 'top.cp_loadings',
+
+	'common_loadings','cp_loadings', 
+	'CorMFa', 'CorMFc', 'covT1', 'covT2',  'Def1', 'Def2', 'Def1Rlin', 'Def1Rquad',  'Def2Rlin', 'Def2Rquad', 'L', 'diagL',
+
+	'DZ.covsT1DZ'   , 'MZ.covsT1MZ'   ,
+	'DZ.covsT2DZ'   , 'MZ.covsT2MZ'   ,
+	'DZ.objective'  , 'MZ.objective'  ,
+	'DZf.objective' , 'MZf.objective' ,
+	'DZff.objective', 'MZff.objective',
+	'DZm.objective' , 'MZm.objective' ,
+	'DZmm.objective', 'MZmm.objective',
+	'DZfm.objective',
+
+	'Mf', 'Mm',
+	'MZW', 'DZW',
+	'fmCOV','mfCOV',
+
+	'meanDZ', 'meanMZ',
+
+	'nFac_Unit', 'nVar', 'nVar2', 'nVarIdenMatrix', 'nVarUnit', 'betas', 
+
+	'oneTwinMeans', 'predMeanT1DZ', 'predMeanT1MZ', 'predMeanT2DZ', 'predMeanT2MZ',
+
+	'R', 'Ra', 'Raf', 'Ram', 'Rc', 'Rcf', 'Rcm', 'Ref', 'Rem',
+	'thresholdDeviations', 'totalVariance', 'UnitLower',
+	'V', 'Vf', 'Vm', 'Vtot', 
+	"C", "logLik", "var", 'SD', 'StdDev',
+	'binLabels', 'Unit_nBinx1')
 )
 
+# ===================================================================
+# = Define some class containers to allow specialised model objects =
+# = plot, etc can then operate on these                             =
+# ===================================================================
 methods::setClass("MxModel.ACE", contains = "MxModel")
+methods::setClass("MxModel.GxE", contains = "MxModel")
+methods::setClass("MxModel.CP" , contains = "MxModel")
+methods::setClass("MxModel.IP" , contains = "MxModel")
 
 #' umxRAM
 #'
@@ -237,6 +295,237 @@ umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, i
 	}
 }
 
+#' umxGxE
+#'
+#' Make a 2-group moderated ACE model
+#'
+#' @param name The name of the model (defaults to "G_by_E")
+#' @param selDVs The dependent variable (e.g. IQ)
+#' @param selDefs The definition variable (e.g. socio economic status)
+#' @param suffix (Optional) used to expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
+#' @param dzData The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator
+#' @param mzData The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator
+#' @param lboundACE = numeric: If !is.na, then lbound the main effects at this value (default = NA)
+#' @param lboundM   = numeric: If !is.na, then lbound the moderators at this value (default = NA)
+#' @param dropMissingDef whether to drop rows missing the definition variable (gives a warning) default = FALSE
+#' @return - GxE \code{\link{mxModel}}
+#' @export
+#' @family Model Building Functions
+#' @seealso - \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' # The total sample has been subdivided into a young cohort, 
+#' # aged 18-30 years, and an older cohort aged 31 and above.
+#' # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
+#' # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
+# # use ?twinData to learn about this data set
+#' require(OpenMx)
+#' data(twinData) 
+#' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
+#' twinData$age1 = twinData$age2 = twinData$age
+#' selDVs  = c("bmi1", "bmi2")
+#' selDefs = c("age1", "age2")
+#' selVars = c(selDVs, selDefs)
+#' mzData  = subset(twinData, ZYG == "MZFF", selVars)
+#' dzData  = subset(twinData, ZYG == "DZMM", selVars)
+#' # Exclude cases with missing Def
+#' mzData <- mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
+#' dzData <- dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
+#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
+#' m1 = umxRun(m1)
+#' # Plot Moderation
+#' umxSummaryGxE(m1)
+#' umxSummary(m1, location = "topright")
+#' umxSummary(m1, separateGraphs = FALSE)
+umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE) {
+	nSib = 2;
+	if(!is.null(suffix)){
+		if(length(suffix) > 1){
+			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
+		}
+		selDVs  = umx_paste_names(selDVs , suffix, 1:2)
+		selDefs = umx_paste_names(selDefs, suffix, 1:2)
+	}
+	if(any(selDefs %in% selDVs)) {
+		warning("selDefs was found in selDVs: You probably gave me all the vars in SelDVs instead of just the DEPENDENT variable");
+	}
+	if(length(selDVs)/nSib!=1){
+		stop("DV list must be 1 variable (2 twins)... You tried ", length(selDVs)/nSib)
+	}
+	if(length(selDefs) != 2){
+		warning("selDefs must be length = 2");
+	}
+	if(length(selDVs) != 2){
+		warning("selDVs must be length = 2");
+	}
+
+	umx_check_names(selDVs, mzData)
+	umx_check_names(selDVs, dzData)
+	message("selDVs: ", omxQuotes(selDVs))
+
+	selVars   = c(selDVs, selDefs)
+	obsMean   = mean(colMeans(mzData[,selDVs], na.rm = TRUE)); # Just one average mean for all twins
+	nVar      = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+	rawVar    = diag(var(mzData[,selDVs], na.rm = TRUE))[1]
+	startMain = sqrt(c(.8, .0 ,.6) * rawVar)	
+	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for gxe")
+	
+	# drop any unused variables
+	dzData = dzData[,selVars]
+	mzData = mzData[,selVars]
+	
+	if(any(is.na(mzData[,selDefs]))){
+		if(dropMissingDef){
+			missingT1 = is.na(mzData[,selDefs[1]])
+			missingT2 = is.na(mzData[,selDefs[2]])
+			missDef = (missingT1 | missingT2)
+			message(sum(missDef), " mz rows dropped due to missing def var for Twin 1 or Twin 2 or both")
+			mzData = mzData[!missDef, ]
+		} else {
+			stop("Some rows of mzData have NA definition variables. Remove these yourself, or set dropMissing = TRUE")
+		}
+	}
+	if(any(is.na(dzData[,selDefs]))){
+		if(dropMissingDef){
+			missDef = is.na(dzData[,selDefs[1]]) | is.na(dzData[,selDefs[2]])
+			message(sum(missDef), " dz rows dropped due to missing def var for Twin 1 or Twin 2 or both")
+			dzData = dzData[!missDef, ]
+		} else {
+			stop("Some rows of dzData have NA definition variables. Remove these yourself, or set dropMissing = TRUE")
+		}
+	}
+	
+	
+	model = mxModel(name,
+		mxModel("top",
+			# Matrices a, c, and e to store a, c, and e path coefficients
+			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[1], name = "a" ), jiggle = .0001),
+			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[2], name = "c" ), jiggle = .0001),
+			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[3], name = "e" ), jiggle = .0001),
+			# Matrices to store moderated path coefficients                       
+			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0, name = "am" )),
+			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0, name = "cm" )),
+			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0, name = "em" )),
+
+			# Matrices A, C, and E compute non-moderated variance components 
+			mxAlgebra(name = "A", a %*% t(a) ),
+			mxAlgebra(name = "C", c %*% t(c) ),
+			mxAlgebra(name = "E", e %*% t(e) ),
+			# Algebra to compute total variances and inverse of standard deviations (diagonal only)
+			mxAlgebra(name = "V", A + C + E),
+			mxMatrix(name  = "I", "Iden", nrow = nVar, ncol = nVar),
+			mxAlgebra(name = "iSD", solve(sqrt(I * V)) ),
+
+			# Matrix & Algebra for expected means vector (non-moderated)
+			mxMatrix(name = "Means", "Full", nrow = 1, ncol = nVar, free = TRUE, values = obsMean, labels = "mean"), # needs mods for multivariate!
+			# Matrices for betas
+			mxMatrix(name = "betaLin" , "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "lin11"), 
+			mxMatrix(name = "betaQuad", "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "quad11")
+
+			# TODO:	add covariates to G x E model
+			# if(0){
+				# TODO: if there are covs
+				# mxMatrix(name = "betas" , "Full", nrow = nCov, ncol = nVar, free = T, values = 0.05, labels = paste0("beta_", covariates))
+			# }
+		),
+		mxModel("MZ",
+			# matrices for covariates (just on the means)
+			# Matrix for moderating/interacting variable
+			mxMatrix(name="Def1", "Full", nrow=1, ncol=1, free=F, labels = paste0("data.", selDefs[1])), # twin1 c("data.age1")
+			mxMatrix(name="Def2", "Full", nrow=1, ncol=1, free=F, labels = paste0("data.", selDefs[2])), # twin2 c("data.age2")
+			# Algebra for expected mean vector
+			# TODO simplyfy this algebra... one for both twins and all def vars... not 4* cov...
+			mxAlgebra(top.betaLin %*% Def1  , name = "Def1Rlin"),
+			mxAlgebra(top.betaQuad%*% Def1^2, name = "Def1Rquad"),
+			mxAlgebra(top.betaLin %*% Def2  , name = "Def2Rlin"),
+			mxAlgebra(top.betaQuad%*% Def2^2, name = "Def2Rquad"),
+			# if(0){ # TODO if there are covs
+			# 	mxMatrix(name = "covsT1", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", covsT1)),
+			# 	mxMatrix(name = "covsT2", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", covsT2)),
+			# 	mxAlgebra(top.betas %*% covsT1, name = "predMeanT1"),
+			# 	mxAlgebra(top.betas %*% covsT2, name = "predMeanT2"),
+			# 	mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad + predMeanT1,
+			# 	                 top.Means + Def2Rlin + Def2Rquad + predMeanT2), name = "expMeans")
+			# } else {
+				# mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeans")
+			# },
+			mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeanMZ"),
+			
+			# Compute ACE variance components
+			mxAlgebra((top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def1), name = "A11"),
+			mxAlgebra((top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def1), name = "C11"),
+			mxAlgebra((top.e + top.em %*% Def1) %*% t(top.e+ top.em %*% Def1), name = "E11"),
+                                                                    
+			mxAlgebra((top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def2), name = "A12"),
+			mxAlgebra((top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def2), name = "C12"),
+                                                                    
+			mxAlgebra((top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def1), name = "A21"),
+			mxAlgebra((top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def1), name = "C21"),
+                                                                    
+			mxAlgebra((top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def2), name = "A22"),
+			mxAlgebra((top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def2), name = "C22"),
+			mxAlgebra((top.e + top.em %*% Def2) %*% t(top.e+ top.em %*% Def2), name = "E22"),
+
+			# Algebra for expected variance/covariance matrix and expected mean vector in MZ
+			mxAlgebra(rbind(cbind(A11+C11+E11, A12+C12),
+			                cbind(A21+C21    , A22+C22+E22) ), name = "expCovMZ"),
+			# Data & Objective
+			mxData(mzData, type = "raw"),
+			mxExpectationNormal("expCovMZ", means = "expMeanMZ", dimnames = selDVs),
+			mxFitFunctionML()
+		),
+	    mxModel("DZ",
+			mxMatrix("Full", nrow=1, ncol=1, free=F, labels=paste("data.",selDefs[1],sep=""), name="Def1"), # twin1  c("data.divorce1")
+			mxMatrix("Full", nrow=1, ncol=1, free=F, labels=paste("data.",selDefs[2],sep=""), name="Def2"), # twin2  c("data.divorce2")
+			# Compute ACE variance components
+			mxAlgebra((top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def1), name="A11"),
+			mxAlgebra((top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def1), name="C11"),
+			mxAlgebra((top.e+ top.em%*% Def1) %*% t(top.e+ top.em%*% Def1), name="E11"),
+
+			mxAlgebra((top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def2), name="A12"),
+			mxAlgebra((top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def2), name="C12"),
+
+			mxAlgebra((top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def1), name="A21"),
+			mxAlgebra((top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def1), name="C21"),
+
+			mxAlgebra((top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def2), name="A22"),
+			mxAlgebra((top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def2), name="C22"),
+			mxAlgebra((top.e+ top.em%*% Def2) %*% t(top.e+ top.em%*% Def2), name="E22"),
+
+			# Expected DZ variance/covariance matrix
+			mxAlgebra(rbind(cbind(A11+C11+E11  , 0.5%x%A12+C12),
+			                cbind(0.5%x%A21+C21, A22+C22+E22) ), name="expCovDZ"),
+			# mxAlgebra(rbind(cbind(A11+C11+E11  , 0.5%x%A21+C21),
+			#                 cbind(0.5%x%A12+C12, A22+C22+E22) ), name="expCov"),
+			# Algebra for expected mean vector
+			mxAlgebra(top.betaLin %*% Def1  , name = "Def1Rlin"),
+			mxAlgebra(top.betaQuad%*% Def1^2, name = "Def1Rquad"),
+			mxAlgebra(top.betaLin %*% Def2  , name = "Def2Rlin"),
+			mxAlgebra(top.betaQuad%*% Def2^2, name = "Def2Rquad"),
+			mxAlgebra(cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeanDZ"),
+			# mxAlgebra(top.betas%*%rbind(Def1, Def1^2), name="Def1R"),
+			# mxAlgebra(top.betas%*%rbind(Def2, Def2^2), name="Def2R"),
+			# mxAlgebra( cbind(top.Means+Def1R, top.Means+Def2R), name="expMeans"),
+			# Data & Objective
+	        mxData(dzData, type = "raw"),
+			mxExpectationNormal("expCovDZ", means = "expMeanDZ", dimnames = selDVs),
+			mxFitFunctionML()
+	    ),
+		mxFitFunctionMultigroup(c("MZ", "DZ"))
+	)
+
+	if(!is.na(lboundACE)){
+		model = omxSetParameters(model, labels = c('a_r1c1', 'c_r1c1', 'e_r1c1'), lbound = lboundACE)
+	}
+	if(!is.na(lboundM)){
+		model = omxSetParameters(model, labels = c('am_r1c1', 'cm_r1c1', 'em_r1c1'), lbound = lboundM)
+	}
+	model = as(model, "MxModel.GxE")
+	return(model)
+}
+
 #' umxGxE_window
 #'
 #' Makes a model to do a GxE analysis using Local SEM (Hildebrandt, Wilhelm & Robitzsch, 2009, p96)
@@ -304,6 +593,7 @@ umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, i
 umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
 	# TODO want to allow missing moderator?
 	# Check moderator is set and exists in mzData and dzData
+	return = match.arg(return)
 	if(is.null(moderator)){
 		stop("Moderator must be set to the name of the moderator column, e.g, moderator = \"birth_year\"")
 	}
@@ -896,6 +1186,394 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 	return(model)
 }
 
+
+#' umxCP
+#'
+#' Make a 2-group Common Pathway model
+#'
+#' @param name The name of the model (defaults to "CP")
+#' @param selDVs The variables to include
+#' @param dzData The DZ dataframe
+#' @param mzData The MZ dataframe
+#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
+#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param nFac How many common factors (default = 1)
+#' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
+#' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
+#' @param freeLowerE Whether to leave the lower triangle of E free (default = F)
+#' @param correlatedA ?? (default = F)
+#' @param equateMeans Whether to equate the means across twins (defaults to T)
+#' @param dzAr The DZ genetic correlation (defaults to .5, set to .25 for dominance model)
+#' @param dzCr The DZ genetic correlation (defaults to 1,  vary to examine assortative mating)
+#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
+#' @param addCI Whether to add the interval requests for CIs (defaults to TRUE)
+#' @param numObsDZ = not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data
+#' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Model Building Functions
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' require(OpenMx)
+#' data(twinData) 
+#' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
+#' selDVs = c("ht", "wt")
+#' mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
+#' dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
+#' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
+#' m1 = umxRun(m1)
+#' umxSummary(m1, dotFilename=NA) # dotFilename = NA to avoid opening a plot window during CRAN check
+#' umxGetParameters(m1, "^c", free = TRUE)
+#' m2 = umxReRun(m1, update = "(cs_.*$)|(c_cp_)", regex = TRUE, name = "dropC")
+#' umxSummaryCP(m2, comparison = m1, dotFilename = NA)
+#' umxCompare(m1, m2)
+umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL) {
+	nSib = 2
+	# expand var names
+	if(!is.null(suffix)){
+		if(length(suffix) != 1){
+			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+			"i.e., set selDVs to 'obese', suffiex to '_T' and I look for 'obese_T1' and 'obese_T2' in the data...\n",
+			"PS: variables have to end in 1 or 2, i.e  'example_T1' and 'example_T2'")
+		}
+		selDVs = umx_paste_names(selDVs, suffix, 1:2)
+	}
+	umx_check_names(selDVs, mzData)
+	umx_check_names(selDVs, dzData)
+	# message("selDVs: ", omxQuotes(selDVs))
+	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+	vars = selDVs[1:nVar]
+	dataType = umx_is_cov(dzData)
+	if(dataType == "raw") {
+		if(!all(is.null(c(numObsMZ, numObsDZ)))){
+			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
+		}
+		# Drop any unused columns from mz and dzData
+		mzData = mzData[, selDVs]
+		dzData = dzData[, selDVs]
+		if(any(umx_is_ordered(mzData))){
+			stop("some selected variables are factors or ordinal... I can only handle continuous variables so far... sorry")
+		}
+	} else if(dataType %in% c("cov", "cor")){
+		if(is.null(numObsMZ)){ stop(paste0("You must set numObsMZ with ", dataType, " data"))}
+		if(is.null(numObsDZ)){ stop(paste0("You must set numObsDZ with ", dataType, " data"))}
+		het_mz = umx_reorder(mzData, selDVs)		
+		het_dz = umx_reorder(dzData, selDVs)
+	} else {
+		stop("Datatype \"", dataType, "\" not understood")
+	}
+
+	if(dataType == "raw"){
+		obsMZmeans = colMeans(mzData, na.rm = T);
+		top = mxModel("top", 
+			# means (not yet equated across twins)
+			umxLabel(mxMatrix(name = "expMean", type = "Full" , nrow = 1, ncol = (nVar * nSib), 
+				free = TRUE, values = obsMZmeans, dimnames = list("means", selDVs)
+			))
+		) 
+		MZ = mxModel("MZ", 
+			mxData(mzData, type = "raw"),
+			mxExpectationNormal("top.expCovMZ", "top.expMean"),
+			mxFitFunctionML()
+		)
+		DZ = mxModel("DZ", 
+			mxData(dzData, type = "raw"), 
+			mxExpectationNormal("top.expCovDZ", "top.expMean"),
+			mxFitFunctionML()
+		)
+	} else {
+		top = mxModel("top") # no means
+		# TODO add alernative fit types?
+		MZ = mxModel("MZ", 
+			mxData(mzData, type = "cov", numObs = numObsMZ),
+			mxExpectationNormal("top.expCovMZ"),
+			mxFitFunctionML()
+		)
+		DZ = mxModel("DZ", 
+			mxData(dzData, type = "cov", numObs = numObsDZ),
+			mxExpectationNormal("top.expCovDZ"),
+			mxFitFunctionML()
+		)
+	}
+
+	if(correlatedA){
+		a_cp_matrix = umxLabel(mxMatrix("Lower", nFac, nFac, free = TRUE, values = .7, name = "a_cp"), jiggle = .05) # Latent common factor
+	} else {
+		a_cp_matrix = umxLabel(mxMatrix("Diag", nFac, nFac, free = TRUE, values = .7, name = "a_cp"), jiggle =.05)
+	}
+
+	model = mxModel(name,
+		mxModel(top,
+			mxMatrix(name = "dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+			mxMatrix(name = "dzCr", "Full", 1, 1, free = FALSE, values = dzCr),	
+			# Latent common factor genetic paths
+			a_cp_matrix,
+			umxLabel(mxMatrix(name="c_cp", "Diag", nFac, nFac, free = TRUE, values =  0), jiggle = .05), # latent common factor Common #environmental path coefficients
+			umxLabel(mxMatrix(name="e_cp", "Diag", nFac, nFac, free = TRUE, values = .7), jiggle = .05), # latent common factor Unique environmental path coefficients
+			# Constrain variance of latent phenotype factor to 1.0
+			# Multiply by each path coefficient by its inverse to get variance component
+			mxAlgebra(name="A_cp", a_cp %*% t(a_cp)), # A_cp variance
+			mxAlgebra(name="C_cp", c_cp %*% t(c_cp)), # C_cp variance
+			mxAlgebra(name="E_cp", e_cp %*% t(e_cp)), # E_cp variance
+			mxAlgebra(name = "L" , A_cp + C_cp + E_cp), # total common factor covariance (a+c+e)
+			mxMatrix("Unit", nrow=nFac, ncol=1, name = "nFac_Unit"),
+			mxAlgebra(diag2vec(L)             , name = "diagL"),
+			mxConstraint(diagL == nFac_Unit   , name = "fix_CP_variances_to_1"),
+
+			umxLabel(mxMatrix(name = "as", "Lower", nVar, nVar, free = T, values = .5), jiggle = .05), # Additive genetic path 
+			umxLabel(mxMatrix(name = "cs", "Lower", nVar, nVar, free = T, values = .1), jiggle = .05), # Common environmental path 
+			umxLabel(mxMatrix(name = "es", "Lower", nVar, nVar, free = T, values = .6), jiggle = .05), # Unique environmental path
+			umxLabel(mxMatrix(name = "cp_loadings", "Full" , nVar, nFac, free = T, values = .6), jiggle = .05), # loadings on latent phenotype
+			# Quadratic multiplication to add cp_loading effects
+			mxAlgebra(cp_loadings %&% A_cp + as %*% t(as), name = "A"), # Additive genetic variance
+			mxAlgebra(cp_loadings %&% C_cp + cs %*% t(cs), name = "C"), # Common environmental variance
+			mxAlgebra(cp_loadings %&% E_cp + es %*% t(es), name = "E"), # Unique environmental variance
+			mxAlgebra(A+C+E, name = "ACE"),
+			mxAlgebra(A+C  , name = "AC" ),
+			mxAlgebra( (dzAr %x% A) + (dzCr %x% C),name="hAC"),
+			mxAlgebra(rbind (cbind(ACE, AC), 
+			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name="expCovMZ"),
+			mxAlgebra(rbind (cbind(ACE, hAC),
+			                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name="expCovDZ")
+		),
+		MZ, DZ,
+		mxFitFunctionMultigroup(c("MZ", "DZ"))
+		# mxCI(c('top.a_cp'))
+	)
+	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
+	if(equateMeans & dataType == "raw"){
+		model = omxSetParameters(model,
+		  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMeanr1c4", "expMeanr1c5", "expMeanr1c6"),
+		  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
+		)
+	}
+	if(!freeLowerA){
+		toset  = model@submodels$top@matrices$as@labels[lower.tri(model@submodels$top@matrices$as@labels)]
+		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
+	}
+	
+	if(!freeLowerC){
+		toset  = model@submodels$top@matrices$cs@labels[lower.tri(model@submodels$top@matrices$cs@labels)]
+		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
+	}
+	if(!freeLowerE){
+		toset  = model@submodels$top@matrices$es@labels[lower.tri(model@submodels$top@matrices$es@labels)]
+		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
+	}
+	if(addStd){
+		newTop = mxModel(model@submodels$top,
+			# nVar Identity matrix
+			mxMatrix(name = "I", "Iden", nVar, nVar),
+			# inverse of standard deviation diagonal  (same as "(\sqrt(I.Vtot))~"
+			mxAlgebra(name = "SD", solve(sqrt(I * ACE))),
+			# Standard specific path coefficients
+			mxAlgebra(name = "as_std", SD %*% as), # standardized a
+			mxAlgebra(name = "cs_std", SD %*% cs), # standardized c
+			mxAlgebra(name = "es_std", SD %*% es), # standardized e
+			# Standardize loadings on Common factors
+			mxAlgebra(SD %*% cp_loadings, name = "cp_loadings_std") # Standardized path coefficients (general factor(s))
+		)
+		model = mxModel(model, newTop)
+		if(addCI){
+			# TODO break these out into single labels.
+			model = mxModel(model, mxCI(c('top.as_std', 'top.cs_std', 'top.es_std', 'top.cp_loadings_std')))
+		}
+	}
+	model = omxAssignFirstParameters(model) # Just trundle through and make sure values with the same label have the same start value... means for instance.
+	model = as(model, "MxModel.CP")
+	return(model)
+} # end umxCP
+
+#' umxIP
+#'
+#' Make a 2-group Independent Pathway model
+#'
+#' @param name The name of the model (defaults to "IP")
+#' @param selDVs The variables to include
+#' @param dzData The DZ dataframe
+#' @param mzData The MZ dataframe
+#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
+#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param nFac How many common factors (default = 1)
+#' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
+#' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
+#' @param freeLowerE Whether to leave the lower triangle of E free (default = F)
+#' @param correlatedA ?? (default = F)
+#' @param equateMeans Whether to equate the means across twins (defaults to T)
+#' @param dzAr The DZ genetic correlation (defaults to .5, set to .25 for dominance model)
+#' @param dzCr The DZ genetic correlation (defaults to 1,  vary to examine assortative mating)
+#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
+#' @param addCI Whether to add the interval requests for CIs (defaults to TRUE)
+#' @param numObsDZ = todo: implement ordinal Number of DZ twins: Set this if you input covariance data
+#' @param numObsMZ = todo: implement ordinal Number of MZ twins: Set this if you input covariance data
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Model Building Functions
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models. \code{\link{umxTestAssumptions}}
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' require(OpenMx)
+#' data(twinData)
+#' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
+#' mzData <- subset(twinData, ZYG == "MZFF")
+#' dzData <- subset(twinData, ZYG == "DZFF")
+#' selDVs = c("ht", "wt") # with suffix = "", these will be expanded into "ht1" "ht2"
+#' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
+#' m1 = umxRun(m1)
+#' umxSummary(m1, dotFilename = NA) # dotFilename = NA to avoid opening a plot window during CRAN check
+umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL) {
+	if(!is.null(correlatedA)){
+		message("I have not implemented correlatedA yet...")
+	}
+	nSib = 2;
+	# expand var names
+	if(!is.null(suffix)){
+		if(length(suffix) != 1){
+			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+			"i.e., set selDVs to 'obese', suffix to '_T' and I look for 'obese_T1' and 'obese_T2' in the data...\n",
+			"nb: variables MUST be sequentially numbered, i.e  'example_T1' and 'example_T2'")
+		}
+		selDVs = umx_paste_names(selDVs, suffix, 1:2)
+	}
+	umx_check_names(selDVs, mzData)
+	umx_check_names(selDVs, dzData)
+	# message("selDVs: ", omxQuotes(selDVs))
+	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+
+	dataType = umx_is_cov(dzData)
+	
+	if(dataType == "raw") {
+		if(!all(is.null(c(numObsMZ, numObsDZ)))){
+			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
+		}
+		# Drop any unused columns from mz and dzData
+		mzData = mzData[, selDVs, drop = FALSE]
+		dzData = dzData[, selDVs, drop = FALSE]
+		if(any(umx_is_ordered(mzData))){
+			stop("some selected variables are factors or ordinal... I can only handle continuous variables so far... sorry")
+		}
+	} else if(dataType %in% c("cov", "cor")){
+		if(is.null(numObsMZ)){ stop(paste0("You must set numObsMZ with ", dataType, " data"))}
+		if(is.null(numObsDZ)){ stop(paste0("You must set numObsDZ with ", dataType, " data"))}
+		het_mz = umx_reorder(mzData, selDVs)		
+		het_dz = umx_reorder(dzData, selDVs)
+		stop("COV not fully implemented yet for IP...")
+	} else {
+		stop("Datatype ", omxQuotes(dataType), " not understood")
+	}
+
+	obsMZmeans = colMeans(mzData, na.rm=TRUE);
+	nVar       = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+	vars       = selDVs[1:nVar]
+	model = mxModel(name,
+		mxModel("top",
+			umxLabel(mxMatrix("Full", 1, nVar*nSib, free=T, values=obsMZmeans, dimnames=list("means", selDVs), name="expMean")), # Means 
+			# (not yet equated for the two twins)
+			# Matrices ac, cc, and ec to store a, c, and e path coefficients for independent general factors
+			umxLabel(mxMatrix("Full", nVar, nFac, free=T, values=.6, name="ai"), jiggle=.05), # latent common factor Additive genetic path 
+			umxLabel(mxMatrix("Full", nVar, nFac, free=T, values=.0, name="ci"), jiggle=.05), # latent common factor Common #environmental path coefficient
+			umxLabel(mxMatrix("Full", nVar, nFac, free=T, values=.6, name="ei"), jiggle=.05), # latent common factor Unique environmental path #coefficient
+			# Matrices as, cs, and es to store a, c, and e path coefficients for specific factors
+			umxLabel(mxMatrix("Lower", nVar, nVar, free=T, values=.6, name="as"), jiggle=.05), # Additive genetic path 
+			umxLabel(mxMatrix("Lower", nVar, nVar, free=T, values=.0, name="cs"), jiggle=.05), # Common environmental path 
+			umxLabel(mxMatrix("Lower", nVar, nVar, free=T, values=.6, name="es"), jiggle=.05), # Unique environmental path.
+
+			mxMatrix("Full", 1, 1, free = FALSE, values = dzAr, name = "dzAr"),
+			mxMatrix("Full", 1, 1, free = FALSE, values = dzCr, name = "dzCr"),
+
+			# Multiply by each path coefficient by its inverse to get variance component
+			# Sum the squared independent and specific paths to get total variance in each component
+			mxAlgebra(name = "A", ai%*%t(ai) + as%*%t(as) ), # Additive genetic variance
+			mxAlgebra(name = "C", ci%*%t(ci) + cs%*%t(cs) ), # Common environmental variance
+			mxAlgebra(name = "E", ei%*%t(ei) + es%*%t(es) ), # Unique environmental variance
+
+			mxAlgebra(name="ACE", A+C+E),
+			mxAlgebra(name="AC" , A+C  ),
+			mxAlgebra( (dzAr %x% A) + (dzCr %x% C),name="hAC"),
+			mxAlgebra(rbind (cbind(ACE, AC), 
+			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name = "expCovMZ"),
+			mxAlgebra(rbind (cbind(ACE, hAC),
+			                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name = "expCovDZ"),
+
+			# Algebra to compute total variances and standard deviations (diagonal only)
+			mxMatrix("Iden", nrow = nVar, name = "I"),
+			mxAlgebra(solve(sqrt(I * ACE)), name = "iSD")
+		),
+		mxModel("MZ", 
+			mxData(mzData, type = "raw"),
+			mxExpectationNormal("top.expCovMZ", "top.expMean"), 
+			mxFitFunctionML()
+		),
+		mxModel("DZ", 
+			mxData(dzData, type = "raw"), 
+			mxExpectationNormal("top.expCovDZ", "top.expMean"), 
+			mxFitFunctionML()
+		),
+		mxFitFunctionMultigroup(c("MZ", "DZ"))
+	)
+	# Equate means for twin1 and twin 2
+	if(equateMeans){
+		model = omxSetParameters(model,
+		  labels    = paste0("expMean_r1c", (nVar+1):(nVar*2)), # c("expMeanr1c4", "expMeanr1c5", "expMeanr1c6"),
+		  newlabels = paste0("expMean_r1c", 1:nVar)             # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
+		)
+	}
+	
+	if(!freeLowerA){
+		toset  = model@submodels$top@matrices$as@labels[lower.tri(model@submodels$top@matrices$as@labels)]
+		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
+	}
+
+	if(!freeLowerC){
+		toset  = model@submodels$top@matrices$cs@labels[lower.tri(model@submodels$top@matrices$cs@labels)]
+		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
+	}
+	
+	if(!freeLowerE){
+		toset  = model@submodels$top@matrices$es@labels[lower.tri(model@submodels$top@matrices$es@labels)]
+		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
+	} else {
+		# set the first column off, bar r1
+		model = omxSetParameters(model, labels = "es_r[^1]0-9?c1", free = FALSE, values = 0)
+
+		# toset  = model@submodels$top@matrices$es@labels[lower.tri(model@submodels$top@matrices$es@labels)]
+		# model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
+		# toset  = model@submodels$top@matrices$es@labels[lower.tri(model@submodels$top@matrices$es@labels)]
+		# model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
+
+		# Used to drop the ei paths, as we have a full Cholesky for E, now just set the bottom row TRUE
+		# toset = umxGetParameters(model, "^ei_r.c.", free= TRUE)
+		# model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
+	}
+
+	if(addStd){
+		newTop = mxModel(model@submodels$top,
+			# nVar Identity matrix
+			mxMatrix("Iden", nrow = nVar, name = "I"),
+			# inverse of standard deviation diagonal  (same as "(\sqrt(I.Vtot))~"
+			mxAlgebra(solve(sqrt(I * ACE)), name = "SD"),
+			# Standard general path coefficients
+			mxAlgebra(SD %*% ai, name = "ai_std"), # standardized ai
+			mxAlgebra(SD %*% ci, name = "ci_std"), # standardized ci
+			mxAlgebra(SD %*% ei, name = "ei_std"), # standardized ei
+			# Standardize specific path coefficients
+			mxAlgebra(SD %*% as, name = "as_std"), # standardized as
+			mxAlgebra(SD %*% cs, name = "cs_std"), # standardized cs
+			mxAlgebra(SD %*% es, name = "es_std")  # standardized es
+		)
+		model = mxModel(model, newTop)
+		if(addCI){
+			model = mxModel(model, mxCI(c('top.ai_std','top.ci_std','top.ei_std', 'top.as_std','top.cs_std','top.es_std')))
+		}
+	}
+	model  = omxAssignFirstParameters(model) # ensure parameters with the same label have the same start value... means, for instance.
+	model = as(model, "MxModel.IP")
+	return(model)
+} # end umxIP
+
 # ========================================
 # = Model building and modifying helpers =
 # ========================================
@@ -1344,9 +2022,13 @@ umxReRun <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value 
 #' umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = TRUE) # Column 6 of matrix "as"
 #' }
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE) {
-	# TODO Be nice to offer a method to handle submodels
-	# model@submodels$aSubmodel@matrices$aMatrix@labels
-	# model@submodels$MZ@matrices
+	# TODO
+	# 1. Be nice to offer a method to handle submodels
+	# 	model@submodels$aSubmodel@matrices$aMatrix@labels
+	# 	model@submodels$MZ@matrices
+	# 2. Simplify handling
+		# allow umxGetParameters to function like omxGetParameters()[name filter]
+	# 3. All user to request values, free, etc.
 	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(methods::is(inputTarget, "MxMatrix")) {

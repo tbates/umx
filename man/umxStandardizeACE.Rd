@@ -24,7 +24,8 @@ fit = umxStandardizeACE(fit)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other Reporting Functions: \code{\link{umx_APA_CI}};
+Other Reporting Functions: \code{\link{umxSummary.MxModel.CP}},
+  \code{\link{umxSummaryCP}}; \code{\link{umx_APA_CI}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
   \code{\link{umx_print}}; \code{\link{umx_show}};
   \code{\link{umx_time}}; \code{\link{umx}},
