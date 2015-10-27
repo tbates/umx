@@ -1359,17 +1359,27 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 		stop("I am sorry Dave, umxGetParameters needs either a model or an mxMatrix: you offered a ", class(inputTarget)[1])
 	}
 	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
-	if( !is.na(regex) ) {
-		if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
-			regex = paste0("^", regex, "[0-9]*$"); # anchor to the start of the string
-			anchored = TRUE
-			if(verbose == TRUE) {
-				message("note: anchored regex to beginning of string and allowed only numeric follow\n");
+	if( length(regex) > 1 || !is.na(regex) ) {
+		if(length(regex) > 1){
+			# assume regex is a list of labels
+			theLabels = theLabels[theLabels %in% regex]
+			if(length(regex) != length(theLabels)){
+				msg = "Not all labels found! Missing were:\n"
+				stop(msg, regex[!(regex %in% theLabels)]);
 			}
-		}else{
-			anchored=F
+		} else {
+			# it's a grep string
+			if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
+				regex = paste0("^", regex, "[0-9]*$"); # anchor to the start of the string
+				anchored = TRUE
+				if(verbose == TRUE) {
+					message("note: anchored regex to beginning of string and allowed only numeric follow\n");
+				}
+			}else{
+				anchored = FALSE
+			}
+			theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # return more detail
 		}
-		theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # return more detail
 		if(length(theLabels) == 0){
 			msg = "Found no matching labels!\n"
 			if(anchored == TRUE){

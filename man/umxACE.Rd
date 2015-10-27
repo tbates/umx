@@ -85,8 +85,8 @@ plot(m1)
 # ADE model (DZ correlation set to .25)
 m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 m2 = umxRun(m2)
-mxCompare(m2, m1) # ADE is better
-umxSummary(m2) # nb: though this is ADE, it's labeled ACE
+umxCompare(m2, m1) # ADE is better
+umxSummary(m2) # nb: though this is ADE, columns are labeled ACE
 
 
 # ===================
@@ -133,7 +133,7 @@ selDVs = c("wt", "obese")
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
 
-# Cut bmi colum to form ordinal obesity variables
+# Cut bmi column to form ordinal obesity variables
 ordDVs = c("obese1", "obese2")
 obesityLevels = c('normal', 'overweight', 'obese')
 cutPoints <- quantile(tmpTwin[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)

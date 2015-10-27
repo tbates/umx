@@ -89,7 +89,7 @@ The common task of creating a variable with variance fixed at 1 and mean at 0 is
 
 \code{umxPath(v1m0 = A)}
 
-For concenience, you can add estimated variance and means with \code{umxPath(v.m. = A)}
+For convenience, you may request estimated variance and means with \code{umxPath(v.m. = A)}
 
 
 umxPath exposes \dQuote{unique.bivariate} so you don't have to remember
