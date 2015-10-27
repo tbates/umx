@@ -3386,6 +3386,99 @@ umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 	}
 }
 
+umx_accumulate <- function(FUN = nlevels, from = c("columns", "rows"), of_df = NULL) {
+	# accumulate(nlevels, fromEach = "column", of_df = ordinalColumns)
+	from = match.arg(from)
+	out = c()
+	if(from == "columns"){
+		for(n in 1:ncol(of_df)){
+			out[n] = nlevels(of_df[,n])
+		}
+	} else {
+		for(n in 1:nrow(of_df)){
+			out[n] = nlevels(of_df[n,])
+		}
+	}
+	return(out)
+}
+
+umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
+	# stringToMxAlgebra(paste(rep("A", nReps), collapse = " %*% "), name="whatever")
+	eval(substitute(mxAlgebra(tExp, name=name, dimnames=dimnames), list(tExp = parse(text=algString)[[1]])))
+	# This is useful because it lets you use paste() and rep() to quickly and easily insert values from R variables into the string, then parse the string as an mxAlgebra argument.
+	# Use case: include a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. With this function, the code goes:
+}
+
+#' umx_standardize_IP
+#'
+#' This function simply inserts the standardized IP components into the ai ci ei and as cs es matrices
+#'
+#' @param fit an \code{\link{mxModel}} to standardize
+#' @return - standardized IP \code{\link{mxModel}}
+#' @export
+#' @family Miscellaneous Functions
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' \dontrun{
+#' fit = umx_standardize_IP(fit)
+#' }
+umx_standardize_IP <- function(fit){
+	if(!is.null(fit$top$ai_std)){
+		# Standardized general path components
+		fit@submodels$top@matrices$ai@values = fit@submodels$top@algebras$ai_std$result # standardized ai
+		fit@submodels$top@matrices$ci@values = fit@submodels$top@algebras$ci_std$result # standardized ci
+		fit@submodels$top@matrices$ei@values = fit@submodels$top@algebras$ei_std$result # standardized ei
+	    # Standardized specific path coefficienfitts
+		fit@submodels$top@matrices$as@values = fit@submodels$top@algebras$as_std$result # standardized as
+		fit@submodels$top@matrices$cs@values = fit@submodels$top@algebras$cs_std$result # standardized cs
+		fit@submodels$top@matrices$es@values = fit@submodels$top@algebras$es_std$result # standardized es
+	} else {
+		stop("Please run umxIP(..., std = TRUE). All I do is copy ai_std values into ai etc, so they have to be run!")
+	}
+	return(fit)
+}
+
+umx_standardize_CP <- function(fit){
+	if(!is.null(fit$top$ai_std)){
+		# Standardized general path components
+		fit@submodels$top@matrices$cp_loadings@values = fit@submodels$top@algebras$cp_loadings_std$result # standardized cp loadings
+		# Standardized specific path coefficienfitts
+		fit@submodels$top@matrices$as@values = fit@submodels$top@algebras$as_std$result # standardized as
+		fit@submodels$top@matrices$cs@values = fit@submodels$top@algebras$cs_std$result # standardized cs
+		fit@submodels$top@matrices$es@values = fit@submodels$top@algebras$es_std$result # standardized es
+		return(fit)
+	} else {
+		# TODO let this work directly... not hard..
+		selDVs = dimnames(fit$top.expCovMZ)[[1]]
+		nVar   = length(selDVs)/2;
+		nFac   = dim(fit@submodels$top@matrices$a_cp)[[1]]	
+		# Calculate standardised variance components
+		a_cp  = mxEval(top.a_cp , fit); # nFac * nFac matrix of path coefficients flowing into the cp_loadings array
+		c_cp  = mxEval(top.c_cp , fit);
+		e_cp  = mxEval(top.e_cp , fit);
+		as = mxEval(top.as, fit); # Specific factor path coefficients
+		cs = mxEval(top.cs, fit);
+		es = mxEval(top.es, fit);
+		cp_loadings = mxEval(top.cp_loadings, fit); # nVar * nFac matrix
+		A  = mxEval(top.A, fit);  # Variances
+		C  = mxEval(top.C, fit);
+		E  = mxEval(top.E, fit);
+		Vtot = A + C + E; # total variance
+		nVarIden = diag(nVar)
+		SD       = solve(sqrt(nVarIden * Vtot)); # inverse of diagonal matrix of standard deviations  (in classic MX -> "(\sqrt(I.Vtot))~"
+		# Standardize loadings on Common factors
+		std_commonLoadings = SD %*% cp_loadings; # Standardized path coefficients (general factor(s))
+		as_std = SD %*% as; # Standardized path coefficients (nVar specific factors matrices)
+		cs_std = SD %*% cs;
+		es_std = SD %*% es;
+	    # Standardized common and specific path coefficients
+		fit@submodels$top@matrices$cp_loadings@values = std_commonLoadings # standardized cp loadings
+		fit@submodels$top@matrices$as@values = as_std # standardized as
+		fit@submodels$top@matrices$cs@values = cs_std # standardized cs
+		fit@submodels$top@matrices$es@values = es_std # standardized es
+		return(fit)
+	}
+}
 # Poems you should know by heart
 # https://en.wikipedia.org/wiki/O_Captain!_My_Captain!
 # https://en.wikipedia.org/wiki/The_Second_Coming_(poem)
