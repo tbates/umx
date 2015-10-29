@@ -30,7 +30,7 @@ umx_cor(myFADataRaw[1:8,])
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other Miscellaneous Stats Functions: \code{\link{reliability}};
+Other Stats Functions: \code{\link{reliability}};
   \code{\link{umxCov2cor}}; \code{\link{umx_means}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }

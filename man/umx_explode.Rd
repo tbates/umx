@@ -25,7 +25,7 @@ umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://www.php.net/}
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{qm}};
+Other Utility Functions: \code{\link{qm}};
   \code{\link{umx_find_object}}; \code{\link{umx_grep}};
   \code{\link{umx_msg}}; \code{\link{umx_names}};
   \code{\link{umx_paste_names}}; \code{\link{umx_pb_note}};

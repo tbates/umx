@@ -32,7 +32,7 @@ umx_merge_CIs(m1, m2)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+Other Data Functions: \code{\link{umxCovData}};
   \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};

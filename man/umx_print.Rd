@@ -42,19 +42,17 @@ umx_print(mtcars[1:10,], file = "Rout.html")
 \seealso{
 - \code{\link{print}}
 
-Other Miscellaneous Utility Functions: \code{\link{qm}};
+Other Reporting Functions: \code{\link{umx_APA_CI}};
+  \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
+  \code{\link{umx_show}}; \code{\link{umx_time}};
+  \code{\link{umx}}, \code{\link{umx-package}}
+
+Other Utility Functions: \code{\link{qm}};
   \code{\link{umx_explode}}; \code{\link{umx_find_object}};
   \code{\link{umx_grep}}; \code{\link{umx_msg}};
   \code{\link{umx_names}}; \code{\link{umx_paste_names}};
   \code{\link{umx_pb_note}}; \code{\link{umx_rename}};
   \code{\link{umx_rot}}; \code{\link{umx_trim}};
-  \code{\link{umx}}, \code{\link{umx-package}}
-
-Other Reporting Functions: \code{\link{umxStandardizeACE}};
-  \code{\link{umxSummary.MxModel.CP}},
-  \code{\link{umxSummaryCP}}; \code{\link{umx_APA_CI}};
-  \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
-  \code{\link{umx_show}}; \code{\link{umx_time}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }
 

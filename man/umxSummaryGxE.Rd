@@ -70,5 +70,19 @@ umxSummaryGxE(m1, separateGraphs = FALSE)
 }
 \seealso{
 - \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+
+Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},
+  \code{\link{umxPlotCP}}; \code{\link{plot.MxModel.GxE}},
+  \code{\link{umxPlotGxE}}; \code{\link{umxACESexLim}};
+  \code{\link{umxACE}}; \code{\link{umxCP}};
+  \code{\link{umxGxE_window}}; \code{\link{umxGxE}};
+  \code{\link{umxIP}};
+  \code{\link{umxSummary.MxModel.ACE}},
+  \code{\link{umxSummaryACE}};
+  \code{\link{umxSummary.MxModel.CP}},
+  \code{\link{umxSummaryCP}};
+  \code{\link{umxSummary.MxModel.IP}},
+  \code{\link{umxSummaryIP}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

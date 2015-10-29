@@ -26,8 +26,8 @@ umx_check_OS()
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{umxEval}};
-  \code{\link{umxJiggle}}; \code{\link{umx_APA_pval}};
+Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_model}};
   \code{\link{umx_check_multi_core}};
@@ -53,7 +53,6 @@ Other Miscellaneous Functions: \code{\link{umxEval}};
   \code{\link{umx_object_as_str}};
   \code{\link{umx_reorder}}; \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}};
-  \code{\link{umx_standardize_IP}};
   \code{\link{umx_string_to_algebra}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }

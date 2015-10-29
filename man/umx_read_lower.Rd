@@ -56,7 +56,7 @@ summary(m1)
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+Other Data Functions: \code{\link{umxCovData}};
   \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};

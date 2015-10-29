@@ -21,9 +21,9 @@ umxACE(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = 0.5,
 \item{suffix}{The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
 omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
-\item{dzAr}{The DZ genetic correlation (defaults to .5, set to .25 for dominance model)}
+\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
 
-\item{dzCr}{The DZ genetic correlation (defaults to 1,  vary to examine assortative mating)}
+\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)}
 
 \item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE)}
 
@@ -201,7 +201,19 @@ plot(m1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{umxGxE_window}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},
+  \code{\link{umxPlotCP}}; \code{\link{plot.MxModel.GxE}},
+  \code{\link{umxPlotGxE}}; \code{\link{umxACESexLim}};
+  \code{\link{umxCP}}; \code{\link{umxGxE_window}};
+  \code{\link{umxGxE}}; \code{\link{umxIP}};
+  \code{\link{umxSummary.MxModel.ACE}},
+  \code{\link{umxSummaryACE}};
+  \code{\link{umxSummary.MxModel.CP}},
+  \code{\link{umxSummaryCP}};
+  \code{\link{umxSummary.MxModel.GxE}},
+  \code{\link{umxSummaryGxE}};
+  \code{\link{umxSummary.MxModel.IP}},
+  \code{\link{umxSummaryIP}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

@@ -84,7 +84,19 @@ Nonparametric Estimates of Gene x Environment Interaction Using Local Structural
 \emph{Behavior Genetics}.
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{umxACE}};
-  \code{\link{umx}}, \code{\link{umx-package}}
+Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},
+  \code{\link{umxPlotCP}}; \code{\link{plot.MxModel.GxE}},
+  \code{\link{umxPlotGxE}}; \code{\link{umxACESexLim}};
+  \code{\link{umxACE}}; \code{\link{umxCP}};
+  \code{\link{umxGxE}}; \code{\link{umxIP}};
+  \code{\link{umxSummary.MxModel.ACE}},
+  \code{\link{umxSummaryACE}};
+  \code{\link{umxSummary.MxModel.CP}},
+  \code{\link{umxSummaryCP}};
+  \code{\link{umxSummary.MxModel.GxE}},
+  \code{\link{umxSummaryGxE}};
+  \code{\link{umxSummary.MxModel.IP}},
+  \code{\link{umxSummaryIP}}; \code{\link{umx}},
+  \code{\link{umx-package}}
 }
 

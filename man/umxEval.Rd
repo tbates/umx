@@ -39,7 +39,7 @@ mxEval(list(ab = ab), m1)
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other Miscellaneous Functions: \code{\link{umxJiggle}};
+Other Misc: \code{\link{umxJiggle}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
@@ -67,7 +67,6 @@ Other Miscellaneous Functions: \code{\link{umxJiggle}};
   \code{\link{umx_object_as_str}};
   \code{\link{umx_reorder}}; \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}};
-  \code{\link{umx_standardize_IP}};
   \code{\link{umx_string_to_algebra}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }

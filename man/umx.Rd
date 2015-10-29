@@ -95,7 +95,7 @@ plot(m1, std = TRUE, dotFilename = NA)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+Other Data Functions: \code{\link{umxCovData}};
   \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};
@@ -108,12 +108,12 @@ Other Miscellaneous Data Functions: \code{\link{umxCovData}};
   \code{\link{umx_scale_wide_twin_data}};
   \code{\link{umx_scale}}; \code{\link{umx_swap_a_block}}
 
-Other Miscellaneous File Functions: \code{\link{dl_from_dropbox}};
+Other File Functions: \code{\link{dl_from_dropbox}};
   \code{\link{umx_move_file}}; \code{\link{umx_open}};
   \code{\link{umx_rename_file}}
 
-Other Miscellaneous Functions: \code{\link{umxEval}};
-  \code{\link{umxJiggle}}; \code{\link{umx_APA_pval}};
+Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
   \code{\link{umx_check_model}};
@@ -140,27 +140,13 @@ Other Miscellaneous Functions: \code{\link{umxEval}};
   \code{\link{umx_object_as_str}};
   \code{\link{umx_reorder}}; \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}};
-  \code{\link{umx_standardize_IP}};
   \code{\link{umx_string_to_algebra}}
 
-Other Miscellaneous Stats Functions: \code{\link{reliability}};
-  \code{\link{umxCov2cor}}; \code{\link{umx_cor}};
-  \code{\link{umx_means}}
-
-Other Miscellaneous Utility Functions: \code{\link{qm}};
-  \code{\link{umx_explode}}; \code{\link{umx_find_object}};
-  \code{\link{umx_grep}}; \code{\link{umx_msg}};
-  \code{\link{umx_names}}; \code{\link{umx_paste_names}};
-  \code{\link{umx_pb_note}}; \code{\link{umx_print}};
-  \code{\link{umx_rename}}; \code{\link{umx_rot}};
-  \code{\link{umx_trim}}
-
-Other Model Building Functions: \code{\link{umxCP}};
-  \code{\link{umxDiagnose}}; \code{\link{umxGxE}};
-  \code{\link{umxIP}}; \code{\link{umxLabel}};
-  \code{\link{umxLatent}}; \code{\link{umxPath}};
-  \code{\link{umxRAM}}; \code{\link{umxReRun}};
-  \code{\link{umxRun}}; \code{\link{umxThresholdMatrix}};
+Other Model Building Functions: \code{\link{umxDiagnose}};
+  \code{\link{umxLabel}}; \code{\link{umxLatent}};
+  \code{\link{umxPath}}; \code{\link{umxRAM}};
+  \code{\link{umxReRun}}; \code{\link{umxRun}};
+  \code{\link{umxThresholdMatrix}};
   \code{\link{umxValues}};
   \code{\link{umx_fix_first_loadings}};
   \code{\link{umx_fix_latents}}
@@ -172,21 +158,43 @@ Other Modify or Compare Models: \code{\link{parameters}},
   \code{\link{umxSetParameters}};
   \code{\link{umxUnexplainedCausalNexus}}
 
-Other Reporting Functions: \code{\link{umxStandardizeACE}};
-  \code{\link{umxSummary.MxModel.CP}},
-  \code{\link{umxSummaryCP}}; \code{\link{umx_APA_CI}};
+Other Reporting Functions: \code{\link{umx_APA_CI}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
   \code{\link{umx_print}}; \code{\link{umx_show}};
   \code{\link{umx_time}}
 
+Other Stats Functions: \code{\link{reliability}};
+  \code{\link{umxCov2cor}}; \code{\link{umx_cor}};
+  \code{\link{umx_means}}
+
 Other Super-easy helpers: \code{\link{umxEFA}}
 
-Other Twin Modeling Functions: \code{\link{umxACE}};
-  \code{\link{umxGxE_window}}
+Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},
+  \code{\link{umxPlotCP}}; \code{\link{plot.MxModel.GxE}},
+  \code{\link{umxPlotGxE}}; \code{\link{umxACESexLim}};
+  \code{\link{umxACE}}; \code{\link{umxCP}};
+  \code{\link{umxGxE_window}}; \code{\link{umxGxE}};
+  \code{\link{umxIP}};
+  \code{\link{umxSummary.MxModel.ACE}},
+  \code{\link{umxSummaryACE}};
+  \code{\link{umxSummary.MxModel.CP}},
+  \code{\link{umxSummaryCP}};
+  \code{\link{umxSummary.MxModel.GxE}},
+  \code{\link{umxSummaryGxE}};
+  \code{\link{umxSummary.MxModel.IP}},
+  \code{\link{umxSummaryIP}}
 
-Other Twin Reporting Functions: \code{\link{umxSummary.MxModel.ACE}},
-  \code{\link{umxSummaryACE}}
+Other Utility Functions: \code{\link{qm}};
+  \code{\link{umx_explode}}; \code{\link{umx_find_object}};
+  \code{\link{umx_grep}}; \code{\link{umx_msg}};
+  \code{\link{umx_names}}; \code{\link{umx_paste_names}};
+  \code{\link{umx_pb_note}}; \code{\link{umx_print}};
+  \code{\link{umx_rename}}; \code{\link{umx_rot}};
+  \code{\link{umx_trim}}
 
-Other zAdvanced Helpers: \code{\link{umx_RAM_ordinal_objective}}
+Other zAdvanced Helpers: \code{\link{umxStandardizeACE}};
+  \code{\link{umx_RAM_ordinal_objective}};
+  \code{\link{umx_standardize_CP}};
+  \code{\link{umx_standardize_IP}}
 }
 

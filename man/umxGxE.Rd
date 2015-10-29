@@ -63,15 +63,19 @@ umxSummary(m1, separateGraphs = FALSE)
 \seealso{
 - \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
-Other Model Building Functions: \code{\link{umxCP}};
-  \code{\link{umxDiagnose}}; \code{\link{umxIP}};
-  \code{\link{umxLabel}}; \code{\link{umxLatent}};
-  \code{\link{umxPath}}; \code{\link{umxRAM}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxThresholdMatrix}};
-  \code{\link{umxValues}};
-  \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}; \code{\link{umx}},
+Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},
+  \code{\link{umxPlotCP}}; \code{\link{plot.MxModel.GxE}},
+  \code{\link{umxPlotGxE}}; \code{\link{umxACESexLim}};
+  \code{\link{umxACE}}; \code{\link{umxCP}};
+  \code{\link{umxGxE_window}}; \code{\link{umxIP}};
+  \code{\link{umxSummary.MxModel.ACE}},
+  \code{\link{umxSummaryACE}};
+  \code{\link{umxSummary.MxModel.CP}},
+  \code{\link{umxSummaryCP}};
+  \code{\link{umxSummary.MxModel.GxE}},
+  \code{\link{umxSummaryGxE}};
+  \code{\link{umxSummary.MxModel.IP}},
+  \code{\link{umxSummaryIP}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }
 

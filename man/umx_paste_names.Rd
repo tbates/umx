@@ -29,7 +29,7 @@ varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{qm}};
+Other Utility Functions: \code{\link{qm}};
   \code{\link{umx_explode}}; \code{\link{umx_find_object}};
   \code{\link{umx_grep}}; \code{\link{umx_msg}};
   \code{\link{umx_names}}; \code{\link{umx_pb_note}};

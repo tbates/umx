@@ -39,7 +39,7 @@ umx_names(mtcars, "r[ab]") # "drat", "carb"
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{qm}};
+Other Utility Functions: \code{\link{qm}};
   \code{\link{umx_explode}}; \code{\link{umx_find_object}};
   \code{\link{umx_grep}}; \code{\link{umx_msg}};
   \code{\link{umx_paste_names}}; \code{\link{umx_pb_note}};

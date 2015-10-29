@@ -24,7 +24,7 @@ umx_open(getwd())
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous File Functions: \code{\link{dl_from_dropbox}};
+Other File Functions: \code{\link{dl_from_dropbox}};
   \code{\link{umx_move_file}};
   \code{\link{umx_rename_file}}; \code{\link{umx}},
   \code{\link{umx-package}}

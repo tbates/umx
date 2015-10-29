@@ -33,9 +33,9 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to T)}
 
-\item{dzAr}{The DZ genetic correlation (defaults to .5, set to .25 for dominance model)}
+\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
 
-\item{dzCr}{The DZ genetic correlation (defaults to 1,  vary to examine assortative mating)}
+\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)}
 
 \item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE)}
 
@@ -73,15 +73,19 @@ umxCompare(m1, m2)
 \seealso{
 - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
-Other Model Building Functions: \code{\link{umxDiagnose}};
+Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},
+  \code{\link{umxPlotCP}}; \code{\link{plot.MxModel.GxE}},
+  \code{\link{umxPlotGxE}}; \code{\link{umxACESexLim}};
+  \code{\link{umxACE}}; \code{\link{umxGxE_window}};
   \code{\link{umxGxE}}; \code{\link{umxIP}};
-  \code{\link{umxLabel}}; \code{\link{umxLatent}};
-  \code{\link{umxPath}}; \code{\link{umxRAM}};
-  \code{\link{umxReRun}}; \code{\link{umxRun}};
-  \code{\link{umxThresholdMatrix}};
-  \code{\link{umxValues}};
-  \code{\link{umx_fix_first_loadings}};
-  \code{\link{umx_fix_latents}}; \code{\link{umx}},
+  \code{\link{umxSummary.MxModel.ACE}},
+  \code{\link{umxSummaryACE}};
+  \code{\link{umxSummary.MxModel.CP}},
+  \code{\link{umxSummaryCP}};
+  \code{\link{umxSummary.MxModel.GxE}},
+  \code{\link{umxSummaryGxE}};
+  \code{\link{umxSummary.MxModel.IP}},
+  \code{\link{umxSummaryIP}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }
 

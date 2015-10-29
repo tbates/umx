@@ -24,7 +24,7 @@ umx_trim("\\t dog \\n") # "dog"
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{qm}};
+Other Utility Functions: \code{\link{qm}};
   \code{\link{umx_explode}}; \code{\link{umx_find_object}};
   \code{\link{umx_grep}}; \code{\link{umx_msg}};
   \code{\link{umx_names}}; \code{\link{umx_paste_names}};

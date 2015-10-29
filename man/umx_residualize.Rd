@@ -51,7 +51,7 @@ umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+Other Data Functions: \code{\link{umxCovData}};
   \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};

@@ -45,8 +45,8 @@ umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 \seealso{
 - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}
 
-Other Miscellaneous Functions: \code{\link{umxEval}};
-  \code{\link{umxJiggle}}; \code{\link{umx_APA_pval}};
+Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
   \code{\link{umx_check_model}};
@@ -72,7 +72,6 @@ Other Miscellaneous Functions: \code{\link{umxEval}};
   \code{\link{umx_object_as_str}};
   \code{\link{umx_reorder}}; \code{\link{umx_set_cores}};
   \code{\link{umx_set_optimizer}};
-  \code{\link{umx_standardize_IP}};
   \code{\link{umx_string_to_algebra}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }

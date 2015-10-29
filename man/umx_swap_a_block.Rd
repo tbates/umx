@@ -33,7 +33,7 @@ umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names =
 \seealso{
 - \code{\link{subset}}
 
-Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+Other Data Functions: \code{\link{umxCovData}};
   \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};

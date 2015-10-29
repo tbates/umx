@@ -38,6 +38,6 @@ umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Building Functions: \code{\link{umx_cov_diag}}
+Other Building Functions: \code{\link{umx_cov_diag}}
 }
 

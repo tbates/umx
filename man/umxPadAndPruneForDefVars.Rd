@@ -35,7 +35,7 @@ df = umxPadAndPruneForDefVars(df, "E", "age", c("_T1", "_T2"))
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+Other Data Functions: \code{\link{umxCovData}};
   \code{\link{umxHetCor}}; \code{\link{umx_as_numeric}};
   \code{\link{umx_cont_2_ordinal}};
   \code{\link{umx_cov2raw}}; \code{\link{umx_lower2full}};

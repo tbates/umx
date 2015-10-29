@@ -37,6 +37,6 @@ umx_cov_diag(tmp2, format = "Full")
 - \url{http://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Building Functions: \code{\link{umx_check_names}}
+Other Building Functions: \code{\link{umx_check_names}}
 }
 

@@ -39,7 +39,7 @@ umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", baseFolder = "Finder",
 \seealso{
 - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
-Other Miscellaneous File Functions: \code{\link{dl_from_dropbox}};
+Other File Functions: \code{\link{dl_from_dropbox}};
   \code{\link{umx_move_file}}; \code{\link{umx_open}};
   \code{\link{umx}}, \code{\link{umx-package}}
 }

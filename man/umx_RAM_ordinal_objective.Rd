@@ -35,7 +35,9 @@ model = umx_RAM_ordinal_objective(model)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other zAdvanced Helpers: \code{\link{umx}},
+Other zAdvanced Helpers: \code{\link{umxStandardizeACE}};
+  \code{\link{umx_standardize_CP}};
+  \code{\link{umx_standardize_IP}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }
 

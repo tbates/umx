@@ -6,7 +6,7 @@
 \usage{
 umxSetParameters(model, labels, free = NULL, values = NULL,
   newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE,
-  strict = TRUE, name = NULL)
+  strict = TRUE, name = NULL, regex = FALSE)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to WITH}
@@ -28,15 +28,22 @@ umxSetParameters(model, labels, free = NULL, values = NULL,
 \item{strict}{whether to complain if labels not found}
 
 \item{name}{= new name for the returned model}
+
+\item{regex}{Is labels a regular expression (defaults to FALSE)}
 }
 \value{
 - \code{\link{mxModel}}
 }
 \description{
-umxSetParameters currently just a wrapper to omxSetParameters to ease user discovery.
-this also underlies to update, allowing homology with \code{\link{update}}()
-for lm models by freeing or fixing labeled parameters.
-It also set starts for parameters which now have identical labels
+Free or fix parameters in \code{\link{mxModels}}.
+This allows similar actions that \code{\link{update}} enables
+for lm models.
+Updating can create duplicate labels, so this function also calls \code{\link{omxAssignFirstParameters}}
+to equate the start values for parameters which now have identical labels.
+}
+\details{
+It also supports regular expressions to select labels. In this respect,
+it is similar to \code{\link{umxReRun}} without running the model.
 }
 \examples{
 require(OpenMx)
@@ -55,7 +62,7 @@ m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2")
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-- \code{\link{umxLabel}}
+- \code{\link{umxReRun}}, \code{\link{umxLabel}}
 
 Other Modify or Compare Models: \code{\link{parameters}},
   \code{\link{umxGetParameters}}; \code{\link{umxAdd1}};

@@ -672,7 +672,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEst
 #' @param ... Other parameters to control model summary
 #' @return - optional \code{\link{mxModel}}
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxACE}} 
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
@@ -880,7 +880,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @export
-#' @family Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://www.github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
@@ -1033,6 +1033,7 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' @param CIs Confidence intervals (F)
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
+#' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://github.com/tbates/umx}, \url{http://tbates.github.io}
@@ -1169,6 +1170,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' @param report 1 = regular, 2 = add descriptive sentences; 3 = open a browser and copyable tables
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
+#' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
@@ -1544,10 +1546,10 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #'
 #' standardize an ACE model
 #'
-#' @param fit an \code{\link{mxModel}} to standardize
-#' @return - standardized ACE \code{\link{mxModel}}
+#' @param fit an \code{\link{umxACE}} model to standardize
+#' @return - standardized ACE \code{\link{umxACE}} model
 #' @export
-#' @family Reporting Functions
+#' @family zAdvanced Helpers
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' \dontrun{
@@ -1860,6 +1862,7 @@ plot.MxModel.ACE <- umxPlotACE
 #' @param separateGraphs (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - 
+#' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxGxE}}
@@ -1933,6 +1936,7 @@ plot.MxModel.GxE <- umxPlotGxE
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
+#' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://tbates.github.io}
@@ -2942,7 +2946,7 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 #' @param min Values below min reported as "< min"
 #' @param rounding Number of decimal to which to round
 #' @param addComparison Whether to add '=' '<' etc. (NA adds when needed)
-#' @family Miscellaneous Functions
+#' @family Misc
 #' @family Reporting Functions
 #' @return - formatted p-value
 #' @export
@@ -3043,7 +3047,7 @@ umx_APA_CI <- function(b, se, digits = 3) {
 #' @param verbose = FALSE
 #' @return - the CI string, e.g. ".73 [-.2, .98]"
 #' @export
-#' @family Miscellaneous Functions
+#' @family Misc
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{

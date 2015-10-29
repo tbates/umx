@@ -38,7 +38,7 @@ df[order(df$mpg), 12:15]
 \seealso{
 - \code{\link{umxACE}}
 
-Other Miscellaneous Data Functions: \code{\link{umxCovData}};
+Other Data Functions: \code{\link{umxCovData}};
   \code{\link{umxHetCor}};
   \code{\link{umxPadAndPruneForDefVars}};
   \code{\link{umx_as_numeric}};

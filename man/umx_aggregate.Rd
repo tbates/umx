@@ -34,9 +34,7 @@ umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 \seealso{
 - \code{\link{aggregate}}
 
-Other Reporting Functions: \code{\link{umxStandardizeACE}};
-  \code{\link{umxSummary.MxModel.CP}},
-  \code{\link{umxSummaryCP}}; \code{\link{umx_APA_CI}};
+Other Reporting Functions: \code{\link{umx_APA_CI}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_print}};
   \code{\link{umx_show}}; \code{\link{umx_time}};
   \code{\link{umx}}, \code{\link{umx-package}}

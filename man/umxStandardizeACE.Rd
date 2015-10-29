@@ -7,10 +7,10 @@
 umxStandardizeACE(fit)
 }
 \arguments{
-\item{fit}{an \code{\link{mxModel}} to standardize}
+\item{fit}{an \code{\link{umxACE}} model to standardize}
 }
 \value{
-- standardized ACE \code{\link{mxModel}}
+- standardized ACE \code{\link{umxACE}} model
 }
 \description{
 standardize an ACE model
@@ -24,11 +24,9 @@ fit = umxStandardizeACE(fit)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other Reporting Functions: \code{\link{umxSummary.MxModel.CP}},
-  \code{\link{umxSummaryCP}}; \code{\link{umx_APA_CI}};
-  \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
-  \code{\link{umx_print}}; \code{\link{umx_show}};
-  \code{\link{umx_time}}; \code{\link{umx}},
+Other zAdvanced Helpers: \code{\link{umx_RAM_ordinal_objective}};
+  \code{\link{umx_standardize_CP}};
+  \code{\link{umx_standardize_IP}}; \code{\link{umx}},
   \code{\link{umx-package}}
 }
 
