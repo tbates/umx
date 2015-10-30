@@ -49,6 +49,11 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \description{
 Make a 2-group Independent Pathway model
 }
+\details{
+The following figure the IP model as a path diagram:
+
+\figure{IP.png}
+}
 \examples{
 require(OpenMx)
 data(twinData)

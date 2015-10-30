@@ -296,7 +296,10 @@ umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, i
 
 #' umxGxE
 #'
-#' Make a 2-group moderated ACE model
+#' Make a 2-group GxE (moderated ACE) model
+#' 
+#' The following figure the GxE model as a path diagram:
+#' \figure{GxE.png}
 #'
 #' @param name The name of the model (defaults to "G_by_E")
 #' @param selDVs The dependent variable (e.g. IQ)
@@ -337,6 +340,8 @@ umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, i
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
+#' m2 = umxReRun(m1, "am_.*", regex=T, comparison = T)
+
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE) {
 	nSib = 2;
 	if(!is.null(suffix)){
@@ -700,6 +705,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' umxACE
 #'
 #' Make a 2-group ACE model
+#' 
+#' The following figure shows how the ACE model appears as a path diagram:
+#' 
+#' \figure{ACE.png}
 #'
 #' @param name The name of the model (defaults to"ACE")
 #' @param selDVs The variables to include from the data
@@ -1190,6 +1199,11 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #'
 #' Make a 2-group Common Pathway model
 #'
+#' 
+#' The following figure shows the CP model as a path diagram:
+#' 
+#' \figure{CP.png}
+#'
 #' @param name The name of the model (defaults to "CP")
 #' @param selDVs The variables to include
 #' @param dzData The DZ dataframe
@@ -1388,6 +1402,10 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' umxIP
 #'
 #' Make a 2-group Independent Pathway model
+#' 
+#' The following figure the IP model as a path diagram:
+#' 
+#' \figure{IP.png}
 #'
 #' @param name The name of the model (defaults to "IP")
 #' @param selDVs The variables to include

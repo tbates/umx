@@ -49,6 +49,11 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \description{
 Make a 2-group ACE model
 }
+\details{
+The following figure shows how the ACE model appears as a path diagram:
+
+\figure{ACE.png}
+}
 \examples{
 # Height, weight, and BMI data from Australian twins.
 # The total sample has been subdivided into a young cohort, aged 18-30 years,

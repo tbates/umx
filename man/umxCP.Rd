@@ -51,6 +51,11 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \description{
 Make a 2-group Common Pathway model
 }
+\details{
+The following figure shows the CP model as a path diagram:
+
+\figure{CP.png}
+}
 \examples{
 require(OpenMx)
 data(twinData)

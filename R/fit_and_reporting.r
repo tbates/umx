@@ -870,7 +870,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' @aliases umxSummary.MxModel.CP
 #' @param model A fitted \code{\link{umxCP}} model to summarize
 #' @param digits rounding (default = 2)
-#' @param dotFilename The name of the dot file to write. Defaults to name of the model. NA = no plot
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param extended how much to report (FALSE)
 #' @param showRg Whether to show the genetic correlations (FALSE) (Not implemented!)
@@ -1025,7 +1025,7 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' @aliases umxSummary.MxModel.IP
 #' @param model A fitted \code{\link{umxIP}} model to summarize
 #' @param digits rounding (default = 2)
-#' @param dotFilename The name of the dot file to write. Defaults to name of the model. NA = no plot
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = F)
 #' @param showRg = whether to show the genetic correlations (F)
 #' @param showStd = Whether to show the standardized model (TRUE)
@@ -1159,7 +1159,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' @aliases umxSummary.MxModel.GxE
 #' @param model A fitted \code{\link{umxGxE}} model to summarize
 #' @param digits rounding (default = 2)
-#' @param dotFilename The name of the dot file to write. Defaults to name of the model. NA = no plot
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param showStd Whether to show the standardized model (not implemented! TRUE)
 #' @param CIs Confidence intervals (FALSE)
@@ -1606,7 +1606,7 @@ umxStandardizeACE <- function(fit) {
 #' @param x an \code{\link{mxModel}} from which to make a path diagram
 #' @param std Whether to standardize the model.
 #' @param digits The number of decimal places to add to the path coefficients
-#' @param dotFilename A file to write the path model to. if you leave it at the default "name", then the model's internal name will be used
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param showFixed Whether to show fixed paths (defaults to FALSE)
 #' @param showMeans Whether to show means
@@ -1758,7 +1758,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 #'
 #' @aliases plot plot.MxModel.ACE
 #' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
-#' @param dotFilename the name of the file that is created (use "name" to create the file using the model's name parameter)
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (default is 2)
 #' @param showMeans Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
@@ -1930,7 +1930,7 @@ plot.MxModel.GxE <- umxPlotGxE
 #'
 #' @aliases plot.MxModel.CP
 #' @param x The Common Pathway \code{\link{mxModel}} to display graphically
-#' @param dotFilename The name of the file that is created (use "name" to create the file using the model's name parameter)
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param showMeans Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
@@ -2026,7 +2026,7 @@ plot.MxModel.CP <- umxPlotCP
 #'
 #' @aliases plot.MxModel.IP
 #' @param x The \code{\link{umxIP}} model to plot
-#' @param dotFilename the name of the file that is created (Default "name" will use the model's internal name parameter)
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param showMeans Whether to show means paths (defaults to FALSE)
 #' @param std whether to standardize the model (defaults to TRUE)

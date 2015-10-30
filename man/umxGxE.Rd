@@ -30,7 +30,11 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL,
 - GxE \code{\link{mxModel}}
 }
 \description{
-Make a 2-group moderated ACE model
+Make a 2-group GxE (moderated ACE) model
+}
+\details{
+The following figure the GxE model as a path diagram:
+\figure{GxE.png}
 }
 \examples{
 # The total sample has been subdivided into a young cohort,
