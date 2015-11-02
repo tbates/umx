@@ -1593,24 +1593,68 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' umxACESexLim
 #'
 #' Cholesky style sex limitation model
-#'
-#' qualitative sex differences are differences in the latent A, C, or E latent variables
-#' quantitative sex differences are differences in the path loadings from A, C, or E to the measured variables
+
+#' Build a multivariate twin analysis with sex limitation
+#' MODEL:MV Quantitative & Qualitative Sex-Limitation script (ACE Correlated Factors model & ACE Cholesky model)
+#' Correlation Approach to ensure that order of variables does NOT affect ability of model to account for DZOS data
+#'  
+#' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
+#' 
+#' Note: Qualitative sex differences are differences in the latent A, C, or E latent variables
+#' Note: Quantitative sex differences are differences in the path loadings from A, C, or E to the measured variables
 #' @param name The name of the model (defaults to "ACE_sexlim")
-#' @param selDVs The variables to include
+#' @param selDVs The variables to include. If you provide a suffix, you can use just the base names.
 #' @param mzmData The MZ male dataframe
 #' @param dzmData The DZ male dataframe
 #' @param mzfData The DZ female dataframe
 #' @param dzfData The DZ female dataframe
-#' @param dzoData The DZ opposite-sex dataframe
+#' @param dzoData The DZ opposite-sex dataframe. (be sure and get in right order)
 #' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
 #' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @return - \code{\link{umxACEsexlim}} model
 #' @export
 #' @family Twin Modeling Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - Neale et al., (2006). Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics.,
+#' \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' #TBD
+#' @examples
+#' # Load Libraries
+#' require(umx);
+#' # =========================
+#' # = Load and Process Data =
+#' # =========================
+#' data("usski")
+#' # rescale vars
+#' usski[,c('bic_T1', 'bic_T2')] <- usski[,c('bic_T1', 'bic_T2')]/3.4
+#' usski[,c('tri_T1', 'tri_T2')] <- usski[,c('tri_T1', 'tri_T2')]/3
+#' usski[,c('caf_T1', 'caf_T2')] <- usski[,c('caf_T1', 'caf_T2')]/3
+#' usski[,c('ssc_T1', 'ssc_T2')] <- usski[,c('ssc_T1', 'ssc_T2')]/5
+#' usski[,c('sil_T1', 'sil_T2')] <- usski[,c('sil_T1', 'sil_T2')]/5
+#' # describe(usski, skew = FALSE)
+#' 
+#' # Select Variables for Analysis
+#' varList = c('ssc','sil','caf','tri','bic')
+#' selVars = umx_paste_names(varList, suffix, 1:2)
+#' 
+#' # Data objects for Multiple Groups
+#' mzmData = subset(usski, zyg == 1, selVars)
+#' dzmData = subset(usski, zyg == 3, selVars)
+#' mzfData = subset(usski, zyg == 2, selVars)
+#' dzfData = subset(usski, zyg == 4, selVars)
+#' dzoData = subset(usski, zyg == 5, selVars)
+#' 
+#' m1 = umxACESexLim(selDVs = varList, mzmData = mzmData, dzmData = dzmData, mzfData = mzfData, dzfData = dzfData, dzoData = dzoData, suffix = "_T")
+#' m1 = mxRun(m1)
+#' # ===================================================
+#' # = Test switching specific a from Males to females =
+#' # ===================================================
+#' m2 = umxSetParameters(m1, labels = "asm_.*", free = F, values = 0, regex = T)
+#' m2 = umxSetParameters(m1, labels = "asf_.*", free = T, values = 0, regex = T)
+#' m2 = mxRun(m2)
+#' summary(m2)
+#' mxCompare(m2, m1)
+#' # does fit move on repeated execution?
+#' # for (i in 1:4) { m2 <- mxRun(m2); print(m2 $output$mi) }
 umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, suffix = NULL){
 	if(!is.null(suffix)){
 		 selDVs = umx_paste_names( selDVs, suffix, 1:2)
