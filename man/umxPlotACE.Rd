@@ -12,7 +12,7 @@ umxPlotACE(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE,
 \arguments{
 \item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
 
-\item{dotFilename}{the name of the file that is created (use "name" to create the file using the model's name parameter)}
+\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{digits}{How many decimals to include in path loadings (default is 2)}
 

@@ -60,6 +60,7 @@ m1 = umxRun(m1)
 umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = FALSE)
+m2 = umxReRun(m1, "am_.*", regex=T, comparison = T)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
@@ -70,8 +71,9 @@ umxSummary(m1, separateGraphs = FALSE)
 Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},
   \code{\link{umxPlotCP}}; \code{\link{plot.MxModel.GxE}},
   \code{\link{umxPlotGxE}}; \code{\link{umxACESexLim}};
-  \code{\link{umxACE}}; \code{\link{umxCP}};
-  \code{\link{umxGxE_window}}; \code{\link{umxIP}};
+  \code{\link{umxACE}}; \code{\link{umxCF_SexLim}};
+  \code{\link{umxCP}}; \code{\link{umxGxE_window}};
+  \code{\link{umxIP}};
   \code{\link{umxSummary.MxModel.ACE}},
   \code{\link{umxSummaryACE}};
   \code{\link{umxSummary.MxModel.CP}},

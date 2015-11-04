@@ -11,7 +11,7 @@ umxPlotIP(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE,
 \arguments{
 \item{x}{The \code{\link{umxIP}} model to plot}
 
-\item{dotFilename}{the name of the file that is created (Default "name" will use the model's internal name parameter)}
+\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{digits}{How many decimals to include in path loadings (defaults to 2)}
 

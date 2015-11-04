@@ -75,8 +75,9 @@ umxSummary(m1, dotFilename = NA) # dotFilename = NA to avoid opening a plot wind
 Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},
   \code{\link{umxPlotCP}}; \code{\link{plot.MxModel.GxE}},
   \code{\link{umxPlotGxE}}; \code{\link{umxACESexLim}};
-  \code{\link{umxACE}}; \code{\link{umxCP}};
-  \code{\link{umxGxE_window}}; \code{\link{umxGxE}};
+  \code{\link{umxACE}}; \code{\link{umxCF_SexLim}};
+  \code{\link{umxCP}}; \code{\link{umxGxE_window}};
+  \code{\link{umxGxE}};
   \code{\link{umxSummary.MxModel.ACE}},
   \code{\link{umxSummaryACE}};
   \code{\link{umxSummary.MxModel.CP}},

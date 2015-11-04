@@ -17,7 +17,7 @@
 
 \item{digits}{The number of decimal places to add to the path coefficients}
 
-\item{dotFilename}{A file to write the path model to. if you leave it at the default "name", then the model's internal name will be used}
+\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{pathLabels}{Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")}
 
