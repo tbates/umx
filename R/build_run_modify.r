@@ -1,3 +1,4 @@
+
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::release("~/bin/umx", check = TRUE)
 
@@ -1616,7 +1617,6 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @family Twin Modeling Functions
 #' @references - Neale et al., (2006). Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics.,
 #' \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-#' @examples
 #' @examples
 #' # Load Libraries
 #' require(umx);

@@ -14,7 +14,7 @@ umxSummaryCP(model, digits = 2, dotFilename = "name", returnStd = FALSE,
 
 \item{digits}{rounding (default = 2)}
 
-\item{dotFilename}{The name of the dot file to write. Defaults to name of the model. NA = no plot}
+\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
@@ -65,9 +65,9 @@ umxSummaryCP(fit, dotFilename = "Figure 3", showStd = TRUE)
 Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},
   \code{\link{umxPlotCP}}; \code{\link{plot.MxModel.GxE}},
   \code{\link{umxPlotGxE}}; \code{\link{umxACESexLim}};
-  \code{\link{umxACE}}; \code{\link{umxCP}};
-  \code{\link{umxGxE_window}}; \code{\link{umxGxE}};
-  \code{\link{umxIP}};
+  \code{\link{umxACE}}; \code{\link{umxCF_SexLim}};
+  \code{\link{umxCP}}; \code{\link{umxGxE_window}};
+  \code{\link{umxGxE}}; \code{\link{umxIP}};
   \code{\link{umxSummary.MxModel.ACE}},
   \code{\link{umxSummaryACE}};
   \code{\link{umxSummary.MxModel.GxE}},

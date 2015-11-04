@@ -134,7 +134,7 @@ umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 				diag(Rao$values) = 1
 				list(Rao, Rco)
 			}
-		}
+		},
 
 		# Matrices A, C, and E compute variance components
 		mxAlgebra(name = "Am" , Ram %&% am),

@@ -28,7 +28,7 @@
 #' @docType data
 #' @keywords datasets
 #' @name us_skinfold_data
-#' @reference # TODO add citation
+#' @references # TODO add citation
 #' @usage data(us_skinfold_data)
 #' @format A data frame with 53940 rows and 10 variables
 NULL
