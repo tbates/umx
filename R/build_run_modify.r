@@ -2318,6 +2318,7 @@ parameters <- umxGetParameters
 #' @param strict whether to complain if labels not found
 #' @param name = new name for the returned model
 #' @param regex Is labels a regular expression (defaults to FALSE)
+#' @param test just show what you would do? (defaults to FALSE)
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Modify or Compare Models
@@ -2334,23 +2335,29 @@ parameters <- umxGetParameters
 #' 	umxPath(v1m0 = latents)
 #' )
 #' parameters(m1, free=TRUE)
-#' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2")
+#' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", trial = FALSE)
+#' m2 = umxSetParameters(m1, "^", newlabels= "m1_", regex = TRUE, trial = TRUE)
 umxSetParameters <- function(model, labels, free = NULL, values = NULL,
 	    newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE,
-	    strict = TRUE, name = NULL, regex = FALSE) {
-	# TODO add update function?
-	# update()
+	    strict = TRUE, name = NULL, regex = FALSE, test = FALSE) {
+	# TODO Add update() S3 function?
 	nothingDoing = all(is.null(c(free, values, newlabels)))
 	if(nothingDoing){
-		warning("you're not setting anything: set one or more of free, values, or newLabels to update a parameter")
+		warning("You are not setting anything: set one or more of free, values, or newLabels to update a parameter")
 	}
 	if(regex){
 		labels = umxGetParameters(model, regex = labels)
+		# newlabels = 
 	}
-	a = omxSetParameters(model = model, labels = labels, free = free, values = values,
+	if(test){
+		message("Found labels:", labels)
+		message("New labels:", newlabels)
+	} else {
+		a = omxSetParameters(model = model, labels = labels, free = free, values = values,
 	    newlabels = newlabels, lbound = lbound, ubound = ubound, indep = indep,
 	    strict = strict, name = name)
 	return(omxAssignFirstParameters(a, indep = FALSE))
+	}
 }
 
 #' umxEquate

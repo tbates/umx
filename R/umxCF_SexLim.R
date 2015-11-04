@@ -1,23 +1,23 @@
-#' umxACESexLim
+#' umxCF_SexLim
 #'
-#' Build a multivariate twin analysis with sex limitation
-#' MODEL:MV Quantitative & Qualitative Sex-Limitation script (ACE Correlated Factors model & ACE Cholesky model)
-#' Correlation Approach to ensure that order of variables does NOT affect ability of model to account for DZOS data
-#' Ref: Neale et al., Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics, 2006 
+#' Build a multivariate twin analysis with sex limitation based on a correlated factors model.
+#' This allows Quantitative & Qualitative Sex-Limitation. The correlation approach ensures that variable order
+#' does NOT affect ability of model to account for DZOS data.
 #' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
 #'
-#' @param name    The name of the model (Defaults = "ACE_sexlim")
-#' @param selDVs  The variables in the analysis. If you provide a suffix, you can use just the base names
+#' @param name    The name of the model (Defaults = "CF_sexlim")
+#' @param selDVs  The variables in the analysis. These are just the base names. You MUST provide suffixes.
 #' @param mzmData Dataframe containing the MZ male data
 #' @param dzmData Dataframe containing the DZ male data
 #' @param mzfData Dataframe containing the MZ female data
 #' @param dzfData Dataframe containing the DZ female data
 #' @param dzoData Dataframe containing the DZ opposite-sex data (be sure and get in right order)
-#' @param suffix (optional) suffix used for twin variable naming. Allows using just the base names in selVars
-#' @return - \code{\link{umxACESexLim}} model
+#' @param suffix Suffix used for twin variable naming. Allows using just the base names in selVars
+#' @return - \code{\link{umxCF_SexLim}} model
 #' @export
 #' @family Twin Modeling Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, 
+#' Neale et al. (2006). Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics.
 #' @examples
 #' # Load Libraries
 #' require(umx);
@@ -44,7 +44,14 @@
 #' dzfData = subset(usski, zyg == 4, selVars)
 #' dzoData = subset(usski, zyg == 5, selVars)
 #'
-#'
+#' m1 = umxCF_SexLim(selDVs = varList, 
+#' 		mzmData = mzmData, dzmData = dzmData, 
+#' 		mzfData = mzfData, dzfData = dzfData, 
+#' 		dzoData = dzoData, suffix = "_T"
+#' )
+#' m1 = mxRun(m1)
+#' summary(m2)
+#' 
 #' # ===============================
 #' # = 1 Nonscalar Sex Limitation  =
 #' # ===============================
@@ -55,39 +62,79 @@
 #' # = Test switching specific a from Males to females =
 #' # ===================================================
 #' 
-#' m1 = umxCF_SexLim(selDVs = varList, mzmData = mzmData, dzmData = dzmData, mzfData = mzfData, dzfData = dzfData, dzoData = dzoData, suffix = "_T")
-#' m1 = mxRun(m1)
-#' 
+#' m2 = umxSetParameters(m1, labels = "asm_.*", free = F, values = 0, regex = T)
+#' m2 = umxSetParameters(m1, labels = "asf_.*", free = T, values = 0, regex = T)
+#' m2 = mxRun(m2)
+#' summary(m2)
+#' mxCompare(m2, m1)
 #' # ===============================
 #' # = 2 Nonscalar Sex Limitation  =
 #' # ===============================
 #' # Quantitative Sex Differences & Qualitative Sex Differences for C
 #' # Male and female paths, plus male and female Ra, Rc and Re between variables
 #' # Male-Female correlations in DZO group between C factors Rco FREE, Ra constrained across male/female and oppsex
-
-
-
-
-#' m2 = umxSetParameters(m1, labels = "asm_.*", free = F, values = 0, regex = T)
-#' m2 = umxSetParameters(m1, labels = "asf_.*", free = T, values = 0, regex = T)
-#' m2 = mxRun(m2)
-#' summary(m2)
-#' mxCompare(m2, m1)
-#' \dontrun{
-#' # Does fit move on repeated execution?
-#' for (i in 1:4){
-#' 	m2 <- mxRun(m2);
-#' 	print(m2$output$mi)
 #' }
-#' }
+#' # -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
+#' # 3 Scalar Sex Limitation 
+#' # Quantitative Sex Differences but NO Qualitative Sex Differences
+#' # Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
+#' # ---------------------------------------------------------------------------------------------------------------------|
+#' 
+# equate m & f R stand by label
+#' m3 = umxSetParameters(m2, labels = "asm_.*", free = F, values = 0, regex = T)
+#' pathRam = mxMatrix(name="Ram", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("ra",nv), lbound=-1, ubound=1)
+#' pathRaf = mxMatrix(name="Raf", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("ra",nv), lbound=-1, ubound=1)
+#' pathRcm = mxMatrix(name="Rcm", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("rc",nv), lbound=-1, ubound=1)
+#' pathRcf = mxMatrix(name="Rcf", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("rc",nv), lbound=-1, ubound=1)
+#' pathRem = mxMatrix(name="Rem", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("re",nv), lbound=-1, ubound=1)
+#' pathRef = mxMatrix(name="Ref", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("re",nv), lbound=-1, ubound=1)
+#' corRao  = mxMatrix(name="Rao", "Symm" , nrow=nv, free=frODiag, values=svODiag, label=laSymm("ra",nv), lbound=-1, ubound=1)
+#' corRco  = mxMatrix(name="Rco", "Symm" , nrow=nv, free=frODiag, values=svODiag, label=laSymm("rc",nv), lbound=-1, ubound=1)
+#' 
+#' m3 <- makeModel("HetCfAce")
+#' m3 <- mxRun(m3)
+#' summary(m3)
+#' round(m3$VarsZm@result,4); round(m3$CorsZm@result,4)
+#' round(m3$VarsZf@result,4); round(m3$CorsZf@result,4)
+#' mxCompare(HetCfAceRgFit, m3)
+#' 
+#'# ===================
+#'# = 4 Homogeneity 
+#'# = NO Quantitative Sex Differences AND NO Qualitative Sex Differences
+#'# = Same paths for males and females
+#'# ===================
+#'# equate [ace]m and [ace]f matrices
+#' pathAm = mxMatrix(name="am", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("a",nv))
+#' pathCm = mxMatrix(name="cm", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("c",nv))
+#' pathEm = mxMatrix(name="em", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("e",nv))
+#' pathAf = mxMatrix(name="af", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("a",nv))
+#' pathCf = mxMatrix(name="cf", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("c",nv))
+#' pathEf = mxMatrix(name="ef", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("e",nv))
+#' 
+#' m4 <- makeModel("HomCfAce")
+#' m4 <- mxRun(m4)
+#' summary(m4)
+#' round(m4$VarsZm@result,4); round(m4$CorsZm@result,4)
+#' round(m4$VarsZf@result,4); round(m4$CorsZf@result,4)
+#' mxCompare(m3, m4)
+#' 
+#' # ==============================================
+#' # = Generate Output Table of all Nested Models =
+#' # ==============================================
+#' 
+#' mxCompare(HetCfAceRgFit, c(HetCfAceRcFit, m3, m4))
+#' 
+#' rbind(
+#'  mxCompare(HetCfAceRgFit, HetCfAceRcFit),
+#'  mxCompare(HetCfAceRcFit, m3)[2,],
+#'  mxCompare(m3, m4)[2,])
 umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, C_or_A = "A", suffix = NA){
-	message("Not checked!")
-	if(!is.na(suffix)){
-		selVars = umx_paste_names(selDVs, suffix, 1:2)
-	}else{
-		selVars = selDVs
-	}
 	# Correlated factors sex limitations
+	message("Not checked!")
+	if(is.na(suffix)){
+		stop("Please provide suffixes")
+	}
+	selVars = umx_paste_names(selDVs, suffix, 1:2)
 	# Algebra to Constrain Correlation Matrices to be Positive Definite
 
 	# get awesome mean-starts
@@ -134,7 +181,7 @@ umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 				diag(Rao$values) = 1
 				list(Rao, Rco)
 			}
-		}
+		},
 
 		# Matrices A, C, and E compute variance components
 		mxAlgebra(name = "Am" , Ram %&% am),
@@ -170,9 +217,9 @@ umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 		mxConstraint(name = "constr", minCor > pos1by6),
 
 		# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins
-		mxMatrix(name = "expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(Vars, "Mm")),
-		mxMatrix(name = "expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(Vars, "Mf")),
-		mxMatrix(name = "expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(Vars, rep(c("Mm", "Mf"), each = nVar))),
+		mxMatrix(name = "expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(selDVs, "Mm")),
+		mxMatrix(name = "expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(selDVs, "Mf")),
+		mxMatrix(name = "expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(selDVs, rep(c("Mm", "Mf"), each = nVar))),
 
 		# Matrix & Algebra for expected Variance/Covariance Matrices in MZ & DZ twins
 		mxAlgebra(name = "expCovMZm", rbind(cbind(Vm, Am + Cm), cbind(Am + Cm, Vm))),
