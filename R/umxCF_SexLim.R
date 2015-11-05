@@ -24,7 +24,7 @@
 #' # =========================
 #' # = Load and Process Data =
 #' # =========================
-#' data("usski")
+#' data("us_skinfold_data")
 #' # rescale vars
 #' usski[,c('bic_T1', 'bic_T2')] <- usski[,c('bic_T1', 'bic_T2')]/3.4
 #' usski[,c('tri_T1', 'tri_T2')] <- usski[,c('tri_T1', 'tri_T2')]/3

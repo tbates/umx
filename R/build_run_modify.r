@@ -1,4 +1,3 @@
-
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::release("~/bin/umx", check = TRUE)
 
@@ -1618,6 +1617,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @references - Neale et al., (2006). Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics.,
 #' \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
+#' @examples
 #' # Load Libraries
 #' require(umx);
 #' # =========================
@@ -2335,8 +2335,8 @@ parameters <- umxGetParameters
 #' 	umxPath(v1m0 = latents)
 #' )
 #' parameters(m1, free=TRUE)
-#' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", trial = FALSE)
-#' m2 = umxSetParameters(m1, "^", newlabels= "m1_", regex = TRUE, trial = TRUE)
+#' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
+#' m2 = umxSetParameters(m1, "^", newlabels= "m1_", regex = TRUE, test = TRUE)
 umxSetParameters <- function(model, labels, free = NULL, values = NULL,
 	    newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE,
 	    strict = TRUE, name = NULL, regex = FALSE, test = FALSE) {
@@ -2346,12 +2346,15 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL,
 		warning("You are not setting anything: set one or more of free, values, or newLabels to update a parameter")
 	}
 	if(regex){
-		labels = umxGetParameters(model, regex = labels)
-		# newlabels = 
+		oldLabels = umxGetParameters(model, regex = labels)
+		if(!is.null(newlabels)){
+			newlabels = gsub(labels, newlabels, oldLabels, ignore.case = F)
+		}
+		labels = oldLabels
 	}
 	if(test){
-		message("Found labels:", labels)
-		message("New labels:", newlabels)
+		message("Found labels:", omxQuotes(labels))
+		message("New labels:", omxQuotes(newlabels))
 	} else {
 		a = omxSetParameters(model = model, labels = labels, free = free, values = values,
 	    newlabels = newlabels, lbound = lbound, ubound = ubound, indep = indep,
