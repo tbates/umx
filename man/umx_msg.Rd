@@ -18,8 +18,8 @@ Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy
 \examples{
 a = "brian"
 umx_msg(a)
-a = c("brian", "sally", "jane")
-umx_msg(a)
+b = c("brian", "sally", "jane")
+umx_msg(b)
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}

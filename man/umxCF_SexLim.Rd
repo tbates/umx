@@ -2,15 +2,15 @@
 % Please edit documentation in R/umxCF_SexLim.R
 \name{umxCF_SexLim}
 \alias{umxCF_SexLim}
-\title{umxACESexLim}
+\title{umxCF_SexLim}
 \usage{
 umxCF_SexLim(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
   dzoData, C_or_A = "A", suffix = NA)
 }
 \arguments{
-\item{name}{The name of the model (Defaults = "ACE_sexlim")}
+\item{name}{The name of the model (Default = "CF_sexlim")}
 
-\item{selDVs}{The variables in the analysis. If you provide a suffix, you can use just the base names}
+\item{selDVs}{BASE NAMES of the variables in the analysis. You MUST provide suffixes.}
 
 \item{mzmData}{Dataframe containing the MZ male data}
 
@@ -22,25 +22,24 @@ umxCF_SexLim(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 
 \item{dzoData}{Dataframe containing the DZ opposite-sex data (be sure and get in right order)}
 
-\item{suffix}{(optional) suffix used for twin variable naming. Allows using just the base names in selVars}
+\item{suffix}{Suffix used for twin variable naming. Allows using just the base names in selVars}
 }
 \value{
-- \code{\link{umxACESexLim}} model
+- \code{\link{umxCF_SexLim}} model
 }
 \description{
-Build a multivariate twin analysis with sex limitation
-MODEL:MV Quantitative & Qualitative Sex-Limitation script (ACE Correlated Factors model & ACE Cholesky model)
-Correlation Approach to ensure that order of variables does NOT affect ability of model to account for DZOS data
-Ref: Neale et al., Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics, 2006
+Build a multivariate twin analysis with sex limitation based on a correlated factors model.
+This allows Quantitative & Qualitative Sex-Limitation. The correlation approach ensures that variable order
+does NOT affect ability of model to account for DZOS data.
 Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
 }
 \examples{
 # Load Libraries
-require(umx);
+require(umx)
 # =========================
 # = Load and Process Data =
 # =========================
-data("usski")
+data("us_skinfold_data")
 # rescale vars
 usski[,c('bic_T1', 'bic_T2')] <- usski[,c('bic_T1', 'bic_T2')]/3.4
 usski[,c('tri_T1', 'tri_T2')] <- usski[,c('tri_T1', 'tri_T2')]/3
@@ -60,6 +59,13 @@ mzfData = subset(usski, zyg == 2, selVars)
 dzfData = subset(usski, zyg == 4, selVars)
 dzoData = subset(usski, zyg == 5, selVars)
 
+m1 = umxCF_SexLim(selDVs = varList,
+		mzmData = mzmData, dzmData = dzmData,
+		mzfData = mzfData, dzfData = dzfData,
+		dzoData = dzoData, suffix = "_T"
+)
+m1 = mxRun(m1)
+summary(m2)
 
 # ===============================
 # = 1 Nonscalar Sex Limitation  =
@@ -71,30 +77,83 @@ dzoData = subset(usski, zyg == 5, selVars)
 # = Test switching specific a from Males to females =
 # ===================================================
 
-m1 = umxCF_SexLim(selDVs = varList, mzmData = mzmData, dzmData = dzmData, mzfData = mzfData, dzfData = dzfData, dzoData = dzoData, suffix = "_T")
-m1 = mxRun(m1)
-
+m2 = umxSetParameters(m1, labels = "asm_.*", free = F, values = 0, regex = T)
+m2 = umxSetParameters(m1, labels = "asf_.*", free = T, values = 0, regex = T)
+m2 = mxRun(m2)
+summary(m2)
+mxCompare(m2, m1)
 # ===============================
 # = 2 Nonscalar Sex Limitation  =
 # ===============================
 # Quantitative Sex Differences & Qualitative Sex Differences for C
 # Male and female paths, plus male and female Ra, Rc and Re between variables
 # Male-Female correlations in DZO group between C factors Rco FREE, Ra constrained across male/female and oppsex
-m2 = umxSetParameters(m1, labels = "asm_.*", free = F, values = 0, regex = T)
-m2 = umxSetParameters(m1, labels = "asf_.*", free = T, values = 0, regex = T)
-m2 = mxRun(m2)
-summary(m2)
-mxCompare(m2, m1)
-\dontrun{
-# Does fit move on repeated execution?
-for (i in 1:4){
-	m2 <- mxRun(m2);
-	print(m2$output$mi)
-}
-}
+
+# -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
+# 3 Scalar Sex Limitation
+# Quantitative Sex Differences but NO Qualitative Sex Differences
+# Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
+# ---------------------------------------------------------------------------------------------------------------------|
+
+# =================================
+# =================================
+m3 = umxSetParameters(m2, labels = "asm_.*", free = F, values = 0, regex = T)
+pathRam = mxMatrix(name="Ram", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("ra",nv), lbound=-1, ubound=1)
+pathRaf = mxMatrix(name="Raf", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("ra",nv), lbound=-1, ubound=1)
+pathRcm = mxMatrix(name="Rcm", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("rc",nv), lbound=-1, ubound=1)
+pathRcf = mxMatrix(name="Rcf", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("rc",nv), lbound=-1, ubound=1)
+pathRem = mxMatrix(name="Rem", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("re",nv), lbound=-1, ubound=1)
+pathRef = mxMatrix(name="Ref", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("re",nv), lbound=-1, ubound=1)
+corRao  = mxMatrix(name="Rao", "Symm" , nrow=nv, free=frODiag, values=svODiag, label=laSymm("ra",nv), lbound=-1, ubound=1)
+corRco  = mxMatrix(name="Rco", "Symm" , nrow=nv, free=frODiag, values=svODiag, label=laSymm("rc",nv), lbound=-1, ubound=1)
+
+m3 <- makeModel("HetCfAce")
+m3 <- mxRun(m3)
+summary(m3)
+round(m3$VarsZm$result,4); round(m3$CorsZm$result,4)
+round(m3$VarsZf$result,4); round(m3$CorsZf$result,4)
+mxCompare(HetCfAceRgFit, m3)
+
+# ===================
+# = 4 Homogeneity
+# = NO Quantitative Sex Differences AND NO Qualitative Sex Differences
+# = Same paths for males and females
+# ===================
+
+# =====================================
+# = Equate [ace]m and [ace]f matrices =
+# =====================================
+
+pathAm = mxMatrix(name="am", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("a",nv))
+pathCm = mxMatrix(name="cm", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("c",nv))
+pathEm = mxMatrix(name="em", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("e",nv))
+pathAf = mxMatrix(name="af", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("a",nv))
+pathCf = mxMatrix(name="cf", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("c",nv))
+pathEf = mxMatrix(name="ef", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("e",nv))
+
+m4 <- makeModel("HomCfAce")
+m4 <- mxRun(m4)
+summary(m4)
+round(m4$VarsZm$result,4); round(m4$CorsZm$result,4)
+round(m4$VarsZf$result,4); round(m4$CorsZf$result,4)
+mxCompare(m3, m4)
+
+# ==============================================
+# = Generate Output Table of all Nested Models =
+# ==============================================
+
+mxCompare(HetCfAceRgFit, c(HetCfAceRcFit, m3, m4))
+
+rbind(
+		mxCompare(HetCfAceRgFit, HetCfAceRcFit),
+ 	mxCompare(HetCfAceRcFit, m3)[2,],
+ 	mxCompare(m3, m4)[2,]
+)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+- Neale et al. (2006).
+Multivariate genetic analysis of sex-lim and GxE interaction.
+\emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489.
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{plot.MxModel.CP}},

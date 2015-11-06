@@ -1256,14 +1256,12 @@ print.reliability <- function (x, digits = 4, ...){
 #' @return - NULL
 #' @export
 #' @family Utility Functions
-
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' a = "brian"
 #' umx_msg(a)
-#' a = c("brian", "sally", "jane")
-#' umx_msg(a)
-
+#' b = c("brian", "sally", "jane")
+#' umx_msg(b)
 umx_msg <- function(x) {
     nm = deparse(substitute(x) )
 	if(length(x) > 1) {

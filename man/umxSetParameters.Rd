@@ -6,7 +6,7 @@
 \usage{
 umxSetParameters(model, labels, free = NULL, values = NULL,
   newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE,
-  strict = TRUE, name = NULL, regex = FALSE)
+  strict = TRUE, name = NULL, regex = FALSE, test = FALSE)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to WITH}
@@ -30,6 +30,8 @@ umxSetParameters(model, labels, free = NULL, values = NULL,
 \item{name}{= new name for the returned model}
 
 \item{regex}{Is labels a regular expression (defaults to FALSE)}
+
+\item{test}{just show what you would do? (defaults to FALSE)}
 }
 \value{
 - \code{\link{mxModel}}
@@ -56,7 +58,8 @@ m1 <- umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
 	umxPath(v1m0 = latents)
 )
 parameters(m1, free=TRUE)
-m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2")
+m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
+m2 = umxSetParameters(m1, "^", newlabels= "m1_", regex = TRUE, test = TRUE)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

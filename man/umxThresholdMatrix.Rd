@@ -47,19 +47,19 @@ For \strong{deviation methods}, it returns a list of lowerOnes_for_thresh, devia
 For \strong{direct}, it returns a thresholdsMatrix (named threshMatName)
 }
 \examples{
-x = data.frame(ordered(rbinom(100,1,.5))); names(x)<-c("x")
+x = data.frame(ordered(rbinom(100,1,.5))); names(x) <- c("x")
 umxThresholdMatrix(x)
 x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
-x = data.frame(ordered(x)); names(x)<-c("x")
-umxThresholdMatrix(x)
+x = data.frame(ordered(x)); names(x) <- c("x")
+tm = umxThresholdMatrix(x)
 
+# ==================
+# = Binary example =
+# ==================
 require(OpenMx)
 data(twinData)
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
-# ==================
-# = Binary example =
-# ==================
 # Cut to form category of 80 \% obese subjects
 cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 obesityLevels = c('normal', 'obese')
@@ -71,8 +71,7 @@ selDVs = c("obese1", "obese2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
-umxThresholdMatrix(mzData, suffixes = 1:2)
-umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE) # suppress informative messages
+tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE) # informative messages
 
 # ======================================
 # = Ordinal (n categories > 2) example =
@@ -86,8 +85,7 @@ selDVs = c("obeseTri1", "obeseTri2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
-umxThresholdMatrix(mzData, suffixes = 1:2)
-umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
+tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
 
 # ========================================================
 # = Mix of all three kinds example (and a 4-level trait) =
@@ -103,7 +101,7 @@ twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
-umxThresholdMatrix(mzData, suffixes = 1:2, verbose = FALSE)
+tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
 
 # ===================
 # = "left_censored" =

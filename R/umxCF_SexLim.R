@@ -5,8 +5,8 @@
 #' does NOT affect ability of model to account for DZOS data.
 #' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
 #'
-#' @param name    The name of the model (Defaults = "CF_sexlim")
-#' @param selDVs  The variables in the analysis. These are just the base names. You MUST provide suffixes.
+#' @param name    The name of the model (Default = "CF_sexlim")
+#' @param selDVs  BASE NAMES of the variables in the analysis. You MUST provide suffixes.
 #' @param mzmData Dataframe containing the MZ male data
 #' @param dzmData Dataframe containing the DZ male data
 #' @param mzfData Dataframe containing the MZ female data
@@ -16,11 +16,12 @@
 #' @return - \code{\link{umxCF_SexLim}} model
 #' @export
 #' @family Twin Modeling Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, 
-#' Neale et al. (2006). Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics.
+#' @references - Neale et al. (2006). 
+#' Multivariate genetic analysis of sex-lim and GxE interaction.
+#' \emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489. 
 #' @examples
 #' # Load Libraries
-#' require(umx);
+#' require(umx)
 #' # =========================
 #' # = Load and Process Data =
 #' # =========================
@@ -51,7 +52,7 @@
 #' )
 #' m1 = mxRun(m1)
 #' summary(m2)
-#' 
+#'
 #' # ===============================
 #' # = 1 Nonscalar Sex Limitation  =
 #' # ===============================
@@ -73,14 +74,16 @@
 #' # Quantitative Sex Differences & Qualitative Sex Differences for C
 #' # Male and female paths, plus male and female Ra, Rc and Re between variables
 #' # Male-Female correlations in DZO group between C factors Rco FREE, Ra constrained across male/female and oppsex
-#' }
+#' 
 #' # -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
 #' # 3 Scalar Sex Limitation 
 #' # Quantitative Sex Differences but NO Qualitative Sex Differences
 #' # Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
 #' # ---------------------------------------------------------------------------------------------------------------------|
 #' 
-# equate m & f R stand by label
+#' # =================================
+#  # = Equate m & f R stand by label =
+#' # =================================
 #' m3 = umxSetParameters(m2, labels = "asm_.*", free = F, values = 0, regex = T)
 #' pathRam = mxMatrix(name="Ram", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("ra",nv), lbound=-1, ubound=1)
 #' pathRaf = mxMatrix(name="Raf", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("ra",nv), lbound=-1, ubound=1)
@@ -94,16 +97,20 @@
 #' m3 <- makeModel("HetCfAce")
 #' m3 <- mxRun(m3)
 #' summary(m3)
-#' round(m3$VarsZm@result,4); round(m3$CorsZm@result,4)
-#' round(m3$VarsZf@result,4); round(m3$CorsZf@result,4)
+#' round(m3$VarsZm$result,4); round(m3$CorsZm$result,4)
+#' round(m3$VarsZf$result,4); round(m3$CorsZf$result,4)
 #' mxCompare(HetCfAceRgFit, m3)
 #' 
-#'# ===================
-#'# = 4 Homogeneity 
-#'# = NO Quantitative Sex Differences AND NO Qualitative Sex Differences
-#'# = Same paths for males and females
-#'# ===================
-#'# equate [ace]m and [ace]f matrices
+#' # ===================
+#' # = 4 Homogeneity 
+#' # = NO Quantitative Sex Differences AND NO Qualitative Sex Differences
+#' # = Same paths for males and females
+#' # ===================
+#' 
+#' # =====================================
+#' # = Equate [ace]m and [ace]f matrices =
+#' # =====================================
+#' 
 #' pathAm = mxMatrix(name="am", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("a",nv))
 #' pathCm = mxMatrix(name="cm", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("c",nv))
 #' pathEm = mxMatrix(name="em", "Diag", nrow = nVar, free=TRUE, values=.5, label=laDiag("e",nv))
@@ -114,8 +121,8 @@
 #' m4 <- makeModel("HomCfAce")
 #' m4 <- mxRun(m4)
 #' summary(m4)
-#' round(m4$VarsZm@result,4); round(m4$CorsZm@result,4)
-#' round(m4$VarsZf@result,4); round(m4$CorsZf@result,4)
+#' round(m4$VarsZm$result,4); round(m4$CorsZm$result,4)
+#' round(m4$VarsZf$result,4); round(m4$CorsZf$result,4)
 #' mxCompare(m3, m4)
 #' 
 #' # ==============================================
@@ -125,9 +132,10 @@
 #' mxCompare(HetCfAceRgFit, c(HetCfAceRcFit, m3, m4))
 #' 
 #' rbind(
-#'  mxCompare(HetCfAceRgFit, HetCfAceRcFit),
-#'  mxCompare(HetCfAceRcFit, m3)[2,],
-#'  mxCompare(m3, m4)[2,])
+#' 		mxCompare(HetCfAceRgFit, HetCfAceRcFit),
+#'  	mxCompare(HetCfAceRcFit, m3)[2,],
+#'  	mxCompare(m3, m4)[2,]
+#' )
 umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, C_or_A = "A", suffix = NA){
 	# Correlated factors sex limitations
 	message("Not checked!")
