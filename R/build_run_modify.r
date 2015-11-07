@@ -3332,11 +3332,11 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath(v1m0 = "A") # Give "A" variance and a mean, fixed at 1 and 0 respectively
 #' umxPath(v.m. = "A") # Give "A" variance and a mean, leaving both free.
 #' umxPath("A", with = "B") # using with: same as "to = B, arrows = 2"
-#' umxPath("A", with = "B", fixedAt = .5)
-#' umxPath("A", with = "B", firstAt = 1)
-#' umxPath("A", with = c("B","C"), fixedAt = 1)
+#' umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
+#' umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 #' umxPath(cov = c("A", "B"))  # Covariance A <-> B
 #' umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
+#' umxPath(Cholesky = c("A1","A2"), c("m1", "m2")) # Cholesky
 #' # A worked example
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -3344,6 +3344,19 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' m1 <- umxRAM("One Factor", data = myData,
 #' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#' umxSummary(m1, show = "std")
+#'
+#' # ====================
+#' # = Cholesky example =
+#' # ====================
+#' latents   = paste0("A", 1:3)
+#' manifests = names(demoOneFactor)
+#' myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("Chol", data = myData,
+#' 	umxPath(Cholesky = latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
@@ -3408,11 +3421,11 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 	n = 0
 
-	for (i in list(with, cov, var, means, unique.bivariate, v.m. , v1m0)) {
+	for (i in list(with, cov, var, means, unique.bivariate, v.m. , v1m0, Cholesky)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, means, unique.bivariate, v1m0, or v.m. can be set: Use at one time")
+		stop("At most one of with, cov, var, means, unique.bivariate, v1m0, v.m. or Cholesky can be set: Use at one time")
 	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
@@ -3422,6 +3435,29 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		# n = 1
 	}
 
+	if(!is.null(Cholesky)){
+		if(!(length(to) >= length(Cholesky))){
+			stop("Must have at least as many 'to' vars as latents for Cholesky")
+		}
+		if(!is.na(labels)){
+			stop("I don't yet support labels for Cholesky")
+		}
+		if(length(lbound) > 1){
+			stop("I don't yet support multiple lbounds for Cholesky")
+		}
+		if(length(ubound) > 1){
+			stop("I don't yet support multiple ubounds for Cholesky")
+		}
+		o = list()
+		n = 1
+		max_to = length(to)
+		for(i in seq_along(Cholesky)) {
+			a = mxPath(from = Cholesky[i], to = to[n:max_to], arrows = 1, free = free, lbound = lbound, ubound = ubound)
+			o = c(o, a)
+			n = n + 1
+		}
+		return(o)
+	}
 	if(!is.null(v1m0)){
 		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels, lbound = lbound, ubound = ubound)
 		b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, labels = labels, lbound = lbound, ubound = ubound)

@@ -135,11 +135,11 @@ umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
 umxPath(v1m0 = "A") # Give "A" variance and a mean, fixed at 1 and 0 respectively
 umxPath(v.m. = "A") # Give "A" variance and a mean, leaving both free.
 umxPath("A", with = "B") # using with: same as "to = B, arrows = 2"
-umxPath("A", with = "B", fixedAt = .5)
-umxPath("A", with = "B", firstAt = 1)
-umxPath("A", with = c("B","C"), fixedAt = 1)
+umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
+umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 umxPath(cov = c("A", "B"))  # Covariance A <-> B
 umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
+umxPath(Cholesky = c("A1","A2"), c("m1", "m2")) # Cholesky
 # A worked example
 data(demoOneFactor)
 latents  = c("G")
@@ -147,6 +147,19 @@ manifests = names(demoOneFactor)
 myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 m1 <- umxRAM("One Factor", data = myData,
 	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
+)
+umxSummary(m1, show = "std")
+
+# ====================
+# = Cholesky example =
+# ====================
+latents   = paste0("A", 1:3)
+manifests = names(demoOneFactor)
+myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("Chol", data = myData,
+	umxPath(Cholesky = latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1.0)
 )
