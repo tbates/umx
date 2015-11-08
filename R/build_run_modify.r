@@ -2342,9 +2342,7 @@ parameters <- umxGetParameters
 #' parameters(m1, free=TRUE)
 #' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
 #' m2 = umxSetParameters(m1, "^", newlabels= "m1_", regex = TRUE, test = TRUE)
-umxSetParameters <- function(model, labels, free = NULL, values = NULL,
-	    newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE,
-	    strict = TRUE, name = NULL, regex = FALSE, test = FALSE) {
+umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE, strict = TRUE, name = NULL, regex = FALSE, test = FALSE) {
 	# TODO Add update() S3 function?
 	nothingDoing = all(is.null(c(free, values, newlabels)))
 	if(nothingDoing){
@@ -3437,7 +3435,8 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 	if(!is.null(Cholesky)){
 		if(!(length(to) >= length(Cholesky))){
-			stop("Must have at least as many 'to' vars as latents for Cholesky")
+			stop("Must have at least as many 'to' vars as latents for Cholesky: you gave me ",
+			length(to), " to vars and ", length(Cholesky), " Choleksy latents")
 		}
 		if(!is.na(labels)){
 			stop("I don't yet support labels for Cholesky")
@@ -3448,15 +3447,20 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		if(length(ubound) > 1){
 			stop("I don't yet support multiple ubounds for Cholesky")
 		}
-		o = list()
 		n = 1
 		max_to = length(to)
 		for(i in seq_along(Cholesky)) {
 			a = mxPath(from = Cholesky[i], to = to[n:max_to], arrows = 1, free = free, lbound = lbound, ubound = ubound)
-			o = c(o, a)
+			if(n == 1){
+				out = a
+			} else if(n == 2) {
+				out = list(out, a)
+			} else {
+				out = c(out, a)
+			}
 			n = n + 1
 		}
-		return(o)
+		return(out)
 	}
 	if(!is.null(v1m0)){
 		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels, lbound = lbound, ubound = ubound)
