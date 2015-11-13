@@ -4,12 +4,14 @@
 \alias{umx_APA_CI}
 \title{umx_APA_CI}
 \usage{
-umx_APA_CI(b, se, digits = 3)
+umx_APA_CI(b, se = NULL, std = FALSE, digits = 3)
 }
 \arguments{
 \item{b}{Either a model (\link{lm}), or a beta-value}
 
 \item{se}{If b is a model, then name of the parameter of interest, else the SE (standard-error)}
+
+\item{std}{Whether to re-run the model on standardized data and report std betas}
 
 \item{digits}{How many digits to use in rounding values}
 }
@@ -26,7 +28,8 @@ in square brackets, for one of the effects (specified by name in se). e.g.:
 Given b and se will return a CI based on 1.96 times the se.
 }
 \examples{
-umx_APA_CI(lm(mpg ~ wt, mtcars), "wt")
+umx_APA_CI(lm(mpg ~ wt + disp, mtcars))
+umx_APA_CI(lm(mpg ~ wt + disp, mtcars), "disp")
 umx_APA_CI(.4, .3)
 }
 \references{

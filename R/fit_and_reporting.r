@@ -1990,7 +1990,7 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 		if(from == "one" & !showMeans ){
 			# not adding means...
 		} else {
-			CIstr = umx_get_CI_as_APA_string(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits)
+			CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits)
 			if(is.na(CIstr)){
 				val = round(parameterKeyList[thisParam], digits)
 			}else{
@@ -2082,7 +2082,7 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 		if(!showMeans & from == "one"){
 			# not adding means...
 		} else {
-			CIstr = umx_get_CI_as_APA_string(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits, verbose = F)
+			CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits, verbose = F)
 			if(is.na(CIstr)){
 				val = round(parameterKeyList[thisParam], digits)
 			}else{
@@ -2995,47 +2995,58 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 	}
 }
 
-#' umx_APA_CI
+#' summaryAPA
 #'
 #' @description
 #' Given an lm, will return a nicely-formated effect including 95\% CI 
 #' in square brackets, for one of the effects (specified by name in se). e.g.:
 #' 
-#' \code{\link{umx_APA_CI}}(m1, "wt")
+#' \code{\link{summaryAPA}}(m1, "wt")
 #' \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 #' 
 #' Given b and se will return a CI based on 1.96 times the se.
 #' 
 #' @param b Either a model (\link{lm}), or a beta-value
 #' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)
+#' @param std Whether to re-run the model on standardized data and report std betas
 #' @param digits How many digits to use in rounding values
 #' @return - string
 #' @export
 #' @family Reporting Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' umx_APA_CI(lm(mpg ~ wt, mtcars), "wt")
-#' umx_APA_CI(.4, .3)
-umx_APA_CI <- function(b, se, digits = 3) {
+#' summaryAPA(lm(mpg ~ wt + disp, mtcars))
+#' summaryAPA(lm(mpg ~ wt + disp, mtcars), "disp")
+#' summaryAPA(.4, .3)
+summaryAPA <- function(b, se = NULL, std = FALSE, digits = 3) {
 	if("lm" == class(b)){
-		conf    = confint(b)
-		lower   = conf[se, 1]
-		upper   = conf[se, 2]
+		if(std){
+			b = update(b, data = umx_scale(b$model))
+		}
 		model_coefficients = summary(b)$coefficients
-		b_and_p = model_coefficients[se, ]
-		b       = b_and_p["Estimate"]
-		tval    = b_and_p["t value"]
-		pval    = b_and_p["Pr(>|t|)"]
-		paste0("\u03B2 = ", round(b, digits), 
-		   " [", round(lower, digits), ", ", round(upper, digits), "], ",
-		   "p ", umx_APA_pval(pval, addComparison = TRUE)
-		)
+		model_coefficients = summary(b)$coefficients
+		conf = confint(b)
+		if(is.null(se)){
+			se = dimnames(model_coefficients)[[1]]
+		}
+		for (i in se) {
+			lower   = conf[i, 1]
+			upper   = conf[i, 2]
+			b_and_p = model_coefficients[i, ]
+			b       = b_and_p["Estimate"]
+			tval    = b_and_p["t value"]
+			pval    = b_and_p["Pr(>|t|)"]
+			print(paste0(i, " \u03B2 = ", round(b, digits), 
+			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
+			   "p ", umx_APA_pval(pval, addComparison = TRUE)
+			))		
+		}
 	} else {
-		paste0("\u03B2 = ", round(b, digits), " [", round(b - (1.96 * se), digits), ", ", round(b + (1.96 * se), digits), "]")
+		print(paste0("\u03B2 = ", round(b, digits), " [", round(b - (1.96 * se), digits), ", ", round(b + (1.96 * se), digits), "]"))
 	}
 }
 
-#' umx_get_CI_as_APA_string
+#' umx_APA_model_CI
 #'
 #' Look up CIs for free parameters in a model, and return as APA-formatted text string
 #'
@@ -3051,9 +3062,9 @@ umx_APA_CI <- function(b, se, digits = 3) {
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' umx_get_CI_as_APA_string(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")
+#' umx_APA_model_CI(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")
 #' }
-umx_get_CI_as_APA_string <- function(model, cellLabel, prefix = "top.", suffix = "_std", digits = 2, verbose= FALSE){
+umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std", digits = 2, verbose= FALSE){
 	if(!umx_has_CIs(model)){
 		if(verbose){
 			message("no CIs")

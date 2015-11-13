@@ -288,7 +288,9 @@ umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, i
 		m1 = umxValues(m1, onlyTouchZeros = TRUE)
 	}
 	if(run){
-		return(mxRun(m1))
+		m1 = mxRun(m1)
+		umxSummary(m1)
+		return(m1)
 	} else {
 		return(m1)
 	}
