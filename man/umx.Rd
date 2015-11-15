@@ -113,6 +113,7 @@ Other File Functions: \code{\link{dl_from_dropbox}};
   \code{\link{umx_rename_file}}
 
 Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umx_APA_model_CI}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
@@ -122,7 +123,6 @@ Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_set_checkpoint}};
   \code{\link{umx_check}};
   \code{\link{umx_default_option}};
-  \code{\link{umx_get_CI_as_APA_string}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_checkpoint}};
   \code{\link{umx_get_cores}};
@@ -158,7 +158,7 @@ Other Modify or Compare Models: \code{\link{parameters}},
   \code{\link{umxSetParameters}};
   \code{\link{umxUnexplainedCausalNexus}}
 
-Other Reporting Functions: \code{\link{umx_APA_CI}};
+Other Reporting Functions: \code{\link{summaryAPA}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
   \code{\link{umx_print}}; \code{\link{umx_show}};
   \code{\link{umx_time}}

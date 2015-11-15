@@ -46,7 +46,7 @@ umx_show(m1, what = "free", "A")
 - \url{http://tbates.github.io}
 }
 \seealso{
-Other Reporting Functions: \code{\link{umx_APA_CI}};
+Other Reporting Functions: \code{\link{summaryAPA}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
   \code{\link{umx_print}}; \code{\link{umx_time}};
   \code{\link{umx}}, \code{\link{umx-package}}

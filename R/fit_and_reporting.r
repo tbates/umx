@@ -3038,7 +3038,7 @@ summaryAPA <- function(b, se = NULL, std = FALSE, digits = 3) {
 			pval    = b_and_p["Pr(>|t|)"]
 			print(paste0(i, " \u03B2 = ", round(b, digits), 
 			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
-			   "p ", umx_APA_pval(pval, addComparison = TRUE)
+			   "t = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))		
 		}
 	} else {

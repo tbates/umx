@@ -41,6 +41,7 @@ if(!umx_is_RAM(m1)){
 }
 \seealso{
 Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
+  \code{\link{umx_APA_model_CI}};
   \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
@@ -50,7 +51,6 @@ Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_set_checkpoint}};
   \code{\link{umx_check}};
   \code{\link{umx_default_option}};
-  \code{\link{umx_get_CI_as_APA_string}};
   \code{\link{umx_get_bracket_addresses}};
   \code{\link{umx_get_checkpoint}};
   \code{\link{umx_get_cores}};
