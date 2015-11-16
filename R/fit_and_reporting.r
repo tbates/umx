@@ -1674,9 +1674,16 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	# ============================
 	# x1 [label="E", shape = square];
 	preOut = "\t# Manifests\n"
+	for(var in latents) {
+	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+	}
+
+	preOut = paste0(preOut, "\n\t# Manifests\n")
 	for(var in selDVs) {
 	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
 	}
+
+	
 	# ================
 	# = handle means =
 	# ================

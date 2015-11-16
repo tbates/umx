@@ -50,7 +50,7 @@ umx_time(c(m1, m2))
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Reporting Functions: \code{\link{umx_APA_CI}};
+Other Reporting Functions: \code{\link{summaryAPA}};
   \code{\link{umx_APA_pval}}; \code{\link{umx_aggregate}};
   \code{\link{umx_print}}; \code{\link{umx_show}};
   \code{\link{umx}}, \code{\link{umx-package}}
