@@ -87,16 +87,6 @@ umx_get_cores <- function(model = NULL) {
 #' \dontrun{
 #' umx_check_parallel()
 #' }
-Hi,
-Glad it arrived!
-
-I am very sorry about the postage. Not sure how that happened, as it should have been franked properly at our end.
-In my reboxing, to add the UK plug, I must have left out the memory card.
-
-So: I will post the memory card today, along with £3 for the postage (again, I apologise).
-
-Hope you have fun with the phone! PS: The memory card slips into the same carrier that holds the sim0
-Best, tim
 umx_check_parallel <- function(nCores = -1) {
 	oldCores = umx_get_cores()
 	if(nCores == -1){
