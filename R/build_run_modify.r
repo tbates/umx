@@ -2703,8 +2703,6 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  name = NULL, labelSuffix = "", verbose = TRUE, endogenous = "deprecated") {
 	# Purpose: make a latent variable formed/or formed by some manifests
 	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
-	# TODO: delete manifestVariance
-	# Check both forms and formedBy are not defined
 	if(!endogenous == "deprecated"){
 		if(endogenous){
 			stop("Error in mxLatent: Use of endogenous=T is deprecated. Remove it and replace with type = \"endogenous\"") 
@@ -2713,14 +2711,12 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 		}
 	}
 	if(is.null(latent)) { stop("Error in mxLatent: you have to provide the name of the latent variable you want to create") }
+	# Check both forms and formedBy are not defined
 	if( is.null(formedBy) &&  is.null(forms)) { stop("Error in mxLatent: Must define one of forms or formedBy") }
 	if(!is.null(formedBy) && !is.null(forms)) { stop("Error in mxLatent: Only one of forms or formedBy can be set") }
-	if(is.null(data)) { stop("Error in mxLatent: you have to provide the data that will be used in the model") }
+	if(is.null(data)){ stop("Error in mxLatent: you have to provide the data that will be used in the model") }
 	# ==========================================================
-	# = NB: If any vars are ordinal, a call to umxMakeThresholdsMatrices
-	# = will fix the mean and variance of ordinal vars to 0 and 1
-	# ==========================================================
-	# Warning("If you use this with a dataframe containing ordinal variables, don't forget to call umxAutoThreshRAMObjective(df)")
+	# = NB: If any vars are ordinal, a call to umxMakeThresholdsMatrices will be made
 	isCov = umx_is_cov(data, boolean = TRUE)
 	if( any(!is.null(forms))) {
 		manifests <- forms

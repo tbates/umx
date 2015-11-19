@@ -74,28 +74,101 @@ umx_get_cores <- function(model = NULL) {
 	invisible(n)
 }
 
-#' umx_check_multi_core
+#' umx_check_parallel
 #'
 #' Shows how many cores you are using, and runs a test script so user can check CPU usage
 #'
-#' @param pathToDemos where to look for demo scripts (Default "~/bin/OpenMx/inst/models/nightly/")
-#' @param demoScript which demo script to use (Default ""3LatentMultiRegWithContinuousModerator-c.R"")
+#' @param nCores How many cores to run (defaults to -1 (all available))
 #' @return - NULL
 #' @export
 #' @family Misc
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' model = umx_check_multi_core()
+#' umx_check_parallel()
 #' }
-umx_check_multi_core <- function(pathToDemos = "~/bin/OpenMx/inst/models/nightly/", demoScript = "3LatentMultiRegWithContinuousModerator-c.R") {
+Hi,
+Glad it arrived!
+
+I am very sorry about the postage. Not sure how that happened, as it should have been franked properly at our end.
+In my reboxing, to add the UK plug, I must have left out the memory card.
+
+So: I will post the memory card today, along with £3 for the postage (again, I apologise).
+
+Hope you have fun with the phone! PS: The memory card slips into the same carrier that holds the sim0
+Best, tim
+umx_check_parallel <- function(nCores = -1) {
 	oldCores = umx_get_cores()
-	maxCores = parallel::detectCores()
-	message("You are using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means all)")
-	message("I will now set cores to max (they will be reset after) and run a script that hits multiple cores if possible.\n",
+	if(nCores == -1){
+		maxCores = parallel::detectCores()
+	} else {
+		maxCores = nCores
+	}
+	message("You are using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means max - 1)")
+	message("I will now set cores to ", maxCores, " (they will be reset after) and run a script that hits multiple cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
 	umx_set_cores(maxCores)
-	source(paste0(pathToDemos, demoScript))
+	library(OpenMx)
+	numberSubjects <- 1000
+	numberIndicators <- 12
+	numberFactors <- 3
+	set.seed(10)
+	fixedBMatrixF <- matrix(c(.4, .2), 2, 1, byrow=TRUE)
+	randomBMatrixF <- matrix(c(.3, .5), 2, 1, byrow=TRUE)
+	XMatrixF <- matrix(rnorm(numberSubjects*2, mean=0, sd=1), numberSubjects, 2)
+	UMatrixF <- matrix(rnorm(numberSubjects*1, mean=0, sd=1), numberSubjects, 1)
+	Z <- matrix(rnorm(numberSubjects, mean=0, sd=1), nrow=numberSubjects, ncol=2)
+
+	XMatrix <- cbind(XMatrixF, XMatrixF %*% fixedBMatrixF + (XMatrixF*Z) %*% randomBMatrixF + UMatrixF)
+
+	BMatrix <- matrix(c( 1, .6, .7, .8,  0,  0,  0,  0,  0,  0,  0,  0,
+	                     0,  0,  0,  0,  1, .5, .6, .7,  0,  0,  0,  0,
+	                     0,  0,  0,  0,  0,  0,  0,  0,  1, .7, .6, .5), numberFactors, numberIndicators, byrow=TRUE)
+	UMatrix <- matrix(rnorm(numberSubjects*numberIndicators, mean=0, sd=1), numberSubjects, numberIndicators)
+	YMatrix <- XMatrix %*% BMatrix + UMatrix
+	dimnames(YMatrix) <- list(NULL, paste("X", 1:numberIndicators, sep=""))
+
+	latentMultiRegModerated1 <- cbind(YMatrix,Z=Z[,1])
+	latentMultiRegModerated1[,'Z'] <- latentMultiRegModerated1[,'Z'] - mean(latentMultiRegModerated1[,'Z'])
+	numberFactors    <- 3
+	numberIndicators <- 12
+	numberModerators <- 1
+	indicators       <- paste("X", 1:numberIndicators, sep="")
+	moderators       <- c("Z")
+	totalVars        <- numberIndicators + numberFactors + numberModerators
+
+	# Build orthogonal simple structure factor model
+
+	latents <- paste("F", 1:numberFactors, sep="")
+	latents1       <- latents[1]
+	indicators1    <- indicators[1:4]
+	latents2       <- latents[2]
+	indicators2    <- indicators[5:8]
+	latents3       <- latents[3]
+	indicators3    <- indicators[9:12]
+
+	# Create model with both direct and moderated paths
+	test1 <- mxModel("threeLatentWithModerator", type="RAM",
+	    manifestVars=c(indicators),
+	    latentVars=c(latents, "dummy1"),
+	    mxPath(from=latents1, to=indicators1, arrows=1, connect="all.pairs", free=T, values=.2),
+		mxPath(from=latents2, to=indicators2, arrows=1, connect="all.pairs", free=T, values=.2),
+		mxPath(from=latents3, to=indicators3, arrows=1, connect="all.pairs", free=T, values=.2),
+		mxPath(from=latents1, to=indicators1[1], arrows=1, free=F, values=1),
+		mxPath(from=latents2, to=indicators2[1], arrows=1, free=F, values=1),
+		mxPath(from=latents3, to=indicators3[1], arrows=1, free=F, values=1),
+		mxPath(from=indicators, arrows=2, free=T, values=.8),
+		mxPath(from=latents, arrows=2, free=T, values=.8),
+		mxPath(from=c("F1","F2"),to="F3", arrows=1, free=T, values=.2, labels=c("b11", "b12")),
+		mxPath(from="F1",to="F2", arrows=1, free=T, values=.1, labels=c("cF1F2")),
+		mxPath(from=c("F1","F2"),to="dummy1", arrows=1, free=T, values=.2, labels=c("b21", "b22")),
+		mxPath(from="dummy1",to="F3", arrows=1, free=F, labels="data.Z"),
+		mxPath(from="one", to=indicators, arrows=1, free=F, values=0),
+		mxPath(from="one", to=c(latents), arrows=1, free=T, values=.1),
+		mxData(latentMultiRegModerated1, type="raw")
+	)
+	test1 <- mxRun(test1)
+	umx_time(test1)
 	umx_set_cores(oldCores)
 }
 

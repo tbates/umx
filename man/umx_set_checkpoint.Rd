@@ -54,7 +54,7 @@ Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
   \code{\link{umx_check_model}};
-  \code{\link{umx_check_multi_core}};
+  \code{\link{umx_check_parallel}};
   \code{\link{umx_check}};
   \code{\link{umx_default_option}};
   \code{\link{umx_get_bracket_addresses}};
