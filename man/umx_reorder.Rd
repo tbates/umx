@@ -30,7 +30,6 @@ umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 
 Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_APA_model_CI}};
-  \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
   \code{\link{umx_check_model}};

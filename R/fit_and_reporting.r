@@ -1542,51 +1542,6 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 	}
 }
 
-#' umxStandardizeACE
-#'
-#' standardize an ACE model
-#'
-#' @param fit an \code{\link{umxACE}} model to standardize
-#' @return - standardized ACE \code{\link{umxACE}} model
-#' @export
-#' @family zAdvanced Helpers
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
-#' @examples
-#' \dontrun{
-#' fit = umxStandardizeACE(fit)
-#' }
-umxStandardizeACE <- function(fit) {
-	if(typeof(fit) == "list"){ # call self recursively
-		for(thisFit in fit) {
-			message("Output for Model: ",thisFit@name)
-			umxStandardizeACE(thisFit)
-		}
-	} else {
-		if(!umx_has_been_run(fit)){
-			stop("I can only standardize ACE models that have been run. Just do\n",
-			"yourModel = mxRun(yourModel)")
-		}
-		selDVs = dimnames(fit$top.expCovMZ)[[1]]
-		nVar <- length(selDVs)/2;
-		# Calculate standardised variance components
-		a  <- mxEval(top.a, fit);   # Path coefficients
-		c  <- mxEval(top.c, fit);
-		e  <- mxEval(top.e, fit);
-
-		A  <- mxEval(top.A, fit);   # Variances
-		C  <- mxEval(top.C, fit);
-		E  <- mxEval(top.E, fit);
-		Vtot = A+C+E;               # Total variance
-		I  <- diag(nVar);           # nVar Identity matrix
-		SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
-	
-		# Standardized _path_ coefficients ready to be stacked together
-		fit@submodels$top@matrices$a@values = SD %*% a; # Standardized path coefficients
-		fit@submodels$top@matrices$c@values = SD %*% c;
-		fit@submodels$top@matrices$e@values = SD %*% e;
-		return(fit)
-	}
-}
 
 # ============
 # = Graphics =
@@ -1792,7 +1747,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
 	model = x # just to be clear that x is a model
 	if(std){
-		model = umxStandardizeACE(model)
+		model = umx_standardize_ACE(model)
 	}
 	out = "";
 	latents  = c();
@@ -2953,7 +2908,6 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 #' @param min Values below min reported as "< min"
 #' @param rounding Number of decimal to which to round
 #' @param addComparison Whether to add '=' '<' etc. (NA adds when needed)
-#' @family Misc
 #' @family Reporting Functions
 #' @return - formatted p-value
 #' @export

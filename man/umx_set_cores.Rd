@@ -39,7 +39,6 @@ umx_get_cores(model = m1)  # show new value
 \seealso{
 Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_APA_model_CI}};
-  \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
   \code{\link{umx_check_model}};

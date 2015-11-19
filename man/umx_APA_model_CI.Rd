@@ -36,7 +36,6 @@ umx_APA_model_CI(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std"
 }
 \seealso{
 Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
-  \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
   \code{\link{umx_check_model}};
