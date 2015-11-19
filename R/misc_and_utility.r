@@ -3407,6 +3407,51 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 	# Use case: include a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. With this function, the code goes:
 }
 
+#' umx_standardize_ACE
+#'
+#' Standardize an ACE model
+#'
+#' @param fit an \code{\link{umxACE}} model to standardize
+#' @return - Standardized ACE \code{\link{umxACE}} model
+#' @export
+#' @family zAdvanced Helpers
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' \dontrun{
+#' fit = umx_standardize_ACE(fit)
+#' }
+umx_standardize_ACE <- function(fit) {
+	if(typeof(fit) == "list"){ # call self recursively
+		for(thisFit in fit) {
+			message("Output for Model: ",thisFit@name)
+			umx_standardize_ACE(thisFit)
+		}
+	} else {
+		if(!umx_has_been_run(fit)){
+			stop("I can only standardize ACE models that have been run. Just do\n",
+			"yourModel = mxRun(yourModel)")
+		}
+		selDVs = dimnames(fit$top.expCovMZ)[[1]]
+		nVar <- length(selDVs)/2;
+		# Calculate standardised variance components
+		a  <- mxEval(top.a, fit);   # Path coefficients
+		c  <- mxEval(top.c, fit);
+		e  <- mxEval(top.e, fit);
+
+		A  <- mxEval(top.A, fit);   # Variances
+		C  <- mxEval(top.C, fit);
+		E  <- mxEval(top.E, fit);
+		Vtot = A+C+E;               # Total variance
+		I  <- diag(nVar);           # nVar Identity matrix
+		SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
+	
+		# Standardized _path_ coefficients ready to be stacked together
+		fit@submodels$top@matrices$a@values = SD %*% a; # Standardized path coefficients
+		fit@submodels$top@matrices$c@values = SD %*% c;
+		fit@submodels$top@matrices$e@values = SD %*% e;
+		return(fit)
+	}
+}
 #' umx_standardize_IP
 #'
 #' This function simply inserts the standardized IP components into the ai ci ei and as cs es matrices
@@ -3415,7 +3460,7 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #' @return - standardized IP \code{\link{umxIP}} model
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' fit = umx_standardize_IP(fit)
@@ -3444,7 +3489,7 @@ umx_standardize_IP <- function(fit){
 #' @return - standardized \code{\link{umxCP}} model
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' fit = umx_standardize_CP(fit)

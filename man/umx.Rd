@@ -114,7 +114,6 @@ Other File Functions: \code{\link{dl_from_dropbox}};
 
 Other Misc: \code{\link{umxEval}}; \code{\link{umxJiggle}};
   \code{\link{umx_APA_model_CI}};
-  \code{\link{umx_APA_pval}};
   \code{\link{umx_add_variances}}; \code{\link{umx_apply}};
   \code{\link{umx_check_OS}};
   \code{\link{umx_check_model}};
@@ -192,8 +191,8 @@ Other Utility Functions: \code{\link{qm}};
   \code{\link{umx_rename}}; \code{\link{umx_rot}};
   \code{\link{umx_trim}}
 
-Other zAdvanced Helpers: \code{\link{umxStandardizeACE}};
-  \code{\link{umx_RAM_ordinal_objective}};
+Other zAdvanced Helpers: \code{\link{umx_RAM_ordinal_objective}};
+  \code{\link{umx_standardize_ACE}};
   \code{\link{umx_standardize_CP}};
   \code{\link{umx_standardize_IP}}
 }
