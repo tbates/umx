@@ -37,7 +37,7 @@
 #' 
 #' # Select Variables for Analysis
 #' varList = c('ssc','sil','caf','tri','bic')
-#' selVars = umx_paste_names(varList, suffix, 1:2)
+#' selVars = umx_paste_names(varList, "_T", 1:2)
 #' 
 #' # Data objects for Multiple Groups
 #' mzmData = subset(us_skinfold_data, zyg == 1, selVars)
