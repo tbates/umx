@@ -16,7 +16,7 @@ umx_has_means(model)
 A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have a means model?"
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

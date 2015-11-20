@@ -57,7 +57,7 @@ under-identification and can break confidence interval estimation, but I think
 Fixing a factor loading to 1 and estimating factor variances can help here
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

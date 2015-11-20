@@ -56,7 +56,7 @@ tm = umxThresholdMatrix(x)
 # ==================
 # = Binary example =
 # ==================
-require(OpenMx)
+require(umx)
 data(twinData)
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)

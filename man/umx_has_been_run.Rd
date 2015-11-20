@@ -18,7 +18,7 @@ umx_has_been_run(model, stop = FALSE)
 check if an mxModel has been run or not
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

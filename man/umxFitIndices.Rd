@@ -18,7 +18,7 @@ umxFitIndices(model, indepfit)
 A list of fit indices
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

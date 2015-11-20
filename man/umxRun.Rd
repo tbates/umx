@@ -36,7 +36,7 @@ umxRun is a version of \code{\link{mxRun}} which can run also set start values, 
 It can also calculate the saturated and independence likelihoods necessary for most fit indices.
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

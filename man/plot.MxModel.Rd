@@ -42,7 +42,7 @@ then set \dQuote{change all}.
 }
 \examples{
 \dontrun{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

@@ -41,7 +41,7 @@ The following figure the GxE model as a path diagram:
 # aged 18-30 years, and an older cohort aged 31 and above.
 # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
 # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-require(OpenMx)
+require(umx)
 data(twinData) 
 zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)

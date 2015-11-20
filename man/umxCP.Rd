@@ -57,7 +57,7 @@ The following figure shows the CP model as a path diagram:
 \figure{CP.png}
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(twinData) 
 zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)

@@ -22,7 +22,7 @@ enables \code{\link{AIC}}(model); \code{\link{BIC}}(model).
 hat-tip Andreas Brandmaier
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

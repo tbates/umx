@@ -1,6 +1,6 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::release("~/bin/umx", check = TRUE)
-
+# devtools::build_win()
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -49,6 +49,10 @@ utils::globalVariables(c(
 	"ACE.af", "ACE.am", "ACE.cf", "ACE.cm", "ACE.ef", "ACE.em", 
 	'ACE.Vf', 'ACE.Vm',
 
+	'Amf', 'Cmf', 
+	'Asm', 'Asf', 'Csm', 'Csf',
+	'asf', 'asm', 'csf', 'csm',
+	'rAf', 'rAm', 'rCf', 'rCm', 'rEf', 'rEm',
 	'top.betaLin', 'top.betaQuad',
 	'top.a', 'top.c', 'top.e',
 	'top.A', 'top.C', 'top.E',
@@ -87,8 +91,7 @@ utils::globalVariables(c(
 	'V', 'Vf', 'Vm', 'Vtot', 
 	"C", "logLik", "var", 'SD', 'StdDev',
 	'binLabels', 'Unit_nBinx1',
-	'Amf', 'Cmf', 'asf', 'asm', 'csf', 'csm',
-	'rAf', 'rAm', 'rCf', 'rCm', 'rEf', 'rEm',
+	
 	'correlatedA', 'minCor', 'pos1by6', 'varList', 'Im1', 'IZ', 'ZI', 'Z'
 	)
 )
@@ -327,7 +330,7 @@ umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, i
 #' # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
 #' # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
 # # use ?twinData to learn about this data set
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData) 
 #' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
@@ -555,7 +558,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 #' @return - Table of estimates of ACE along the moderator
 #' @export
 #' @examples
-#' library(OpenMx);
+#' library(umx);
 #' # ==============================
 #' # = 1. Open and clean the data =
 #' # ==============================
@@ -779,7 +782,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # ===================
 #' # = Ordinal example =
 #' # ===================
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData)
 #' tmpTwin <- twinData
 #' names(tmpTwin)
@@ -841,7 +844,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # =======================================
 #' # = Mixed continuous and binary example =
 #' # =======================================
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData)
 #' tmpTwin <- twinData
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
@@ -869,7 +872,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # Example with covariance data only =
 #' # ===================================
 #' 
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData)
 #' tmpTwin <- twinData
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
@@ -1239,7 +1242,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData) 
 #' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
@@ -1441,7 +1444,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData)
 #' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
@@ -1642,11 +1645,10 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' us_skinfold_data[,c('caf_T1', 'caf_T2')] <- us_skinfold_data[,c('caf_T1', 'caf_T2')]/3
 #' us_skinfold_data[,c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[,c('ssc_T1', 'ssc_T2')]/5
 #' us_skinfold_data[,c('sil_T1', 'sil_T2')] <- us_skinfold_data[,c('sil_T1', 'sil_T2')]/5
-#' # describe(us_skinfold_data, skew = FALSE)
 #' 
 #' # Select Variables for Analysis
 #' varList = c('ssc','sil','caf','tri','bic')
-#' selVars = umx_paste_names(varList, suffix, 1:2)
+#' selVars = umx_paste_names(varList, "_T", 1:2)
 #' 
 #' # Data objects for Multiple Groups
 #' mzmData = subset(us_skinfold_data, zyg == 1, selVars)
@@ -1822,7 +1824,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 #' @family Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents = c("G")
 #' manifests = names(demoOneFactor)
@@ -1960,7 +1962,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2027,7 +2029,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2136,7 +2138,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @references - \url{http://github.com/tbates/umx}
 #' @export
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2228,7 +2230,7 @@ umxReRun <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value 
 #' @family Modify or Compare Models
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2312,7 +2314,7 @@ parameters <- umxGetParameters
 
 #' umxSetParameters
 #'
-#' Free or fix parameters in \code{\link{mxModels}}.
+#' Free or fix parameters in an \code{\link{mxModel}}.
 #' This allows similar actions that \code{\link{update}} enables
 #' for lm models.
 #' Updating can create duplicate labels, so this function also calls \code{\link{omxAssignFirstParameters}}
@@ -2339,7 +2341,7 @@ parameters <- umxGetParameters
 #' @seealso - \code{\link{umxReRun}}, \code{\link{umxLabel}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2400,7 +2402,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @family Modify or Compare Models
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2461,7 +2463,7 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' @family Modify or Compare Models
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents = c("G")
 #' manifests = names(demoOneFactor)
@@ -2871,7 +2873,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' # ==================
 #' # = Binary example =
 #' # ==================
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData)
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
@@ -3322,7 +3324,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @seealso - \code{\link{mxPath}}, \code{\link{umxLabel}}, \code{\link{umxLabel}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' # Some examples of paths with umxPath
 #' umxPath("A", to = "B") # One-headed path from A to B
 #' umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @@1

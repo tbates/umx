@@ -24,7 +24,7 @@ It will try and be smart in guessing these from the values in your data, and the
 If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents = c("G")
 manifests = names(demoOneFactor)

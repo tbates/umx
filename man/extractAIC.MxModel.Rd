@@ -24,7 +24,7 @@ helper function for \code{\link{logLik.MxModel}} (which enables AIC(model); logL
 Original Author: brandmaier
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

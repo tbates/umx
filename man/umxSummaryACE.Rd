@@ -41,7 +41,7 @@ umxSummaryACE(model, digits = 2, dotFilename = NULL, returnStd = FALSE,
 Summarise a Cholesky model, as returned by umxACE
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(twinData)
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)

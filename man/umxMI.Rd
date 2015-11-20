@@ -31,7 +31,7 @@ You are almost certainly doing better science when testing competing models rath
 }
 \examples{
 \dontrun{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

@@ -22,7 +22,7 @@
 Return the \code{\link{residuals}} from an OpenMx RAM model
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("g")
 manifests = names(demoOneFactor)

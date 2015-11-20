@@ -18,7 +18,7 @@ umx_is_endogenous(model, manifests_only = TRUE)
 Return a list of all the endogenous variables (variables with at least one incoming single-arrow path) in a model.
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 	mxPath(from = "g", to = names(demoOneFactor))

@@ -96,7 +96,7 @@ umxSummary(m2) # nb: though this is ADE, columns are labeled ACE
 # ===================
 # = Ordinal example =
 # ===================
-require(OpenMx)
+require(umx)
 data(twinData)
 tmpTwin <- twinData
 names(tmpTwin)
@@ -158,7 +158,7 @@ umxSummary(m1)
 # =======================================
 # = Mixed continuous and binary example =
 # =======================================
-require(OpenMx)
+require(umx)
 data(twinData)
 tmpTwin <- twinData
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
@@ -186,7 +186,7 @@ umxSummary(m1)
 # Example with covariance data only =
 # ===================================
 
-require(OpenMx)
+require(umx)
 data(twinData)
 tmpTwin <- twinData
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")

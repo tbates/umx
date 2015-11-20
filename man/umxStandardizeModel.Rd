@@ -25,7 +25,7 @@ umxStandardizeModel(model, return = "parameters", Amatrix = NA,
 umxStandardizeModel takes a RAM-style model, and returns standardized version.
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

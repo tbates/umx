@@ -22,7 +22,7 @@ umxFixAll(model, name = "_fixed", run = FALSE, verbose = FALSE)
 Fix all free parameters in a model using omxGetParameters()
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents = c("G")
 manifests = names(demoOneFactor)

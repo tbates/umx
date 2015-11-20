@@ -20,7 +20,7 @@ umx_fix_first_loadings(model, latents = NULL, at = 1)
 Fix the loading of the first path from each latent at selected value (default = 1).
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 m1 <- mxModel("One Factor", type = "RAM",
  manifestVars = names(demoOneFactor),

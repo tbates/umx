@@ -22,7 +22,7 @@ umx_fix_latents(model, latents = NULL, exogenous.only = TRUE, at = 1)
 Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 m1 <- mxModel("One Factor", type = "RAM",
  manifestVars = names(demoOneFactor),

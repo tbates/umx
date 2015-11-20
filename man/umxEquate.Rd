@@ -38,7 +38,7 @@ Tip: To find labels of free parameters use \code{\link{umxGetParameters}} with f
 Tip: To find labels by name, use the regex parameter of \code{\link{umxGetParameters}}
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

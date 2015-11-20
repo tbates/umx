@@ -37,7 +37,7 @@ umxSetParameters(model, labels, free = NULL, values = NULL,
 - \code{\link{mxModel}}
 }
 \description{
-Free or fix parameters in \code{\link{mxModels}}.
+Free or fix parameters in an \code{\link{mxModel}}.
 This allows similar actions that \code{\link{update}} enables
 for lm models.
 Updating can create duplicate labels, so this function also calls \code{\link{omxAssignFirstParameters}}
@@ -48,7 +48,7 @@ It also supports regular expressions to select labels. In this respect,
 it is similar to \code{\link{umxReRun}} without running the model.
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

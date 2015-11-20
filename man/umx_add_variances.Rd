@@ -22,7 +22,7 @@ umx_add_variances(model, add.to, values = NULL, free = NULL)
 Convenience function to save the user specifying mxPaths adding variance to each variable
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 m1 <- mxModel("One Factor", type = "RAM",
  manifestVars = names(demoOneFactor),

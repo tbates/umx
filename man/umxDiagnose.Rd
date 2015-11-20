@@ -20,7 +20,7 @@ umxDiagnose(model, tryHard = FALSE, diagonalizeExpCov = FALSE)
 Diagnose problems in a model - this is a work in progress.
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

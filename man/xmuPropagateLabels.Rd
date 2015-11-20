@@ -21,7 +21,7 @@ You should be calling \code{\link{umxLabel}}.
 This function is called by xmuLabel_MATRIX_Model
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

@@ -16,7 +16,7 @@
 #' @family Model Building Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -144,7 +144,7 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #' @family Reporting functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("g")
 #' manifests = names(demoOneFactor)
@@ -191,7 +191,7 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 #' @references - \url{http://github.com/tbates/umx}
 #' @export
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -324,7 +324,7 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 #' @seealso - \code{\link[stats]{confint}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents = c("G")
 #' manifests = names(demoOneFactor)
@@ -437,7 +437,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' @references - http://www.github.com/tbates/umx/
 #' @export
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -560,7 +560,7 @@ umxSummary.default <- function(model, ...){
 #' @import OpenMx
 #' @return - parameterTable returned invisibly, if estimates requested
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -748,7 +748,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEst
 #' @seealso - \code{\link{umxACE}} 
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData)
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
@@ -956,7 +956,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' @seealso - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://www.github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData)
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
@@ -1110,7 +1110,7 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' @seealso - \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData)
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
@@ -1252,7 +1252,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
 #' # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
 #  # use ?twinData to learn about this data set.
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData) 
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
@@ -1337,7 +1337,7 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' @export
 #' @import OpenMx
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -1461,7 +1461,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' @export
 #' @examples
 #' \dontrun{
-#' 	require(OpenMx)
+#' 	require(umx)
 #' 	data(demoOneFactor)
 #' 	latents  = c("G")
 #' 	manifests = names(demoOneFactor)
@@ -1575,7 +1575,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -1731,7 +1731,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 #' @family Reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(twinData)
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
@@ -2093,7 +2093,7 @@ plot.MxModel.IP <- umxPlotIP
 #' @export
 #' @examples
 #' \dontrun{
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2460,7 +2460,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @family Reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2495,7 +2495,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' Original written by \url{http://openmx.psyc.virginia.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2563,7 +2563,7 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 #' @family Reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/2598}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2623,7 +2623,7 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' @family Reporting functions
 #' @references - \url{http://openmx.psyc.virginia.edu/thread/931#comment-4858}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2668,7 +2668,7 @@ logLik.MxModel <- function(object, ...) {
 #' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2791,7 +2791,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' @family Reporting functions
 #' @references - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2820,7 +2820,7 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' @family Reporting functions
 #' @references - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)

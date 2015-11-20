@@ -39,7 +39,7 @@ If parm is empty, and run = FALSE, a message will alert you to add run = TRUE.
 Even a few CIs can take too long to make running the default.
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents = c("G")
 manifests = names(demoOneFactor)

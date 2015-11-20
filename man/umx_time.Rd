@@ -30,7 +30,7 @@ If a list of models is provided, time deltas will also be reported.
 If the model hasn't been run, this function will run it for you.
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

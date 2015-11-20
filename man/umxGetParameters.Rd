@@ -23,7 +23,7 @@ Get the parameter labels from a model. Like \code{\link{omxGetParameters}},
 but supercharged with regular expressions for more power and ease!
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

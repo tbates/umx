@@ -16,7 +16,7 @@ umx_is_RAM(obj)
 Utility function returning a binary answer to the question "Is this a RAM model?"
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

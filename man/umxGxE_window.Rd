@@ -37,7 +37,7 @@ ACE analyses targeted at sucessive regions of the moderator.
 In this sense, you can think of it as nonparametric GxE
 }
 \examples{
-library(OpenMx);
+library(umx);
 # ==============================
 # = 1. Open and clean the data =
 # ==============================

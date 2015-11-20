@@ -25,7 +25,7 @@ i.e., matrixname _ r rowNumber c colNumber
 End users should just call \code{\link{umxLabel}}
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 m2 <- mxModel("One Factor",
 	mxMatrix("Full", 5, 1, values = 0.2, free = TRUE, name = "A"), 

@@ -51,7 +51,7 @@ fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "n
 fit2 = mxRun(fit2)
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

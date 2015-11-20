@@ -17,7 +17,7 @@ get the checkpoint status for a model or global options
 }
 \examples{
 umx_get_checkpoint() # current global default
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

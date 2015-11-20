@@ -22,7 +22,7 @@ umx_check_names(namesNeeded, data, die = TRUE, no_others = FALSE)
 Check if a list of names are in the names() of a dataframe (or the of a matrix)
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 umx_check_names(c("x1", "x2"), demoOneFactor)
 umx_check_names(c("x1", "x2"), as.matrix(demoOneFactor))

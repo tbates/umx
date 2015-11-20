@@ -35,7 +35,7 @@ umxSummaryIP(model, digits = 2, dotFilename = c(NA, "name",
 Summarise a Independent Pathway model, as returned by \code{\link{umxIP}}
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(twinData)
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)

@@ -22,7 +22,7 @@ umxExpMeans(model, manifests = TRUE, latents = NULL, digits = NULL)
 Extract the expected means matrix from an \code{\link{mxModel}}
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

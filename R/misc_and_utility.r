@@ -98,7 +98,6 @@ umx_check_parallel <- function(nCores = -1) {
 	message("I will now set cores to ", maxCores, " (they will be reset after) and run a script that hits multiple cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
 	umx_set_cores(maxCores)
-	library(OpenMx)
 	numberSubjects <- 1000
 	numberIndicators <- 12
 	numberFactors <- 3
@@ -227,7 +226,7 @@ umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
 #' # turn off checkpointing with interval = 0
 #' umx_set_checkpoint(interval = 0)
 #' umx_set_checkpoint(2, "evaluations", prefix="SNP_1")
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -289,7 +288,7 @@ umx_checkpoint <- umx_set_checkpoint
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' umx_get_checkpoint() # current global default
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -351,7 +350,7 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' @family Misc
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 #' 	mxPath(from = "g", to = names(demoOneFactor))
@@ -389,7 +388,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @family Misc
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 #' 	mxPath(from = "g", to = names(demoOneFactor))
@@ -431,7 +430,7 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' @family Misc
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' m1 <- mxModel("One Factor", type = "RAM",
 #'  manifestVars = names(demoOneFactor),
@@ -473,7 +472,7 @@ umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 #' @family Model Building Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' m1 <- mxModel("One Factor", type = "RAM",
 #'  manifestVars = names(demoOneFactor),
@@ -513,7 +512,7 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 #' @family Model Building Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' m1 <- mxModel("One Factor", type = "RAM",
 #'  manifestVars = names(demoOneFactor),
@@ -1336,22 +1335,23 @@ umx_msg <- function(x) {
 
 #' umx_paste_names
 #'
-#' Helper to add suffixes to names: useful for expanding twin vars like "bmi" into c("bmi_T1", "bmi_T2")
-#' Use textConstant to turning add a constant"E_T1", by adding "_T" and 1.
+#' Helper to add suffixes to names: useful for expanding base names for variables (e.g. "bmi")
+#' into fully specified fmaily-wise row names for variables c("bmi_T1", "bmi_T2")
+#' Use textConstant to add a constant like "_T" adter each base variable name.
+#' This is then suffixed with e.g. "1", "2".
 #'
-#' @param varNames a list of base names, e.g c("bmi", "IQ")
-#' @param textConstant The suffix added to all names, e.g. "_T" (default is "")
-#' @param suffixes a list of terminal suffixes differentiating the var names (e.g c("1", "2"))
+#' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
+#' @param textConstant A string separating the name and the twin suffix, e.g. "_T" (default is "")
+#' @param suffixes a list of terminal suffixes differentiating the twins default = c("1", "2"))
 #' @return - vector of suffixed var names, i.e., c("a_T1", "b_T1", "a_T2", "b_T2")
 #' @export
 #' @family Utility Functions
-
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' umx_paste_names("bmi", "_T", 1:2)
 #' umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
 #' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
-umx_paste_names <- function(varNames, textConstant = "", suffixes) {
+umx_paste_names <- function(varNames, textConstant = "", suffixes = 1:2) {
 	nameList = c()
 	for (ID in suffixes) {
 		nameList = c(nameList, paste0(varNames, textConstant, ID))
@@ -1469,7 +1469,7 @@ umxCov2cor <- function(x) {
 #' @family Reporting Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -1597,7 +1597,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -1668,7 +1668,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' @family Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 #' umx_check_names(c("x1", "x2"), demoOneFactor)
 #' umx_check_names(c("x1", "x2"), as.matrix(demoOneFactor))
@@ -1891,7 +1891,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' @family Misc
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2023,7 +2023,7 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' @family Misc
 #' @references - http://www.github.com/tbates/umx/
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2064,7 +2064,7 @@ umx_has_means <- function(model) {
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}
 #' @references - http://www.github.com/tbates/umx/
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2123,7 +2123,7 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @seealso - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -2771,7 +2771,7 @@ umx_rot <- function(vec){
 #' @family Reporting Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -3408,7 +3408,7 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 #' @family Misc
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' require(OpenMx)
+#' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)

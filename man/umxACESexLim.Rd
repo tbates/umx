@@ -56,11 +56,10 @@ us_skinfold_data[,c('tri_T1', 'tri_T2')] <- us_skinfold_data[,c('tri_T1', 'tri_T
 us_skinfold_data[,c('caf_T1', 'caf_T2')] <- us_skinfold_data[,c('caf_T1', 'caf_T2')]/3
 us_skinfold_data[,c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[,c('ssc_T1', 'ssc_T2')]/5
 us_skinfold_data[,c('sil_T1', 'sil_T2')] <- us_skinfold_data[,c('sil_T1', 'sil_T2')]/5
-# describe(us_skinfold_data, skew = FALSE)
 
 # Select Variables for Analysis
 varList = c('ssc','sil','caf','tri','bic')
-selVars = umx_paste_names(varList, suffix, 1:2)
+selVars = umx_paste_names(varList, "_T", 1:2)
 
 # Data objects for Multiple Groups
 mzmData = subset(us_skinfold_data, zyg == 1, selVars)

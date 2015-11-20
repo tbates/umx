@@ -37,7 +37,7 @@ umxSummaryCP(model, digits = 2, dotFilename = "name", returnStd = FALSE,
 Summarise a Commmon Pathway model, as returned by \code{\link{umxCP}}
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(twinData)
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)

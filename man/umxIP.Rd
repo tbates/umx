@@ -55,7 +55,7 @@ The following figure the IP model as a path diagram:
 \figure{IP.png}
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(twinData)
 zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)

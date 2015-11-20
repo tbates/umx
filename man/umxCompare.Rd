@@ -27,7 +27,7 @@ umxCompare compares two or more \code{\link{mxModel}}s.
 If you leave comparison blank, it will just give fit info for the base model
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

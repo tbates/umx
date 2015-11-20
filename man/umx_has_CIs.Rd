@@ -18,7 +18,7 @@ umx_has_CIs(model, check = c("both", "intervals", "output"))
 A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?"
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

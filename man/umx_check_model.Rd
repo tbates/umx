@@ -27,7 +27,7 @@ umx_check_model(obj, type = NULL, hasData = NULL, beenRun = NULL,
 Check an OpenMx model
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

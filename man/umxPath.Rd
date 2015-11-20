@@ -123,7 +123,7 @@ There are also new terms to describe fixing values: \dQuote{fixedAt} and \dQuote
 Finally, (in future) it will allow sem-style \dQuote{A->B} string specification.
 }
 \examples{
-require(OpenMx)
+require(umx)
 # Some examples of paths with umxPath
 umxPath("A", to = "B") # One-headed path from A to B
 umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @1

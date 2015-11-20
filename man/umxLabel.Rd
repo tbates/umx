@@ -37,7 +37,7 @@ umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix b
 This is a core function in umx: Adding labels to paths opens the door to \code{\link{umxEquate}}, as well as \code{\link{omxSetParameters}}
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

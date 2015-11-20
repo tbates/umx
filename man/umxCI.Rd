@@ -38,7 +38,7 @@ This function also reports any problems computing a CI. The codes are standard O
 If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

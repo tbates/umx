@@ -29,7 +29,7 @@ umxPlotACE(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE,
 Make a graphical display of an ACE model
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(twinData)
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)

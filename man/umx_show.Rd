@@ -23,7 +23,7 @@ umx_show(model, what = c("values", "free", "labels", "nonzero_or_free"),
 Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
 }
 \examples{
-require(OpenMx)
+require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
