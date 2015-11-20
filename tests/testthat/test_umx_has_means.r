@@ -4,7 +4,6 @@
 # 
 # test_package("umx")
 
-require(OpenMx)
 require(umx)
 data(demoOneFactor)
 latents  = c("G")

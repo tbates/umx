@@ -7,13 +7,14 @@
 #'
 #' @param name    The name of the model (Default = "CF_sexlim")
 #' @param selDVs  BASE NAMES of the variables in the analysis. You MUST provide suffixes.
+#' @param C_or_A  Whether to model sex-limitation on C or on A. (Defaults to "A")
 #' @param mzmData Dataframe containing the MZ male data
 #' @param dzmData Dataframe containing the DZ male data
 #' @param mzfData Dataframe containing the MZ female data
 #' @param dzfData Dataframe containing the DZ female data
 #' @param dzoData Dataframe containing the DZ opposite-sex data (be sure and get in right order)
 #' @param suffix Suffix used for twin variable naming. Allows using just the base names in selVars
-#' @return - \code{\link{umxCF_SexLim}} model
+#' @return - CF SexLim model
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Neale et al. (2006). 
@@ -27,23 +28,23 @@
 #' # =========================
 #' data("us_skinfold_data")
 #' # rescale vars
-#' usski[,c('bic_T1', 'bic_T2')] <- usski[,c('bic_T1', 'bic_T2')]/3.4
-#' usski[,c('tri_T1', 'tri_T2')] <- usski[,c('tri_T1', 'tri_T2')]/3
-#' usski[,c('caf_T1', 'caf_T2')] <- usski[,c('caf_T1', 'caf_T2')]/3
-#' usski[,c('ssc_T1', 'ssc_T2')] <- usski[,c('ssc_T1', 'ssc_T2')]/5
-#' usski[,c('sil_T1', 'sil_T2')] <- usski[,c('sil_T1', 'sil_T2')]/5
-#' # describe(usski, skew = FALSE)
+#' us_skinfold_data[,c('bic_T1', 'bic_T2')] <- us_skinfold_data[,c('bic_T1', 'bic_T2')]/3.4
+#' us_skinfold_data[,c('tri_T1', 'tri_T2')] <- us_skinfold_data[,c('tri_T1', 'tri_T2')]/3
+#' us_skinfold_data[,c('caf_T1', 'caf_T2')] <- us_skinfold_data[,c('caf_T1', 'caf_T2')]/3
+#' us_skinfold_data[,c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[,c('ssc_T1', 'ssc_T2')]/5
+#' us_skinfold_data[,c('sil_T1', 'sil_T2')] <- us_skinfold_data[,c('sil_T1', 'sil_T2')]/5
+#' # describe(us_skinfold_data, skew = FALSE)
 #' 
 #' # Select Variables for Analysis
 #' varList = c('ssc','sil','caf','tri','bic')
 #' selVars = umx_paste_names(varList, suffix, 1:2)
 #' 
 #' # Data objects for Multiple Groups
-#' mzmData = subset(usski, zyg == 1, selVars)
-#' dzmData = subset(usski, zyg == 3, selVars)
-#' mzfData = subset(usski, zyg == 2, selVars)
-#' dzfData = subset(usski, zyg == 4, selVars)
-#' dzoData = subset(usski, zyg == 5, selVars)
+#' mzmData = subset(us_skinfold_data, zyg == 1, selVars)
+#' dzmData = subset(us_skinfold_data, zyg == 3, selVars)
+#' mzfData = subset(us_skinfold_data, zyg == 2, selVars)
+#' dzfData = subset(us_skinfold_data, zyg == 4, selVars)
+#' dzoData = subset(us_skinfold_data, zyg == 5, selVars)
 #'
 #' m1 = umxCF_SexLim(selDVs = varList, 
 #' 		mzmData = mzmData, dzmData = dzmData, 
@@ -58,7 +59,8 @@
 #' # ===============================
 #' # Quantitative Sex Differences & Qualitative Sex Differences for A
 #' # Male and female paths, plus male and female Ra, Rc and Re between variables
-#' # Male-Female correlations in DZO group between A factors Rao FREE, Rc constrained across male/female and opp-sex
+#' # Male-Female correlations in DZO group between 
+#' # A factors Rao FREE, Rc constrained across male/female and opp-sex
 #' # ===================================================
 #' # = Test switching specific a from Males to females =
 #' # ===================================================
@@ -73,26 +75,35 @@
 #' # ===============================
 #' # Quantitative Sex Differences & Qualitative Sex Differences for C
 #' # Male and female paths, plus male and female Ra, Rc and Re between variables
-#' # Male-Female correlations in DZO group between C factors Rco FREE, Ra constrained across male/female and oppsex
+#' # Male-Female correlations in DZO group between C 
+#' # factors Rco FREE, Ra constrained across male/female and oppsex
 #' 
-#' # -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
+#' # -------|---------|---------|---------|---------|---------|---------|---------|---------|-----|
 #' # 3 Scalar Sex Limitation 
 #' # Quantitative Sex Differences but NO Qualitative Sex Differences
-#' # Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
-#' # ---------------------------------------------------------------------------------------------------------------------|
+#' # Male and female paths, but one set of Ra, Rc and Re between variables (same for male & female)
+#' # ---------------------------------------------------------------------------------------------|
 #' 
 #' # =================================
 #  # = Equate m & f R stand by label =
 #' # =================================
 #' m3 = umxSetParameters(m2, labels = "asm_.*", free = F, values = 0, regex = T)
-#' pathRam = mxMatrix(name="Ram", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("ra",nv), lbound=-1, ubound=1)
-#' pathRaf = mxMatrix(name="Raf", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("ra",nv), lbound=-1, ubound=1)
-#' pathRcm = mxMatrix(name="Rcm", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("rc",nv), lbound=-1, ubound=1)
-#' pathRcf = mxMatrix(name="Rcf", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("rc",nv), lbound=-1, ubound=1)
-#' pathRem = mxMatrix(name="Rem", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("re",nv), lbound=-1, ubound=1)
-#' pathRef = mxMatrix(name="Ref", "Stand", nrow=nv, free=TRUE, values=.4, label=laSdiag("re",nv), lbound=-1, ubound=1)
-#' corRao  = mxMatrix(name="Rao", "Symm" , nrow=nv, free=frODiag, values=svODiag, label=laSymm("ra",nv), lbound=-1, ubound=1)
-#' corRco  = mxMatrix(name="Rco", "Symm" , nrow=nv, free=frODiag, values=svODiag, label=laSymm("rc",nv), lbound=-1, ubound=1)
+#' pathRam = mxMatrix(name="Ram", "Stand", nrow=nv, free=TRUE, values=.4, 
+#'			label=laSdiag("ra",nv), lbound=-1, ubound=1)
+#' pathRaf = mxMatrix(name="Raf", "Stand", nrow=nv, free=TRUE, values=.4, 
+#'			label=laSdiag("ra",nv), lbound=-1, ubound=1)
+#' pathRcm = mxMatrix(name="Rcm", "Stand", nrow=nv, free=TRUE, values=.4, 
+#'			label=laSdiag("rc",nv), lbound=-1, ubound=1)
+#' pathRcf = mxMatrix(name="Rcf", "Stand", nrow=nv, free=TRUE, values=.4, 
+#'			label=laSdiag("rc",nv), lbound=-1, ubound=1)
+#' pathRem = mxMatrix(name="Rem", "Stand", nrow=nv, free=TRUE, values=.4, 
+#'			label=laSdiag("re",nv), lbound=-1, ubound=1)
+#' pathRef = mxMatrix(name="Ref", "Stand", nrow=nv, free=TRUE, values=.4, 
+#'			label=laSdiag("re",nv), lbound=-1, ubound=1)
+#' corRao  = mxMatrix(name="Rao", "Symm" , nrow=nv, free=frODiag, values=svODiag,
+#'          label=laSymm("ra",nv), lbound=-1, ubound=1)
+#' corRco  = mxMatrix(name="Rco", "Symm" , nrow=nv, free=frODiag, values=svODiag, 
+#'          label=laSymm("rc",nv), lbound=-1, ubound=1)
 #' 
 #' m3 <- makeModel("HetCfAce")
 #' m3 <- mxRun(m3)
@@ -225,9 +236,9 @@ umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 		mxConstraint(name = "constr", minCor > pos1by6),
 
 		# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins
-		mxMatrix(name = "expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(selDVs, "Mm")),
-		mxMatrix(name = "expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(selDVs, "Mf")),
-		mxMatrix(name = "expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(selDVs, rep(c("Mm", "Mf"), each = nVar))),
+		mxMatrix(name = "expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(selDVs, "Mm")),
+		mxMatrix(name = "expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(selDVs, "Mf")),
+		mxMatrix(name = "expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(selDVs, rep(c("Mm", "Mf"), each = nVar))),
 
 		# Matrix & Algebra for expected Variance/Covariance Matrices in MZ & DZ twins
 		mxAlgebra(name = "expCovMZm", rbind(cbind(Vm, Am + Cm), cbind(Am + Cm, Vm))),

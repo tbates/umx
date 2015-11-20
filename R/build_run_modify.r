@@ -86,7 +86,11 @@ utils::globalVariables(c(
 	'thresholdDeviations', 'totalVariance', 'UnitLower',
 	'V', 'Vf', 'Vm', 'Vtot', 
 	"C", "logLik", "var", 'SD', 'StdDev',
-	'binLabels', 'Unit_nBinx1')
+	'binLabels', 'Unit_nBinx1',
+	'Amf', 'Cmf', 'asf', 'asm', 'csf', 'csm',
+	'rAf', 'rAm', 'rCf', 'rCm', 'rEf', 'rEm',
+	'correlatedA', 'minCor', 'pos1by6', 'varList', 'Im1', 'IZ', 'ZI', 'Z'
+	)
 )
 
 # ===================================================================
@@ -740,7 +744,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # Cohort 1 Zygosity is coded as follows: 
 #' # 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
 #' # tip: ?twinData to learn more about this data set
-#' require(OpenMx)
 #' require(umx)
 #' data(twinData)
 #' tmpTwin <- twinData
@@ -1600,16 +1603,18 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 
 #' umxACESexLim
 #'
-#' Cholesky style sex limitation model
-
-#' Build a multivariate twin analysis with sex limitation
-#' MODEL:MV Quantitative & Qualitative Sex-Limitation script (ACE Correlated Factors model & ACE Cholesky model)
-#' Correlation Approach to ensure that order of variables does NOT affect ability of model to account for DZOS data
+#' Cholesky style sex-limitation model.
+#'
+#' This is a multi-variate capable Quantitative & Qualitative Sex-Limitation script using
+#' ACE Cholesky modeling. It implements a correlation approach to ensure that order of variables
+#' does NOT affect ability of model to account for DZOS data.
 #'  
-#' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
+#' Restrictions include the assumtion that twin means and variances can be equated across birth
+#' order within zygosity groups.
 #' 
 #' Note: Qualitative sex differences are differences in the latent A, C, or E latent variables
-#' Note: Quantitative sex differences are differences in the path loadings from A, C, or E to the measured variables
+#' Note: Quantitative sex differences are differences in the path loadings from A, C, or E 
+#' to the measured variables
 #' @param name The name of the model (defaults to "ACE_sexlim")
 #' @param selDVs The variables to include. If you provide a suffix, you can use just the base names.
 #' @param mzmData The MZ male dataframe
@@ -1619,7 +1624,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param dzoData The DZ opposite-sex dataframe. (be sure and get in right order)
 #' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
 #' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
-#' @return - \code{\link{umxACEsexlim}} model
+#' @return - ACE sexlim model
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Neale et al., (2006). Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics.,
@@ -1630,27 +1635,29 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' # =========================
 #' # = Load and Process Data =
 #' # =========================
-#' data("usski")
+#' data('us_skinfold_data')
 #' # rescale vars
-#' usski[,c('bic_T1', 'bic_T2')] <- usski[,c('bic_T1', 'bic_T2')]/3.4
-#' usski[,c('tri_T1', 'tri_T2')] <- usski[,c('tri_T1', 'tri_T2')]/3
-#' usski[,c('caf_T1', 'caf_T2')] <- usski[,c('caf_T1', 'caf_T2')]/3
-#' usski[,c('ssc_T1', 'ssc_T2')] <- usski[,c('ssc_T1', 'ssc_T2')]/5
-#' usski[,c('sil_T1', 'sil_T2')] <- usski[,c('sil_T1', 'sil_T2')]/5
-#' # describe(usski, skew = FALSE)
+#' us_skinfold_data[,c('bic_T1', 'bic_T2')] <- us_skinfold_data[,c('bic_T1', 'bic_T2')]/3.4
+#' us_skinfold_data[,c('tri_T1', 'tri_T2')] <- us_skinfold_data[,c('tri_T1', 'tri_T2')]/3
+#' us_skinfold_data[,c('caf_T1', 'caf_T2')] <- us_skinfold_data[,c('caf_T1', 'caf_T2')]/3
+#' us_skinfold_data[,c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[,c('ssc_T1', 'ssc_T2')]/5
+#' us_skinfold_data[,c('sil_T1', 'sil_T2')] <- us_skinfold_data[,c('sil_T1', 'sil_T2')]/5
+#' # describe(us_skinfold_data, skew = FALSE)
 #' 
 #' # Select Variables for Analysis
 #' varList = c('ssc','sil','caf','tri','bic')
 #' selVars = umx_paste_names(varList, suffix, 1:2)
 #' 
 #' # Data objects for Multiple Groups
-#' mzmData = subset(usski, zyg == 1, selVars)
-#' dzmData = subset(usski, zyg == 3, selVars)
-#' mzfData = subset(usski, zyg == 2, selVars)
-#' dzfData = subset(usski, zyg == 4, selVars)
-#' dzoData = subset(usski, zyg == 5, selVars)
+#' mzmData = subset(us_skinfold_data, zyg == 1, selVars)
+#' dzmData = subset(us_skinfold_data, zyg == 3, selVars)
+#' mzfData = subset(us_skinfold_data, zyg == 2, selVars)
+#' dzfData = subset(us_skinfold_data, zyg == 4, selVars)
+#' dzoData = subset(us_skinfold_data, zyg == 5, selVars)
 #' 
-#' m1 = umxACESexLim(selDVs = varList, mzmData = mzmData, dzmData = dzmData, mzfData = mzfData, dzfData = dzfData, dzoData = dzoData, suffix = "_T")
+#' m1 = umxACESexLim(selDVs = varList, 
+#'        mzmData = mzmData, dzmData = dzmData, 
+#'        mzfData = mzfData, dzfData = dzfData, dzoData = dzoData, suffix = "_T")
 #' m1 = mxRun(m1)
 #' # ===================================================
 #' # = Test switching specific a from Males to females =
@@ -1749,9 +1756,9 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 			mxConstraint(name = "constRe", vech(rEf) == vech(rEm)),
 
 			# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins
-			mxMatrix(name = "expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(varList, "Mm")),
-			mxMatrix(name = "expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(varList, "Mf")),
-			mxMatrix(name = "expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, label = paste0(varList, rep(c("Mm","Mf"), each = nVar))),
+			mxMatrix(name = "expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(varList, "Mm")),
+			mxMatrix(name = "expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(varList, "Mf")),
+			mxMatrix(name = "expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(varList, rep(c("Mm","Mf"), each = nVar))),
 
 			# Algebras generated to hold Parameter Estimates and Derived Variance Components
 			mxAlgebra(name = "VarsZm", cbind(Am/Vm,Cm/Vm,Em/Vm), dimnames = list(NULL, colZm)),
@@ -2673,7 +2680,6 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' library(OpenMx)
 #' library(umx)
 #' data(demoOneFactor)
 #' latents = c("G")
@@ -3631,7 +3637,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' There is a helpful blog at \url{http://tbates.github.io}
 #' 
-#' To install from github, you need:
+#' To install from github, use:
 #' install.packages("devtools")
 #' library("devtools")
 #' install_github("tbates/umx")
@@ -3651,7 +3657,6 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @references - \url{http://www.github.com/tbates/umx}
 #' 
 #' @examples
-#' require("OpenMx")
 #' require("umx")
 #' data(demoOneFactor)
 #' myData = mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))

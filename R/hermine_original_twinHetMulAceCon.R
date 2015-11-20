@@ -22,14 +22,14 @@
 # allVars   <- c('fan','zyg',
 #  'ht1','wt1','bmi1','bml1','bic1','caf1','ssc1','sil1','tri1',
 #  'ht2','wt2','bmi2','bml2','bic2','caf2','ssc2','sil2','tri2')
-# usski <- read.table("usski.rec", header = FALSE, na.strings = ".", col.names = allVars)
-# describe(usski, skew=F)
-# usski[,c('bic1','bic2')] <- usski[,c('bic1','bic2')]/3.4
-# usski[,c('tri1','tri2')] <- usski[,c('tri1','tri2')]/3
-# usski[,c('caf1','caf2')] <- usski[,c('caf1','caf2')]/3
-# usski[,c('ssc1','ssc2')] <- usski[,c('ssc1','ssc2')]/5
-# usski[,c('sil1','sil2')] <- usski[,c('sil1','sil2')]/5
-# describe(usski, skew=F)
+# us_skinfold_data <- read.table("us_skinfold_data.rec", header = FALSE, na.strings = ".", col.names = allVars)
+# describe(us_skinfold_data, skew=F)
+# us_skinfold_data[,c('bic1','bic2')] <- us_skinfold_data[,c('bic1','bic2')]/3.4
+# us_skinfold_data[,c('tri1','tri2')] <- us_skinfold_data[,c('tri1','tri2')]/3
+# us_skinfold_data[,c('caf1','caf2')] <- us_skinfold_data[,c('caf1','caf2')]/3
+# us_skinfold_data[,c('ssc1','ssc2')] <- us_skinfold_data[,c('ssc1','ssc2')]/5
+# us_skinfold_data[,c('sil1','sil2')] <- us_skinfold_data[,c('sil1','sil2')]/5
+# describe(us_skinfold_data, skew=F)
 #
 # # Select Variables for Analysis
 # Vars      <- c('ssc','sil','caf','tri','bic')
@@ -39,11 +39,11 @@
 # nvm1      <- nv-1    # number of variables minus one
 #
 # # Select Data for Analysis
-# mzmData   <- subset(usski, zyg==1, selVars)
-# dzmData   <- subset(usski, zyg==3, selVars)
-# mzfData   <- subset(usski, zyg==2, selVars)
-# dzfData   <- subset(usski, zyg==4, selVars)
-# dzoData   <- subset(usski, zyg==5, selVars)
+# mzmData   <- subset(us_skinfold_data, zyg==1, selVars)
+# dzmData   <- subset(us_skinfold_data, zyg==3, selVars)
+# mzfData   <- subset(us_skinfold_data, zyg==2, selVars)
+# dzfData   <- subset(us_skinfold_data, zyg==4, selVars)
+# dzoData   <- subset(us_skinfold_data, zyg==5, selVars)
 #
 # # ====================
 # # = checked and done =
@@ -307,7 +307,8 @@
 # # 1 Nonscalar Sex Limitation
 # # Quantitative Sex Differences & Qualitative Sex Differences for A
 # # Male and female paths, plus male and female Ra, Rc and Re between variables
-# # Male-Female correlations in DZO group between A factors Rao FREE, Rc constrained across male/female and oppsex
+# # Male-Female correlations in DZO group between A factors Rao FREE, 
+# # Rc constrained across male/female and oppsex
 # # ---------------------------------------------------------------------------------------------------------------------|
 #
 # # Matrices for Path Coefficients
@@ -426,7 +427,8 @@
 # # 2 Nonscalar Sex Limitation
 # # Quantitative Sex Differences & Qualitative Sex Differences for C
 # # Male and female paths, plus male and female Ra, Rc and Re between variables
-# # Male-Female correlations in DZO group between C factors Rco FREE, Ra constrained across male/female and oppsex
+# # Male-Female correlations in DZO group between
+# # C factors Rco FREE, Ra constrained across male/female and oppsex
 # # ---------------------------------------------------------------------------------------------------------------------|
 #
 # # Matrices for Correlation Coefficients within/across Individuals

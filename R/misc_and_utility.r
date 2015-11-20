@@ -21,7 +21,7 @@
 #' @family Misc
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' library(OpenMx)
+#' library(umx)
 #' manifests = c("mpg", "disp", "gear")
 #' m1 <- mxModel("ind", type = "RAM",
 #' 	manifestVars = manifests,
@@ -53,7 +53,7 @@ umx_set_cores <- function(cores = parallel::detectCores(), model = NULL) {
 #' @family Misc
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
-#' library(OpenMx)
+#' library(umx)
 #' manifests = c("mpg", "disp", "gear")
 #' m1 <- mxModel("ind", type = "RAM",
 #' 	manifestVars = manifests,

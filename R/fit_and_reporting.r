@@ -4,55 +4,9 @@
 # = Model Diagnostics =
 # =====================
 
-#' umxReduce
-#'
-#' Reduce a model - this is a work in progress
-#'
-#' @param m1 an \code{\link{mxModel}} to reduce
-#' @param report how to report the results table. 3 = html file
-#' @param baseFileName file to use when report = 3 (defaults to "tmp.html", I add the html)
-#' @return - 
-#' @export
-#' @family umx core functions
-#' @references - \url{http://tbates.github.io}
-#' @examples
-#' \dontrun{
-#' model = umxReduce(model)
-#' }
-umxReduce <- function(m1, report = 3, baseFileName = "tmp") {
-	# umxReduce(m1, report = 3)
-	umx_is_MxModel(m1)
-	if(class(m1) == "MxModel.GxE"){
-		# Reduce GxE Model
-		no_c   = umxReRun(m1, "c_r1c1" , name = "no_c"   )
-		no_a   = umxReRun(m1, "a_r1c1" , name = "no_a"   )
-		no_em  = umxReRun(m1, "em_r1c1", name = "no_em"  )
-		no_cm  = umxReRun(m1, "cm_r1c1", name = "no_cm"  )
-		no_am  = umxReRun(m1, "am_r1c1", name = "no_am"  )
-		no_lin = umxReRun(m1, "lin11"  , name = "no_lin" )  # big linear effect of ses on brain size
-		no_sq  = umxReRun(m1, "quad11" , name = "no_quad")  # no ^2 effect of ses on brain size
-		# good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
-
-		no_c_cm   = umxReRun(no_c    , "cm_r1c1", name = "no_c_no_cm")
-		no_c_cem  = umxReRun(no_c_cm , "em_r1c1", name = "no_c_no_em")
-		no_c_acem = umxReRun(no_c_cem, "am_r1c1", name = "no_a_c_or_em")
-		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report=1)
-		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report=report, file = paste0(baseFileName, ".html"))
-		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report=1)
-		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report=report, file=paste0(baseFileName, 2, ".html"))
-		# return(result)
-	} else {
-		stop("only GxE implemented so far. Open build twin and add what you want..")
-		# TODO if we get an MxModel.ACE, lets 
-		# 1. make umxCP, and umxIP
-		# 2. also relaxed CP/IP?
-		# 3 report fit table
-	}
-}
-
 #' mxDiagnostic
 #'
-#' Diagnose problems in a model
+#' Diagnose problems in a model - this is a work in progress.
 #'
 #' @param model an \code{\link{mxModel}} to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
@@ -97,6 +51,52 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 # =============================
 # = Fit and Reporting Helpers =
 # =============================
+
+#' umxReduce
+#'
+#' Reduce a model - this is a work in progress.
+#'
+#' @param m1 an \code{\link{mxModel}} to reduce
+#' @param report how to report the results table. 3 = html file
+#' @param baseFileName file to use when report = 3 (defaults to "tmp.html", I add the html)
+#' @return - 
+#' @export
+#' @family umx core functions
+#' @references - \url{http://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' model = umxReduce(model)
+#' }
+umxReduce <- function(m1, report = 3, baseFileName = "tmp") {
+	# umxReduce(m1, report = 3)
+	umx_is_MxModel(m1)
+	if(class(m1) == "MxModel.GxE"){
+		# Reduce GxE Model
+		no_c   = umxReRun(m1, "c_r1c1" , name = "no_c"   )
+		no_a   = umxReRun(m1, "a_r1c1" , name = "no_a"   )
+		no_em  = umxReRun(m1, "em_r1c1", name = "no_em"  )
+		no_cm  = umxReRun(m1, "cm_r1c1", name = "no_cm"  )
+		no_am  = umxReRun(m1, "am_r1c1", name = "no_am"  )
+		no_lin = umxReRun(m1, "lin11"  , name = "no_lin" )  # big linear effect of ses on brain size
+		no_sq  = umxReRun(m1, "quad11" , name = "no_quad")  # no ^2 effect of ses on brain size
+		# good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
+
+		no_c_cm   = umxReRun(no_c    , "cm_r1c1", name = "no_c_no_cm")
+		no_c_cem  = umxReRun(no_c_cm , "em_r1c1", name = "no_c_no_em")
+		no_c_acem = umxReRun(no_c_cem, "am_r1c1", name = "no_a_c_or_em")
+		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report=1)
+		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report=report, file = paste0(baseFileName, ".html"))
+		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report=1)
+		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report=report, file=paste0(baseFileName, 2, ".html"))
+		# return(result)
+	} else {
+		stop("only GxE implemented so far. Open build twin and add what you want..")
+		# TODO if we get an MxModel.ACE, lets 
+		# 1. make umxCP, and umxIP
+		# 2. also relaxed CP/IP?
+		# 3 report fit table
+	}
+}
 
 #' umx_drop_ok
 #'
@@ -408,6 +408,78 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 		}
 	}
 	invisible(object)
+}
+
+#' umxCI
+#'
+#' umxCI adds mxCI() calls for all free parameters in a model, 
+#' runs the CIs, and reports a neat summary.
+#'
+#' This function also reports any problems computing a CI. The codes are standard OpenMx errors and warnings
+#' \itemize{
+#' \item 1: The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN)
+#' \item 2: The linear constraints and bounds could not be satisfied. The problem has no feasible solution.
+#' \item 3: The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.
+#' \item 4: The major iteration limit was reached (Mx status BLUE).
+#' \item 6: The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)
+#' \item 7: The function derivates returned by funcon or funobj appear to be incorrect.
+#' \item 9: An input parameter was invalid
+#' }
+#' 
+#' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
+#' @param add Whether or not to add mxCIs if none are found (defaults to TRUE)
+#' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary". 
+#' @param showErrorCodes Whether to show errors (default == TRUE)
+#' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
+#' @return - \code{\link{mxModel}}
+#' @family Reporting functions
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
+#' @references - http://www.github.com/tbates/umx/
+#' @export
+#' @examples
+#' require(OpenMx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' m1$intervals # none yet list()
+#' m1 = umxCI(m1)
+#' m1$intervals # $G_to_x1
+#' m1 = umxCI(m1, add = TRUE) # Add CIs for all free parameters, and return model
+#' \dontrun{
+#' umxCI(model, run = "yes") # force update of CIs
+#' # Don't force update of CIs, but if they were just added, then calculate them
+#' umxCI(model, run = "if necessary")
+#' }
+umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"), showErrorCodes = TRUE) {
+	# TODO superceed this with confint? just need parameters to hold the 95% etc...
+	run = match.arg(run)
+	if(add){
+		# TODO remove existing CIs to avoid duplicates?
+		# TODO ensure each CI is added individually
+		# TODO support breaking these out into separate models and reassembling them
+		CIs   = names(omxGetParameters(model, free = TRUE))
+		model = mxModel(model, mxCI(CIs))
+	}
+    
+	if(run == "yes" | (!umx_has_CIs(model) & run == "if necessary")) {
+		model = mxRun(model, intervals = TRUE)
+	}else{
+		message("Not running CIs, run==", run)
+	}
+
+	if(umx_has_CIs(model)){
+		message("### CIs for model ", model@name)
+		confint(model, showErrorCodes = showErrorCodes)
+	}
+	invisible(model)
 }
 
 #' umxSummary.default
@@ -1369,77 +1441,6 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# }
 }
 
-#' umxCI
-#'
-#' umxCI adds mxCI() calls for all free parameters in a model, 
-#' runs the CIs, and reports a neat summary.
-#'
-#' This function also reports any problems computing a CI. The codes are standard OpenMx errors and warnings
-#' \itemize{
-#' \item 1: The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN)
-#' \item 2: The linear constraints and bounds could not be satisfied. The problem has no feasible solution.
-#' \item 3: The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.
-#' \item 4: The major iteration limit was reached (Mx status BLUE).
-#' \item 6: The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)
-#' \item 7: The function derivates returned by funcon or funobj appear to be incorrect.
-#' \item 9: An input parameter was invalid
-#' }
-#' 
-#' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
-#' @param add Whether or not to add mxCIs if none are found (defaults to TRUE)
-#' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary". 
-#' @param showErrorCodes Whether to show errors (default == TRUE)
-#' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
-#' @return - \code{\link{mxModel}}
-#' @family Reporting functions
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
-#' @references - http://www.github.com/tbates/umx/
-#' @export
-#' @examples
-#' require(OpenMx)
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' m1$intervals # none yet list()
-#' m1 = umxCI(m1)
-#' m1$intervals # $G_to_x1
-#' m1 = umxCI(m1, add = TRUE) # Add CIs for all free parameters, and return model
-#' \dontrun{
-#' umxCI(model, run = "yes") # force update of CIs
-#' # Don't force update of CIs, but if they were just added, then calculate them
-#' umxCI(model, run = "if necessary")
-#' }
-umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"), showErrorCodes = TRUE) {
-	# TODO superceed this with confint? just need parameters to hold the 95% etc...
-	run = match.arg(run)
-	if(add){
-		# TODO remove existing CIs to avoid duplicates?
-		# TODO ensure each CI is added individually
-		# TODO support breaking these out into separate models and reassembling them
-		CIs   = names(omxGetParameters(model, free = TRUE))
-		model = mxModel(model, mxCI(CIs))
-	}
-    
-	if(run == "yes" | (!umx_has_CIs(model) & run == "if necessary")) {
-		model = mxRun(model, intervals = TRUE)
-	}else{
-		message("Not running CIs, run==", run)
-	}
-
-	if(umx_has_CIs(model)){
-		message("### CIs for model ", model@name)
-		confint(model, showErrorCodes = showErrorCodes)
-	}
-	invisible(model)
-}
 
 #' umxCI_boot
 #'
@@ -1880,11 +1881,6 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 
 #' @export
 plot.MxModel.GxE <- umxPlotGxE
-
-
-# ===================================
-# = note: umxACE and GxE are in umx =
-# ===================================
 
 #' umxPlotCP
 #'
@@ -3073,7 +3069,3 @@ umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std",
 	}
 	# if estimate differs...
 }
-
-# ==========================
-# = Data filter and re-org =
-# ==========================
