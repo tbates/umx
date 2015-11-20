@@ -39,11 +39,21 @@ Restrictions: Assumes means and variances can be equated across birth order with
 # Load Libraries
 require(umx)
 # Create Functions to Assign Labels
-laLower <- function(la,nVar) { paste(la,rev(nVar+1-sequence(1:nVar)),rep(1:nVar,nVar:1),sep="_") }
-laSdiag <- function(la,nVar) { paste(la,rev(nVar+1-sequence(1:(nVar-1))),rep(1:(nVar-1),(nVar-1):1),sep="_") }
-laFull  <- function(la,nVar) { paste(la,1:nVar,rep(1:nVar,each=nVar),sep="_") }
-laDiag  <- function(la,nVar) { paste(la,1:nVar,1:nVar,sep="_") }
-laSymm  <- function(la,nVar) { paste(la,rev(nVar+1-sequence(1:nVar)),rep(1:nVar,nVar:1),sep="_") }
+laLower <- function(la,nVar) {
+	paste(la,rev(nVar+1-sequence(1:nVar)),rep(1:nVar,nVar:1),sep="_")
+}
+laSdiag <- function(la,nVar) {
+	paste(la,rev(nVar+1-sequence(1:(nVar-1))),rep(1:(nVar-1),(nVar-1):1),sep="_") 
+}
+laFull  <- function(la,nVar) {
+	paste(la,1:nVar,rep(1:nVar,each=nVar),sep="_") 
+}
+laDiag  <- function(la,nVar) {
+	paste(la,1:nVar,1:nVar,sep="_") 
+}
+laSymm  <- function(la,nVar) {
+	paste(la,rev(nVar+1-sequence(1:nVar)),rep(1:nVar,nVar:1),sep="_") 
+}
 # =========================
 # = Load and Process Data =
 # =========================
@@ -59,6 +69,7 @@ us_skinfold_data[,c('sil_T1', 'sil_T2')] <- us_skinfold_data[,c('sil_T1', 'sil_T
 # Select Variables for Analysis
 varList = c('ssc','sil','caf','tri','bic')
 selVars = umx_paste_names(varList, "_T", 1:2)
+nVar = length(selVars)
 
 # Data objects for Multiple Groups
 mzmData = subset(us_skinfold_data, zyg == 1, selVars)
@@ -106,6 +117,8 @@ mxCompare(m2, m1)
 
 # =================================
 # =================================
+frODiag   <- c(rep(c(FALSE,rep(TRUE,nVar)),nVar-1),FALSE)
+svODiag   <- c(rep(c(1,rep(.4,nVar)),nVar-1),1)
 m3 = umxSetParameters(m2, labels = "asm_.*", free = FALSE, values = 0, regex = TRUE)
 pathRam = mxMatrix(name="Ram", "Stand", nrow= nVar, free = TRUE, values = .4, 
 		label = laSdiag("ra", nVar), lbound = -1, ubound = 1)
@@ -141,31 +154,37 @@ mxCompare(HetCfAceRgFit, m3)
 # = Equate [ace]m and [ace]f matrices =
 # =====================================
 
-pathAm = mxMatrix(name="am", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("a", nVar))
-pathCm = mxMatrix(name="cm", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("c", nVar))
-pathEm = mxMatrix(name="em", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("e", nVar))
-pathAf = mxMatrix(name="af", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("a", nVar))
-pathCf = mxMatrix(name="cf", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("c", nVar))
-pathEf = mxMatrix(name="ef", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("e", nVar))
+pathAm = mxMatrix(name="am", "Diag", nrow = nVar, free = TRUE, values = .5, 
+label = laDiag("a", nVar))
+pathCm = mxMatrix(name="cm", "Diag", nrow = nVar, free = TRUE, values = .5, 
+label = laDiag("c", nVar))
+pathEm = mxMatrix(name="em", "Diag", nrow = nVar, free = TRUE, values = .5, 
+label = laDiag("e", nVar))
+pathAf = mxMatrix(name="af", "Diag", nrow = nVar, free = TRUE, values = .5, 
+label = laDiag("a", nVar))
+pathCf = mxMatrix(name="cf", "Diag", nrow = nVar, free = TRUE, values = .5, 
+label = laDiag("c", nVar))
+pathEf = mxMatrix(name="ef", "Diag", nrow = nVar, free = TRUE, values = .5, 
+label = laDiag("e", nVar))
 
-m4 <- makeModel("HomCfAce")
-m4 <- mxRun(m4)
-summary(m4)
-round(m4$VarsZm$result,4); round(m4$CorsZm$result,4)
-round(m4$VarsZf$result,4); round(m4$CorsZf$result,4)
-mxCompare(m3, m4)
+# m4 <- makeModel("HomCfAce")
+# m4 <- mxRun(m4)
+# summary(m4)
+# round(m4$VarsZm$result,4); round(m4$CorsZm$result,4)
+# round(m4$VarsZf$result,4); round(m4$CorsZf$result,4)
+# mxCompare(m3, m4)
 
 # ==============================================
 # = Generate Output Table of all Nested Models =
 # ==============================================
 
-mxCompare(HetCfAceRgFit, c(HetCfAceRcFit, m3, m4))
+# mxCompare(HetCfAceRgFit, c(HetCfAceRcFit, m3, m4))
 
-rbind(
-		mxCompare(HetCfAceRgFit, HetCfAceRcFit),
- 	mxCompare(HetCfAceRcFit, m3)[2,],
- 	mxCompare(m3, m4)[2,]
-)
+# rbind(
+# 		mxCompare(HetCfAceRgFit, HetCfAceRcFit),
+#  	mxCompare(HetCfAceRcFit, m3)[2,],
+#  	mxCompare(m3, m4)[2,]
+# )
 }
 \references{
 - Neale et al. (2006). 
