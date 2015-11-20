@@ -1,6 +1,6 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::release("~/bin/umx", check = TRUE)
-# devtools::build_win()
+# devtools::build_win("~/bin/umx")
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -965,8 +965,8 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 					 "\nbut I was looking for ", weightVar, " as the moderator."
 				)
 			}
-			mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = F, values = mzData[, weightVar])
-			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = F, values = dzData[, weightVar])
+			mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = FALSE, values = mzData[, weightVar])
+			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = FALSE, values = dzData[, weightVar])
 			mzData = mzData[, selDVs]
 			dzData = dzData[, selDVs]
 			bVector = TRUE
@@ -1664,8 +1664,8 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' # ===================================================
 #' # = Test switching specific a from Males to females =
 #' # ===================================================
-#' m2 = umxSetParameters(m1, labels = "asm_.*", free = F, values = 0, regex = T)
-#' m2 = umxSetParameters(m1, labels = "asf_.*", free = T, values = 0, regex = T)
+#' m2 = umxSetParameters(m1, labels = "asm_.*", free = FALSE, values = 0, regex = T)
+#' m2 = umxSetParameters(m1, labels = "asf_.*", free = TRUE , values = 0, regex = T)
 #' m2 = mxRun(m2)
 #' summary(m2)
 #' mxCompare(m2, m1)

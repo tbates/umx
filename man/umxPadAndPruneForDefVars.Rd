@@ -36,7 +36,8 @@ df = umxPadAndPruneForDefVars(df, "E", "age", c("_T1", "_T2"))
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},
-  \code{\link{umxHetCor}}, \code{\link{umx_as_numeric}},
+  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
+  \code{\link{umx_as_numeric}},
   \code{\link{umx_cont_2_ordinal}},
   \code{\link{umx_cov2raw}}, \code{\link{umx_lower2full}},
   \code{\link{umx_make_bin_cont_pair_data}},

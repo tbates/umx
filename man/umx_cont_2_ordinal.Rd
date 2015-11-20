@@ -40,7 +40,7 @@ str(umx_cont_2_ordinal(rnorm(10000), nlevels = 4, verbose = TRUE))
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},
-  \code{\link{umxHetCor}},
+  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},
   \code{\link{umx_as_numeric}}, \code{\link{umx_cov2raw}},
   \code{\link{umx_lower2full}},

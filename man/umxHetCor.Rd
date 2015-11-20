@@ -35,6 +35,7 @@ umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = FALSE, verbose = TRUE)
 - \code{\link[polycor]{hetcor}}
 
 Other Data Functions: \code{\link{umxCovData}},
+  \code{\link{umxFactor}},
   \code{\link{umxPadAndPruneForDefVars}},
   \code{\link{umx_as_numeric}},
   \code{\link{umx_cont_2_ordinal}},

@@ -35,7 +35,7 @@ umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names =
 - \code{\link{subset}}
 
 Other Data Functions: \code{\link{umxCovData}},
-  \code{\link{umxHetCor}},
+  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},
   \code{\link{umx_as_numeric}},
   \code{\link{umx_cont_2_ordinal}},

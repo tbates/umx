@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_explode}
 \alias{umx_explode}
-\title{umx_explode - like php's explode function}
+\title{umx_explode - like the php function `explode`}
 \usage{
 umx_explode(delimiter = character(), string)
 }
@@ -12,10 +12,10 @@ umx_explode(delimiter = character(), string)
 \item{string}{an character string, e.g. "dog"}
 }
 \value{
-- a collection of characters, e.g. c("d", "o", "g")
+- a vector of strings, e.g. c("d", "o", "g")
 }
 \description{
-Takes a string and returns each character as an item in an array
+Takes a string and returns an array of delimtted strings (by default, each character)
 }
 \examples{
 umx_explode("", "dog") # "d" "o" "g"

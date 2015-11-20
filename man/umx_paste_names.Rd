@@ -18,8 +18,8 @@ umx_paste_names(varNames, textConstant = "", suffixes = 1:2)
 }
 \description{
 Helper to add suffixes to names: useful for expanding base names for variables (e.g. "bmi")
-into fully specified fmaily-wise row names for variables c("bmi_T1", "bmi_T2")
-Use textConstant to add a constant like "_T" adter each base variable name.
+into fully specified family-wise row names for variables c("bmi_T1", "bmi_T2")
+Use textConstant to add a constant like "_T" after each base variable name.
 This is then suffixed with e.g. "1", "2".
 }
 \examples{

@@ -29,7 +29,7 @@ head(umx_round(mtcars, coerce = TRUE))
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},
-  \code{\link{umxHetCor}},
+  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},
   \code{\link{umx_as_numeric}},
   \code{\link{umx_cont_2_ordinal}},

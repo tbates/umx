@@ -33,7 +33,7 @@ umx_merge_CIs(m1, m2)
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},
-  \code{\link{umxHetCor}},
+  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},
   \code{\link{umx_as_numeric}},
   \code{\link{umx_cont_2_ordinal}},

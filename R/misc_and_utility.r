@@ -571,6 +571,32 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 # = Ordinal/Threshold Model Helpers =
 # ===================================
 
+#' umxFactor
+#'
+#' Just a wrapper around mxFactor for the case when the factor levels are those in the variable
+#'
+#' @param x A variable to recode as an mxFactor (see \code{\link{mxFactor}})
+#' @param levels defaults to NA. UNLIKE mxFactor, if not specified, the existing levels will be used
+#' @param labels = levels (see \code{\link{mxFactor}})
+#' @param exclude = NA (see \code{\link{mxFactor}})
+#' @param ordered = TRUE (see \code{\link{mxFactor}})
+#' @param collapse = FALSE (see \code{\link{mxFactor}})
+#' @return - \code{\link{mxFactor}}
+#' @export
+#' @family Data Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' x = umxFactor(letters)
+#' str(x)
+umxFactor <- function(x = character(), levels = NA, labels = levels, 
+		exclude = NA, ordered = TRUE, collapse = FALSE) {
+	if(is.na(levels)){
+		levels = levels(x)
+	}
+	mxFactor(x = character(), levels, labels = levels, 
+	    exclude = exclude, ordered = ordered, collapse = collapse)
+}
+
 #' umx_RAM_ordinal_objective
 #'
 #' umx_RAM_ordinal_objective builds an appropriate thresholds matrix
@@ -1336,8 +1362,8 @@ umx_msg <- function(x) {
 #' umx_paste_names
 #'
 #' Helper to add suffixes to names: useful for expanding base names for variables (e.g. "bmi")
-#' into fully specified fmaily-wise row names for variables c("bmi_T1", "bmi_T2")
-#' Use textConstant to add a constant like "_T" adter each base variable name.
+#' into fully specified family-wise row names for variables c("bmi_T1", "bmi_T2")
+#' Use textConstant to add a constant like "_T" after each base variable name.
 #' This is then suffixed with e.g. "1", "2".
 #'
 #' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
@@ -2663,16 +2689,15 @@ qm <- function(..., rowMarker = "|") {
 # ====================
 # = php type helpers =
 # ====================
-#' umx_explode - like php's explode function
+#' umx_explode - like the php function `explode` 
 #'
-#' Takes a string and returns each character as an item in an array
+#' Takes a string and returns an array of delimtted strings (by default, each character)
 #'
 #' @param delimiter what to break the string on. Default is empty string ""
 #' @param string an character string, e.g. "dog"
-#' @return - a collection of characters, e.g. c("d", "o", "g")
+#' @return - a vector of strings, e.g. c("d", "o", "g")
 #' @export
 #' @family Utility Functions
-
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://www.php.net/}
 #' @examples
 #' umx_explode("", "dog") # "d" "o" "g"
