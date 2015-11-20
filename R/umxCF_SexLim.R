@@ -147,6 +147,12 @@
 #'  	mxCompare(m3, m4)[2,]
 #' )
 umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, C_or_A = "A", suffix = NA){
+	# Create Functions to Assign Labels
+	laLower   <- function(la,nv) { paste(la,rev(nv+1-sequence(1:nv)),rep(1:nv,nv:1),sep="_") }
+	laSdiag   <- function(la,nv) { paste(la,rev(nv+1-sequence(1:(nv-1))),rep(1:(nv-1),(nv-1):1),sep="_") }
+	laFull    <- function(la,nv) { paste(la,1:nv,rep(1:nv,each=nv),sep="_") }
+	laDiag    <- function(la,nv) { paste(la,1:nv,1:nv,sep="_") }
+	laSymm    <- function(la,nv) { paste(la,rev(nv+1-sequence(1:nv)),rep(1:nv,nv:1),sep="_") }
 	# Correlated factors sex limitations
 	message("Not checked!")
 	if(is.na(suffix)){
