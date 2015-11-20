@@ -1664,8 +1664,8 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' # ===================================================
 #' # = Test switching specific a from Males to females =
 #' # ===================================================
-#' m2 = umxSetParameters(m1, labels = "asm_.*", free = FALSE, values = 0, regex = T)
-#' m2 = umxSetParameters(m1, labels = "asf_.*", free = TRUE , values = 0, regex = T)
+#' m2 = umxSetParameters(m1, labels = "asm_.*", free = FALSE, values = 0, regex = TRUE)
+#' m2 = umxSetParameters(m1, labels = "asf_.*", free = TRUE , values = 0, regex = TRUE)
 #' m2 = mxRun(m2)
 #' summary(m2)
 #' mxCompare(m2, m1)
