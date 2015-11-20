@@ -107,11 +107,11 @@ tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
 # = "left_censored" =
 # ===================
 
-x = round(10*rnorm(1000, mean=-.2))
-x[x<0] = 0
+x = round(10 * rnorm(1000, mean = -.2))
+x[x < 0] = 0
 x = mxFactor(x, levels = sort(unique(x)))
 x = data.frame(x)
-umxThresholdMatrix(x, deviation = FALSE, hint = "left_censored")
+# umxThresholdMatrix(x, deviation = FALSE, hint = "left_censored")
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}

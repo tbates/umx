@@ -6,8 +6,8 @@
 \usage{
 umxIP(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
-  equateMeans = TRUE, dzAr = 0.5, dzCr = 1, addStd = TRUE,
-  addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL)
+  equateMeans = TRUE, dzAr = 0.5, dzCr = 1, correlatedA = FALSE,
+  addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "IP")}
@@ -34,6 +34,8 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
 
 \item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)}
+
+\item{correlatedA}{Whether factors are allowed to correlate (not implemented yet: FALSE)}
 
 \item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE)}
 

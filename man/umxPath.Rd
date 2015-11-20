@@ -139,7 +139,7 @@ umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
 umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 umxPath(cov = c("A", "B"))  # Covariance A <-> B
 umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
-umxPath(Cholesky = c("A1","A2"), c("m1", "m2")) # Cholesky
+umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 # A worked example
 data(demoOneFactor)
 latents  = c("G")

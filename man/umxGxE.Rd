@@ -60,7 +60,7 @@ m1 = umxRun(m1)
 umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = FALSE)
-m2 = umxReRun(m1, "am_.*", regex=T, comparison = T)
+m2 = umxReRun(m1, "am_.*", regex=TRUE, comparison = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

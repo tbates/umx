@@ -123,12 +123,12 @@
 #' corRco  = mxMatrix(name="Rco", "Symm" , nrow= nVar, free = frODiag, values = svODiag, 
 #'          label = laSymm("rc", nVar), lbound = -1, ubound = 1)
 #' 
-#' m3 <- makeModel("HetCfAce")
-#' m3 <- mxRun(m3)
-#' summary(m3)
-#' round(m3$VarsZm$result,4); round(m3$CorsZm$result,4)
-#' round(m3$VarsZf$result,4); round(m3$CorsZf$result,4)
-#' mxCompare(HetCfAceRgFit, m3)
+#' # m3 <- makeModel("HetCfAce")
+#' # m3 <- mxRun(m3)
+#' # summary(m3)
+#' # round(m3$VarsZm$result,4); round(m3$CorsZm$result,4)
+#' # round(m3$VarsZf$result,4); round(m3$CorsZf$result,4)
+#' # mxCompare(HetCfAceRgFit, m3)
 #' 
 #' # ===================
 #' # = 4 Homogeneity 

@@ -1,6 +1,7 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::release("~/bin/umx", check = TRUE)
 # devtools::build_win("~/bin/umx")
+# devtools::run_examples("~/bin/umx")
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -349,7 +350,7 @@ umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, i
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
-#' m2 = umxReRun(m1, "am_.*", regex=T, comparison = T)
+#' m2 = umxReRun(m1, "am_.*", regex=TRUE, comparison = TRUE)
 
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE) {
 	nSib = 2;
@@ -1434,6 +1435,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param equateMeans Whether to equate the means across twins (defaults to T)
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
+#' @param correlatedA Whether factors are allowed to correlate (not implemented yet: FALSE)
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
 #' @param addCI Whether to add the interval requests for CIs (defaults to TRUE)
 #' @param numObsDZ = todo: implement ordinal Number of DZ twins: Set this if you input covariance data
@@ -1454,8 +1456,9 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
 #' umxSummary(m1, dotFilename = NA) # dotFilename = NA to avoid opening a plot window during CRAN check
-umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL) {
-	if(!is.null(correlatedA)){
+umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL) {
+	# TODO implement correlatedA
+	if(correlatedA){
 		message("I have not implemented correlatedA yet...")
 	}
 	nSib = 2;
@@ -2928,11 +2931,11 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' # = "left_censored" =
 #' # ===================
 #' 
-#' x = round(10*rnorm(1000, mean=-.2))
-#' x[x<0] = 0
+#' x = round(10 * rnorm(1000, mean = -.2))
+#' x[x < 0] = 0
 #' x = mxFactor(x, levels = sort(unique(x)))
 #' x = data.frame(x)
-#' umxThresholdMatrix(x, deviation = FALSE, hint = "left_censored")
+#' # umxThresholdMatrix(x, deviation = FALSE, hint = "left_censored")
 umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE, hint = c("none", "left_censored")){
 	if(droplevels){ stop("Not sure it's wise to drop levels...") }
 	hint        = match.arg(hint)
@@ -3344,7 +3347,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 #' umxPath(cov = c("A", "B"))  # Covariance A <-> B
 #' umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
-#' umxPath(Cholesky = c("A1","A2"), c("m1", "m2")) # Cholesky
+#' umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 #' # A worked example
 #' data(demoOneFactor)
 #' latents  = c("G")
