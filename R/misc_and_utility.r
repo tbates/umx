@@ -1816,7 +1816,8 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 #'
 #' Return the names of any ordinal variables in a dataframe
 #'
-#' @param df an \code{\link{data.frame}} to look in for ordinal variables
+#' @param df A \code{\link{data.frame}} to look in for ordinal variables (if you offer a
+#' matrix or vector, it will be upgraded to a dataframe)
 #' @param names whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)
 #' @param strict whether to stop when unordered factors are found (default = TRUE)
 #' @param binary.only only count binary factors (2-levels) (default = FALSE)
@@ -1843,16 +1844,17 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 #' tmp$cyl = factor(mtcars$cyl)
 #' umx_is_ordered(tmp, names=TRUE)
 #' }
-
 umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE, continuous.only = FALSE) {
 	if(sum(c(binary.only, ordinal.only, continuous.only)) > 1){
 		stop("Only one of binary.only ordinal.only and continuous.only can be TRUE")
 	}
 	if(!is.data.frame(df)){
 		if(is.matrix(df)){
-			stop("df argument to umx_is_ordered must be a dataframe. You gave me a matrix")
+			df = data.frame(df)
+			# stop("df argument to umx_is_ordered must be a dataframe. You gave me a matrix")
 		} else {
-			stop("df argument to umx_is_ordered must be a dataframe. Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+			df = data.frame(df)
+			# stop("df argument to umx_is_ordered must be a dataframe. Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 		}
 	}
 	nVar = ncol(df);

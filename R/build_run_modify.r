@@ -1657,9 +1657,10 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' dzfData = subset(us_skinfold_data, zyg == 4, selVars)
 #' dzoData = subset(us_skinfold_data, zyg == 5, selVars)
 #' 
-#' m1 = umxACESexLim(selDVs = varList, 
+#' m1 = umxACESexLim(selDVs = varList, suffix = "_T",
 #'        mzmData = mzmData, dzmData = dzmData, 
-#'        mzfData = mzfData, dzfData = dzfData, dzoData = dzoData, suffix = "_T")
+#'        mzfData = mzfData, dzfData = dzfData, 
+#'        dzoData = dzoData)
 #' m1 = mxRun(m1)
 #' # ===================================================
 #' # = Test switching specific a from Males to females =
@@ -1668,20 +1669,23 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' m2 = umxSetParameters(m1, labels = "asf_.*", free = TRUE , values = 0, regex = TRUE)
 #' m2 = mxRun(m2)
 #' summary(m2)
-#' mxCompare(m2, m1)
+#' umxCompare(m2, m1)
 #' # does fit move on repeated execution?
 #' # for (i in 1:4) { m2 <- mxRun(m2); print(m2 $output$mi) }
 umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, suffix = NULL){
-	if(!is.null(suffix)){
-		 selDVs = umx_paste_names( selDVs, suffix, 1:2)
+	if(is.null(suffix)){
+		stop("umx functions now require the suffix parameter is set,
+		and selDVs is just a list of variable's base names")
 	}
+	 selDVs = umx_paste_names(selDVs, suffix, 1:2)
+
 	# ==========================
 	# = Cholesky (Ch) Approach =
 	# ==========================
 	# 1 Nonscalar Sex Limitation 
 	# Quantitative Sex Differences & Qualitative Sex Differences for A
 	# Male and female Cholesky paths, and male- OR female-specific A paths to be estimated
-	nVar    = length( selDVs)/2 # number of variables
+	nVar = length(selDVs)/2 # number of variables
 	# Starting Values
 	svMe = colMeans(mzmData[, 1:nVar], na.rm = TRUE) # c(5,8,4,4,8) # start value for means
 	laMe  = paste0( selDVs, "_Mean")

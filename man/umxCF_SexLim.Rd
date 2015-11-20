@@ -52,7 +52,7 @@ us_skinfold_data[,c('sil_T1', 'sil_T2')] <- us_skinfold_data[,c('sil_T1', 'sil_T
 
 # Select Variables for Analysis
 varList = c('ssc','sil','caf','tri','bic')
-selVars = umx_paste_names(varList, suffix, 1:2)
+selVars = umx_paste_names(varList, "_T", 1:2)
 
 # Data objects for Multiple Groups
 mzmData = subset(us_skinfold_data, zyg == 1, selVars)
