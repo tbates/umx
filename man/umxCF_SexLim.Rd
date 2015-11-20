@@ -61,13 +61,12 @@ mzfData = subset(us_skinfold_data, zyg == 2, selVars)
 dzfData = subset(us_skinfold_data, zyg == 4, selVars)
 dzoData = subset(us_skinfold_data, zyg == 5, selVars)
 
-m1 = umxCF_SexLim(selDVs = varList, 
-		mzmData = mzmData, dzmData = dzmData, 
-		mzfData = mzfData, dzfData = dzfData, 
-		dzoData = dzoData, suffix = "_T"
-)
+m1 = umxACESexLim(selDVs = varList, suffix = "_T",
+       mzmData = mzmData, dzmData = dzmData, 
+       mzfData = mzfData, dzfData = dzfData, 
+       dzoData = dzoData)
 m1 = mxRun(m1)
-summary(m2)
+summary(m1)
 
 # ===============================
 # = 1 Nonscalar Sex Limitation  =

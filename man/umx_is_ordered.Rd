@@ -8,7 +8,8 @@ umx_is_ordered(df, names = FALSE, strict = TRUE, binary.only = FALSE,
   ordinal.only = FALSE, continuous.only = FALSE)
 }
 \arguments{
-\item{df}{an \code{\link{data.frame}} to look in for ordinal variables}
+\item{df}{A \code{\link{data.frame}} to look in for ordinal variables (if you offer a
+matrix or vector, it will be upgraded to a dataframe)}
 
 \item{names}{whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)}
 
