@@ -38,6 +38,12 @@ Restrictions: Assumes means and variances can be equated across birth order with
 \examples{
 # Load Libraries
 require(umx)
+# Create Functions to Assign Labels
+laLower <- function(la,nVar) { paste(la,rev(nVar+1-sequence(1:nVar)),rep(1:nVar,nVar:1),sep="_") }
+laSdiag <- function(la,nVar) { paste(la,rev(nVar+1-sequence(1:(nVar-1))),rep(1:(nVar-1),(nVar-1):1),sep="_") }
+laFull  <- function(la,nVar) { paste(la,1:nVar,rep(1:nVar,each=nVar),sep="_") }
+laDiag  <- function(la,nVar) { paste(la,1:nVar,1:nVar,sep="_") }
+laSymm  <- function(la,nVar) { paste(la,rev(nVar+1-sequence(1:nVar)),rep(1:nVar,nVar:1),sep="_") }
 # =========================
 # = Load and Process Data =
 # =========================
@@ -101,22 +107,22 @@ mxCompare(m2, m1)
 # =================================
 # =================================
 m3 = umxSetParameters(m2, labels = "asm_.*", free = FALSE, values = 0, regex = TRUE)
-pathRam = mxMatrix(name="Ram", "Stand", nrow=nv, free = TRUE, values = .4, 
-		label = laSdiag("ra", nv), lbound = -1, ubound = 1)
-pathRaf = mxMatrix(name = "Raf", "Stand", nrow = nv, free = TRUE, values = .4, 
-		label=laSdiag("ra", nv), lbound = -1, ubound = 1)
-pathRcm = mxMatrix(name="Rcm", "Stand", nrow = nv, free = TRUE, values = .4, 
-		label=laSdiag("rc", nv), lbound = -1, ubound = 1)
-pathRcf = mxMatrix(name="Rcf", "Stand", nrow = nv, free = TRUE, values = .4, 
-		label=laSdiag("rc", nv), lbound = -1, ubound = 1)
-pathRem = mxMatrix(name="Rem", "Stand", nrow=nv, free=TRUE, values = .4, 
-		label = laSdiag("re", nv), lbound = -1, ubound = 1)
-pathRef = mxMatrix(name="Ref", "Stand", nrow=nv, free=TRUE, values = .4, 
-		label = laSdiag("re", nv), lbound = -1, ubound = 1)
-corRao  = mxMatrix(name="Rao", "Symm" , nrow=nv, free = frODiag, values = svODiag,
-         label = laSymm("ra", nv), lbound = -1, ubound = 1)
-corRco  = mxMatrix(name="Rco", "Symm" , nrow=nv, free = frODiag, values = svODiag, 
-         label = laSymm("rc", nv), lbound = -1, ubound = 1)
+pathRam = mxMatrix(name="Ram", "Stand", nrow= nVar, free = TRUE, values = .4, 
+		label = laSdiag("ra", nVar), lbound = -1, ubound = 1)
+pathRaf = mxMatrix(name = "Raf", "Stand", nrow = nVar, free = TRUE, values = .4, 
+		label=laSdiag("ra", nVar), lbound = -1, ubound = 1)
+pathRcm = mxMatrix(name="Rcm", "Stand", nrow = nVar, free = TRUE, values = .4, 
+		label=laSdiag("rc", nVar), lbound = -1, ubound = 1)
+pathRcf = mxMatrix(name="Rcf", "Stand", nrow = nVar, free = TRUE, values = .4, 
+		label=laSdiag("rc", nVar), lbound = -1, ubound = 1)
+pathRem = mxMatrix(name="Rem", "Stand", nrow= nVar, free=TRUE, values = .4, 
+		label = laSdiag("re", nVar), lbound = -1, ubound = 1)
+pathRef = mxMatrix(name="Ref", "Stand", nrow= nVar, free=TRUE, values = .4, 
+		label = laSdiag("re", nVar), lbound = -1, ubound = 1)
+corRao  = mxMatrix(name="Rao", "Symm" , nrow= nVar, free = frODiag, values = svODiag,
+         label = laSymm("ra", nVar), lbound = -1, ubound = 1)
+corRco  = mxMatrix(name="Rco", "Symm" , nrow= nVar, free = frODiag, values = svODiag, 
+         label = laSymm("rc", nVar), lbound = -1, ubound = 1)
 
 m3 <- makeModel("HetCfAce")
 m3 <- mxRun(m3)
@@ -135,12 +141,12 @@ mxCompare(HetCfAceRgFit, m3)
 # = Equate [ace]m and [ace]f matrices =
 # =====================================
 
-pathAm = mxMatrix(name="am", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("a", nv))
-pathCm = mxMatrix(name="cm", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("c", nv))
-pathEm = mxMatrix(name="em", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("e", nv))
-pathAf = mxMatrix(name="af", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("a", nv))
-pathCf = mxMatrix(name="cf", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("c", nv))
-pathEf = mxMatrix(name="ef", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("e", nv))
+pathAm = mxMatrix(name="am", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("a", nVar))
+pathCm = mxMatrix(name="cm", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("c", nVar))
+pathEm = mxMatrix(name="em", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("e", nVar))
+pathAf = mxMatrix(name="af", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("a", nVar))
+pathCf = mxMatrix(name="cf", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("c", nVar))
+pathEf = mxMatrix(name="ef", "Diag", nrow = nVar, free = TRUE, values = .5, label = laDiag("e", nVar))
 
 m4 <- makeModel("HomCfAce")
 m4 <- mxRun(m4)
