@@ -10,17 +10,13 @@
     packageStartupMessage("For an overview type '?umx'")
 }
 
-# =====================================================================================================
-# = Create a class for ACE models so we can subclass plot and umxSummary to handle them automagically =
-# =====================================================================================================
-
 #' @importFrom graphics plot
 #' @importFrom methods as getSlots is slotNames
 #' @importFrom stats C aggregate as.formula complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
-#' @importFrom stats setNames var
+#' @importFrom stats setNames update var
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables
 #' @importFrom numDeriv jacobian
