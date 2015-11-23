@@ -4,15 +4,15 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE,
+umxRAM(model = NA, ..., data = NULL, run = TRUE, setValues = TRUE,
   independent = NA, remove_unused_manifests = TRUE, name = NA)
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
 
-\item{data}{data for the model. Can be an \code{\link{mxData}} or a data.frame}
-
 \item{...}{mx or umxPaths, mxThreshold objects, etc.}
+
+\item{data}{data for the model. Can be an \code{\link{mxData}} or a data.frame}
 
 \item{run}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 
