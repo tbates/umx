@@ -29,7 +29,7 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{freeLowerE}{Whether to leave the lower triangle of E free (default = F)}
 
-\item{correlatedA}{?? (default = F)}
+\item{correlatedA}{?? (default = FALSE)}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to T)}
 
@@ -49,12 +49,42 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 - \code{\link{mxModel}}
 }
 \description{
-Make a 2-group Common Pathway model
+Make a 2-group Common Pathway model (see Details below)
 }
 \details{
-The following figure shows the CP model as a path diagram:
+The common-pathway model provides a powerful tool for theory-based decomposition of genetic
+and environmental differences.
+umxCP supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
+to model the genetic and environmental structure of multiple phenotypes
+(measured behaviors).
+
+Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
+into Additive genetic, unique environmental (E) and, optionally, either
+common or shared-environment (C) or 
+non-additive genetic effects (D).
+
+Unlike the Cholesky, these factors do not act directly on the phenotype. Instead A, 
+C, and E influences impact on latent factors (by default 1), which then act to account for variance in the phenotypes (see Figure below).
+
+CP model path diagram.
 
 \figure{CP.png}
+
+As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotye.
+
+\strong{Data Input}
+Currently, the umxCP function accepts only raw data. This may change in future versions.
+
+\strong{Ordinal Data}
+In an important capability, the model transparently handles ordinal (binary or multi-level
+ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
+data in any combination.
+
+\strong{Additional features}
+The umxCP function supports varying the DZ genetic association (defaulting to .5)
+to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
+from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
+to .25 to model dominance effects.
 }
 \examples{
 require(umx)

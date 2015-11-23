@@ -47,8 +47,7 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 - \code{\link{mxModel}} of subclass mxModel.ACE
 }
 \description{
-Make a 2-group ACE model
-Make a 2-group ACE model.
+Make a 2-group ACE Cholesky Twin model (see Details below)
 }
 \details{
 A common task in twin modelling involves using the genetic and environmental differences 
