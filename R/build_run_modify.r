@@ -186,7 +186,7 @@ umxRAM <- function(model = NA, ..., data = NULL,  run = TRUE, setValues = TRUE, 
 			# }
 			if(run){
 				newModel = mxRun(newModel)
-				names()(newModel)
+				umxSummary(newModel)
 				umxCompare(model, newModel)
 			}			
 			return(newModel)
