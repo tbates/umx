@@ -3,9 +3,10 @@
 umx 1.1.0
 --------------
 
-* Maintainance update: Help, function features, consistency in names
-* Beginning to add support for sex-lim twin models
-
+* Allow umxRAM to take existing model as input
+* Begin support for sex-lim twin models
+* Significant additional tutorial-style help in twin model Rd
+* Maintainance to help, function features, consistency in names
 
 umx 1.0.0
 --------------

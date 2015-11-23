@@ -21,15 +21,20 @@ Up to you to check all variables are present!}
 - dataframe with var residualized in place (i.e under its original column name)
 }
 \description{
-Return one or more variables residualised against covs.
+Residualise one or more variables residualised against covariates, and return a
+complete dataframe with residualized variable in place.
+Optionally, this also works on wide (ie., twin) data. Just supply suffixes to identify
+the paired-wide columns (see examples)
 }
 \details{
-This is the same as:
+In R, residuals for a variable can be found with the following statement:
 
 \code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
 
-Optionally, this also works on wide (ie., twin) data. Just supply suffixes to identify
-the paired-wide columns (see examples)
+This tmp variable could then be written over the old data:
+umx_residualize obviates the user having to build the lm, set na.action, or replace the data.
+In addition, it has the powerful feature of operating on a list of variables, and of operating on
+wide data, expanding the var name using a set of variable-name suffixes.
 }
 \examples{
 library(formula.tools)

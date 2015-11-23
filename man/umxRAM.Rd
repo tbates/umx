@@ -70,11 +70,11 @@ m1 = umxRAM("tim", data = myCov,
 	umxPath(var = c("wt", "disp", "mpg"))
 )
 
-\dontrun{
-# 5. Print a nice summary 
+# 4. Print a nice summary 
 umxSummary(m1, show = "std")
 
-# 6. Draw a nice path diagram (needs Graphviz)
+\dontrun{
+# 5. Draw a nice path diagram (needs Graphviz)
 plot(m1)
 plot(m1, resid = "line") # I find it easier to work with stick-residuals
 }

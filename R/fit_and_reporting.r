@@ -663,7 +663,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEst
 			print(parameterTable[,namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
 		}
 	} else {
-		message("For estimates, add showEstimates = 'raw' 'std' or 'both")
+		message("For estimates, umxSummary(..., showEstimates = 'std', 'raw', or 'both')")
 	}
 	with(modelSummary, {
 		if(!is.finite(TLI)){
