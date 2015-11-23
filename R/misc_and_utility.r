@@ -2450,8 +2450,9 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)$mpg
 #' r2 = residuals(lm(mpg ~ cyl + disp, data = tmp, na.action = na.exclude))
 #' all(r1 == r2)
-#' # plot(r1 ~ r2)
-#' # formula interface
+#' # =====================
+#' # = formula interface =
+#' # =====================
 #' r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = tmp)$mpg
 #' # Same again, but now on wide data (i.e. with family data on each row)
 #' tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
@@ -2463,62 +2464,74 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	# TODO remove dependency on formula.tools
     # depends on formula.tools::lhs
     # depends on formula.tools::rhs
-	if(class(var) == "formula"){
-		umx_check(is.null(covs), "stop", "when using formula, leave covs empty")
-		form <- var
-		var  = all.vars(formula.tools::lhs(form))
-		covs = all.vars(formula.tools::rhs(form))
+	nVar = length(var)
+	if(nVar > 1){
+		if(!is.null(suffixes)){
+			message("umx_residualize doesn't (yet) work with multiple vars AND suffixes (email tim)")
+		}
+		for (i in nVar) {
+			data = umx_residualize(i, covs = covs, suffixes = suffixes, data)
+			# data[, var[i]] = umx_residualize(i, covs = covs, suffixes = suffixes, data)
+		}
+		return(data)
 	} else {
-		form = NULL # so we catch this and create it below
-	}
+		if(class(var) == "formula"){
+			umx_check(is.null(covs), "stop", "when using formula, leave covs empty")
+			form <- var
+			var  = all.vars(formula.tools::lhs(form))
+			covs = all.vars(formula.tools::rhs(form))
+		} else {
+			form = NULL # so we catch this and create it below
+		}
 	
-	if(is.null(suffixes)){
-		vars = c(var, covs)
-	} else {
-		# Wide vars provided: expand names
-		vars = umx_paste_names(c(var, covs), suffixes = suffixes)
-	}
-	umx_check_names(vars, data = data, die = TRUE)
-	nVar = length(c(var, covs))
+		if(is.null(suffixes)){
+			vars = c(var, covs)
+		} else {
+			# Wide vars provided: expand names
+			vars = umx_paste_names(c(var, covs), suffixes = suffixes)
+		}
+		umx_check_names(vars, data = data, die = TRUE)
+		nVar = length(c(var, covs))
 
-	if(!is.null(suffixes)){
-		# Make a long version of the vars we want
-		for (i in 1:length(suffixes)) {
-			vars = umx_paste_names(c(var, covs), suffixes = suffixes[i])
-			if(i == 1){
-				tmp = data[,vars]
-				names(tmp) = c(var, covs)
-			} else {
-				tmp2 = data[,vars]
-				names(tmp2) = c(var, covs)
-				tmp = rbind(tmp, tmp2)
+		if(!is.null(suffixes)){
+			# Make a long version of the vars we want
+			for (i in 1:length(suffixes)) {
+				vars = umx_paste_names(c(var, covs), suffixes = suffixes[i])
+				if(i == 1){
+					tmp = data[,vars]
+					names(tmp) = c(var, covs)
+				} else {
+					tmp2 = data[,vars]
+					names(tmp2) = c(var, covs)
+					tmp = rbind(tmp, tmp2)
+				}
 			}
+		} else {
+			tmp = data[,vars]
 		}
-	} else {
-		tmp = data[,vars]
-	}
-	oldNAs = sum(is.na(tmp[,var]))
-	# If formula not provided, construct it from var and covs
-	if(is.null(form)){
-		form = paste0(var, " ~ ", paste(covs, collapse = " + "))
-		form = as.formula(form)
-	}
-	tmp <- residuals(lm(form, data = tmp, na.action = na.exclude))
-	newNAs = sum(is.na(tmp))
-	if(newNAs > oldNAs){
-		message(newNAs - oldNAs, " cases of var ", omxQuotes(var), "lost due to missing covariates")
-	}
-	if(!is.null(suffixes)){
-		i = 1
-		nRows = nrow(data)
-		for (suff in suffixes) {
-			data[, paste0(var, suff)] = tmp[i:(i+nRows-1)]
-			i = i + nRows
+		oldNAs = sum(is.na(tmp[,var]))
+		# If formula not provided, construct it from var and covs
+		if(is.null(form)){
+			form = paste0(var, " ~ ", paste(covs, collapse = " + "))
+			form = as.formula(form)
 		}
-	} else {
-		data[, var] = tmp
+		tmp <- residuals(lm(form, data = tmp, na.action = na.exclude))
+		newNAs = sum(is.na(tmp))
+		if(newNAs > oldNAs){
+			message(newNAs - oldNAs, " cases of var ", omxQuotes(var), "lost due to missing covariates")
+		}
+		if(!is.null(suffixes)){
+			i = 1
+			nRows = nrow(data)
+			for (suff in suffixes) {
+				data[, paste0(var, suff)] = tmp[i:(i+nRows-1)]
+				i = i + nRows
+			}
+		} else {
+			data[, var] = tmp
+		}
+		return(data)
 	}
-	return(data)
 }
 
 #' umx_scale_wide_twin_data

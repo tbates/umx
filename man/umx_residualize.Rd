@@ -38,8 +38,9 @@ tmp = mtcars
 r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)$mpg
 r2 = residuals(lm(mpg ~ cyl + disp, data = tmp, na.action = na.exclude))
 all(r1 == r2)
-# plot(r1 ~ r2)
-# formula interface
+# =====================
+# = formula interface =
+# =====================
 r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = tmp)$mpg
 # Same again, but now on wide data (i.e. with family data on each row)
 tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
