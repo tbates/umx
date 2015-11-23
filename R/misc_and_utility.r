@@ -2474,7 +2474,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	nVar = length(var)
 	if(nVar > 1){
 		if(!is.null(suffixes)){
-			message("umx_residualize doesn't (yet) work with multiple vars AND suffixes (email tim)")
+			stop("Sorry: umx_residualize doesn't (yet) work whn BOTH multiple vars AND suffixes are used (email tim)")
 		}
 		for (i in nVar) {
 			data = umx_residualize(i, covs = covs, suffixes = suffixes, data)
