@@ -710,11 +710,48 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 
 #' umxACE
 #'
-#' Make a 2-group ACE model
+#' Make a 2-group ACE Cholesky Twin model (see Details below)
+#' 
+#' A common task in twin modelling involves using the genetic and environmental differences 
+#' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
+#' to model the genetic and environmental structure of one, or, typically, several phenotypes
+#' (measured behaviors).
+#' 
+#' umxACE supports a core model in behavior genetics, known as the ACE Cholesky model
+#' {Cardon and Neale}. This model decomposes phenotypic variance into Additive genetic, 
+#' unique environmental (E) and, optionally, either common or shared-environment (C) or 
+#' non-additive genetic effects (D). This latter restriction emerges due to a lack of degrees of 
+#' freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}. The Cholesky or 
+#' lower-triangle decomposition allows a model which is both sure to be solvable, and also to 
+#' account for all the variance (with some restrictions) in the data. This model creates as 
+#' many latent A C and E variables as there are phenotypes, and, moving from left to 
+#' right, decomposes the variance in each component into successively restricted 
+#' factors (see Figure below).
 #' 
 #' The following figure shows how the ACE model appears as a path diagram:
 #' 
 #' \figure{ACE.png}
+#' 
+#' \strong{Data Input}
+#' The function flexibly accepts raw data, and also summary covariance data 
+#' (in which case the user must also supple numbers of observations for the two input data sets).
+#' 
+#' \strong{Ordinal Data}
+#' In an important capability, the model transparently handles ordinal (binary or multi-level
+#' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
+#' data in any combination. An experimental feature is under development to allow Tobit modelling. 
+#' 
+#' The function also supports weighting of individual data rows. In this case,
+#' the model is estimated for each row individually, then each row likelihood
+#' is multiplied by its weight, and these weighted likelyhoods summed to form
+#' the model-likelihood, which is to be minimised.
+#' This feature is used in the non-linear GxE model functions.
+#' 
+#' \strong{Additional features}
+#' The umxACE function supports varying the DZ genetic association (defaulting to .5)
+#' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
+#' from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
+#' to .25 to model dominance effects.
 #'
 #' @param name The name of the model (defaults to"ACE")
 #' @param selDVs The variables to include from the data
@@ -1208,12 +1245,41 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 
 #' umxCP
 #'
-#' Make a 2-group Common Pathway model
-#'
+#' Make a 2-group Common Pathway model (see Details below)
 #' 
-#' The following figure shows the CP model as a path diagram:
+#' The common-pathway model provides a powerful tool for theory-based decomposition of genetic
+#' and environmental differences.
+#' umxCP supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
+#' to model the genetic and environmental structure of multiple phenotypes
+#' (measured behaviors).
+#' 
+#' Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
+#' into Additive genetic, unique environmental (E) and, optionally, either
+#' common or shared-environment (C) or 
+#' non-additive genetic effects (D).
+#' 
+#' Unlike the Cholesky, these factors do not act directly on the phenotype. Instead A, 
+#' C, and E influences impact on latent factors (by default 1), which then act to account for variance in the phenotypes (see Figure below).
+#' 
+#' CP model path diagram.
 #' 
 #' \figure{CP.png}
+#' 
+#' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotye.
+#' 
+#' \strong{Data Input}
+#' Currently, the umxCP function accepts only raw data. This may change in future versions.
+#' 
+#' \strong{Ordinal Data}
+#' In an important capability, the model transparently handles ordinal (binary or multi-level
+#' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
+#' data in any combination.
+#' 
+#' \strong{Additional features}
+#' The umxCP function supports varying the DZ genetic association (defaulting to .5)
+#' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
+#' from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
+#' to .25 to model dominance effects.
 #'
 #' @param name The name of the model (defaults to "CP")
 #' @param selDVs The variables to include
@@ -1225,7 +1291,7 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
 #' @param freeLowerE Whether to leave the lower triangle of E free (default = F)
-#' @param correlatedA ?? (default = F)
+#' @param correlatedA ?? (default = FALSE)
 #' @param equateMeans Whether to equate the means across twins (defaults to T)
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
