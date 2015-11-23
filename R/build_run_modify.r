@@ -186,10 +186,10 @@ umxRAM <- function(model = NA, ..., data = NULL,  run = TRUE, setValues = TRUE, 
 			# }
 			if(run){
 				newModel = mxRun(newModel)
-				umxSummary(newModel)
+				names()(newModel)
 				umxCompare(model, newModel)
 			}			
-			return(model)
+			return(newModel)
 		} else {
 			stop("First item must be either an existing model or a name string. You gave me a ", typeof(model))
 		}
