@@ -2123,7 +2123,17 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 	}
 	if(is.na(numInd)){
 		thresh = qchisq(p = (1 - 0.01), df = 1) # 6.63
-		suggestions = sort(MIlist[MIlist > thresh], decreasing = TRUE)
+		# check how many
+		nSig = length(MIlist[MIlist > thresh])
+		if(nSig < 1){
+			# nothing significant, display top 3 or so
+			mostPossible = length(MIlist)
+			numInd = min(3, mostPossible)
+			suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
+		} else {
+			suggestions = sort(MIlist[MIlist > thresh], decreasing = TRUE)
+		}
+		
 	} else {
 		suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
 	}

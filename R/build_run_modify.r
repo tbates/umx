@@ -187,7 +187,13 @@ umxRAM <- function(model = NA, ..., data = NULL,  run = TRUE, setValues = TRUE, 
 			if(run){
 				newModel = mxRun(newModel)
 				umxSummary(newModel)
-				umxCompare(model, newModel)
+				moreFree = FALSE
+				# TODO compute moreFree from df of models!!!
+				if(moreFree){
+					umxCompare(model, newModel)
+				} else {
+					umxCompare(newModel, model)
+				}
 			}			
 			return(newModel)
 		} else {
