@@ -157,15 +157,16 @@ methods::setClass("MxModel.IP" , contains = "MxModel")
 #' 	umxPath(var = c("wt", "disp", "mpg"))
 #' )
 #' 
-#' \dontrun{
-#' # 5. Print a nice summary 
+#' # 4. Print a nice summary 
 #' umxSummary(m1, show = "std")
 #' 
-#' # 6. Draw a nice path diagram (needs Graphviz)
+#' \dontrun{
+#' # 5. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' plot(m1, resid = "line") # I find it easier to work with stick-residuals
 #' }
-umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, name= NA) {
+umxRAM <- function(model = NA, ..., data = NULL,  run = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, name= NA) {
+	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(typeof(model) == "character"){
 		if(is.na(name)){
 			name = model
@@ -174,11 +175,35 @@ umxRAM <- function(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE, i
 		}
 	} else {
 		# TODO allow model to be given as input
-		stop("Looks like you didn't pass in the model name as the first item.\nMy next job is to implement allowing umxRAM to take an existing model and update it, but not there yet, sorry :-(")
+		if(umx_is_RAM(model)){
+			message("Updating existing model")
+			if(is.na(name)){
+				name = model$name
+			}
+			newModel = mxModel(model, dot.items, name = name)
+			# if(setValues){
+			# 	newModel = umxValues(newModel)
+			# }
+			if(run){
+				newModel = mxRun(newModel)
+				umxSummary(newModel)
+				moreFree = FALSE
+				# TODO compute moreFree from df of models!!!
+				if(moreFree){
+					umxCompare(model, newModel)
+				} else {
+					umxCompare(newModel, model)
+				}
+			}			
+			return(newModel)
+		} else {
+			stop("First item must be either an existing model or a name string. You gave me a ", typeof(model))
+		}
 	}
-	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(!length(dot.items) > 0){
+		# do we care?
 	}
+
 	if(is.null(data)){
 		stop("umxRAM needs some mxData. You set this like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
 	}

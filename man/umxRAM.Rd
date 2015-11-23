@@ -4,15 +4,15 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(model = NA, data = NULL, ..., run = TRUE, setValues = TRUE,
+umxRAM(model = NA, ..., data = NULL, run = TRUE, setValues = TRUE,
   independent = NA, remove_unused_manifests = TRUE, name = NA)
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
 
-\item{data}{data for the model. Can be an \code{\link{mxData}} or a data.frame}
-
 \item{...}{mx or umxPaths, mxThreshold objects, etc.}
+
+\item{data}{data for the model. Can be an \code{\link{mxData}} or a data.frame}
 
 \item{run}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 
@@ -70,11 +70,11 @@ m1 = umxRAM("tim", data = myCov,
 	umxPath(var = c("wt", "disp", "mpg"))
 )
 
-\dontrun{
-# 5. Print a nice summary 
+# 4. Print a nice summary 
 umxSummary(m1, show = "std")
 
-# 6. Draw a nice path diagram (needs Graphviz)
+\dontrun{
+# 5. Draw a nice path diagram (needs Graphviz)
 plot(m1)
 plot(m1, resid = "line") # I find it easier to work with stick-residuals
 }
