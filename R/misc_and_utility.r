@@ -2454,18 +2454,26 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' library(formula.tools)
 #' tmp = mtcars
 #' # Residualise mpg on cylinders and displacement
-#' r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)$mpg
+#' r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)
 #' r2 = residuals(lm(mpg ~ cyl + disp, data = tmp, na.action = na.exclude))
-#' all(r1 == r2)
+#' all(r1$mpg == r2)
 #' # =====================
 #' # = formula interface =
 #' # =====================
-#' r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = tmp)$mpg
+#' r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = tmp)
+#' all(r1$mpg == r2)
 #' # Same again, but now on wide data (i.e. with family data on each row)
 #' tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
 #' tmp$cyl_T1  = tmp$cyl_T2  = tmp$cyl
 #' tmp$disp_T1 = tmp$disp_T2 = tmp$disp
-#' umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)
+#' umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)[1:5,12:17]
+#' # ===================
+#' # = several at once =
+#' # ===================
+#' r1 = umx_residualize(c("mpg", "hp"), cov = c("cyl", "disp"), data = tmp)
+#' r2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
+#' all(r1$hp == r2)
+
 umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	# Check names
 	# TODO remove dependency on formula.tools
@@ -2473,12 +2481,8 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
     # depends on formula.tools::rhs
 	nVar = length(var)
 	if(nVar > 1){
-		if(!is.null(suffixes)){
-			stop("Sorry: umx_residualize doesn't (yet) work whn BOTH multiple vars AND suffixes are used (email tim)")
-		}
-		for (i in nVar) {
-			data = umx_residualize(i, covs = covs, suffixes = suffixes, data)
-			# data[, var[i]] = umx_residualize(i, covs = covs, suffixes = suffixes, data)
+		for (i in 1:nVar) {
+			data = umx_residualize(var[i], covs = covs, suffixes = suffixes, data = data)
 		}
 		return(data)
 	} else {
