@@ -1327,22 +1327,27 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 
 #' umxCompare
 #'
-#' umxCompare compares two or more \code{\link{mxModel}}s.
-#' If you leave comparison blank, it will just give fit info for the base model
+#' umxCompare compares two or more \code{\link{mxModel}}s. It has several nice features:
+#' 1. It supports direct control of rounding, and reports p-values rounded to APA style.
+#' 2. It reports the table in your preferred markdown format (relies on knitr)
+#' 3. The table columns are arranged in a method suitable for easy comparison for readers.
+#' 4. By default, it also reports the output as an ENglish sentence suitable for a paper.
+#' 5. It can open tabular output in a browser (report = 3)
+#' 
+#' note: If you leave comparison blank, it will just give fit info for the base model
 #'
 #' @param base The base \code{\link{mxModel}} for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
 #' @param digits rounding for p etc.
-#' @param report Optionally add sentences for inclusion inline in a paper (report= 2)
+#' @param report Optionally (report = 2) add sentences for inclusion inline in a paper, or create an html table
 #' and output to an html table which will open your default browser (report = 3).
 #' (This is handy for getting tables into Word, markdown, and other text systems!)
 #' @param file file to write html too if report=3 (defaults to "tmp.html")
 #' @family Reporting functions
-#' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
+#' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRAM}},
 #' @references - \url{http://www.github.com/tbates/umx/}
 #' @export
-#' @import OpenMx
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1366,7 +1371,7 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 #' umxCompare(m1, c(m2, m3))
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 1, file = "tmp.html") {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 2, file = "tmp.html") {
 	if(is.null(comparison)){
 		comparison <- base
 	} else if (is.null(base)) {
