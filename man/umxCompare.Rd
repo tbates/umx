@@ -5,7 +5,7 @@
 \title{umxCompare}
 \usage{
 umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
-  report = 1, file = "tmp.html")
+  report = 2, file = "tmp.html")
 }
 \arguments{
 \item{base}{The base \code{\link{mxModel}} for comparison}
@@ -16,15 +16,22 @@ umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
 
 \item{digits}{rounding for p etc.}
 
-\item{report}{Optionally add sentences for inclusion inline in a paper (report= 2)
+\item{report}{Optionally (report = 2) add sentences for inclusion inline in a paper, or create an html table
 and output to an html table which will open your default browser (report = 3).
 (This is handy for getting tables into Word, markdown, and other text systems!)}
 
 \item{file}{file to write html too if report=3 (defaults to "tmp.html")}
 }
 \description{
-umxCompare compares two or more \code{\link{mxModel}}s.
-If you leave comparison blank, it will just give fit info for the base model
+umxCompare compares two or more \code{\link{mxModel}}s. It has several nice features:
+1. It supports direct control of rounding, and reports p-values rounded to APA style.
+2. It reports the table in your preferred markdown format (relies on knitr)
+3. The table columns are arranged in a method suitable for easy comparison for readers.
+4. By default, it also reports the output as an ENglish sentence suitable for a paper.
+5. It can open tabular output in a browser (report = 3)
+}
+\details{
+note: If you leave comparison blank, it will just give fit info for the base model
 }
 \examples{
 require(umx)
@@ -54,7 +61,7 @@ umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 - \url{http://www.github.com/tbates/umx/}
 }
 \seealso{
-- \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRun}},
+- \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRAM}},
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
