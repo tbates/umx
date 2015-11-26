@@ -164,10 +164,10 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 	umx_check_model(object, type = NULL, hasData = TRUE)
 	expCov = umxExpCov(object, latents = FALSE)
-	if(object@data@type == "raw"){
-		obsCov = umxHetCor(object@data@observed)
+	if(object$data$type == "raw"){
+		obsCov = umxHetCor(object$data$observed)
 	} else {
-		obsCov = object@data@observed
+		obsCov = object$data$observed
 	}
 	resid = cov2cor(obsCov) - cov2cor(expCov)
 	umx_print(data.frame(resid), digits = digits, zero.print = ".", suppress = suppress)
@@ -213,7 +213,7 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 	if (!umx_is_RAM(model) & !suppliedNames ){
 		stop("I need either type = RAM model or the names of the equivalent of the A and S matrices.")
 	}
-	output <- model@output
+	output <- model$output
 	# Stop if there is no objective function
 	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
 	# Stop if there is no output
@@ -224,40 +224,40 @@ umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smat
 	# Get the names of the A, S and M matrices 
 	if("expectation" %in% slotNames(model)){
 		# openMx 2
-		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@expectation@A}
-		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@expectation@S}
-		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@expectation@M}
+		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model$expectation$A}
+		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model$expectation$S}
+		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model$expectation$M}
 	} else {
-		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model@objective@A}
-		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model@objective@S}
-		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model@objective@M}
+		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model$objective$A}
+		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model$objective$S}
+		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model$objective$M}
 	}
 	# Get the A and S matrices, and make an identity matrix
 	A <- model[[nameA]]
 	S <- model[[nameS]]
-	I <- diag(nrow(S@values))
+	I <- diag(nrow(S$values))
 	
 	# this can fail (non-invertable etc. so we wrap it in try-catch)
 	tryCatch({	
 		# Calculate the expected covariance matrix
-		IA <- solve(I - A@values)
-		expCov <- IA %*% S@values %*% t(IA)
+		IA <- solve(I - A$values)
+		expCov <- IA %*% S$values %*% t(IA)
 		# Return 1/SD to a diagonal matrix
 		invSDs <- 1/sqrt(diag(expCov))
 		# Give the inverse SDs names, because mxSummary treats column names as characters
 		names(invSDs) <- as.character(1:length(invSDs))
-		if (!is.null(dimnames(A@values))){names(invSDs) <- as.vector(dimnames(S@values)[[2]])}
+		if (!is.null(dimnames(A$values))){names(invSDs) <- as.vector(dimnames(S$values)[[2]])}
 		# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
 		diag(I) <- invSDs
 		# Standardize the A, S and M matrices
 		#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
 		#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
-		stdA <- I %*% A@values %*% solve(I)
-		stdS <- I %*% S@values %*% I
+		stdA <- I %*% A$values %*% solve(I)
+		stdS <- I %*% S$values %*% I
 		# Populate the model
-		model[[nameA]]@values[,] <- stdA
-		model[[nameS]]@values[,] <- stdS
-		if (!is.na(nameM)){model[[nameM]]@values[,] <- rep(0, length(invSDs))}
+		model[[nameA]]$values[,] <- stdA
+		model[[nameS]]$values[,] <- stdS
+		if (!is.na(nameM)){model[[nameM]]$values[,] <- rep(0, length(invSDs))}
 	}, warning = function(cond) {
 	    # warning-handler-code
         message(cond)
@@ -887,8 +887,8 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FAL
 		CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
 		CIlist$fullName = row.names(CIlist)
 		# Initialise empty matrices for the standardized results
-		rows = dim(model@submodels$top@matrices$a@labels)[1]
-		cols = dim(model@submodels$top@matrices$a@labels)[2]
+		rows = dim(model$submodels$top$matrices$a$labels)[1]
+		cols = dim(model$submodels$top$matrices$a$labels)[2]
 		a_std = c_std = e_std = matrix(NA, rows, cols)
 
 		# iterate over each CI
