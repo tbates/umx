@@ -53,9 +53,9 @@ tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
 tmp$cyl_T1  = tmp$cyl_T2  = tmp$cyl
 tmp$disp_T1 = tmp$disp_T2 = tmp$disp
 umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)[1:5,12:17]
-# ===================
-# = several at once =
-# ===================
+# ===================================
+# = Residualise several DVs at once =
+# ===================================
 r1 = umx_residualize(c("mpg", "hp"), cov = c("cyl", "disp"), data = tmp)
 r2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
 all(r1$hp == r2)

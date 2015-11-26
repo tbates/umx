@@ -230,7 +230,7 @@ umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1.0)
@@ -292,10 +292,10 @@ umx_checkpoint <- umx_set_checkpoint
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
 #' m1 = umx_set_checkpoint(interval = 2, model = m1)
 #' umx_get_checkpoint(model = m1)
@@ -306,7 +306,6 @@ umx_get_checkpoint <- function(model = NULL) {
 	message("Checkpoint  Prefix: "   , mxOption(model, "Checkpoint Prefix" ) )	
 	message("Checkpoint  Directory: ", mxOption(model, "Checkpoint Directory" ) )
 }
-
 
 # ======================================
 # = Lower-level Model building helpers =
@@ -2466,20 +2465,19 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' tmp$cyl_T1  = tmp$cyl_T2  = tmp$cyl
 #' tmp$disp_T1 = tmp$disp_T2 = tmp$disp
 #' umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)[1:5,12:17]
-#' # ===================
-#' # = several at once =
-#' # ===================
+#' # ===================================
+#' # = Residualise several DVs at once =
+#' # ===================================
 #' r1 = umx_residualize(c("mpg", "hp"), cov = c("cyl", "disp"), data = tmp)
 #' r2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
 #' all(r1$hp == r2)
-
 umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	# Check names
 	# TODO remove dependency on formula.tools
     # depends on formula.tools::lhs
     # depends on formula.tools::rhs
 	nVar = length(var)
-	if(nVar > 1){
+	if(nVar > 1 && class(var) != "formula"){
 		for (i in 1:nVar) {
 			data = umx_residualize(var[i], covs = covs, suffixes = suffixes, data = data)
 		}
