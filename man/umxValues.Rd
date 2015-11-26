@@ -13,15 +13,16 @@ umxValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 
 \item{n}{Optional Mean for start values}
 
-\item{onlyTouchZeros}{Don't start things that appear to have already been started (useful for speeding \code{\link{umxReRun}})}
+\item{onlyTouchZeros}{Don't alter parameters that appear to have already been started (useful for speeding \code{\link{umxReRun}})}
 }
 \value{
 - \code{\link{mxModel}} with updated start values
 }
 \description{
-umxValues will set start values for the free parameters in RAM and Matrix \code{\link{mxModel}}s, or even mxMatrices.
-It will try and be smart in guessing these from the values in your data, and the model type.
-If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
+For models to be estimated, it is important that path values start at credible values. umxValues takes on that task for you.
+umxValues can set start values for the free parameters in both RAM and Matrix \code{\link{mxModel}}s. It can also take mxMatrices as input.
+It tries to be smart in guessing starts from the values in your data and the model type.
+note: If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
 }
 \examples{
 require(umx)
@@ -43,7 +44,7 @@ umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 
 # todo: handle complex guided matrix value starts...
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{http://www.github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 - Core functions:

@@ -537,15 +537,15 @@ umxSummary.default <- function(model, ...){
 #' @aliases umxSummary.MxModel
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param refModels Saturated models if needed for fit indices (see example below:
-#' 	Only needed for raw data. nb also, umxRun takes care of this for you)
-#' @param report The format for the output line or table (default is "line")
-#' @param showEstimates What estimates to show. Options are c("none", "raw", "std", "both", "list of column names"). 
+#' 	Only needed for raw data. nb: \code{\link{umxRun}} takes care of this for you)
+#' @param showEstimates What estimates to show. Options are c("none", "std", "raw", "both", "list of column names"). 
 #' Default  is "none" (just shows the fit indices)
 #' @param digits How many decimal places to report to (default = 2)
-#' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
-#' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
+#' @param report If 3, then open an html table of the results (default = 1, options "table" and "html")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
+#' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
+#' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
 #' @param ... Other parameters to control model summary
 #' @family Reporting functions
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
@@ -579,8 +579,8 @@ umxSummary.default <- function(model, ...){
 #' )
 #' m1 <- mxRun(m1)
 #' umxSummary(m1, show = "std")
-#' # umxSummary(m1, report = "table") # not yet implemented
-umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE, filter = c("ALL", "NS", "SIG"), SE=TRUE, ...){
+#' umxSummary(m1, report = "table")
+umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE=TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...){
 	# TODO make table take lists of models...
 	report = match.arg(report)
 	filter = match.arg(filter)
@@ -655,12 +655,18 @@ umxSummary.MxModel <- function(model, refModels = NULL, report = "line", showEst
 				}
 			}
 		}
-		if(filter == "NS"){
-			print(parameterTable[parameterTable$sig == FALSE, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
-		}else if(filter == "SIG"){
-			print(parameterTable[parameterTable$sig == TRUE, namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")
-		}else{
-			print(parameterTable[,namesToShow], digits = digits, na.print = "", zero.print = "0", justify = "none")			
+		if(filter == "NS") {
+			toShow = parameterTable[parameterTable$sig == FALSE, namesToShow]
+		} else if(filter == "SIG") {
+			toShow = parameterTable[parameterTable$sig == TRUE, namesToShow]
+		} else {
+			toShow = parameterTable[,namesToShow]
+		}
+		if(report == "html"){
+			# depends on R2HTML::HTML
+			umx_print(toShow, digits = digits, file = "tmp.html");
+		} else {
+			umx_print(toShow, digits = digits, na.print = "", zero.print = "0", justify = "none")
 		}
 	} else {
 		message("For estimates, umxSummary(..., showEstimates = 'std', 'raw', or 'both')")
@@ -823,7 +829,8 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FAL
 	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
 	if(report == 3){
 		# depends on R2HTML::HTML
-		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); system(paste0("open ", "tmp.html"))
+		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
+		system(paste0("open ", "tmp.html"))
 	}
 
 	if(extended == TRUE) {

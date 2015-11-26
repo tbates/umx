@@ -36,6 +36,7 @@ By default, Zeros have the decimals suppressed, and NAs are suppressed altogethe
 umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 \dontrun{
 umx_print(model)
+# open in browser
 umx_print(mtcars[1:10,], file = "Rout.html")
 }
 }

@@ -1904,19 +1904,20 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 
 #' umxValues
 #'
-#' umxValues will set start values for the free parameters in RAM and Matrix \code{\link{mxModel}}s, or even mxMatrices.
-#' It will try and be smart in guessing these from the values in your data, and the model type.
-#' If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
+#' For models to be estimated, it is important that path values start at credible values. umxValues takes on that task for you.
+#' umxValues can set start values for the free parameters in both RAM and Matrix \code{\link{mxModel}}s. It can also take mxMatrices as input.
+#' It tries to be smart in guessing starts from the values in your data and the model type.
+#' note: If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
 #'
 #' @param obj The RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.
 #' @param sd Optional Standard Deviation for start values
 #' @param n  Optional Mean for start values
-#' @param onlyTouchZeros Don't start things that appear to have already been started (useful for speeding \code{\link{umxReRun}})
+#' @param onlyTouchZeros Don't alter parameters that appear to have already been started (useful for speeding \code{\link{umxReRun}})
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export
 #' @seealso - Core functions:
 #' @family Model Building Functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{http://www.github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1940,7 +1941,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# Use obj as the mean, return a list of length n, with sd = sd
 		return(xmu_start_value_list(mean = obj, sd = sd, n = n))
 	} else if (umx_is_MxMatrix(obj) ) {
-		message("Let's put values into a matrix.")
+		message("TODO put values into a matrix.")
 	} else if (umx_is_RAM(obj) ) {
 		# This is a RAM Model: Set sane starting values
 		# Means at manifest means
@@ -1995,22 +1996,20 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		} else {
 			covData = diag(diag(theData))
 		}
-		# dataVariances = diag(covData)
 		# ======================================================
 		# = Fill the symmetrical matrix with good start values =
 		# ======================================================
 		# The diagonal is variances
 		if(onlyTouchZeros) {
-			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE) & obj@matrices$S@values[1:nVar, 1:nVar] == 0
+			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE) & obj$S$values[1:nVar, 1:nVar] == 0
 		} else {
-			freePaths = (obj@matrices$S@free[1:nVar, 1:nVar] == TRUE)			
+			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE)			
 		}
 		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
 		# ================
 		# = set off diag =
 		# ================
-		# TODO decide whether to leave this as independence, or see with non-zero covariances...
-		# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		# TODO decide whether to leave this as independence, or set to non-zero covariances...
 		# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		# obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = (covData[freePaths]/2)
 		# offDiag = !diag(nVar)

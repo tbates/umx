@@ -1571,18 +1571,17 @@ umx_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"),
 #' @param ... Optional parameters for print
 #' @export
 #' @family Utility Functions
-
 #' @family Reporting Functions
 #' @seealso - \code{\link{print}}
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 #' \dontrun{
 #' umx_print(model)
+#' # open in browser
 #' umx_print(mtcars[1:10,], file = "Rout.html")
 #' }
-
-umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA,"tmp.html"), suppress = NULL, ...){
-	# depends on R2HTML::HTML
+umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
+	# depends on R2HTML::HTML and knitr::kable
 	# TODO: Options for file = c("Rout.html","cat","return")
 	file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
 	if(!is.null(suppress)){
@@ -1602,7 +1601,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 		system(paste0("open ", file))
 		print("Table opened in browser")
     }else{
-		print(x, quote = quote, ...)	
+		print(knitr::kable(x, quote = quote, ...))
     }
     invisible(x)
 }

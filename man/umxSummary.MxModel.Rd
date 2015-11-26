@@ -4,31 +4,31 @@
 \alias{umxSummary.MxModel}
 \title{umxSummary.MxModel}
 \usage{
-\method{umxSummary}{MxModel}(model, refModels = NULL, report = "line",
+\method{umxSummary}{MxModel}(model, refModels = NULL,
   showEstimates = c("none", "raw", "std", "both", "list of column names"),
-  digits = 2, RMSEA_CI = FALSE, matrixAddresses = FALSE,
-  filter = c("ALL", "NS", "SIG"), SE = TRUE, ...)
+  digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS",
+  "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} whose fit will be reported}
 
 \item{refModels}{Saturated models if needed for fit indices (see example below:
-Only needed for raw data. nb also, umxRun takes care of this for you)}
+Only needed for raw data. nb: \code{\link{umxRun}} takes care of this for you)}
 
-\item{report}{The format for the output line or table (default is "line")}
-
-\item{showEstimates}{What estimates to show. Options are c("none", "raw", "std", "both", "list of column names"). 
+\item{showEstimates}{What estimates to show. Options are c("none", "std", "raw", "both", "list of column names"). 
 Default  is "none" (just shows the fit indices)}
 
 \item{digits}{How many decimal places to report to (default = 2)}
 
-\item{RMSEA_CI}{Whether to compute the CI on RMSEA (Defaults to FALSE)}
-
-\item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
+\item{report}{If 3, then open an html table of the results (default = 1, options "table" and "html")}
 
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 
 \item{SE}{Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.}
+
+\item{RMSEA_CI}{Whether to compute the CI on RMSEA (Defaults to FALSE)}
+
+\item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
 
 \item{...}{Other parameters to control model summary}
 }
@@ -76,7 +76,7 @@ m1 <- mxModel(m1,
 )
 m1 <- mxRun(m1)
 umxSummary(m1, show = "std")
-# umxSummary(m1, report = "table") # not yet implemented
+umxSummary(m1, report = "table")
 }
 \references{
 - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
