@@ -17,7 +17,9 @@ umx_aggregate(formula = DV ~ condition, data, what = c("mean_sd", "n"))
 - table
 }
 \description{
-umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions
+umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions.
+The purpose of this function is to simplify the task of summarising data
+aggregating over some grouping factor. A common use is preparing summary tables.
 }
 \examples{
 aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)

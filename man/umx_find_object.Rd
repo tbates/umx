@@ -30,11 +30,9 @@ umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
 - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 
 Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_explode}}, \code{\link{umx_grep}},
-  \code{\link{umx_msg}}, \code{\link{umx_names}},
-  \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_rename}},
-  \code{\link{umx_rot}}, \code{\link{umx_trim}},
-  \code{\link{umx}}
+  \code{\link{umx_grep}}, \code{\link{umx_msg}},
+  \code{\link{umx_names}}, \code{\link{umx_paste_names}},
+  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
+  \code{\link{umx_rename}}, \code{\link{umx}}
 }
 

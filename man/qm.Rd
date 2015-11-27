@@ -31,12 +31,10 @@ qm(M1,c(4,5) | c(1,2),M2 | t(1:3))
 \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
 }
 \seealso{
-Other Utility Functions: \code{\link{umx_explode}},
-  \code{\link{umx_find_object}}, \code{\link{umx_grep}},
-  \code{\link{umx_msg}}, \code{\link{umx_names}},
-  \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_rename}},
-  \code{\link{umx_rot}}, \code{\link{umx_trim}},
-  \code{\link{umx}}
+Other Utility Functions: \code{\link{umx_find_object}},
+  \code{\link{umx_grep}}, \code{\link{umx_msg}},
+  \code{\link{umx_names}}, \code{\link{umx_paste_names}},
+  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
+  \code{\link{umx_rename}}, \code{\link{umx}}
 }
 

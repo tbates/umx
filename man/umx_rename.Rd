@@ -43,11 +43,9 @@ umx_names(x, "^d") # all names begining with a d
 }
 \seealso{
 Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_explode}}, \code{\link{umx_find_object}},
-  \code{\link{umx_grep}}, \code{\link{umx_msg}},
-  \code{\link{umx_names}}, \code{\link{umx_paste_names}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_rot}}, \code{\link{umx_trim}},
-  \code{\link{umx}}
+  \code{\link{umx_find_object}}, \code{\link{umx_grep}},
+  \code{\link{umx_msg}}, \code{\link{umx_names}},
+  \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_print}}, \code{\link{umx}}
 }
 

@@ -18,7 +18,7 @@
 #' @param model an (optional) model to set. If left NULL, the global option is updated.
 #' @return - NULL
 #' @export
-#' @family Misc
+#' @family Get and set
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' library(umx)
@@ -50,7 +50,7 @@ umx_set_cores <- function(cores = parallel::detectCores(), model = NULL) {
 #' @param model an (optional) model to get from. If left NULL, the global option is returned
 #' @return - number of cores
 #' @export
-#' @family Misc
+#' @family Get and set
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' library(umx)
@@ -81,7 +81,7 @@ umx_get_cores <- function(model = NULL) {
 #' @param nCores How many cores to run (defaults to -1 (all available))
 #' @return - NULL
 #' @export
-#' @family Misc
+#' @family Test
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -168,7 +168,7 @@ umx_check_parallel <- function(nCores = -1) {
 #' @param model (optional) model to get from. If left NULL, the global option is returned
 #' @return - the optimizer  - a string
 #' @export
-#' @family Misc
+#' @family Get and set
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' umx_get_optimizer() # current optimizer
@@ -187,7 +187,7 @@ umx_get_optimizer <- function(model = NULL) {
 #' @param opt defaults to "NPSOL". Current alternatives are "SLSQP" and "CSOLNP"
 #' @return - 
 #' @export
-#' @family Misc
+#' @family Get and set
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' library(umx)
@@ -219,7 +219,7 @@ umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
 #' @param model (optional) model to set options in (default = NULL)
 #' @return - mxModel if provided
 #' @export
-#' @family Misc
+#' @family Get and set
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' umx_set_checkpoint(interval = 1, "evaluations", dir = "~/Desktop/")
@@ -284,7 +284,7 @@ umx_checkpoint <- umx_set_checkpoint
 #' @param model an optional model to get options from
 #' @return - NULL
 #' @export
-#' @family Misc
+#' @family Get and set
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' umx_get_checkpoint() # current global default
@@ -320,7 +320,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @param sd the sd of the jiggle noise
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
 #' @return - \code{\link{mxMatrix}}
-#' @family Misc
+#' @family Super-easy helpers
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -346,7 +346,7 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' @param manifests_only Whether to check only manifests (default = TRUE)
 #' @return - list of exogenous variables
 #' @export
-#' @family Misc
+#' @family Test
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(umx)
@@ -384,7 +384,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @param manifests_only Whether to check only manifests (default = TRUE)
 #' @return - list of endogenous variables
 #' @export
-#' @family Misc
+#' @family Test
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(umx)
@@ -746,7 +746,6 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @return - dataframe with columns renamed.
 #' @export
 #' @family Utility Functions
-
 #' @examples
 #' # Re-name "cyl" to "cylinder"
 #' x = mtcars
@@ -1134,7 +1133,7 @@ umx_open <- function(filepath = getwd()) {
 #' @param action What to do on failure of the test: nothing (default), warn or die
 #' @return - TRUE if on the specified OS (else FALSE)
 #' @export
-#' @family Misc
+#' @family Test
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umx_check_OS()
@@ -1617,7 +1616,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @param stop  Whether to stop if the model has not been run (defaults to FALSE)
 #' @return - boolean
 #' @export
-#' @family Misc
+#' @family Test
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1661,7 +1660,7 @@ umx_has_been_run <- function(model, stop = FALSE) {
 #' @param message what to tell the user when boolean.test is FALSE
 #' @return - boolean
 #' @export
-#' @family Misc
+#' @family Test
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_check(length(1:3)==3, "stop", "item must have length == 3")
@@ -1687,7 +1686,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' @param data data.frame (or matrix) to search in for names
 #' @param die whether to die if the check fails (defaults to TRUE)
 #' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)
-#' @return - boolean
+#' @family Test
 #' @export
 #' @family Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -1794,7 +1793,7 @@ umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), us
 #' tmp$hp  = ordered(mtcars$hp)  # binary factor
 #' umx_means(tmp, ordVar = 0, na.rm = TRUE)
 umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
-	if(any(umx_is_ordered(df))){
+	if(any(umx_is_ordered(df, strict = F))){
 		# Set the default outcome
 		means = rep(ordVar, times = dim(df)[2])
 		# Get variables where mean makes snes
@@ -1823,7 +1822,7 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 #' @param continuous.only use with names = TRUE to get the names of the continuous variables
 #' @return - vector of variable names or Booleans
 #' @export
-#' @family Misc
+#' @family Test
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' tmp = mtcars
@@ -1914,7 +1913,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' @param obj an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}
 #' @return - Boolean
 #' @export
-#' @family Misc
+#' @family Test
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -1954,7 +1953,7 @@ umx_is_RAM <- function(obj) {
 #' @param obj an object to be tested to see if it is an OpenMx \code{\link{mxModel}}
 #' @return - Boolean
 #' @export
-#' @family Misc
+#' @family Test
 #' @seealso - \code{\link{mxModel}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1973,7 +1972,7 @@ umx_is_MxModel <- function(obj) {
 #' @param obj an object to be tested to see if it is an OpenMx \code{\link{mxMatrix}}
 #' @return - Boolean
 #' @export
-#' @family Misc
+#' @family Test
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' x = mxMatrix(name = "eg", type = "Full", nrow = 3, ncol = 3, values = .3)
@@ -1992,7 +1991,7 @@ umx_is_MxMatrix <- function(obj) {
 #' @param verbose How much feedback to give (default = FALSE)
 #' @return - "raw", "cor", or "cov", or, if boolean= T, then T | F
 #' @export
-#' @family Misc
+#' @family Test
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -2002,7 +2001,6 @@ umx_is_MxMatrix <- function(obj) {
 #' umx_is_cov(df)
 #' umx_is_cov(df, boolean = TRUE)
 #' umx_is_cov(mtcars, boolean = TRUE)
-
 umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 	if(is.null(data)) { stop("Error in umx_is_cov: You have to provide the data = that you want to check...\n",
 		"Or as Jack Nicholson says, 'No ticky, no laundry' :-) ") }
@@ -2046,7 +2044,7 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' @param model The \code{\link{mxModel}} to check for presence of means
 #' @return - TRUE or FALSE
 #' @export
-#' @family Misc
+#' @family Test
 #' @references - http://www.github.com/tbates/umx/
 #' @examples
 #' require(umx)
@@ -2086,7 +2084,7 @@ umx_has_means <- function(model) {
 #' @param check What to check for: "intervals" requested, "output" present, or "both". Defaults to "both"
 #' @return - TRUE or FALSE
 #' @export
-#' @family Misc
+#' @family Test
 #' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}
 #' @references - http://www.github.com/tbates/umx/
 #' @examples
@@ -2145,7 +2143,7 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @param checkSubmodels whether to check submodels (not implemented yet) (default = FALSE)
 #' @return - boolean
 #' @export
-#' @family Misc
+#' @family Test
 #' @seealso - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -2215,7 +2213,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #' @param newOrder The order you'd like the variables to be in
 #' @return - the re-ordered (and/or resized) matrix
 #' @export
-#' @family Misc
+#' @family Data Functions
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -2293,7 +2291,7 @@ umx_cont_2_ordinal <- function(var, nlevels = 10, type = c("mxFactor", "ordered"
 #' @param input The label to check for square brackets (string input)
 #' @return - boolean
 #' @export
-#' @family Misc
+#' @family Test
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -2433,7 +2431,7 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' \code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
 #'
 #' This tmp variable could then be written over the old data:
-
+#' 
 #' umx_residualize obviates the user having to build the lm, set na.action, or replace the data.
 #' In addition, it has the powerful feature of operating on a list of variables, and of operating on
 #' wide data, expanding the var name using a set of variable-name suffixes.
@@ -2709,9 +2707,9 @@ qm <- function(..., rowMarker = "|") {
 # summary(tm)
 # tm <- microbenchmark(1:10^6); autoplot(tm)
 
-# ====================
-# = php type helpers =
-# ====================
+# ================================
+# = string and php-style helpers =
+# ================================
 #' umx_explode - like the php function `explode` 
 #'
 #' Takes a string and returns an array of delimtted strings (by default, each character)
@@ -2720,7 +2718,7 @@ qm <- function(..., rowMarker = "|") {
 #' @param string an character string, e.g. "dog"
 #' @return - a vector of strings, e.g. c("d", "o", "g")
 #' @export
-#' @family Utility Functions
+#' @family String Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://www.php.net/}
 #' @examples
 #' umx_explode("", "dog") # "d" "o" "g"
@@ -2765,14 +2763,12 @@ umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, valu
 #' @param string to trim
 #' @return - string
 #' @export
-#' @family Utility Functions
-
+#' @family String Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' umx_trim(" dog") # "dog"
 #' umx_trim("dog ") # "dog"
 #' umx_trim("\t dog \n") # "dog"
-
 umx_trim <- function(string) {
 	# http://www.php.net/manual/en/function.trim.php
 	return(gsub("^\\s+|\\s+$", "", string))
@@ -2789,7 +2785,7 @@ umx_trim <- function(string) {
 #' @param vec vector to rotate
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Utility Functions
+#' @family String Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' umx_rot(1:10)
@@ -2898,8 +2894,6 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 	out = data.frame(out);  names(out) <- colnames(myCovariance);
 	return(out)
 }
-
-
 
 #' umx_swap_a_block
 #'

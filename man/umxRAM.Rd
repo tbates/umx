@@ -4,8 +4,9 @@
 \alias{umxRAM}
 \title{umxRAM}
 \usage{
-umxRAM(model = NA, ..., data = NULL, run = TRUE, setValues = TRUE,
-  independent = NA, remove_unused_manifests = TRUE, name = NA)
+umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
+  run = TRUE, setValues = TRUE, independent = NA,
+  remove_unused_manifests = TRUE)
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
@@ -14,6 +15,10 @@ umxRAM(model = NA, ..., data = NULL, run = TRUE, setValues = TRUE,
 
 \item{data}{data for the model. Can be an \code{\link{mxData}} or a data.frame}
 
+\item{name}{A friendly name for the model}
+
+\item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
+
 \item{run}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 
 \item{setValues}{Whether to generate likely good start values (Defaults to TRUE)}
@@ -21,8 +26,6 @@ umxRAM(model = NA, ..., data = NULL, run = TRUE, setValues = TRUE,
 \item{independent}{Whether the model is independent (default = NA)}
 
 \item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
-
-\item{name}{A friendly name for the model}
 }
 \value{
 - \code{\link{mxModel}}

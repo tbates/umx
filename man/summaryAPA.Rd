@@ -4,33 +4,46 @@
 \alias{summaryAPA}
 \title{summaryAPA}
 \usage{
-summaryAPA(b, se = NULL, std = FALSE, digits = 3)
+summaryAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete")
 }
 \arguments{
-\item{b}{Either a model (\link{lm}), or a beta-value}
+\item{obj}{Either a model (\link{lm}), a beta-value, or a data.frame}
 
 \item{se}{If b is a model, then name of the parameter of interest, else the SE (standard-error)}
 
-\item{std}{Whether to re-run the model on standardized data and report std betas}
+\item{std}{If obj is an lm, whether to re-run the model on standardized data and report std betas}
 
 \item{digits}{How many digits to use in rounding values}
+
+\item{use}{If obj is a data.frame, how to handle NA (default = "complete")}
 }
 \value{
 - string
 }
 \description{
-Given an lm, will return a nicely-formated effect including 95\% CI 
+This function creates object summaries used in reporting models, effects, and summarizing data.
+1. Given an lm, will return a formated effect, including 95\% CI 
 in square brackets, for one of the effects (specified by name in se). e.g.:
 
 \code{\link{summaryAPA}}(m1, "wt")
 \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 
-Given b and se will return a CI based on 1.96 times the se.
+2. Given b and se will return a CI based on 1.96 times the se.
+
+3. Given a dataframe, summaryAPA will return table of correlations, with
+the mean and SD of each variable as the second row.
+}
+\details{
+
 }
 \examples{
+# Generate a formatted string convey the effects in a model:  
 summaryAPA(lm(mpg ~ wt + disp, mtcars))
 summaryAPA(lm(mpg ~ wt + disp, mtcars), "disp")
+# Generate a CI string based on effect and se
 summaryAPA(.4, .3)
+# Generate a summary table of correlations +  Mean and SD:
+summaryAPA(mtcars[,1:3])
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

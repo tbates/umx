@@ -37,32 +37,10 @@ umx_get_cores(model = m1)  # show new value
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-Other Misc: \code{\link{umxEval}}, \code{\link{umxJiggle}},
-  \code{\link{umx_APA_model_CI}},
-  \code{\link{umx_add_variances}}, \code{\link{umx_apply}},
-  \code{\link{umx_check_OS}},
-  \code{\link{umx_check_model}},
-  \code{\link{umx_check_parallel}},
-  \code{\link{umx_check}},
-  \code{\link{umx_default_option}},
-  \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_get_checkpoint}},
+Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_get_cores}},
   \code{\link{umx_get_optimizer}},
-  \code{\link{umx_has_CIs}},
-  \code{\link{umx_has_been_run}},
-  \code{\link{umx_has_means}},
-  \code{\link{umx_has_square_brackets}},
-  \code{\link{umx_is_MxMatrix}},
-  \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_cov}},
-  \code{\link{umx_is_endogenous}},
-  \code{\link{umx_is_exogenous}},
-  \code{\link{umx_is_ordered}},
-  \code{\link{umx_object_as_str}},
-  \code{\link{umx_reorder}},
   \code{\link{umx_set_checkpoint}},
-  \code{\link{umx_set_optimizer}},
-  \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
+  \code{\link{umx_set_optimizer}}
 }
 

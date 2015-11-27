@@ -24,12 +24,7 @@ umx_rot(c(3,4,5,6,7))
 - \url{http://tbates.github.io}
 }
 \seealso{
-Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_explode}}, \code{\link{umx_find_object}},
-  \code{\link{umx_grep}}, \code{\link{umx_msg}},
-  \code{\link{umx_names}}, \code{\link{umx_paste_names}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_rename}}, \code{\link{umx_trim}},
-  \code{\link{umx}}
+Other String Functions: \code{\link{umx_explode}},
+  \code{\link{umx_trim}}
 }
 

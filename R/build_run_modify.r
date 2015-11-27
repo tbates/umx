@@ -131,9 +131,10 @@ methods::setClass("MxModel.IP" , contains = "MxModel")
 #' @param ... mx or umxPaths, mxThreshold objects, etc.
 #' @param run Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @param setValues Whether to generate likely good start values (Defaults to TRUE)
+#' @param name A friendly name for the model
+#' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param independent Whether the model is independent (default = NA)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
-#' @param name A friendly name for the model
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
@@ -165,7 +166,7 @@ methods::setClass("MxModel.IP" , contains = "MxModel")
 #' plot(m1)
 #' plot(m1, resid = "line") # I find it easier to work with stick-residuals
 #' }
-umxRAM <- function(model = NA, ..., data = NULL,  run = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, name= NA) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, run = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	if(typeof(model) == "character"){
 		if(is.na(name)){
@@ -187,12 +188,14 @@ umxRAM <- function(model = NA, ..., data = NULL,  run = TRUE, setValues = TRUE, 
 			if(run){
 				newModel = mxRun(newModel)
 				umxSummary(newModel)
-				moreFree = FALSE
-				# TODO compute moreFree from df of models!!!
-				if(moreFree){
-					umxCompare(model, newModel)
-				} else {
-					umxCompare(newModel, model)
+				if(comparison){
+					moreFree = FALSE
+					# TODO compute moreFree from df of models!!!
+					if(moreFree){
+						umxCompare(model, newModel)
+					} else {
+						umxCompare(newModel, model)
+					}
 				}
 			}			
 			return(newModel)

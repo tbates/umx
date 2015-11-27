@@ -15,9 +15,6 @@ umx_check_names(namesNeeded, data, die = TRUE, no_others = FALSE)
 
 \item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)}
 }
-\value{
-- boolean
-}
 \description{
 Check if a list of names are in the names() of a dataframe (or the of a matrix)
 }
@@ -39,5 +36,19 @@ umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 }
 \seealso{
 Other Building Functions: \code{\link{umx_cov_diag}}
+
+Other Test: \code{\link{umx_check_OS}},
+  \code{\link{umx_check_model}},
+  \code{\link{umx_check_parallel}},
+  \code{\link{umx_check}}, \code{\link{umx_has_CIs}},
+  \code{\link{umx_has_been_run}},
+  \code{\link{umx_has_means}},
+  \code{\link{umx_has_square_brackets}},
+  \code{\link{umx_is_MxMatrix}},
+  \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
+  \code{\link{umx_is_cov}},
+  \code{\link{umx_is_endogenous}},
+  \code{\link{umx_is_exogenous}},
+  \code{\link{umx_is_ordered}}
 }
 

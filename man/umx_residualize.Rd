@@ -32,6 +32,7 @@ In R, residuals for a variable can be found with the following statement:
 \code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
 
 This tmp variable could then be written over the old data:
+
 umx_residualize obviates the user having to build the lm, set na.action, or replace the data.
 In addition, it has the powerful feature of operating on a list of variables, and of operating on
 wide data, expanding the var name using a set of variable-name suffixes.
@@ -72,7 +73,8 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_cov2raw}}, \code{\link{umx_lower2full}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_merge_CIs}},
-  \code{\link{umx_read_lower}}, \code{\link{umx_round}},
+  \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
+  \code{\link{umx_round}},
   \code{\link{umx_scale_wide_twin_data}},
   \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}},
   \code{\link{umx}}

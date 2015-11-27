@@ -102,7 +102,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_cov2raw}}, \code{\link{umx_lower2full}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_merge_CIs}},
-  \code{\link{umx_read_lower}},
+  \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
   \code{\link{umx_residualize}}, \code{\link{umx_round}},
   \code{\link{umx_scale_wide_twin_data}},
   \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}}
@@ -111,33 +111,12 @@ Other File Functions: \code{\link{dl_from_dropbox}},
   \code{\link{umx_move_file}}, \code{\link{umx_open}},
   \code{\link{umx_rename_file}}
 
-Other Misc: \code{\link{umxEval}}, \code{\link{umxJiggle}},
+Other Misc: \code{\link{umxEval}},
   \code{\link{umx_APA_model_CI}},
   \code{\link{umx_add_variances}}, \code{\link{umx_apply}},
-  \code{\link{umx_check_OS}},
-  \code{\link{umx_check_model}},
-  \code{\link{umx_check_parallel}},
-  \code{\link{umx_check}},
   \code{\link{umx_default_option}},
   \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_get_checkpoint}},
-  \code{\link{umx_get_cores}},
-  \code{\link{umx_get_optimizer}},
-  \code{\link{umx_has_CIs}},
-  \code{\link{umx_has_been_run}},
-  \code{\link{umx_has_means}},
-  \code{\link{umx_has_square_brackets}},
-  \code{\link{umx_is_MxMatrix}},
-  \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_cov}},
-  \code{\link{umx_is_endogenous}},
-  \code{\link{umx_is_exogenous}},
-  \code{\link{umx_is_ordered}},
   \code{\link{umx_object_as_str}},
-  \code{\link{umx_reorder}},
-  \code{\link{umx_set_checkpoint}},
-  \code{\link{umx_set_cores}},
-  \code{\link{umx_set_optimizer}},
   \code{\link{umx_string_to_algebra}}
 
 Other Model Building Functions: \code{\link{umxDiagnose}},
@@ -164,7 +143,8 @@ Other Stats Functions: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umx_cor}},
   \code{\link{umx_means}}
 
-Other Super-easy helpers: \code{\link{umxEFA}}
+Other Super-easy helpers: \code{\link{umxEFA}},
+  \code{\link{umxJiggle}}
 
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
@@ -175,12 +155,10 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}}
 
 Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_explode}}, \code{\link{umx_find_object}},
-  \code{\link{umx_grep}}, \code{\link{umx_msg}},
-  \code{\link{umx_names}}, \code{\link{umx_paste_names}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_rename}}, \code{\link{umx_rot}},
-  \code{\link{umx_trim}}
+  \code{\link{umx_find_object}}, \code{\link{umx_grep}},
+  \code{\link{umx_msg}}, \code{\link{umx_names}},
+  \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_print}}, \code{\link{umx_rename}}
 
 Other zAdvanced Helpers: \code{\link{umx_RAM_ordinal_objective}},
   \code{\link{umx_standardize_ACE}},

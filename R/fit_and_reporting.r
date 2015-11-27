@@ -2872,9 +2872,17 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 # = Regular stats and table helpers =
 # ===================================
 
+umx_fun_mean_sd = function(x){
+	paste0(round(mean(x, na.rm=TRUE),2), " (",
+		   round(sd(x, na.rm=TRUE),2), ")"
+	)
+}
+
 #' umx_aggregate
 #'
-#' umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions
+#' umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions.
+#' The purpose of this function is to simplify the task of summarising data
+#' aggregating over some grouping factor. A common use is preparing summary tables.
 #'
 #' @param formula the aggregation formula. e.g., DV ~ condition
 #' @param data the dataframe to aggregate with
@@ -2977,34 +2985,51 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' summaryAPA
 #'
 #' @description
-#' Given an lm, will return a nicely-formated effect including 95\% CI 
+#' This function creates object summaries used in reporting models, effects, and summarizing data.
+#' 1. Given an lm, will return a formated effect, including 95\% CI 
 #' in square brackets, for one of the effects (specified by name in se). e.g.:
 #' 
 #' \code{\link{summaryAPA}}(m1, "wt")
 #' \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 #' 
-#' Given b and se will return a CI based on 1.96 times the se.
+#' 2. Given b and se will return a CI based on 1.96 times the se.
 #' 
-#' @param b Either a model (\link{lm}), or a beta-value
+#' 3. Given a dataframe, summaryAPA will return table of correlations, with
+#' the mean and SD of each variable as the second row.
+#' 
+#' 
+#' @details
+#' 
+#' @param obj Either a model (\link{lm}), a beta-value, or a data.frame
 #' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)
-#' @param std Whether to re-run the model on standardized data and report std betas
+#' @param std If obj is an lm, whether to re-run the model on standardized data and report std betas
 #' @param digits How many digits to use in rounding values
+#' @param use If obj is a data.frame, how to handle NA (default = "complete")
 #' @return - string
 #' @export
 #' @family Reporting Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
+#' # Generate a formatted string convey the effects in a model:  
 #' summaryAPA(lm(mpg ~ wt + disp, mtcars))
 #' summaryAPA(lm(mpg ~ wt + disp, mtcars), "disp")
+#' # Generate a CI string based on effect and se
 #' summaryAPA(.4, .3)
-summaryAPA <- function(b, se = NULL, std = FALSE, digits = 3) {
-	if("lm" == class(b)){
+#' # Generate a summary table of correlations +  Mean and SD:
+#' summaryAPA(mtcars[,1:3])
+summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete") {
+	if("data.frame" == class(obj)){
+		cor_table = cor(obj, use = use)
+		cor_table = umx_apply(round, cor_table, digits= digits)
+		m_sd = umx_apply(umx_fun_mean_sd, obj)
+		umx_print(rbind(cor_table, m_sd), digits = digits)
+	}else if( "lm" == class(obj)){
 		if(std){
-			b = update(b, data = umx_scale(b$model))
+			obj = update(obj, data = umx_scale(obj$model))
 		}
-		model_coefficients = summary(b)$coefficients
-		model_coefficients = summary(b)$coefficients
-		conf = confint(b)
+		model_coefficients = summary(obj)$coefficients
+		model_coefficients = summary(obj)$coefficients
+		conf = confint(obj)
 		if(is.null(se)){
 			se = dimnames(model_coefficients)[[1]]
 		}
@@ -3021,7 +3046,7 @@ summaryAPA <- function(b, se = NULL, std = FALSE, digits = 3) {
 			))		
 		}
 	} else {
-		print(paste0("\u03B2 = ", round(b, digits), " [", round(b - (1.96 * se), digits), ", ", round(b + (1.96 * se), digits), "]"))
+		print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), ", ", round(obj + (1.96 * se), digits), "]"))
 	}
 }
 
