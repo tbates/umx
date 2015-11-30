@@ -2867,14 +2867,31 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 	)
 }
 
-
 # ===================================
-# = Regular stats and table helpers =
+# = summary Stats and table helpers =
 # ===================================
 
-umx_fun_mean_sd = function(x){
-	paste0(round(mean(x, na.rm=TRUE),2), " (",
-		   round(sd(x, na.rm=TRUE),2), ")"
+#' umx_fun
+#'
+#' Misellaneous functions that are handy in summary and other tasks where you might otherwise have
+#' to craft a custom nameless funtions. e.g.
+#' 
+#' \itemize{
+#'   \item \code{\link{umx_fun_mean_sd}}: returns "mean (SD)" of x.
+#'   \item Second item
+#' }
+#'
+#' @param x input
+#' @return - function result
+#' @export
+#' @family Miscellaneous Stats Helpers
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' summaryAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
+umx_fun_mean_sd = function(x, na.rm = TRUE, digits =2){
+	paste0(
+		round(mean(x, na.rm = na.rm),2), " ",
+		"(", round(sd(x, na.rm=TRUE),digits = digits), ")"
 	)
 }
 
@@ -3005,6 +3022,7 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' @param std If obj is an lm, whether to re-run the model on standardized data and report std betas
 #' @param digits How many digits to use in rounding values
 #' @param use If obj is a data.frame, how to handle NA (default = "complete")
+#' @param report what to return (default = markdown table). Use "html" to open a web page table
 #' @return - string
 #' @export
 #' @family Reporting Functions
@@ -3017,12 +3035,17 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' summaryAPA(.4, .3)
 #' # Generate a summary table of correlations +  Mean and SD:
 #' summaryAPA(mtcars[,1:3])
-summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete") {
+summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", report = c("table", "html")) {
+	report = match.arg(report)
 	if("data.frame" == class(obj)){
-		cor_table = cor(obj, use = use)
+		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE)
 		cor_table = umx_apply(round, cor_table, digits= digits)
 		m_sd = umx_apply(umx_fun_mean_sd, obj)
-		umx_print(rbind(cor_table, m_sd), digits = digits)
+		if(report == "html"){
+			umx_print(rbind(cor_table, m_sd), digits = digits, file = "tmp.html")
+		} else {
+			umx_print(rbind(cor_table, m_sd), digits = digits)			
+		}
 	}else if( "lm" == class(obj)){
 		if(std){
 			obj = update(obj, data = umx_scale(obj$model))

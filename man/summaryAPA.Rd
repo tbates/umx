@@ -4,7 +4,8 @@
 \alias{summaryAPA}
 \title{summaryAPA}
 \usage{
-summaryAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete")
+summaryAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
+  report = c("table", "html"))
 }
 \arguments{
 \item{obj}{Either a model (\link{lm}), a beta-value, or a data.frame}
@@ -16,6 +17,8 @@ summaryAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete")
 \item{digits}{How many digits to use in rounding values}
 
 \item{use}{If obj is a data.frame, how to handle NA (default = "complete")}
+
+\item{report}{what to return (default = markdown table). Use "html" to open a web page table}
 }
 \value{
 - string

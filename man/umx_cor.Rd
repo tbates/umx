@@ -4,7 +4,8 @@
 \alias{umx_cor}
 \title{umx_cor}
 \usage{
-umx_cor(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3)
+umx_cor(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 2,
+  type = c("r and p-value", "smart"))
 }
 \arguments{
 \item{X}{a matrix or dataframe}

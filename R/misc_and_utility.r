@@ -1185,7 +1185,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_cor(myFADataRaw[1:8,])
-umx_cor <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 3) {
+umx_cor <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 2, type= c("r and p-value", "smart")) {
 	# see also
 	# hmisc::rcorr( )
 	warning("don't use this until we are computing n properly")
