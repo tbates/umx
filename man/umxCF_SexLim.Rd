@@ -36,6 +36,7 @@ does NOT affect ability of model to account for DZOS data.
 Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
 }
 \examples{
+\dontrun{
 # Load Libraries
 require(umx)
 # Create Functions to Assign Labels
@@ -185,6 +186,7 @@ label = laDiag("e", nVar))
 #  	mxCompare(HetCfAceRcFit, m3)[2,],
 #  	mxCompare(m3, m4)[2,]
 # )
+}
 }
 \references{
 - Neale et al. (2006). 

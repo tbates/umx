@@ -2882,13 +2882,15 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' }
 #'
 #' @param x input
+#' @param na.rm How to handle missing (default = TRUE = remove)
+#' @param digits Rounding (default = 2)
 #' @return - function result
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' summaryAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
-umx_fun_mean_sd = function(x, na.rm = TRUE, digits =2){
+umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 	paste0(
 		round(mean(x, na.rm = na.rm),2), " ",
 		"(", round(sd(x, na.rm=TRUE),digits = digits), ")"
@@ -3013,9 +3015,6 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' 
 #' 3. Given a dataframe, summaryAPA will return table of correlations, with
 #' the mean and SD of each variable as the second row.
-#' 
-#' 
-#' @details
 #' 
 #' @param obj Either a model (\link{lm}), a beta-value, or a data.frame
 #' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)

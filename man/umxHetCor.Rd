@@ -32,7 +32,7 @@ umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = FALSE, verbose = TRUE)
 -
 }
 \seealso{
-- \code{\link[polycor]{hetcor}}
+- \code{\link{umx_cor}}, \code{\link[polycor]{hetcor}}
 
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxFactor}},

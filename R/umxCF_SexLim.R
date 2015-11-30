@@ -21,6 +21,7 @@
 #' Multivariate genetic analysis of sex-lim and GxE interaction.
 #' \emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489. 
 #' @examples
+#' \dontrun{
 #' # Load Libraries
 #' require(umx)
 #' # Create Functions to Assign Labels
@@ -171,6 +172,7 @@
 #' #  	mxCompare(HetCfAceRcFit, m3)[2,],
 #' #  	mxCompare(m3, m4)[2,]
 #' # )
+#' }
 umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, C_or_A = "A", suffix = NA){
 	# Correlated factors sex limitations
 	message("Don't use! Not checked!")

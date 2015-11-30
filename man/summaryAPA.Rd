@@ -36,9 +36,6 @@ in square brackets, for one of the effects (specified by name in se). e.g.:
 3. Given a dataframe, summaryAPA will return table of correlations, with
 the mean and SD of each variable as the second row.
 }
-\details{
-
-}
 \examples{
 # Generate a formatted string convey the effects in a model:  
 summaryAPA(lm(mpg ~ wt + disp, mtcars))

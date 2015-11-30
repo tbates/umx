@@ -1726,6 +1726,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @references - Neale et al., (2006). Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics.,
 #' \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
+#' \dontrun{
 #' # Load Libraries
 #' require(umx);
 #' # =========================
@@ -1765,6 +1766,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' umxCompare(m2, m1)
 #' # does fit move on repeated execution?
 #' # for (i in 1:4) { m2 <- mxRun(m2); print(m2 $output$mi) }
+#' }
 umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, suffix = NULL){
 	if(is.null(suffix)){
 		stop("umx functions now require the suffix parameter is set,

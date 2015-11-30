@@ -15,9 +15,11 @@ umx_cor(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 2,
 \item{use}{how to handle missing data}
 
 \item{digits}{rounding of answers}
+
+\item{type}{Unused argument for future directions}
 }
 \value{
-- matrix of correlations and p-values
+- Matrix of correlations and p-values
 }
 \description{
 Report correlations and their p-values
@@ -29,7 +31,7 @@ umx_cor(myFADataRaw[1:8,])
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+- \code{\link{umxHetCor}}
 
 Other Stats Functions: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umx_means}},

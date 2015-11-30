@@ -44,6 +44,7 @@ Note: Quantitative sex differences are differences in the path loadings from A, 
 to the measured variables
 }
 \examples{
+\dontrun{
 # Load Libraries
 require(umx);
 # =========================
@@ -83,6 +84,7 @@ summary(m2)
 umxCompare(m2, m1)
 # does fit move on repeated execution?
 # for (i in 1:4) { m2 <- mxRun(m2); print(m2 $output$mi) }
+}
 }
 \references{
 - Neale et al., (2006). Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics.,

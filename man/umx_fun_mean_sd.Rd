@@ -8,6 +8,10 @@ umx_fun_mean_sd(x, na.rm = TRUE, digits = 2)
 }
 \arguments{
 \item{x}{input}
+
+\item{na.rm}{How to handle missing (default = TRUE = remove)}
+
+\item{digits}{Rounding (default = 2)}
 }
 \value{
 - function result

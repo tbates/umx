@@ -1178,10 +1178,11 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' @param df the degrees of freedom for the test
 #' @param use how to handle missing data
 #' @param digits rounding of answers
-#' @return - matrix of correlations and p-values
+#' @param type Unused argument for future directions
+#' @return - Matrix of correlations and p-values
 #' @family Stats Functions
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+#' @seealso - \code{\link{umxHetCor}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_cor(myFADataRaw[1:8,])
@@ -3234,7 +3235,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @return - A matrix of correlations
 #' @family Data Functions
 #' @export
-#' @seealso - \code{\link[polycor]{hetcor}}
+#' @seealso - \code{\link{umx_cor}}, \code{\link[polycor]{hetcor}}
 #' @references - 
 #' @examples
 #' umxHetCor(mtcars[,c("mpg", "am")])
