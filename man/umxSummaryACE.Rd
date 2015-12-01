@@ -7,7 +7,7 @@
 \usage{
 umxSummaryACE(model, digits = 2, dotFilename = NULL, returnStd = FALSE,
   extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL,
-  CIs = TRUE, zero.print = ".", report = 1, ...)
+  CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to summarize}

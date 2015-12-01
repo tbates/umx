@@ -5,7 +5,7 @@
 \title{umxCompare}
 \usage{
 umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
-  report = 2, file = "tmp.html")
+  report = c("2", "1", "html"), file = "tmp.html")
 }
 \arguments{
 \item{base}{The base \code{\link{mxModel}} for comparison}
@@ -16,9 +16,9 @@ umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
 
 \item{digits}{rounding for p etc.}
 
-\item{report}{Optionally (report = 2) add sentences for inclusion inline in a paper, or create an html table
-and output to an html table which will open your default browser (report = 3).
-(This is handy for getting tables into Word, markdown, and other text systems!)}
+\item{report}{Optionally (report = "2") add sentences for inclusion in a paper, or ("html")
+create a web table and open your default browser.
+(handy for getting tables into Word, and other text systems!)}
 
 \item{file}{file to write html too if report=3 (defaults to "tmp.html")}
 }
@@ -28,7 +28,7 @@ umxCompare compares two or more \code{\link{mxModel}}s. It has several nice feat
 2. It reports the table in your preferred markdown format (relies on knitr)
 3. The table columns are arranged in a method suitable for easy comparison for readers.
 4. By default, it also reports the output as an ENglish sentence suitable for a paper.
-5. It can open tabular output in a browser (report = 3)
+5. It can open tabular output in a browser (report = "html")
 }
 \details{
 note: If you leave comparison blank, it will just give fit info for the base model
@@ -49,9 +49,9 @@ m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
 mxCompare(m1, m2) # what OpenMx gives by default
-umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
+umxCompare(m1, m2, report = "2") # Add English-sentence descriptions
 \dontrun{
-umxCompare(m1, m2, report = 3) # Open table in browser
+umxCompare(m1, m2, report = "html") # Open table in browser
 }
 m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 umxCompare(m1, c(m2, m3))

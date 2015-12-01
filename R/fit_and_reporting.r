@@ -57,8 +57,8 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' Reduce a model - this is a work in progress.
 #'
 #' @param m1 an \code{\link{mxModel}} to reduce
-#' @param report how to report the results table. 3 = html file
-#' @param baseFileName file to use when report = 3 (defaults to "tmp.html", I add the html)
+#' @param report How to report the results. "html" = open in browser
+#' @param baseFileName file (I add the html) to use when report = "html" (defaults to "tmp")
 #' @return - 
 #' @export
 #' @family umx core functions
@@ -67,8 +67,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduce <- function(m1, report = 3, baseFileName = "tmp") {
-	# umxReduce(m1, report = 3)
+umxReduce <- function(m1, report = "html", baseFileName = "tmp") {
 	umx_is_MxModel(m1)
 	if(class(m1) == "MxModel.GxE"){
 		# Reduce GxE Model
@@ -84,17 +83,17 @@ umxReduce <- function(m1, report = 3, baseFileName = "tmp") {
 		no_c_cm   = umxReRun(no_c    , "cm_r1c1", name = "no_c_no_cm")
 		no_c_cem  = umxReRun(no_c_cm , "em_r1c1", name = "no_c_no_em")
 		no_c_acem = umxReRun(no_c_cem, "am_r1c1", name = "no_a_c_or_em")
-		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report=1)
-		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report=report, file = paste0(baseFileName, ".html"))
-		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report=1)
-		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report=report, file=paste0(baseFileName, 2, ".html"))
+		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = "1")
+		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = report, file = paste0(baseFileName, ".html"))
+		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report = "1")
+		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report = report, file = paste0(baseFileName, 2, ".html"))
 		# return(result)
 	} else {
-		stop("only GxE implemented so far. Open build twin and add what you want..")
+		stop("Only GxE implemented so far. Feel free to let me know what you want...")
 		# TODO if we get an MxModel.ACE, lets 
 		# 1. make umxCP, and umxIP
 		# 2. also relaxed CP/IP?
-		# 3 report fit table
+		# 3. report fit table
 	}
 }
 
@@ -540,8 +539,8 @@ umxSummary.default <- function(model, ...){
 #' 	Only needed for raw data. nb: \code{\link{umxRun}} takes care of this for you)
 #' @param showEstimates What estimates to show. Options are c("none", "std", "raw", "both", "list of column names"). 
 #' Default  is "none" (just shows the fit indices)
-#' @param digits How many decimal places to report to (default = 2)
-#' @param report If 3, then open an html table of the results (default = 1, options "table" and "html")
+#' @param digits How many decimal places to report (default = 2)
+#' @param report If "html", then show results in browser ("1", "table", "html")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
@@ -769,7 +768,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 #' umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = 1, ...) {
+umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
+	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
@@ -827,7 +827,7 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FAL
 	names(Estimates) = paste0(rep(c("a", "c", "e"), each = nVar), rep(1:nVar));
 
 	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-	if(report == 3){
+	if(report == "html"){
 		# depends on R2HTML::HTML
 		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
 		system(paste0("open ", "tmp.html"))
@@ -1246,7 +1246,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' @param location default = "topleft"
 #' @param reduce  Whether run and tabulate a complete model reduction...(Defaults to FALSE)
 #' @param separateGraphs default = F
-#' @param report 1 = regular, 2 = add descriptive sentences; 3 = open a browser and copyable tables
+#' @param report "1" = regular, "2" = add descriptive sentences; "html" = open a browser and copyable tables
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @family Twin Modeling Functions
@@ -1278,7 +1278,8 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' umxSummaryGxE(m1)
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, dotFilename = NULL, returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL, report = 1, ...) {
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, dotFilename = NULL, returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
+	report = match.arg(report)
 	if(any(!is.null(c(dotFilename, returnStd, showStd, CIs, ...) ))){
 		message("I haven't implemented dotFilename, returnStd, extended, showStd, comparison or CIs yet...")
 	}
@@ -1332,7 +1333,7 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' 2. It reports the table in your preferred markdown format (relies on knitr)
 #' 3. The table columns are arranged in a method suitable for easy comparison for readers.
 #' 4. By default, it also reports the output as an ENglish sentence suitable for a paper.
-#' 5. It can open tabular output in a browser (report = 3)
+#' 5. It can open tabular output in a browser (report = "html")
 #' 
 #' note: If you leave comparison blank, it will just give fit info for the base model
 #'
@@ -1340,9 +1341,9 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
 #' @param digits rounding for p etc.
-#' @param report Optionally (report = 2) add sentences for inclusion inline in a paper, or create an html table
-#' and output to an html table which will open your default browser (report = 3).
-#' (This is handy for getting tables into Word, markdown, and other text systems!)
+#' @param report Optionally (report = "2") add sentences for inclusion in a paper, or ("html")
+#' create a web table and open your default browser.
+#' (handy for getting tables into Word, and other text systems!)
 #' @param file file to write html too if report=3 (defaults to "tmp.html")
 #' @family Reporting functions
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRAM}},
@@ -1364,14 +1365,15 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
 #' umxCompare(m1, m2)
 #' mxCompare(m1, m2) # what OpenMx gives by default
-#' umxCompare(m1, m2, report = 2) # Add English-sentence descriptions
+#' umxCompare(m1, m2, report = "2") # Add English-sentence descriptions
 #' \dontrun{
-#' umxCompare(m1, m2, report = 3) # Open table in browser
+#' umxCompare(m1, m2, report = "html") # Open table in browser
 #' }
 #' m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 #' umxCompare(m1, c(m2, m3))
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = 2, file = "tmp.html") {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("2", "1", "html"), file = "tmp.html") {
+	report = match.arg(report)
 	if(is.null(comparison)){
 		comparison <- base
 	} else if (is.null(base)) {
@@ -1412,7 +1414,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
-	if(report > 1){
+	if(report != "1"){
 		n_rows = dim(tablePub)[1]
 		for (i in 1:n_rows) {
 			if(!is.na(tablePub[i, "p"])){
@@ -1433,11 +1435,11 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 	}
 	
-	if(report == 3){
-		R2HTML::HTML(tablePub, file = file, Border = 0, append = FALSE, sortableDF = TRUE); system(paste0("open ", file))
+	if(report == "html"){
+		R2HTML::HTML(tablePub, file = file, Border = 0, append = FALSE, sortableDF = TRUE);
+		system(paste0("open ", file))
 	} else {
 		umx_print(tablePub)
-		# R2HTML::print(tableOut, output = output, rowlabel = "")
 	}
 	invisible(tablePub)
 	
@@ -1452,7 +1454,6 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# 	system(paste("open", fName));
 	# }
 }
-
 
 #' umxCI_boot
 #'

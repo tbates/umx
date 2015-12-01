@@ -7,7 +7,8 @@
 \usage{
 umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
   separateGraphs = FALSE, dotFilename = NULL, returnStd = NULL,
-  showStd = NULL, reduce = FALSE, CIs = NULL, report = 1, ...)
+  showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2",
+  "html"), ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxGxE}} model to summarize}
@@ -30,7 +31,7 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
 
 \item{CIs}{Confidence intervals (FALSE)}
 
-\item{report}{1 = regular, 2 = add descriptive sentences; 3 = open a browser and copyable tables}
+\item{report}{"1" = regular, "2" = add descriptive sentences; "html" = open a browser and copyable tables}
 
 \item{...}{Optional additional parameters}
 }
