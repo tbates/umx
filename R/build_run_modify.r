@@ -330,7 +330,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, r
 
 #' umxGxE
 #'
-#' Make a 2-group GxE (moderated ACE) model
+#' Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
+#' of genetic (or environmental) influence varies parametrically (usuaally linear effects on path estimates)
+#' across levels of environment. umxGxE allows detecting,
+#' testing, and visualizing  G×E (or C or E×E) interaction forms.
 #' 
 #' The following figure the GxE model as a path diagram:
 #' \figure{GxE.png}
@@ -348,7 +351,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, r
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, \strong{6}, 554-571. Retrieved from http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187
 #' @examples
 #' # The total sample has been subdivided into a young cohort, 
 #' # aged 18-30 years, and an older cohort aged 31 and above.
@@ -375,7 +378,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, r
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' m2 = umxReRun(m1, "am_.*", regex=TRUE, comparison = TRUE)
-
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE) {
 	nSib = 2;
 	if(!is.null(suffix)){
@@ -566,10 +568,16 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 
 #' umxGxE_window
 #'
-#' Makes a model to do a GxE analysis using Local SEM (Hildebrandt, Wilhelm & Robitzsch, 2009, p96)
-#' Local SEM GxE relies on weighting the moderator to allow conducting repeated regular
-#' ACE analyses targeted at sucessive regions of the moderator.
-#' In this sense, you can think of it as nonparametric GxE
+#' Make a 2-group GxE (moderated ACE) model using LOSEM. In G×E interaction studies, typically,
+#' the hypothesis that the strength of genetic influence varies parametrically (usuaally linear effects
+#' on path estimates) across levels of environment. Of course, the function linking genetic influence
+#' and context is not necessarily linear, but may react more steeply at the extremes, or take other, unknown forms.
+#' To avoid obscuring the underlying shape of the interaction effect, local structural equation
+#' modeling (LOSEM) may be used, and GxE_window implements this. LOSEM is a non-parametric,
+#' estimating latent interaction effects across the range of a measured moderator using a
+#' windowing function which is walked along the context dimension, and which weights subjects
+#' near the centrre of the window highly relative to subjects far above or below the window centre.
+#' This allows detecting and visualizing arbitrary G×E (or C or E×E) interaction forms.
 #' 
 #' @param selDVs The dependent variables for T1 and T2, e.g. c("bmi_T1", "bmi_T2")
 #' @param moderator The name of the moderator variable in the dataset e.g. "age", "SES" etc.
@@ -588,7 +596,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 #' # = 1. Open and clean the data =
 #' # ==============================
 #' # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin
-#' mod = "age"         # The name of the moderator column in the dataset
+#' mod = "age" # The name of the moderator column in the dataset
 #' selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 #' data(twinData) # Dataset of Australian twins, built into OpenMx
 #' # The twinData consist of two cohorts. First we label them
