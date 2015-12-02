@@ -30,7 +30,10 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL,
 - GxE \code{\link{mxModel}}
 }
 \description{
-Make a 2-group GxE (moderated ACE) model
+Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
+of genetic (or environmental) influence varies parametrically (usuaally linear effects on path estimates)
+across levels of environment. umxGxE allows detecting,
+testing, and visualizing  G xE (or C or E x E) interaction forms.
 }
 \details{
 The following figure the GxE model as a path diagram:
@@ -63,7 +66,7 @@ umxSummary(m1, separateGraphs = FALSE)
 m2 = umxReRun(m1, "am_.*", regex=TRUE, comparison = TRUE)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, \strong{6}, 554-571. Retrieved from http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187
 }
 \seealso{
 - \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.

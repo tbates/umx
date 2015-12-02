@@ -31,10 +31,16 @@ umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
 - Table of estimates of ACE along the moderator
 }
 \description{
-Makes a model to do a GxE analysis using Local SEM (Hildebrandt, Wilhelm & Robitzsch, 2009, p96)
-Local SEM GxE relies on weighting the moderator to allow conducting repeated regular
-ACE analyses targeted at sucessive regions of the moderator.
-In this sense, you can think of it as nonparametric GxE
+Make a 2-group GxE (moderated ACE) model using LOSEM. In G \eqn{\x} E interaction studies, typically,
+the hypothesis that the strength of genetic influence varies parametrically (usuaally linear effects
+on path estimates) across levels of environment. Of course, the function linking genetic influence
+and context is not necessarily linear, but may react more steeply at the extremes, or take other, unknown forms.
+To avoid obscuring the underlying shape of the interaction effect, local structural equation
+modeling (LOSEM) may be used, and GxE_window implements this. LOSEM is a non-parametric,
+estimating latent interaction effects across the range of a measured moderator using a
+windowing function which is walked along the context dimension, and which weights subjects
+near the centrre of the window highly relative to subjects far above or below the window centre.
+This allows detecting and visualizing arbitrary G  x E (or C   x E or E  x E) interaction forms.
 }
 \examples{
 library(umx);
@@ -42,7 +48,7 @@ library(umx);
 # = 1. Open and clean the data =
 # ==============================
 # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin
-mod = "age"         # The name of the moderator column in the dataset
+mod = "age" # The name of the moderator column in the dataset
 selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 data(twinData) # Dataset of Australian twins, built into OpenMx
 # The twinData consist of two cohorts. First we label them
