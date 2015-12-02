@@ -4,14 +4,14 @@
 \alias{umxReduce}
 \title{umxReduce}
 \usage{
-umxReduce(m1, report = 3, baseFileName = "tmp")
+umxReduce(m1, report = "html", baseFileName = "tmp")
 }
 \arguments{
 \item{m1}{an \code{\link{mxModel}} to reduce}
 
-\item{report}{how to report the results table. 3 = html file}
+\item{report}{How to report the results. "html" = open in browser}
 
-\item{baseFileName}{file to use when report = 3 (defaults to "tmp.html", I add the html)}
+\item{baseFileName}{file (I add the html) to use when report = "html" (defaults to "tmp")}
 }
 \value{
 -

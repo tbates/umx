@@ -18,9 +18,9 @@ Only needed for raw data. nb: \code{\link{umxRun}} takes care of this for you)}
 \item{showEstimates}{What estimates to show. Options are c("none", "std", "raw", "both", "list of column names"). 
 Default  is "none" (just shows the fit indices)}
 
-\item{digits}{How many decimal places to report to (default = 2)}
+\item{digits}{How many decimal places to report (default = 2)}
 
-\item{report}{If 3, then open an html table of the results (default = 1, options "table" and "html")}
+\item{report}{If "html", then show results in browser ("1", "table", "html")}
 
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 
