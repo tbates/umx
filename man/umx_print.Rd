@@ -29,7 +29,8 @@ umx_print(x, digits = getOption("digits"), quote = FALSE, na.print = "",
 }
 \description{
 A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
-Its most useful characteristic is allowing you to change how NA and zero appear.
+Its most useful characteristics are allowing you to change how NA and zero appear.
+and supressing values below a certain cut-off.
 By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 }
 \examples{

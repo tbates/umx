@@ -1555,10 +1555,10 @@ umx_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"),
 #' umx_print
 #'
 #' A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
-#' Its most useful characteristic is allowing you to change how NA and zero appear.
+#' Its most useful characteristics are allowing you to change how NA and zero appear.
+#' and supressing values below a certain cut-off.
 #' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 #'
-
 #' @param x A data.frame to print
 #' @param digits  The number of decimal places to print (defaults to getOption("digits")
 #' @param quote  Parameter passed to print (defaults to FALSE)
@@ -1581,28 +1581,35 @@ umx_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"),
 #' }
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
 	# depends on R2HTML::HTML and knitr::kable
-	# TODO: Options for file = c("Rout.html","cat","return")
-	file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
-	if(!is.null(suppress)){
-		x[abs(x) < suppress] = 0
-		zero.print = "."
+	# TODO allow matrix as input
+	if(class(x)!="data.frame"){
+		message("Sorry, umx_print currently only prints data.frames. File a request to print '", class(x), "' objects")
+		return()
+	} else if(dim(x)[1] == 0){
+		return()
+	} else {
+		file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
+		if(!is.null(suppress)){
+			x[abs(x) < suppress] = 0
+			zero.print = "."
+		}
+		x <- umx_round(x, digits = digits, coerce = FALSE)
+	    if (any(ina <- is.na(x))) 
+	        x[ina] <- na.print
+		i0 <- !ina & x == 0
+	    if (zero.print != "0" && any(i0)) 
+	        x[i0] <- zero.print
+	    if (is.numeric(x) || is.complex(x)){
+	        print(x, quote = quote, right = TRUE, ...)
+		} else if(!is.na(file)){
+			R2HTML::HTML(x, file = file, Border = 0, append = FALSE, sortableDF= TRUE); 
+			system(paste0("open ", file))
+			print("Table opened in browser")
+	    }else{
+			print(knitr::kable(x, quote = quote, ...))
+	    }
+	    invisible(x)
 	}
-	x <- umx_round(x, digits = digits, coerce = FALSE)
-    if (any(ina <- is.na(x))) 
-        x[ina] <- na.print
-	i0 <- !ina & x == 0
-    if (zero.print != "0" && any(i0)) 
-        x[i0] <- zero.print
-    if (is.numeric(x) || is.complex(x)){
-        print(x, quote = quote, right = TRUE, ...)
-	} else if(!is.na(file)){
-		R2HTML::HTML(x, file = file, Border = 0, append = FALSE, sortableDF= TRUE); 
-		system(paste0("open ", file))
-		print("Table opened in browser")
-    }else{
-		print(knitr::kable(x, quote = quote, ...))
-    }
-    invisible(x)
 }
 
 # ===========================

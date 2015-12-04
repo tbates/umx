@@ -578,6 +578,8 @@ umxSummary.default <- function(model, ...){
 #' )
 #' m1 <- mxRun(m1)
 #' umxSummary(m1, show = "std")
+#' umxSummary(m1, show = "std", filter = "NS")
+#' umxSummary(m1, show = "std")
 #' umxSummary(m1, report = "table")
 umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE=TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...){
 	# TODO make table take lists of models...
@@ -662,7 +664,6 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 			toShow = parameterTable[,namesToShow]
 		}
 		if(report == "html"){
-			# depends on R2HTML::HTML
 			umx_print(toShow, digits = digits, file = "tmp.html");
 		} else {
 			umx_print(toShow, digits = digits, na.print = "", zero.print = "0", justify = "none")
@@ -701,7 +702,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 				}
 				x = paste0(
 					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi, 2), # was A7
-					", p "      , umx_APA_pval(p, .001, 3),
+					", p "      , umx_APA_pval(p, .001, 3, addComparison = TRUE),
 					"; CFI = "  , round(CFI, 3),
 					"; TLI = "  , round(TLI, 3),
 					"; ", RMSEA_CI
@@ -1417,7 +1418,8 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	if(report != "1"){
 		n_rows = dim(tablePub)[1]
 		for (i in 1:n_rows) {
-			if(!is.na(tablePub[i, "p"])){
+			thisPValue = tableOut[i, 9]
+			if(!is.na(thisPValue) && !is.nan(thisPValue)){
 				if(tableOut[i, 9] < .05){
 					did_didnot = ". This caused a significant loss of fit "
 				} else {

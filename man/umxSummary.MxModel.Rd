@@ -76,6 +76,8 @@ m1 <- mxModel(m1,
 )
 m1 <- mxRun(m1)
 umxSummary(m1, show = "std")
+umxSummary(m1, show = "std", filter = "NS")
+umxSummary(m1, show = "std")
 umxSummary(m1, report = "table")
 }
 \references{
