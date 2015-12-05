@@ -175,7 +175,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, r
 			stop("Don't set model to a string && pass in name as a string as well...")
 		}
 	} else {
-		# TODO allow model to be given as input
 		if(umx_is_RAM(model)){
 			message("Updating existing model")
 			if(is.na(name)){
@@ -189,12 +188,15 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, r
 				newModel = mxRun(newModel)
 				umxSummary(newModel)
 				if(comparison){
-					moreFree = FALSE
-					# TODO compute moreFree from df of models!!!
-					if(moreFree){
-						umxCompare(model, newModel)
+					if(length(coef(model)) > length(coef(newModel))){
+						newMore = FALSE
 					} else {
+						newMore = TRUE
+					}
+					if(newMore){
 						umxCompare(newModel, model)
+					} else {
+						umxCompare(model, newModel)
 					}
 				}
 			}			
@@ -2092,10 +2094,10 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE) {	
-	# TODO change these to an S3 method with three classes...
-	# TODO test that arguments not used by a particular class are not set away from their defaults
-	# TODO perhaps make "A_with_A" --> "var_A"
-	# TODO perhaps make "one_to_x2" --> "mean_x2" 
+	# TODO umxLabel: change these to an S3 method with three classes...
+	# TODO umxLabel: test that arguments not used by a particular class are not set away from their defaults
+	# TODO umxLabel: perhaps make "A_with_A" --> "var_A"
+	# TODO umxLabel: perhaps make "one_to_x2" --> "mean_x2" best left as is
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
 		xmuLabel_Matrix(mx_matrix = obj, baseName = baseName, setfree = setfree, drop = drop, labelFixedCells = labelFixedCells, jiggle = jiggle, boundDiag = boundDiag, suffix = suffix, verbose = verbose, overRideExisting = overRideExisting)

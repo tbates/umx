@@ -7,14 +7,14 @@
 umx_default_option(x, option_list, check = TRUE)
 }
 \arguments{
-\item{x}{the value chosen (may be a selection, or the default list of options)}
+\item{x}{the value chosen (may be the default option list)}
 
-\item{option_list}{TODO fix this documentation}
+\item{option_list}{A vector of valid options}
 
 \item{check}{Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE)}
 }
 \value{
-- the option
+- one validated option
 }
 \description{
 Handle parameter options given as a default list in a function.

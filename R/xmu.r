@@ -204,7 +204,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	namesS = dimnames(freeS)[[1]]
 
 	# if(umx_has_means(model)){
-	# 	freeM  = model@matrices$M@free
+	# 	freeM  = model$matrices$M$free
 	# 	namesM = dimnames(freeM)[[1]]
 	# }
 

@@ -13,7 +13,7 @@ reliability(S)
 -
 }
 \description{
-Compute and report Coefficient alpha
+Compute and report Coefficient alpha (extracted from Rcmdr to avoid its dependencies)
 }
 \examples{
 # treat vehicle aspects as items of a test

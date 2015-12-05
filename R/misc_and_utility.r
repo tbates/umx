@@ -1267,10 +1267,9 @@ specify_decimal <- function(x, k){
 	format(round(x, k), nsmall = k)
 }
 
-# extracted from Rcmdr: TODO: fix URL for RCmdr reference
 #' reliability
 #'
-#' Compute and report Coefficient alpha
+#' Compute and report Coefficient alpha (extracted from Rcmdr to avoid its dependencies)
 #'
 #' @param S A square, symmetric, numeric covariance matrix
 #' @return - 
@@ -2592,10 +2591,10 @@ umx_scale_wide_twin_data <- function(varsToScale, suffixes, df) {
 #' This is just a version of x = \code{\link{match.arg}}(x) which
 #' allows items not in the list.
 #'
-#' @param x the value chosen (may be a selection, or the default list of options)
-#' @param option_list TODO fix this documentation
+#' @param x the value chosen (may be the default option list)
+#' @param option_list  A vector of valid options
 #' @param check Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE) 
-#' @return - the option
+#' @return - one validated option
 #' @export
 #' @family Misc
 #' @seealso - \code{\link{match.arg}}
