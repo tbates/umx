@@ -5,10 +5,10 @@
 \alias{vcov.MxModel}
 \title{umxExpCov}
 \usage{
-umxExpCov(model, latents = FALSE, manifests = TRUE, digits = NULL)
+umxExpCov(model, latents = FALSE, manifests = TRUE, digits = NULL, ...)
 
 \method{vcov}{MxModel}(model, latents = FALSE, manifests = TRUE,
-  digits = NULL)
+  digits = NULL, ...)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get the covariance matrix from}
@@ -18,6 +18,8 @@ umxExpCov(model, latents = FALSE, manifests = TRUE, digits = NULL)
 \item{manifests}{Whether to select the manifest variables (defaults to TRUE)}
 
 \item{digits}{precision of reporting. Leave NULL to do no rounding.}
+
+\item{...}{extra parameters (to match \code{\link{vcov}})}
 }
 \value{
 - expected covariance matrix

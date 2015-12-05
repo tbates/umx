@@ -2513,6 +2513,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @param latents Whether to select the latent variables (defaults to TRUE)
 #' @param manifests Whether to select the manifest variables (defaults to TRUE)
 #' @param digits precision of reporting. Leave NULL to do no rounding.
+#' @param ... extra parameters (to match \code{\link{vcov}})
 #' @return - expected covariance matrix
 #' @export
 #' @family Reporting functions
@@ -2534,7 +2535,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxExpCov(m1)
 #' umxExpCov(m1, digits = 3)
-umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
+umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
 	if(model@data@type == "raw"){
 		manifestNames = names(model$data@observed)
@@ -2579,7 +2580,6 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 #' @rdname umxExpCov
 #' @export
 vcov.MxModel <- umxExpCov
-
 
 #' umxExpMean
 #'
