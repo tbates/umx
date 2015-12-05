@@ -2507,7 +2507,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 
 #' umxExpCov
 #'
-#' extract the expected covariance matrix from an \code{\link{mxModel}}
+#' Extract the expected covariance matrix from an \code{\link{mxModel}}
 #'
 #' @param model an \code{\link{mxModel}} to get the covariance matrix from
 #' @param latents Whether to select the latent variables (defaults to TRUE)
@@ -2575,6 +2575,12 @@ umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL){
 	}
 	return(expCov) 
 }
+
+#' @rdname umxExpCov
+#' @export
+vcov.MxModel <- umxExpCov
+
+
 #' umxExpMean
 #'
 #' Extract the expected means matrix from an \code{\link{mxModel}}

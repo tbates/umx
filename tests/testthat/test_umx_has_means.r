@@ -4,6 +4,8 @@
 # 
 # test_package("umx")
 
+context("umx_has type functions")
+
 require(umx)
 data(demoOneFactor)
 latents  = c("G")
@@ -16,16 +18,15 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 
-testthat::expect_false(umx_has_means(m1))
 m2 <- mxModel(m1, 
 	mxPath(from = "one", to = manifests),
 	mxData(demoOneFactor, type = "raw")
 )
-testthat::expect_true(umx_has_means(m2))
-m2 = umxRun(m2, setLabels = TRUE, setValues = TRUE)
-testthat::expect_true(umx_has_means(m2))
+m2run = umxRun(m2, setLabels = TRUE, setValues = TRUE)
 
-m3 <- mxModel(m2, name = "row_of_NA", mxData(rbind(demoOneFactor, NA), type = "raw"))
-umx_time(c(mxRun(m2), mxRun(m3)), "%H:%M:%OS2")
-
+test_that("umx_has_means works", {
+	expect_false(umx_has_means(m1))
+	expect_true(umx_has_means(m2))
+	expect_true(umx_has_means(m2run))
+})
 

@@ -2,9 +2,13 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxExpCov}
 \alias{umxExpCov}
+\alias{vcov.MxModel}
 \title{umxExpCov}
 \usage{
 umxExpCov(model, latents = FALSE, manifests = TRUE, digits = NULL)
+
+\method{vcov}{MxModel}(model, latents = FALSE, manifests = TRUE,
+  digits = NULL)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get the covariance matrix from}
@@ -19,7 +23,7 @@ umxExpCov(model, latents = FALSE, manifests = TRUE, digits = NULL)
 - expected covariance matrix
 }
 \description{
-extract the expected covariance matrix from an \code{\link{mxModel}}
+Extract the expected covariance matrix from an \code{\link{mxModel}}
 }
 \examples{
 require(umx)
