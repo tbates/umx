@@ -2509,7 +2509,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #'
 #' Extract the expected covariance matrix from an \code{\link{mxModel}}
 #'
-#' @param model an \code{\link{mxModel}} to get the covariance matrix from
+#' @param object an \code{\link{mxModel}} to get the covariance matrix from
 #' @param latents Whether to select the latent variables (defaults to TRUE)
 #' @param manifests Whether to select the manifest variables (defaults to TRUE)
 #' @param digits precision of reporting. Leave NULL to do no rounding.
@@ -2535,39 +2535,39 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxExpCov(m1)
 #' umxExpCov(m1, digits = 3)
-umxExpCov <- function(model, latents = FALSE, manifests = TRUE, digits = NULL, ...){
+umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
-	if(model@data@type == "raw"){
-		manifestNames = names(model$data@observed)
+	if(object$data$type == "raw"){
+		manifestNames = names(object$data@observed)
 	} else {
-		manifestNames = dimnames(model$data@observed)[[1]]
+		manifestNames = dimnames(object$data@observed)[[1]]
 	}
-	if(umx_is_RAM(model)){
+	if(umx_is_RAM(object)){
 		if(manifests & !latents){
-			# expCov = attr(model$objective[[2]]$result, "expCov")
-			thisFit = paste0(model$name, ".fitfunction")
-			expCov <- attr(model@output$algebras[[thisFit]], "expCov")
+			# expCov = attr(object$objective[[2]]$result, "expCov")
+			thisFit = paste0(object$name, ".fitfunction")
+			expCov <- attr(object$output$algebras[[thisFit]], "expCov")
 			dimnames(expCov) = list(manifestNames, manifestNames)
 		} else {
-			A <- mxEval(A, model)
-			S <- mxEval(S, model)
+			A <- mxEval(A, object)
+			S <- mxEval(S, object)
 			I <- diag(1, nrow(A))
 			E <- solve(I - A)
 			expCov <- E %&% S # The model-implied covariance matrix
 			mV <- NULL
 			if(latents) {
-				mV <- model@latentVars 
+				mV <- object$latentVars 
 			}
 			if(manifests) {
-				mV <- c(mV, model@manifestVars)
+				mV <- c(mV, object$manifestVars)
 			}
 			expCov = expCov[mV, mV]
 		}
 	} else {
 		if(latents){
-			stop("I don't know how to reliably get the latents for non-RAM models... Sorry :-(")
+			stop("I don't know how to reliably get the latents for non-RAM objects... Sorry :-(")
 		} else {
-			expCov <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expCov")
+			expCov <- attr(object$output$algebras[[paste0(object$name, ".fitfunction")]], "expCov")
 			dimnames(expCov) = list(manifestNames, manifestNames)
 		}
 	}

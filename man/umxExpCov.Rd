@@ -5,13 +5,13 @@
 \alias{vcov.MxModel}
 \title{umxExpCov}
 \usage{
-umxExpCov(model, latents = FALSE, manifests = TRUE, digits = NULL, ...)
+umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL, ...)
 
-\method{vcov}{MxModel}(model, latents = FALSE, manifests = TRUE,
+\method{vcov}{MxModel}(object, latents = FALSE, manifests = TRUE,
   digits = NULL, ...)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to get the covariance matrix from}
+\item{object}{an \code{\link{mxModel}} to get the covariance matrix from}
 
 \item{latents}{Whether to select the latent variables (defaults to TRUE)}
 
