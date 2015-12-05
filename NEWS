@@ -3,17 +3,16 @@
 umx 1.1.0
 --------------
 
-* Allow umxRAM to take existing model as input (very useful)
+* umxRAM can take existing model as input (very useful)
 * umxRAM reports model fit and comparison (if old model exists)
-* Allow umx_residualize to take multiple DVs
-* Enhance umxMI to cope with more situations
-* Begin support for sex-lim twin models
-* Significant additional tutorial-style help in twin model Rd
-* Much enhanced help for twin functions
-* Include and document data for sex-limitation functions
-* Various new function features, help functions like umx_fun_mean_sd
+* Enhanced umx_residualize to take multiple DVs
+* Enhanced umxMI to cope with more situations
 * Improvements to summaryAPA to handle data as well as lm
-* Improving consistency and learability in parameter names (minor backward incompatibility)
+* Much enhanced help for twin functions
+* Begin support for sex-lim twin models
+* New data file for sex-limitation
+* Various new function features, help functions like umx_fun_mean_sd
+* Improving consistency in parameter names (minor backward incompatibility)
 * Replacing @ with $ accessor begun
 
 umx 1.0.0
