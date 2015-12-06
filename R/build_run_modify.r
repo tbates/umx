@@ -12,7 +12,7 @@
 
 #' @importFrom graphics plot
 #' @importFrom methods as getSlots is slotNames
-#' @importFrom stats C aggregate as.formula complete.cases
+#' @importFrom stats C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
@@ -3577,13 +3577,21 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		return(out)
 	}
 	if(!is.null(v1m0)){
+		# TODO lbound ubound unlikely to be applied to two things, and can't affect result... error if they're not NULL?
+		if(!is.na(lbound)&&is.na(ubound)){
+			warning("don't use lbound or ubound with v1m0: it doesn't make sense...")
+		}
 		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels, lbound = lbound, ubound = ubound)
 		b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
 		return(list(a,b))
 	}
 
 	if(!is.null(v.m.)){
-		a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, labels = labels, lbound = lbound, ubound = ubound)
+		# TODO lbound ubound unlikely to be applied to two things. lbound for var should be 0
+		if(!is.na(lbound)&&is.na(ubound)){
+			warning("Don't use lbound or ubound with v1m0: it doesn't make sense... + I lbound var @ 0")
+		}
+		a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
 		b = mxPath(from = "one", to = v.m., free = TRUE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
 		return(list(a,b))
 	}
@@ -3663,13 +3671,6 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			arrows  = 2
 			connect = "unique.bivariate"
 		}
-	} else if(!is.null(Cholesky)){
-		stop("I have not yet implemented Cholesky as a connection - email me a reminder!.\n")
-		if(is.null(from) | is.null(to)){
-			stop("To use Cholesky, I need both 'from=' and 'to=' to be set.\n")
-		} else {
-			stop("I have not yet implemented Cholesky as a connection - email me a reminder!.\n")
-		}
 	} else {
 		if(is.null(from) && is.null(to)){
 			stop("You don't seem to have requested any paths.\n",
@@ -3682,7 +3683,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			from    = from
 			to      = to
 			arrows  = arrows
-			connect = "single"
+			connect = connect
 		}
 	}
 	# ==================================

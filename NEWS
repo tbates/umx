@@ -5,13 +5,17 @@ umx 1.1.0
 
 * umxRAM can take existing model as input (very useful)
 * umxRAM reports model fit and comparison (if old model exists)
+* umxPath now lbounds var@0 for v.m.
 * Enhanced umx_residualize to take multiple DVs
 * Enhanced umxMI to cope with more situations
 * Improvements to summaryAPA to handle data as well as lm
 * Much enhanced help for twin functions
+* Various new function features
+* Add vcov() S3 fn
+* Improved umx_print handling of 0-row input
+* summary helpers  (e.g. umx_fun_mean_sd)
 * Begin support for sex-lim twin models
 * New data file for sex-limitation
-* Various new function features, help functions like umx_fun_mean_sd
 * Improving consistency in parameter names (minor backward incompatibility)
 * Replacing @ with $ accessor begun
 
