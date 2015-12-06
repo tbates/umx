@@ -2487,12 +2487,15 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 
 #' umxEquate
 #'
-#' Equate parameters by setting one or more labels (the slave set) equal
-#' to the labels in a master set.
-#' Setting two or more parameters to have the same 
-#' \code{\link{umxLabel}} constrains them to take the same value.
+#' In addition to dropping or adding parameters, a second common task in modelling
+#' is to equate parameters. umx provides a convenience function to equate parameters 
+#' by setting one or more parameters (the "slave" set) equal to one or more "master" 
+#' parameters. These parameters are picked out via their labels, and setting two or more
+#' parameters to have the same value is accomplished by setting the slave(s) to have
+#' the same label(s) as the master parameters, thus constraining them to take the same
+#' value during model fitting.
 #' 
-#' note: In addition to using this method to equating parameters, you can
+#' \emph{note}: In addition to using this method to equating parameters, you can
 #' also equate one parameter to another by setting its label to the 
 #' "square bracket" address of the master, e.g. "a[r,c]".
 #' 
