@@ -1643,8 +1643,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	# ============================
 	# = Make the manifest shapes =
 	# ============================
-	# x1 [label="E", shape = square];
-	preOut = "\t# Manifests\n"
+	preOut = "\t# Latents\n"
 	for(var in latents) {
 	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
 	}
@@ -1800,12 +1799,17 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 			out = paste0(out, from, " -> ", target, " [label = \"", value, "\"]", ";\n")
 		}
 	}
-	preOut = "";
-	for(var in selDVs[1:varCount]) {
-	   preOut = paste0(preOut, "\n", var, " [shape = box];\n")
+	preOut = "\t# Latents\n"
+	latents = unique(latents)
+	for(var in latents) {
+	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
 	}
 
-	latents = unique(latents)
+	preOut = paste0(preOut, "\n\t# Manifests\n")
+	for(var in selDVs[1:varCount]) {
+	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
+	}
+
 	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
 	# grep('a', latents, value=T)
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
@@ -1932,6 +1936,7 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 	parameterKeyList = omxGetParameters(model)
 	out = "";
 	cSpecifics = c();
+	latents = c();
 	for(thisParam in names(parameterKeyList) ) {
 		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { # top level a c e
 			# top level a c e
@@ -1939,18 +1944,21 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 			from = sub("^([ace]_cp)_r([0-9])", '\\1\\2', thisParam, perl=T);
 			# "a_cp_r1c1" # row = common factor number
 			target = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl=T);
+			latents = append(latents,from);
 		} else if (grepl("^cp_loadings_r[0-9]", thisParam)) {
 			# common loading cp_loadings_r1c1
 			from    = sub("^cp_loadings_r([0-9])c([0-9])", "common\\2", thisParam, perl=TRUE);
 			# from    = "common";
 			thisVar = as.numeric(sub('cp_loadings_r([0-9])c([0-9])', '\\1', thisParam, perl = TRUE));
 			target  = selDVs[as.numeric(thisVar)]
+			latents = append(latents,from);
 		} else if (grepl("^[ace]s_r[0-9]", thisParam)) {
 			# specific
 			grepStr = '([ace]s)_r([0-9]+)c([0-9]+)'
 			from    = sub(grepStr, '\\1\\3', thisParam, perl=T);
 			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl=T));
 			target  = selDVs[as.numeric(targetindex)]			
+			latents = append(latents,from);
 			cSpecifics = append(cSpecifics,from);
 		} else if (grepl("^expMean", thisParam)) { # means probably expMean_r1c1
 			grepStr = '(^.*)_r([0-9]+)c([0-9]+)'
@@ -1972,10 +1980,16 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 			out = paste0(out, ";\n", from, " -> ", target, " [label=\"", val, "\"]")
 		}
 	}
-	preOut = "";
-	for(n in c(1:varCount)) {
-	   preOut = paste0(preOut, "\n", selDVs[n], " [shape=box];\n")
+	preOut = "\t# Latents\n"
+	latents = unique(latents)
+	for(var in latents) {
+	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
 	}
+	preOut = paste0(preOut, "\n\t# Manifests\n")
+	for(n in c(1:varCount)) {
+	   preOut = paste0(preOut, "\n", selDVs[n], " [shape=square];\n")
+	}
+	
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
@@ -2028,6 +2042,7 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	parameterKeyList = omxGetParameters(model, free = TRUE);
 	out = "";
 	cSpecifics = c();
+	latents = c()
 	for(thisParam in names(parameterKeyList) ) {
 		if( grepl("^[ace]i_r[0-9]", thisParam)) {
 			# top level a c e
@@ -2037,12 +2052,14 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 			from    = sub(grepStr, '\\1_\\3', thisParam, perl = TRUE);
 			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl=T));
 			target  = selDVs[as.numeric(targetindex)]
+			latents = append(latents,from);
 		} else if (grepl("^[ace]s_r[0-9]", thisParam)) { # specific
 			grepStr = '([ace]s)_r([0-9]+)c([0-9]+)'
 			from    = sub(grepStr, '\\1\\3', thisParam, perl = T);
 			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl = T));
 			target  = selDVs[as.numeric(targetindex)]
 			cSpecifics = append(cSpecifics,from);
+			latents = append(latents,from);
 		} else if (grepl("^expMean", thisParam)) { # means probably expMean_r1c1
 			grepStr = '(^.*)_r([0-9]+)c([0-9]+)'
 			from    = "one";
@@ -2066,11 +2083,16 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 		# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin");
 	}
 
-	preOut = "";
-
-	for(n in c(1:varCount)) {
-	   preOut = paste0(preOut, "\n", selDVs[n], " [shape=box];\n")
+	preOut = "\t# Latents\n"
+	latents = unique(latents)
+	for(var in latents) {
+	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
 	}
+	preOut = paste0(preOut, "\n\t# Manifests\n")
+	for(n in c(1:varCount)) {
+	   preOut = paste0(preOut, "\n", selDVs[n], " [shape=square];\n")
+	}
+
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");

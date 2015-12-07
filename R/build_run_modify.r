@@ -756,7 +756,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' (measured behaviors).
 #' 
 #' umxACE supports a core model in behavior genetics, known as the ACE Cholesky model
-#' {Cardon and Neale}. This model decomposes phenotypic variance into Additive genetic, 
+#' (Cardon and Neale, 1996). This model decomposes phenotypic variance into Additive genetic, 
 #' unique environmental (E) and, optionally, either common or shared-environment (C) or 
 #' non-additive genetic effects (D). This latter restriction emerges due to a lack of degrees of 
 #' freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}. The Cholesky or 
@@ -764,9 +764,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' account for all the variance (with some restrictions) in the data. This model creates as 
 #' many latent A C and E variables as there are phenotypes, and, moving from left to 
 #' right, decomposes the variance in each component into successively restricted 
-#' factors (see Figure below).
-#' 
-#' The following figure shows how the ACE model appears as a path diagram:
+#' factors. The following figure shows how the ACE model appears as a path diagram:
 #' 
 #' \figure{ACE.png}
 #' 
