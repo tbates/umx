@@ -834,12 +834,15 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 #' Search for text. Will search names if given a data.frame, or strings if given a vector of strings. 
 #' NOTE: Handy feature is that this can search the labels of data imported from SPSS
 #'
+#' To simply grep for a pattern in a string just use R built-in grep* functions, e.g.:
+#'  grepl("^NA\\[0-9]", "NA.3")
 #' @param df The \code{\link{data.frame}} or string to search
 #' @param grepString the search string
 #' @param output the column name, the label, or both (default)
 #' @param ignore.case whether to be case sensitive or not (default TRUE = ignore case)
 #' @param useNames whether to search the names as well as the labels (for SPSS files with label metadata)
 #' @return - list of matched column names and/or labels
+#' @seealso - \code{\link{grep}}
 #' @family Utility Functions
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
