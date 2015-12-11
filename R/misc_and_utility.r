@@ -157,8 +157,8 @@ umx_check_parallel <- function(nCores = -1) {
 		mxData(latentMultiRegModerated1, type="raw")
 	)
 	test1 <- mxRun(test1)
-	umx_time(test1)
 	umx_set_cores(oldCores)
+	invisible(umx_time(test1))
 }
 
 #' umx_get_optimizer
