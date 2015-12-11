@@ -25,6 +25,10 @@ umx_grep(df, grepString, output = c("both", "label", "name"),
 Search for text. Will search names if given a data.frame, or strings if given a vector of strings. 
 NOTE: Handy feature is that this can search the labels of data imported from SPSS
 }
+\details{
+To simply grep for a pattern in a string just use R built-in grep* functions, e.g.:
+ grepl("^NA\\[0-9]", "NA.3")
+}
 \examples{
 umx_grep(mtcars, "hp", output="both", ignore.case= TRUE)
 umx_grep(c("hp", "ph"), "hp")
@@ -38,6 +42,8 @@ umx_grep(spss_df, "labeltext", output = "name")
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
+- \code{\link{grep}}
+
 Other Utility Functions: \code{\link{qm}},
   \code{\link{umx_find_object}}, \code{\link{umx_msg}},
   \code{\link{umx_names}}, \code{\link{umx_paste_names}},

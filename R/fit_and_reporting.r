@@ -873,17 +873,20 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FAL
 		# TODO and then add to umxSummaryIP and CP
 		message("Creating CI-based report!")
 		# CIs exist, get the lower and uppper CIs as a dataframe
-		CIlist = data.frame(model@output$confidenceIntervals)
+		CIlist = data.frame(model$output$confidenceIntervals)
 		# Drop rows fixed to zero
 		CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
+		# discard rows named NA
+		CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
+
 		# These can be names ("top.a_std[1,1]") or labels ("a11")
 		# imxEvalByName finds them both
-		outList = c();
-		for(aName in row.names(CIlist)) {
-			outList <- append(outList, imxEvalByName(aName, model))
-		}
-		# Add estimates into the CIlist
-		CIlist$estimate = outList
+		# outList = c();
+		# for(aName in row.names(CIlist)) {
+		# 	outList <- append(outList, imxEvalByName(aName, model))
+		# }
+		# # Add estimates into the CIlist
+		# CIlist$estimate = outList
 		# reorder to match summary
 		CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
 		CIlist$fullName = row.names(CIlist)
@@ -895,7 +898,7 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FAL
 		# iterate over each CI
 		labelList = imxGenerateLabels(model)			
 		rowCount = dim(CIlist)[1]
-
+		# return(CIlist)
 		for(n in 1:rowCount) { # n = 1
 			thisName = row.names(CIlist)[n] # thisName = "a11"
 			# convert labels to [bracket] style
@@ -909,7 +912,7 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FAL
 			thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
 			thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
 			CIparts = round(CIlist[n, c("estimate", "lbound", "ubound")], 2)
-			thisString = paste(CIparts[1], " (",CIparts[2], ":",CIparts[3], ")", sep="")
+			thisString = paste(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]", sep="")
 			# print(list(CIlist, labelList, rowCount, fullName, thisMatrixName))
 
 			if(grepl("^a", thisMatrixName)) {
@@ -935,6 +938,9 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FAL
 		umxPlotACE(model, dotFilename, std = showStd)
 	}
 	if(returnStd) {
+		if(CIs){
+			message("Returned model won't work if you asked for CIs...")
+		}
 		return(stdFit)
 	}
 }
