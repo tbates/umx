@@ -38,7 +38,6 @@ In addition, it has the powerful feature of operating on a list of variables, an
 wide data, expanding the var name using a set of variable-name suffixes.
 }
 \examples{
-library(formula.tools)
 tmp = mtcars
 # Residualise mpg on cylinders and displacement
 r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)
