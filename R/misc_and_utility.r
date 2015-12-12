@@ -2485,10 +2485,11 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' df2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
 #' all(df1$hp == df2)
 umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
+	library(formula.tools)
 	# Check names
 	# TODO remove dependency on formula.tools
-    # depends on formula.tools::lhs
-    # depends on formula.tools::rhs
+	# depends on formula.tools::lhs
+	# depends on formula.tools::rhs
 	nVar = length(var)
 	if(nVar > 1 && class(var) != "formula"){
 		for (i in 1:nVar) {
