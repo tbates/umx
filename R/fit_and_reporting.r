@@ -3073,14 +3073,15 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' summaryAPA(mtcars[,1:3])
 summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", report = c("table", "html")) {
 	report = match.arg(report)
-	if("data.frame" == class(obj)){
+	if(class(obj)=="data.frame"){
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE)
 		cor_table = umx_apply(round, cor_table, digits= digits)
 		m_sd = umx_apply(umx_fun_mean_sd, obj)
+		output = data.frame(rbind(cor_table, m_sd), stringsAsFactors=FALSE)
 		if(report == "html"){
-			umx_print(rbind(cor_table, m_sd), digits = digits, file = "tmp.html")
+			umx_print(output, digits = digits, file = "tmp.html")
 		} else {
-			umx_print(rbind(cor_table, m_sd), digits = digits)			
+			umx_print(output, digits = digits)
 		}
 	}else if( "lm" == class(obj)){
 		if(std){
