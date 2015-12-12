@@ -10,7 +10,6 @@
     packageStartupMessage("For an overview type '?umx'")
 }
 
-#' @importFrom formula.tools lhs rhs
 #' @importFrom graphics plot
 #' @importFrom methods as getSlots is slotNames
 #' @importFrom stats C aggregate as.formula coef complete.cases

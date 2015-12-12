@@ -2484,11 +2484,7 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' df2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
 #' all(df1$hp == df2)
 umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
-	# Check names
-	# TODO remove dependency on formula.tools
-	# depends on formula.tools::lhs
-	# depends on formula.tools::rhs
-	
+	# Check names	
 	nVar = length(var)
 	if(nVar > 1 && class(var) != "formula"){
 		for (i in 1:nVar) {
@@ -2499,8 +2495,8 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 		if(class(var) == "formula"){
 			umx_check(is.null(covs), "stop", "when using formula, leave covs empty")
 			form <- var
-			var  = all.vars(lhs(form))
-			covs = all.vars(rhs(form))
+			var  = all.vars(terms(form))[1]
+			covs = all.vars(delete.response(terms(form)))
 		} else {
 			form = NULL # so we catch this and create it below
 		}
