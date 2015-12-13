@@ -190,24 +190,19 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #' @family xmu internal not for end user
 #' @export
 xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = FALSE) {
-	# TODO implement overRideExisting !!!
 	if (!umx_is_RAM(model)) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
-	if(overRideExisting){
-		stop("overRideExisting not implemented yet, sorry...")
-	}
-	freeA  = model$matrices$A$free
+	freeA  = model$A$free
 	namesA = dimnames(freeA)[[1]]
 
-	freeS  = model$matrices$S$free
+	freeS  = model$S$free
 	namesS = dimnames(freeS)[[1]]
 
 	# if(umx_has_means(model)){
 	# 	freeM  = model$matrices$M$free
 	# 	namesM = dimnames(freeM)[[1]]
 	# }
-
 	# =========================
 	# = Add asymmetric labels =
 	# =========================
@@ -215,8 +210,10 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	for(fromCol in seq_along(theseNames)) {
 		for(toRow in seq_along(theseNames)) {
 			if(labelFixedCells | freeA[toRow, fromCol]){
-			   thisLabel = paste(theseNames[fromCol], "_to_", theseNames[toRow], suffix, sep = "")
-			   model@matrices$A@labels[toRow,fromCol] = thisLabel
+			   thisLabel = paste0(theseNames[fromCol], "_to_", theseNames[toRow], suffix)			 	
+				if(overRideExisting | is.na(model$A$labels[toRow,fromCol])){
+					model$A$labels[toRow,fromCol] = thisLabel
+			 	}
 			}
 		}
 	}
@@ -231,14 +228,16 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 			if(labelFixedCells | freeS[toRow, fromCol]) {
 			   orderedNames = sort(c(theseNames[fromCol], theseNames[toRow]))
 			   thisLabel = paste0(orderedNames[1], "_with_", orderedNames[2], suffix)
-			   model@matrices$S@labels[toRow,fromCol] = thisLabel
+ 				if(overRideExisting | is.na(model$S$labels[toRow,fromCol])){
+			   	 model$S$labels[toRow,fromCol] = thisLabel
+ 			 	}
 			}
 		}
 	}
-	model@matrices$S@labels[lower.tri(model$S$labels)] = t(model$S$labels[upper.tri(t(model$S$labels))])
+	model$S$labels[lower.tri(model$S$labels)] = t(model$S$labels[upper.tri(t(model$S$labels))])
 	toGet = model$S$labels
 	transpose_toGet = t(toGet)
-	model@matrices$S@labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
+	model$S$labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
 
 	# ==============================
 	# = Add means labels if needed =
@@ -247,11 +246,16 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	if(!is.null(model@data)){
 		if(model@data@type == "raw" & is.null(model$M)) {
 			message("You are using raw data, but have not yet added paths for the means\n")
-			message("You do this with mxPath(from = 'one', to = 'var')")
+			message("Do this with umxPath(means = 'var')")
 		}
 	}
 	if(!is.null(model$M)){
-		model$M@labels[] = paste0("one_to_", colnames(model$M$values), suffix)
+		meanLabels = paste0("one_to_", colnames(model$M$values), suffix)
+		if(overRideExisting){
+			model$M$labels[] = meanLabels
+	 	}else{
+			model$M$labels[is.na(model$M$labels)] = meanLabels[is.na(model$M$labels)]
+	 	}
 	}
 	return(model)
 }
@@ -547,9 +551,9 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' )
 #' m1 = umx:::xmuPropagateLabels(m1, suffix = "MZ")
 xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
-	model@matrices  <- lapply(model$matrices , xmuLabel_Matrix   , suffix = suffix, verbose = verbose)
-    model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix, verbose = verbose)
-    return(model)
+	model@matrices <- lapply(model$matrices , xmuLabel_Matrix   , suffix = suffix, verbose = verbose)
+	model@submodels <- lapply(model@submodels, xmuPropagateLabels, suffix = suffix, verbose = verbose)
+	return(model)
 }
 
 #' xmuMI

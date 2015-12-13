@@ -165,6 +165,21 @@ methods::setClass("MxModel.IP" , contains = "MxModel")
 #' # 5. Draw a nice path diagram (needs Graphviz)
 #' plot(m1)
 #' plot(m1, resid = "line") # I find it easier to work with stick-residuals
+#' 
+#' # =================================================
+#' # = This is an example of using your own labels:  =
+#' #   umxRAM will not over-ride them                =
+#' # =================================================
+#' m1 = umxRAM("tim", data = myCov,
+#' 	umxPath(c("wt", "disp"), to = "mpg"),
+#' 	umxPath(cov = c("wt", "disp"), labels = "b1"),
+#' 	umxPath(var = c("wt", "disp", "mpg"))
+#' )
+#' m1$S$labels
+#'#      mpg             wt            disp
+#'# mpg  "mpg_with_mpg"  "mpg_with_wt" "disp_with_mpg"
+#'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
+#'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' }
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, run = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
