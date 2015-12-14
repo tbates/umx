@@ -175,6 +175,7 @@ methods::setClass("MxModel.IP" , contains = "MxModel")
 #' 	umxPath(cov = c("wt", "disp"), labels = "b1"),
 #' 	umxPath(var = c("wt", "disp", "mpg"))
 #' )
+#' omxCheckEquals(m1$S$labels["disp", "wt"], "b1") # label preserved
 #' m1$S$labels
 #'#      mpg             wt            disp
 #'# mpg  "mpg_with_mpg"  "mpg_with_wt" "disp_with_mpg"
