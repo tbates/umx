@@ -37,7 +37,7 @@ Some highlights include:
 	* `umxDrop1()` *# Drop parameters and return a table of the effect on fit*
 4. Twin models
 	* umxACE, umxCP, umxIP
-	* ![umxACE](http://tbates.github.io/models/twins/2020/05/06/Twins-umxACE.html)
+	* ![umxACE](https://github.com/tbates/umx/blob/master/man/figures/ACE.png)
 5. Lower level helpers, data helpers, etc.
 	* `umxStart()` *# Add plausible start values to RAM or matrix models, or matrices: **very** helpful*
 	* `umxLabel()` *# Add systematic labels to paths ("var1_to_var2") and matrix cells ("a_r1c1"). This is great for setting, equating and dropping paths by label!*
