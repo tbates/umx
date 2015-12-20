@@ -13,7 +13,7 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
 \arguments{
 \item{model}{A fitted \code{\link{umxGxE}} model to summarize}
 
-\item{digits}{rounding (default = 2)}
+\item{digits}{round to how many digits (default = 2)}
 
 \item{xlab}{label for the x-axis of plot}
 

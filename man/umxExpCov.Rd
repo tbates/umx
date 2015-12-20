@@ -17,7 +17,7 @@ umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL, ...)
 
 \item{manifests}{Whether to select the manifest variables (defaults to TRUE)}
 
-\item{digits}{precision of reporting. Leave NULL to do no rounding.}
+\item{digits}{precision of reporting. Deafult (NULL) is not not round at all.}
 
 \item{...}{extra parameters (to match \code{\link{vcov}})}
 }

@@ -9,7 +9,7 @@
 \arguments{
 \item{object}{An fitted \code{\link{mxModel}} from which to get residuals}
 
-\item{digits}{rounding (default = 2)}
+\item{digits}{round to how many digits (default = 2)}
 
 \item{suppress}{smallest deviation to print out (default = NULL = show all)}
 

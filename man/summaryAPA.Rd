@@ -2,10 +2,11 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{summaryAPA}
 \alias{summaryAPA}
+\alias{umxAPA}
 \title{summaryAPA}
 \usage{
 summaryAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
-  report = c("table", "html"))
+  min = 0.001, addComparison = NA, report = c("table", "html"))
 }
 \arguments{
 \item{obj}{Either a model (\link{lm}), a beta-value, or a data.frame}
@@ -14,9 +15,13 @@ summaryAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
 
 \item{std}{If obj is an lm, whether to re-run the model on standardized data and report std betas}
 
-\item{digits}{How many digits to use in rounding values}
+\item{digits}{Round numbers to how many values}
 
 \item{use}{If obj is a data.frame, how to handle NA (default = "complete")}
+
+\item{min}{= .001 for a p-value, the smallest value to report numerically}
+
+\item{addComparison}{for a p-value, whether to add "</=" default (NA) adds "<" if necessary}
 
 \item{report}{what to return (default = markdown table). Use "html" to open a web page table}
 }
@@ -31,19 +36,23 @@ in square brackets, for one of the effects (specified by name in se). e.g.:
 \code{\link{summaryAPA}}(m1, "wt")
 \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 
-2. Given b and se will return a CI based on 1.96 times the se.
+2. Given a dataframe, summaryAPA will return a table of correlations, with
+the mean and SD of each variable as the last row.
 
-3. Given a dataframe, summaryAPA will return table of correlations, with
-the mean and SD of each variable as the second row.
+3. Given obj and se will return a CI based on 1.96 times the se.
+
+4. Given only obj, will be treated as a p value as returned in APA format.
 }
 \examples{
 # Generate a formatted string convey the effects in a model:  
 summaryAPA(lm(mpg ~ wt + disp, mtcars))
 summaryAPA(lm(mpg ~ wt + disp, mtcars), "disp")
+# Generate a summary table of correlations + Mean and SD:
+summaryAPA(mtcars[,1:3])
 # Generate a CI string based on effect and se
 summaryAPA(.4, .3)
-# Generate a summary table of correlations +  Mean and SD:
-summaryAPA(mtcars[,1:3])
+# format p-value
+summaryAPA(.0182613)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

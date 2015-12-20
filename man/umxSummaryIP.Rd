@@ -12,7 +12,7 @@ umxSummaryIP(model, digits = 2, dotFilename = c(NA, "name",
 \arguments{
 \item{model}{A fitted \code{\link{umxIP}} model to summarize}
 
-\item{digits}{rounding (default = 2)}
+\item{digits}{round to how many digits (default = 2)}
 
 \item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 

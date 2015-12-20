@@ -12,7 +12,7 @@ umxSummaryACE(model, digits = 2, dotFilename = NULL, returnStd = FALSE,
 \arguments{
 \item{model}{an \code{\link{mxModel}} to summarize}
 
-\item{digits}{rounding (default = 2)}
+\item{digits}{round to how many digits (default = 2)}
 
 \item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 

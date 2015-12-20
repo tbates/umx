@@ -135,7 +135,7 @@ umx_drop_ok <- function(model1, model2, text = "parameter") {
 #'
 #' @rdname residuals.MxModel
 #' @param object An fitted \code{\link{mxModel}} from which to get residuals
-#' @param digits rounding (default = 2)
+#' @param digits round to how many digits (default = 2)
 #' @param suppress smallest deviation to print out (default = NULL = show all)
 #' @param ... Optional parameters
 #' @return - matrix of residuals
@@ -737,7 +737,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 #'
 #' @aliases umxSummary.MxModel.ACE
 #' @param model an \code{\link{mxModel}} to summarize
-#' @param digits rounding (default = 2)
+#' @param digits round to how many digits (default = 2)
 #' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = F)
 #' @param extended how much to report (F)
@@ -955,7 +955,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #'
 #' @aliases umxSummary.MxModel.CP
 #' @param model A fitted \code{\link{umxCP}} model to summarize
-#' @param digits rounding (default = 2)
+#' @param digits round to how many digits (default = 2)
 #' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param extended how much to report (FALSE)
@@ -1110,7 +1110,7 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #'
 #' @aliases umxSummary.MxModel.IP
 #' @param model A fitted \code{\link{umxIP}} model to summarize
-#' @param digits rounding (default = 2)
+#' @param digits round to how many digits (default = 2)
 #' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = F)
 #' @param showRg = whether to show the genetic correlations (F)
@@ -1244,7 +1244,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #'
 #' @aliases umxSummary.MxModel.GxE
 #' @param model A fitted \code{\link{umxGxE}} model to summarize
-#' @param digits rounding (default = 2)
+#' @param digits round to how many digits (default = 2)
 #' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param showStd Whether to show the standardized model (not implemented! TRUE)
@@ -1419,7 +1419,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			tablePub[i, "Compare with Model"] = NA
 		}
 	}
-	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), rounding = digits, addComparison = NA)
+	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), digits = digits, addComparison = NA)
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
 	if(report != "1"){
 		n_rows = dim(tablePub)[1]
@@ -2540,7 +2540,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @param object an \code{\link{mxModel}} to get the covariance matrix from
 #' @param latents Whether to select the latent variables (defaults to TRUE)
 #' @param manifests Whether to select the manifest variables (defaults to TRUE)
-#' @param digits precision of reporting. Leave NULL to do no rounding.
+#' @param digits precision of reporting. Deafult (NULL) is not not round at all.
 #' @param ... extra parameters (to match \code{\link{vcov}})
 #' @return - expected covariance matrix
 #' @export
@@ -2616,7 +2616,7 @@ vcov.MxModel <- umxExpCov
 #' @param model an \code{\link{mxModel}} to get the means from
 #' @param latents Whether to select the latent variables (defaults to TRUE)
 #' @param manifests Whether to select the manifest variables (defaults to TRUE)
-#' @param digits precision of reporting. Leave NULL to do no rounding.
+#' @param digits precision of reporting. Default (NULL) will not round at all.
 #' @return - expected means
 #' @export
 #' @family Reporting functions
@@ -2987,11 +2987,12 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 #' round a p value so you get < .001 instead of .000000002 or 1.00E-09
 #'
 #' @param p The p-value to round
-#' @param min Values below min reported as "< min"
-#' @param rounding Number of decimal to which to round
+#' @param min Values below min will be reported as "< min"
+#' @param digits Number of decimals to which to round (default = 3)
 #' @param addComparison Whether to add '=' '<' etc. (NA adds when needed)
+#' @param rounding deprecated - please replace 'rounding' with 'digits'
 #' @family Reporting Functions
-#' @return - formatted p-value
+#' @return - p-value formatted in APA style
 #' @export
 #' @seealso - \code{\link{round}}
 #' @examples
@@ -3000,12 +3001,16 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 #' umx_APA_pval(1.23E-4)
 #' umx_APA_pval(c(1.23E-3, .5))
 #' umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
-umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
+umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA, rounding = NULL) {
+	if(!is.null(rounding)){
+		message("rounding deprecated - please replace 'rounding' with 'digits'")
+		digits = rounding
+	}
 	# leave addComparison as NA to add only when needed
 	if(length(p) > 1){
 		o = rep(NA, length(p))
 		for(i in seq_along(p)) {
-		   o[i] = umx_APA_pval(p[i], min = min, rounding = rounding, addComparison = addComparison)
+		   o[i] = umx_APA_pval(p[i], min = min, digits = digits, addComparison = addComparison)
 		}
 		return(o)
 	} else {
@@ -3028,11 +3033,11 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 			}
 		} else {
 			if(is.na(addComparison)){
-				return(format(round(p, rounding), scientific = FALSE, nsmall = rounding))
+				return(format(round(p, digits), scientific = FALSE, nsmall = digits))
 			}else if(addComparison){				
-				return(paste0("= ", format(round(p, rounding), scientific = FALSE, nsmall = rounding)))
+				return(paste0("= ", format(round(p, digits), scientific = FALSE, nsmall = digits)))
 			} else {
-				return(round(p, rounding))
+				return(round(p, digits))
 			}
 		}	
 	}
@@ -3048,16 +3053,21 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' \code{\link{summaryAPA}}(m1, "wt")
 #' \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 #' 
-#' 2. Given b and se will return a CI based on 1.96 times the se.
-#' 
-#' 3. Given a dataframe, summaryAPA will return a table of correlations, with
+#' 2. Given a dataframe, summaryAPA will return a table of correlations, with
 #' the mean and SD of each variable as the last row.
 #' 
+#' 3. Given obj and se will return a CI based on 1.96 times the se.
+#' 
+#' 4. Given only obj, will be treated as a p value as returned in APA format.
+#' 
+#' @aliases umxAPA
 #' @param obj Either a model (\link{lm}), a beta-value, or a data.frame
 #' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)
 #' @param std If obj is an lm, whether to re-run the model on standardized data and report std betas
-#' @param digits How many digits to use in rounding values
+#' @param digits Round numbers to how many values
 #' @param use If obj is a data.frame, how to handle NA (default = "complete")
+#' @param min = .001 for a p-value, the smallest value to report numerically
+#' @param addComparison for a p-value, whether to add "</=" default (NA) adds "<" if necessary
 #' @param report what to return (default = markdown table). Use "html" to open a web page table
 #' @return - string
 #' @export
@@ -3067,11 +3077,13 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' # Generate a formatted string convey the effects in a model:  
 #' summaryAPA(lm(mpg ~ wt + disp, mtcars))
 #' summaryAPA(lm(mpg ~ wt + disp, mtcars), "disp")
-#' # Generate a CI string based on effect and se
-#' summaryAPA(.4, .3)
 #' # Generate a summary table of correlations + Mean and SD:
 #' summaryAPA(mtcars[,1:3])
-summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", report = c("table", "html")) {
+#' # Generate a CI string based on effect and se
+#' summaryAPA(.4, .3)
+#' # format p-value
+#' summaryAPA(.0182613)
+summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("table", "html")) {
 	report = match.arg(report)
 	if(class(obj)=="data.frame"){
 		# generate a summary of correlation and means
@@ -3108,9 +3120,18 @@ summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete"
 			))		
 		}
 	} else {
-		print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), ", ", round(obj + (1.96 * se), digits), "]"))
+		if(is.null(se)){
+			# p-value
+			umx_APA_pval(obj, min = min, digits = digits, addComparison = addComparison)
+		} else {
+			# beta and SE
+			print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), ", ", round(obj + (1.96 * se), digits), "]"))
+		}
 	}
 }
+
+#' @export
+umxAPA <- summaryAPA
 
 #' umx_APA_model_CI
 #'
@@ -3151,11 +3172,11 @@ umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std",
 			
 			
 			APAstr = paste0(
-				umx_APA_pval(z[dimIndex, "estimate"], min = -1, rounding = digits),
+				umx_APA_pval(z[dimIndex, "estimate"], min = -1, digits = digits),
 				" [",
-				umx_APA_pval(z[dimIndex, "lbound"], min = -1, rounding = digits),
+				umx_APA_pval(z[dimIndex, "lbound"], min = -1, digits = digits),
 				", ",
-				umx_APA_pval(z[dimIndex, "ubound"], min = -1, rounding = digits),
+				umx_APA_pval(z[dimIndex, "ubound"], min = -1, digits = digits),
 				"]"
 			)
 		    return(APAstr) 

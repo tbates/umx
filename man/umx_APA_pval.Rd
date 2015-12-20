@@ -4,19 +4,22 @@
 \alias{umx_APA_pval}
 \title{umx_APA_pval}
 \usage{
-umx_APA_pval(p, min = 0.001, rounding = 3, addComparison = NA)
+umx_APA_pval(p, min = 0.001, digits = 3, addComparison = NA,
+  rounding = NULL)
 }
 \arguments{
 \item{p}{The p-value to round}
 
-\item{min}{Values below min reported as "< min"}
+\item{min}{Values below min will be reported as "< min"}
 
-\item{rounding}{Number of decimal to which to round}
+\item{digits}{Number of decimals to which to round (default = 3)}
 
 \item{addComparison}{Whether to add '=' '<' etc. (NA adds when needed)}
+
+\item{rounding}{deprecated - please replace 'rounding' with 'digits'}
 }
 \value{
-- formatted p-value
+- p-value formatted in APA style
 }
 \description{
 round a p value so you get < .001 instead of .000000002 or 1.00E-09
