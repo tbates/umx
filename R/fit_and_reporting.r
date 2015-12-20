@@ -3050,8 +3050,8 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' 
 #' 2. Given b and se will return a CI based on 1.96 times the se.
 #' 
-#' 3. Given a dataframe, summaryAPA will return table of correlations, with
-#' the mean and SD of each variable as the second row.
+#' 3. Given a dataframe, summaryAPA will return a table of correlations, with
+#' the mean and SD of each variable as the last row.
 #' 
 #' @param obj Either a model (\link{lm}), a beta-value, or a data.frame
 #' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)
@@ -3069,21 +3069,23 @@ umx_APA_pval <- function(p, min = .001, rounding = 3, addComparison = NA) {
 #' summaryAPA(lm(mpg ~ wt + disp, mtcars), "disp")
 #' # Generate a CI string based on effect and se
 #' summaryAPA(.4, .3)
-#' # Generate a summary table of correlations +  Mean and SD:
+#' # Generate a summary table of correlations + Mean and SD:
 #' summaryAPA(mtcars[,1:3])
 summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", report = c("table", "html")) {
 	report = match.arg(report)
 	if(class(obj)=="data.frame"){
+		# generate a summary of correlation and means
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE)
-		cor_table = umx_apply(round, cor_table, digits= digits)
-		m_sd = umx_apply(umx_fun_mean_sd, obj)
-		output = data.frame(rbind(cor_table, m_sd), stringsAsFactors=FALSE)
+		cor_table = umx_apply(round, cor_table, digits = digits) # round corelations
+		mean_sd = umx_apply(umx_fun_mean_sd, obj)
+		output = data.frame(rbind(cor_table, mean_sd), stringsAsFactors = FALSE)
 		if(report == "html"){
 			umx_print(output, digits = digits, file = "tmp.html")
 		} else {
 			umx_print(output, digits = digits)
 		}
 	}else if( "lm" == class(obj)){
+		# report lm summary table
 		if(std){
 			obj = update(obj, data = umx_scale(obj$model))
 		}
