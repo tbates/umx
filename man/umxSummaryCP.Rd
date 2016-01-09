@@ -63,11 +63,12 @@ umxSummaryCP(fit, dotFilename = "Figure 3", showStd = TRUE)
 - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryGxE}},
-  \code{\link{umxSummaryIP}}, \code{\link{umx}}
+  \code{\link{umxACEcov}}, \code{\link{umxACE}},
+  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxSummaryACE}},
+  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+  \code{\link{umx}}
 }
 

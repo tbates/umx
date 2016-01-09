@@ -64,11 +64,12 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE);
 - \code{\link{umxACE}}
 
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxSummaryCP}}, \code{\link{umxSummaryGxE}},
-  \code{\link{umxSummaryIP}}, \code{\link{umx}}
+  \code{\link{umxACEcov}}, \code{\link{umxACE}},
+  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+  \code{\link{umx}}
 }
 

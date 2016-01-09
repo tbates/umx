@@ -108,6 +108,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}}
 
 Other File Functions: \code{\link{dl_from_dropbox}},
+  \code{\link{umx_SQL_from_Excel}},
   \code{\link{umx_move_file}}, \code{\link{umx_open}},
   \code{\link{umx_rename_file}}
 
@@ -147,12 +148,13 @@ Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxJiggle}}
 
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}}
+  \code{\link{umxACEcov}}, \code{\link{umxACE}},
+  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxSummaryACE}},
+  \code{\link{umxSummaryCP}}, \code{\link{umxSummaryGxE}},
+  \code{\link{umxSummaryIP}}
 
 Other Utility Functions: \code{\link{qm}},
   \code{\link{umx_find_object}}, \code{\link{umx_grep}},

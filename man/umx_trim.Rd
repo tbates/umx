@@ -4,10 +4,12 @@
 \alias{umx_trim}
 \title{umx_trim}
 \usage{
-umx_trim(string)
+umx_trim(string, removeThis = NULL)
 }
 \arguments{
 \item{string}{to trim}
+
+\item{removeThis}{if not NULl then this string is removed whereever found in 'string'}
 }
 \value{
 - string
@@ -19,6 +21,7 @@ returns string w/o leading or trailing whitespace
 umx_trim(" dog") # "dog"
 umx_trim("dog ") # "dog"
 umx_trim("\\t dog \\n") # "dog"
+umx_trim("xlsx dog.xlsx", "\\\\.xlsx$") # "dog"
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}

@@ -97,10 +97,11 @@ utils::globalVariables(c(
 # = Define some class containers to allow specialised model objects =
 # = plot, etc can then operate on these                             =
 # ===================================================================
-methods::setClass("MxModel.ACE", contains = "MxModel")
-methods::setClass("MxModel.GxE", contains = "MxModel")
-methods::setClass("MxModel.CP" , contains = "MxModel")
-methods::setClass("MxModel.IP" , contains = "MxModel")
+methods::setClass("MxModel.ACE"   , contains = "MxModel")
+methods::setClass("MxModel.GxE"   , contains = "MxModel")
+methods::setClass("MxModel.CP"    , contains = "MxModel")
+methods::setClass("MxModel.IP"    , contains = "MxModel")
+methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 
 #' umxRAM
 #'
@@ -1119,8 +1120,8 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 			# threshMat is a three-item list of matrices and algebra
 			threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), verbose = FALSE, hint = hint)
 			# return(threshMat)
-			mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
-			dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
+			mzExpect = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
+			dzExpect = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
 			top = mxModel("top", umxLabel(meansMatrix), threshMat)
 			MZ  = mxModel("MZ", mzExpect, mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
 			DZ  = mxModel("DZ", dzExpect, mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
@@ -1225,12 +1226,12 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 		mxMatrix(name = "dzCr", type = "Full", 1, 1, free = FALSE, values = dzCr),
 		# Multiply by each path coefficient by its inverse to get variance component
 		# Quadratic multiplication to add common_loadings
-		mxAlgebra(a %*% t(a), name = "A"), # additive genetic variance
-		mxAlgebra(c %*% t(c), name = "C"), # common environmental variance
-		mxAlgebra(e %*% t(e), name = "E"), # unique environmental variance
-		mxAlgebra(A+C+E     , name = "ACE"),
-		mxAlgebra(A+C       , name = "AC" ),
-		mxAlgebra( (dzAr %x% A) + (dzCr %x% C),name = "hAC"),
+		mxAlgebra(name = "A", a %*% t(a)), # additive genetic variance
+		mxAlgebra(name = "C", c %*% t(c)), # common environmental variance
+		mxAlgebra(name = "E", e %*% t(e)), # unique environmental variance
+		mxAlgebra(name = "ACE", A+C+E),
+		mxAlgebra(name = "AC" , A+C  ),
+		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 		mxAlgebra(rbind (cbind(ACE, AC),
 		                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name = "expCovMZ"),
 		mxAlgebra(rbind (cbind(ACE, hAC),

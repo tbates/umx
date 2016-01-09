@@ -1168,6 +1168,73 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 	return(isTarget)
 }
 
+#' umx_SQL_from_Excel
+#'
+#' Read an xlsx file and convert into SQL insert statements. Unliekly to be of use to anyone but the package author :-)
+#' On OS X, the function can access the current frontmost Finder window.
+#' The file renaming is fast and, because you can use regular expressions, powerful
+#'
+#' @param theFile The xlsx file to read. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose file dialog will be thrown.
+#' @family File Functions
+#' @return - 
+#' @export
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' \dontrun{
+#' umx_SQL_from_Excel()
+#' umx_SQL_from_Excel("~/Desktop/test.xlsx")
+#' }
+umx_SQL_from_Excel <- function(theFile = "Finder") {
+	if(theFile == "Finder"){
+		umx_check_OS("OSX")
+		theFile = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (selection as alias)'")
+		message("Using file selected in front-most Finder window:", theFile)
+	} else if(theFile == "") {
+		theFile = file.choose(new = FALSE) ## choose a file
+		message("Using selected file:", theFile)
+	}else{
+		umx_check(file.exists(theFile), message= paste0("file:'", theFile, "' does not exist..."))
+	}
+	# remove suffix (i.e., .xlsx )
+	testName = umx_trim(basename(theFile), "\\.[^\\.]+$")
+	
+	df <- gdata::read.xls(theFile, sheet=1, stringsAsFactors= FALSE)
+	nItems = dim(df)[1]
+	nCols  = dim(df)[2]
+
+	for (i in 1:nCols) {
+		df[,i] = as.character(df[,i])
+	}
+	df[df == ""] = NA
+
+	pre = "INSERT INTO Items VALUES ('"
+	end = paste0("');")
+
+	o = data.frame(sql="junk", stringsAsFactors = FALSE) ;
+	itemNumber = 1
+	for (lineNumber in 1:nItems) {
+		direction  = df[lineNumber, "direction"]
+		scale      = df[lineNumber, "scale"]
+		type       = df[lineNumber, "type"]
+		if (type=="info" & itemNumber == 1){
+			# this will fail if there are two info questions at the top
+			itemNumber = 0
+		}
+		itemText = df[lineNumber, "itemText"]
+		# Any more cells in <itemBreak>?
+		items = df[lineNumber, 5:nCols]
+		if(any(!is.na(items))){
+			itemText = paste0(itemText, "<itemBreak>", paste(items[!is.na(items)], collapse = "<itemBreak>"))
+		}
+		o[itemNumber, ] = paste(pre, testName, itemNumber, itemText, direction, scale, type, testName, end, sep = "', '")
+		itemNumber = itemNumber + 1
+	}
+	# TODO : make robust to system choice
+	clip <- pipe("pbcopy", "w")
+	write.table(o, file = clip, row.names = F, col.names = F, quote = F)
+	close(clip)
+	message("sql is on clipboard")
+}
 
 # =========================
 # = Various Stats helpers =
@@ -2772,6 +2839,7 @@ umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, valu
 #' returns string w/o leading or trailing whitespace
 #'
 #' @param string to trim
+#' @param removeThis if not NULl then this string is removed whereever found in 'string'
 #' @return - string
 #' @export
 #' @family String Functions
@@ -2780,13 +2848,18 @@ umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, valu
 #' umx_trim(" dog") # "dog"
 #' umx_trim("dog ") # "dog"
 #' umx_trim("\t dog \n") # "dog"
-umx_trim <- function(string) {
-	# http://www.php.net/manual/en/function.trim.php
-	return(gsub("^\\s+|\\s+$", "", string))
-	# returns string w/o leading whitespace
-	# trim.leading <- function (x)  sub("^\\s+", "", x)
-	# returns string w/o trailing whitespace
-	# sub("\\s+$", "", x)
+#' umx_trim("xlsx dog.xlsx", "\\.xlsx$") # "dog"
+umx_trim <- function(string, removeThis = NULL) {
+	if(is.null(removeThis)){
+		# http://www.php.net/manual/en/function.trim.php
+		return(gsub("^\\s+|\\s+$", "", string))
+		# returns string w/o leading whitespace
+		# trim.leading <- function (x)  sub("^\\s+", "", x)
+		# returns string w/o trailing whitespace
+		# sub("\\s+$", "", x)
+	} else {
+		return(gsub(removeThis, "", string))
+	}
 }
 
 #' umx_rot
