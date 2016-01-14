@@ -736,7 +736,6 @@ umx_as_numeric <- function(df, force = FALSE) {
 #' @param requiredClass the class of object that will be matched
 #' @return - a list of objects matching the class and name
 #' @export
-#' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - 
 #' @family Utility Functions
 #' @examples
@@ -941,7 +940,6 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @family File Functions
 #' @return - 
 #' @export
-#' @seealso - \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -1088,7 +1086,6 @@ umx_pb_note <- function(title="test", body="default body", auth_key=NA) {
 #' @return - 
 #' @family File Functions
 #' @export
-#' @seealso - \code{\link{umx_rename_file}}, \code{\link{file.rename}}
 #' @examples
 #' \dontrun{
 #' base = "/Users/tim/Music/iTunes/iTunes Music/"
@@ -1278,7 +1275,6 @@ umx_SQL_from_Excel <- function(theFile = "Finder") {
 #' @return - Matrix of correlations and p-values
 #' @family Stats Functions
 #' @export
-#' @seealso - \code{\link{umxHetCor}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_cor(myFADataRaw[1:8,])
@@ -1371,7 +1367,6 @@ specify_decimal <- function(x, k){
 #' @return - 
 #' @export
 #' @family Stats Functions
-#' @seealso - \code{\link{cov}}
 #' @references - \url{https://cran.r-project.org/package=Rcmdr}
 #' @examples
 #' # treat vehicle aspects as items of a test
@@ -1534,7 +1529,6 @@ umx_merge_CIs <- function(m1, m2) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Data Functions
-#' @seealso - \code{\link{umxHetCor}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umxCovData(mtcars, c("mpg", "hp"))
@@ -1554,7 +1548,6 @@ umxCovData = function(df, columns = NA, use = c("complete.obs", "everything", "a
 #' @return - a correlation matrix
 #' @export
 #' @family Stats Functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umxCov2cor(cov(mtcars))
@@ -1666,7 +1659,6 @@ umx_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"),
 #' @export
 #' @family Utility Functions
 #' @family Reporting Functions
-#' @seealso - \code{\link{print}}
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 #' \dontrun{
@@ -1720,7 +1712,6 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @return - boolean
 #' @export
 #' @family Test
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -2057,7 +2048,6 @@ umx_is_RAM <- function(obj) {
 #' @return - Boolean
 #' @export
 #' @family Test
-#' @seealso - \code{\link{mxModel}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' m1 = mxModel("test")
@@ -2095,7 +2085,6 @@ umx_is_MxMatrix <- function(obj) {
 #' @return - "raw", "cor", or "cov", or, if boolean= T, then T | F
 #' @export
 #' @family Test
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' df = cov(mtcars)
@@ -2188,7 +2177,6 @@ umx_has_means <- function(model) {
 #' @return - TRUE or FALSE
 #' @export
 #' @family Test
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI}}, \code{\link{umxRun}}
 #' @references - http://www.github.com/tbates/umx/
 #' @examples
 #' require(umx)
@@ -2247,7 +2235,6 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @return - boolean
 #' @export
 #' @family Test
-#' @seealso - \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -2317,7 +2304,6 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #' @return - the re-ordered (and/or resized) matrix
 #' @export
 #' @family Data Functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' oldMatrix = cov(mtcars)
@@ -2395,7 +2381,6 @@ umx_cont_2_ordinal <- function(var, nlevels = 10, type = c("mxFactor", "ordered"
 #' @return - boolean
 #' @export
 #' @family Test
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_has_square_brackets("[hello]")
@@ -2418,7 +2403,6 @@ umx_has_square_brackets <- function (input) {
 #' @return - \code{\link{mxAlgebra}}
 #' @export
 #' @family Misc
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -2455,7 +2439,6 @@ umx_object_as_str<- function(x) {
 #' @return - an openmx algebra (formula)
 #' @export
 #' @family Misc
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' m1 = mxModel("fit",
@@ -2481,7 +2464,6 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @return - new dataframe with scaled variables
 #' @export
 #' @family Data Functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
@@ -2654,7 +2636,6 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' @return - new dataframe with scaled variables
 #' @export
 #' @family Data Functions
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
@@ -3159,8 +3140,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs, a = c(avg = .5, min = 0, max =
 #' @param het.ML = F
 #' @param het.suppress = T
 #' @return - new dataframe
+#' @family Data Functions
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @examples
 #' fakeCars = umx_fake_data(mtcars)
 umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.levels = TRUE, use.miss = TRUE, mvt.method = "eigen", het.ML = FALSE, het.suppress = TRUE){
@@ -3373,7 +3354,6 @@ umx_read_lower <- function(file="", diag=TRUE, names=as.character(paste("X", 1:n
 #' @return - copy of the dataframe with new binary variables and censoring
 #' @export
 #' @family Data Functions
-#' @seealso - \code{\link{umxACE}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
@@ -3441,7 +3421,6 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @return - A matrix of correlations
 #' @family Data Functions
 #' @export
-#' @seealso - \code{\link{umx_cor}}, \code{\link[polycor]{hetcor}}
 #' @references - 
 #' @examples
 #' umxHetCor(mtcars[,c("mpg", "am")])
