@@ -5,7 +5,7 @@
 \title{umxACESexLim}
 \usage{
 umxACESexLim(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
-  dzoData, suffix = NULL)
+  dzoData, suffix = NULL, autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{name}{The name of the model (defaults to "ACE_sexlim")}
@@ -24,6 +24,8 @@ umxACESexLim(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 
 \item{suffix}{The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
 omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
+
+\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 }
 \value{
 - ACE sexlim model
@@ -98,6 +100,6 @@ Other Twin Modeling Functions: \code{\link{umxACEcov}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}
+  \code{\link{umx_make_TwinData}}, \code{\link{umx}}
 }
 

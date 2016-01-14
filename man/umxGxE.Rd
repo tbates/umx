@@ -5,7 +5,8 @@
 \title{umxGxE}
 \usage{
 umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL,
-  lboundACE = NA, lboundM = NA, dropMissingDef = FALSE)
+  lboundACE = NA, lboundM = NA, dropMissingDef = FALSE,
+  autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{name}{The name of the model (defaults to "G_by_E")}
@@ -14,17 +15,19 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL,
 
 \item{selDefs}{The definition variable (e.g. socio economic status)}
 
-\item{dzData}{The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator}
+\item{dzData}{The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)}
 
-\item{mzData}{The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator}
+\item{mzData}{The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)}
 
-\item{suffix}{(Optional) used to expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2}
+\item{suffix}{Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2}
 
 \item{lboundACE}{= numeric: If !is.na, then lbound the main effects at this value (default = NA)}
 
 \item{lboundM}{= numeric: If !is.na, then lbound the moderators at this value (default = NA)}
 
-\item{dropMissingDef}{whether to drop rows missing the definition variable (gives a warning) default = FALSE}
+\item{dropMissingDef}{Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE}
+
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 }
 \value{
 - GxE \code{\link{mxModel}}
@@ -54,9 +57,6 @@ selDefs = c("age1", "age2")
 selVars = c(selDVs, selDefs)
 mzData  = subset(twinData, ZYG == "MZFF", selVars)
 dzData  = subset(twinData, ZYG == "DZMM", selVars)
-# Exclude cases with missing Def
-mzData <- mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
-dzData <- dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
 m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 # Plot Moderation
@@ -78,6 +78,6 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}
+  \code{\link{umx_make_TwinData}}, \code{\link{umx}}
 }
 

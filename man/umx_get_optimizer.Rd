@@ -13,10 +13,11 @@ umx_get_optimizer(model = NULL)
 - the optimizer  - a string
 }
 \description{
-get the optimizer in OpenMx
+This function is now deprecated: Get the current optimizer, use \\code{\link{umx_set_optimizer}}
+with no parameters.
 }
 \examples{
-umx_get_optimizer() # current optimizer
+# Deprecated function: to get cores, use umx_set_cores() with no value
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
@@ -24,6 +25,7 @@ umx_get_optimizer() # current optimizer
 \seealso{
 Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_get_cores}},
+  \code{\link{umx_set_auto_run}},
   \code{\link{umx_set_checkpoint}},
   \code{\link{umx_set_cores}},
   \code{\link{umx_set_optimizer}}

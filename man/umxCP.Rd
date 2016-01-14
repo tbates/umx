@@ -7,7 +7,8 @@
 umxCP(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
   correlatedA = FALSE, equateMeans = T, dzAr = 0.5, dzCr = 1,
-  addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL)
+  addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL,
+  autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP")}
@@ -44,6 +45,8 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \item{numObsDZ}{= not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data}
 
 \item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data}
+
+\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 }
 \value{
 - \code{\link{mxModel}}
@@ -115,6 +118,6 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}
+  \code{\link{umx_make_TwinData}}, \code{\link{umx}}
 }
 

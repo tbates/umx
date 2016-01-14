@@ -2,7 +2,7 @@
 % Please edit documentation in R/ACE_cov.R
 \name{umxACEcov}
 \alias{umxACEcov}
-\title{umxACE}
+\title{umxACEcov}
 \usage{
 umxACEcov(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL,
@@ -11,7 +11,7 @@ umxACEcov(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NULL,
 \arguments{
 \item{name}{The name of the model (defaults to"ACE")}
 
-\item{selDVs}{The variables to include from the data}
+\item{selDVs}{The variables to include from the data (do not include suffixes)}
 
 \item{dzData}{The DZ dataframe}
 
@@ -32,21 +32,13 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE)}
 
-\item{numObsDZ}{= Number of DZ twins: Set this if you input covariance data}
-
-\item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data}
-
-\item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL)}
-
-\item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE)}
-
 \item{hint}{An analysis hint. Options include "none", (default) "left_censored". Default does nothing.}
 }
 \value{
-- \code{\link{mxModel}} of subclass mxModel.ACE
+- \code{\link{mxModel}} of subclass mxModel.ACEcov
 }
 \description{
-Make a 2-group ACE Cholesky Twin model (see Details below)
+Make a 2-group ACE Cholesky Twin model with covariates modeled (see Details below)
 }
 \details{
 A common task in twin modelling involves using the genetic and environmental differences 
@@ -127,6 +119,6 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}
+  \code{\link{umx_make_TwinData}}, \code{\link{umx}}
 }
 

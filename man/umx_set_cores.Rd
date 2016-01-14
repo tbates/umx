@@ -4,10 +4,10 @@
 \alias{umx_set_cores}
 \title{umx_set_cores}
 \usage{
-umx_set_cores(cores = parallel::detectCores(), model = NULL)
+umx_set_cores(cores = NA, model = NULL)
 }
 \arguments{
-\item{cores}{number of cores to use (defaults to max - 1 to preserve UI responsiveness)}
+\item{cores}{number of cores to use. NA (the default) returns current value. "max" will set to detectCores-1}
 
 \item{model}{an (optional) model to set. If left NULL, the global option is updated.}
 }
@@ -26,12 +26,12 @@ m1 <- mxModel("ind", type = "RAM",
 	mxPath(from = "one", to = manifests),
 	mxData(mtcars[, manifests], type = "raw")
 )
-oldCores <- umx_get_cores() # get global value
-umx_set_cores() # set to default (max)
-umx_set_cores(parallel::detectCores() - 1) # set to max - 1
-umx_get_cores() # show new value
-umx_set_cores(1, m1)  # set m1 useage to 1 core
-umx_get_cores(model = m1)  # show new value
+oldCores <- umx_set_cores() # get existing value
+umx_set_cores(detectCores()) # set to max
+umx_set_cores()            # show new value
+umx_set_cores(1, m1)       # set m1 useage to 1 core
+umx_set_cores(model = m1)  # show new value
+umx_set_cores(oldCores)    # reinstate old value
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
@@ -40,6 +40,7 @@ umx_get_cores(model = m1)  # show new value
 Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_get_cores}},
   \code{\link{umx_get_optimizer}},
+  \code{\link{umx_set_auto_run}},
   \code{\link{umx_set_checkpoint}},
   \code{\link{umx_set_optimizer}}
 }

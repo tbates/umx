@@ -22,7 +22,7 @@ If you supply auth_key, It will be writen to "~/.pushbulletkey"
 \code{\link{umx_pb_note}}(auth_key="mykeystring")
 once it exists there, you dont need to store it in code, so code is sharable.
 
-You can get your autho code at \url{https://www.pushbullet.com/account}
+You can get your autho code at \url{http://www.pushbullet.com/account}
 
 \strong{Note}: You can show the existing stored key using "GET"
 }

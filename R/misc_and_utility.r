@@ -10,11 +10,36 @@
 # = Get and set OpenMx options =
 # ==============================
 
+#' umx_set_auto_run
+#'
+#' Set autorun default for models like umxACE umxGxE etc
+#'
+#' @param cores number of cores to use (defaults to max - 1 to preserve UI responsiveness)
+#' @param model an (optional) model to set. If left NULL, the global option is updated.
+#' @return - NULL
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' library(umx)
+#' old = umx_set_auto_run() # get existing value
+#' umx_set_auto_run(FALSE)  # set to FALSE
+#' umx_set_auto_run(old)    # reinstate
+umx_set_auto_run <- function(autoRun = NA) {
+	# TODO implement umx_set_auto_run
+	if(is.na(autoRun)) {
+		getOption("umx_auto_run")
+	} else {
+		umx_check(autoRun %in% c(TRUE, FALSE), "stop")
+		options("umx_auto_run" = autoRun)
+	}
+}
+
 #' umx_set_cores
 #'
 #' set the number of cores (threads) used by OpenMx
 #'
-#' @param cores number of cores to use (defaults to max - 1 to preserve UI responsiveness)
+#' @param cores number of cores to use. NA (the default) returns current value. "max" will set to detectCores-1
 #' @param model an (optional) model to set. If left NULL, the global option is updated.
 #' @return - NULL
 #' @export
@@ -29,15 +54,19 @@
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxData(mtcars[, manifests], type = "raw")
 #' )
-#' oldCores <- umx_get_cores() # get global value
-#' umx_set_cores() # set to default (max)
-#' umx_set_cores(parallel::detectCores() - 1) # set to max - 1
-#' umx_get_cores() # show new value
-#' umx_set_cores(1, m1)  # set m1 useage to 1 core
-#' umx_get_cores(model = m1)  # show new value
-umx_set_cores <- function(cores = parallel::detectCores(), model = NULL) {
+#' oldCores <- umx_set_cores() # get existing value
+#' umx_set_cores(detectCores()) # set to max
+#' umx_set_cores()            # show new value
+#' umx_set_cores(1, m1)       # set m1 useage to 1 core
+#' umx_set_cores(model = m1)  # show new value
+#' umx_set_cores(oldCores)    # reinstate old value
+umx_set_cores <- function(cores = NA, model = NULL) {
 	# depends on parallel::detectCores
-	if(umx_is_MxModel(cores)){
+	if(is.na(cores)){
+		n = mxOption(model, "Number of Threads")
+		message(n, "/", parallel::detectCores())
+		invisible(n)
+	} else if(umx_is_MxModel(cores)) {
 		stop("Call this as umx_set_cores(cores, model), not the other way around")
 	}
 	mxOption(model, "Number of Threads", cores)
@@ -45,29 +74,18 @@ umx_set_cores <- function(cores = parallel::detectCores(), model = NULL) {
 
 #' umx_get_cores
 #'
-#' Gets the number of cores (threads) used by OpenMx.
+#' This function is now deprecated: Get the number of cores using \\code{\link{umx_set_cores}}
+#' with no parameters.
 #'
 #' @param model an (optional) model to get from. If left NULL, the global option is returned
 #' @return - number of cores
 #' @export
 #' @family Get and set
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' library(umx)
-#' manifests = c("mpg", "disp", "gear")
-#' m1 <- mxModel("ind", type = "RAM",
-#' 	manifestVars = manifests,
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = "one", to = manifests),
-#' 	mxData(mtcars[, manifests], type = "raw")
-#' )
-#' oldCores = umx_get_cores()   # get current default value
-#' umx_set_cores(model = m1)    # set to default (max - 1)
-#' umx_get_cores(model = m1)    # show new value
-#' umx_set_cores() # set to default (max - 1)
-#' umx_get_cores()              # show new value
-#' umx_set_cores(oldCores)      # reset to old value
+#' # Deprecated function: to get cores, use umx_set_cores() with no value
 umx_get_cores <- function(model = NULL) {
+	message("Deprecated function: to get cores, use umx_set_cores() with no value")
 	# depends on parallel::detectCores
 	n = mxOption(model, "Number of Threads")
 	message(n, "/", parallel::detectCores())
@@ -163,7 +181,8 @@ umx_check_parallel <- function(nCores = -1) {
 
 #' umx_get_optimizer
 #'
-#' get the optimizer in OpenMx
+#' This function is now deprecated: Get the current optimizer, use \\code{\link{umx_set_optimizer}}
+#' with no parameters.
 #'
 #' @param model (optional) model to get from. If left NULL, the global option is returned
 #' @return - the optimizer  - a string
@@ -171,8 +190,9 @@ umx_check_parallel <- function(nCores = -1) {
 #' @family Get and set
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' umx_get_optimizer() # current optimizer
+#' # Deprecated function: to get cores, use umx_set_cores() with no value
 umx_get_optimizer <- function(model = NULL) {
+	message("Deprecated function: to get optimizer, use umx_set_optimizer() with no value")
 	if(is.null(model)){
 		mxOption(NULL, "Default optimizer")
 	} else {
@@ -182,28 +202,34 @@ umx_get_optimizer <- function(model = NULL) {
 
 #' umx_set_optimizer
 #'
-#' set the optimizer in OpenMx
+#' Set the optimizer in OpenMx
 #'
-#' @param opt defaults to "NPSOL". Current alternatives are "SLSQP" and "CSOLNP"
+#' @param opt default (NA) returns current value. Current alternatives are
+#' "NPSOL" "SLSQP" and "CSOLNP".
 #' @return - 
 #' @export
 #' @family Get and set
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' library(umx)
-#' old = umx_get_optimizer() # get the existing state
+#' old = umx_set_optimizer() # get the existing state
 #' umx_set_optimizer("SLSQP") # update globally
 #' umx_set_optimizer(old) # set back
-umx_set_optimizer <- function(opt = c("NPSOL", "SLSQP", "CSOLNP")) {
-	opt = umx_default_option(opt, c("NPSOL", "SLSQP", "CSOLNP"), check = FALSE)
-	if(!opt %in% mxAvailableOptimizers()){
-		stop("The Optimizer ", omxQuotes(opt), " is not legal. legal values are:", omxQuotes(mxAvailableOptimizers()))
+umx_set_optimizer <- function(opt = NA) {
+	if(is.na(opt)){
+		if(is.null(model)){
+			o= mxOption(NULL, "Default optimizer")
+		} else {
+			o= mxOption(model, "Default optimizer")
+		}
+		message("Current Optiumizer is:'", o, "'")
+		invisible(o)
+	} else {
+		if(!opt %in% mxAvailableOptimizers()){
+			stop("The Optimizer ", omxQuotes(opt), " is not legal. legal values are:", omxQuotes(mxAvailableOptimizers()))
+		}
+		mxOption(NULL, "Default optimizer", opt)	
 	}
-	mxOption(NULL, "Default optimizer", opt)	
-	# if(opt == "NPSOL"){
-	# 	# mxOption(model, 'mvnAbsEps', 1.e-6) # default is .001
-	# 	# mxOption(model, 'mvnMaxPointsC', 5e+5) # default is 5000
-	# }
 }
 
 #' umx_set_checkpoint
@@ -1011,7 +1037,7 @@ dl_from_dropbox <- function(x, key=NULL){
 #' \code{\link{umx_pb_note}}(auth_key="mykeystring")
 #' once it exists there, you dont need to store it in code, so code is sharable.
 #' 
-#' You can get your autho code at \url{https://www.pushbullet.com/account}
+#' You can get your autho code at \url{http://www.pushbullet.com/account}
 #' 
 #' \strong{Note}: You can show the existing stored key using "GET"
 #'
@@ -3008,6 +3034,103 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	theData[rowSelector,] <- theRows
 	return(theData)
 }
+
+#' umx_make_TwinData
+#'
+#' @description
+#' makes MZ and DZ twin data, optionally moderated.
+#'
+#' @details
+#'
+#' @param nMZpairs Number of MZ pairs to simulate
+#' @param nDZpairs Number of DZ pairs to simulate
+#' @param a value for a, defaults to an example of moderation: c(avg=.5, min=0, max=1)
+#' @param c value for c
+#' @param e value for e
+#' @return - list of mzData and dzData data.frames
+#' @export
+#' @family Twin Modeling Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' str(umx_make_TwinData(100,100, .5, .3, .4))
+umx_make_TwinData <- function(nMZpairs, nDZpairs, a = c(avg = .5, min = 0, max = 1), c, e) {
+	# function caps the moderator effect at -3 and +3 SD
+	if(length(a)==3){
+		avgA = a["avg"]
+		# minA applied at -3 SD
+		# maxA applied at +3 SD
+		SES_2_A_beta = (a["max"] - a["min"])/6
+
+		mzData = data.frame(T1 = rep(NA, nMZpairs), T2 = rep(NA, nMZpairs), M1 = rep(NA, nMZpairs), M2 = rep(NA, nMZpairs))
+		dzData = data.frame(T1 = rep(NA, nDZpairs), T2 = rep(NA, nDZpairs), M1 = rep(NA, nDZpairs), M2 = rep(NA, nDZpairs))
+		# ==========
+		# = Do MZs =
+		# ==========
+		SESlist = rnorm(n = nMZpairs, mean = 0, sd = 1)
+		# qplot(SESlist)
+		j = 1
+		for (thisSES in SESlist) {
+			# thisSES = 0
+			a = max(0, (avgA + (thisSES * SES_2_A_beta)))
+			# c = 0.0
+			# e = 0.1
+			ac  =  a + c
+			hac = .5 * ac
+			ace = ac + e
+			mzCov = matrix(nrow = 2, byrow = T, c(
+				ace, ac,
+				ac, ace)
+			);
+			mzPair = mvrnorm(n = 1, mu = c(0,0), Sigma = mzCov);
+			mzData[j,] = c(mzPair, thisSES, thisSES)
+			j = j + 1
+		}
+		# ==========
+		# = Do DZs =
+		# ==========
+		SESlist = rnorm(n = nDZpairs, mean = 0, sd = 1)
+		j = 1
+		for (thisSES in SESlist) {
+			thisSES = -5
+			a = max(0, (avgA + (thisSES * SES_2_A_beta)))
+			ac  =  a + c
+			hac = .5 * ac
+			ace = ac + e
+			dzCov = matrix(nrow = 2, byrow = T, c(
+				ace, hac,
+				hac, ace)
+			);
+			dzPair = mvrnorm(n = 1, mu = c(0,0), Sigma = dzCov);
+			dzData[j,] = c(dzPair, thisSES, thisSES)
+			j = j + 1
+		}
+
+	} else {
+		# just one set
+		ac  =  a + c
+		hac = .5 * ac
+		ace = ac + e
+		mzCov = matrix(nrow = 2, byrow = T, c(
+			ace, ac,
+			ac, ace)
+		);
+
+		dzCov = matrix(nrow = 2, byrow = T, c(
+			ace, hac,
+			hac, ace)
+		);
+		mzData = mvrnorm(n = nMZpairs, mu = c(0,0), Sigma = mzCov);
+		dzData = mvrnorm(n = nDZpairs, mu = c(0,0), Sigma = dzCov);
+		mzData = data.frame(mzData)
+		dzData = data.frame(dzData)
+
+		names(mzData) = c("T1", "T2")	
+		names(dzData) = c("T1", "T2")	
+	}
+	return(list(mzData=mzData, dzData = dzData))
+}
+	
+
 
 
 #' umx_fake_data

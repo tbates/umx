@@ -5,8 +5,8 @@
 \title{umxRAM}
 \usage{
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
-  run = TRUE, setValues = TRUE, independent = NA,
-  remove_unused_manifests = TRUE)
+  setValues = TRUE, independent = NA, remove_unused_manifests = TRUE,
+  autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
@@ -19,13 +19,13 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
-\item{run}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
-
 \item{setValues}{Whether to generate likely good start values (Defaults to TRUE)}
 
 \item{independent}{Whether the model is independent (default = NA)}
 
 \item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
+
+\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 }
 \value{
 - \code{\link{mxModel}}

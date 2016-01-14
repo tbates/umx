@@ -13,30 +13,19 @@ umx_get_cores(model = NULL)
 - number of cores
 }
 \description{
-Gets the number of cores (threads) used by OpenMx.
+This function is now deprecated: Get the number of cores using \\code{\link{umx_set_cores}}
+with no parameters.
 }
 \examples{
-library(umx)
-manifests = c("mpg", "disp", "gear")
-m1 <- mxModel("ind", type = "RAM",
-	manifestVars = manifests,
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = "one", to = manifests),
-	mxData(mtcars[, manifests], type = "raw")
-)
-oldCores = umx_get_cores()   # get current default value
-umx_set_cores(model = m1)    # set to default (max - 1)
-umx_get_cores(model = m1)    # show new value
-umx_set_cores() # set to default (max - 1)
-umx_get_cores()              # show new value
-umx_set_cores(oldCores)      # reset to old value
+# Deprecated function: to get cores, use umx_set_cores() with no value
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_get_optimizer}},
+  \code{\link{umx_set_auto_run}},
   \code{\link{umx_set_checkpoint}},
   \code{\link{umx_set_cores}},
   \code{\link{umx_set_optimizer}}

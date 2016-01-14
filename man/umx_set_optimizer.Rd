@@ -4,20 +4,21 @@
 \alias{umx_set_optimizer}
 \title{umx_set_optimizer}
 \usage{
-umx_set_optimizer(opt = c("NPSOL", "SLSQP", "CSOLNP"))
+umx_set_optimizer(opt = NA)
 }
 \arguments{
-\item{opt}{defaults to "NPSOL". Current alternatives are "SLSQP" and "CSOLNP"}
+\item{opt}{default (NA) returns current value. Current alternatives are
+"NPSOL" "SLSQP" and "CSOLNP".}
 }
 \value{
 -
 }
 \description{
-set the optimizer in OpenMx
+Set the optimizer in OpenMx
 }
 \examples{
 library(umx)
-old = umx_get_optimizer() # get the existing state
+old = umx_set_optimizer() # get the existing state
 umx_set_optimizer("SLSQP") # update globally
 umx_set_optimizer(old) # set back
 }
@@ -28,6 +29,7 @@ umx_set_optimizer(old) # set back
 Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_get_cores}},
   \code{\link{umx_get_optimizer}},
+  \code{\link{umx_set_auto_run}},
   \code{\link{umx_set_checkpoint}},
   \code{\link{umx_set_cores}}
 }

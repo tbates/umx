@@ -154,7 +154,8 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxIP}}, \code{\link{umxPlotCP}},
   \code{\link{umxPlotGxE}}, \code{\link{umxSummaryACE}},
   \code{\link{umxSummaryCP}}, \code{\link{umxSummaryGxE}},
-  \code{\link{umxSummaryIP}}
+  \code{\link{umxSummaryIP}},
+  \code{\link{umx_make_TwinData}}
 
 Other Utility Functions: \code{\link{qm}},
   \code{\link{umx_find_object}}, \code{\link{umx_grep}},
