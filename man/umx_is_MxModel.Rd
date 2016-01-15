@@ -25,8 +25,6 @@ if(umx_is_MxModel(m1)){
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{mxModel}}
-
 Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_check_model}},
   \code{\link{umx_check_names}},

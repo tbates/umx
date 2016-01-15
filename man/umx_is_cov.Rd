@@ -31,8 +31,6 @@ umx_is_cov(mtcars, boolean = TRUE)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-
 Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_check_model}},
   \code{\link{umx_check_names}},

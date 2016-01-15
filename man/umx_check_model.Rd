@@ -50,8 +50,6 @@ umx_check_model(m1, beenRun = FALSE)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umx}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-
 Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_check_names}},
   \code{\link{umx_check_parallel}},

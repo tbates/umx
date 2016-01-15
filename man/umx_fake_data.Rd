@@ -50,6 +50,18 @@ Created:  17 Aug 2010
 fakeCars = umx_fake_data(mtcars)
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+Other Data Functions: \code{\link{umxCovData}},
+  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
+  \code{\link{umxPadAndPruneForDefVars}},
+  \code{\link{umx_as_numeric}},
+  \code{\link{umx_cont_2_ordinal}},
+  \code{\link{umx_cov2raw}}, \code{\link{umx_lower2full}},
+  \code{\link{umx_make_bin_cont_pair_data}},
+  \code{\link{umx_merge_CIs}},
+  \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
+  \code{\link{umx_residualize}}, \code{\link{umx_round}},
+  \code{\link{umx_scale_wide_twin_data}},
+  \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}},
+  \code{\link{umx}}
 }
 

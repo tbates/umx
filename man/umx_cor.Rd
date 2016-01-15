@@ -31,8 +31,6 @@ umx_cor(myFADataRaw[1:8,])
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxHetCor}}
-
 Other Stats Functions: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umx_means}},
   \code{\link{umx}}

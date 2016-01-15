@@ -37,8 +37,6 @@ mxEval(list(ab = ab), m1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-
 Other Misc: \code{\link{umx_APA_model_CI}},
   \code{\link{umx_add_variances}}, \code{\link{umx_apply}},
   \code{\link{umx_default_option}},

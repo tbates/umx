@@ -22,8 +22,6 @@ umxCov2cor(cov(mtcars))
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-
 Other Stats Functions: \code{\link{reliability}},
   \code{\link{umx_cor}}, \code{\link{umx_means}},
   \code{\link{umx}}

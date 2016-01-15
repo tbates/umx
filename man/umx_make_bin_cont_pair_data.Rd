@@ -36,14 +36,13 @@ df[order(df$mpg), 12:15]
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
 }
 \seealso{
-- \code{\link{umxACE}}
-
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxFactor}}, \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},
   \code{\link{umx_as_numeric}},
   \code{\link{umx_cont_2_ordinal}},
-  \code{\link{umx_cov2raw}}, \code{\link{umx_lower2full}},
+  \code{\link{umx_cov2raw}}, \code{\link{umx_fake_data}},
+  \code{\link{umx_lower2full}},
   \code{\link{umx_merge_CIs}},
   \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
   \code{\link{umx_residualize}}, \code{\link{umx_round}},

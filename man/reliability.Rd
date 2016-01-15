@@ -23,8 +23,6 @@ reliability(cov(mtcars))
 - \url{https://cran.r-project.org/package=Rcmdr}
 }
 \seealso{
-- \code{\link{cov}}
-
 Other Stats Functions: \code{\link{umxCov2cor}},
   \code{\link{umx_cor}}, \code{\link{umx_means}},
   \code{\link{umx}}

@@ -42,8 +42,6 @@ umx_print(mtcars[1:10,], file = "Rout.html")
 }
 }
 \seealso{
-- \code{\link{print}}
-
 Other Reporting Functions: \code{\link{summaryAPA}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_show}}, \code{\link{umx_time}},

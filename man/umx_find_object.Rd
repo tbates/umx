@@ -27,8 +27,6 @@ umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
 -
 }
 \seealso{
-- \code{\link{grep}}, \code{\link{umxRun}}, \code{\link{umxValues}}
-
 Other Utility Functions: \code{\link{qm}},
   \code{\link{umx_grep}}, \code{\link{umx_msg}},
   \code{\link{umx_names}}, \code{\link{umx_paste_names}},
