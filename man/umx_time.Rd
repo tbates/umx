@@ -4,7 +4,7 @@
 \alias{umx_time}
 \title{umx_time}
 \usage{
-umx_time(model, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
+umx_time(model = NA, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
   tz = "GMT")
 }
 \arguments{
@@ -31,6 +31,7 @@ If the model hasn't been run, this function will run it for you.
 }
 \examples{
 require(umx)
+umx_time('start')
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
@@ -45,6 +46,8 @@ m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umx_time(m1)
 m2 = umxRun(m1)
 umx_time(c(m1, m2))
+umx_time('stop')
+# elapsed time: 05.23 seconds
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

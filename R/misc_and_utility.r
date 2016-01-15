@@ -1583,6 +1583,7 @@ umxCov2cor <- function(x) {
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
+#' umx_time('start')
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
@@ -1597,25 +1598,40 @@ umxCov2cor <- function(x) {
 #' umx_time(m1)
 #' m2 = umxRun(m1)
 #' umx_time(c(m1, m2))
-umx_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT"){
-	# TODO output a nicely formated table
+#' umx_time('stop')
+#' # elapsed time: 05.23 seconds
+umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT"){
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
+	# TODO output a nicely formated table
 	for(i in 1:length(model)) {			
 		if(length(model) > 1) {
 			m = model[[i]]
 		}else{
 			m = model
 		}
-		if(!umx_has_been_run(m)){
-			m = mxRun(m)
-			# message("You must run the model before asking for the elapsed run time")
-		}
-		thisTime = m$output$wallTime
-		if(i == 1){
-			lastTime = thisTime
-			timeDelta = ""
+		if(class(m) == "character"){
+			if(m == "start"){
+				options("umx_last_time" = proc.time())
+				return(invisible())
+			} else if (m == "stop") {
+				thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
+				options("umx_last_time" = proc.time())
+			}else{
+				stop("Value strings for umx_time are start and stop, not: ", omxQuote(m))
+			}
 		} else {
-			timeDelta = paste0("(\u2206: ", round(thisTime - lastTime, 3), ")")
+			# handle model
+			if(!umx_has_been_run(m)){
+				m = mxRun(m)
+				# message("You must run the model before asking for the elapsed run time")
+			}
+			thisTime = m$output$wallTime
+			if(i == 1){
+				lastTime = thisTime
+				timeDelta = ""
+			} else {
+				timeDelta = paste0("(\u2206: ", round(thisTime - lastTime, 3), ")")
+			}
 		}
 		if(formatStr == "std"){
 			formatStr = "Wall clock time (HH:MM:SS.hh): %H:%M:%OS2"
@@ -1634,7 +1650,11 @@ umx_time <- function(model, formatStr = c("simple", "std", "custom %H %M %OS3"),
 				formatStr = "%OS2 seconds"
 			}
 		}
-		timeString = format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta))
+		if(class(model) == "character"){
+			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", formatStr))
+		} else {
+			timeString = format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta))
+		}
 		message(timeString)
 	}
 	invisible(timeString)
