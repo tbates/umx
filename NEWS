@@ -1,24 +1,34 @@
 
-
 umx 1.1.1
 --------------
-improvement to umx_check_parrallel (return time)
+
+* Jan 2016 Fire Safety edition
+* umx_make_TwinData added to support simulation studies
+* umx_check_parallel now returns timing)
+* umx_time now supports "start" and "stop")
+* umxAPA can format more objects in APA style, inc just a p-value)
+* summaryAPA can now summarise a data.frame with mean, sd, and correlations
+* umxLabel now supports preserving existing labels in umxRAM models: labels = is now saved
+* umxACEcov support for ACE with covariates begun
+* Help improvements (wording, seealso etc)
+* Removed dependency on formula.tools
 
 umx 1.1.0
 --------------
 
+* December 2015 update
 * umxRAM can take existing model as input (very useful)
 * umxRAM reports model fit and comparison (if old model exists)
 * umxPath now lbounds var@0 for v.m.
-* Enhanced umx_residualize to take multiple DVs
-* Enhanced umxMI to cope with more situations
-* Improved resilience of summary to missing CIs (ht Nathan Gillespie!)
-* Improvements to summaryAPA to handle data as well as lm
+* umx_residualize  can now take multiple DVs
+* umxMI enhanced to cope with more situations
+* summary more resilient with missing CIs (#ht Nathan Gillespie!)
+* summaryAPA now handles data as well as lm
 * Improved help for twin functions
 * Various new function features
-* Add vcov() S3 fn
+* vcov() S3 fn added
 * umx_print resilient to 0-row input
-* summary helpers  (e.g. umx_fun_mean_sd)
+* summary helpers (e.g. umx_fun_mean_sd)
 * Begin support for sex-lim twin models
 * New data file for sex-limitation
 * Improving consistency in parameter names (minor backward incompatibility)
