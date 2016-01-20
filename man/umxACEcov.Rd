@@ -4,7 +4,7 @@
 \alias{umxACEcov}
 \title{umxACEcov}
 \usage{
-umxACEcov(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NULL,
+umxACEcov(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL,
   equateMeans = TRUE)
 }
@@ -12,6 +12,8 @@ umxACEcov(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NULL,
 \item{name}{The name of the model (defaults to"ACE")}
 
 \item{selDVs}{The variables to include from the data (do not include suffixes)}
+
+\item{selCovs}{The covariates to include from the data (do not include suffixes)}
 
 \item{dzData}{The DZ dataframe}
 

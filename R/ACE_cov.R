@@ -44,6 +44,7 @@
 #'
 #' @param name The name of the model (defaults to"ACE")
 #' @param selDVs The variables to include from the data (do not include suffixes)
+#' @param selCovs The covariates to include from the data (do not include suffixes)
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
 #' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
@@ -87,7 +88,7 @@
 #' \dontrun{
 #' plot(m1)
 #' }
-umxACEcov <- function(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE) {
+umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE) {
 	if(nrow(dzData)==0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData)==0){ stop("Your DZ dataset has no rows!") }
 	nSib = 2 # number of siblings in a twin pair
@@ -106,7 +107,7 @@ umxACEcov <- function(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NUL
 			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
 			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
 		}
-		selDVs = umx_paste_names(selDVs, suffix, 1:2)
+		selDVs  = umx_paste_names(selDVs, suffix, 1:2)
 		selCovs = umx_paste_names(selCovs, suffix, 1:2)
 	}
 	selVars = c(selDVs, selCovs)
