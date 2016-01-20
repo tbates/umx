@@ -93,6 +93,8 @@ to .25 to model dominance effects.
 require(umx)
 data(twinData)
 tmpTwin <- twinData
+# add age 1 and age 2 columns
+tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
 # Pick the variables
 selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
 # the function will then make the varnames for each twin using this:
@@ -101,8 +103,11 @@ selDVs = c("bmi")
 selCovs = c("age")
 selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
 # just top 200 so example runs in a couple of secs
-mzData = subset(twinData, zygosity == "MZFF", selVars)[,1:200]
-dzData = subset(twinData, zygosity == "DZFF", selVars)[,1:200]
+mzData = subset(tmpTwin, zyg == 1, selVars)[1:200, ]
+dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
+# TODO update for new dataset variable zygosity
+# mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
+# dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "")
 m1 = umxRun(m1)
 umxSummary(m1)
