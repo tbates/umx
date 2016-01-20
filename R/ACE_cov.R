@@ -133,6 +133,15 @@ umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NU
 	meanDimNames = list("means", selVars)
 	meanLabels = c(paste0("mean", 1:nTot), paste0("mean", 1:nTot))
 	meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
+
+	varStarts = diag(umxHetCor(mzData))
+	if(nVar == 1){
+		varStarts = varStarts/3
+	} else {
+		varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
+	}
+	varStarts = matrix(varStarts, nVar, nVar)
+
 	# Matrices a,c,e to store a,c,e path coefficients
 	top = mxModel("top",
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
@@ -165,15 +174,15 @@ umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NU
 		mxAlgebra(name = "ACE" , A + C + E),
 		mxAlgebra(name = "hAC" , dzAr * AC),
 		mxAlgebra(name = "expCovMZ", expression = rbind(
-			cbind(ACE + beta %&% WplusB, AC  + beta %&% CovB  , tBeta %*% WplusB, tBeta %*% CovB),
-			cbind(AC  + beta %&% CovB  , ACE + beta %&% WplusB, tBeta %*% CovB  , tBeta %*% WplusB),
+			cbind(ACE + WplusB %&% beta, AC  + CovB   %&% beta, tBeta %*% WplusB, tBeta %*% CovB),
+			cbind(AC  + CovB   %&% beta, ACE + WplusB %&% beta, tBeta %*% CovB  , tBeta %*% WplusB),
 			cbind(WplusB %*% beta      , CovB   %*% beta      , WplusB          , CovB),
 			cbind(CovB   %*% beta      , WplusB %*% beta      , CovB            , WplusB))
 		),
 		# Algebra for expected variance/covariance matrix #in DZ twins
 		mxAlgebra(name="expCovDZ", expression = rbind(
-			cbind(ACE+ beta %&% WplusB, hAC+ beta %&% CovB  , tBeta %*% WplusB, tBeta %*% CovB),
-			cbind(hAC+ beta %&%CovB   , ACE+ beta %&% WplusB, tBeta%*%CovB    , tBeta %*% WplusB),
+			cbind(ACE+ WplusB %&% beta, hAC+ CovB   %&% beta, tBeta %*% WplusB, tBeta %*% CovB),
+			cbind(hAC+ CovB   %&% beta, ACE+ WplusB %&% beta, tBeta %*% CovB  , tBeta %*% WplusB),
 			cbind(WplusB %*% beta     , CovB %*% beta       , WplusB          , CovB),
 			cbind(CovB %*% beta       , WplusB %*% beta     , CovB            , WplusB))
 		)

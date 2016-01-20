@@ -25,6 +25,7 @@
 #' @importFrom graphics plot
 #' @importFrom numDeriv jacobian
 #' @importFrom methods setClass
+#' @importFrom polycor hetcor
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
 NULL

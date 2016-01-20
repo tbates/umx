@@ -4,7 +4,8 @@
 \alias{umx_cor}
 \title{umx_cor}
 \usage{
-umx_cor(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 2,
+umx_cor(X, df = nrow(X) - 2, use = c("pairwise.complete.obs",
+  "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2,
   type = c("r and p-value", "smart"))
 }
 \arguments{
@@ -12,7 +13,7 @@ umx_cor(X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 2,
 
 \item{df}{the degrees of freedom for the test}
 
-\item{use}{how to handle missing data}
+\item{use}{how to handle missing data (defaults to pairwise complete)}
 
 \item{digits}{rounding of answers}
 
