@@ -4,14 +4,17 @@
 \alias{umxACEcov}
 \title{umxACEcov}
 \usage{
-umxACEcov(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NULL,
+umxACEcov(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL,
-  equateMeans = TRUE)
+  equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"),
+  autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE")}
 
 \item{selDVs}{The variables to include from the data (do not include suffixes)}
+
+\item{selCovs}{The covariates to include from the data (do not include suffixes)}
 
 \item{dzData}{The DZ dataframe}
 
@@ -90,6 +93,8 @@ to .25 to model dominance effects.
 require(umx)
 data(twinData)
 tmpTwin <- twinData
+# add age 1 and age 2 columns
+tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
 # Pick the variables
 selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
 # the function will then make the varnames for each twin using this:
@@ -98,8 +103,11 @@ selDVs = c("bmi")
 selCovs = c("age")
 selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
 # just top 200 so example runs in a couple of secs
-mzData = subset(twinData, zygosity == "MZFF", selVars)[,1:200]
-dzData = subset(twinData, zygosity == "DZFF", selVars)[,1:200]
+mzData = subset(tmpTwin, zyg == 1, selVars)[1:200, ]
+dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
+# TODO update for new dataset variable zygosity
+# mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
+# dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "")
 m1 = umxRun(m1)
 umxSummary(m1)

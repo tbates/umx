@@ -4,15 +4,15 @@
 \alias{umxHetCor}
 \title{umxHetCor}
 \usage{
-umxHetCor(data, ML = FALSE, use = "complete.obs",
-  treatAllAsFactor = FALSE, verbose = FALSE)
+umxHetCor(data, ML = FALSE, use = c("pairwise.complete.obs",
+  "complete.obs"), treatAllAsFactor = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of columns for which to compute heterochoric correlations}
 
 \item{ML}{Whether to use Maximum likelihood computation of correlations (default = FALSE)}
 
-\item{use}{How to handle missing data: "complete.obs", "pairwise.complete.obs" Default is complete.obs}
+\item{use}{How to handle missing data: "complete.obs" (Default), "pairwise.complete.obs"}
 
 \item{treatAllAsFactor}{Whether to treat all columns as factors, whether they are or not.}
 

@@ -44,6 +44,7 @@
 #'
 #' @param name The name of the model (defaults to"ACE")
 #' @param selDVs The variables to include from the data (do not include suffixes)
+#' @param selCovs The covariates to include from the data (do not include suffixes)
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
 #' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
@@ -69,6 +70,8 @@
 #' require(umx)
 #' data(twinData)
 #' tmpTwin <- twinData
+#' # add age 1 and age 2 columns
+#' tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
 #' # Pick the variables
 #' selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
 #' # the function will then make the varnames for each twin using this:
@@ -78,8 +81,11 @@
 #' selCovs = c("age")
 #' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
 #' # just top 200 so example runs in a couple of secs
-#' mzData = subset(twinData, zygosity == "MZFF", selVars)[,1:200]
-#' dzData = subset(twinData, zygosity == "DZFF", selVars)[,1:200]
+#' mzData = subset(tmpTwin, zyg == 1, selVars)[1:200, ]
+#' dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
+#' # TODO update for new dataset variable zygosity
+#' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
+#' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "")
 #' m1 = umxRun(m1)
 #' umxSummary(m1)
@@ -87,7 +93,7 @@
 #' \dontrun{
 #' plot(m1)
 #' }
-umxACEcov <- function(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE) {
+umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	if(nrow(dzData)==0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData)==0){ stop("Your DZ dataset has no rows!") }
 	nSib = 2 # number of siblings in a twin pair
@@ -106,7 +112,7 @@ umxACEcov <- function(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NUL
 			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
 			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
 		}
-		selDVs = umx_paste_names(selDVs, suffix, 1:2)
+		selDVs  = umx_paste_names(selDVs, suffix, 1:2)
 		selCovs = umx_paste_names(selCovs, suffix, 1:2)
 	}
 	selVars = c(selDVs, selCovs)
@@ -123,18 +129,28 @@ umxACEcov <- function(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NUL
 	mzData = mzData[, selVars]
 	dzData = dzData[, selVars]
 
-	obsMZmeans = umx_means(mzData[, selDVs], ordVar = 0, na.rm = TRUE)
-	meanDimNames = list("means", selDVs)		
+	obsMZmeans = umx_means(mzData[, selVars], ordVar = 0, na.rm = TRUE)
+	meanDimNames = list("means", selVars)
 	meanLabels = c(paste0("mean", 1:nTot), paste0("mean", 1:nTot))
 	meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
+
+	varStarts = diag(umxHetCor(mzData))
+	if(nVar == 1){
+		varStarts = varStarts/3
+	} else {
+		varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
+	}
+	varStarts = matrix(varStarts, nVar, nVar)
+
 	# Matrices a,c,e to store a,c,e path coefficients
-	top = mxModel(top,
+	top = mxModel("top",
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 		# NB: top already has the means model and thresholds matrix added if necessary  - see above
 		# Additive, Common, and Unique environmental paths
-		umxLabel(mxMatrix(name = "a", type = "Full", nrow = nVar, ncol = nVar, free = T, values = varStarts, byrow = T)),
-		umxLabel(mxMatrix(name = "c", type = "Full", nrow = nVar, ncol = nVar, free = T, values = varStarts, byrow = T)),
-		umxLabel(mxMatrix(name = "e", type = "Full", nrow = nVar, ncol = nVar, free = T, values = varStarts, byrow = T)),  
+		# TODO fix varStarts
+		umxLabel(mxMatrix(name = "a", type = "Full", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)),
+		umxLabel(mxMatrix(name = "c", type = "Full", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)),
+		umxLabel(mxMatrix(name = "e", type = "Full", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)),  
 
 		mxMatrix(name = "dzAr", type = "Full", 1, 1, free = FALSE, values = dzAr),
 		mxMatrix(name = "dzCr", type = "Full", 1, 1, free = FALSE, values = dzCr),
@@ -157,17 +173,16 @@ umxACEcov <- function(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NUL
 		mxAlgebra(name = "AC"  , A + C),
 		mxAlgebra(name = "ACE" , A + C + E),
 		mxAlgebra(name = "hAC" , dzAr * AC),
-		mxAlgebra(name = "hACE", dzAr * ACE),
 		mxAlgebra(name = "expCovMZ", expression = rbind(
-			cbind(ACE + beta %&% WplusB, AC  + beta %&% CovB  , tBeta %*% WplusB, tBeta %*% CovB),
-			cbind(AC  + beta %&% CovB  , ACE + beta %&% WplusB, tBeta %*% CovB  , tBeta %*% WplusB),
+			cbind(ACE + WplusB %&% beta, AC  + CovB   %&% beta, tBeta %*% WplusB, tBeta %*% CovB),
+			cbind(AC  + CovB   %&% beta, ACE + WplusB %&% beta, tBeta %*% CovB  , tBeta %*% WplusB),
 			cbind(WplusB %*% beta      , CovB   %*% beta      , WplusB          , CovB),
 			cbind(CovB   %*% beta      , WplusB %*% beta      , CovB            , WplusB))
 		),
 		# Algebra for expected variance/covariance matrix #in DZ twins
 		mxAlgebra(name="expCovDZ", expression = rbind(
-			cbind(ACE+ beta %&% WplusB, hAC+ beta %&% CovB  , tBeta %*% WplusB, tBeta %*% CovB),
-			cbind(hACE+ beta %&%CovB  , ACE+ beta %&% WplusB, tBeta%*%CovB    , tBeta %*% WplusB),
+			cbind(ACE+ WplusB %&% beta, hAC+ CovB   %&% beta, tBeta %*% WplusB, tBeta %*% CovB),
+			cbind(hAC+ CovB   %&% beta, ACE+ WplusB %&% beta, tBeta %*% CovB  , tBeta %*% WplusB),
 			cbind(WplusB %*% beta     , CovB %*% beta       , WplusB          , CovB),
 			cbind(CovB %*% beta       , WplusB %*% beta     , CovB            , WplusB))
 		)
@@ -209,7 +224,7 @@ umxACEcov <- function(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NUL
 		}
 	}
 	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
-	if(equateMeans & (dataType == "raw")){
+	if(equateMeans){
 		model = omxSetParameters(model,
 		  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMean14", "expMean15", "expMean16"),
 		  newlabels = paste0("expMean_r1c", 1:nVar)             # c("expMean11", "expMean12", "expMean13")
@@ -218,5 +233,9 @@ umxACEcov <- function(name = "ACE", selDVs, seCovs, dzData, mzData, suffix = NUL
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModel.ACEcov") # set class so that S3 plot() dispatches.
-	return(model)
+	if(autoRun){
+		return(mxRun(model))
+	} else {
+		return(model)
+	}
 }

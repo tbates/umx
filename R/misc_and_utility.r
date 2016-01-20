@@ -14,12 +14,11 @@
 #'
 #' Set autorun default for models like umxACE umxGxE etc
 #'
-#' @param cores number of cores to use (defaults to max - 1 to preserve UI responsiveness)
-#' @param model an (optional) model to set. If left NULL, the global option is updated.
-#' @return - NULL
+#' @param autoRun If TRUE or FALSE, sets the umx_auto_run option. Else returns the current value of umx_auto_run
+#' @return - Current umx_auto_run setting
 #' @export
 #' @family Get and set
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' library(umx)
 #' old = umx_set_auto_run() # get existing value
@@ -206,6 +205,7 @@ umx_get_optimizer <- function(model = NULL) {
 #'
 #' @param opt default (NA) returns current value. Current alternatives are
 #' "NPSOL" "SLSQP" and "CSOLNP".
+#' @param model A model for which to set the optimizer. Default (NULL) sets the optimizer globally.
 #' @return - 
 #' @export
 #' @family Get and set
@@ -215,7 +215,7 @@ umx_get_optimizer <- function(model = NULL) {
 #' old = umx_set_optimizer() # get the existing state
 #' umx_set_optimizer("SLSQP") # update globally
 #' umx_set_optimizer(old) # set back
-umx_set_optimizer <- function(opt = NA) {
+umx_set_optimizer <- function(opt = NA, model = NULL) {
 	if(is.na(opt)){
 		if(is.null(model)){
 			o= mxOption(NULL, "Default optimizer")
@@ -1269,7 +1269,7 @@ umx_SQL_from_Excel <- function(theFile = "Finder") {
 #'
 #' @param X a matrix or dataframe
 #' @param df the degrees of freedom for the test
-#' @param use how to handle missing data
+#' @param use how to handle missing data (defaults to pairwise complete)
 #' @param digits rounding of answers
 #' @param type Unused argument for future directions
 #' @return - Matrix of correlations and p-values
@@ -1278,9 +1278,11 @@ umx_SQL_from_Excel <- function(theFile = "Finder") {
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_cor(myFADataRaw[1:8,])
-umx_cor <- function (X, df = nrow(X) - 2, use = "pairwise.complete.obs", digits = 2, type= c("r and p-value", "smart")) {
+
+umx_cor <- function (X, df = nrow(X) - 2, use = c("pairwise.complete.obs", "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2, type= c("r and p-value", "smart")) {
 	# see also
 	# hmisc::rcorr( )
+	use = match.arg(use)
 	warning("don't use this until we are computing n properly")
 	# nvar    = dim(x)[2]
 	# nMatrix = diag(NA, nrow= nvar)
@@ -1617,7 +1619,7 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 				thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
 				options("umx_last_time" = proc.time())
 			}else{
-				stop("Value strings for umx_time are start and stop, not: ", omxQuote(m))
+				stop("Value strings for umx_time are start and stop, not: ", omxQuotes(m))
 			}
 		} else {
 			# handle model
@@ -3082,7 +3084,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs, a = c(avg = .5, min = 0, max =
 				ace, ac,
 				ac, ace)
 			);
-			mzPair = mvrnorm(n = 1, mu = c(0,0), Sigma = mzCov);
+			# MASS:: package
+			mzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = mzCov);
 			mzData[j,] = c(mzPair, thisSES, thisSES)
 			j = j + 1
 		}
@@ -3435,7 +3438,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #'
 #' @param data A \code{\link{data.frame}} of columns for which to compute heterochoric correlations
 #' @param ML Whether to use Maximum likelihood computation of correlations (default = FALSE)
-#' @param use How to handle missing data: "complete.obs", "pairwise.complete.obs" Default is complete.obs
+#' @param use How to handle missing data: "complete.obs" (Default), "pairwise.complete.obs" 
 #' @param treatAllAsFactor Whether to treat all columns as factors, whether they are or not.
 #' @param verbose How much to tell the user about what was done.
 #' @return - A matrix of correlations
@@ -3445,15 +3448,16 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @examples
 #' umxHetCor(mtcars[,c("mpg", "am")])
 #' umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = FALSE, verbose = TRUE)
-umxHetCor <- function(data, ML = FALSE, use = "complete.obs", treatAllAsFactor = FALSE, verbose = FALSE){
+umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "complete.obs"), treatAllAsFactor = FALSE, verbose = FALSE){
 	# depends on polycor::hetcor
+	use = match.arg(use)
 	if(treatAllAsFactor){
 		n = ncol(data)
 		for (i in 1:n) {
 			data[,i] = factor(data[,i])
 		}
 	}
-	hetc = polycor::hetcor(data, ML = ML, use = use, std.err = FALSE)
+	hetc = hetcor(data, ML = ML, use = use, std.err = FALSE)
 	if(verbose){
 		print(hetc)
 	}
