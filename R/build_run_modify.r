@@ -13,8 +13,7 @@
     packageStartupMessage("For an overview type '?umx'")
 }
 
-#' @importFrom graphics plot
-#' @importFrom methods as getSlots is slotNames
+#' @importFrom MASS mvrnorm
 #' @importFrom stats C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
@@ -22,10 +21,12 @@
 #' @importFrom stats setNames update var
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables
+#' @importFrom methods as getSlots is slotNames
+#' @importFrom graphics plot
 #' @importFrom numDeriv jacobian
+#' @importFrom methods setClass
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
-#' @importFrom methods setClass
 NULL
 
 utils::globalVariables(c(
@@ -79,6 +80,16 @@ utils::globalVariables(c(
 	'Mf', 'Mm',
 	'MZW', 'DZW',
 	'fmCOV','mfCOV',
+
+	# from umxACEcov
+	'varStarts',
+	'CholCovB',
+	'CholCovW',
+	'CovB',
+	'CovW',
+	'WplusB',
+	'tBeta',
+
 
 	'meanDZ', 'meanMZ',
 
@@ -204,7 +215,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			# if(setValues){
 			# 	newModel = umxValues(newModel)
 			# }
-			if(run){
+			if(autoRun){
 				newModel = mxRun(newModel)
 				umxSummary(newModel)
 				if(comparison){
@@ -1841,7 +1852,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 	colSZm = paste0(varList, rep(c('Asm','Csm')     , each = nVar))
 	colSZf = paste0(varList, rep(c('Asf','Csf')     , each = nVar))
 
-	m1 = mxModel(name,
+	model = mxModel(name,
 		mxModel("top",
 			# Matrices a, c, and e to store Path Coefficients
 			# Male & female parameters <- am cm em, Ram, Rcm, Rem, Am, Cm, Em, Vm, VarsZm, CorsZm
@@ -1941,7 +1952,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 		),
 		mxFitFunctionMultigroup(c("MZf", "DZf", "MZm", "DZm", "DZo"))
 	)
-	m1 = umxLabel(m1)
+	model = umxLabel(model)
 	if(autoRun){
 		return(mxRun(model))
 	} else {
