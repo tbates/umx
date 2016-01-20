@@ -2,6 +2,7 @@
 # devtools::release("~/bin/umx", check = TRUE)
 # devtools::build_win("~/bin/umx")
 # devtools::run_examples("~/bin/umx")
+# install.packages("digest"); install.packages("Rcpp")
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -340,7 +341,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(setValues){
 		m1 = umxValues(m1, onlyTouchZeros = TRUE)
 	}
-	if(run){
+	if(autoRun){
 		m1 = mxRun(m1)
 		umxSummary(m1)
 		return(m1)
