@@ -1,6 +1,5 @@
 ## Changes
-now import stats::vcov
-Version 1.1.0.
+New functions and improvements in Version 1.1.1
 
 ## Test environments
 * OS X 10.11, R version 3.2.2 (2015-11-17)
