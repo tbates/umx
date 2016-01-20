@@ -6,7 +6,8 @@
 \usage{
 umxACEcov(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL,
-  equateMeans = TRUE)
+  equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"),
+  autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE")}

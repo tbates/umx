@@ -4,11 +4,13 @@
 \alias{umx_set_optimizer}
 \title{umx_set_optimizer}
 \usage{
-umx_set_optimizer(opt = NA)
+umx_set_optimizer(opt = NA, model = NULL)
 }
 \arguments{
 \item{opt}{default (NA) returns current value. Current alternatives are
 "NPSOL" "SLSQP" and "CSOLNP".}
+
+\item{model}{A model for which to set the optimizer. Default (NULL) sets the optimizer globally.}
 }
 \value{
 -

@@ -7,12 +7,10 @@
 umx_set_auto_run(autoRun = NA)
 }
 \arguments{
-\item{cores}{number of cores to use (defaults to max - 1 to preserve UI responsiveness)}
-
-\item{model}{an (optional) model to set. If left NULL, the global option is updated.}
+\item{autoRun}{If TRUE or FALSE, sets the umx_auto_run option. Else returns the current value of umx_auto_run}
 }
 \value{
-- NULL
+- Current umx_auto_run setting
 }
 \description{
 Set autorun default for models like umxACE umxGxE etc
@@ -24,7 +22,7 @@ umx_set_auto_run(FALSE)  # set to FALSE
 umx_set_auto_run(old)    # reinstate
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set: \code{\link{umx_get_checkpoint}},
