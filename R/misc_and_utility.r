@@ -1769,7 +1769,7 @@ umx_has_been_run <- function(model, stop = FALSE) {
 		}
 	} else if (length(output) < 1){
 		if(stop){
-			stop("Provided model has no output. , and thus no output to process further")
+			stop("Provided model has no output (probably you have not yet run it?)")
 		} else {
 			return(FALSE)
 		}

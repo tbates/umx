@@ -595,7 +595,11 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 		model = omxSetParameters(model, labels = c('am_r1c1', 'cm_r1c1', 'em_r1c1'), lbound = lboundM)
 	}
 	model = as(model, "MxModel.GxE")
-	return(model)
+	if(autoRun){
+		return(mxRun(model))
+	} else {
+		return(model)
+	}
 }
 
 #' umxGxE_window

@@ -1287,6 +1287,8 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
 umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, dotFilename = NULL, returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
 	report = match.arg(report)
+	umx_has_been_run(model, stop=TRUE)
+	
 	if(any(!is.null(c(dotFilename, returnStd, showStd, CIs, ...) ))){
 		message("I haven't implemented dotFilename, returnStd, extended, showStd, comparison or CIs yet...")
 	}
