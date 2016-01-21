@@ -38,9 +38,9 @@ umx_set_auto_run <- function(autoRun = NA) {
 #'
 #' set the number of cores (threads) used by OpenMx
 #'
-#' @param cores number of cores to use. NA (the default) returns current value. "max" will set to detectCores-1
+#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to detectCores().
 #' @param model an (optional) model to set. If left NULL, the global option is updated.
-#' @return - NULL
+#' @return - number of cores
 #' @export
 #' @family Get and set
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
@@ -53,22 +53,31 @@ umx_set_auto_run <- function(autoRun = NA) {
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxData(mtcars[, manifests], type = "raw")
 #' )
-#' oldCores <- umx_set_cores() # get existing value
+#' umx_set_cores()              # show current value
+#' oldCores <- umx_set_cores()  # store existing value
 #' umx_set_cores(detectCores()) # set to max
-#' umx_set_cores()            # show new value
-#' umx_set_cores(1, m1)       # set m1 useage to 1 core
-#' umx_set_cores(model = m1)  # show new value
-#' umx_set_cores(oldCores)    # reinstate old value
+#' umx_set_cores(-1) ; umx_set_cores() # set to max
+#' m1 = umx_set_cores(1, m1)  # set m1 useage to 1 core
+#' umx_set_cores(model = m1)  # show new value for m1
+#' umx_set_cores(oldCores)    # reinstate old global value
 umx_set_cores <- function(cores = NA, model = NULL) {
 	# depends on parallel::detectCores
 	if(is.na(cores)){
-		n = mxOption(model, "Number of Threads")
+		n = mxOption(model, "Number of Threads") # get the old value
 		message(n, "/", parallel::detectCores())
-		invisible(n)
+		return(n)
 	} else if(umx_is_MxModel(cores)) {
 		stop("Call this as umx_set_cores(cores, model), not the other way around")
+	}else{
+		umx_check(isTRUE(all.equal(cores, as.integer(cores))), message = paste0("cores must be an integer. You gave me: ", cores))
+		if(cores > detectCores() ){
+			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", detectCores() )
+			cores = detectCores()
+		} else if (cores < 1){
+			cores = detectCores()
+		}
+		mxOption(model, "Number of Threads", cores)		
 	}
-	mxOption(model, "Number of Threads", cores)
 }
 
 #' umx_get_cores
@@ -102,10 +111,11 @@ umx_get_cores <- function(model = NULL) {
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
+#' # takes a minute on a fast machine
 #' umx_check_parallel()
 #' }
 umx_check_parallel <- function(nCores = -1) {
-	oldCores = umx_get_cores()
+	oldCores = umx_set_cores()
 	if(nCores == -1){
 		maxCores = parallel::detectCores()
 	} else {
