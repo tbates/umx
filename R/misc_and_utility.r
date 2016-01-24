@@ -69,6 +69,9 @@ umx_set_cores <- function(cores = NA, model = NULL) {
 	} else if(umx_is_MxModel(cores)) {
 		stop("Call this as umx_set_cores(cores, model), not the other way around")
 	}else{
+		if(!is.numeric(cores)){
+			stop("cores must be an integer. You gave me ", cores)
+		}
 		umx_check(isTRUE(all.equal(cores, as.integer(cores))), message = paste0("cores must be an integer. You gave me: ", cores))
 		if(cores > detectCores() ){
 			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", detectCores() )
