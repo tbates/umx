@@ -117,14 +117,14 @@ umx_get_cores <- function(model = NULL) {
 umx_check_parallel <- function(nCores = -1) {
 	oldCores = umx_set_cores()
 	if(nCores == -1){
-		maxCores = parallel::detectCores()
+		nCores = detectCores()
 	} else {
-		maxCores = nCores
+		nCores = nCores
 	}
 	message("You are using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means max - 1)")
-	message("I will now set cores to ", maxCores, " (they will be reset after) and run a script that hits multiple cores if possible.\n",
+	message("I will now set cores to ", nCores, " (they will be reset after) and run a script that hits multiple cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
-	umx_set_cores(maxCores)
+	umx_set_cores(nCores)
 	numberSubjects <- 1000
 	numberIndicators <- 12
 	numberFactors <- 3
