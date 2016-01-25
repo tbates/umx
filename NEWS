@@ -3,8 +3,8 @@ umx 1.1.1
 --------------
 
 * Jan 2016 Fire Safety edition
-* Added an auto-run option options("umx_auto_run" = TRUE)
 * auto-run now the default for all models!
+* Added option to switch this: options("umx_auto_run" = TRUE)
 * umx_make_TwinData added to support simulation studies
 * umx_check_parallel now returns timing)
 * umx_time now supports "start" and "stop")
