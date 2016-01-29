@@ -6,6 +6,7 @@
 \usage{
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   setValues = TRUE, independent = NA, remove_unused_manifests = TRUE,
+  showEstimates = c("none", "raw", "std", "both", "list of column names"),
   autoRun = getOption("umx_auto_run"))
 }
 \arguments{
@@ -24,6 +25,8 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 \item{independent}{Whether the model is independent (default = NA)}
 
 \item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
+
+\item{showEstimates}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 }

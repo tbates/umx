@@ -3,6 +3,7 @@
 # devtools::build_win("~/bin/umx")
 # devtools::run_examples("~/bin/umx")
 # install.packages("digest"); install.packages("Rcpp")
+# install.packages("curl"); install.packages("devtools"); install.packages("R6"); install.packages("rstudioapi"); install.packages("withr")
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -150,6 +151,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param independent Whether the model is independent (default = NA)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
+#' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -198,8 +200,9 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' }
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, autoRun = getOption("umx_auto_run")) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), autoRun = getOption("umx_auto_run")) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
+	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both"), check = FALSE)
 	if(typeof(model) == "character"){
 		if(is.na(name)){
 			name = model
@@ -280,8 +283,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			manifestVars = names(data@observed)
 			isRaw = TRUE
 		} else {
-			isRaw = FALSE
 			manifestVars = colnames(data@observed)
+			isRaw = FALSE
 		}
 		if(is.null(manifestVars)){
 			stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
@@ -355,7 +358,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}
 	if(autoRun){
 		m1 = mxRun(m1)
-		umxSummary(m1)
+		umxSummary(m1, showEstimates = showEstimates)
 		return(m1)
 	} else {
 		return(m1)
