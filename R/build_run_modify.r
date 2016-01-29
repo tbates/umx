@@ -202,7 +202,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' }
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), autoRun = getOption("umx_auto_run")) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
-	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both"), check = FALSE)
+	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
 	if(typeof(model) == "character"){
 		if(is.na(name)){
 			name = model
