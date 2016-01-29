@@ -22,10 +22,12 @@ umx_make_TwinData(nMZpairs, nDZpairs, a = c(avg = 0.5, min = 0, max = 1), c,
 - list of mzData and dzData data.frames
 }
 \description{
-makes MZ and DZ twin data, optionally moderated.
+Makes MZ and DZ twin data, optionally moderated.
 }
 \details{
-
+You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of a, c,and e.
+a can take a list of values which if specified will act like a moderated heritability, with average value a[1], and swinging
+down to a[2 and up to a[3] across 4-SDs of the moderator.
 }
 \examples{
 str(umx_make_TwinData(100,100, .5, .3, .4))

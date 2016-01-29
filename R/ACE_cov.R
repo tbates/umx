@@ -56,6 +56,8 @@
 #' @param boundDiag = Whether to bound the diagonal of the a, c, and e matrices
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE)
 #' @param hint An analysis hint. Options include "none", (default) "left_censored". Default does nothing.
+#' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE)
+#' @param autoRun Whether to run the model and return it, or just return it
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @export
 #' @family Twin Modeling Functions
@@ -86,8 +88,7 @@
 #' # TODO update for new dataset variable zygosity
 #' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 #' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
-#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "")
-#' m1 = umxRun(m1)
+#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "", autoRun = FALSE)
 #' umxSummary(m1)
 #' umxSummaryACE(m1)
 #' \dontrun{
@@ -166,7 +167,7 @@ umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NU
 		mxAlgebra(name = "C", c %*% t(c)),
 		mxAlgebra(name = "E", e %*% t(e)),
 		# Declare a vector for the regression parameters
-		mxMatrix(name="beta", type="Full", nrow=nVar, ncol=1, free=TRUE, values= 0, labels=paste0("beta", 1:nCov)),
+		mxMatrix(name = "beta", type = "Full", nrow = (nCov * nSib), ncol = 1, free = TRUE, values = 0, labels = c(paste0("beta", 1:nCov), paste0("beta", 1:nCov))),
 
 		mxAlgebra(name = "tBeta", expression = t(beta)),
 		# Algebra for expected variance/covariance matrix #in MZ twins

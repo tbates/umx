@@ -996,8 +996,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' }
 umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"), autoRun=getOption("umx_auto_run")) {
-	if(nrow(dzData)==0){ stop("Your DZ dataset has no rows!") }
-	if(nrow(mzData)==0){ stop("Your DZ dataset has no rows!") }
+	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
+	if(nrow(mzData) == 0){ stop("Your DZ dataset has no rows!") }
 	hint = match.arg(hint)
 	nSib = 2 # number of siblings in a twin pair
 	if(dzCr == .25 && name == "ACE"){

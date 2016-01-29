@@ -35,7 +35,11 @@ omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE)}
 
+\item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE)}
+
 \item{hint}{An analysis hint. Options include "none", (default) "left_censored". Default does nothing.}
+
+\item{autoRun}{Whether to run the model and return it, or just return it}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACEcov
@@ -108,8 +112,7 @@ dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
 # TODO update for new dataset variable zygosity
 # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
-m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "")
-m1 = umxRun(m1)
+m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "", autoRun = FALSE)
 umxSummary(m1)
 umxSummaryACE(m1)
 \dontrun{

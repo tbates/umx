@@ -24,7 +24,8 @@ Imports:
     RCurl
 Suggests:
     knitr,
-    testthat
+    testthat,
+	gdata
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 LazyData: true
