@@ -88,7 +88,7 @@
 #' # TODO update for new dataset variable zygosity
 #' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 #' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
-#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "", autoRun = FALSE)
+#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "", autoRun = TRUE)
 #' umxSummary(m1)
 #' umxSummaryACE(m1)
 #' \dontrun{
