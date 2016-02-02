@@ -3637,9 +3637,9 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	if(!is.null(v1m0)){
 		# TODO lbound ubound unlikely to be applied to two things, and can't affect result... error if they're not NULL?
 		if(!is.na(lbound)&&is.na(ubound)){
-			warning("don't use lbound or ubound with v1m0: it doesn't make sense...")
+			message("I lbounded var of ", v1m0, " @ 0")
 		}
-		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels, lbound = lbound, ubound = ubound)
+		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels, lbound = 0, ubound = ubound)
 		b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
 		return(list(a,b))
 	}
@@ -3647,7 +3647,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	if(!is.null(v.m.)){
 		# TODO lbound ubound unlikely to be applied to two things. lbound for var should be 0
 		if(!is.na(lbound)&&is.na(ubound)){
-			warning("Don't use lbound or ubound with v1m0: it doesn't make sense... + I lbound var @ 0")
+			message("I lbounded var of ", v.m. , " @ 0")
 		}
 		a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
 		b = mxPath(from = "one", to = v.m., free = TRUE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
@@ -3694,6 +3694,10 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			to     = var
 			arrows = 2
 			connect = "single"
+			if(is.na(lbound)){
+				message("I lbounded var of ", var, " @ 0")			
+				lbound  = 0
+			}
 		}
 	} else if(!is.null(means)){
 		# ================
@@ -3713,7 +3717,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		# = Handle unique.bivariate =
 		# ===========================
 		if(length(unique(unique.bivariate)) < 2){
-			stop("You have to have at least 2 uniuque variables to use unique.bivariate")
+			stop("You have to have at least 2 unique variables to use unique.bivariate")
 		}
 		if(!is.null(from)){
 			stop("To use unique.bivariate, 'from=' should be empty.\n",
@@ -3778,10 +3782,6 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		free = TRUE
 		values = freeAt
 	}
-	# TODO check incoming value of connect
-	# if(!connect == "single"){
-	# 	message("Connect should be single, it was:", connect)
-	# }	
 	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound)
 }
 
