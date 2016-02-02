@@ -161,7 +161,7 @@ umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NU
 		mxMatrix(name = "CholCovB", 'Lower', nrow=nVar, ncol=nVar, values=0.5, free=TRUE),
 		mxAlgebra(name= "CovB"    , CholCovB %*% t(CholCovB)),
 		mxAlgebra(name= "CovW"    , CholCovW %*% t(CholCovW)),
-		mxAlgebra(name= "WplusB"  , CovB + CovW),
+		mxAlgebra(name= "sumWB"   , CovW + CovB),
 		# Matrices A, C,E + compute variance components
 		mxAlgebra(name = "A", a %*% t(a)),
 		mxAlgebra(name = "C", c %*% t(c)),
@@ -169,27 +169,28 @@ umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NU
 		# Declare a vector for the regression parameters
 		mxMatrix(name = "beta", type = "Full", nrow = (nCov * nSib), ncol  = 1, free = TRUE, values = 0, labels = c(paste0("beta", 1:nCov), paste0("beta", 1:nCov))),
 		# Some handy component algebras
-		mxAlgebra(name = "AC"  , A + C),
-		mxAlgebra(name = "ACE" , A + C + E),
-		mxAlgebra(name = "hAC" , dzAr * AC),
-		mxAlgebra(name = "b_WplusB_b", t(beta) %*% WplusB %*% beta),
-		mxAlgebra(name = "b_WplusB"  , t(beta) %*% WplusB),
-		mxAlgebra(name = "b_CovB_b"  , t(beta) %*% CovB %*% beta),
-		mxAlgebra(name = "b_CovB"  , t(beta) %*% CovB),
-		mxAlgebra(name = "CovB_b"  , CovB %*% beta),
+		mxAlgebra(name = "AC" , A + C),
+		mxAlgebra(name = "ACE", A + C + E),
+		mxAlgebra(name = "hAC", dzAr * AC),
+		mxAlgebra(name = "tb_sumWB_b", t(beta) %*% sumWB %*% beta),
+		mxAlgebra(name = "tb_CovB_b" , t(beta) %*% CovB %*% beta),
+		mxAlgebra(name = "tb_sumWB"  , t(beta) %*% sumWB),
+		mxAlgebra(name = "tb_CovB"   , t(beta) %*% CovB),
+		mxAlgebra(name = "sumWB_b"   ,   sumWB %*% beta),
+		mxAlgebra(name = "CovB_b"    ,   CovB  %*% beta),
 		# Algebra for expected variance/covariance matrix #in MZ twins
 		mxAlgebra(name = "expCovMZ", expression = rbind(
-			cbind(ACE + b_WplusB_b, AC  + b_CovB_b  , b_CovB, b_CovB),
-			cbind(AC  + b_CovB_b  , ACE + b_WplusB_b, b_CovB, b_CovB),
-			cbind(WplusB %*% beta , CovB   %*% beta      , WplusB          , CovB),
-			cbind(CovB_b                   , WplusB %*% beta      , CovB            , WplusB))
+			cbind(ACE + tb_sumWB_b, AC  + tb_CovB_b , tb_sumWB, tb_CovB),
+			cbind(AC  + tb_CovB_b , ACE + tb_sumWB_b, tb_CovB , tb_sumWB),
+			cbind(sumWB_b         , CovB_b          , sumWB   , CovB),
+			cbind(CovB_b          , sumWB_b         , CovB    , sumWB))
 		),
 		# Algebra for expected variance/covariance matrix #in DZ twins
 		mxAlgebra(name="expCovDZ", expression = rbind(
-			cbind(ACE+ b_WplusB_b, hAC+ b_CovB_b, b_WplusB_b %*% CovB),
-			cbind(hAC+ b_CovB_b  , ACE+ b_WplusB_b, b_CovB  , b_WplusB),
-			cbind(WplusB %*% beta                 , CovB %*% beta                   , WplusB          , CovB),
-			cbind(CovB %*% beta                   , WplusB %*% beta                 , CovB            , WplusB))
+			cbind(ACE + tb_sumWB_b, hAC + tb_CovB_b , tb_sumWB, tb_CovB),
+			cbind(hAC + tb_CovB_b , ACE + tb_sumWB_b, tb_CovB , tb_sumWB),
+			cbind(sumWB_b         , CovB_b          , sumWB   , CovB),
+			cbind(CovB_b          , sumWB_b         , CovB    , sumWB))
 		)
 	) # end top
 
