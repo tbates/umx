@@ -175,17 +175,17 @@ umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NU
 		mxAlgebra(name = "ACE" , A + C + E),
 		mxAlgebra(name = "hAC" , dzAr * AC),
 		mxAlgebra(name = "expCovMZ", expression = rbind(
-			cbind(ACE + WplusB %&% beta, AC  + CovB   %&% beta, tBeta %*% WplusB, tBeta %*% CovB),
-			cbind(AC  + CovB   %&% beta, ACE + WplusB %&% beta, tBeta %*% CovB  , tBeta %*% WplusB),
-			cbind(WplusB %*% beta      , CovB   %*% beta      , WplusB          , CovB),
-			cbind(CovB   %*% beta      , WplusB %*% beta      , CovB            , WplusB))
+			cbind(ACE + t(beta) %*% WplusB %*% beta, AC  + t(beta) %*% CovB   %*% beta, tBeta %*% WplusB, tBeta %*% CovB),
+			cbind(AC  + t(beta) %*% CovB   %*% beta, ACE + t(beta) %*% WplusB %*% beta, tBeta %*% CovB  , tBeta %*% WplusB),
+			cbind(WplusB %*% beta                  , CovB   %*% beta      , WplusB          , CovB),
+			cbind(CovB   %*% beta                  , WplusB %*% beta      , CovB            , WplusB))
 		),
 		# Algebra for expected variance/covariance matrix #in DZ twins
 		mxAlgebra(name="expCovDZ", expression = rbind(
-			cbind(ACE+ WplusB %&% beta, hAC+ CovB   %&% beta, tBeta %*% WplusB, tBeta %*% CovB),
-			cbind(hAC+ CovB   %&% beta, ACE+ WplusB %&% beta, tBeta %*% CovB  , tBeta %*% WplusB),
-			cbind(WplusB %*% beta     , CovB %*% beta       , WplusB          , CovB),
-			cbind(CovB %*% beta       , WplusB %*% beta     , CovB            , WplusB))
+			cbind(ACE+ t(beta) %*% WplusB %*% beta, hAC+ t(beta) %*% WplusB %*% beta, tBeta %*% WplusB, tBeta %*% CovB),
+			cbind(hAC+ t(beta) %*% CovB   %*% beta, ACE+ t(beta) %*% CovB   %*% beta, tBeta %*% CovB  , tBeta %*% WplusB),
+			cbind(WplusB %*% beta                 , CovB %*% beta                   , WplusB          , CovB),
+			cbind(CovB %*% beta                   , WplusB %*% beta                 , CovB            , WplusB))
 		)
 	) # end top
 
