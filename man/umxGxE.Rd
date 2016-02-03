@@ -76,6 +76,7 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxIP}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umx_make_TwinData}}, \code{\link{umx}}
