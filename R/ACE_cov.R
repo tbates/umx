@@ -1,4 +1,7 @@
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+# devtools::release("~/bin/umx", check = TRUE)
 # https://www.researchgate.net/publication/287346605_A_New_Approach_to_Handle_Missing_Covariate_Data_in_Twin_Research
+
 #' umxACEcov
 #'
 #' Make a 2-group ACE Cholesky Twin model with covariates modeled (see Details below)
@@ -8,16 +11,11 @@
 #' to model the genetic and environmental structure of one, or, typically, several phenotypes
 #' (measured behaviors).
 #' 
-#' umxACE supports a core model in behavior genetics, known as the ACE Cholesky model
-#' (Cardon and Neale, 1996). This model decomposes phenotypic variance into Additive genetic, 
-#' unique environmental (E) and, optionally, either common or shared-environment (C) or 
-#' non-additive genetic effects (D). This latter restriction emerges due to a lack of degrees of 
-#' freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}. The Cholesky or 
-#' lower-triangle decomposition allows a model which is both sure to be solvable, and also to 
-#' account for all the variance (with some restrictions) in the data. This model creates as 
-#' many latent A C and E variables as there are phenotypes, and, moving from left to 
-#' right, decomposes the variance in each component into successively restricted 
-#' factors. The following figure shows how the ACE model appears as a path diagram:
+#' umxACEcov supports a core model in behavior genetics, known as the ACE Cholesky model
+#' (Cardon and Neale, 1996), supplemented with covariates.
+#' The ACE model decomposes phenotypic variance into Additive genetic, 
+#' unique environmental (E) and, either common xor shared-environment (C) or 
+#' non-additive genetic effects (D). The following figure shows how the ACE model appears as a path diagram:
 #' 
 #' \figure{ACE.png}
 #' 
@@ -74,12 +72,9 @@
 #' tmpTwin <- twinData
 #' # add age 1 and age 2 columns
 #' tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
-#' # Pick the variables
-#' selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
-#' # the function will then make the varnames for each twin using this:
-#' # for example. "VarSuffix1" "VarSuffix2"
+#' # Pick the variables. We will use base names (i.e., "bmi") and set suffix.
 # str(twinData)
-#' selDVs = c("bmi")
+#' selDVs  = c("bmi")
 #' selCovs = c("age")
 #' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
 #' # just top 200 so example runs in a couple of secs
@@ -88,7 +83,8 @@
 #' # TODO update for new dataset variable zygosity
 #' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 #' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
-#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "", autoRun = TRUE)
+#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
+#' 	 suffix = "", autoRun = T)
 #' umxSummary(m1)
 #' umxSummaryACE(m1)
 #' \dontrun{
@@ -108,94 +104,109 @@ umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NU
 		"BadNames included: ", omxQuotes(badNames) )
 	}
 
-	if(!is.null(suffix)){
-		if(length(suffix) > 1){
+	if(is.null(suffix)){
+		stop("I need a suffix, like '_T'. I will add 1 and 2 afterwards... \n",
+		"i.e., selDVs should be 'bmi' etc, and I will re-name to 'bmi_T1' and 'bmi_T2' etc.")
+	}else if(length(suffix) > 1){
 			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
 			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
-		}
+	}else{
+		# stash base names for use later
+		baseDVs = selDVs
+		baseCovs = selCovs
+		# fill out full trait names
 		selDVs  = umx_paste_names(selDVs, suffix, 1:2)
 		selCovs = umx_paste_names(selCovs, suffix, 1:2)
 	}
+
 	selVars = c(selDVs, selCovs)
 	umx_check_names(selVars, mzData)
 	umx_check_names(selVars, dzData)
 	# message("selVars: ", omxQuotes(selVars))
 
-	nDVs    = length(selDVs) /nSib
-	nCov    = length(selCovs)/nSib
-	nVar    = length(selVars)/nSib # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
-	nTot    = nVar * 2
+	nDV  = length(selDVs) /nSib
+	nCov = length(selCovs)/nSib
+	nVar = length(selVars)/nSib # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
 	# Drop unused columns from mz and dzData
 	mzData = mzData[, selVars]
 	dzData = dzData[, selVars]
 
-	obsMZmeans = umx_means(mzData[, selVars], ordVar = 0, na.rm = TRUE)
-	meanDimNames = list("means", selVars)
-	meanLabels = c(paste0("mean", 1:nTot), paste0("mean", 1:nTot))
-	meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
-
-	varStarts = diag(umxHetCor(mzData))
-	if(nVar == 1){
+	meanDimNames= list("means", selVars)
+	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
+	if(equateMeans){
+		meanLabels = c(rep(paste0("expMean_", baseDVs), nSib), paste0("expMean_", selCovs))
+	}else{
+		stop("Currently, means must be equated")
+		# meanLabels = c(paste0("expMean_", selDVs), paste0("expMean_", selCovs))
+	}
+	
+	obsMZmeans  = umx_means(mzData[, selVars], ordVar = 0, na.rm = TRUE)
+	meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib),
+			free = TRUE, values = obsMZmeans, labels = meanLabels, dimnames = meanDimNames)
+	# TODO this should be variance not correlation...
+	varStarts = diag(umxHetCor(mzData[,selDVs]))
+	if(nDV == 1){
 		varStarts = varStarts/3
 	} else {
 		varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
 	}
-	varStarts = matrix(varStarts, nVar, nVar)
+	# TODO fix varStarts to include covs also
+	varStarts = matrix(varStarts, nDV, nDV)
 
-	# Matrices a,c,e to store a,c,e path coefficients
 	top = mxModel("top",
-		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
-		# NB: top already has the means model and thresholds matrix added if necessary  - see above
-		# Additive, Common, and Unique environmental paths
-		# TODO fix varStarts
-		umxLabel(mxMatrix(name = "a", type = "Full", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)),
-		umxLabel(mxMatrix(name = "c", type = "Full", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)),
-		umxLabel(mxMatrix(name = "e", type = "Full", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)),  
+		# "top" defines the algebra of the twin model, which MZ and DZ slave off of.
+		# NB: top already has the means model and thresholds matrix added if necessary  - see above.
+		# Additive, Common, and Unique environmental paths.
+		# Matrices a, c, e to store a, c, e path coefficients.
+		umxLabel(mxMatrix(name = "a", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE)),
+		umxLabel(mxMatrix(name = "c", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE)),
+		umxLabel(mxMatrix(name = "e", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE)),  
 
-		mxMatrix(name = "dzAr", type = "Full", 1, 1, free = FALSE, values = dzAr),
-		mxMatrix(name = "dzCr", type = "Full", 1, 1, free = FALSE, values = dzCr),
+		mxMatrix(name = "dzAr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzAr),
+		mxMatrix(name = "dzCr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzCr),
 
-		umxLabel(meansMatrix),
-		mxMatrix(name = "CholCovW", 'Lower', nrow=nVar, ncol=nVar, values=0.5, free=TRUE),
-		mxMatrix(name = "CholCovB", 'Lower', nrow=nVar, ncol=nVar, values=0.5, free=TRUE),
-		mxAlgebra(name= "CovB"    , CholCovB %*% t(CholCovB)),
-		mxAlgebra(name= "CovW"    , CholCovW %*% t(CholCovW)),
-		mxAlgebra(name= "sumWB"   , CovW + CovB),
+		meansMatrix,
+		mxMatrix(name = "lowerB", 'Lower', nrow = nCov, ncol = nCov, values = 0.5, free = TRUE),
+		mxMatrix(name = "lowerW", 'Lower', nrow = nCov, ncol = nCov, values = 0.5, free = TRUE),
+		mxAlgebra(name= "CovB"  , lowerB %*% t(lowerB)),
+		mxAlgebra(name= "CovW"  , lowerW %*% t(lowerW)),
+		mxAlgebra(name= "CovWB" , CovW + CovB),
+		
 		# Matrices A, C,E + compute variance components
 		mxAlgebra(name = "A", a %*% t(a)),
 		mxAlgebra(name = "C", c %*% t(c)),
 		mxAlgebra(name = "E", e %*% t(e)),
 		# Declare a vector for the regression parameters
-		mxMatrix(name = "beta", type = "Full", nrow = (nCov * nSib), ncol  = 1, free = TRUE, values = 0, labels = c(paste0("beta", 1:nCov), paste0("beta", 1:nCov))),
+		mxMatrix(name = "beta", type = "Full", nrow = nCov, ncol  = 1, free = TRUE, values = 0, labels = paste0("beta", 1:nCov)),
 		# Some handy component algebras
 		mxAlgebra(name = "AC" , A + C),
 		mxAlgebra(name = "ACE", A + C + E),
 		mxAlgebra(name = "hAC", dzAr * AC),
-		mxAlgebra(name = "tb_sumWB_b", t(beta) %*% sumWB %*% beta),
-		mxAlgebra(name = "tb_CovB_b" , t(beta) %*% CovB %*% beta),
-		mxAlgebra(name = "tb_sumWB"  , t(beta) %*% sumWB),
+		mxAlgebra(name = "tb_CovWB_b", (t(beta) %*% CovWB) %*% beta),
+		mxAlgebra(name = "tb_CovB_b" , (t(beta) %*% CovB) %*% beta),
+		mxAlgebra(name = "tb_CovWB"  , t(beta) %*% CovWB),
 		mxAlgebra(name = "tb_CovB"   , t(beta) %*% CovB),
-		mxAlgebra(name = "sumWB_b"   ,   sumWB %*% beta),
+		mxAlgebra(name = "CovWB_b"   ,   CovWB %*% beta),
 		mxAlgebra(name = "CovB_b"    ,   CovB  %*% beta),
 		# Algebra for expected variance/covariance matrix #in MZ twins
 		mxAlgebra(name = "expCovMZ", expression = rbind(
-			cbind(ACE + tb_sumWB_b, AC  + tb_CovB_b , tb_sumWB, tb_CovB),
-			cbind(AC  + tb_CovB_b , ACE + tb_sumWB_b, tb_CovB , tb_sumWB),
-			cbind(sumWB_b         , CovB_b          , sumWB   , CovB),
-			cbind(CovB_b          , sumWB_b         , CovB    , sumWB))
+			cbind(ACE + tb_CovWB_b, AC  + tb_CovB_b , tb_CovWB, tb_CovB),
+			cbind(AC  + tb_CovB_b , ACE + tb_CovWB_b, tb_CovB , tb_CovWB),
+			cbind(CovWB_b         , CovB_b          , CovWB   , CovB),
+			cbind(CovB_b          , CovWB_b         , CovB    , CovWB))
 		),
 		# Algebra for expected variance/covariance matrix #in DZ twins
-		mxAlgebra(name="expCovDZ", expression = rbind(
-			cbind(ACE + tb_sumWB_b, hAC + tb_CovB_b , tb_sumWB, tb_CovB),
-			cbind(hAC + tb_CovB_b , ACE + tb_sumWB_b, tb_CovB , tb_sumWB),
-			cbind(sumWB_b         , CovB_b          , sumWB   , CovB),
-			cbind(CovB_b          , sumWB_b         , CovB    , sumWB))
+		mxAlgebra(name = "expCovDZ", expression = rbind(
+			cbind(ACE + tb_CovWB_b, hAC + tb_CovB_b , tb_CovWB, tb_CovB),
+			cbind(hAC + tb_CovB_b , ACE + tb_CovWB_b, tb_CovB , tb_CovWB),
+			cbind(CovWB_b         , CovB_b          , CovWB   , CovB),
+			cbind(CovB_b          , CovWB_b         , CovB    , CovWB))
 		)
 	) # end top
 
-	MZ  = mxModel("MZ" , mxExpectationNormal("top.expCovMZ", "top.expMean"), mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
-	DZ  = mxModel("DZ" , mxExpectationNormal("top.expCovDZ", "top.expMean"), mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
+	MZ  = mxModel("MZ", mxExpectationNormal("top.expCovMZ", "top.expMean"), mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
+	DZ  = mxModel("DZ", mxExpectationNormal("top.expCovDZ", "top.expMean"), mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
 
 	MZ = mxModel("MZ",
 		mxData(mzData , type = "raw"),
@@ -228,13 +239,6 @@ umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NU
 		if(addCI){
 			model = mxModel(model, mxCI(c('top.a_std', 'top.c_std', 'top.e_std')))
 		}
-	}
-	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
-	if(equateMeans){
-		model = omxSetParameters(model,
-		  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMean14", "expMean15", "expMean16"),
-		  newlabels = paste0("expMean_r1c", 1:nVar)             # c("expMean11", "expMean12", "expMean13")
-		)
 	}
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)

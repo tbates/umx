@@ -2,8 +2,18 @@
 # devtools::release("~/bin/umx", check = TRUE)
 # devtools::build_win("~/bin/umx")
 # devtools::run_examples("~/bin/umx")
-# install.packages("digest"); install.packages("Rcpp")
-# install.packages("curl"); install.packages("devtools"); install.packages("R6"); install.packages("rstudioapi"); install.packages("withr")
+# install.packages("curl")
+# install.packages("devtools")
+# install.packages("digest")
+# install.packages("git2r")
+# install.packages("httr")
+# install.packages("memoise")
+# install.packages("openssl")
+# install.packages("R6")
+# install.packages("Rcpp")
+# install.packages("rstudioapi")
+# install.packages("withr")
+
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -27,10 +37,11 @@
 #' @importFrom numDeriv jacobian
 #' @importFrom methods setClass
 #' @importFrom polycor hetcor
+#' @importFrom parallel detectCores
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
 NULL
-
+	
 utils::globalVariables(c(
 	'A', 'E',
 	'a', 'c', 'e', 
@@ -89,9 +100,13 @@ utils::globalVariables(c(
 	'CholCovW',
 	'CovB',
 	'CovW',
-	'WplusB',
-	'tBeta',
-
+	'sumWB',
+	'tb_sumWB_b',
+	'tb_CovB_b',
+	'tb_sumWB',
+	'tb_CovB',
+	'sumWB_b',
+	'CovB_b',
 
 	'meanDZ', 'meanMZ',
 

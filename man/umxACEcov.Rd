@@ -53,16 +53,11 @@ between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins re
 to model the genetic and environmental structure of one, or, typically, several phenotypes
 (measured behaviors).
 
-umxACE supports a core model in behavior genetics, known as the ACE Cholesky model
-(Cardon and Neale, 1996). This model decomposes phenotypic variance into Additive genetic, 
-unique environmental (E) and, optionally, either common or shared-environment (C) or 
-non-additive genetic effects (D). This latter restriction emerges due to a lack of degrees of 
-freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}. The Cholesky or 
-lower-triangle decomposition allows a model which is both sure to be solvable, and also to 
-account for all the variance (with some restrictions) in the data. This model creates as 
-many latent A C and E variables as there are phenotypes, and, moving from left to 
-right, decomposes the variance in each component into successively restricted 
-factors. The following figure shows how the ACE model appears as a path diagram:
+umxACEcov supports a core model in behavior genetics, known as the ACE Cholesky model
+(Cardon and Neale, 1996), supplemented with covariates.
+The ACE model decomposes phenotypic variance into Additive genetic, 
+unique environmental (E) and, either common xor shared-environment (C) or 
+non-additive genetic effects (D). The following figure shows how the ACE model appears as a path diagram:
 
 \figure{ACE.png}
 
@@ -99,11 +94,8 @@ data(twinData)
 tmpTwin <- twinData
 # add age 1 and age 2 columns
 tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
-# Pick the variables
-selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
-# the function will then make the varnames for each twin using this:
-# for example. "VarSuffix1" "VarSuffix2"
-selDVs = c("bmi")
+# Pick the variables. We will use base names (i.e., "bmi") and set suffix.
+selDVs  = c("bmi")
 selCovs = c("age")
 selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
 # just top 200 so example runs in a couple of secs
@@ -112,7 +104,8 @@ dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
 # TODO update for new dataset variable zygosity
 # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
-m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix= "", autoRun = TRUE)
+m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
+	 suffix = "", autoRun = T)
 umxSummary(m1)
 umxSummaryACE(m1)
 \dontrun{
