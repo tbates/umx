@@ -1042,7 +1042,7 @@ umxSummaryACEcov <- function(model, digits = 2, dotFilename = NULL, returnStd = 
 	rowNames = sub("_.1$", "", selDVs[1:nDV])
 	Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
 
-	names(Estimates) = paste0(rep(c("a", "c", "e"), each = nVar), rep(1:nVar));
+	names(Estimates) = paste0(rep(c("a", "c", "e"), each = nDV), rep(1:nDV));
 
 	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
 	if(report == "html"){
@@ -1060,7 +1060,7 @@ umxSummaryACEcov <- function(model, digits = 2, dotFilename = NULL, returnStd = 
 		cClean[upper.tri(cClean)] = NA
 		eClean[upper.tri(eClean)] = NA
 		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
-		names(unStandardizedEstimates) = paste0(rep(c("a", "c", "e"), each = nDv), rep(1:nDV));
+		names(unStandardizedEstimates) = paste0(rep(c("a", "c", "e"), each = nDV), rep(1:nDV));
 		umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
 	}
 

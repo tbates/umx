@@ -96,17 +96,20 @@ utils::globalVariables(c(
 
 	# from umxACEcov
 	'varStarts',
-	'CholCovB',
-	'CholCovW',
+	'lowerB',
+	'lowerW',
 	'CovB',
 	'CovW',
-	'sumWB',
-	'tb_sumWB_b',
+	'CovWB',
+	'tb_CovWB_b',
 	'tb_CovB_b',
-	'tb_sumWB',
+	'tb_CovWB',
 	'tb_CovB',
-	'sumWB_b',
+	'CovWB_b',
 	'CovB_b',
+
+	'Iden',
+	'nDv',
 
 	'meanDZ', 'meanMZ',
 
