@@ -84,18 +84,20 @@
 #' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 #' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
+#' 	 suffix = "", autoRun = F)
+#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 #' 	 suffix = "", autoRun = T)
 #' umxSummary(m1)
 #' umxSummaryACE(m1)
 #' \dontrun{
 #' plot(m1)
 #' }
-umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"), autoRun = getOption("umx_auto_run")) {
+umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	if(nrow(dzData)==0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData)==0){ stop("Your DZ dataset has no rows!") }
 	nSib = 2 # number of siblings in a twin pair
 	if(dzCr == .25 && name == "ACE"){
-		name = "ADE"
+		name = "ADEcov"
 	}
 	# look for name conflicts
 	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
@@ -132,7 +134,8 @@ umxACEcov <- function(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NU
 	mzData = mzData[, selVars]
 	dzData = dzData[, selVars]
 
-	meanDimNames= list("means", selVars)
+	meanDimNames = list(NULL, selVars)
+	# meanDimNames= list("means", selVars)
 	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
 	if(equateMeans){
 		meanLabels = c(rep(paste0("expMean_", baseDVs), nSib), paste0("expMean_", selCovs))
