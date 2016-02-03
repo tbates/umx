@@ -1840,6 +1840,128 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 #' @export
 plot.MxModel.ACE <- umxPlotACE
 
+#' umxPlotACE
+#'
+#' Make a graphical display of an ACE model
+#'
+#' @aliases plot plot.MxModel.ACE
+#' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
+#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param digits How many decimals to include in path loadings (default is 2)
+#' @param showMeans Whether to show means paths (default is FALSE)
+#' @param std Whether to standardize the model (default is TRUE)
+#' @param ... Additional (optional) parameters
+#' @return - optionally return the dot code
+#' @export
+#' @family Reporting functions
+#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @examples
+#' # Height, weight, and BMI data from Australian twins. 
+#' # The total sample has been subdivided into a young cohort, aged 18-30 years,
+#' # and an older cohort aged 31 and above.
+#' # Cohort 1 Zygosity is coded as follows: 
+#' # 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
+#' # tip: ?twinData to learn more about this data set
+#' require(umx)
+#' data(twinData)
+#' tmpTwin <- twinData
+#' # add age 1 and age 2 columns
+#' tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
+#' # Pick the variables. We will use base names (i.e., "bmi") and set suffix.
+# str(twinData)
+#' selDVs  = c("bmi")
+#' selCovs = c("age")
+#' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
+#' # just top 200 so example runs in a couple of secs
+#' mzData = subset(tmpTwin, zyg == 1, selVars)[1:200, ]
+#' dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
+#' # TODO update for new dataset variable zygosity
+#' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
+#' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
+#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
+#' 	 suffix = "", autoRun = T)
+#' \dontrun{
+#' plot(m1)
+#' umxPlotACEcov(m1, dotFilename = "override_model_name")
+#' plot(m1, std = FALSE) # don't standardize
+#' }
+umxPlotACEcov <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
+	model = x # just to be clear that x is a model
+	# relies on 'a' not having its dimnames stripped off...
+	if(model$MZ$data$type == "raw"){
+		selDVs = dimnames(model$top$a)[[1]]
+		umx_msg(selDVs)	
+		# selDVs = names(model$MZ$data$observed)
+	}else{
+		stop("ACEcov has to have raw data...")
+		# selDVs = dimnames(model$MZ$data$observed)[[1]]
+	}
+	if(std){
+		model = umx_standardize_ACEcov(model)
+	}
+	out = "";
+	latents = c();
+
+	varCount = length(selDVs)
+	parameterKeyList = omxGetParameters(model);
+	for(thisParam in names(parameterKeyList) ) {
+		value = parameterKeyList[thisParam]
+		if(class(value) == "numeric") {
+			value = round(value, digits)
+		}
+		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
+			show    = TRUE
+			search  = '([ace])_r([0-9]+)c([0-9]+)'
+			from    = sub(search, '\\1\\3', thisParam, perl = T); # a c or e
+			target  = as.numeric(sub(search, '\\2', thisParam, perl = T)); # pull the row
+			target  = selDVs[target]
+			latents = append(latents, from)
+		} else { # means probably
+			if(showMeans){
+				show = TRUE
+			} else {
+				show = FALSE
+			}
+			selDVs
+			from   = thisParam; # "one"
+			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl=T)
+		}
+		if(show){
+			out = paste0(out, from, " -> ", target, " [label = \"", value, "\"]", ";\n")
+		}
+	}
+	preOut = "\t# Latents\n"
+	latents = unique(latents)
+	for(var in latents) {
+	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+	}
+
+	preOut = paste0(preOut, "\n\t# Manifests\n")
+	for(var in selDVs[1:varCount]) {
+	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
+	}
+	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
+	# grep('a', latents, value=T)
+	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value = T), collapse = "; "), "};\n") # {rank=min; a1; a2}
+	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value = T), collapse = "; "), "};\n") # {rank=min; c1; e1}
+	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
+	# cat(digraph);
+	# return (out)
+	if(!is.na(dotFilename)){
+		if(dotFilename == "name"){
+			dotFilename = paste0(model@name, ".dot");
+		}
+		cat(digraph, file = dotFilename)
+		system(paste0("open '", dotFilename, "'"));
+		# return(invisible(cat(digraph)))
+	} else {
+		return (cat(digraph));
+	}
+} # end umxPlotACEcov
+
+#' @export
+plot.MxModel.ACEcov <- umxPlotACEcov
+
 #' umxPlotGxE
 #'
 #' Plot GxE results (univariate environmental moderation of ACE components)

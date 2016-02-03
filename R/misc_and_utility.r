@@ -3776,12 +3776,50 @@ umx_standardize_ACE <- function(fit) {
 		SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
 	
 		# Standardized _path_ coefficients ready to be stacked together
-		fit@submodels$top@matrices$a@values = SD %*% a; # Standardized path coefficients
-		fit@submodels$top@matrices$c@values = SD %*% c;
-		fit@submodels$top@matrices$e@values = SD %*% e;
+		fit$top@matrices$a$values = SD %*% a; # Standardized path coefficients
+		fit$top@matrices$c$values = SD %*% c;
+		fit$top@matrices$e$values = SD %*% e;
 		return(fit)
 	}
 }
+
+
+#' umx_standardize_ACEcov
+#'
+#' Standardize an ACE model with covariates
+#'
+#' @param fit an \code{\link{umxACEcov}} model to standardize
+#' @return - Standardized \code{\link{umxACEcov}} model
+#' @export
+#' @family zAdvanced Helpers
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' \dontrun{
+#' fit = umx_standardize_ACE(fit)
+#' }
+umx_standardize_ACEcov <- function(fit) {
+	if(typeof(fit) == "list"){ # call self recursively
+		for(thisFit in fit) {
+			message("Output for Model: ",thisFit@name)
+			umx_standardize_ACEcov(thisFit)
+		}
+	} else {
+		if(!umx_has_been_run(fit)){
+			stop("I can only standardize models that have been run. Just do\n",
+			"yourModel = mxRun(yourModel)")
+		}
+		if(!is.null(fit$top$a_std)){
+			# Standardized general path components
+			fit$top$a$values = fit$top$a_std$result # standardized a
+			fit$top$c$values = fit$top$c_std$result # standardized c
+			fit$top$e$values = fit$top$e_std$result # standardized e
+		} else {
+			stop("Please run umxACEcov(..., std = TRUE). All I do is copy a_std values into a etc, so model has to have been run!")
+		}
+		return(fit)
+	}
+}
+
 #' umx_standardize_IP
 #'
 #' This function simply inserts the standardized IP components into the ai ci ei and as cs es matrices
@@ -3798,13 +3836,13 @@ umx_standardize_ACE <- function(fit) {
 umx_standardize_IP <- function(fit){
 	if(!is.null(fit$top$ai_std)){
 		# Standardized general path components
-		fit@submodels$top@matrices$ai@values = fit@submodels$top@algebras$ai_std$result # standardized ai
-		fit@submodels$top@matrices$ci@values = fit@submodels$top@algebras$ci_std$result # standardized ci
-		fit@submodels$top@matrices$ei@values = fit@submodels$top@algebras$ei_std$result # standardized ei
-	    # Standardized specific path coefficienfitts
-		fit@submodels$top@matrices$as@values = fit@submodels$top@algebras$as_std$result # standardized as
-		fit@submodels$top@matrices$cs@values = fit@submodels$top@algebras$cs_std$result # standardized cs
-		fit@submodels$top@matrices$es@values = fit@submodels$top@algebras$es_std$result # standardized es
+		fit$top$ai@values = fit$top$ai_std$result # standardized ai
+		fit$top$ci@values = fit$top$ci_std$result # standardized ci
+		fit$top$ei@values = fit$top$ei_std$result # standardized ei
+	    # Standardized specific coeficients
+		fit$top$as@values = fit$top$as_std$result # standardized as
+		fit$top$cs@values = fit$top$cs_std$result # standardized cs
+		fit$top$es@values = fit$top$es_std$result # standardized es
 	} else {
 		stop("Please run umxIP(..., std = TRUE). All I do is copy ai_std values into ai etc, so they have to be run!")
 	}
@@ -3829,9 +3867,9 @@ umx_standardize_CP <- function(fit){
 		# Standardized general path components
 		fit@submodels$top@matrices$cp_loadings@values = fit@submodels$top@algebras$cp_loadings_std$result # standardized cp loadings
 		# Standardized specific path coefficienfitts
-		fit@submodels$top@matrices$as@values = fit@submodels$top@algebras$as_std$result # standardized as
-		fit@submodels$top@matrices$cs@values = fit@submodels$top@algebras$cs_std$result # standardized cs
-		fit@submodels$top@matrices$es@values = fit@submodels$top@algebras$es_std$result # standardized es
+		fit$top$as$values = fit$top$as_std$result # standardized as
+		fit$top$cs$values = fit$top$cs_std$result # standardized cs
+		fit$top$es$values = fit$top$es_std$result # standardized es
 		return(fit)
 	} else {
 		# TODO let this work directly... not hard..
@@ -3858,10 +3896,10 @@ umx_standardize_CP <- function(fit){
 		cs_std = SD %*% cs;
 		es_std = SD %*% es;
 	    # Standardized common and specific path coefficients
-		fit@submodels$top@matrices$cp_loadings@values = std_commonLoadings # standardized cp loadings
-		fit@submodels$top@matrices$as@values = as_std # standardized as
-		fit@submodels$top@matrices$cs@values = cs_std # standardized cs
-		fit@submodels$top@matrices$es@values = es_std # standardized es
+		fit$top$cp_loadings$values = std_commonLoadings # standardized cp loadings
+		fit$top$as$values = as_std # standardized as
+		fit$top$cs$values = cs_std # standardized cs
+		fit$top$es$values = es_std # standardized es
 		return(fit)
 	}
 }

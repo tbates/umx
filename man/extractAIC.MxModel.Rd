@@ -54,7 +54,7 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxCI_boot}}, \code{\link{umxCI}},
   \code{\link{umxCompare}}, \code{\link{umxExpCov}},
   \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
-  \code{\link{umxPlotACE}},
+  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACE}},
   \code{\link{umxStandardizeModel}},
   \code{\link{umxSummary.MxModel}},
   \code{\link{umx_drop_ok}}
