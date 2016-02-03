@@ -4,7 +4,7 @@
 \alias{umxACEcov}
 \title{umxACEcov}
 \usage{
-umxACEcov(name = "ACE", selDVs, selCovs, dzData, mzData, suffix = NULL,
+umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL,
   equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"),
   autoRun = getOption("umx_auto_run"))
@@ -104,6 +104,8 @@ dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
 # TODO update for new dataset variable zygosity
 # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
+m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
+	 suffix = "", autoRun = F)
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 	 suffix = "", autoRun = T)
 umxSummary(m1)
