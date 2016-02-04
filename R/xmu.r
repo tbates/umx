@@ -282,7 +282,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 #' @param setfree Whether to set free cells FALSE
 #' @param drop What values to drop 0
 #' @param jiggle = whether to jiggle start values
-#' @param boundDiag whether to add bounds to the diagonal
+#' @param boundDiag set diagonal element lbounds to this numeric value (default = NA = ignore) 
 #' @param suffix a string to append to each label
 #' @param verbose how much feedback to give
 #' @param labelFixedCells = FALSE

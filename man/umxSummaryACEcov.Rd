@@ -38,7 +38,7 @@ umxSummaryACEcov(model, digits = 2, dotFilename = NULL, returnStd = FALSE,
 - optional \code{\link{mxModel}}
 }
 \description{
-Summarise a Cholesky model, as returned by umxACE
+Summarise a Cholesky model as returned by umxACEcov
 }
 \examples{
 require(umx)

@@ -1,13 +1,13 @@
 Package: umx
 Version: 1.1.1
-Date: 2016-01-29
-Title: Helper Functions for Structural Equation Modelling in OpenMx
+Date: 2016-02-03
+Title: Structural Equation Modelling in R with OpenMx
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))
 Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
 License: GPL-3
 URL: http://github.com/tbates/umx
-Description: Create, running, and reporting SEM and twin models in OpenMx.
+Description: Create, run, and report SEM and twin models in OpenMx.
     If you're just starting out, try typing ?umx.
 Depends:
     R (>= 3.0.3),

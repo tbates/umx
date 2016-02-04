@@ -118,8 +118,7 @@ dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", selDVs]
 mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
 dzData <- dzData[1:200,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-m1 = umxRun(m1)
-umxSummary(m1)
+umxSummary(m1, showStd=FALSE)
 umxSummaryACE(m1)
 \dontrun{
 plot(m1)
@@ -159,10 +158,9 @@ mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
 dzData <- dzData[1:200,]
 str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-m1 = mxRun(m1)
-umxSummary(m1)
 \dontrun{
-# plot(m1)
+umxSummary(m1)
+plot(m1)
 }
 
 # ============================================

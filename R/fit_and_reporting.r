@@ -581,7 +581,7 @@ umxSummary.default <- function(model, ...){
 #' umxSummary(m1, show = "std", filter = "NS")
 #' umxSummary(m1, show = "std")
 #' umxSummary(m1, report = "table")
-umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE=TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...){
+umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...){
 	# TODO make table take lists of models...
 	report = match.arg(report)
 	filter = match.arg(filter)
@@ -733,24 +733,25 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 
 #' umxSummaryACE
 #'
-#' Summarise a Cholesky model, as returned by umxACE
+#' Summarise a Cholesky model returned by \\code{\link{umxACE}}.
 #'
 #' @aliases umxSummary.MxModel.ACE
 #' @param model an \code{\link{mxModel}} to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
-#' @param returnStd Whether to return the standardized form of the model (default = F)
-#' @param extended how much to report (F)
-#' @param showRg = whether to show the genetic correlations (F)
-#' @param showStd = whether to show the standardized model (T)
 #' @param comparison you can run mxCompare on a comparison model (NULL)
+#' @param showStd Whether to standardize the output (defualt = TRUE)
+#' @param showRg = whether to show the genetic correlations (FALSE)
 #' @param CIs Whether to show Confidence intervals if they exist (T)
-#' @param zero.print How to show zeros (".")
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param report If 3, then open an html table of the results
+#' @param extended how much to report (FALSE)
+#' @param zero.print How to show zeros (".")
 #' @param ... Other parameters to control model summary
 #' @return - optional \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
+#' @family Reporting functions
 #' @seealso - \code{\link{umxACE}} 
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
@@ -769,13 +770,13 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 #' umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
+umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, comparison = NULL, showStd = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
-			umxSummaryACE(thisFit, digits = digits, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, zero.print = zero.print, report = report)
+			umxSummaryACE(thisFit, digits = digits, dotFilename = dotFilename, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
@@ -950,7 +951,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 
 #' umxSummaryACEcov
 #'
-#' Summarise a Cholesky model, as returned by umxACE
+#' Summarise a Cholesky model as returned by umxACEcov
 #'
 #' @aliases umxSummary.MxModel.ACEcov
 #' @param model a \code{\link{umxACEcov}} model to summarize

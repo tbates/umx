@@ -892,8 +892,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
 #' dzData <- dzData[1:200,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' m1 = umxRun(m1)
-#' umxSummary(m1)
+#' umxSummary(m1, showStd=TRUE)
 #' umxSummaryACE(m1)
 #' \dontrun{
 #' plot(m1)
@@ -933,10 +932,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' dzData <- dzData[1:200,]
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-#' m1 = mxRun(m1)
-#' umxSummary(m1)
 #' \dontrun{
-#' # plot(m1)
+#' umxSummary(m1)
+#' plot(m1)
 #' }
 #' 
 #' # ============================================
@@ -1004,8 +1002,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
 #' selDVs = c("wt1", "wt2")
-#' dz = cov(tmpTwin[tmpTwin$zyg == "MZFF", selDVs], use = "complete")
-#' mz = cov(tmpTwin[tmpTwin$zyg == "DZFF", selDVs], use = "complete")
+#' mz = cov(tmpTwin[tmpTwin$zyg %in% "MZFF", selDVs], use = "complete")
+#' dz = cov(tmpTwin[tmpTwin$zyg %in% "DZFF", selDVs], use = "complete")
 #' m1 = umxACE(selDVs= selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 #' umxSummary(m1)
 #' \dontrun{
@@ -1467,7 +1465,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	umx_check_names(selVars, dzData)
 	# message("selVars: ", omxQuotes(selVars))
 
-
 	# Drop unused columns from mz and dzData
 	mzData = mzData[, selVars]
 	dzData = dzData[, selVars]
@@ -1521,9 +1518,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		# Declare a vector for the regression parameters
 		mxMatrix(name = "beta", type = "Full", nrow = nCov, ncol  = 1, free = TRUE, values = 0, labels = paste0("beta", 1:nCov)),
 		# Some handy component algebras
-		mxAlgebra(name = "AC" , A + C),
 		mxAlgebra(name = "ACE", A + C + E),
-		mxAlgebra(name = "hAC", dzAr * AC),
+		mxAlgebra(name = "AC" , A + C),
+		mxAlgebra(name = "hAC", (dzAr * A) + C),
 		mxAlgebra(name = "tb_CovWB_b", (t(beta) %*% CovWB) %*% beta),
 		mxAlgebra(name = "tb_CovB_b" , (t(beta) %*% CovB) %*% beta),
 		mxAlgebra(name = "tb_CovWB"  , t(beta) %*% CovWB),

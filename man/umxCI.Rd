@@ -78,6 +78,6 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxPlotACE}},
   \code{\link{umxStandardizeModel}},
   \code{\link{umxSummary.MxModel}},
-  \code{\link{umx_drop_ok}}
+  \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}}
 }
 
