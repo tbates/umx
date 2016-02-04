@@ -2050,11 +2050,11 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 #' @export
 plot.MxModel.ACE <- umxPlotACE
 
-#' umxPlotACE
+#' umxPlotACEcov
 #'
 #' Make a graphical display of an ACE model
 #'
-#' @aliases plot plot.MxModel.ACE
+#' @aliases plot.MxModel.ACEcov
 #' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
 #' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (default is 2)
@@ -2089,7 +2089,7 @@ plot.MxModel.ACE <- umxPlotACE
 #' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 #' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
-#' 	 suffix = "", autoRun = T)
+#' 	 suffix = "", autoRun = TRUE)
 #' \dontrun{
 #' plot(m1)
 #' umxPlotACEcov(m1, dotFilename = "override_model_name")
