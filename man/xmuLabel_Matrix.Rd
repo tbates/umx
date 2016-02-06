@@ -19,7 +19,7 @@ xmuLabel_Matrix(mx_matrix = NA, baseName = NA, setfree = FALSE,
 
 \item{jiggle}{= whether to jiggle start values}
 
-\item{boundDiag}{whether to add bounds to the diagonal}
+\item{boundDiag}{set diagonal element lbounds to this numeric value (default = NA = ignore)}
 
 \item{suffix}{a string to append to each label}
 

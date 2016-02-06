@@ -118,7 +118,7 @@ dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", selDVs]
 mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
 dzData <- dzData[1:200,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-umxSummary(m1, showStd=FALSE)
+umxSummary(m1, showStd=TRUE)
 umxSummaryACE(m1)
 \dontrun{
 plot(m1)
@@ -228,8 +228,8 @@ tmpTwin <- twinData
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
 selDVs = c("wt1", "wt2")
-dz = cov(tmpTwin[tmpTwin$zyg == "MZFF", selDVs], use = "complete")
-mz = cov(tmpTwin[tmpTwin$zyg == "DZFF", selDVs], use = "complete")
+mz = cov(tmpTwin[tmpTwin$zyg \%in\% "MZFF", selDVs], use = "complete")
+dz = cov(tmpTwin[tmpTwin$zyg \%in\% "DZFF", selDVs], use = "complete")
 m1 = umxACE(selDVs= selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 umxSummary(m1)
 \dontrun{

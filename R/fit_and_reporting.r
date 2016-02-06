@@ -1944,14 +1944,16 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 		if(umx_check_OS("OSX")){
 			system(paste("open", shQuote(dotFilename)));
 		} else if (umx_check_OS("Windows")){
-			system(paste("dot -Tpdf -O ", shQuote(dotFilename)));
-			system("start input.pdf")
+			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
+			system(paste0("start ", shQuote(dotFilename), ".pdf") )
 		}
+		# dot -Tpdf -O yourFilename.dot
+		# creates "yourFilename.dot.pdf"
 		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
-}
+} # end plot.MxModel
 
 #' umxPlotACE
 #'
@@ -2045,14 +2047,16 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 		if(dotFilename == "name"){
 			dotFilename = paste0(model@name, ".dot");
 		}
-		cat(digraph, file = dotFilename)
+		cat(digraph, file = dotFilename) # write to file
 		if(umx_check_OS("OSX")){
 			system(paste("open", shQuote(dotFilename)));
 		} else if (umx_check_OS("Windows")){
-			system(paste("dot -Tpdf -O ", shQuote(dotFilename)));
-			system("start input.pdf")
+			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
+			system(paste0("start ", shQuote(dotFilename), ".pdf") )
 		}
-		# return(invisible(cat(digraph)))
+		# dot -Tpdf -O yourFilename.dot
+		# creates "yourFilename.dot.pdf"
+		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
@@ -2171,14 +2175,16 @@ umxPlotACEcov <- function(x = NA, dotFilename = "name", digits = 2, showMeans = 
 		if(dotFilename == "name"){
 			dotFilename = paste0(model@name, ".dot");
 		}
-		cat(digraph, file = dotFilename)
+		cat(digraph, file = dotFilename) # write to file
 		if(umx_check_OS("OSX")){
 			system(paste("open", shQuote(dotFilename)));
 		} else if (umx_check_OS("Windows")){
-			system(paste("dot -Tpdf -O ", shQuote(dotFilename)));
-			system("start input.pdf")
+			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
+			system(paste0("start ", shQuote(dotFilename), ".pdf") )
 		}
-		# return(invisible(cat(digraph)))
+		# dot -Tpdf -O yourFilename.dot
+		# creates "yourFilename.dot.pdf"
+		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
@@ -2352,8 +2358,16 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 		if(dotFilename=="name"){
 			dotFilename = paste0(model@name, ".dot");
 		}
-		cat(digraph, file = dotFilename)
-		system(paste("open", dotFilename));
+		cat(digraph, file = dotFilename) # write to file
+		if(umx_check_OS("OSX")){
+			system(paste("open", shQuote(dotFilename)));
+		} else if (umx_check_OS("Windows")){
+			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
+			system(paste0("start ", shQuote(dotFilename), ".pdf") )
+		}
+		# dot -Tpdf -O yourFilename.dot
+		# creates "yourFilename.dot.pdf"
+		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
@@ -2455,8 +2469,16 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 		if(dotFilename == "name"){
 			dotFilename = paste0(model$name, ".dot");
 		}
-		cat(digraph, file = dotFilename)
-		system(paste("open", dotFilename));
+		cat(digraph, file = dotFilename) # write to file
+		if(umx_check_OS("OSX")){
+			system(paste("open", shQuote(dotFilename)));
+		} else if (umx_check_OS("Windows")){
+			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
+			system(paste0("start ", shQuote(dotFilename), ".pdf") )
+		}
+		# dot -Tpdf -O yourFilename.dot
+		# creates "yourFilename.dot.pdf"
+		# invisible(cat(digraph))
 	} else {
 		return(cat(digraph));
 	}
