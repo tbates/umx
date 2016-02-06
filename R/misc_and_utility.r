@@ -1155,6 +1155,7 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 #' umx_open("~/bin/umx/R/misc_and_utility copy.r")
 #' }
 umx_open <- function(filepath = getwd()) {
+	filepath = normalizePath(filepath)
 	if(umx_check_OS("OSX")){
 		opener = "open "
 	} else if (umx_check_OS("Windows")){
