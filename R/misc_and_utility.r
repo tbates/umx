@@ -1141,8 +1141,9 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 
 #' umx_open
 #'
-#' Open a file or folder. So far only works on OS X
+#' Open a file or folder. Works on OS X, mostly on windows, and hopefully on unix.
 #'
+#' NOTE: Your filepath is shQuoted by this function.
 #' @param filepath The file to open
 #' @return - 
 #' @export
@@ -1151,17 +1152,17 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 #' @examples
 #' \dontrun{
 #' umx_open(getwd())
+#' umx_open("~/bin/umx/R/misc_and_utility copy.r")
 #' }
 umx_open <- function(filepath = getwd()) {
 	if(umx_check_OS("OSX")){
-		if(file.exists(filepath)){
-			system(paste("open", shQuote(filepath)))	
-		} else {
-			warning("file ", omxQuotes(filepath), " doesn't exist")
-		}
-	} else {
-		message("Sorry, only OS X supports opening files")
+		opener = "open "
+	} else if (umx_check_OS("Windows")){
+		opener = "start "
+	}else { # *nix?
+		opener = "xdg-open "
 	}
+	system(paste(opener, shQuote(filepath)))
 }
 
 #' umx_check_OS

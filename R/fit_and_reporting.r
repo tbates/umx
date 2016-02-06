@@ -832,9 +832,9 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, comparison = NU
 	if(report == "html"){
 		# depends on R2HTML::HTML
 		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
-		system(paste0("open ", "tmp.html"))
+		umx_open("tmp.html")
 	}
-
+	
 	if(extended == TRUE) {
 		message("Unstandardized path coefficients")
 		aClean = a
@@ -1049,7 +1049,7 @@ umxSummaryACEcov <- function(model, digits = 2, dotFilename = NULL, returnStd = 
 	if(report == "html"){
 		# depends on R2HTML::HTML
 		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
-		system(paste0("open ", "tmp.html"))
+		umx_open("tmp.html")
 	}
 
 	if(extended == TRUE) {
@@ -1658,7 +1658,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	
 	if(report == "html"){
 		R2HTML::HTML(tablePub, file = file, Border = 0, append = FALSE, sortableDF = TRUE);
-		system(paste0("open ", file))
+		umx_open(file)
 	} else {
 		umx_print(tablePub)
 	}
@@ -1942,14 +1942,13 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 		}
 		cat(digraph, file = dotFilename) # write to file
 		if(umx_check_OS("OSX")){
-			system(paste("open", shQuote(dotFilename)));
-		} else if (umx_check_OS("Windows")){
+			umx_open(dotFilename);
+		} else {
 			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			system(paste0("start ", shQuote(dotFilename), ".pdf") )
+			umx_open(paste0(dotFilename, ".pdf"))
 		}
 		# dot -Tpdf -O yourFilename.dot
 		# creates "yourFilename.dot.pdf"
-		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
@@ -2049,14 +2048,11 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 		}
 		cat(digraph, file = dotFilename) # write to file
 		if(umx_check_OS("OSX")){
-			system(paste("open", shQuote(dotFilename)));
-		} else if (umx_check_OS("Windows")){
+			umx_open(dotFilename);
+		} else {
 			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			system(paste0("start ", shQuote(dotFilename), ".pdf") )
+			umx_open(paste0(dotFilename, ".pdf"))
 		}
-		# dot -Tpdf -O yourFilename.dot
-		# creates "yourFilename.dot.pdf"
-		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
@@ -2177,14 +2173,11 @@ umxPlotACEcov <- function(x = NA, dotFilename = "name", digits = 2, showMeans = 
 		}
 		cat(digraph, file = dotFilename) # write to file
 		if(umx_check_OS("OSX")){
-			system(paste("open", shQuote(dotFilename)));
-		} else if (umx_check_OS("Windows")){
+			umx_open(dotFilename);
+		} else {
 			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			system(paste0("start ", shQuote(dotFilename), ".pdf") )
+			umx_open(paste0(dotFilename, ".pdf"))
 		}
-		# dot -Tpdf -O yourFilename.dot
-		# creates "yourFilename.dot.pdf"
-		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
@@ -2360,14 +2353,11 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 		}
 		cat(digraph, file = dotFilename) # write to file
 		if(umx_check_OS("OSX")){
-			system(paste("open", shQuote(dotFilename)));
-		} else if (umx_check_OS("Windows")){
+			umx_open(dotFilename);
+		} else {
 			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			system(paste0("start ", shQuote(dotFilename), ".pdf") )
+			umx_open(paste0(dotFilename, ".pdf"))
 		}
-		# dot -Tpdf -O yourFilename.dot
-		# creates "yourFilename.dot.pdf"
-		# invisible(cat(digraph))
 	} else {
 		return (cat(digraph));
 	}
@@ -2471,14 +2461,11 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 		}
 		cat(digraph, file = dotFilename) # write to file
 		if(umx_check_OS("OSX")){
-			system(paste("open", shQuote(dotFilename)));
-		} else if (umx_check_OS("Windows")){
+			umx_open(dotFilename);
+		} else {
 			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			system(paste0("start ", shQuote(dotFilename), ".pdf") )
+			umx_open(paste0(dotFilename, ".pdf"))
 		}
-		# dot -Tpdf -O yourFilename.dot
-		# creates "yourFilename.dot.pdf"
-		# invisible(cat(digraph))
 	} else {
 		return(cat(digraph));
 	}
