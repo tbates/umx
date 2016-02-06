@@ -10,6 +10,9 @@ New functions and improvements in Version 1.1.1
 
 No NOTEs, ERRORs, or WARNINGs resulted.
  
+"mis-spelled" words in DESCRIPTION: are fine OpenMx, SEM, umx
+URL: https://www.pushbullet.com/account is correct (requires user of pushbullet)
+	
 ## Downstream dependencies
 
 There are currently no downstream dependencies for this package.

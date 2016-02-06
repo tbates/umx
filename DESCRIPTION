@@ -7,7 +7,7 @@ Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
 Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
 License: GPL-3
 URL: http://github.com/tbates/umx
-Description: Create, run, and report SEM and twin models in OpenMx.
+Description: Create, run, and report structural equation and twin models quickly.
     If you're just starting out, try typing ?umx.
 Depends:
     R (>= 3.0.3),

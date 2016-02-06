@@ -29,9 +29,9 @@
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
-#' @importFrom stats setNames update var
+#' @importFrom stats setNames update var delete.response terms
 #' @importFrom utils combn data flush.console read.table txtProgressBar
-#' @importFrom utils globalVariables
+#' @importFrom utils globalVariables write.table
 #' @importFrom methods as getSlots is slotNames
 #' @importFrom graphics plot
 #' @importFrom numDeriv jacobian
