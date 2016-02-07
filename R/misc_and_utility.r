@@ -1157,13 +1157,13 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 umx_open <- function(filepath = getwd()) {
 	filepath = normalizePath(filepath)
 	if(umx_check_OS("OSX")){
-		opener = "open "
+		opener = "open"
 	} else if (umx_check_OS("Windows")){
-		opener = "start "
+		opener = "start"
 	}else { # *nix?
-		opener = "xdg-open "
+		opener = "xdg-open"
 	}
-	system(paste(opener, shQuote(filepath)))
+	system2(opener, shQuote(filepath))
 }
 
 #' umx_check_OS

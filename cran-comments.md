@@ -8,9 +8,8 @@ New functionality, plus improvements to existing functions and help
 
 ## R CMD check results
 
-No NOTEs, ERRORs, or WARNINGs resulted.
- 
-"mis-spelled" (OpenMx, umx) in DESCRIPTION are fine.
+No ERRORs, or WARNINGs. 1 false-alarm NOTE about spelling:
+ spelling of OpenMx and umx in DESCRIPTION are fine.
 
 ## Downstream dependencies
 

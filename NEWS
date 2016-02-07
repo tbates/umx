@@ -5,12 +5,13 @@ umx 1.1.1
 * Feb 2016 Wooden Christmas-Tree edition
 * auto-run now the default for all models!
 	* Added option to switch this: options("umx_auto_run" = TRUE)
+* plot should generate pdfs for Windows and Unix users now
 * umxACEcov support for ACE with covariates
-* umx_check_parallel now returns timing
+* umx_check_parallel now returns timing information
 * umx_time now supports "start" and "stop")
 * umxAPA can format more objects in APA style, inc just a p-value)
 * summaryAPA can now summarise a data.frame with mean, sd, and correlations
-* umxLabel now supports preserving existing labels in umxRAM models: labels = is now saved
+* umxLabel now preserves existing labels in umxRAM models: labels = is now saved
 * umx_make_TwinData added to support simulation studies
 * Help improvements (wording, seealso etc)
 * Removed dependency on formula.tools
