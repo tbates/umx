@@ -1936,22 +1936,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
 	print("nb: see ?plot.MxModel for options - std, digits, dotFilename, pathLabels, resid, showFixed, showMeans")
-	if(!is.na(dotFilename)){
-		if(dotFilename == "name"){
-			dotFilename = paste0(model@name, ".dot")
-		}
-		cat(digraph, file = dotFilename) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
-		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
-		}
-		# dot -Tpdf -O yourFilename.dot
-		# creates "yourFilename.dot.pdf"
-	} else {
-		return (cat(digraph));
-	}
+	xmu_dot_maker(model, dotFilename, digraph)
 } # end plot.MxModel
 
 #' umxPlotACE
@@ -2040,22 +2025,7 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value=T), collapse="; "), "};\n") # {rank=min; c1; e1}
 	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
-	# cat(digraph);
-	# return (out)
-	if(!is.na(dotFilename)){
-		if(dotFilename == "name"){
-			dotFilename = paste0(model@name, ".dot");
-		}
-		cat(digraph, file = dotFilename) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
-		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
-		}
-	} else {
-		return (cat(digraph));
-	}
+	xmu_dot_maker(model, dotFilename, digraph)
 } # end umxPlotACE
 
 #' @export
@@ -2165,22 +2135,7 @@ umxPlotACEcov <- function(x = NA, dotFilename = "name", digits = 2, showMeans = 
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value = T), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value = T), collapse = "; "), "};\n") # {rank=min; c1; e1}
 	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
-	# cat(digraph);
-	# return (out)
-	if(!is.na(dotFilename)){
-		if(dotFilename == "name"){
-			dotFilename = paste0(model@name, ".dot");
-		}
-		cat(digraph, file = dotFilename) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
-		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
-		}
-	} else {
-		return (cat(digraph));
-	}
+	xmu_dot_maker(model, dotFilename, digraph)
 } # end umxPlotACEcov
 
 #' @export
@@ -2347,20 +2302,7 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
-	if(!is.na(dotFilename)){
-		if(dotFilename=="name"){
-			dotFilename = paste0(model@name, ".dot");
-		}
-		cat(digraph, file = dotFilename) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
-		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
-		}
-	} else {
-		return (cat(digraph));
-	}
+	xmu_dot_maker(model, dotFilename, digraph)
 }
 
 #' @export
@@ -2455,20 +2397,7 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
-	if(!is.na(dotFilename)){
-		if(dotFilename == "name"){
-			dotFilename = paste0(model$name, ".dot");
-		}
-		cat(digraph, file = dotFilename) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
-		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
-		}
-	} else {
-		return(cat(digraph));
-	}
+	xmu_dot_maker(model, dotFilename, digraph)
 }
 #' @export
 plot.MxModel.IP <- umxPlotIP

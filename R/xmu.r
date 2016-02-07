@@ -797,3 +797,25 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	}
 	return(toAdd)
 }
+
+xmu_dot_maker <- function(model, dotFilename, digraph){
+	if(!is.na(dotFilename)){
+		if(dotFilename == "name"){
+			dotFilename = paste0(model@name, ".dot")
+		}
+		cat(digraph, file = dotFilename) # write to file
+		if(umx_check_OS("OSX")){
+			umx_open(dotFilename);
+		} else if(umx_check_OS("Windows")){
+			shell(paste0("dot -Tpdf -O ", shQuote(dotFilename)), "cmd.exe");
+			umx_open(paste0(dotFilename, ".pdf"))
+		} else {
+			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
+			umx_open(paste0(dotFilename, ".pdf"))
+		}
+		# dot -Tpdf -O yourFilename.dot
+		# creates "yourFilename.dot.pdf"
+	} else {
+		return (cat(digraph));
+	}
+}
