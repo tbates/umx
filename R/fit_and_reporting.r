@@ -1936,6 +1936,10 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
 	print("nb: see ?plot.MxModel for options - std, digits, dotFilename, pathLabels, resid, showFixed, showMeans")
+	dotMaker(model, dotFilename, digraph)
+} # end plot.MxModel
+
+dotMaker <- function(model, dotFilename, digraph){
 	if(!is.na(dotFilename)){
 		if(dotFilename == "name"){
 			dotFilename = paste0(model@name, ".dot")
@@ -1943,6 +1947,9 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 		cat(digraph, file = dotFilename) # write to file
 		if(umx_check_OS("OSX")){
 			umx_open(dotFilename);
+		} else if(umx_check_OS("Windows")){
+			shell(paste0("dot -Tpdf -O ", shQuote(dotFilename)), "cmd.exe");
+			umx_open(paste0(dotFilename, ".pdf"))
 		} else {
 			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
 			umx_open(paste0(dotFilename, ".pdf"))
@@ -1952,7 +1959,8 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	} else {
 		return (cat(digraph));
 	}
-} # end plot.MxModel
+}
+
 
 #' umxPlotACE
 #'
@@ -2042,20 +2050,7 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
 	# cat(digraph);
 	# return (out)
-	if(!is.na(dotFilename)){
-		if(dotFilename == "name"){
-			dotFilename = paste0(model@name, ".dot");
-		}
-		cat(digraph, file = dotFilename) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
-		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
-		}
-	} else {
-		return (cat(digraph));
-	}
+	dotMaker(model, dotFilename, digraph)
 } # end umxPlotACE
 
 #' @export
@@ -2167,20 +2162,7 @@ umxPlotACEcov <- function(x = NA, dotFilename = "name", digits = 2, showMeans = 
 	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
 	# cat(digraph);
 	# return (out)
-	if(!is.na(dotFilename)){
-		if(dotFilename == "name"){
-			dotFilename = paste0(model@name, ".dot");
-		}
-		cat(digraph, file = dotFilename) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
-		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
-		}
-	} else {
-		return (cat(digraph));
-	}
+	dotMaker(model, dotFilename, digraph)
 } # end umxPlotACEcov
 
 #' @export
@@ -2347,20 +2329,7 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
-	if(!is.na(dotFilename)){
-		if(dotFilename=="name"){
-			dotFilename = paste0(model@name, ".dot");
-		}
-		cat(digraph, file = dotFilename) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
-		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
-		}
-	} else {
-		return (cat(digraph));
-	}
+	dotMaker(model, dotFilename, digraph)
 }
 
 #' @export
@@ -2455,20 +2424,7 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
-	if(!is.na(dotFilename)){
-		if(dotFilename == "name"){
-			dotFilename = paste0(model$name, ".dot");
-		}
-		cat(digraph, file = dotFilename) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
-		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
-		}
-	} else {
-		return(cat(digraph));
-	}
+	dotMaker(model, dotFilename, digraph)
 }
 #' @export
 plot.MxModel.IP <- umxPlotIP

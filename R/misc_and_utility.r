@@ -1156,14 +1156,16 @@ umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, de
 #' }
 umx_open <- function(filepath = getwd()) {
 	filepath = normalizePath(filepath)
-	if(umx_check_OS("OSX")){
-		opener = "open "
-	} else if (umx_check_OS("Windows")){
-		opener = "start "
-	}else { # *nix?
-		opener = "xdg-open "
+	if (umx_check_OS("Windows")){
+		shell(shQuote(filepath, type='cmd'), 'cmd.exe')
+	} else {
+		if(umx_check_OS("OSX")){
+			opener = "open "
+		} else { # *nix?
+			opener = "xdg-open "
+		}
+		system(paste(opener, shQuote(filepath)))
 	}
-	system(paste(opener, shQuote(filepath)))
 }
 
 #' umx_check_OS
