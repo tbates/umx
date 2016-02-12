@@ -17,7 +17,7 @@ Shows how many cores you are using, and runs a test script so user can check CPU
 }
 \examples{
 \dontrun{
-# takes a minute on a fast machine
+# On a fast machine, takes a minute with 1 core
 umx_check_parallel()
 }
 }

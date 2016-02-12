@@ -114,20 +114,17 @@ umx_get_cores <- function(model = NULL) {
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' # takes a minute on a fast machine
+#' # On a fast machine, takes a minute with 1 core
 #' umx_check_parallel()
 #' }
 umx_check_parallel <- function(nCores = -1) {
 	oldCores = umx_set_cores()
 	if(nCores == -1){
 		nCores = detectCores()
-	} else {
-		nCores = nCores
 	}
-	message("You are using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means max - 1)")
-	message("I will now set cores to ", nCores, " (they will be reset after) and run a script that hits multiple cores if possible.\n",
+	message("You have been using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means max - 1)")
+	message("I will now set cores to ", omxQuotes(nCores), " (they will be reset after) and run a script that hits that many cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
-	umx_set_cores(nCores)
 	numberSubjects <- 1000
 	numberIndicators <- 12
 	numberFactors <- 3
@@ -186,9 +183,22 @@ umx_check_parallel <- function(nCores = -1) {
 		mxPath(from="one", to=c(latents), arrows=1, free=T, values=.1),
 		mxData(latentMultiRegModerated1, type="raw")
 	)
-	test1 <- mxRun(test1)
+	models = c(test1)
+	for (thisCores in nCores) {
+		models = append(models, test1)
+	}
+	n = 1
+	for (thisCores in nCores) {
+		umx_set_cores(thisCores)
+		thisModel = mxRename(models[[n]], paste0("nCcores_equals_", thisCores))
+		thisModel <- mxRun(thisModel)
+		umx_time(thisModel)
+		models[n] = thisModel
+		n = n + 1
+	}
 	umx_set_cores(oldCores)
-	invisible(umx_time(test1))
+	umx_time(models)
+	invisible(umx_time(models))
 }
 
 #' umx_get_optimizer
