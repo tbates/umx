@@ -13,7 +13,7 @@
 # install.packages("Rcpp")
 # install.packages("rstudioapi")
 # install.packages("withr")
-
+# install.packages("~/Dropbox/shared folders/OpenMx_binaries/OpenMx_2.3.1-239-OSX/3.2/OpenMx_2.3.1-239.tgz")
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -3960,7 +3960,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			arrows = 2
 			connect = "single"
 			if(is.na(lbound)){
-				message("I lbounded var of ", var, " @ 0")			
+				message("I lbounded var of ", omxQuotes(var), " @ 0")			
 				lbound  = 0
 			}
 		}
