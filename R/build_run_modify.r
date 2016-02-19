@@ -3680,9 +3680,9 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' Specify a variance for A with
 #' 
-#' \code{umxPath(var = A)}.
+#' \code{umxPath(var = "A")}.
 #' 
-#' This is equivalent to \code{mxPath(from = A, to = A, arrows = 2)}.
+#' This is equivalent to \code{mxPath(from = "A", to = "A", arrows = 2)}.
 #' 
 #' Of course you can use vectors anywhere:
 #' 
@@ -3690,18 +3690,19 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' To specify a mean, you just say
 #' 
-#' \code{umxPath(mean = A)}, which is equivalent to \code{mxPath(from = "one", to = A)}.
+#' \code{umxPath(mean = "A")}, which is equivalent to \code{mxPath(from = "one", to = "A")}.
 #' 
 #' To fix a path at a value, instead of to \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)} you can say:
 #' 
-#' \code{umxPath(var = A, fixedAt = 1)} .
+#' \code{umxPath(var = "A", fixedAt = 1)} .
 #' 
 #' The common task of creating a variable with variance fixed at 1 and mean at 0 is done thus:
 #' 
-#' \code{umxPath(v1m0 = A)}
+#' \code{umxPath(v1m0 = "A")}
 #' 
-#' For convenience, you may request estimated variance and means with \code{umxPath(v.m. = A)}
+#' For free variance and means use:
 #' 
+#' \code{umxPath(v.m. = "A")}
 #' 
 #' umxPath exposes \dQuote{unique.bivariate} so you don't have to remember
 #' how to fill in connect = in mxPath (you can still use connect if you wish).
@@ -3710,21 +3711,20 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' \code{umxPath(unique.bivariate = c('A',"B","C"))}
 #' 
-#' 
 #' Setting up a latent trait, you can fix the loading of the first path with
 #' 
 #' \code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)}  
 #' 
 #' This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
 #' 
-#' Finally, there are two promised features, not implemented in this release.
+#' A new feature is the ability to create Cholesky-pattern connections:
 #' 
-#' \emph{Cholesky} form paths (see \code{\link{umxACE}}) will be created by:
-#'
 #' \code{umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))}
 #' 
-#' I will also implement John Fox "sem"-package style notation,
-#' i.e., "A -> B; X <-> B; " (see examples below.)
+#' Finally, a feature, not implemented in this release, but intended for the future is
+#' John Fox "sem"-package style notation,
+#' 
+#' i.e., "A -> B; X <-> B; "
 #' 
 #' 
 #' @param from either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"
