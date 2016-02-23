@@ -176,9 +176,9 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 	invisible(resid)
 }
 
-#' umxStandardizeModel
+#' umx_standardize_RAM
 #'
-#' umxStandardizeModel takes a RAM-style model, and returns standardized version.
+#' umx_standardize_RAM takes a RAM-style model, and returns standardized version.
 #'
 #' @param model The \code{\link{mxModel}} you wish to standardise
 #' @param return What to return. Valid options: "parameters", "matrices", or "model"
@@ -202,9 +202,9 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' m1 = umxStandardizeModel(m1, return = "model")
+#' m1 = umx_standardize_RAM(m1, return = "model")
 #' summary(m1)
-umxStandardizeModel <- function(model, return = "parameters", Amatrix = NA, Smatrix = NA, Mmatrix = NA) {
+umx_standardize_RAM <- function(model, return = "parameters", Amatrix = NA, Smatrix = NA, Mmatrix = NA) {
 	if (!(return == "parameters"|return == "matrices"|return == "model")) stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
 	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
 	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
@@ -1843,7 +1843,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	pathLabels = match.arg(pathLabels)
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
-	if(std){ model = umxStandardizeModel(model, return = "model") }
+	if(std){ model = umx_standardize_RAM(model, return = "model") }
 
 	# ========================
 	# = Get Symmetric & Asymmetric Paths =
