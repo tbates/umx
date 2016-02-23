@@ -1,4 +1,5 @@
 # umx
+![alt text](https://zenodo.org/badge/5184/tbates/umx.svg)
 
 umx is a structural equation modelling package designed to make SEM easier to build, modify, and report.
 
