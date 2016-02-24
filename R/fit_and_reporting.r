@@ -738,7 +738,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 #' @aliases umxSummary.MxModel.ACE
 #' @param model an \code{\link{mxModel}} to summarize
 #' @param digits round to how many digits (default = 2)
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param dotFilename The name of the dot file to write: "name" = use the name of the model.
+#' Defaults to NA = do not create plot output
 #' @param comparison you can run mxCompare on a comparison model (NULL)
 #' @param showStd Whether to standardize the output (defualt = TRUE)
 #' @param showRg = whether to show the genetic correlations (FALSE)
@@ -770,13 +771,13 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 #' umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, comparison = NULL, showStd = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACE <- function(model, digits = 2, dotFilename = "name", comparison = NULL, showStd = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
-			umxSummaryACE(thisFit, digits = digits, dotFilename = dotFilename, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
+			umxSummaryACE(thisFit, digits = digits, dotFilename = NA, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
@@ -934,7 +935,7 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = NULL, comparison = NU
 	stdFit$top$a@values = a_std
 	stdFit$top$c@values = c_std
 	stdFit$top$e@values = e_std
-	if(!is.null(dotFilename)) {
+	if(!is.na(dotFilename)) {
 		message("making dot file")
 		umxPlotACE(model, dotFilename, std = showStd)
 	}
@@ -987,7 +988,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACEcov <- function(model, digits = 2, dotFilename = NULL, returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
+umxSummaryACEcov <- function(model, digits = 2, dotFilename = c(NA, "name"), returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
 	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
@@ -996,6 +997,7 @@ umxSummaryACEcov <- function(model, digits = 2, dotFilename = NULL, returnStd = 
 			umxSummaryACEcov(thisFit, digits = digits, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, zero.print = zero.print, report = report)
 		}
 	} else {
+	dotFilename = umx_default_option(dotFilename, c(NA, "name"), check = FALSE)
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(comparison)){
 		message("-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
@@ -1145,7 +1147,7 @@ umxSummaryACEcov <- function(model, digits = 2, dotFilename = NULL, returnStd = 
 	stdFit$top$a@values = a_std
 	stdFit$top$c@values = c_std
 	stdFit$top$e@values = e_std
-	if(!is.null(dotFilename)) {
+	if(!is.na(dotFilename)) {
 		message("making dot file")
 		plot(model, dotFilename, std = showStd)
 	}
@@ -1199,7 +1201,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' umxSummaryCP(fit);
 #' umxSummaryCP(fit, dotFilename = "Figure 3", showStd = TRUE)
 #' }
-umxSummaryCP <- function(model, digits = 2, dotFilename = "name", returnStd = FALSE, 
+umxSummaryCP <- function(model, digits = 2, dotFilename = c(NA, "name"), returnStd = FALSE, 
     extended = FALSE, showRg = TRUE, comparison = NULL, showStd = TRUE, CIs = FALSE, ...) {
 	# TODO: detect value of DZ covariance, and if .25 set "C" to "D"
 	if(typeof(model) == "list"){ # call self recursively
@@ -1211,7 +1213,7 @@ umxSummaryCP <- function(model, digits = 2, dotFilename = "name", returnStd = FA
 		if(class(model)[1] != "MxModel.CP"){
 			stop("You used umxSummaryCP on model of class ", class(model)[1], "not 'MxModel.CP'")
 		}
-
+		dotFilename = umx_default_option(dotFilename, c(NA, "name"), check = FALSE)
 		umx_has_been_run(model, stop = TRUE)
 		if(is.null(comparison)){
 			message("-2 \u00d7 log(Likelihood)") # x
@@ -1496,7 +1498,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' umxSummaryGxE(m1)
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, dotFilename = NULL, returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, dotFilename = NA, returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
 	report = match.arg(report)
 	umx_has_been_run(model, stop=TRUE)
 	
