@@ -5,9 +5,10 @@
 \alias{umxSummaryACEcov}
 \title{umxSummaryACEcov}
 \usage{
-umxSummaryACEcov(model, digits = 2, dotFilename = NULL, returnStd = FALSE,
-  extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL,
-  CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...)
+umxSummaryACEcov(model, digits = 2, dotFilename = c(NA, "name"),
+  returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE,
+  comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2",
+  "html"), ...)
 }
 \arguments{
 \item{model}{a \code{\link{umxACEcov}} model to summarize}

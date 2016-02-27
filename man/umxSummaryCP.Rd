@@ -5,9 +5,9 @@
 \alias{umxSummaryCP}
 \title{umxSummaryCP}
 \usage{
-umxSummaryCP(model, digits = 2, dotFilename = "name", returnStd = FALSE,
-  extended = FALSE, showRg = TRUE, comparison = NULL, showStd = TRUE,
-  CIs = FALSE, ...)
+umxSummaryCP(model, digits = 2, dotFilename = c(NA, "name"),
+  returnStd = FALSE, extended = FALSE, showRg = TRUE, comparison = NULL,
+  showStd = TRUE, CIs = FALSE, ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxCP}} model to summarize}
