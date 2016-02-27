@@ -9,22 +9,27 @@ citEntry(entry="article",
 		      person(c("Timothy", "C."), "Bates"),
 		      person(c("Michael", "C."), "Neale"),
 		      person(c("Hermine", "H."), "Maes"),
-          journal = "Journal of Statistics",
+          journal   = "The R Journal",
           publisher = "ZZZ",
           year  = "under review",
 	      pages = "",
 		  doi   = "",
-          textVersion = paste("Timothy C. Bates,", "Michael C. Neale,", 
-		  "Hermine H. Maes,", "(under review). umx: Twin and path-based Structural Equation Modeling in OpenMx. Journal of Statistics,", "DOI:XXXX")
+          textVersion = paste(
+		  	"Timothy C. Bates,",
+			"Michael C. Neale,", 
+		  	"Hermine H. Maes,",
+			"(under review). umx: Twin and path-based Structural Equation Modeling in OpenMx. The R Journal,",
+			"DOI:XXXX")
+		)
 )
 
-year <- 2016
+year <- "2016"
 revision <- "1.1.1"
 authors <-  c(person(c("Timothy", "C."), "Bates", role="aut"))
 title = paste("umx", revision, "User Guide") 
 citEntry(entry="manual",
-	title = title,
-    year = year,
+	title  = title,
+    year   = year,
     author = authors,
     textVersion = paste(paste(paste(authors[1:length(authors) - 1], collapse = ", "), 
                         paste(authors[[length(authors)]], ".", sep=''), sep = " and "),

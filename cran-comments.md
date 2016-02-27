@@ -1,5 +1,5 @@
 ## Changes
-New functionality, plus improvements to existing functions and help
+Function rationalization and feature tweaks for Boulder Genetics workshop
 
 ## Test environments
 * OS X 10.11, R version 3.2.3 (2015-12-10)
