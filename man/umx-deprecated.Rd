@@ -45,7 +45,7 @@ Replace umxGraph_RAM with \code{\link{plot}}
 
 Replace tryHard with \code{\link{umxRun}}
 
-Replace genEpi_ReRun with \code{\link{umxReRun}}
+Replace genEpi_ReRun with \code{\link{umxModify}}
 
 Replace mxStart with \code{\link{umxValues}}
 

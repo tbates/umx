@@ -46,14 +46,14 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
+m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
 mxCompare(m1, m2) # what OpenMx gives by default
 umxCompare(m1, m2, report = "2") # Add English-sentence descriptions
 \dontrun{
 umxCompare(m1, m2, report = "html") # Open table in browser
 }
-m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
+m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 umxCompare(m1, c(m2, m3))
 umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 }

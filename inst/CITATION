@@ -24,16 +24,15 @@ citEntry(entry="article",
 )
 
 year <- "2016"
-revision <- "1.1.1"
+revision <- "1.1.5"
 authors <-  c(person(c("Timothy", "C."), "Bates", role="aut"))
 title = paste("umx", revision, "User Guide") 
 citEntry(entry="manual",
 	title  = title,
     year   = year,
     author = authors,
-    textVersion = paste(paste(paste(authors[1:length(authors) - 1], collapse = ", "), 
-                        paste(authors[[length(authors)]], ".", sep=''), sep = " and "),
-                        paste0("(", year, ")"), title))
+    textVersion = paste0(authors[1], ". (", year, "). ", title)
+)
 
 bibentry("Manual",
    title = "umx: A helper package for Structural Equation Modeling in OpenMx",
