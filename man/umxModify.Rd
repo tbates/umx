@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxModify}
 \alias{umxModify}
-\alias{umxReRun}
+\alias{umxReRun,}
 \title{umxModify}
 \usage{
 umxModify(lastFit, update = NULL, regex = FALSE, free = FALSE,
@@ -37,7 +37,8 @@ over-rides the contents of update, and sets regex to TRUE.}
 - \code{\link{mxModel}}
 }
 \description{
-umxModify is allows you to modify and re-run an \code{\link{mxModel}}, and report the effect in 1-line. 
+umxModify allows you to modify, re-run and summarize an \code{\link{mxModel}},
+all in one line of script. 
 You can add paths, or other model elements, set paths or drop them.
 As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
 }
@@ -71,7 +72,8 @@ umxSummary(m2); umxCompare(m1, m2)
 # 1-line version including comparison
 m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
 m2 = umxModify(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
-m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1", comp = TRUE)
+m2 = umxModify(m1, regex = "^G_to_x[3-5]", name = "no_G_to_x3_5") # same, but shorter
+m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comp = TRUE)
 m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", comparison = TRUE)
 }
 \references{

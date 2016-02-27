@@ -2536,7 +2536,8 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 
 #' umxModify
 #' 
-#' umxModify is allows you to modify and re-run an \code{\link{mxModel}}, and report the effect in 1-line. 
+#' umxModify allows you to modify, re-run and summarize an \code{\link{mxModel}},
+#' all in one line of script. 
 #' You can add paths, or other model elements, set paths or drop them.
 #' As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
 #' 
@@ -2551,7 +2552,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' fit2 = mxRun(fit2)
 #' summary(fit2)
 #' 
-#' @aliases umxReRun
+#' @aliases umxReRun, umxModify
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
 #' @param regex    Whether or not update is a regular expression (defaults to FALSE). If you provide a string, it
@@ -2586,34 +2587,31 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' # 1-line version including comparison
 #' m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
 #' m2 = umxModify(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
-#' m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1", comp = TRUE)
+#' m2 = umxModify(m1, regex = "^G_to_x[3-5]", name = "no_G_to_x3_5") # same, but shorter
+#' m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comp = TRUE)
 #' m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", comparison = TRUE)
 umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, dropList = "deprecated") {
-	if (dropList != "deprecated" | typeof(regex) != "logical"){
-		if(dropList != "deprecated"){
-			stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
-				"umxModify(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
-				"becomes\n",
-				"umxModify(m1, update = ", omxQuotes("E_to_heartRate"), ")\n",
-   			 "\nThis regular expression will do it for you:\n",
-   			 "find    = regex *= *(\\\"[^\\\"]+\\\"),\n",
-   			 "replace = update = $1, regex = TRUE,"
-			)
-		} else {
-			stop("hi. Sorry for the change. To use regex replace ", omxQuotes("regex"), " with ", omxQuotes("update"),
-			 "AND regex =", omxQuotes(T), "e.g.:\n",
-			 "umxModify(m1, regex = ", omxQuotes("^E_.*"), ")\n",
-			 "becomes\n",
-			 "umxModify(m1, update = ", omxQuotes("^E_.*"), ", regex = TRUE)\n",
+	if(dropList != "deprecated"){
+		stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
+			"umxModify(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
+			"becomes\n",
+			"umxModify(m1, update = ", omxQuotes("E_to_heartRate"), ")\n",
 			 "\nThis regular expression will do it for you:\n",
 			 "find    = regex *= *(\\\"[^\\\"]+\\\"),\n",
 			 "replace = update = $1, regex = TRUE,"
-			 )
+		)
+	}
+	if (typeof(regex) != "logical"){
+		# Use the regex as input, and switch to regex mode
+		if(!is.null(update)){
+			stop("If you input a regular expression in ", omxQuotes("regex"), " you must leave ", omxQuotes("update"), " set to NULL.")
 		}
+		update = regex
+		regex = TRUE
 	}
 
 	if(is.null(update)){
-		message("As you havn't asked to do anything: the parameters that are free to be dropped are:")
+		message("As you haven't asked to do anything: the parameters that are free to be dropped are:")
 		print(umxGetParameters(lastFit))
 		stop()
 	}else{
