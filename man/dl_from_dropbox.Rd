@@ -30,8 +30,8 @@ dl_from_dropbox("tinytwinData.rda", key = "7kauod48r9cfhwc")
 - \url{http://thebiobucket.blogspot.kr/2013/04/download-files-from-dropbox.html}
 }
 \seealso{
-Other File Functions: \code{\link{umx_SQL_from_Excel}},
-  \code{\link{umx_move_file}}, \code{\link{umx_open}},
-  \code{\link{umx_rename_file}}, \code{\link{umx}}
+Other File Functions: \code{\link{umx_move_file}},
+  \code{\link{umx_open}}, \code{\link{umx_rename_file}},
+  \code{\link{umx_sql_from_excel}}, \code{\link{umx}}
 }
 

@@ -627,13 +627,13 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 
 #' umxFactor
 #'
-#' Just a wrapper around mxFactor for the case when the factor levels are those in the variable
+#' A convenient version of \code{\link{mxFactor}} supporting the common 
+#' case in which the factor levels are those in the variable.
 #'
 #' @param x A variable to recode as an mxFactor (see \code{\link{mxFactor}})
 #' @param levels defaults to NA. UNLIKE mxFactor, if not specified, the existing levels will be used
 #' @param labels = levels (see \code{\link{mxFactor}})
 #' @param exclude = NA (see \code{\link{mxFactor}})
-#' @param ordered = TRUE (see \code{\link{mxFactor}})
 #' @param collapse = FALSE (see \code{\link{mxFactor}})
 #' @return - \code{\link{mxFactor}}
 #' @export
@@ -643,10 +643,15 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' x = umxFactor(letters)
 #' str(x)
 umxFactor <- function(x = character(), levels = NA, labels = levels, 
-		exclude = NA, ordered = TRUE, collapse = FALSE) {
+		exclude = NA, collapse = FALSE) {
+	if(!is.factor(x)){
+		x = factor(x, ordered=TRUE)
+		msg("your variable was not a factor: I made it into one, with levels:", levels(x) )
+	}
 	if(is.na(levels)){
 		levels = levels(x)
 	}
+	# TODO should check the provided levels match the data!
 	mxFactor(x = character(), levels, labels = levels, 
 	    exclude = exclude, ordered = ordered, collapse = collapse)
 }
@@ -1227,11 +1232,18 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 	return(isTarget)
 }
 
-#' umx_SQL_from_Excel
+#' umx_sql_from_excel
 #'
-#' Read an xlsx file and convert into SQL insert statements. Unliekly to be of use to anyone but the package author :-)
+#' Unlikely to be of use to anyone but the package author :-)
+#' Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
 #' On OS X, the function can access the current frontmost Finder window.
-#' The file renaming is fast and, because you can use regular expressions, powerful
+#' 
+#' The file name should be the name of the test.
+#' Columns should be headed:
+#' itemText	direction	scale	type	then	whatever	you	need	for	response	options
+#' 
+#' The SQL fields expected are:
+#' itemID, test, native_item_number, item_text, direction, scale, format, author
 #'
 #' @param theFile The xlsx file to read. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose file dialog will be thrown.
 #' @family File Functions
@@ -1240,10 +1252,10 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' umx_SQL_from_Excel()
-#' umx_SQL_from_Excel("~/Desktop/test.xlsx")
+#' umx_sql_from_excel() # Using file selected in front-most Finder window
+#' umx_sql_from_excel("~/Desktop/test.xlsx") # provide a path
 #' }
-umx_SQL_from_Excel <- function(theFile = "Finder") {
+umx_sql_from_excel <- function(theFile = "Finder") {
 	if(theFile == "Finder"){
 		umx_check_OS("OSX")
 		theFile = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (selection as alias)'")

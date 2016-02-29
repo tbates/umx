@@ -12,7 +12,7 @@
 data(ex9_6)
 }
 \description{
-A dataset for use in multivariate model example. See \code{\link{?multilevel}}.
+A dataset for use in multivariate model example.
 }
 \details{
 \describe{

@@ -109,9 +109,9 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}}
 
 Other File Functions: \code{\link{dl_from_dropbox}},
-  \code{\link{umx_SQL_from_Excel}},
   \code{\link{umx_move_file}}, \code{\link{umx_open}},
-  \code{\link{umx_rename_file}}
+  \code{\link{umx_rename_file}},
+  \code{\link{umx_sql_from_excel}}
 
 Other Misc: \code{\link{umxEval}},
   \code{\link{umx_APA_model_CI}},

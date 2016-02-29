@@ -1,6 +1,6 @@
 #' A multilevel dataset.
 #'
-#' A dataset for use in multivariate model example. See \code{\link{?multilevel}}.
+#' A dataset for use in multivariate model example.
 #'
 #' \describe{
 #'   \item{y1}{something}

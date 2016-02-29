@@ -5,7 +5,7 @@
 \title{umxFactor}
 \usage{
 umxFactor(x = character(), levels = NA, labels = levels, exclude = NA,
-  ordered = TRUE, collapse = FALSE)
+  collapse = FALSE)
 }
 \arguments{
 \item{x}{A variable to recode as an mxFactor (see \code{\link{mxFactor}})}
@@ -16,15 +16,14 @@ umxFactor(x = character(), levels = NA, labels = levels, exclude = NA,
 
 \item{exclude}{= NA (see \code{\link{mxFactor}})}
 
-\item{ordered}{= TRUE (see \code{\link{mxFactor}})}
-
 \item{collapse}{= FALSE (see \code{\link{mxFactor}})}
 }
 \value{
 - \code{\link{mxFactor}}
 }
 \description{
-Just a wrapper around mxFactor for the case when the factor levels are those in the variable
+A convenient version of \code{\link{mxFactor}} supporting the common 
+case in which the factor levels are those in the variable.
 }
 \examples{
 x = umxFactor(letters)

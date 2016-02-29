@@ -5,22 +5,22 @@ citFooter(paste("BibTeX entries for LaTeX users are obtained by:\n\n",
      
 citEntry(entry="article",
 	title = paste("umx: Twin and path-based Structural Equation Modeling in Open{M}x"),
-          author = c(
-		      person(c("Timothy", "C."), "Bates"),
-		      person(c("Michael", "C."), "Neale"),
-		      person(c("Hermine", "H."), "Maes"),
-          journal   = "The R Journal",
-          publisher = "ZZZ",
-          year  = "under review",
-	      pages = "",
-		  doi   = "",
-          textVersion = paste(
-		  	"Timothy C. Bates,",
-			"Michael C. Neale,", 
-		  	"Hermine H. Maes,",
-			"(under review). umx: Twin and path-based Structural Equation Modeling in OpenMx. The R Journal,",
-			"DOI:XXXX")
-		)
+	author = c(
+		person(c("Timothy", "C."), "Bates"),
+		person(c("Michael", "C."), "Neale"),
+		person(c("Hermine", "H."), "Maes")
+	),
+	journal   = "The R Journal",
+	publisher = "ZZZ",
+	year  = "under review",
+	pages = "",
+	doi   = "",
+	textVersion = paste(
+		"Timothy C. Bates,",
+		"Michael C. Neale,", 
+		"Hermine H. Maes,",
+		"(under review). umx: Twin and path-based Structural Equation Modeling in OpenMx. The R Journal,",
+		"DOI:XXXX")
 )
 
 year <- "2016"
