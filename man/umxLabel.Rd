@@ -66,8 +66,8 @@ umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 }
 \seealso{
 Other Model Building Functions: \code{\link{umxDiagnose}},
-  \code{\link{umxLatent}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxReRun}},
+  \code{\link{umxLatent}}, \code{\link{umxModify}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
   \code{\link{umxRun}}, \code{\link{umxThresholdMatrix}},
   \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},

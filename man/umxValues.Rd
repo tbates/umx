@@ -13,7 +13,7 @@ umxValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 
 \item{n}{Optional Mean for start values}
 
-\item{onlyTouchZeros}{Don't alter parameters that appear to have already been started (useful for speeding \code{\link{umxReRun}})}
+\item{onlyTouchZeros}{Don't alter parameters that appear to have already been started (useful for speeding \code{\link{umxModify}})}
 }
 \value{
 - \code{\link{mxModel}} with updated start values
@@ -51,8 +51,8 @@ umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 
 
 Other Model Building Functions: \code{\link{umxDiagnose}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
-  \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxReRun}}, \code{\link{umxRun}},
+  \code{\link{umxModify}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
   \code{\link{umxThresholdMatrix}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}, \code{\link{umx}}

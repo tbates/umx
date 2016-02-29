@@ -71,18 +71,18 @@ umxReduce <- function(m1, report = "html", baseFileName = "tmp") {
 	umx_is_MxModel(m1)
 	if(class(m1) == "MxModel.GxE"){
 		# Reduce GxE Model
-		no_c   = umxReRun(m1, "c_r1c1" , name = "no_c"   )
-		no_a   = umxReRun(m1, "a_r1c1" , name = "no_a"   )
-		no_em  = umxReRun(m1, "em_r1c1", name = "no_em"  )
-		no_cm  = umxReRun(m1, "cm_r1c1", name = "no_cm"  )
-		no_am  = umxReRun(m1, "am_r1c1", name = "no_am"  )
-		no_lin = umxReRun(m1, "lin11"  , name = "no_lin" )  # big linear effect of ses on brain size
-		no_sq  = umxReRun(m1, "quad11" , name = "no_quad")  # no ^2 effect of ses on brain size
+		no_c   = umxModify(m1, "c_r1c1" , name = "no_c"   )
+		no_a   = umxModify(m1, "a_r1c1" , name = "no_a"   )
+		no_em  = umxModify(m1, "em_r1c1", name = "no_em"  )
+		no_cm  = umxModify(m1, "cm_r1c1", name = "no_cm"  )
+		no_am  = umxModify(m1, "am_r1c1", name = "no_am"  )
+		no_lin = umxModify(m1, "lin11"  , name = "no_lin" )  # big linear effect of ses on brain size
+		no_sq  = umxModify(m1, "quad11" , name = "no_quad")  # no ^2 effect of ses on brain size
 		# good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
 
-		no_c_cm   = umxReRun(no_c    , "cm_r1c1", name = "no_c_no_cm")
-		no_c_cem  = umxReRun(no_c_cm , "em_r1c1", name = "no_c_no_em")
-		no_c_acem = umxReRun(no_c_cem, "am_r1c1", name = "no_a_c_or_em")
+		no_c_cm   = umxModify(no_c    , "cm_r1c1", name = "no_c_no_cm")
+		no_c_cem  = umxModify(no_c_cm , "em_r1c1", name = "no_c_no_em")
+		no_c_acem = umxModify(no_c_cem, "am_r1c1", name = "no_a_c_or_em")
 		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = "1")
 		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = report, file = paste0(baseFileName, ".html"))
 		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report = "1")
@@ -1513,19 +1513,19 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 	umxPlotGxE(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
 
 	if(reduce){
-		modelnomeans  = umxReRun(model , update="lin|quad", regex= TRUE, name = "no_moderation_of_means")
+		modelnomeans  = umxModify(model , update="lin|quad", regex= TRUE, name = "no_moderation_of_means")
 
-		noACEmod     = umxReRun(model, update = "[ace]m"       , regex = TRUE, name = "no_moderation")
-		noA          = umxReRun(model, update = "a_r1c1"       , regex = TRUE, name = "dropA")
-		noC          = umxReRun(model, update = "c_r1c1"       , regex = TRUE, name = "dropC")
-		noE          = umxReRun(model, update = "e_r1c1"       , regex = TRUE, name = "dropE")
-		noAmod       = umxReRun(model, update = "^am"          , regex = TRUE, name = "no_mod_on_A")
-		noCmod       = umxReRun(model, update = "^cm"          , regex = TRUE, name = "no_mod_on_C")
-		noEmod       = umxReRun(model, update = "^em"          , regex = TRUE, name = "no_mod_on_E")
-		noA_noAmod   = umxReRun(model, update = "^(a|am)_r1c1" , regex = TRUE, name = "no_A_no_mod_on_A")
-		noC_noCmod   = umxReRun(model, update = "^(c|cm)_r1c1" , regex = TRUE, name = "no_C_no_mod_on_C")
-		noC_noCEmod  = umxReRun(model, update = "^(c|[ce]m)_r" , regex = TRUE, name = "no_C_no_mod_on_C_or_E")
-		noC_noACEmod = umxReRun(model, update = "^c|([ace]m)_r", regex = TRUE, name = "no_C_no_mod_on_A_C_or_E")
+		noACEmod     = umxModify(model, update = "[ace]m"       , regex = TRUE, name = "no_moderation")
+		noA          = umxModify(model, update = "a_r1c1"       , regex = TRUE, name = "dropA")
+		noC          = umxModify(model, update = "c_r1c1"       , regex = TRUE, name = "dropC")
+		noE          = umxModify(model, update = "e_r1c1"       , regex = TRUE, name = "dropE")
+		noAmod       = umxModify(model, update = "^am"          , regex = TRUE, name = "no_mod_on_A")
+		noCmod       = umxModify(model, update = "^cm"          , regex = TRUE, name = "no_mod_on_C")
+		noEmod       = umxModify(model, update = "^em"          , regex = TRUE, name = "no_mod_on_E")
+		noA_noAmod   = umxModify(model, update = "^(a|am)_r1c1" , regex = TRUE, name = "no_A_no_mod_on_A")
+		noC_noCmod   = umxModify(model, update = "^(c|cm)_r1c1" , regex = TRUE, name = "no_C_no_mod_on_C")
+		noC_noCEmod  = umxModify(model, update = "^(c|[ce]m)_r" , regex = TRUE, name = "no_C_no_mod_on_C_or_E")
+		noC_noACEmod = umxModify(model, update = "^c|([ace]m)_r", regex = TRUE, name = "no_C_no_mod_on_A_C_or_E")
 
 		comparisons = c(
 			noACEmod,
@@ -1584,14 +1584,14 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' m2 = umxReRun(m1, update = "G_to_x2", name = "drop_path_2_x2")
+#' m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
 #' umxCompare(m1, m2)
 #' mxCompare(m1, m2) # what OpenMx gives by default
 #' umxCompare(m1, m2, report = "2") # Add English-sentence descriptions
 #' \dontrun{
 #' umxCompare(m1, m2, report = "html") # Open table in browser
 #' }
-#' m3 = umxReRun(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
+#' m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 #' umxCompare(m1, c(m2, m3))
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("2", "1", "html"), file = "tmp.html") {

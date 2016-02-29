@@ -1,4 +1,9 @@
 
+umx 1.1.5
+--------------
+* Changing from umxReRun to umxModify based on feedback.
+* plot() now works on Windows and Unix as well as OS X.
+
 umx 1.1.1
 --------------
 

@@ -45,7 +45,7 @@ to equate the start values for parameters which now have identical labels.
 }
 \details{
 It also supports regular expressions to select labels. In this respect,
-it is similar to \code{\link{umxReRun}} without running the model.
+it is similar to \code{\link{umxModify}} without running the model.
 }
 \examples{
 require(umx)
@@ -65,7 +65,7 @@ m2 = umxSetParameters(m1, "^", newlabels= "m1_", regex = TRUE, test = TRUE)
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-- \code{\link{umxReRun}}, \code{\link{umxLabel}}
+- \code{\link{umxModify}}, \code{\link{umxLabel}}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
