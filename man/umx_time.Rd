@@ -4,15 +4,17 @@
 \alias{umx_time}
 \title{umx_time}
 \usage{
-umx_time(what = NA, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
-  tz = "GMT")
+umx_time(model = NA, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
+  tz = "GMT", autoRun = TRUE)
 }
 \arguments{
+\item{model}{An \code{\link{mxModel}} from which to get the elapsed time}
+
 \item{formatStr}{A format string, defining how to show the time (defaults to human readable)}
 
 \item{tz}{time zone in which the model was executed (defaults to "GMT")}
 
-\item{model}{An \code{\link{mxModel}} from which to get the elapsed time}
+\item{autoRun}{If TRUE (default), run the model if it appears not to have been.}
 }
 \value{
 - invisible time string

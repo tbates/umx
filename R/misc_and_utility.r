@@ -119,7 +119,7 @@ umx_get_cores <- function(model = NULL) {
 #' }
 umx_check_parallel <- function(nCores = -1) {
 	oldCores = umx_set_cores()
-	if(nCores == -1){
+	if( (length(nCores) == 1) && (nCores == -1)){
 		nCores = detectCores()
 	}
 	message("You have been using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means max - 1)")
@@ -129,11 +129,11 @@ umx_check_parallel <- function(nCores = -1) {
 	numberIndicators <- 12
 	numberFactors <- 3
 	set.seed(10)
-	fixedBMatrixF <- matrix(c(.4, .2), 2, 1, byrow=TRUE)
-	randomBMatrixF <- matrix(c(.3, .5), 2, 1, byrow=TRUE)
-	XMatrixF <- matrix(rnorm(numberSubjects*2, mean=0, sd=1), numberSubjects, 2)
-	UMatrixF <- matrix(rnorm(numberSubjects*1, mean=0, sd=1), numberSubjects, 1)
-	Z <- matrix(rnorm(numberSubjects, mean=0, sd=1), nrow=numberSubjects, ncol=2)
+	fixedBMatrixF <- matrix(c(.4, .2), 2, 1, byrow = TRUE)
+	randomBMatrixF <- matrix(c(.3, .5), 2, 1, byrow = TRUE)
+	XMatrixF <- matrix(rnorm(numberSubjects * 2, mean = 0, sd = 1), numberSubjects, 2)
+	UMatrixF <- matrix(rnorm(numberSubjects * 1, mean = 0, sd = 1), numberSubjects, 1)
+	Z <- matrix(rnorm(numberSubjects, mean = 0, sd = 1), nrow=numberSubjects, ncol = 2)
 
 	XMatrix <- cbind(XMatrixF, XMatrixF %*% fixedBMatrixF + (XMatrixF*Z) %*% randomBMatrixF + UMatrixF)
 
@@ -183,21 +183,22 @@ umx_check_parallel <- function(nCores = -1) {
 		mxPath(from="one", to=c(latents), arrows=1, free=T, values=.1),
 		mxData(latentMultiRegModerated1, type="raw")
 	)
-	# Make a list to keep the models in
-	modelsToRun = list()
-	# run them, renaming as apprioraite
+	models = c(test1)
+	for (thisCores in nCores) {
+		models = append(models, test1)
+	}
 	n = 1
 	for (thisCores in nCores) {
 		umx_set_cores(thisCores)
-		thisModel = mxRename(test1, paste0("nCores_equals_", thisCores))
+		thisModel = mxRename(models[[n]], paste0("nCcores_equals_", thisCores))
 		thisModel <- mxRun(thisModel)
-		umx_time(thisModel)
-		modelsToRun[n] = thisModel
+		# umx_time(thisModel, autoRun= F)
+		models[n] = thisModel
 		n = n + 1
 	}
 	umx_set_cores(oldCores)
-	umx_time(modelsToRun)
-	invisible(umx_time(modelsToRun))
+	# umx_time(models, autoRun= F)
+	invisible(umx_time(models, autoRun= F))
 }
 
 #' umx_get_optimizer
@@ -1626,6 +1627,7 @@ umxCov2cor <- function(x) {
 #' @param model An \code{\link{mxModel}} from which to get the elapsed time
 #' @param formatStr A format string, defining how to show the time (defaults to human readable)
 #' @param tz time zone in which the model was executed (defaults to "GMT")
+#' @param autoRun If TRUE (default), run the model if it appears not to have been.
 #' @return - invisible time string
 #' @export
 #' @family Reporting Functions
@@ -1647,14 +1649,14 @@ umxCov2cor <- function(x) {
 #' umx_time(c(m1, m2))
 #' umx_time('stop')
 #' # elapsed time: 05.23 seconds
-umx_time <- function(what = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT"){
+umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	# TODO output a nicely formated table
-	for(i in 1:length(what)) {			
-		if(length(what) > 1) {
-			m = what[[i]]
+	for(i in 1:length(model)) {			
+		if(length(model) > 1) {
+			m = model[[i]]
 		}else{
-			m = what
+			m = model
 		}
 		if(class(m) == "character"){
 			if(m == "start"){
@@ -1668,7 +1670,7 @@ umx_time <- function(what = NA, formatStr = c("simple", "std", "custom %H %M %OS
 			}
 		} else {
 			# handle model
-			if(!umx_has_been_run(m)){
+			if(!umx_has_been_run(m) && autoRun){
 				m = mxRun(m)
 				# message("You must run the model before asking for the elapsed run time")
 			}
@@ -1697,7 +1699,7 @@ umx_time <- function(what = NA, formatStr = c("simple", "std", "custom %H %M %OS
 				formatStr = "%OS2 seconds"
 			}
 		}
-		if(class(what) == "character"){
+		if(class(model) == "character"){
 			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", formatStr))
 		} else {
 			timeString = format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta))
