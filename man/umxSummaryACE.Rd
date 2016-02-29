@@ -5,7 +5,7 @@
 \alias{umxSummaryACE}
 \title{umxSummaryACE}
 \usage{
-umxSummaryACE(model, digits = 2, dotFilename = NULL, comparison = NULL,
+umxSummaryACE(model, digits = 2, dotFilename = "name", comparison = NULL,
   showStd = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2",
   "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...)
 }
@@ -14,7 +14,8 @@ umxSummaryACE(model, digits = 2, dotFilename = NULL, comparison = NULL,
 
 \item{digits}{round to how many digits (default = 2)}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{dotFilename}{The name of the dot file to write: "name" = use the name of the model.
+Defaults to NA = do not create plot output}
 
 \item{comparison}{you can run mxCompare on a comparison model (NULL)}
 
@@ -73,9 +74,9 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxCompare}}, \code{\link{umxExpCov}},
   \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACE}},
-  \code{\link{umxStandardizeModel}},
   \code{\link{umxSummary.MxModel}},
-  \code{\link{umx_drop_ok}}
+  \code{\link{umx_drop_ok}},
+  \code{\link{umx_standardize_RAM}}
 
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxACEcov}}, \code{\link{umxACE}},

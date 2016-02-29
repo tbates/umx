@@ -183,22 +183,21 @@ umx_check_parallel <- function(nCores = -1) {
 		mxPath(from="one", to=c(latents), arrows=1, free=T, values=.1),
 		mxData(latentMultiRegModerated1, type="raw")
 	)
-	models = c(test1)
-	for (thisCores in nCores) {
-		models = append(models, test1)
-	}
+	# Make a list to keep the models in
+	modelsToRun = list()
+	# run them, renaming as apprioraite
 	n = 1
 	for (thisCores in nCores) {
 		umx_set_cores(thisCores)
-		thisModel = mxRename(models[[n]], paste0("nCcores_equals_", thisCores))
+		thisModel = mxRename(test1, paste0("nCores_equals_", thisCores))
 		thisModel <- mxRun(thisModel)
 		umx_time(thisModel)
-		models[n] = thisModel
+		modelsToRun[n] = thisModel
 		n = n + 1
 	}
 	umx_set_cores(oldCores)
-	umx_time(models)
-	invisible(umx_time(models))
+	umx_time(modelsToRun)
+	invisible(umx_time(modelsToRun))
 }
 
 #' umx_get_optimizer
@@ -1636,14 +1635,14 @@ umxCov2cor <- function(x) {
 #' umx_time(c(m1, m2))
 #' umx_time('stop')
 #' # elapsed time: 05.23 seconds
-umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT"){
+umx_time <- function(what = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT"){
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	# TODO output a nicely formated table
-	for(i in 1:length(model)) {			
-		if(length(model) > 1) {
-			m = model[[i]]
+	for(i in 1:length(what)) {			
+		if(length(what) > 1) {
+			m = what[[i]]
 		}else{
-			m = model
+			m = what
 		}
 		if(class(m) == "character"){
 			if(m == "start"){
@@ -1686,7 +1685,7 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 				formatStr = "%OS2 seconds"
 			}
 		}
-		if(class(model) == "character"){
+		if(class(what) == "character"){
 			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", formatStr))
 		} else {
 			timeString = format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta))
