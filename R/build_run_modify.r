@@ -318,7 +318,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	nLatent = length(latentVars)
 	# Report on which latents were created
 	if(nLatent == 0){
-		message("No latent variables were created.\n")
+		# message("No latent variables were created.\n")
 		latentVars = NA
 	} else if (nLatent == 1){
 		message("A latent variable '", latentVars[1], "' was created.\n")
@@ -336,7 +336,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		} else {
 			varList = paste0("They were: ", paste(unusedManifests, collapse = ", "), "\n")
 		}
-		message("There were ", length(unusedManifests), " variables in the dataset which were not referenced in any path\n",varList)
+		message(length(unusedManifests), " variables in the dataset which were not referenced in any path\n",varList)
 		if(remove_unused_manifests){
 			# trim down the data to include only the used manifests
 			manifestVars = setdiff(manifestVars, unusedManifests)
@@ -345,12 +345,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			} else {
 				data@observed = umx_reorder(data@observed, manifestVars)
 			}
-			message("These were dropped from the dataset")
+			message("These were dropped from the analysis")
 		} else {
 			message("I left them in the data. To remove them automatically, next time set remove_unused_manifests = TRUE")
 		}		
 	}
-	message("ManifestVars set to: ", paste(manifestVars, collapse = ", "), "\n")
+	message("ManifestVars set to:\n", paste(manifestVars, collapse = ", "), "\n")
 
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = manifestVars,

@@ -646,7 +646,7 @@ umxFactor <- function(x = character(), levels = NA, labels = levels,
 		exclude = NA, collapse = FALSE) {
 	if(!is.factor(x)){
 		x = factor(x, ordered=TRUE)
-		msg("your variable was not a factor: I made it into one, with levels:", levels(x) )
+		message("Your variable was not a factor: I made it into one, with levels:", levels(x) )
 	}
 	if(is.na(levels)){
 		levels = levels(x)
@@ -1474,6 +1474,22 @@ print.reliability <- function (x, digits = 4, ...){
 # =====================
 # = Utility functions =
 # =====================
+#' getOpenMx
+#'
+#' @description
+#' source() the getOpenMx.R script from source repo.
+#'
+#' @return - 
+#' @export
+#' @family Miscellaneous Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' getOpenMx()
+#' }
+getOpenMx <- function() {
+	source('http://openmx.psyc.virginia.edu/getOpenMx.R')
+}
 
 #' umx_msg
 #'
@@ -1752,21 +1768,21 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 		x <- umx_round(x, digits = digits, coerce = FALSE)
 	    if (any(ina <- is.na(x))) 
 	        x[ina] <- na.print
-		i0 <- !ina & x == 0
+			i0 <- !ina & x == 0
 	    if (zero.print != "0" && any(i0)) 
 	        x[i0] <- zero.print
 	    if (is.numeric(x) || is.complex(x)){
 	        print(x, quote = quote, right = TRUE, ...)
 		} else if(!is.na(file)){
-			R2HTML::HTML(x, file = file, Border = 0, append = FALSE, sortableDF= TRUE); 
-			system(paste0("open ", file))
-			print("Table opened in browser")
+				R2HTML::HTML(x, file = file, Border = 0, append = FALSE, sortableDF= TRUE); 
+				system(paste0("open ", file))
+				print("Table opened in browser")
 	    }else{
-			print(knitr::kable(x, quote = quote, ...))
+				print(knitr::kable(x))
 	    }
 	    invisible(x)
 	}
-}
+} # end umx_print
 
 # ===========================
 # = Boolean check functions =
