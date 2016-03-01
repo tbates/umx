@@ -653,7 +653,7 @@ umxFactor <- function(x = character(), levels = NA, labels = levels,
 	}
 	# TODO should check the provided levels match the data!
 	mxFactor(x = character(), levels, labels = levels, 
-	    exclude = exclude, ordered = ordered, collapse = collapse)
+	    exclude = exclude, ordered = TRUE, collapse = collapse)
 }
 
 #' umx_RAM_ordinal_objective
