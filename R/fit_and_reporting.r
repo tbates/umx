@@ -2582,20 +2582,20 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 		eMean <- model$fitfunction@info$expMean
 		expectation <- model$expectation
 		if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
-			A <- eval(substitute(model$X@values, list(X=expectation@A)))
-			S <- eval(substitute(model$X@values, list(X=expectation@S)))
-			if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation@M)) {
-				M <- eval(substitute(model$X@values, list(X=expectation@M)))
+			A <- eval(substitute(model$X$values, list(X=expectation$A)))
+			S <- eval(substitute(model$X$values, list(X=expectation$S)))
+			if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation$M)) {
+				M <- eval(substitute(model$X$values, list(X=expectation$M)))
 			}
 		}
 	} else { # Old objective-style
 		eCov <- model$objective@info$expCov
 		eMean <- model$objective@info$expMean
 		if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
-			A <- eval(substitute(model$X@values, list(X=expectation@A)))
-			S <- eval(substitute(model$X@values, list(X=expectation@S)))
-			if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation@M)) {
-				M <- eval(substitute(model$X@values, list(X=expectation@M)))
+			A <- eval(substitute(model$X$values, list(X=expectation$A)))
+			S <- eval(substitute(model$X$values, list(X=expectation$S)))
+			if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation$M)) {
+				M <- eval(substitute(model$X$values, list(X=expectation$M)))
 			}
 		}
 	}

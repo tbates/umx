@@ -2553,7 +2553,8 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' fit2 = mxRun(fit2)
 #' summary(fit2)
 #' 
-#' @aliases umxReRun, umxModify
+#' @aliases umxReRun
+#' @aliases umxModify
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
 #' @param regex    Whether or not update is a regular expression (defaults to FALSE). If you provide a string, it
