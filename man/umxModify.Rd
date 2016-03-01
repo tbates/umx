@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxModify}
 \alias{umxModify}
-\alias{umxReRun,}
+\alias{umxReRun}
 \title{umxModify}
 \usage{
 umxModify(lastFit, update = NULL, regex = FALSE, free = FALSE,
