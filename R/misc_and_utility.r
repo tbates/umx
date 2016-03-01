@@ -651,7 +651,7 @@ umxFactor <- function(x = character(), levels = NA, labels = levels,
 	if(is.na(levels)){
 		levels = levels(x)
 	}else{
-	# TODO should check the provided levels match the data!	(quick)	
+		# TODO should check the provided levels match the data!	(quick)	
 	}
 	mxFactor(x = character(), levels, labels = levels, 
 	    exclude = exclude, ordered = TRUE, collapse = collapse)
