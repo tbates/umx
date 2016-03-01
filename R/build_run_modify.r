@@ -2,6 +2,7 @@
 # devtools::release("~/bin/umx", check = TRUE)
 # devtools::build_win("~/bin/umx")
 # devtools::run_examples("~/bin/umx")
+
 # install.packages("curl")
 # install.packages("devtools")
 # install.packages("digest")
