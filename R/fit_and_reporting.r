@@ -570,6 +570,11 @@ umxSummary.default <- function(model, ...){
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
 #' umxSummary(m1, show = "std")
+#' # output as latex
+#' options(knitr.table.format = 'latex')
+#' umxSummary(m1, show = "std")
+#' options(knitr.table.format = 'markdown')
+#' # output as std
 #' umxSummary(m1, show = "raw")
 #' m1 <- mxModel(m1,
 #'   mxData(demoOneFactor, type = "raw"),
