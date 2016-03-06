@@ -17,13 +17,13 @@ Imports:
     MASS,
     Matrix,
     methods,
+    knitr,
     mvtnorm,
     numDeriv,
     polycor,
     R2HTML,
     RCurl
 Suggests:
-    knitr,
     testthat,
 	gdata
 BugReports: http://github.com/tbates/umx/issues
