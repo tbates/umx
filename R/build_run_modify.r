@@ -22,7 +22,8 @@
 	# TODO remove mxCondenseMatrixSlots now that $ get and set are working properly
 	options('mxCondenseMatrixSlots'= FALSE)
 	options("umx_auto_run" = TRUE)
-    packageStartupMessage("For an overview type '?umx'")
+	options("umx_auto_plot" = NA)
+  packageStartupMessage("For an overview type '?umx'")
 }
 
 #' @importFrom MASS mvrnorm
@@ -426,7 +427,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' mzData  = subset(twinData, ZYG == "MZFF", selVars)
 #' dzData  = subset(twinData, ZYG == "DZMM", selVars)
 #' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
-#' m1 = umxRun(m1)
 #' # Plot Moderation
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")
@@ -900,7 +900,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' }
 #' # ADE model (DZ correlation set to .25)
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
-#' m2 = umxRun(m2)
 #' umxCompare(m2, m1) # ADE is better
 #' umxSummary(m2) # nb: though this is ADE, columns are labeled ACE
 #' 
@@ -962,7 +961,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' dzData <- dzData[1:200,]
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-#' m1 = umxRun(m1)
 #' umxSummary(m1)
 #' 
 #' 
@@ -990,7 +988,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' str(mzData)
 #' umx_paste_names(selDVs, "", 1:2)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-#' m1 = umxRun(m1)
 #' umxSummary(m1)
 #' 
 #' # ===================================
@@ -1658,7 +1655,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
 #' dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
-#' m1 = umxRun(m1)
 #' umxSummary(m1, dotFilename=NA) # dotFilename = NA to avoid opening a plot window during CRAN check
 #' umxGetParameters(m1, "^c", free = TRUE)
 #' m2 = umxModify(m1, update = "(cs_.*$)|(c_cp_)", regex = TRUE, name = "dropC")
@@ -1866,7 +1862,6 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' dzData <- subset(twinData, ZYG == "DZFF")
 #' selDVs = c("ht", "wt") # with suffix = "", these will be expanded into "ht1" "ht2"
 #' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
-#' m1 = umxRun(m1)
 #' umxSummary(m1, dotFilename = NA) # dotFilename = NA to avoid opening a plot window during CRAN check
 umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run")) {
 	# TODO implement correlatedA
@@ -2905,7 +2900,6 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' m1 = mxRun(m1)
 #' m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 #' mxCompare(m1, m2)
 umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
