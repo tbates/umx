@@ -3731,10 +3731,10 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param formative Paired with to, this will build a formative variable, from the formatives, allowing these to
 #' covary, and to the latent "to" variable, fixing its variance to zero.
-#' @param Cholesky Treat the \strong{from} vars as latent and \strong{to} as measured, and connect up as in an ACE model.
+#' @param Cholesky Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
 #' @param v1m0 variance of 1 and mean of zero in one call.
-#' @param v.m. variance and mean added, both free.
+#' @param v.m. variance and mean, both free.
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
 #' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
 #' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
