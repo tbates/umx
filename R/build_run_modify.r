@@ -893,7 +893,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
 #' dzData <- dzData[1:200,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummary(m1, showStd=TRUE)
+#' umxSummary(m1, showStd = TRUE)
 #' umxSummaryACE(m1)
 #' \dontrun{
 #' plot(m1)
@@ -901,7 +901,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # ADE model (DZ correlation set to .25)
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
-#' umxSummary(m2) # nb: though this is ADE, columns are labeled ACE
+#' umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
 #' 
 #' 
 #' # ===================

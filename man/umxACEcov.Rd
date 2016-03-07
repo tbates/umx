@@ -20,8 +20,8 @@ umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL,
 
 \item{mzData}{The MZ dataframe}
 
-\item{suffix}{The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
+\item{suffix}{suffix for twin 1 and twin 2, often "_T" If set, you can
+omit suffixes from SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
 

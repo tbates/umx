@@ -10,9 +10,35 @@
 # = Get and set OpenMx options =
 # ==============================
 
+#' umx_set_table.format
+#'
+#' Set knitr.table.format default (output style for tables). Legal values are 
+#' "latex", "html", "markdown", "pandoc", and "rst".
+#'
+#' @param knitr.table.format format for tables (if empty, returns the current value of knitr.table.format)
+#' @return - Current knitr.table.format setting
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' library(umx)
+#' old = umx_set_table.format() # get existing value
+#' umx_set_table.format("latex")
+#' umx_set_table.format("html")
+#' umx_set_table.format("markdown")
+#' umx_set_table.format(old)    # reinstate
+umx_set_table.format <- function(knitr.table.format = NULL) {
+	if(is.null(knitr.table.format)) {
+		options("knitr.table.format")
+	} else {
+		umx_check(knitr.table.format %in% c("latex", "html", "markdown", "pandoc", "rst"), "stop")
+		options("knitr.table.format" = knitr.table.format)
+	}
+}
+
 #' umx_set_auto_plot
 #'
-#' Set autoplot default for models like umxACE umxGxE etc
+#' Set autoPlot default for models like umxACE umxGxE etc
 #'
 #' @param autoPlot If NA or "name", sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
 #' @return - Current umx_auto_plot setting
