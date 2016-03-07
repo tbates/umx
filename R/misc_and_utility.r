@@ -1782,7 +1782,7 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 #' and supressing values below a certain cut-off.
 #' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 #'
-#' @param x A data.frame to print
+#' @param x A data.frame to print (matrices will be coerced to data.frame)
 #' @param digits  The number of decimal places to print (defaults to getOption("digits")
 #' @param quote  Parameter passed to print (defaults to FALSE)
 #' @param na.print String to replace NA with (default to blank "")
@@ -1805,9 +1805,14 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 	# depends on R2HTML::HTML and knitr::kable
 	# TODO allow matrix as input
 	if(class(x)!="data.frame"){
-		message("Sorry, umx_print currently only prints data.frames. File a request to print '", class(x), "' objects")
-		return()
-	} else if(dim(x)[1] == 0){
+		if(class(x)=="matrix"){
+			x = data.frame(x)
+		} else {
+			message("Sorry, umx_print currently only prints data.frames. File a request to print '", class(x), "' objects")
+			return()
+		}
+	}
+	if(dim(x)[1] == 0){
 		return()
 	} else {
 		file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
