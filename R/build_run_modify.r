@@ -849,8 +849,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param selDVs The variables to include from the data
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix The suffix for twin 1 and twin 2, often "_T". if set, simplifies
+#' SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
@@ -1381,8 +1381,8 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #' @param selCovs The covariates to include from the data (do not include suffixes)
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix suffix for twin 1 and twin 2, often "_T" If set, you can
+#' omit suffixes from SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
@@ -1626,8 +1626,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' @param selDVs The variables to include
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
+#' omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param nFac How many common factors (default = 1)
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
@@ -1833,8 +1833,8 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param selDVs The variables to include
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
+#' omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param nFac How many common factors (default = 1)
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
@@ -2039,8 +2039,8 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param mzfData The DZ female dataframe
 #' @param dzfData The DZ female dataframe
 #' @param dzoData The DZ opposite-sex dataframe. (be sure and get in right order)
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
+#' omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - ACE sexlim model
 #' @export
