@@ -58,7 +58,6 @@ selVars = c(selDVs, selDefs)
 mzData  = subset(twinData, ZYG == "MZFF", selVars)
 dzData  = subset(twinData, ZYG == "DZMM", selVars)
 m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
-m1 = umxRun(m1)
 # Plot Moderation
 umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")

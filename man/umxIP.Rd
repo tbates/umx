@@ -68,7 +68,6 @@ mzData <- subset(twinData, ZYG == "MZFF")
 dzData <- subset(twinData, ZYG == "DZFF")
 selDVs = c("ht", "wt") # with suffix = "", these will be expanded into "ht1" "ht2"
 m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
-m1 = umxRun(m1)
 umxSummary(m1, dotFilename = NA) # dotFilename = NA to avoid opening a plot window during CRAN check
 }
 \references{

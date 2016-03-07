@@ -17,6 +17,6 @@ No ERRORs, or WARNINGs. 1 false-alarm NOTE about spelling:
 
 There are currently no downstream dependencies for this package.
 
-Note: Two examples take too long, reflecting slow-down in current CRAN OpenMx.
+Note: One example takes too long, reflecting slow-down in current CRAN OpenMx.
 
 Best wishes, tim

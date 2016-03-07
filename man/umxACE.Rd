@@ -125,7 +125,6 @@ plot(m1)
 }
 # ADE model (DZ correlation set to .25)
 m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
-m2 = umxRun(m2)
 umxCompare(m2, m1) # ADE is better
 umxSummary(m2) # nb: though this is ADE, columns are labeled ACE
 
@@ -187,7 +186,6 @@ mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
 dzData <- dzData[1:200,]
 str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-m1 = umxRun(m1)
 umxSummary(m1)
 
 
@@ -215,7 +213,6 @@ dzData <- dzData[1:200,]
 str(mzData)
 umx_paste_names(selDVs, "", 1:2)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-m1 = umxRun(m1)
 umxSummary(m1)
 
 # ===================================
