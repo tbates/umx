@@ -3254,7 +3254,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	# m1 = mxLatent("Read", formedBy = manifestsRead, model.name="base"); umxPlot(m1, std = FALSE, dotFilename="name")
 	# m2 = mxLatent("Read", forms = manifestsRead, as.model="base"); 
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
-	# umxPlot(m2, std=FALSE, dotFilename="name")
+	# plot(m2, std=FALSE, dotFilename="name")
 	# mxLatent("Read", forms = manifestsRead)
 }
 
@@ -4144,7 +4144,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # And make a Figure it dot format!
 #' # If you have installed GraphViz, the next command will open it for you to see!
 #' 
-#' # umxPlot(m1, std = TRUE)
+#' # plot(m1, std = TRUE)
 #' # Run this instead if you don't have GraphViz
 #' plot(m1, std = TRUE, dotFilename = NA)
 #' @docType package
