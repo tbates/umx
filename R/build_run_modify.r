@@ -1342,47 +1342,15 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #'
 #' Make a 2-group ACE Cholesky Twin model with covariates modeled (see Details below)
 #' 
-#' A common task in twin modelling involves using the genetic and environmental differences 
-#' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
-#' to model the genetic and environmental structure of one, or, typically, several phenotypes
-#' (measured behaviors).
-#' 
-#' umxACEcov supports a core model in behavior genetics, known as the ACE Cholesky model
-#' (Cardon and Neale, 1996), supplemented with covariates.
-#' The ACE model decomposes phenotypic variance into Additive genetic, 
-#' unique environmental (E) and, either common xor shared-environment (C) or 
-#' non-additive genetic effects (D). The following figure shows how the ACE model appears as a path diagram:
-#' 
-#' \figure{ACE.png}
-#' 
-#' \strong{Data Input}
-#' The function flexibly accepts raw data, and also summary covariance data 
-#' (in which case the user must also supple numbers of observations for the two input data sets).
-#' 
-#' \strong{Ordinal Data}
-#' In an important capability, the model transparently handles ordinal (binary or multi-level
-#' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
-#' data in any combination. An experimental feature is under development to allow Tobit modelling. 
-#' 
-#' The function also supports weighting of individual data rows. In this case,
-#' the model is estimated for each row individually, then each row likelihood
-#' is multiplied by its weight, and these weighted likelyhoods summed to form
-#' the model-likelihood, which is to be minimised.
-#' This feature is used in the non-linear GxE model functions.
-#' 
-#' \strong{Additional features}
-#' The umxACE function supports varying the DZ genetic association (defaulting to .5)
-#' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-#' from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
-#' to .25 to model dominance effects.
+#' umxACEcov supplements the \code{\link{umxACE}} Cholesky model with covariates.
 #'
 #' @param name The name of the model (defaults to"ACE")
 #' @param selDVs The variables to include from the data (do not include suffixes)
 #' @param selCovs The covariates to include from the data (do not include suffixes)
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix suffix for twin 1 and twin 2, often "_T" If set, you can
-#' omit suffixes from SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix suffix for twin 1 and twin 2, often "_T" Used to expand selDVs into
+#' full column names, i,e "dep" -->  c("dep_T1", "dep_T2")
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
@@ -1395,7 +1363,10 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @export
 #' @family Twin Modeling Functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
+#' and genotype on self-report drunkenness following a challenge dose of alcohol. 
+#' Behavior Genetics, 19(1), 63-78. doi:10.1007/BF01065884
+
 #' @examples
 #' # Height, weight, and BMI data from Australian twins. 
 #' # The total sample has been subdivided into a young cohort, aged 18-30 years,

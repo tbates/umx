@@ -112,7 +112,9 @@ plot(m1)
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
+and genotype on self-report drunkenness following a challenge dose of alcohol. 
+Behavior Genetics, 19(1), 63-78. doi:10.1007/BF01065884
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
