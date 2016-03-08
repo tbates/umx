@@ -1,4 +1,10 @@
 
+umx 1.1.7
+--------------
+* Updating minimum R and OpenMx requirement to  >= 3.2.0 and >= 2.5.0
+* umx_set_auto_plot to control auto plot
+* umx_set_table.format to control table output via knitr
+
 umx 1.1.5
 --------------
 * Changing from umxReRun to umxModify based on feedback.

@@ -1,6 +1,6 @@
 ## Changes
-Compatibility with OpenMx 2.5.2
-Function and feature modifications for Boulder Genetics workshop.
+Compatibility with OpenMx 2.5.2. Require R 3.2
+More features for Boulder Genetics workshop.
 
 ## Test environments
 * OS X 10.11.4, R version 3.2.3 (2015-12-10)
