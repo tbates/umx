@@ -556,8 +556,8 @@ umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 		stop("not all names found in model")
 	}
 	for (i in add.to) {
-		model$matrices$S$free[i, i] = TRUE
-		model$matrices$S$values[i, i] = .1
+		model@matrices$S@free[i, i] = TRUE
+		model@matrices$S@values[i, i] = .1
 	}
 	return(model)
 }
