@@ -86,7 +86,7 @@ confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
 # And make a Figure it dot format!
 # If you have installed GraphViz, the next command will open it for you to see!
 
-# umxPlot(m1, std = TRUE)
+# plot(m1, std = TRUE)
 # Run this instead if you don't have GraphViz
 plot(m1, std = TRUE, dotFilename = NA)
 }

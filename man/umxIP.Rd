@@ -19,8 +19,8 @@ umxIP(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
 
 \item{mzData}{The MZ dataframe}
 
-\item{suffix}{The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
+\item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, you can
+omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{nFac}{How many common factors (default = 1)}
 
@@ -68,7 +68,6 @@ mzData <- subset(twinData, ZYG == "MZFF")
 dzData <- subset(twinData, ZYG == "DZFF")
 selDVs = c("ht", "wt") # with suffix = "", these will be expanded into "ht1" "ht2"
 m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
-m1 = umxRun(m1)
 umxSummary(m1, dotFilename = NA) # dotFilename = NA to avoid opening a plot window during CRAN check
 }
 \references{

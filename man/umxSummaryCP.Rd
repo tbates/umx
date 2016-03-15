@@ -5,7 +5,7 @@
 \alias{umxSummaryCP}
 \title{umxSummaryCP}
 \usage{
-umxSummaryCP(model, digits = 2, dotFilename = c(NA, "name"),
+umxSummaryCP(model, digits = 2, dotFilename = getOption("umx_auto_plot"),
   returnStd = FALSE, extended = FALSE, showRg = TRUE, comparison = NULL,
   showStd = TRUE, CIs = FALSE, ...)
 }

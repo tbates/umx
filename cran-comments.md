@@ -1,5 +1,6 @@
 ## Changes
-Function and feature modifications for Boulder Genetics workshop.
+Compatibility with OpenMx 2.5.2. Require R 3.2
+More features for Boulder Genetics workshop.
 
 ## Test environments
 * OS X 10.11.4, R version 3.2.3 (2015-12-10)
@@ -16,6 +17,6 @@ No ERRORs, or WARNINGs. 1 false-alarm NOTE about spelling:
 
 There are currently no downstream dependencies for this package.
 
-Note: Two examples take too long, reflecting slow-down in current CRAN OpenMx.
+Note: One example takes too long, reflecting slow-down in current CRAN OpenMx.
 
 Best wishes, tim

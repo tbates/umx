@@ -776,13 +776,13 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 #' umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(model, digits = 2, dotFilename = "name", comparison = NULL, showStd = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACE <- function(model, digits = 2, dotFilename = getOption("umx_auto_plot"), comparison = NULL, showStd = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
-			umxSummaryACE(thisFit, digits = digits, dotFilename = NA, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
+			umxSummaryACE(thisFit, digits = digits, dotFilename = dotFilename, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
@@ -993,7 +993,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACEcov <- function(model, digits = 2, dotFilename = c(NA, "name"), returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
+umxSummaryACEcov <- function(model, digits = 2, dotFilename = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
 	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
@@ -1002,7 +1002,6 @@ umxSummaryACEcov <- function(model, digits = 2, dotFilename = c(NA, "name"), ret
 			umxSummaryACEcov(thisFit, digits = digits, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, zero.print = zero.print, report = report)
 		}
 	} else {
-	dotFilename = umx_default_option(dotFilename, c(NA, "name"), check = FALSE)
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(comparison)){
 		message("-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
@@ -1206,7 +1205,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' umxSummaryCP(fit);
 #' umxSummaryCP(fit, dotFilename = "Figure 3", showStd = TRUE)
 #' }
-umxSummaryCP <- function(model, digits = 2, dotFilename = c(NA, "name"), returnStd = FALSE, 
+umxSummaryCP <- function(model, digits = 2, dotFilename = getOption("umx_auto_plot"), returnStd = FALSE, 
     extended = FALSE, showRg = TRUE, comparison = NULL, showStd = TRUE, CIs = FALSE, ...) {
 	# TODO: detect value of DZ covariance, and if .25 set "C" to "D"
 	if(typeof(model) == "list"){ # call self recursively
@@ -1218,7 +1217,6 @@ umxSummaryCP <- function(model, digits = 2, dotFilename = c(NA, "name"), returnS
 		if(class(model)[1] != "MxModel.CP"){
 			stop("You used umxSummaryCP on model of class ", class(model)[1], "not 'MxModel.CP'")
 		}
-		dotFilename = umx_default_option(dotFilename, c(NA, "name"), check = FALSE)
 		umx_has_been_run(model, stop = TRUE)
 		if(is.null(comparison)){
 			message("-2 \u00d7 log(Likelihood)") # x
@@ -1355,9 +1353,8 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' \dontrun{
 #' umxSummaryIP(m1, digits = 2, dotFilename = "Figure3", showRg = FALSE, CIs = TRUE);
 #' }
-umxSummaryIP <- function(model, digits = 2, dotFilename = c(NA, "name", "make_up_a_file_name"), 
+umxSummaryIP <- function(model, digits = 2, dotFilename = getOption("umx_auto_plot"), 
     returnStd = FALSE, showStd = FALSE, showRg = TRUE, comparison = NULL, CIs = FALSE, ...) {
-	dotFilename = umx_default_option(dotFilename, c(NA, "name", "make_up_a_file_name"))
 	if(class(model)[1] != "MxModel.IP"){
 		stop("You used umxSummaryIP on model of class ", class(model)[1], "not 'MxModel.IP'")
 	}
@@ -1503,7 +1500,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' umxSummaryGxE(m1)
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, dotFilename = NA, returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, dotFilename = getOption("umx_auto_plot"), returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
 	report = match.arg(report)
 	umx_has_been_run(model, stop=TRUE)
 	
@@ -1789,13 +1786,20 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 # = Graphics =
 # ============
 
-#' Create a figure from an MxModel
+#' Create a graphical figure from an MxModel
 #'
 #' Create graphical path diagrams from your OpenMx models!
-#' \emph{Note:} On systems with Word installed, a \sQuote{.dot} file extension gets opened (uselessly) by M$ wurd. 
-#' You may, therefore, need to set the default app for .dot to Graphviz.
 #' 
-#' On mac, get info, choose \dQuote{open with}, select Graphviz.app (or omnigraffle professional),
+#' plot() produces SEM diagrams in .dot language format, and relies on a graphviz application to create the
+#' image. You can get this for free at \url{http://www.graphviz.org/Download..php}. The commercial application
+#' Omnigraffle is great for editing these images.
+#' 
+#'
+#' On unix and windows, plot() will create a pdf and open it in your default pdf reader.
+#' 
+#' On OS X, we open the graphviz application. \emph{Note:} On OS X systems with Word installed,
+#' a \sQuote{.dot} file extension gets opened (uselessly) by M$ wurd. 
+#' Find a .dot file, get info (cmd-I), then choose \dQuote{open with}, select Graphviz.app (or omnigraffle professional),
 #' then set \dQuote{change all}.
 #'
 #' @aliases umxPlot
@@ -3230,12 +3234,13 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 
 #' umx_aggregate
 #'
-#' umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions.
-#' The purpose of this function is to simplify the task of summarising data
+#' R's built-in \code{\link{aggregate}} function is extremely useful and powerful, allowing
+#' xtabs based on a formula. umx_aggregate just tries to make using it a bit easier.
+#' In particular, it has some handy base functions that simplify the task of summarising data
 #' aggregating over some grouping factor. A common use is preparing summary tables.
 #'
-#' @param formula the aggregation formula. e.g., DV ~ condition
-#' @param data the dataframe to aggregate with
+#' @param formula The aggregation formula. e.g., DV ~ condition
+#' @param data frame to aggregate with
 #' @param what function to use. Defaults to a built-in "smart" mean (sd)
 #' @return - table
 #' @export
@@ -3268,12 +3273,19 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 	}else{
 		FUN = what
 	}
-	tmp = aggregate(formula, FUN= FUN, data = data)
-	n_s = aggregate(formula, FUN= x_n, data = data)
-	row.names(tmp) = paste0(as.character(tmp[,1]), " (n = ", n_s[,2], ")")
-	# tmp = data.frame(tmp)
-	tmp = tmp[,-1, drop=FALSE]
-	return(tmp)
+	tmp = aggregate(formula, FUN = FUN, data = data)
+	n_s = aggregate(formula, FUN = x_n, data = data)
+
+	# old way
+	# row.names(tmp) = paste0(as.character(tmp[,1]), " (n = ", n_s[,2], ")")
+	# # tmp = data.frame(tmp)
+	# tmp = tmp[,-1, drop = FALSE]
+	# return(tmp)
+
+	# new way
+	tmp = data.frame(tmp)
+	tmp[,1] = paste0(as.character(tmp[,1]), " (n = ", n_s[,2], ")")
+	return(tmp)	
 }
 
 #' umx_APA_pval

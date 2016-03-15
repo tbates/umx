@@ -9,7 +9,7 @@ umx_print(x, digits = getOption("digits"), quote = FALSE, na.print = "",
   suppress = NULL, ...)
 }
 \arguments{
-\item{x}{A data.frame to print}
+\item{x}{A data.frame to print (matrices will be coerced to data.frame)}
 
 \item{digits}{The number of decimal places to print (defaults to getOption("digits")}
 

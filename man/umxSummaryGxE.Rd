@@ -6,9 +6,9 @@
 \title{umxSummaryGxE}
 \usage{
 umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
-  separateGraphs = FALSE, dotFilename = NA, returnStd = NULL,
-  showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2",
-  "html"), ...)
+  separateGraphs = FALSE, dotFilename = getOption("umx_auto_plot"),
+  returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL,
+  report = c("1", "2", "html"), ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxGxE}} model to summarize}

@@ -10,6 +10,55 @@
 # = Get and set OpenMx options =
 # ==============================
 
+#' umx_set_table.format
+#'
+#' Set knitr.table.format default (output style for tables). Legal values are 
+#' "latex", "html", "markdown", "pandoc", and "rst".
+#'
+#' @param knitr.table.format format for tables (if empty, returns the current value of knitr.table.format)
+#' @return - Current knitr.table.format setting
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' library(umx)
+#' old = umx_set_table.format() # get existing value
+#' umx_set_table.format("latex")
+#' umx_set_table.format("html")
+#' umx_set_table.format("markdown")
+#' umx_set_table.format(old)    # reinstate
+umx_set_table.format <- function(knitr.table.format = NULL) {
+	if(is.null(knitr.table.format)) {
+		options("knitr.table.format")
+	} else {
+		umx_check(knitr.table.format %in% c("latex", "html", "markdown", "pandoc", "rst"), "stop")
+		options("knitr.table.format" = knitr.table.format)
+	}
+}
+
+#' umx_set_auto_plot
+#'
+#' Set autoPlot default for models like umxACE umxGxE etc
+#'
+#' @param autoPlot If NA or "name", sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
+#' @return - Current umx_auto_plot setting
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' library(umx)
+#' old = umx_set_auto_plot() # get existing value
+#' umx_set_auto_plot("name")  # set to "name"
+#' umx_set_auto_plot(old)    # reinstate
+umx_set_auto_plot <- function(autoPlot = NULL) {
+	if(is.null(autoPlot)) {
+		getOption("umx_auto_plot")
+	} else {
+		umx_check(autoPlot %in% c(NA, "name"), "stop")
+		options("umx_auto_plot" = autoPlot)
+	}
+}
+
 #' umx_set_auto_run
 #'
 #' Set autorun default for models like umxACE umxGxE etc
@@ -1733,7 +1782,7 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 #' and supressing values below a certain cut-off.
 #' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 #'
-#' @param x A data.frame to print
+#' @param x A data.frame to print (matrices will be coerced to data.frame)
 #' @param digits  The number of decimal places to print (defaults to getOption("digits")
 #' @param quote  Parameter passed to print (defaults to FALSE)
 #' @param na.print String to replace NA with (default to blank "")
@@ -1756,9 +1805,14 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 	# depends on R2HTML::HTML and knitr::kable
 	# TODO allow matrix as input
 	if(class(x)!="data.frame"){
-		message("Sorry, umx_print currently only prints data.frames. File a request to print '", class(x), "' objects")
-		return()
-	} else if(dim(x)[1] == 0){
+		if(class(x)=="matrix"){
+			x = data.frame(x)
+		} else {
+			message("Sorry, umx_print currently only prints data.frames. File a request to print '", class(x), "' objects")
+			return()
+		}
+	}
+	if(dim(x)[1] == 0){
 		return()
 	} else {
 		file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
@@ -2984,7 +3038,8 @@ umx_rot <- function(vec){
 #' Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
 #'
 #' @param model an \code{\link{mxModel}} to show data from
-#' @param what  legal options are "values" (default), "free", or "labels")
+#' @param what legal options are "values" (default), "free", or "labels")
+#' @param show filter on what to show c("all", "free", "fixed")
 #' @param matrices to show  (default is c("S", "A"))
 #' @param digits precision to report, defaults to rounding to 2 decimal places
 #' @return - \code{\link{mxModel}}
@@ -3010,11 +3065,12 @@ umx_rot <- function(vec){
 #' umx_show(m1, what = "free")
 #' umx_show(m1, what = "labels")
 #' umx_show(m1, what = "free", "A")
-umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), matrices = c("S", "A"), digits = 2) {
+umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2) {
 	if(!umx_is_RAM(model)){
 		stop("Only RAM models by default: what would you like me to do with this type of model?")
 	}
 	what = match.arg(what)
+	show = match.arg(show)
 	for (w in matrices) {
 		message("Showing ", what, " for:", w, " matrix:")
 		if(what == "values"){
@@ -3022,7 +3078,13 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 		}else if(what == "free"){
 			umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
 		}else if(what == "labels"){
-			umx_print(data.frame(model$matrices[[w]]$labels) , zero.print = ".", digits = digits)
+			x = model$matrices[[w]]$labels
+			if(show=="free"){
+				x[model$matrices[[w]]$free!=TRUE] = ""
+			} else if (show=="fixed") {
+				x[model$matrices[[w]]$free==TRUE] = ""
+			}
+			umx_print(x, zero.print = ".", digits = digits)
 		}else if(what == "nonzero_or_free"){
 			message("99 means the value is fixed, but is non-zero")
 			values = model$matrices[[w]]$values

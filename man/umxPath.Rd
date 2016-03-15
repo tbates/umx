@@ -27,13 +27,13 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 \item{formative}{Paired with to, this will build a formative variable, from the formatives, allowing these to
 covary, and to the latent "to" variable, fixing its variance to zero.}
 
-\item{Cholesky}{Treat the \strong{from} vars as latent and \strong{to} as measured, and connect up as in an ACE model.}
+\item{Cholesky}{Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.}
 
 \item{means}{equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).}
 
 \item{v1m0}{variance of 1 and mean of zero in one call.}
 
-\item{v.m.}{variance and mean added, both free.}
+\item{v.m.}{variance and mean, both free.}
 
 \item{fixedAt}{Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)}
 

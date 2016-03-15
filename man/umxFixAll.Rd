@@ -31,7 +31,6 @@ m1 <- umxRAM("OneFactor", data = mxData(cov(demoOneFactor), type = "cov", numObs
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
 )
-m1 = mxRun(m1)
 m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 mxCompare(m1, m2)
 }

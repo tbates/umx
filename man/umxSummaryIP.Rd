@@ -5,9 +5,9 @@
 \alias{umxSummaryIP}
 \title{umxSummaryIP}
 \usage{
-umxSummaryIP(model, digits = 2, dotFilename = c(NA, "name",
-  "make_up_a_file_name"), returnStd = FALSE, showStd = FALSE,
-  showRg = TRUE, comparison = NULL, CIs = FALSE, ...)
+umxSummaryIP(model, digits = 2, dotFilename = getOption("umx_auto_plot"),
+  returnStd = FALSE, showStd = FALSE, showRg = TRUE, comparison = NULL,
+  CIs = FALSE, ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxIP}} model to summarize}

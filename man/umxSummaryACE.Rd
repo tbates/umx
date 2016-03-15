@@ -5,9 +5,10 @@
 \alias{umxSummaryACE}
 \title{umxSummaryACE}
 \usage{
-umxSummaryACE(model, digits = 2, dotFilename = "name", comparison = NULL,
-  showStd = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2",
-  "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...)
+umxSummaryACE(model, digits = 2, dotFilename = getOption("umx_auto_plot"),
+  comparison = NULL, showStd = TRUE, showRg = FALSE, CIs = TRUE,
+  report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE,
+  zero.print = ".", ...)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to summarize}

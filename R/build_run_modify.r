@@ -22,7 +22,8 @@
 	# TODO remove mxCondenseMatrixSlots now that $ get and set are working properly
 	options('mxCondenseMatrixSlots'= FALSE)
 	options("umx_auto_run" = TRUE)
-    packageStartupMessage("For an overview type '?umx'")
+	options("umx_auto_plot" = NA)
+  packageStartupMessage("For an overview type '?umx'")
 }
 
 #' @importFrom MASS mvrnorm
@@ -426,7 +427,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' mzData  = subset(twinData, ZYG == "MZFF", selVars)
 #' dzData  = subset(twinData, ZYG == "DZMM", selVars)
 #' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
-#' m1 = umxRun(m1)
 #' # Plot Moderation
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")
@@ -849,8 +849,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param selDVs The variables to include from the data
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix The suffix for twin 1 and twin 2, often "_T". if set, simplifies
+#' SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
@@ -893,16 +893,15 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
 #' dzData <- dzData[1:200,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummary(m1, showStd=TRUE)
+#' umxSummary(m1, showStd = TRUE)
 #' umxSummaryACE(m1)
 #' \dontrun{
 #' plot(m1)
 #' }
 #' # ADE model (DZ correlation set to .25)
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
-#' m2 = umxRun(m2)
 #' umxCompare(m2, m1) # ADE is better
-#' umxSummary(m2) # nb: though this is ADE, columns are labeled ACE
+#' umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
 #' 
 #' 
 #' # ===================
@@ -962,7 +961,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' dzData <- dzData[1:200,]
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-#' m1 = umxRun(m1)
 #' umxSummary(m1)
 #' 
 #' 
@@ -990,7 +988,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' str(mzData)
 #' umx_paste_names(selDVs, "", 1:2)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-#' m1 = umxRun(m1)
 #' umxSummary(m1)
 #' 
 #' # ===================================
@@ -1345,47 +1342,15 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #'
 #' Make a 2-group ACE Cholesky Twin model with covariates modeled (see Details below)
 #' 
-#' A common task in twin modelling involves using the genetic and environmental differences 
-#' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
-#' to model the genetic and environmental structure of one, or, typically, several phenotypes
-#' (measured behaviors).
-#' 
-#' umxACEcov supports a core model in behavior genetics, known as the ACE Cholesky model
-#' (Cardon and Neale, 1996), supplemented with covariates.
-#' The ACE model decomposes phenotypic variance into Additive genetic, 
-#' unique environmental (E) and, either common xor shared-environment (C) or 
-#' non-additive genetic effects (D). The following figure shows how the ACE model appears as a path diagram:
-#' 
-#' \figure{ACE.png}
-#' 
-#' \strong{Data Input}
-#' The function flexibly accepts raw data, and also summary covariance data 
-#' (in which case the user must also supple numbers of observations for the two input data sets).
-#' 
-#' \strong{Ordinal Data}
-#' In an important capability, the model transparently handles ordinal (binary or multi-level
-#' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
-#' data in any combination. An experimental feature is under development to allow Tobit modelling. 
-#' 
-#' The function also supports weighting of individual data rows. In this case,
-#' the model is estimated for each row individually, then each row likelihood
-#' is multiplied by its weight, and these weighted likelyhoods summed to form
-#' the model-likelihood, which is to be minimised.
-#' This feature is used in the non-linear GxE model functions.
-#' 
-#' \strong{Additional features}
-#' The umxACE function supports varying the DZ genetic association (defaulting to .5)
-#' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-#' from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
-#' to .25 to model dominance effects.
+#' umxACEcov supplements the \code{\link{umxACE}} Cholesky model with covariates.
 #'
 #' @param name The name of the model (defaults to"ACE")
 #' @param selDVs The variables to include from the data (do not include suffixes)
 #' @param selCovs The covariates to include from the data (do not include suffixes)
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix suffix for twin 1 and twin 2, often "_T" Used to expand selDVs into
+#' full column names, i,e "dep" -->  c("dep_T1", "dep_T2")
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
@@ -1398,7 +1363,10 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @export
 #' @family Twin Modeling Functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
+#' and genotype on self-report drunkenness following a challenge dose of alcohol. 
+#' Behavior Genetics, 19(1), 63-78. doi:10.1007/BF01065884
+
 #' @examples
 #' # Height, weight, and BMI data from Australian twins. 
 #' # The total sample has been subdivided into a young cohort, aged 18-30 years,
@@ -1629,8 +1597,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' @param selDVs The variables to include
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
+#' omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param nFac How many common factors (default = 1)
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
@@ -1658,7 +1626,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
 #' dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
-#' m1 = umxRun(m1)
 #' umxSummary(m1, dotFilename=NA) # dotFilename = NA to avoid opening a plot window during CRAN check
 #' umxGetParameters(m1, "^c", free = TRUE)
 #' m2 = umxModify(m1, update = "(cs_.*$)|(c_cp_)", regex = TRUE, name = "dropC")
@@ -1837,8 +1804,8 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param selDVs The variables to include
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
+#' omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param nFac How many common factors (default = 1)
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
@@ -1866,7 +1833,6 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' dzData <- subset(twinData, ZYG == "DZFF")
 #' selDVs = c("ht", "wt") # with suffix = "", these will be expanded into "ht1" "ht2"
 #' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
-#' m1 = umxRun(m1)
 #' umxSummary(m1, dotFilename = NA) # dotFilename = NA to avoid opening a plot window during CRAN check
 umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run")) {
 	# TODO implement correlatedA
@@ -2044,8 +2010,8 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param mzfData The DZ female dataframe
 #' @param dzfData The DZ female dataframe
 #' @param dzoData The DZ opposite-sex dataframe. (be sure and get in right order)
-#' @param suffix The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-#' omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
+#' omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - ACE sexlim model
 #' @export
@@ -2905,7 +2871,6 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' m1 = mxRun(m1)
 #' m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 #' mxCompare(m1, m2)
 umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
@@ -3260,7 +3225,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	# m1 = mxLatent("Read", formedBy = manifestsRead, model.name="base"); umxPlot(m1, std = FALSE, dotFilename="name")
 	# m2 = mxLatent("Read", forms = manifestsRead, as.model="base"); 
 	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
-	# umxPlot(m2, std=FALSE, dotFilename="name")
+	# plot(m2, std=FALSE, dotFilename="name")
 	# mxLatent("Read", forms = manifestsRead)
 }
 
@@ -3737,10 +3702,10 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param formative Paired with to, this will build a formative variable, from the formatives, allowing these to
 #' covary, and to the latent "to" variable, fixing its variance to zero.
-#' @param Cholesky Treat the \strong{from} vars as latent and \strong{to} as measured, and connect up as in an ACE model.
+#' @param Cholesky Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
 #' @param v1m0 variance of 1 and mean of zero in one call.
-#' @param v.m. variance and mean added, both free.
+#' @param v.m. variance and mean, both free.
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
 #' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
 #' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
@@ -4015,13 +3980,13 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			connect = connect
 		}
 	}
-	# ==================================
-	# = From and to will be set now... =
-	# ==================================
+	# ====================================
+	# = From and to have now been set... =
+	# ====================================
 
-	# ===============================
-	# =  handle fixedAt and firstAt =
-	# ===============================
+	# ==============================
+	# = Handle fixedAt and firstAt =
+	# ==============================
 	if(sum(c(is.null(fixedAt), is.null(firstAt), is.null(freeAt))) < 2){
 		stop("At most one of fixedAt freeAt and firstAt can be set: You seem to have tried to set more than one.")
 	}
@@ -4150,7 +4115,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # And make a Figure it dot format!
 #' # If you have installed GraphViz, the next command will open it for you to see!
 #' 
-#' # umxPlot(m1, std = TRUE)
+#' # plot(m1, std = TRUE)
 #' # Run this instead if you don't have GraphViz
 #' plot(m1, std = TRUE, dotFilename = NA)
 #' @docType package

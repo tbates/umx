@@ -22,8 +22,8 @@ umxACESexLim(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 
 \item{dzoData}{The DZ opposite-sex dataframe. (be sure and get in right order)}
 
-\item{suffix}{The suffix for twin 1 and twin 2, often "_T" (defaults to NULL) With this, you can
-omit suffixes from names in SelDV, i.e., just "dep" not c("dep_T1", "dep_T2")}
+\item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, you can
+omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 }
