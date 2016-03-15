@@ -42,7 +42,7 @@ umx_show(m1, digits = 3)
 umx_show(m1, matrices = "S")
 umx_show(m1, what = "free")
 umx_show(m1, what = "labels")
-umx_show(m1, what = "free", "A")
+umx_show(m1, what = "free", matrices = "A")
 }
 \references{
 - \url{http://tbates.github.io}

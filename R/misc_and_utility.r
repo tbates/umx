@@ -596,8 +596,8 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 	exogenous_list = umx_is_exogenous(model, manifests_only = FALSE)
 	for (i in latenVarList) {
 		if(!exogenous.only | i %in% exogenous_list){
-			model$matrices$S$free[i, i]   = FALSE
-			model$matrices$S$values[i, i] = at
+			model@matrices$S@free[i, i]   = FALSE
+			model@matrices$S@values[i, i] = at
 		}
 	}
 	return(model)
@@ -641,14 +641,14 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1) {
 		# check that there is not already a factor fixed prior to this one
 		if(firstFreeRow == 1){
 			# must be ok
-			model$matrices$A$free[firstFreeRow, i]   = FALSE
-			model$matrices$A$values[firstFreeRow, i] = at
+			model@matrices$A@free[firstFreeRow, i]   = FALSE
+			model@matrices$A@values[firstFreeRow, i] = at
 		} else {
 			if(any(model$matrices$A$values[1:(firstFreeRow-1), i] == at)){
 				message("I skipped factor '", i, "'. It looks like it already has a loading fixed at ", at)
 			} else {
-				model$matrices$A$free[firstFreeRow, i]   = FALSE
-				model$matrices$A$values[firstFreeRow, i] = at				
+				model@matrices$A@free[firstFreeRow, i]   = FALSE
+				model@matrices$A@values[firstFreeRow, i] = at				
 			}
 		}
 	}
@@ -3073,7 +3073,7 @@ umx_rot <- function(vec){
 #' umx_show(m1, matrices = "S")
 #' umx_show(m1, what = "free")
 #' umx_show(m1, what = "labels")
-#' umx_show(m1, what = "free", "A")
+#' umx_show(m1, what = "free", matrices = "A")
 umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2) {
 	if(!umx_is_RAM(model)){
 		stop("Only RAM models by default: what would you like me to do with this type of model?")
