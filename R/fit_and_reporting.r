@@ -605,7 +605,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 		# saturatedModels not passed in from outside, so get them from the model
 		# TODO improve efficiency here: compute summary only once by detecting when SaturatedLikelihood is missing
 		modelSummary = summary(model)		
-		if(is.null(model)){
+		if(is.null(model$data)){
 			# # TODO model with no data - no saturated solution?
 		} else if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
@@ -1733,7 +1733,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 			}
 		}
 	}
-	N = round(model$numObs)
+	N = round(model$data$numObs)
 	pard = t(data.frame("mod" = summary(model)$parameters[, 5 + 2 * std], row.names = summary(model)$parameters[, 1]))
 	pb   = txtProgressBar(min = 0, max = rep, label = "Computing confidence intervals", style = 3)
 	#####
@@ -1988,10 +1988,10 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	out = "";
 	latents  = c();
 
-	if(model$submodels$MZ$type == "raw"){
-		selDVs = names(model$submodels$MZ$observed)
+	if(model$submodels$MZ$data$type == "raw"){
+		selDVs = names(model$submodels$MZ$data$observed)
 	}else{
-		selDVs = dimnames(model$submodels$MZ$observed)[[1]]
+		selDVs = dimnames(model$submodels$MZ$data$observed)[[1]]
 	}
 
 	varCount = length(selDVs)/2;
@@ -2178,8 +2178,8 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
 	model = x # to emphasise that x has to be a umxGxE model
 	# get unique values of moderator
-	mzData = model$submodels$MZ$observed
-	dzData = model$submodels$DZ$observed
+	mzData = model$submodels$MZ$data$observed
+	dzData = model$submodels$DZ$data$observed
 	selDefs = names(mzData)[3:4]
 	if(is.na(xlab)){
 		xlab = selDefs[1]
@@ -2251,7 +2251,7 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 	# TODO Check I am handling nFac > 1 properly!!
 	facCount = dim(model$submodels$top$a_cp$labels)[[1]]
 	varCount = dim(model$submodels$top$as$values)[[1]]
-	selDVs   = dimnames(model$submodels$MZ$observed)[[2]]
+	selDVs   = dimnames(model$submodels$MZ$data$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
 	parameterKeyList = omxGetParameters(model)
 	out = "";
@@ -2349,7 +2349,7 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	# TODO Check I am handling nFac > 1 properly!!
 	facCount = dim(model$submodels$top$a_cp$labels)[[1]]
 	varCount = dim(model$submodels$top$ai$values)[[1]]
-	selDVs   = dimnames(model$submodels$MZ$observed)[[2]]
+	selDVs   = dimnames(model$submodels$MZ$data$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
 	parameterKeyList = omxGetParameters(model, free = TRUE);
 	out = "";
@@ -3000,8 +3000,8 @@ logLik.MxModel <- function(object, ...) {
 	if (!is.null(model$output) & !is.null(model$output$Minus2LogLikelihood)){
 		Minus2LogLikelihood <- (-0.5) * model$output$Minus2LogLikelihood		
 	}
-	if (!is.null(model)){
-		attr(Minus2LogLikelihood,"nobs") <- model$numObs
+	if (!is.null(model$data)){
+		attr(Minus2LogLikelihood,"nobs") <- model$data$numObs
 	}else{ 
 		attr(Minus2LogLikelihood,"nobs") <- NA
 	}
@@ -3058,7 +3058,7 @@ umxFitIndices <- function(model, indepfit) {
 	indep.df  <- indepSummary$degreesOfFreedom
 	q <- (N.manifest*(N.manifest+1))/2
 	N.latent     <- length(model$latentVars)
-	observed.cov <- model$observed
+	observed.cov <- model$data$observed
 	observed.cor <- cov2cor(observed.cov)
 
 	A <- model$matrices$A$values

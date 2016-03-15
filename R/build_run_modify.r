@@ -364,7 +364,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		if(is.null(m1$matrices$M) ){
 			message("You have raw data, but no means model. I added\n",
 			"mxPath('one', to = manifestVars)")
-			m1 = mxModel(m1, mxPath("one", manifestVars))
+			m1 = mxModel(m1, mxPath("one", to = manifestVars))
 		} else {
 			# leave the user's means as the model
 			# print("using your means model")
@@ -2253,18 +2253,17 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		if (length(obj$submodels) > 0) {
 			stop("Cannot yet handle submodels")
 		}
-		if (is.null(obj)) {
+		if (is.null(obj$data)) {
 			stop("'model' does not contain any data")
 		}
 		if(!is.null(obj$matrices$Thresholds)){
 			message("this is a threshold RAM model... I'm not sure how to handle setting values in these yet")
 			return(obj)
 		}
-		theData   = obj$observed
+		theData   = obj$data$observed
 		manifests = obj$manifestVars
 		latents   = obj$latentVars
 		nVar      = length(manifests)
-
 		if(length(latents) > 0){
 			lats  =  (nVar+1):(nVar + length(latents))
 			# The diagonal is variances
@@ -2303,9 +2302,9 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# ======================================================
 		# The diagonal is variances
 		if(onlyTouchZeros) {
-			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE) & obj$S$values[1:nVar, 1:nVar] == 0
+			freePaths = (obj$matrices$S$free[1:nVar, 1:nVar] == TRUE) & obj$matrices$S$values[1:nVar, 1:nVar] == 0
 		} else {
-			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE)			
+			freePaths = (obj$matrices$S$free[1:nVar, 1:nVar] == TRUE)			
 		}
 		obj$matrices$S$values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
 		# ================

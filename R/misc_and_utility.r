@@ -2027,6 +2027,15 @@ umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), us
 #' tmp$hp  = ordered(mtcars$hp)  # binary factor
 #' umx_means(tmp, ordVar = 0, na.rm = TRUE)
 umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
+	if(!is.data.frame(df)){
+		if(is.matrix(df)){
+			df = data.frame(df)
+			# stop("df argument to umx_is_ordered must be a dataframe. You gave me a matrix")
+		} else {
+			# df = data.frame(df)
+			stop("argument df must be a dataframe. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+		}
+	}
 	if(any(umx_is_ordered(df, strict = F))){
 		# Set the default outcome
 		means = rep(ordVar, times = dim(df)[2])
@@ -2084,8 +2093,8 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 			df = data.frame(df)
 			# stop("df argument to umx_is_ordered must be a dataframe. You gave me a matrix")
 		} else {
-			df = data.frame(df)
-			# stop("df argument to umx_is_ordered must be a dataframe. Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+			# df = data.frame(df)
+			stop("df argument to umx_is_ordered must be a dataframe. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 		}
 	}
 	nVar = ncol(df);
@@ -2416,7 +2425,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 		}
 	}
 	if(!is.null(hasData)){
-		if (hasData & is.null(obj$observed)) {
+		if (hasData & is.null(obj$data$observed)) {
 			stop("'model' does not contain any data")
 		}
 	}

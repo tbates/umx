@@ -4,7 +4,9 @@
 \alias{umxEFA}
 \title{umxEFA}
 \usage{
-umxEFA(name = "", latents, data, report = c("table", "line", "long"))
+umxEFA(name = "efa", latents = NULL, data = NULL,
+  showEstimates = c("none", "raw", "std", "both", "list of column names"),
+  digits = 2, report = c("1", "table", "html"))
 }
 \arguments{
 \item{name}{the name for your new EFA model}
@@ -12,6 +14,10 @@ umxEFA(name = "", latents, data, report = c("table", "line", "long"))
 \item{latents}{List of factors in your CFA}
 
 \item{data}{The dataframe of manifest columns you are modeling}
+
+\item{showEstimates}{= c("none", "raw", "std", "both", "list of column names")}
+
+\item{digits}{rounding (defaults to 2)}
 
 \item{report}{What to report}
 }
@@ -22,9 +28,7 @@ umxEFA(name = "", latents, data, report = c("table", "line", "long"))
 A helper for EFA that only requires you to enter your latents and manifests
 }
 \examples{
-\dontrun{
-umxEFA("test", latents = "g", data = mtcars[, c("mpg", "disp", "hp", "wt")])
-}
+umxEFA(name= "test", latents = "g", data = mtcars[, c("mpg", "disp", "hp", "wt")])
 }
 \references{
 - \url{http://github.com/tbates/umx}
