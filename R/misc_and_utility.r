@@ -3038,7 +3038,8 @@ umx_rot <- function(vec){
 #' Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
 #'
 #' @param model an \code{\link{mxModel}} to show data from
-#' @param what  legal options are "values" (default), "free", or "labels")
+#' @param what legal options are "values" (default), "free", or "labels")
+#' @param show filter on what to show c("all", "free", "fixed")
 #' @param matrices to show  (default is c("S", "A"))
 #' @param digits precision to report, defaults to rounding to 2 decimal places
 #' @return - \code{\link{mxModel}}
@@ -3064,11 +3065,12 @@ umx_rot <- function(vec){
 #' umx_show(m1, what = "free")
 #' umx_show(m1, what = "labels")
 #' umx_show(m1, what = "free", "A")
-umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), matrices = c("S", "A"), digits = 2) {
+umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2) {
 	if(!umx_is_RAM(model)){
 		stop("Only RAM models by default: what would you like me to do with this type of model?")
 	}
 	what = match.arg(what)
+	show = match.arg(show)
 	for (w in matrices) {
 		message("Showing ", what, " for:", w, " matrix:")
 		if(what == "values"){
@@ -3076,7 +3078,13 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 		}else if(what == "free"){
 			umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
 		}else if(what == "labels"){
-			umx_print(data.frame(model$matrices[[w]]$labels) , zero.print = ".", digits = digits)
+			x = model$matrices[[w]]$labels
+			if(show=="free"){
+				x[model$matrices[[w]]$free!=TRUE] = ""
+			} else if (show=="fixed") {
+				x[model$matrices[[w]]$free==TRUE] = ""
+			}
+			umx_print(x, zero.print = ".", digits = digits)
 		}else if(what == "nonzero_or_free"){
 			message("99 means the value is fixed, but is non-zero")
 			values = model$matrices[[w]]$values

@@ -5,12 +5,14 @@
 \title{umx_show}
 \usage{
 umx_show(model, what = c("values", "free", "labels", "nonzero_or_free"),
-  matrices = c("S", "A"), digits = 2)
+  show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to show data from}
 
 \item{what}{legal options are "values" (default), "free", or "labels")}
+
+\item{show}{filter on what to show c("all", "free", "fixed")}
 
 \item{matrices}{to show  (default is c("S", "A"))}
 

@@ -3980,13 +3980,13 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			connect = connect
 		}
 	}
-	# ==================================
-	# = From and to will be set now... =
-	# ==================================
+	# ====================================
+	# = From and to have now been set... =
+	# ====================================
 
-	# ===============================
-	# =  handle fixedAt and firstAt =
-	# ===============================
+	# ==============================
+	# = Handle fixedAt and firstAt =
+	# ==============================
 	if(sum(c(is.null(fixedAt), is.null(firstAt), is.null(freeAt))) < 2){
 		stop("At most one of fixedAt freeAt and firstAt can be set: You seem to have tried to set more than one.")
 	}

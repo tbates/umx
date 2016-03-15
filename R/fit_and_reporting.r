@@ -1786,13 +1786,20 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 # = Graphics =
 # ============
 
-#' Create a figure from an MxModel
+#' Create a graphical figure from an MxModel
 #'
 #' Create graphical path diagrams from your OpenMx models!
-#' \emph{Note:} On systems with Word installed, a \sQuote{.dot} file extension gets opened (uselessly) by M$ wurd. 
-#' You may, therefore, need to set the default app for .dot to Graphviz.
 #' 
-#' On mac, get info, choose \dQuote{open with}, select Graphviz.app (or omnigraffle professional),
+#' plot() produces SEM diagrams in .dot language format, and relies on a graphviz application to create the
+#' image. You can get this for free at \url{http://www.graphviz.org/Download..php}. The commercial application
+#' Omnigraffle is great for editing these images.
+#' 
+#'
+#' On unix and windows, plot() will create a pdf and open it in your default pdf reader.
+#' 
+#' On OS X, we open the graphviz application. \emph{Note:} On OS X systems with Word installed,
+#' a \sQuote{.dot} file extension gets opened (uselessly) by M$ wurd. 
+#' Find a .dot file, get info (cmd-I), then choose \dQuote{open with}, select Graphviz.app (or omnigraffle professional),
 #' then set \dQuote{change all}.
 #'
 #' @aliases umxPlot
@@ -3227,12 +3234,13 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 
 #' umx_aggregate
 #'
-#' umx_aggregate Aggregate based on a formula, using a function. Has some handy base functions.
-#' The purpose of this function is to simplify the task of summarising data
+#' R's built-in \code{\link{aggregate}} function is extremely useful and powerful, allowing
+#' xtabs based on a formula. umx_aggregate just tries to make using it a bit easier.
+#' In particular, it has some handy base functions that simplify the task of summarising data
 #' aggregating over some grouping factor. A common use is preparing summary tables.
 #'
-#' @param formula the aggregation formula. e.g., DV ~ condition
-#' @param data the dataframe to aggregate with
+#' @param formula The aggregation formula. e.g., DV ~ condition
+#' @param data frame to aggregate with
 #' @param what function to use. Defaults to a built-in "smart" mean (sd)
 #' @return - table
 #' @export
@@ -3265,12 +3273,19 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 	}else{
 		FUN = what
 	}
-	tmp = aggregate(formula, FUN= FUN, data = data)
-	n_s = aggregate(formula, FUN= x_n, data = data)
-	row.names(tmp) = paste0(as.character(tmp[,1]), " (n = ", n_s[,2], ")")
-	# tmp = data.frame(tmp)
-	tmp = tmp[,-1, drop=FALSE]
-	return(tmp)
+	tmp = aggregate(formula, FUN = FUN, data = data)
+	n_s = aggregate(formula, FUN = x_n, data = data)
+
+	# old way
+	# row.names(tmp) = paste0(as.character(tmp[,1]), " (n = ", n_s[,2], ")")
+	# # tmp = data.frame(tmp)
+	# tmp = tmp[,-1, drop = FALSE]
+	# return(tmp)
+
+	# new way
+	tmp = data.frame(tmp)
+	tmp[,1] = paste0(as.character(tmp[,1]), " (n = ", n_s[,2], ")")
+	return(tmp)	
 }
 
 #' umx_APA_pval

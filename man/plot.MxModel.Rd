@@ -3,7 +3,7 @@
 \name{plot.MxModel}
 \alias{plot.MxModel}
 \alias{umxPlot}
-\title{Create a figure from an MxModel}
+\title{Create a graphical figure from an MxModel}
 \usage{
 \method{plot}{MxModel}(x = NA, std = TRUE, digits = 2,
   dotFilename = "name", pathLabels = c("none", "labels", "both"),
@@ -33,11 +33,17 @@
 }
 \description{
 Create graphical path diagrams from your OpenMx models!
-\emph{Note:} On systems with Word installed, a \sQuote{.dot} file extension gets opened (uselessly) by M$ wurd. 
-You may, therefore, need to set the default app for .dot to Graphviz.
 }
 \details{
-On mac, get info, choose \dQuote{open with}, select Graphviz.app (or omnigraffle professional),
+plot() produces SEM diagrams in .dot language format, and relies on a graphviz application to create the
+image. You can get this for free at \url{http://www.graphviz.org/Download..php}. The commercial application
+Omnigraffle is great for editing these images.
+
+On unix and windows, plot() will create a pdf and open it in your default pdf reader.
+
+On OS X, we open the graphviz application. \emph{Note:} On OS X systems with Word installed,
+a \sQuote{.dot} file extension gets opened (uselessly) by M$ wurd. 
+Find a .dot file, get info (cmd-I), then choose \dQuote{open with}, select Graphviz.app (or omnigraffle professional),
 then set \dQuote{change all}.
 }
 \examples{
