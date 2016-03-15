@@ -1831,7 +1831,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
 #' mzData <- subset(twinData, ZYG == "MZFF")
 #' dzData <- subset(twinData, ZYG == "DZFF")
-#' selDVs = c("ht", "wt") # with suffix = "", these will be expanded into "ht1" "ht2"
+#' selDVs = c("ht", "wt") # These will be expanded into "ht1" "ht2"
 #' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
 #' umxSummary(m1, dotFilename = NA) # dotFilename = NA to avoid opening a plot window during CRAN check
 umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run")) {
@@ -2487,11 +2487,10 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 	if(umx_is_RAM(model)){
 		if(model$data$type == "raw"){
 			# If we have a RAM model with raw data, compute the satuated and indpendence models
-			# TODO: Update to omxSaturated() and omxIndependenceModel()
-			message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
+			# message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
 			ref_models = mxRefModels(model, run = TRUE)
-			model$output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
-			model$output$SaturatedLikelihood    = as.numeric(-2 * logLik(ref_models$Saturated))
+			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
+			model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(ref_models$Saturated))
 		}
 	}
 	if(!is.null(comparison)){ 

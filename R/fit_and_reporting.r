@@ -859,8 +859,8 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = getOption("umx_auto_p
 		message("Genetic correlations")
 		NAmatrix <- matrix(NA, nVar, nVar);
 		rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error = function(err) return(NAmatrix)); # genetic correlations
-		rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error = function(err) return(NAmatrix)); # shared environmental correlations
-		rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error = function(err) return(NAmatrix)); # Unique environmental correlations
+		rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error = function(err) return(NAmatrix)); # C correlations
+		rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error = function(err) return(NAmatrix)); # E correlations
 		rAClean = rA
 		rCClean = rC
 		rEClean = rE
@@ -1397,9 +1397,9 @@ umxSummaryIP <- function(model, digits = 2, dotFilename = getOption("umx_auto_pl
 	ci_std   = SD %*% ci ; # Standardized path coefficients (independent general factors )
 	ei_std   = SD %*% ei ; # Standardized path coefficients (independent general factors )
 
-	stdFit$submodels$top$matrices$ai$values = ai_std
-	stdFit$submodels$top$matrices$ci$values = ci_std
-	stdFit$submodels$top$matrices$ei$values = ei_std
+	stdFit@submodels$top@matrices$ai@values = ai_std
+	stdFit@submodels$top@matrices$ci@values = ci_std
+	stdFit@submodels$top@matrices$ei@values = ei_std
 
 	rowNames = sub("_.1$", "", selDVs[1:nVar])
 
@@ -1412,9 +1412,9 @@ umxSummaryIP <- function(model, digits = 2, dotFilename = getOption("umx_auto_pl
 	as_std = SD %*% as; # Standardized path coefficients (nVar specific factors matrices)
 	cs_std = SD %*% cs;
 	es_std = SD %*% es;
-	stdFit$submodels$top$matrices$as$values = as_std
-	stdFit$submodels$top$matrices$cs$values = cs_std
-	stdFit$submodels$top$matrices$es$values = es_std
+	stdFit@submodels$top@matrices$as@values = as_std
+	stdFit@submodels$top@matrices$cs@values = cs_std
+	stdFit@submodels$top@matrices$es@values = es_std
 
 	asClean = as_std
 	csClean = cs_std
