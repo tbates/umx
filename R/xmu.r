@@ -242,7 +242,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	# ==============================
 	# = Add means labels if needed =
 	# ==============================
-	if(!is.null(model)){
+	if(!is.null(model$data)){
 		if(model$data$type == "raw" & is.null(model$M)) {
 			warning("You are using raw data, but have not yet added paths for the means\n")
 			message("Do this with umxPath(means = 'var')")
