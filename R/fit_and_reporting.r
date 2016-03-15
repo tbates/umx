@@ -348,7 +348,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 	if (isTRUE(all.equal(parm, defaultParmString))) {
 		if(umx_has_CIs(object, "intervals")) {
 			# TODO add a count for the user
-			message(length(object@intervals), " CIs found")
+			message(length(object$intervals), " CIs found")
 		} else {
 			message("Adding CIs for all free parameters")
 			CIs_to_set = names(omxGetParameters(object, free = TRUE))
@@ -384,7 +384,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 		model_summary = summary(object)
 		CIs = model_summary$CI
 		model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
-		model_CI_OK = object@output$confidenceIntervalCodes
+		model_CI_OK = object$output$confidenceIntervalCodes
 		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
 		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
 		print(model_CIs)
@@ -475,7 +475,7 @@ umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary")
 	}
 
 	if(umx_has_CIs(model)){
-		message("### CIs for model ", model@name)
+		message("### CIs for model ", model$name)
 		confint(model, showErrorCodes = showErrorCodes)
 	}
 	invisible(model)
@@ -605,7 +605,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 		# saturatedModels not passed in from outside, so get them from the model
 		# TODO improve efficiency here: compute summary only once by detecting when SaturatedLikelihood is missing
 		modelSummary = summary(model)		
-		if(is.null(model@data)){
+		if(is.null(model)){
 			# # TODO model with no data - no saturated solution?
 		} else if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
@@ -696,7 +696,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 				}
 			}
 			if(report == "table"){
-				x = data.frame(cbind(model@name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
+				x = data.frame(cbind(model$name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
 				names(x) = c("model","\u03C7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
 				print(x)
 			} else {
@@ -722,8 +722,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 			}
 	})
 	
-	if(!is.null(model@output$confidenceIntervals)){
-		print(model@output$confidenceIntervals)
+	if(!is.null(model$output$confidenceIntervals)){
+		print(model$output$confidenceIntervals)
 	}
 	if(showEstimates != "none"){ # return these as  invisible for the user to filer, sort etc.
 		if(filter == "NS"){
@@ -937,9 +937,9 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = getOption("umx_auto_p
 		print(e_std)
 	}
 	} # Use CIs
-	stdFit$top$a@values = a_std
-	stdFit$top$c@values = c_std
-	stdFit$top$e@values = e_std
+	stdFit$top$a$values = a_std
+	stdFit$top$c$values = c_std
+	stdFit$top$e$values = e_std
 	if(!is.na(dotFilename)) {
 		message("making dot file")
 		umxPlotACE(model, dotFilename, std = showStd)
@@ -1148,9 +1148,9 @@ umxSummaryACEcov <- function(model, digits = 2, dotFilename = getOption("umx_aut
 		print(e_std)
 	}
 	} # Use CIs
-	stdFit$top$a@values = a_std
-	stdFit$top$c@values = c_std
-	stdFit$top$e@values = e_std
+	stdFit$top$a$values = a_std
+	stdFit$top$c$values = c_std
+	stdFit$top$e$values = e_std
 	if(!is.na(dotFilename)) {
 		message("making dot file")
 		plot(model, dotFilename, std = showStd)
@@ -1210,7 +1210,7 @@ umxSummaryCP <- function(model, digits = 2, dotFilename = getOption("umx_auto_pl
 	# TODO: detect value of DZ covariance, and if .25 set "C" to "D"
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
-			message(paste("Output for Model: ", thisFit@name))
+			message(paste("Output for Model: ", thisFit$name))
 			umxSummaryCP(thisFit, digits = digits, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, comparison = comparison, CIs = CIs)
 		}
 	} else {
@@ -1227,8 +1227,8 @@ umxSummaryCP <- function(model, digits = 2, dotFilename = getOption("umx_auto_pl
 		}
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2;
-		nFac   = dim(model@submodels$top@matrices$a_cp)[[1]]	
-		# MZc = mxEval(MZ.expCov,  model); # Same effect as expCovMZ@matrices$twinACEFit
+		nFac   = dim(model$submodels$top$matrices$a_cp)[[1]]	
+		# MZc = mxEval(MZ.expCov,  model); # Same effect as expCovMZ$matrices$twinACEFit
 		# DZc = mxEval(DZ.expCov,  model);
 		# M   = mxEval(MZ.expMean, model);
 		# Calculate standardised variance components
@@ -1253,7 +1253,7 @@ umxSummaryCP <- function(model, digits = 2, dotFilename = getOption("umx_auto_pl
 		names(commonACE) = c ("A", "C", "E")
 		message("Common Factor paths")
 		umx_print(commonACE, digits = digits, zero.print = ".")
-		if(class(model@submodels$top@matrices$a_cp)[1] =="LowerMatrix"){
+		if(class(model$submodels$top$matrices$a_cp)[1] =="LowerMatrix"){
 			message("You used correlated genetic inputs to the common factor. This is the a_cp matrix")
 			print(a_cp)
 		}
@@ -1397,9 +1397,9 @@ umxSummaryIP <- function(model, digits = 2, dotFilename = getOption("umx_auto_pl
 	ci_std   = SD %*% ci ; # Standardized path coefficients (independent general factors )
 	ei_std   = SD %*% ei ; # Standardized path coefficients (independent general factors )
 
-	stdFit@submodels$top@matrices$ai@values = ai_std
-	stdFit@submodels$top@matrices$ci@values = ci_std
-	stdFit@submodels$top@matrices$ei@values = ei_std
+	stdFit$submodels$top$matrices$ai$values = ai_std
+	stdFit$submodels$top$matrices$ci$values = ci_std
+	stdFit$submodels$top$matrices$ei$values = ei_std
 
 	rowNames = sub("_.1$", "", selDVs[1:nVar])
 
@@ -1412,9 +1412,9 @@ umxSummaryIP <- function(model, digits = 2, dotFilename = getOption("umx_auto_pl
 	as_std = SD %*% as; # Standardized path coefficients (nVar specific factors matrices)
 	cs_std = SD %*% cs;
 	es_std = SD %*% es;
-	stdFit@submodels$top@matrices$as@values = as_std
-	stdFit@submodels$top@matrices$cs@values = cs_std
-	stdFit@submodels$top@matrices$es@values = es_std
+	stdFit$submodels$top$matrices$as$values = as_std
+	stdFit$submodels$top$matrices$cs$values = cs_std
+	stdFit$submodels$top$matrices$es$values = es_std
 
 	asClean = as_std
 	csClean = cs_std
@@ -1723,23 +1723,23 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 	if(type == "par.expected") {
 		exp = umxExpCov(model, latents = FALSE)
 	} else if(type == "par.observed") {
-		if(model$data@type == "raw") {
+		if(model$data$type == "raw") {
 			exp = var(mxEval(data, model))
 		} else { 
-			if(model$data@type == "sscp") {
-				exp = mxEval(data, model) / (model$data@numObs - 1)
+			if(model$data$type == "sscp") {
+				exp = mxEval(data, model) / (model$data$numObs - 1)
 			} else {
 				exp = mxEval(data, model)
 			}
 		}
 	}
-	N = round(model@data@numObs)
+	N = round(model$numObs)
 	pard = t(data.frame("mod" = summary(model)$parameters[, 5 + 2 * std], row.names = summary(model)$parameters[, 1]))
 	pb   = txtProgressBar(min = 0, max = rep, label = "Computing confidence intervals", style = 3)
 	#####
 	if(type == "empirical") {
 		if(length(rawData) == 0) {
-			if(model$data@type == "raw"){
+			if(model$data$type == "raw"){
 				rawData = mxEval(data, model)
 			} else {
 				stop("No raw data supplied for empirical bootstrap.")	
@@ -1852,22 +1852,22 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	model = x # just to be clear that x is a model
 
 	pathLabels = match.arg(pathLabels)
-	latents = model@latentVars   # 'vis', 'math', and 'text' 
-	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
+	latents = model$latentVars   # 'vis', 'math', and 'text' 
+	selDVs  = model$manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	if(std){ model = umx_standardize_RAM(model, return = "model") }
 
 	# ========================
 	# = Get Symmetric & Asymmetric Paths =
 	# ========================
 	out = "";
-	out = xmu_dot_make_paths(model@matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
+	out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
 	if(resid == "circle"){
-		out = xmu_dot_make_paths(model@matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
+		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
 	} else {
-		out = xmu_dot_make_paths(model@matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
+		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
 	}
 	# TODO should xmu_dot_make_residuals handle showFixed or not necessary?
-	tmp = xmu_dot_make_residuals(model@matrices$S, latents = latents, digits = digits, resid = resid)
+	tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
 	variances     = tmp$variances  #either "var_var textbox" or "var -> var port circles"
 	varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
 	# ============================
@@ -1891,11 +1891,11 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 		out = paste0(out, "\n\t# Means paths\n")
 		# Add a triangle to the list of shapes
 		preOut = paste0(preOut, "\t one [shape = triangle];\n")
-		mxMat = model@matrices$M
-		mxMat_vals   = mxMat@values
-		mxMat_free   = mxMat@free
-		mxMat_labels = mxMat@labels
-		meanVars = colnames(mxMat@values)
+		mxMat = model$matrices$M
+		mxMat_vals   = mxMat$values
+		mxMat_free   = mxMat$free
+		mxMat_labels = mxMat
+		meanVars = colnames(mxMat$values)
 		for(to in meanVars) {
 			thisPathLabel = mxMat_labels[1, to]
 			thisPathFree  = mxMat_free[1, to]
@@ -1988,10 +1988,10 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	out = "";
 	latents  = c();
 
-	if(model@submodels$MZ@data$type == "raw"){
-		selDVs = names(model@submodels$MZ@data@observed)
+	if(model$submodels$MZ$type == "raw"){
+		selDVs = names(model$submodels$MZ$observed)
 	}else{
-		selDVs = dimnames(model@submodels$MZ@data@observed)[[1]]
+		selDVs = dimnames(model$submodels$MZ$observed)[[1]]
 	}
 
 	varCount = length(selDVs)/2;
@@ -2178,8 +2178,8 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
 	model = x # to emphasise that x has to be a umxGxE model
 	# get unique values of moderator
-	mzData = model@submodels$MZ@data@observed
-	dzData = model@submodels$DZ@data@observed
+	mzData = model$submodels$MZ$observed
+	dzData = model$submodels$DZ$observed
 	selDefs = names(mzData)[3:4]
 	if(is.na(xlab)){
 		xlab = selDefs[1]
@@ -2190,12 +2190,12 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	dz2 = as.vector(dzData[,selDefs[2]])
 	allValuesOfDefVar= c(mz1,mz2,dz1,dz2)
 	defVarValues = sort(unique(allValuesOfDefVar))
-	a   = model@submodels$top@matrices$a@values
-	c   = model@submodels$top@matrices$c@values
-	e   = model@submodels$top@matrices$e@values
-	am  = model@submodels$top@matrices$am@values
-	cm  = model@submodels$top@matrices$cm@values
-	em  = model@submodels$top@matrices$em@values
+	a   = model$submodels$top$matrices$a$values
+	c   = model$submodels$top$matrices$c$values
+	e   = model$submodels$top$matrices$e$values
+	am  = model$submodels$top$matrices$am$values
+	cm  = model$submodels$top$matrices$cm$values
+	em  = model$submodels$top$matrices$em$values
 	Va  = (a + am * defVarValues)^2
 	Vc  = (c + cm * defVarValues)^2
 	Ve  = (e + em * defVarValues)^2
@@ -2251,7 +2251,7 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 	# TODO Check I am handling nFac > 1 properly!!
 	facCount = dim(model$submodels$top$a_cp$labels)[[1]]
 	varCount = dim(model$submodels$top$as$values)[[1]]
-	selDVs   = dimnames(model@submodels$MZ@data@observed)[[2]]
+	selDVs   = dimnames(model$submodels$MZ$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
 	parameterKeyList = omxGetParameters(model)
 	out = "";
@@ -2349,7 +2349,7 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	# TODO Check I am handling nFac > 1 properly!!
 	facCount = dim(model$submodels$top$a_cp$labels)[[1]]
 	varCount = dim(model$submodels$top$ai$values)[[1]]
-	selDVs   = dimnames(model@submodels$MZ@data@observed)[[2]]
+	selDVs   = dimnames(model$submodels$MZ$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
 	parameterKeyList = omxGetParameters(model, free = TRUE);
 	out = "";
@@ -2506,8 +2506,8 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 	# 		}
 	# 		from = mi.df$from[n]
 	# 		to   = mi.df$to[n]
-	# 		a = (model@matrices$S@free[to,from] |model@matrices$A@free[to,from])
-	# 		b = (model@matrices$S@values[to,from]!=0 |model@matrices$A@values[to,from] !=0)
+	# 		a = (model$matrices$S$free[to,from] |model$matrices$A$free[to,from])
+	# 		b = (model$matrices$S$values[to,from]!=0 |model$matrices$A$values[to,from] !=0)
 	# 		if(a|b){
 	# 			mi.df$action[n]="delete"
 	# 		} else {
@@ -2556,7 +2556,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 #' }
 umxUnexplainedCausalNexus <- function(from, delta, to, model) {
-	manifests = model@manifestVars
+	manifests = model$manifestVars
 	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to support string varnames 
 	dimnames(partialDataRow) = list("val", manifests)
 	partialDataRow[1, from] <- delta # delta is in raw "from" units
@@ -2580,15 +2580,15 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 	# Handle missing data
 	if(is.null(newData)) {
 		data <- model$data
-		if(data@type != "raw") {
+		if(data$type != "raw") {
 			stop("Conditionals requires either new data or a model with raw data.")
 		}
-		newData <- data@observed
+		newData <- data$observed
 	}
 	
 	if(is.list(expectation)) {  # New fit-function style
-		eCov  <- model$fitfunction@info$expCov
-		eMean <- model$fitfunction@info$expMean
+		eCov  <- model$fitfunction$info$expCov
+		eMean <- model$fitfunction$info$expMean
 		expectation <- model$expectation
 		if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
 			A <- eval(substitute(model$X$values, list(X=expectation$A)))
@@ -2598,8 +2598,8 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 			}
 		}
 	} else { # Old objective-style
-		eCov <- model$objective@info$expCov
-		eMean <- model$objective@info$expMean
+		eCov <- model$objective$info$expCov
+		eMean <- model$objective$info$expMean
 		if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
 			A <- eval(substitute(model$X$values, list(X=expectation$A)))
 			S <- eval(substitute(model$X$values, list(X=expectation$S)))
@@ -2617,7 +2617,7 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 		if(!is.null(M)) {
 			eMean <- Z %*% t(M)
 		}
-		latents <- model@latentVars
+		latents <- model$latentVars
 		newData <- data.frame(newData, matrix(NA, ncol=length(latents), dimnames=list(NULL, latents)))
 	}
 	
@@ -2864,9 +2864,9 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
 	if(object$data$type == "raw"){
-		manifestNames = names(object$data@observed)
+		manifestNames = names(object$data$observed)
 	} else {
-		manifestNames = dimnames(object$data@observed)[[1]]
+		manifestNames = dimnames(object$data$observed)[[1]]
 	}
 	if(umx_is_RAM(object)){
 		if(manifests & !latents){
@@ -2949,12 +2949,12 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 		# TODO should a function called expMeans get expected means for latents... why not.
 		stop("Haven't thought about getting means for latents yet... Bug me about it :-)")
 	}
-	expMean <- attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
+	expMean <- attr(model$output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
 	
-	if(model@data@type == "raw"){
-		manifestNames = names(model$data@observed)
+	if(model$data$type == "raw"){
+		manifestNames = names(model$data$observed)
 	} else {
-		manifestNames = dimnames(model$data@observed)[[1]]
+		manifestNames = dimnames(model$data$observed)[[1]]
 	}
 	dimnames(expMean) = list("mean", manifestNames)
 	if(!is.null(digits)){
@@ -2997,16 +2997,16 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 logLik.MxModel <- function(object, ...) {
 	model = object # just to be clear that object is a model
 	Minus2LogLikelihood <- NA
-	if (!is.null(model@output) & !is.null(model@output$Minus2LogLikelihood)){
-		Minus2LogLikelihood <- (-0.5) * model@output$Minus2LogLikelihood		
+	if (!is.null(model$output) & !is.null(model$output$Minus2LogLikelihood)){
+		Minus2LogLikelihood <- (-0.5) * model$output$Minus2LogLikelihood		
 	}
-	if (!is.null(model@data)){
-		attr(Minus2LogLikelihood,"nobs") <- model@data@numObs
+	if (!is.null(model)){
+		attr(Minus2LogLikelihood,"nobs") <- model$numObs
 	}else{ 
 		attr(Minus2LogLikelihood,"nobs") <- NA
 	}
-	if (!is.null(model@output)){
-		attr(Minus2LogLikelihood,"df") <- length(model@output$estimate)	
+	if (!is.null(model$output)){
+		attr(Minus2LogLikelihood,"df") <- length(model$output$estimate)	
 	} else {
 		attr(Minus2LogLikelihood, "df") <- NA
 	}
@@ -3048,7 +3048,7 @@ umxFitIndices <- function(model, indepfit) {
 	modelSummary <- summary(model)
 	N         <- modelSummary$numObs
 	N.parms   <- modelSummary$estimatedParameters
-	N.manifest <- length(model@manifestVars)
+	N.manifest <- length(model$manifestVars)
 	deviance  <- modelSummary$Minus2LogLikelihood
 	Chi       <- modelSummary$Chi
 	df        <- modelSummary$degreesOfFreedom
@@ -3057,13 +3057,13 @@ umxFitIndices <- function(model, indepfit) {
 	indep.chi <- indepSummary$Chi
 	indep.df  <- indepSummary$degreesOfFreedom
 	q <- (N.manifest*(N.manifest+1))/2
-	N.latent     <- length(model@latentVars)
-	observed.cov <- model@data@observed
+	N.latent     <- length(model$latentVars)
+	observed.cov <- model$observed
 	observed.cor <- cov2cor(observed.cov)
 
-	A <- model@matrices$A@values
-	S <- model@matrices$S@values
-	F <- model@matrices$F@values
+	A <- model$matrices$A$values
+	S <- model$matrices$S$values
+	F <- model$matrices$F$values
 	I <- diag(N.manifest+N.latent)
 	estimate.cov <- F %*% (qr.solve(I-A)) %*% S %*% (t(qr.solve(I-A))) %*% t(F)
 	estimate.cor <- cov2cor(estimate.cov)

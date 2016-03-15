@@ -193,8 +193,8 @@
 # HetChAceAsmSum   <- summary(HetChAceAsmFit)
 # HetChAceAsmSum$Mi
 # # for (i in 1:4) { HetChAceAsmFit <- mxRun(HetChAceAsmFit); print(HetChAceAsmFit $output$mi) }
-# round(HetChAceAsmFit$VarsZm@result,4); round(HetChAceAsmFit$VarSZm@result,4); round(HetChAceAsmFit$CorsZm@result,4)
-# round(HetChAceAsmFit$VarsZf@result,4); round(HetChAceAsmFit$VarSZf@result,4); round(HetChAceAsmFit$CorsZf@result,4)
+# round(HetChAceAsmFit$VarsZm,4); round(HetChAceAsmFit$VarSZm,4); round(HetChAceAsmFit$CorsZm,4)
+# round(HetChAceAsmFit$VarsZf,4); round(HetChAceAsmFit$VarSZf,4); round(HetChAceAsmFit$CorsZf,4)
 #
 # HetChAceAsfModel <- mxModel(HetChAceAsmModel, name="HetChAceAsf")
 # HetChAceAsfModel <- omxSetParameters( HetChAceAsfModel, labels=laLower("asm",nv), free=FALSE, values=0 )
@@ -203,8 +203,8 @@
 # HetChAceAsfSum   <- summary(HetChAceAsfFit)
 # HetChAceAsfSum$Mi
 # #for (i in 1:4) { HetChAceAsfFit <- mxRun(HetChAceAsfFit); print(HetChAceAsfFit $output$mi) }
-# round(HetChAceAsfFit$VarsZm@result,4); round(HetChAceAsfFit$VarSZm@result,4); round(HetChAceAsfFit$CorsZm@result,4)
-# round(HetChAceAsfFit$VarsZf@result,4); round(HetChAceAsfFit$VarSZf@result,4); round(HetChAceAsfFit$CorsZf@result,4)
+# round(HetChAceAsfFit$VarsZm,4); round(HetChAceAsfFit$VarSZm,4); round(HetChAceAsfFit$CorsZm,4)
+# round(HetChAceAsfFit$VarsZf,4); round(HetChAceAsfFit$VarSZf,4); round(HetChAceAsfFit$CorsZf,4)
 # mxCompare(HetChAceAsfFit, HetChAceAsmFit)
 #
 # # -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
@@ -220,8 +220,8 @@
 # HetChAceCsmSum   <- summary(HetChAceCsmFit)
 # HetChAceCsmSum$Mi
 # #for (i in 1:4) { HetChAceCsmFit <- mxRun(HetChAceCsmFit); print(HetChAceCsmFit$output$mi) }
-# round(HetChAceCsmFit$VarsZm@result,4); round(HetChAceCsmFit$VarSZm@result,4); round(HetChAceCsmFit$CorsZm@result,4)
-# round(HetChAceCsmFit$VarsZf@result,4); round(HetChAceCsmFit$VarSZf@result,4); round(HetChAceCsmFit$CorsZf@result,4)
+# round(HetChAceCsmFit$VarsZm,4); round(HetChAceCsmFit$VarSZm,4); round(HetChAceCsmFit$CorsZm,4)
+# round(HetChAceCsmFit$VarsZf,4); round(HetChAceCsmFit$VarSZf,4); round(HetChAceCsmFit$CorsZf,4)
 # mxCompare(HetChAceAsfFit, HetChAceCsmFit)
 #
 # HetChAceCsfModel <- mxModel (HetChAceAsmModel, name="HetChAceCsf")
@@ -231,8 +231,8 @@
 # HetChAceCsfSum   <- summary(HetChAceCsfFit)
 # HetChAceCsfSum$Mi
 # #for (i in 1:4) { HetChAceCsfFit <- mxRun(HetChAceCsfFit); print(HetChAceCsfFit$output$mi) }
-# round(HetChAceCsfFit$VarsZm@result,4); round(HetChAceCsfFit$VarSZm@result,4); round(HetChAceCsfFit$CorsZm@result,4)
-# round(HetChAceCsfFit$VarsZf@result,4); round(HetChAceCsfFit$VarSZf@result,4); round(HetChAceCsfFit$CorsZf@result,4)
+# round(HetChAceCsfFit$VarsZm,4); round(HetChAceCsfFit$VarSZm,4); round(HetChAceCsfFit$CorsZm,4)
+# round(HetChAceCsfFit$VarsZf,4); round(HetChAceCsfFit$VarSZf,4); round(HetChAceCsfFit$CorsZf,4)
 # mxCompare(HetChAceAsfFit, HetChAceCsfFit)
 #
 # # -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
@@ -247,8 +247,8 @@
 # HetChAceSum   <- summary(HetChAceFit)
 # HetChAceSum$Mi
 # #for (i in 1:4) { HetChAceFit <- mxRun(HetChAceFit); print(HetChAceFit$output$mi) }
-# round(HetChAceFit$VarsZm@result,4); round(HetChAceFit$CorsZm@result,4)
-# round(HetChAceFit$VarsZf@result,4); round(HetChAceFit$CorsZf@result,4)
+# round(HetChAceFit$VarsZm,4); round(HetChAceFit$CorsZm,4)
+# round(HetChAceFit$VarsZf,4); round(HetChAceFit$CorsZf,4)
 # mxCompare(HetChAceAsfFit, HetChAceFit)
 #
 # # -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
@@ -281,8 +281,8 @@
 # HomChAceSum   <- summary(HomChAceFit)
 # HomChAceSum$Mi
 # #for (i in 1:4) { HomChAceFit <- mxRun(HomChAceFit); print(HomChAceFit$output$mi) }
-# round(HomChAceFit$VarsZm@result,4); round(HomChAceFit$CorsZm@result,4)
-# round(HomChAceFit$VarsZf@result,4); round(HomChAceFit$CorsZf@result,4)
+# round(HomChAceFit$VarsZm,4); round(HomChAceFit$CorsZm,4)
+# round(HomChAceFit$VarsZf,4); round(HomChAceFit$CorsZf,4)
 # mxCompare(HetChAceFit, HomChAceFit)
 #
 #
@@ -415,8 +415,8 @@
 # HetCfAceRgSum   <- summary(HetCfAceRgFit)
 # HetCfAceRgSum$Mi
 # #for (i in 1:4) { HetCfAceRgFit <- mxRun(HetCfAceRgFit); print(HetCfAceRgFit$output$mi) }
-# round(HetCfAceRgFit$VarsZm@result,4); round(HetCfAceRgFit$CorsZm@result,4)
-# round(HetCfAceRgFit$VarsZf@result,4); round(HetCfAceRgFit$CorsZf@result,4)
+# round(HetCfAceRgFit$VarsZm,4); round(HetCfAceRgFit$CorsZm,4)
+# round(HetCfAceRgFit$VarsZf,4); round(HetCfAceRgFit$CorsZf,4)
 # mxCompare(HetCfAceRgFit)
 #
 # source("GenEpiHelperFunctions.R")
@@ -446,8 +446,8 @@
 # HetCfAceRcSum   <- summary(HetCfAceRcFit)
 # HetCfAceRcSum$Mi
 # #for (i in 1:4) { HetCfAceRcFit <- mxRun(HetCfAceRcFit); print(HetCfAceRcFit$output$mi) }
-# round(HetCfAceRcFit$VarsZm@result,4); round(HetCfAceRcFit$CorsZm@result,4)
-# round(HetCfAceRcFit$VarsZf@result,4); round(HetCfAceRcFit$CorsZf@result,4)
+# round(HetCfAceRcFit$VarsZm,4); round(HetCfAceRcFit$CorsZm,4)
+# round(HetCfAceRcFit$VarsZf,4); round(HetCfAceRcFit$CorsZf,4)
 # mxCompare(HetCfAceRcFit, HetCfAceRcFit)
 #
 # # -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
@@ -470,8 +470,8 @@
 # HetCfAceSum   <- summary(HetCfAceFit)
 # HetCfAceSum$Mi
 # #for (i in 1:4) { HetCfAceFit <- mxRun(HetCfAceFit); print(HetCfAceFit$output$mi) }
-# round(HetCfAceFit$VarsZm@result,4); round(HetCfAceFit$CorsZm@result,4)
-# round(HetCfAceFit$VarsZf@result,4); round(HetCfAceFit$CorsZf@result,4)
+# round(HetCfAceFit$VarsZm,4); round(HetCfAceFit$CorsZm,4)
+# round(HetCfAceFit$VarsZf,4); round(HetCfAceFit$CorsZf,4)
 # mxCompare(HetCfAceRgFit, HetCfAceFit)
 #
 # # -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
@@ -492,8 +492,8 @@
 # HomCfAceSum   <- summary(HomCfAceFit)
 # HomCfAceSum$Mi
 # #for (i in 1:4) { HomCfAceFit <- mxRun(HomCfAceFit); print(HomCfAceFit$output$mi) }
-# round(HomCfAceFit$VarsZm@result,4); round(HomCfAceFit$CorsZm@result,4)
-# round(HomCfAceFit$VarsZf@result,4); round(HomCfAceFit$CorsZf@result,4)
+# round(HomCfAceFit$VarsZm,4); round(HomCfAceFit$CorsZm,4)
+# round(HomCfAceFit$VarsZf,4); round(HomCfAceFit$CorsZf,4)
 # mxCompare(HetCfAceFit, HomCfAceFit)
 #
 # # -------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|

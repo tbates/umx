@@ -462,9 +462,9 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' umx_is_exogenous(m1, manifests_only = FALSE)
 umx_is_exogenous <- function(model, manifests_only = TRUE) {
 	umx_check_model(model, type = "RAM")
-	checkThese = model@manifestVars
+	checkThese = model$manifestVars
 	if(!manifests_only){
-		checkThese = c(checkThese, model@latentVars)
+		checkThese = c(checkThese, model$latentVars)
 	}
 	if(length(checkThese) < 1){
 		return(c())
@@ -472,7 +472,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 	exog = c()
 	n = 1
 	for (i in checkThese) {
-		if(!any(model@matrices$A@free[i, ])){
+		if(!any(model$matrices$A$free[i, ])){
 			exog[n] = i
 			n = n + 1
 		}
@@ -501,9 +501,9 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 umx_is_endogenous <- function(model, manifests_only = TRUE) {
 	# has_no_incoming_single_arrow
 	umx_check_model(model, type = "RAM")
-	checkThese = model@manifestVars
+	checkThese = model$manifestVars
 	if(!manifests_only){
-		checkThese = c(checkThese, model@latentVars)
+		checkThese = c(checkThese, model$latentVars)
 	}
 	if(length(checkThese) < 1){
 		return(c())
@@ -551,13 +551,13 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' umxSummary(m1)
 umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 	umx_check_model(model, type = "RAM")
-	theList = c(model@latentVars, model@manifestVars)
+	theList = c(model$latentVars, model$manifestVars)
 	if(!all(add.to %in% theList)){
 		stop("not all names found in model")
 	}
 	for (i in add.to) {
-		model@matrices$S@free[i, i] = TRUE
-		model@matrices$S@values[i, i] = .1
+		model$matrices$S$free[i, i] = TRUE
+		model$matrices$S$values[i, i] = .1
 	}
 	return(model)
 }
@@ -589,15 +589,15 @@ umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 #' umx_show(m1, matrices = "S") # variance of g is fixed at 1
 umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1) {
 	if(is.null(latents)){
-		latenVarList = model@latentVars
+		latenVarList = model$latentVars
 	} else {
 		latenVarList = latents
 	}
 	exogenous_list = umx_is_exogenous(model, manifests_only = FALSE)
 	for (i in latenVarList) {
 		if(!exogenous.only | i %in% exogenous_list){
-			model@matrices$S@free[i, i]   = FALSE
-			model@matrices$S@values[i, i] = at
+			model$matrices$S$free[i, i]   = FALSE
+			model$matrices$S$values[i, i] = at
 		}
 	}
 	return(model)
@@ -631,24 +631,24 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1) {
 	# TODO: Must not apply this twice
 	umx_check_model(model, type = "RAM")
 	if(is.null(latents)){
-		latenVarList = model@latentVars
+		latenVarList = model$latentVars
 	} else {
 		latenVarList = latents
 	}
 	for (i in latenVarList) {
 		# i = "ind60"
-		firstFreeRow = which(model@matrices$A@free[,i])[1]
+		firstFreeRow = which(model$matrices$A$free[,i])[1]
 		# check that there is not already a factor fixed prior to this one
 		if(firstFreeRow == 1){
 			# must be ok
-			model@matrices$A@free[firstFreeRow, i]   = FALSE
-			model@matrices$A@values[firstFreeRow, i] = at
+			model$matrices$A$free[firstFreeRow, i]   = FALSE
+			model$matrices$A$values[firstFreeRow, i] = at
 		} else {
-			if(any(model@matrices$A@values[1:(firstFreeRow-1), i] == at)){
+			if(any(model$matrices$A$values[1:(firstFreeRow-1), i] == at)){
 				message("I skipped factor '", i, "'. It looks like it already has a loading fixed at ", at)
 			} else {
-				model@matrices$A@free[firstFreeRow, i]   = FALSE
-				model@matrices$A@values[firstFreeRow, i] = at				
+				model$matrices$A$free[firstFreeRow, i]   = FALSE
+				model$matrices$A$values[firstFreeRow, i] = at				
 			}
 		}
 	}
@@ -1612,8 +1612,8 @@ umx_paste_names <- function(varNames, textConstant = "", suffixes = 1:2) {
 #' }
 umx_merge_CIs <- function(m1, m2) {
 	# cludge together
-	a  = m1@output$confidenceIntervals
-	b  = m2@output$confidenceIntervals
+	a  = m1$output$confidenceIntervals
+	b  = m2$output$confidenceIntervals
 	a_names = attr(a, "dimnames")[[1]]
 	b_names = attr(b, "dimnames")[[1]]
 	all_names = c(a_names, b_names)
@@ -1626,7 +1626,7 @@ umx_merge_CIs <- function(m1, m2) {
 		cat(all_CIs[duplicated(all_names), ])
 	}
 
-	m1@output$confidenceIntervals = all_CIs
+	m1$output$confidenceIntervals = all_CIs
 	return(m1)
 	# return(all_CIs)
 }
@@ -1868,7 +1868,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umx_has_been_run(m1)
 umx_has_been_run <- function(model, stop = FALSE) {
-	output <- model@output
+	output <- model$output
 	if (is.null(output)){
 		if(stop){
 			stop("Provided model has no objective function, and thus no output to process further")
@@ -2303,8 +2303,8 @@ umx_has_means <- function(model) {
 	if(!umx_is_RAM(model)){
 		stop("Can only run on RAM models so far")
 	}
-	return(!is.null(model@matrices$M))
-	# expMeans = attr(model@output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
+	return(!is.null(model$matrices$M))
+	# expMeans = attr(model$output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
 	# return(!all(dim(expMeans) == 0))
 }
 
@@ -2341,15 +2341,15 @@ umx_has_means <- function(model) {
 #' umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 	check = umx_default_option(check, c("both", "intervals", "output"), check=F)
-	if(is.null(model@intervals)){
+	if(is.null(model$intervals)){
 		thisModelHasIntervals = FALSE
 	}else{
-		thisModelHasIntervals = length(names(model@intervals)) > 0
+		thisModelHasIntervals = length(names(model$intervals)) > 0
 	}
-	if(is.null(model@output$confidenceIntervals)){
+	if(is.null(model$output$confidenceIntervals)){
 		thisModelHasOutput = FALSE
 	} else {
-		thisModelHasOutput = dim(model@output$confidenceIntervals)[1] > 0
+		thisModelHasOutput = dim(model$output$confidenceIntervals)[1] > 0
 	}
 	# do logic of returning a value
 	if(check == "both"){
@@ -2411,12 +2411,12 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 		message(paste("type", sQuote(type), "not handled yet"))
 	}
 	if(checkSubmodels){
-		if (length(obj@submodels) > 0) {
+		if (length(obj$submodels) > 0) {
 			message("Cannot yet handle models with submodels")
 		}
 	}
 	if(!is.null(hasData)){
-		if (hasData & is.null(obj@data@observed)) {
+		if (hasData & is.null(obj$observed)) {
 			stop("'model' does not contain any data")
 		}
 	}
@@ -3808,8 +3808,8 @@ umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 	} else {
 		matName = newName
 	}
-	rows <- nrow(mat@free)
-	cols <- ncol(mat@free)
+	rows <- nrow(mat$free)
+	cols <- ncol(mat$free)
 	d1 <- expand.grid(matName, "[", 1:rows, ",", 1:cols, "]", stringsAsFactors = FALSE)	
 	addys = c()
 	for (i in 1:(rows*cols)) {
@@ -3819,9 +3819,9 @@ umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 	if(is.na(free) ){
 		return(addys)
 	} else if (free == TRUE){
-		return(addys[mat@free == TRUE])
+		return(addys[mat$free == TRUE])
 	} else if (free == FALSE){
-		return(addys[mat@free == TRUE])
+		return(addys[mat$free == TRUE])
 	} else {
 		stop("free must be one of NA TRUE or FALSE")	
 	}
@@ -3866,7 +3866,7 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 umx_standardize_ACE <- function(fit) {
 	if(typeof(fit) == "list"){ # call self recursively
 		for(thisFit in fit) {
-			message("Output for Model: ",thisFit@name)
+			message("Output for Model: ",thisFit$name)
 			umx_standardize_ACE(thisFit)
 		}
 	} else {
@@ -3889,9 +3889,9 @@ umx_standardize_ACE <- function(fit) {
 		SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
 	
 		# Standardized _path_ coefficients ready to be stacked together
-		fit$top@matrices$a$values = SD %*% a; # Standardized path coefficients
-		fit$top@matrices$c$values = SD %*% c;
-		fit$top@matrices$e$values = SD %*% e;
+		fit$top$matrices$a$values = SD %*% a; # Standardized path coefficients
+		fit$top$matrices$c$values = SD %*% c;
+		fit$top$matrices$e$values = SD %*% e;
 		return(fit)
 	}
 }
@@ -3913,7 +3913,7 @@ umx_standardize_ACE <- function(fit) {
 umx_standardize_ACEcov <- function(fit) {
 	if(typeof(fit) == "list"){ # call self recursively
 		for(thisFit in fit) {
-			message("Output for Model: ",thisFit@name)
+			message("Output for Model: ",thisFit$name)
 			umx_standardize_ACEcov(thisFit)
 		}
 	} else {
@@ -3949,13 +3949,13 @@ umx_standardize_ACEcov <- function(fit) {
 umx_standardize_IP <- function(fit){
 	if(!is.null(fit$top$ai_std)){
 		# Standardized general path components
-		fit$top$ai@values = fit$top$ai_std$result # standardized ai
-		fit$top$ci@values = fit$top$ci_std$result # standardized ci
-		fit$top$ei@values = fit$top$ei_std$result # standardized ei
+		fit$top$ai$values = fit$top$ai_std$result # standardized ai
+		fit$top$ci$values = fit$top$ci_std$result # standardized ci
+		fit$top$ei$values = fit$top$ei_std$result # standardized ei
 	    # Standardized specific coeficients
-		fit$top$as@values = fit$top$as_std$result # standardized as
-		fit$top$cs@values = fit$top$cs_std$result # standardized cs
-		fit$top$es@values = fit$top$es_std$result # standardized es
+		fit$top$as$values = fit$top$as_std$result # standardized as
+		fit$top$cs$values = fit$top$cs_std$result # standardized cs
+		fit$top$es$values = fit$top$es_std$result # standardized es
 	} else {
 		stop("Please run umxIP(..., std = TRUE). All I do is copy ai_std values into ai etc, so they have to be run!")
 	}
@@ -3978,7 +3978,7 @@ umx_standardize_IP <- function(fit){
 umx_standardize_CP <- function(fit){
 	if(!is.null(fit$top$ai_std)){
 		# Standardized general path components
-		fit@submodels$top@matrices$cp_loadings@values = fit@submodels$top@algebras$cp_loadings_std$result # standardized cp loadings
+		fit$submodels$top$matrices$cp_loadings$values = fit$submodels$top$algebras$cp_loadings_std$result # standardized cp loadings
 		# Standardized specific path coefficienfitts
 		fit$top$as$values = fit$top$as_std$result # standardized as
 		fit$top$cs$values = fit$top$cs_std$result # standardized cs
@@ -3988,7 +3988,7 @@ umx_standardize_CP <- function(fit){
 		# TODO let this work directly... not hard..
 		selDVs = dimnames(fit$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2;
-		nFac   = dim(fit@submodels$top@matrices$a_cp)[[1]]	
+		nFac   = dim(fit$submodels$top$matrices$a_cp)[[1]]	
 		# Calculate standardised variance components
 		a_cp  = mxEval(top.a_cp , fit); # nFac * nFac matrix of path coefficients flowing into the cp_loadings array
 		c_cp  = mxEval(top.c_cp , fit);
