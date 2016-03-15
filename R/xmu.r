@@ -78,7 +78,7 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 	}
 	mxMat_vals   = mxMat$values
 	mxMat_free   = mxMat$free
-	mxMat_labels = mxMat
+	mxMat_labels = mxMat$labels
 	mxMat_rows = dimnames(mxMat_free)[[1]]
 	mxMat_cols = dimnames(mxMat_free)[[2]]
 	if(!is.null(comment)){
@@ -242,9 +242,10 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	# ==============================
 	# = Add means labels if needed =
 	# ==============================
+	# TODO add a test case with raw data but no means...
 	if(!is.null(model$data)){
 		if(model$data$type == "raw" & is.null(model$M)) {
-			warning("You are using raw data, but have not yet added paths for the means\n")
+			message("You are using raw data, but have not yet added paths for the means\n")
 			message("Do this with umxPath(means = 'var')")
 		}
 	}
@@ -350,7 +351,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 		return(paste0("You tried to set type ", "to ", omxQuotes(type)));
 	}
 	# Set labels
-	mx_matrix <- newLabels;
+	mx_matrix$labels <- newLabels;
 	if(setfree == FALSE) {
 		# return("Matrix Specification not used: leave free as set in mx_matrix") 
 	} else {
@@ -467,7 +468,7 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	# Fill first row of deviations_for_thresh with useful lower thresholds, perhaps -1 or .5 SD (nthresh/2)
 	deviations_for_thresh$free[1,]   <- TRUE
 	deviations_for_thresh$values[1,] <- initialLowerLim # Start with an even -2. Might spread this a bit for different levels, or centre on 0 for 1 threshold
-	deviations_for_thresh[1,] <- paste("ThreshBaseline1", 1:nOrdinal, sep ="_")
+	deviations_for_thresh$labels[1,] <- paste("ThreshBaseline1", 1:nOrdinal, sep ="_")
 	deviations_for_thresh$lbound[1,] <- -7 # baseline limit in SDs
 	deviations_for_thresh$ubound[1,] <-  7 # baseline limit in SDs
 
@@ -475,14 +476,14 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 		thisThreshMinus1 = levelList[n] -1
 		stepSize = (initialUpperLim-initialLowerLim)/thisThreshMinus1
 		deviations_for_thresh$values[2:thisThreshMinus1,n] = (initialUpperLim - initialLowerLim) / thisThreshMinus1
-		deviations_for_thresh[2:thisThreshMinus1,n] = paste("ThreshDeviation", 2:thisThreshMinus1, n, sep = "_")
+		deviations_for_thresh$labels[2:thisThreshMinus1,n] = paste("ThreshDeviation", 2:thisThreshMinus1, n, sep = "_")
 		deviations_for_thresh$free  [2:thisThreshMinus1,n] = TRUE
 		deviations_for_thresh$lbound[2:thisThreshMinus1,n] = .001
 		if(thisThreshMinus1 < maxThreshMinus1) {
 			# pad the shorter var's excess rows with fixed@99 so humans can see them...
 			deviations_for_thresh$values[(thisThreshMinus1+1):maxThreshMinus1,n] <- (-99)
 
-			deviations_for_thresh[(thisThreshMinus1+1):maxThreshMinus1,n] <- paste("unusedThresh", min(thisThreshMinus1 + 1, maxThreshMinus1), n, sep = "_")
+			deviations_for_thresh$labels[(thisThreshMinus1+1):maxThreshMinus1,n] <- paste("unusedThresh", min(thisThreshMinus1 + 1, maxThreshMinus1), n, sep = "_")
 			deviations_for_thresh$free  [(thisThreshMinus1+1):maxThreshMinus1,n] <- F
 		}
 	}
@@ -607,7 +608,7 @@ xmuMI <- function(model, vector = TRUE) {
 	m <- dim(A)[1]
 	which.free <- c(model$A$free, model$S$free & upper.tri(diag(m), diag= TRUE))
 	vars       <- colnames(A)
-	parNames   <- c(model$A, model$S)
+	parNames   <- c(model$A$labels, model$S$labels)
 	parNames[is.na(parNames)] <- c(outer(vars, vars, paste, sep=' <- '),
 	outer(vars, vars, paste, sep=' <-> '))[is.na(parNames)]
 	NM     <- model$data$numObs - 1

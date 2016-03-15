@@ -377,7 +377,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 			"m1 = confint(m1, run = TRUE)")
 		} else {
 			message("hmmm... you wanted it run, but I don't see any computed CIs despite there being ", length(object$intervals), " requested...",
-			"\nThat's a bug. Please report it to timothy.c.bates@gmail.com")
+			"\nThat's a bug. Please report it to timothy.c.bates at gmail.com")
 		}
 	} else {
 		# model has CIs and they have been run
@@ -1852,8 +1852,8 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	model = x # just to be clear that x is a model
 
 	pathLabels = match.arg(pathLabels)
-	latents = model$latentVars   # 'vis', 'math', and 'text' 
-	selDVs  = model$manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
+	latents = model@latentVars   # 'vis', 'math', and 'text' 
+	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	if(std){ model = umx_standardize_RAM(model, return = "model") }
 
 	# ========================
@@ -1894,7 +1894,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 		mxMat = model$matrices$M
 		mxMat_vals   = mxMat$values
 		mxMat_free   = mxMat$free
-		mxMat_labels = mxMat
+		mxMat_labels = mxMat$labels
 		meanVars = colnames(mxMat$values)
 		for(to in meanVars) {
 			thisPathLabel = mxMat_labels[1, to]
@@ -2556,7 +2556,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 #' }
 umxUnexplainedCausalNexus <- function(from, delta, to, model) {
-	manifests = model$manifestVars
+	manifests = model@manifestVars
 	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to support string varnames 
 	dimnames(partialDataRow) = list("val", manifests)
 	partialDataRow[1, from] <- delta # delta is in raw "from" units
@@ -2617,7 +2617,7 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 		if(!is.null(M)) {
 			eMean <- Z %*% t(M)
 		}
-		latents <- model$latentVars
+		latents <- model@latentVars
 		newData <- data.frame(newData, matrix(NA, ncol=length(latents), dimnames=list(NULL, latents)))
 	}
 	
@@ -2882,10 +2882,10 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 			expCov <- E %&% S # The model-implied covariance matrix
 			mV <- NULL
 			if(latents) {
-				mV <- object$latentVars 
+				mV <- object@latentVars 
 			}
 			if(manifests) {
-				mV <- c(mV, object$manifestVars)
+				mV <- c(mV, object@manifestVars)
 			}
 			expCov = expCov[mV, mV]
 		}
@@ -3048,7 +3048,7 @@ umxFitIndices <- function(model, indepfit) {
 	modelSummary <- summary(model)
 	N         <- modelSummary$numObs
 	N.parms   <- modelSummary$estimatedParameters
-	N.manifest <- length(model$manifestVars)
+	N.manifest <- length(model@manifestVars)
 	deviance  <- modelSummary$Minus2LogLikelihood
 	Chi       <- modelSummary$Chi
 	df        <- modelSummary$degreesOfFreedom
@@ -3057,7 +3057,7 @@ umxFitIndices <- function(model, indepfit) {
 	indep.chi <- indepSummary$Chi
 	indep.df  <- indepSummary$degreesOfFreedom
 	q <- (N.manifest*(N.manifest+1))/2
-	N.latent     <- length(model$latentVars)
+	N.latent     <- length(model@latentVars)
 	observed.cov <- model$data$observed
 	observed.cor <- cov2cor(observed.cov)
 

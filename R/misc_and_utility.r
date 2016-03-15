@@ -462,9 +462,9 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' umx_is_exogenous(m1, manifests_only = FALSE)
 umx_is_exogenous <- function(model, manifests_only = TRUE) {
 	umx_check_model(model, type = "RAM")
-	checkThese = model$manifestVars
+	checkThese = model@manifestVars
 	if(!manifests_only){
-		checkThese = c(checkThese, model$latentVars)
+		checkThese = c(checkThese, model@latentVars)
 	}
 	if(length(checkThese) < 1){
 		return(c())
@@ -501,9 +501,9 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 umx_is_endogenous <- function(model, manifests_only = TRUE) {
 	# has_no_incoming_single_arrow
 	umx_check_model(model, type = "RAM")
-	checkThese = model$manifestVars
+	checkThese = model@manifestVars
 	if(!manifests_only){
-		checkThese = c(checkThese, model$latentVars)
+		checkThese = c(checkThese, model@latentVars)
 	}
 	if(length(checkThese) < 1){
 		return(c())
@@ -551,7 +551,7 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' umxSummary(m1)
 umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 	umx_check_model(model, type = "RAM")
-	theList = c(model$latentVars, model$manifestVars)
+	theList = c(model@latentVars, model@manifestVars)
 	if(!all(add.to %in% theList)){
 		stop("not all names found in model")
 	}
@@ -589,7 +589,7 @@ umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 #' umx_show(m1, matrices = "S") # variance of g is fixed at 1
 umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1) {
 	if(is.null(latents)){
-		latenVarList = model$latentVars
+		latenVarList = model@latentVars
 	} else {
 		latenVarList = latents
 	}
@@ -631,7 +631,7 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1) {
 	# TODO: Must not apply this twice
 	umx_check_model(model, type = "RAM")
 	if(is.null(latents)){
-		latenVarList = model$latentVars
+		latenVarList = model@latentVars
 	} else {
 		latenVarList = latents
 	}
@@ -2094,7 +2094,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 			# stop("df argument to umx_is_ordered must be a dataframe. You gave me a matrix")
 		} else {
 			# df = data.frame(df)
-			stop("df argument to umx_is_ordered must be a dataframe. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+			stop("Argument df must be a dataframe. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 		}
 	}
 	nVar = ncol(df);

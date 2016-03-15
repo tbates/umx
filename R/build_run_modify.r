@@ -364,7 +364,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		if(is.null(m1$matrices$M) ){
 			message("You have raw data, but no means model. I added\n",
 			"mxPath('one', to = manifestVars)")
-			m1 = mxModel(m1, mxPath("one", to = manifestVars))
+			m1 = mxModel(m1, mxPath("one", manifestVars))
 		} else {
 			# leave the user's means as the model
 			# print("using your means model")
@@ -1194,9 +1194,9 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 			MZ  = mxModel("MZ", mzExpect, mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
 			DZ  = mxModel("DZ", dzExpect, mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
 
-			# ==================================
+			# ===================================
 			# = Constrain Ordinal variance @1  =
-			# ==================================
+			# ===================================
 			# Algebra to pick out the ord vars
 			# TODO check this way of using twin 1 to pick where the bin vars are is robust...
 			the_bin_cols = which(isBin)[1:nVar] # columns in which the bin vars appear for twin 1, i.e., c(1,3,5,7)
@@ -1752,16 +1752,16 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 		)
 	}
 	if(!freeLowerA){
-		toset  = model$submodels$top$matrices$as[lower.tri(model$submodels$top$matrices$as)]
+		toset  = model$submodels$top$matrices$as$labels[lower.tri(model$submodels$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 	
 	if(!freeLowerC){
-		toset  = model$submodels$top$matrices$cs[lower.tri(model$submodels$top$matrices$cs)]
+		toset  = model$submodels$top$matrices$cs$labels[lower.tri(model$submodels$top$matrices$cs$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 	if(!freeLowerE){
-		toset  = model$submodels$top$matrices$es[lower.tri(model$submodels$top$matrices$es)]
+		toset  = model$submodels$top$matrices$es$labels[lower.tri(model$submodels$top$matrices$es$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 	if(addStd){
@@ -1934,25 +1934,25 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 	
 	if(!freeLowerA){
-		toset  = model$submodels$top$matrices$as[lower.tri(model$submodels$top$matrices$as)]
+		toset  = model$submodels$top$matrices$as$labels[lower.tri(model$submodels$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 
 	if(!freeLowerC){
-		toset  = model$submodels$top$matrices$cs[lower.tri(model$submodels$top$matrices$cs)]
+		toset  = model$submodels$top$matrices$cs$labels[lower.tri(model$submodels$top$matrices$cs$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 	
 	if(!freeLowerE){
-		toset  = model$submodels$top$matrices$es[lower.tri(model$submodels$top$matrices$es)]
+		toset  = model$submodels$top$matrices$es$labels[lower.tri(model$submodels$top$matrices$es$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	} else {
 		# set the first column off, bar r1
 		model = omxSetParameters(model, labels = "es_r[^1]0-9?c1", free = FALSE, values = 0)
 
-		# toset  = model$submodels$top$matrices$es[lower.tri(model$submodels$top$matrices$es)]
+		# toset  = model$submodels$top$matrices$es$labels[lower.tri(model$submodels$top$matrices$es$labels)]
 		# model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
-		# toset  = model$submodels$top$matrices$es[lower.tri(model$submodels$top$matrices$es)]
+		# toset  = model$submodels$top$matrices$es$labels[lower.tri(model$submodels$top$matrices$es$labels)]
 		# model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 
 		# Used to drop the ei paths, as we have a full Cholesky for E, now just set the bottom row TRUE
@@ -2257,13 +2257,14 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			stop("'model' does not contain any data")
 		}
 		if(!is.null(obj$matrices$Thresholds)){
-			message("this is a threshold RAM model... I'm not sure how to handle setting values in these yet")
+			message("This is a threshold RAM model... I'm not sure how to handle setting values in these yet")
 			return(obj)
 		}
 		theData   = obj$data$observed
-		manifests = obj$manifestVars
-		latents   = obj$latentVars
+		manifests = obj@manifestVars
+		latents   = obj@latentVars
 		nVar      = length(manifests)
+
 		if(length(latents) > 0){
 			lats  =  (nVar+1):(nVar + length(latents))
 			# The diagonal is variances
@@ -2272,12 +2273,11 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			} else {
 				freePaths = (obj$matrices$S$free[lats, lats] == TRUE)			
 			}
-			obj$matrices$S$values[lats, lats][freePaths] = 1
+			obj@matrices$S$values[lats, lats][freePaths] = 1
 			offDiag = !diag(length(latents))
 			newOffDiags = obj$matrices$S$values[lats, lats][offDiag & freePaths]/3
-			obj$matrices$S$values[lats, lats][offDiag & freePaths] = newOffDiags			
+			obj@matrices$S@values[lats, lats][offDiag & freePaths] = newOffDiags			
 		}
-
 		# =============
 		# = Set means =
 		# =============
@@ -2289,7 +2289,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			} else {
 				dataMeans = umx_means(theData[, manifests], ordVar = 0, na.rm = TRUE)
 				freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
-				obj$matrices$M$values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
+				obj@matrices$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
 				# covData = cov(theData, )
 				covData = umx_cov_diag(theData[, manifests], ordVar = 1, format = "diag", use = "pairwise.complete.obs")
 				covData = diag(covData)
@@ -2302,11 +2302,11 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# ======================================================
 		# The diagonal is variances
 		if(onlyTouchZeros) {
-			freePaths = (obj$matrices$S$free[1:nVar, 1:nVar] == TRUE) & obj$matrices$S$values[1:nVar, 1:nVar] == 0
+			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE) & obj$S$values[1:nVar, 1:nVar] == 0
 		} else {
-			freePaths = (obj$matrices$S$free[1:nVar, 1:nVar] == TRUE)			
+			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE)			
 		}
-		obj$matrices$S$values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
+		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
 		# ================
 		# = set off diag =
 		# ================
@@ -2327,7 +2327,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		} else {
 			freePaths = (obj$matrices$A$free[1:Arows, 1:Acols] == TRUE)			
 		}
-		obj$matrices$A$values[1:Arows, 1:Acols][freePaths] = .9
+		obj@matrices$A@values[1:Arows, 1:Acols][freePaths] = .9
 		return(obj)
 	} else {
 		stop("'obj' must be an mxMatrix, a RAM model, or a simple number")
@@ -2649,7 +2649,7 @@ umxReRun <- umxModify
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE) {
 	# TODO
 	# 1. Be nice to offer a method to handle submodels
-	# 	model$submodels$aSubmodel$matrices$aMatrix
+	# 	model$submodels$aSubmodel$matrices$aMatrix$labels
 	# 	model$submodels$MZ$matrices
 	# 2. Simplify handling
 		# allow umxGetParameters to function like omxGetParameters()[name filter]
@@ -2658,9 +2658,9 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(methods::is(inputTarget, "MxMatrix")) {
 		if(is.na(free)) {
-			topLabels = inputTarget
+			topLabels = inputTarget$labels
 		} else {
-			topLabels = inputTarget[inputTarget$free==free]
+			topLabels = inputTarget$labels[inputTarget$free==free]
 		}
 	}else{
 		stop("I am sorry Dave, umxGetParameters needs either a model or an mxMatrix: you offered a ", class(inputTarget)[1])
@@ -3597,17 +3597,17 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 umxCheck <- function(fit1){
 	# are all the manifests in paths?
 	# do the manifests have residuals?
-	if(any(duplicated(fit1$manifestVars))){
-		stop(paste("manifestVars contains duplicates:", duplicated(fit1$manifestVars)))
+	if(any(duplicated(fit1@manifestVars))){
+		stop(paste("manifestVars contains duplicates:", duplicated(fit1@manifestVars)))
 	}
-	if(length(fit1$latentVars) == 0){
+	if(length(fit1@latentVars) == 0){
 		# Check none are duplicates, none in manifests
-		if(any(duplicated(fit1$latentVars))){
-			stop(paste("latentVars contains duplicates:", duplicated(fit1$latentVars)))
+		if(any(duplicated(fit1@latentVars))){
+			stop(paste("latentVars contains duplicates:", duplicated(fit1@latentVars)))
 		}
-		if(any(duplicated(c(fit1$manifestVars,fit1$latentVars)))){
+		if(any(duplicated(c(fit1@manifestVars, fit1@latentVars)))){
 			stop(
-				paste("manifest and latent lists contain clashing names:", duplicated(c(fit1$manifestVars,fit1$latentVars)))
+				paste("manifest and latent lists contain clashing names:", duplicated(c(fit1@manifestVars, fit1@latentVars)))
 			)
 		}
 	}
