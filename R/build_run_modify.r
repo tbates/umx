@@ -2282,10 +2282,10 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# =============
 		# = Set means =
 		# =============
-		if(obj$type == "raw"){
+		if(obj$data$type == "raw"){
 			# = Set the means =
 			if(is.null(obj$matrices$M)){
-				message("You are using raw data, but have not yet added paths for the means\n")
+				warning("You are using raw data, but have not yet added paths for the means\n")
 				stop("You do this with mxPath(from = 'one', to = 'var')")
 			} else {
 				dataMeans = umx_means(theData[, manifests], ordVar = 0, na.rm = TRUE)
