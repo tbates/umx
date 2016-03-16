@@ -556,8 +556,8 @@ umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 		stop("not all names found in model")
 	}
 	for (i in add.to) {
-		model@matrices$S@free[i, i] = TRUE
-		model@matrices$S@values[i, i] = .1
+		model$S@free[i, i] = TRUE
+		model$S@values[i, i] = .1
 	}
 	return(model)
 }
@@ -596,8 +596,8 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 	exogenous_list = umx_is_exogenous(model, manifests_only = FALSE)
 	for (i in latenVarList) {
 		if(!exogenous.only | i %in% exogenous_list){
-			model@matrices$S@free[i, i]   = FALSE
-			model@matrices$S@values[i, i] = at
+			model$S@free[i, i]   = FALSE
+			model$S@values[i, i] = at
 		}
 	}
 	return(model)
@@ -641,14 +641,14 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1) {
 		# check that there is not already a factor fixed prior to this one
 		if(firstFreeRow == 1){
 			# must be ok
-			model@matrices$A@free[firstFreeRow, i]   = FALSE
-			model@matrices$A@values[firstFreeRow, i] = at
+			model$A@free[firstFreeRow, i]   = FALSE
+			model$A@values[firstFreeRow, i] = at
 		} else {
 			if(any(model$matrices$A$values[1:(firstFreeRow-1), i] == at)){
 				message("I skipped factor '", i, "'. It looks like it already has a loading fixed at ", at)
 			} else {
-				model@matrices$A@free[firstFreeRow, i]   = FALSE
-				model@matrices$A@values[firstFreeRow, i] = at				
+				model$A@free[firstFreeRow, i]   = FALSE
+				model$A@values[firstFreeRow, i] = at				
 			}
 		}
 	}

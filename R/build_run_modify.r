@@ -2273,10 +2273,10 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			} else {
 				freePaths = (obj$matrices$S$free[lats, lats] == TRUE)			
 			}
-			obj@matrices$S$values[lats, lats][freePaths] = 1
+			obj$S$values[lats, lats][freePaths] = 1
 			offDiag = !diag(length(latents))
 			newOffDiags = obj$matrices$S$values[lats, lats][offDiag & freePaths]/3
-			obj@matrices$S@values[lats, lats][offDiag & freePaths] = newOffDiags			
+			obj$S@values[lats, lats][offDiag & freePaths] = newOffDiags			
 		}
 		# =============
 		# = Set means =
@@ -2289,7 +2289,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			} else {
 				dataMeans = umx_means(theData[, manifests], ordVar = 0, na.rm = TRUE)
 				freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
-				obj@matrices$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
+				obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
 				# covData = cov(theData, )
 				covData = umx_cov_diag(theData[, manifests], ordVar = 1, format = "diag", use = "pairwise.complete.obs")
 				covData = diag(covData)
@@ -2306,7 +2306,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		} else {
 			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE)			
 		}
-		obj@matrices$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
+		obj$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
 		# ================
 		# = set off diag =
 		# ================
@@ -2327,7 +2327,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		} else {
 			freePaths = (obj$matrices$A$free[1:Arows, 1:Acols] == TRUE)			
 		}
-		obj@matrices$A@values[1:Arows, 1:Acols][freePaths] = .9
+		obj$A@values[1:Arows, 1:Acols][freePaths] = .9
 		return(obj)
 	} else {
 		stop("'obj' must be an mxMatrix, a RAM model, or a simple number")
