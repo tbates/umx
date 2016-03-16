@@ -4,16 +4,20 @@
 \alias{umxEFA}
 \title{umxEFA}
 \usage{
-umxEFA(name = "efa", latents = NULL, data = NULL,
-  showEstimates = c("none", "raw", "std", "both", "list of column names"),
-  digits = 2, report = c("1", "table", "html"))
+umxEFA(name = "efa", factors = NULL, data = NULL, covmat = NULL,
+  n.obs = NULL, showEstimates = c("none", "raw", "std", "both",
+  "list of column names"), digits = 2, report = c("1", "table", "html"))
 }
 \arguments{
-\item{name}{the name for your new EFA model}
+\item{name}{A name for your model.}
 
-\item{latents}{List of factors in your CFA}
+\item{factors}{Either a number (of factors to request) or a list of factor names.}
 
-\item{data}{The dataframe of manifest columns you are modeling}
+\item{data}{A dataframe of manifest columns you are modeling}
+
+\item{covmat}{Covariance matrix of data you are modeling}
+
+\item{n.obs}{Number of observations in covmat (if provided, default = NA)}
 
 \item{showEstimates}{= c("none", "raw", "std", "both", "list of column names")}
 
@@ -25,16 +29,33 @@ umxEFA(name = "efa", latents = NULL, data = NULL,
 - \code{\link{mxModel}}
 }
 \description{
-A helper for EFA that only requires you to enter your latents and manifests
+A helper for EFA that only requires you to choose how many factors and offer up manifest data.
+This is very much early days. I will add "scores" and "rotation" control if there is demand.
+}
+\details{
+You can create an EFA either by specifying some factor names:
+
+umxEFA(factors = c("g", "v"), data = mtcars)
+
+or
+
+umxEFA(factors = 2, data = mtcars)
+
+\figure{umxEFA.png}
 }
 \examples{
-umxEFA(name= "test", latents = "g", data = mtcars[, c("mpg", "disp", "hp", "wt")])
+vars = c("mpg", "disp", "hp", "wt", "qsec")
+m1 = umxEFA(name= "test", factors = "g", data = mtcars[, vars])
+m2 = umxEFA(name= "test", factors =   2, data = mtcars[, vars])
+\dontrun{
+plot(m2)
+}
 }
 \references{
 - \url{http://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+- \code{\link{factanal}}
 
 Other Super-easy helpers: \code{\link{umxJiggle}},
   \code{\link{umx}}

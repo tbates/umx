@@ -178,7 +178,7 @@ umxSummary(m1, show = "std")
 - \url{http://tbates.github.io}
 }
 \seealso{
-- \code{\link{mxPath}}, \code{\link{umxLabel}}, \code{\link{umxLabel}}
+- \code{\link{mxPath}}
 
 Other Model Building Functions: \code{\link{umxDiagnose}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},

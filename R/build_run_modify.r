@@ -3717,7 +3717,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @return - 1 or more \code{\link{mxPath}}s
 #' @export
 #' @family Model Building Functions
-#' @seealso - \code{\link{mxPath}}, \code{\link{umxLabel}}, \code{\link{umxLabel}}
+#' @seealso - \code{\link{mxPath}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' require(umx)
