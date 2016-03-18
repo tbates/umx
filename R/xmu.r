@@ -551,7 +551,7 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' )
 #' m1 = umx:::xmuPropagateLabels(m1, suffix = "MZ")
 xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
-	model@matrices <- lapply(model$matrices , xmuLabel_Matrix   , suffix = suffix, verbose = verbose)
+	model@matrices  <- lapply(model$matrices , xmuLabel_Matrix   , suffix = suffix, verbose = verbose)
 	model@submodels <- lapply(model$submodels, xmuPropagateLabels, suffix = suffix, verbose = verbose)
 	return(model)
 }
