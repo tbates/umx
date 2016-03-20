@@ -5,13 +5,13 @@
 \alias{umxPlotCP}
 \title{umxPlotCP}
 \usage{
-umxPlotCP(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE,
+umxPlotCP(x = NA, file = "name", digits = 2, showMeans = FALSE,
   std = TRUE, ...)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link{mxModel}} to display graphically}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{digits}{How many decimals to include in path loadings (defaults to 2)}
 
@@ -31,7 +31,7 @@ Draw a graphical figure for a Common Pathway model
 \dontrun{
 umxPlotCP(model)
 plot(model) # works fine!
-umxPlotCP(model, dotFilename = "MyPreferredName.dot")
+umxPlotCP(model, file = "MyPreferredName.gv")
 }
 }
 \references{

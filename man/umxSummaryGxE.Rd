@@ -6,7 +6,7 @@
 \title{umxSummaryGxE}
 \usage{
 umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
-  separateGraphs = FALSE, dotFilename = getOption("umx_auto_plot"),
+  separateGraphs = FALSE, file = getOption("umx_auto_plot"),
   returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL,
   report = c("1", "2", "html"), ...)
 }
@@ -21,7 +21,7 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
 
 \item{separateGraphs}{default = F}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 

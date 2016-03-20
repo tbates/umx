@@ -4,9 +4,11 @@
 \alias{loadings.MxModel}
 \title{loadings.MxModel}
 \usage{
-\method{loadings}{MxModel}(x)
+\method{loadings}{MxModel}(x, verbose = TRUE)
 }
 \arguments{
+\item{verbose}{print the latents and manifests if TRUE}
+
 \item{model}{a RAM model to get which to get loadings}
 }
 \value{

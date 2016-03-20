@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{loadings}
 \alias{loadings}
-\title{loadings.default
+\title{loadings
 Generic loadings function}
 \usage{
 loadings(x, ...)

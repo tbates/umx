@@ -88,7 +88,7 @@ confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
 
 # plot(m1, std = TRUE)
 # Run this instead if you don't have GraphViz
-plot(m1, std = TRUE, dotFilename = NA)
+plot(m1, std = TRUE, file = NA)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

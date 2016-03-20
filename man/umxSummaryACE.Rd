@@ -5,7 +5,7 @@
 \alias{umxSummaryACE}
 \title{umxSummaryACE}
 \usage{
-umxSummaryACE(model, digits = 2, dotFilename = getOption("umx_auto_plot"),
+umxSummaryACE(model, digits = 2, file = getOption("umx_auto_plot"),
   comparison = NULL, showStd = TRUE, showRg = FALSE, CIs = TRUE,
   report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE,
   zero.print = ".", ...)
@@ -15,7 +15,7 @@ umxSummaryACE(model, digits = 2, dotFilename = getOption("umx_auto_plot"),
 
 \item{digits}{round to how many digits (default = 2)}
 
-\item{dotFilename}{The name of the dot file to write: "name" = use the name of the model.
+\item{file}{The name of the dot file to write: "name" = use the name of the model.
 Defaults to NA = do not create plot output}
 
 \item{comparison}{you can run mxCompare on a comparison model (NULL)}
@@ -54,8 +54,8 @@ m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 umxSummaryACE(m1)
 \dontrun{
-umxSummaryACE(m1, dotFilename = NA);
-umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
+umxSummaryACE(m1, file = NA);
+umxSummaryACE(m1, file = "name", showStd = TRUE)
 stdFit = umxSummaryACE(m1, returnStd = TRUE);
 }
 }

@@ -6,13 +6,13 @@
 \alias{umxPlotACE}
 \title{umxPlotACE}
 \usage{
-umxPlotACE(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE,
+umxPlotACE(x = NA, file = "name", digits = 2, showMeans = FALSE,
   std = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{digits}{How many decimals to include in path loadings (default is 2)}
 
@@ -40,7 +40,7 @@ m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = mxRun(m1)
 \dontrun{
 plot(m1)
-umxPlotACE(m1, dotFilename = "override_model_name")
+umxPlotACE(m1, file = "override_model_name")
 plot(m1, std = FALSE) # don't standardize
 }
 }

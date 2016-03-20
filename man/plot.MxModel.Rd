@@ -5,10 +5,10 @@
 \alias{umxPlot}
 \title{Create a graphical figure from an MxModel}
 \usage{
-\method{plot}{MxModel}(x = NA, std = TRUE, digits = 2,
-  dotFilename = "name", pathLabels = c("none", "labels", "both"),
-  showFixed = FALSE, showMeans = TRUE, resid = c("circle", "line",
-  "none"), showError = "deprecated", ...)
+\method{plot}{MxModel}(x = NA, std = TRUE, digits = 2, file = "name",
+  pathLabels = c("none", "labels", "both"), showFixed = FALSE,
+  showMeans = TRUE, resid = c("circle", "line", "none"),
+  showError = "deprecated", ...)
 }
 \arguments{
 \item{x}{an \code{\link{mxModel}} from which to make a path diagram}
@@ -17,7 +17,7 @@
 
 \item{digits}{The number of decimal places to add to the path coefficients}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{pathLabels}{Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")}
 
@@ -35,15 +35,16 @@
 Create graphical path diagrams from your OpenMx models!
 }
 \details{
-plot() produces SEM diagrams in .dot language format, and relies on a graphviz application to create the
+plot() produces SEM diagrams in graphviz format, and relies on a graphviz application to create the
 image. You can get this for free at \url{http://www.graphviz.org/Download..php}. The commercial application
 Omnigraffle is great for editing these images.
 
 On unix and windows, plot() will create a pdf and open it in your default pdf reader.
 
-On OS X, we open the graphviz application. \emph{Note:} On OS X systems with Word installed,
-a \sQuote{.dot} file extension gets opened (uselessly) by M$ wurd. 
-Find a .dot file, get info (cmd-I), then choose \dQuote{open with}, select Graphviz.app (or omnigraffle professional),
+On OS X, we open the graphviz application.
+\emph{Note:} You may need to association the \sQuote{.gv} extension with the graphviz app.
+Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}, 
+select Graphviz.app (or OmniGraffle professional),
 then set \dQuote{change all}.
 }
 \examples{
@@ -64,7 +65,7 @@ plot(m1)
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{http://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 }
 \seealso{
 - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}

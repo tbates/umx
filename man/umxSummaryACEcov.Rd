@@ -5,17 +5,17 @@
 \alias{umxSummaryACEcov}
 \title{umxSummaryACEcov}
 \usage{
-umxSummaryACEcov(model, digits = 2,
-  dotFilename = getOption("umx_auto_plot"), returnStd = FALSE,
-  extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL,
-  CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...)
+umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),
+  returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE,
+  comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2",
+  "html"), ...)
 }
 \arguments{
 \item{model}{a \code{\link{umxACEcov}} model to summarize}
 
 \item{digits}{round to how many digits (default = 2)}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = F)}
 
@@ -53,8 +53,8 @@ m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 umxSummaryACE(m1)
 \dontrun{
-umxSummaryACE(m1, dotFilename = NA);
-umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
+umxSummaryACE(m1, file = NA);
+umxSummaryACE(m1, file = "name", showStd = TRUE)
 stdFit = umxSummaryACE(m1, returnStd = TRUE);
 }
 }

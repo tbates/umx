@@ -176,6 +176,50 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 	invisible(resid)
 }
 
+# define generic loadings...
+#' loadings
+#' Generic loadings function
+#'
+#' See \code{\link[umx]{loadings.MxModel}} to access the laodings of RAM EFA models
+#'
+#' @param x an object from which to get the RMSEA 
+#' @param ... additional parameters
+#' @return - matrix of loadings
+#' @export
+#' @family Reporting functions
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+loadings <- function(x, ...) UseMethod("loadings", x)
+
+#' @export
+loadings.default <- function(x, ...){
+	stats::loadings(x, ...)
+}
+
+#' loadings.MxModel
+#'
+#' @description
+#' loadings.MxModel exracts the factor loadings from a EFA RAM model. 
+#'
+#' @details
+#'
+#' @param model a RAM model to get which to get loadings 
+#' @param verbose print the latents and manifests if TRUE
+#' @return - loadings matrix
+#' @export
+#' @family Reporting Functions
+#' @seealso - \code{\link{factanal}}, \code{\link{laodings}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' m1 = umxEFA(name= "test", factors =   2, data = mtcars[, vars])
+#' loadings(m1)
+loadings.MxModel <- function(x, verbose = TRUE) {
+	if(verbose){
+		print(paste0("manifests are: ", omxQuotes(x@manifestVars)))
+		print(paste0("latents are: ", omxQuotes(x@latentVars)))
+	}
+	x$A$values[x@manifestVars, x@latentVars]
+}
+
 #' umx_standardize_RAM
 #'
 #' umx_standardize_RAM takes a RAM-style model, and returns standardized version.
@@ -1818,7 +1862,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @export
 #' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
 #' @family Reporting functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{http://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 #' @examples
 #' \dontrun{
 #' require(umx)

@@ -5,7 +5,7 @@
 \alias{umxSummaryCP}
 \title{umxSummaryCP}
 \usage{
-umxSummaryCP(model, digits = 2, dotFilename = getOption("umx_auto_plot"),
+umxSummaryCP(model, digits = 2, file = getOption("umx_auto_plot"),
   returnStd = FALSE, extended = FALSE, showRg = TRUE, comparison = NULL,
   showStd = TRUE, CIs = FALSE, ...)
 }
@@ -14,7 +14,7 @@ umxSummaryCP(model, digits = 2, dotFilename = getOption("umx_auto_plot"),
 
 \item{digits}{round to how many digits (default = 2)}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
@@ -46,14 +46,14 @@ mzData <- subset(twinData, ZYG == "MZFF")
 dzData <- subset(twinData, ZYG == "DZFF")
 m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 m1 = mxRun(m1)
-umxSummaryCP(m1, dotFilename = NA) # suppress plot creation with dotFilename
-umxSummary(m1, dotFilename = NA) # generic summary is the same
-stdFit = umxSummaryCP(m1, digits = 2, dotFilename = NA, returnStd = FALSE, 
+umxSummaryCP(m1, file = NA) # suppress plot creation with file
+umxSummary(m1, file = NA) # generic summary is the same
+stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = FALSE, 
 		extended = FALSE, showRg = TRUE, showStd = TRUE, CIs = TRUE);
 \dontrun{
 examples which will create graphical output
 umxSummaryCP(fit);
-umxSummaryCP(fit, dotFilename = "Figure 3", showStd = TRUE)
+umxSummaryCP(fit, file = "Figure 3", showStd = TRUE)
 }
 }
 \references{

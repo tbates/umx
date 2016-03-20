@@ -5,8 +5,8 @@
 \title{umxEFA}
 \usage{
 umxEFA(name = "efa", factors = NULL, data = NULL, covmat = NULL,
-  n.obs = NULL, showEstimates = c("none", "raw", "std", "both",
-  "list of column names"), digits = 2, report = c("1", "table", "html"))
+  n.obs = NULL, rotation = c("varimax", "promax", "none"), digits = 2,
+  report = c("1", "table", "html"))
 }
 \arguments{
 \item{name}{A name for your model.}
@@ -19,18 +19,19 @@ umxEFA(name = "efa", factors = NULL, data = NULL, covmat = NULL,
 
 \item{n.obs}{Number of observations in covmat (if provided, default = NA)}
 
-\item{showEstimates}{= c("none", "raw", "std", "both", "list of column names")}
-
 \item{digits}{rounding (defaults to 2)}
 
 \item{report}{What to report}
+
+\item{showEstimates}{= c("none", "raw", "std", "both", "list of column names")}
 }
 \value{
 - \code{\link{mxModel}}
 }
 \description{
 A helper for EFA that only requires you to choose how many factors and offer up manifest data.
-This is very much early days. I will add "scores" and "rotation" control if there is demand.
+This is very much early days. I will add "scores" if there is demand, but you are better off
+making a CFA model and getting scores from that with \code{\link{mxFactorScores}}.
 }
 \details{
 You can create an EFA either by specifying some factor names:
@@ -42,11 +43,23 @@ or
 umxEFA(factors = 2, data = mtcars)
 
 \figure{umxEFA.png}
+
+\emph{notes}: In an EFA, all items may load on all factors.
+For identification we need m^2. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
+We get another m(m-1)/2 degrees of freemdom by fixing the upper-right hand corner of the factor loadings
+component of the A matrix.
+
+EFA reports standardized loadings: to do this, we scale the data.
+
+Bear in mind that factor scores are indeterminate and can be rotated.
 }
 \examples{
 vars = c("mpg", "disp", "hp", "wt", "qsec")
 m1 = umxEFA(name= "test", factors = "g", data = mtcars[, vars])
 m2 = umxEFA(name= "test", factors =   2, data = mtcars[, vars])
+loadings(m2)
+m3 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "none", data = mtcars)
+loadings(m3)
 \dontrun{
 plot(m2)
 }

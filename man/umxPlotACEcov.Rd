@@ -5,13 +5,13 @@
 \alias{umxPlotACEcov}
 \title{umxPlotACEcov}
 \usage{
-umxPlotACEcov(x = NA, dotFilename = "name", digits = 2,
-  showMeans = FALSE, std = TRUE, ...)
+umxPlotACEcov(x = NA, file = "name", digits = 2, showMeans = FALSE,
+  std = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{digits}{How many decimals to include in path loadings (default is 2)}
 
@@ -53,7 +53,7 @@ m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzD
 	 suffix = "", autoRun = TRUE)
 \dontrun{
 plot(m1)
-umxPlotACEcov(m1, dotFilename = "override_model_name")
+umxPlotACEcov(m1, file = "override_model_name")
 plot(m1, std = FALSE) # don't standardize
 }
 }

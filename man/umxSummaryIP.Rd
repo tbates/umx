@@ -5,7 +5,7 @@
 \alias{umxSummaryIP}
 \title{umxSummaryIP}
 \usage{
-umxSummaryIP(model, digits = 2, dotFilename = getOption("umx_auto_plot"),
+umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
   returnStd = FALSE, showStd = FALSE, showRg = TRUE, comparison = NULL,
   CIs = FALSE, ...)
 }
@@ -14,7 +14,7 @@ umxSummaryIP(model, digits = 2, dotFilename = getOption("umx_auto_plot"),
 
 \item{digits}{round to how many digits (default = 2)}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = F)}
 
@@ -44,9 +44,9 @@ mzData <- subset(twinData, ZYG == "MZFF")
 dzData <- subset(twinData, ZYG == "DZFF")
 m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
-umxSummaryIP(m1, dotFilename = NA) # suppress graphing with NA for CRAN
+umxSummaryIP(m1, file = NA) # suppress graphing with NA for CRAN
 \dontrun{
-umxSummaryIP(m1, digits = 2, dotFilename = "Figure3", showRg = FALSE, CIs = TRUE);
+umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 }
 }
 \references{

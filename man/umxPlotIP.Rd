@@ -5,13 +5,13 @@
 \alias{umxPlotIP}
 \title{umxPlotIP}
 \usage{
-umxPlotIP(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE,
+umxPlotIP(x = NA, file = "name", digits = 2, showMeans = FALSE,
   std = TRUE, ...)
 }
 \arguments{
 \item{x}{The \code{\link{umxIP}} model to plot}
 
-\item{dotFilename}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{digits}{How many decimals to include in path loadings (defaults to 2)}
 
@@ -30,8 +30,8 @@ Make a graphical display of an Independent Pathway model
 \examples{
 \dontrun{
 plot(model)
-umxPlotIP(model, dotFilename = "special_name.dot")
-umxPlotIP(model, dotFilename = NA)
+umxPlotIP(model, file = "special_name.gv")
+umxPlotIP(model, file = NA)
 }
 }
 \references{
