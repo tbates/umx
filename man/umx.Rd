@@ -136,10 +136,10 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxMI}}, \code{\link{umxSetParameters}},
   \code{\link{umxUnexplainedCausalNexus}}
 
-Other Reporting Functions: \code{\link{summaryAPA}},
-  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_print}}, \code{\link{umx_show}},
-  \code{\link{umx_time}}
+Other Reporting Functions: \code{\link{loadings.MxModel}},
+  \code{\link{summaryAPA}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
+  \code{\link{umx_show}}, \code{\link{umx_time}}
 
 Other Stats Functions: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umx_cor}},

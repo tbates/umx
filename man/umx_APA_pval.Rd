@@ -34,9 +34,9 @@ umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 \seealso{
 - \code{\link{round}}
 
-Other Reporting Functions: \code{\link{summaryAPA}},
-  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
-  \code{\link{umx_show}}, \code{\link{umx_time}},
-  \code{\link{umx}}
+Other Reporting Functions: \code{\link{loadings.MxModel}},
+  \code{\link{summaryAPA}}, \code{\link{umx_aggregate}},
+  \code{\link{umx_print}}, \code{\link{umx_show}},
+  \code{\link{umx_time}}, \code{\link{umx}}
 }
 

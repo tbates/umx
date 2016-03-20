@@ -798,23 +798,23 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	return(toAdd)
 }
 
-xmu_dot_maker <- function(model, dotFilename, digraph){
-	if(!is.na(dotFilename)){
-		if(dotFilename == "name"){
-			dotFilename = paste0(model$name, ".dot")
+xmu_dot_maker <- function(model, file, digraph){
+	if(!is.na(file)){
+		if(file == "name"){
+			file = paste0(model$name, ".gv")
 		}
-		cat(digraph, file = dotFilename) # write to file
+		cat(digraph, file = file) # write to file
 		if(umx_check_OS("OSX")){
-			umx_open(dotFilename);
+			umx_open(file);
 		} else if(umx_check_OS("Windows")){
-			shell(paste0("dot -Tpdf -O ", shQuote(dotFilename)), "cmd.exe");
-			umx_open(paste0(dotFilename, ".pdf"))
+			shell(paste0("dot -Tpdf -O ", shQuote(file)), "cmd.exe");
+			umx_open(paste0(file, ".pdf"))
 		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(dotFilename)));
-			umx_open(paste0(dotFilename, ".pdf"))
+			system(paste0("dot -Tpdf -O ", shQuote(file)));
+			umx_open(paste0(file, ".pdf"))
 		}
-		# dot -Tpdf -O yourFilename.dot
-		# creates "yourFilename.dot.pdf"
+		# dot -Tpdf -O yourFilename.gv
+		# creates "yourFilename.gv.pdf"
 	} else {
 		return (cat(digraph));
 	}

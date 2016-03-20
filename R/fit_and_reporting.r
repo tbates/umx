@@ -743,7 +743,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 #' @aliases umxSummary.MxModel.ACE
 #' @param model an \code{\link{mxModel}} to summarize
 #' @param digits round to how many digits (default = 2)
-#' @param dotFilename The name of the dot file to write: "name" = use the name of the model.
+#' @param file The name of the dot file to write: "name" = use the name of the model.
 #' Defaults to NA = do not create plot output
 #' @param comparison you can run mxCompare on a comparison model (NULL)
 #' @param showStd Whether to standardize the output (defualt = TRUE)
@@ -772,17 +772,17 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 #' m1 = umxRun(m1)
 #' umxSummaryACE(m1)
 #' \dontrun{
-#' umxSummaryACE(m1, dotFilename = NA);
-#' umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
+#' umxSummaryACE(m1, file = NA);
+#' umxSummaryACE(m1, file = "name", showStd = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(model, digits = 2, dotFilename = getOption("umx_auto_plot"), comparison = NULL, showStd = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, showStd = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
-			umxSummaryACE(thisFit, digits = digits, dotFilename = dotFilename, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
+			umxSummaryACE(thisFit, digits = digits, file = file, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
@@ -940,9 +940,9 @@ umxSummaryACE <- function(model, digits = 2, dotFilename = getOption("umx_auto_p
 	stdFit$top$a$values = a_std
 	stdFit$top$c$values = c_std
 	stdFit$top$e$values = e_std
-	if(!is.na(dotFilename)) {
+	if(!is.na(file)) {
 		message("making dot file")
-		umxPlotACE(model, dotFilename, std = showStd)
+		umxPlotACE(model, file, std = showStd)
 	}
 	if(returnStd) {
 		if(CIs){
@@ -962,7 +962,7 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' @aliases umxSummary.MxModel.ACEcov
 #' @param model a \code{\link{umxACEcov}} model to summarize
 #' @param digits round to how many digits (default = 2)
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = F)
 #' @param extended how much to report (F)
 #' @param showRg = whether to show the genetic correlations (F)
@@ -989,17 +989,17 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' m1 = umxRun(m1)
 #' umxSummaryACE(m1)
 #' \dontrun{
-#' umxSummaryACE(m1, dotFilename = NA);
-#' umxSummaryACE(m1, dotFilename = "name", showStd = TRUE)
+#' umxSummaryACE(m1, file = NA);
+#' umxSummaryACE(m1, file = "name", showStd = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACEcov <- function(model, digits = 2, dotFilename = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
+umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
 	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
-			umxSummaryACEcov(thisFit, digits = digits, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, zero.print = zero.print, report = report)
+			umxSummaryACEcov(thisFit, digits = digits, file = file, returnStd = returnStd, extended = extended, showRg = showRg, showStd = showStd, comparison = comparison, CIs = CIs, zero.print = zero.print, report = report)
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
@@ -1151,9 +1151,9 @@ umxSummaryACEcov <- function(model, digits = 2, dotFilename = getOption("umx_aut
 	stdFit$top$a$values = a_std
 	stdFit$top$c$values = c_std
 	stdFit$top$e$values = e_std
-	if(!is.na(dotFilename)) {
+	if(!is.na(file)) {
 		message("making dot file")
-		plot(model, dotFilename, std = showStd)
+		plot(model, file, std = showStd)
 	}
 	if(returnStd) {
 		if(CIs){
@@ -1173,7 +1173,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' @aliases umxSummary.MxModel.CP
 #' @param model A fitted \code{\link{umxCP}} model to summarize
 #' @param digits round to how many digits (default = 2)
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param extended how much to report (FALSE)
 #' @param showRg Whether to show the genetic correlations (FALSE) (Not implemented!)
@@ -1196,22 +1196,22 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' dzData <- subset(twinData, ZYG == "DZFF")
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 #' m1 = mxRun(m1)
-#' umxSummaryCP(m1, dotFilename = NA) # suppress plot creation with dotFilename
-#' umxSummary(m1, dotFilename = NA) # generic summary is the same
-#' stdFit = umxSummaryCP(m1, digits = 2, dotFilename = NA, returnStd = FALSE, 
+#' umxSummaryCP(m1, file = NA) # suppress plot creation with file
+#' umxSummary(m1, file = NA) # generic summary is the same
+#' stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = FALSE, 
 #' 		extended = FALSE, showRg = TRUE, showStd = TRUE, CIs = TRUE);
 #' \dontrun{
 #' examples which will create graphical output
 #' umxSummaryCP(fit);
-#' umxSummaryCP(fit, dotFilename = "Figure 3", showStd = TRUE)
+#' umxSummaryCP(fit, file = "Figure 3", showStd = TRUE)
 #' }
-umxSummaryCP <- function(model, digits = 2, dotFilename = getOption("umx_auto_plot"), returnStd = FALSE, 
+umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, 
     extended = FALSE, showRg = TRUE, comparison = NULL, showStd = TRUE, CIs = FALSE, ...) {
 	# TODO: detect value of DZ covariance, and if .25 set "C" to "D"
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message(paste("Output for Model: ", thisFit$name))
-			umxSummaryCP(thisFit, digits = digits, dotFilename = dotFilename, returnStd = returnStd, extended = extended, showRg = showRg, comparison = comparison, CIs = CIs)
+			umxSummaryCP(thisFit, digits = digits, file = file, returnStd = returnStd, extended = extended, showRg = showRg, comparison = comparison, CIs = CIs)
 		}
 	} else {
 		if(class(model)[1] != "MxModel.CP"){
@@ -1308,8 +1308,8 @@ umxSummaryCP <- function(model, digits = 2, dotFilename = getOption("umx_auto_pl
 		if(CIs){
 			message("showing CIs in output not implemented yet: use summary(model) to view them in the mean time")
 		}
-		if(!is.na(dotFilename)){
-			umxPlotCP(model = stdFit, dotFilename = dotFilename, digits = digits, showMeans = FALSE, std = FALSE)
+		if(!is.na(file)){
+			umxPlotCP(model = stdFit, file = file, digits = digits, showMeans = FALSE, std = FALSE)
 		}
 		if(returnStd) {
 			return(stdFit)
@@ -1327,7 +1327,7 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' @aliases umxSummary.MxModel.IP
 #' @param model A fitted \code{\link{umxIP}} model to summarize
 #' @param digits round to how many digits (default = 2)
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = F)
 #' @param showRg = whether to show the genetic correlations (F)
 #' @param showStd = Whether to show the standardized model (TRUE)
@@ -1349,11 +1349,11 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' dzData <- subset(twinData, ZYG == "DZFF")
 #' m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
-#' umxSummaryIP(m1, dotFilename = NA) # suppress graphing with NA for CRAN
+#' umxSummaryIP(m1, file = NA) # suppress graphing with NA for CRAN
 #' \dontrun{
-#' umxSummaryIP(m1, digits = 2, dotFilename = "Figure3", showRg = FALSE, CIs = TRUE);
+#' umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 #' }
-umxSummaryIP <- function(model, digits = 2, dotFilename = getOption("umx_auto_plot"), 
+umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
     returnStd = FALSE, showStd = FALSE, showRg = TRUE, comparison = NULL, CIs = FALSE, ...) {
 	if(class(model)[1] != "MxModel.IP"){
 		stop("You used umxSummaryIP on model of class ", class(model)[1], "not 'MxModel.IP'")
@@ -1442,8 +1442,8 @@ umxSummaryIP <- function(model, digits = 2, dotFilename = getOption("umx_auto_pl
 	if(CIs){
 		message("showing CIs in output not implemented yet: use summary(model) to view them in the mean time")
 	}
-	if(!is.na(dotFilename)){
-		umxPlotIP(model = stdFit, dotFilename = dotFilename, digits = 2, std = FALSE)
+	if(!is.na(file)){
+		umxPlotIP(model = stdFit, file = file, digits = 2, std = FALSE)
 	}
 	if(returnStd) {
 		return(stdFit)
@@ -1460,7 +1460,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' @aliases umxSummary.MxModel.GxE
 #' @param model A fitted \code{\link{umxGxE}} model to summarize
 #' @param digits round to how many digits (default = 2)
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param showStd Whether to show the standardized model (not implemented! TRUE)
 #' @param CIs Confidence intervals (FALSE)
@@ -1500,12 +1500,12 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' umxSummaryGxE(m1)
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, dotFilename = getOption("umx_auto_plot"), returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
 	report = match.arg(report)
 	umx_has_been_run(model, stop=TRUE)
 	
-	if(any(!is.null(c(dotFilename, returnStd, showStd, CIs, ...) ))){
-		message("I haven't implemented dotFilename, returnStd, extended, showStd, comparison or CIs yet...")
+	if(any(!is.null(c(file, returnStd, showStd, CIs, ...) ))){
+		message("I haven't implemented file, returnStd, extended, showStd, comparison or CIs yet...")
 	}
 
 	if(is.null(model)){
@@ -1790,16 +1790,17 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #'
 #' Create graphical path diagrams from your OpenMx models!
 #' 
-#' plot() produces SEM diagrams in .dot language format, and relies on a graphviz application to create the
+#' plot() produces SEM diagrams in graphviz format, and relies on a graphviz application to create the
 #' image. You can get this for free at \url{http://www.graphviz.org/Download..php}. The commercial application
 #' Omnigraffle is great for editing these images.
 #' 
 #'
 #' On unix and windows, plot() will create a pdf and open it in your default pdf reader.
 #' 
-#' On OS X, we open the graphviz application. \emph{Note:} On OS X systems with Word installed,
-#' a \sQuote{.dot} file extension gets opened (uselessly) by M$ wurd. 
-#' Find a .dot file, get info (cmd-I), then choose \dQuote{open with}, select Graphviz.app (or omnigraffle professional),
+#' On OS X, we open the graphviz application.
+#' \emph{Note:} You may need to association the \sQuote{.gv} extension with the graphviz app.
+#' Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}, 
+#' select Graphviz.app (or OmniGraffle professional),
 #' then set \dQuote{change all}.
 #'
 #' @aliases umxPlot
@@ -1807,7 +1808,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param x an \code{\link{mxModel}} from which to make a path diagram
 #' @param std Whether to standardize the model.
 #' @param digits The number of decimal places to add to the path coefficients
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param showFixed Whether to show fixed paths (defaults to FALSE)
 #' @param showMeans Whether to show means
@@ -1834,7 +1835,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' plot(m1)
 #' }
-plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, resid = c("circle", "line", "none"), showError = "deprecated", ...) {
+plot.MxModel <- function(x = NA, std = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, resid = c("circle", "line", "none"), showError = "deprecated", ...) {
 	if(showError != "deprecated"){
 		message(omxQuotes("showError"), " is deprecated: in future, use ", 
 			omxQuotes("resid"), " and one of ", omxQuotes(c("circle", "line", "none")))
@@ -1946,8 +1947,8 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 	# ===================================
 	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
-	print("nb: see ?plot.MxModel for options - std, digits, dotFilename, pathLabels, resid, showFixed, showMeans")
-	xmu_dot_maker(model, dotFilename, digraph)
+	print("nb: see ?plot.MxModel for options - std, digits, file, pathLabels, resid, showFixed, showMeans")
+	xmu_dot_maker(model, file, digraph)
 } # end plot.MxModel
 
 #' umxPlotACE
@@ -1956,7 +1957,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 #'
 #' @aliases plot plot.MxModel.ACE
 #' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (default is 2)
 #' @param showMeans Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
@@ -1977,10 +1978,10 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, dotFilename = "name", p
 #' m1 = mxRun(m1)
 #' \dontrun{
 #' plot(m1)
-#' umxPlotACE(m1, dotFilename = "override_model_name")
+#' umxPlotACE(m1, file = "override_model_name")
 #' plot(m1, std = FALSE) # don't standardize
 #' }
-umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
+umxPlotACE <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
 	model = x # just to be clear that x is a model
 	if(std){
 		model = umx_standardize_ACE(model)
@@ -2036,7 +2037,7 @@ umxPlotACE <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value=T), collapse="; "), "};\n") # {rank=min; c1; e1}
 	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
-	xmu_dot_maker(model, dotFilename, digraph)
+	xmu_dot_maker(model, file, digraph)
 } # end umxPlotACE
 
 #' @export
@@ -2048,7 +2049,7 @@ plot.MxModel.ACE <- umxPlotACE
 #'
 #' @aliases plot.MxModel.ACEcov
 #' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (default is 2)
 #' @param showMeans Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
@@ -2084,10 +2085,10 @@ plot.MxModel.ACE <- umxPlotACE
 #' 	 suffix = "", autoRun = TRUE)
 #' \dontrun{
 #' plot(m1)
-#' umxPlotACEcov(m1, dotFilename = "override_model_name")
+#' umxPlotACEcov(m1, file = "override_model_name")
 #' plot(m1, std = FALSE) # don't standardize
 #' }
-umxPlotACEcov <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
+umxPlotACEcov <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
 	model = x # just to be clear that x is a model
 	# relies on 'a' not having its dimnames stripped off...
 	if(model$MZ$data$type == "raw"){
@@ -2146,7 +2147,7 @@ umxPlotACEcov <- function(x = NA, dotFilename = "name", digits = 2, showMeans = 
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value = T), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value = T), collapse = "; "), "};\n") # {rank=min; c1; e1}
 	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
-	xmu_dot_maker(model, dotFilename, digraph)
+	xmu_dot_maker(model, file, digraph)
 } # end umxPlotACEcov
 
 #' @export
@@ -2227,7 +2228,7 @@ plot.MxModel.GxE <- umxPlotGxE
 #'
 #' @aliases plot.MxModel.CP
 #' @param x The Common Pathway \code{\link{mxModel}} to display graphically
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param showMeans Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
@@ -2241,9 +2242,9 @@ plot.MxModel.GxE <- umxPlotGxE
 #' \dontrun{
 #' umxPlotCP(model)
 #' plot(model) # works fine!
-#' umxPlotCP(model, dotFilename = "MyPreferredName.dot")
+#' umxPlotCP(model, file = "MyPreferredName.gv")
 #' }
-umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
+umxPlotCP <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
 	model = x # just to emphasise that x has to be a model 
 	if(std){
 		model = umx_standardize_CP(model)
@@ -2313,7 +2314,7 @@ umxPlotCP <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALS
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
-	xmu_dot_maker(model, dotFilename, digraph)
+	xmu_dot_maker(model, file, digraph)
 }
 
 #' @export
@@ -2325,7 +2326,7 @@ plot.MxModel.CP <- umxPlotCP
 #'
 #' @aliases plot.MxModel.IP
 #' @param x The \code{\link{umxIP}} model to plot
-#' @param dotFilename The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param showMeans Whether to show means paths (defaults to FALSE)
 #' @param std whether to standardize the model (defaults to TRUE)
@@ -2338,10 +2339,10 @@ plot.MxModel.CP <- umxPlotCP
 #' @examples
 #' \dontrun{
 #' plot(model)
-#' umxPlotIP(model, dotFilename = "special_name.dot")
-#' umxPlotIP(model, dotFilename = NA)
+#' umxPlotIP(model, file = "special_name.gv")
+#' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
+umxPlotIP  <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
 	model = x # to emphasise that x has to be an umxIP model
 	if(std){
 		model = umx_standardize_IP(model)
@@ -2408,7 +2409,7 @@ umxPlotIP  <- function(x = NA, dotFilename = "name", digits = 2, showMeans = FAL
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
-	xmu_dot_maker(model, dotFilename, digraph)
+	xmu_dot_maker(model, file, digraph)
 }
 #' @export
 plot.MxModel.IP <- umxPlotIP
@@ -2539,6 +2540,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 # ======================
 # = Path tracing rules =
 # ======================
+
 #' umxUnexplainedCausalNexus
 #'
 #' umxUnexplainedCausalNexus report the effect of a change (delta) in a variable (from) on an output (to)
