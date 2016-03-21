@@ -19,9 +19,9 @@
 #' \figure{umxEFA.png}
 #' 
 #' \emph{notes}: In an EFA, all items may load on all factors.
-#' For identification we need m^2. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
+#' For identification we need m^2 degrees of freedom. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
 #' We get another m(m-1)/2 degrees of freemdom by fixing the upper-right hand corner of the factor loadings
-#' component of the A matrix.
+#' component of the A matrix. The manifest variances are also lbounded at 0.
 #' 
 #' EFA reports standardized loadings: to do this, we scale the data.
 #' 
@@ -43,9 +43,9 @@
 #' @seealso - \code{\link{factanal}}
 #' @references - \url{http://github.com/tbates/umx}
 #' @examples
-#' vars = c("mpg", "disp", "hp", "wt", "qsec")
-#' m1 = umxEFA(name= "named", factors = "g", data = mtcars[, vars])
-#' m2 = umxEFA(name= "by_number", factors =   2, rotation = "promax", data = mtcars[, vars])
+#' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
+#' m1 = umxEFA(name = "named"    , factors = "g", data = mtcars[, myVars])
+#' m2 = umxEFA(name = "by_number", factors =   2, rotation = "promax", data = mtcars[, myVars])
 #' loadings(m2)
 #' m3 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 #' loadings(m3)
@@ -53,15 +53,20 @@
 #' plot(m2)
 #' }
 umxEFA <- function(name = "efa", factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, rotation = c("varimax", "promax", "none"), digits = 2, report = c("1", "table", "html")){
+	# name     = "efa"
+	# factors  = 1
+	# data     = mtcars[,c("mpg", "disp", "hp", "wt", "qsec")]
+	# rotation = "varimax"
 	message("umxEFA is beta-only, and NOT ready for prime time")
+	if(!is.null(covmat) ||!is.null(n.obs)){
+		stop("Covmat support not yet implemented - but you may as well be using factanal...")
+	}
+
 	if(is.null(data)){
 		stop("You need to provide data to factor analyse.")
 	}
 	# what about for scores? then we don't want std loadings...
 	data = umx_scale(data)
-	if(!is.null(covmat)){
-		stop("Mostly this was implemented for users of raw data wanting FIML. e-mail me to implement cov matrix support")
-	}
 	rotation = umx_default_option(rotation, c("varimax", "promax", "none"), check = FALSE)
 	if(is.null(factors)){
 		stop("You need to request at least 1 latent factor.")
@@ -75,21 +80,29 @@ umxEFA <- function(name = "efa", factors = NULL, data = NULL, covmat = NULL, n.o
 		umxPath(v.m. = manifests),
 		umxPath(v1m0 = factors, fixedAt = 1)
 	)
-	# set upper right triangle of the A-matrix factor columns to zero
+	# Fix upper-right triangle of A-matrix factor columns at zero
 	nFac       = length(factors)
 	nManifests = length(manifests)
-	for(i in 2:nFac) {
-		m1$A$free[1:(i-1), factors[i]] = FALSE
-		m1$A$values[1:(i-1), factors[i]] = 0
+	if(nFac > 1){
+		for(i in 2:nFac){
+			m1$A$free[1:(i-1), factors[i]] = FALSE
+			m1$A$values[1:(i-1), factors[i]] = 0
+		}
+	}
+	# lbound the manifest diagonal to avoid mirror indeterminacy
+	for(i in seq_along(manifests)) {
+	   thisManifest = manifests[i]
+	   m1$A$lbound[thisManifest, thisManifest] = 0
 	}
 	m1 = mxRun(m1)
-	if(rotation !="none"){
+	if(rotation != "none" && nFac > 1){
 		x = loadings(m1, verbose = F)
 		x = eval(parse(text = paste0(rotation, "(x)")))
 		m1$A$values[manifests, factors] = x$loadings[1:nManifests, 1:nFac]
 		print(x)
+	} else {
+		print(loadings(m1))
 	}
-	# print(loadings(m1))
 	umxSummary(m1, digits = digits, report = report);
 	invisible(m1)
 }

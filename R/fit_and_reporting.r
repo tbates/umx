@@ -203,21 +203,18 @@ loadings.default <- function(x, ...){
 #' @details
 #'
 #' @param model a RAM model to get which to get loadings 
-#' @param verbose print the latents and manifests if TRUE
+#' @param ... Other paramters (currently unused)
 #' @return - loadings matrix
 #' @export
 #' @family Reporting Functions
 #' @seealso - \code{\link{factanal}}, \code{\link{laodings}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' m1 = umxEFA(name= "test", factors =   2, data = mtcars[, vars])
+#' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
+#' m1 = umxEFA(name = "test", factors =   2, data = mtcars[, myVars])
 #' loadings(m1)
-loadings.MxModel <- function(x, verbose = TRUE) {
-	if(verbose){
-		print(paste0("manifests are: ", omxQuotes(x@manifestVars)))
-		print(paste0("latents are: ", omxQuotes(x@latentVars)))
-	}
-	x$A$values[x@manifestVars, x@latentVars]
+loadings.MxModel <- function(x, ...) {
+	x$A$values[x@manifestVars, x@latentVars, drop = FALSE]
 }
 
 #' umx_standardize_RAM

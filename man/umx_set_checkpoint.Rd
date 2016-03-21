@@ -55,6 +55,6 @@ Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_set_auto_run}},
   \code{\link{umx_set_cores}},
   \code{\link{umx_set_optimizer}},
-  \code{\link{umx_set_table.format}}
+  \code{\link{umx_set_table_format}}
 }
 

@@ -4,10 +4,10 @@
 \alias{loadings.MxModel}
 \title{loadings.MxModel}
 \usage{
-\method{loadings}{MxModel}(x, verbose = TRUE)
+\method{loadings}{MxModel}(x, ...)
 }
 \arguments{
-\item{verbose}{print the latents and manifests if TRUE}
+\item{...}{Other paramters (currently unused)}
 
 \item{model}{a RAM model to get which to get loadings}
 }
@@ -21,7 +21,8 @@ loadings.MxModel exracts the factor loadings from a EFA RAM model.
 
 }
 \examples{
-m1 = umxEFA(name= "test", factors =   2, data = mtcars[, vars])
+myVars <- c("mpg", "disp", "hp", "wt", "qsec")
+m1 = umxEFA(name = "test", factors =   2, data = mtcars[, myVars])
 loadings(m1)
 }
 \references{

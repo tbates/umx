@@ -45,20 +45,20 @@ umxEFA(factors = 2, data = mtcars)
 \figure{umxEFA.png}
 
 \emph{notes}: In an EFA, all items may load on all factors.
-For identification we need m^2. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
+For identification we need m^2 degrees of freedom. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
 We get another m(m-1)/2 degrees of freemdom by fixing the upper-right hand corner of the factor loadings
-component of the A matrix.
+component of the A matrix. The manifest variances are also lbounded at 0.
 
 EFA reports standardized loadings: to do this, we scale the data.
 
 Bear in mind that factor scores are indeterminate and can be rotated.
 }
 \examples{
-vars = c("mpg", "disp", "hp", "wt", "qsec")
-m1 = umxEFA(name= "test", factors = "g", data = mtcars[, vars])
-m2 = umxEFA(name= "test", factors =   2, data = mtcars[, vars])
+myVars <- c("mpg", "disp", "hp", "wt", "qsec")
+m1 = umxEFA(name = "named"    , factors = "g", data = mtcars[, myVars])
+m2 = umxEFA(name = "by_number", factors =   2, rotation = "promax", data = mtcars[, myVars])
 loadings(m2)
-m3 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "none", data = mtcars)
+m3 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m3)
 \dontrun{
 plot(m2)

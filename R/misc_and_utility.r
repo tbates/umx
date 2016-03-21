@@ -10,7 +10,7 @@
 # = Get and set OpenMx options =
 # ==============================
 
-#' umx_set_table.format
+#' umx_set_table_format
 #'
 #' Set knitr.table.format default (output style for tables). Legal values are 
 #' "latex", "html", "markdown", "pandoc", and "rst".
@@ -22,12 +22,12 @@
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' library(umx)
-#' old = umx_set_table.format() # get existing value
-#' umx_set_table.format("latex")
-#' umx_set_table.format("html")
-#' umx_set_table.format("markdown")
-#' umx_set_table.format(old)    # reinstate
-umx_set_table.format <- function(knitr.table.format = NULL) {
+#' old = umx_set_table_format() # get existing value
+#' umx_set_table_format("latex")
+#' umx_set_table_format("html")
+#' umx_set_table_format("markdown")
+#' umx_set_table_format(old)    # reinstate
+umx_set_table_format <- function(knitr.table.format = NULL) {
 	if(is.null(knitr.table.format)) {
 		options("knitr.table.format")
 	} else {
