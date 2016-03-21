@@ -19,11 +19,11 @@ umxEFA(name = "efa", factors = NULL, data = NULL, covmat = NULL,
 
 \item{n.obs}{Number of observations in covmat (if provided, default = NA)}
 
+\item{rotation}{A rotation to perform on the loadings (default  = "varimax")}
+
 \item{digits}{rounding (defaults to 2)}
 
 \item{report}{What to report}
-
-\item{showEstimates}{= c("none", "raw", "std", "both", "list of column names")}
 }
 \value{
 - \code{\link{mxModel}}

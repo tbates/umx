@@ -7,9 +7,9 @@
 \method{loadings}{MxModel}(x, ...)
 }
 \arguments{
-\item{...}{Other paramters (currently unused)}
+\item{x}{A RAM model to get which to get loadings}
 
-\item{model}{a RAM model to get which to get loadings}
+\item{...}{Other parameters (currently unused)}
 }
 \value{
 - loadings matrix

@@ -34,7 +34,7 @@
 #' @param data A dataframe of manifest columns you are modeling
 #' @param covmat Covariance matrix of data you are modeling
 #' @param n.obs Number of observations in covmat (if provided, default = NA)
-#' @param showEstimates = c("none", "raw", "std", "both", "list of column names")
+#' @param rotation A rotation to perform on the loadings (default  = "varimax")
 #' @param digits rounding (defaults to 2)
 #' @param report What to report
 #' @return - \code{\link{mxModel}}

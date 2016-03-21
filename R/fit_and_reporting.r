@@ -202,8 +202,8 @@ loadings.default <- function(x, ...){
 #'
 #' @details
 #'
-#' @param model a RAM model to get which to get loadings 
-#' @param ... Other paramters (currently unused)
+#' @param x A RAM model to get which to get loadings 
+#' @param ... Other parameters (currently unused)
 #' @return - loadings matrix
 #' @export
 #' @family Reporting Functions
