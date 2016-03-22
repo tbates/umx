@@ -29,7 +29,7 @@ loadings(m1)
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-- \code{\link{factanal}}, \code{\link{laodings}}
+- \code{\link{factanal}}, \code{\link{loadings}}
 
 Other Reporting Functions: \code{\link{summaryAPA}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
