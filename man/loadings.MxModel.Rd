@@ -15,14 +15,12 @@
 - loadings matrix
 }
 \description{
-loadings.MxModel exracts the factor loadings from a EFA RAM model.
-}
-\details{
-
+loadings exracts the factor loadings from an OpenMx EFA (factor analysis) model. 
+Behaves equivalently to stats::loadings.
 }
 \examples{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")
-m1 = umxEFA(name = "test", factors =   2, data = mtcars[, myVars])
+m1 = umxEFA(name = "test", factors = 2, data = mtcars[, myVars])
 loadings(m1)
 }
 \references{
