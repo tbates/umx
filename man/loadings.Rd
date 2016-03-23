@@ -8,7 +8,7 @@ Generic loadings function}
 loadings(x, ...)
 }
 \arguments{
-\item{x}{an object from which to get the RMSEA}
+\item{x}{an object from which to get loadings}
 
 \item{...}{additional parameters}
 }
@@ -16,7 +16,7 @@ loadings(x, ...)
 - matrix of loadings
 }
 \description{
-See \code{\link[umx]{loadings.MxModel}} to access the loadings of RAM EFA models
+See \code{\link[umx]{loadings.MxModel}} to access the laodings of RAM EFA models.
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
