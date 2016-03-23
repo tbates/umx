@@ -180,9 +180,9 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 #' loadings
 #' Generic loadings function
 #'
-#' See \code{\link[umx]{loadings.MxModel}} to access the loadings of RAM EFA models
+#' See \code{\link[umx]{loadings.MxModel}} to access the laodings of RAM EFA models.
 #'
-#' @param x an object from which to get the RMSEA 
+#' @param x an object from which to get loadings 
 #' @param ... additional parameters
 #' @return - matrix of loadings
 #' @export
@@ -197,10 +197,8 @@ loadings.default <- function(x, ...){
 
 #' loadings.MxModel
 #'
-#' @description
-#' loadings.MxModel exracts the factor loadings from a EFA RAM model. 
-#'
-#' @details
+#' loadings exracts the factor loadings from an OpenMx EFA (factor analysis) model. 
+#' Behaves equivalently to stats::loadings.
 #'
 #' @param x A RAM model to get which to get loadings 
 #' @param ... Other parameters (currently unused)
@@ -211,7 +209,7 @@ loadings.default <- function(x, ...){
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
-#' m1 = umxEFA(name = "test", factors =   2, data = mtcars[, myVars])
+#' m1 = umxEFA(name = "test", factors = 2, data = mtcars[, myVars])
 #' loadings(m1)
 loadings.MxModel <- function(x, ...) {
 	x$A$values[x@manifestVars, x@latentVars, drop = FALSE]

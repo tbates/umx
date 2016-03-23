@@ -1,9 +1,16 @@
 
 umx 1.1.7
 --------------
-* Updating minimum R and OpenMx requirement to  >= 3.2.0 and >= 2.5.0
-* umx_set_auto_plot to control auto plot
-* umx_set_table.format to control table output via knitr
+* NEW: umx_set_auto_plot to control auto plot
+* NEW: umx_set_table_format to control table output via knitr
+* NEW: beta of umxEFA (exploratory factor analysis)
+* NEW loadings() support for umxEFA
+* CHANGE:  .dot --> .gv suffix for plotting (more compatible)
+* CHANGE: To $ from @ accessors for OpenMx compression compatibility
+* BETTER: help: ACECov figure, many improvements
+* ENHANCED: umx_print, umx_show
+* REQUIRE knitr
+* INCREASE minimum R / OpenMx to  >= 3.2.0 / >= 2.5.0
 
 umx 1.1.5
 --------------
