@@ -4032,15 +4032,11 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' Introductory working examples are below. You can run all demos with demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
-#' The development version of umx is github \url{http://github.com/tbates/umx}
-#' 
 #' There is a helpful blog at \url{http://tbates.github.io}
 #' 
-#' To install from github, use:
-#' install.packages("devtools")
-#' library("devtools")
-#' install_github("tbates/umx")
-#' library("umx")
+#' If you want the bleeding-edge version:
+#' 
+#' devtools::install_github("tbates/umx")
 #' 
 #' @family Model Building Functions
 #' @family Reporting Functions
@@ -4061,29 +4057,13 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' myData = mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
 #' latents = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM",
-#' 	manifestVars = manifests,
-#' 	latentVars  = latents,
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1),
-#' 	myData
+#' m1 <- umxRAM("One Factor", data = myData,
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents  , fixedAt=1)
 #' )
 #' 
-#' omxGetParameters(m1) # nb: By default, paths have no labels, and starts of 0
-#' 
-#' # With \code{link{umxLabel}}, you can easily add informative and predictable labels to each free
-#' # path (works with matrix style as well!) and use \code{link{umxValues}}, to set 
-#' # sensible guesses for start values...
-#' m1 = umxLabel(m1)  
-#' m1 = umxValues(m1)  
-#'
-#' # nb: ?mxRAM simplifies model making in several ways. Check it out!
-#' 
-#' # Re-run omxGetParameters...
 #' omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
-#' 
-#' m1 = mxRun(m1) # not needed given we've done this above.
 #' 
 #' # Let's get some journal-ready fit information
 #' 
@@ -4110,7 +4090,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
 #' 
-#' # And make a Figure it dot format!
+#' # And make a Figure in .gv format!
 #' # If you have installed GraphViz, the next command will open it for you to see!
 #' 
 #' # plot(m1, std = TRUE)
