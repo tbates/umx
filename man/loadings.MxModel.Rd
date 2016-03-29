@@ -16,7 +16,8 @@
 }
 \description{
 loadings exracts the factor loadings from an OpenMx EFA (factor analysis) model. 
-Behaves equivalently to stats::loadings.
+Behaves equivalently to stats::loadings in returning the loadings from an 
+EFA (factor analysis), but doesn't store the rotation matrix.
 }
 \examples{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")
