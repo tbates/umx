@@ -198,7 +198,8 @@ loadings.default <- function(x, ...){
 #' loadings.MxModel
 #'
 #' loadings exracts the factor loadings from an OpenMx EFA (factor analysis) model. 
-#' Behaves equivalently to stats::loadings.
+#' Behaves equivalently to stats::loadings in returning the loadings from an 
+#' EFA (factor analysis), but doesn't store the rotation matrix.
 #'
 #' @param x A RAM model to get which to get loadings 
 #' @param ... Other parameters (currently unused)
@@ -635,7 +636,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 	# if the filter is off default, the user must want something, let's assume it's std ...
 	if( filter != "ALL" & showEstimates == "none") {
 		showEstimates = "std"
-	}else if(showEstimates =="std" && SE==FALSE){
+	}else if(showEstimates =="std" && SE == FALSE){
 		message("SE must be TRUE to show std, overriding to set SE =TRUE")
 		SE = TRUE
 	}
