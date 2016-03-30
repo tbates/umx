@@ -30,7 +30,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 umx_has_means(m1)
 m1 <- mxModel(m1,
 	mxPath(from = "one", to = manifests),
-	mxData(demoOneFactor, type = "raw")
+	mxData(demoOneFactor[1:100,], type = "raw")
 )
 umx_has_means(m1)
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)

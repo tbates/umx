@@ -881,7 +881,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' tmpTwin <- twinData
 #' names(tmpTwin)
 #' # "fam", "age", "zyg", "part",
-#' # "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2", "cohort", "zygosity", "age1", "age2" 
+#' # "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2", 
+#' # "cohort", "zygosity", "age1", "age2" 
 #'   
 #' # Set zygosity to a factor
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
@@ -913,9 +914,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' require(umx)
 #' data(twinData)
 #' tmpTwin <- twinData
-#' names(tmpTwin)
-#' # "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
-#' 
 #' # Set zygosity to a factor
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
