@@ -53,6 +53,14 @@ EFA reports standardized loadings: to do this, we scale the data.
 
 Bear in mind that factor scores are indeterminate and can be rotated.
 }
+\examples{
+myVars <- c("mpg", "disp", "hp", "wt", "qsec")
+m1 = umxEFA(name = "named"    , factors = "g", data = mtcars[, myVars])
+m2 = umxEFA(name = "by_number", factors =   2, rotation = "promax", data = mtcars[, myVars])
+loadings(m2)
+plot(m2)
+m3 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars[])
+}
 \references{
 - \url{http://github.com/tbates/umx}
 }

@@ -47,9 +47,8 @@
 #' m1 = umxEFA(name = "named"    , factors = "g", data = mtcars[, myVars])
 #' m2 = umxEFA(name = "by_number", factors =   2, rotation = "promax", data = mtcars[, myVars])
 #' loadings(m2)
-#' m3 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars[])
 #' plot(m2)
-#' }
+#' m3 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars[])
 umxEFA <- function(name = "efa", factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, rotation = c("varimax", "promax", "none"), digits = 2, report = c("1", "table", "html")){
 	# name     = "efa"
 	# factors  = 1
