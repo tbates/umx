@@ -1832,15 +1832,18 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #'
 #' Create graphical path diagrams from your OpenMx models!
 #' 
-#' plot() produces SEM diagrams in graphviz format, and relies on a graphviz application to create the
-#' image. You can get this for free at \url{http://www.graphviz.org/Download..php}. The commercial application
-#' Omnigraffle is great for editing these images.
+#' plot() produces SEM diagrams in graphviz format, and relies on DiagrammeR (or a 
+#' graphviz application) to create the image. 
+#' The commercial application Omnigraffle is great for editing these images.
 #' 
 #'
 #' On unix and windows, plot() will create a pdf and open it in your default pdf reader.
 #' 
-#' On OS X, we open the graphviz application.
-#' \emph{Note:} You may need to association the \sQuote{.gv} extension with the graphviz app.
+#' If you use umx_set_plot_format("graphviz"), files will open in with a graphviz helper.
+#' 
+#' \emph{Note:} DiagrammeR is supported out of the box. If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
+#' On OS X we try and open an app: you may need to associate the \sQuote{.gv}
+#' extension with the graphviz app.
 #' Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}, 
 #' select Graphviz.app (or OmniGraffle professional),
 #' then set \dQuote{change all}.
@@ -1858,7 +1861,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param showError deprecated: use resid instead
 #' @param ... Optional parameters
 #' @export
-#' @seealso - \code{\link{umxLabel}}, \code{\link{umxRun}}, \code{\link{umxValues}}
+#' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{umxLabel}}, \code{\link{umxValues}}
 #' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 #' @examples

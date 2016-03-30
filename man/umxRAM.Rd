@@ -80,7 +80,7 @@ m1 = umxRAM("tim", data = myCov,
 umxSummary(m1, show = "std")
 
 \dontrun{
-# 5. Draw a nice path diagram (needs Graphviz)
+# 5. Draw a nice path diagram (uses DiagrameR package or Graphviz app)
 plot(m1)
 plot(m1, resid = "line")
 

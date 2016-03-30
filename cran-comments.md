@@ -1,22 +1,20 @@
 ## Changes
 Compatibility with OpenMx 2.5.2. Require R 3.2
-More features for Boulder Genetics workshop.
+More features, inc plotting with DiagrammeR
 
 ## Test environments
-* OS X 10.11.4, R version 3.2.3 (2015-12-10)
-* Win x86_64-w64-mingw32 (64-bit) using R Under development (unstable) (2016-02-29 r70251)
-
-* 64-bit Linux (Scientific Linux 6), R 3.2.2
+* OS X 10.11.4, R version 3.2.4 (2016-12-10)
+* Win (64-bit) R version 3.3.0 alpha (2016-03-28 r70391)
+* 64-bit Linux (Scientific Linux 6), R 3.2.4
 
 ## R CMD check results
 
-No ERRORs, or WARNINGs. 1 false-alarm NOTE about spelling:
- spelling of OpenMx and umx in DESCRIPTION are fine.
+No ERRORs, WARNINGs, or NOTES
 
 ## Downstream dependencies
 
 There are currently no downstream dependencies for this package.
 
-Note: One example takes too long, reflecting slow-down in current CRAN OpenMx.
+Note: One example takes a few seconds too long
 
 Best wishes, tim

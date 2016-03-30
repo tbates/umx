@@ -12,7 +12,7 @@
 
 #' umx_set_plot_format
 #'
-#' Set output format of plots (default graphviz). Other legal value is DiagrammeR
+#' Set output format of plots (default = "DiagrammeR", alternative is "graphviz")
 #'
 #' @param umx.plot.format format for plots (if empty, returns the current value of umx.plot.format)
 #' @return - Current umx.plot.format setting

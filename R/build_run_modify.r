@@ -202,7 +202,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' umxSummary(m1, show = "std")
 #' 
 #' \dontrun{
-#' # 5. Draw a nice path diagram (needs Graphviz)
+#' # 5. Draw a nice path diagram (uses DiagrameR package or Graphviz app)
 #' plot(m1)
 #' plot(m1, resid = "line")
 #' 
@@ -4093,10 +4093,9 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
 #' 
 #' # And make a Figure in .gv format!
-#' # If you have installed GraphViz, the next command will open it for you to see!
 #' 
 #' # plot(m1, std = TRUE)
-#' # Run this instead if you don't have GraphViz
+#' # If you just want the .dot code returned set file = NA
 #' plot(m1, std = TRUE, file = NA)
 #' @docType package
 #' @name umx

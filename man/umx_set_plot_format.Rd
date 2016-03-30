@@ -13,7 +13,7 @@ umx_set_plot_format(umx.plot.format = NULL)
 - Current umx.plot.format setting
 }
 \description{
-Set output format of plots (default graphviz). Other legal value is DiagrammeR
+Set output format of plots (default = "DiagrammeR", alternative is "graphviz")
 }
 \examples{
 library(umx)
