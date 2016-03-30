@@ -69,10 +69,10 @@ m1 <- umxRAM("One Factor",
 )
 umxSummary(m1, show = "std")
 # output as latex
-options(knitr.table.format = 'latex')
+umx_set_table_format("latex")
 umxSummary(m1, show = "std")
-options(knitr.table.format = 'markdown')
-# output as std
+umx_set_table_format("markdown")
+# output as raw
 umxSummary(m1, show = "raw")
 m1 <- mxModel(m1,
   mxData(demoOneFactor, type = "raw"),

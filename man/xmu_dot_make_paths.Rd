@@ -9,15 +9,15 @@ xmu_dot_make_paths(mxMat, stringIn, heads = NULL, showFixed = TRUE,
   digits = 2)
 }
 \arguments{
-\item{mxMat}{an MxMatrix}
+\item{mxMat}{An mxMatrix}
 
-\item{stringIn}{input string}
+\item{stringIn}{Input string}
 
-\item{heads}{1 or 2}
+\item{heads}{1 or 2 arrows (default NULL - you must set this)}
 
-\item{showFixed}{to show fixed values or not}
+\item{showFixed}{Whether show fixed values or not (defaults to TRUE)}
 
-\item{comment}{a comment to include}
+\item{comment}{A comment to include}
 
 \item{showResiduals}{Whether to show residuals}
 

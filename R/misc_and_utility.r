@@ -10,6 +10,31 @@
 # = Get and set OpenMx options =
 # ==============================
 
+#' umx_set_plot_format
+#'
+#' Set output format of plots (default graphviz). Other legal value is DiagrammeR
+#'
+#' @param umx.plot.format format for plots (if empty, returns the current value of umx.plot.format)
+#' @return - Current umx.plot.format setting
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' library(umx)
+#' umx_set_plot_format()
+#' old = umx_set_plot_format() # get existing value
+#' umx_set_plot_format("graphviz")
+#' umx_set_plot_format("DiagrammeR")
+#' umx_set_plot_format(old)    # reinstate
+umx_set_plot_format <- function(umx.plot.format = NULL) {
+	if(is.null(umx.plot.format)) {
+		getOption("umx.plot.format")
+	} else {
+		umx_check(umx.plot.format %in% c("graphviz", "DiagrammeR"), "stop")
+		options("umx.plot.format" = umx.plot.format)
+	}
+}
+
 #' umx_set_table_format
 #'
 #' Set knitr.table.format default (output style for tables). Legal values are 
@@ -29,7 +54,7 @@
 #' umx_set_table_format(old)    # reinstate
 umx_set_table_format <- function(knitr.table.format = NULL) {
 	if(is.null(knitr.table.format)) {
-		options("knitr.table.format")
+		getOption("knitr.table.format")
 	} else {
 		umx_check(knitr.table.format %in% c("latex", "html", "markdown", "pandoc", "rst"), "stop")
 		options("knitr.table.format" = knitr.table.format)

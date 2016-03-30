@@ -21,12 +21,22 @@
 .onAttach <- function(libname, pkgname){
 	# TODO remove mxCondenseMatrixSlots now that $ get and set are working properly
 	options('mxCondenseMatrixSlots'= FALSE)
+	options('umx.plot.format' = 'DiagrammeR')
 	options("umx_auto_run" = TRUE)
 	options("umx_auto_plot" = NA)
-  packageStartupMessage("For an overview type '?umx'")
+	packageStartupMessage("For an overview type '?umx'")
 }
 
+#' @importFrom DiagrammeR DiagrammeR
+#' @importFrom graphics plot
 #' @importFrom MASS mvrnorm
+#' @importFrom methods as getSlots is slotNames
+#' @importFrom methods setClass
+# methods::setClass is called during build not package source code.
+# suppress NOTE with a spurious importFrom in the namespace
+#' @importFrom numDeriv jacobian
+#' @importFrom polycor hetcor
+#' @importFrom parallel detectCores
 #' @importFrom stats C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
@@ -34,14 +44,6 @@
 #' @importFrom stats setNames update var delete.response terms
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table
-#' @importFrom methods as getSlots is slotNames
-#' @importFrom graphics plot
-#' @importFrom numDeriv jacobian
-#' @importFrom methods setClass
-#' @importFrom polycor hetcor
-#' @importFrom parallel detectCores
-# methods::setClass is called during build not package source code.
-# suppress NOTE with a spurious importFrom in the namespace
 NULL
 	
 utils::globalVariables(c(

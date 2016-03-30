@@ -1,138 +1,7 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # ========================================
-# = Not Typically used directly by users =
+# = Not used directly by users =
 # ========================================
-
-#' xmu_dot_make_residuals (not for end users)
-#'
-#'
-#' @param mxMat An A or S MxMatrix 
-#' @param latents optional list of latents to alter location of circles (defaults to NULL)
-#' @param showFixed Whether to show fixed values or not
-#' @param digits How many digits to report
-#' @param resid How to show residuals and variances default is "circle". Other option is "line"
-#' @return - list of variance names and variances
-#' @export
-#' @family xmu internal not for end user
-xmu_dot_make_residuals <- function(mxMat, latents = NULL, showFixed = TRUE, digits = 2, resid = c("circle", "line")) {
-	mxMat_vals   = mxMat$values
-	mxMat_free   = mxMat$free
-	mxMat_labels = mxMat$labels
-	mxMat_rows = dimnames(mxMat_free)[[1]]
-	mxMat_cols = dimnames(mxMat_free)[[2]]
-
-	variances = c()
-	varianceNames = c()
-	for(to in mxMat_rows ) { # rows
-		lowerVars  = mxMat_rows[1:match(to, mxMat_rows)]
-		for(from in lowerVars) { # columns
-			thisPathLabel = mxMat_labels[to, from]
-			thisPathFree  = mxMat_free[to, from]
-			thisPathVal   = round(mxMat_vals[to, from], digits)
-
-			if(thisPathFree){ prefix = "" } else { prefix = "@" }
-			# TODO currently all variances are labeled "a_with_a"
-			# Could diversify to "a_with_a", "var_a" & "resid_a"
-			if(thisPathFree | (thisPathVal !=0 && showFixed)) {
-				if((to == from)) {
-					if(resid =="circle"){
-						# TODO refactor based on mxGraphviz to support latents north
-						if(from %in% latents){
-							circleString = paste0(from, ' -> ', from, '[label="', prefix, thisPathVal, '", dir=both, headport=n, tailport=n]')
-						} else {
-							circleString = paste0(from, ' -> ', from, '[label="', prefix, thisPathVal, '", dir=both, headport=s, tailport=s]')
-						}
-						variances = append(variances, circleString)
-					} else if(resid =="line"){
-						varianceNames = append(varianceNames, paste0(from, '_var'))
-						variances = append(variances, paste0(from, '_var [label="', prefix, thisPathVal, '", shape = plaintext]'))
-					}					
-				}
-			}
-		}
-	}
-	return(list(varianceNames = varianceNames, variances = variances))
-}
-
-#' xmu_dot_make_paths (not for end users)
-#'
-#' Makes graphviz paths
-#'
-#' @param mxMat an MxMatrix
-#' @param stringIn input string
-#' @param heads 1 or 2
-#' @param showFixed to show fixed values or not
-#' @param comment a comment to include
-#' @param showResiduals Whether to show residuals
-#' @param pathLabels labels
-#' @param digits how many digits to report
-#' @return - string
-#' @export
-#' @family xmu internal not for end user
-xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2) {
-	if(is.null(heads)){
-		stop("You must set 'heads' to 1 or 2 (was NULL)")
-	}
-	if(!heads %in% 1:2){
-		stop("You must set 'heads' to 1 or 2: was ", heads)
-	}
-	mxMat_vals   = mxMat$values
-	mxMat_free   = mxMat$free
-	mxMat_labels = mxMat$labels
-	mxMat_rows = dimnames(mxMat_free)[[1]]
-	mxMat_cols = dimnames(mxMat_free)[[2]]
-	if(!is.null(comment)){
-		stringIn = paste0(stringIn, "\n\t# ", comment, "\n")
-	}
-	if(heads == 1){
-		for(target in mxMat_rows ) {
-			for(source in mxMat_cols) {
-				thisPathLabel = mxMat_labels[target, source]
-				thisPathFree  = mxMat_free[target, source]
-				thisPathVal   = round(mxMat_vals[target, source], digits)
-
-				if(thisPathFree){ labelStart = ' [label="' } else { labelStart = ' [label="@' }
-
-				if(thisPathFree | ((showFixed & (thisPathVal != 0))) ) {
-					stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStart, thisPathVal, '"];\n')
-				}else{
-					# print(paste0("thisPathFree = ", thisPathFree , "showFixed =", showFixed, "; thisPathVal = ", thisPathVal, "\n"))
-				}
-				
-			}
-		}
-	} else {
-		# heads = 2
-		for(target in mxMat_rows ) { # rows
-			lowerVars  = mxMat_rows[1:match(target, mxMat_rows)]
-			for(source in lowerVars) { # columns
-				thisPathLabel = mxMat_labels[target, source]
-				thisPathFree  = mxMat_free[target, source]
-				thisPathVal   = round(mxMat_vals[target, source], digits)
-
-				if(thisPathFree){ prefix = "" } else { prefix = "@" }
-
-				if(thisPathFree | ((showFixed & (thisPathVal != 0))) ) {
-					if(target == source) {
-						if(showResiduals){
-							stringIn = paste0(stringIn, "\t", source, "_var -> ", target, ";\n")
-						}
-					} else {
-						if(pathLabels == "both"){
-							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
-						} else if(pathLabels == "labels"){
-							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "\"];\n")
-						}else {
-							# pathLabels = "none"
-							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', prefix, thisPathVal, "\"];\n")
-						}
-					}
-				}
-			}
-		}
-	}
-	return(stringIn)
-}
 
 #' xmuLabel_MATRIX_Model (not a user function)
 #'
@@ -804,18 +673,154 @@ xmu_dot_maker <- function(model, file, digraph){
 			file = paste0(model$name, ".gv")
 		}
 		cat(digraph, file = file) # write to file
-		if(umx_check_OS("OSX")){
-			umx_open(file);
-		} else if(umx_check_OS("Windows")){
-			shell(paste0("dot -Tpdf -O ", shQuote(file)), "cmd.exe");
-			umx_open(paste0(file, ".pdf"))
+		if(umx_set_plot_format()=="DiagrammeR"){			
+			DiagrammeR(diagram = "~tim/base.gv", type = "grViz")
+			DiagrammeR(diagram = file, type = "grViz")
 		} else {
-			system(paste0("dot -Tpdf -O ", shQuote(file)));
-			umx_open(paste0(file, ".pdf"))
+			if(umx_check_OS("OSX")){
+				umx_open(file);
+			} else if(umx_check_OS("Windows")){
+				shell(paste0("dot -Tpdf -O ", shQuote(file)), "cmd.exe");
+				umx_open(paste0(file, ".pdf"))
+			} else {
+				system(paste0("dot -Tpdf -O ", shQuote(file)));
+				umx_open(paste0(file, ".pdf"))
+			}
+			# dot -Tpdf -O yourFilename.gv
+			# creates "yourFilename.gv.pdf"
 		}
-		# dot -Tpdf -O yourFilename.gv
-		# creates "yourFilename.gv.pdf"
 	} else {
 		return (cat(digraph));
 	}
+}
+
+#' xmu_dot_make_residuals (not for end users)
+#'
+#'
+#' @param mxMat An A or S mxMatrix 
+#' @param latents Optional list of latents to alter location of circles (defaults to NULL)
+#' @param showFixed Whether to show fixed values or not
+#' @param digits How many digits to report
+#' @param resid How to show residuals and variances default is "circle". Other option is "line"
+#' @return - list of variance names and variances
+#' @export
+#' @family xmu internal not for end user
+xmu_dot_make_residuals <- function(mxMat, latents = NULL, showFixed = TRUE, digits = 2, resid = c("circle", "line")) {
+	mxMat_vals   = mxMat$values
+	mxMat_free   = mxMat$free
+	mxMat_labels = mxMat$labels
+	mxMat_rows = dimnames(mxMat_free)[[1]]
+	mxMat_cols = dimnames(mxMat_free)[[2]]
+
+	variances = c()
+	varianceNames = c()
+	for(to in mxMat_rows ) { # rows
+		lowerVars  = mxMat_rows[1:match(to, mxMat_rows)]
+		for(from in lowerVars) { # columns
+			thisPathLabel = mxMat_labels[to, from]
+			thisPathFree  = mxMat_free[to, from]
+			thisPathVal   = round(mxMat_vals[to, from], digits)
+
+			if(thisPathFree){ prefix = "" } else { prefix = "@" }
+			# TODO currently all variances are labeled "a_with_a"
+			# Could diversify to "a_with_a", "var_a" & "resid_a"
+			if(thisPathFree | (thisPathVal !=0 && showFixed)) {
+				if((to == from)) {
+					if(resid =="circle"){
+						# TODO refactor based on mxGraphviz to support latents north
+						if(from %in% latents){
+							circleString = paste0(from, ' -> ', from, '[label="', prefix, thisPathVal, '", dir=both, headport=n, tailport=n]')
+						} else {
+							circleString = paste0(from, ' -> ', from, '[label="', prefix, thisPathVal, '", dir=both, headport=s, tailport=s]')
+						}
+						variances = append(variances, circleString)
+					} else if(resid =="line"){
+						varianceNames = append(varianceNames, paste0(from, '_var'))
+						variances = append(variances, paste0(from, '_var [label="', prefix, thisPathVal, '", shape = plaintext]'))
+					}					
+				}
+			}
+		}
+	}
+	return(list(varianceNames = varianceNames, variances = variances))
+}
+
+#' xmu_dot_make_paths (not for end users)
+#'
+#' Makes graphviz paths
+#'
+#' @param mxMat An mxMatrix
+#' @param stringIn Input string
+#' @param heads 1 or 2 arrows (default NULL - you must set this)
+#' @param showFixed Whether show fixed values or not (defaults to TRUE)
+#' @param comment A comment to include
+#' @param showResiduals Whether to show residuals
+#' @param pathLabels labels
+#' @param digits how many digits to report
+#' @return - string
+#' @export
+#' @family xmu internal not for end user
+xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2) {
+	if(is.null(heads)){
+		stop("You must set 'heads' to 1 or 2 (was NULL)")
+	}
+	if(!heads %in% 1:2){
+		stop("You must set 'heads' to 1 or 2: was ", heads)
+	}
+	mxMat_vals   = mxMat$values
+	mxMat_free   = mxMat$free
+	mxMat_labels = mxMat$labels
+	mxMat_rows = dimnames(mxMat_free)[[1]]
+	mxMat_cols = dimnames(mxMat_free)[[2]]
+	if(!is.null(comment)){
+		stringIn = paste0(stringIn, "\n\t# ", comment, "\n")
+	}
+	if(heads == 1){
+		for(target in mxMat_rows ) {
+			for(source in mxMat_cols) {
+				thisPathLabel = mxMat_labels[target, source]
+				thisPathFree  = mxMat_free[target, source]
+				thisPathVal   = round(mxMat_vals[target, source], digits)
+
+				if(thisPathFree){ labelStart = ' [label="' } else { labelStart = ' [label="@' }
+
+				if(thisPathFree | ((showFixed & (thisPathVal != 0))) ) {
+					stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStart, thisPathVal, '"];\n')
+				}else{
+					# print(paste0("thisPathFree = ", thisPathFree , "showFixed =", showFixed, "; thisPathVal = ", thisPathVal, "\n"))
+				}
+				
+			}
+		}
+	} else {
+		# heads = 2
+		for(target in mxMat_rows ) { # rows
+			lowerVars  = mxMat_rows[1:match(target, mxMat_rows)]
+			for(source in lowerVars) { # columns
+				thisPathLabel = mxMat_labels[target, source]
+				thisPathFree  = mxMat_free[target, source]
+				thisPathVal   = round(mxMat_vals[target, source], digits)
+
+				if(thisPathFree){ prefix = "" } else { prefix = "@" }
+
+				if(thisPathFree | ((showFixed & (thisPathVal != 0))) ) {
+					if(target == source) {
+						if(showResiduals){
+							stringIn = paste0(stringIn, "\t", source, "_var -> ", target, ";\n")
+						}
+					} else {
+						if(pathLabels == "both"){
+							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
+						} else if(pathLabels == "labels"){
+							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "\"];\n")
+						}else {
+							# pathLabels = "none"
+							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', prefix, thisPathVal, "\"];\n")
+						}
+					}
+				}
+			}
+		}
+	}
+	return(stringIn)
 }

@@ -1,22 +1,29 @@
 
-umx 1.1.7
+umx 1.2.0
 --------------
-* NEW: umx_set_auto_plot to control auto plot
-* NEW: umx_set_table_format to control table output via knitr
-* NEW: beta of umxEFA (exploratory factor analysis)
+* April 2016 Very Secure Dishes (3.2.4) edition
+* NEW: Plot using DiagrammeR!
+* NEW: Choose plot format!
+* NEW: umx_set_plot_format("DiagrammeR")
+* NEW: umx_set_plot_format("graphviz")
+* NEW: Choose plot format!
+* NEW: umx_set_table_format("markdown")
+* NEW: umx_set_table_format("latex")
+* NEW: Control plotting by default: umx_set_auto_plot(TRUE) 
+* NEW: EFA! with umxEFA() (exploratory factor analysis is beta!)
 * NEW loadings() support for umxEFA
 * CHANGE:  .dot --> .gv suffix for plotting (more compatible)
 * CHANGE: To $ from @ accessors for OpenMx compression compatibility
-* BETTER: help: ACECov figure, many improvements
-* ENHANCED: umx_print, umx_show
-* REQUIRE knitr
+* BETTER: More Help! ACECov figure, ... many other improvements
+* ENHANCED: umx_print, umx_show, umxCompare
+* REQUIRE knitr, DiagrammeR
 * INCREASE minimum R / OpenMx to  >= 3.2.0 / >= 2.5.0
 
 umx 1.1.5
 --------------
-* Changing from umxReRun to umxModify based on feedback.
-* plot() now works on Windows and Unix as well as OS X.
-* Update for compatibility with OpenMx 2.5.2
+* NEW: plot() now works on Windows and Unix as well as OS X! (h/t @mhunter)
+* CHANGE: umxReRun to umxModify (h/t @hmaes)
+* BETTER: compatibility with OpenMx 2.5.2
 
 umx 1.1.1
 --------------

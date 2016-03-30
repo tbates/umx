@@ -8,9 +8,9 @@ xmu_dot_make_residuals(mxMat, latents = NULL, showFixed = TRUE,
   digits = 2, resid = c("circle", "line"))
 }
 \arguments{
-\item{mxMat}{An A or S MxMatrix}
+\item{mxMat}{An A or S mxMatrix}
 
-\item{latents}{optional list of latents to alter location of circles (defaults to NULL)}
+\item{latents}{Optional list of latents to alter location of circles (defaults to NULL)}
 
 \item{showFixed}{Whether to show fixed values or not}
 

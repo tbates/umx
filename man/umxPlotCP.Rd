@@ -29,8 +29,7 @@ Draw a graphical figure for a Common Pathway model
 }
 \examples{
 \dontrun{
-umxPlotCP(model)
-plot(model) # works fine!
+plot(model) # no need to remember a special name: plot works fine!
 umxPlotCP(model, file = "MyPreferredName.gv")
 }
 }

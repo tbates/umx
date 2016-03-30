@@ -1,6 +1,6 @@
 Package: umx
-Version: 1.1.7
-Date: 2016-03-14
+Version: 1.2.0
+Date: 2016-03-30
 Title: Structural Equation Modelling in R with 'OpenMx'
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))
@@ -13,19 +13,20 @@ Depends:
     R (>= 3.2.0),
     OpenMx (>= 2.5.0)
 Imports:
-    utils,
+    DiagrammeR,
+    knitr,
     MASS,
     Matrix,
     methods,
-    knitr,
     mvtnorm,
     numDeriv,
     polycor,
     R2HTML,
-    RCurl
+    RCurl,
+    utils
 Suggests:
     testthat,
-	gdata
+    gdata
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 LazyData: true
