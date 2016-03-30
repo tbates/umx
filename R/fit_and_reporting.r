@@ -1695,7 +1695,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				" was tested by dropping ", tablePub[i,"Model"],
 				" from ", tablePub[i,"Compare with Model"], 
 				did_didnot, 
-				"(\u03A7\u00B2(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2), # \u03A7 = Chi \u00B2 = superscript 2
+				"(\u03C7\u00B2(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2), # \u03A7 = Chi \u00B2 = superscript 2
 				", p = ", tablePub[i,"p"], ")."
 				)
 			}
