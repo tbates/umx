@@ -66,10 +66,10 @@ loadings(m1)
 m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m2)
 \dontrun{
-m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
-m3 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
-m4 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
 plot(m2)
+m3 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
+m4 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
+m5 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
 }
 }
 \references{

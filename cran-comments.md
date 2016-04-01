@@ -15,6 +15,6 @@ No ERRORs, WARNINGs, or NOTES
 
 There are currently no downstream dependencies for this package.
 
-Note: One example takes a few seconds too long
+Note: I reduced 4 example run times. A couple are likely still over (can't tell as can't repro)
 
 Best wishes, tim

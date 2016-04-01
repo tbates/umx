@@ -2327,7 +2327,7 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' umx_has_means(m1)
 #' m1 <- mxModel(m1,
 #' 	mxPath(from = "one", to = manifests),
-#' 	mxData(demoOneFactor, type = "raw")
+#' 	mxData(demoOneFactor[1:100,], type = "raw")
 #' )
 #' umx_has_means(m1)
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
@@ -2338,8 +2338,6 @@ umx_has_means <- function(model) {
 		stop("Can only run on RAM models so far")
 	}
 	return(!is.null(model$matrices$M))
-	# expMeans = attr(model$output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
-	# return(!all(dim(expMeans) == 0))
 }
 
 #' umx_has_CIs

@@ -617,15 +617,12 @@ umxSummary.default <- function(model, ...){
 #' # output as raw
 #' umxSummary(m1, show = "raw")
 #' m1 <- mxModel(m1,
-#'   mxData(demoOneFactor, type = "raw"),
+#'   mxData(demoOneFactor[1:100,], type = "raw"),
 #'   umxPath(mean = manifests),
 #'   umxPath(mean = latents, fixedAt = 0)
 #' )
 #' m1 <- mxRun(m1)
-#' umxSummary(m1, show = "std")
 #' umxSummary(m1, show = "std", filter = "NS")
-#' umxSummary(m1, show = "std")
-#' umxSummary(m1, report = "table")
 umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...){
 	# TODO make table take lists of models...
 	report = match.arg(report)
@@ -2976,7 +2973,7 @@ vcov.MxModel <- umxExpCov
 #' 	mxPath(from = manifests, arrows = 2),
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(demoOneFactor, type = "raw")
+#' 	mxData(demoOneFactor[1:100,], type = "raw")
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umxExpMeans(model = m1)

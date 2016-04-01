@@ -880,8 +880,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' data(twinData)
 #' tmpTwin <- twinData
 #' names(tmpTwin)
-#' # "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
-#' 
+#' # "fam", "age", "zyg", "part",
+#' # "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2", 
+#' # "cohort", "zygosity", "age1", "age2" 
+#'   
 #' # Set zygosity to a factor
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
@@ -892,8 +894,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # for example. "VarSuffix1" "VarSuffix2"
 #' mzData <- tmpTwin[tmpTwin$zyg %in% "MZFF", selDVs]
 #' dzData <- tmpTwin[tmpTwin$zyg %in% "DZFF", selDVs]
-#' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
-#' dzData <- dzData[1:200,]
+#' mzData <- mzData[1:100,] # just top 100 so example runs in a couple of secs
+#' dzData <- dzData[1:100,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' umxSummary(m1, showStd = TRUE)
 #' umxSummaryACE(m1)
@@ -912,9 +914,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' require(umx)
 #' data(twinData)
 #' tmpTwin <- twinData
-#' names(tmpTwin)
-#' # "fam", "age", "zyg", "part", "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2"
-#' 
 #' # Set zygosity to a factor
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
@@ -930,8 +929,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
 #' mzData <- tmpTwin[tmpTwin$zyg %in% "MZFF", umx_paste_names(selDVs, "", 1:2)]
 #' dzData <- tmpTwin[tmpTwin$zyg %in% "DZFF", umx_paste_names(selDVs, "", 1:2)]
-#' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
-#' dzData <- dzData[1:200,]
+#' mzData <- mzData[1:100,] # just top 100 so example runs in a couple of secs
+#' dzData <- dzData[1:100,]
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' \dontrun{
@@ -959,8 +958,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
 #' mzData <- tmpTwin[tmpTwin$zyg %in% "MZFF", umx_paste_names(selDVs, "", 1:2)]
 #' dzData <- tmpTwin[tmpTwin$zyg %in% "DZFF", umx_paste_names(selDVs, "", 1:2)]
-#' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
-#' dzData <- dzData[1:200,]
+#' mzData <- mzData[1:100,] # just top 100 so example runs in a couple of secs
+#' dzData <- dzData[1:100,]
 #' str(mzData)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' umxSummary(m1)
@@ -985,8 +984,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' selDVs = c("wt", "obese")
 #' mzData <- tmpTwin[tmpTwin$zyg == "MZFF", umx_paste_names(selDVs, "", 1:2)]
 #' dzData <- tmpTwin[tmpTwin$zyg == "DZFF", umx_paste_names(selDVs, "", 1:2)]
-#' mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
-#' dzData <- dzData[1:200,]
+#' mzData <- mzData[1:100,] # just top 200 so example runs in a couple of secs
+#' dzData <- dzData[1:100,]
 #' str(mzData)
 #' umx_paste_names(selDVs, "", 1:2)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
@@ -2741,7 +2740,7 @@ parameters <- umxGetParameters
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
+#' m1 <- umxRAM("One Factor", data = mxData(demoOneFactor[1:80,], type = "raw"),
 #' 	umxPath(from = latents, to = manifests),
 #' 	umxPath(v.m. = manifests),
 #' 	umxPath(v1m0 = latents)
