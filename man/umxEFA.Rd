@@ -4,34 +4,35 @@
 \alias{umxEFA}
 \title{umxEFA}
 \usage{
-umxEFA(name = "efa", factors = NULL, data = NULL, covmat = NULL,
-  n.obs = NULL, rotation = c("varimax", "promax", "none"), digits = 2,
-  report = c("1", "table", "html"))
+umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
+  n.obs = NULL, rotation = c("varimax", "promax", "none"), name = "efa",
+  digits = 2, report = c("1", "table", "html"))
 }
 \arguments{
-\item{name}{A name for your model.}
+\item{x}{Either 1: data, 2: A formula (not implemented yet), 3: A collection of variable names, or 4: A name for the model.}
 
-\item{factors}{Either a number (of factors to request) or a list of factor names.}
+\item{factors}{Either number of factors to request or a vector of factor names.}
 
 \item{data}{A dataframe of manifest columns you are modeling}
 
-\item{covmat}{Covariance matrix of data you are modeling}
+\item{covmat}{Covariance matrix of data you are modeling (not implemented)}
 
 \item{n.obs}{Number of observations in covmat (if provided, default = NA)}
 
 \item{rotation}{A rotation to perform on the loadings (default  = "varimax")}
 
-\item{digits}{rounding (defaults to 2)}
+\item{name}{A name for your model.}
+
+\item{digits}{rounding (default = 2)}
 
 \item{report}{What to report}
 }
 \value{
-- \code{\link{mxModel}}
+- EFA \code{\link{mxModel}}
 }
 \description{
-A helper for EFA that only requires you to choose how many factors and offer up manifest data.
-This is very much early days. I will add "scores" if there is demand, but you are better off
-making a CFA model and getting scores from that with \code{\link{mxFactorScores}}.
+Perform full-information maximum-likelihood factor analysis on a data matrix.
+You need only offer up manifest data, specify the number of factors.
 }
 \details{
 You can create an EFA either by specifying some factor names:
@@ -52,15 +53,22 @@ component of the A matrix. The manifest variances are also lbounded at 0.
 EFA reports standardized loadings: to do this, we scale the data.
 
 Bear in mind that factor scores are indeterminate and can be rotated.
+
+This is very much early days. I will add "scores" if there is demand. Currently, you can
+get scores from with \code{\link{mxFactorScores}}.
+
+todo: detect ordinal items and switch to UWLS
 }
 \examples{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")
-m1 = umxEFA(name = "named"    , factors = "g", data = mtcars[, myVars])
-m2 = umxEFA(name = "by_number", factors =   2, rotation = "promax", data = mtcars[, myVars])
+m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
+loadings(m1)
+m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m2)
-m3 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
-loadings(m3)
 \dontrun{
+m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
+m3 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
+m4 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
 plot(m2)
 }
 }

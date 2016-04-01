@@ -4,9 +4,8 @@
 # ==================
 #' umxEFA
 #'
-#' A helper for EFA that only requires you to choose how many factors and offer up manifest data.
-#' This is very much early days. I will add "scores" if there is demand, but you are better off
-#' making a CFA model and getting scores from that with \code{\link{mxFactorScores}}.
+#' Perform full-information maximum-likelihood factor analysis on a data matrix.
+#' You need only offer up manifest data, specify the number of factors.
 #' 
 #' You can create an EFA either by specifying some factor names:
 #' 
@@ -27,44 +26,74 @@
 #' 
 #' Bear in mind that factor scores are indeterminate and can be rotated.
 #' 
-# todo: detect ordinal items and switch to UWLS
+#' This is very much early days. I will add "scores" if there is demand. Currently, you can
+#' get scores from with \code{\link{mxFactorScores}}.
 #' 
-#' @param name A name for your model.
-#' @param factors Either a number (of factors to request) or a list of factor names.
+#' todo: detect ordinal items and switch to UWLS
+#' 
+#' @param x Either 1: data, 2: A formula (not implemented yet), 3: A collection of variable names, or 4: A name for the model.
+#' @param factors Either number of factors to request or a vector of factor names.
 #' @param data A dataframe of manifest columns you are modeling
-#' @param covmat Covariance matrix of data you are modeling
+#' @param covmat Covariance matrix of data you are modeling (not implemented)
 #' @param n.obs Number of observations in covmat (if provided, default = NA)
 #' @param rotation A rotation to perform on the loadings (default  = "varimax")
-#' @param digits rounding (defaults to 2)
+#' @param name A name for your model.
+#' @param digits rounding (default = 2)
 #' @param report What to report
-#' @return - \code{\link{mxModel}}
+#' @return - EFA \code{\link{mxModel}}
 #' @family Super-easy helpers
 #' @export
 #' @seealso - \code{\link{factanal}}
 #' @references - \url{http://github.com/tbates/umx}
 #' @examples
 #' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
-#' m1 = umxEFA(name = "named"    , factors = "g", data = mtcars[, myVars])
-#' m2 = umxEFA(name = "by_number", factors =   2, rotation = "promax", data = mtcars[, myVars])
+#' m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
+#' loadings(m1)
+#' m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 #' loadings(m2)
-#' m3 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
-#' loadings(m3)
 #' \dontrun{
+#' m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
+#' m3 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
+#' m4 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
 #' plot(m2)
 #' }
-umxEFA <- function(name = "efa", factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, rotation = c("varimax", "promax", "none"), digits = 2, report = c("1", "table", "html")){
+umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, report = c("1", "table", "html")){
+	message("umxEFA is beta-only, and NOT ready for prime time")
 	# name     = "efa"
 	# factors  = 1
 	# data     = mtcars[,c("mpg", "disp", "hp", "wt", "qsec")]
 	# rotation = "varimax"
-	message("umxEFA is beta-only, and NOT ready for prime time")
-	if(!is.null(covmat) ||!is.null(n.obs)){
+	if (!is.null(data)){
+		# x must be formula, or column list && covmat and n.obs must be NULL
+		if(!is.null(covmat) || !is.null(n.obs)){
+			stop("Covmat and n.obs must be empty when using 'data =' ...")
+		}
+		if(!is.null(x)){
+			if(length(x) > 1) {
+				umx_check_names(x, data)
+				data = data[,x]
+			} else {
+				stop("Did you give me a formula to select columns? I can't handle that yet")
+				# todo: handle is.formula()
+			}
+		}
+	} else if(!is.null(covmat) || !is.null(n.obs)){
+		# data must be NULL
 		stop("Covmat support not yet implemented - but you may as well be using factanal...")
+		if(!is.null(data)){
+			stop("You can't offer up both a data.frame and a covmat.")
+		}
+	} else {
+		# x must be data
+		if(!is.null(x)){
+			if(is.data.frame(x) || is.matrix(x)){
+				data = x # get data from x
+			}
+		} else if(is.null(data)){
+			stop("You need to provide a data.frame to analyse: this can be in x, or data, or covmat")
+		}
 	}
 
-	if(is.null(data)){
-		stop("You need to provide data to factor analyse.")
-	}
 	# what about for scores? then we don't want std loadings...
 	data = umx_scale(data)
 	rotation = umx_default_option(rotation, c("varimax", "promax", "none"), check = FALSE)
