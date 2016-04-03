@@ -421,7 +421,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' selVars = c(selDVs, selDefs)
 #' mzData  = subset(twinData, zyg == 1, selVars)[1:80,]
 #' dzData  = subset(twinData, zyg == 3, selVars)[1:80,]
-#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData, dropMissing = TRUE)
+#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+#' 	dzData = dzData, mzData = mzData, dropMissing = TRUE)
 #' # Plot Moderation
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")

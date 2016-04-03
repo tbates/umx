@@ -2208,7 +2208,8 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 #' selVars = c(selDVs, selDefs)
 #' mzData  = subset(twinData, zyg == 1, selVars)
 #' dzData  = subset(twinData, zyg == 3, selVars)
-#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData, dropMissing = TRUE)
+#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+#'  	dzData = dzData, mzData = mzData, dropMissing = TRUE)
 #' plot(m1)
 #' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
@@ -2470,7 +2471,8 @@ plot.MxModel.IP <- umxPlotIP
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)[1:3]
-#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500),
+#' df = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = df,
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)

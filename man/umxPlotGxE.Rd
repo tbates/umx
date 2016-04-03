@@ -35,7 +35,8 @@ selDefs = c("age1", "age2")
 selVars = c(selDVs, selDefs)
 mzData  = subset(twinData, zyg == 1, selVars)
 dzData  = subset(twinData, zyg == 3, selVars)
-m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData, dropMissing = TRUE)
+m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+ 	dzData = dzData, mzData = mzData, dropMissing = TRUE)
 plot(m1)
 umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 }
