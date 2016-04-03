@@ -53,6 +53,7 @@ summaryAPA(mtcars[,1:3])
 summaryAPA(.4, .3)
 # format p-value
 summaryAPA(.0182613)
+summaryAPA(.000182613)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

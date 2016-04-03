@@ -33,19 +33,15 @@ require(umx)
 data(twinData)
 labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
-selDVs = c("bmi1","bmi2")
+selDVs = c("bmi1", "bmi2")
 mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-m1 = mxRun(m1)
-\dontrun{
 plot(m1)
-umxPlotACE(m1, file = "override_model_name")
 plot(m1, std = FALSE) # don't standardize
 }
-}
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://www.github.com/tbates/umx}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

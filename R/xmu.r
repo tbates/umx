@@ -256,7 +256,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 #' @param verbose how much feedback to give (defaults to FALSE)
 #' @return - a list containing an \code{\link{mxMatrix}} called "thresh", 
 #' an \code{\link{mxRAMObjective}} object, and an \code{\link{mxData}} object
-#' @references - http://openmx.psyc.virginia.edu/
+#' @references - \url{http://tbates.github.io}
 #' @examples
 #' # x = mtcars
 #' # x$cyl = mxFactor(x$cyl, levels = c(4,6,8))

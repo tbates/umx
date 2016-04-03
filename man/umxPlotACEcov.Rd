@@ -28,37 +28,27 @@ umxPlotACEcov(x = NA, file = "name", digits = 2, showMeans = FALSE,
 Make a graphical display of an ACE model
 }
 \examples{
-# Height, weight, and BMI data from Australian twins. 
-# The total sample has been subdivided into a young cohort, aged 18-30 years,
-# and an older cohort aged 31 and above.
-# Cohort 1 Zygosity is coded as follows: 
-# 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-# tip: ?twinData to learn more about this data set
 require(umx)
+# BMI ?twinData from Australian twins. 
+# Cohort 1 Zygosity 1 == MZ females 3 == DZ females
 data(twinData)
-tmpTwin <- twinData
-# add age 1 and age 2 columns
-tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
 # Pick the variables. We will use base names (i.e., "bmi") and set suffix.
 selDVs  = c("bmi")
 selCovs = c("age")
 selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
-# just top 200 so example runs in a couple of secs
-mzData = subset(tmpTwin, zyg == 1, selVars)[1:200, ]
-dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
+# just top 100 so example runs in a couple of secs
+mzData = subset(tmpTwin, zyg == 1, selVars)[1:100, ]
+dzData = subset(tmpTwin, zyg == 3, selVars)[1:100, ]
 # TODO update for new dataset variable zygosity
 # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 	 suffix = "", autoRun = TRUE)
-\dontrun{
 plot(m1)
-umxPlotACEcov(m1, file = "override_model_name")
 plot(m1, std = FALSE) # don't standardize
 }
-}
 \references{
-- \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

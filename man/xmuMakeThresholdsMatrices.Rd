@@ -27,6 +27,6 @@ This is not as reliable a strategy and likely to be superceeded...
 # umx:::xmuMakeThresholdsMatrices(df = x, droplevels=FALSE, verbose= TRUE)
 }
 \references{
-- http://openmx.psyc.virginia.edu/
+- \url{http://tbates.github.io}
 }
 

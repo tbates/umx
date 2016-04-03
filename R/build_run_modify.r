@@ -413,11 +413,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' @seealso - \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, \strong{6}, 554-571. Retrieved from http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187
 #' @examples
-#' # The total sample has been subdivided into a young cohort, 
-#' # aged 18-30 years, and an older cohort aged 31 and above.
-#' # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
-#' # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-# # use ?twinData to learn about this data set
 #' require(umx)
 #' data(twinData) 
 #' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
@@ -427,7 +422,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' selDefs = c("age1", "age2")
 #' selVars = c(selDVs, selDefs)
 #' mzData  = subset(twinData, ZYG == "MZFF", selVars)
-#' dzData  = subset(twinData, ZYG == "DZMM", selVars)
+#' dzData  = subset(twinData, ZYG == "DZFF", selVars)
 #' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
 #' # Plot Moderation
 #' umxSummaryGxE(m1)
@@ -870,38 +865,19 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @family Twin Modeling Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' # Height, weight, and BMI data from Australian twins. 
-#' # The total sample has been subdivided into a young cohort, aged 18-30 years,
-#' # and an older cohort aged 31 and above.
-#' # Cohort 1 Zygosity is coded as follows: 
-#' # 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-#' # tip: ?twinData to learn more about this data set
 #' require(umx)
+#' # BMI ?twinData set from Australian twins.
 #' data(twinData)
 #' tmpTwin <- twinData
 #' names(tmpTwin)
-#' # "fam", "age", "zyg", "part",
-#' # "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2", 
-#' # "cohort", "zygosity", "age1", "age2" 
-#'   
-#' # Set zygosity to a factor
-#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
-#' 
 #' # Pick the variables
-#' selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
-#' # the function will then make the varnames for each twin using this:
-#' # for example. "VarSuffix1" "VarSuffix2"
-#' mzData <- tmpTwin[tmpTwin$zyg %in% "MZFF", selDVs]
-#' dzData <- tmpTwin[tmpTwin$zyg %in% "DZFF", selDVs]
-#' mzData <- mzData[1:100,] # just top 100 so example runs in a couple of secs
-#' dzData <- dzData[1:100,]
+#' selDVs = c("bmi1", "bmi2")
+#' selDVs = c("bmi1", "bmi2")
+#' mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
+#' dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' umxSummary(m1, showStd = TRUE)
-#' umxSummaryACE(m1)
-#' \dontrun{
 #' plot(m1)
-#' }
 #' # ADE model (DZ correlation set to .25)
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
@@ -1369,34 +1345,24 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 #' Behavior Genetics, 19(1), 63-78. doi:10.1007/BF01065884
 
 #' @examples
-#' # Height, weight, and BMI data from Australian twins. 
-#' # The total sample has been subdivided into a young cohort, aged 18-30 years,
-#' # and an older cohort aged 31 and above.
-#' # Cohort 1 Zygosity is coded as follows: 
-#' # 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-#' # tip: ?twinData to learn more about this data set
 #' require(umx)
 #' data(twinData)
 #' tmpTwin <- twinData
 #' # add age 1 and age 2 columns
 #' tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
-#' # Pick the variables. We will use base names (i.e., "bmi") and set suffix.
-# str(twinData)
 #' selDVs  = c("bmi")
 #' selCovs = c("age")
 #' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
-#' # just top 200 so example runs in a couple of secs
-#' mzData = subset(tmpTwin, zyg == 1, selVars)[1:200, ]
-#' dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
+#' # just top 80 so example runs in a couple of secs
+#' mzData = subset(tmpTwin, zyg == 1, selVars)[1:80, ]
+#' dzData = subset(tmpTwin, zyg == 3, selVars)[1:80, ]
 #' # TODO update for new dataset variable zygosity
-#' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
-#' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
+#' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:80, ]
+#' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:80, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 #' 	 suffix = "", autoRun = TRUE)
 #' umxSummary(m1)
-#' \dontrun{
 #' plot(m1)
-#' }
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	if(nrow(dzData)==0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData)==0){ stop("Your MZ dataset has no rows!") }

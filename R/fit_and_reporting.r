@@ -110,9 +110,18 @@ umxReduce <- function(m1, report = "html", baseFileName = "tmp") {
 #' @family Reporting functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' \dontrun{
-#' model = umx_drop_ok(model)
-#' }
+#' require(umx)
+#' data(demoOneFactor)
+#' latents   = c("g")
+#' manifests = names(demoOneFactor)
+#' myData    = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("OneFactor", data = myData,
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
+#' )
+#' m2 = umxModify(m1, update = "g_to_x1", name = "no effect on x1")
+#' umx_drop_ok(m1, m2, text = "the path to x1")
 umx_drop_ok <- function(model1, model2, text = "parameter") {
 	a = mxCompare(model1, model2)
 	if(a$diffdf[2] > 1){
@@ -1862,21 +1871,16 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 #' @examples
-#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' plot(m1)
-#' }
 plot.MxModel <- function(x = NA, std = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, resid = c("circle", "line", "none"), showError = "deprecated", ...) {
 	if(showError != "deprecated"){
 		message(omxQuotes("showError"), " is deprecated: in future, use ", 
@@ -2007,22 +2011,18 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, file = "name", pathLabe
 #' @return - optionally return the dot code
 #' @export
 #' @family Reporting functions
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
 #' data(twinData)
 #' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
-#' selDVs = c("bmi1","bmi2")
+#' selDVs = c("bmi1", "bmi2")
 #' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 #' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' m1 = mxRun(m1)
-#' \dontrun{
 #' plot(m1)
-#' umxPlotACE(m1, file = "override_model_name")
 #' plot(m1, std = FALSE) # don't standardize
-#' }
 umxPlotACE <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
 	model = x # just to be clear that x is a model
 	if(std){
@@ -2030,13 +2030,11 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std
 	}
 	out = "";
 	latents  = c();
-
 	if(model$submodels$MZ$data$type == "raw"){
 		selDVs = names(model$submodels$MZ$data$observed)
 	}else{
 		selDVs = dimnames(model$submodels$MZ$data$observed)[[1]]
 	}
-
 	varCount = length(selDVs)/2;
 	parameterKeyList = omxGetParameters(model);
 	for(thisParam in names(parameterKeyList) ) {
@@ -2099,37 +2097,26 @@ plot.MxModel.ACE <- umxPlotACE
 #' @return - optionally return the dot code
 #' @export
 #' @family Reporting functions
-#' @references - \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}
 #' @examples
-#' # Height, weight, and BMI data from Australian twins. 
-#' # The total sample has been subdivided into a young cohort, aged 18-30 years,
-#' # and an older cohort aged 31 and above.
-#' # Cohort 1 Zygosity is coded as follows: 
-#' # 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-#' # tip: ?twinData to learn more about this data set
 #' require(umx)
+#' # BMI ?twinData from Australian twins. 
+#' # Cohort 1 Zygosity 1 == MZ females 3 == DZ females
 #' data(twinData)
-#' tmpTwin <- twinData
-#' # add age 1 and age 2 columns
-#' tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
 #' # Pick the variables. We will use base names (i.e., "bmi") and set suffix.
-# str(twinData)
 #' selDVs  = c("bmi")
 #' selCovs = c("age")
 #' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
-#' # just top 200 so example runs in a couple of secs
-#' mzData = subset(tmpTwin, zyg == 1, selVars)[1:200, ]
-#' dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
+#' # just top 100 so example runs in a couple of secs
+#' mzData = subset(tmpTwin, zyg == 1, selVars)[1:100, ]
+#' dzData = subset(tmpTwin, zyg == 3, selVars)[1:100, ]
 #' # TODO update for new dataset variable zygosity
 #' # mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
 #' # dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 #' 	 suffix = "", autoRun = TRUE)
-#' \dontrun{
 #' plot(m1)
-#' umxPlotACEcov(m1, file = "override_model_name")
 #' plot(m1, std = FALSE) # don't standardize
-#' }
 umxPlotACEcov <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
 	model = x # just to be clear that x is a model
 	# relies on 'a' not having its dimnames stripped off...
@@ -2213,11 +2200,17 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 #' @seealso - \code{\link{umxGxE}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
-#' \dontrun{
-#' # TODO  add example
-#' umxPlot(model)
-#' umxPlotGxE(x = model, xlab = "SES", location = "topleft") # mainTitle="Moderation effect", 
-#' }
+#' require(umx)
+#' data(twinData) 
+#' twinData$age1 = twinData$age2 = twinData$age
+#' selDVs  = c("bmi1", "bmi2")
+#' selDefs = c("age1", "age2")
+#' selVars = c(selDVs, selDefs)
+#' mzData  = subset(twinData, zyg == 1, selVars)
+#' dzData  = subset(twinData, zyg == 3, selVars)
+#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData, dropMissing = TRUE)
+#' plot(m1)
+#' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
 	model = x # to emphasise that x has to be a umxGxE model
 	# get unique values of moderator
@@ -2282,8 +2275,7 @@ plot.MxModel.GxE <- umxPlotGxE
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' plot(model) # no need to remember a special name: plot works fine!
-#' umxPlotCP(model, file = "MyPreferredName.gv")
+#' plot(yourCP_Model) # no need to remember a special name: plot works fine!
 #' }
 umxPlotCP <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
 	model = x # just to emphasise that x has to be a model 
@@ -2380,7 +2372,6 @@ plot.MxModel.CP <- umxPlotCP
 #' @examples
 #' \dontrun{
 #' plot(model)
-#' umxPlotIP(model, file = "special_name.gv")
 #' umxPlotIP(model, file = NA)
 #' }
 umxPlotIP  <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
@@ -2475,29 +2466,25 @@ plot.MxModel.IP <- umxPlotIP
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
-#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' manifests = names(demoOneFactor)[1:3]
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' umxMI(model)
-#' umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
-#' }
+#' umxMI(m1, full=FALSE)
 umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToShow = "both", decreasing = TRUE) {
+	if(typeToShow != "both"){
+		message("Only showing both add and remove is supported so far")
+	}
 	if(is.na(matrices)){
 		if(umx_is_RAM(model)){
 			matrices = c("A", "S")
 		}
 	}
-	# e.g. MI = mxMI(model = m1, matrices = c("A", "S"), full = TRUE)
 	suppressMessages({MI = mxMI(model = model, matrices = matrices, full = full)})
 	if(full){
 		MIlist = MI$MI.Full
@@ -2515,67 +2502,12 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 			suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
 		} else {
 			suggestions = sort(MIlist[MIlist > thresh], decreasing = TRUE)
-		}
-		
+		}		
 	} else {
 		suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
 	}
 	print(suggestions)
 	invisible(MI)
-
-	# MI: The restricted modification index.
-	# MI.Full: The full modification index.
-	# plusOneParamModels: A list of models with one additional free parameter
-
-	# if(typeof(model) == "list"){
-	# 	mi.df = model
-	# } else {
-	# 	mi = xmuMI(model, vector = TRUE)
-	# 	mi.df = data.frame(path= as.character(attributes(mi$mi)$names), value=mi$mi);
-	# 	row.names(mi.df) = 1:nrow(mi.df);
-	# 	# TODO: could be a helper: choose direction
-	# 	mi.df$from = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\1", mi.df$path)
-	# 	mi.df$to   = sub(pattern="(.*) +(<->|<-|->) +(.*)", replacement="\\3", mi.df$path)
-	# 	mi.df$arrows = 1
-	# 	mi.df$arrows[grepl("<->", mi.df$path)]= 2
-	#
-	# 	mi.df$action = NA
-	# 	mi.df  = mi.df[order(abs(mi.df[,2]), decreasing = decreasing),]
-	# 	mi.df$copy = 1:nrow(mi.df)
-	# 	for(n in 1:(nrow(mi.df)-1)) {
-	# 		if(grepl(" <- ", mi.df$path[n])){
-	# 			tmp = mi.df$from[n]; mi.df$from[n] = mi.df$to[n]; mi.df$to[n] = tmp
-	# 		}
-	# 		from = mi.df$from[n]
-	# 		to   = mi.df$to[n]
-	# 		a = (model$matrices$S$free[to,from] |model$matrices$A$free[to,from])
-	# 		b = (model$matrices$S$values[to,from]!=0 |model$matrices$A$values[to,from] !=0)
-	# 		if(a|b){
-	# 			mi.df$action[n]="delete"
-	# 		} else {
-	# 			mi.df$action[n]="add"
-	# 		}
-	# 		inc= min(4,nrow(mi.df)-(n))
-	# 		for (i in 1:inc) {
-	# 			if((mi.df$copy[(n)])!=n){
-	# 				# already dirty
-	# 			}else{
-	# 				# could be a helper: swap two
-	# 				from1 = mi.df[n,"from"]     ; to1   = mi.df[n,"to"]
-	# 				from2 = mi.df[(n+i),"from"] ; to2   = mi.df[(n+i),'to']
-	# 				if((from1==from2 & to1==to2) | (from1==to2 & to1==from2)){
-	# 					mi.df$copy[(n+i)]<-n
-	# 				}
-	# 			}
-	# 		}
-	# 	}
-	# }
-	# mi.df = mi.df[unique(mi.df$copy),] # c("copy")
-	# if(typeToShow != "both"){
-	# 	mi.df = mi.df[mi.df$action == typeToShow,]
-	# }
-	# print(mi.df[1:numInd, !(names(mi.df) %in% c("path","copy"))])
-	# invisible(mi.df)
 }
 
 # ======================
@@ -3432,6 +3364,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA, rounding
 #' summaryAPA(.4, .3)
 #' # format p-value
 #' summaryAPA(.0182613)
+#' summaryAPA(.000182613)
 summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("table", "html")) {
 	report = match.arg(report)
 	if(class(obj)=="data.frame"){

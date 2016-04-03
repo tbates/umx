@@ -93,38 +93,19 @@ from 1 (the default for modelling family-level effects shared 100% by twins in a
 to .25 to model dominance effects.
 }
 \examples{
-# Height, weight, and BMI data from Australian twins. 
-# The total sample has been subdivided into a young cohort, aged 18-30 years,
-# and an older cohort aged 31 and above.
-# Cohort 1 Zygosity is coded as follows: 
-# 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-# tip: ?twinData to learn more about this data set
 require(umx)
+# BMI ?twinData set from Australian twins.
 data(twinData)
 tmpTwin <- twinData
 names(tmpTwin)
-# "fam", "age", "zyg", "part",
-# "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2", 
-# "cohort", "zygosity", "age1", "age2" 
-  
-# Set zygosity to a factor
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
-
 # Pick the variables
-selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
-# the function will then make the varnames for each twin using this:
-# for example. "VarSuffix1" "VarSuffix2"
-mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", selDVs]
-dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", selDVs]
-mzData <- mzData[1:100,] # just top 100 so example runs in a couple of secs
-dzData <- dzData[1:100,]
+selDVs = c("bmi1", "bmi2")
+selDVs = c("bmi1", "bmi2")
+mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
+dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 umxSummary(m1, showStd = TRUE)
-umxSummaryACE(m1)
-\dontrun{
 plot(m1)
-}
 # ADE model (DZ correlation set to .25)
 m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # ADE is better

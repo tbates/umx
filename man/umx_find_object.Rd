@@ -21,6 +21,7 @@ The string (pattern) is grep-enabled, so you can match wild-cards
 \examples{
 \dontrun{
 umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
+umx_find_object("", "MxModel") # all MxModels
 }
 }
 \references{
