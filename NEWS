@@ -1,7 +1,7 @@
 
 # umx 1.2.5
-* Bug fix: sill $models bug in umxStandardizeACE
-* greatly expand example test suite to avoid this in future
+* FIX: $models bug in umxStandardizeACE
+* EXPAND test suite
 
 umx 1.2.0
 --------------

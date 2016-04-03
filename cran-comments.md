@@ -1,5 +1,5 @@
 ## Changes
-Dumb bug in umxStandardizeACE which this patches and adds tests for.
+Function umxStandardizeACE needed a patch.
 
 ## Test environments
 * OS X 10.11.4, R version 3.2.4 (2016-12-10)
@@ -14,7 +14,7 @@ No ERRORs, WARNINGs, or NOTES
 
 There are currently no downstream dependencies for this package.
 
-NOTE: I apologise for releasing an update so soon: 
-I added a bunch of unit tests to avoid this in future.
+NOTE: Apologies for updating so soon:  Added several additional unit tests 
+to avoid this in future. Also speeded-up example suite.
 
-Best wishes, tim
+Many thanks, tim
