@@ -47,7 +47,7 @@ umx_time(m1)
 m2 = umxRun(m1)
 umx_time(c(m1, m2))
 umx_time('stop')
-# elapsed time: 05.23 seconds
+# elapsed time: .3 seconds
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

@@ -1739,8 +1739,11 @@ umxCov2cor <- function(x) {
 #' m2 = umxRun(m1)
 #' umx_time(c(m1, m2))
 #' umx_time('stop')
-#' # elapsed time: 05.23 seconds
+#' # elapsed time: .3 seconds
 umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
+	if(is.na(model)){
+		stop("Valid requests are 'start', 'stop', or a model as argument")
+	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	# TODO output a nicely formated table
 	for(i in 1:length(model)) {			
@@ -1770,7 +1773,7 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 				lastTime = thisTime
 				timeDelta = ""
 			} else {
-				timeDelta = paste0("(\u2206: ", round(thisTime - lastTime, 3), ")")
+				timeDelta = paste0("(\u2583: ", round(thisTime - lastTime, 3), ")")
 			}
 		}
 		if(formatStr == "std"){
@@ -1790,7 +1793,8 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 				formatStr = "%OS2 seconds"
 			}
 		}
-		if(class(model) == "character"){
+		
+		if(class(m) == "character"){
 			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", formatStr))
 		} else {
 			timeString = format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta))

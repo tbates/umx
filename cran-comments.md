@@ -1,5 +1,5 @@
 ## Changes
-Function umxStandardizeACE needed a patch.
+Function umxStandardizeACE was broken in last build.
 
 ## Test environments
 * OS X 10.11.4, R version 3.2.4 (2016-12-10)
