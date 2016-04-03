@@ -1,6 +1,5 @@
 ## Changes
-Compatibility with OpenMx 2.5.2. Require R 3.2
-More features, inc plotting with DiagrammeR
+Dumb bug in umxStandardizeACE which this patches and adds tests for.
 
 ## Test environments
 * OS X 10.11.4, R version 3.2.4 (2016-12-10)
@@ -15,6 +14,7 @@ No ERRORs, WARNINGs, or NOTES
 
 There are currently no downstream dependencies for this package.
 
-Note: I reduced 4 example run times. A couple are likely still over (can't tell as can't repro)
+NOTE: I apologise for releasing an update so soon: 
+I added a bunch of unit tests to avoid this in future.
 
 Best wishes, tim

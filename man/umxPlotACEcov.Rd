@@ -36,12 +36,12 @@ data(twinData)
 selDVs  = c("bmi")
 selCovs = c("age")
 selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
-# just top 100 so example runs in a couple of secs
-mzData = subset(tmpTwin, zyg == 1, selVars)[1:100, ]
-dzData = subset(tmpTwin, zyg == 3, selVars)[1:100, ]
+# just top few pairs so example runs quickly
+mzData = subset(twinData, zyg == 1, selVars)[1:100, ]
+dzData = subset(twinData, zyg == 3, selVars)[1:100, ]
 # TODO update for new dataset variable zygosity
-# mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
-# dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
+# mzData = subset(twinData, zygosity == "MZFF", selVars)[1:200, ]
+# dzData = subset(twinData, zygosity == "DZFF", selVars)[1:200, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 	 suffix = "", autoRun = TRUE)
 plot(m1)

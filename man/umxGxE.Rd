@@ -45,15 +45,13 @@ The following figure the GxE model as a path diagram:
 \examples{
 require(umx)
 data(twinData) 
-zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = c("bmi1", "bmi2")
 selDefs = c("age1", "age2")
 selVars = c(selDVs, selDefs)
-mzData  = subset(twinData, ZYG == "MZFF", selVars)
-dzData  = subset(twinData, ZYG == "DZFF", selVars)
-m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
+mzData  = subset(twinData, zyg == 1, selVars)[1:80,]
+dzData  = subset(twinData, zyg == 3, selVars)[1:80,]
+m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData, dropMissing = TRUE)
 # Plot Moderation
 umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")
