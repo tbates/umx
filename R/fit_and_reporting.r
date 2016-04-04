@@ -1674,8 +1674,8 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 
 	tablePub = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
 	# names(tablePub)     <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
-	names(tablePub)     <- c("Model"     , "EP", "\u25B3 -2LL", "\u25B3 df", "p", "AIC", "Compare with Model")
-	# "\U+25B3"
+	names(tablePub)     <- c("Model"     , "EP", "\u2206 -2LL", "\u2206 df", "p", "AIC", "Compare with Model")
+	# U+2206 = math delta
 	# Fix problem where base model has compare set to its own name, and name set to NA
 	nRows = dim(tablePub)[1]
 	for (i in 1:nRows) {

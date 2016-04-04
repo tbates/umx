@@ -1741,7 +1741,7 @@ umxCov2cor <- function(x) {
 #' umx_time('stop')
 #' # elapsed time: .3 seconds
 umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
-	if(is.na(model)){
+	if(!umx_is_MxModel(m1) && any(is.na(model))){
 		stop("Valid requests are 'start', 'stop', or a model as argument")
 	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
@@ -1773,7 +1773,7 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 				lastTime = thisTime
 				timeDelta = ""
 			} else {
-				timeDelta = paste0("(\u2583: ", round(thisTime - lastTime, 3), ")")
+				timeDelta = paste0("(\u2206: ", round(thisTime - lastTime, 3), ")")
 			}
 		}
 		if(formatStr == "std"){
