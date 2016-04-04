@@ -27,11 +27,18 @@ see ?legend for alternatives like bottomright}
 Plot GxE results (univariate environmental moderation of ACE components)
 }
 \examples{
-\dontrun{
-# TODO  add example
-umxPlot(model)
-umxPlotGxE(x = model, xlab = "SES", location = "topleft") # mainTitle="Moderation effect", 
-}
+require(umx)
+data(twinData) 
+twinData$age1 = twinData$age2 = twinData$age
+selDVs  = c("bmi1", "bmi2")
+selDefs = c("age1", "age2")
+selVars = c(selDVs, selDefs)
+mzData  = subset(twinData, zyg == 1, selVars)
+dzData  = subset(twinData, zyg == 3, selVars)
+m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+ 	dzData = dzData, mzData = mzData, dropMissing = TRUE)
+plot(m1)
+umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 }
 \references{
 - \url{http://tbates.github.io}

@@ -30,22 +30,17 @@ freed parameter).
 You are almost certainly doing better science when testing competing models rather than modifying a model to fit.
 }
 \examples{
-\dontrun{
 require(umx)
 data(demoOneFactor)
 latents  = c("G")
-manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+manifests = names(demoOneFactor)[1:3]
+df = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = df,
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-umxMI(model)
-umxMI(model, numInd=5, typeToShow="add") # valid options are "both|add|delete"
-}
+umxMI(m1, full=FALSE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

@@ -16,9 +16,17 @@ umx_standardize_ACEcov(fit)
 Standardize an ACE model with covariates
 }
 \examples{
-\dontrun{
-fit = umx_standardize_ACE(fit)
-}
+require(umx)
+data(twinData)
+twinData$age1 = twinData$age2 = twinData$age
+selDVs  = c("bmi")
+selCovs = c("age")
+selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
+mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
+dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
+m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
+	 suffix = "", autoRun = TRUE)
+fit = umx_standardize_ACEcov(m1)
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}

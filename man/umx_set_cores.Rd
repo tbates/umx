@@ -35,7 +35,7 @@ umx_set_cores(model = m1)  # show new value for m1
 umx_set_cores(oldCores)    # reinstate old global value
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set: \code{\link{umx_get_checkpoint}},

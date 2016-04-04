@@ -30,7 +30,6 @@ Make a graphical display of an Independent Pathway model
 \examples{
 \dontrun{
 plot(model)
-umxPlotIP(model, file = "special_name.gv")
 umxPlotIP(model, file = NA)
 }
 }

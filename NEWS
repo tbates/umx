@@ -1,61 +1,70 @@
+# umx 1.2.7
+* IMPROVED: umx_time handling of no input arguments
+* 
+
+# umx 1.2.5
+* April 2016 bug fix release
+* FIX: $models bug in umxStandardizeACE
+* EXPAND: test suite
 
 # umx 1.2.0
-* April 2016 Very Secure Dishes (3.2.4) edition
+* April 2016 R 3.2.4 Very Secure Dishes edition
 * NEW: Plot using DiagrammeR!
 * NEW: Choose plot format!
-* NEW: umx_set_plot_format("DiagrammeR")
-* NEW: umx_set_plot_format("graphviz")
+ * umx_set_plot_format("DiagrammeR")
+ * umx_set_plot_format("graphviz")
 * NEW: Choose table format!
-* NEW: umx_set_table_format("markdown")
-* NEW: umx_set_table_format("latex")
-* NEW: Control plotting by default: umx_set_auto_plot(TRUE) 
+ * umx_set_table_format("markdown")
+ * umx_set_table_format("latex")
+* NEW: set plotting by default: umx_set_auto_plot(TRUE) 
 * NEW: EFA! with umxEFA() (exploratory factor analysis is beta!)
 * NEW loadings() support for umxEFA
 * CHANGE:  .dot --> .gv suffix for plotting (more compatible)
 * CHANGE: To $ from @ accessors for OpenMx compression compatibility
-* BETTER: More Help! ACECov figure, ... many other improvements
+* BETTER: Help! ACECov figure, ... many other improvements
 * ENHANCED: umx_print, umx_show, umxCompare
 * REQUIRE knitr, DiagrammeR
 * INCREASE minimum R / OpenMx to  >= 3.2.0 / >= 2.5.0
 
 # umx 1.1.5
+* March 2016 Boulder Workshop feedback updates
 * NEW: plot() now works on Windows and Unix as well as OS X! (h/t @mhunter)
 * CHANGE: umxReRun to umxModify (h/t @hmaes)
 * BETTER: compatibility with OpenMx 2.5.2
 
 # umx 1.1.1
-* Feb 2016 Wooden Christmas-Tree edition
-* auto-run now the default for all models!
+* Feb 2016 R 3.2.3 Wooden Christmas Tree edition
+* NEW: auto-run now the default for all models!
 	* Added option to switch this: options("umx_auto_run" = TRUE)
-* plot should generate pdfs for Windows and Unix users now
-* umxACEcov support for ACE with covariates
-* umx_check_parallel now returns timing information
-* umx_time now supports "start" and "stop")
-* umxAPA can format more objects in APA style, inc just a p-value)
-* summaryAPA can now summarise a data.frame with mean, sd, and correlations
-* umxLabel now preserves existing labels in umxRAM models: labels = is now saved
-* umx_make_TwinData added to support simulation studies
-* Help improvements (wording, seealso etc)
-* Removed dependency on formula.tools
+* NEW: plot should generate pdfs for Windows and Unix users now
+* NEW: umxACEcov support for ACE with covariates
+* NEW: umx_make_TwinData added to support simulation studies
+* BETTER: umx_check_parallel now returns timing information
+* BETTER: umx_time now supports "start" and "stop")
+* BETTER: umxAPA can format more objects in APA style, inc just a p-value)
+* BETTER: summaryAPA can now summarise a data.frame with mean, sd, and correlations
+* BETTER: umxLabel now preserves existing labels in umxRAM models: labels = is now saved
+* BETTER: Help improvements (wording, seealso etc)
+* DEEP: Removed dependency on formula.tools
 
 # umx 1.1.0
 * December 2015 update
-* umxRAM can take existing model as input (very useful)
-* umxRAM reports model fit and comparison (if old model exists)
-* umxPath now lbounds var@0 for v.m.
-* umx_residualize  can now take multiple DVs
-* umxMI enhanced to cope with more situations
-* summary more resilient with missing CIs (#ht Nathan Gillespie!)
-* summaryAPA now handles data as well as lm
-* Improved help for twin functions
+* NEW: vcov() added
+* NEW: Begin support for sex-lim twin models
+* NEW: New data file for sex-limitation
+* IMPROVED: umxRAM can take existing model as input (very useful)
+* IMPROVED: umxRAM reports model fit and comparison (if old model exists)
+* IMPROVED: umxPath now lbounds var@0 for v.m.
+* IMPROVED: umx_residualize  can now take multiple DVs
+* IMPROVED: umxMI enhanced to cope with more situations
+* IMPROVED: summary more resilient with missing CIs (#ht Nathan Gillespie!)
+* IMPROVED: summaryAPA now handles data as well as lm
+* IMPROVED: help for twin functions
 * Various new function features
-* vcov() S3 fn added
-* umx_print resilient to 0-row input
-* summary helpers (e.g. umx_fun_mean_sd)
-* Begin support for sex-lim twin models
-* New data file for sex-limitation
-* Improving consistency in parameter names (minor backward incompatibility)
-* Replacing @ with $ accessor begun
+* IMPROVED: umx_print resilient to 0-row input
+* IMPROVED: summary helpers (e.g. umx_fun_mean_sd)
+* IMPROVED: consistency in parameter names (minor backward incompatibility)
+* DEEP: Replacing @ with $ accessor begun
 
 # umx 1.0.0
 * NEW CP twin models! (create, plot, summary) 
@@ -73,19 +82,16 @@
 * First CRAN release
 
 # umx 0.49.0
-
 * Ensuring edge cases work
 * Improving help files and feedback
 * rationalizing fn names into @families
 
 # umx 0.45-beta
-
 * Feature complete
 * Bug squashing
 * Optimizing fn names for memorability and typing
 
 # umx 0.40-beta
-
 * Beta level!
 * Standard confint(); plot() etc functions implemented
 * Adding umxRAM() and umxPath shortcuts

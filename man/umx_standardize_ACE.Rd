@@ -16,9 +16,13 @@ umx_standardize_ACE(fit)
 Standardize an ACE model
 }
 \examples{
-\dontrun{
-fit = umx_standardize_ACE(fit)
-}
+require(umx)
+data(twinData)
+selDVs = c("bmi1", "bmi2")
+mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
+dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
+m1  = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+std = umx_standardize_ACE(m1)
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}

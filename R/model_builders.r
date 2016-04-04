@@ -72,8 +72,8 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 			if(length(x) > 1) {
 				umx_check_names(x, data)
 				data = data[,x]
-			} else {
-				stop("Did you give me a formula to select columns? I can't handle that yet")
+			} else if (inherits(x,"formula")){
+				stop("Nice formula! Sadly I can't handle formulae yet: email tim and abuse him about this failing")
 				# todo: handle is.formula()
 			}
 		}

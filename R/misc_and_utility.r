@@ -117,7 +117,7 @@ umx_set_auto_run <- function(autoRun = NA) {
 #' @return - number of cores
 #' @export
 #' @family Get and set
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' library(umx)
 #' manifests = c("mpg", "disp", "gear")
@@ -850,7 +850,7 @@ umx_as_numeric <- function(df, force = FALSE) {
 #' @examples
 #' \dontrun{
 #' umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
-#  umx_find_object("", "MxModel") # all MxModels
+#' umx_find_object("", "MxModel") # all MxModels
 #' }
 umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 	# Use case: umxFindObject("Chol*", "MxModel")
@@ -1739,8 +1739,11 @@ umxCov2cor <- function(x) {
 #' m2 = umxRun(m1)
 #' umx_time(c(m1, m2))
 #' umx_time('stop')
-#' # elapsed time: 05.23 seconds
+#' # elapsed time: .3 seconds
 umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
+	if(is.na(model)){
+		stop("Valid requests are 'start', 'stop', or a model as argument")
+	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	# TODO output a nicely formated table
 	for(i in 1:length(model)) {			
@@ -1770,7 +1773,7 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 				lastTime = thisTime
 				timeDelta = ""
 			} else {
-				timeDelta = paste0("(\u2206: ", round(thisTime - lastTime, 3), ")")
+				timeDelta = paste0("(\u2583: ", round(thisTime - lastTime, 3), ")")
 			}
 		}
 		if(formatStr == "std"){
@@ -1790,7 +1793,8 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 				formatStr = "%OS2 seconds"
 			}
 		}
-		if(class(model) == "character"){
+		
+		if(class(m) == "character"){
 			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", formatStr))
 		} else {
 			timeString = format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta))
@@ -3892,9 +3896,13 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #' @family zAdvanced Helpers
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' \dontrun{
-#' fit = umx_standardize_ACE(fit)
-#' }
+#' require(umx)
+#' data(twinData)
+#' selDVs = c("bmi1", "bmi2")
+#' mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
+#' dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
+#' m1  = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' std = umx_standardize_ACE(m1)
 umx_standardize_ACE <- function(fit) {
 	if(typeof(fit) == "list"){ # call self recursively
 		for(thisFit in fit) {
@@ -3921,9 +3929,9 @@ umx_standardize_ACE <- function(fit) {
 		SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
 	
 		# Standardized _path_ coefficients ready to be stacked together
-		fit$top$matrices$a$values = SD %*% a; # Standardized path coefficients
-		fit$top$matrices$c$values = SD %*% c;
-		fit$top$matrices$e$values = SD %*% e;
+		fit$top$a$values = SD %*% a; # Standardized path coefficients
+		fit$top$c$values = SD %*% c;
+		fit$top$e$values = SD %*% e;
 		return(fit)
 	}
 }
@@ -3939,9 +3947,17 @@ umx_standardize_ACE <- function(fit) {
 #' @family zAdvanced Helpers
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' \dontrun{
-#' fit = umx_standardize_ACE(fit)
-#' }
+#' require(umx)
+#' data(twinData)
+#' twinData$age1 = twinData$age2 = twinData$age
+#' selDVs  = c("bmi")
+#' selCovs = c("age")
+#' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
+#' mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
+#' dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
+#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
+#' 	 suffix = "", autoRun = TRUE)
+#' fit = umx_standardize_ACEcov(m1)
 umx_standardize_ACEcov <- function(fit) {
 	if(typeof(fit) == "list"){ # call self recursively
 		for(thisFit in fit) {

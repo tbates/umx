@@ -43,21 +43,16 @@ The following figure the GxE model as a path diagram:
 \figure{GxE.png}
 }
 \examples{
-# The total sample has been subdivided into a young cohort, 
-# aged 18-30 years, and an older cohort aged 31 and above.
-# Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
-# 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
 require(umx)
 data(twinData) 
-zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = c("bmi1", "bmi2")
 selDefs = c("age1", "age2")
 selVars = c(selDVs, selDefs)
-mzData  = subset(twinData, ZYG == "MZFF", selVars)
-dzData  = subset(twinData, ZYG == "DZMM", selVars)
-m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
+mzData  = subset(twinData, zyg == 1, selVars)[1:80,]
+dzData  = subset(twinData, zyg == 3, selVars)[1:80,]
+m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+	dzData = dzData, mzData = mzData, dropMissing = TRUE)
 # Plot Moderation
 umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")

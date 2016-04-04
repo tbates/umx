@@ -93,38 +93,17 @@ from 1 (the default for modelling family-level effects shared 100% by twins in a
 to .25 to model dominance effects.
 }
 \examples{
-# Height, weight, and BMI data from Australian twins. 
-# The total sample has been subdivided into a young cohort, aged 18-30 years,
-# and an older cohort aged 31 and above.
-# Cohort 1 Zygosity is coded as follows: 
-# 1 == MZ females 2 == MZ males 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-# tip: ?twinData to learn more about this data set
 require(umx)
+# BMI ?twinData set from Australian twins.
 data(twinData)
-tmpTwin <- twinData
-names(tmpTwin)
-# "fam", "age", "zyg", "part",
-# "wt1", "wt2", "ht1", "ht2", "htwt1", "htwt2", "bmi1", "bmi2", 
-# "cohort", "zygosity", "age1", "age2" 
-  
-# Set zygosity to a factor
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
-
 # Pick the variables
-selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
-# the function will then make the varnames for each twin using this:
-# for example. "VarSuffix1" "VarSuffix2"
-mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", selDVs]
-dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", selDVs]
-mzData <- mzData[1:100,] # just top 100 so example runs in a couple of secs
-dzData <- dzData[1:100,]
+selDVs = c("bmi1", "bmi2")
+selDVs = c("bmi1", "bmi2")
+mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
+dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 umxSummary(m1, showStd = TRUE)
-umxSummaryACE(m1)
-\dontrun{
 plot(m1)
-}
 # ADE model (DZ correlation set to .25)
 m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # ADE is better
@@ -136,54 +115,40 @@ umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
 # ===================
 require(umx)
 data(twinData)
-tmpTwin <- twinData
-# Set zygosity to a factor
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
-
 # Cut bmi colum to form ordinal obesity variables
 ordDVs = c("obese1", "obese2")
 selDVs = c("obese")
 obesityLevels = c('normal', 'overweight', 'obese')
-cutPoints <- quantile(tmpTwin[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-tmpTwin$obese1 <- cut(tmpTwin$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-tmpTwin$obese2 <- cut(tmpTwin$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
-tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
-mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", umx_paste_names(selDVs, "", 1:2)]
-dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", umx_paste_names(selDVs, "", 1:2)]
-mzData <- mzData[1:100,] # just top 100 so example runs in a couple of secs
-dzData <- dzData[1:100,]
+twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
+dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
+mzData <- mzData[1:80,] # just top 80 pairs to run fast
+dzData <- dzData[1:80,]
 str(mzData)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-\dontrun{
 umxSummary(m1)
-plot(m1)
-}
 
 # ============================================
 # = Bivariate continuous and ordinal example =
 # ============================================
 data(twinData)
-tmpTwin <- twinData
 selDVs = c("wt", "obese")
-# Set zygosity to a factor
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
-
 # Cut bmi column to form ordinal obesity variables
 ordDVs = c("obese1", "obese2")
 obesityLevels = c('normal', 'overweight', 'obese')
-cutPoints <- quantile(tmpTwin[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-tmpTwin$obese1 <- cut(tmpTwin$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-tmpTwin$obese2 <- cut(tmpTwin$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
-tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
-mzData <- tmpTwin[tmpTwin$zyg \%in\% "MZFF", umx_paste_names(selDVs, "", 1:2)]
-dzData <- tmpTwin[tmpTwin$zyg \%in\% "DZFF", umx_paste_names(selDVs, "", 1:2)]
-mzData <- mzData[1:100,] # just top 100 so example runs in a couple of secs
-dzData <- dzData[1:100,]
-str(mzData)
+twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
+dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
+mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
+dzData <- dzData[1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)
 
@@ -193,24 +158,19 @@ umxSummary(m1)
 # =======================================
 require(umx)
 data(twinData)
-tmpTwin <- twinData
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
 # Cut to form category of 20\% obese subjects
-cutPoints <- quantile(tmpTwin[, "bmi1"], probs = .2, na.rm = TRUE)
+cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 obesityLevels = c('normal', 'obese')
-tmpTwin$obese1 <- cut(tmpTwin$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-tmpTwin$obese2 <- cut(tmpTwin$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 ordDVs = c("obese1", "obese2")
-tmpTwin[, ordDVs] <- mxFactor(tmpTwin[, ordDVs], levels = obesityLevels)
+twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
 selDVs = c("wt", "obese")
-mzData <- tmpTwin[tmpTwin$zyg == "MZFF", umx_paste_names(selDVs, "", 1:2)]
-dzData <- tmpTwin[tmpTwin$zyg == "DZFF", umx_paste_names(selDVs, "", 1:2)]
-mzData <- mzData[1:100,] # just top 200 so example runs in a couple of secs
-dzData <- dzData[1:100,]
-str(mzData)
-umx_paste_names(selDVs, "", 1:2)
+mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
+dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
+mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
+dzData <- dzData[1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)
 
@@ -220,17 +180,12 @@ umxSummary(m1)
 
 require(umx)
 data(twinData)
-tmpTwin <- twinData
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
 selDVs = c("wt1", "wt2")
-mz = cov(tmpTwin[tmpTwin$zyg \%in\% "MZFF", selDVs], use = "complete")
-dz = cov(tmpTwin[tmpTwin$zyg \%in\% "DZFF", selDVs], use = "complete")
-m1 = umxACE(selDVs= selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
+mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
+dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
+m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 umxSummary(m1)
-\dontrun{
 plot(m1)
-}
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
