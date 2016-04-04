@@ -1,12 +1,11 @@
 
-umx 1.2.0
---------------
+# umx 1.2.0
 * April 2016 Very Secure Dishes (3.2.4) edition
 * NEW: Plot using DiagrammeR!
 * NEW: Choose plot format!
 * NEW: umx_set_plot_format("DiagrammeR")
 * NEW: umx_set_plot_format("graphviz")
-* NEW: Choose plot format!
+* NEW: Choose table format!
 * NEW: umx_set_table_format("markdown")
 * NEW: umx_set_table_format("latex")
 * NEW: Control plotting by default: umx_set_auto_plot(TRUE) 
@@ -19,15 +18,12 @@ umx 1.2.0
 * REQUIRE knitr, DiagrammeR
 * INCREASE minimum R / OpenMx to  >= 3.2.0 / >= 2.5.0
 
-umx 1.1.5
---------------
+# umx 1.1.5
 * NEW: plot() now works on Windows and Unix as well as OS X! (h/t @mhunter)
 * CHANGE: umxReRun to umxModify (h/t @hmaes)
 * BETTER: compatibility with OpenMx 2.5.2
 
-umx 1.1.1
---------------
-
+# umx 1.1.1
 * Feb 2016 Wooden Christmas-Tree edition
 * auto-run now the default for all models!
 	* Added option to switch this: options("umx_auto_run" = TRUE)
@@ -42,9 +38,7 @@ umx 1.1.1
 * Help improvements (wording, seealso etc)
 * Removed dependency on formula.tools
 
-umx 1.1.0
---------------
-
+# umx 1.1.0
 * December 2015 update
 * umxRAM can take existing model as input (very useful)
 * umxRAM reports model fit and comparison (if old model exists)
@@ -63,56 +57,45 @@ umx 1.1.0
 * Improving consistency in parameter names (minor backward incompatibility)
 * Replacing @ with $ accessor begun
 
-umx 1.0.0
---------------
+# umx 1.0.0
+* NEW CP twin models! (create, plot, summary) 
+* NEW IP twin models! (create, plot, summary) 
+* NEW GxE twin models! (create, plot, summary) 
+* FIXED limitation in umxPath where "to" was not being set.
+* SUPPORT circles as well as lines for residualvariance
+* IMPROVE help text. Thanks Mike Neale esp.!
+* IMPROVE organization of functions into @families in the help.
+* IMPROVE example for umx_lower2full()
+* DROPPED umxRAM functionality to set endogenous, exogenous, and latent traits
+* DROPPED a dozen deprecated functions.
 
-* Full support (create, plot, summary) for CP twin models!
-* Full support (create, plot, summary) for IP twin models!
-* Full support (create, plot, summary) for GxE twin models!
-* Fixed limitation in umxPath where "to" was not being set.
-* Add support for circles as well as lines for residualvariance
-* Improve help text. Thanks Mike Neale esp.!
-* Improved organization of functions into @families in the help.
-* Improved example for umx_lower2full()
-* Dropped umxRAM functionality to set endogenous, exogenous, and latent traits
-* Dropped a dozen deprecated functions.
-
-umx 0.50.0
---------------
-
+# umx 0.50.0
 * First CRAN release
 
-umx 0.49.0
---------------
+# umx 0.49.0
 
 * Ensuring edge cases work
 * Improving help files and feedback
 * rationalizing fn names into @families
 
-umx 0.45-beta
---------------
+# umx 0.45-beta
 
 * Feature complete
 * Bug squashing
 * Optimizing fn names for memorability and typing
 
-umx 0.40-beta
---------------
+# umx 0.40-beta
 
 * Beta level!
 * Standard confint(); plot() etc functions implemented
 * Adding umxRAM() and umxPath shortcuts
 
-umx 0.30-alpha
---------------
-
+# umx 0.30-alpha
 * Alpha release
 * 90% feature complete
 * lots of name rationalization
 
-umx 0.25-alpha
---------------
-
+# umx 0.25-alpha
 * Alpha release
 * 80% feature complete
 * Function prefix reflects usage:: umxMajor, umx_utility_function, xmuNotForUser
