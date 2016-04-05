@@ -2,6 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{getOpenMx}
 \alias{getOpenMx}
+\alias{umx_get_OpenMx}
 \title{getOpenMx}
 \usage{
 getOpenMx()
