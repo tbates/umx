@@ -1,3 +1,31 @@
+library(lme4)
+library(visreg)
+str(sleepstudy)
+df = umx_rename(sleepstudy, "RT","Reaction")
+fm1 <- lmer(RT ~ Days + (Days | Subject), df)
+visreg(fm1)
+
+umxSubjectLevel <- function(data = theData, primaryKey = "Subject") {
+	subjectData = data.frame(Subject = unique(data[,primaryKey]))
+	subjectLevelModel <− umxRAM("subjectLevel", # level1?
+		data = mxData(subjectData, type = "raw", primaryKey = primaryKey),
+		umxPath(var = c("intercept" , "slope")),
+		umxPath("intercept", with = "slope", labels = "cov1")
+	)
+}
+
+multi_level_sem <− mxModel("sleep", type="RAM", 
+	umxSubjectLevel(data = theData, primaryKey = "Subject"),
+	manifestVars = "Reaction" , latentVars = "Days",
+	mxData(sleepstudy, type = "raw", sort = FALSE) ,
+	mxPath("one", "Reaction", arrows = 1, free = TRUE),
+	mxPath("one", "Days", arrows = 1, free = FALSE, labels = "data.Days"),
+	mxPath("Days", "Reaction", arrows = 1, free = TRUE),
+	mxPath("Reaction", arrows = 2, values = 1),
+	mxPath(c('bySubj.intercept','bySubj.slope'),'Reaction', free=FALSE, values=c(1,NA), labels=c(NA, "data.Days"), joinKey="Subject")
+)
+
+
 # [mplus ex9.6](https://www.statmodel.com/usersguide/chap9/ex9.6.html)
 # Two-level CFA with continuous factor indicators (y1-y4), a random intercept factor (clusterID?), and covariates (x1 and x2)
 # VARIABLE:	NAMES ARE y1-y4 x1 x2 w clus;
