@@ -1554,6 +1554,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @description
 #' source() the getOpenMx.R script from source repo.
 #'
+#' @aliases umx_get_OpenMx
 #' @return - 
 #' @export
 #' @family Miscellaneous Functions
@@ -1565,6 +1566,9 @@ print.reliability <- function (x, digits = 4, ...){
 getOpenMx <- function() {
 	source('http://openmx.psyc.virginia.edu/getOpenMx.R')
 }
+
+#' @export
+umx_get_OpenMx <- getOpenMx
 
 #' umx_msg
 #'
