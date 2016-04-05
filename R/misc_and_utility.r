@@ -2708,21 +2708,21 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' @family Data Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' tmp = mtcars
 #' # Residualise mpg on cylinders and displacement
-#' r1 = umx_residualize("mpg", c("cyl", "disp"), data = tmp)
-#' r2 = residuals(lm(mpg ~ cyl + disp, data = tmp, na.action = na.exclude))
+#' r1 = umx_residualize("mpg", c("cyl", "disp"), data = mtcars)
+#' r2 = residuals(lm(mpg ~ cyl + disp, data = mtcars, na.action = na.exclude))
 #' all(r1$mpg == r2)
 #' # =====================
 #' # = formula interface =
 #' # =====================
-#' r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = tmp)
-#' r2 = residuals(lm(mpg ~ cyl + I(cyl^2) + disp, data = tmp, na.action = na.exclude))
+#' r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = mtcars)
+#' r2 = residuals(lm(mpg ~ cyl + I(cyl^2) + disp, data = mtcars, na.action = na.exclude))
 #' all(r1$mpg == r2)
 #' 
 #' # ========================================================================
 #' # = Demonstrate ability to residualize WIDE data (i.e. 1 family per row) =
 #' # ========================================================================
+#' tmp = mtcars
 #' tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
 #' tmp$cyl_T1  = tmp$cyl_T2  = tmp$cyl
 #' tmp$disp_T1 = tmp$disp_T2 = tmp$disp
@@ -2806,37 +2806,36 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #'
 #' Scale wide data across all cases: currently twins
 #'
-#' @param varsToScale the base names of the variables ("weight" etc)
-#' @param suffixes the suffix that distinguishes each case (T1, T2 etc.)
-#' @param df a wide dataframe
-#' @return - new dataframe with scaled variables
+#' @param varsToScale The base names of the variables ("weight" etc)
+#' @param suffix The suffix that distinguishes each case, e.g. "_T")
+#' @param data a wide dataframe
+#' @return - new dataframe with variables scaled in place
 #' @export
 #' @family Data Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
-#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffixes = c("1","2") )
+#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "" )
 #' plot(wt1 ~ wt2, data = df)
-
-umx_scale_wide_twin_data <- function(varsToScale, suffixes, df) {
-	if(length(suffixes) != 2){
-		stop("I need two suffixes, you gave me ", length(suffixes))
+umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
+	if(length(suffixes) != 1){
+		stop("I need one suffix, you gave me ", length(suffix), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
-	namesNeeded = c(paste0(varsToScale, suffixes[1]), paste0(varsToScale, suffixes[2]))
-	umx_check_names(namesNeeded, df)
-	t1Traits = paste0(varsToScale, suffixes[1])
-	t2Traits = paste0(varsToScale, suffixes[2])
+	namesNeeded = umx_paste_names(varsToScale, textConstant = suffix, suffixes = 1:2)
+	umx_check_names(namesNeeded, data)
+	t1Traits = paste0(varsToScale, suffix, 1)
+	t2Traits = paste0(varsToScale, suffix, 2)
 	for (i in 1:length(varsToScale)) {
-		T1 = df[,t1Traits[i]]
-		T2 = df[,t2Traits[i]]
+		T1 = data[,t1Traits[i]]
+		T2 = data[,t2Traits[i]]
 		totalMean = mean(c(T1, T2), na.rm = TRUE)
 		totalSD   =   sd(c(T1, T2), na.rm = TRUE)
 		T1 = (T1 - totalMean)/totalSD
 		T2 = (T2 - totalMean)/totalSD
-		df[,t1Traits[i] ] = T1
-		df[,t2Traits[i] ] = T2
+		data[,t1Traits[i] ] = T1
+		data[,t2Traits[i] ] = T2
 	}
-	return(df)
+	return(data)
 }
 
 #' umx_default_option
