@@ -987,8 +987,8 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 	stdFit$top$c$values = c_std
 	stdFit$top$e$values = e_std
 	if(!is.na(file)) {
-		message("making dot file")
-		umxPlotACE(model, file, std = showStd)
+		# message("making dot file")
+		umxPlotACE(stdFit, file = file, std = showStd)
 	}
 	if(returnStd) {
 		if(CIs){

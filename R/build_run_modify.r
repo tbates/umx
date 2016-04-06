@@ -1277,11 +1277,16 @@ umxACE <- function(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = .
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModel.ACE") # set class so that S3 plot() dispatches.
 	if(autoRun){
-		return(mxRun(model))
+		model = mxRun(model)
+		umxSummary(model)
+		# if(!is.na(umx_set_auto_plot())){
+			# plot(model)
+		# }
 	} else {
-		return(model)
+		# --
 	}
-}
+	return(model)
+} #end umxACE
 
 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");

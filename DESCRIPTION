@@ -25,7 +25,8 @@ Imports:
     RCurl,
     utils
 Suggests:
-    testthat,
+    devtools,
+	testthat,
     gdata
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)

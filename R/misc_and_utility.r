@@ -79,7 +79,7 @@ umx_set_auto_plot <- function(autoPlot = NULL) {
 	if(is.null(autoPlot)) {
 		getOption("umx_auto_plot")
 	} else {
-		umx_check(autoPlot %in% c(NA, "name"), "stop")
+		umx_check(autoPlot %in% c(NA, "name"), "stop", "autoPlot should be either NA or 'name'")
 		options("umx_auto_plot" = autoPlot)
 	}
 }
@@ -1573,9 +1573,7 @@ umx_get_OpenMx <- getOpenMx
 #' umx_make umx using devtools
 #'
 #' @description
-#' Easily  run devtools' "install", "release", "win", or "examples"
-#'
-#' @details
+#' Easily  run devtools "install", "release", "win", or "examples".
 #'
 #' @param what whether to c("install", "release", "win", "examples")
 #' @return - 
@@ -1774,7 +1772,7 @@ umxCov2cor <- function(x) {
 #' umx_time('stop')
 #' # elapsed time: .3 seconds
 umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
-	if(!umx_is_MxModel(m1) && any(is.na(model))){
+	if(!umx_is_MxModel(model) && any(is.na(model))){
 		stop("Valid requests are 'start', 'stop', or a model as argument")
 	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)

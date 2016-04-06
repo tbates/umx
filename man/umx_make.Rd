@@ -13,10 +13,7 @@ umx_make(what = c("install", "release", "win", "examples"))
 -
 }
 \description{
-Easily  run devtools' "install", "release", "win", or "examples"
-}
-\details{
-
+Easily  run devtools "install", "release", "win", or "examples".
 }
 \examples{
 \dontrun{
