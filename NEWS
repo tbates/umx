@@ -1,6 +1,10 @@
 # umx 1.2.7
 * IMPROVED: umx_time handling of no input arguments
-* 
+* ADDED: umx_get_OpenMx (download parallel version of OpenMx)
+* CHANGE: umx_scale_wide_twin_data argument names for consistency: "suffix" "data"
+* CHANGE: umx_residualize() ditto
+
+
 
 # umx 1.2.5
 * April 2016 bug fix release

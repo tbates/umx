@@ -4,24 +4,24 @@
 \alias{umx_scale_wide_twin_data}
 \title{umx_scale_wide_twin_data}
 \usage{
-umx_scale_wide_twin_data(varsToScale, suffixes, df)
+umx_scale_wide_twin_data(varsToScale, suffix, data)
 }
 \arguments{
-\item{varsToScale}{the base names of the variables ("weight" etc)}
+\item{varsToScale}{The base names of the variables ("weight" etc)}
 
-\item{suffixes}{the suffix that distinguishes each case (T1, T2 etc.)}
+\item{suffix}{The suffix that distinguishes each case, e.g. "_T")}
 
-\item{df}{a wide dataframe}
+\item{data}{a wide dataframe}
 }
 \value{
-- new dataframe with scaled variables
+- new dataframe with variables scaled in place
 }
 \description{
 Scale wide data across all cases: currently twins
 }
 \examples{
 data(twinData) 
-df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffixes = c("1","2") )
+df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "" )
 plot(wt1 ~ wt2, data = df)
 }
 \references{
