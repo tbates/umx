@@ -23,7 +23,13 @@ m1 <- mxModel("One Factor", type = "RAM",
 m1 = umxRun(m1, setLabels = T, setValues = T)
 residuals(m1)
 
-test_that("residuals.MxModel works", {
-	# testthat::expect_output(residuals(m1),"     x1    x2   x3    x4 x5\nx1    .     . 0.01     .  .\nx2    .     . 0.01 -0.01  .\nx3 0.01  0.01    .     .  .\nx4    . -0.01    .     .  .\nx5    .     .    .     .  .\n[1] \"nb: You can zoom in on bad values with suppress, e.g. suppress = .01\""
-	)
+test_that("residuals.MxModel works", {"
+	|   |x1   |x2    |x3   |x4    |x5 |
+	|:--|:----|:-----|:----|:-----|:--|
+	|x1 |.    |.     |0.01 |.     |.  |
+	|x2 |.    |.     |0.01 |-0.01 |.  |
+	|x3 |0.01 |0.01  |.    |.     |.  |
+	|x4 |.    |-0.01 |.    |.     |.  |
+	|x5 |.    |.     |.    |.     |.  |
+	[1] \"nb: You can zoom in on bad values with, e.g. suppress = .01, which will hide values smaller than this. Use digits = to round\""
 })

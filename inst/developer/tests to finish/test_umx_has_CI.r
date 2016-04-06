@@ -21,7 +21,7 @@ testthat::expect_true(umx_has_CIs(m2), "test_CI m2 failed")
 # ===============================================================
 # = Make a new model, add a label, and request CI on that label =
 # ===============================================================
-m3 = m1; m3$A@labels[2,13] = "myLabel"
+m3 = m1; m3$A$labels[2,13] = "myLabel"
 m3 = mxRun(mxModel(m3, mxCI("myLabel"), name = "bylabel"), intervals = TRUE)
 testthat::expect_true(umx_has_CIs(m3), "test_CI m3 failed")
 
