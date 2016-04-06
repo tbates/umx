@@ -14,7 +14,6 @@ m1 <- mxModel("m1", type = "RAM",
 	mxData(df, "raw")
 )
 m1 = umxRun(m1, setLabels = T, setValues = T)
-
 m1 = umxRun(m1); AIC(m1)
 umxSummary(m1, show = "std"); # plot(m1, showFixed = T)
 
@@ -23,10 +22,6 @@ umxSummary(m1, show = "std"); # plot(m1, showFixed = T)
 # ================
 
 testthat::expect_warning(
-	xmuLabel_RAM_Model(m1, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = FALSE),
+	umxValues(m1),
 	"You are using raw data, but have not yet added paths for the means"
 )
-
-
-
-xmuLabel_RAM_Model(m1, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = FALSE)

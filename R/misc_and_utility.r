@@ -2822,7 +2822,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "" )
 #' plot(wt1 ~ wt2, data = df)
 umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
-	if(length(suffixes) != 1){
+	if(length(suffix) != 1){
 		stop("I need one suffix, you gave me ", length(suffix), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
 	namesNeeded = umx_paste_names(varsToScale, textConstant = suffix, suffixes = 1:2)

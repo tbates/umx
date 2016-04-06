@@ -1,4 +1,3 @@
 library(testthat)
-library(umx.twin)
-
-test_check("umx.twin")
+library(umx)
+test_check("umx")
