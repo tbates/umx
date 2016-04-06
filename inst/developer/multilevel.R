@@ -25,7 +25,6 @@ multi_level_sem <− mxModel("sleep", type="RAM",
 	mxPath(c('bySubj.intercept','bySubj.slope'),'Reaction', free=FALSE, values=c(1,NA), labels=c(NA, "data.Days"), joinKey="Subject")
 )
 
-
 # [mplus ex9.6](https://www.statmodel.com/usersguide/chap9/ex9.6.html)
 # Two-level CFA with continuous factor indicators (y1-y4), a random intercept factor (clusterID?), and covariates (x1 and x2)
 # VARIABLE:	NAMES ARE y1-y4 x1 x2 w clus;
