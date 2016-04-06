@@ -1570,6 +1570,35 @@ getOpenMx <- function() {
 #' @export
 umx_get_OpenMx <- getOpenMx
 
+#' umx_make umx using devtools
+#'
+#' @description
+#' Easily  run devtools' "install", "release", "win", or "examples"
+#'
+#' @details
+#'
+#' @param what whether to c("install", "release", "win", "examples")
+#' @return - 
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' umx_make(what = c("install", "release", "win", "examples"))
+#' }
+umx_make <- function(what = c("install", "release", "win", "examples")) {
+	what = match.arg(what)
+	if(what == "install"){
+		devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+	} else if (what == "release"){
+		devtools::release("~/bin/umx", check = TRUE)
+	}else if (what =="win"){
+		devtools::build_win("~/bin/umx")
+	}else if(what == "examples"){
+		devtools::run_examples("~/bin/umx")
+	}
+}
+
 #' umx_msg
 #'
 #' Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy
