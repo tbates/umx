@@ -1173,6 +1173,10 @@ umx_pb_note <- function(title="test", body="default body", auth_key=NA) {
 		fileConn <- file(auth_key_file)
 		writeLines(auth_key, fileConn)
 		close(fileConn)
+		if(title=="test" && body=="default body"){
+			title = "sucessfully setup umx_pb_note!"
+			body = paste0("auth key is in ", omxQuotes(auth_key_file))
+		}
 	}
 	cmd = paste0("curl -s --header 'Authorization: Bearer ", auth_key, "'", 
 	" -X POST https://api.pushbullet.com/v2/pushes ",
