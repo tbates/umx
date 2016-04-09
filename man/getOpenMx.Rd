@@ -21,4 +21,7 @@ getOpenMx()
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
+\seealso{
+Other Miscellaneous Functions: \code{\link{umxJiggle}}
+}
 

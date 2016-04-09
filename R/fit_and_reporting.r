@@ -185,29 +185,12 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 	invisible(resid)
 }
 
-# define generic loadings...
-#' loadings
-#' Generic loadings function
-#'
-#' See \code{\link[umx]{loadings.MxModel}} to access the laodings of RAM EFA models.
-#'
-#' @param x an object from which to get loadings 
-#' @param ... additional parameters
-#' @return - matrix of loadings
-#' @export
-#' @family Reporting functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
-loadings <- function(x, ...) UseMethod("loadings", x)
-
-#' @export
-loadings.default <- function(x, ...){
-	stats::loadings(x, ...)
-}
+setGeneric("loadings")
 
 #' loadings.MxModel
 #'
-#' loadings exracts the factor loadings from an OpenMx EFA (factor analysis) model. 
-#' Behaves equivalently to stats::loadings in returning the loadings from an 
+#' loadings extracts the factor loadings from an OpenMx EFA (factor analysis) model. 
+#' It behaves equivalently to stats::loadings in returning the loadings from an 
 #' EFA (factor analysis), but doesn't store the rotation matrix.
 #'
 #' @param x A RAM model to get which to get loadings 

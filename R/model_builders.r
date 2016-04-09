@@ -125,10 +125,10 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 	}
 	m1 = mxRun(m1)
 	if(rotation != "none" && nFac > 1){
-		x = loadings(m1, verbose = F)
+		x = loadings.MxModel(m1)
 		x = eval(parse(text = paste0(rotation, "(x)")))
-		m1$A$values[manifests, factors] = x$loadings[1:nManifests, 1:nFac]
-		print(x)
+		print(x) # print out the nice rotation result
+		m1$A$values[manifests, factors] = x$loadings[1:nManifests, 1:nFac] # stash the rotated result
 	} else {
 		print(loadings(m1))
 	}

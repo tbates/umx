@@ -5,6 +5,30 @@ df = umx_rename(sleepstudy, "RT","Reaction")
 fm1 <- lmer(RT ~ Days + (Days | Subject), df)
 visreg(fm1)
 
+sub <− umxRAM("bySubj", mxData(data.frame(Subject=unique(sleepstudy$Subject)), type="raw", primaryKey = "Subject"),
+	umxPath(var = c("intercept" , "slope")),
+	umxPath("intercept" , with="slope", values=.25, labels="cov1")
+)
+
+manifestVars=" Reaction " , latentVars = "Days" ,
+ss <− mxModel("sleep", sub,
+	mxData(sleepstudy, type = "raw", sort=FALSE),
+	mxPath(means = "Reaction"),
+	mxPath(means = "Days", free=FALSE, labels="data.Days"),
+	mxPath("Days", to = "Reaction"),
+	mxPath(var = "Reaction"),
+	mxPath(c('sub.intercept','sub.slope'), to = 'Reaction', free=FALSE, values=c(1, NA), labels=c(NA, "data.Days"), joinKey="Subject")
+)
+
+umxSubjectLevel <- function(data = theData, primaryKey = "Subject") {
+	subjectData = data.frame(Subject=unique(theData[,primaryKey]))
+	subjectLevelModel <− umxRAM("subjectLevel", data = mxData(subjectData, type="raw", primaryKey = primaryKey),
+		umxPath(var = c("intercept" , "slope")),
+		umxPath("intercept" , with = "slope", labels="cov1")
+	)
+}
+
+
 umxSubjectLevel <- function(data = theData, primaryKey = "Subject") {
 	subjectData = data.frame(Subject = unique(data[,primaryKey]))
 	subjectLevelModel <− umxRAM("subjectLevel", # level1?

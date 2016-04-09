@@ -124,8 +124,7 @@ Other Stats Functions: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umx_cor}},
   \code{\link{umx_means}}
 
-Other Super-easy helpers: \code{\link{umxEFA}},
-  \code{\link{umxJiggle}}
+Other Super-easy helpers: \code{\link{umxEFA}}
 
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxACEcov}}, \code{\link{umxACE}},

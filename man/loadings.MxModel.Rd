@@ -4,7 +4,7 @@
 \alias{loadings.MxModel}
 \title{loadings.MxModel}
 \usage{
-\method{loadings}{MxModel}(x, ...)
+loadings.MxModel(x, ...)
 }
 \arguments{
 \item{x}{A RAM model to get which to get loadings}
@@ -15,8 +15,8 @@
 - loadings matrix
 }
 \description{
-loadings exracts the factor loadings from an OpenMx EFA (factor analysis) model. 
-Behaves equivalently to stats::loadings in returning the loadings from an 
+loadings extracts the factor loadings from an OpenMx EFA (factor analysis) model. 
+It behaves equivalently to stats::loadings in returning the loadings from an 
 EFA (factor analysis), but doesn't store the rotation matrix.
 }
 \examples{

@@ -449,7 +449,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @param sd the sd of the jiggle noise
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
 #' @return - \code{\link{mxMatrix}}
-#' @family Super-easy helpers
+#' @family Miscellaneous Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples

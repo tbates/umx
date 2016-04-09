@@ -78,7 +78,6 @@ m5 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[
 \seealso{
 - \code{\link{factanal}}
 
-Other Super-easy helpers: \code{\link{umxJiggle}},
-  \code{\link{umx}}
+Other Super-easy helpers: \code{\link{umx}}
 }
 
