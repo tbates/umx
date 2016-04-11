@@ -185,7 +185,26 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 	invisible(resid)
 }
 
-setGeneric("loadings")
+# define generic loadings...
+#' loadings
+#' Generic loadings function to extract factor loadings from exploratory or confirmatory
+#' factor analyses.
+#'
+#' See \code{\link[umx]{loadings.MxModel}} to access the loadings of OpenMx EFA models.
+#' 
+#' Base \code{\link[stats]{loadings}} handles \code{\link{factanal}} objects. 
+#'
+#' @param x an object from which to get loadings 
+#' @param ... additional parameters
+#' @return - matrix of loadings
+#' @export
+#' @family Reporting functions
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+loadings <- function(x, ...) UseMethod("loadings")
+#' @export
+loadings.default <- function(x, ...) stats::loadings(x, ...) 
+
+# TODO: alternative approach would be to use setGeneric("loadings")
 
 #' loadings.MxModel
 #'

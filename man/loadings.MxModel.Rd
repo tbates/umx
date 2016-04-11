@@ -4,7 +4,7 @@
 \alias{loadings.MxModel}
 \title{loadings.MxModel}
 \usage{
-loadings.MxModel(x, ...)
+\method{loadings}{MxModel}(x, ...)
 }
 \arguments{
 \item{x}{A RAM model to get which to get loadings}
