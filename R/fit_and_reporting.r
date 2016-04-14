@@ -478,6 +478,8 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
 #' @param add Whether or not to add mxCIs if none are found (defaults to TRUE)
+#' @param which = c("ALL", NA, "list of your making")
+#' @param remove = FALSE
 #' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary". 
 #' @param showErrorCodes Whether to show errors (default == TRUE)
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
@@ -508,21 +510,37 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' # Don't force update of CIs, but if they were just added, then calculate them
 #' umxCI(model, run = "if necessary")
 #' }
-umxCI <- function(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"), showErrorCodes = TRUE) {
+umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary"), showErrorCodes = TRUE) {
 	# TODO superceed this with confint? just need parameters to hold the 95% etc...
 	run = match.arg(run)
-	if(add){
-		# TODO remove existing CIs to avoid duplicates?
-		# TODO ensure each CI is added individually
-		# TODO support breaking these out into separate models and reassembling them
-		CIs   = names(omxGetParameters(model, free = TRUE))
+	which = umx_default_option(which, c("ALL", NA, "list of your making"), check = FALSE)
+	if(remove){
+		if(which == "ALL"){
+			CIs = names(model$intervals)
+		} else {
+			CIs = which 
+		}
+		if(length(names(model$intervals))>0){
+			model = mxModel(model, mxCI(CIs), remove = TRUE)
+		} else {
+			message("model has no intervals to remove")
+		}
+	} else {
+		# TODO Avoid duplicating existing CIs?
+		# TODO Add each CI individually
+		# TODO Break them out into separate models and reassemble if on cluster?
+		if(which == "ALL"){
+			CIs = names(omxGetParameters(model, free = TRUE))
+		} else {
+			CIs = which 
+		}
 		model = mxModel(model, mxCI(CIs))
 	}
     
 	if(run == "yes" | (!umx_has_CIs(model) & run == "if necessary")) {
 		model = mxRun(model, intervals = TRUE)
-	}else{
-		message("Not running CIs, run==", run)
+	} else {
+		message("Not running CIs, run == ", run)
 	}
 
 	if(umx_has_CIs(model)){

@@ -4,7 +4,7 @@
 \alias{umx_pb_note}
 \title{umx_pb_note}
 \usage{
-umx_pb_note(title = "test", body = "default body", auth_key = NA)
+umx_pb_note(title = "test", body = "body", auth_key = c(NA, "GET"))
 }
 \arguments{
 \item{title}{of the note}

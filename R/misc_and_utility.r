@@ -1160,9 +1160,10 @@ dl_from_dropbox <- function(x, key=NULL){
 #' \dontrun{
 #' umx_pb_note("done!", umx_time(m1))
 #' }
-umx_pb_note <- function(title="test", body="default body", auth_key=NA) {
+umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) {
+	auth_key = match.arg(auth_key)
 	auth_key_file = "~/.pushbulletkey"
-	helpMsg = "auth_key not found. You need to call umx_pb_note one time with auth_key set. see ?umx_pb_note"
+	helpMsg = "auth_key not found. You need to call umx_pb_note one time with auth_key set. See ?umx_pb_note"
 	if(is.na(auth_key)){
 		umx_check(file.exists(auth_key_file), "message", helpMsg)
 		auth_key = read.table(auth_key_file, stringsAsFactors=FALSE)[1,1]
@@ -2536,9 +2537,9 @@ umx_reorder <- function(old, newOrder) {
 	return(new)
 }
 
-#' umx_cont_2_ordinal
+#' umx_cont_2_quantiles
 #'
-#' Recode a variable into n-quantiles (default = deciles (10 levels)).
+#' Recode a continuous variable into n-quantiles (default = deciles (10 levels)).
 #' It returns an \code{\link{mxFactor}}, with the levels labeled with the max value
 #' in each quantile (i.e., open on the left-side).
 #' 
@@ -2555,14 +2556,17 @@ umx_reorder <- function(old, newOrder) {
 #' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' x = umx_cont_2_ordinal(rnorm(10000), verbose = TRUE)
-#' x = umx_cont_2_ordinal(rep(0:10, 10), verbose = TRUE)
+#' x = umx_cont_2_quantiles(rnorm(10000), verbose = TRUE)
 #' levels(x)
-#' str(umx_cont_2_ordinal(rnorm(10000), nlevels = 4, verbose = TRUE))
-umx_cont_2_ordinal <- function(var, nlevels = 10, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
+#' x = umx_cont_2_quantiles(mtcars[,1])
+#' x = umx_cont_2_quantiles(mtcars[,2])
+#' x = umx_cont_2_quantiles(mtcars[,1:3])
+#' x = umx_cont_2_quantiles(rep(0:10, 10))
+#' x = umx_cont_2_quantiles(rbinom(10000, 1, .5))
+#' str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))
+umx_cont_2_quantiles <- function(var, nlevels = 10, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
 	type = match.arg(type)	
-	# var = rnorm(1000)
-	# nlevels = 10
+	# TODO: check if dim[2]<1, and if so, proceed columnwise
 	myBreaks = quantile(var, seq(0, 1, by = 1/nlevels), type = 8, na.rm = TRUE)
 	myBreaks[1] = -Inf
 	myBreaks[length(myBreaks)] = Inf
@@ -2879,6 +2883,7 @@ umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
 #' This is just a version of x = \code{\link{match.arg}}(x) which
 #' allows items not in the list.
 #'
+#' @aliases umx_match.arg
 #' @param x the value chosen (may be the default option list)
 #' @param option_list  A vector of valid options
 #' @param check Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE) 
@@ -2915,6 +2920,10 @@ umx_default_option <- function(x, option_list, check = TRUE){
 		return(x)
 	}
 }
+
+#' @export
+umx_match.arg <- umx_default_option
+
 
 #' qm
 #'

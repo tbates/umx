@@ -2,6 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_default_option}
 \alias{umx_default_option}
+\alias{umx_match.arg}
 \title{umx_default_option}
 \usage{
 umx_default_option(x, option_list, check = TRUE)

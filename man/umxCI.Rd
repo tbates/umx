@@ -4,17 +4,22 @@
 \alias{umxCI}
 \title{umxCI}
 \usage{
-umxCI(model = NULL, add = TRUE, run = c("no", "yes", "if necessary"),
+umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
+  remove = FALSE, run = c("no", "yes", "if necessary"),
   showErrorCodes = TRUE)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on}
 
-\item{add}{Whether or not to add mxCIs if none are found (defaults to TRUE)}
+\item{which}{= c("ALL", NA, "list of your making")}
+
+\item{remove}{= FALSE}
 
 \item{run}{Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".}
 
 \item{showErrorCodes}{Whether to show errors (default == TRUE)}
+
+\item{add}{Whether or not to add mxCIs if none are found (defaults to TRUE)}
 }
 \value{
 - \code{\link{mxModel}}
