@@ -20,29 +20,26 @@ and also provides umxRAM and umxPath functions that make [Structural Equation Mo
 
 Some highlights include:
 
-1. Building Models
+1. Building Path Models
 	* `umxRAM()` *# mxModel with an R-like `data =` parameter, no need to specify type = "RAM", + auto-discovery of manifests and latents from the paths you write*
 	* `umxPath()` *# mxPath on steroids: one-word settings to set `var` , `mean` `cov`, `fixedAt` and more. Great time-saver!*
-	* `umxACE()` *# 1-line function handling twin ACE modeling with aplomb* paths are labeled, and works with `plot()` and `umxSummary`
 2. Reporting output
 	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA). Optionally show the path loadings*
-	* `plot(model, std=TRUE, precision=3, dotFilename="name")` # *Create a graphical representation of models (outputs a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
-	* `umx_time(m1)`  *# Report the time taken by a model in a compact programable format*
+	* `plot(model, std=T, digits = 3, file = "name")` # *Create a graphical representation of model! and a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
+	* `umx_time(model)`  *# Report the time taken by a model in a compact programable format*
 3. Modify models
-	* `umxReRun()` *# Modify and run a model. You can add objects, drop or add paths, including by regular-expression label matching), re-name the model, re-run, and even return the comparison. All in 1 line *
+	* `umxModify()` *# Modify and run a model. You can add objects, drop or add paths, including by regular-expression label matching), re-name the model, re-run, and even return the comparison. All in 1 line *
 	* `umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. like `omxGetParameters` but uses regular expressions.*
-	* `umxMI()` *# Report the top n modification indices*
-	* `umxAdd1()` *# add parameters and return a table of the effect on fit*
-	* `umxDrop1()` *# Drop parameters and return a table of the effect on fit*
 4. Twin models
-	* umxACE, umxCP, umxIP
+	* `umxACE()` *# 1-line function handling twin ACE modeling with aplomb* paths are labeled, and works with `plot()` and `umxSummary`
+	* `umxIP()`, `umxGxE()`, `umxCP()`…
 	* ![umxACE](https://github.com/tbates/umx/blob/master/man/figures/ACE.png)
 5. Lower level helpers, data helpers, etc.
 	* `umxStart()` *# Add plausible start values to RAM or matrix models, or matrices: **very** helpful*
 	* `umxLabel()` *# Add systematic labels to paths ("var1_to_var2") and matrix cells ("a_r1c1"). This is great for setting, equating and dropping paths by label!*
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
 6. Helpers for easy-to-forget option names
-	* `umx_get_optimizer()`
+	* `umx_set_cores()`
 	* `umx_set_optimizer()`
 
 Dozens more (?umx to see them all). Check out the "family links" in any help file also!
