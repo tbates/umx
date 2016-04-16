@@ -58,7 +58,7 @@ m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m1$intervals # none yet list()
 m1 = umxCI(m1)
 m1$intervals # $G_to_x1
-m1 = umxCI(m1, add = TRUE) # Add CIs for all free parameters, and return model
+m1 = umxCI(m1, remove = TRUE) # Add CIs for all free parameters, and return model
 \dontrun{
 umxCI(model, run = "yes") # force update of CIs
 # Don't force update of CIs, but if they were just added, then calculate them
