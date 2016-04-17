@@ -477,9 +477,8 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' }
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
-#' @param add Whether or not to add mxCIs if none are found (defaults to TRUE)
-#' @param which = c("ALL", NA, "list of your making")
-#' @param remove = FALSE
+#' @param which What CIs to add: c("ALL", NA, "list of your making")
+#' @param remove = FALSE (if set, removes existing specified CIs from the model)
 #' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary". 
 #' @param showErrorCodes Whether to show errors (default == TRUE)
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.

@@ -2546,8 +2546,8 @@ umx_reorder <- function(old, newOrder) {
 #' \strong{Note}: Redundant bins are merged. i.e., if the same score identifies
 #' all deciles up to the fourth, then these will be merged into one level.
 #'
-#' @param var a variable to recode as ordinal
-#' @param nlevels how many bins or levels (at most) to use (default = 10 i,e deciles)
+#' @param x a variable to recode as ordinal (email me if you'd like this upgraded to handle df input)
+#' @param nlevels How many bins or levels (at most) to use (i.e., 10 = deciles)
 #' @param type what to return (Default is "mxFactor") options include
 #' "ordered" and "unordered")
 #' @param verbose report the min, max, and decile cuts used (default = FALSE)
@@ -2556,16 +2556,17 @@ umx_reorder <- function(old, newOrder) {
 #' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' x = umx_cont_2_quantiles(rnorm(10000), verbose = TRUE)
+#' x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
 #' levels(x)
-#' x = umx_cont_2_quantiles(mtcars[,1])
-#' x = umx_cont_2_quantiles(mtcars[,2])
-#' x = umx_cont_2_quantiles(mtcars[,1:3])
+#' x = umx_cont_2_quantiles(mtcars[,"mpg"], 5) # quintiles
+#' x = umx_cont_2_quantiles(mtcars[,"cyl"], 10)
+#' # x = umx_cont_2_quantiles(mtcars[,1:3])
 #' x = umx_cont_2_quantiles(rep(0:10, 10))
 #' x = umx_cont_2_quantiles(rbinom(10000, 1, .5))
 #' str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))
-umx_cont_2_quantiles <- function(x, nlevels = 10, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
+umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
 	type = match.arg(type)
+	# TODO: could make nlevels == NULL create a level for each unique value...
 	# TODO: check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed columnwise
 	if(is.data.frame(x) && dim(x)[2] > 1){
 		stop("Can't handle multiple column actions yet: email tim and rip him a new one")
@@ -2573,26 +2574,27 @@ umx_cont_2_quantiles <- function(x, nlevels = 10, type = c("mxFactor", "ordered"
 		if(!is.numeric(x) ){
 			stop("This is for numeric variables. you gave me a ", typeof(x))
 		} else {
-			# x = mtcars[,2]
+			# x = mtcars[,"cyl"]
 			myBreaks = quantile(x, seq(0, 1, by = 1/nlevels), type = 8, na.rm = TRUE)
-			myBreaks[1] = -Inf
-			myBreaks[length(myBreaks)] = Inf
 			myBreaks = unique(myBreaks)
-		  if(max(myBreaks)==max(x)){
-				myBreaks = myBreaks[1:(length(myBreaks)-1)]
-				myLabels = myBreaks[2:length(myBreaks)]
-		  } else {
-				myLabels = c(myBreaks[2:(length(myBreaks)-1)], paste0("_", max(x)))
-		  }
+		  myLabels = myBreaks
+			myBreaks = c(-Inf, myBreaks)
+			# myBreaks[length(myBreaks)] = Inf
+			# myLabels = NULL
+		  # if(max(myBreaks) == max(x)){
+		  # 				myBreaks = myBreaks[1:(length(myBreaks)-1)]
+		  # 				myLabels = myBreaks[2:length(myBreaks)]
+		  # } else {
+		  # 				myLabels = c(myBreaks[2:(length(myBreaks)-1)], paste0("_", max(x)))
+		  # }
 			if(type == "mxFactor"){
 				out = cut(x, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 
-				out = mxFactor(out, levels = myLabels)
+				out = mxFactor(out, levels = levels(out))
 			} else if (type == "ordered") {
 				out = cut(x, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 		
 			} else {
 				out = cut(x, breaks = myBreaks, labels = myLabels); 
 			}
-	
 			if(verbose){
 				message("Scores ranged from ", min(x), " to ", max(x), ". Cuts made at ", omxQuotes(myBreaks))
 			}
