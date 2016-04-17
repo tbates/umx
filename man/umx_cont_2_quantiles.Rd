@@ -4,18 +4,18 @@
 \alias{umx_cont_2_quantiles}
 \title{umx_cont_2_quantiles}
 \usage{
-umx_cont_2_quantiles(var, nlevels = 10, type = c("mxFactor", "ordered",
+umx_cont_2_quantiles(x, nlevels = 10, type = c("mxFactor", "ordered",
   "unordered"), verbose = FALSE)
 }
 \arguments{
-\item{var}{a variable to recode as ordinal}
-
 \item{nlevels}{how many bins or levels (at most) to use (default = 10 i,e deciles)}
 
 \item{type}{what to return (Default is "mxFactor") options include
 "ordered" and "unordered")}
 
 \item{verbose}{report the min, max, and decile cuts used (default = FALSE)}
+
+\item{var}{a variable to recode as ordinal}
 }
 \value{
 - recoded variable as an \code{\link{mxFactor}}

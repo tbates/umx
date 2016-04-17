@@ -2571,18 +2571,23 @@ umx_cont_2_quantiles <- function(x, nlevels = 10, type = c("mxFactor", "ordered"
 		stop("Can't handle multiple column actions yet: email tim and rip him a new one")
 	} else {
 		if(!is.numeric(x) ){
-			stop("This is for continous variables. you gave me a ", typeof(x))
+			stop("This is for numeric variables. you gave me a ", typeof(x))
 		} else {
+			# x = mtcars[,2]
 			myBreaks = quantile(x, seq(0, 1, by = 1/nlevels), type = 8, na.rm = TRUE)
 			myBreaks[1] = -Inf
 			myBreaks[length(myBreaks)] = Inf
 			myBreaks = unique(myBreaks)
-		    myLabels = c(myBreaks[2:(length(myBreaks)-1)], max(x))
-			# myBreaks = myBreaks[2:(length(myBreaks)-1)] # trim ends
+		  if(max(myBreaks)==max(x)){
+				myBreaks = myBreaks[1:(length(myBreaks)-1)]
+				myLabels = myBreaks[2:length(myBreaks)]
+		  } else {
+				myLabels = c(myBreaks[2:(length(myBreaks)-1)], paste0("_", max(x)))
+		  }
 			if(type == "mxFactor"){
 				out = cut(x, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 
 				out = mxFactor(out, levels = myLabels)
-			} else if (type=="ordered") {
+			} else if (type == "ordered") {
 				out = cut(x, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 		
 			} else {
 				out = cut(x, breaks = myBreaks, labels = myLabels); 
