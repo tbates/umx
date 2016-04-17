@@ -35,7 +35,7 @@
 #' @param data A dataframe of manifest columns you are modeling
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
 #' @param n.obs Number of observations in covmat (if provided, default = NA)
-#' @param rotation A rotation to perform on the loadings (default  = "varimax")
+#' @param rotation A rotation to perform on the loadings (default  = "varimax" (orthogonal))
 #' @param name A name for your model.
 #' @param digits rounding (default = 2)
 #' @param report What to report

@@ -704,32 +704,54 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' A convenient version of \code{\link{mxFactor}} supporting the common 
 #' case in which the factor levels are those in the variable.
 #'
+#' @aliases umx_factor
 #' @param x A variable to recode as an mxFactor (see \code{\link{mxFactor}})
 #' @param levels defaults to NA. UNLIKE mxFactor, if not specified, the existing levels will be used
 #' @param labels = levels (see \code{\link{mxFactor}})
 #' @param exclude = NA (see \code{\link{mxFactor}})
 #' @param collapse = FALSE (see \code{\link{mxFactor}})
+#' @param ordered = TRUE By default return an ordered mxFactor
+#' @param verbose Whether to tell user about such things as coercing to factor
 #' @return - \code{\link{mxFactor}}
 #' @export
 #' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' x = umxFactor(letters)
+#' x = umxFactor(letters) # just do it
 #' str(x)
-umxFactor <- function(x = character(), levels = NA, labels = levels, 
-		exclude = NA, collapse = FALSE) {
-	if(!is.factor(x)){
-		x = factor(x, ordered=TRUE)
-		message("Your variable was not a factor: I made it into one, with levels:", levels(x) )
+#' x = umxFactor(letters, verbose = T) # report coercions
+#' x = umxFactor(letters, ordered = F) # non-ordered factor like factor(x), but handles data.frames
+#' x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
+umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = NA, collapse = FALSE, ordered = TRUE, verbose = FALSE) {
+	if(is.data.frame(x)){
+		ncols = ncol(x)
+		for (c in 1:ncols) {
+			x[,c] = umxFactor(x = x[,c], levels = levels, labels = labels, exclude = exclude, collapse = collapse, ordered = ordered, verbose = verbose)
+		}
+	} else {
+		if(!is.factor(x)){
+			x = factor(x, ordered = ordered)
+			if(verbose){
+				message("Your variable was not a factor: I made it into one, with levels:", levels(x) )
+			}
+		}
+		if(is.na(levels)){
+			levels = levels(x)
+		} else {
+			# TODO should check the provided levels match the data!	(quick)	
+			if(!levels(x) == levels){
+				message("the levels you provided are not those I see in the data")
+			}
+		}
+		if(ordered){
+			x = mxFactor(x = x, levels = levels, labels = levels, exclude = exclude, ordered = TRUE, collapse = collapse)
+		}
 	}
-	if(is.na(levels)){
-		levels = levels(x)
-	}else{
-		# TODO should check the provided levels match the data!	(quick)	
-	}
-	mxFactor(x = character(), levels, labels = levels, 
-	    exclude = exclude, ordered = TRUE, collapse = collapse)
+	return(x)
 }
+
+#' @export
+umx_factor <- umxFactor
 
 #' umx_RAM_ordinal_objective
 #'

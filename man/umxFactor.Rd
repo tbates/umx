@@ -2,10 +2,11 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umxFactor}
 \alias{umxFactor}
+\alias{umx_factor}
 \title{umxFactor}
 \usage{
 umxFactor(x = character(), levels = NA, labels = levels, exclude = NA,
-  collapse = FALSE)
+  collapse = FALSE, ordered = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{x}{A variable to recode as an mxFactor (see \code{\link{mxFactor}})}
@@ -17,6 +18,10 @@ umxFactor(x = character(), levels = NA, labels = levels, exclude = NA,
 \item{exclude}{= NA (see \code{\link{mxFactor}})}
 
 \item{collapse}{= FALSE (see \code{\link{mxFactor}})}
+
+\item{ordered}{= TRUE By default return an ordered mxFactor}
+
+\item{verbose}{Whether to tell user about such things as coercing to factor}
 }
 \value{
 - \code{\link{mxFactor}}
@@ -26,8 +31,11 @@ A convenient version of \code{\link{mxFactor}} supporting the common
 case in which the factor levels are those in the variable.
 }
 \examples{
-x = umxFactor(letters)
+x = umxFactor(letters) # just do it
 str(x)
+x = umxFactor(letters, verbose = T) # report coercions
+x = umxFactor(letters, ordered = F) # non-ordered factor like factor(x), but handles data.frames
+x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
