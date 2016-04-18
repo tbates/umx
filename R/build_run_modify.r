@@ -1501,10 +1501,11 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 
 #' umxCP
 #'
-#' Make a 2-group Common Pathway model (see Details below)
+#' Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
 #' 
 #' The common-pathway model provides a powerful tool for theory-based decomposition of genetic
 #' and environmental differences.
+#' 
 #' umxCP supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 #' to model the genetic and environmental structure of multiple phenotypes
 #' (measured behaviors).
@@ -1514,10 +1515,10 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' common or shared-environment (C) or 
 #' non-additive genetic effects (D).
 #' 
-#' Unlike the Cholesky, these factors do not act directly on the phenotype. Instead A, 
-#' C, and E influences impact on latent factors (by default 1), which then act to account for variance in the phenotypes (see Figure below).
+#' Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
+#' C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
 #' 
-#' CP model path diagram.
+#' Common-pathway path diagram:
 #' 
 #' \figure{CP.png}
 #' 
@@ -1738,9 +1739,9 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 
 #' umxIP
 #'
-#' Make a 2-group Independent Pathway model
+#' Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model)
 #' 
-#' The following figure the IP model as a path diagram:
+#' The following figure shows the IP model diagramatically:
 #' 
 #' \figure{IP.png}
 #'

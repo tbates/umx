@@ -2095,9 +2095,7 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 	if(!is.data.frame(df)){
 		if(is.matrix(df)){
 			df = data.frame(df)
-			# stop("df argument to umx_is_ordered must be a dataframe. You gave me a matrix")
 		} else {
-			# df = data.frame(df)
 			stop("argument df must be a dataframe. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 		}
 	}
@@ -2565,8 +2563,16 @@ umx_reorder <- function(old, newOrder) {
 #' x = umx_cont_2_quantiles(rbinom(10000, 1, .5))
 #' str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))
 umx_cont_2_quantiles <- function(var, nlevels = 10, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
+	if(!is.data.frame(df)){
+		if(is.matrix(df)){
+			df = data.frame(df)
+		} else {
+			stop("argument df must be a dataframe. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+		}
+	}
 	type = match.arg(type)	
 	# TODO: check if dim[2]<1, and if so, proceed columnwise
+
 	myBreaks = quantile(var, seq(0, 1, by = 1/nlevels), type = 8, na.rm = TRUE)
 	myBreaks[1] = -Inf
 	myBreaks[length(myBreaks)] = Inf
