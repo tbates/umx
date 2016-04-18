@@ -5,16 +5,15 @@
 #' umxEFA
 #'
 #' Perform full-information maximum-likelihood factor analysis on a data matrix.
-#' You need only offer up manifest data, specify the number of factors.
+#' as in \code{\link{factanal}}, you need only specify the number of factors and offer up
+#' some manifest data, e.g:
+#'                                                              
+#' umxEFA(factors = 2, data = mtcars)
 #' 
-#' You can create an EFA either by specifying some factor names:
+#' Equivalently, you can also give a list of factor names:
 #' 
 #' umxEFA(factors = c("g", "v"), data = mtcars)
 #' 
-#' or 
-#' 
-#' umxEFA(factors = 2, data = mtcars)
-#'
 #' \figure{umxEFA.png}
 #' 
 #' \emph{notes}: In an EFA, all items may load on all factors.
@@ -36,7 +35,7 @@
 #' @param data A dataframe of manifest columns you are modeling
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
 #' @param n.obs Number of observations in covmat (if provided, default = NA)
-#' @param rotation A rotation to perform on the loadings (default  = "varimax")
+#' @param rotation A rotation to perform on the loadings (default  = "varimax" (orthogonal))
 #' @param name A name for your model.
 #' @param digits rounding (default = 2)
 #' @param report What to report

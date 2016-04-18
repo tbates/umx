@@ -32,16 +32,15 @@ umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
 }
 \description{
 Perform full-information maximum-likelihood factor analysis on a data matrix.
-You need only offer up manifest data, specify the number of factors.
+as in \code{\link{factanal}}, you need only specify the number of factors and offer up
+some manifest data, e.g:
+                                                             
+umxEFA(factors = 2, data = mtcars)
 }
 \details{
-You can create an EFA either by specifying some factor names:
+Equivalently, you can also give a list of factor names:
 
 umxEFA(factors = c("g", "v"), data = mtcars)
-
-or
-
-umxEFA(factors = 2, data = mtcars)
 
 \figure{umxEFA.png}
 

@@ -4,13 +4,13 @@
 \alias{umx_cont_2_quantiles}
 \title{umx_cont_2_quantiles}
 \usage{
-umx_cont_2_quantiles(var, nlevels = 10, type = c("mxFactor", "ordered",
+umx_cont_2_quantiles(x, nlevels = NULL, type = c("mxFactor", "ordered",
   "unordered"), verbose = FALSE)
 }
 \arguments{
-\item{var}{a variable to recode as ordinal}
+\item{x}{a variable to recode as ordinal (email me if you'd like this upgraded to handle df input)}
 
-\item{nlevels}{how many bins or levels (at most) to use (default = 10 i,e deciles)}
+\item{nlevels}{How many bins or levels (at most) to use (i.e., 10 = deciles)}
 
 \item{type}{what to return (Default is "mxFactor") options include
 "ordered" and "unordered")}
@@ -30,11 +30,11 @@ in each quantile (i.e., open on the left-side).
 all deciles up to the fourth, then these will be merged into one level.
 }
 \examples{
-x = umx_cont_2_quantiles(rnorm(10000), verbose = TRUE)
+x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
 levels(x)
-x = umx_cont_2_quantiles(mtcars[,1])
-x = umx_cont_2_quantiles(mtcars[,2])
-x = umx_cont_2_quantiles(mtcars[,1:3])
+x = umx_cont_2_quantiles(mtcars[,"mpg"], 5) # quintiles
+x = umx_cont_2_quantiles(mtcars[,"cyl"], 10)
+# x = umx_cont_2_quantiles(mtcars[,1:3])
 x = umx_cont_2_quantiles(rep(0:10, 10))
 x = umx_cont_2_quantiles(rbinom(10000, 1, .5))
 str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))

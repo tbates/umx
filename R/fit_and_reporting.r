@@ -477,9 +477,8 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' }
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
-#' @param add Whether or not to add mxCIs if none are found (defaults to TRUE)
-#' @param which = c("ALL", NA, "list of your making")
-#' @param remove = FALSE
+#' @param which What CIs to add: c("ALL", NA, "list of your making")
+#' @param remove = FALSE (if set, removes existing specified CIs from the model)
 #' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary". 
 #' @param showErrorCodes Whether to show errors (default == TRUE)
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
@@ -504,7 +503,7 @@ confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "n
 #' m1$intervals # none yet list()
 #' m1 = umxCI(m1)
 #' m1$intervals # $G_to_x1
-#' m1 = umxCI(m1, add = TRUE) # Add CIs for all free parameters, and return model
+#' m1 = umxCI(m1, remove = TRUE) # Add CIs for all free parameters, and return model
 #' \dontrun{
 #' umxCI(model, run = "yes") # force update of CIs
 #' # Don't force update of CIs, but if they were just added, then calculate them

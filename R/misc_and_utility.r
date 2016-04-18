@@ -704,32 +704,54 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' A convenient version of \code{\link{mxFactor}} supporting the common 
 #' case in which the factor levels are those in the variable.
 #'
+#' @aliases umx_factor
 #' @param x A variable to recode as an mxFactor (see \code{\link{mxFactor}})
 #' @param levels defaults to NA. UNLIKE mxFactor, if not specified, the existing levels will be used
 #' @param labels = levels (see \code{\link{mxFactor}})
 #' @param exclude = NA (see \code{\link{mxFactor}})
 #' @param collapse = FALSE (see \code{\link{mxFactor}})
+#' @param ordered = TRUE By default return an ordered mxFactor
+#' @param verbose Whether to tell user about such things as coercing to factor
 #' @return - \code{\link{mxFactor}}
 #' @export
 #' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' x = umxFactor(letters)
+#' x = umxFactor(letters) # just do it
 #' str(x)
-umxFactor <- function(x = character(), levels = NA, labels = levels, 
-		exclude = NA, collapse = FALSE) {
-	if(!is.factor(x)){
-		x = factor(x, ordered=TRUE)
-		message("Your variable was not a factor: I made it into one, with levels:", levels(x) )
+#' x = umxFactor(letters, verbose = T) # report coercions
+#' x = umxFactor(letters, ordered = F) # non-ordered factor like factor(x), but handles data.frames
+#' x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
+umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = NA, collapse = FALSE, ordered = TRUE, verbose = FALSE) {
+	if(is.data.frame(x)){
+		ncols = ncol(x)
+		for (c in 1:ncols) {
+			x[,c] = umxFactor(x = x[,c], levels = levels, labels = labels, exclude = exclude, collapse = collapse, ordered = ordered, verbose = verbose)
+		}
+	} else {
+		if(!is.factor(x)){
+			x = factor(x, ordered = ordered)
+			if(verbose){
+				message("Your variable was not a factor: I made it into one, with levels:", levels(x) )
+			}
+		}
+		if(is.na(levels)){
+			levels = levels(x)
+		} else {
+			# TODO should check the provided levels match the data!	(quick)	
+			if(!levels(x) == levels){
+				message("the levels you provided are not those I see in the data")
+			}
+		}
+		if(ordered){
+			x = mxFactor(x = x, levels = levels, labels = levels, exclude = exclude, ordered = TRUE, collapse = collapse)
+		}
 	}
-	if(is.na(levels)){
-		levels = levels(x)
-	}else{
-		# TODO should check the provided levels match the data!	(quick)	
-	}
-	mxFactor(x = character(), levels, labels = levels, 
-	    exclude = exclude, ordered = TRUE, collapse = collapse)
+	return(x)
 }
+
+#' @export
+umx_factor <- umxFactor
 
 #' umx_RAM_ordinal_objective
 #'
@@ -2544,8 +2566,8 @@ umx_reorder <- function(old, newOrder) {
 #' \strong{Note}: Redundant bins are merged. i.e., if the same score identifies
 #' all deciles up to the fourth, then these will be merged into one level.
 #'
-#' @param var a variable to recode as ordinal
-#' @param nlevels how many bins or levels (at most) to use (default = 10 i,e deciles)
+#' @param x a variable to recode as ordinal (email me if you'd like this upgraded to handle df input)
+#' @param nlevels How many bins or levels (at most) to use (i.e., 10 = deciles)
 #' @param type what to return (Default is "mxFactor") options include
 #' "ordered" and "unordered")
 #' @param verbose report the min, max, and decile cuts used (default = FALSE)
@@ -2554,14 +2576,15 @@ umx_reorder <- function(old, newOrder) {
 #' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' x = umx_cont_2_quantiles(rnorm(10000), verbose = TRUE)
+#' x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
 #' levels(x)
-#' x = umx_cont_2_quantiles(mtcars[,1])
-#' x = umx_cont_2_quantiles(mtcars[,2])
-#' x = umx_cont_2_quantiles(mtcars[,1:3])
+#' x = umx_cont_2_quantiles(mtcars[,"mpg"], 5) # quintiles
+#' x = umx_cont_2_quantiles(mtcars[,"cyl"], 10)
+#' # x = umx_cont_2_quantiles(mtcars[,1:3])
 #' x = umx_cont_2_quantiles(rep(0:10, 10))
 #' x = umx_cont_2_quantiles(rbinom(10000, 1, .5))
 #' str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))
+<<<<<<< HEAD
 umx_cont_2_quantiles <- function(var, nlevels = 10, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
 	if(!is.data.frame(df)){
 		if(is.matrix(df)){
@@ -2584,14 +2607,45 @@ umx_cont_2_quantiles <- function(var, nlevels = 10, type = c("mxFactor", "ordere
 		out = mxFactor(out, levels = myLabels)
 	} else if (type=="ordered") {
 		out = cut(var, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 		
+=======
+umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
+	type = match.arg(type)
+	# TODO: could make nlevels == NULL create a level for each unique value...
+	# TODO: check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed columnwise
+	if(is.data.frame(x) && dim(x)[2] > 1){
+		stop("Can't handle multiple column actions yet: email tim and rip him a new one")
+>>>>>>> d99a6663dd4bb63fe11578d24d46bd237e3dc930
 	} else {
-		out = cut(var, breaks = myBreaks, labels = myLabels); 
+		if(!is.numeric(x) ){
+			stop("This is for numeric variables. you gave me a ", typeof(x))
+		} else {
+			# x = mtcars[,"cyl"]
+			myBreaks = quantile(x, seq(0, 1, by = 1/nlevels), type = 8, na.rm = TRUE)
+			myBreaks = unique(myBreaks)
+		  myLabels = myBreaks
+			myBreaks = c(-Inf, myBreaks)
+			# myBreaks[length(myBreaks)] = Inf
+			# myLabels = NULL
+		  # if(max(myBreaks) == max(x)){
+		  # 				myBreaks = myBreaks[1:(length(myBreaks)-1)]
+		  # 				myLabels = myBreaks[2:length(myBreaks)]
+		  # } else {
+		  # 				myLabels = c(myBreaks[2:(length(myBreaks)-1)], paste0("_", max(x)))
+		  # }
+			if(type == "mxFactor"){
+				out = cut(x, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 
+				out = mxFactor(out, levels = levels(out))
+			} else if (type == "ordered") {
+				out = cut(x, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 		
+			} else {
+				out = cut(x, breaks = myBreaks, labels = myLabels); 
+			}
+			if(verbose){
+				message("Scores ranged from ", min(x), " to ", max(x), ". Cuts made at ", omxQuotes(myBreaks))
+			}
+			return(out)
+		}
 	}
-	
-	if(verbose){
-		message("Scores ranged from ", min(var), " to ", max(var), ". Cuts made at ", omxQuotes(myBreaks))
-	}
-	return(out)
 }
 
 #' umx_has_square_brackets
