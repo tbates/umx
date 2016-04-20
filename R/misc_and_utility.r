@@ -2584,37 +2584,11 @@ umx_reorder <- function(old, newOrder) {
 #' x = umx_cont_2_quantiles(rep(0:10, 10))
 #' x = umx_cont_2_quantiles(rbinom(10000, 1, .5))
 #' str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))
-<<<<<<< HEAD
-umx_cont_2_quantiles <- function(var, nlevels = 10, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
-	if(!is.data.frame(df)){
-		if(is.matrix(df)){
-			df = data.frame(df)
-		} else {
-			stop("argument df must be a dataframe. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
-		}
-	}
-	type = match.arg(type)	
-	# TODO: check if dim[2]<1, and if so, proceed columnwise
-
-	myBreaks = quantile(var, seq(0, 1, by = 1/nlevels), type = 8, na.rm = TRUE)
-	myBreaks[1] = -Inf
-	myBreaks[length(myBreaks)] = Inf
-	myBreaks = unique(myBreaks)
-    myLabels = c(myBreaks[2:(length(myBreaks)-1)], max(var))
-	# myBreaks = myBreaks[2:(length(myBreaks)-1)] # trim ends
-	if(type == "mxFactor"){
-		out = cut(var, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 
-		out = mxFactor(out, levels = myLabels)
-	} else if (type=="ordered") {
-		out = cut(var, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 		
-=======
 umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
 	type = match.arg(type)
-	# TODO: could make nlevels == NULL create a level for each unique value...
 	# TODO: check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed columnwise
 	if(is.data.frame(x) && dim(x)[2] > 1){
 		stop("Can't handle multiple column actions yet: email tim and rip him a new one")
->>>>>>> d99a6663dd4bb63fe11578d24d46bd237e3dc930
 	} else {
 		if(!is.numeric(x) ){
 			stop("This is for numeric variables. you gave me a ", typeof(x))

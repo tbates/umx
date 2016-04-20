@@ -19,7 +19,7 @@ umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
 
 \item{n.obs}{Number of observations in covmat (if provided, default = NA)}
 
-\item{rotation}{A rotation to perform on the loadings (default  = "varimax")}
+\item{rotation}{A rotation to perform on the loadings (default  = "varimax" (orthogonal))}
 
 \item{name}{A name for your model.}
 

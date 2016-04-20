@@ -52,11 +52,12 @@ omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 - \code{\link{mxModel}}
 }
 \description{
-Make a 2-group Common Pathway model (see Details below)
+Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
 }
 \details{
 The common-pathway model provides a powerful tool for theory-based decomposition of genetic
 and environmental differences.
+
 umxCP supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 to model the genetic and environmental structure of multiple phenotypes
 (measured behaviors).
@@ -66,10 +67,10 @@ into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or 
 non-additive genetic effects (D).
 
-Unlike the Cholesky, these factors do not act directly on the phenotype. Instead A, 
-C, and E influences impact on latent factors (by default 1), which then act to account for variance in the phenotypes (see Figure below).
+Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
+C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
 
-CP model path diagram.
+Common-pathway path diagram:
 
 \figure{CP.png}
 
