@@ -749,8 +749,8 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @examples
 #' x = umxFactor(letters) # just do it
 #' str(x)
-#' x = umxFactor(letters, verbose = T) # report coercions
-#' x = umxFactor(letters, ordered = F) # non-ordered factor like factor(x), but handles data.frames
+#' x = umxFactor(letters, verbose = TRUE) # report coercions
+#' x = umxFactor(letters, ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
 #' x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
 umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = NA, collapse = FALSE, ordered = TRUE, verbose = FALSE) {
 	if(is.data.frame(x)){

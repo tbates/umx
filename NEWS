@@ -1,5 +1,7 @@
 # umx 1.2.7
-* ADDED: umx_get_OpenMx (download parallel version of OpenMx)
+* May 2016 stable release
+* ADDED: umx_set_condensed_slots(): Get and set matrix compression
+* ADDED: umx_get_OpenMx (download OpenMP/parallel version of OpenMx with NPSOL)
 * CHANGE: umx_scale_wide_twin_data argument names for consistency: "suffix" "data"
 * CHANGE: umx_residualize() ditto
 * IMPROVED: umx_CI() more flexible, now allows removing CIs
