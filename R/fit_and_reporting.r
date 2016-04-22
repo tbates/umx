@@ -1875,18 +1875,18 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #'
 #' @aliases umxPlot
 #' @rdname plot.MxModel
-#' @param x an \code{\link{mxModel}} from which to make a path diagram
+#' @param x An \code{\link{mxModel}} from which to make a path diagram
 #' @param std Whether to standardize the model.
 #' @param digits The number of decimal places to add to the path coefficients
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param showFixed Whether to show fixed paths (defaults to FALSE)
 #' @param showMeans Whether to show means
-#' @param resid how to show residuals and variances default is "circle". Options are "line" & "none"
+#' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
 #' @param showError deprecated: use resid instead
 #' @param ... Optional parameters
 #' @export
-#' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{umxLabel}}, \code{\link{umxValues}}
+#' @seealso - \code{\link{umx_set_plot_format}}
 #' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 #' @examples

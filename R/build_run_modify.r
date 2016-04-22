@@ -1,8 +1,8 @@
+# umx_open("~/bin/umx/R/misc_and_utility.r")
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::release("~/bin/umx", check = TRUE)
 # devtools::build_win("~/bin/umx")
 # devtools::run_examples("~/bin/umx")
-
 # install.packages("curl")
 # install.packages("devtools")
 # install.packages("digest")

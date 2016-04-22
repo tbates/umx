@@ -35,8 +35,8 @@ levels(x)
 x = umx_cont_2_quantiles(mtcars[,"mpg"], 5) # quintiles
 x = umx_cont_2_quantiles(mtcars[,"cyl"], 10)
 # x = umx_cont_2_quantiles(mtcars[,1:3])
-x = umx_cont_2_quantiles(rep(0:10, 10))
-x = umx_cont_2_quantiles(rbinom(10000, 1, .5))
+x = umx_cont_2_quantiles(rep(0:10, 10), nlevels = 10)
+x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))
 }
 \references{

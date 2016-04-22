@@ -751,7 +751,8 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' str(x)
 #' x = umxFactor(letters, verbose = TRUE) # report coercions
 #' x = umxFactor(letters, ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
-#' x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
+#' # Dataframe example:
+#' x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) 
 umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = NA, collapse = FALSE, ordered = TRUE, verbose = FALSE) {
 	if(is.data.frame(x)){
 		ncols = ncol(x)
@@ -2611,11 +2612,14 @@ umx_reorder <- function(old, newOrder) {
 #' x = umx_cont_2_quantiles(mtcars[,"mpg"], 5) # quintiles
 #' x = umx_cont_2_quantiles(mtcars[,"cyl"], 10)
 #' # x = umx_cont_2_quantiles(mtcars[,1:3])
-#' x = umx_cont_2_quantiles(rep(0:10, 10))
-#' x = umx_cont_2_quantiles(rbinom(10000, 1, .5))
+#' x = umx_cont_2_quantiles(rep(0:10, 10), nlevels = 10)
+#' x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 #' str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))
 umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
 	type = match.arg(type)
+	if(is.null(nlevels)){
+		stop("You must set the number of levels to threshold data, i.e., 'nlevels = 10' for deciles")
+	}
 	# TODO: check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed columnwise
 	if(is.data.frame(x) && dim(x)[2] > 1){
 		stop("Can't handle multiple column actions yet: email tim and rip him a new one")
