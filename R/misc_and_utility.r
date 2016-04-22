@@ -296,6 +296,36 @@ umx_get_optimizer <- function(model = NULL) {
 	}
 }
 
+
+#' umx_set_condensed_slots
+#'
+#' Sets whether newly-created mxMatrices are to be condensed (set to NULL if not being used) or not.
+#'
+#' @param state what state (TRUE or FALSE) to set condensed slots (default NA returns current value).
+#' @return - current value of condensed slots
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' library(umx)
+#' old = umx_set_condensed_slots() # get the existing state
+#' umx_set_condensed_slots(TRUE) # update globally
+#' umx_set_condensed_slots(old) # set back
+umx_set_condensed_slots <- function(state = NA) {
+	if(is.na(state)){
+		message("mxCondenseMatrixSlots is currently: ",
+			omxQuotes(getOption('mxCondenseMatrixSlots'))
+		)
+		invisible(getOption('mxCondenseMatrixSlots'))
+	} else {
+		if(!is.logical(state)){
+			stop("mxCondenseMatrixSlots can only be set to TRUE FALSE you tried ", omxQuotes(state))
+		}else{
+			options(mxCondenseMatrixSlots = state)			
+		}
+	}
+}
+
 #' umx_set_optimizer
 #'
 #' Set the optimizer in OpenMx
