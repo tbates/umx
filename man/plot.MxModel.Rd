@@ -11,7 +11,7 @@
   showError = "deprecated", ...)
 }
 \arguments{
-\item{x}{an \code{\link{mxModel}} from which to make a path diagram}
+\item{x}{An \code{\link{mxModel}} from which to make a path diagram}
 
 \item{std}{Whether to standardize the model.}
 
@@ -25,7 +25,7 @@
 
 \item{showMeans}{Whether to show means}
 
-\item{resid}{how to show residuals and variances default is "circle". Options are "line" & "none"}
+\item{resid}{How to show residuals and variances default is "circle". Options are "line" & "none"}
 
 \item{showError}{deprecated: use resid instead}
 
@@ -66,7 +66,7 @@ plot(m1)
 - \url{http://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 }
 \seealso{
-- \code{\link{umx_set_plot_format}}, \code{\link{umxLabel}}, \code{\link{umxValues}}
+- \code{\link{umx_set_plot_format}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

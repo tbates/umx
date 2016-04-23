@@ -35,7 +35,8 @@ x = umxFactor(letters) # just do it
 str(x)
 x = umxFactor(letters, verbose = TRUE) # report coercions
 x = umxFactor(letters, ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
-x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
+# Dataframe example:
+x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) 
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
