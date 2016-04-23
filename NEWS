@@ -1,16 +1,17 @@
 # umx 1.2.7
 * May 2016 stable release
-* ADDED: umx_set_condensed_slots(): Get and set matrix compression
-* ADDED: umx_get_OpenMx (download OpenMP/parallel version of OpenMx with NPSOL)
-* CHANGE: umx_scale_wide_twin_data argument names for consistency: "suffix" "data"
-* CHANGE: umx_residualize() ditto
+* ADDED: umx_set_condensed_slots(TRUE|FALSE): Get and set matrix compression
+* ADDED: umx_get_OpenMx() (download OpenMP/parallel version of OpenMx with NPSOL)
+* ADDED: umx_cont_2_quantile(x, nlevels=)
+* IMPROVED: umxFactor (alias to umx_factor)
+  * now handles dataframes and allows non-ordered;
 * IMPROVED: umx_CI() more flexible, now allows removing CIs
   * Old code will break: replace "add" with "which"
 * IMPROVED: umx_time handling of no input arguments
-* IMPROVED: umx_cont_2_quantile()
-  * Old code will break: replace umx_cont_2_ordinal with umx_cont_2_quantile
 * IMPROVED: umx_pb_note() better feedback and setup
 * IMPROVED: loadings() generic
+* CHANGE: umx_scale_wide_twin_data argument names for consistency: "suffix" "data"
+* CHANGE: umx_residualize() ditto
 * UPDATE: Readme.md
 
 # umx 1.2.5
