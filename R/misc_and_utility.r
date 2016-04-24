@@ -59,103 +59,9 @@ umx_set_table_format <- function(knitr.table.format = NULL) {
 		umx_check(knitr.table.format %in% c("latex", "html", "markdown", "pandoc", "rst"), "stop")
 		options("knitr.table.format" = knitr.table.format)
 	}
-}
+} # end umx_set_table_format
 
-#' umx_set_auto_plot
-#'
-#' Set autoPlot default for models like umxACE umxGxE etc
-#'
-#' @param autoPlot If NA or "name", sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
-#' @return - Current umx_auto_plot setting
-#' @export
-#' @family Get and set
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
-#' library(umx)
-#' old = umx_set_auto_plot() # get existing value
-#' umx_set_auto_plot("name")  # set to "name"
-#' umx_set_auto_plot(old)    # reinstate
-umx_set_auto_plot <- function(autoPlot = NULL) {
-	if(is.null(autoPlot)) {
-		getOption("umx_auto_plot")
-	} else {
-		umx_check(autoPlot %in% c(NA, "name"), "stop", "autoPlot should be either NA or 'name'")
-		options("umx_auto_plot" = autoPlot)
-	}
-}
 
-#' umx_set_auto_run
-#'
-#' Set autorun default for models like umxACE umxGxE etc
-#'
-#' @param autoRun If TRUE or FALSE, sets the umx_auto_run option. Else returns the current value of umx_auto_run
-#' @return - Current umx_auto_run setting
-#' @export
-#' @family Get and set
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
-#' library(umx)
-#' old = umx_set_auto_run() # get existing value
-#' umx_set_auto_run(FALSE)  # set to FALSE
-#' umx_set_auto_run(old)    # reinstate
-umx_set_auto_run <- function(autoRun = NA) {
-	# TODO implement umx_set_auto_run
-	if(is.na(autoRun)) {
-		getOption("umx_auto_run")
-	} else {
-		umx_check(autoRun %in% c(TRUE, FALSE), "stop")
-		options("umx_auto_run" = autoRun)
-	}
-}
-
-#' umx_set_cores
-#'
-#' set the number of cores (threads) used by OpenMx
-#'
-#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to detectCores().
-#' @param model an (optional) model to set. If left NULL, the global option is updated.
-#' @return - number of cores
-#' @export
-#' @family Get and set
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
-#' library(umx)
-#' manifests = c("mpg", "disp", "gear")
-#' m1 <- mxModel("ind", type = "RAM",
-#' 	manifestVars = manifests,
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = "one", to = manifests),
-#' 	mxData(mtcars[, manifests], type = "raw")
-#' )
-#' umx_set_cores()              # show current value
-#' oldCores <- umx_set_cores()  # store existing value
-#' umx_set_cores(detectCores()) # set to max
-#' umx_set_cores(-1) ; umx_set_cores() # set to max
-#' m1 = umx_set_cores(1, m1)  # set m1 useage to 1 core
-#' umx_set_cores(model = m1)  # show new value for m1
-#' umx_set_cores(oldCores)    # reinstate old global value
-umx_set_cores <- function(cores = NA, model = NULL) {
-	# depends on parallel::detectCores
-	if(is.na(cores)){
-		n = mxOption(model, "Number of Threads") # get the old value
-		message(n, "/", parallel::detectCores())
-		return(n)
-	} else if(umx_is_MxModel(cores)) {
-		stop("Call this as umx_set_cores(cores, model), not the other way around")
-	}else{
-		if(!is.numeric(cores)){
-			stop("cores must be an integer. You gave me ", cores)
-		}
-		umx_check(isTRUE(all.equal(cores, as.integer(cores))), message = paste0("cores must be an integer. You gave me: ", cores))
-		if(cores > detectCores() ){
-			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", detectCores() )
-			cores = detectCores()
-		} else if (cores < 1){
-			cores = detectCores()
-		}
-		mxOption(model, "Number of Threads", cores)		
-	}
-}
 
 #' umx_get_cores
 #'
@@ -275,27 +181,53 @@ umx_check_parallel <- function(nCores = -1) {
 	invisible(umx_time(models, autoRun= F))
 }
 
-#' umx_get_optimizer
+
+#' umx_set_auto_plot
 #'
-#' This function is now deprecated: Get the current optimizer, use \\code{\link{umx_set_optimizer}}
-#' with no parameters.
+#' Set autoPlot default for models like umxACE umxGxE etc
 #'
-#' @param model (optional) model to get from. If left NULL, the global option is returned
-#' @return - the optimizer  - a string
+#' @param autoPlot If NA or "name", sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
+#' @return - Current umx_auto_plot setting
 #' @export
 #' @family Get and set
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' # Deprecated function: to get cores, use umx_set_cores() with no value
-umx_get_optimizer <- function(model = NULL) {
-	message("Deprecated function: to get optimizer, use umx_set_optimizer() with no value")
-	if(is.null(model)){
-		mxOption(NULL, "Default optimizer")
+#' library(umx)
+#' old = umx_set_auto_plot() # get existing value
+#' umx_set_auto_plot("name")  # set to "name"
+#' umx_set_auto_plot(old)    # reinstate
+umx_set_auto_plot <- function(autoPlot = NULL) {
+	if(is.null(autoPlot)) {
+		getOption("umx_auto_plot")
 	} else {
-		mxOption(model, "Default optimizer")
+		umx_check(autoPlot %in% c(NA, "name"), "stop", "autoPlot should be either NA or 'name'")
+		options("umx_auto_plot" = autoPlot)
 	}
 }
 
+#' umx_set_auto_run
+#'
+#' Set autorun default for models like umxACE umxGxE etc
+#'
+#' @param autoRun If TRUE or FALSE, sets the umx_auto_run option. Else returns the current value of umx_auto_run
+#' @return - Current umx_auto_run setting
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' library(umx)
+#' old = umx_set_auto_run() # get existing value
+#' umx_set_auto_run(FALSE)  # set to FALSE
+#' umx_set_auto_run(old)    # reinstate
+umx_set_auto_run <- function(autoRun = NA) {
+	# TODO implement umx_set_auto_run
+	if(is.na(autoRun)) {
+		getOption("umx_auto_run")
+	} else {
+		umx_check(autoRun %in% c(TRUE, FALSE), "stop")
+		options("umx_auto_run" = autoRun)
+	}
+}
 
 #' umx_set_condensed_slots
 #'
@@ -325,6 +257,7 @@ umx_set_condensed_slots <- function(state = NA) {
 		}
 	}
 }
+
 
 #' umx_set_optimizer
 #'
@@ -465,6 +398,56 @@ umx_get_checkpoint <- function(model = NULL) {
 	message("Checkpoint  Prefix: "   , mxOption(model, "Checkpoint Prefix" ) )	
 	message("Checkpoint  Directory: ", mxOption(model, "Checkpoint Directory" ) )
 }
+
+#' umx_set_cores
+#'
+#' set the number of cores (threads) used by OpenMx
+#'
+#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to detectCores().
+#' @param model an (optional) model to set. If left NULL, the global option is updated.
+#' @return - number of cores
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' library(umx)
+#' manifests = c("mpg", "disp", "gear")
+#' m1 <- mxModel("ind", type = "RAM",
+#' 	manifestVars = manifests,
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = "one", to = manifests),
+#' 	mxData(mtcars[, manifests], type = "raw")
+#' )
+#' umx_set_cores()              # show current value
+#' oldCores <- umx_set_cores()  # store existing value
+#' umx_set_cores(detectCores()) # set to max
+#' umx_set_cores(-1) ; umx_set_cores() # set to max
+#' m1 = umx_set_cores(1, m1)  # set m1 useage to 1 core
+#' umx_set_cores(model = m1)  # show new value for m1
+#' umx_set_cores(oldCores)    # reinstate old global value
+umx_set_cores <- function(cores = NA, model = NULL) {
+	# depends on parallel::detectCores
+	if(is.na(cores)){
+		n = mxOption(model, "Number of Threads") # get the old value
+		message(n, "/", parallel::detectCores())
+		return(n)
+	} else if(umx_is_MxModel(cores)) {
+		stop("Call this as umx_set_cores(cores, model), not the other way around")
+	}else{
+		if(!is.numeric(cores)){
+			stop("cores must be an integer. You gave me ", cores)
+		}
+		umx_check(isTRUE(all.equal(cores, as.integer(cores))), message = paste0("cores must be an integer. You gave me: ", cores))
+		if(cores > detectCores() ){
+			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", detectCores() )
+			cores = detectCores()
+		} else if (cores < 1){
+			cores = detectCores()
+		}
+		mxOption(model, "Number of Threads", cores)		
+	}
+}
+
 
 # ======================================
 # = Lower-level Model building helpers =
@@ -4180,3 +4163,24 @@ umx_standardize_CP <- function(fit){
 # https://en.wikipedia.org/wiki/The_Second_Coming_(poem)
 # https://en.wikipedia.org/wiki/Invictus
 # http://www.poetryfoundation.org/poem/173698get
+
+#' umx_get_optimizer
+#'
+#' This function is now deprecated: Get the current optimizer, use \\code{\link{umx_set_optimizer}}
+#' with no parameters.
+#'
+#' @param model (optional) model to get from. If left NULL, the global option is returned
+#' @return - the optimizer  - a string
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' # Deprecated function: to get cores, use umx_set_cores() with no value
+umx_get_optimizer <- function(model = NULL) {
+	message("Deprecated function: to get optimizer, use umx_set_optimizer() with no value")
+	if(is.null(model)){
+		mxOption(NULL, "Default optimizer")
+	} else {
+		mxOption(model, "Default optimizer")
+	}
+}
