@@ -5,7 +5,7 @@
 \title{umxTwoStage}
 \usage{
 umxTwoStage(formula, instruments, data, subset, weights, contrasts = NULL,
-  name = "tsls", digits = 2, ...)
+  name = "tsls", ...)
 }
 \arguments{
 \item{formula}{for structural equation to be estimated; a regression constant is implied if not explicitly omitted.}
@@ -24,9 +24,9 @@ to be used to compute weighted 2SLS estimates.}
 
 \item{name}{for the model (defaults to "tsls")}
 
-\item{digits}{number of digits for summary output.}
-
 \item{...}{arguments to be passed down.}
+
+\item{digits}{number of digits for summary output.}
 }
 \value{
 -

@@ -189,7 +189,7 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 # # Try with an missing value for one subect
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (MR_data[1,"qtl"] = NA))
 #' }
-umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls", digits = 2,...) {
+umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
 	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxTwoStage: email maintainer to prioritize")	
 	# formula = Y ~ X; instruments ~ qtl; data = MR_data
 	# m1 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
@@ -211,7 +211,7 @@ umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= 
 	latentErr <- paste0("e", allForm) # latentErr   <- c("eX", "eY")
 	umx_check_names(manifests, data = data, die = TRUE)
 
-	IVModel <- umxRAM("IV Model", data = mxData(MR_data, type = "raw", digits = digits),
+	IVModel <- umxRAM("IV Model", data = mxData(MR_data, type = "raw"),
 		# Causal and confounding paths
 		umxPath(inst , to = Xvars), # beta of SNP effect          :  X ~ b1 x inst
 		umxPath(Xvars, to = DV),    # Causal effect of Xvars on DV: DV ~ b2 x X
