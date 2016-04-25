@@ -25,7 +25,7 @@ Some highlights include:
 	* `umxPath()` *# mxPath on steroids: one-word settings to set `var` , `mean` `cov`, `fixedAt` and more. Great time-saver!*
 2. Reporting output
 	* `umxSummary(model)` # *Get a brief summary of model fit, similar to a journal report (Χ², p, CFI, TLI, & RMSEA). Optionally show the path loadings*
-	* `plot(model, std=T, digits = 3, file = "name")` # *Create a graphical representation of model! and a [GraphViz](http://www.graphviz.org/Gallery.php) file)*
+	* `plot(model, std=T, digits = 3, file = "name")` # *Create a graphical representation of model!*
 	* `umx_time(model)`  *# Report the time taken by a model in a compact programable format*
 3. Modify models
 	* `umxModify()` *# Modify and run a model. You can add objects, drop or add paths, including by regular-expression label matching), re-name the model, re-run, and even return the comparison. All in 1 line *
