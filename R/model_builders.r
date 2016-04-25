@@ -138,7 +138,7 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' umxTwoStage
 #'
 #' umxTwoStage implements 2-stage least squares regression in Structural Equation Modeling.
-#' The function is modeled closely on the tsls function in the sem package for ease of learning.
+#' For ease of learning, the function is modeled closely on the \code{\link[sem]{tsls}}.
 #' 
 #' The example is a Mendelian Randomization \url{https://en.wikipedia.org/wiki/Mendelian_randomization} 
 #' analysis to show the value of two-stage.
@@ -151,12 +151,13 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' if specified should be a non-negative numeric vector with one entry for each observation,
 #' to be used to compute weighted 2SLS estimates.
 #' @param contrasts	an optional list. See the contrasts.arg argument of model.matrix.default.
+#' @param name for the model (defaults to "tsls")
 #' @param digits number of digits for summary output.
 #' @param ...	arguments to be passed down.
 #' @return - 
 #' @export
 #' @family Super-easy helpers
-#' @seealso - \code{\link{umxRAM}}, \code{\link{tsls}}
+#' @seealso - \code{\link{umxRAM}}, \code{\link[sem]{tsls}}
 #' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
 #' In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass., 
 #' Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
@@ -173,28 +174,26 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' plot(m1)
 #' 
 #' # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
-#' m1 = lm(Y ~ X    , data = MR_data); coef(m1) # "appears" that Y is caused by X:  𝛽= .35
-#' m1 = lm(Y ~ X + U, data = MR_data); coef(m1) # Controlling U reveals the true link: 𝛽= 0.1
+#' m1 = lm(Y ~ X    , data = MR_data); coef(m1) # incorrect .35 effect of X on Y
+#' m1 = lm(Y ~ X + U, data = MR_data); coef(m1) # Controlling U reveals the true 0.1 beta weight
 #' #
 #' #
 #' \dontrun{
-#' # =========================
-#' # = tsls from sem library =
-#' # =========================
+#' # ======================
+#' # = now with sem::tsls =
+#' # ======================
 #' # library(sem) # will require you to install X11
-#' m2 = tsls(formula = Y ~ X, instruments = ~ qtl, data = MR_data)
-#'
+#' m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = MR_data)
 #' coef(m1)
 #' coef(m2)
-#' #                 Estimate  Std. Error   t value     Pr(>|t|)
-#' # (Intercept) 0.0009797078 0.003053891 0.3208064 7.483577e-01
-#' # X           0.1013835358 0.021147133 4.7941976 1.635616e-06
-#' # X effect correctly estimated at .1 !!
+# # Try with an missing value for one subect
+#' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (MR_data[1,"qtl"] = NA))
 #' }
-umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls",...) {
+umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls", digits = 2,...) {
+	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxTwoStage: email maintainer to prioritize")	
 	# formula = Y ~ X; instruments ~ qtl; data = MR_data
-	# m1 = tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
-	# summary(tsls(Q ~ P + D, ~ D + F + A, data=Kmenta))
+	# m1 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
+	# summary(sem::tsls(Q ~ P + D, ~ D + F + A, data=Kmenta))
 	if(!class(formula) == "formula"){
 		stop("formula must be a formula")
 	}
@@ -212,7 +211,7 @@ umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= 
 	latentErr <- paste0("e", allForm) # latentErr   <- c("eX", "eY")
 	umx_check_names(manifests, data = data, die = TRUE)
 
-	IVModel <- umxRAM("IV Model", data = mxData(MR_data, type = "raw"),
+	IVModel <- umxRAM("IV Model", data = mxData(MR_data, type = "raw", digits = digits),
 		# Causal and confounding paths
 		umxPath(inst , to = Xvars), # beta of SNP effect          :  X ~ b1 x inst
 		umxPath(Xvars, to = DV),    # Causal effect of Xvars on DV: DV ~ b2 x X
