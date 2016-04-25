@@ -1876,14 +1876,13 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @aliases umxPlot
 #' @rdname plot.MxModel
 #' @param x An \code{\link{mxModel}} from which to make a path diagram
-#' @param std Whether to standardize the model.
+#' @param std Whether to standardize the model (default = FALSE).
 #' @param digits The number of decimal places to add to the path coefficients
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
-#' @param showFixed Whether to show fixed paths (defaults to FALSE)
+#' @param showFixed Whether to show fixed paths (defaults to TRUE)
 #' @param showMeans Whether to show means
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
-#' @param showError deprecated: use resid instead
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umx_set_plot_format}}
@@ -1900,21 +1899,11 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' plot(m1)
-plot.MxModel <- function(x = NA, std = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), showFixed = FALSE, showMeans = TRUE, resid = c("circle", "line", "none"), showError = "deprecated", ...) {
-	if(showError != "deprecated"){
-		message(omxQuotes("showError"), " is deprecated: in future, use ", 
-			omxQuotes("resid"), " and one of ", omxQuotes(c("circle", "line", "none")))
-		if(showError){
-			resid = "circle"
-		} else {
-			resid = "none"
-		}
-	} else {
-		resid = match.arg(resid)
-	}
+plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), showFixed = TRUE, showMeans = TRUE, resid = c("circle", "line", "none"), ...) {
 	# ==========
 	# = Setup  =
 	# ==========
+	resid = match.arg(resid)
 	model = x # just to be clear that x is a model
 
 	pathLabels = match.arg(pathLabels)
@@ -1973,8 +1962,8 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, file = "name", pathLabe
 			}
 
 			# TODO find a way of showing means fixed at zero?
-			if(thisPathFree | showFixed ) {
-			# if(thisPathFree | (showFixed & thisPathVal != 0) ) {
+			if(thisPathFree || showFixed ) {
+				# if(thisPathFree | (showFixed & thisPathVal != 0) ) {
 				out = paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n')
 			}else{
 				# cat(paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n'))
@@ -2012,7 +2001,7 @@ plot.MxModel <- function(x = NA, std = TRUE, digits = 2, file = "name", pathLabe
 	# ===================================
 	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
-	print("nb: see ?plot.MxModel for options - std, digits, file, pathLabels, resid, showFixed, showMeans")
+	print("nb: see ?plot.MxModel for options - std, digits, file, showFixed, showMeans, resid= 'circle|line|none', pathLabels")
 	xmu_dot_maker(model, file, digraph)
 } # end plot.MxModel
 

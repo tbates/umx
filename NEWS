@@ -1,6 +1,7 @@
 # umx 1.2.7
 * May 2016 stable release
 * ADDED: beta umxTwoStage function for FIML-based Instrumental variable and Mendelian Randomization
+* ADDED: beta umxTwoStage function for FIML-based Instrumental variable and Mendelian Randomization
 * ADDED: umx_set_condensed_slots(TRUE|FALSE): Get and set matrix compression
 * ADDED: umx_get_OpenMx() (download OpenMP/parallel version of OpenMx with NPSOL)
 * ADDED: umx_cont_2_quantile(x, nlevels=)

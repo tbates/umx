@@ -40,9 +40,9 @@ analysis to show the value of two-stage.
 \examples{
 library(umx)
 
-data("MR_data")
-# reduce row count for speed
-df = MR_data[1:10000,]
+df = umx_make_MR_data(10000)
+str(df)
+
 # ====================================
 # = Mendelian randomization analysis =
 # ====================================

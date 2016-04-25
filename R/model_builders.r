@@ -163,9 +163,9 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' @examples
 #' library(umx)
 #' 
-#' data("MR_data")
-#' # reduce row count for speed
-#' df = MR_data[1:10000,]
+#' df = umx_make_MR_data(10000)
+#' str(df)
+#' 
 #' # ====================================
 #' # = Mendelian randomization analysis =
 #' # ====================================

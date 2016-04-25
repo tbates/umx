@@ -3395,6 +3395,60 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs, a = c(avg = .5, min = 0, max =
 	return(list(mzData=mzData, dzData = dzData))
 }
 
+#' Simulate Mendelian Randomization data
+#'
+#' umx_make_MR_data returns a dataset containing 4 variables: A variable of interest (Y), a putative cause (X),
+#' a qtl (quantitative trait locus) influencing X, and a confounding variable (U) affecting both X and Y.
+#'
+#' The code to make these Data. Modified from Dave Evans 2016 Boulder workshop talk.
+#' 
+#' @param nSubjects Number of subjects in sample
+#' @param Vqtl Variance of QTL affecting causal variable X (Default 0.02) 
+#' @param pQTL Decreaser allele frequency (Default 0.5)
+#' @param bXY  Causal effect of X on Y (Default 0.1) 
+#' @param bUX  Confounding effect of U on X (Default 0.5) 
+#' @param bUY  Confounding effect of U on Y (Default 0.5) 
+#' @return - data.frame
+#' @export
+#' @family Data Functions
+#' @examples
+#' df = umx_make_MR_data(10000)
+#' str(df)
+#' \dontrun{
+#' m1 = umxTwoStage(Y ~ X, ~qtl, data = df)
+#' plot(m1)
+#' }
+umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5, bUY = 0.5, pQTL = 0.5, seed = 123) {	
+	# nSubjects  = 50,000 # Individuals
+	# bXY  = 0.1      # Causal effect of X on Y
+	# bUX  = 0.5      # Confounding effect of U on X
+	# bUY  = 0.5      # Confounding effect of U on Y
+	# pQTL = 0.5      # Decreaser allele frequency
+	set.seed(seed)
+	b_qtl_x  = sqrt(Vqtl) # Path coefficient between SNP and X
+	q    = 1 - pQTL # Increaser allele frequency
+	a = sqrt(1/(2 * pQTL * q)) # Genotypic value for genetic variable of variance 1.0
+	# Residual variance in variable X (so variance adds up to one)
+	Vex  <- (1- Vqtl - bUX^2)
+	sdex <- sqrt(Vex) # Residual standard error in variable X
+	
+	# Residual variance for Y variable (so var adds up to 1.0)
+	Vey = 1 - (bXY^2 + 2*bXY*bUX*bUY + bUY^2) 
+	sdey <- sqrt(Vey) # Residual standard error in variable Y
+ 
+	# Simulate individual genotypic and phenotypic values
+	qtl <- sample(c(-a,0,a), nSubjects, replace = TRUE, prob = c(p^2, 2*p*q, q^2)) 
+	U <- rnorm(nSubjects, 0, 1) #Confounding variables
+	X <- b_qtl_x * qtl + bUX * U + rnorm(nSubjects, 0, sdex) # X variable
+	Y <- bXY * X + bUY * U + rnorm(nSubjects, 0, sdey) # Y variable
+	# Recode SNP qtl using traditional 0, 1, 2 coding
+	qtl <- replace(qtl, qtl ==  a, 2)
+	qtl <- replace(qtl, qtl ==  0, 1)
+	qtl <- replace(qtl, qtl == -a, 0)
+	MR_data = data.frame(X = X, Y = Y, U = U, qtl = qtl)
+	# save(MR_data, file = "~/bin/umx/data/MR_data.rda")
+}
+
 #' umx_make_fake_data
 #'
 #' This function takes as argument an existing dataset, which 
