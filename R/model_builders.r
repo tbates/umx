@@ -223,7 +223,7 @@ umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= 
 		umxPath(means = c(Xvars, DV))
 	)
 	# umx_time(IVModel) # IV Model: 3.1 s ( was 14.34 seconds with poor start values) for 100,000 subjects
-	return(m1)
+	return(IVModel)
 }
 
 # load(file = "~/Dropbox/shared folders/OpenMx_binaries/shared data/bad_CFI.Rda", verbose =T)
