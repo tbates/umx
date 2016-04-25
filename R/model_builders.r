@@ -164,17 +164,19 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' library(umx)
 #' 
 #' data("MR_data")
+#' # reduce row count for speed
+#' df = MR_data[1:10000,]
 #' # ====================================
 #' # = Mendelian randomization analysis =
 #' # ====================================
 #' 
-#' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = MR_data)
+#' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
 #' plot(m1)
 #' 
 #' # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
-#' m1 = lm(Y ~ X    , data = MR_data); coef(m1) # incorrect .35 effect of X on Y
-#' m1 = lm(Y ~ X + U, data = MR_data); coef(m1) # Controlling U reveals the true 0.1 beta weight
+#' m1 = lm(Y ~ X    , data = df); coef(m1) # incorrect .35 effect of X on Y
+#' m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 beta weight
 #' #
 #' #
 #' \dontrun{
@@ -182,11 +184,11 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' # = now with sem::tsls =
 #' # ======================
 #' # library(sem) # will require you to install X11
-#' m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = MR_data)
+#' m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
 #' coef(m2)
 # # Try with an missing value for one subect
-#' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (MR_data[1,"qtl"] = NA))
+#' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1,"qtl"] = NA))
 #' }
 umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
 	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxTwoStage: email maintainer to prioritize")	

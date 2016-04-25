@@ -63,12 +63,12 @@ NULL
 #' @usage data(MR_data)
 #' @format data frame with 50,000 rows and 4 variables
 #' @examples
+#' \dontrun{
 #' data(MR_data)
 #' str(MR_data)
 #' m1 = umxTwoStage(Y ~ X, ~qtl, data = MR_data)
 #' plot(m1)
 #' 
-#' \dontrun{
 #' # ========================================================
 #' # =            The code to make these Data               =
 #' # = Modified from Dave Evan's 2016 Boulder workshop talk =

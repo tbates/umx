@@ -25,8 +25,6 @@ to be used to compute weighted 2SLS estimates.}
 \item{name}{for the model (defaults to "tsls")}
 
 \item{...}{arguments to be passed down.}
-
-\item{digits}{number of digits for summary output.}
 }
 \value{
 -
