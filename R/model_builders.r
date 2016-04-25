@@ -152,7 +152,6 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' to be used to compute weighted 2SLS estimates.
 #' @param contrasts	an optional list. See the contrasts.arg argument of model.matrix.default.
 #' @param name for the model (defaults to "tsls")
-#' @param digits number of digits for summary output.
 #' @param ...	arguments to be passed down.
 #' @return - 
 #' @export
