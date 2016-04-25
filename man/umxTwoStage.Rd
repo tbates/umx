@@ -41,17 +41,19 @@ analysis to show the value of two-stage.
 library(umx)
 
 data("MR_data")
+# reduce row count for speed
+df = MR_data[1:10000,]
 # ====================================
 # = Mendelian randomization analysis =
 # ====================================
 
-m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = MR_data)
+m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 coef(m1)
 plot(m1)
 
 # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
-m1 = lm(Y ~ X    , data = MR_data); coef(m1) # incorrect .35 effect of X on Y
-m1 = lm(Y ~ X + U, data = MR_data); coef(m1) # Controlling U reveals the true 0.1 beta weight
+m1 = lm(Y ~ X    , data = df); coef(m1) # incorrect .35 effect of X on Y
+m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 beta weight
 #
 #
 \dontrun{
@@ -59,10 +61,10 @@ m1 = lm(Y ~ X + U, data = MR_data); coef(m1) # Controlling U reveals the true 0.
 # = now with sem::tsls =
 # ======================
 # library(sem) # will require you to install X11
-m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = MR_data)
+m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 coef(m1)
 coef(m2)
-m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (MR_data[1,"qtl"] = NA))
+m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1,"qtl"] = NA))
 }
 }
 \references{

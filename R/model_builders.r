@@ -220,7 +220,7 @@ umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= 
 		# Latent error stuff + setting up variance and means for variables
 		umxPath(v.m. = inst),     # Model variance and mean of instrument
 		umxPath(var = latentErr), # Variance of residual errors
-		umxPath(latentErr, to = Xvars, fixedAt = 1), # Xvar residuals@1.
+		umxPath(latentErr, to = allForm, fixedAt = 1), # X and Y residuals@1.
 		umxPath(unique.bivariate = latentErr, values = 0.2, labels = paste0("phi", length(latentErr)) ), # Correlation among residuals
 		umxPath(means = c(Xvars, DV))
 	)

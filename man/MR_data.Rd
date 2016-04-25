@@ -21,12 +21,12 @@ known to influence X, and a confounding variable (U) affecting both X and Y.
 }
 }
 \examples{
+\dontrun{
 data(MR_data)
 str(MR_data)
 m1 = umxTwoStage(Y ~ X, ~qtl, data = MR_data)
 plot(m1)
 
-\dontrun{
 # ========================================================
 # =            The code to make these Data               =
 # = Modified from Dave Evan's 2016 Boulder workshop talk =
