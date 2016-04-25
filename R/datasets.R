@@ -44,3 +44,63 @@
 #' plot(ht_T1 ~ht_T2, ylim = c(130, 165), data = subset(us_skinfold_data, zyg == 3))
 #' par(mfrow = c(1, 1))  # back to as it was
 NULL
+
+#' Simulated Mendelian Randomization data
+#'
+#' A dataset containing a variable of interest (Y), a putative cause (X), a qtl 
+#' known to influence X, and a confounding variable (U) affecting both X and Y.
+#' 
+#' \itemize{
+#'   \item X A putative causal variable affecting Y.
+#'   \item Y  The dependent variable of interest.
+#'   \item qtl A genetic polymorphism or "quantitative trait locus" affecting X.
+#'   \item U A confounding variable, affecting both X and Y.
+#' }
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name MR_data
+#' @usage data(MR_data)
+#' @format A data frame with 15000 rows and 4 variables
+#' @examples
+#' data(MR_data)
+#' str(MR_data)
+#' m1 = umxTwoStage(Y ~X, ~Z, data = MR_data)
+#' plot(m1)
+#' 
+#' 
+#' # ========================================================
+#' # =            The code to make these Data               =
+#' # = Modified from Dave Evan's 2016 Boulder workshop talk =
+#' # ========================================================
+#' set.seed(999)   # Set seed for random number generator
+#' nInd  = 100000    # 100,000 Individuals
+#' Vqtl  = 0.02     # Variance of QTL affecting causal variable X
+#' b_qtl_x  = sqrt(Vqtl) # Path coefficient between SNP and X
+#' b_xy  = 0.1      # Causal effect of X on Y
+#' b_ux  = 0.5      # Confounding effect of U on X
+#' b_uy  = 0.5      # Confounding effect of U on Y
+#' p     = 0.5      # Decreaser allele frequency
+#' q     = 1 - p    # Increaser allele frequency
+#' a = sqrt(1/(2 * p * q)) # Genotypic value for genetic variable of variance 1.0
+#' 
+#' Vex  <- (1- Vqtl - b_ux^2) # Residual variance in variable X (so variance adds up to one)
+#' sdex <- sqrt(Vex) # Residual standard error in variable X
+#' 
+#' Vey = 1 - (b_xy^2 + 2*b_xy*b_ux*b_uy + b_uy^2) # Residual variance for Y variable (so var adds up to 1.0)
+#' sdey <- sqrt(Vey) # Residual standard error in variable Y
+#' 
+#' # Simulate individuals
+#' qtl <- sample(c(-a,0,a), nInd, replace = TRUE, prob = c(p^2, 2*p*q, q^2)) # Simulate genotypic values
+#' U <- rnorm(nInd, 0, 1) #Confounding variables
+#' X <- b_qtl_x * qtl + b_ux * U + rnorm(nInd, 0, sdex) # X variable
+#' Y <- b_xy * X + b_uy * U + rnorm(nInd, 0, sdey) # Y variable
+#' #
+# Recode SNP qtl using traditional 0, 1, 2 coding
+#' qtl <- replace(qtl, qtl ==  a, 2)
+#' qtl <- replace(qtl, qtl ==  0, 1)
+#' qtl <- replace(qtl, qtl == -a, 0)
+#' #
+#' MR_data = data.frame(U = U, X = X, Y = Y, qtl = qtl)
+#' save(MR_data, file = "~/bin/umx/data/MR_data.rda")
+NULL

@@ -134,3 +134,100 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 	umxSummary(m1, digits = digits, report = report);
 	invisible(m1)
 }
+
+#' umxTwoStage
+#'
+#' umxTwoStage implements 2-stage least squares regression in Structural Equation Modeling.
+#' The function is modeled closely on the tsls function in the sem package for ease of learning.
+#' 
+#' The example is a Mendelian Randomization \url{https://en.wikipedia.org/wiki/Mendelian_randomization} 
+#' analysis to show the value of two-stage.
+#'
+#' @param formula	for structural equation to be estimated; a regression constant is implied if not explicitly omitted.
+#' @param instruments	one-sided formula specifying instrumental variables.
+#' @param data data.frame containing the variables in the model.
+#' @param subset [optional] vector specifying a subset of observations to be used in fitting the model.
+#' @param weights [optional] vector of weights to be used in the fitting process;
+#' if specified should be a non-negative numeric vector with one entry for each observation,
+#' to be used to compute weighted 2SLS estimates.
+#' @param contrasts	an optional list. See the contrasts.arg argument of model.matrix.default.
+#' @param digits number of digits for summary output.
+#' @param ...	arguments to be passed down.
+#' @return - 
+#' @export
+#' @family Super-easy helpers
+#' @seealso - \code{\link{umxRAM}}, \code{\link{tsls}}
+#' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
+#' In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass., 
+#' Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
+#' @examples
+#' library(umx)
+#' 
+#' data("MR_data")
+#' # ====================================
+#' # = Mendelian randomization analysis =
+#' # ====================================
+#' 
+#' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = MR_data)
+#' coef(m1)
+#' plot(m1)
+#' 
+#' # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
+#' m1 = lm(Y ~ X    , data = MR_data); coef(m1) # "appears" that Y is caused by X:  𝛽= .35
+#' m1 = lm(Y ~ X + U, data = MR_data); coef(m1) # Controlling U reveals the true link: 𝛽= 0.1
+#' #
+#' #
+#' \dontrun{
+#' # =========================
+#' # = tsls from sem library =
+#' # =========================
+#' # library(sem) # will require you to install X11
+#' m2 = tsls(formula = Y ~ X, instruments = ~ qtl, data = MR_data)
+#'
+#' coef(m1)
+#' coef(m2)
+#' #                 Estimate  Std. Error   t value     Pr(>|t|)
+#' # (Intercept) 0.0009797078 0.003053891 0.3208064 7.483577e-01
+#' # X           0.1013835358 0.021147133 4.7941976 1.635616e-06
+#' # X effect correctly estimated at .1 !!
+#' }
+umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls",...) {
+	# formula = Y ~ X; instruments ~ qtl; data = MR_data
+	# m1 = tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
+	# summary(tsls(Q ~ P + D, ~ D + F + A, data=Kmenta))
+	if(!class(formula) == "formula"){
+		stop("formula must be a formula")
+	}
+	allForm = all.vars(terms(formula))
+	if(length(allForm) != 2){
+		stop("I'm currently limited to 1 DV, 1 IV, and 1 instrument: 'formula' had ", length(allForm), " items")
+	}
+	DV   = allForm[1] # left hand item
+	Xvars  = all.vars(delete.response(terms(formula)))
+	inst = all.vars(terms(instruments))
+	if(length(inst) != 1){
+		stop("I'm currently limited to 1 DV, 1 IV, and 1 instrument: 'instruments' had ", length(allForm), " items")
+	}
+	manifests <- c(allForm, inst)     # manifests <- c("qtl", "X", "Y")
+	latentErr <- paste0("e", allForm) # latentErr   <- c("eX", "eY")
+	umx_check_names(manifests, data = data, die = TRUE)
+
+	IVModel <- umxRAM("IV Model", data = mxData(MR_data, type = "raw"),
+		# Causal and confounding paths
+		umxPath(inst , to = Xvars), # beta of SNP effect          :  X ~ b1 x inst
+		umxPath(Xvars, to = DV),    # Causal effect of Xvars on DV: DV ~ b2 x X
+
+		# Latent error stuff + setting up variance and means for variables
+		umxPath(v.m. = inst),     # Model variance and mean of instrument
+		umxPath(var = latentErr), # Variance of residual errors
+		umxPath(latentErr, to = Xvars, fixedAt = 1), # Xvar residuals@1.
+		umxPath(unique.bivariate = latentErr, values = 0.2, labels = paste0("phi", length(latentErr)) ), # Correlation among residuals
+		umxPath(means = c(Xvars, DV))
+	)
+	# umx_time(IVModel) # IV Model: 3.1 s ( was 14.34 seconds with poor start values) for 100,000 subjects
+	return(m1)
+}
+
+# load(file = "~/Dropbox/shared folders/OpenMx_binaries/shared data/bad_CFI.Rda", verbose =T)
+# ref <- mxRefModels(IVModel, run=TRUE)
+# summary(IVModel, refModels=ref)
