@@ -3294,6 +3294,9 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	return(theData)
 }
 
+# =================
+# = Simulate Data =
+# =================
 #' umx_make_TwinData
 #'
 #' @description
@@ -3391,11 +3394,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs, a = c(avg = .5, min = 0, max =
 	}
 	return(list(mzData=mzData, dzData = dzData))
 }
-	
 
-
-
-#' umx_fake_data
+#' umx_make_fake_data
 #'
 #' This function takes as argument an existing dataset, which 
 #' must be either a matrix or a data frame. Each column of the 
@@ -3424,8 +3424,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs, a = c(avg = .5, min = 0, max =
 #' @family Data Functions
 #' @export
 #' @examples
-#' fakeCars = umx_fake_data(mtcars)
-umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.levels = TRUE, use.miss = TRUE, mvt.method = "eigen", het.ML = FALSE, het.suppress = TRUE){
+#' fakeCars = umx_make_fake_data(mtcars)
+umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.levels = TRUE, use.miss = TRUE, mvt.method = "eigen", het.ML = FALSE, het.suppress = TRUE){
   # requires mvtnorm & polycor
   # requires data frame or matrix
   if((is.data.frame(dataset)+is.matrix(dataset))==0){
@@ -3552,6 +3552,7 @@ umx_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, use.lev
   # Return the new data
   return(fake)
 }
+
 
 #' Read lower-triangle of data matrix from console or file
 #'

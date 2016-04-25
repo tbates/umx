@@ -187,7 +187,7 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
 #' coef(m2)
-# # Try with an missing value for one subect
+# # Try with missing value for one subect
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1,"qtl"] = NA))
 #' }
 umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
