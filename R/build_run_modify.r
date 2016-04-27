@@ -2520,6 +2520,12 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 		regex = TRUE
 	}
 
+	if (typeof(free) != "logical"){
+		# Use the free as input, and switch to free = TRUE
+		update = free
+		free = TRUE
+	}
+
 	if(is.null(update)){
 		message("As you haven't asked to do anything: the parameters that are free to be dropped are:")
 		print(umxGetParameters(lastFit))
@@ -2539,7 +2545,8 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 		}
 		x = mxRun(x, intervals = intervals)
 		if(comparison){
-			if(free){ # we added a df
+			umxSummary(x)			
+			if(free){ # new model has fewer df
 				umxCompare(x, lastFit)
 			} else {
 				umxCompare(lastFit, x)

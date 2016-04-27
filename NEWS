@@ -6,12 +6,15 @@
 * ADDED: umx_get_OpenMx() (download OpenMP/parallel version of OpenMx with NPSOL)
 * ADDED: umx_cont_2_quantile(x, nlevels=)
 * ADDED: umx_factor alias to umxFactor
+* FIXED: plot(resid = "none") was not suppressing plotting residuals
 * IMPROVED: umxFactor now handles dataframes and allows non-ordered output
 * IMPROVED: umx_CI() more flexible, now allows removing CIs
   * Old code will break: replace "add" with "which"
 * IMPROVED: umx_time handling of no input arguments
 * IMPROVED: umx_pb_note() better feedback and setup
 * IMPROVED: loadings() generic
+* CHANGE: umxModify - if free is a string, it will be used as input and the found paths will be freed.
+* CHANGE: umxModify - show summary as well as comparison if comparison is TRUE
 * CHANGE: Plot defaults for std and showFixed changed h/t @MikeNeale
 * CHANGE: umx_scale_wide_twin_data argument names for consistency: "suffix" "data"
 * CHANGE: umx_residualize() ditto

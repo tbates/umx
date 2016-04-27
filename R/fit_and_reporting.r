@@ -1918,8 +1918,10 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 	out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
 	if(resid == "circle"){
 		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
-	} else {
+	} else if(resid == "line"){
 		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
+	}else{
+		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)		
 	}
 	# TODO should xmu_dot_make_residuals handle showFixed or not necessary?
 	tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
