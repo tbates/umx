@@ -3336,7 +3336,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA, rounding
 	}
 }
 
-#' summaryAPA
+#' umxAPA
 #'
 #' @description
 #' This function creates object summaries used in reporting models, effects, and summarizing data.
@@ -3353,7 +3353,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA, rounding
 #' 
 #' 4. Given only obj, will be treated as a p value as returned in APA format.
 #' 
-#' @aliases umxAPA
+#' @aliases summaryAPA
 #' @param obj Either a model (\link{lm}), a beta-value, or a data.frame
 #' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)
 #' @param std If obj is an lm, whether to re-run the model on standardized data and report std betas
@@ -3368,16 +3368,16 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA, rounding
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' # Generate a formatted string convey the effects in a model:  
-#' summaryAPA(lm(mpg ~ wt + disp, mtcars))
-#' summaryAPA(lm(mpg ~ wt + disp, mtcars), "disp")
+#' umxAPA(lm(mpg ~ wt + disp, mtcars))
+#' umxAPA(lm(mpg ~ wt + disp, mtcars), "disp")
 #' # Generate a summary table of correlations + Mean and SD:
-#' summaryAPA(mtcars[,1:3])
+#' umxAPA(mtcars[,1:3])
 #' # Generate a CI string based on effect and se
-#' summaryAPA(.4, .3)
+#' umxAPA(.4, .3)
 #' # format p-value
-#' summaryAPA(.0182613)
-#' summaryAPA(.000182613)
-summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("table", "html")) {
+#' umxAPA(.0182613)
+#' umxAPA(.000182613)
+umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("table", "html")) {
 	report = match.arg(report)
 	if(class(obj)=="data.frame"){
 		# generate a summary of correlation and means
@@ -3389,6 +3389,9 @@ summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete"
 			umx_print(output, digits = digits, file = "tmp.html")
 		} else {
 			umx_print(output, digits = digits)
+		}
+		if(anyNA(obj)){
+			message("Some rows in dataframe had missing values.")
 		}
 	}else if( "lm" == class(obj)){
 		# report lm summary table
@@ -3425,7 +3428,7 @@ summaryAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete"
 }
 
 #' @export
-umxAPA <- summaryAPA
+summaryAPA <- umxAPA
 
 #' umx_APA_model_CI
 #'
