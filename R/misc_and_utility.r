@@ -1587,9 +1587,9 @@ print.reliability <- function (x, digits = 4, ...){
 }
 
 
-# =====================
-# = Utility functions =
-# =====================
+# ==================
+# = Code functions =
+# ==================
 #' getOpenMx
 #'
 #' @description
@@ -1638,6 +1638,10 @@ umx_make <- function(what = c("install", "release", "win", "examples")) {
 	}
 }
 
+# ==============================
+# = User interaction functions =
+# ==============================
+
 #' umx_msg
 #'
 #' Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy
@@ -1661,6 +1665,9 @@ umx_msg <- function(x) {
 	}
 }
 
+# ====================
+# = String Functions =
+# ====================
 #' umx_paste_names
 #'
 #' Helper to add suffixes to names: useful for expanding base names for variables (e.g. "bmi")
@@ -3225,44 +3232,7 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	}
 }
 
-#' Turn a cov matrix into raw data
-#'
-#' Turns a covariance matrix into comparable raw data :-)
-#'
-#' @param myCovariance a covariance matrix
-#' @param n how many rows of data to return
-#' @param means the means of the raw data (defaults to 0)
-#' @return - data.frame
-#' @export
-#' @seealso - \code{\link{cov2cor}}
-#' @family Data Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
-#' covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(paste0("v", 1:6), paste0("v", 1:6)),
-#' data = c(0.9223099, 0.1862938, 0.4374359, 0.8959973, 0.9928430, 0.5320662,
-#'            0.1862938, 0.2889364, 0.3927790, 0.3321639, 0.3371594, 0.4476898,
-#'            0.4374359, 0.3927790, 1.0069552, 0.6918755, 0.7482155, 0.9013952,
-#'            0.8959973, 0.3321639, 0.6918755, 1.8059956, 1.6142005, 0.8040448,
-#'            0.9928430, 0.3371594, 0.7482155, 1.6142005, 1.9223567, 0.8777786,
-#'            0.5320662, 0.4476898, 0.9013952, 0.8040448, 0.8777786, 1.3997558))
-#' myData = umx_cov2raw(covData, n = 100, means = 1:6)
-umx_cov2raw <- function(myCovariance, n, means = 0) {
-	# depends on MASS::mvrnorm
-	if(!umx_is_cov(myCovariance, boolean = TRUE)){
-		stop("myCovariance must be a covariance matrix")
-	}
-	if(length(means) == 0){
-		means = rep(means, dim(myCovariance)[2])
-	} else {
-		if(length(means) != dim(myCovariance)[2]){
-			stop("means must have the same length as the matrix columns. You gave me ", dim(myCovariance)[2], 
-			 " columns of cov matrix, but ", length(means), " means.")
-		}
-	}
-	out = MASS::mvrnorm (n = n, mu = means, Sigma = myCovariance);
-	out = data.frame(out);  names(out) <- colnames(myCovariance);
-	return(out)
-}
+
 
 #' umx_swap_a_block
 #'
@@ -3405,9 +3375,10 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs, a = c(avg = .5, min = 0, max =
 #' @param nSubjects Number of subjects in sample
 #' @param Vqtl Variance of QTL affecting causal variable X (Default 0.02) 
 #' @param pQTL Decreaser allele frequency (Default 0.5)
-#' @param bXY  Causal effect of X on Y (Default 0.1) 
-#' @param bUX  Confounding effect of U on X (Default 0.5) 
-#' @param bUY  Confounding effect of U on Y (Default 0.5) 
+#' @param bXY  Causal effect of X on Y (Default 0.1)
+#' @param bUX  Confounding effect of confounder 'U' on X (Default 0.5) 
+#' @param bUY  Confounding effect of confounder 'U' on Y (Default 0.5) 
+#' @param seed value for the random number generator (Default 123)
 #' @return - data.frame
 #' @export
 #' @family Data Functions
@@ -3607,6 +3578,48 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
   return(fake)
 }
 
+#' Turn a cov matrix into raw data with umx_cov2raw
+#'
+#' Turns a covariance matrix into comparable raw data :-)
+#'
+#' @param myCovariance a covariance matrix
+#' @param n how many rows of data to return
+#' @param means the means of the raw data (defaults to 0)
+#' @return - data.frame
+#' @export
+#' @seealso - \code{\link{cov2cor}}
+#' @family Data Functions
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(paste0("v", 1:6), paste0("v", 1:6)),
+#' data = c(0.9223099, 0.1862938, 0.4374359, 0.8959973, 0.9928430, 0.5320662,
+#'            0.1862938, 0.2889364, 0.3927790, 0.3321639, 0.3371594, 0.4476898,
+#'            0.4374359, 0.3927790, 1.0069552, 0.6918755, 0.7482155, 0.9013952,
+#'            0.8959973, 0.3321639, 0.6918755, 1.8059956, 1.6142005, 0.8040448,
+#'            0.9928430, 0.3371594, 0.7482155, 1.6142005, 1.9223567, 0.8777786,
+#'            0.5320662, 0.4476898, 0.9013952, 0.8040448, 0.8777786, 1.3997558))
+#' myData = umx_cov2raw(covData, n = 100, means = 1:6)
+umx_cov2raw <- function(myCovariance, n, means = 0) {
+	# depends on MASS::mvrnorm
+	if(!umx_is_cov(myCovariance, boolean = TRUE)){
+		stop("myCovariance must be a covariance matrix")
+	}
+	if(length(means) == 0){
+		means = rep(means, dim(myCovariance)[2])
+	} else {
+		if(length(means) != dim(myCovariance)[2]){
+			stop("means must have length 1 or the number of columns in the matrix. You gave me ", dim(myCovariance)[2], 
+			 " columns of cov matrix, but ", length(means), " means.")
+		}
+	}
+	out = MASS::mvrnorm (n = n, mu = means, Sigma = myCovariance);
+	out = data.frame(out);  names(out) <- colnames(myCovariance);
+	return(out)
+}
+
+# =============
+# = Read data =
+# =============
 
 #' Read lower-triangle of data matrix from console or file
 #'

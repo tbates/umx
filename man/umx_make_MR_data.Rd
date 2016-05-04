@@ -14,11 +14,13 @@ umx_make_MR_data(nSubjects = 1000, Vqtl = 0.02, bXY = 0.1, bUX = 0.5,
 
 \item{bXY}{Causal effect of X on Y (Default 0.1)}
 
-\item{bUX}{Confounding effect of U on X (Default 0.5)}
+\item{bUX}{Confounding effect of confounder 'U' on X (Default 0.5)}
 
-\item{bUY}{Confounding effect of U on Y (Default 0.5)}
+\item{bUY}{Confounding effect of confounder 'U' on Y (Default 0.5)}
 
 \item{pQTL}{Decreaser allele frequency (Default 0.5)}
+
+\item{seed}{value for the random number generator (Default 123)}
 }
 \value{
 - data.frame

@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_cov2raw}
 \alias{umx_cov2raw}
-\title{Turn a cov matrix into raw data}
+\title{Turn a cov matrix into raw data with umx_cov2raw}
 \usage{
 umx_cov2raw(myCovariance, n, means = 0)
 }
