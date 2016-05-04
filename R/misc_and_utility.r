@@ -3432,12 +3432,12 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 	Vex  <- (1- Vqtl - bUX^2)
 	sdex <- sqrt(Vex) # Residual standard error in variable X
 	
-	# Residual variance for Y variable (so var adds up to 1.0)
+	# Residual variance for Y variable (so var sums to 1)
 	Vey = 1 - (bXY^2 + 2*bXY*bUX*bUY + bUY^2) 
 	sdey <- sqrt(Vey) # Residual standard error in variable Y
  
 	# Simulate individual genotypic and phenotypic values
-	qtl <- sample(c(-a,0,a), nSubjects, replace = TRUE, prob = c(p^2, 2*p*q, q^2)) 
+	qtl <- sample(c(-a, 0, a), nSubjects, replace = TRUE, prob = c(pQTL^2, 2 * pQTL * q, q^2)) 
 	U <- rnorm(nSubjects, 0, 1) #Confounding variables
 	X <- b_qtl_x * qtl + bUX * U + rnorm(nSubjects, 0, sdex) # X variable
 	Y <- bXY * X + bUY * U + rnorm(nSubjects, 0, sdey) # Y variable
