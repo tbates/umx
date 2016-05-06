@@ -163,13 +163,13 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' @examples
 #' library(umx)
 #' 
-#' df = umx_make_MR_data(10000)
-#' str(df)
 #' 
 #' # ====================================
 #' # = Mendelian randomization analysis =
 #' # ====================================
 #' 
+#'# Note: in practice: many more subjects are desireable - this just to let example run fast
+#' df = umx_make_MR_data(1000) 
 #' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
 #' plot(m1)
@@ -180,6 +180,9 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' #
 #' #
 #' \dontrun{
+#' df = umx_make_MR_data(1e5) 
+#' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
+#' 
 #' # ======================
 #' # = now with sem::tsls =
 #' # ======================
@@ -187,7 +190,7 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 #' m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
 #' coef(m2)
-# # Try with missing value for one subect
+# # Try with missing value for one subect: A beneift of the FIML approach in OpenMx.
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1,"qtl"] = NA))
 #' }
 umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
