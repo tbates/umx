@@ -4,10 +4,12 @@
 \alias{umx_is_MxModel}
 \title{umx_is_MxModel}
 \usage{
-umx_is_MxModel(obj)
+umx_is_MxModel(obj, listOK = FALSE)
 }
 \arguments{
-\item{obj}{an object to be tested to see if it is an OpenMx \code{\link{mxModel}}}
+\item{obj}{An object to be tested to see if it is an OpenMx \code{\link{mxModel}}}
+
+\item{listOK}{Is it acceptable to pass in a list of models? (Default = FALSE)}
 }
 \value{
 - Boolean
@@ -19,6 +21,9 @@ Utility function returning a binary answer to the question "Is this an OpenMx mo
 m1 = mxModel("test")
 if(umx_is_MxModel(m1)){
 	message("nice OpenMx model!")
+}
+if(umx_is_MxModel(list(m1,m1), listOK = TRUE)){
+	message("nice list of OpenMx models!")
 }
 }
 \references{

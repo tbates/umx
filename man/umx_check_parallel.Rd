@@ -4,10 +4,17 @@
 \alias{umx_check_parallel}
 \title{umx_check_parallel}
 \usage{
-umx_check_parallel(nCores = -1)
+umx_check_parallel(nCores = -1, testScript = NULL,
+  rowwiseParallel = FALSE, numberSubjects = 1000)
 }
 \arguments{
 \item{nCores}{How many cores to run (defaults to -1 (all available))}
+
+\item{testScript}{A user-provided script to run (NULL)}
+
+\item{rowwiseParallel}{Whether to parallel-ize rows or gradient computation (default)}
+
+\item{numberSubjects}{Number of rows to model (Default = 1000) Reduce for quicker runs.}
 }
 \value{
 - NULL

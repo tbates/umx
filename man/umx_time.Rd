@@ -8,7 +8,7 @@ umx_time(model = NA, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
   tz = "GMT", autoRun = TRUE)
 }
 \arguments{
-\item{model}{An \code{\link{mxModel}} from which to get the elapsed time}
+\item{model}{An \code{\link{mxModel}} (or \code{\link{list}} of models for which to display elapsed time}
 
 \item{formatStr}{A format string, defining how to show the time (defaults to human readable)}
 
@@ -29,7 +29,7 @@ The default is "simple", which gives only the biggest unit used. i.e., "x second
 
 If a list of models is provided, time deltas will also be reported.
 
-If the model hasn't been run, this function will run it for you.
+If the model hasn not been run, umx_time will run it for you.
 }
 \examples{
 require(umx)

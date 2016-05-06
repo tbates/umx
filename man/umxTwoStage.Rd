@@ -40,13 +40,13 @@ analysis to show the value of two-stage.
 \examples{
 library(umx)
 
-df = umx_make_MR_data(10000)
-str(df)
 
 # ====================================
 # = Mendelian randomization analysis =
 # ====================================
 
+# Note: in practice: many more subjects are desireable - this just to let example run fast
+df = umx_make_MR_data(1000) 
 m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 coef(m1)
 plot(m1)
@@ -57,6 +57,9 @@ m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 bet
 #
 #
 \dontrun{
+df = umx_make_MR_data(1e5) 
+m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
+
 # ======================
 # = now with sem::tsls =
 # ======================
