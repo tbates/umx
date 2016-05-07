@@ -88,6 +88,9 @@ umx_get_cores <- function(model = NULL) {
 #' Shows how many cores you are using, and runs a test script so user can check CPU usage
 #'
 #' @param nCores How many cores to run (defaults to -1 (all available))
+#' @param testScript A user-provided script to run (NULL)
+#' @param rowwiseParallel Whether to parallel-ize rows or gradient computation (default)
+#' @param numberSubjects Number of rows to model (Default = 1000) Reduce for quicker runs.
 #' @return - NULL
 #' @export
 #' @family Test
@@ -97,7 +100,10 @@ umx_get_cores <- function(model = NULL) {
 #' # On a fast machine, takes a minute with 1 core
 #' umx_check_parallel()
 #' }
-umx_check_parallel <- function(nCores = -1) {
+umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel = FALSE, numberSubjects = 1000) {
+	if(!is.null(testScript)){
+		stop("test script not implemented yet - beat on tim to do it!")
+	}
 	oldCores = umx_set_cores()
 	if( (length(nCores) == 1) && (nCores == -1)){
 		nCores = detectCores()
@@ -105,43 +111,42 @@ umx_check_parallel <- function(nCores = -1) {
 	message("You have been using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means max - 1)")
 	message("I will now set cores to ", omxQuotes(nCores), " (they will be reset after) and run a script that hits that many cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
-	numberSubjects <- 1000
-	numberIndicators <- 12
-	numberFactors <- 3
 	set.seed(10)
-	fixedBMatrixF <- matrix(c(.4, .2), 2, 1, byrow = TRUE)
-	randomBMatrixF <- matrix(c(.3, .5), 2, 1, byrow = TRUE)
-	XMatrixF <- matrix(rnorm(numberSubjects * 2, mean = 0, sd = 1), numberSubjects, 2)
-	UMatrixF <- matrix(rnorm(numberSubjects * 1, mean = 0, sd = 1), numberSubjects, 1)
-	Z <- matrix(rnorm(numberSubjects, mean = 0, sd = 1), nrow=numberSubjects, ncol = 2)
+	numberIndicators = 12
+	numberFactors    = 3
+	fixedBMatrixF    = matrix(c(.4, .2), 2, 1, byrow = TRUE)
+	randomBMatrixF   = matrix(c(.3, .5), 2, 1, byrow = TRUE)
+	XMatrixF         = matrix(rnorm(numberSubjects * 2, mean = 0, sd = 1), numberSubjects, 2)
+	UMatrixF         = matrix(rnorm(numberSubjects * 1, mean = 0, sd = 1), numberSubjects, 1)
+	Z = matrix(rnorm(numberSubjects, mean = 0, sd = 1), nrow=numberSubjects, ncol = 2)
 
-	XMatrix <- cbind(XMatrixF, XMatrixF %*% fixedBMatrixF + (XMatrixF*Z) %*% randomBMatrixF + UMatrixF)
+	XMatrix = cbind(XMatrixF, XMatrixF %*% fixedBMatrixF + (XMatrixF*Z) %*% randomBMatrixF + UMatrixF)
 
-	BMatrix <- matrix(c( 1, .6, .7, .8,  0,  0,  0,  0,  0,  0,  0,  0,
+	BMatrix = matrix(c( 1, .6, .7, .8,  0,  0,  0,  0,  0,  0,  0,  0,
 	                     0,  0,  0,  0,  1, .5, .6, .7,  0,  0,  0,  0,
 	                     0,  0,  0,  0,  0,  0,  0,  0,  1, .7, .6, .5), numberFactors, numberIndicators, byrow=TRUE)
-	UMatrix <- matrix(rnorm(numberSubjects*numberIndicators, mean=0, sd=1), numberSubjects, numberIndicators)
-	YMatrix <- XMatrix %*% BMatrix + UMatrix
-	dimnames(YMatrix) <- list(NULL, paste("X", 1:numberIndicators, sep=""))
+	UMatrix = matrix(rnorm(numberSubjects*numberIndicators, mean=0, sd=1), numberSubjects, numberIndicators)
+	YMatrix = XMatrix %*% BMatrix + UMatrix
+	dimnames(YMatrix) = list(NULL, paste("X", 1:numberIndicators, sep=""))
 
-	latentMultiRegModerated1 <- cbind(YMatrix,Z=Z[,1])
-	latentMultiRegModerated1[,'Z'] <- latentMultiRegModerated1[,'Z'] - mean(latentMultiRegModerated1[,'Z'])
-	numberFactors    <- 3
-	numberIndicators <- 12
-	numberModerators <- 1
-	indicators       <- paste("X", 1:numberIndicators, sep="")
-	moderators       <- c("Z")
-	totalVars        <- numberIndicators + numberFactors + numberModerators
+	latentMultiRegModerated1 = cbind(YMatrix,Z=Z[,1])
+	latentMultiRegModerated1[,'Z'] = latentMultiRegModerated1[,'Z'] - mean(latentMultiRegModerated1[,'Z'])
+	numberFactors    = 3
+	numberIndicators = 12
+	numberModerators = 1
+	indicators       = paste("X", 1:numberIndicators, sep="")
+	moderators       = c("Z")
+	totalVars        = numberIndicators + numberFactors + numberModerators
 
 	# Build orthogonal simple structure factor model
 
-	latents <- paste("F", 1:numberFactors, sep="")
-	latents1       <- latents[1]
-	indicators1    <- indicators[1:4]
-	latents2       <- latents[2]
-	indicators2    <- indicators[5:8]
-	latents3       <- latents[3]
-	indicators3    <- indicators[9:12]
+	latents = paste("F", 1:numberFactors, sep="")
+	latents1       = latents[1]
+	indicators1    = indicators[1:4]
+	latents2       = latents[2]
+	indicators2    = indicators[5:8]
+	latents3       = latents[3]
+	indicators3    = indicators[9:12]
 
 	# Create model with both direct and moderated paths
 	test1 <- mxModel("threeLatentWithModerator", type="RAM",
@@ -163,22 +168,33 @@ umx_check_parallel <- function(nCores = -1) {
 		mxPath(from="one", to=c(latents), arrows=1, free=T, values=.1),
 		mxData(latentMultiRegModerated1, type="raw")
 	)
-	models = c(test1)
+	
+	# set rowwiseParallel
+	test1$fitfunction$rowwiseParallel = rowwiseParallel
+	# nCores = 4
+	n = 1
 	for (thisCores in nCores) {
-		models = append(models, test1)
+		if(n == 1){
+			models = list(test1) # initialize
+		} else {
+			models = append(models, test1)
+		}
+		n = n + 1
 	}
 	n = 1
+	# run each model
+	# thisCores = 4
 	for (thisCores in nCores) {
 		umx_set_cores(thisCores)
 		thisModel = mxRename(models[[n]], paste0("nCcores_equals_", thisCores))
-		thisModel <- mxRun(thisModel)
+		thisModel = mxRun(thisModel)
 		# umx_time(thisModel, autoRun= F)
-		models[n] = thisModel
+		models[[n]] = thisModel
 		n = n + 1
 	}
 	umx_set_cores(oldCores)
 	# umx_time(models, autoRun= F)
-	invisible(umx_time(models, autoRun= F))
+	invisible(umx_time(models, autoRun = FALSE))
 }
 
 
@@ -1792,9 +1808,9 @@ umxCov2cor <- function(x) {
 #' 
 #' If a list of models is provided, time deltas will also be reported.
 #' 
-#' If the model hasn't been run, this function will run it for you.
+#' If the model hasn not been run, umx_time will run it for you.
 #'
-#' @param model An \code{\link{mxModel}} from which to get the elapsed time
+#' @param model An \code{\link{mxModel}} (or \code{\link{list}} of models for which to display elapsed time
 #' @param formatStr A format string, defining how to show the time (defaults to human readable)
 #' @param tz time zone in which the model was executed (defaults to "GMT")
 #' @param autoRun If TRUE (default), run the model if it appears not to have been.
@@ -1820,16 +1836,31 @@ umxCov2cor <- function(x) {
 #' umx_time('stop')
 #' # elapsed time: .3 seconds
 umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
-	if(!umx_is_MxModel(model) && any(is.na(model))){
-		stop("Valid requests are 'start', 'stop', or a model as argument")
+	if(is.list(model)){
+		# check each item is a model
+		if(!umx_is_MxModel(model, listOK = TRUE)){
+			stop("If model is a list of models, each must be a valid mxModel")
+		}
+	}else if(umx_is_MxModel(model)){
+		# great, we've got a model?
+	}else if(is.character(model)){
+		umx_check(model %in% c('start', 'stop'), "stop", "Valid time strings are 'start', 'stop' (or a model or list of models)")
+	}else if(is.na(model)){
+		stop("You must set the first parameter (options are 'start', 'stop', a model, or a list of models)")
+	}else{
+		stop("You must set the first parameter to 'start', 'stop', a model, or a list of models.\nYou offered up a", class(model))
 	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
-	# TODO output a nicely formated table
+	# TODO output a nicely formatted table
 	for(i in 1:length(model)) {			
 		if(length(model) > 1) {
 			m = model[[i]]
-		}else{
-			m = model
+		} else {
+			if(class(model) == "list"){
+				m = model[[i]]
+			} else {
+				m = model
+			}
 		}
 		if(class(m) == "character"){
 			if(m == "start"){
@@ -1858,7 +1889,7 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 		if(formatStr == "std"){
 			formatStr = "Wall clock time (HH:MM:SS.hh): %H:%M:%OS2"
 		} else if(formatStr == "simple"){
-			if(thisTime > (3600 * 2)-1){ # hours
+			if(thisTime > (3600 * 2) - 1){ # hours
 				formatStr = "%H hours, %M minute(s), %OS2 seconds"
 			} else if(thisTime > 3600){ # hours
 				formatStr = "%H hour, %M minute(s), %OS2 seconds"
@@ -2299,7 +2330,8 @@ umx_is_RAM <- function(obj) {
 #'
 #' Utility function returning a binary answer to the question "Is this an OpenMx model?"
 #'
-#' @param obj an object to be tested to see if it is an OpenMx \code{\link{mxModel}}
+#' @param obj An object to be tested to see if it is an OpenMx \code{\link{mxModel}}
+#' @param listOK Is it acceptable to pass in a list of models? (Default = FALSE)
 #' @return - Boolean
 #' @export
 #' @family Test
@@ -2309,8 +2341,28 @@ umx_is_RAM <- function(obj) {
 #' if(umx_is_MxModel(m1)){
 #' 	message("nice OpenMx model!")
 #' }
-umx_is_MxModel <- function(obj) {
-	isS4(obj) & is(obj, "MxModel")	
+#' if(umx_is_MxModel(list(m1,m1), listOK = TRUE)){
+#' 	message("nice list of OpenMx models!")
+#' }
+umx_is_MxModel <- function(obj, listOK = FALSE) {
+	if(is.list(obj)){
+		if(!listOK){
+			message("If you're expecting a list of models, set listOK = TRUE")
+			testVal = FALSE
+		}else{
+			n = 1
+			testVal = TRUE
+			for (m in obj) {
+				if(!umx_is_MxModel(m, listOK = FALSE)){
+					testVal = FALSE
+				}
+				n = n + 1
+			}
+		}
+	} else {
+		testVal  = isS4(obj) & is(obj, "MxModel")	
+	}
+	return(testVal)
 }
 
 #' umx_is_MxMatrix
@@ -4245,7 +4297,7 @@ umx_standardize_CP <- function(fit){
 #' @examples
 #' # Deprecated function: to get cores, use umx_set_cores() with no value
 umx_get_optimizer <- function(model = NULL) {
-	message("Deprecated function: to get optimizer, use umx_set_optimizer() with no value")
+	message("Deprecated function: to get optimizer, call umx_set_optimizer() with no value")
 	if(is.null(model)){
 		mxOption(NULL, "Default optimizer")
 	} else {
