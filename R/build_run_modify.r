@@ -14,7 +14,8 @@
 # install.packages("Rcpp")
 # install.packages("rstudioapi")
 # install.packages("withr")
-# install.packages("~/Dropbox/shared folders/OpenMx_binaries/OpenMx_2.3.1-239-OSX/3.2/OpenMx_2.3.1-239.tgz")
+# install.packages("~/Dropbox/shared folders/OpenMx_binaries/OpenMx2.6.0-MZ-OSX/3.2/OpenMx_2.6.0.tgz")
+
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
