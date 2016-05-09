@@ -4,9 +4,9 @@
 \alias{umxACE}
 \title{umxACE}
 \usage{
-umxACE(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = 0.5,
-  dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
-  numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
+umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
+  suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
+  numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
   equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"),
   autoRun = getOption("umx_auto_run"))
 }
@@ -19,7 +19,7 @@ umxACE(name = "ACE", selDVs, dzData, mzData, suffix = NULL, dzAr = 0.5,
 
 \item{mzData}{The MZ dataframe}
 
-\item{suffix}{The suffix for twin 1 and twin 2, often "_T". if set, simplifies
+\item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, simplifies
 SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}

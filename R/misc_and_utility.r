@@ -1699,7 +1699,7 @@ umx_make <- function(what = c("install", "release", "win", "examples")) {
 #' b = c("brian", "sally", "jane")
 #' umx_msg(b)
 umx_msg <- function(x) {
-    nm = deparse(substitute(x) )
+  nm = deparse(substitute(x) )
 	if(length(x) > 1) {
 		message(nm, " = ", omxQuotes(x))	
 	} else {
