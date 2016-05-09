@@ -44,7 +44,8 @@ mzData <- subset(twinData, ZYG == "MZFF")
 dzData <- subset(twinData, ZYG == "DZFF")
 m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
-umxSummaryIP(m1, file = NA) # suppress graphing with NA for CRAN
+umxSummaryIP(m1)
+plot(m1)
 \dontrun{
 umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 }

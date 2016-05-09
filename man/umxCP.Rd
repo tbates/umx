@@ -99,7 +99,7 @@ selDVs = c("ht", "wt")
 mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
 dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
 m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
-umxSummary(m1, file=NA) # file = NA to avoid opening a plot window during CRAN check
+umxSummary(m1)
 umxGetParameters(m1, "^c", free = TRUE)
 m2 = umxModify(m1, update = "(cs_.*$)|(c_cp_)", regex = TRUE, name = "dropC")
 umxSummaryCP(m2, comparison = m1, file = NA)
