@@ -23,6 +23,10 @@
 	# TODO remove mxCondenseMatrixSlots now that $ get and set are working properly
 	options('mxCondenseMatrixSlots'= FALSE)
 	options('umx.plot.format' = 'DiagrammeR')
+	if(is.null(getOption('knitr.table.format'))){
+		# umx_set_table_format('markdown')
+	}
+	# options('knitr.table.format' = "markdown")
 	options("umx_auto_run" = TRUE)
 	options("umx_auto_plot" = NA)
 	packageStartupMessage("For an overview type '?umx'")

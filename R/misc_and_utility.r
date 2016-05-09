@@ -9,6 +9,27 @@
 # ==============================
 # = Get and set OpenMx options =
 # ==============================
+#' umx_show_options
+#'
+#' show the umx options. Useful for beginners to discover, or people like me to remember :-)
+#'
+#' @return - message
+#' @export
+#' @family Miscellaneous Functions
+#' @examples
+#' umx_show_options()
+umx_show_options <- function() {
+		o = paste0("current options set are:\n",
+		"\numx_set_auto_plot()  = "      , umx_set_auto_plot(),
+		"\numx_set_plot_format()  = "    , umx_set_plot_format(),
+		"\numx_set_table_format()  = "   , umx_set_table_format(),
+		"\numx_set_cores()  = "          , umx_set_cores(),
+		"\numx_set_condensed_slots()  = ", umx_set_condensed_slots(),
+		"\numx_set_optimizer()  = "      , umx_set_optimizer(),
+		"\numx_set_auto_run()  = "       , umx_set_auto_run() 
+	)
+	message(o)
+}
 
 #' umx_set_plot_format
 #'
