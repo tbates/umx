@@ -15,6 +15,8 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
 
 \item{selDVs}{The variables to include from the data}
 
+\item{selCovs}{(optional) covariates to include from the data (do not include suffix in names)}
+
 \item{dzData}{The DZ dataframe}
 
 \item{mzData}{The MZ dataframe}

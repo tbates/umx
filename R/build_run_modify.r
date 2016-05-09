@@ -32,6 +32,7 @@
 	packageStartupMessage("For an overview type '?umx'")
 }
 
+
 #' @importFrom DiagrammeR DiagrammeR
 #' @importFrom graphics plot
 #' @importFrom MASS mvrnorm
@@ -48,7 +49,7 @@
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
 #' @importFrom stats setNames update var delete.response terms
 #' @importFrom utils combn data flush.console read.table txtProgressBar
-#' @importFrom utils globalVariables write.table
+#' @importFrom utils globalVariables write.table packageDescription
 NULL
 	
 utils::globalVariables(c(
@@ -848,7 +849,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #'
 #' @param name The name of the model (defaults to"ACE")
 #' @param selDVs The variables to include from the data
-#' @param selCovs {optional) covariates to include from the data (do not include suffixes)
+#' @param selCovs (optional) covariates to include from the data (do not include suffix in names)
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
 #' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, simplifies
@@ -965,9 +966,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"), autoRun = getOption("umx_auto_run")) {
-
+		# if cov, call umxACEcov
 		if(!is.null(selCovs)){
-			umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffiz, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, hint = hint, autoRun = autoRun)
+			umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, hint = hint, autoRun = autoRun)
 		} else {
 		if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
 		if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
