@@ -30,6 +30,7 @@ mat1 = umxJiggle(mat1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{getOpenMx}}
+Other Miscellaneous Functions: \code{\link{getOpenMx}},
+  \code{\link{umx_show_options}}
 }
 

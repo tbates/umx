@@ -110,8 +110,8 @@ umx_get_cores <- function(model = NULL) {
 #'
 #' @param nCores How many cores to run (defaults to -1 (all available))
 #' @param testScript A user-provided script to run (NULL)
-#' @param rowwiseParallel Whether to parallel-ize rows or gradient computation (default)
-#' @param numberSubjects Number of rows to model (Default = 1000) Reduce for quicker runs.
+#' @param rowwiseParallel Whether to parallel-ize rows (default) or gradient computation 
+#' @param nSubjects Number of rows to model (Default = 1000) Reduce for quicker runs.
 #' @return - NULL
 #' @export
 #' @family Test
@@ -121,7 +121,7 @@ umx_get_cores <- function(model = NULL) {
 #' # On a fast machine, takes a minute with 1 core
 #' umx_check_parallel()
 #' }
-umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel = FALSE, numberSubjects = 1000) {
+umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
 	if(!is.null(testScript)){
 		stop("test script not implemented yet - beat on tim to do it!")
 	}
@@ -137,16 +137,16 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 	numberFactors    = 3
 	fixedBMatrixF    = matrix(c(.4, .2), 2, 1, byrow = TRUE)
 	randomBMatrixF   = matrix(c(.3, .5), 2, 1, byrow = TRUE)
-	XMatrixF         = matrix(rnorm(numberSubjects * 2, mean = 0, sd = 1), numberSubjects, 2)
-	UMatrixF         = matrix(rnorm(numberSubjects * 1, mean = 0, sd = 1), numberSubjects, 1)
-	Z = matrix(rnorm(numberSubjects, mean = 0, sd = 1), nrow=numberSubjects, ncol = 2)
+	XMatrixF         = matrix(rnorm(nSubjects * 2, mean = 0, sd = 1), nSubjects, 2)
+	UMatrixF         = matrix(rnorm(nSubjects * 1, mean = 0, sd = 1), nSubjects, 1)
+	Z = matrix(rnorm(nSubjects, mean = 0, sd = 1), nrow=nSubjects, ncol = 2)
 
 	XMatrix = cbind(XMatrixF, XMatrixF %*% fixedBMatrixF + (XMatrixF*Z) %*% randomBMatrixF + UMatrixF)
 
 	BMatrix = matrix(c( 1, .6, .7, .8,  0,  0,  0,  0,  0,  0,  0,  0,
 	                     0,  0,  0,  0,  1, .5, .6, .7,  0,  0,  0,  0,
 	                     0,  0,  0,  0,  0,  0,  0,  0,  1, .7, .6, .5), numberFactors, numberIndicators, byrow=TRUE)
-	UMatrix = matrix(rnorm(numberSubjects*numberIndicators, mean=0, sd=1), numberSubjects, numberIndicators)
+	UMatrix = matrix(rnorm(nSubjects*numberIndicators, mean=0, sd=1), nSubjects, numberIndicators)
 	YMatrix = XMatrix %*% BMatrix + UMatrix
 	dimnames(YMatrix) = list(NULL, paste("X", 1:numberIndicators, sep=""))
 
@@ -161,7 +161,7 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 
 	# Build orthogonal simple structure factor model
 
-	latents = paste("F", 1:numberFactors, sep="")
+	latents        = paste0("F", 1:numberFactors)
 	latents1       = latents[1]
 	indicators1    = indicators[1:4]
 	latents2       = latents[2]
@@ -170,28 +170,33 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 	indicators3    = indicators[9:12]
 
 	# Create model with both direct and moderated paths
-	test1 <- mxModel("threeLatentWithModerator", type="RAM",
-	    manifestVars=c(indicators),
-	    latentVars=c(latents, "dummy1"),
-	    mxPath(from=latents1, to=indicators1, arrows=1, connect="all.pairs", free=T, values=.2),
-		mxPath(from=latents2, to=indicators2, arrows=1, connect="all.pairs", free=T, values=.2),
-		mxPath(from=latents3, to=indicators3, arrows=1, connect="all.pairs", free=T, values=.2),
-		mxPath(from=latents1, to=indicators1[1], arrows=1, free=F, values=1),
-		mxPath(from=latents2, to=indicators2[1], arrows=1, free=F, values=1),
-		mxPath(from=latents3, to=indicators3[1], arrows=1, free=F, values=1),
-		mxPath(from=indicators, arrows=2, free=T, values=.8),
-		mxPath(from=latents, arrows=2, free=T, values=.8),
-		mxPath(from=c("F1","F2"),to="F3", arrows=1, free=T, values=.2, labels=c("b11", "b12")),
-		mxPath(from="F1",to="F2", arrows=1, free=T, values=.1, labels=c("cF1F2")),
-		mxPath(from=c("F1","F2"),to="dummy1", arrows=1, free=T, values=.2, labels=c("b21", "b22")),
-		mxPath(from="dummy1",to="F3", arrows=1, free=F, labels="data.Z"),
-		mxPath(from="one", to=indicators, arrows=1, free=F, values=0),
-		mxPath(from="one", to=c(latents), arrows=1, free=T, values=.1),
-		mxData(latentMultiRegModerated1, type="raw")
+	test1 <- mxModel("threeLatentWithModerator", type = "RAM",
+	  manifestVars = c(indicators),
+	  latentVars   = c(latents, "dummy1"),
+	  mxPath(latents1 , to = indicators1, connect = "all.pairs", values = .2),
+		mxPath(latents2 , to = indicators2, connect = "all.pairs", values = .2),
+		mxPath(latents3 , to = indicators3, connect = "all.pairs", values = .2),
+		umxPath(latents1, to = indicators1[1], fixedAt = 1),
+		umxPath(latents2, to = indicators2[1], fixedAt = 1),
+		umxPath(latents3, to = indicators3[1], fixedAt = 1),
+		mxPath(var = latents   , values = .8),
+		mxPath(var = indicators, values = .8),
+		mxPath(c("F1", "F2"), to = "F3", values = .2, labels = c("b11", "b12")),
+		mxPath("F1",to = "F2", values = .1, labels = "cF1F2"),
+		mxPath(c("F1", "F2"),to = "dummy1", values = .2, labels = c("b21", "b22")),
+		mxPath("dummy1",to="F3", free = FALSE, labels = "data.Z"),
+		umxPath(means = indicators, fixedAt = 0),
+		umxPath(means = latents, values = .1),
+		mxData(latentMultiRegModerated1, type = "raw")
 	)
 	
 	# set rowwiseParallel
-	test1$fitfunction$rowwiseParallel = rowwiseParallel
+	if(packageVersion("OpenMx") >= "2.6.1"){
+		test1$fitfunction$rowwiseParallel = rowwiseParallel
+	} else {
+		message("ignored rowwiseParallel: upgrade to OpenMx 2.6.1 or better to use this")
+		# ignore: this is not supported by versions before 2.6.1
+	}
 	# nCores = 4
 	n = 1
 	for (thisCores in nCores) {
