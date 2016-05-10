@@ -49,7 +49,7 @@
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
 #' @importFrom stats setNames update var delete.response terms
 #' @importFrom utils combn data flush.console read.table txtProgressBar
-#' @importFrom utils globalVariables write.table packageDescription
+#' @importFrom utils globalVariables write.table packageVersion
 NULL
 	
 utils::globalVariables(c(
