@@ -4,16 +4,23 @@
 \alias{xmuMinLevels}
 \title{xmuMinLevels}
 \usage{
-xmuMinLevels(df)
+xmuMinLevels(df, what = c("value", "name"))
 }
 \arguments{
 \item{df}{Dataframe to search through}
+
+\item{what}{Either "value" or "name" (of the min-level column)}
 }
 \value{
 - min number of levels in frame
 }
 \description{
 Get the min levels from df
+}
+\examples{
+xmuMinLevels(mtcars) # NA = no ordinal vars
+xmuMinLevels(umxFactor(tmp))
+xmuMinLevels(umxFactor(tmp), what = "name")
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},

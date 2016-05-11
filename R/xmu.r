@@ -571,10 +571,16 @@ xmuHasSquareBrackets <- function (input) {
 #' Get the max levels from df
 #'
 #' @param df Dataframe to search through
+#' @param what Either "value" or "name" ( of the max-level column)
 #' @return - max number of levels in frame
 #' @export
 #' @family xmu internal not for end user
-xmuMaxLevels <- function(df) {
+#' @examples
+#' xmuMaxLevels(mtcars) # NA = no ordinal vars
+#' xmuMaxLevels(umxFactor(tmp))
+#' xmuMaxLevels(umxFactor(tmp), what = "name")
+xmuMaxLevels <- function(df, what = c("value", "name")) {
+	what = match.arg(what)
 	isOrd = umx_is_ordered(df)
 	if(any(isOrd)){
 		vars = names(df)[isOrd]
@@ -584,7 +590,11 @@ xmuMaxLevels <- function(df) {
 			nLevels[j] = length(levels(df[,i]))
 			j = j + 1
 		}	
-		return(max(nLevels))
+		if(what == "value"){
+			return(max(nLevels))
+		} else {
+			return(names(df)[which.max(nLevels)])
+		}
 	} else {
 		return(NA)
 	}
@@ -595,10 +605,16 @@ xmuMaxLevels <- function(df) {
 #' Get the min levels from df
 #'
 #' @param df Dataframe to search through
+#' @param what Either "value" or "name" (of the min-level column)
 #' @return - min number of levels in frame
 #' @export
 #' @family xmu internal not for end user
-xmuMinLevels <- function(df) {
+#' @examples
+#' xmuMinLevels(mtcars) # NA = no ordinal vars
+#' xmuMinLevels(umxFactor(tmp))
+#' xmuMinLevels(umxFactor(tmp), what = "name")
+xmuMinLevels <- function(df, what = c("value", "name")) {
+	what = match.arg(what)
 	isOrd = umx_is_ordered(df)
 	if(any(isOrd)){
 		vars = names(df)[isOrd]
@@ -607,8 +623,12 @@ xmuMinLevels <- function(df) {
 		for (i in vars) {
 			nLevels[j] = length(levels(df[,i]))
 			j = j + 1
-		}	
-		return(min(nLevels))
+		}
+		if(what == "value"){
+			return(min(nLevels))
+		} else {
+			return(names(df)[which.min(nLevels)])
+		}
 	} else {
 		return(NA)
 	}

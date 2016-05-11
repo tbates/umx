@@ -3291,7 +3291,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' x = data.frame(x)
 #' # umxThresholdMatrix(x, deviation = FALSE, hint = "left_censored")
 umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE, hint = c("none", "left_censored")){
-	if(droplevels){ stop("Not sure it's wise to drop levels...") }
+	if(droplevels){ stop("Not sure it's wise to drop levels... let me know what you think") }
 	hint        = match.arg(hint)
 	method      = match.arg(method)
 	nSib        = length(suffixes)
@@ -3305,7 +3305,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	ordVarNames    = names(df)[isOrd]
 	binVarNames    = names(df)[isBin]
 	if((nOrdVars + nBinVars) < 1){
-		message("No ordinal or binary variables in dataframe: no need to call umxThresholdMatrix")
+		warning("No ordinal or binary variables in dataframe (or possibly a factor but with only 1 level): no need to call umxThresholdMatrix")
 		return(NA) # probably OK to set thresholds matrix to NA in mxExpectation()
 		# TODO check if we should die here instead
 	} else {
@@ -3333,6 +3333,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	maxThresh = maxLevels - 1
 
 	# TODO simplify for n = bin, n= ord, n= cont msg
+	# TODO handle this in the presnet of hint
 	if(nBinVars > 0){
 		binVarNames = names(df)[isBin]
 		if(verbose){
@@ -3350,7 +3351,8 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		}
 	}
 	if(minLevels == 1){
-		stop("You seem to have a trait with only one category... makes it a bit futile to model it?")
+		warning("You seem to have a trait with only one category: ", omxQuotes(xmuMinLevels(df, what = "name")), "... makes it a bit futile to model it?")
+		stop("Stopping, as I can't handle trait with no variance.")
 	}
 
 	df = df[, factorVarNames, drop = FALSE]
@@ -3482,7 +3484,19 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	
 	# TODO describe what we have at this point
 	
-	if(deviationBased) {
+	if (hint == "left_censored"){
+		# ignore everything above...
+		if(method !="method"){
+			message("using ", hint, " fixed thresholds. Your choice of method ", omxQuotes(method), "will be ignored.")
+		}else{
+			message("using ", hint, " fixed thresholds.")
+		}
+		stop("tobit not implemented yet")
+		return(threshMat)
+	} else if(deviationBased) {
+		if(verbose) {
+			message("Using deviation based model: Thresholds will be in", omxQuotes(threshMatName), "based on deviations in ", omxQuotes("deviations_for_thresh"))
+		}
 		# ==========================
 		# = Adding deviation model =
 		# ==========================

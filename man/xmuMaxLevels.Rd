@@ -4,16 +4,23 @@
 \alias{xmuMaxLevels}
 \title{xmuMaxLevels}
 \usage{
-xmuMaxLevels(df)
+xmuMaxLevels(df, what = c("value", "name"))
 }
 \arguments{
 \item{df}{Dataframe to search through}
+
+\item{what}{Either "value" or "name" ( of the max-level column)}
 }
 \value{
 - max number of levels in frame
 }
 \description{
 Get the max levels from df
+}
+\examples{
+xmuMaxLevels(mtcars) # NA = no ordinal vars
+xmuMaxLevels(umxFactor(tmp))
+xmuMaxLevels(umxFactor(tmp), what = "name")
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
