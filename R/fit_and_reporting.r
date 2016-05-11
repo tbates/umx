@@ -605,9 +605,9 @@ umxSummary.default <- function(model, ...){
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param refModels Saturated models if needed for fit indices (see example below:
 #' 	Only needed for raw data. nb: \code{\link{umxRun}} takes care of this for you)
-#' @param showEstimates What estimates to show. Options are c("none", "std", "raw", "both", "list of column names"). 
-#' Default  is "none" (just shows the fit indices)
-#' @param digits How many decimal places to report (default = 2)
+#' @param showEstimates What estimates to show. By default, the raw estimates are shown 
+#' (Options = c("raw", "std", "both", "none", "list of column names").
+#'  @param digits How many decimal places to report (default = 2)
 #' @param report If "html", then show results in browser ("1", "table", "html")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
@@ -651,7 +651,7 @@ umxSummary.default <- function(model, ...){
 #' )
 #' m1 <- mxRun(m1)
 #' umxSummary(m1, show = "std", filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none", "raw", "std", "both", "list of column names"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...){
+umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both", "list of column names"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...){
 	# TODO make table take lists of models...
 	report = match.arg(report)
 	filter = match.arg(filter)
@@ -815,7 +815,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("none"
 #' @param showRg = whether to show the genetic correlations (FALSE)
 #' @param CIs Whether to show Confidence intervals if they exist (T)
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
-#' @param report If 3, then open an html table of the results
+#' @param report If "html", then open an html table of the results
 #' @param extended how much to report (FALSE)
 #' @param zero.print How to show zeros (".")
 #' @param ... Other parameters to control model summary
@@ -1028,14 +1028,14 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' @param model a \code{\link{umxACEcov}} model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
-#' @param returnStd Whether to return the standardized form of the model (default = F)
-#' @param extended how much to report (F)
-#' @param showRg = whether to show the genetic correlations (F)
-#' @param showStd = whether to show the standardized model (T)
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
+#' @param extended how much to report (FALSE)
+#' @param showRg = whether to show the genetic correlations (FALSE)
+#' @param showStd = whether to show the standardized model (TRUE)
 #' @param comparison you can run mxCompare on a comparison model (NULL)
-#' @param CIs Whether to show Confidence intervals if they exist (T)
+#' @param CIs Whether to show Confidence intervals if they exist (TRUE)
 #' @param zero.print How to show zeros (".")
-#' @param report If 3, then open an html table of the results
+#' @param report If "html", then open an html table of the results.
 #' @param ... Other parameters to control model summary
 #' @return - optional \code{\link{mxModel}}
 #' @export
