@@ -26,7 +26,7 @@ Defaults to NA = do not create plot output}
 
 \item{CIs}{Whether to show Confidence intervals if they exist (T)}
 
-\item{report}{If 3, then open an html table of the results}
+\item{report}{If "html", then open an html table of the results}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
