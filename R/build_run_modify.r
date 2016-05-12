@@ -228,7 +228,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' }
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), thresholds = c("deviationBased", "direct", "do_nothing"), autoRun = getOption("umx_auto_run")) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), thresholds = c("deviationBased", "direct", "ignore"), autoRun = getOption("umx_auto_run")) {
 	dot.items     = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
 	thresholds    = match.arg(thresholds)
@@ -388,12 +388,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}
 	
 	if(any(umx_is_ordered(data$observed))){
-		if(thresholds =="do_nothing"){
-			# do nothing :-)
-		} else if (thresholds =="deviationBased"){
+		if(thresholds == "ignore"){
+			autoRun = FALSE
+		} else if (thresholds == "deviationBased"){
 			m1 = umxRAM2Ordinal(m1, verbose = T, deviationBased = TRUE, autoRun = FALSE)
 		}else if (thresholds == "direct"){
-			m1 = umxRAM2Ordinal(m1, verbose = T, deviationBased = deviationBased, autoRun = FALSE)
+			m1 = umxRAM2Ordinal(m1, verbose = T, deviationBased = FALSE, autoRun = FALSE)
 		} else {
 			stop("thresholds value of", thresholds, "was unexpected,. legal were deviationBased, direct, do_nothing")
 		}
