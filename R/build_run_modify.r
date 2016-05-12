@@ -32,7 +32,6 @@
 	packageStartupMessage("For an overview type '?umx'")
 }
 
-
 #' @importFrom DiagrammeR DiagrammeR
 #' @importFrom graphics plot
 #' @importFrom MASS mvrnorm
@@ -180,6 +179,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' @param independent Whether the model is independent (default = NA)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
 #' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
+#' @param thresholds Whether to use deviation-based threshold modeling for ordinal data (if any is detected), direct, or do nothing.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -228,9 +228,11 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' }
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), autoRun = getOption("umx_auto_run")) {
-	dot.items = list(...) # grab all the dot items: mxPaths, etc...
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), thresholds = c("deviationBased", "direct", "do_nothing"), autoRun = getOption("umx_auto_run")) {
+	dot.items     = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
+	thresholds    = match.arg(thresholds)
+
 	if(typeof(model) == "character"){
 		if(is.na(name)){
 			name = model
@@ -383,6 +385,18 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	m1 = umxLabel(m1)
 	if(setValues){
 		m1 = umxValues(m1, onlyTouchZeros = TRUE)
+	}
+	
+	if(any(umx_is_ordered(data$observed))){
+		if(thresholds =="do_nothing"){
+			# do nothing :-)
+		} else if (thresholds =="deviationBased"){
+			m1 = umxRAM2Ordinal(m1, verbose = T, deviationBased = TRUE, autoRun = FALSE)
+		}else if (thresholds == "direct"){
+			m1 = umxRAM2Ordinal(m1, verbose = T, deviationBased = deviationBased, autoRun = FALSE)
+		} else {
+			stop("thresholds value of", thresholds, "was unexpected,. legal were deviationBased, direct, do_nothing")
+		}
 	}
 	if(autoRun){
 		m1 = mxRun(m1)

@@ -2261,6 +2261,27 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 
 #' umx_is_ordered
 #'
+#' Is the input an MxData?
+#'
+#' @param x An object to test for being an MxData object
+#' @return - Boolean
+#' @export
+#' @family Test
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' umx_is_MxData(mtcars)
+#' umx_is_MxData(mxData(mtcars, type= "raw"))
+#' umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
+umx_is_MxData <- function(df) {
+    if(class(df)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
+		TRUE
+	} else {
+		FALSE
+	}
+}
+
+#' umx_is_ordered
+#'
 #' Return the names of any ordinal variables in a dataframe
 #'
 #' @param df A \code{\link{data.frame}} to look in for ordinal variables (if you offer a
