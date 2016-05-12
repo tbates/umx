@@ -17,6 +17,6 @@ umx_show_options()
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{getOpenMx}},
-  \code{\link{umxJiggle}}
+  \code{\link{umxJiggle}}, \code{\link{umx_pad}}
 }
 
