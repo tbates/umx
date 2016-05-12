@@ -829,6 +829,7 @@ umx_factor <- umxFactor
 #' model = umx_RAM_ordinal_objective(model)
 #' }
 umx_RAM_ordinal_objective <- function(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE) {
+	# TODO This doesn't work, needs work :-)
 	# (This is a nice place to check, as we have the df present...)
 	if(!any(umx_is_ordered(df))){
 		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")
@@ -842,6 +843,49 @@ umx_RAM_ordinal_objective <- function(df, deviationBased = TRUE, droplevels = TR
 # ===========
 # = Utility =
 # ===========
+
+#' Pad an Object with NAs
+#' 
+#' This function pads an R object (list, data.frame, matrix, atomic vector)
+#' with \code{NA}s. For matrices, lists and data.frames, this occurs by extending
+#' each (column) vector in the object.
+#' @param x An \R object (list, data.frame, matrix, atomic vector).
+#' @param n The final length of each object.
+#' @return - padded object
+#' @export
+#' @family Miscellaneous Functions
+#' @references - \url{https://github.com/kevinushey/Kmisc/tree/master/man}
+#' @examples
+#' umx_pad(1:3, 4)
+umx_pad <- function(x, n) {
+  if (is.data.frame(x)) {
+    nrow <- nrow(x)
+    attr(x, "row.names") <- 1:n
+    for( i in 1:ncol(x) ) {
+      x[[i]] <- c( x[[i]], rep(NA, times=n-nrow) )
+    }
+    return(x)
+  } else if (is.list(x)) {
+    if (missing(n)) {
+      max_len <- max( sapply( x, length ) )
+      return( lapply(x, function(xx) {
+        return( c(xx, rep(NA, times=max_len-length(xx))) )
+      }))
+    } else {
+      return( lapply(x, function(xx) {
+        if (n > length(xx)) {
+          return( c(xx, rep(NA, times=n-length(xx))) )
+        } else {
+          return(xx)
+        }
+      }))
+    }
+  } else if (is.matrix(x)) {
+    return( rbind( x, matrix(NA, nrow=n-nrow(x), ncol=ncol(x)) ) )
+  } else {
+    return( c( x, rep(NA, n-length(x)) ) ) 
+  } 
+}
 
 #' umx_apply
 #'
@@ -2213,6 +2257,27 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 		means = umx_apply(mean, df, by = "columns", na.rm = TRUE)
 	}
 	return(means)
+}
+
+#' umx_is_ordered
+#'
+#' Is the input an MxData?
+#'
+#' @param x An object to test for being an MxData object
+#' @return - Boolean
+#' @export
+#' @family Test
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' umx_is_MxData(mtcars)
+#' umx_is_MxData(mxData(mtcars, type= "raw"))
+#' umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
+umx_is_MxData <- function(df) {
+    if(class(df)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
+		TRUE
+	} else {
+		FALSE
+	}
 }
 
 #' umx_is_ordered

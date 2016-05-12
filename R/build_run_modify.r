@@ -32,7 +32,6 @@
 	packageStartupMessage("For an overview type '?umx'")
 }
 
-
 #' @importFrom DiagrammeR DiagrammeR
 #' @importFrom graphics plot
 #' @importFrom MASS mvrnorm
@@ -180,6 +179,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' @param independent Whether the model is independent (default = NA)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
 #' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
+#' @param thresholds Whether to use deviation-based threshold modeling for ordinal data (if any is detected), direct, or do nothing.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -228,9 +228,11 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' }
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), autoRun = getOption("umx_auto_run")) {
-	dot.items = list(...) # grab all the dot items: mxPaths, etc...
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), thresholds = c("deviationBased", "direct", "ignore"), autoRun = getOption("umx_auto_run")) {
+	dot.items     = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
+	thresholds    = match.arg(thresholds)
+
 	if(typeof(model) == "character"){
 		if(is.na(name)){
 			name = model
@@ -383,6 +385,18 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	m1 = umxLabel(m1)
 	if(setValues){
 		m1 = umxValues(m1, onlyTouchZeros = TRUE)
+	}
+	
+	if(any(umx_is_ordered(data$observed))){
+		if(thresholds == "ignore"){
+			autoRun = FALSE
+		} else if (thresholds == "deviationBased"){
+			m1 = umxRAM2Ordinal(m1, verbose = T, deviationBased = TRUE, autoRun = FALSE)
+		}else if (thresholds == "direct"){
+			m1 = umxRAM2Ordinal(m1, verbose = T, deviationBased = FALSE, autoRun = FALSE)
+		} else {
+			stop("thresholds value of", thresholds, "was unexpected,. legal were deviationBased, direct, do_nothing")
+		}
 	}
 	if(autoRun){
 		m1 = mxRun(m1)
@@ -1062,7 +1076,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 			# 1. Set to mxFactor
 			# 2. For Binary vars:
 			#   1. Means of binary vars fixedAt 0
-			#   2. A+C+E for binary vars is constrained to 1 
+			#   2. A + C + E for binary vars is constrained to 1 
 			# 4. For Ordinal vars, first 2 thresholds fixed
 			# 5. Option to fix all (or all but the first 2??) thresholds for left-censored data.
 	        #   # TODO
@@ -2161,6 +2175,41 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 # ========================================
 # = Model building and modifying helpers =
 # ========================================
+
+#' umxRAM2Ordinal 
+#'
+#' umxRAM2Ordinal  converts a RAM model whose data contain ordinal vars to a threshold-based model
+#'
+#' @param model an \code{\link{mxModel}} to add thresholds too
+#' @param verbose = TRUE 
+#' @param deviationBased Whether to use deviation-based thresholds (TRUE by default)
+#' @param name = A new name for the modified model (NULL means leave it as it)
+#' @param showEstimates = Whether to show estimates in the summary (if autorunning) TRUE
+#' @param autoRun = whether to run the model before returning it: defaults to getOption("umx_auto_run"))
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Model Building Functions
+#' @seealso - \code{\link{umxRAM}}
+#' @examples
+#' m1 = umxRAM2Ordinal(model)
+umxRAM2Ordinal <- function(model, verbose = T, deviationBased = TRUE, name = NULL, showEstimates= TRUE, autoRun = getOption("umx_auto_run")) {
+	# model = m3
+	if(!umx_is_RAM(model)){
+		stop("Only works with RAM models, sorry.")
+	}
+	if(!is.null(name)){
+		model = mxRename(model, name)
+	}
+	model$expectation$thresholds = "threshMat"
+	model = mxModel(model, umxThresholdMatrix(model$data$observed, deviationBased = deviationBased, verbose = verbose))
+	if (autoRun) {
+		model = mxRun(model)
+		umxSummary(model, showEstimates = showEstimates)
+		return(model)
+	} else {
+		return(model)
+	}
+}
 
 #' umxValues
 #'
@@ -3291,6 +3340,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' x = data.frame(x)
 #' umxThresholdMatrix(x, hint = "left_censored")
 umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE, hint = c("none", "left_censored")){
+	# TODO consider changing name of threshMatName to "Thresholds" to match what mxModel does with mxThresholds internally now...
 	if(droplevels){ stop("Not sure it's wise to drop levels... let me know what you think") }
 	hint        = match.arg(hint)
 	method      = match.arg(method)
@@ -3310,7 +3360,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		# TODO check if we should die here instead
 	} else {
 		if(verbose){
-			message("'threshMat' created to handle ")
+			message("object ", omxQuotes(threshMatName), " created to handle ")
 			if(nSib == 2){
 				if(nOrdVars > 0){
 					message(nOrdVars/nSib, " pair(s) of ordinal variables:", omxQuotes(ordVarNames), "\n")
@@ -3517,7 +3567,10 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		# 3. Make lower matrix of 1s called "lowerOnes_for_thresh"
 		# 4. Create thresholdsAlgebra named threshMatName
 		# 5. Return a package of lowerOnes_for_thresh, deviations_for_thresh & thresholdsAlgebra (named threshMatName)
-		# 1
+
+		# =====
+		# = 1 =
+		# =====
 		# startDeviations
 		startDeviations = threshMat$values
 		nrows = dim(threshMat$values)[1]
@@ -3558,13 +3611,13 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 			labels   = devLabels,
 			values   = startDeviations,
 			lbound   = .001,
-			# TODO ubound might want to be NA
-			ubound   = 4,
+			# TODO ubound might want to be l_u_bound[2]
+			ubound   = NA,
 			dimnames = list(paste0("dev_", 1:maxThresh), factorVarNames)
 		)
-		# 2
-		lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThresh, free = FALSE, values = 1)
 		# 3
+		lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThresh, free = FALSE, values = 1)
+		# 4
 		threshDimNames = list(paste0("th_", 1:maxThresh), factorVarNames)
 		thresholdsAlgebra = mxAlgebra(name = threshMatName, lowerOnes_for_thresh %*% deviations_for_thresh, dimnames = threshDimNames)
 

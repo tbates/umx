@@ -7,6 +7,7 @@
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   setValues = TRUE, independent = NA, remove_unused_manifests = TRUE,
   showEstimates = c("none", "raw", "std", "both", "list of column names"),
+  thresholds = c("deviationBased", "direct", "ignore"),
   autoRun = getOption("umx_auto_run"))
 }
 \arguments{
@@ -27,6 +28,8 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 \item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
 
 \item{showEstimates}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
+
+\item{thresholds}{Whether to use deviation-based threshold modeling for ordinal data (if any is detected), direct, or do nothing.}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 }
@@ -108,7 +111,8 @@ m1$S$labels
 Other Model Building Functions: \code{\link{umxDiagnose}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
   \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRun}}, \code{\link{umxThresholdMatrix}},
+  \code{\link{umxRAM2Ordinal}}, \code{\link{umxRun}},
+  \code{\link{umxThresholdMatrix}},
   \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}, \code{\link{umx}}

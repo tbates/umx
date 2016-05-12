@@ -52,8 +52,8 @@ umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 
 Other Model Building Functions: \code{\link{umxDiagnose}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
   \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxThresholdMatrix}},
+  \code{\link{umxRAM2Ordinal}}, \code{\link{umxRAM}},
+  \code{\link{umxRun}}, \code{\link{umxThresholdMatrix}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}, \code{\link{umx}}
 }
