@@ -3289,7 +3289,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' x[x < 0] = 0
 #' x = mxFactor(x, levels = sort(unique(x)))
 #' x = data.frame(x)
-#' # umxThresholdMatrix(x, deviation = FALSE, hint = "left_censored")
+#' umxThresholdMatrix(x, hint = "left_censored")
 umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE, hint = c("none", "left_censored")){
 	if(droplevels){ stop("Not sure it's wise to drop levels... let me know what you think") }
 	hint        = match.arg(hint)
@@ -3333,7 +3333,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	maxThresh = maxLevels - 1
 
 	# TODO simplify for n = bin, n= ord, n= cont msg
-	# TODO handle this in the presnet of hint
+	# TODO handle this in the presence of hint
 	if(nBinVars > 0){
 		binVarNames = names(df)[isBin]
 		if(verbose){
@@ -3486,12 +3486,22 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	
 	if (hint == "left_censored"){
 		# ignore everything above...
-		if(method !="method"){
+		if(method != "auto"){
 			message("using ", hint, " fixed thresholds. Your choice of method ", omxQuotes(method), "will be ignored.")
 		}else{
 			message("using ", hint, " fixed thresholds.")
 		}
+		return(threshMat)
 		stop("tobit not implemented yet")
+		m7$threshMat$free = FALSE
+		maxLen = dim(m7$threshMat$values)[1]
+		for (varName in manifests) {
+			theseLevels = levels(df[,varName])
+			nLevels     = length(theseLevels)
+			m7$threshMat$values[,varName] = umx_pad(as.numeric(theseLevels[2:(nLevels)]), maxLen)
+		}
+		m7 = mxRun(m7); umxCompare(m6, m7)
+
 		return(threshMat)
 	} else if(deviationBased) {
 		if(verbose) {

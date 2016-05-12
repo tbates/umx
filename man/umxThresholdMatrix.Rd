@@ -111,7 +111,7 @@ x = round(10 * rnorm(1000, mean = -.2))
 x[x < 0] = 0
 x = mxFactor(x, levels = sort(unique(x)))
 x = data.frame(x)
-# umxThresholdMatrix(x, deviation = FALSE, hint = "left_censored")
+umxThresholdMatrix(x, hint = "left_censored")
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
