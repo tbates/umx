@@ -577,8 +577,8 @@ xmuHasSquareBrackets <- function (input) {
 #' @family xmu internal not for end user
 #' @examples
 #' xmuMaxLevels(mtcars) # NA = no ordinal vars
-#' xmuMaxLevels(umxFactor(tmp))
-#' xmuMaxLevels(umxFactor(tmp), what = "name")
+#' xmuMaxLevels(umxFactor(mtcars))
+#' xmuMaxLevels(umxFactor(mtcars), what = "name")
 xmuMaxLevels <- function(df, what = c("value", "name")) {
 	what = match.arg(what)
 	isOrd = umx_is_ordered(df)
