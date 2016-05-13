@@ -19,8 +19,8 @@ Get the max levels from df
 }
 \examples{
 xmuMaxLevels(mtcars) # NA = no ordinal vars
-xmuMaxLevels(umxFactor(tmp))
-xmuMaxLevels(umxFactor(tmp), what = "name")
+xmuMaxLevels(umxFactor(mtcars))
+xmuMaxLevels(umxFactor(mtcars), what = "name")
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},

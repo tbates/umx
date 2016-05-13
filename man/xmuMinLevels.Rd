@@ -19,8 +19,8 @@ Get the min levels from df
 }
 \examples{
 xmuMinLevels(mtcars) # NA = no ordinal vars
-xmuMinLevels(umxFactor(tmp))
-xmuMinLevels(umxFactor(tmp), what = "name")
+xmuMinLevels(umxFactor(mtcars))
+xmuMinLevels(umxFactor(mtcars), what = "name")
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
