@@ -611,8 +611,8 @@ xmuMaxLevels <- function(df, what = c("value", "name")) {
 #' @family xmu internal not for end user
 #' @examples
 #' xmuMinLevels(mtcars) # NA = no ordinal vars
-#' xmuMinLevels(umxFactor(tmp))
-#' xmuMinLevels(umxFactor(tmp), what = "name")
+#' xmuMinLevels(umxFactor(mtcars))
+#' xmuMinLevels(umxFactor(mtcars), what = "name")
 xmuMinLevels <- function(df, what = c("value", "name")) {
 	what = match.arg(what)
 	isOrd = umx_is_ordered(df)
