@@ -761,7 +761,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #'
 #' @aliases umx_factor
 #' @param x A variable to recode as an mxFactor (see \code{\link{mxFactor}})
-#' @param levels defaults to NA. UNLIKE mxFactor, if not specified, the existing levels will be used
+#' @param levels defaults to NA. UNLIKE \code{\link{mxFactor}}, if not specified, the existing levels will be used
 #' @param labels = levels (see \code{\link{mxFactor}})
 #' @param exclude = NA (see \code{\link{mxFactor}})
 #' @param collapse = FALSE (see \code{\link{mxFactor}})

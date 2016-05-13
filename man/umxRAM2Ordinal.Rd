@@ -8,9 +8,9 @@ umxRAM2Ordinal(model, verbose = T, deviationBased = TRUE, name = NULL,
   showEstimates = TRUE, autoRun = getOption("umx_auto_run"))
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to add thresholds too}
+\item{model}{An RAM model to add thresholds too.}
 
-\item{verbose}{= TRUE}
+\item{verbose}{Tell the user what was added and why (Default = TRUE)}
 
 \item{deviationBased}{Whether to use deviation-based thresholds (TRUE by default)}
 
@@ -27,7 +27,9 @@ umxRAM2Ordinal(model, verbose = T, deviationBased = TRUE, name = NULL,
 umxRAM2Ordinal  converts a RAM model whose data contain ordinal vars to a threshold-based model
 }
 \examples{
+\dontrun{
 m1 = umxRAM2Ordinal(model)
+}
 }
 \seealso{
 - \code{\link{umxRAM}}

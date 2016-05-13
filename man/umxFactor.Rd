@@ -11,7 +11,7 @@ umxFactor(x = character(), levels = NA, labels = levels, exclude = NA,
 \arguments{
 \item{x}{A variable to recode as an mxFactor (see \code{\link{mxFactor}})}
 
-\item{levels}{defaults to NA. UNLIKE mxFactor, if not specified, the existing levels will be used}
+\item{levels}{defaults to NA. UNLIKE \code{\link{mxFactor}}, if not specified, the existing levels will be used}
 
 \item{labels}{= levels (see \code{\link{mxFactor}})}
 

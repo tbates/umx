@@ -108,9 +108,11 @@ tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
 # ===================
 
 x = round(10 * rnorm(1000, mean = -.2))
+y = round(5 * rnorm(1000))
 x[x < 0] = 0
-x = mxFactor(x, levels = sort(unique(x)))
-x = data.frame(x)
+y[y < 0] = 0
+df = data.frame(x = x, y = y)
+df = umxFactor(df); #str(df)
 umxThresholdMatrix(x, hint = "left_censored")
 }
 \references{
