@@ -109,11 +109,10 @@ tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
 
 x = round(10 * rnorm(1000, mean = -.2))
 y = round(5 * rnorm(1000))
-x[x < 0] = 0
-y[y < 0] = 0
+x[x < 0] = 0; y[y < 0] = 0
 df = data.frame(x = x, y = y)
 df = umxFactor(df); #str(df)
-umxThresholdMatrix(x, hint = "left_censored")
+umxThresholdMatrix(df, hint = "left_censored")
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}

@@ -3339,11 +3339,10 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #'
 #' x = round(10 * rnorm(1000, mean = -.2))
 #' y = round(5 * rnorm(1000))
-#' x[x < 0] = 0
-#' y[y < 0] = 0
+#' x[x < 0] = 0; y[y < 0] = 0
 #' df = data.frame(x = x, y = y)
 #' df = umxFactor(df); #str(df)
-#' umxThresholdMatrix(x, hint = "left_censored")
+#' umxThresholdMatrix(df, hint = "left_censored")
 umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE, hint = c("none", "left_censored")){
 	# TODO consider changing name of threshMatName to "Thresholds" to match what mxModel does with mxThresholds internally now...
 	# df = x
