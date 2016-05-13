@@ -3354,10 +3354,45 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	factorVarNames = names(df)[isFactor]
 	ordVarNames    = names(df)[isOrd]
 	binVarNames    = names(df)[isBin]
+
+	if(nSib == 2){
+		# For better precision, copy both halves of the dataframe into each
+		T1 = df[, grep(paste0(suffixes[1], "$"), factorVarNames, value = TRUE), drop = FALSE]
+		T2 = df[, grep(paste0(suffixes[2], "$"), factorVarNames, value = TRUE), drop = FALSE]
+		names(T2) <- names(T1)
+		dfLong = rbind(T1, T2)
+		df = cbind(dfLong, dfLong)
+		names(df) = factorVarNames
+	} else if(nSib == 1){
+		# df is fine as is.		
+	} else {
+		stop("I can only handle 1 and 2 sib models. You gave me ", nSib, " suffixes.")
+	}
+	df = df[, factorVarNames, drop = FALSE]
+
+	minLevels = xmuMinLevels(df)
+	maxLevels = xmuMaxLevels(df)
+	maxThresh = maxLevels - 1
+
+	# Size the threshMat to order maxThresh rows * nFactors cols
+	threshMat = mxMatrix(name = threshMatName, type = "Full",
+		nrow     = maxThresh,
+		ncol     = nFactors,
+		free     = TRUE, 
+		values = rep(NA, (maxThresh * nFactors)),
+		lbound   = l_u_bound[1],
+		ubound   = l_u_bound[2],
+		dimnames = list(paste0("th_", 1:maxThresh), factorVarNames)
+	)
+
+	# TODO simplify for n = bin, n= ord, n= cont msg
+	# TODO handle this in the presence of hint
+	# ===========================================
+	# = Tell the user what we found if they ask =
+	# ===========================================
 	if((nOrdVars + nBinVars) < 1){
 		warning("No ordinal or binary variables in dataframe (or possibly a factor but with only 1 level): no need to call umxThresholdMatrix")
 		return(NA) # probably OK to set thresholds matrix to NA in mxExpectation()
-		# TODO check if we should die here instead
 	} else {
 		if(verbose){
 			message("object ", omxQuotes(threshMatName), " created to handle ")
@@ -3378,18 +3413,12 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 			}
 		}
 	}
-	minLevels = xmuMinLevels(df)
-	maxLevels = xmuMaxLevels(df)
-	maxThresh = maxLevels - 1
-
-	# TODO simplify for n = bin, n= ord, n= cont msg
-	# TODO handle this in the presence of hint
 	if(nBinVars > 0){
 		binVarNames = names(df)[isBin]
 		if(verbose){
 			message(sum(isBin), " trait(s) are binary (only 2-levels).\n",
 			omxQuotes(binVarNames),
-			"\nFor these, you you MUST fix or constrain (usually mean==0 & var==1) the latent traits driving each ordinal variable.\n",
+			"\nFor these, you you MUST fix the mean and variance of the latent traits driving each variable (usually 0  & 1 respectively) .\n",
 			"See ?mxThresholdMatrix")
 		}
 	}
@@ -3405,32 +3434,8 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		stop("Stopping, as I can't handle trait with no variance.")
 	}
 
-	df = df[, factorVarNames, drop = FALSE]
 
-	if(nSib == 2){
-		# For better precision, copy both halves of the dataframe into each
-		T1 = df[, grep(paste0(suffixes[1], "$"), factorVarNames, value = TRUE), drop = FALSE]
-		T2 = df[, grep(paste0(suffixes[2], "$"), factorVarNames, value = TRUE), drop = FALSE]
-		names(T2) <- names(T1)
-		dfLong = rbind(T1, T2)
-		df = cbind(dfLong, dfLong)
-		names(df) = factorVarNames
-	} else if(nSib == 1){
-		# df is fine as is.		
-	} else {
-		stop("I can only handle 1 and 2 sib models. You gave me ", nSib, " suffixes.")
-	}
 	
-	# Size the threshMat to order maxThresh rows * nFactors cols
-	threshMat = mxMatrix(name = threshMatName, type = "Full",
-		nrow     = maxThresh,
-		ncol     = nFactors,
-		free     = TRUE, 
-		values = rep(NA, (maxThresh * nFactors)),
-		lbound   = l_u_bound[1],
-		ubound   = l_u_bound[2],
-		dimnames = list(paste0("th_", 1:maxThresh), factorVarNames)
-	)
 	# For each factor variable
 	for (thisVarName in factorVarNames) {
 		thisCol = df[,thisVarName]
