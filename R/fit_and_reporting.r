@@ -607,7 +607,7 @@ umxSummary.default <- function(model, ...){
 #' 	Only needed for raw data. nb: \code{\link{umxRun}} takes care of this for you)
 #' @param showEstimates What estimates to show. By default, the raw estimates are shown 
 #' (Options = c("raw", "std", "both", "none", "list of column names").
-#'  @param digits How many decimal places to report (default = 2)
+#' @param digits How many decimal places to report (default = 2)
 #' @param report If "html", then show results in browser ("1", "table", "html")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.

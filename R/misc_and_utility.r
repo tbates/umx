@@ -2272,8 +2272,8 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 #' umx_is_MxData(mtcars)
 #' umx_is_MxData(mxData(mtcars, type= "raw"))
 #' umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
-umx_is_MxData <- function(df) {
-    if(class(df)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
+umx_is_MxData <- function(x) {
+    if(class(x)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
 		TRUE
 	} else {
 		FALSE
