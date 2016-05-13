@@ -3560,12 +3560,10 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 				stop("The thresholds for ", thisVarName, " are not in order... oops: that's my fault :-(")
 			}
 		
+			# Already labeled, and all free initialized to TRUE (out of range = FALSE)
 			if(nThreshThisVar > 1){ # fix the first 2
-				free[1:2] = FALSE
-			}
-		
-			threshMat$labels[, thisVarName] = labels
-			threshMat$free[,   thisVarName] = free
+				threshMat$free[1:2,   thisVarName] = FALSE
+			}	
 			threshMat$values[, thisVarName] = values
 		} # end for each factor variable
 	
