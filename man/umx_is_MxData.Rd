@@ -4,7 +4,7 @@
 \alias{umx_is_MxData}
 \title{umx_is_ordered}
 \usage{
-umx_is_MxData(df)
+umx_is_MxData(x)
 }
 \arguments{
 \item{x}{An object to test for being an MxData object}

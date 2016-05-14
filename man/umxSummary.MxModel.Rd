@@ -16,8 +16,9 @@
 Only needed for raw data. nb: \code{\link{umxRun}} takes care of this for you)}
 
 \item{showEstimates}{What estimates to show. By default, the raw estimates are shown 
-(Options = c("raw", "std", "both", "none", "list of column names").
- @param digits How many decimal places to report (default = 2)}
+(Options = c("raw", "std", "both", "none", "list of column names").}
+
+\item{digits}{How many decimal places to report (default = 2)}
 
 \item{report}{If "html", then show results in browser ("1", "table", "html")}
 
