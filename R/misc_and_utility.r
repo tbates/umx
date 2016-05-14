@@ -809,37 +809,6 @@ umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = N
 #' @export
 umx_factor <- umxFactor
 
-#' umx_RAM_ordinal_objective
-#'
-#' umx_RAM_ordinal_objective builds an appropriate thresholds matrix
-#' It also sets latent means and variances to 0 and 1 respectively.
-#' 
-#' TODO: more detail about what we are doing here
-#'
-#' @param df Dataframe to make a threshold matrix for
-#' @param deviationBased whether to use the deviation system to ensure order thresholds (default = TRUE)
-#' @param droplevels whether to also drop unused levels (default = TRUE)
-#' @param verbose whether to say what the function is doing (default = FALSE)
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @family zAdvanced Helpers
-#' @references - \url{http://www.github.com/tbates/umx}
-#' @examples
-#' \dontrun{
-#' model = umx_RAM_ordinal_objective(model)
-#' }
-umx_RAM_ordinal_objective <- function(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE) {
-	# TODO This doesn't work, needs work :-)
-	# (This is a nice place to check, as we have the df present...)
-	if(!any(umx_is_ordered(df))){
-		stop("No ordinal variables in dataframe: no need to call umx_RAM_ordinal_objective")
-	} 
-	pt1 = umxPath(means = umx_is_ordered(df, names = TRUE), fixedAt = 0)
-	pt2 = umxPath(var   = umx_is_ordered(df, names = TRUE), fixedAt = 1)
-	return(list(pt1, pt2, umxThresholdMatrix(df, deviationBased = TRUE, droplevels = TRUE, verbose = FALSE)))
-}
-
-
 # ===========
 # = Utility =
 # ===========

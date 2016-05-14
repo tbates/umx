@@ -995,7 +995,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
-		# if cov, call umxACEcov
+		# If given covariates, call umxACEcov
 		if(!is.null(selCovs)){
 			umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 		} else {
@@ -1059,7 +1059,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 		}
 		used = selDVs
 		if(!is.null(weightVar)){
-			used = c(used,weightVar)
+			used = c(used, weightVar)
 		}
 		# Drop unused columns from mz and dzData
 		mzData = mzData[, used]
@@ -1085,17 +1085,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# no weights
 			}
 
-			# ===============================
-			# = Notes: Ordinal requires:    =
-			# ===============================
-			# 1. Set to mxFactor
-			# 2. For Binary vars:
-			#   1. Means of binary vars fixedAt 0
-			#   2. A + C + E for binary vars is constrained to 1 
-			# 4. For Ordinal vars, first 2 thresholds fixed
-			# 5. Option to fix all (or all but the first 2??) thresholds for left-censored data.
-	        #   # TODO
-			# 	1. Simple test if results are similar for an ACE model of 1 variable
 			# ===========================
 			# = Add means matrix to top =
 			# ===========================
@@ -1116,6 +1105,18 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 			# smarter but not guaranteed
 			# a_val = e_val = t(chol(xmu_cov_factor(mzData, use = "pair"))) * .6
 			# c_val = t(chol(cov(mzData, use = "pair"))) * .1
+
+			# ===============================
+			# = Notes: Ordinal requires:    =
+			# ===============================
+			# 1. Set to mxFactor
+			# 2. For Binary vars:
+			#   1. Means of binary vars fixedAt 0
+			#   2. A + C + E for binary vars is constrained to 1 
+			# 4. For Ordinal vars, first 2 thresholds fixed
+			# 5. Option to fix all (or all but the first 2??) thresholds for left-censored data.
+	        #   # TODO
+			# 	1. Simple test if results are similar for an ACE model of 1 variable
 			if(nFactors == 0) {			
 				# =======================================================
 				# = Handle all continuous case                          =
@@ -1142,7 +1143,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# for better guessing with low-freq cells
 				allData = rbind(mzData, dzData)
 				# threshMat is a three-item list of matrices and algebra
-				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), verbose = FALSE, thresholds = thresholds)
+
+				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), threshMatName = "threshMat", thresholds = thresholds, verbose = FALSE)
 				# return(threshMat)
 				mzExpect = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 				dzExpect = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
@@ -1150,6 +1152,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				MZ  = mxModel("MZ", mzExpect, mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
 				DZ  = mxModel("DZ", dzExpect, mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
 			} else if(sum(isBin) > 0){
+				if(thresholds == "left_censored"){
+					stop("left_censored doesn't make sense for binary variables. I also can't handle mixtures of censored and binary yet, sorry")
+				}
 				# =======================================================
 				# = Handle case of at least 1 binary variable           =
 				# =======================================================
@@ -1176,7 +1181,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# For better guessing with low-freq cells
 				allData = rbind(mzData, dzData)
 				# threshMat may be a three item list of matrices and algebra
-				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), verbose = TRUE)
+				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2),  thresholds =  thresholds, threshMatName = "threshMat", verbose = TRUE)
+
 				mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 				dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")
 
@@ -3296,7 +3302,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' umxThresholdMatrix(x)
 #' x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
 #' x = data.frame(ordered(x)); names(x) <- c("x")
-#' tm = umxThresholdMatrix(x)
+#' tmp = umxThresholdMatrix(x)
 #' 
 #' # ==================
 #' # = Binary example =
@@ -3316,7 +3322,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' str(mzData)
-#' tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE) # informative messages
+#' tmp = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE) # informative messages
 #' 
 #' # ======================================
 #' # = Ordinal (n categories > 2) example =
@@ -3330,7 +3336,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' str(mzData)
-#' tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
+#' tmp = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
 #'
 #' # ========================================================
 #' # = Mix of all three kinds example (and a 4-level trait) =
@@ -3357,7 +3363,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' x[x < 0] = 0; y[y < 0] = 0
 #' df = data.frame(x = x, y = y)
 #' df = umxFactor(df); #str(df)
-#' x = umxThresholdMatrix(df, thresholds = "left_censored"); str(x)
+#' tmp = umxThresholdMatrix(df, thresholds = "left_censored"); str(x)
 #' any(x$free) # all fixed.
 umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), thresholds = c("deviationBased", "direct", "ignore", "left_censored"), droplevels = FALSE, verbose = FALSE){
 	# TODO consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
