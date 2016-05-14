@@ -4,15 +4,16 @@
 \alias{umxRAM2Ordinal}
 \title{umxRAM2Ordinal}
 \usage{
-umxRAM2Ordinal(model, verbose = T, deviationBased = TRUE, name = NULL,
-  showEstimates = TRUE, autoRun = getOption("umx_auto_run"))
+umxRAM2Ordinal(model, verbose = T, thresholds = c("deviationBased",
+  "direct", "ignore", "left_censored"), name = NULL, showEstimates = TRUE,
+  autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{model}{An RAM model to add thresholds too.}
 
 \item{verbose}{Tell the user what was added and why (Default = TRUE)}
 
-\item{deviationBased}{Whether to use deviation-based thresholds (TRUE by default)}
+\item{thresholds}{How to implement thresholds: c("deviationBased", "direct", "ignore", "left_censored")}
 
 \item{name}{= A new name for the modified model (NULL means leave it as it)}
 

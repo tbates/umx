@@ -6,8 +6,8 @@
 \usage{
 umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
   method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA),
-  deviationBased = TRUE, droplevels = FALSE, verbose = FALSE,
-  hint = c("none", "left_censored"))
+  thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
+  droplevels = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{df}{the data being modelled (to allow access to the factor levels and quantiles within these for each variable)}
@@ -20,13 +20,11 @@ umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
 
 \item{l_u_bound}{c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.}
 
-\item{deviationBased}{Whether to build a helper matrix to keep the thresholds in order (defaults to = TRUE)}
+\item{thresholds}{How to implement thresholds: "deviationBased" (default), "direct", "ignore", "left_censored"}
 
 \item{droplevels}{Whether to drop levels with no observed data (defaults to FALSE)}
 
 \item{verbose}{(defaults to FALSE))}
-
-\item{hint}{currently used for "left_censored" data (defaults to "none"))}
 }
 \value{
 - thresholds matrix
@@ -112,7 +110,7 @@ y = round(5 * rnorm(1000))
 x[x < 0] = 0; y[y < 0] = 0
 df = data.frame(x = x, y = y)
 df = umxFactor(df); #str(df)
-umxThresholdMatrix(df, hint = "left_censored")
+umxThresholdMatrix(df, thresholds = "left_censored")
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}

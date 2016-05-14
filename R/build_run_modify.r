@@ -229,9 +229,10 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' }
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), thresholds = c("deviationBased", "direct", "ignore"), autoRun = getOption("umx_auto_run")) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	dot.items     = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
+	legalThresholdsOptions = c("deviationBased", "direct", "ignore", "left_censored")
 	thresholds    = match.arg(thresholds)
 
 	if(typeof(model) == "character"){
@@ -390,13 +391,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	
 	if(any(umx_is_ordered(data$observed))){
 		if(thresholds == "ignore"){
+			# can't run, as ignored are incomplete
 			autoRun = FALSE
-		} else if (thresholds == "deviationBased"){
-			m1 = umxRAM2Ordinal(m1, verbose = T, deviationBased = TRUE, autoRun = FALSE)
-		}else if (thresholds == "direct"){
-			m1 = umxRAM2Ordinal(m1, verbose = T, deviationBased = FALSE, autoRun = FALSE)
 		} else {
-			stop("thresholds value of", thresholds, "was unexpected,. legal were deviationBased, direct, do_nothing")
+			m1 = umxRAM2Ordinal(m1, verbose = T, thresholds = thresholds, autoRun = FALSE)
 		}
 	}
 	if(autoRun){
@@ -879,7 +877,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param weightVar = If provided, a vector objective will be used to weight the data. (default = NULL) 
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE)
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE)
-#' @param hint An analysis hint. Options include "none", (default) "left_censored". Default does nothing.
+#' @param thresholds How to implement ordinal thresholds c("deviationBased", "left_censored")
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
@@ -901,8 +899,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
 #' umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
-#' 
-#' 
+#'
 #' # ===================
 #' # = Ordinal example =
 #' # ===================
@@ -979,15 +976,32 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 #' umxSummary(m1)
 #' plot(m1)
+#' # =========================
+#' # Example with Tobin data =
+#' # =========================
+#' 
+#' require(umx)
+#' data(twinData)
+#' selDVs = c("bmi1", "bmi2")
+#' tmp = twinData[,selDVs]
+#' tmp$bmi1[tmp$bmi1 <= 22] = 22
+#' tmp$bmi1[tmp$bmi1 <= 22] = 22
+#' tmp$bmi2[tmp$bmi2 <= 22] = 22
+#' tmp = umxFactor(tmp) # ~ 500 "levels" !
+#' mz = tmp[tmp$zyg == 1, selDVs]
+#' dz = tmp[tmp$zyg == 3, selDVs]
+#' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, thresholds= "left_censored")
+#' umxSummary(m1)
+#' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"), autoRun = getOption("umx_auto_run")) {
+	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
 		# if cov, call umxACEcov
 		if(!is.null(selCovs)){
-			umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, hint = hint, autoRun = autoRun)
+			umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 		} else {
 		if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
 		if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
-		hint = match.arg(hint)
+		thresholds = match.arg(thresholds)
 		nSib = 2 # number of siblings in a twin pair
 		if(dzCr == .25 && name == "ACE"){
 			name = "ADE"
@@ -1128,7 +1142,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# for better guessing with low-freq cells
 				allData = rbind(mzData, dzData)
 				# threshMat is a three-item list of matrices and algebra
-				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), verbose = FALSE, hint = hint)
+				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), verbose = FALSE, thresholds = thresholds)
 				# return(threshMat)
 				mzExpect = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 				dzExpect = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
@@ -1339,7 +1353,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' @param addCI Whether to add intervals to compute CIs (defaults to TRUE)
 #' @param boundDiag = Whether to bound the diagonal of the a, c, and e matrices
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE)
-#' @param hint An analysis hint. Options include "none", (default) "left_censored". Default does nothing.
+#' @param thresholds How to implement ordinal thresholds: c("deviationBased", "left_censored")
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE)
 #' @param autoRun Whether to run the model and return it, or just return it
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
@@ -1367,7 +1381,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' 	 suffix = "", autoRun = TRUE)
 #' umxSummary(m1)
 #' plot(m1)
-umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"), autoRun = getOption("umx_auto_run")) {
+umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	if(nrow(dzData)==0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData)==0){ stop("Your MZ dataset has no rows!") }
 	nSib = 2 # number of siblings in a twin pair
@@ -2183,7 +2197,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 #'
 #' @param model An RAM model to add thresholds too.
 #' @param verbose Tell the user what was added and why (Default = TRUE)
-#' @param deviationBased Whether to use deviation-based thresholds (TRUE by default)
+#' @param thresholds How to implement thresholds: c("deviationBased", "direct", "ignore", "left_censored")
 #' @param name = A new name for the modified model (NULL means leave it as it)
 #' @param showEstimates = Whether to show estimates in the summary (if autorunning) TRUE
 #' @param autoRun = whether to run the model before returning it: defaults to getOption("umx_auto_run"))
@@ -2195,8 +2209,10 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 #' \dontrun{
 #' m1 = umxRAM2Ordinal(model)
 #' }
-umxRAM2Ordinal <- function(model, verbose = T, deviationBased = TRUE, name = NULL, showEstimates= TRUE, autoRun = getOption("umx_auto_run")) {
+umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), name = NULL, showEstimates= TRUE, autoRun = getOption("umx_auto_run")) {
 	# model = m3
+	legalThresholdsOptions = c("deviationBased", "direct", "ignore", "left_censored")
+	thresholds = match.arg(thresholds)
 	if(!umx_is_RAM(model)){
 		stop("Only works with RAM models, sorry.")
 	}
@@ -2204,7 +2220,7 @@ umxRAM2Ordinal <- function(model, verbose = T, deviationBased = TRUE, name = NUL
 		model = mxRename(model, name)
 	}
 	model$expectation$thresholds = "threshMat"
-	model = mxModel(model, umxThresholdMatrix(model$data$observed, deviationBased = deviationBased, verbose = verbose))
+	model = mxModel(model, umxThresholdMatrix(model$data$observed, thresholds = thresholds, verbose = verbose))
 	if (autoRun) {
 		model = mxRun(model)
 		umxSummary(model, showEstimates = showEstimates)
@@ -3268,10 +3284,9 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' @param threshMatName name of the matrix which is returned. Defaults to "threshMat" - best not to change it.
 #' @param method  How to set the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)
 #' @param l_u_bound c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.
-#' @param deviationBased Whether to build a helper matrix to keep the thresholds in order (defaults to = TRUE)
+#' @param thresholds 	How to implement thresholds: "deviationBased" (default), "direct", "ignore", "left_censored"
 #' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
 #' @param verbose (defaults to FALSE))
-#' @param hint currently used for "left_censored" data (defaults to "none"))
 #' @return - thresholds matrix
 #' @export
 #' @family Model Building Functions
@@ -3342,19 +3357,19 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' x[x < 0] = 0; y[y < 0] = 0
 #' df = data.frame(x = x, y = y)
 #' df = umxFactor(df); #str(df)
-#' umxThresholdMatrix(df, hint = "left_censored")
-umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), deviationBased = TRUE, droplevels = FALSE, verbose = FALSE, hint = c("none", "left_censored")){
-	# TODO consider changing name of threshMatName to "Thresholds" to match what mxModel does with mxThresholds internally now...
+#' x = umxThresholdMatrix(df, thresholds = "left_censored"); str(x)
+#' any(x$free) # all fixed.
+umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), thresholds = c("deviationBased", "direct", "ignore", "left_censored"), droplevels = FALSE, verbose = FALSE){
+	# TODO consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
 	# df = x
 	# suffixes   =NA
 	# threshMatName = "threshMat"
-	# hint = "left_censored"
 	# method      = "auto"
-	# deviationBased = TRUE
+	# thresholds = "deviationBased"
 	# l_u_bound = c(NA,NA)
 	# verbose = T
 	if(droplevels){ stop("Not sure it's wise to drop levels... let me know what you think") }
-	hint        = match.arg(hint)
+	thresholds  = match.arg(thresholds)
 	method      = match.arg(method)
 	nSib        = length(suffixes)
 	isFactor    = umx_is_ordered(df) # all ordered factors including binary
@@ -3428,7 +3443,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		} else {
 			thisLab = thisVarName
 		}
-	    theseLabels = c(paste0(thisLab, "_thresh", 1:nThreshThisVar), rep(NA, (maxThresh - nThreshThisVar)))
+		theseLabels = c(paste0(thisLab, "_thresh", 1:nThreshThisVar), rep(NA, (maxThresh - nThreshThisVar)))
 		labels = append(labels, theseLabels)
 		# ============
 		# = Set Free =
@@ -3448,10 +3463,10 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 		dimnames = list(paste0("th_", 1:maxThresh), factorVarNames)
 	)
 
-	if (hint == "left_censored"){
-		message("using ", hint, " fixed thresholds Tobit-style analysis")
+	if (thresholds == "left_censored"){
+		message("using ", thresholds, " for a fixed-threshold Tobit-style analysis")
 		if(method != "auto"){
-			message("With ", hint, " thresholds are fixed: Your choice of method ", omxQuotes(method), " will be ignored.")
+			message("With ", thresholds, " thresholds are fixed: Your choice of method ", omxQuotes(method), " will be ignored.")
 		}
 		threshMat$free = FALSE
 		for (varName in factorVarNames) {
@@ -3550,7 +3565,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 					# Copenhagen, Michael Frein
 				}
 			}
-	        # TODO start from 1, right, not 2?
+	    # TODO start from 1, right, not 2?
 			# note 2015-03-22: rep(0) was rep(NA). But with deviation-based, the matrix can't contain NAs as it gets %*% by lowerones
 			values = c(zValues[1:(nThreshThisVar)], rep(.001, (maxThresh - nThreshThisVar)))
 			sortValues <- sort(zValues[1:(nThreshThisVar)], na.last = TRUE)
@@ -3568,9 +3583,9 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	
 		# TODO describe what we have at this point
 	
-		if(deviationBased) {
+		if(thresholds == "deviationBased") {
 			if(verbose) {
-				message("Using deviation based model: Thresholds will be in", omxQuotes(threshMatName), "based on deviations in ", omxQuotes("deviations_for_thresh"))
+				message("Using deviation-based model: Thresholds will be in", omxQuotes(threshMatName), "based on deviations in ", omxQuotes("deviations_for_thresh"))
 			}
 			# ==========================
 			# = Adding deviation model =

@@ -7,7 +7,7 @@
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   setValues = TRUE, independent = NA, remove_unused_manifests = TRUE,
   showEstimates = c("none", "raw", "std", "both", "list of column names"),
-  thresholds = c("deviationBased", "direct", "ignore"),
+  thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
   autoRun = getOption("umx_auto_run"))
 }
 \arguments{

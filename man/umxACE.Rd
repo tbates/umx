@@ -7,8 +7,8 @@
 umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
   suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
-  equateMeans = TRUE, bVector = FALSE, hint = c("none", "left_censored"),
-  autoRun = getOption("umx_auto_run"))
+  equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
+  "left_censored"), autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE")}
@@ -44,7 +44,7 @@ SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE)}
 
-\item{hint}{An analysis hint. Options include "none", (default) "left_censored". Default does nothing.}
+\item{thresholds}{How to implement ordinal thresholds c("deviationBased", "left_censored")}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 }
@@ -110,7 +110,6 @@ plot(m1)
 m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # ADE is better
 umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
-
 
 # ===================
 # = Ordinal example =
