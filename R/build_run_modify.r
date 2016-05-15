@@ -980,17 +980,21 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # Example with Tobin data =
 #' # =========================
 #' 
+#' # Analyse a dataset in which only people with a BMI over 22 had their BMI recorded
+#' 
 #' require(umx)
 #' data(twinData)
-#' selDVs = c("bmi1", "bmi2")
-#' tmp = twinData[,selDVs]
-#' tmp$bmi1[tmp$bmi1 <= 22] = 22
+#' baseNames = c("bmi")
+#' selDVs = umx_paste_names(baseNames, "", 1:2)
+#' tmp = twinData[, c(selDVs, "zyg")]
 #' tmp$bmi1[tmp$bmi1 <= 22] = 22
 #' tmp$bmi2[tmp$bmi2 <= 22] = 22
 #' tmp = umxFactor(tmp) # ~ 500 "levels" !
 #' mz = tmp[tmp$zyg == 1, selDVs]
 #' dz = tmp[tmp$zyg == 3, selDVs]
-#' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, thresholds= "left_censored")
+#' allData = rbind(mz, dz)
+#' x = umxThresholdMatrix(allData, suffixes = 1:2, thresholds = "left_censored", verbose = T)
+#' m1 = umxACE(selDVs = baseNames, dzData = dz, mzData = mz, suffix = "", thresholds = "left_censored")
 #' umxSummary(m1)
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
@@ -999,91 +1003,91 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 		if(!is.null(selCovs)){
 			umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 		} else {
-		if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
-		if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
-		thresholds = match.arg(thresholds)
-		nSib = 2 # number of siblings in a twin pair
-		if(dzCr == .25 && name == "ACE"){
-			name = "ADE"
-		}
-		# look for name conflicts
-		badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
-		if(!identical(character(0), badNames)){
-			stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
-			"BadNames included: ", omxQuotes(badNames) )
-		}
-
-		if(!is.null(suffix)){
-			if(length(suffix) > 1){
-				stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-				"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
+			if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
+			if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
+			thresholds = match.arg(thresholds)
+			nSib = 2 # number of siblings in a twin pair
+			if(dzCr == .25 && name == "ACE"){
+				name = "ADE"
 			}
-			selDVs = umx_paste_names(selDVs, suffix, 1:2)
-		}
-		umx_check_names(selDVs, mzData)
-		umx_check_names(selDVs, dzData)
-		# message("selDVs: ", omxQuotes(selDVs))
-		nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
-
-		dataType = umx_is_cov(dzData, boolean = FALSE)
-		# compute numbers of ordinal and binary variables
-		if(dataType == "raw"){
-			if(!all(is.null(c(numObsMZ, numObsDZ)))){
-				stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
+			# look for name conflicts
+			badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
+			if(!identical(character(0), badNames)){
+				stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
+				"BadNames included: ", omxQuotes(badNames) )
 			}
-			isFactor = umx_is_ordered(mzData[, selDVs])                      # T/F list of factor columns
-			isOrd    = umx_is_ordered(mzData[, selDVs], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
-			isBin    = umx_is_ordered(mzData[, selDVs], binary.only  = TRUE) # T/F list of binary columns
-			nFactors = sum(isFactor)
-			nOrdVars = sum(isOrd) # total number of ordinal columns
-			nBinVars = sum(isBin) # total number of binary columns
 
-			factorVarNames = names(mzData)[isFactor]
-			ordVarNames    = names(mzData)[isOrd]
-			binVarNames    = names(mzData)[isBin]
-			contVarNames   = names(mzData)[!isFactor]
-		} else {
-			# summary data
-			isFactor = isOrd = isBin = c()
-			nFactors = nOrdVars = nBinVars = 0
-			factorVarNames = ordVarNames = binVarNames = contVarNames = c()
-		}
-		if(nFactors > 0 & is.null(suffix)){
-			stop("Please set suffix.\n",
-			"Why: You have included ordinal or binary variables. I need to know which variables are for twin 1 and which for twin2.\n",
-			"The way I do this is enforcing some naming rules. For example, if you have 2 variables:\n",
-			" obesity and depression called: 'obesity_T1', 'dep_T1', 'obesity_T2' and 'dep_T2', you should call umxACE with:\n",
-			"selDVs = c('obesity','dep'), suffix = '_T' \n",
-			"suffix is just one word, appearing in all variables (e.g. '_T').\n",
-			"This is assumed to be followed by '1' '2' etc...")
-		}
-		used = selDVs
-		if(!is.null(weightVar)){
-			used = c(used, weightVar)
-		}
-		# Drop unused columns from mz and dzData
-		mzData = mzData[, used]
-		dzData = dzData[, used]
-
-		if(dataType == "raw") {
-			if(!is.null(weightVar)){
-				# weight variable provided: check it exists in each frame
-				if(!umx_check_names(weightVar, data = mzData, die = FALSE) | !umx_check_names(weightVar, data = dzData, die = FALSE)){
-					stop("The weight variable must be included in the mzData and dzData",
-						 " frames passed into umxACE when \"weightVar\" is specified",
-						 "\n mzData contained:", paste(names(mzData), collapse = ", "),
-						 "\n and dzData contain:", paste(names(dzData), collapse = ", "),
-						 "\nbut I was looking for ", weightVar, " as the moderator."
-					)
+			if(!is.null(suffix)){
+				if(length(suffix) > 1){
+					stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+					"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
 				}
-				mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = FALSE, values = mzData[, weightVar])
-				dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = FALSE, values = dzData[, weightVar])
-				mzData = mzData[, selDVs]
-				dzData = dzData[, selDVs]
-				bVector = TRUE
-			} else {
-				# no weights
+				selDVs = umx_paste_names(selDVs, suffix, 1:2)
 			}
+			umx_check_names(selDVs, mzData)
+			umx_check_names(selDVs, dzData)
+			# message("selDVs: ", omxQuotes(selDVs))
+			nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+
+			dataType = umx_is_cov(dzData, boolean = FALSE)
+			# compute numbers of ordinal and binary variables
+			if(dataType == "raw"){
+				if(!all(is.null(c(numObsMZ, numObsDZ)))){
+					stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
+				}
+				isFactor = umx_is_ordered(mzData[, selDVs])                      # T/F list of factor columns
+				isOrd    = umx_is_ordered(mzData[, selDVs], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
+				isBin    = umx_is_ordered(mzData[, selDVs], binary.only  = TRUE) # T/F list of binary columns
+				nFactors = sum(isFactor)
+				nOrdVars = sum(isOrd) # total number of ordinal columns
+				nBinVars = sum(isBin) # total number of binary columns
+
+				factorVarNames = names(mzData)[isFactor]
+				ordVarNames    = names(mzData)[isOrd]
+				binVarNames    = names(mzData)[isBin]
+				contVarNames   = names(mzData)[!isFactor]
+			} else {
+				# summary data
+				isFactor = isOrd = isBin = c()
+				nFactors = nOrdVars = nBinVars = 0
+				factorVarNames = ordVarNames = binVarNames = contVarNames = c()
+			}
+			if(nFactors > 0 & is.null(suffix)){
+				stop("Please set suffix.\n",
+				"Why: You have included ordinal or binary variables. I need to know which variables are for twin 1 and which for twin2.\n",
+				"The way I do this is enforcing some naming rules. For example, if you have 2 variables:\n",
+				" obesity and depression called: 'obesity_T1', 'dep_T1', 'obesity_T2' and 'dep_T2', you should call umxACE with:\n",
+				"selDVs = c('obesity','dep'), suffix = '_T' \n",
+				"suffix is just one word, appearing in all variables (e.g. '_T').\n",
+				"This is assumed to be followed by '1' '2' etc...")
+			}
+			used = selDVs
+			if(!is.null(weightVar)){
+				used = c(used, weightVar)
+			}
+			# Drop unused columns from mz and dzData
+			mzData = mzData[, used]
+			dzData = dzData[, used]
+
+			if(dataType == "raw") {
+				if(!is.null(weightVar)){
+					# weight variable provided: check it exists in each frame
+					if(!umx_check_names(weightVar, data = mzData, die = FALSE) | !umx_check_names(weightVar, data = dzData, die = FALSE)){
+						stop("The weight variable must be included in the mzData and dzData",
+							 " frames passed into umxACE when \"weightVar\" is specified",
+							 "\n mzData contained:", paste(names(mzData), collapse = ", "),
+							 "\n and dzData contain:", paste(names(dzData), collapse = ", "),
+							 "\nbut I was looking for ", weightVar, " as the moderator."
+						)
+					}
+					mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = FALSE, values = mzData[, weightVar])
+					dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = FALSE, values = dzData[, weightVar])
+					mzData = mzData[, selDVs]
+					dzData = dzData[, selDVs]
+					bVector = TRUE
+				} else {
+					# no weights
+				}
 
 			# ===========================
 			# = Add means matrix to top =
@@ -1142,9 +1146,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# Thresholds
 				# for better guessing with low-freq cells
 				allData = rbind(mzData, dzData)
-				# threshMat is a three-item list of matrices and algebra
-
-				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), threshMatName = "threshMat", thresholds = thresholds, verbose = FALSE)
+				# threshMat is is a matrix, or a list of 2 matrices and an algebra
+				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
 				# return(threshMat)
 				mzExpect = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 				dzExpect = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
@@ -1372,29 +1375,36 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' # add age 1 and age 2 columns
+#' # dupliate age to  age1 & age2
 #' twinData$age1 = twinData$age2 = twinData$age
-#' selDVs  = c("bmi")
-#' selCovs = c("age")
-#' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
-#' # just top 80 so example runs in a couple of secs
+#' selDVs  = c("bmi") # Set the DV
+#' selCovs = c("age") # Set the IV
+#' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes = 1:2)
+#' # 80 rows so example runs fast
 #' mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
 #' dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
-#' # TODO update for new dataset variable zygosity
+#' # This will also work on OpenMx 2.5 or better
 #' # mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 #' # dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
-#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
-#' 	 suffix = "", autoRun = TRUE)
+#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
+#' 	dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE)
 #' umxSummary(m1)
 #' plot(m1)
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
-	if(nrow(dzData)==0){ stop("Your DZ dataset has no rows!") }
-	if(nrow(mzData)==0){ stop("Your MZ dataset has no rows!") }
-	nSib = 2 # number of siblings in a twin pair
+	nSib = 2 # Number of siblings in a twin pair
 	if(dzCr == .25 && name == "ACE"){
 		name = "ADEcov"
 	}
-	# look for name conflicts
+
+	# ==============
+	# = run checks =
+	# ==============
+	if(any(umx_is_ordered(dzData))){
+		stop("Sorry: umxACEcov can't handle ordinal yet: e-mail tim and chew him out")
+	}
+	if(nrow(dzData)==0){ stop("Your DZ dataset has no rows!") }
+	if(nrow(mzData)==0){ stop("Your MZ dataset has no rows!") }
+	# Look for name conflicts
 	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
 	if(!identical(character(0), badNames)){
 		stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
@@ -1430,13 +1440,11 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	dzData = dzData[, selVars]
 
 	meanDimNames = list(NULL, selVars)
-	# meanDimNames= list("means", selVars)
 	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
 	if(equateMeans){
 		meanLabels = c(rep(paste0("expMean_", baseDVs), nSib), paste0("expMean_", selCovs))
 	}else{
-		stop("Currently, means must be equated")
-		# meanLabels = c(paste0("expMean_", selDVs), paste0("expMean_", selCovs))
+		stop("Currently, means must be equated... why?")
 	}
 	
 	obsMZmeans  = umx_means(mzData[, selVars], ordVar = 0, na.rm = TRUE)
@@ -3375,6 +3383,7 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	# l_u_bound = c(NA,NA)
 	# verbose = T
 	if(droplevels){ stop("Not sure it's wise to drop levels... let me know what you think") }
+
 	thresholds  = match.arg(thresholds)
 	method      = match.arg(method)
 	nSib        = length(suffixes)
@@ -3388,20 +3397,20 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	ordVarNames    = names(df)[isOrd]
 	binVarNames    = names(df)[isBin]
 
+	df = df[, factorVarNames, drop = FALSE]
 	if(nSib == 2){
-		# For better precision, copy both halves of the dataframe into each
+		# For precision (placing cuts) and to ensure twins have same levels, copy both halves of the dataframe into each
 		T1 = df[, grep(paste0(suffixes[1], "$"), factorVarNames, value = TRUE), drop = FALSE]
 		T2 = df[, grep(paste0(suffixes[2], "$"), factorVarNames, value = TRUE), drop = FALSE]
 		names(T2) <- names(T1)
 		dfLong = rbind(T1, T2)
 		df = cbind(dfLong, dfLong)
-		names(df) = factorVarNames
+		names(dfLong) = factorVarNames
 	} else if(nSib == 1){
 		# df is fine as is.		
 	} else {
 		stop("I can only handle 1 and 2 sib models. You gave me ", nSib, " suffixes.")
 	}
-	df = df[, factorVarNames, drop = FALSE]
 
 	minLevels = xmuMinLevels(df)
 	maxLevels = xmuMaxLevels(df)

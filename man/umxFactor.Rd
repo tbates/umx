@@ -6,7 +6,7 @@
 \title{umxFactor}
 \usage{
 umxFactor(x = character(), levels = NA, labels = levels, exclude = NA,
-  collapse = FALSE, ordered = TRUE, verbose = FALSE)
+  ordered = TRUE, collapse = FALSE, verbose = FALSE, suffix = NA)
 }
 \arguments{
 \item{x}{A variable to recode as an mxFactor (see \code{\link{mxFactor}})}
@@ -17,11 +17,13 @@ umxFactor(x = character(), levels = NA, labels = levels, exclude = NA,
 
 \item{exclude}{= NA (see \code{\link{mxFactor}})}
 
-\item{collapse}{= FALSE (see \code{\link{mxFactor}})}
-
 \item{ordered}{= TRUE By default return an ordered mxFactor}
 
+\item{collapse}{= FALSE (see \code{\link{mxFactor}})}
+
 \item{verbose}{Whether to tell user about such things as coercing to factor}
+
+\item{suffix}{If twin data are being used - ensure factor levels same across all twins}
 }
 \value{
 - \code{\link{mxFactor}}
@@ -36,7 +38,15 @@ str(x)
 x = umxFactor(letters, verbose = TRUE) # report coercions
 x = umxFactor(letters, ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
 # Dataframe example:
-x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) 
+x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE)
+# =================
+# = Twin example: =
+# =================
+data(twinData)
+tmp = twinData[, c("bmi1", "bmi2")]
+tmp$bmi1[tmp$bmi1 <= 22] = 22
+tmp$bmi2[tmp$bmi2 <= 22] = 22
+umxFactor(tmp, suffix = "")
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

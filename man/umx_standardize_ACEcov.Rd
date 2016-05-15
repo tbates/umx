@@ -32,8 +32,7 @@ fit = umx_standardize_ACEcov(m1)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other zAdvanced Helpers: \code{\link{umx_RAM_ordinal_objective}},
-  \code{\link{umx_standardize_ACE}},
+Other zAdvanced Helpers: \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_CP}},
   \code{\link{umx_standardize_IP}}, \code{\link{umx}}
 }

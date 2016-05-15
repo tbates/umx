@@ -3,6 +3,68 @@
 # = Not used directly by users =
 # ========================================
 
+#' umx_explode_twin_names
+#'
+#' Break names like Dep_T1 into a list of base names, a seperator, and a 
+#' vector of twin indexes. e.g. c("Dep_T1", "Dep_T2") 
+#' -> list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+#'
+#' @param df data.frame containing the data
+#' @param suffix text constant separating name from numeric 1:2 twin index
+#' @return - list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+#' @export
+#' @family xmu internal not for end user
+#' @examples
+#' require(umx)
+#' data("twinData")
+#' umx_explode_twin_names(twinData, suffix = "")
+umx_explode_twin_names <- function(df, suffix) {
+	allNames         = names(df)
+	endInSuffixDigit = grep(paste0("^.+", suffix, "[0-9]$"), allNames, value = TRUE)
+	baseNames        = sub(paste0("^(.+", suffix, ")([0-9])$"), rep = "\\1", x = endInSuffixDigit)
+	baseNames        = unique(baseNames)
+	twinIndexes      = sub(paste0("^(.+", suffix, ")([0-9])$"), rep = "\\2", x = endInSuffixDigit)
+	twinIndexes      = sort(unique(as.numeric(twinIndexes)))
+	return(list(baseNames = baseNames, sep = suffix, twinIndexes = twinIndexes))
+}
+#' xmu_check_levels_identical
+#'
+#' Just checks that the factor levels for twins 1 and 2 are the same
+#'
+#' @param df data.frame containing the data
+#' @param selDVs base names of variables (without suffixes)
+#' @param suffix text constant separating name from 1:2 twin suffix
+#' @param twins 1:2
+#' @return - 
+#' @export
+#' @family xmu internal not for end user
+#' @examples
+#' require(umx)
+#' data(twinData)
+#' baseNames = c("bmi")
+#' selDVs = umx_paste_names(baseNames, "", 1:2)
+#' tmp = twinData[, selDVs]
+#' tmp$bmi1[tmp$bmi1 <= 22] = 22
+#' tmp$bmi2[tmp$bmi2 <= 22] = 22
+#' xmu_check_levels_identical(umxFactor(tmp, suffix = ""), selDVs = baseNames, suffix = "")
+#' \dontrun{
+#' xmu_check_levels_identical(umxFactor(tmp), selDVs = baseNames, suffix = "")
+#' }
+xmu_check_levels_identical <- function(df, selDVs, suffix = NA, twins = 1:2){
+	umx_check_names(umx_paste_names(selDVs, textConstant = suffix, suffixes= twins), data = df, die = T)
+	nSib = length(twins)
+	if(nSib != 2){
+		stop("Sorry, can only handle two sibs :-(")
+	}
+	for (thisVar in selDVs) {
+		a = levels(df[,paste0(thisVar, suffix, twins[1])])
+		b = levels(df[,paste0(thisVar, suffix, twins[2])])
+		if(!identical(a, b)){
+			stop("levels of ", thisVar, " not identical for twin 1 and twin 2")
+		}
+	}
+}
+
 #' xmuLabel_MATRIX_Model (not a user function)
 #'
 #' This function will label all the free parameters in a (non-RAM) OpenMx \code{\link{mxModel}}

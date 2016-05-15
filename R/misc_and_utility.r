@@ -764,9 +764,10 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param levels defaults to NA. UNLIKE \code{\link{mxFactor}}, if not specified, the existing levels will be used
 #' @param labels = levels (see \code{\link{mxFactor}})
 #' @param exclude = NA (see \code{\link{mxFactor}})
-#' @param collapse = FALSE (see \code{\link{mxFactor}})
 #' @param ordered = TRUE By default return an ordered mxFactor
+#' @param collapse = FALSE (see \code{\link{mxFactor}})
 #' @param verbose Whether to tell user about such things as coercing to factor
+#' @param suffix If twin data are being used - ensure factor levels same across all twins
 #' @return - \code{\link{mxFactor}}
 #' @export
 #' @family Data Functions
@@ -777,30 +778,69 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' x = umxFactor(letters, verbose = TRUE) # report coercions
 #' x = umxFactor(letters, ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
 #' # Dataframe example:
-#' x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE) 
-umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = NA, collapse = FALSE, ordered = TRUE, verbose = FALSE) {
+#' x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE)
+#' # =================
+#' # = Twin example: =
+#' # =================
+#' data(twinData)
+#' tmp = twinData[, c("bmi1", "bmi2")]
+#' tmp$bmi1[tmp$bmi1 <= 22] = 22
+#' tmp$bmi2[tmp$bmi2 <= 22] = 22
+#' umxFactor(tmp, suffix = "")
+umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = NA, ordered = TRUE, collapse = FALSE, verbose = FALSE, suffix = NA){
 	if(is.data.frame(x)){
+		# x = tmp; suffix = ""; thisName = "bmi"; levels = NA
 		ncols = ncol(x)
-		for (c in 1:ncols) {
-			x[,c] = umxFactor(x = x[,c], levels = levels, labels = labels, exclude = exclude, collapse = collapse, ordered = ordered, verbose = verbose)
+		if(!is.na(suffix)){
+			if(!is.na(levels)){
+				stop("leave levels = NA: I don't handle setting levels within data.frames AND suffix. You set them to ", omxQuotes(levels))
+			}
+			tmp         = umx_explode_twin_names(x, suffix = suffix)
+			sep         = tmp$sep
+			baseNames   = tmp$baseNames
+			twinIndexes = tmp$twinIndexes
+			for (thisName in baseNames) {
+				theseNames = umx_paste_names(thisName, sep, twinIndexes)
+				a = x[, theseNames]
+				allLevels = unique(as.vector(as.matrix(a)))
+				allLevels = sort(allLevels)
+				allLevels = allLevels[!is.na(allLevels)] # drop NA if present
+				# z = umxFactor(x = x[,theseNames], levels = allLevels, ordered = T, verbose = T, collapse=FALSE)
+				# z = umxFactor(x = x[,theseNames], levels = allLevels, labels = allLevels, ordered = T, verbose = T)
+				x[, theseNames] = umxFactor(x = x[,theseNames], levels = allLevels, labels = allLevels, exclude = exclude, collapse = collapse, ordered = ordered, verbose = verbose)
+			}
+		} else {
+			for (c in 1:ncols) {
+				str(levels)
+				str(labels)
+				x[,c] = umxFactor(x = x[,c], levels = levels, labels = labels, exclude = exclude, collapse = collapse, ordered = ordered, verbose = verbose)
+			}
 		}
 	} else {
 		if(!is.factor(x)){
-			x = factor(x, ordered = ordered)
-			if(verbose){
-				message("Your variable was not a factor: I made it into one, with levels:", levels(x) )
-			}
-		}
-		if(is.na(levels)){
+			x = factor(x, levels = levels, labels = labels, exclude = exclude, ordered = ordered)
 			levels = levels(x)
-		} else {
-			# TODO should check the provided levels match the data!	(quick)	
-			if(!levels(x) == levels){
-				message("the levels you provided are not those I see in the data")
+			if(verbose){
+				if(length(levels(x)) > 20){
+					feedback = paste0(length(levels(x)), " levels:", paste(c(x[1:10],"..."), collapse = "', '"))
+				} else {
+					feedback = paste0("levels:", omxQuotes(x))
+				}
+				message("Your variable was not a factor: I made it into one, with ", feedback)
+			}
+		}else{
+			# already a factor
+			if(is.na(levels)){
+				levels = levels(x)
+			} else {
+				# TODO Check the provided levels match the data!
+				if(!levels(x) == levels){
+					message("the levels you provided are not those I see in the data")
+				}
 			}
 		}
 		if(ordered){
-			x = mxFactor(x = x, levels = levels, labels = levels, exclude = exclude, ordered = TRUE, collapse = collapse)
+			x = mxFactor(x = x, levels = levels, labels = levels, exclude = exclude, ordered = ordered, collapse = collapse)
 		}
 	}
 	return(x)

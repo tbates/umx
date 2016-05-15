@@ -28,8 +28,7 @@ std = umx_standardize_ACE(m1)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other zAdvanced Helpers: \code{\link{umx_RAM_ordinal_objective}},
-  \code{\link{umx_standardize_ACEcov}},
+Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},
   \code{\link{umx_standardize_CP}},
   \code{\link{umx_standardize_IP}}, \code{\link{umx}}
 }

@@ -49,7 +49,7 @@ x = data.frame(ordered(rbinom(100,1,.5))); names(x) <- c("x")
 umxThresholdMatrix(x)
 x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
 x = data.frame(ordered(x)); names(x) <- c("x")
-tm = umxThresholdMatrix(x)
+tmp = umxThresholdMatrix(x)
 
 # ==================
 # = Binary example =
@@ -69,7 +69,7 @@ selDVs = c("obese1", "obese2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
-tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE) # informative messages
+tmp = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE) # informative messages
 
 # ======================================
 # = Ordinal (n categories > 2) example =
@@ -83,7 +83,7 @@ selDVs = c("obeseTri1", "obeseTri2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
-tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
+tmp = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
 
 # ========================================================
 # = Mix of all three kinds example (and a 4-level trait) =
@@ -110,7 +110,8 @@ y = round(5 * rnorm(1000))
 x[x < 0] = 0; y[y < 0] = 0
 df = data.frame(x = x, y = y)
 df = umxFactor(df); #str(df)
-umxThresholdMatrix(df, thresholds = "left_censored")
+tmp = umxThresholdMatrix(df, thresholds = "left_censored"); str(x)
+any(x$free) # all fixed.
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
