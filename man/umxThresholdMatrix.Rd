@@ -4,15 +4,15 @@
 \alias{umxThresholdMatrix}
 \title{umxThresholdMatrix}
 \usage{
-umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
+umxThresholdMatrix(df, sep = NA, threshMatName = "threshMat",
   method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA),
   thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
-  droplevels = FALSE, verbose = FALSE)
+  droplevels = FALSE, verbose = FALSE, suffixes = NA)
 }
 \arguments{
 \item{df}{the data being modelled (to allow access to the factor levels and quantiles within these for each variable)}
 
-\item{suffixes}{e.g. c("T1", "T2") - Use for data with repeated observations in a row (i.e., twin data) (defaults to NA)}
+\item{sep}{optional, used for data with repeated observations in a row (i.e., twin data) (e.g. "_T")}
 
 \item{threshMatName}{name of the matrix which is returned. Defaults to "threshMat" - best not to change it.}
 
@@ -25,6 +25,8 @@ umxThresholdMatrix(df, suffixes = NA, threshMatName = "threshMat",
 \item{droplevels}{Whether to drop levels with no observed data (defaults to FALSE)}
 
 \item{verbose}{(defaults to FALSE))}
+
+\item{suffixes}{deprecated. Instead of c("T1", "T2"), set sep (see above)}
 }
 \value{
 - thresholds matrix
@@ -69,7 +71,7 @@ selDVs = c("obese1", "obese2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
-tmp = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE) # informative messages
+tmp = umxThresholdMatrix(mzData, sep = "", verbose = TRUE) # informative messages
 
 # ======================================
 # = Ordinal (n categories > 2) example =
@@ -83,7 +85,7 @@ selDVs = c("obeseTri1", "obeseTri2")
 twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
-tmp = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
+tmp = umxThresholdMatrix(mzData, sep = "", verbose = TRUE)
 
 # ========================================================
 # = Mix of all three kinds example (and a 4-level trait) =
@@ -99,7 +101,7 @@ twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
-tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
+tm = umxThresholdMatrix(mzData, sep = "", verbose = TRUE)
 
 # ===================
 # = "left_censored" =
@@ -108,9 +110,9 @@ tm = umxThresholdMatrix(mzData, suffixes = 1:2, verbose = TRUE)
 x = round(10 * rnorm(1000, mean = -.2))
 y = round(5 * rnorm(1000))
 x[x < 0] = 0; y[y < 0] = 0
-df = data.frame(x = x, y = y)
-df = umxFactor(df); #str(df)
-tmp = umxThresholdMatrix(df, thresholds = "left_censored"); str(x)
+df  = data.frame(x = x, y = y)
+df  = umxFactor(df); #str(df)
+tmp = umxThresholdMatrix(df, thresholds = "left_censored"); str(tmp)
 any(x$free) # all fixed.
 }
 \references{

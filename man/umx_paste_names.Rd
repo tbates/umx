@@ -4,12 +4,12 @@
 \alias{umx_paste_names}
 \title{umx_paste_names}
 \usage{
-umx_paste_names(varNames, textConstant = "", suffixes = 1:2)
+umx_paste_names(varNames, sep = "", suffixes = 1:2)
 }
 \arguments{
 \item{varNames}{a list of _base_ names, e.g c("bmi", "IQ")}
 
-\item{textConstant}{A string separating the name and the twin suffix, e.g. "_T" (default is "")}
+\item{sep}{A string separating the name and the twin suffix, e.g. "_T" (default is "")}
 
 \item{suffixes}{a list of terminal suffixes differentiating the twins default = c("1", "2"))}
 }

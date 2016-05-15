@@ -203,8 +203,7 @@ tmp$bmi2[tmp$bmi2 <= 22] = 22
 tmp = umxFactor(tmp) # ~ 500 "levels" !
 mz = tmp[tmp$zyg == 1, selDVs]
 dz = tmp[tmp$zyg == 3, selDVs]
-allData = rbind(mz, dz)
-x = umxThresholdMatrix(allData, suffixes = 1:2, thresholds = "left_censored", verbose = T)
+x  = umxThresholdMatrix(dz, suffixes = 1:2, thresholds = "left_censored", verbose = T)
 m1 = umxACE(selDVs = baseNames, dzData = dz, mzData = mz, suffix = "", thresholds = "left_censored")
 umxSummary(m1)
 plot(m1)

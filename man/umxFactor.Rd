@@ -5,13 +5,14 @@
 \alias{umx_factor}
 \title{umxFactor}
 \usage{
-umxFactor(x = character(), levels = NA, labels = levels, exclude = NA,
-  ordered = TRUE, collapse = FALSE, verbose = FALSE, suffix = NA)
+umxFactor(x = character(), levels = NULL, labels = levels, exclude = NA,
+  ordered = TRUE, collapse = FALSE, verbose = FALSE, sep = NA)
 }
 \arguments{
 \item{x}{A variable to recode as an mxFactor (see \code{\link{mxFactor}})}
 
-\item{levels}{defaults to NA. UNLIKE \code{\link{mxFactor}}, if not specified, the existing levels will be used}
+\item{levels}{(default NULL). Like \code{\link{factor}} but UNLIKE \code{\link{mxFactor}}, 
+unique values will be used if levels not specified.}
 
 \item{labels}{= levels (see \code{\link{mxFactor}})}
 
@@ -23,7 +24,8 @@ umxFactor(x = character(), levels = NA, labels = levels, exclude = NA,
 
 \item{verbose}{Whether to tell user about such things as coercing to factor}
 
-\item{suffix}{If twin data are being used - ensure factor levels same across all twins}
+\item{sep}{If twin data are being used, the string that separates the base from twin index
+# will try and ensure factor levels same across all twins.}
 }
 \value{
 - \code{\link{mxFactor}}
@@ -46,8 +48,17 @@ data(twinData)
 tmp = twinData[, c("bmi1", "bmi2")]
 tmp$bmi1[tmp$bmi1 <= 22] = 22
 tmp$bmi2[tmp$bmi2 <= 22] = 22
-str(umxFactor(tmp, suffix = ""))
-xmu_check_levels_identical()
+# do this _before_ breaking into MZ and DZ groups
+x = umxFactor(tmp, sep = ""); str(x)
+xmu_check_levels_identical(x)
+
+# Simple example to check behavior
+x = round(10 * rnorm(1000, mean = -.2))
+y = round(5 * rnorm(1000))
+x[x < 0] = 0; y[y < 0] = 0
+jnk = umxFactor(x); str(jnk)
+df  = data.frame(x = x, y = y)
+jnk = umxFactor(df); str(jnk)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

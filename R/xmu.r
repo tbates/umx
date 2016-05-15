@@ -3,37 +3,13 @@
 # = Not used directly by users =
 # ========================================
 
-#' umx_explode_twin_names
-#'
-#' Break names like Dep_T1 into a list of base names, a seperator, and a 
-#' vector of twin indexes. e.g. c("Dep_T1", "Dep_T2") 
-#' -> list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
-#'
-#' @param df data.frame containing the data
-#' @param suffix text constant separating name from numeric 1:2 twin index
-#' @return - list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
-#' @export
-#' @family xmu internal not for end user
-#' @examples
-#' require(umx)
-#' data("twinData")
-#' umx_explode_twin_names(twinData, suffix = "")
-umx_explode_twin_names <- function(df, suffix) {
-	allNames         = names(df)
-	endInSuffixDigit = grep(paste0("^.+", suffix, "[0-9]$"), allNames, value = TRUE)
-	baseNames        = sub(paste0("^(.+", suffix, ")([0-9])$"), rep = "\\1", x = endInSuffixDigit)
-	baseNames        = unique(baseNames)
-	twinIndexes      = sub(paste0("^(.+", suffix, ")([0-9])$"), rep = "\\2", x = endInSuffixDigit)
-	twinIndexes      = sort(unique(as.numeric(twinIndexes)))
-	return(list(baseNames = baseNames, sep = suffix, twinIndexes = twinIndexes))
-}
 #' xmu_check_levels_identical
 #'
 #' Just checks that the factor levels for twins 1 and 2 are the same
 #'
 #' @param df data.frame containing the data
 #' @param selDVs base names of variables (without suffixes)
-#' @param suffix text constant separating base variable names the twin index (1:2)
+#' @param sep text-constant separating base variable names the twin index (1:2)
 #' @return - 
 #' @export
 #' @family xmu internal not for end user
@@ -45,24 +21,24 @@ umx_explode_twin_names <- function(df, suffix) {
 #' tmp = twinData[, selDVs]
 #' tmp$bmi1[tmp$bmi1 <= 22] = 22
 #' tmp$bmi2[tmp$bmi2 <= 22] = 22
-#' xmu_check_levels_identical(umxFactor(tmp, suffix = ""), selDVs = baseNames, sep = "")
+#' xmu_check_levels_identical(umxFactor(tmp, sep = ""), selDVs = baseNames, sep = "")
 #' \dontrun{
 #' xmu_check_levels_identical(umxFactor(tmp), selDVs = baseNames, sep = "")
 #' }
 xmu_check_levels_identical <- function(df, selDVs, sep = NA){
-	n = umx_explode_twin_names(df, suffix)
+	n = umx_explode_twin_names(df, sep)
 	baseNames   = n$baseNames
 	sep         = n$sep
 	twinIndexes = n$twinIndexes
-	selVars     = umx_paste_names(selDVs, textConstant = sep, suffixes= twinIndexes)
-	umx_check_names(selVars, data = df, die = T)
+	selVars     = umx_paste_names(selDVs, sep = sep, suffixes = twinIndexes)
+	umx_check_names(selVars, data = df, die = TRUE)
 	nSib = length(twinIndexes)
 	if(nSib != 2){
-		stop("Sorry, can only handle two sibs :-(")
+		stop("Sorry, Ask tim to implement handling more than two sibs")
 	}
 	for (thisVar in selDVs) {
-		a = levels(df[,paste0(thisVar, suffix, twins[1])])
-		b = levels(df[,paste0(thisVar, suffix, twins[2])])
+		a = levels(df[,paste0(thisVar, suffix, twinIndexes[1])])
+		b = levels(df[,paste0(thisVar, suffix, twinIndexes[2])])
 		if(!identical(a, b)){
 			stop("levels of ", thisVar, " not identical for twin 1 and twin 2")
 		}

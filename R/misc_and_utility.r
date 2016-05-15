@@ -750,6 +750,32 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	return (model)
 }
 
+#' umx_explode_twin_names
+#'
+#' Break names like Dep_T1 into a list of base names, a seperator, and a 
+#' vector of twin indexes. e.g. c("Dep_T1", "Dep_T2") 
+#' -> list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+#'
+#' @param df data.frame containing the data
+#' @param sep text constant separating name from numeric 1:2 twin index
+#' @return - list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+#' @export
+#' @family xmu internal not for end user
+#' @examples
+#' require(umx)
+#' data("twinData")
+#' umx_explode_twin_names(twinData, sep = "")
+umx_explode_twin_names <- function(df, sep) {
+	allNames         = names(df)
+	endInSuffixDigit = grep(paste0("^.+", sep, "[0-9]$"), allNames, value = TRUE)
+	baseNames        = sub(paste0("^(.+", sep, ")([0-9])$"), replacement = "\\1", x = endInSuffixDigit)
+	baseNames        = unique(baseNames)
+	twinIndexes      = sub(paste0("^(.+", sep, ")([0-9])$"), replacement = "\\2", x = endInSuffixDigit)
+	twinIndexes      = sort(unique(as.numeric(twinIndexes)))
+	return(list(baseNames = baseNames, sep = sep, twinIndexes = twinIndexes))
+}
+
+
 # ===================================
 # = Ordinal/Threshold Model Helpers =
 # ===================================
@@ -761,13 +787,15 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #'
 #' @aliases umx_factor
 #' @param x A variable to recode as an mxFactor (see \code{\link{mxFactor}})
-#' @param levels defaults to NA. UNLIKE \code{\link{mxFactor}}, if not specified, the existing levels will be used
+#' @param levels (default NULL). Like \code{\link{factor}} but UNLIKE \code{\link{mxFactor}}, 
+#' unique values will be used if levels not specified.
 #' @param labels = levels (see \code{\link{mxFactor}})
 #' @param exclude = NA (see \code{\link{mxFactor}})
 #' @param ordered = TRUE By default return an ordered mxFactor
 #' @param collapse = FALSE (see \code{\link{mxFactor}})
 #' @param verbose Whether to tell user about such things as coercing to factor
-#' @param suffix If twin data are being used - ensure factor levels same across all twins
+#' @param sep If twin data are being used, the string that separates the base from twin index
+#' # will try and ensure factor levels same across all twins.
 #' @return - \code{\link{mxFactor}}
 #' @export
 #' @family Data Functions
@@ -786,18 +814,26 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' tmp = twinData[, c("bmi1", "bmi2")]
 #' tmp$bmi1[tmp$bmi1 <= 22] = 22
 #' tmp$bmi2[tmp$bmi2 <= 22] = 22
-#' str(umxFactor(tmp, suffix = ""))
-#' xmu_check_levels_identical()
-
-umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = NA, ordered = TRUE, collapse = FALSE, verbose = FALSE, suffix = NA){
+#' # do this _before_ breaking into MZ and DZ groups
+#' x = umxFactor(tmp, sep = ""); str(x)
+#' xmu_check_levels_identical(x)
+#' 
+#' # Simple example to check behavior
+#' x = round(10 * rnorm(1000, mean = -.2))
+#' y = round(5 * rnorm(1000))
+#' x[x < 0] = 0; y[y < 0] = 0
+#' jnk = umxFactor(x); str(jnk)
+#' df  = data.frame(x = x, y = y)
+#' jnk = umxFactor(df); str(jnk)
+umxFactor <- function(x = character(), levels= NULL, labels = levels, exclude = NA, ordered = TRUE, collapse = FALSE, verbose = FALSE, sep = NA){
 	if(is.data.frame(x)){
-		# x = tmp; suffix = ""; thisName = "bmi"; levels = NA
+		# x = tmp; sep = NA; sep = ""; thisName = "bmi"; levels = NA
 		ncols = ncol(x)
-		if(!is.na(suffix)){
-			if(!is.na(levels)){
-				stop("leave levels = NA: I don't handle setting levels within data.frames AND suffix. You set them to ", omxQuotes(levels))
+		if(!is.na(sep)){
+			if(!is.null(levels)){
+				stop("leave levels = NA: I don't handle setting levels within data.frames AND sep. You set them to ", omxQuotes(levels))
 			}
-			tmp         = umx_explode_twin_names(x, suffix = suffix)
+			tmp         = umx_explode_twin_names(x, sep = sep)
 			sep         = tmp$sep
 			baseNames   = tmp$baseNames
 			twinIndexes = tmp$twinIndexes
@@ -818,19 +854,23 @@ umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = N
 		}
 	} else {
 		if(!is.factor(x)){
-			x = factor(x, levels = levels, labels = labels, exclude = exclude, ordered = ordered)
+			if(!is.null(levels)) {
+				x = factor(x, levels = levels, labels = labels, exclude = exclude, ordered = ordered)
+			} else {
+				x = factor(x, exclude = exclude, ordered = ordered)
+			}
 			levels = levels(x)
 			if(verbose){
-				if(length(levels(x)) > 20){
-					feedback = paste0(length(levels(x)), " levels:", paste(c(levels(x)[1:10],"..."), collapse = "', '"))
+				if(length(levels) > 20){
+					feedback = paste0(length(levels), " levels:", paste(c(levels[1:10], "..."), collapse = "', '"))
 				} else {
-					feedback = paste0("levels:", omxQuotes(levels(x)))
+					feedback = paste0("levels:", omxQuotes(levels))
 				}
 				message("Your variable was not a factor: I made it into one, with ", feedback)
 			}
 		}else{
-			# already a factor
-			if(is.na(levels)){
+			# Already a factor
+			if(is.null(levels)) {
 				levels = levels(x)
 			} else {
 				# TODO Check the provided levels match the data!
@@ -1771,7 +1811,7 @@ umx_msg <- function(x) {
 #' This is then suffixed with e.g. "1", "2".
 #'
 #' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
-#' @param textConstant A string separating the name and the twin suffix, e.g. "_T" (default is "")
+#' @param sep A string separating the name and the twin suffix, e.g. "_T" (default is "")
 #' @param suffixes a list of terminal suffixes differentiating the twins default = c("1", "2"))
 #' @return - vector of suffixed var names, i.e., c("a_T1", "b_T1", "a_T2", "b_T2")
 #' @export
@@ -1781,10 +1821,10 @@ umx_msg <- function(x) {
 #' umx_paste_names("bmi", "_T", 1:2)
 #' umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
 #' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
-umx_paste_names <- function(varNames, textConstant = "", suffixes = 1:2) {
+umx_paste_names <- function(varNames, sep = "", suffixes = 1:2) {
 	nameList = c()
 	for (ID in suffixes) {
-		nameList = c(nameList, paste0(varNames, textConstant, ID))
+		nameList = c(nameList, paste0(varNames, sep, ID))
 	}
 	return(nameList)
 }
@@ -3070,7 +3110,7 @@ umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
 	if(length(suffix) != 1){
 		stop("I need one suffix, you gave me ", length(suffix), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
-	namesNeeded = umx_paste_names(varsToScale, textConstant = suffix, suffixes = 1:2)
+	namesNeeded = umx_paste_names(varsToScale, sep = suffix, suffixes = 1:2)
 	umx_check_names(namesNeeded, data)
 	t1Traits = paste0(varsToScale, suffix, 1)
 	t2Traits = paste0(varsToScale, suffix, 2)
@@ -4266,7 +4306,7 @@ umx_standardize_ACE <- function(fit) {
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = c("bmi")
 #' selCovs = c("age")
-#' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
+#' selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes= 1:2)
 #' mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
 #' dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 

@@ -11,7 +11,7 @@ xmu_check_levels_identical(df, selDVs, sep = NA)
 
 \item{selDVs}{base names of variables (without suffixes)}
 
-\item{suffix}{text constant separating base variable names the twin index (1:2)}
+\item{sep}{text-constant separating base variable names the twin index (1:2)}
 }
 \value{
 -
