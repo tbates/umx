@@ -27,7 +27,7 @@ selDVs = umx_paste_names(baseNames, "", 1:2)
 tmp = twinData[, selDVs]
 tmp$bmi1[tmp$bmi1 <= 22] = 22
 tmp$bmi2[tmp$bmi2 <= 22] = 22
-xmu_check_levels_identical(umxFactor(tmp, suffix = ""), selDVs = baseNames, sep = "")
+xmu_check_levels_identical(umxFactor(tmp, sep = ""), selDVs = baseNames, sep = "")
 \dontrun{
 xmu_check_levels_identical(umxFactor(tmp), selDVs = baseNames, sep = "")
 }

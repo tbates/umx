@@ -918,7 +918,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
 #' mzData <- mzData[1:80,] # just top 80 pairs to run fast
 #' dzData <- dzData[1:80,]
-#' str(mzData)
+#' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' umxSummary(m1)
 #' 
@@ -992,7 +992,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' tmp = umxFactor(tmp) # ~ 500 "levels" !
 #' mz = tmp[tmp$zyg == 1, selDVs]
 #' dz = tmp[tmp$zyg == 3, selDVs]
-#' x  = umxThresholdMatrix(dz, suffixes = 1:2, thresholds = "left_censored", verbose = T)
+#' x  = umxThresholdMatrix(dz, sep = "", thresholds = "left_censored", verbose = T)
 #' m1 = umxACE(selDVs = baseNames, dzData = dz, mzData = mz, suffix = "", thresholds = "left_censored")
 #' umxSummary(m1)
 #' plot(m1)
@@ -1146,7 +1146,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# for better guessing with low-freq cells
 				allData = rbind(mzData, dzData)
 				# threshMat is is a matrix, or a list of 2 matrices and an algebra
-				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2), thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
+				threshMat = umxThresholdMatrix(allData, sep = suffix, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
 				# return(threshMat)
 				mzExpect = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 				dzExpect = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
@@ -1183,7 +1183,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# For better guessing with low-freq cells
 				allData = rbind(mzData, dzData)
 				# threshMat may be a three item list of matrices and algebra
-				threshMat = umxThresholdMatrix(allData, suffixes = paste0(suffix, 1:2),  thresholds =  thresholds, threshMatName = "threshMat", verbose = TRUE)
+				threshMat = umxThresholdMatrix(allData, sep = suffix, thresholds = thresholds, threshMatName = "threshMat", verbose = TRUE)
 
 				mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 				dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")
@@ -3375,7 +3375,8 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' any(x$free) # all fixed.
 umxThresholdMatrix <- function(df, sep = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), thresholds = c("deviationBased", "direct", "ignore", "left_censored"), droplevels = FALSE, verbose = FALSE, suffixes = NA){
 	if(!is.na(suffixes)){
-		message("Using suffixes (likely 1:2) is deprecated: instead set 'sep' to the separator (often '_T') between the baseName and the twin suffix")
+		stop("Using suffixes in umxThresholdMatrix (likely 1:2) is deprecated:
+		Instead set 'sep' to the separator (often '_T') between the baseName and the twin numeric suffix")
 	} else if(!is.na(sep)) {
 		tmp         = umx_explode_twin_names(names(df), sep = sep)
 		sep         = tmp$sep

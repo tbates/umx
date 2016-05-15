@@ -129,7 +129,7 @@ mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
 dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
 mzData <- mzData[1:80,] # just top 80 pairs to run fast
 dzData <- dzData[1:80,]
-str(mzData)
+str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)
 
@@ -203,7 +203,7 @@ tmp$bmi2[tmp$bmi2 <= 22] = 22
 tmp = umxFactor(tmp) # ~ 500 "levels" !
 mz = tmp[tmp$zyg == 1, selDVs]
 dz = tmp[tmp$zyg == 3, selDVs]
-x  = umxThresholdMatrix(dz, suffixes = 1:2, thresholds = "left_censored", verbose = T)
+x  = umxThresholdMatrix(dz, sep = "", thresholds = "left_censored", verbose = T)
 m1 = umxACE(selDVs = baseNames, dzData = dz, mzData = mz, suffix = "", thresholds = "left_censored")
 umxSummary(m1)
 plot(m1)
