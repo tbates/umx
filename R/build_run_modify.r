@@ -3396,7 +3396,6 @@ umxThresholdMatrix <- function(df, suffixes = NA, threshMatName = "threshMat", m
 	factorVarNames = names(df)[isFactor]
 	ordVarNames    = names(df)[isOrd]
 	binVarNames    = names(df)[isBin]
-
 	df = df[, factorVarNames, drop = FALSE]
 	if(nSib == 2){
 		# For precision (placing cuts) and to ensure twins have same levels, copy both halves of the dataframe into each

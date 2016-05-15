@@ -33,8 +33,7 @@ umx_explode_twin_names <- function(df, suffix) {
 #'
 #' @param df data.frame containing the data
 #' @param selDVs base names of variables (without suffixes)
-#' @param suffix text constant separating name from 1:2 twin suffix
-#' @param twins 1:2
+#' @param suffix text constant separating base variable names the twin index (1:2)
 #' @return - 
 #' @export
 #' @family xmu internal not for end user
@@ -46,13 +45,18 @@ umx_explode_twin_names <- function(df, suffix) {
 #' tmp = twinData[, selDVs]
 #' tmp$bmi1[tmp$bmi1 <= 22] = 22
 #' tmp$bmi2[tmp$bmi2 <= 22] = 22
-#' xmu_check_levels_identical(umxFactor(tmp, suffix = ""), selDVs = baseNames, suffix = "")
+#' xmu_check_levels_identical(umxFactor(tmp, suffix = ""), selDVs = baseNames, sep = "")
 #' \dontrun{
-#' xmu_check_levels_identical(umxFactor(tmp), selDVs = baseNames, suffix = "")
+#' xmu_check_levels_identical(umxFactor(tmp), selDVs = baseNames, sep = "")
 #' }
-xmu_check_levels_identical <- function(df, selDVs, suffix = NA, twins = 1:2){
-	umx_check_names(umx_paste_names(selDVs, textConstant = suffix, suffixes= twins), data = df, die = T)
-	nSib = length(twins)
+xmu_check_levels_identical <- function(df, selDVs, sep = NA){
+	n = umx_explode_twin_names(df, suffix)
+	baseNames   = n$baseNames
+	sep         = n$sep
+	twinIndexes = n$twinIndexes
+	selVars     = umx_paste_names(selDVs, textConstant = sep, suffixes= twinIndexes)
+	umx_check_names(selVars, data = df, die = T)
+	nSib = length(twinIndexes)
 	if(nSib != 2){
 		stop("Sorry, can only handle two sibs :-(")
 	}

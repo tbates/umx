@@ -786,7 +786,9 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' tmp = twinData[, c("bmi1", "bmi2")]
 #' tmp$bmi1[tmp$bmi1 <= 22] = 22
 #' tmp$bmi2[tmp$bmi2 <= 22] = 22
-#' umxFactor(tmp, suffix = "")
+#' str(umxFactor(tmp, suffix = ""))
+#' xmu_check_levels_identical()
+
 umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = NA, ordered = TRUE, collapse = FALSE, verbose = FALSE, suffix = NA){
 	if(is.data.frame(x)){
 		# x = tmp; suffix = ""; thisName = "bmi"; levels = NA
@@ -811,8 +813,6 @@ umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = N
 			}
 		} else {
 			for (c in 1:ncols) {
-				str(levels)
-				str(labels)
 				x[,c] = umxFactor(x = x[,c], levels = levels, labels = labels, exclude = exclude, collapse = collapse, ordered = ordered, verbose = verbose)
 			}
 		}
@@ -822,9 +822,9 @@ umxFactor <- function(x = character(), levels = NA, labels = levels, exclude = N
 			levels = levels(x)
 			if(verbose){
 				if(length(levels(x)) > 20){
-					feedback = paste0(length(levels(x)), " levels:", paste(c(x[1:10],"..."), collapse = "', '"))
+					feedback = paste0(length(levels(x)), " levels:", paste(c(levels(x)[1:10],"..."), collapse = "', '"))
 				} else {
-					feedback = paste0("levels:", omxQuotes(x))
+					feedback = paste0("levels:", omxQuotes(levels(x)))
 				}
 				message("Your variable was not a factor: I made it into one, with ", feedback)
 			}

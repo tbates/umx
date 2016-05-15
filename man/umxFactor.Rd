@@ -46,7 +46,8 @@ data(twinData)
 tmp = twinData[, c("bmi1", "bmi2")]
 tmp$bmi1[tmp$bmi1 <= 22] = 22
 tmp$bmi2[tmp$bmi2 <= 22] = 22
-umxFactor(tmp, suffix = "")
+str(umxFactor(tmp, suffix = ""))
+xmu_check_levels_identical()
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

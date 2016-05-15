@@ -4,16 +4,14 @@
 \alias{xmu_check_levels_identical}
 \title{xmu_check_levels_identical}
 \usage{
-xmu_check_levels_identical(df, selDVs, suffix = NA, twins = 1:2)
+xmu_check_levels_identical(df, selDVs, sep = NA)
 }
 \arguments{
 \item{df}{data.frame containing the data}
 
 \item{selDVs}{base names of variables (without suffixes)}
 
-\item{suffix}{text constant separating name from 1:2 twin suffix}
-
-\item{twins}{1:2}
+\item{suffix}{text constant separating base variable names the twin index (1:2)}
 }
 \value{
 -
@@ -29,9 +27,9 @@ selDVs = umx_paste_names(baseNames, "", 1:2)
 tmp = twinData[, selDVs]
 tmp$bmi1[tmp$bmi1 <= 22] = 22
 tmp$bmi2[tmp$bmi2 <= 22] = 22
-xmu_check_levels_identical(umxFactor(tmp, suffix = ""), selDVs = baseNames, suffix = "")
+xmu_check_levels_identical(umxFactor(tmp, suffix = ""), selDVs = baseNames, sep = "")
 \dontrun{
-xmu_check_levels_identical(umxFactor(tmp), selDVs = baseNames, suffix = "")
+xmu_check_levels_identical(umxFactor(tmp), selDVs = baseNames, sep = "")
 }
 }
 \seealso{
