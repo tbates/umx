@@ -12,6 +12,8 @@ xmu_check_levels_identical(df, selDVs, sep, action = c("stop", "ignore"))
 \item{selDVs}{base names of variables (without suffixes)}
 
 \item{sep}{text-constant separating base variable names the twin index (1:2)}
+
+\item{action}{if unequal levels found:  c("stop", "ignore")}
 }
 \value{
 -

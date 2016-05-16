@@ -112,8 +112,8 @@ y = round(5 * rnorm(1000))
 x[x < 0] = 0; y[y < 0] = 0
 df  = data.frame(x = x, y = y)
 df  = umxFactor(df); #str(df)
-tmp = umxThresholdMatrix(df, thresholds = "left_censored"); str(tmp)
-any(x$free) # all fixed.
+tmp = umxThresholdMatrix(df, thresholds = "left_censored"); class(tmp)
+any(tmp$free) # all fixed.
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
