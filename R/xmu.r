@@ -10,6 +10,7 @@
 #' @param df data.frame containing the data
 #' @param selDVs base names of variables (without suffixes)
 #' @param sep text-constant separating base variable names the twin index (1:2)
+#' @param action if unequal levels found:  c("stop", "ignore")
 #' @return - 
 #' @export
 #' @family xmu internal not for end user
@@ -25,7 +26,7 @@
 #' \dontrun{
 #' xmu_check_levels_identical(umxFactor(tmp), selDVs = baseNames, sep = "")
 #' }
-xmu_check_levels_identical <- function(df, selDVs, sep = NA){
+xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "ignore")){
 	n = umx_explode_twin_names(df, sep)
 	baseNames   = n$baseNames
 	sep         = n$sep
@@ -36,13 +37,20 @@ xmu_check_levels_identical <- function(df, selDVs, sep = NA){
 	if(nSib != 2){
 		stop("Sorry, Ask tim to implement handling more than two sibs")
 	}
+	allIdentical = TRUE
 	for (thisVar in selDVs) {
-		a = levels(df[,paste0(thisVar, suffix, twinIndexes[1])])
-		b = levels(df[,paste0(thisVar, suffix, twinIndexes[2])])
+		a = levels(df[,paste0(thisVar, sep, twinIndexes[1])])
+		b = levels(df[,paste0(thisVar, sep, twinIndexes[2])])
 		if(!identical(a, b)){
-			stop("levels of ", thisVar, " not identical for twin 1 and twin 2")
+			if(action =="stop"){
+				allIdentical = FALSE
+				stop("levels of ", thisVar, " not identical for twin 1 and twin 2")
+			} else {
+				# alt.expr
+			}
 		}
 	}
+	return(allIdentical)
 }
 
 #' xmuLabel_MATRIX_Model (not a user function)

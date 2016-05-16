@@ -57,7 +57,7 @@ data(twinData)
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = c("bmi") # Set the DV
 selCovs = c("age") # Set the IV
-selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes = 1:2)
+selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes = 1:2)
 # 80 rows so example runs fast
 mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
 dzData = subset(twinData, zyg == 3, selVars)[1:80, ]

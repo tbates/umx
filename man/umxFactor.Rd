@@ -35,12 +35,11 @@ A convenient version of \code{\link{mxFactor}} supporting the common
 case in which the factor levels are those in the variable.
 }
 \examples{
-x = umxFactor(letters) # just do it
-str(x)
-x = umxFactor(letters, verbose = TRUE) # report coercions
-x = umxFactor(letters, ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
+umxFactor(letters)
+umxFactor(letters, verbose = TRUE) # report coercions
+umxFactor(letters, ordered = FALSE) # non-ordered factor like factor(x)
 # Dataframe example:
-x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE)
+x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE); str(x)
 # =================
 # = Twin example: =
 # =================
@@ -48,9 +47,9 @@ data(twinData)
 tmp = twinData[, c("bmi1", "bmi2")]
 tmp$bmi1[tmp$bmi1 <= 22] = 22
 tmp$bmi2[tmp$bmi2 <= 22] = 22
-# do this _before_ breaking into MZ and DZ groups
+# remember to factor _before_ breaking into MZ and DZ groups
 x = umxFactor(tmp, sep = ""); str(x)
-xmu_check_levels_identical(x)
+xmu_check_levels_identical(x, "bmi", sep="")
 
 # Simple example to check behavior
 x = round(10 * rnorm(1000, mean = -.2))

@@ -801,12 +801,11 @@ umx_explode_twin_names <- function(df, sep) {
 #' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' x = umxFactor(letters) # just do it
-#' str(x)
-#' x = umxFactor(letters, verbose = TRUE) # report coercions
-#' x = umxFactor(letters, ordered = FALSE) # non-ordered factor like factor(x), but handles data.frames
+#' umxFactor(letters)
+#' umxFactor(letters, verbose = TRUE) # report coercions
+#' umxFactor(letters, ordered = FALSE) # non-ordered factor like factor(x)
 #' # Dataframe example:
-#' x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE)
+#' x = umx_factor(mtcars[,c("cyl", "am")], ordered = FALSE); str(x)
 #' # =================
 #' # = Twin example: =
 #' # =================
@@ -814,9 +813,9 @@ umx_explode_twin_names <- function(df, sep) {
 #' tmp = twinData[, c("bmi1", "bmi2")]
 #' tmp$bmi1[tmp$bmi1 <= 22] = 22
 #' tmp$bmi2[tmp$bmi2 <= 22] = 22
-#' # do this _before_ breaking into MZ and DZ groups
+#' # remember to factor _before_ breaking into MZ and DZ groups
 #' x = umxFactor(tmp, sep = ""); str(x)
-#' xmu_check_levels_identical(x)
+#' xmu_check_levels_identical(x, "bmi", sep="")
 #' 
 #' # Simple example to check behavior
 #' x = round(10 * rnorm(1000, mean = -.2))
@@ -1807,7 +1806,7 @@ umx_msg <- function(x) {
 #'
 #' Helper to add suffixes to names: useful for expanding base names for variables (e.g. "bmi")
 #' into fully specified family-wise row names for variables c("bmi_T1", "bmi_T2")
-#' Use textConstant to add a constant like "_T" after each base variable name.
+#' Use sep to add a constant like "_T" after each base variable name.
 #' This is then suffixed with e.g. "1", "2".
 #'
 #' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
@@ -1818,6 +1817,7 @@ umx_msg <- function(x) {
 #' @family Utility Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
+#' # two styles doing the same thing: first is more general
 #' umx_paste_names("bmi", "_T", 1:2)
 #' umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
 #' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)

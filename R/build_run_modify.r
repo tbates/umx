@@ -992,7 +992,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' tmp = umxFactor(tmp) # ~ 500 "levels" !
 #' mz = tmp[tmp$zyg == 1, selDVs]
 #' dz = tmp[tmp$zyg == 3, selDVs]
-#' x  = umxThresholdMatrix(dz, sep = "", thresholds = "left_censored", verbose = T)
+#' x  = umxThresholdMatrix(dz, sep = "", thresholds = "left_censored", verbose = TRUE)
 #' m1 = umxACE(selDVs = baseNames, dzData = dz, mzData = mz, suffix = "", thresholds = "left_censored")
 #' umxSummary(m1)
 #' plot(m1)
@@ -1378,7 +1378,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = c("bmi") # Set the DV
 #' selCovs = c("age") # Set the IV
-#' selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes = 1:2)
+#' selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes = 1:2)
 #' # 80 rows so example runs fast
 #' mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
 #' dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
@@ -3371,8 +3371,8 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' x[x < 0] = 0; y[y < 0] = 0
 #' df  = data.frame(x = x, y = y)
 #' df  = umxFactor(df); #str(df)
-#' tmp = umxThresholdMatrix(df, thresholds = "left_censored"); str(tmp)
-#' any(x$free) # all fixed.
+#' tmp = umxThresholdMatrix(df, thresholds = "left_censored"); class(tmp)
+#' any(tmp$free) # all fixed.
 umxThresholdMatrix <- function(df, sep = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), thresholds = c("deviationBased", "direct", "ignore", "left_censored"), droplevels = FALSE, verbose = FALSE, suffixes = NA){
 	if(!is.na(suffixes)){
 		stop("Using suffixes in umxThresholdMatrix (likely 1:2) is deprecated:

@@ -4,7 +4,7 @@
 \alias{xmu_check_levels_identical}
 \title{xmu_check_levels_identical}
 \usage{
-xmu_check_levels_identical(df, selDVs, sep = NA)
+xmu_check_levels_identical(df, selDVs, sep, action = c("stop", "ignore"))
 }
 \arguments{
 \item{df}{data.frame containing the data}
