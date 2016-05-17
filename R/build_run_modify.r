@@ -656,6 +656,8 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 #' @param moderator The name of the moderator variable in the dataset e.g. "age", "SES" etc.
 #' @param mzData Dataframe containing the DV and moderator for MZ twins
 #' @param dzData Dataframe containing the DV and moderator for DZ twins
+#' @param suffix (optional) separator, e.g. "_T" which will be used expand base names into full variable names:
+#' e.g.: 'bmi' --> c("bmi_T1", "bmi_T2")
 #' @param weightCov Whether to use cov.wt matrices or FIML default = FALSE, i.e., FIML
 #' @param width An option to widen or narrow the window from its default (of 1)
 #' @param target A user-selected list of moderator values to test (default = NULL = explore the full range)
@@ -709,7 +711,12 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 #' Briley, D.A., Harden, K.P., Bates, T.C.,  Tucker-Drob, E.M. (2015).
 #' Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
 #' \emph{Behavior Genetics}.
-umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
+umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, suffix = NA, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
+	if(!is.na(suffix)){
+		selDVs    = umx_paste_names(selDVs, sep = suffix, 1:2)
+		moderator = umx_paste_names(moderator, sep = suffix, 1:2)
+	} else {
+	}
 	# TODO want to allow missing moderator?
 	# Check moderator is set and exists in mzData and dzData
 	return = match.arg(return)
