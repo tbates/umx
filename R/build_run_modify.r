@@ -3367,7 +3367,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' str(mzData)
-#' tm = umxThresholdMatrix(mzData, sep = "", verbose = TRUE)
+#' tmp = umxThresholdMatrix(mzData, sep = "", verbose = TRUE)
 #'
 #' # ===================
 #' # = "left_censored" =
@@ -3540,7 +3540,7 @@ umxThresholdMatrix <- function(df, sep = NA, threshMatName = "threshMat", method
 		for (thisVarName in factorVarNames) {
 			thisCol = df[,thisVarName]
 			nThreshThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
-
+			
 			# ===============================================================
 			# = Work out z-values for thresholds based on simple bin counts =
 			# ===============================================================
@@ -3617,7 +3617,6 @@ umxThresholdMatrix <- function(df, sep = NA, threshMatName = "threshMat", method
 			}	
 			threshMat$values[, thisVarName] = values
 		} # end for each factor variable
-	
 		# TODO describe what we have at this point
 	
 		if(thresholds == "deviationBased") {

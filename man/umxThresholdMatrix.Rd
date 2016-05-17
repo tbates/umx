@@ -108,7 +108,7 @@ tmp = umxThresholdMatrix(mzData, sep = "", verbose = TRUE)
 selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
 mzData <- subset(twinData, zyg == "MZFF", selDVs)
 str(mzData)
-tm = umxThresholdMatrix(mzData, sep = "", verbose = TRUE)
+tmp = umxThresholdMatrix(mzData, sep = "", verbose = TRUE)
 
 # ===================
 # = "left_censored" =
