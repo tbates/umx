@@ -756,7 +756,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' vector of twin indexes. e.g. c("Dep_T1", "Dep_T2") 
 #' -> list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
 #'
-#' @param df data.frame containing the data
+#' @param df vector of names or data.frame containing the data
 #' @param sep text constant separating name from numeric 1:2 twin index
 #' @return - list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
 #' @export
@@ -765,13 +765,25 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' require(umx)
 #' data("twinData")
 #' umx_explode_twin_names(twinData, sep = "")
-umx_explode_twin_names <- function(df, sep) {
-	allNames         = names(df)
-	endInSuffixDigit = grep(paste0("^.+", sep, "[0-9]$"), allNames, value = TRUE)
-	baseNames        = sub(paste0("^(.+", sep, ")([0-9])$"), replacement = "\\1", x = endInSuffixDigit)
-	baseNames        = unique(baseNames)
-	twinIndexes      = sub(paste0("^(.+", sep, ")([0-9])$"), replacement = "\\2", x = endInSuffixDigit)
-	twinIndexes      = sort(unique(as.numeric(twinIndexes)))
+#' # Single-character single variable test case
+#' x = round(10 * rnorm(1000, mean = -.2))
+#' y = round(5 * rnorm(1000))
+#' x[x < 0] = 0; y[y < 0] = 0
+#' umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
+#' umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
+umx_explode_twin_names <- function(df, sep = "_T") {
+	# debugonce(umx::umx_explode_twin_names)
+	if(is.data.frame(df)){
+		names_in_df = names(df)
+	} else {
+		names_in_df = df
+	}
+	regex3Parts = paste0("^(.+)", sep, "([0-9]+)$")
+	legalVars   = grep(regex3Parts, names_in_df, value = TRUE)
+	baseNames   = sub(regex3Parts, replacement = "\\1", x = legalVars)
+	baseNames   = unique(baseNames)
+	twinIndexes = sub(regex3Parts, replacement = "\\2", x = legalVars)
+	twinIndexes = sort(unique(as.numeric(twinIndexes)))
 	return(list(baseNames = baseNames, sep = sep, twinIndexes = twinIndexes))
 }
 

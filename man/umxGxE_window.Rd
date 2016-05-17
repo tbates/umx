@@ -5,8 +5,8 @@
 \title{umxGxE_window}
 \usage{
 umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
-  dzData = dzData, weightCov = FALSE, target = NULL, width = 1,
-  plotWindow = FALSE, return = c("estimates", "last_model"))
+  dzData = dzData, suffix = NA, weightCov = FALSE, target = NULL,
+  width = 1, plotWindow = FALSE, return = c("estimates", "last_model"))
 }
 \arguments{
 \item{selDVs}{The dependent variables for T1 and T2, e.g. c("bmi_T1", "bmi_T2")}
@@ -16,6 +16,9 @@ umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
 \item{mzData}{Dataframe containing the DV and moderator for MZ twins}
 
 \item{dzData}{Dataframe containing the DV and moderator for DZ twins}
+
+\item{suffix}{(optional) separator, e.g. "_T" which will be used expand base names into full variable names:
+e.g.: 'bmi' --> c("bmi_T1", "bmi_T2")}
 
 \item{weightCov}{Whether to use cov.wt matrices or FIML default = FALSE, i.e., FIML}
 

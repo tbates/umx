@@ -4,10 +4,10 @@
 \alias{umx_explode_twin_names}
 \title{umx_explode_twin_names}
 \usage{
-umx_explode_twin_names(df, sep)
+umx_explode_twin_names(df, sep = "_T")
 }
 \arguments{
-\item{df}{data.frame containing the data}
+\item{df}{vector of names or data.frame containing the data}
 
 \item{sep}{text constant separating name from numeric 1:2 twin index}
 }
@@ -23,6 +23,12 @@ vector of twin indexes. e.g. c("Dep_T1", "Dep_T2")
 require(umx)
 data("twinData")
 umx_explode_twin_names(twinData, sep = "")
+# Single-character single variable test case
+x = round(10 * rnorm(1000, mean = -.2))
+y = round(5 * rnorm(1000))
+x[x < 0] = 0; y[y < 0] = 0
+umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
+umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
