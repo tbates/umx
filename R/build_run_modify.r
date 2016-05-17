@@ -3323,18 +3323,38 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' # = Binary example =
 #' # ==================
 #' require(umx)
+#' if(!packageVersion("OpenMx") > 2.5){message("Update OpenMx to get a new version of twinData")}
 #' data(twinData)
-#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$zyg = factor(twinData$zyg, levels = 1:5, labels = labList)
+#' # ===============================================================
+#' # = Create a series of binary and ordinal columns to work with =
+#' # ===============================================================
 #' # Cut to form category of 80 % obese subjects
-#' cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+#' selDVs = c("obese1", "obese2")
 #' obesityLevels = c('normal', 'obese')
+#' cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 #' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Step 2: Make the ordinal variables into mxFactors
 #' # this ensures ordered= TRUE + requires user to confirm levels
-#' selDVs = c("obese1", "obese2")
 #' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
+#' 
+#' # Repeat for three-level weight variable
+#' selDVs = c("obeseTri1", "obeseTri2")
+#' obesityLevels = c('normal', 'overweight', 'obese')
+#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
+#' twinData$obeseTri1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obeseTri2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
+#' 
+#' selDVs = c("obeseQuad1", "obeseQuad2")
+#' obesityLevels = c('underWeight', 'normal', 'overweight', 'obese')
+#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
+#' twinData$obeseQuad1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obeseQuad2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
+#'
+#' # Example 1
+#' selDVs = c("obese1", "obese2")
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' str(mzData)
 #' tmp = umxThresholdMatrix(mzData, sep = "", verbose = TRUE) # informative messages
@@ -3342,13 +3362,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' # ======================================
 #' # = Ordinal (n categories > 2) example =
 #' # ======================================
-#' # Cut to form three categories of weight
-#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
-#' obesityLevels = c('normal', 'overweight', 'obese')
-#' twinData$obeseTri1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' twinData$obeseTri2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' selDVs = c("obeseTri1", "obeseTri2")
-#' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
 #' str(mzData)
 #' tmp = umxThresholdMatrix(mzData, sep = "", verbose = TRUE)
@@ -3356,13 +3370,6 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' # ========================================================
 #' # = Mix of all three kinds example (and a 4-level trait) =
 #' # ========================================================
-#' 
-#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
-#' obesityLevels = c('underWeight', 'normal', 'overweight', 'obese')
-#' twinData$obeseQuad1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' twinData$obeseQuad2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' selDVs = c("obeseQuad1", "obeseQuad2")
-#' twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
 #' 
 #' selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
 #' mzData <- subset(twinData, zyg == "MZFF", selDVs)
@@ -3378,6 +3385,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' x[x < 0] = 0; y[y < 0] = 0
 #' df  = data.frame(x = x, y = y)
 #' df  = umxFactor(df); #str(df)
+#' table(df)
 #' tmp = umxThresholdMatrix(df, thresholds = "left_censored"); class(tmp)
 #' any(tmp$free) # all fixed.
 umxThresholdMatrix <- function(df, sep = NA, threshMatName = "threshMat", method = c("auto", "Mehta", "allFree"), l_u_bound = c(NA, NA), thresholds = c("deviationBased", "direct", "ignore", "left_censored"), droplevels = FALSE, verbose = FALSE, suffixes = NA){
@@ -3646,11 +3654,17 @@ umxThresholdMatrix <- function(df, sep = NA, threshMatName = "threshMat", method
 					# Skip row 1 which is the base
 					for (row in 2:nrows) {
 						# Convert remaining rows to offsets
-						thisOffset = threshMat$values[row, col] - threshMat$values[(row-1), col]
-						if(thisOffset<0){
-							thisOffset = .001
+						thisValue = threshMat$values[row, col]
+						previousValue = threshMat$values[(row-1), col]
+						if(!is.na(thisValue)){
+							thisOffset = thisValue - previousValue
+							if(thisOffset < 0){
+								thisOffset = .001
+							}
+							startDeviations[row, col] = thisOffset
+						} else {
+							# out of range: TODO: simpligy by just run to max thresh row
 						}
-						startDeviations[row, col] = thisOffset
 					}
 				}
 			}
