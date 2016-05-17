@@ -200,7 +200,8 @@ selDVs = umx_paste_names(baseNames, "", 1:2)
 tmp = twinData[, c(selDVs, "zyg")]
 tmp$bmi1[tmp$bmi1 <= 22] = 22
 tmp$bmi2[tmp$bmi2 <= 22] = 22
-tmp = umxFactor(tmp) # ~ 500 "levels" !
+tmp = umxFactor(tmp) # BAD! letting it know that there are wide data!
+tmp = umxFactor(tmp, sep = "") # GOOD same factor for each twin!
 mz = tmp[tmp$zyg == 1, selDVs]
 dz = tmp[tmp$zyg == 3, selDVs]
 x  = umxThresholdMatrix(dz, sep = "", thresholds = "left_censored", verbose = TRUE)
