@@ -3369,8 +3369,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' # ========================================================
 #'
 #' selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
-#' tmp = subset(twinData, selDVs)
-#' tmp = umxThresholdMatrix(tmp, sep = "", verbose = TRUE)
+#' tmp = umxThresholdMatrix(twinData[,selDVs], sep = "", verbose = TRUE)
 #' str(tmp)
 #'
 #' # ===================
