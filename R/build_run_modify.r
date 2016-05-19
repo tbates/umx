@@ -880,7 +880,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param addCI Whether to add intervals to compute CIs (defaults to TRUE)
 #' @param numObsDZ = Number of DZ twins: Set this if you input covariance data
 #' @param numObsMZ = Number of MZ twins: Set this if you input covariance data
-#' @param boundDiag = Whether to bound the diagonal of the a, c, and e matrices
+#' @param boundDiag = (optional) lbound for diagonal of the a, c, and e matrices.
 #' @param weightVar = If provided, a vector objective will be used to weight the data. (default = NULL) 
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE)
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE)
@@ -983,9 +983,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 #' umxSummary(m1)
 #' plot(m1)
-#' # =========================
-#' # Example with Tobin data =
-#' # =========================
+#' # =========================================================
+#' # Example with Tobin data (this is not profuction quality =
+#' # Definately a work in progress!!!                        =
+#' # =========================================================
 #' 
 #' # Analyse a dataset in which only people with a BMI over 22 had their BMI recorded
 #' 
