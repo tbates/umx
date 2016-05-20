@@ -36,7 +36,7 @@ SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data}
 
-\item{boundDiag}{= Whether to bound the diagonal of the a, c, and e matrices}
+\item{boundDiag}{= (optional) lbound for diagonal of the a, c, and e matrices.}
 
 \item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL)}
 
@@ -187,9 +187,10 @@ dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
 m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 umxSummary(m1)
 plot(m1)
-# =========================
-# Example with Tobin data =
-# =========================
+# =========================================================
+# Example with Tobin data (this is not profuction quality =
+# Definately a work in progress!!!                        =
+# =========================================================
 
 # Analyse a dataset in which only people with a BMI over 22 had their BMI recorded
 
