@@ -917,12 +917,13 @@ umx_factor <- umxFactor
 #' @references - \url{https://github.com/kevinushey/Kmisc/tree/master/man}
 #' @examples
 #' umx_pad(1:3, 4)
+#' umx_pad(1:3, 3)
 umx_pad <- function(x, n) {
   if (is.data.frame(x)) {
     nrow <- nrow(x)
     attr(x, "row.names") <- 1:n
     for( i in 1:ncol(x) ) {
-      x[[i]] <- c( x[[i]], rep(NA, times=n-nrow) )
+      x[[i]] <- c( x[[i]], rep(NA, times = n - nrow) )
     }
     return(x)
   } else if (is.list(x)) {
@@ -943,7 +944,11 @@ umx_pad <- function(x, n) {
   } else if (is.matrix(x)) {
     return( rbind( x, matrix(NA, nrow=n-nrow(x), ncol=ncol(x)) ) )
   } else {
-    return( c( x, rep(NA, n-length(x)) ) ) 
+    if (n > length(x)) {
+			return( c( x, rep(NA, n-length(x)) ) ) 
+    } else {
+      return(x)
+    }
   } 
 }
 
@@ -2073,7 +2078,6 @@ umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %O
 #' }
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
 	# depends on R2HTML::HTML and knitr::kable
-	# TODO allow matrix as input
 	if(class(x)!="data.frame"){
 		if(class(x)=="matrix"){
 			x = data.frame(x)
@@ -3381,7 +3385,7 @@ umx_rot <- function(vec){
 #' @param model an \code{\link{mxModel}} to show data from
 #' @param what legal options are "values" (default), "free", or "labels")
 #' @param show filter on what to show c("all", "free", "fixed")
-#' @param matrices to show  (default is c("S", "A"))
+#' @param matrices to show  (default is c("S", "A")). "Thresholds" in beta
 #' @param digits precision to report, defaults to rounding to 2 decimal places
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -3412,26 +3416,61 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	}
 	what = match.arg(what)
 	show = match.arg(show)
-	for (w in matrices) {
-		message("Showing ", what, " for:", w, " matrix:")
+	
+	if("thresholds" %in% matrices){
+		# TODO threshold printing not finalized yet…
+		if(!is.null(model$deviations_for_thresh)){
+			dev = TRUE
+			x = model$deviations_for_thresh
+		} else {
+			dev = FALSE
+			x = model$threshMat
+		}
 		if(what == "values"){
-			umx_print(data.frame(model$matrices[[w]]$values), zero.print = ".", digits = digits)		
-		}else if(what == "free"){
-			umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
-		}else if(what == "labels"){
-			x = model$matrices[[w]]$labels
-			if(show=="free"){
-				x[model$matrices[[w]]$free!=TRUE] = ""
-			} else if (show=="fixed") {
-				x[model$matrices[[w]]$free==TRUE] = ""
+			if(dev){
+				v = model$lowerOnes_for_thresh$values %*% x$values
+			} else {
+				v = x$values
 			}
-			umx_print(x, zero.print = ".", digits = digits)
-		}else if(what == "nonzero_or_free"){
-			message("99 means the value is fixed, but is non-zero")
-			values = model$matrices[[w]]$values
-			Free   = model$matrices[[w]]$free
-			values[!Free & values !=0] = 99
-			umx_print(data.frame(values) , zero.print = ".", digits = digits)
+			if(show == "free"){
+				v[x$free == FALSE] = NA
+			} else if (show == "fixed") {
+				v[x$free == TRUE] = NA
+			}
+			umx_print(v, zero.print = ".", digits = digits)		
+		}else if(what == "free"){
+			umx_print(data.frame(x$free) , zero.print = ".", digits = digits)
+		}else if(what == "labels"){
+			l = x$labels
+			if(show == "free"){
+				l[x$free == FALSE] = ""
+			} else if (show=="fixed") {
+				l[x$free == TRUE] = ""
+			}
+			umx_print(l, zero.print = ".", digits = digits)
+		}
+	} else {
+		for (w in matrices) {
+			message("Showing ", what, " for:", w, " matrix:")
+			if(what == "values"){
+				umx_print(data.frame(model$matrices[[w]]$values), zero.print = ".", digits = digits)		
+			}else if(what == "free"){
+				umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
+			}else if(what == "labels"){
+				x = model$matrices[[w]]$labels
+				if(show=="free"){
+					x[model$matrices[[w]]$free!=TRUE] = ""
+				} else if (show=="fixed") {
+					x[model$matrices[[w]]$free==TRUE] = ""
+				}
+				umx_print(x, zero.print = ".", digits = digits)
+			}else if(what == "nonzero_or_free"){
+				message("99 means the value is fixed, but is non-zero")
+				values = model$matrices[[w]]$values
+				Free   = model$matrices[[w]]$free
+				values[!Free & values !=0] = 99
+				umx_print(data.frame(values) , zero.print = ".", digits = digits)
+			}
 		}
 	}
 }

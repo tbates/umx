@@ -604,7 +604,7 @@ umxSummary.default <- function(model, ...){
 #' @aliases umxSummary.MxModel
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param refModels Saturated models if needed for fit indices (see example below:
-#' 	Only needed for raw data. nb: \code{\link{umxRun}} takes care of this for you)
+#' 	If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.
 #' @param showEstimates What estimates to show. By default, the raw estimates are shown 
 #' (Options = c("raw", "std", "both", "none", "list of column names").
 #' @param digits How many decimal places to report (default = 2)
@@ -615,7 +615,7 @@ umxSummary.default <- function(model, ...){
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
 #' @param ... Other parameters to control model summary
 #' @family Reporting functions
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
+#' @seealso - \code{\link{umxRun}}
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Coventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
 #'
@@ -679,7 +679,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 			refModels = mxRefModels(model, run = TRUE)
 			modelSummary = summary(model, refModels = refModels)
 		}
-	} else {
+	} else if (refModels == FALSE){
+		modelSummary = summary(model) # don't use or generate refModels		
+	}else{
 		modelSummary = summary(model, refModels = refModels) # use user-supplied refModels		
 	}
 

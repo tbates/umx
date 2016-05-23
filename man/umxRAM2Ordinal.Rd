@@ -6,7 +6,7 @@
 \usage{
 umxRAM2Ordinal(model, verbose = T, thresholds = c("deviationBased",
   "direct", "ignore", "left_censored"), name = NULL, showEstimates = TRUE,
-  autoRun = getOption("umx_auto_run"))
+  refModels = NULL, autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{model}{An RAM model to add thresholds too.}
@@ -18,6 +18,8 @@ umxRAM2Ordinal(model, verbose = T, thresholds = c("deviationBased",
 \item{name}{= A new name for the modified model (NULL means leave it as it)}
 
 \item{showEstimates}{= Whether to show estimates in the summary (if autorunning) TRUE}
+
+\item{refModels}{pass in reference models if available. Use FALSE to supress computing these if not provided.}
 
 \item{autoRun}{= whether to run the model before returning it: defaults to getOption("umx_auto_run"))}
 }

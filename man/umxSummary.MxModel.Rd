@@ -13,7 +13,7 @@
 \item{model}{The \code{\link{mxModel}} whose fit will be reported}
 
 \item{refModels}{Saturated models if needed for fit indices (see example below:
-Only needed for raw data. nb: \code{\link{umxRun}} takes care of this for you)}
+If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
 
 \item{showEstimates}{What estimates to show. By default, the raw estimates are shown 
 (Options = c("raw", "std", "both", "none", "list of column names").}
@@ -92,7 +92,7 @@ umxSummary(m1, show = "std", filter = "NS")
 \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{mxCI}}, \code{\link{umxCI_boot}}, \code{\link{umxRun}}
+- \code{\link{umxRun}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

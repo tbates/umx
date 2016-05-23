@@ -1,4 +1,3 @@
-
 # umx_open("~/bin/umx/R/misc_and_utility.r")
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # devtools::release("~/bin/umx", check = TRUE)
@@ -180,6 +179,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' @param independent Whether the model is independent (default = NA)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
 #' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
+#' @param refModels pass in reference models if available. Use FALSE to supress computing these if not provided.
 #' @param thresholds Whether to use deviation-based threshold modeling for ordinal data (if any is detected), direct, or do nothing.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - \code{\link{mxModel}}
@@ -229,7 +229,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' }
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run")) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	dot.items     = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
 	legalThresholdsOptions = c("deviationBased", "direct", "ignore", "left_censored")
@@ -399,7 +399,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}
 	if(autoRun){
 		m1 = mxRun(m1)
-		umxSummary(m1, showEstimates = showEstimates)
+		umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
 		return(m1)
 	} else {
 		return(m1)
@@ -2222,6 +2222,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 #' @param thresholds How to implement thresholds: c("deviationBased", "direct", "ignore", "left_censored")
 #' @param name = A new name for the modified model (NULL means leave it as it)
 #' @param showEstimates = Whether to show estimates in the summary (if autorunning) TRUE
+#' @param refModels pass in reference models if available. Use FALSE to supress computing these if not provided.
 #' @param autoRun = whether to run the model before returning it: defaults to getOption("umx_auto_run"))
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -2231,7 +2232,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 #' \dontrun{
 #' m1 = umxRAM2Ordinal(model)
 #' }
-umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), name = NULL, showEstimates= TRUE, autoRun = getOption("umx_auto_run")) {
+umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), name = NULL, showEstimates= TRUE, refModels = NULL, autoRun = getOption("umx_auto_run")) {
 	# model = m3
 	legalThresholdsOptions = c("deviationBased", "direct", "ignore", "left_censored")
 	thresholds = match.arg(thresholds)
@@ -2245,7 +2246,7 @@ umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", 
 	model = mxModel(model, umxThresholdMatrix(model$data$observed, thresholds = thresholds, verbose = verbose))
 	if (autoRun) {
 		model = mxRun(model)
-		umxSummary(model, showEstimates = showEstimates)
+		umxSummary(model, showEstimates = showEstimates, refModels = refModels)
 		return(model)
 	} else {
 		return(model)
@@ -3413,12 +3414,12 @@ umxThresholdMatrix <- function(df, sep = NA, method = c("auto", "Mehta", "allFre
 		nSib = 1
 	}
 
-	isFactor    = umx_is_ordered(df) # all ordered factors including binary
-	isOrd       = umx_is_ordered(df, ordinal.only = TRUE) # only ordinals
-	isBin       = umx_is_ordered(df, binary.only  = TRUE) # only binaries
-	nFactors    = sum(isFactor)
-	nOrdVars    = sum(isOrd)
-	nBinVars    = sum(isBin)
+	isFactor = umx_is_ordered(df) # all ordered factors including binary
+	isOrd    = umx_is_ordered(df, ordinal.only = TRUE) # only ordinals
+	isBin    = umx_is_ordered(df, binary.only  = TRUE) # only binaries
+	nFactors = sum(isFactor)
+	nOrdVars = sum(isOrd)
+	nBinVars = sum(isBin)
 	factorVarNames = names(df)[isFactor]
 	ordVarNames    = names(df)[isOrd]
 	binVarNames    = names(df)[isBin]
@@ -3510,9 +3511,9 @@ umxThresholdMatrix <- function(df, sep = NA, method = c("auto", "Mehta", "allFre
 		}
 		threshMat$free = FALSE
 		for (varName in factorVarNames) {
-			theseLevels = levels(df[,varName])
+			theseLevels = as.numeric(levels(df[,varName]))
 			nLevels     = length(theseLevels)
-			threshMat$values[,varName] = umx_pad(as.numeric(theseLevels[2:(nLevels)]), maxThresh)
+			threshMat$values[,varName] = umx_pad(theseLevels[1:(nLevels - 1)], maxThresh)
 		}
 		return(threshMat)
 	} else {

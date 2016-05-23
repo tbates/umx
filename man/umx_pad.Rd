@@ -21,6 +21,7 @@ each (column) vector in the object.
 }
 \examples{
 umx_pad(1:3, 4)
+umx_pad(1:3, 3)
 }
 \references{
 - \url{https://github.com/kevinushey/Kmisc/tree/master/man}

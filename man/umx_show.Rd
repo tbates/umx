@@ -14,7 +14,7 @@ umx_show(model, what = c("values", "free", "labels", "nonzero_or_free"),
 
 \item{show}{filter on what to show c("all", "free", "fixed")}
 
-\item{matrices}{to show  (default is c("S", "A"))}
+\item{matrices}{to show  (default is c("S", "A")). "Thresholds" in beta}
 
 \item{digits}{precision to report, defaults to rounding to 2 decimal places}
 }
