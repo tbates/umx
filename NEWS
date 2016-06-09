@@ -1,14 +1,15 @@
 # umx 1.2.8
 * R 3.3.0 companion: "Very compatible" May 2016
 * NEW: umxRAM can now build and run Joint Continuous Ordinal models. Tada!!
-* NEW: umxThresholdMatrix can now implement left-censoring. Tada!!
-* NEW: umxACE can now implement left-censoring. Tada!!
-* CHANGE: I changed "suffix" to "sep" in several places for consistency: this will break
-  some low level code: nearly all of it mine, and fixed. But might affect some users!!
-* ADDED: umx_show_options to help learn the options available
+* NEW: umxThresholdMatrix can now implement a form of left-censoring. Tada!!
+* NEW: umxACE can now implement a form of left-censoring. Tada!!
+* NEW: umx_show_options function to help users learn the options available
+* IMPROVE: umxRAM & umxRAM2Ordinal can turn off refModel computation with refModels = F;
+* IMPROVE: umx_show can show thresholds
 * IMPROVED: listOK option for umx_is_MxModel
 * IMPROVED: rowwiseParallel and numberSubjects options for umx_check_parallel
-* IMPROVED: rowwiseParallel and numberSubjects options for umx_check_parallel
+* CHANGE: I changed "suffix" to "sep" in several places for consistency: this will break
+  some low level code: nearly all of it mine, and fixed. But might affect some users!!
 * UPDATE: umx_time and umx_check_parallel to work with new S4 list deprecation
 * UPDATE: shorter run-time on 2sls code
 
