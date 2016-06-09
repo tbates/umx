@@ -42,7 +42,7 @@ umx_grep(spss_df, "labeltext", output = "name")
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{grep}}
+- \code{\link{grep}} umx_aggregate
 
 Other Utility Functions: \code{\link{qm}},
   \code{\link{umx_find_object}}, \code{\link{umx_msg}},

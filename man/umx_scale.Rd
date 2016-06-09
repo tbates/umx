@@ -22,7 +22,7 @@ Scale data columns, skipping ordinal
 \examples{
 data(twinData) 
 df = umx_scale(twinData, varsToScale = NULL)
-plot(wt1 ~ wt2, data= df)
+plot(wt1 ~ wt2, data = df)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

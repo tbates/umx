@@ -51,7 +51,7 @@ umx_set_plot_format <- function(umx.plot.format = NULL) {
 	if(is.null(umx.plot.format)) {
 		getOption("umx.plot.format")
 	} else {
-		umx_check(umx.plot.format %in% c("graphviz", "DiagrammeR"), "stop")
+		umx_check(umx.plot.format %in% c("graphviz", "DiagrammeR"), "stop", "valid options are 'graphviz' or 'DiagrammeR'")
 		options("umx.plot.format" = umx.plot.format)
 	}
 }
@@ -961,10 +961,11 @@ umx_pad <- function(x, n) {
 #' @param of The dataframe to work with
 #' @param by What to apply the function to: columns or rows (default = "columns")
 #' @param ... optional arguments to FUN, i.e., na.rm = T
-#' @return - \code{\link{mxModel}}
+#' @return - object
 #' @export
+#' @seealso - \code{\link{umx_aggregate}} 
 #' @family Misc
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' umx_apply(mean, mtcars, by = "columns")
 #' umx_apply(mean, of = mtcars, by = "columns")
@@ -1163,7 +1164,7 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 #' @param ignore.case whether to be case sensitive or not (default TRUE = ignore case)
 #' @param useNames whether to search the names as well as the labels (for SPSS files with label metadata)
 #' @return - list of matched column names and/or labels
-#' @seealso - \code{\link{grep}}
+#' @seealso - \code{\link{grep}} umx_aggregate
 #' @family Utility Functions
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -1795,7 +1796,7 @@ umx_make <- function(what = c("install", "release", "win", "examples")) {
 
 #' umx_msg
 #'
-#' Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy
+#' Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy.
 #'
 #' @param  x the thing you want to print
 #' @return - NULL
@@ -2159,6 +2160,26 @@ umx_has_been_run <- function(model, stop = FALSE) {
 	return(TRUE)
 }
 
+umxCheckModel <- function(model){
+	# Are all the manifests in paths?
+	# Do the manifests have residuals?
+	if(any(duplicated(model@manifestVars))){
+		stop(paste("manifestVars contains duplicates:", duplicated(model@manifestVars)))
+	}
+	if(length(model@latentVars) == 0){
+		# Check none are duplicates, none in manifests
+		if(any(duplicated(model@latentVars))){
+			stop(paste("latentVars contains duplicates:", duplicated(model@latentVars)))
+		}
+		if(any(duplicated(c(model@manifestVars, model@latentVars)))){
+			stop(
+				paste("manifest and latent lists contain clashing names:", duplicated(c(model@manifestVars, model@latentVars)))
+			)
+		}
+	}
+	# Check manifests in dataframe
+}
+
 #' umx_check
 #'
 #' Check that a test evaluates to TRUE. If not, stop, warn, or message the user
@@ -2176,9 +2197,9 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 	action = match.arg(action)
 	if(!boolean.test){
 		if(action == "stop"){
-			stop(message)
+			stop(message, call. = FALSE)
 		} else if(action == "warning"){
-			warning(message)
+			warning(message, call. = FALSE)
 		}else{
 			message(message)			
 		}
@@ -2949,23 +2970,27 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @examples
 #' data(twinData) 
 #' df = umx_scale(twinData, varsToScale = NULL)
-#' plot(wt1 ~ wt2, data= df)
-
+#' plot(wt1 ~ wt2, data = df)
 umx_scale <- function(df, varsToScale = NULL, coerce = FALSE){
 	if(!is.data.frame(df)){
-		stop(paste0("umx_round takes a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+		if(is.numeric(df)){
+			return(scale(df))
+		}else{
+			stop(paste0("umx_scale takes a dataframe (or numeric vector) as its first argument. ", quote(df), " isn't a dataframe"))
+		}
+	}else{
+		# For each column, if numeric, scale
+		if(is.null(varsToScale)){
+			varsToScale = names(df)
+		}
+		if(coerce){
+			stop("coerce not implemented yet")
+		}
+		varsToScale = varsToScale[umx_is_numeric(df[,varsToScale])]
+		message("Vars I will scale are:", paste(varsToScale, ", "))
+		df[ ,varsToScale] = scale(df[ ,varsToScale])
+		return(df)
 	}
-	# For each column, if numeric, scale
-	if(is.null(varsToScale)){
-		varsToScale = names(df)
-	}
-	if(coerce){
-		stop("coerce not implemented yet")
-	}
-	varsToScale = varsToScale[umx_is_numeric(df[,varsToScale])]
-	message("Vars I will scale are:", paste(varsToScale, ", "))
-	df[ ,varsToScale] = scale(df[ ,varsToScale])
-	return(df)
 }
 
 umx_is_numeric <- function(df, cols = TRUE){
@@ -4493,5 +4518,33 @@ umx_get_optimizer <- function(model = NULL) {
 		mxOption(NULL, "Default optimizer")
 	} else {
 		mxOption(model, "Default optimizer")
+	}
+}
+
+#' umx_complete_dollar
+#'
+#' Modifies the RGUI to extend completion by adding a "$" and trying again when no stem completion is found.
+#' Implemeneted by Simon Urbanek!
+#'
+#' @export
+#' @family Miscellaneous Functions
+umx_complete_dollar <- function(){
+	if(umx_check_OS("OSX")){
+		RGUI = as.environment("tools:RGUI")
+		RGUI$rcompgen.completion <- function (x) {
+			comp <- function(x) {
+			    utils:::.assignLinebuffer(x)
+			    utils:::.assignEnd(nchar(x))
+			    utils:::.guessTokenFromLine()
+			    utils:::.completeToken()
+			    utils:::.CompletionEnv[["comps"]]
+			}
+			res <- unique(comp(x))
+			if (nzchar(x) && identical(res, x) && !identical(substr(x, nchar(x), nchar(x) + 1L), "$")) {
+			  rc <- comp(paste0(x, "$"))
+			  if (!identical(substr(rc, nchar(rc), nchar(rc) + 1L), "$")) res <- rc
+			}
+			res
+		}
 	}
 }

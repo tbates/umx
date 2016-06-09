@@ -3237,7 +3237,7 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' @return - table
 #' @export
 #' @family Reporting Functions
-#' @seealso - \code{\link{aggregate}}
+#' @seealso - \code{\link{umx_apply}}, \code{\link{aggregate}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
@@ -3257,7 +3257,7 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 	}
 	x_n = function(x){sum(!is.na(x))}
 
-	what = umx_default_option(what, c("mean_sd", "n"), check=FALSE)
+	what = umx_default_option(what, c("mean_sd", "n"), check = FALSE)
 	if(what == "mean_sd"){
 		FUN = mean_sd
 	} else if(what == "n"){
@@ -3397,6 +3397,15 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 		}
 		if(anyNA(obj)){
 			message("Some rows in dataframe had missing values.")
+		}
+	}else if( "matrix" == class(obj)){
+		# Assume these are correlations or similar numbers
+		cor_table = umx_apply(round, obj, digits = digits) # round corelations
+		output = data.frame(cor_table)
+		if(report == "html"){
+			umx_print(output, digits = digits, file = "tmp.html")
+		} else {
+			umx_print(output, digits = digits)
 		}
 	}else if( "lm" == class(obj)){
 		# report lm summary table

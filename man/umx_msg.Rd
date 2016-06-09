@@ -13,7 +13,7 @@ umx_msg(x)
 - NULL
 }
 \description{
-Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy
+Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy.
 }
 \examples{
 a = "brian"

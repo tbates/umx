@@ -16,7 +16,7 @@ umx_apply(FUN, of, by = "columns", ...)
 \item{...}{optional arguments to FUN, i.e., na.rm = T}
 }
 \value{
-- \code{\link{mxModel}}
+- object
 }
 \description{
 Tries to make apply more readable. Other functions to think of include
@@ -28,9 +28,11 @@ umx_apply(mean, of = mtcars, by = "columns")
 umx_apply(mean, by = "rows", of = mtcars[1:3,], na.rm = TRUE)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
+- \code{\link{umx_aggregate}}
+
 Other Misc: \code{\link{umxEval}},
   \code{\link{umx_APA_model_CI}},
   \code{\link{umx_add_variances}},

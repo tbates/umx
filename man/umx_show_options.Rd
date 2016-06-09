@@ -17,6 +17,7 @@ umx_show_options()
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{getOpenMx}},
-  \code{\link{umxJiggle}}, \code{\link{umx_pad}}
+  \code{\link{umxJiggle}},
+  \code{\link{umx_complete_dollar}}, \code{\link{umx_pad}}
 }
 

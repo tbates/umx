@@ -3711,26 +3711,6 @@ umxThresholdMatrix <- function(df, sep = NA, method = c("auto", "Mehta", "allFre
 # = Utility =
 # ===========
 
-umxCheck <- function(fit1){
-	# are all the manifests in paths?
-	# do the manifests have residuals?
-	if(any(duplicated(fit1@manifestVars))){
-		stop(paste("manifestVars contains duplicates:", duplicated(fit1@manifestVars)))
-	}
-	if(length(fit1@latentVars) == 0){
-		# Check none are duplicates, none in manifests
-		if(any(duplicated(fit1@latentVars))){
-			stop(paste("latentVars contains duplicates:", duplicated(fit1@latentVars)))
-		}
-		if(any(duplicated(c(fit1@manifestVars, fit1@latentVars)))){
-			stop(
-				paste("manifest and latent lists contain clashing names:", duplicated(c(fit1@manifestVars, fit1@latentVars)))
-			)
-		}
-	}
-	# Check manifests in dataframe
-}
-
 # ====================
 # = Parallel Helpers =
 # ====================
@@ -3984,8 +3964,8 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 	if(!is.null(v1m0)){
 		# TODO lbound ubound unlikely to be applied to two things, and can't affect result... error if they're not NULL?
-		if(!is.na(lbound)&&is.na(ubound)){
-			message("I lbounded var of ", v1m0, " @0")
+		if(!is.na(lbound) && is.na(ubound) && FALSE){
+				message("I lbounded var of ", v1m0, " @0")
 		}
 		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels, lbound = 0, ubound = ubound)
 		b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
@@ -3994,7 +3974,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 	if(!is.null(v.m.)){
 		# TODO lbound ubound unlikely to be applied to two things. lbound for var should be 0
-		if(!is.na(lbound)&&is.na(ubound)){
+		if(!is.na(lbound) && is.na(ubound) && FALSE){
 			message("I lbounded var of ", v.m. , " @0")
 		}
 		a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
@@ -4042,7 +4022,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			to     = var
 			arrows = 2
 			connect = "single"
-			if(is.na(lbound)){
+			if(is.na(lbound) && FALSE){
 				message("I lbounded var of ", omxQuotes(var), " @0")			
 				lbound  = 0
 			}
