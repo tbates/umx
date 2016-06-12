@@ -30,6 +30,7 @@
 #' 
 #' todo: detect ordinal items and switch to UWLS
 #' 
+#' @aliases umxFactanal umxEFA
 #' @param x Either 1: data, 2: A formula (not implemented yet), 3: A collection of variable names, or 4: A name for the model.
 #' @param factors Either number of factors to request or a vector of factor names.
 #' @param data A dataframe of manifest columns you are modeling
@@ -134,6 +135,9 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 	umxSummary(m1, digits = digits, report = report);
 	invisible(m1)
 }
+
+#' @export
+umxFactanal <- umxEFA
 
 #' umxTwoStage
 #'

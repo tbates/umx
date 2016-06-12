@@ -30,18 +30,29 @@ umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
 }
 \description{
 This function creates object summaries used in reporting models, effects, and summarizing data.
+
 1. Given an lm, will return a formated effect, including 95\% CI 
 in square brackets, for one of the effects (specified by name in se). e.g.:
+\code{\link{umxAPA}}(m1, "wt") yields:
 
-\code{\link{summaryAPA}}(m1, "wt")
 \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 
 2. Given a dataframe, summaryAPA will return a table of correlations, with
-the mean and SD of each variable as the last row.
+the mean and SD of each variable as the last row. So, 
+\code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )])} yields a table of 
+correlations, means and SDs thus:
 
-3. Given obj and se will return a CI based on 1.96 times the se.
+\tabular{lccc}{
+        \tab cyl         \tab  wt          \tab mpg          \cr
+cyl     \tab 1           \tab  0.78        \tab -0.85        \cr
+wt      \tab 0.78        \tab  1           \tab -0.87        \cr
+mpg     \tab -0.85       \tab  -0.87       \tab 1            \cr
+mean_sd \tab 6.19 (1.79) \tab  3.22 (0.98) \tab 20.09 (6.03)
+}
 
-4. Given only obj, will be treated as a p value as returned in APA format.
+3. Given obj and se, umxAPA returns a CI based on 1.96 times the se.
+
+4. Given only a number as obj will be treated as a p-value as returned in APA format.
 }
 \examples{
 # Generate a formatted string convey the effects in a model:  

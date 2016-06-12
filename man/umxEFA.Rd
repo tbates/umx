@@ -2,6 +2,7 @@
 % Please edit documentation in R/model_builders.r
 \name{umxEFA}
 \alias{umxEFA}
+\alias{umxFactanal}
 \title{umxEFA}
 \usage{
 umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
