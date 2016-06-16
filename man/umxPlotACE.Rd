@@ -6,8 +6,8 @@
 \alias{umxPlotACE}
 \title{umxPlotACE}
 \usage{
-umxPlotACE(x = NA, file = "name", digits = 2, showMeans = FALSE,
-  std = TRUE, ...)
+umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
+  showMeans = NULL, std = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
@@ -16,7 +16,9 @@ umxPlotACE(x = NA, file = "name", digits = 2, showMeans = FALSE,
 
 \item{digits}{How many decimals to include in path loadings (default is 2)}
 
-\item{showMeans}{Whether to show means paths (default is FALSE)}
+\item{means}{Whether to show means paths (default is FALSE)}
+
+\item{showMeans}{Deprecated: just use 'means = ' for simplicity of typing.}
 
 \item{std}{Whether to standardize the model (default is TRUE)}
 

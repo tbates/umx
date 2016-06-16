@@ -1378,7 +1378,7 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 			message("showing CIs in output not implemented yet: use summary(model) to view them in the mean time")
 		}
 		if(!is.na(file)){
-			umxPlotCP(model = stdFit, file = file, digits = digits, showMeans = FALSE, std = FALSE)
+			umxPlotCP(model = stdFit, file = file, digits = digits, means = FALSE, std = FALSE)
 		}
 		if(returnStd) {
 			return(stdFit)
@@ -1886,8 +1886,9 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param showFixed Whether to show fixed paths (defaults to TRUE)
-#' @param showMeans Whether to show means
+#' @param means Whether to show means or not (default = TRUE)
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
+#' @param showMeans Deprecated: just use 'means = '
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umx_set_plot_format}}
@@ -1904,10 +1905,15 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' plot(m1)
-plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), showFixed = TRUE, showMeans = TRUE, resid = c("circle", "line", "none"), ...) {
+plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), showFixed = TRUE, means = TRUE, resid = c("circle", "line", "none"), showMeans = NULL, ...) {
 	# ==========
 	# = Setup  =
 	# ==========
+	if(!is.null(showMeans)){
+		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+		means = showMeans
+	}	
+	
 	resid = match.arg(resid)
 	model = x # just to be clear that x is a model
 
@@ -1949,7 +1955,7 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 	# ================
 	# = handle means =
 	# ================
-	if(umx_has_means(model) & showMeans){
+	if(umx_has_means(model) & means){
 		out = paste0(out, "\n\t# Means paths\n")
 		# Add a triangle to the list of shapes
 		preOut = paste0(preOut, "\t one [shape = triangle];\n")
@@ -2008,7 +2014,7 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 	# ===================================
 	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
 
-	print("nb: see ?plot.MxModel for options - std, digits, file, showFixed, showMeans, resid= 'circle|line|none', pathLabels")
+	print("nb: see ?plot.MxModel for options - std, digits, file, showFixed, means, resid= 'circle|line|none', pathLabels")
 	xmu_dot_maker(model, file, digraph)
 } # end plot.MxModel
 
@@ -2020,8 +2026,9 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (default is 2)
-#' @param showMeans Whether to show means paths (default is FALSE)
+#' @param means Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
+#' @param showMeans Deprecated: just use 'means = ' for simplicity of typing.
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -2038,7 +2045,11 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' plot(m1)
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACE <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
+umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, showMeans = NULL, std = TRUE, ...) {
+	if(!is.null(showMeans)){
+		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+		means = showMeans
+	}
 	model = x # just to be clear that x is a model
 	if(std){
 		model = umx_standardize_ACE(model)
@@ -2064,10 +2075,10 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std
 			latents = append(latents, from)
 			show = T
 		} else { # means probably
-			if(showMeans){
-				show = T
+			if(means){
+				show = TRUE
 			} else {
-				show = F
+				show = FALSE
 			}
 			from   = thisParam;
 			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl=T) 
@@ -2106,8 +2117,9 @@ plot.MxModel.ACE <- umxPlotACE
 #' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (default is 2)
-#' @param showMeans Whether to show means paths (default is FALSE)
+#' @param means Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
+#' @param showMeans (older parameter - replace with means)
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -2132,7 +2144,11 @@ plot.MxModel.ACE <- umxPlotACE
 #' 	 suffix = "", autoRun = TRUE)
 #' plot(m1)
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACEcov <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
+umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = NULL, ...) {
+	if(!is.null(showMeans)){
+		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+		means = showMeans
+	}	
 	model = x # just to be clear that x is a model
 	# relies on 'a' not having its dimnames stripped off...
 	if(model$MZ$data$type == "raw"){
@@ -2163,7 +2179,7 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, 
 			target  = selDVs[target]
 			latents = append(latents, from)
 		} else { # means probably
-			if(showMeans){
+			if(means){
 				show = TRUE
 			} else {
 				show = FALSE
@@ -2281,8 +2297,9 @@ plot.MxModel.GxE <- umxPlotGxE
 #' @param x The Common Pathway \code{\link{mxModel}} to display graphically
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
-#' @param showMeans Whether to show means paths (defaults to FALSE)
+#' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
+#' @param showMeans deprecated: replace with just 'means'
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @family Twin Modeling Functions
@@ -2293,7 +2310,11 @@ plot.MxModel.GxE <- umxPlotGxE
 #' \dontrun{
 #' plot(yourCP_Model) # no need to remember a special name: plot works fine!
 #' }
-umxPlotCP <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
+umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = NULL, ...) {
+	if(!is.null(showMeans)){
+		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+		means = showMeans
+	}	
 	model = x # just to emphasise that x has to be a model 
 	if(std){
 		model = umx_standardize_CP(model)
@@ -2338,7 +2359,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std 
 		} else {
 			stop("I don't know what a ", thisParam, " is")
 		}
-		if(from == "one" & !showMeans ){
+		if(from == "one" & !means ){
 			# not adding means...
 		} else {
 			CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits)
@@ -2377,8 +2398,9 @@ plot.MxModel.CP <- umxPlotCP
 #' @param x The \code{\link{umxIP}} model to plot
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
-#' @param showMeans Whether to show means paths (defaults to FALSE)
+#' @param means Whether to show means paths (defaults to FALSE)
 #' @param std whether to standardize the model (defaults to TRUE)
+#' @param showMeans Deprecated: replace with just 'means' for simplicity.
 #' @param ... Optional additional parameters
 #' 
 #' @return - optionally return the dot code
@@ -2390,7 +2412,11 @@ plot.MxModel.CP <- umxPlotCP
 #' plot(model)
 #' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP  <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std = TRUE, ...) {
+umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = NULL, ...) {
+	if(!is.null(showMeans)){
+		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+		means = showMeans
+	}	
 	model = x # to emphasise that x has to be an umxIP model
 	if(std){
 		model = umx_standardize_IP(model)
@@ -2430,7 +2456,7 @@ umxPlotIP  <- function(x = NA, file = "name", digits = 2, showMeans = FALSE, std
 			stop("I don't know what a ", thisParam, " is")
 		}
 
-		if(!showMeans & from == "one"){
+		if(!means & from == "one"){
 			# not adding means...
 		} else {
 			CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits, verbose = F)

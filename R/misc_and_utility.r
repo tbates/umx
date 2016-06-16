@@ -3324,7 +3324,8 @@ umx_explode <- function(delimiter = character(), string) {
 
 #' umx_names
 #'
-#' Convenient equivalent of grep("fa[rl].*", names(df), value=T, ignore.case=T)
+#' Convenient equivalent of grep("fa[rl].*", names(df), value = TRUE, ignore.case = TRUE)
+#' Can handle dataframe (uses names), model (uses parameter names), or a vector of strings.
 #'
 #' @param df dataframe to get names from
 #' @param pattern = "find.*"
@@ -3343,11 +3344,17 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(mtcars, "^d") # "disp", drat
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
 umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
-	nameVector = names(df)
-	if(is.null(nameVector)){
-		stop(paste0("umx_names requires a dataframe or something else with names(), ", umx_object_as_str(df), " is a ", typeof(df)))
+	if(class(df)=="data.frame"){
+		nameVector = names(df)
+	} else if(class(df)=="character"){
+		nameVector = df
+	} else {
+		nameVector = parameters(df)
 	}
-	grep(pattern = pattern, x = names(df), ignore.case = ignore.case, perl = perl, value = value,
+	if(is.null(nameVector)){
+		stop(paste0("umx_names requires a dataframe or something else with names() or parameters(), ", umx_object_as_str(df), " is a ", typeof(df)))
+	}
+	grep(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, value = value,
 	     fixed = fixed, useBytes = useBytes, invert = invert)
 }
 

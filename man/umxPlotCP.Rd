@@ -5,8 +5,8 @@
 \alias{umxPlotCP}
 \title{umxPlotCP}
 \usage{
-umxPlotCP(x = NA, file = "name", digits = 2, showMeans = FALSE,
-  std = TRUE, ...)
+umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
+  std = TRUE, showMeans = NULL, ...)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link{mxModel}} to display graphically}
@@ -15,9 +15,11 @@ umxPlotCP(x = NA, file = "name", digits = 2, showMeans = FALSE,
 
 \item{digits}{How many decimals to include in path loadings (defaults to 2)}
 
-\item{showMeans}{Whether to show means paths (defaults to FALSE)}
+\item{means}{Whether to show means paths (defaults to FALSE)}
 
 \item{std}{Whether to standardize the model (defaults to TRUE)}
+
+\item{showMeans}{deprecated: replace with just 'means'}
 
 \item{...}{Optional additional parameters}
 }

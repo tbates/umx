@@ -5,8 +5,8 @@
 \alias{umxPlotIP}
 \title{umxPlotIP}
 \usage{
-umxPlotIP(x = NA, file = "name", digits = 2, showMeans = FALSE,
-  std = TRUE, ...)
+umxPlotIP(x = NA, file = "name", digits = 2, means = FALSE,
+  std = TRUE, showMeans = NULL, ...)
 }
 \arguments{
 \item{x}{The \code{\link{umxIP}} model to plot}
@@ -15,9 +15,11 @@ umxPlotIP(x = NA, file = "name", digits = 2, showMeans = FALSE,
 
 \item{digits}{How many decimals to include in path loadings (defaults to 2)}
 
-\item{showMeans}{Whether to show means paths (defaults to FALSE)}
+\item{means}{Whether to show means paths (defaults to FALSE)}
 
 \item{std}{whether to standardize the model (defaults to TRUE)}
+
+\item{showMeans}{Deprecated: replace with just 'means' for simplicity.}
 
 \item{...}{Optional additional parameters}
 }

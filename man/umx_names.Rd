@@ -28,7 +28,8 @@ umx_names(df, pattern = ".*", ignore.case = TRUE, perl = FALSE,
 - vector of matches
 }
 \description{
-Convenient equivalent of grep("fa[rl].*", names(df), value=T, ignore.case=T)
+Convenient equivalent of grep("fa[rl].*", names(df), value = TRUE, ignore.case = TRUE)
+Can handle dataframe (uses names), model (uses parameter names), or a vector of strings.
 }
 \examples{
 umx_names(mtcars, "mpg") #"mpg" "cyl" "disp" "hp" "drat" "wt" "qsec" "vs" "am" "gear" "carb"

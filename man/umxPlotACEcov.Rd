@@ -5,8 +5,8 @@
 \alias{umxPlotACEcov}
 \title{umxPlotACEcov}
 \usage{
-umxPlotACEcov(x = NA, file = "name", digits = 2, showMeans = FALSE,
-  std = TRUE, ...)
+umxPlotACEcov(x = NA, file = "name", digits = 2, means = FALSE,
+  std = TRUE, showMeans = NULL, ...)
 }
 \arguments{
 \item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
@@ -15,9 +15,11 @@ umxPlotACEcov(x = NA, file = "name", digits = 2, showMeans = FALSE,
 
 \item{digits}{How many decimals to include in path loadings (default is 2)}
 
-\item{showMeans}{Whether to show means paths (default is FALSE)}
+\item{means}{Whether to show means paths (default is FALSE)}
 
 \item{std}{Whether to standardize the model (default is TRUE)}
+
+\item{showMeans}{(older parameter - replace with means)}
 
 \item{...}{Additional (optional) parameters}
 }
