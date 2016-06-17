@@ -5,11 +5,12 @@
 \title{umxPath: Flexible specification of sem paths}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
-  unique.bivariate = NULL, formative = NULL, Cholesky = NULL,
-  means = NULL, v1m0 = NULL, v.m. = NULL, fixedAt = NULL,
+  unique.bivariate = NULL, forms = NULL, Cholesky = NULL, means = NULL,
+  v1m0 = NULL, v.m. = NULL, v0m0 = NULL, fixedAt = NULL,
   freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs",
   "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1,
-  free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA)
+  free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA,
+  hasMeans = NULL)
 }
 \arguments{
 \item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
@@ -22,10 +23,11 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 \item{cov}{equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)}
 
-\item{unique.bivariate}{equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)}
+\item{unique.bivariate}{equivalent to setting "connect = "unique.bivariate", arrows = 2".
+nb: from, to, and with must be left empty (their default)}
 
-\item{formative}{Paired with to, this will build a formative variable, from the formatives, allowing these to
-covary, and to the latent "to" variable, fixing its variance to zero.}
+\item{forms}{Paired with from, this will build a formative variable. from vars form the latent.
+Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate among froms.}
 
 \item{Cholesky}{Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.}
 
@@ -34,6 +36,8 @@ covary, and to the latent "to" variable, fixing its variance to zero.}
 \item{v1m0}{variance of 1 and mean of zero in one call.}
 
 \item{v.m.}{variance and mean, both free.}
+
+\item{v0m0}{variance and mean, both fixed at zero.}
 
 \item{fixedAt}{Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)}
 
@@ -54,6 +58,8 @@ covary, and to the latent "to" variable, fixing its variance to zero.}
 \item{lbound}{lower bounds for each path value}
 
 \item{ubound}{upper bounds for each path value}
+
+\item{hasMeans}{Used in 'forms' case to know whether the data have means or not.}
 }
 \value{
 - 1 or more \code{\link{mxPath}}s

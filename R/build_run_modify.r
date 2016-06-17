@@ -3795,13 +3795,15 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param with same as "to = vars, arrows = 2". nb: from, to= and var=  must be left empty (their default)
 #' @param var equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
-#' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2". nb: from, to, and with must be left empty (their default)
-#' @param formative Paired with to, this will build a formative variable, from the formatives, allowing these to
-#' covary, and to the latent "to" variable, fixing its variance to zero.
+#' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2".
+#' nb: from, to, and with must be left empty (their default)
+#' @param forms Paired with from, this will build a formative variable. from vars form the latent.
+#' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate among froms.
 #' @param Cholesky Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
 #' @param v1m0 variance of 1 and mean of zero in one call.
 #' @param v.m. variance and mean, both free.
+#' @param v0m0 variance and mean, both fixed at zero.
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
 #' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
 #' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
@@ -3812,6 +3814,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param labels labels for each path
 #' @param lbound lower bounds for each path value
 #' @param ubound upper bounds for each path value
+#' @param hasMeans Used in 'forms' case to know whether the data have means or not.
 #' @return - 1 or more \code{\link{mxPath}}s
 #' @export
 #' @family Model Building Functions
@@ -3868,75 +3871,26 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # # manifests is a reserved word, as is latents.
 #' # # It allows the string syntax to use the manifestVars variable
 #' # umxPath("A -> manifests") 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, formative = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, forms = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
-	if(!is.null(from)){
-		if(length(from) > 1){
-			isSEMstyle = grepl("[<>]", x = from[1])	
-		} else {
-			isSEMstyle = grepl("[<>]", x = from)				
-		}
-		if(isSEMstyle){
-			stop("sem-style string syntax not yet implemented. In the mean time, try the other features, like with, var, means = , fixedAt = , fixFirst = ")
-			if("from contains an arrow"){
-				# parse into paths
-			} else {
-				if(!is.null(with)){
-					to = with
-					arrows = 2
-					connect = "single"
-				} else {
-					to = to
-					arrows = 1
-					connect = "single"
-				}
-			}	
-			a = "A ->B;A<-B; A>B; A --> B
-			A<->B"
-			# remove newlines, replacing with ;
-			allOneLine = gsub("\n+", ";", a, ignore.case = TRUE)
-			# regularizedArrows = gsub("[ \t]?^<-?>[ \t]?", "->", allOneLine, ignore.case = TRUE)
-			# regularizedArrows = gsub("[ \t]?-?>[ \t]?", "<-", regularizedArrows, ignore.case = TRUE)
-
-			# TODO remove duplicate ; 
-			pathList = umx_explode(";", allOneLine)
-			for (aPath in pathList) {
-				if(length(umx_explode("<->", aPath))==3){
-					# bivariate
-					parts = umx_explode("<->", aPath)
-					# not finished, obviously...
-					mxPath(from = umx_trim(parts[1]))
-				} else if(length(umx_explode("->", aPath))==3){
-					# from to
-				} else if(length(umx_explode("<-", aPath))==3){
-					# to from
-				}else{
-					# bad line
-				}
-			}
-			umx_explode("", a)
-		}
-	}
+	xmu_string2path(from)
 	n = 0
-
-	for (i in list(with, cov, var, means, unique.bivariate, v.m. , v1m0, Cholesky)) {
+	for (i in list(with, cov, var, forms, means, unique.bivariate, v.m. , v1m0, v0m0, Cholesky)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, means, unique.bivariate, v1m0, v.m. or Cholesky can be set: Use at one time")
+		stop("At most one of with, cov, var, forms, means, unique.bivariate, v1m0, v.m., v0m0, or Cholesky can be set: Use at one time")
 	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
 			stop("You must set at least 'from'")
 		}	
-	} else {
-		# n = 1
 	}
 
 	if(!is.null(Cholesky)){
 		if(!(length(to) >= length(Cholesky))){
 			stop("Must have at least as many 'to' vars as latents for Cholesky: you gave me ",
-			length(to), " to vars and ", length(Cholesky), " Choleksy latents")
+			length(to), " to vars and ", length(Cholesky), " Cholesky latents")
 		}
 		if(!is.na(labels)){
 			stop("I don't yet support labels for Cholesky")
@@ -3980,6 +3934,44 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
 		b = mxPath(from = "one", to = v.m., free = TRUE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
 		return(list(a,b))
+	}
+
+	if(!is.null(v0m0)){
+		a = mxPath(from = v0m0, arrows = 2, free = FALSE, values = 0)
+		b = mxPath(from = "one", to = v0m0, free = FALSE, values = 0)
+		return(list(a,b))
+	}
+
+	if(!is.null(forms)){
+		# ====================
+		# = Handle formative =
+		# ====================
+		# http://davidakenny.net/cm/mvar.htm
+		if(is.null(from)){
+			stop("You have to have offer up at least 3 unique 'from' variables to make a formative")
+		}
+		if(is.null(hasMeans)){
+			message("You have to set hasMeans so I know whether to make them for this formative: Assuming TRUE")
+			hasMeans = TRUE
+		}
+		a = unlist(umxPath(unique.bivariate = from))
+		b = unlist(umxPath(from, to = forms, firstAt = 1))
+		if(hasMeans){
+			c = mxPath(from = forms, arrows = 2, free = FALSE, values = 0)
+			d = mxPath(from = "one", to = forms, free = FALSE, values = 0)
+			e = mxPath(from = from, arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
+			f = mxPath(from = "one", to = from, free = TRUE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
+			# c = umxPath(v0m0 = forms)
+			# d = umxPath(v.m. = from)
+			return(list(a, b, c, d, e, f))
+		} else {
+			c = mxPath(from = forms, arrows = 2, free = FALSE, values = 0)
+			e = mxPath(from = from, arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
+
+			# c = umxPath(var = forms, fixedAt = 0)
+			# d = umxPath(var = from)
+			return(list(a, b, c, e))
+		}
 	}
 
 	if(!is.null(with)){

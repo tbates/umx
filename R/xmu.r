@@ -893,3 +893,56 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 	}
 	return(stringIn)
 }
+
+# handle sem-style strings
+
+xmu_string2path <- function(from) {
+	if(!is.null(from)){
+		if(length(from) > 1){
+			isSEMstyle = grepl("[<>]", x = from[1])	
+		} else {
+			isSEMstyle = grepl("[<>]", x = from)				
+		}
+		if(isSEMstyle){
+			stop("sem-style string syntax not yet implemented. In the mean time, try the other features, like with, var, means = , fixedAt = , fixFirst = ")
+
+			if("from contains an arrow"){
+				# parse into paths
+			} else {
+				if(!is.null(with)){
+					to = with
+					arrows = 2
+					connect = "single"
+				} else {
+					to = to
+					arrows = 1
+					connect = "single"
+				}
+			}	
+			a = "A ->B;A<-B; A>B; A --> B
+			A<->B"
+			# remove newlines, replacing with ;
+			allOneLine = gsub("\n+", ";", a, ignore.case = TRUE)
+			# regularizedArrows = gsub("[ \t]?^<-?>[ \t]?", "->", allOneLine, ignore.case = TRUE)
+			# regularizedArrows = gsub("[ \t]?-?>[ \t]?", "<-", regularizedArrows, ignore.case = TRUE)
+
+			# TODO remove duplicate ; 
+			pathList = umx_explode(";", allOneLine)
+			for (aPath in pathList) {
+				if(length(umx_explode("<->", aPath))==3){
+					# bivariate
+					parts = umx_explode("<->", aPath)
+					# not finished, obviously...
+					mxPath(from = umx_trim(parts[1]))
+				} else if(length(umx_explode("->", aPath))==3){
+					# from to
+				} else if(length(umx_explode("<-", aPath))==3){
+					# to from
+				}else{
+					# bad line
+				}
+			}
+			umx_explode("", a)
+		}
+	}
+}
