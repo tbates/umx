@@ -4016,16 +4016,16 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		# ==============
 		# = handle var =
 		# ==============
-		if(!is.null(from) | !is.null(to)){
+		if(!is.null(from) || !is.null(to)){
 			stop("To use 'var = ', 'from' and 'to' should be empty")
 		} else {
 			from   = var
 			to     = var
 			arrows = 2
 			connect = "single"
-			if(is.na(lbound) && FALSE){
-				message("I lbounded var of ", omxQuotes(var), " @0")			
+			if(is.na(lbound)){
 				lbound  = 0
+				# message("I lbounded var of ", omxQuotes(var), " @0")
 			}
 		}
 	} else if(!is.null(means)){
