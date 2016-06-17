@@ -3954,24 +3954,33 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			message("You have to set hasMeans so I know whether to make them for this formative: Assuming TRUE")
 			hasMeans = TRUE
 		}
-		a = unlist(umxPath(unique.bivariate = from))
-		b = unlist(umxPath(from, to = forms, firstAt = 1))
+
+		if(length(forms) > 1){
+			# TODO think about this
+			stop("It's tricky to setup multiple forms vars in 1 line. email if you'd like this to work..")
+		} else {
+			numPaths  = length(forms)
+			free      = rep(TRUE, numPaths)
+			free[1]   = FALSE
+			values    = rep(NA, numPaths)
+			values[1] = 1
+		}
+
+		a = mxPath(from = from, connect = "unique.bivariate")
+		b = mxPath(from = from, to = forms, free = free, values = values)
 		if(hasMeans){
 			c = mxPath(from = forms, arrows = 2, free = FALSE, values = 0)
 			d = mxPath(from = "one", to = forms, free = FALSE, values = 0)
 			e = mxPath(from = from, arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
 			f = mxPath(from = "one", to = from, free = TRUE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
-			# c = umxPath(v0m0 = forms)
-			# d = umxPath(v.m. = from)
-			return(list(a, b, c, d, e, f))
+			x = list(a, b, c, d, e, f)
 		} else {
 			c = mxPath(from = forms, arrows = 2, free = FALSE, values = 0)
 			e = mxPath(from = from, arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
-
-			# c = umxPath(var = forms, fixedAt = 0)
-			# d = umxPath(var = from)
-			return(list(a, b, c, e))
+			x = list(a, b, c, e)
 		}
+		# return(c(a, b))
+		return(x)
 	}
 
 	if(!is.null(with)){
