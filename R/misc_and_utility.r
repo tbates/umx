@@ -72,13 +72,17 @@ umx_set_plot_format <- function(umx.plot.format = NULL) {
 #' umx_set_table_format("latex")
 #' umx_set_table_format("html")
 #' umx_set_table_format("markdown")
+#' umx_set_table_format("") # get available options
 #' umx_set_table_format(old)    # reinstate
 umx_set_table_format <- function(knitr.table.format = NULL) {
 	if(is.null(knitr.table.format)) {
 		getOption("knitr.table.format")
 	} else {
-		umx_check(knitr.table.format %in% c("latex", "html", "markdown", "pandoc", "rst"), "stop")
-		options("knitr.table.format" = knitr.table.format)
+		if(!knitr.table.format %in% c("latex", "html", "markdown", "pandoc", "rst")){
+			message("legal options are latex, html, markdown, pandoc, rst")
+		} else {
+			options("knitr.table.format" = knitr.table.format)
+		}
 	}
 } # end umx_set_table_format
 

@@ -230,10 +230,10 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' }
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run")) {
-	dot.items     = list(...) # grab all the dot items: mxPaths, etc...
+	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
 	legalThresholdsOptions = c("deviationBased", "direct", "ignore", "left_censored")
-	thresholds    = match.arg(thresholds)
+	thresholds = match.arg(thresholds)
 
 	if(typeof(model) == "character"){
 		if(is.na(name)){

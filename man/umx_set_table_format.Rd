@@ -22,6 +22,7 @@ old = umx_set_table_format() # get existing value
 umx_set_table_format("latex")
 umx_set_table_format("html")
 umx_set_table_format("markdown")
+umx_set_table_format("") # get available options
 umx_set_table_format(old)    # reinstate
 }
 \references{
