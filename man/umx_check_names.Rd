@@ -4,16 +4,19 @@
 \alias{umx_check_names}
 \title{umx_check_names}
 \usage{
-umx_check_names(namesNeeded, data, die = TRUE, no_others = FALSE)
+umx_check_names(namesNeeded, data, die = TRUE, no_others = FALSE,
+  intersection = FALSE)
 }
 \arguments{
-\item{namesNeeded}{list of variable names to find}
+\item{namesNeeded}{list of variable names to find (a dataframe is also allowed)}
 
 \item{data}{data.frame (or matrix) to search in for names}
 
 \item{die}{whether to die if the check fails (defaults to TRUE)}
 
 \item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)}
+
+\item{intersection}{Show the intersection of names}
 }
 \description{
 Check if a list of names are in the names() of a dataframe (or the of a matrix)

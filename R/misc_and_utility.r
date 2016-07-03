@@ -2215,10 +2215,11 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #'
 #' Check if a list of names are in the names() of a dataframe (or the of a matrix)
 #'
-#' @param namesNeeded list of variable names to find
+#' @param namesNeeded list of variable names to find (a dataframe is also allowed)
 #' @param data data.frame (or matrix) to search in for names
 #' @param die whether to die if the check fails (defaults to TRUE)
 #' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)
+#' @param intersection Show the intersection of names
 #' @family Test
 #' @export
 #' @family Building Functions
@@ -2235,7 +2236,14 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' \dontrun{
 #' umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 #' }
-umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
+umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE, intersection = FALSE){
+	if(is.data.frame(namesNeeded)){
+		namesNeeded = names(namesNeeded)
+	}else if(is.matrix(namesNeeded)){
+		namesNeeded = dimnames(namesNeeded)[[2]]
+	} else if (!typeof(namesNeeded)=="character"){
+		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a", typeof(namesInData))
+	}
 	if(is.data.frame(data)){
 		namesInData = names(data)
 	}else if(is.matrix(data)){
@@ -2243,25 +2251,30 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE){
 	} else {
 		stop("data has to be a dataframe or matrix. You gave me a", typeof(data))
 	}
-	namesFound = (namesNeeded %in% namesInData)
-	if(any(!namesFound)){
-		if(die){
-			# print(namesInData[namesFound])
-			stop("Not all required names were found in the data. Missing were:\n",
-				paste(namesNeeded[!namesFound], collapse = "; ")
-			)
-		} else {
-			return(FALSE)
-		}
-	} else if(no_others & !setequal(namesInData, namesNeeded)){
-		if(die){
-			stop("Data contains columns other than those needed. Superfluous columns were:\n", 
-				paste(namesInData[!namesInData %in% namesNeeded], collapse = "; "))
-		} else {
-			return(FALSE)
-		}
+	if(intersection){
+		namesFound = intersect(namesNeeded, namesInData)
+		message(paste(namesFound, ", "))
 	} else {
-		return(TRUE)
+		namesFound = (namesNeeded %in% namesInData)
+		if(any(!namesFound)){
+			if(die){
+				# print(namesInData[namesFound])
+				stop("Not all required names were found in the data. Missing were:\n",
+					paste(namesNeeded[!namesFound], collapse = "; ")
+				)
+			} else {
+				return(FALSE)
+			}
+		} else if(no_others & !setequal(namesInData, namesNeeded)){
+			if(die){
+				stop("Data contains columns other than those needed. Superfluous columns were:\n", 
+					paste(namesInData[!namesInData %in% namesNeeded], collapse = "; "))
+			} else {
+				return(FALSE)
+			}
+		} else {
+			return(TRUE)
+		}
 	}
 }
 
