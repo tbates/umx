@@ -4557,5 +4557,10 @@ umx_complete_dollar <- function(){
 			}
 			res
 		}
+	}else{
+		message("only works on OS X")
 	}
 }
+
+
+
