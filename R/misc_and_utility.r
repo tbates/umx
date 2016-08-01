@@ -178,17 +178,17 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 	  manifestVars = c(indicators),
 	  latentVars   = c(latents, "dummy1"),
 	  mxPath(latents1 , to = indicators1, connect = "all.pairs", values = .2),
-		mxPath(latents2 , to = indicators2, connect = "all.pairs", values = .2),
-		mxPath(latents3 , to = indicators3, connect = "all.pairs", values = .2),
+		umxPath(latents2 , to = indicators2, connect = "all.pairs", values = .2),
+		umxPath(latents3 , to = indicators3, connect = "all.pairs", values = .2),
 		umxPath(latents1, to = indicators1[1], fixedAt = 1),
 		umxPath(latents2, to = indicators2[1], fixedAt = 1),
 		umxPath(latents3, to = indicators3[1], fixedAt = 1),
-		mxPath(var = latents   , values = .8),
-		mxPath(var = indicators, values = .8),
-		mxPath(c("F1", "F2"), to = "F3", values = .2, labels = c("b11", "b12")),
-		mxPath("F1",to = "F2", values = .1, labels = "cF1F2"),
-		mxPath(c("F1", "F2"),to = "dummy1", values = .2, labels = c("b21", "b22")),
-		mxPath("dummy1",to="F3", free = FALSE, labels = "data.Z"),
+		umxPath(var = latents   , values = .8),
+		umxPath(var = indicators, values = .8),
+		umxPath(c("F1", "F2"), to = "F3", values = .2, labels = c("b11", "b12")),
+		umxPath("F1",to = "F2", values = .1, labels = "cF1F2"),
+		umxPath(c("F1", "F2"),to = "dummy1", values = .2, labels = c("b21", "b22")),
+		umxPath("dummy1",to="F3", free = FALSE, labels = "data.Z"),
 		umxPath(means = indicators, fixedAt = 0),
 		umxPath(means = latents, values = .1),
 		mxData(latentMultiRegModerated1, type = "raw")
@@ -1504,7 +1504,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 	return(isTarget)
 }
 
-#' umx_sql_from_excel
+#' umx_make_sql_from_excel
 #'
 #' Unlikely to be of use to anyone but the package author :-)
 #' Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
@@ -1512,9 +1512,9 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' 
 #' The file name should be the name of the test.
 #' Columns should be headed:
-#' itemText	direction	scale	type	then	whatever	you	need	for	response	options
+#' itemText	direction	scale	type	[optional	response	options]
 #' 
-#' The SQL fields expected are:
+#' The SQL fields generated are:
 #' itemID, test, native_item_number, item_text, direction, scale, format, author
 #'
 #' @param theFile The xlsx file to read. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose file dialog will be thrown.
@@ -1524,10 +1524,13 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' umx_sql_from_excel() # Using file selected in front-most Finder window
-#' umx_sql_from_excel("~/Desktop/test.xlsx") # provide a path
+#' # An example xcel spreadsheet
+#' fp = system.file("data", "GQ6.sql.xlsx", package = "umx")
+#' umx_open(fp)
+#' umx_make_sql_from_excel() # Using file selected in front-most Finder window
+#' umx_make_sql_from_excel("~/Desktop/test.xlsx") # provide a path
 #' }
-umx_sql_from_excel <- function(theFile = "Finder") {
+umx_make_sql_from_excel <- function(theFile = "Finder") {
 	if(theFile == "Finder"){
 		umx_check_OS("OSX")
 		theFile = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (selection as alias)'")
@@ -1539,9 +1542,16 @@ umx_sql_from_excel <- function(theFile = "Finder") {
 		umx_check(file.exists(theFile), message= paste0("file:'", theFile, "' does not exist..."))
 	}
 	# remove suffix (i.e., .xlsx )
-	testName = umx_trim(basename(theFile), "\\.[^\\.]+$")
+	testName = umx_trim(basename(theFile), "\\..+$")
 	
-	df <- gdata::read.xls(theFile, sheet=1, stringsAsFactors= FALSE)
+	df <- gdata::read.xls(theFile, sheet = 1, stringsAsFactors= FALSE)
+
+	expect8 = c("itemText", "direction", "scale", "type")
+	if(!all(expect8 %in% names(df))){
+		stop(paste("I expected the following required column names:\n", omxQuotes(expect8), "\nYou gave me:", 
+		    omxQuotes(names(df))), call. = FALSE)
+	}
+
 	nItems = dim(df)[1]
 	nCols  = dim(df)[2]
 
@@ -4570,5 +4580,10 @@ umx_complete_dollar <- function(){
 			}
 			res
 		}
+	}else{
+		message("only works on OS X")
 	}
 }
+
+
+

@@ -398,6 +398,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			m1 = umxRAM2Ordinal(m1, verbose = T, thresholds = thresholds, autoRun = FALSE)
 		}
 	}
+	m1 = omxAssignFirstParameters(m1)
 	if(autoRun){
 		m1 = mxRun(m1)
 		umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
