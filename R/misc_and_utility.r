@@ -1504,7 +1504,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 	return(isTarget)
 }
 
-#' umx_sql_from_excel
+#' umx_make_sql_from_excel
 #'
 #' Unlikely to be of use to anyone but the package author :-)
 #' Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
@@ -1512,9 +1512,9 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' 
 #' The file name should be the name of the test.
 #' Columns should be headed:
-#' itemText	direction	scale	type	then	whatever	you	need	for	response	options
+#' itemText	direction	scale	type	[optional	response	options]
 #' 
-#' The SQL fields expected are:
+#' The SQL fields generated are:
 #' itemID, test, native_item_number, item_text, direction, scale, format, author
 #'
 #' @param theFile The xlsx file to read. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose file dialog will be thrown.
@@ -1524,10 +1524,13 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' umx_sql_from_excel() # Using file selected in front-most Finder window
-#' umx_sql_from_excel("~/Desktop/test.xlsx") # provide a path
+#' # An example xcel spreadsheet
+#' fp = system.file("data", "GQ6.sql.xlsx", package = "umx")
+#' umx_open(fp)
+#' umx_make_sql_from_excel() # Using file selected in front-most Finder window
+#' umx_make_sql_from_excel("~/Desktop/test.xlsx") # provide a path
 #' }
-umx_sql_from_excel <- function(theFile = "Finder") {
+umx_make_sql_from_excel <- function(theFile = "Finder") {
 	if(theFile == "Finder"){
 		umx_check_OS("OSX")
 		theFile = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (selection as alias)'")
@@ -1539,9 +1542,16 @@ umx_sql_from_excel <- function(theFile = "Finder") {
 		umx_check(file.exists(theFile), message= paste0("file:'", theFile, "' does not exist..."))
 	}
 	# remove suffix (i.e., .xlsx )
-	testName = umx_trim(basename(theFile), "\\.[^\\.]+$")
+	testName = umx_trim(basename(theFile), "\\..+$")
 	
-	df <- gdata::read.xls(theFile, sheet=1, stringsAsFactors= FALSE)
+	df <- gdata::read.xls(theFile, sheet = 1, stringsAsFactors= FALSE)
+
+	expect8 = c("itemText", "direction", "scale", "type")
+	if(!all(expect8 %in% names(df))){
+		stop(paste("I expected the following required column names:\n", omxQuotes(expect8), "\nYou gave me:", 
+		    omxQuotes(names(df))), call. = FALSE)
+	}
+
 	nItems = dim(df)[1]
 	nCols  = dim(df)[2]
 
