@@ -41,6 +41,7 @@
 # suppress NOTE with a spurious importFrom in the namespace
 #' @importFrom numDeriv jacobian
 #' @importFrom polycor hetcor
+#' @importFrom sfsmisc nearcor
 #' @importFrom parallel detectCores
 #' @importFrom stats C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm

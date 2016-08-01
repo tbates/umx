@@ -23,10 +23,11 @@ Imports:
     polycor,
     R2HTML,
     RCurl,
+    sfsmisc,
     utils
 Suggests:
     devtools,
-	testthat,
+    testthat,
     gdata
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
