@@ -3799,6 +3799,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2".
 #' nb: from, to, and with must be left empty (their default)
+#' @param unique.pairs equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)
 #' @param forms Paired with from, this will build a formative variable. from vars form the latent.
 #' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate among froms.
 #' @param Cholesky Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.
@@ -3827,6 +3828,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # Some examples of paths with umxPath
 #' umxPath("A", to = "B") # One-headed path from A to B
 #' umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @@1
+#' umxPath("A", to = c("B", "C"), fixedAt = 1:2) # same, with more than 1 value
 #' umxPath("A", to = LETTERS[2:4], firstAt = 1) # Fix only the first path, others free
 #' umxPath(var = "A") # Give a variance to A
 #' umxPath(var = "A", fixedAt = 1) # Give a variance, fixed at 1
@@ -3839,6 +3841,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 #' umxPath(cov = c("A", "B"))  # Covariance A <-> B
 #' umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
+#' umxPath(unique.pairs = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 #' umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 #' # A worked example
 #' data(demoOneFactor)
@@ -3873,15 +3876,15 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # # manifests is a reserved word, as is latents.
 #' # # It allows the string syntax to use the manifestVars variable
 #' # umxPath("A -> manifests") 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, forms = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, unique.pairs = NULL, forms = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
 	xmu_string2path(from)
 	n = 0
-	for (i in list(with, cov, var, forms, means, unique.bivariate, v.m. , v1m0, v0m0, Cholesky)) {
+	for (i in list(with, cov, var, forms, means, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, Cholesky)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, forms, means, unique.bivariate, v1m0, v.m., v0m0, or Cholesky can be set: Use at one time")
+		stop("At most one of with, cov, var, forms, means, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, or Cholesky can be set: Use at one time")
 	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
@@ -3925,7 +3928,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		}
 		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels, lbound = 0, ubound = ubound)
 		b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
-		return(list(a,b))
+		return(list(a, b))
 	}
 
 	if(!is.null(v.m.)){
@@ -3935,13 +3938,13 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		}
 		a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
 		b = mxPath(from = "one", to = v.m., free = TRUE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
-		return(list(a,b))
+		return(list(a, b))
 	}
 
 	if(!is.null(v0m0)){
 		a = mxPath(from = v0m0, arrows = 2, free = FALSE, values = 0)
 		b = mxPath(from = "one", to = v0m0, free = FALSE, values = 0)
-		return(list(a,b))
+		return(list(a, b))
 	}
 
 	if(!is.null(forms)){
@@ -4064,6 +4067,27 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			arrows  = 2
 			connect = "unique.bivariate"
 		}
+	} else if(!is.null(unique.pairs)){
+		# ===========================
+		# = Handle unique.pairs =
+		# ===========================
+		if(length(unique(unique.pairs)) < 2){
+			stop("You have to have at least 2 unique variables to use unique.pairs")
+		}
+		if(!is.null(from)){
+			stop("To use unique.pairs, 'from=' should be empty.\n",
+			"Just say 'unique.pairs = c(\"X\",\"Y\").'\n",
+			"or 'unique.pairs = c(\"X\",\"Y\"), to = \"Z\"")
+		} else {
+			if(is.null(to)){
+				to = NA				
+			} else {
+				to = to	
+			}
+			from    = unique.pairs
+			arrows  = 2
+			connect = "unique.pairs"
+		}
 	} else {
 		if(is.null(from) && is.null(to)){
 			stop("You don't seem to have requested any paths.\n",
@@ -4079,9 +4103,9 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			connect = connect
 		}
 	}
-	# ====================================
-	# = From and to have now been set... =
-	# ====================================
+	# ==============================================
+	# = From, to, and connect have now been set... =
+	# ==============================================
 
 	# ==============================
 	# = Handle fixedAt and firstAt =
