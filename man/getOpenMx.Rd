@@ -23,7 +23,6 @@ getOpenMx()
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{umxJiggle}},
-  \code{\link{umx_complete_dollar}}, \code{\link{umx_pad}},
-  \code{\link{umx_show_options}}
+  \code{\link{umx_pad}}, \code{\link{umx_show_options}}
 }
 

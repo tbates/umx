@@ -28,8 +28,6 @@ umx_pad(1:3, 3)
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{getOpenMx}},
-  \code{\link{umxJiggle}},
-  \code{\link{umx_complete_dollar}},
-  \code{\link{umx_show_options}}
+  \code{\link{umxJiggle}}, \code{\link{umx_show_options}}
 }
 

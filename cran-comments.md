@@ -1,9 +1,9 @@
 ## Changes
-* New functions, new plot routines, sundry improvements and bug fixes.
+* New functions, sundry improvements and bug fixes.
 ## Test environments
-* OS X 10.11.4, R version 3.3.0
+* OS X 10.12.0, R version 3.3.1
 * Win (64-bit) R Under development (unstable) (2016-05-14 r70617)
-* 64-bit Linux (Scientific Linux 6), R 3.3.0
+* 64-bit Linux (Scientific Linux 6), R 3.3.1
 
 ## R CMD check results
 
