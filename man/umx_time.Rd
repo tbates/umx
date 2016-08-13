@@ -54,8 +54,9 @@ umx_time('stop')
 }
 \seealso{
 Other Reporting Functions: \code{\link{loadings.MxModel}},
-  \code{\link{umxAPA}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
-  \code{\link{umx_show}}, \code{\link{umx}}
+  \code{\link{mxSE}}, \code{\link{umxAPA}},
+  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
+  \code{\link{umx_print}}, \code{\link{umx_show}},
+  \code{\link{umx}}
 }
 

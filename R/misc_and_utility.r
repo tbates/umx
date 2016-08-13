@@ -177,7 +177,7 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 	test1 <- mxModel("threeLatentWithModerator", type = "RAM",
 	  manifestVars = c(indicators),
 	  latentVars   = c(latents, "dummy1"),
-	  mxPath(latents1 , to = indicators1, connect = "all.pairs", values = .2),
+	  umxPath(latents1 , to = indicators1, connect = "all.pairs", values = .2),
 		umxPath(latents2 , to = indicators2, connect = "all.pairs", values = .2),
 		umxPath(latents3 , to = indicators3, connect = "all.pairs", values = .2),
 		umxPath(latents1, to = indicators1[1], fixedAt = 1),
@@ -188,7 +188,7 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 		umxPath(c("F1", "F2"), to = "F3", values = .2, labels = c("b11", "b12")),
 		umxPath("F1",to = "F2", values = .1, labels = "cF1F2"),
 		umxPath(c("F1", "F2"),to = "dummy1", values = .2, labels = c("b21", "b22")),
-		umxPath("dummy1",to="F3", free = FALSE, labels = "data.Z"),
+		umxPath("dummy1",to = "F3", free = FALSE, labels = "data.Z"),
 		umxPath(means = indicators, fixedAt = 0),
 		umxPath(means = latents, values = .1),
 		mxData(latentMultiRegModerated1, type = "raw")

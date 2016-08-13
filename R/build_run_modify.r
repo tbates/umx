@@ -20,15 +20,15 @@
 # = Highlevel models (ACE, GxE) =
 # ===============================
 .onAttach <- function(libname, pkgname){
-	# TODO remove mxCondenseMatrixSlots now that $ get and set are working properly
-	options('mxCondenseMatrixSlots'= FALSE)
+	# TODO make sure mxCondenseMatrixSlots not needed now that $ get and set are working properly
+	# options('mxCondenseMatrixSlots'= FALSE)
 	options('umx.plot.format' = 'DiagrammeR')
 	if(is.null(getOption('knitr.table.format'))){
-		# umx_set_table_format('markdown')
+		umx_set_table_format('markdown')
+		# options('knitr.table.format' = "markdown")
 	}
-	# options('knitr.table.format' = "markdown")
 	options("umx_auto_run" = TRUE)
-	options("umx_auto_plot" = NA)
+	options("umx_auto_plot" = TRUE)
 	packageStartupMessage("For an overview type '?umx'")
 }
 
