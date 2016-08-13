@@ -5,12 +5,12 @@
 \title{umxPath: Flexible specification of sem paths}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
-  unique.bivariate = NULL, forms = NULL, Cholesky = NULL, means = NULL,
-  v1m0 = NULL, v.m. = NULL, v0m0 = NULL, fixedAt = NULL,
-  freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs",
-  "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1,
-  free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA,
-  hasMeans = NULL)
+  unique.bivariate = NULL, unique.pairs = NULL, forms = NULL,
+  Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL,
+  v0m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL,
+  connect = c("single", "all.pairs", "all.bivariate", "unique.pairs",
+  "unique.bivariate"), arrows = 1, free = TRUE, values = NA,
+  labels = NA, lbound = NA, ubound = NA, hasMeans = NULL)
 }
 \arguments{
 \item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
@@ -25,6 +25,8 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 \item{unique.bivariate}{equivalent to setting "connect = "unique.bivariate", arrows = 2".
 nb: from, to, and with must be left empty (their default)}
+
+\item{unique.pairs}{equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)}
 
 \item{forms}{Paired with from, this will build a formative variable. from vars form the latent.
 Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate among froms.}
@@ -133,6 +135,7 @@ require(umx)
 # Some examples of paths with umxPath
 umxPath("A", to = "B") # One-headed path from A to B
 umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @1
+umxPath("A", to = c("B", "C"), fixedAt = 1:2) # same, with more than 1 value
 umxPath("A", to = LETTERS[2:4], firstAt = 1) # Fix only the first path, others free
 umxPath(var = "A") # Give a variance to A
 umxPath(var = "A", fixedAt = 1) # Give a variance, fixed at 1
@@ -145,6 +148,7 @@ umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
 umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 umxPath(cov = c("A", "B"))  # Covariance A <-> B
 umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
+umxPath(unique.pairs = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 # A worked example
 data(demoOneFactor)

@@ -1525,7 +1525,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' @examples
 #' \dontrun{
 #' # An example xcel spreadsheet
-#' fp = system.file("data", "GQ6.sql.xlsx", package = "umx")
+#' fp = system.file("inst/extdata", "GQ6.sql.xlsx", package = "umx")
 #' umx_open(fp)
 #' umx_make_sql_from_excel() # Using file selected in front-most Finder window
 #' umx_make_sql_from_excel("~/Desktop/test.xlsx") # provide a path
@@ -3477,7 +3477,7 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	show = match.arg(show)
 	
 	if("thresholds" %in% matrices){
-		# TODO threshold printing not finalized yet…
+		# TODO threshold printing not finalized yet
 		if(!is.null(model$deviations_for_thresh)){
 			dev = TRUE
 			x = model$deviations_for_thresh
@@ -4554,36 +4554,4 @@ umx_get_optimizer <- function(model = NULL) {
 		mxOption(model, "Default optimizer")
 	}
 }
-
-#' umx_complete_dollar
-#'
-#' Modifies the RGUI to extend completion by adding a "$" and trying again when no stem completion is found.
-#' Implemeneted by Simon Urbanek!
-#'
-#' @export
-#' @family Miscellaneous Functions
-umx_complete_dollar <- function(){
-	if(umx_check_OS("OSX")){
-		RGUI = as.environment("tools:RGUI")
-		RGUI$rcompgen.completion <- function (x) {
-			comp <- function(x) {
-			    utils:::.assignLinebuffer(x)
-			    utils:::.assignEnd(nchar(x))
-			    utils:::.guessTokenFromLine()
-			    utils:::.completeToken()
-			    utils:::.CompletionEnv[["comps"]]
-			}
-			res <- unique(comp(x))
-			if (nzchar(x) && identical(res, x) && !identical(substr(x, nchar(x), nchar(x) + 1L), "$")) {
-			  rc <- comp(paste0(x, "$"))
-			  if (!identical(substr(rc, nchar(rc), nchar(rc) + 1L), "$")) res <- rc
-			}
-			res
-		}
-	}else{
-		message("only works on OS X")
-	}
-}
-
-
 
