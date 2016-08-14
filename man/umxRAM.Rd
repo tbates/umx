@@ -5,10 +5,11 @@
 \title{umxRAM}
 \usage{
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
-  setValues = TRUE, independent = NA, remove_unused_manifests = TRUE,
-  showEstimates = c("none", "raw", "std", "both", "list of column names"),
-  refModels = NULL, thresholds = c("deviationBased", "direct", "ignore",
-  "left_censored"), autoRun = getOption("umx_auto_run"))
+  setValues = TRUE, suffix = "", independent = NA,
+  remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std",
+  "both", "list of column names"), refModels = NULL,
+  thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
+  autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
@@ -22,6 +23,8 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
 \item{setValues}{Whether to generate likely good start values (Defaults to TRUE)}
+
+\item{suffix}{String to append to each label (useful if model will be used in a multi-group model)}
 
 \item{independent}{Whether the model is independent (default = NA)}
 

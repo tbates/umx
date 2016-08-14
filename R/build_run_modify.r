@@ -175,6 +175,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' @param data data for the model. Can be an \code{\link{mxData}} or a data.frame
 #' @param ... mx or umxPaths, mxThreshold objects, etc.
 #' @param setValues Whether to generate likely good start values (Defaults to TRUE)
+#' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param name A friendly name for the model
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param independent Whether the model is independent (default = NA)
@@ -230,7 +231,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' }
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run")) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
 	legalThresholdsOptions = c("deviationBased", "direct", "ignore", "left_censored")
@@ -385,7 +386,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			# print(m1$matrices$M$values)
 		}
 	}
-	m1 = umxLabel(m1)
+	m1 = umxLabel(m1, suffix = suffix)
 	if(setValues){
 		m1 = umxValues(m1, onlyTouchZeros = TRUE)
 	}
@@ -2400,7 +2401,6 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @param boundDiag Whether to bound the diagonal of a matrix
 #' @param verbose How much feedback to give the user (default = FALSE)
 #' @param overRideExisting = FALSE
-#' 
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Model Building Functions
