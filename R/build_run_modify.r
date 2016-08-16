@@ -21,14 +21,15 @@
 # ===============================
 .onAttach <- function(libname, pkgname){
 	# TODO make sure mxCondenseMatrixSlots not needed now that $ get and set are working properly
-	# options('mxCondenseMatrixSlots'= FALSE)
-	options('umx.plot.format' = 'DiagrammeR')
+	# umx_set_condensed_slots(FALSE)
+	umx_set_plot_format('DiagrammeR')
+
 	if(is.null(getOption('knitr.table.format'))){
 		umx_set_table_format('markdown')
 		# options('knitr.table.format' = "markdown")
 	}
-	options("umx_auto_run" = TRUE)
-	options("umx_auto_plot" = TRUE)
+	umx_set_auto_run(TRUE)
+	umx_set_auto_plot("name")
 	packageStartupMessage("For an overview type '?umx'")
 }
 
