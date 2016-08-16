@@ -20,7 +20,7 @@
 # Filename: mxSE.R
 #------------------------------------------------------------------------------
 
-#' mxSE - compute standard errors in OpenMx
+#' mxSE - Compute standard errors in OpenMx
 #' @description
 #' This function allows you to obtain standard errors for arbitrary
 #' expressions, named entities, and algebras.
@@ -58,11 +58,10 @@
 #' )
 #' m1 = mxRun(m1)
 #' mxSE('A', model = m1)
-#' mxSE( (A + A) %*% S, model = m1)
+#' mxSE((A + A) %*% S, model = m1)
 #' mxSE(S, model = m1)
-#' mxSE( A[1,2], model = m1)
-#' mxSE( A[1,6]^2, model = m1)
-
+#' mxSE(A[1,2], model = m1)
+#' mxSE(A[1,6]^2, model = m1)
 mxSE <- function(x, model, ...){
 	# browser()
 	isCallEtc <- any(c('call', 'language', 'MxAlgebraFormula') %in% is(match.call()$x))

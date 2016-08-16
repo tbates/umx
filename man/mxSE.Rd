@@ -2,7 +2,7 @@
 % Please edit documentation in R/mxSE.R
 \name{mxSE}
 \alias{mxSE}
-\title{mxSE - compute standard errors in OpenMx}
+\title{mxSE - Compute standard errors in OpenMx}
 \usage{
 mxSE(x, model, ...)
 }
@@ -46,10 +46,10 @@ m1 <- mxModel("One Factor", type = "RAM",
 )
 m1 = mxRun(m1)
 mxSE('A', model = m1)
-mxSE( (A + A) \%*\% S, model = m1)
+mxSE((A + A) \%*\% S, model = m1)
 mxSE(S, model = m1)
-mxSE( A[1,2], model = m1)
-mxSE( A[1,6]^2, model = m1)
+mxSE(A[1,2], model = m1)
+mxSE(A[1,6]^2, model = m1)
 }
 \references{
 - \url{https://en.wikipedia.org/wiki/Standard_error}

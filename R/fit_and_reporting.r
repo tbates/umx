@@ -663,17 +663,18 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 	# if the filter is off default, the user must want something, let's assume it's std ...
 	if( filter != "ALL" & showEstimates == "none") {
 		showEstimates = "std"
-	}else if(showEstimates =="std" && SE == FALSE){
+	}else if(showEstimates == "std" && SE == FALSE){
 		message("SE must be TRUE to show std, overriding to set SE =TRUE")
 		SE = TRUE
 	}
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(refModels)) {
+		
 		# saturatedModels not passed in from outside, so get them from the model
 		# TODO improve efficiency here: compute summary only once by detecting when SaturatedLikelihood is missing
 		modelSummary = summary(model)		
 		if(is.null(model$data)){
-			# # TODO model with no data - no saturated solution?
+			# TODO model with no data - no saturated solution?
 		} else if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
 			refModels = mxRefModels(model, run = TRUE)
@@ -687,7 +688,11 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 
 	# DisplayColumns
 	if(showEstimates != "none"){
-		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # compute standard errors
+		if(length(model@submodels)>0){
+			parameterTable = mxStandardizeRAMpaths(model@submodels[[1]], SE = SE) # compute standard errors
+		} else {
+			parameterTable = mxStandardizeRAMpaths(model, SE = SE) # compute standard errors
+		}
 		#                 name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
 		# 1  no_HRV_Dep.A[6,1]    age    A        mean_sdrr   age   -0.37       0.0284   -0.372350    .028
 		# Raw.SE is new
