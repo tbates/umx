@@ -50,11 +50,7 @@ umxSummary(m1, file = NA) # generic summary is the same
 stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = TRUE, 
 		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
 umxSummaryCP(m1, ext = TRUE, file = "name")
-\dontrun{
-# examples which will create graphical output
-umxSummaryCP(fit);
 umxSummaryCP(fit, file = "Figure 3", std = TRUE)
-}
 }
 \references{
 - \url{http://www.github.com/tbates/umx}, \url{http://tbates.github.io}
