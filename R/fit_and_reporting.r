@@ -1388,7 +1388,6 @@ umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(), returnSt
 			message("Showing CIs in output not implemented yet: use summary(model) to view them in the mean time")
 		}
 		if(!is.na(file)){
-			umx_msg(file)
 			umxPlotCP(stdFit, file = file, digits = digits, std = FALSE, means = FALSE)
 		}
 		if(returnStd) {
