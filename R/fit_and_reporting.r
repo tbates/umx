@@ -1275,7 +1275,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = TRUE, 
 #' 		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
 #' umxSummaryCP(m1, ext = TRUE, file = "name")
-#' umxSummaryCP(fit, file = "Figure 3", std = TRUE)
+#' umxSummaryCP(m1, file = "Figure 3", std = TRUE)
 umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(), returnStd = FALSE, 
     extended = FALSE, showRg = TRUE, comparison = NULL, std = TRUE, CIs = FALSE, ...) {
 	# TODO: detect value of DZ covariance, and if .25 set "C" to "D"
