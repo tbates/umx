@@ -1274,7 +1274,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' umxSummary(m1, file = NA) # generic summary is the same
 #' stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = TRUE, 
 #' 		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
-#' umxSummaryCP(m1, ext=T, file = "name")
+#' umxSummaryCP(m1, ext = TRUE, file = "name")
 #' \dontrun{
 #' # examples which will create graphical output
 #' umxSummaryCP(fit);
@@ -1523,7 +1523,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 		message("showing CIs in output not implemented yet: use summary(model) to view them in the mean time")
 	}
 	if(!is.na(file)){
-		umxPlotIP(model = stdFit, file = file, digits = 2, std = FALSE)
+		umxPlotIP(x = stdFit, file = file, digits = 2, std = FALSE)
 	}
 	if(returnStd) {
 		return(stdFit)
