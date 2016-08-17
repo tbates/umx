@@ -973,8 +973,8 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
 		CIlist$fullName = row.names(CIlist)
 		# Initialise empty matrices for the standardized results
-		rows = dim(model$submodels$top$matrices$a$labels)[1]
-		cols = dim(model$submodels$top$matrices$a$labels)[2]
+		rows = dim(model$top$matrices$a$labels)[1]
+		cols = dim(model$top$matrices$a$labels)[2]
 		a_std = c_std = e_std = matrix(NA, rows, cols)
 
 		# iterate over each CI
@@ -1184,8 +1184,8 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
 		CIlist$fullName = row.names(CIlist)
 		# Initialise empty matrices for the standardized results
-		rows = dim(model$submodels$top$matrices$a$labels)[1]
-		cols = dim(model$submodels$top$matrices$a$labels)[2]
+		rows = dim(model$top$matrices$a$labels)[1]
+		cols = dim(model$top$matrices$a$labels)[2]
 		a_std = c_std = e_std = matrix(NA, rows, cols)
 
 		# iterate over each CI
@@ -1274,6 +1274,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' umxSummary(m1, file = NA) # generic summary is the same
 #' stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = TRUE, 
 #' 		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
+#' umxSummaryCP(m1, ext=T, file = "name")
 #' \dontrun{
 #' # examples which will create graphical output
 #' umxSummaryCP(fit);
@@ -1305,7 +1306,7 @@ umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(), returnSt
 		}
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2;
-		nFac   = dim(model$submodels$top$matrices$a_cp)[[1]]	
+		nFac   = dim(model$top$matrices$a_cp)[[1]]	
 		# MZc = mxEval(MZ.expCov,  model); # Same effect as expCovMZ$matrices$twinACEFit
 		# DZc = mxEval(DZ.expCov,  model);
 		# M   = mxEval(MZ.expMean, model);
@@ -1331,7 +1332,7 @@ umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(), returnSt
 		names(commonACE) = c ("A", "C", "E")
 		message("Common Factor paths")
 		umx_print(commonACE, digits = digits, zero.print = ".")
-		if(class(model$submodels$top$matrices$a_cp)[1] =="LowerMatrix"){
+		if(class(model$top$matrices$a_cp)[1] =="LowerMatrix"){
 			message("You used correlated genetic inputs to the common factor. This is the a_cp matrix")
 			print(a_cp)
 		}
@@ -1359,7 +1360,7 @@ umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(), returnSt
 		if(extended == TRUE) {
 			cat("\nUnstandardized path coefficients\n") # factor loadings
 			print(round(commonACE, digits)); # Loadings on Common factor
-			print(round(data.frame(common_loadings, row.names = rowNames), digits));
+			print(round(data.frame(cp_loadings, row.names = rowNames), digits));
 			# specifics
 			asClean = as
 			csClean = cs
@@ -1387,7 +1388,8 @@ umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(), returnSt
 			message("Showing CIs in output not implemented yet: use summary(model) to view them in the mean time")
 		}
 		if(!is.na(file)){
-			umxPlotCP(model = stdFit, file = file, digits = digits, std = FALSE, means = FALSE)
+			umx_msg(file)
+			umxPlotCP(stdFit, file = file, digits = digits, std = FALSE, means = FALSE)
 		}
 		if(returnStd) {
 			return(stdFit)
@@ -2059,16 +2061,19 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, showMea
 		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
 		means = showMeans
 	}
+	if(!class(x) == "MxModel.ACE"){
+		stop("The first parameter of umxPlotACE must be an ACE model, you gave me a ", class(x))
+	}
 	model = x # just to be clear that x is a model
 	if(std){
 		model = umx_standardize_ACE(model)
 	}
 	out = "";
 	latents  = c();
-	if(model$submodels$MZ$data$type == "raw"){
-		selDVs = names(model$submodels$MZ$data$observed)
+	if(model$MZ$data$type == "raw"){
+		selDVs = names(model$MZ$data$observed)
 	}else{
-		selDVs = dimnames(model$submodels$MZ$data$observed)[[1]]
+		selDVs = dimnames(model$MZ$data$observed)[[1]]
 	}
 	varCount = length(selDVs)/2;
 	parameterKeyList = omxGetParameters(model);
@@ -2158,6 +2163,9 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
 		means = showMeans
 	}	
+	if(!class(x) == "MxModel.ACEcov"){
+		stop("The first parameter of umxPlotACEcov must be an ACEcov model, you gave me a ", class(x))
+	}
 	model = x # just to be clear that x is a model
 	# relies on 'a' not having its dimnames stripped off...
 	if(model$MZ$data$type == "raw"){
@@ -2253,10 +2261,13 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 #' plot(m1)
 #' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
+	if(!class(x) == "MxModel.GxE"){
+		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x))
+	}
 	model = x # to emphasise that x has to be a umxGxE model
 	# get unique values of moderator
-	mzData = model$submodels$MZ$data$observed
-	dzData = model$submodels$DZ$data$observed
+	mzData = model$MZ$data$observed
+	dzData = model$DZ$data$observed
 	selDefs = names(mzData)[3:4]
 	if(is.na(xlab)){
 		xlab = selDefs[1]
@@ -2267,12 +2278,12 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	dz2 = as.vector(dzData[,selDefs[2]])
 	allValuesOfDefVar= c(mz1,mz2,dz1,dz2)
 	defVarValues = sort(unique(allValuesOfDefVar))
-	a   = model$submodels$top$matrices$a$values
-	c   = model$submodels$top$matrices$c$values
-	e   = model$submodels$top$matrices$e$values
-	am  = model$submodels$top$matrices$am$values
-	cm  = model$submodels$top$matrices$cm$values
-	em  = model$submodels$top$matrices$em$values
+	a   = model$top$matrices$a$values
+	c   = model$top$matrices$c$values
+	e   = model$top$matrices$e$values
+	am  = model$top$matrices$am$values
+	cm  = model$top$matrices$cm$values
+	em  = model$top$matrices$em$values
 	Va  = (a + am * defVarValues)^2
 	Vc  = (c + cm * defVarValues)^2
 	Ve  = (e + em * defVarValues)^2
@@ -2323,15 +2334,18 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	if(!is.null(showMeans)){
 		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
 		means = showMeans
-	}	
+	}
+	if(!class(x) == "MxModel.CP"){
+		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
+	}
 	model = x # just to emphasise that x has to be a model 
 	if(std){
 		model = umx_standardize_CP(model)
 	}
 	# TODO Check I am handling nFac > 1 properly!!
-	facCount = dim(model$submodels$top$a_cp$labels)[[1]]
-	varCount = dim(model$submodels$top$as$values)[[1]]
-	selDVs   = dimnames(model$submodels$MZ$data$observed)[[2]]
+	facCount = dim(model$top$a_cp$labels)[[1]]
+	varCount = dim(model$top$as$values)[[1]]
+	selDVs   = dimnames(model$MZ$data$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
 	parameterKeyList = omxGetParameters(model)
 	out = "";
@@ -2426,14 +2440,17 @@ umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
 		means = showMeans
 	}	
+	if(!class(x) == "MxModel.IP"){
+		stop("The first parameter of umxPlotIP must be an IP model, you gave me a ", class(x))
+	}
 	model = x # to emphasise that x has to be an umxIP model
 	if(std){
 		model = umx_standardize_IP(model)
 	}
 	# TODO Check I am handling nFac > 1 properly!!
-	facCount = dim(model$submodels$top$a_cp$labels)[[1]]
-	varCount = dim(model$submodels$top$ai$values)[[1]]
-	selDVs   = dimnames(model$submodels$MZ$data$observed)[[2]]
+	facCount = dim(model$top$a_cp$labels)[[1]]
+	varCount = dim(model$top$ai$values)[[1]]
+	selDVs   = dimnames(model$MZ$data$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
 	parameterKeyList = omxGetParameters(model, free = TRUE);
 	out = "";

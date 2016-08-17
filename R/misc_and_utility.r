@@ -9,16 +9,16 @@
 # ==============================
 # = Get and set OpenMx options =
 # ==============================
-#' umx_show_options
+#' umx_get_options
 #'
-#' show the umx options. Useful for beginners to discover, or people like me to remember :-)
+#' Show the umx options. Useful for beginners to discover, or people like me to remember :-)
 #'
 #' @return - message
 #' @export
 #' @family Miscellaneous Functions
 #' @examples
-#' umx_show_options()
-umx_show_options <- function() {
+#' umx_get_options()
+umx_get_options <- function() {
 		o = paste0("current options set are:\n",
 		"\numx_set_auto_plot()  = "      , umx_set_auto_plot(),
 		"\numx_set_plot_format()  = "    , umx_set_plot_format(),
@@ -4469,7 +4469,7 @@ umx_standardize_IP <- function(fit){
 umx_standardize_CP <- function(fit){
 	if(!is.null(fit$top$ai_std)){
 		# Standardized general path components
-		fit$submodels$top$matrices$cp_loadings$values = fit$submodels$top$algebras$cp_loadings_std$result # standardized cp loadings
+		fit$top$matrices$cp_loadings$values = fit$top$algebras$cp_loadings_std$result # standardized cp loadings
 		# Standardized specific path coefficienfitts
 		fit$top$as$values = fit$top$as_std$result # standardized as
 		fit$top$cs$values = fit$top$cs_std$result # standardized cs
@@ -4479,7 +4479,7 @@ umx_standardize_CP <- function(fit){
 		# TODO let this work directly... not hard..
 		selDVs = dimnames(fit$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2;
-		nFac   = dim(fit$submodels$top$matrices$a_cp)[[1]]	
+		nFac   = dim(fit$top$matrices$a_cp)[[1]]	
 		# Calculate standardised variance components
 		a_cp  = mxEval(top.a_cp , fit); # nFac * nFac matrix of path coefficients flowing into the cp_loadings array
 		c_cp  = mxEval(top.c_cp , fit);

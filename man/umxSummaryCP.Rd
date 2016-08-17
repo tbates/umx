@@ -49,6 +49,7 @@ umxSummaryCP(m1, file = NA) # suppress plot creation with file
 umxSummary(m1, file = NA) # generic summary is the same
 stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = TRUE, 
 		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
+umxSummaryCP(m1, ext=T, file = "name")
 \dontrun{
 # examples which will create graphical output
 umxSummaryCP(fit);

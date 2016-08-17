@@ -1307,12 +1307,12 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 			)
 		}
 		if(!is.null(boundDiag)){
-			diag(model$submodels$top$matrices$a$lbound) = boundDiag
-			diag(model$submodels$top$matrices$c$lbound) = boundDiag
-			diag(model$submodels$top$matrices$e$lbound) = boundDiag
+			diag(model$top$matrices$a$lbound) = boundDiag
+			diag(model$top$matrices$c$lbound) = boundDiag
+			diag(model$top$matrices$e$lbound) = boundDiag
 		}
 		if(addStd){
-			newTop = mxModel(model$submodels$top,
+			newTop = mxModel(model$top,
 				mxMatrix(name  = "I", "Iden", nVar, nVar), # nVar Identity matrix
 				mxAlgebra(name = "Vtot", A + C+ E),       # Total variance
 				# TODO test that these are identical in all cases
@@ -1543,7 +1543,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	)
 	
 	if(addStd){
-		newTop = mxModel(model$submodels$top,
+		newTop = mxModel(model$top,
 			mxMatrix(name  = "Iden", "Iden", nDV, nDV), # nDV Identity matrix
 			mxAlgebra(name = "Vtot", A + C+ E),       # Total variance
 			mxAlgebra(name = "SD", solve(sqrt(Iden * Vtot))), # Total variance
@@ -1764,20 +1764,20 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 		)
 	}
 	if(!freeLowerA){
-		toset  = model$submodels$top$matrices$as$labels[lower.tri(model$submodels$top$matrices$as$labels)]
+		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 	
 	if(!freeLowerC){
-		toset  = model$submodels$top$matrices$cs$labels[lower.tri(model$submodels$top$matrices$cs$labels)]
+		toset  = model$top$matrices$cs$labels[lower.tri(model$top$matrices$cs$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 	if(!freeLowerE){
-		toset  = model$submodels$top$matrices$es$labels[lower.tri(model$submodels$top$matrices$es$labels)]
+		toset  = model$top$matrices$es$labels[lower.tri(model$top$matrices$es$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 	if(addStd){
-		newTop = mxModel(model$submodels$top,
+		newTop = mxModel(model$top,
 			# nVar Identity matrix
 			mxMatrix(name = "I", "Iden", nVar, nVar),
 			# inverse of standard deviation diagonal  (same as "(\sqrt(I.Vtot))~"
@@ -1947,25 +1947,25 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 	
 	if(!freeLowerA){
-		toset  = model$submodels$top$matrices$as$labels[lower.tri(model$submodels$top$matrices$as$labels)]
+		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 
 	if(!freeLowerC){
-		toset  = model$submodels$top$matrices$cs$labels[lower.tri(model$submodels$top$matrices$cs$labels)]
+		toset  = model$top$matrices$cs$labels[lower.tri(model$top$matrices$cs$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
 	
 	if(!freeLowerE){
-		toset  = model$submodels$top$matrices$es$labels[lower.tri(model$submodels$top$matrices$es$labels)]
+		toset  = model$top$matrices$es$labels[lower.tri(model$top$matrices$es$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	} else {
 		# set the first column off, bar r1
 		model = omxSetParameters(model, labels = "es_r[^1]0-9?c1", free = FALSE, values = 0)
 
-		# toset  = model$submodels$top$matrices$es$labels[lower.tri(model$submodels$top$matrices$es$labels)]
+		# toset  = model$top$matrices$es$labels[lower.tri(model$top$matrices$es$labels)]
 		# model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
-		# toset  = model$submodels$top$matrices$es$labels[lower.tri(model$submodels$top$matrices$es$labels)]
+		# toset  = model$top$matrices$es$labels[lower.tri(model$top$matrices$es$labels)]
 		# model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 
 		# Used to drop the ei paths, as we have a full Cholesky for E, now just set the bottom row TRUE
@@ -1974,7 +1974,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 
 	if(addStd){
-		newTop = mxModel(model$submodels$top,
+		newTop = mxModel(model$top,
 			# nVar Identity matrix
 			mxMatrix("Iden", nrow = nVar, name = "I"),
 			# inverse of standard deviation diagonal  (same as "(\sqrt(I.Vtot))~"
@@ -2707,8 +2707,8 @@ umxReRun <- umxModify
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE) {
 	# TODO
 	# 1. Be nice to offer a method to handle submodels
-	# 	model$submodels$aSubmodel$matrices$aMatrix$labels
-	# 	model$submodels$MZ$matrices
+	# 	model$aSubmodel$matrices$aMatrix$labels
+	# 	model$MZ$matrices
 	# 2. Simplify handling
 		# allow umxGetParameters to function like omxGetParameters()[name filter]
 	# 3. All user to request values, free, etc.
