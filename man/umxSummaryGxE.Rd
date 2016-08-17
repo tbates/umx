@@ -7,7 +7,7 @@
 \usage{
 umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
   separateGraphs = FALSE, file = getOption("umx_auto_plot"),
-  returnStd = NULL, showStd = NULL, reduce = FALSE, CIs = NULL,
+  returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL,
   report = c("1", "2", "html"), ...)
 }
 \arguments{
@@ -25,7 +25,7 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
-\item{showStd}{Whether to show the standardized model (not implemented! TRUE)}
+\item{std}{Whether to show the standardized model (not implemented! TRUE)}
 
 \item{reduce}{Whether run and tabulate a complete model reduction...(Defaults to FALSE)}
 

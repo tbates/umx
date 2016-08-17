@@ -6,7 +6,7 @@
 \title{umxSummaryACEcov}
 \usage{
 umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),
-  returnStd = FALSE, extended = FALSE, showRg = FALSE, showStd = TRUE,
+  returnStd = FALSE, extended = FALSE, showRg = FALSE, std = TRUE,
   comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2",
   "html"), ...)
 }
@@ -23,7 +23,7 @@ umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),
 
 \item{showRg}{= whether to show the genetic correlations (FALSE)}
 
-\item{showStd}{= whether to show the standardized model (TRUE)}
+\item{std}{= whether to show the standardized model (TRUE)}
 
 \item{comparison}{you can run mxCompare on a comparison model (NULL)}
 
@@ -54,7 +54,7 @@ m1 = umxRun(m1)
 umxSummaryACE(m1)
 \dontrun{
 umxSummaryACE(m1, file = NA);
-umxSummaryACE(m1, file = "name", showStd = TRUE)
+umxSummaryACE(m1, file = "name", std = TRUE)
 stdFit = umxSummaryACE(m1, returnStd = TRUE);
 }
 }

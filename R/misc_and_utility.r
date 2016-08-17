@@ -87,27 +87,6 @@ umx_set_table_format <- function(knitr.table.format = NULL) {
 } # end umx_set_table_format
 
 
-
-#' umx_get_cores
-#'
-#' This function is now deprecated: Get the number of cores using \\code{\link{umx_set_cores}}
-#' with no parameters.
-#'
-#' @param model an (optional) model to get from. If left NULL, the global option is returned
-#' @return - number of cores
-#' @export
-#' @family Get and set
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
-#' # Deprecated function: to get cores, use umx_set_cores() with no value
-umx_get_cores <- function(model = NULL) {
-	message("Deprecated function: to get cores, use umx_set_cores() with no value")
-	# depends on parallel::detectCores
-	n = mxOption(model, "Number of Threads")
-	message(n, "/", parallel::detectCores())
-	invisible(n)
-}
-
 #' umx_check_parallel
 #'
 #' Shows how many cores you are using, and runs a test script so user can check CPU usage
@@ -4534,6 +4513,30 @@ umx_standardize_CP <- function(fit){
 # https://en.wikipedia.org/wiki/Invictus
 # http://www.poetryfoundation.org/poem/173698get
 
+
+# ==============
+# = Deprecated =
+# ==============
+#' umx_get_cores
+#'
+#' This function is now deprecated: Get the number of cores using \\code{\link{umx_set_cores}}
+#' with no parameters.
+#'
+#' @param model an (optional) model to get from. If left NULL, the global option is returned
+#' @return - number of cores
+#' @export
+#' @family umx deprecated
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' # Deprecated function: to get cores, use umx_set_cores() with no value
+umx_get_cores <- function(model = NULL) {
+	message("Deprecated function: to get cores, use umx_set_cores() with no value")
+	# depends on parallel::detectCores
+	n = mxOption(model, "Number of Threads")
+	message(n, "/", parallel::detectCores())
+	invisible(n)
+}
+
 #' umx_get_optimizer
 #'
 #' This function is now deprecated: Get the current optimizer, use \\code{\link{umx_set_optimizer}}
@@ -4542,7 +4545,7 @@ umx_standardize_CP <- function(fit){
 #' @param model (optional) model to get from. If left NULL, the global option is returned
 #' @return - the optimizer  - a string
 #' @export
-#' @family Get and set
+#' @family umx deprecated
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' # Deprecated function: to get cores, use umx_set_cores() with no value
@@ -4554,4 +4557,3 @@ umx_get_optimizer <- function(model = NULL) {
 		mxOption(model, "Default optimizer")
 	}
 }
-

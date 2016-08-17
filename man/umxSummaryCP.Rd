@@ -5,9 +5,9 @@
 \alias{umxSummaryCP}
 \title{umxSummaryCP}
 \usage{
-umxSummaryCP(model, digits = 2, file = getOption("umx_auto_plot"),
+umxSummaryCP(model, digits = 2, file = umx_set_auto_plot(),
   returnStd = FALSE, extended = FALSE, showRg = TRUE, comparison = NULL,
-  showStd = TRUE, CIs = FALSE, ...)
+  std = TRUE, CIs = FALSE, ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxCP}} model to summarize}
@@ -24,7 +24,7 @@ umxSummaryCP(model, digits = 2, file = getOption("umx_auto_plot"),
 
 \item{comparison}{Whether to run mxCompare on a comparison model (NULL)}
 
-\item{showStd}{Whether to show the standardized model (TRUE) (Not implemented!)}
+\item{std}{Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)}
 
 \item{CIs}{Confidence intervals (F)}
 
@@ -45,15 +45,14 @@ selDVs = c("ht", "wt") # will be expanded into "ht1", "wt1", "ht2", "wt2"
 mzData <- subset(twinData, ZYG == "MZFF")
 dzData <- subset(twinData, ZYG == "DZFF")
 m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
-m1 = mxRun(m1)
 umxSummaryCP(m1, file = NA) # suppress plot creation with file
 umxSummary(m1, file = NA) # generic summary is the same
-stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = FALSE, 
-		extended = FALSE, showRg = TRUE, showStd = TRUE, CIs = TRUE);
+stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = TRUE, 
+		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
 \dontrun{
-examples which will create graphical output
+# examples which will create graphical output
 umxSummaryCP(fit);
-umxSummaryCP(fit, file = "Figure 3", showStd = TRUE)
+umxSummaryCP(fit, file = "Figure 3", std = TRUE)
 }
 }
 \references{

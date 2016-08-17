@@ -6,7 +6,7 @@
 \title{umxSummaryIP}
 \usage{
 umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
-  returnStd = FALSE, showStd = FALSE, showRg = TRUE, comparison = NULL,
+  returnStd = FALSE, std = TRUE, showRg = TRUE, comparison = NULL,
   CIs = FALSE, ...)
 }
 \arguments{
@@ -18,7 +18,7 @@ umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
 
 \item{returnStd}{Whether to return the standardized form of the model (default = F)}
 
-\item{showStd}{= Whether to show the standardized model (TRUE)}
+\item{std}{= Whether to show the standardized model (TRUE)}
 
 \item{showRg}{= whether to show the genetic correlations (F)}
 

@@ -67,10 +67,10 @@ m1 <- umxRAM("One Factor",
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
 )
-umxSummary(m1, show = "std")
+umxSummary(m1, showEstimates = "std")
 # output as latex
 umx_set_table_format("latex")
-umxSummary(m1, show = "std")
+umxSummary(m1, showEstimates = "std")
 umx_set_table_format("markdown")
 # output as raw
 umxSummary(m1, show = "raw")
@@ -80,7 +80,7 @@ m1 <- mxModel(m1,
   umxPath(mean = latents, fixedAt = 0)
 )
 m1 <- mxRun(m1)
-umxSummary(m1, show = "std", filter = "NS")
+umxSummary(m1, showEstimates = "std", filter = "NS")
 }
 \references{
 - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
