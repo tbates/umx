@@ -794,6 +794,7 @@ umx_explode_twin_names <- function(df, sep = "_T") {
 #' @return - \code{\link{mxFactor}}
 #' @export
 #' @family Data Functions
+#' @seealso - \code{\link{umxFactanal}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umxFactor(letters)
