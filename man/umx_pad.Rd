@@ -27,7 +27,7 @@ umx_pad(1:3, 3)
 - \url{https://github.com/kevinushey/Kmisc/tree/master/man}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{getOpenMx}},
+Other Miscellaneous Functions: \code{\link{install.OpenMx}},
   \code{\link{umxJiggle}}, \code{\link{umx_get_options}}
 }
 

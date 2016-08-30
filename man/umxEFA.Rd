@@ -55,7 +55,7 @@ EFA reports standardized loadings: to do this, we scale the data.
 Bear in mind that factor scores are indeterminate and can be rotated.
 
 This is very much early days. I will add "scores" if there is demand. Currently, you can
-get scores from the model using \code{\link{mxFactorScores}}.
+get scores from with \code{\link{mxFactorScores}}.
 
 todo: detect ordinal items and switch to UWLS
 }

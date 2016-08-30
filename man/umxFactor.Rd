@@ -63,6 +63,8 @@ jnk = umxFactor(df); str(jnk)
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
+- \code{\link{umxFactanal}}
+
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},

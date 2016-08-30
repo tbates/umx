@@ -16,7 +16,7 @@ Show the umx options. Useful for beginners to discover, or people like me to rem
 umx_get_options()
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{getOpenMx}},
+Other Miscellaneous Functions: \code{\link{install.OpenMx}},
   \code{\link{umxJiggle}}, \code{\link{umx_pad}}
 }
 

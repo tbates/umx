@@ -1736,26 +1736,26 @@ print.reliability <- function (x, digits = 4, ...){
 # ==================
 # = Code functions =
 # ==================
-#' getOpenMx
+#' install.OpenMx
 #'
 #' @description
 #' source() the getOpenMx.R script from source repo.
 #'
-#' @aliases umx_get_OpenMx
+#' @aliases umx_install_OpenMx
 #' @return - 
 #' @export
 #' @family Miscellaneous Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' getOpenMx()
+#' install.OpenMx()
 #' }
-getOpenMx <- function() {
+install.OpenMx <- function() {
 	source('http://openmx.psyc.virginia.edu/getOpenMx.R')
 }
 
 #' @export
-umx_get_OpenMx <- getOpenMx
+umx_install_OpenMx <- install.OpenMx
 
 #' umx_make umx using devtools
 #'
