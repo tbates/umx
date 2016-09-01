@@ -46,6 +46,10 @@ plot(m1, std = FALSE) # don't standardize
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
+Other Plotting functions: \code{\link{plot.MxModel}},
+  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}}
+
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
   \code{\link{confint.MxModel}},
@@ -55,7 +59,8 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxCI_boot}}, \code{\link{umxCI}},
   \code{\link{umxCompare}}, \code{\link{umxExpCov}},
   \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
-  \code{\link{umxPlotACEcov}},
+  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotIP}},
   \code{\link{umxSummary.MxModel}},
   \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}

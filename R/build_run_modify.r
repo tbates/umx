@@ -354,9 +354,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			varList = paste0("They were: ", paste(unusedManifests, collapse = ", "), "\n")
 		}
 		message(length(unusedManifests), " variables in the dataset which were not referenced in any path\n",varList)
+		manifestVars = setdiff(manifestVars, unusedManifests)
 		if(remove_unused_manifests){
 			# trim down the data to include only the used manifests
-			manifestVars = setdiff(manifestVars, unusedManifests)
 			if(data$type == "raw"){
 				data$observed = data$observed[, manifestVars]
 			} else {

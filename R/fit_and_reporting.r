@@ -1884,7 +1884,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' select Graphviz.app (or OmniGraffle professional),
 #' then set \dQuote{change all}.
 #'
-#' @aliases umxPlot
+#' @aliases plot umxPlot
 #' @rdname plot.MxModel
 #' @param x An \code{\link{mxModel}} from which to make a path diagram
 #' @param std Whether to standardize the model (default = FALSE).
@@ -1897,8 +1897,10 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param showMeans Deprecated: just use 'means = '
 #' @param ... Optional parameters
 #' @export
-#' @seealso - \code{\link{umx_set_plot_format}}
+#' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},
+#' @family Plotting functions
 #' @family Reporting functions
+#' @family Twin Modeling Functions
 #' @references - \url{http://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 #' @examples
 #' require(umx)
@@ -2028,7 +2030,7 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #'
 #' Make a graphical display of an ACE model
 #'
-#' @aliases plot plot.MxModel.ACE
+#' @aliases plot.MxModel.ACE
 #' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (default is 2)
@@ -2038,6 +2040,7 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
+#' @family Plotting functions
 #' @family Reporting functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -2132,7 +2135,9 @@ plot.MxModel.ACE <- umxPlotACE
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
+#' @family Plotting functions
 #' @family Reporting functions
+#' @family Twin Modeling Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' require(umx)
@@ -2237,6 +2242,8 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 #' @param separateGraphs (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - 
+#' @family Reporting functions
+#' @family Plotting functions
 #' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
@@ -2317,6 +2324,8 @@ plot.MxModel.GxE <- umxPlotGxE
 #' @param showMeans deprecated: replace with just 'means'
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
+#' @family Plotting functions
+#' @family Reporting functions
 #' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
@@ -2420,10 +2429,12 @@ plot.MxModel.CP <- umxPlotCP
 #' @param std whether to standardize the model (defaults to TRUE)
 #' @param showMeans Deprecated: replace with just 'means' for simplicity.
 #' @param ... Optional additional parameters
-#' 
 #' @return - optionally return the dot code
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()}
+#' @family Plotting functions
+#' @family Reporting functions
+#' @family Twin Modeling Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{

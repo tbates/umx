@@ -40,12 +40,31 @@ plot(yourCP_Model) # no need to remember a special name: plot works fine!
 \seealso{
 - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
+Other Plotting functions: \code{\link{plot.MxModel}},
+  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACE}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}}
+
+Other Reporting functions: \code{\link{RMSEA.MxModel}},
+  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
+  \code{\link{confint.MxModel}},
+  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
+  \code{\link{logLik.MxModel}}, \code{\link{plot.MxModel}},
+  \code{\link{residuals.MxModel}},
+  \code{\link{umxCI_boot}}, \code{\link{umxCI}},
+  \code{\link{umxCompare}}, \code{\link{umxExpCov}},
+  \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
+  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACE}},
+  \code{\link{umxPlotIP}},
+  \code{\link{umxSummary.MxModel}},
+  \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}},
+  \code{\link{umx_standardize_RAM}}
+
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxACEcov}}, \code{\link{umxACE}},
   \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
   \code{\link{umxIP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxSummaryACEcov}},
+  \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umx_make_TwinData}}, \code{\link{umx}}

@@ -46,6 +46,7 @@ Other Reporting functions: \code{\link{RMSEA.summary.mxmodel}},
   \code{\link{umxCompare}}, \code{\link{umxExpCov}},
   \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACE}},
+  \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}},
   \code{\link{umxSummary.MxModel}},
   \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
