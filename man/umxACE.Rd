@@ -214,10 +214,11 @@ plot(m1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACEcov}}, \code{\link{umxCF_SexLim}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
+Other Twin Modeling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
+  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},

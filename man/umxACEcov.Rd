@@ -75,10 +75,11 @@ and genotype on self-report drunkenness following a challenge dose of alcohol.
 Behavior Genetics, 19(1), 63-78. doi:10.1007/BF01065884
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
+Other Twin Modeling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxACESexLim}}, \code{\link{umxACE}},
+  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},

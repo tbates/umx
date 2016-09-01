@@ -65,10 +65,11 @@ m2 = umxModify(m1, "am_.*", regex=TRUE, comparison = TRUE)
 \seealso{
 - \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
-Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACEcov}}, \code{\link{umxACE}},
-  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxIP}},
+Other Twin Modeling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
+  \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
+  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},

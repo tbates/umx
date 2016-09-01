@@ -194,10 +194,11 @@ Multivariate genetic analysis of sex-lim and GxE interaction.
 \emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489.
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACEcov}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
+Other Twin Modeling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
+  \code{\link{umxACE}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
