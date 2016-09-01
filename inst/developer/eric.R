@@ -17,6 +17,7 @@ m1 <- umxRAM("MZ", data = mxData(mzData, type = "raw"),remove_unused_manifests =
 	umxPath(means = selDVs),
 	umxPath(var = "Age_def", fixedAt = 0),
 	umxPath(means = "Age_def", fixedAt = 0, labels = "data.age"),
+	# umxPath(v0m0 = "Age_def", labels = "data.age"),
 
 	# =========
 	# = model =
@@ -26,7 +27,7 @@ m1 <- umxRAM("MZ", data = mxData(mzData, type = "raw"),remove_unused_manifests =
 	mxPath("Age_def", to = selDVs, labels = c("beta_1", "beta_1"))
 	# mxPath("Age_def", to = selDVs, labels = c("beta_1", "beta_2"))
 )
-plot(m1)
+plot(m1, digits=3)
 
 
 
