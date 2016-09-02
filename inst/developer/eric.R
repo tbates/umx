@@ -5,6 +5,14 @@ names(twinData)
 # latents   = c("L1", "L2")
 # manifestVars = selDVs
 
+# umxPath(definition = "age"){
+# 	theName = paste0(definition, "_def")
+# 	umxPath(var   = theName, fixedAt = 0),
+# 	umxPath(means = theName, fixedAt = 0, labels = paste0("data.", definition)),
+#
+# }
+# umxPath(v0m0 = "Age_def", labels = "data.age"),
+
 selDVs  = c("bmi1", "bmi2")
 selDefs = c("age")
 selVars = c(selDVs, selDefs)
@@ -13,22 +21,19 @@ dzData  = subset(twinData, zyg == 3 & !is.na(age), selVars); dim(dzData)
 
 m1 <- umxRAM("MZ", data = mxData(mzData, type = "raw"),remove_unused_manifests = FALSE,
 	# variances and covariances + means for vars, and defVar
-	umxPath(var = selDVs),
-	umxPath(means = selDVs),
-	umxPath(var = "Age_def", fixedAt = 0),
+	umxPath(v.m.  = selDVs),
+	umxPath(var   = "Age_def", fixedAt = 0),
 	umxPath(means = "Age_def", fixedAt = 0, labels = "data.age"),
-	# umxPath(v0m0 = "Age_def", labels = "data.age"),
 
 	# =========
-	# = model =
+	# = Model =
 	# =========
 	umxPath("bmi1", with = "bmi2"),
 	# betaWeights
 	mxPath("Age_def", to = selDVs, labels = c("beta_1", "beta_1"))
 	# mxPath("Age_def", to = selDVs, labels = c("beta_1", "beta_2"))
 )
-plot(m1, digits=3)
-
+plot(m1, digits = 3)
 
 
 m1$matrices
