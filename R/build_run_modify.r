@@ -349,11 +349,15 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	unusedManifests = setdiff(manifestVars, foundNames)
 	if(length(unusedManifests) > 0){
 		if(length(unusedManifests) > 10){
-			varList = paste0("The first 10 were: ", paste(unusedManifests[1:10], collapse = ", "), "\n")
+			varList = paste0("First 10 were: ", paste(unusedManifests[1:10], collapse = ", "))
+			msg_str = paste0(length(unusedManifests), " variables in data not referenced in any path. ", varList)
+		} else if(length(unusedManifests) > 1){
+			varList = paste(unusedManifests, collapse = ", ")
+			msg_str = paste0(length(unusedManifests), " variables in data not referenced in any path: ", varList)
 		} else {
-			varList = paste0("They were: ", paste(unusedManifests, collapse = ", "), "\n")
+			varList = unusedManifests
+			msg_str = paste0(length(unusedManifests), " variable in data not referenced in any path: ", varList)
 		}
-		message(length(unusedManifests), " variables in the dataset which were not referenced in any path\n",varList)
 		manifestVars = setdiff(manifestVars, unusedManifests)
 		if(remove_unused_manifests){
 			# trim down the data to include only the used manifests
@@ -362,12 +366,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			} else {
 				data$observed = umx_reorder(data$observed, manifestVars)
 			}
-			message("These were dropped from the analysis")
+			message(msg_str, " (removed from analysis)")
 		} else {
-			message("I left them in the data. To remove them automatically, next time set remove_unused_manifests = TRUE")
+			message(msg_str, " (to remove automatically, set remove_unused_manifests = TRUE)")
 		}		
 	}
-	message("ManifestVars set to:\n", paste(manifestVars, collapse = ", "), "\n")
+	message("ManifestVars set to: ", paste(manifestVars, collapse = ", "))
 
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = manifestVars,
