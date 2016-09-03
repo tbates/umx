@@ -7,8 +7,8 @@
 \title{Create a graphical figure from an MxModel}
 \usage{
 \method{plot}{MxModel}(x = NA, std = FALSE, digits = 2, file = "name",
-  pathLabels = c("none", "labels", "both"), showFixed = TRUE,
-  means = TRUE, resid = c("circle", "line", "none"), showMeans = NULL,
+  pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE,
+  resid = c("circle", "line", "none"), showFixed = TRUE, showMeans = NULL,
   ...)
 }
 \arguments{
@@ -22,13 +22,15 @@
 
 \item{pathLabels}{Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")}
 
-\item{showFixed}{Whether to show fixed paths (defaults to TRUE)}
+\item{fixed}{Whether to show fixed paths (defaults to TRUE)}
 
 \item{means}{Whether to show means or not (default = TRUE)}
 
 \item{resid}{How to show residuals and variances default is "circle". Options are "line" & "none"}
 
-\item{showMeans}{Deprecated: just use 'means = '}
+\item{showFixed}{Deprecated: just use 'fixed = TRUE'}
+
+\item{showMeans}{Deprecated: just use 'means = TRUE'}
 
 \item{...}{Optional parameters}
 }

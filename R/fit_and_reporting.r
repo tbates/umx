@@ -1891,10 +1891,11 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param digits The number of decimal places to add to the path coefficients
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
-#' @param showFixed Whether to show fixed paths (defaults to TRUE)
+#' @param fixed Whether to show fixed paths (defaults to TRUE)
 #' @param means Whether to show means or not (default = TRUE)
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
-#' @param showMeans Deprecated: just use 'means = '
+#' @param showMeans Deprecated: just use 'means = TRUE'
+#' @param showFixed Deprecated: just use 'fixed = TRUE'
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},
@@ -1913,7 +1914,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' plot(m1)
-plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), showFixed = TRUE, means = TRUE, resid = c("circle", "line", "none"), showMeans = NULL, ...) {
+plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE, resid = c("circle", "line", "none"), showFixed = TRUE, showMeans = NULL, ...) {
 	# ==========
 	# = Setup  =
 	# ==========
@@ -1922,27 +1923,38 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 		means = showMeans
 	}	
 	
+	if(!is.null(showMeans)){
+		message("We're moving from showFixed = T/F to just fixed = T/F for simplicity")
+		fixed = showFixed
+	}	
 	resid = match.arg(resid)
 	model = x # just to be clear that x is a model
 
 	pathLabels = match.arg(pathLabels)
 	latents = model@latentVars   # 'vis', 'math', and 'text' 
 	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
+	
+	# update values using compute = T to capture labels with [] references.
+	# TODO: !!! Needs more work to sync with confidence intervals and SES
+	model$S$values = mxEval(S, model, compute = T)
+	model$A$values = mxEval(A, model, compute = T)
+	model$M$values = mxEval(M, model, compute = T)
+	
 	if(std){ model = umx_standardize_RAM(model, return = "model") }
 
 	# ========================
 	# = Get Symmetric & Asymmetric Paths =
 	# ========================
 	out = "";
-	out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, showFixed = showFixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
+	out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, fixed = fixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
 	if(resid == "circle"){
-		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
+		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
 	} else if(resid == "line"){
-		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
+		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
 	}else{
-		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , showFixed = showFixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)		
+		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)		
 	}
-	# TODO should xmu_dot_make_residuals handle showFixed or not necessary?
+	# TODO should xmu_dot_make_residuals handle fixed or not necessary?
 	tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
 	variances     = tmp$variances  #either "var_var textbox" or "var -> var port circles"
 	varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
@@ -1983,8 +1995,8 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 			}
 
 			# TODO find a way of showing means fixed at zero?
-			if(thisPathFree || showFixed ) {
-				# if(thisPathFree | (showFixed & thisPathVal != 0) ) {
+			if(thisPathFree || fixed ) {
+				# if(thisPathFree | (fixed & thisPathVal != 0) ) {
 				out = paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n')
 			}else{
 				# cat(paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n'))
@@ -2018,7 +2030,7 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 	# = Assemble full text to write out =
 	# ===================================
 	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
-	print("?plot.MxModel options: std, digits, file, showFixed, means, resid= 'circle|line|none' & more")
+	print("?plot.MxModel options: std, digits, file, fixed, means, resid= 'circle|line|none' & more")
 	xmu_dot_maker(model, file, digraph)
 } # end plot.MxModel
 

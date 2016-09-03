@@ -9,8 +9,8 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
   Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL,
   v0m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL,
   connect = c("single", "all.pairs", "all.bivariate", "unique.pairs",
-  "unique.bivariate"), arrows = 1, free = TRUE, values = NA,
-  labels = NA, lbound = NA, ubound = NA, hasMeans = NULL)
+  "unique.bivariate"), defn = NULL, arrows = 1, free = TRUE,
+  values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL)
 }
 \arguments{
 \item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
@@ -48,6 +48,8 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 \item{firstAt}{first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)}
 
 \item{connect}{as in mxPath - nb: Only used when using from and to}
+
+\item{defn}{latent variable, var@0 mean fixed, with label-based as data source}
 
 \item{arrows}{as in mxPath - nb: Only used when using from and to}
 

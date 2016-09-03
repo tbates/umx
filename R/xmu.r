@@ -768,13 +768,13 @@ xmu_dot_maker <- function(model, file, digraph){
 #'
 #' @param mxMat An A or S mxMatrix 
 #' @param latents Optional list of latents to alter location of circles (defaults to NULL)
-#' @param showFixed Whether to show fixed values or not
+#' @param fixed Whether to show fixed values or not
 #' @param digits How many digits to report
 #' @param resid How to show residuals and variances default is "circle". Other option is "line"
 #' @return - list of variance names and variances
 #' @export
 #' @family xmu internal not for end user
-xmu_dot_make_residuals <- function(mxMat, latents = NULL, showFixed = TRUE, digits = 2, resid = c("circle", "line")) {
+xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits = 2, resid = c("circle", "line")) {
 	mxMat_vals   = mxMat$values
 	mxMat_free   = mxMat$free
 	mxMat_labels = mxMat$labels
@@ -793,7 +793,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, showFixed = TRUE, digi
 			if(thisPathFree){ prefix = "" } else { prefix = "@" }
 			# TODO currently all variances are labeled "a_with_a"
 			# Could diversify to "a_with_a", "var_a" & "resid_a"
-			if(thisPathFree | (thisPathVal !=0 && showFixed)) {
+			if(thisPathFree | (thisPathVal !=0 && fixed)) {
 				if((to == from)) {
 					if(resid =="circle"){
 						# TODO support latents north (see mxGraphviz)
@@ -821,7 +821,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, showFixed = TRUE, digi
 #' @param mxMat An mxMatrix
 #' @param stringIn Input string
 #' @param heads 1 or 2 arrows (default NULL - you must set this)
-#' @param showFixed Whether show fixed values or not (defaults to TRUE)
+#' @param fixed Whether show fixed values or not (defaults to TRUE)
 #' @param comment A comment to include
 #' @param showResiduals Whether to show residuals
 #' @param pathLabels labels
@@ -829,7 +829,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, showFixed = TRUE, digi
 #' @return - string
 #' @export
 #' @family xmu internal not for end user
-xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2) {
+xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2) {
 	if(is.null(heads)){
 		stop("You must set 'heads' to 1 or 2 (was NULL)")
 	}
@@ -853,10 +853,10 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 
 				if(thisPathFree){ labelStart = ' [label="' } else { labelStart = ' [label="@' }
 
-				if(thisPathFree | ((showFixed & (thisPathVal != 0))) ) {
+				if(thisPathFree | ((fixed & (thisPathVal != 0))) ) {
 					stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStart, thisPathVal, '"];\n')
 				}else{
-					# print(paste0("thisPathFree = ", thisPathFree , "showFixed =", showFixed, "; thisPathVal = ", thisPathVal, "\n"))
+					# print(paste0("thisPathFree = ", thisPathFree , "fixed =", fixed, "; thisPathVal = ", thisPathVal, "\n"))
 				}
 				
 			}
@@ -872,7 +872,7 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, showFixed = TRUE, 
 
 				if(thisPathFree){ prefix = "" } else { prefix = "@" }
 
-				if(thisPathFree | ((showFixed & (thisPathVal != 0))) ) {
+				if(thisPathFree | ((fixed & (thisPathVal != 0))) ) {
 					if(target == source) {
 						if(showResiduals){
 							stringIn = paste0(stringIn, "\t", source, "_var -> ", target, ";\n")

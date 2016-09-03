@@ -4,15 +4,15 @@
 \alias{xmu_dot_make_residuals}
 \title{xmu_dot_make_residuals (not for end users)}
 \usage{
-xmu_dot_make_residuals(mxMat, latents = NULL, showFixed = TRUE,
-  digits = 2, resid = c("circle", "line"))
+xmu_dot_make_residuals(mxMat, latents = NULL, fixed = TRUE, digits = 2,
+  resid = c("circle", "line"))
 }
 \arguments{
 \item{mxMat}{An A or S mxMatrix}
 
 \item{latents}{Optional list of latents to alter location of circles (defaults to NULL)}
 
-\item{showFixed}{Whether to show fixed values or not}
+\item{fixed}{Whether to show fixed values or not}
 
 \item{digits}{How many digits to report}
 

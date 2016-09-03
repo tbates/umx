@@ -27,9 +27,9 @@ m1 <- umxRAM("MZ", data = df,remove_unused_manifests = T,
 plot(m1); cov(df)
 round(coef(m1), 2)
 
-# =====================================================
-# = Let's compute cov XY in a matrix, then read it in =
-# =====================================================
+# =========================================================
+# = Now, compute cov XY in a matrix cell, at use by label =
+# =========================================================
 m1 <- umxRAM("MZ", data = df,remove_unused_manifests = FALSE,
 	umxPath(v.m.  = selDVs),
 	umxPath("x", with = "y", free = F, label = "covXY[1,1]"), # if label contains [ free = FALSE
@@ -37,16 +37,16 @@ m1 <- umxRAM("MZ", data = df,remove_unused_manifests = FALSE,
 )
 round(coef(m1),2)
 
-# =========================================
-# = Let's use an algebra to compute covXY =
-# =========================================
-m1 <- umxRAM("MZ", data = df,remove_unused_manifests = FALSE,
+# ====================================
+# = Now compute covXY in an algebra  =
+# ====================================
+m1 <- umxRAM("MZ", data = df, remove_unused_manifests = FALSE,
 	umxPath(v.m. = selDVs),
 	umxPath("x", with = "y", free = F, label = "covXY[1,1]"), # if label contains [ free = FALSE
 	mxMatrix(name = "XY", type = "Full", nrow = 1, ncol = 1, free = TRUE),
 	mxAlgebra(name = "covXY", XY)
 )
-round(coef(m1),2)
+round(coef(m1), 2)
 
 # ===================================================
 # = Let's allow group to moderate the XY covariance =
@@ -55,13 +55,16 @@ m1 <- umxRAM("MZ", data = df,remove_unused_manifests = FALSE,
 	umxPath(v.m. = selDVs),
 	umxPath("x", with = "y", free = F, label = "covXY[1,1]"),
 	mxMatrix(name = "XY", type = "Full", nrow = 1, ncol = 1, free = TRUE),
-	mxMatrix(name = "bMod", type = "Full", nrow = 1, ncol = 1, free = TRUE),
-	mxAlgebra(name = "covXY", XY + bMod*data.grp)
+	mxMatrix(name = "betaCov", type = "Full", nrow = 1, ncol = 1, free = TRUE),
+	mxAlgebra(name = "covXY", XY + betaCov*data.grp)
 )
-round(coef(m1), 2)
-# test the moderator
-m2 = umxModify(m1, update = "MZ.bMod[1,1]", name = "no_XY_moderation", comparison = T)
+plot(m1, fixed = T)
+# We can test the moderator thus:
+m2 = umxModify(m1, update = "MZ.betaCov[1,1]", name = "no_XY_moderation", comparison = T)
 round(coef(m2), 2)
+# We've lost direct access to our estimate of covXY, either in the plot, or coef. We need to dig deeper with mxEval.
+round(coef(m1), 2)
+plot(m1)
 
 # ===================================================
 # = Allow group to moderate XY covariance and means =
@@ -69,13 +72,18 @@ round(coef(m2), 2)
 m1 <- umxRAM("MZ", data = df,remove_unused_manifests = FALSE,
 	umxPath(v.m. = selDVs),
 	umxPath("x", with = "y", free = F, label = "covXY[1,1]"),
-	mxMatrix(name = "XY", type = "Full", nrow = 1, ncol = 1, free = TRUE),
-	mxMatrix(name = "bMod", type = "Full", nrow = 1, ncol = 1, free = TRUE),
-	mxAlgebra(name = "covXY", XY + bMod*data.grp)
+	mxAlgebra(name = "covXY", XY + betaCov * data.grp),
+	mxMatrix(name  = "XY", type = "Full", nrow = 1, ncol = 1, free = TRUE),
+	mxMatrix(name  = "betaCov", type = "Full", nrow = 1, ncol = 1, free = TRUE),
 
-	umxPath(var   = "grp_def", fixedAt = 0),
-	umxPath(means = "grp_def", fixedAt = 0, labels = "data.grp"),
-	mxPath("grp_def", to = selDVs, labels = c("beta_1", "beta_2"))
+	# mxAlgebra(name = "meanXY", XY_mean + betaMean * data.grp),
+	# mxMatrix(name  = "XY_mean" , type = "Full", nrow = 1, ncol = 1, free = TRUE),
+	# mxMatrix(name  = "betaMean", type = "Full", nrow = 1, ncol = 1, free = TRUE),
+
+	# Means
+	umxPath("means", to = selDVs),
+	umxPath("def", to = selDVs, labels = c("beta_1", "beta_2")),
+	umxPath(defn = "def", labels = "data.grp")
 )
 
 m1 <- umxRAM("MZ", data = df,remove_unused_manifests = FALSE,

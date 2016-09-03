@@ -4,7 +4,7 @@
 \alias{xmu_dot_make_paths}
 \title{xmu_dot_make_paths (not for end users)}
 \usage{
-xmu_dot_make_paths(mxMat, stringIn, heads = NULL, showFixed = TRUE,
+xmu_dot_make_paths(mxMat, stringIn, heads = NULL, fixed = TRUE,
   comment = "More paths", showResiduals = TRUE, pathLabels = "labels",
   digits = 2)
 }
@@ -15,7 +15,7 @@ xmu_dot_make_paths(mxMat, stringIn, heads = NULL, showFixed = TRUE,
 
 \item{heads}{1 or 2 arrows (default NULL - you must set this)}
 
-\item{showFixed}{Whether show fixed values or not (defaults to TRUE)}
+\item{fixed}{Whether show fixed values or not (defaults to TRUE)}
 
 \item{comment}{A comment to include}
 

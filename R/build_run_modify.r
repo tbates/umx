@@ -329,7 +329,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}
 
 	foundNames = unique(na.omit(foundNames))
-
 	# Anything not in data -> latent
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
 	nLatent = length(latentVars)
@@ -338,9 +337,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		# message("No latent variables were created.\n")
 		latentVars = NA
 	} else if (nLatent == 1){
-		message("A latent variable '", latentVars[1], "' was created.\n")
+		message("A latent variable '", latentVars[1], "' was created. ")
 	} else {
-		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ".\n")
+		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ". ")
 	}
 	# TODO handle when the user adds mxThreshold object: this will be a model where things are not in the data and are not latent...
 	# ====================
@@ -350,13 +349,13 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(length(unusedManifests) > 0){
 		if(length(unusedManifests) > 10){
 			varList = paste0("First 10 were: ", paste(unusedManifests[1:10], collapse = ", "))
-			msg_str = paste0(length(unusedManifests), " variables in data not referenced in any path. ", varList)
+			msg_str = paste0(length(unusedManifests), " variables not used in any path. ", varList)
 		} else if(length(unusedManifests) > 1){
 			varList = paste(unusedManifests, collapse = ", ")
-			msg_str = paste0(length(unusedManifests), " variables in data not referenced in any path: ", varList)
+			msg_str = paste0(length(unusedManifests), " variables not used in any path: ", varList)
 		} else {
 			varList = unusedManifests
-			msg_str = paste0(length(unusedManifests), " variable in data not referenced in any path: ", varList)
+			msg_str = paste0(length(unusedManifests), " variable not used in any path: ", varList)
 		}
 		manifestVars = setdiff(manifestVars, unusedManifests)
 		if(remove_unused_manifests){
@@ -366,12 +365,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			} else {
 				data$observed = umx_reorder(data$observed, manifestVars)
 			}
-			message(msg_str, " (removed from analysis)")
+			msg_str = paste0(msg_str, " (removed from analysis)")
 		} else {
-			message(msg_str, " (to remove automatically, set remove_unused_manifests = TRUE)")
+			msg_str = paste0(msg_str, " (left in data)")
 		}		
 	}
-	message("ManifestVars set to: ", paste(manifestVars, collapse = ", "))
+	message("ManifestVars set to: ", paste(manifestVars, collapse = ", "), ". ", msg_str)
 
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = manifestVars,
@@ -3816,6 +3815,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
 #' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
 #' @param connect as in mxPath - nb: Only used when using from and to
+#' @param defn latent variable, var@0 mean fixed, with label-based as data source
 #' @param arrows as in mxPath - nb: Only used when using from and to
 #' @param free whether the value is free to be optimised
 #' @param values default value list
@@ -3881,20 +3881,31 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # # manifests is a reserved word, as is latents.
 #' # # It allows the string syntax to use the manifestVars variable
 #' # umxPath("A -> manifests") 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, unique.pairs = NULL, forms = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, unique.pairs = NULL, forms = NULL, Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), defn = NULL, arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
 	xmu_string2path(from)
 	n = 0
-	for (i in list(with, cov, var, forms, means, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, Cholesky)) {
+	for (i in list(with, cov, var, forms, means, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, defn, Cholesky)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, forms, means, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, or Cholesky can be set: Use at one time")
+		stop("At most one of with, cov, var, forms, means, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, defn, or Cholesky can be set: Use at one time")
 	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
 			stop("You must set at least 'from'")
 		}	
+	}
+
+	if(!is.null(defn)){
+		if(is.na(labels)){
+			stop("You must provide the name of the data source for your definition variable in labels! e.g. \"data.age\" ")
+		} else if(length(labels) > 1){
+			stop("Labels must consist of just one data variable (data source) name!")			
+		}
+		a = umxPath(var = defn, fixedAt = 0)
+		b = umxPath(means = defn, free = FALSE, labels = labels)
+		return(list(a, b))
 	}
 
 	if(!is.null(Cholesky)){
