@@ -2856,6 +2856,8 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @param free    Should parameter(s) initally be free? (default = TRUE)
 #' @param verbose Whether to give verbose feedback (default = TRUE)
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
+#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Modify or Compare Models
@@ -2876,7 +2878,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
 #' m2 = mxRun(m2) # have to run the model again...
 #' umxCompare(m1, m2) # not good :-)
-umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE, name = NULL) {	
+umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE, name = NULL, autoRun = getOption("umx_auto_run"), comparison = TRUE) {	
 	free = umx_default_option(free, c(TRUE, FALSE, NA))
 	if(!umx_is_MxModel(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])
@@ -2903,10 +2905,35 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 		message("Labels available in model are: ", paste(legal, ", "))
 		stop("ERROR in umxEquate: no slave labels found or none requested!")
 	}
-	print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
-	model = omxSetParameters(model = model, labels = slaveLabels, newlabels = masterLabels, name = name)
-	model = omxAssignFirstParameters(model, indep = FALSE)
-	return(model)
+	# print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
+	newModel = omxSetParameters(model = model, labels = slaveLabels, newlabels = masterLabels, name = name)
+	newModel = omxAssignFirstParameters(newModel, indep = FALSE)
+	if(autoRun){
+		newModel = mxRun(newModel)
+		tryCatch({
+			umxSummary(newModel)
+		}, warning = function(w) {
+			message("Warning incurred trying to run summary ")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run summary ")
+			message(e)
+		})
+		
+		if(comparison){
+			if(length(coef(model)) > length(coef(newModel))){
+				newMore = FALSE
+			} else {
+				newMore = TRUE
+			}
+			if(newMore){
+				umxCompare(newModel, model)
+			} else {
+				umxCompare(model, newModel)
+			}
+		}
+	}			
+	return(newModel)
 }
 
 #' umxFixAll

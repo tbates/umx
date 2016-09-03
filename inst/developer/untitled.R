@@ -75,23 +75,12 @@ m1 <- umxRAM("MZ", data = df,remove_unused_manifests = FALSE,
 	mxAlgebra(name = "covXY", XY + betaCov * data.grp),
 	mxMatrix(name  = "XY", type = "Full", nrow = 1, ncol = 1, free = TRUE),
 	mxMatrix(name  = "betaCov", type = "Full", nrow = 1, ncol = 1, free = TRUE),
-
-	# mxAlgebra(name = "meanXY", XY_mean + betaMean * data.grp),
-	# mxMatrix(name  = "XY_mean" , type = "Full", nrow = 1, ncol = 1, free = TRUE),
-	# mxMatrix(name  = "betaMean", type = "Full", nrow = 1, ncol = 1, free = TRUE),
-
 	# Means
 	umxPath("means", to = selDVs),
 	umxPath("def", to = selDVs, labels = c("beta_1", "beta_2")),
 	umxPath(defn = "def", labels = "data.grp")
 )
-
-m1 <- umxRAM("MZ", data = df,remove_unused_manifests = FALSE,
-	umxPath(v.m.  = selDVs),
-	# mxMatrix(name = "b_2", label = "modVal", "Full", nrow=1, ncol=1, free=T, values = 0),
-	# mxAlgebra(name = "covXY", (b_2 * 0)  + cov),
-	mxMatrix(name = "XY", type = "Full", nrow = 1, ncol = 1, free = TRUE),
-	mxAlgebra(name = "covXY", XY),
-	umxPath("x", with = "y", free = F, label = "covXY[1,1]")
-)
-round(coef(m1),2)
+m2 = umxModify(m1, update = "MZ.betaCov[1,1]", name = "no_XY_moderation", comparison = T)
+m3 = umxModify(m1, update = c("beta_1", "beta_2"), name = "no_means_moderation", comparison = F)
+m4 = umxEquate(m1, master = "beta_1", slave = "beta_2", free = T, verbose = T, name = "equate means")
+m5 = umxModify(m2, update = c("beta_1", "beta_2"), name = "no_means_moderation")

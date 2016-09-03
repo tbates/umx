@@ -5,7 +5,7 @@
 \title{umxEquate}
 \usage{
 umxEquate(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE,
-  name = NULL)
+  name = NULL, autoRun = getOption("umx_auto_run"), comparison = TRUE)
 }
 \arguments{
 \item{model}{An \code{\link{mxModel}} within which to equate parameters}
@@ -19,6 +19,10 @@ umxEquate(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE,
 \item{verbose}{Whether to give verbose feedback (default = TRUE)}
 
 \item{name}{name for the returned model (optional: Leave empty to leave name unchanged)}
+
+\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+
+\item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 }
 \value{
 - \code{\link{mxModel}}
