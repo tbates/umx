@@ -17,9 +17,9 @@ selDVs          = c("x", "y")                # Make selection variables object
 df = data.frame(xy, grp)
 cov(df)
 
-# ===============
-# = Basic model =
-# ===============
+# =============================
+# = Basic x<->y + means model =
+# =============================
 m1 <- umxRAM("MZ", data = df,remove_unused_manifests = T,
 	umxPath(v.m.  = selDVs),
 	umxPath("x", with = "y")

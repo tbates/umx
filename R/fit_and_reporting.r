@@ -2010,19 +2010,15 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 	# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
 	rankVariables = paste0("\t{rank=min ; ", paste(latents, collapse = "; "), "};\n")
 	rankVariables = paste0(rankVariables, "\t{rank=same; ", paste(selDVs, collapse = " "), "};\n")
-	
 	if(umx_has_means(model)){ append(varianceNames, "one")}
-
 	if(length(varianceNames) > 0){
 		rankVariables = paste0(rankVariables, "\t{rank=max ; ", paste(varianceNames, collapse = " "), "};\n")
 	}
-
 	# ===================================
 	# = Assemble full text to write out =
 	# ===================================
 	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
-
-	print("nb: see ?plot.MxModel for options - std, digits, file, showFixed, means, resid= 'circle|line|none', pathLabels")
+	print("?plot.MxModel options: std, digits, file, showFixed, means, resid= 'circle|line|none' & more")
 	xmu_dot_maker(model, file, digraph)
 } # end plot.MxModel
 
