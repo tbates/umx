@@ -3,6 +3,20 @@
 # = Not used directly by users =
 # ========================================
 
+xmu_safe_summary <- function(model1, model2, summary = TRUE) {
+	# model = mxRun(model)
+	tryCatch({
+		umxSummary(model1)
+		umxCompare(model1, model2)
+	}, warning = function(w) {
+		message("Warning incurred trying to run summary ")
+		message(w)
+	}, error = function(e) {
+		message("Error incurred trying to run summary ")
+		message(e)
+	})
+}
+
 #' xmu_check_levels_identical
 #'
 #' Just checks that the factor levels for twins 1 and 2 are the same

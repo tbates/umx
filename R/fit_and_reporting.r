@@ -658,7 +658,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 	validValuesForshowEstimates = c("raw", "std", "none", "both", "list of column names")
 	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list
 
-	message('?umxSummary showEstimates="raw|std", digits, report= "html", filter= "NS|SIG" & more')
+	message("?umxSummary showEstimates='raw|std', digits, report= 'html', filter= 'NS' & more")
 	
 	# if the filter is off default, the user must want something, let's assume it's std ...
 	if( filter != "ALL" & showEstimates == "none") {

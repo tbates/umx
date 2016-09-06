@@ -35,7 +35,6 @@ m1 <- umxRAM("MZ", data = mxData(mzData, type = "raw"),remove_unused_manifests =
 )
 plot(m1, digits = 3)
 
-
 m1$matrices
 m1$algebras
 

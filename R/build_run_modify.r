@@ -2655,7 +2655,7 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 		}
 		x = mxRun(x, intervals = intervals)
 		if(comparison){
-			umxSummary(x)			
+			umxSummary(x)
 			if(free){ # new model has fewer df
 				umxCompare(x, lastFit)
 			} else {
@@ -2665,7 +2665,6 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 		return(x)
 	}
 }
-
 #' @export
 umxReRun <- umxModify
 
