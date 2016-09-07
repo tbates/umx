@@ -1938,7 +1938,9 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 	# TODO: !!! Needs more work to sync with confidence intervals and SES
 	model$S$values = mxEval(S, model, compute = T)
 	model$A$values = mxEval(A, model, compute = T)
-	model$M$values = mxEval(M, model, compute = T)
+	if(!is.null(model$M)){
+		model$M$values = mxEval(M, model, compute = T)
+	}
 	
 	if(std){ model = umx_standardize_RAM(model, return = "model") }
 
