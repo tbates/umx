@@ -346,6 +346,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# = Handle Manifests =
 	# ====================
 	unusedManifests = setdiff(manifestVars, foundNames)
+	msg_str = ""
 	if(length(unusedManifests) > 0){
 		if(length(unusedManifests) > 10){
 			varList = paste0("First 10 were: ", paste(unusedManifests[1:10], collapse = ", "))
