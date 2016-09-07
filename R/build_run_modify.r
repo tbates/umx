@@ -54,6 +54,7 @@
 NULL
 	
 utils::globalVariables(c(
+	'M', 'S',
 	'A', 'E',
 	'a', 'c', 'e', 
 	'Am', 'Cm', 'Em',
