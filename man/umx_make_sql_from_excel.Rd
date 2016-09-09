@@ -29,6 +29,7 @@ itemID, test, native_item_number, item_text, direction, scale, format, author
 \dontrun{
 # An example xcel spreadsheet
 fp = system.file("inst/extdata", "GQ6.sql.xlsx", package = "umx")
+fp = system.file("extdata", "GQ6.sql.xlsx", package = "umx")
 umx_open(fp)
 umx_make_sql_from_excel() # Using file selected in front-most Finder window
 umx_make_sql_from_excel("~/Desktop/test.xlsx") # provide a path
