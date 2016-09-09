@@ -2437,10 +2437,10 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE) {	
-	# TODO umxLabel: change these to an S3 method with three classes...
-	# TODO umxLabel: test that arguments not used by a particular class are not set away from their defaults
-	# TODO umxLabel: perhaps make "A_with_A" --> "var_A"
-	# TODO umxLabel: perhaps make "one_to_x2" --> "mean_x2" best left as is
+	# TODO umxLabel: Change these to an S3 method with three classes...
+	# TODO umxLabel: Check that arguments not used by a particular class are not set away from their defaults
+	# TODO umxLabel: Perhaps make "A_with_A" --> "var_A"
+	# TODO umxLabel: Perhaps make "one_to_x2" --> "mean_x2" best left as is
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
 		xmuLabel_Matrix(mx_matrix = obj, baseName = baseName, setfree = setfree, drop = drop, labelFixedCells = labelFixedCells, jiggle = jiggle, boundDiag = boundDiag, suffix = suffix, verbose = verbose, overRideExisting = overRideExisting)
@@ -2455,6 +2455,52 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 		stop("I can only label OpenMx models and mxMatrix types. You gave me a ", typeof(obj))
 	}
 }
+
+#' umxMatrix
+#'
+#' @description
+#' umxMatrix is a wrapper for mxMatrix which labels cells buy default, and has the name parameter first in order. 
+#'
+#' @param name The name of the matrix (Default = NA). Note the different order compared to mxMatrix!
+#' @param type The type of the matrix (Default = "Full")
+#' @param nrow Number of rows in the matrix: Must be set
+#' @param ncol Number of columns in the matrix: Must be set
+#' @param free Whether cells are free (Defaul FALSE)
+#' @param values The values of the matrix (Default NA)
+#' @param labels Either whether to label the matrix (default TRUE), OR a vector of labels to apply.
+#' @param lbound Lower bounds on cells (Defaults to NA)
+#' @param ubound Upper bounds on cells (Defaults to NA)
+#' @param byrow  Whether to fill the matrix down columns or across rows first (Default = getOption('mxByrow')
+#' @param dimnames NA
+#' @param condenseSlots Whether to save memory by NULLing out unused matrix elements, like labels, ubnound etc. Default = getOption('mxCondenseMatrixSlots')
+#' @param ... Additional parameters (!! not currently supported by umxMatrix)
+#' @param joinKey See mxMatrix documentation: Defaults to as.character(NA)
+#' @param joinModel See mxMatrix documentation: Defaults to as.character(NA)
+#' @return - \code{\link{mxMatrix}}
+#' @export
+#' @family Model Building Functions
+#' @seealso - \code{\link{umxLabel}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' umxMatrix("test", "Full", 1, 1)
+umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA, byrow = getOption('mxByrow'), dimnames = NA, condenseSlots=getOption('mxCondenseMatrixSlots'), ..., joinKey=as.character(NA), joinModel=as.character(NA)) {
+	legalMatrixTypes = c("Diag", "Full", "Iden", "Lower", "Sdiag", "Stand", "Symm", "Unit",  "Zero")
+	if(name %in% legalMatrixTypes){
+		stop("You used ", name, "as the name of your matrix. You might be used to mxMatrix, where type comes first? But it is not a legal matrix name.")
+	}
+	if(isTRUE(labels)){
+		setLabels = TRUE
+		labels = NA
+	} else {
+		setLabels = FALSE
+	} 
+	x = mxMatrix(type = type, nrow = nrow, ncol = ncol, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound, byrow = byrow, dimnames = dimnames, name = name, condenseSlots=condenseSlots, joinKey = joinKey, joinModel = joinModel, ...)
+	if(setLabels){
+		x = umxLabel(x)
+	}
+	return(x)
+}
+
 
 # =================================
 # = Run Helpers =

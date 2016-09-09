@@ -103,9 +103,10 @@ Other Misc: \code{\link{umxEval}},
 
 Other Model Building Functions: \code{\link{umxDiagnose}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
-  \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM2Ordinal}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxThresholdMatrix}},
+  \code{\link{umxMatrix}}, \code{\link{umxModify}},
+  \code{\link{umxPath}}, \code{\link{umxRAM2Ordinal}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
+  \code{\link{umxThresholdMatrix}},
   \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}
