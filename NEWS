@@ -1,13 +1,14 @@
-# umx 1.3.1
-* R 3.3.1 companion: "Bug in your Hair" August 2016
-* NEW: Add autoRun and compare support to umxEquate
-* NEW: Support definition variables as an umxPath type, e.g.
+# umx 1.4.0
+* September 2016 "New features and improvements"
+* NEW: umxMatrix
+  * Adds umxLabel by default, allows name as parameter one
+* NEW: Definition variable umxPath type, e.g.
   * umxPath(defn = "def", labels = "data.age")
-* IMPROVE: More concise feedback
-* IMPROVE: support definition variables as an umxPath type, e.g.
-* IMPROVE: umxRAM remove_unused_manifests no-longer updates manifestVars, just leaves the variable in the data.
-* CHANGE: umxGetOpenMx to install.OpenMx or umx_install_OpenMx
-* CHANGE: "showFixed" to "fixed" in plot
+* IMPROVED: umxEquate supports autoRun and compare
+* IMPROVED: More concise feedback
+* IMPROVED: umxRAM remove_unused_manifests no longer updates manifestVars + leaves variable in data by default.
+* RENAME: umxGetOpenMx aliased to install.OpenMx or umx_install_OpenMx
+* RENAME: plot() "showFixed" deprecated in favour of easier to type "fixed"
 
 # umx 1.3.0
 * R 3.3.1 companion: "Bug in your Hair" August 2016
