@@ -1040,6 +1040,8 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #'
 #' Returns a dataframe with variables renamed as desired.
 #' Unlike some functions, it checks that the variables exist, and that the new names are not already used.
+#' 
+#' As a courtesy function, it handles grep replace in strings of characters.
 #'
 #' note: to use replace list, you must say c(old = "new"), not c(old -> "new")
 #' @param x the dataframe in which to rename variables
@@ -1072,9 +1074,9 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 		if(is.null(replace)){
 			stop("Please set replace to a valid replacement string!")
 		}
-	    nameVector = names(x)
+	    nameVector = umx_names(x)
 	    if (is.null(nameVector)) {
-	        stop(paste0("umx_names requires a dataframe or something else with names(), ", 
+	        stop(paste0("umx_rename requires a dataframe or something else with names(), ", 
 	            umx_object_as_str(x), " is a ", typeof(x)))
 	    }
 		new_names = gsub(grep, replace, nameVector)
@@ -1086,7 +1088,11 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 			message("New:")
 			print(new_names[!(nameVector == new_names)])
 		} else {
-			names(x) = new_names
+			if(class(x)=="character"){
+				x = new_names
+			} else {
+				names(x) = new_names
+			}
 		}
 		invisible(x)		
 	} else {
@@ -3352,9 +3358,9 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(mtcars, "^d") # "disp", drat
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
 umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
-	if(class(df)=="data.frame"){
+	if(class(df) == "data.frame"){
 		nameVector = names(df)
-	} else if(class(df)=="character"){
+	} else if(class(df) == "character"){
 		nameVector = df
 	} else {
 		nameVector = parameters(df)
