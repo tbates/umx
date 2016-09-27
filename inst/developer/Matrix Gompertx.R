@@ -1,9 +1,5 @@
-#
-# Mx script to fit Gompertz growth curve to data collected from
-# twins on nocc occasions of measurement
-#
+# OpenMx script to fit Gompertz growth curve to data collected from twins on nOcc measurement occasions
 nOcc   = 4
-nOccx2 = 8
 
 # Group 1: compute factor loading vectors
 # Matrices declare matrices
@@ -63,7 +59,8 @@ End Algebra;
 End Group
 
 Group 3 fit the model to the MZ data
-Data Ninput=nOccx2 nobs=75
+Data Ninput=nOcc*2
+nobs=75
 CMatrix full file=bayleymz.cov # observed cov matrix
 Mean file=bayleymz.mean        # observed means
 
@@ -89,7 +86,8 @@ Option rs
 End Group
 
 Group 4 fit the model to the DZ data
-Data ninput=nOccx2 nobs=75
+Data ninput=nOcc*2
+nobs=75
 CMatrix full file=bayleydz.cov
 means file=bayleydz.mean
 

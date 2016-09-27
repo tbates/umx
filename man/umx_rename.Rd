@@ -27,6 +27,8 @@ Returns a dataframe with variables renamed as desired.
 Unlike some functions, it checks that the variables exist, and that the new names are not already used.
 }
 \details{
+As a courtesy function, it handles grep replace in strings of characters.
+
 note: to use replace list, you must say c(old = "new"), not c(old -> "new")
 }
 \examples{
