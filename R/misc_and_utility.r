@@ -1941,14 +1941,17 @@ umxCov2cor <- function(x) {
 #' A function to compactly report how long a model took to execute. Comes with some preset styles
 #' User can set the format with C-style string formatting.
 #'
-#' The default is "simple", which gives only the biggest unit used. i.e., "x seconds" for times under 1 minute.
+#' The default time format is "simple", which gives only the biggest unit used. i.e., "x seconds" for times under 1 minute.
 #' "std" shows time in the format adopted in OpenMx 2.0 e.g. "Wall clock time (HH:MM:SS.hh): 00:00:01.16"
 #' 
 #' If a list of models is provided, time deltas will also be reported.
 #' 
-#' If the model hasn not been run, umx_time will run it for you.
+#' If instead of a model the key word "start" is given in x, a start time will be recorded. "stop" gives the
+#' time since "start" was called (and clears the timer)
+#' 
+#' If a model has not been run, umx_time will run it for you.
 #'
-#' @param model An \code{\link{mxModel}} (or \code{\link{list}} of models for which to display elapsed time
+#' @param x A \code{\link{mxModel}} or list of models for which to display elapsed time, or 'start' or 'stop'
 #' @param formatStr A format string, defining how to show the time (defaults to human readable)
 #' @param tz time zone in which the model was executed (defaults to "GMT")
 #' @param autoRun If TRUE (default), run the model if it appears not to have been.
@@ -1973,7 +1976,7 @@ umxCov2cor <- function(x) {
 #' umx_time(c(m1, m2))
 #' umx_time('stop')
 #' # elapsed time: .3 seconds
-umx_time <- function(model = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
+umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
 	if(is.list(model)){
 		# check each item is a model
 		if(!umx_is_MxModel(model, listOK = TRUE)){
