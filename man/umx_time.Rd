@@ -4,11 +4,11 @@
 \alias{umx_time}
 \title{umx_time}
 \usage{
-umx_time(model = NA, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
+umx_time(x = NA, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
   tz = "GMT", autoRun = TRUE)
 }
 \arguments{
-\item{model}{An \code{\link{mxModel}} (or \code{\link{list}} of models for which to display elapsed time}
+\item{x}{A \code{\link{mxModel}} or list of models for which to display elapsed time, or 'start' or 'stop'}
 
 \item{formatStr}{A format string, defining how to show the time (defaults to human readable)}
 
@@ -24,12 +24,15 @@ A function to compactly report how long a model took to execute. Comes with some
 User can set the format with C-style string formatting.
 }
 \details{
-The default is "simple", which gives only the biggest unit used. i.e., "x seconds" for times under 1 minute.
+The default time format is "simple", which gives only the biggest unit used. i.e., "x seconds" for times under 1 minute.
 "std" shows time in the format adopted in OpenMx 2.0 e.g. "Wall clock time (HH:MM:SS.hh): 00:00:01.16"
 
 If a list of models is provided, time deltas will also be reported.
 
-If the model hasn not been run, umx_time will run it for you.
+If instead of a model the key word "start" is given in x, a start time will be recorded. "stop" gives the
+time since "start" was called (and clears the timer)
+
+If a model has not been run, umx_time will run it for you.
 }
 \examples{
 require(umx)
