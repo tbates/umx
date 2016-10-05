@@ -1,0 +1,27 @@
+digraph G {
+
+	z1 [shape = square];
+	z2 [shape = square];
+	z3 [shape = square];
+	 one [shape = triangle];
+	z1_var [label="@0.71", shape = plaintext];
+	z2_var [label="@0.71", shape = plaintext];
+	z3_var [label="@0.71", shape = plaintext];
+	F1_var [label="@1", shape = plaintext];
+
+
+	# Single arrow paths
+	F1 -> z1 [label="0.54"];
+	F1 -> z2 [label="0.54"];
+	F1 -> z3 [label="0.54"];
+
+	# Variances
+
+	# Means paths
+
+	{rank=min ; F1};
+	{rank=same; z1 z2 z3};
+	{rank=max ; z1_var z2_var z3_var F1_var};
+
+
+}

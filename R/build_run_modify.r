@@ -900,18 +900,34 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @family Twin Modeling Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
+#' 
+#' # ===========================
+#' # = Univariate model of BMI =
+#' # ===========================
 #' require(umx)
-#' # BMI ?twinData set from Australian twins.
-#' data(twinData)
+#' 
+#' data(twinData) # ?twinData set from Australian twins.
 #' # Pick the variables
-#' selDVs = c("bmi1", "bmi2")
 #' selDVs = c("bmi1", "bmi2")
 #' mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
 #' dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' umxSummary(m1, showStd = TRUE)
 #' plot(m1)
-#' # ADE model (DZ correlation set to .25)
+#' 
+#' # =====================================
+#' # = Bivariate height and weight model =
+#' # =====================================
+#' data(twinData) # ?twinData set from Australian twins.
+#' # Pick the variables
+#' selDVs = c("bmi1", "bmi2")
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' umxSummary(m1, showStd = TRUE)
+#' plot(m1)
+#' 
+#' # =========================================
+#' # = ADE model (DZ correlation set to .25) =
+#' # =========================================
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
 #' umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE

@@ -1,0 +1,25 @@
+digraph G {
+	z1 [shape = square];
+	z2 [shape = square];
+	z3 [shape = square];
+	z1_var [label="40", shape = plaintext];
+	z2_var [label="42", shape = plaintext];
+	z3_var [label="50", shape = plaintext];
+	F1_var [label="@1", shape = plaintext];
+
+
+	# Single arrow paths
+	F1 -> z1 [label="78"];
+	F1 -> z2 [label="76"];
+	F1 -> z3 [label="71"];
+
+	# Variances
+	z1_var -> z1;
+	z2_var -> z2;
+	z3_var -> z3;
+	F1_var -> F1;
+
+	{rank=min ; F1 F1_var};
+	{rank=same; z1 z2 z3};
+	{rank=max ; z1_var z2_var z3_var};
+}
