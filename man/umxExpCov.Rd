@@ -7,8 +7,8 @@
 \usage{
 umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL, ...)
 
-\method{vcov}{MxModel}(object, latents = FALSE, manifests = TRUE,
-  digits = NULL, ...)
+vcov.MxModel(object, latents = FALSE, manifests = TRUE, digits = NULL,
+  ...)
 }
 \arguments{
 \item{object}{an \code{\link{mxModel}} to get the covariance matrix from}

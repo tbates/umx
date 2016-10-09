@@ -3991,6 +3991,14 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		}	
 	}
 
+	n = 0
+	for (i in list(v.m. , v1m0, v0m0)) {
+		if(!is.null(i)){ n = n + 1}
+	}
+	if(n && !is.null(fixedAt)){
+		warning("When you use v.m. , v1m0, v0m0, don't also set fixedAt - I will ignore it this time")
+	}
+
 	if(!is.null(defn)){
 		if(is.na(labels)){
 			stop("You must provide the name of the data source for your definition variable in labels! e.g. \"data.age\" ")

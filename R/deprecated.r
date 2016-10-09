@@ -43,7 +43,7 @@
 #' 
 #' Replace umxGraph_RAM with \code{\link{plot}}
 #'
-#' Replace tryHard with \code{\link{umxRun}}
+#' Replace tryHard with \code{\link{mxTryHard}}
 #'
 #' Replace genEpi_ReRun with \code{\link{umxModify}}
 #'
@@ -61,11 +61,12 @@
 #'
 #' Replace mxLatent with \code{\link{umxLatent}}
 #' 
-#' Change col.as.numeric is deprecated. Please replace with \code{\link{umx_as_numeric}}
+#' Change col.as.numeric to \code{\link{umx_as_numeric}}
 #' 
 #' Change cor.prob to \code{\link{umx_cor}}
 #' 
 #' Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
+#' 
 #'
 #' @name umx-deprecated
 #' @family umx deprecated
