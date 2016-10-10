@@ -8,13 +8,16 @@
 # install.packages("digest")
 # install.packages("git2r")
 # install.packages("httr")
+# install.packages("jsonlite")
 # install.packages("memoise")
 # install.packages("openssl")
 # install.packages("R6")
 # install.packages("Rcpp")
 # install.packages("rstudioapi")
 # install.packages("withr")
+
 # install.packages("~/Dropbox/shared folders/OpenMx_binaries/OpenMx2.6.0-MZ-OSX/3.2/OpenMx_2.6.0.tgz")
+# "curl", "jsonlite", "R6"
 
 # ===============================
 # = Highlevel models (ACE, GxE) =
@@ -912,10 +915,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' data(twinData) # ?twinData set from Australian twins.
 #' # Pick the variables
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- twinData[twinData$zyg == 1][1:80,] # 80 pairs for speed
-#' dzData <- twinData[twinData$zyg == 3][1:80,]
+#' mzData <- twinData[twinData$zyg == 1,][1:80,] # 80 pairs for speed
+#' dzData <- twinData[twinData$zyg == 3,][1:80,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummary(m1, showStd = TRUE)
+#' umxSummary(m1, std = FALSE)
 #' plot(m1)
 #' 
 #' # =====================================

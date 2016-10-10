@@ -106,10 +106,10 @@ require(umx)
 data(twinData) # ?twinData set from Australian twins.
 # Pick the variables
 selDVs = c("bmi1", "bmi2")
-mzData <- twinData[twinData$zyg == 1][1:80,] # 80 pairs for speed
-dzData <- twinData[twinData$zyg == 3][1:80,]
+mzData <- twinData[twinData$zyg == 1,][1:80,] # 80 pairs for speed
+dzData <- twinData[twinData$zyg == 3,][1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-umxSummary(m1, showStd = TRUE)
+umxSummary(m1, std = FALSE)
 plot(m1)
 
 # =====================================

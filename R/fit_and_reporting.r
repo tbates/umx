@@ -2046,7 +2046,8 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' @param digits How many decimals to include in path loadings (default is 2)
 #' @param means Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
-#' @param showMeans Deprecated: just use 'means = ' for simplicity of typing.
+#' @param showMeans DEPRECATED: just use 'means = ' for simplicity of typing.
+#' @param showStd DEPRECATED: just use 'std = '
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -2064,10 +2065,14 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' plot(m1)
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, showMeans = NULL, std = TRUE, ...) {
-	if(!is.null(showMeans)){
-		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", showStd = "deprecated", ...) {
+	if(showMeans != "deprecated"){
+		message("We're moving from 'showMeans'to just means = T/F for simplicity")
 		means = showMeans
+	}
+	if(showStd != "deprecated"){
+		message("We're moving from 'showStd' to just std = T/F for simplicity")
+		std = showStd
 	}
 	if(!class(x) == "MxModel.ACE"){
 		stop("The first parameter of umxPlotACE must be an ACE model, you gave me a ", class(x))
@@ -2141,7 +2146,7 @@ plot.MxModel.ACE <- umxPlotACE
 #' @param digits How many decimals to include in path loadings (default is 2)
 #' @param means Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
-#' @param showMeans (older parameter - replace with means)
+#' @param showMeans DEPRECATED use "means" instead
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
