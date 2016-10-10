@@ -112,6 +112,14 @@ m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 umxSummary(m1, std = FALSE)
 plot(m1)
 
+# =========================================
+# = ADE model (DZ correlation set to .25) =
+# =========================================
+m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
+umxCompare(m2, m1) # ADE is better
+umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
+
+
 # =====================================
 # = Bivariate height and weight model =
 # =====================================
@@ -124,19 +132,10 @@ dzData <- dzData[1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)
 
-# ==================================================
-# = Well done! Now you can do twin models in R :-) =
-# ==================================================
+# ================================================================
+# = Well done! Now you can make and compare twin models in R :-) =
+# ================================================================
 
-
-
-
-# =========================================
-# = ADE model (DZ correlation set to .25) =
-# =========================================
-m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
-umxCompare(m2, m1) # ADE is better
-umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
 
 # ===================
 # = Ordinal example =
@@ -173,13 +172,12 @@ twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels =
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
-dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
+mzData <- twinData[twinData$zyg == 1,]
+dzData <- twinData[twinData$zyg == 3,]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-umxSummary(m1)
-
+plot(m1)
 
 # =======================================
 # = Mixed continuous and binary example =
