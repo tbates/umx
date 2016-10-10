@@ -7,15 +7,18 @@
 umxFitIndices(model, refModels = mxRefModels(model, run = TRUE))
 }
 \arguments{
-\item{model}{the \code{\link{mxModel}} you want fit indices for}
+\item{model}{The \code{\link{mxModel}} for which you want fit indices.}
 
-\item{refModels}{independence and saturated models. default mxRefModels(model, run = TRUE)}
+\item{refModels}{Independence and saturated models. default mxRefModels(model, run = TRUE)}
 }
 \value{
-\code{NULL}
+Table of fit statistics
 }
 \description{
-A list of fit indices. See, for origins, http://openmx.psyc.virginia.edu/thread/765
+A list of fit indices. Originated in this thread: http://openmx.psyc.virginia.edu/thread/765
+note: This is not a full-fat fit reporter. It is not robust across multi-group designs,
+definition variables. It is primarily designed to add less-often reported fit indices for 
+RAM models where reviewer 2 wants something other than CFA/TLI/RMSEA :-).
 }
 \examples{
 require(umx)
@@ -29,15 +32,17 @@ m1 <- umxRAM("One Factor",
 	umxPath(var = latents, fixedAt = 1)
 )
 umxFitIndices(m1)
+# And with raw data
 m1 <- umxRAM("m1", data = demoOneFactor,
 	umxPath(latents, to = manifests),
 	umxPath(v.m. = manifests),
 	umxPath(v1m0 = latents)
 )
 umxFitIndices(m1)
+umxAPA(umxFitIndices(m1), digits = 3)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+-
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

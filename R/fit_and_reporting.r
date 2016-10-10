@@ -2929,6 +2929,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' umxExpCov(m1, digits = 3)
 umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
+	# TODO integrate with mxGetExpected(model, "covariance")
 	if(object$data$type == "raw"){
 		manifestNames = names(object$data$observed)
 	} else {
@@ -3082,14 +3083,17 @@ logLik.MxModel <- function(object, ...) {
 
 #' umxFitIndices
 #'
-#' A list of fit indices. See, for origins, http://openmx.psyc.virginia.edu/thread/765
+#' A list of fit indices. Originated in this thread: http://openmx.psyc.virginia.edu/thread/765
+#' note: This is not a full-fat fit reporter. It is not robust across multi-group designs,
+#' definition variables. It is primarily designed to add less-often reported fit indices for 
+#' RAM models where reviewer 2 wants something other than CFA/TLI/RMSEA :-).
 #'
-#' @param model the \code{\link{mxModel}} you want fit indices for
-#' @param refModels  independence and saturated models. default mxRefModels(model, run = TRUE)
-#' @return \code{NULL}
+#' @param model The \code{\link{mxModel}} for which you want fit indices.
+#' @param refModels Independence and saturated models. default mxRefModels(model, run = TRUE)
+#' @return Table of fit statistics
 #' @export
 #' @family Reporting functions
-#' @references - \url{http://www.github.com/tbates/umx} 
+#' @references - 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3102,15 +3106,18 @@ logLik.MxModel <- function(object, ...) {
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
 #' umxFitIndices(m1)
+#' # And with raw data
 #' m1 <- umxRAM("m1", data = demoOneFactor,
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(v.m. = manifests),
 #' 	umxPath(v1m0 = latents)
 #' )
 #' umxFitIndices(m1)
+# Round to 3 places, and report as a markdown table
+#' umxAPA(umxFitIndices(m1), digits = 3)
 umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
 	if(!umx_is_RAM(model)){
-		message("Currently working for RAM models... email me if you need matrix-based models")
+		message("Not fully tested against non-RAM models...")
 	}
 	# refModels = mxRefModels(model, run = TRUE)
 	modelSummary = summary(model, refModels = refModels)
@@ -3133,28 +3140,24 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
 	}
 	observed.cor = cov2cor(observed.cov)
 
-	A =  model$matrices$A$values
-	S =  model$matrices$S$values
-	Fmat =  model$matrices$F$values
-	I =  diag(N.manifest+N.latent)
-	estimate.cov =  Fmat %*% (qr.solve(I-A)) %*% S %*% (t(qr.solve(I-A))) %*% t(Fmat)
+	estimate.cov =	mxGetExpected(model, "covariance")
 	estimate.cor =  cov2cor(estimate.cov)
 	Id.manifest  =  diag(N.manifest)
-	residual.cov =  observed.cov-estimate.cov
-	residual.cor =  observed.cor-estimate.cor
+	residual.cov =  observed.cov - estimate.cov
+	residual.cor =  observed.cor - estimate.cor
 	F0       =  max((Chi-df)/(N-1),0)
-	NFI      =  (indep.chi-Chi)/indep.chi
-	NNFI.TLI =  (indep.chi-indep.df/df*Chi)/(indep.chi-indep.df)
-	PNFI     =  (df/indep.df)*NFI
+	NFI      =  (indep.chi - Chi)/indep.chi
+	NNFI.TLI =  (indep.chi - indep.df/df * Chi)/(indep.chi - indep.df)
+	PNFI     =  (df/indep.df) * NFI
 	RFI      =  1 - (Chi/df) / (indep.chi/indep.df)
-	IFI      =  (indep.chi-Chi)/(indep.chi-df)
-	CFI      =  min(1.0-(Chi-df)/(indep.chi-indep.df),1)
+	IFI      =  (indep.chi - Chi)/(indep.chi - df)
+	CFI      =  min(1.0-(Chi - df)/(indep.chi - indep.df),1)
 	PRATIO   =  df/indep.df
 	PCFI     =  PRATIO*CFI
-	NCP      =  max((Chi-df),0)
+	NCP      =  max((Chi - df), 0)
 	RMSEA    =  sqrt(F0/df) # need confidence intervals
-	MFI      =  exp(-0.5*(Chi-df)/N)
-	GH       =  N.manifest / (N.manifest+2*((Chi-df)/(N-1)))
+	MFI      =  exp(-0.5 * (Chi - df)/N)
+	GH       =  N.manifest / (N.manifest + 2 * ((Chi - df)/(N - 1)))
 	GFI      =  1 - (
 		 sum(diag(((solve(estimate.cor) %*% observed.cor)-Id.manifest) %*% ((solve(estimate.cor) %*% observed.cor) - Id.manifest))) /
 	    sum(diag((solve(estimate.cor) %*% observed.cor) %*% (solve(estimate.cor) %*% observed.cor)))
