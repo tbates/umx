@@ -172,7 +172,7 @@ twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels =
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-mzData <- twinData[twinData$zyg == 1,]
+mzData <- twinData[twinData$zyg == 1,] # umxACE can trim out unused variables on its own
 dzData <- twinData[twinData$zyg == 3,]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
