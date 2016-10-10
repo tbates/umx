@@ -2891,10 +2891,11 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 	return(a[1, "AIC"])
 }
 
-#' umxExpCov
+#' Get the expected vcov matrix
 #'
 #' Extract the expected covariance matrix from an \code{\link{mxModel}}
 #'
+#' @aliases vcov.MxModel
 #' @param object an \code{\link{mxModel}} to get the covariance matrix from
 #' @param latents Whether to select the latent variables (defaults to TRUE)
 #' @param manifests Whether to select the manifest variables (defaults to TRUE)
@@ -2919,7 +2920,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' umxExpCov(m1)
+#' vcov(m1)
 #' umxExpCov(m1, digits = 3)
 umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
@@ -2963,9 +2964,9 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 	return(expCov) 
 }
 
-#' @rdname umxExpCov
 #' @export
 vcov.MxModel <- umxExpCov
+
 
 #' umxExpMean
 #'
@@ -3103,12 +3104,12 @@ logLik.MxModel <- function(object, ...) {
 #' )
 #' umxFitIndices(m1)
 umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
-	options(scipen = 3)
 	if(!umx_is_RAM(model)){
 		message("Currently working for RAM models... email me if you need matrix-based models")
 	}
-	modelSummary = summary(model, refModels)
-	indepSummary = summary(refModels$Independence)
+	# refModels = mxRefModels(model, run = TRUE)
+	modelSummary = summary(model, refModels = refModels)
+	indepSummary = summary(refModels$Independence) #, refModels = refModels$Independence
 	N            = modelSummary$numObs
 	N.parms      = modelSummary$estimatedParameters
 	N.manifest   = length(model@manifestVars) # assumes RAM
