@@ -835,15 +835,19 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 
 #' umxACE
 #'
-#' Make a 2-group ACE Cholesky Twin model (see Details below)
-#' 
+#' Make a 2-group ACE Cholesky Twin model.
+#' umxACE supports a core model in behavior genetics, known as the ACE Cholesky model
+#' (Cardon and Neale, 1996). #' This model decomposes phenotypic variance into Additive genetic,
+#' unique environmental (E) and, optionally, either common or shared-environment (C) or 
+#' non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
+#' and multiple examples.
+
 #' A common task in twin modelling involves using the genetic and environmental differences 
 #' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 #' to model the genetic and environmental structure of one, or, typically, several phenotypes
 #' (measured behaviors).
 #' 
-#' umxACE supports a core model in behavior genetics, known as the ACE Cholesky model
-#' (Cardon and Neale, 1996). This model decomposes phenotypic variance into Additive genetic, 
+#' This model decomposes phenotypic variance into Additive genetic,
 #' unique environmental (E) and, optionally, either common or shared-environment (C) or 
 #' non-additive genetic effects (D). This latter restriction emerges due to a lack of degrees of 
 #' freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}. The Cholesky or 
@@ -905,12 +909,11 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # = Univariate model of BMI =
 #' # ===========================
 #' require(umx)
-#' 
 #' data(twinData) # ?twinData set from Australian twins.
 #' # Pick the variables
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
-#' dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
+#' mzData <- twinData[twinData$zyg == 1][1:80,] # 80 pairs for speed
+#' dzData <- twinData[twinData$zyg == 3][1:80,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' umxSummary(m1, showStd = TRUE)
 #' plot(m1)
@@ -918,12 +921,21 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # =====================================
 #' # = Bivariate height and weight model =
 #' # =====================================
-#' data(twinData) # ?twinData set from Australian twins.
-#' # Pick the variables
-#' selDVs = c("bmi1", "bmi2")
-#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummary(m1, showStd = TRUE)
-#' plot(m1)
+#' data(twinData)
+#' selDVs = c("ht", "wt") # umx will add suffix (in this case "") + "1" or '2'
+#' mzData <- twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
+#' dzData <- twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
+#' mzData <- mzData[1:80,] # quicker run to keep CRAN happy
+#' dzData <- dzData[1:80,]
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+#' umxSummary(m1)
+#' 
+#' # ==================================================
+#' # = Well done! Now you can do twin models in R :-) =
+#' # ==================================================
+#' 
+#' 
+#' 
 #' 
 #' # =========================================
 #' # = ADE model (DZ correlation set to .25) =
