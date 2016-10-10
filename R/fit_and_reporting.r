@@ -2891,10 +2891,11 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 	return(a[1, "AIC"])
 }
 
-#' umxExpCov
+#' Get the expected vcov matrix
 #'
 #' Extract the expected covariance matrix from an \code{\link{mxModel}}
 #'
+#' @aliases vcov.MxModel
 #' @param object an \code{\link{mxModel}} to get the covariance matrix from
 #' @param latents Whether to select the latent variables (defaults to TRUE)
 #' @param manifests Whether to select the manifest variables (defaults to TRUE)
@@ -2919,7 +2920,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' umxExpCov(m1)
+#' vcov(m1)
 #' umxExpCov(m1, digits = 3)
 umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
@@ -2963,9 +2964,9 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 	return(expCov) 
 }
 
-#' @rdname umxExpCov
 #' @export
 vcov.MxModel <- umxExpCov
+
 
 #' umxExpMean
 #'
@@ -3076,105 +3077,110 @@ logLik.MxModel <- function(object, ...) {
 
 #' umxFitIndices
 #'
-#' A list of fit indices
+#' A list of fit indices. See, for origins, http://openmx.psyc.virginia.edu/thread/765
 #'
 #' @param model the \code{\link{mxModel}} you want fit indices for
-#' @param indepfit an (optional) saturated \code{\link{mxModel}}
+#' @param refModels  independence and saturated models. default mxRefModels(model, run = TRUE)
 #' @return \code{NULL}
 #' @export
 #' @family Reporting functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{http://www.github.com/tbates/umx} 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor",
+#' 	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' \dontrun{
 #' umxFitIndices(m1)
-#' }
-umxFitIndices <- function(model, indepfit) {
-	# TODO fix umxFitIndices requirement for indepence if model doesn't need it!
-    # TODO use means and compute independence model here for example...
-	options(scipen = 3)
-	indepSummary     <- summary(indepfit)
-	modelSummary <- summary(model)
-	N         <- modelSummary$numObs
-	N.parms   <- modelSummary$estimatedParameters
-	N.manifest <- length(model@manifestVars)
-	deviance  <- modelSummary$Minus2LogLikelihood
-	Chi       <- modelSummary$Chi
-	df        <- modelSummary$degreesOfFreedom
-	p.Chi     <- 1 - pchisq(Chi, df)
-	Chi.df    <- Chi/df
-	indep.chi <- indepSummary$Chi
-	indep.df  <- indepSummary$degreesOfFreedom
-	q <- (N.manifest*(N.manifest+1))/2
-	N.latent     <- length(model@latentVars)
-	observed.cov <- model$data$observed
-	observed.cor <- cov2cor(observed.cov)
+#' m1 <- umxRAM("m1", data = demoOneFactor,
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(v.m. = manifests),
+#' 	umxPath(v1m0 = latents)
+#' )
+#' umxFitIndices(m1)
+umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
+	if(!umx_is_RAM(model)){
+		message("Currently working for RAM models... email me if you need matrix-based models")
+	}
+	# refModels = mxRefModels(model, run = TRUE)
+	modelSummary = summary(model, refModels = refModels)
+	indepSummary = summary(refModels$Independence) #, refModels = refModels$Independence
+	N            = modelSummary$numObs
+	N.parms      = modelSummary$estimatedParameters
+	N.manifest   = length(model@manifestVars) # assumes RAM
+	deviance     = modelSummary$Minus2LogLikelihood
+	Chi          = modelSummary$Chi
+	df           = modelSummary$degreesOfFreedom
+	p.Chi        = 1 - pchisq(Chi, df)
+	Chi.df       = Chi/df
+	indep.chi    = indepSummary$Chi
+	indep.df     = indepSummary$degreesOfFreedom
+	q            = (N.manifest * (N.manifest + 1)) / 2
+	N.latent     = length(model@latentVars)
+	observed.cov = model$data$observed
+	if(model$data$type == "raw"){
+		observed.cov = cov(observed.cov)
+	}
+	observed.cor = cov2cor(observed.cov)
 
-	A <- model$matrices$A$values
-	S <- model$matrices$S$values
-	F <- model$matrices$F$values
-	I <- diag(N.manifest+N.latent)
-	estimate.cov <- F %*% (qr.solve(I-A)) %*% S %*% (t(qr.solve(I-A))) %*% t(F)
-	estimate.cor <- cov2cor(estimate.cov)
-	Id.manifest  <- diag(N.manifest)
-	residual.cov <- observed.cov-estimate.cov
-	residual.cor <- observed.cor-estimate.cor
-	F0       <- max((Chi-df)/(N-1),0)
-	NFI      <- (indep.chi-Chi)/indep.chi
-	NNFI.TLI <- (indep.chi-indep.df/df*Chi)/(indep.chi-indep.df)
-	PNFI     <- (df/indep.df)*NFI
-	RFI      <- 1 - (Chi/df) / (indep.chi/indep.df)
-	IFI      <- (indep.chi-Chi)/(indep.chi-df)
-	CFI      <- min(1.0-(Chi-df)/(indep.chi-indep.df),1)
-	PRATIO   <- df/indep.df
-	PCFI     <- PRATIO*CFI
-	NCP      <- max((Chi-df),0)
-	RMSEA    <- sqrt(F0/df) # need confidence intervals
-	MFI      <- exp(-0.5*(Chi-df)/N)
-	GH       <- N.manifest / (N.manifest+2*((Chi-df)/(N-1)))
-	GFI      <- 1 - (
+	A =  model$matrices$A$values
+	S =  model$matrices$S$values
+	Fmat =  model$matrices$F$values
+	I =  diag(N.manifest+N.latent)
+	estimate.cov =  Fmat %*% (qr.solve(I-A)) %*% S %*% (t(qr.solve(I-A))) %*% t(Fmat)
+	estimate.cor =  cov2cor(estimate.cov)
+	Id.manifest  =  diag(N.manifest)
+	residual.cov =  observed.cov-estimate.cov
+	residual.cor =  observed.cor-estimate.cor
+	F0       =  max((Chi-df)/(N-1),0)
+	NFI      =  (indep.chi-Chi)/indep.chi
+	NNFI.TLI =  (indep.chi-indep.df/df*Chi)/(indep.chi-indep.df)
+	PNFI     =  (df/indep.df)*NFI
+	RFI      =  1 - (Chi/df) / (indep.chi/indep.df)
+	IFI      =  (indep.chi-Chi)/(indep.chi-df)
+	CFI      =  min(1.0-(Chi-df)/(indep.chi-indep.df),1)
+	PRATIO   =  df/indep.df
+	PCFI     =  PRATIO*CFI
+	NCP      =  max((Chi-df),0)
+	RMSEA    =  sqrt(F0/df) # need confidence intervals
+	MFI      =  exp(-0.5*(Chi-df)/N)
+	GH       =  N.manifest / (N.manifest+2*((Chi-df)/(N-1)))
+	GFI      =  1 - (
 		 sum(diag(((solve(estimate.cor) %*% observed.cor)-Id.manifest) %*% ((solve(estimate.cor) %*% observed.cor) - Id.manifest))) /
 	    sum(diag((solve(estimate.cor) %*% observed.cor) %*% (solve(estimate.cor) %*% observed.cor)))
 	)
-	AGFI     <- 1 - (q/df)*(1-GFI)
-	PGFI     <- GFI * df/q
-	AICchi   <- Chi+2*N.parms
-	AICdev   <- deviance+2*N.parms
-	BCCchi   <- Chi + 2*N.parms/(N-N.manifest-2)
-	BCCdev   <- deviance + 2*N.parms/(N-N.manifest-2)
-	BICchi   <- Chi+N.parms*log(N)
-	BICdev   <- deviance+N.parms*log(N)
-	CAICchi  <- Chi+N.parms*(log(N)+1)
-	CAICdev  <- deviance+N.parms*(log(N)+1)
-	ECVIchi  <- 1/N*AICchi
-	ECVIdev  <- 1/N*AICdev
-	MECVIchi <- 1/BCCchi
-	MECVIdev <- 1/BCCdev
-	RMR      <- sqrt((2*sum(residual.cov^2))/(2*q))
-	SRMR     <- sqrt((2*sum(residual.cor^2))/(2*q))
-	indices  <-
-	rbind(N,deviance,N.parms,Chi,df,p.Chi,Chi.df,
-		AICchi,AICdev,
-		BCCchi,BCCdev,
-		BICchi,BICdev,
-		CAICchi,CAICdev,
-		RMSEA,SRMR,RMR,
-		GFI,AGFI,PGFI,
-		NFI,RFI,IFI,
-		NNFI.TLI,CFI,
-		PRATIO,PNFI,PCFI,NCP,
-		ECVIchi,ECVIdev,MECVIchi,MECVIdev,MFI,GH
+	AGFI     =  1 - (q/df) * (1 - GFI)
+	PGFI     =  GFI * df/q
+	AICchi   =  Chi + 2 * N.parms
+	AICdev   =  deviance + 2 * N.parms
+	BCCchi   =  Chi + 2 * N.parms/(N - N.manifest - 2)
+	BCCdev   =  deviance + 2 * N.parms/(N - N.manifest - 2)
+	BICchi   =  Chi + N.parms * log(N)
+	BICdev   =  deviance + N.parms * log(N)
+	CAICchi  =  Chi + N.parms * (log(N) + 1)
+	CAICdev  =  deviance + N.parms * (log(N) + 1)
+	ECVIchi  =  1/N * AICchi
+	ECVIdev  =  1/N * AICdev
+	MECVIchi =  1/BCCchi
+	MECVIdev =  1/BCCdev
+	RMR      =  sqrt((sum(residual.cov^2))/(2 * q))
+	SRMR     =  sqrt((sum(residual.cor^2))/(2 * q))
+	indices  =  rbind(N, deviance, N.parms, Chi, df, p.Chi, Chi.df,
+		AICchi, AICdev,
+		BCCchi, BCCdev,
+		BICchi, BICdev,
+		CAICchi, CAICdev,
+		RMSEA, SRMR, RMR,
+		GFI, AGFI, PGFI,
+		NFI, RFI, IFI,
+		NNFI.TLI, CFI,
+		PRATIO, PNFI, PCFI, NCP,
+		ECVIchi, ECVIdev, MECVIchi, MECVIdev, MFI, GH
 	)
 	return(indices)
 }

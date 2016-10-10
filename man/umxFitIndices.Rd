@@ -4,35 +4,37 @@
 \alias{umxFitIndices}
 \title{umxFitIndices}
 \usage{
-umxFitIndices(model, indepfit)
+umxFitIndices(model, refModels = mxRefModels(model, run = TRUE))
 }
 \arguments{
 \item{model}{the \code{\link{mxModel}} you want fit indices for}
 
-\item{indepfit}{an (optional) saturated \code{\link{mxModel}}}
+\item{refModels}{independence and saturated models. default mxRefModels(model, run = TRUE)}
 }
 \value{
 \code{NULL}
 }
 \description{
-A list of fit indices
+A list of fit indices. See, for origins, http://openmx.psyc.virginia.edu/thread/765
 }
 \examples{
 require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor",
+	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-\dontrun{
 umxFitIndices(m1)
-}
+m1 <- umxRAM("m1", data = demoOneFactor,
+	umxPath(latents, to = manifests),
+	umxPath(v.m. = manifests),
+	umxPath(v1m0 = latents)
+)
+umxFitIndices(m1)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

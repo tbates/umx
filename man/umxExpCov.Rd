@@ -3,12 +3,9 @@
 \name{umxExpCov}
 \alias{umxExpCov}
 \alias{vcov.MxModel}
-\title{umxExpCov}
+\title{Get the expected vcov matrix}
 \usage{
 umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL, ...)
-
-\method{vcov}{MxModel}(object, latents = FALSE, manifests = TRUE,
-  digits = NULL, ...)
 }
 \arguments{
 \item{object}{an \code{\link{mxModel}} to get the covariance matrix from}
@@ -40,7 +37,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-umxExpCov(m1)
+vcov(m1)
 umxExpCov(m1, digits = 3)
 }
 \references{

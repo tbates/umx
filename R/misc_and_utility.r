@@ -1977,30 +1977,30 @@ umxCov2cor <- function(x) {
 #' umx_time('stop')
 #' # elapsed time: .3 seconds
 umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
-	if(is.list(model)){
+	if(is.list(x)){
 		# check each item is a model
-		if(!umx_is_MxModel(model, listOK = TRUE)){
-			stop("If model is a list of models, each must be a valid mxModel")
+		if(!umx_is_MxModel(x, listOK = TRUE)){
+			stop("If x is a list of models, each must be a valid mxModel")
 		}
-	}else if(umx_is_MxModel(model)){
+	}else if(umx_is_MxModel(x)){
 		# great, we've got a model?
-	}else if(is.character(model)){
-		umx_check(model %in% c('start', 'stop'), "stop", "Valid time strings are 'start', 'stop' (or a model or list of models)")
-	}else if(is.na(model)){
+	}else if(is.character(x)){
+		umx_check(x %in% c('start', 'stop'), "stop", "Valid time strings are 'start', 'stop' (or a model or list of models)")
+	}else if(is.na(x)){
 		stop("You must set the first parameter (options are 'start', 'stop', a model, or a list of models)")
 	}else{
-		stop("You must set the first parameter to 'start', 'stop', a model, or a list of models.\nYou offered up a", class(model))
+		stop("You must set the first parameter to 'start', 'stop', a model, or a list of models.\nYou offered up a", class(x))
 	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	# TODO output a nicely formatted table
-	for(i in 1:length(model)) {			
-		if(length(model) > 1) {
-			m = model[[i]]
+	for(i in 1:length(x)) {			
+		if(length(x) > 1) {
+			m = x[[i]]
 		} else {
-			if(class(model) == "list"){
-				m = model[[i]]
+			if(class(x) == "list"){
+				m = x[[i]]
 			} else {
-				m = model
+				m = x
 			}
 		}
 		if(class(m) == "character"){
