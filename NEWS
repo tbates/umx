@@ -1,5 +1,5 @@
 # umx 1.4.0
-* September 2016 "New features and improvements"
+* Mid October 2016 "New features and improvements"
 * NEW: umxMatrix
   * Adds umxLabel by default, allows name as parameter one
 * NEW: Definition variable umxPath type, e.g.
@@ -7,6 +7,7 @@
 * IMPROVED: umxEquate supports autoRun and compare
 * IMPROVED: More concise feedback
 * IMPROVED: umxRAM remove_unused_manifests no longer updates manifestVars + leaves variable in data by default.
+* BUG FIX: umxFitIndices (h/t Brenton Wiernik!)
 * RENAME: umxGetOpenMx aliased to install.OpenMx or umx_install_OpenMx
 * RENAME: plot() "showFixed" deprecated in favour of easier to type "fixed"
 
