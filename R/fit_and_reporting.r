@@ -3162,28 +3162,34 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
 		 sum(diag(((solve(estimate.cor) %*% observed.cor)-Id.manifest) %*% ((solve(estimate.cor) %*% observed.cor) - Id.manifest))) /
 	    sum(diag((solve(estimate.cor) %*% observed.cor) %*% (solve(estimate.cor) %*% observed.cor)))
 	)
-	AGFI     =  1 - (q/df) * (1 - GFI)
-	PGFI     =  GFI * df/q
-	AICchi   =  Chi + 2 * N.parms
-	AICdev   =  deviance + 2 * N.parms
-	BCCchi   =  Chi + 2 * N.parms/(N - N.manifest - 2)
-	BCCdev   =  deviance + 2 * N.parms/(N - N.manifest - 2)
-	BICchi   =  Chi + N.parms * log(N)
-	BICdev   =  deviance + N.parms * log(N)
-	CAICchi  =  Chi + N.parms * (log(N) + 1)
-	CAICdev  =  deviance + N.parms * (log(N) + 1)
-	ECVIchi  =  1/N * AICchi
-	ECVIdev  =  1/N * AICdev
-	MECVIchi =  1/BCCchi
-	MECVIdev =  1/BCCdev
-	RMR      =  sqrt((sum(residual.cov^2))/(2 * q))
-	SRMR     =  sqrt((sum(residual.cor^2))/(2 * q))
-	indices  =  rbind(N, deviance, N.parms, Chi, df, p.Chi, Chi.df,
+	AGFI        =  1 - (q/df) * (1 - GFI)
+	PGFI        =  GFI * df/q
+	AICchi      =  Chi + 2 * N.parms
+	AICdev      =  deviance + 2 * N.parms
+	BCCchi      =  Chi + 2 * N.parms/(N - N.manifest - 2)
+	BCCdev      =  deviance + 2 * N.parms/(N - N.manifest - 2)
+	BICchi      =  Chi + N.parms * log(N)
+	BICdev      =  deviance + N.parms * log(N)
+	CAICchi     =  Chi + N.parms * (log(N) + 1)
+	CAICdev     =  deviance + N.parms * (log(N) + 1)
+	ECVIchi     =  1/N * AICchi
+	ECVIdev     =  1/N * AICdev
+	MECVIchi    =  1/BCCchi
+	MECVIdev    =  1/BCCdev
+	RMR         =  sqrt((sum((residual.cov^2)[lower.tri(residual.cov,diag=TRUE]))/(2 * q))
+	SRMR        =  sqrt((sum((residual.cor^2)[lower.tri(residual.cor,diag=TRUE]))/(2 * q))
+	MAR         =  sum(abs(residual.cov[lower.tri(residual.cor,diag=TRUE)]))/(2 * q)
+	SMAR        =  sum(abs(residual.cor[lower.tri(resiual.cor,diag=TRUE)]))/(2 * q)
+	MAR.nodiag  =  sum(abs(residual.cov[lower.tri(residual.cor,diag=FALSE)]))/(2 * q - N.manifest)
+	SMAR.nodiag =  sum(abs(residual.cor[lower.tri(resiual.cor,diag=FALSE)]))/(2 * q - N.manifest)			       
+	indices     =  rbind(N, deviance, N.parms, Chi, df, p.Chi, Chi.df,
 		AICchi, AICdev,
 		BCCchi, BCCdev,
 		BICchi, BICdev,
 		CAICchi, CAICdev,
 		RMSEA, SRMR, RMR,
+		SMAR, MAR,
+		SMAR.nodiag, MAR.nodiag,
 		GFI, AGFI, PGFI,
 		NFI, RFI, IFI,
 		NNFI.TLI, CFI,
