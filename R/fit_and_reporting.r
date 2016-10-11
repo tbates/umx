@@ -3176,12 +3176,12 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
 	ECVIdev     =  1/N * AICdev
 	MECVIchi    =  1/BCCchi
 	MECVIdev    =  1/BCCdev
-	RMR         =  sqrt((sum((residual.cov^2)[lower.tri(residual.cov,diag=TRUE]))/(2 * q))
-	SRMR        =  sqrt((sum((residual.cor^2)[lower.tri(residual.cor,diag=TRUE]))/(2 * q))
-	MAR         =  sum(abs(residual.cov[lower.tri(residual.cor,diag=TRUE)]))/(2 * q)
-	SMAR        =  sum(abs(residual.cor[lower.tri(resiual.cor,diag=TRUE)]))/(2 * q)
-	MAR.nodiag  =  sum(abs(residual.cov[lower.tri(residual.cor,diag=FALSE)]))/(2 * q - N.manifest)
-	SMAR.nodiag =  sum(abs(residual.cor[lower.tri(resiual.cor,diag=FALSE)]))/(2 * q - N.manifest)			       
+	RMR         =  sqrt(mean((residual.cov^2)[lower.tri(residual.cov,diag=TRUE)]))
+	SRMR        =  sqrt(mean((residual.cor^2)[lower.tri(residual.cor,diag=TRUE)]))
+	MAR         =  mean(abs(residual.cov[lower.tri(residual.cor,diag=TRUE)]))
+	SMAR        =  mean(abs(residual.cor[lower.tri(residual.cor,diag=TRUE)]))
+	MAR.nodiag  =  mean(abs(residual.cov[lower.tri(residual.cov,diag=FALSE)]))
+	SMAR.nodiag =  mean(abs(residual.cor[lower.tri(residual.cor,diag=FALSE)]))
 	indices     =  rbind(N, deviance, N.parms, Chi, df, p.Chi, Chi.df,
 		AICchi, AICdev,
 		BCCchi, BCCdev,
