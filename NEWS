@@ -1,15 +1,15 @@
 # umx 1.4.0
 * Mid October 2016 "New features and improvements"
-* NEW: umxMatrix
-  * Adds umxLabel by default, allows name as parameter one
+* BUG FIX: umxFitIndices RMR and SRMR (h/t Brenton Wiernik!)
+* NEW: umxMatrix with default labels and name as 1st parameter 
 * NEW: Definition variable umxPath type, e.g.
   * umxPath(defn = "def", labels = "data.age")
-* IMPROVED: umxEquate supports autoRun and compare
 * IMPROVED: More concise feedback
-* IMPROVED: umxRAM remove_unused_manifests no longer updates manifestVars + leaves variable in data by default.
+* IMPROVED: umxEquate supports autoRun and compare
 * IMPROVED: umx_names can, as a convenience, take string vectors
-* BUG FIX: umxFitIndices (h/t Brenton Wiernik!)
 * RENAME: umxGetOpenMx aliased to install.OpenMx or umx_install_OpenMx
+* IMPROVED: umxFitIndices new indices + computes refModels automatically
+* IMPROVED: umxRAM remove_unused_manifests no longer updates manifestVars + leaves variable in data by default.
 * RENAME: plot() "showFixed" deprecated in favour of easier to type "fixed"
 
 # umx 1.3.0
