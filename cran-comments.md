@@ -1,16 +1,16 @@
 ## Changes
-* New functions, sundry improvements and bug fixes.
+* New functions and improvements + a bug fix.
 
 ## Test environments
-* OS X 10.12.0, R version 3.3.1
-* Win (64-bit) R Under development (unstable) (2016-08-16 r71104)
+* OS X 10.12.1, R version 3.3.1 (2016-06-21)
+* Win (64-bit) R Under development (unstable) (2016-10-10 r71494)
 * 64-bit Linux (Scientific Linux 6), R 3.3.1
 
 ## R CMD check results
-* No ERRORs, WARNINGs, or NOTES
+* No ERRORs, No WARNINGs, No NOTES
 
 ## Downstream dependencies
+* No downstream dependencies.
 
-* There are currently no downstream dependencies for this package.
-
-Many thanks! tim
+Many thanks!
+Tim
