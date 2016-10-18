@@ -27,4 +27,11 @@ model = umxReduce(model)
 \references{
 - \url{http://tbates.github.io}
 }
+\seealso{
+Other Core Modelling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
+  \code{\link{umxMatrix}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
+  \code{\link{umx}}
+}
 

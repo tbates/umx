@@ -65,11 +65,9 @@ umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Model Building Functions: \code{\link{umxDiagnose}},
-  \code{\link{umxLatent}}, \code{\link{umxMatrix}},
-  \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM2Ordinal}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxThresholdMatrix}},
+Other Advanced Model Building Functions: \code{\link{umxJiggle}},
+  \code{\link{umxRAM2Ordinal}},
+  \code{\link{umxThresholdMatrix}},
   \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}, \code{\link{umx}}

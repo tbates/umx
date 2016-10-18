@@ -49,7 +49,8 @@ umx_get_options <- function() {
 #' umx_set_plot_format(old)    # reinstate
 umx_set_plot_format <- function(umx.plot.format = NULL) {
 	if(is.null(umx.plot.format)) {
-		getOption("umx.plot.format")
+		message("Current format is", omxQuotes(getOption("umx.plot.format")), ". Valid options are 'graphviz' or 'DiagrammeR'")
+		invisible(getOption("umx.plot.format"))
 	} else {
 		umx_check(umx.plot.format %in% c("graphviz", "DiagrammeR"), "stop", "valid options are 'graphviz' or 'DiagrammeR'")
 		options("umx.plot.format" = umx.plot.format)
@@ -76,7 +77,10 @@ umx_set_plot_format <- function(umx.plot.format = NULL) {
 #' umx_set_table_format(old)    # reinstate
 umx_set_table_format <- function(knitr.table.format = NULL) {
 	if(is.null(knitr.table.format)) {
-		getOption("knitr.table.format")
+		message("Current format is", omxQuotes(getOption("knitr.table.format")), 
+			". Valid options are latex, html, markdown, pandoc, or rst"
+		)
+		invisible(getOption("knitr.table.format"))		
 	} else {
 		if(!knitr.table.format %in% c("latex", "html", "markdown", "pandoc", "rst")){
 			message("legal options are latex, html, markdown, pandoc, rst")
@@ -223,7 +227,11 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 #' umx_set_auto_plot(old)    # reinstate
 umx_set_auto_plot <- function(autoPlot = NULL) {
 	if(is.null(autoPlot)) {
-		getOption("umx_auto_plot")
+		message("Current plot format is ", omxQuotes(getOption("umx_auto_plot")),
+			". Valid options are NA or 'name'.", 
+			" 'name' will auto-plot, using the name of the model as the plot name."
+		)
+		invisible(getOption("umx_auto_plot"))
 	} else {
 		umx_check(autoPlot %in% c(NA, "name"), "stop", "autoPlot should be either NA or 'name'")
 		options("umx_auto_plot" = autoPlot)
@@ -247,7 +255,10 @@ umx_set_auto_plot <- function(autoPlot = NULL) {
 umx_set_auto_run <- function(autoRun = NA) {
 	# TODO implement umx_set_auto_run
 	if(is.na(autoRun)) {
-		getOption("umx_auto_run")
+		message("Current auto-run setting is ", omxQuotes(getOption("umx_auto_run")),
+			". Valid options are TRUE or FALSE."
+		)
+		invisible(getOption("umx_auto_run"))
 	} else {
 		umx_check(autoRun %in% c(TRUE, FALSE), "stop")
 		options("umx_auto_run" = autoRun)
@@ -276,7 +287,7 @@ umx_set_condensed_slots <- function(state = NA) {
 		invisible(getOption('mxCondenseMatrixSlots'))
 	} else {
 		if(!is.logical(state)){
-			stop("mxCondenseMatrixSlots can only be set to TRUE FALSE you tried ", omxQuotes(state))
+			stop("mxCondenseMatrixSlots must be TRUE or FALSE you tried ", omxQuotes(state))
 		}else{
 			options(mxCondenseMatrixSlots = state)			
 		}
@@ -303,11 +314,12 @@ umx_set_condensed_slots <- function(state = NA) {
 umx_set_optimizer <- function(opt = NA, model = NULL) {
 	if(is.na(opt)){
 		if(is.null(model)){
-			o= mxOption(NULL, "Default optimizer")
+			o = mxOption(NULL, "Default optimizer")
 		} else {
-			o= mxOption(model, "Default optimizer")
+			o = mxOption(model, "Default optimizer")
 		}
-		message("Current Optimizer is:'", o, "'")
+		quoteOptions = omxQuotes(mxAvailableOptimizers())
+		message("Current Optimizer is: ", omxQuotes(o), ". Options are: ", quoteOptions)
 		invisible(o)
 	} else {
 		if(!opt %in% mxAvailableOptimizers()){
@@ -487,7 +499,7 @@ umx_set_cores <- function(cores = NA, model = NULL) {
 #' @param sd the sd of the jiggle noise
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
 #' @return - \code{\link{mxMatrix}}
-#' @family Miscellaneous Functions
+#' @family Advanced Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -635,7 +647,7 @@ umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 #' @param at (Default = 1)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Model Building Functions
+#' @family Advanced Model Building Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(umx)
@@ -675,7 +687,7 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 #' @param at (Default = 1)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Model Building Functions
+#' @family Advanced Model Building Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
 #' @examples
 #' require(umx)
@@ -718,6 +730,46 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1) {
 	return(model)
 }
 
+#' umx_drop_ok
+#'
+#' Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
+#' merged with \code{\link{umxCompare}}() :-)
+#'
+#' @param model1 the base code{\link{mxModel}}
+#' @param model2 the nested code{\link{mxModel}}
+#' @param text name of the thing being tested, i.e., "Extraversion" or "variances"
+#' @return - 
+#' @export
+#' @family Reporting functions
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' require(umx)
+#' data(demoOneFactor)
+#' latents   = c("g")
+#' manifests = names(demoOneFactor)
+#' myData    = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("OneFactor", data = myData,
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
+#' )
+#' m2 = umxModify(m1, update = "g_to_x1", name = "no effect on x1")
+#' umx_drop_ok(m1, m2, text = "the path to x1")
+umx_drop_ok <- function(model1, model2, text = "parameter") {
+	a = mxCompare(model1, model2)
+	if(a$diffdf[2] > 1){
+		are = "are"
+	}else{
+		are = "is"
+	}
+	if(a$p[2] < .05){
+		if(!is.null(text)){ print(paste0("The ", text, " ", are, " significant and should be kept (p = ", umx_APA_pval(a$p[2]), ")")) }
+		return(FALSE)
+	} else {
+		if(!is.null(text)){ print(paste0("The ", text, " ", are, " non-significant and can be dropped (p = ", umx_APA_pval(a$p[2]), ")")) }
+		return(TRUE)
+	}
+}
 
 # ====================
 # = Parallel Helpers =
@@ -743,7 +795,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param sep text constant separating name from numeric 1:2 twin index
 #' @return - list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
 #' @export
-#' @family xmu internal not for end user
+#' @family String Functions
 #' @examples
 #' require(umx)
 #' data("twinData")
@@ -2325,7 +2377,8 @@ umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), us
 
 #' umx_means
 #'
-#' Helper to get means from a df that might contain ordered  data. Factor means are set to "ordVar"
+#' Helper to get means from a df that might contain ordered or string data.
+#' Factor means are set to "ordVar"
 #'
 #' @param df a dataframe of raw data from which to get variances.
 #' @param ordVar value to return for the means of factor data = 0
@@ -2719,7 +2772,6 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 		return(thisModelHasOutput)
 	}
 }
-
 
 #' umx_check_model
 #'

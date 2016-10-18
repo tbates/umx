@@ -30,7 +30,11 @@ mat1 = umxJiggle(mat1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{install.OpenMx}},
-  \code{\link{umx_get_options}}, \code{\link{umx_pad}}
+Other Advanced Model Building Functions: \code{\link{umxLabel}},
+  \code{\link{umxRAM2Ordinal}},
+  \code{\link{umxThresholdMatrix}},
+  \code{\link{umxValues}},
+  \code{\link{umx_fix_first_loadings}},
+  \code{\link{umx_fix_latents}}, \code{\link{umx}}
 }
 

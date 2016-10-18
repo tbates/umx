@@ -31,9 +31,9 @@ loadings(m1)
 - \code{\link{factanal}}, \code{\link{loadings}}
 
 Other Reporting Functions: \code{\link{mxSE}},
-  \code{\link{umxAPA}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
-  \code{\link{umx_show}}, \code{\link{umx_time}},
-  \code{\link{umx}}
+  \code{\link{umxAPA}}, \code{\link{umxSummary}},
+  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
+  \code{\link{umx_print}}, \code{\link{umx_show}},
+  \code{\link{umx_time}}, \code{\link{umx}}
 }
 

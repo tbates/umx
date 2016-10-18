@@ -17,7 +17,8 @@ umx_means(df, ordVar = 0, na.rm = TRUE)
 - frame of means
 }
 \description{
-Helper to get means from a df that might contain ordered  data. Factor means are set to "ordVar"
+Helper to get means from a df that might contain ordered or string data.
+Factor means are set to "ordVar"
 }
 \examples{
 tmp = mtcars[,1:4]

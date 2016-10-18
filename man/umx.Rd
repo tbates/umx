@@ -73,6 +73,19 @@ plot(m1, std = TRUE, file = NA)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
+Other Advanced Model Building Functions: \code{\link{umxJiggle}},
+  \code{\link{umxLabel}}, \code{\link{umxRAM2Ordinal}},
+  \code{\link{umxThresholdMatrix}},
+  \code{\link{umxValues}},
+  \code{\link{umx_fix_first_loadings}},
+  \code{\link{umx_fix_latents}}
+
+Other Core Modelling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
+  \code{\link{umxMatrix}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxReduce}},
+  \code{\link{umxRun}}
+
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxFactor}}, \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},
@@ -101,16 +114,6 @@ Other Misc: \code{\link{umxEval}},
   \code{\link{umx_object_as_str}},
   \code{\link{umx_string_to_algebra}}
 
-Other Model Building Functions: \code{\link{umxDiagnose}},
-  \code{\link{umxLabel}}, \code{\link{umxLatent}},
-  \code{\link{umxMatrix}}, \code{\link{umxModify}},
-  \code{\link{umxPath}}, \code{\link{umxRAM2Ordinal}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}},
-  \code{\link{umx_fix_first_loadings}},
-  \code{\link{umx_fix_latents}}
-
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
   \code{\link{umxFixAll}}, \code{\link{umxGetParameters}},
@@ -119,9 +122,9 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{mxSE}}, \code{\link{umxAPA}},
-  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_print}}, \code{\link{umx_show}},
-  \code{\link{umx_time}}
+  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
+  \code{\link{umx_show}}, \code{\link{umx_time}}
 
 Other Stats Functions: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umx_cor}},

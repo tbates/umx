@@ -152,9 +152,13 @@ methods::setClass("MxModel.CP"    , contains = "MxModel")
 methods::setClass("MxModel.IP"    , contains = "MxModel")
 methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 
+# ============================
+# = Core Modelling Functions =
+# ============================
+
 #' umxRAM
 #'
-#' Making it as simple as possible to create a RAM model, without doing invisible things to the user.
+#' Making it as simple as possible to create a RAM model, without doing invisible things to the model.
 #' 
 #' @details Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
 #' \enumerate{
@@ -191,7 +195,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Model Building Functions
+#' @family Core Modelling Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' # umxRAM is like lm, ggplot2 etc: you give the data in a data = parameter
@@ -418,6 +422,124 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}
 }
 
+#' umxModify
+#' 
+#' umxModify allows you to modify, re-run and summarize an \code{\link{mxModel}},
+#' all in one line of script. 
+#' You can add paths, or other model elements, set paths or drop them.
+#' As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
+#' 
+#' \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
+#' 
+#' Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
+#' fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_andCr", comparison = TRUE)
+#' 
+#' If you are just starting out, you might find it easier to be more explicit. Like this: 
+#' 
+#' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
+#' fit2 = mxRun(fit2)
+#' summary(fit2)
+#' 
+#' @aliases umxReRun umxModify
+#' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
+#' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
+#' @param regex    Whether or not update is a regular expression (defaults to FALSE). If you provide a string, it
+#' over-rides the contents of update, and sets regex to TRUE.
+#' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
+#' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
+#' @param freeToStart Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)
+#' @param name      The name for the new model
+#' @param verbose   How much feedback to give
+#' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
+#' @param comparison Whether to run umxCompare() after umxRun
+#' @param dropList (deprecated: use 'update' instead.
+#' @return - \code{\link{mxModel}}
+#' @family Core Modeling Functions
+#' @references - \url{http://github.com/tbates/umx}
+#' @export
+#' @examples
+#' require(umx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1")
+#' umxSummary(m2); umxCompare(m1, m2)
+#' # 1-line version including comparison
+#' m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
+#' m2 = umxModify(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
+#' m2 = umxModify(m1, regex = "^G_to_x[3-5]", name = "no_G_to_x3_5") # same, but shorter
+#' m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comp = TRUE)
+#' m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", comparison = TRUE)
+umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, dropList = "deprecated") {
+	if(dropList != "deprecated"){
+		stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
+			"umxModify(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
+			"becomes\n",
+			"umxModify(m1, update = ", omxQuotes("E_to_heartRate"), ")\n",
+			 "\nThis regular expression will do it for you:\n",
+			 "find    = regex *= *(\\\"[^\\\"]+\\\"),\n",
+			 "replace = update = $1, regex = TRUE,"
+		)
+	}
+	if (typeof(regex) != "logical"){
+		# Use the regex as input, and switch to regex mode
+		if(!is.null(update)){
+			stop("If you input a regular expression in ", omxQuotes("regex"), " you must leave ", omxQuotes("update"), " set to NULL.")
+		}
+		update = regex
+		regex = TRUE
+	}
+
+	if (typeof(free) != "logical"){
+		# Use the free as input, and switch to free = TRUE
+		update = free
+		free = TRUE
+	}
+
+	if(is.null(update)){
+		message("As you haven't asked to do anything: the parameters that are free to be dropped are:")
+		print(umxGetParameters(lastFit))
+		stop()
+	}else{
+		if(regex | typeof(update) == "character") {
+			if (regex) {
+				theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
+			}else {
+				theLabels = update
+			}
+			x = omxSetParameters(lastFit, labels = theLabels, free = free, values = value, name = name)		
+		} else {
+			# TODO Label and start new object
+			if(is.null(name)){ name = NA }
+			x = mxModel(lastFit, update, name = name)
+		}
+		x = mxRun(x, intervals = intervals)
+		if(comparison){
+			umxSummary(x)
+			if(free){ # new model has fewer df
+				umxCompare(x, lastFit)
+			} else {
+				umxCompare(lastFit, x)
+			}
+		}
+		return(x)
+	}
+}
+
+#' @export
+umxReRun <- umxModify
+
+# ==================
+# = Twin Functions =
+# ==================
 #' umxGxE
 #'
 #' Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
@@ -2251,9 +2373,9 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 	}
 }
 
-# ========================================
-# = Model building and modifying helpers =
-# ========================================
+# =====================================
+# = Advanced Build and Modify helpers =
+# =====================================
 
 #' umxRAM2Ordinal 
 #'
@@ -2268,7 +2390,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 #' @param autoRun = whether to run the model before returning it: defaults to getOption("umx_auto_run"))
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Model Building Functions
+#' @family Advanced Model Building Functions
 #' @seealso - \code{\link{umxRAM}}
 #' @examples
 #' \dontrun{
@@ -2309,7 +2431,7 @@ umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", 
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export
 #' @seealso - Core functions:
-#' @family Model Building Functions
+#' @family Advanced Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' require(umx)
@@ -2442,7 +2564,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @param overRideExisting = FALSE
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Model Building Functions
+#' @family Advanced Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -2511,7 +2633,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param joinModel See mxMatrix documentation: Defaults to as.character(NA)
 #' @return - \code{\link{mxMatrix}}
 #' @export
-#' @family Model Building Functions
+#' @family Core Modelling Functions
 #' @seealso - \code{\link{umxLabel}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -2555,7 +2677,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @param setStarts Deprecated way to setValues
 #' @return - \code{\link{mxModel}}
-#' @family Model Building Functions
+#' @family Core Modelling Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -2634,120 +2756,6 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 	}
 	return(model)
 }
-
-#' umxModify
-#' 
-#' umxModify allows you to modify, re-run and summarize an \code{\link{mxModel}},
-#' all in one line of script. 
-#' You can add paths, or other model elements, set paths or drop them.
-#' As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
-#' 
-#' \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
-#' 
-#' Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
-#' fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_andCr", comparison = TRUE)
-#' 
-#' If you are just starting out, you might find it easier to be more explicit. Like this: 
-#' 
-#' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
-#' fit2 = mxRun(fit2)
-#' summary(fit2)
-#' 
-#' @aliases umxReRun umxModify
-#' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
-#' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
-#' @param regex    Whether or not update is a regular expression (defaults to FALSE). If you provide a string, it
-#' over-rides the contents of update, and sets regex to TRUE.
-#' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
-#' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
-#' @param freeToStart Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)
-#' @param name      The name for the new model
-#' @param verbose   How much feedback to give
-#' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
-#' @param comparison Whether to run umxCompare() after umxRun
-#' @param dropList (deprecated: use 'update' instead.
-#' @return - \code{\link{mxModel}}
-#' @family Model Building Functions
-#' @references - \url{http://github.com/tbates/umx}
-#' @export
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1")
-#' umxSummary(m2); umxCompare(m1, m2)
-#' # 1-line version including comparison
-#' m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
-#' m2 = umxModify(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
-#' m2 = umxModify(m1, regex = "^G_to_x[3-5]", name = "no_G_to_x3_5") # same, but shorter
-#' m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comp = TRUE)
-#' m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", comparison = TRUE)
-umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, dropList = "deprecated") {
-	if(dropList != "deprecated"){
-		stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
-			"umxModify(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
-			"becomes\n",
-			"umxModify(m1, update = ", omxQuotes("E_to_heartRate"), ")\n",
-			 "\nThis regular expression will do it for you:\n",
-			 "find    = regex *= *(\\\"[^\\\"]+\\\"),\n",
-			 "replace = update = $1, regex = TRUE,"
-		)
-	}
-	if (typeof(regex) != "logical"){
-		# Use the regex as input, and switch to regex mode
-		if(!is.null(update)){
-			stop("If you input a regular expression in ", omxQuotes("regex"), " you must leave ", omxQuotes("update"), " set to NULL.")
-		}
-		update = regex
-		regex = TRUE
-	}
-
-	if (typeof(free) != "logical"){
-		# Use the free as input, and switch to free = TRUE
-		update = free
-		free = TRUE
-	}
-
-	if(is.null(update)){
-		message("As you haven't asked to do anything: the parameters that are free to be dropped are:")
-		print(umxGetParameters(lastFit))
-		stop()
-	}else{
-		if(regex | typeof(update) == "character") {
-			if (regex) {
-				theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
-			}else {
-				theLabels = update
-			}
-			x = omxSetParameters(lastFit, labels = theLabels, free = free, values = value, name = name)		
-		} else {
-			# TODO Label and start new object
-			if(is.null(name)){ name = NA }
-			x = mxModel(lastFit, update, name = name)
-		}
-		x = mxRun(x, intervals = intervals)
-		if(comparison){
-			umxSummary(x)
-			if(free){ # new model has fewer df
-				umxCompare(x, lastFit)
-			} else {
-				umxCompare(lastFit, x)
-			}
-		}
-		return(x)
-	}
-}
-#' @export
-umxReRun <- umxModify
 
 # ==============================
 # = Label and equate functions =
@@ -3240,10 +3248,9 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @param name A name for the path NULL
 #' @param labelSuffix a suffix string to append to each label
 #' @param verbose  Default is TRUE as this function does quite a lot
-#' @param endogenous This is now deprecated. use type= \"exogenous|endogenous\"
 #' @return - path list
 #' @export
-#' @family Model Building Functions
+#' @family Core Modelling Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -3273,16 +3280,9 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' umxSummary(m2, show = "std")
 #' plot(m2)
 #' }
-umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  name = NULL, labelSuffix = "", verbose = TRUE, endogenous = "deprecated") {
+umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  name = NULL, labelSuffix = "", verbose = TRUE) {
 	# Purpose: make a latent variable formed/or formed by some manifests
 	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
-	if(!endogenous == "deprecated"){
-		if(endogenous){
-			stop("Error in mxLatent: Use of endogenous=T is deprecated. Remove it and replace with type = \"endogenous\"") 
-		} else {
-			stop("Error in mxLatent: Use of endogenous=F is deprecated. Remove it and replace with type = \"exogenous\"") 
-		}
-	}
 	if(is.null(latent)) { stop("Error in mxLatent: you have to provide the name of the latent variable you want to create") }
 	# Check both forms and formedBy are not defined
 	if( is.null(formedBy) &&  is.null(forms)) { stop("Error in mxLatent: Must define one of forms or formedBy") }
@@ -3426,7 +3426,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' @param verbose (defaults to FALSE))
 #' @return - thresholds matrix
 #' @export
-#' @family Model Building Functions
+#' @family Advanced Model Building Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' x = data.frame(ordered(rbinom(100,1,.5))); names(x) <- c("x")
@@ -3932,7 +3932,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param hasMeans Used in 'forms' case to know whether the data have means or not.
 #' @return - 1 or more \code{\link{mxPath}}s
 #' @export
-#' @family Model Building Functions
+#' @family Core Modelling Functions
 #' @seealso - \code{\link{mxPath}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
@@ -4294,16 +4294,17 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' devtools::install_github("tbates/umx")
 #' 
-#' @family Model Building Functions
-#' @family Reporting Functions
-#' @family Modify or Compare Models
+#' @family Core Modelling Functions
 #' @family Super-easy helpers
+#' @family Reporting Functions
+#' @family Twin Modeling Functions
+#' @family Modify or Compare Models
+#' @family Advanced Model Building Functions
 #' @family Misc
 #' @family Data Functions
 #' @family Utility Functions
 #' @family Stats Functions
 #' @family File Functions
-#' @family Twin Modeling Functions
 #' @family zAdvanced Helpers
 #' @references - \url{http://www.github.com/tbates/umx}
 #' 

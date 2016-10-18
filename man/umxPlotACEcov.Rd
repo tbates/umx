@@ -27,7 +27,7 @@ umxPlotACEcov(x = NA, file = "name", digits = 2, means = FALSE,
 - optionally return the dot code
 }
 \description{
-Make a graphical display of an ACE model
+Make a graphical display of an ACE model with covariates.
 }
 \examples{
 require(umx)

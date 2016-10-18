@@ -50,8 +50,7 @@ umx:::xmuLabel_Matrix(mxMatrix("Full" , 1, 1, values = 1, name = "a", labels= "t
 See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = FALSE, value = 0, name = "drop_a_row1_c1")
 }
 \seealso{
-Other xmu internal not for end user: \code{\link{umx_explode_twin_names}},
-  \code{\link{xmuHasSquareBrackets}},
+Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},
   \code{\link{xmuMakeDeviationThresholdsMatrices}},

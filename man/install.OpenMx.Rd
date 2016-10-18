@@ -22,7 +22,7 @@ install.OpenMx()
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{umxJiggle}},
-  \code{\link{umx_get_options}}, \code{\link{umx_pad}}
+Other Miscellaneous Functions: \code{\link{umx_get_options}},
+  \code{\link{umx_pad}}
 }
 

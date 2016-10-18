@@ -13,7 +13,7 @@
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
 #' @return - helpful messages and perhaps a modified model
 #' @export
-#' @family Model Building Functions
+#' @family Core Modelling Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -61,7 +61,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @param baseFileName file (I add the html) to use when report = "html" (defaults to "tmp")
 #' @return - 
 #' @export
-#' @family umx core functions
+#' @family Core Modelling Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -94,47 +94,6 @@ umxReduce <- function(m1, report = "html", baseFileName = "tmp") {
 		# 1. make umxCP, and umxIP
 		# 2. also relaxed CP/IP?
 		# 3. report fit table
-	}
-}
-
-#' umx_drop_ok
-#'
-#' Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
-#' merged with \code{\link{umxCompare}}() :-)
-#'
-#' @param model1 the base code{\link{mxModel}}
-#' @param model2 the nested code{\link{mxModel}}
-#' @param text name of the thing being tested, i.e., "Extraversion" or "variances"
-#' @return - 
-#' @export
-#' @family Reporting functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' latents   = c("g")
-#' manifests = names(demoOneFactor)
-#' myData    = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' m1 <- umxRAM("OneFactor", data = myData,
-#' 	umxPath(latents, to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
-#' )
-#' m2 = umxModify(m1, update = "g_to_x1", name = "no effect on x1")
-#' umx_drop_ok(m1, m2, text = "the path to x1")
-umx_drop_ok <- function(model1, model2, text = "parameter") {
-	a = mxCompare(model1, model2)
-	if(a$diffdf[2] > 1){
-		are = "are"
-	}else{
-		are = "is"
-	}
-	if(a$p[2] < .05){
-		if(!is.null(text)){ print(paste0("The ", text, " ", are, " significant and should be kept (p = ", umx_APA_pval(a$p[2]), ")")) }
-		return(FALSE)
-	} else {
-		if(!is.null(text)){ print(paste0("The ", text, " ", are, " non-significant and can be dropped (p = ", umx_APA_pval(a$p[2]), ")")) }
-		return(TRUE)
 	}
 }
 
@@ -553,22 +512,22 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #'
 #' @description
 #' Report the fit of a OpenMx model or specialized model class (such as ACE, CP etc.)
-#' in a compact form suitable for a journal. Because this same function is needed in umx, 
-#' it gets defined twice currently.
+#' in a compact form suitable for reporting in a journal.
 #'
 #' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
+#' 
+#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
 #' 
 #' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
 #' 
 #' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
 #' 
 #' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
-#' 
-#' View documentation on the twin model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param ... Other parameters to control model summary
 #' @family Reporting Functions
+#' @family Core Modelling Functions
 #' \url{http://www.github.com/tbates/umx}
 #' @export
 umxSummary <- function(model, ...){
@@ -660,11 +619,11 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 
 	message("?umxSummary showEstimates='raw|std', digits, report= 'html', filter= 'NS' & more")
 	
-	# if the filter is off default, the user must want something, let's assume it's std ...
+	# If the filter is off default, the user must want something, let's assume it's std ...
 	if( filter != "ALL" & showEstimates == "none") {
 		showEstimates = "std"
 	}else if(showEstimates == "std" && SE == FALSE){
-		message("SE must be TRUE to show std, overriding to set SE =TRUE")
+		message("SE must be TRUE to show std, overriding to set SE = TRUE")
 		SE = TRUE
 	}
 	umx_has_been_run(model, stop = TRUE)
@@ -1899,6 +1858,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},
+#' @family Core Modelling Functions
 #' @family Plotting functions
 #' @family Reporting functions
 #' @family Twin Modeling Functions
@@ -2138,7 +2098,7 @@ plot.MxModel.ACE <- umxPlotACE
 
 #' umxPlotACEcov
 #'
-#' Make a graphical display of an ACE model
+#' Make a graphical display of an ACE model with covariates.
 #'
 #' @aliases plot.MxModel.ACEcov
 #' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)

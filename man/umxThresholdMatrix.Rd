@@ -127,11 +127,8 @@ tmp$labels
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Model Building Functions: \code{\link{umxDiagnose}},
-  \code{\link{umxLabel}}, \code{\link{umxLatent}},
-  \code{\link{umxMatrix}}, \code{\link{umxModify}},
-  \code{\link{umxPath}}, \code{\link{umxRAM2Ordinal}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
+Other Advanced Model Building Functions: \code{\link{umxJiggle}},
+  \code{\link{umxLabel}}, \code{\link{umxRAM2Ordinal}},
   \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}, \code{\link{umx}}

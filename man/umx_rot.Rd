@@ -24,7 +24,7 @@ umx_rot(c(3,4,5,6,7))
 - \url{http://tbates.github.io}
 }
 \seealso{
-Other String Functions: \code{\link{umx_explode}},
-  \code{\link{umx_trim}}
+Other String Functions: \code{\link{umx_explode_twin_names}},
+  \code{\link{umx_explode}}, \code{\link{umx_trim}}
 }
 

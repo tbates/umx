@@ -25,8 +25,7 @@ xmu_dot_make_residuals(mxMat, latents = NULL, fixed = TRUE, digits = 2,
 xmu_dot_make_residuals (not for end users)
 }
 \seealso{
-Other xmu internal not for end user: \code{\link{umx_explode_twin_names}},
-  \code{\link{xmuHasSquareBrackets}},
+Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}},
   \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},

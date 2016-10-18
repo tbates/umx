@@ -42,7 +42,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 - \code{\link{mxModel}}
 }
 \description{
-Making it as simple as possible to create a RAM model, without doing invisible things to the user.
+Making it as simple as possible to create a RAM model, without doing invisible things to the model.
 }
 \details{
 Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
@@ -113,13 +113,10 @@ m1$S$labels
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Model Building Functions: \code{\link{umxDiagnose}},
-  \code{\link{umxLabel}}, \code{\link{umxLatent}},
-  \code{\link{umxMatrix}}, \code{\link{umxModify}},
-  \code{\link{umxPath}}, \code{\link{umxRAM2Ordinal}},
-  \code{\link{umxRun}}, \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}},
-  \code{\link{umx_fix_first_loadings}},
-  \code{\link{umx_fix_latents}}, \code{\link{umx}}
+Other Core Modelling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
+  \code{\link{umxMatrix}}, \code{\link{umxPath}},
+  \code{\link{umxReduce}}, \code{\link{umxRun}},
+  \code{\link{umx}}
 }
 

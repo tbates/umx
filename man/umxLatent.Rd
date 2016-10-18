@@ -5,8 +5,7 @@
 \title{umxLatent}
 \usage{
 umxLatent(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
-  type = NULL, name = NULL, labelSuffix = "", verbose = TRUE,
-  endogenous = "deprecated")
+  type = NULL, name = NULL, labelSuffix = "", verbose = TRUE)
 }
 \arguments{
 \item{latent}{the name of the latent variable (string)}
@@ -24,8 +23,6 @@ umxLatent(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 \item{labelSuffix}{a suffix string to append to each label}
 
 \item{verbose}{Default is TRUE as this function does quite a lot}
-
-\item{endogenous}{This is now deprecated. use type= \"exogenous|endogenous\"}
 }
 \value{
 - path list
@@ -73,13 +70,10 @@ plot(m2)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Model Building Functions: \code{\link{umxDiagnose}},
-  \code{\link{umxLabel}}, \code{\link{umxMatrix}},
-  \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM2Ordinal}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}},
-  \code{\link{umx_fix_first_loadings}},
-  \code{\link{umx_fix_latents}}, \code{\link{umx}}
+Other Core Modelling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxDiagnose}}, \code{\link{umxMatrix}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxReduce}}, \code{\link{umxRun}},
+  \code{\link{umx}}
 }
 

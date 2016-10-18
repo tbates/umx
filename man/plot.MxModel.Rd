@@ -71,6 +71,12 @@ plot(m1)
 \seealso{
 - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},
 
+Other Core Modelling Functions: \code{\link{umxDiagnose}},
+  \code{\link{umxLatent}}, \code{\link{umxMatrix}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxReduce}}, \code{\link{umxRun}},
+  \code{\link{umx}}
+
 Other Plotting functions: \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}}
