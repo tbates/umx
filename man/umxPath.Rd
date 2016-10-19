@@ -6,10 +6,10 @@
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
   unique.bivariate = NULL, unique.pairs = NULL, forms = NULL,
-  Cholesky = NULL, means = NULL, v1m0 = NULL, v.m. = NULL,
-  v0m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL,
-  connect = c("single", "all.pairs", "all.bivariate", "unique.pairs",
-  "unique.bivariate"), defn = NULL, arrows = 1, free = TRUE,
+  Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL,
+  v.m. = NULL, v0m0 = NULL, fixedAt = NULL, freeAt = NULL,
+  firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate",
+  "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE,
   values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL)
 }
 \arguments{
@@ -33,6 +33,8 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 
 \item{Cholesky}{Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.}
 
+\item{defn}{latent variable, var@0 mean fixed, with label-based as data source}
+
 \item{means}{equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).}
 
 \item{v1m0}{variance of 1 and mean of zero in one call.}
@@ -48,8 +50,6 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 \item{firstAt}{first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)}
 
 \item{connect}{as in mxPath - nb: Only used when using from and to}
-
-\item{defn}{latent variable, var@0 mean fixed, with label-based as data source}
 
 \item{arrows}{as in mxPath - nb: Only used when using from and to}
 
@@ -71,7 +71,7 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 \description{
 The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 
-It introduces 11 new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{Cholesky}, \strong{means}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
+It introduces 14 new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{means}, \strong{v1m0}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
 
 The new preposition \dQuote{with} means you no-longer need set arrows = 2 on covariances. Instead, you can say:
 
