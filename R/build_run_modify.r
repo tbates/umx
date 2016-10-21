@@ -3980,6 +3980,8 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' )
 #' umxSummary(m1, show = "std")
 #'
+
+
 #' # The following NOT YET implemented!!
 #' # umxPath("A <-> B") # same path as above using a string
 #' # umxPath("A -> B") # one-headed arrow with string syntax
