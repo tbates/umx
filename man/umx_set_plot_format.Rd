@@ -4,10 +4,12 @@
 \alias{umx_set_plot_format}
 \title{umx_set_plot_format}
 \usage{
-umx_set_plot_format(umx.plot.format = NULL)
+umx_set_plot_format(umx.plot.format = NULL, silent = FALSE)
 }
 \arguments{
 \item{umx.plot.format}{format for plots (if empty, returns the current value of umx.plot.format)}
+
+\item{silent}{If TRUE, no message will be printed.}
 }
 \value{
 - Current umx.plot.format setting
@@ -17,11 +19,11 @@ Set output format of plots (default = "DiagrammeR", alternative is "graphviz")
 }
 \examples{
 library(umx)
-umx_set_plot_format()
-old = umx_set_plot_format() # get existing value
+umx_set_plot_format() # print current state
+old = umx_set_plot_format(silent = TRUE) # store current value
 umx_set_plot_format("graphviz")
 umx_set_plot_format("DiagrammeR")
-umx_set_plot_format(old)    # reinstate
+umx_set_plot_format(old) # reinstate
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}

@@ -19,7 +19,8 @@ Set autoPlot default for models like umxACE umxGxE etc
 }
 \examples{
 library(umx)
-old = umx_set_auto_plot() # get existing value
+umx_set_auto_plot() # print current state
+old = umx_set_auto_plot(silent = TRUE) # store existing value
 umx_set_auto_plot("name")  # set to "name"
 umx_set_auto_plot(old)    # reinstate
 }

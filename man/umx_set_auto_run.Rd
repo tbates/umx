@@ -4,10 +4,12 @@
 \alias{umx_set_auto_run}
 \title{umx_set_auto_run}
 \usage{
-umx_set_auto_run(autoRun = NA)
+umx_set_auto_run(autoRun = NA, silent = FALSE)
 }
 \arguments{
 \item{autoRun}{If TRUE or FALSE, sets the umx_auto_run option. Else returns the current value of umx_auto_run}
+
+\item{silent}{If TRUE, no message will be printed.}
 }
 \value{
 - Current umx_auto_run setting
@@ -17,7 +19,8 @@ Set autorun default for models like umxACE umxGxE etc
 }
 \examples{
 library(umx)
-old = umx_set_auto_run() # get existing value
+umx_set_auto_run() # print existing value
+old = umx_set_auto_run(silent = TRUE) # store existing value
 umx_set_auto_run(FALSE)  # set to FALSE
 umx_set_auto_run(old)    # reinstate
 }

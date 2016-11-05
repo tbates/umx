@@ -4,10 +4,12 @@
 \alias{umx_set_table_format}
 \title{umx_set_table_format}
 \usage{
-umx_set_table_format(knitr.table.format = NULL)
+umx_set_table_format(knitr.table.format = NULL, silent = FALSE)
 }
 \arguments{
 \item{knitr.table.format}{format for tables (if empty, returns the current value of knitr.table.format)}
+
+\item{silent}{If TRUE, no message will be printed.}
 }
 \value{
 - Current knitr.table.format setting
@@ -18,7 +20,8 @@ Set knitr.table.format default (output style for tables). Legal values are
 }
 \examples{
 library(umx)
-old = umx_set_table_format() # get existing value
+umx_set_table_format() # show current state
+old = umx_set_table_format() # store existing value
 umx_set_table_format("latex")
 umx_set_table_format("html")
 umx_set_table_format("markdown")

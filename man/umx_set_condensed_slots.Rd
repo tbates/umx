@@ -4,10 +4,12 @@
 \alias{umx_set_condensed_slots}
 \title{umx_set_condensed_slots}
 \usage{
-umx_set_condensed_slots(state = NA)
+umx_set_condensed_slots(state = NA, silent = FALSE)
 }
 \arguments{
 \item{state}{what state (TRUE or FALSE) to set condensed slots (default NA returns current value).}
+
+\item{silent}{If TRUE, no message will be printed.}
 }
 \value{
 - current value of condensed slots
@@ -17,7 +19,8 @@ Sets whether newly-created mxMatrices are to be condensed (set to NULL if not be
 }
 \examples{
 library(umx)
-old = umx_set_condensed_slots() # get the existing state
+umx_set_condensed_slots() # print
+old = umx_set_condensed_slots(silent = TRUE) # store the existing state
 umx_set_condensed_slots(TRUE) # update globally
 umx_set_condensed_slots(old) # set back
 }

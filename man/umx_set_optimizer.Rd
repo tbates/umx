@@ -4,13 +4,15 @@
 \alias{umx_set_optimizer}
 \title{umx_set_optimizer}
 \usage{
-umx_set_optimizer(opt = NA, model = NULL)
+umx_set_optimizer(opt = NA, model = NULL, silent = FALSE)
 }
 \arguments{
 \item{opt}{default (NA) returns current value. Current alternatives are
 "NPSOL" "SLSQP" and "CSOLNP".}
 
 \item{model}{A model for which to set the optimizer. Default (NULL) sets the optimizer globally.}
+
+\item{silent}{If TRUE, no message will be printed.}
 }
 \value{
 -
@@ -20,7 +22,8 @@ Set the optimizer in OpenMx
 }
 \examples{
 library(umx)
-old = umx_set_optimizer() # get the existing state
+umx_set_optimizer() # print the existing state
+old = umx_set_optimizer(silent = TRUE) # store the existing state
 umx_set_optimizer("SLSQP") # update globally
 umx_set_optimizer(old) # set back
 }

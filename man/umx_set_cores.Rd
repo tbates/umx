@@ -4,12 +4,14 @@
 \alias{umx_set_cores}
 \title{umx_set_cores}
 \usage{
-umx_set_cores(cores = NA, model = NULL)
+umx_set_cores(cores = NA, model = NULL, silent = FALSE)
 }
 \arguments{
 \item{cores}{number of cores to use. NA (the default) returns current value. "-1" will set to detectCores().}
 
 \item{model}{an (optional) model to set. If left NULL, the global option is updated.}
+
+\item{silent}{If TRUE, no message will be printed.}
 }
 \value{
 - number of cores
@@ -26,10 +28,10 @@ m1 <- mxModel("ind", type = "RAM",
 	mxPath(from = "one", to = manifests),
 	mxData(mtcars[, manifests], type = "raw")
 )
-umx_set_cores()              # show current value
-oldCores <- umx_set_cores()  # store existing value
+umx_set_cores() # print current value
+oldCores <- umx_set_cores(silent = TRUE)  # store existing value
 umx_set_cores(detectCores()) # set to max
-umx_set_cores(-1) ; umx_set_cores() # set to max
+umx_set_cores(-1); umx_set_cores() # set to max
 m1 = umx_set_cores(1, m1)  # set m1 useage to 1 core
 umx_set_cores(model = m1)  # show new value for m1
 umx_set_cores(oldCores)    # reinstate old global value
