@@ -4,10 +4,12 @@
 \alias{umx_set_auto_plot}
 \title{umx_set_auto_plot}
 \usage{
-umx_set_auto_plot(autoPlot = NULL)
+umx_set_auto_plot(autoPlot = NULL, silent = FALSE)
 }
 \arguments{
 \item{autoPlot}{If NA or "name", sets the umx_auto_plot option. Else returns the current value of umx_auto_plot}
+
+\item{silent}{If TRUE, no message will be printed.}
 }
 \value{
 - Current umx_auto_plot setting

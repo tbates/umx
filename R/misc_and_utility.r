@@ -216,6 +216,7 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 #' Set autoPlot default for models like umxACE umxGxE etc
 #'
 #' @param autoPlot If NA or "name", sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
+#' @param silent If TRUE, no message will be printed.
 #' @return - Current umx_auto_plot setting
 #' @export
 #' @family Get and set
@@ -225,12 +226,14 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 #' old = umx_set_auto_plot() # get existing value
 #' umx_set_auto_plot("name")  # set to "name"
 #' umx_set_auto_plot(old)    # reinstate
-umx_set_auto_plot <- function(autoPlot = NULL) {
+umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 	if(is.null(autoPlot)) {
-		message("Current plot format is ", omxQuotes(getOption("umx_auto_plot")),
-			". Valid options are NA or 'name'.", 
-			" 'name' will auto-plot, using the name of the model as the plot name."
-		)
+		if(!silent){
+			message("Current plot format is ", omxQuotes(getOption("umx_auto_plot")),
+				". Valid options are NA or 'name'.", 
+				" 'name' will auto-plot, using the name of the model as the plot name."
+			)
+		}
 		invisible(getOption("umx_auto_plot"))
 	} else {
 		umx_check(autoPlot %in% c(NA, "name"), "stop", "autoPlot should be either NA or 'name'")
