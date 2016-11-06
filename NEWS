@@ -1,7 +1,8 @@
 # umx 1.4.5
-* Mid November 2016 "Usability is queen"
+* Mid November 2016 "Usability is queen/Sincere Pumpkin Patch"
 * IMPROVED: Reorganize function families to increase clarity
 * IMPROVED: umx_set functions now show legal options by default
+* NEW: umx_set functions have silent option
 
 # umx 1.4.0
 * Mid October 2016 "New features and improvements"
