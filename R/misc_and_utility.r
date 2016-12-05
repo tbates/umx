@@ -3637,17 +3637,17 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 # =================
 # = Simulate Data =
 # =================
-#' umx_make_TwinData
+#' umx_make_TwinData: Simulate twin data with control over A, C, E, and moderation
 #'
 #' @description
 #' Makes MZ and DZ twin data, optionally moderated.
 #'
 #' @details You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of a, c,and e.
-#' a can take a list of values which if specified will act like a moderated heritability, with average value a[1], and swinging
-#' down to a[2 and up to a[3] across 4-SDs of the moderator.
+#' a can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value avg, and swinging
+#' down to min and up to max across 4-SDs of the moderator.
 #'
 #' @param nMZpairs Number of MZ pairs to simulate
-#' @param nDZpairs Number of DZ pairs to simulate
+#' @param nDZpairs Number of DZ pairs to simulate (if omitted defaults to nMZpairs)
 #' @param a value for a, defaults to an example of moderation: c(avg=.5, min=0, max=1)
 #' @param c value for c
 #' @param e value for e
@@ -3656,10 +3656,12 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @family Twin Modeling Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' str(umx_make_TwinData(100,100, .5, .3, .4))
-umx_make_TwinData <- function(nMZpairs, nDZpairs, a = c(avg = .5, min = 0, max = 1), c, e) {
+#' str(umx_make_TwinData(nMZpairs = 100, nDZpairs = 100, a = .5, c = .3, e = .4))
+#' str(umx_make_TwinData(nMZpairs = 100, nDZpairs = 100, a = .5, c = .3, e = .4))
+#' str(umx_make_TwinData(nMZpairs = 100, a = c(avg = .5, min = 0, max = 1), c = .3, e = .4))
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, a = c(avg = .5, min = 0, max = 1), c = NULL, e = NULL) {
 	# function caps the moderator effect at -3 and +3 SD
-	if(length(a)==3){
+	if(length(a) == 3){
 		avgA = a["avg"]
 		# minA applied at -3 SD
 		# maxA applied at +3 SD
