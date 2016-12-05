@@ -1,10 +1,10 @@
 ## Changes
-* New functions and improvements + a bug fix.
+* Small improvements
 
 ## Test environments
-* OS X 10.12.1, R version 3.3.1 (2016-06-21)
-* Win (64-bit) R Under development (unstable) (2016-10-10 r71494)
-* 64-bit Linux (Scientific Linux 6), R 3.3.1
+* OS X 10.12.1, R version 3.3.2
+* Win (64-bit) R Under development (2016-11-05 r71630)
+* 64-bit Linux (Scientific Linux 6), R 3.3.2
 
 ## R CMD check results
 * No ERRORs, No WARNINGs, No NOTES

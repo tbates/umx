@@ -3805,18 +3805,15 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 #' provided a new sample size is not requested. Warnings from
 #' the polycor::hetcor function are suppressed.
 #'
-#' Author:   Ryne Estabrook
-#' Created:  17 Aug 2010
-#'
-#' @param dataset The original dataset you want to make a simulacrum of
-#' @param digits = 2
-#' @param n = NA
-#' @param use.names = T
-#' @param use.levels = T
-#' @param use.miss = T
-#' @param mvt.method = "eigen"
-#' @param het.ML = F
-#' @param het.suppress = T
+#' @param dataset The original dataset of which to make a simulacrum
+#' @param digits = Round the data to the requested digits (default = 2)
+#' @param n Number of rows to generate (NA = all rows in dataset)
+#' @param use.names Whether to name the variables (default = TRUE)
+#' @param use.levels = Whether to use existing levels (default = TRUE)
+#' @param use.miss Whether to have data missting as in original (defaults to TRUE)
+#' @param mvt.method = Passed to hetcor (default = "eigen")
+#' @param het.ML = Passed to hetcor (default = FALSE)
+#' @param het.suppress Passed to hetcor (default = TRUE)
 #' @return - new dataframe
 #' @family Data Functions
 #' @export

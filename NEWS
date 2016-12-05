@@ -1,9 +1,9 @@
 # umx 1.4.5
-* Mid November 2016 "Usability is queen/Sincere Pumpkin Patch"
+* November 2016 "Usability is queen/Sincere Pumpkin Patch"
 * IMPROVED: Reorganize function families to increase clarity
 * IMPROVED: umx_set functions now show legal options by default
 * NEW: umx_set functions have silent option
-
+* FIX secure http URLs
 # umx 1.4.0
 * Mid October 2016 "New features and improvements"
 * BUG FIX: umxFitIndices RMR and SRMR (h/t Brenton Wiernik!)
