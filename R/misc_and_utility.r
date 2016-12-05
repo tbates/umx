@@ -3661,6 +3661,9 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' str(umx_make_TwinData(nMZpairs = 100, a = c(avg = .5, min = 0, max = 1), c = .3, e = .4))
 umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, a = c(avg = .5, min = 0, max = 1), c = NULL, e = NULL) {
 	# function caps the moderator effect at -3 and +3 SD
+	if(is.null(c) || is.null(e)){
+		stop("You must set a, c, and e")
+	}
 	if(length(a) == 3){
 		avgA = a["avg"]
 		# minA applied at -3 SD
@@ -3680,12 +3683,11 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, a = c(avg = .5, min
 			a = max(0, (avgA + (thisSES * SES_2_A_beta)))
 			# c = 0.0
 			# e = 0.1
-			ac  =  a + c
-			hac = .5 * ac
-			ace = ac + e
+			ac  = a + c
+			ace = a + c + e
 			mzCov = matrix(nrow = 2, byrow = T, c(
 				ace, ac,
-				ac, ace)
+				ac , ace)
 			);
 			# MASS:: package
 			mzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = mzCov);
@@ -3698,16 +3700,15 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, a = c(avg = .5, min
 		SESlist = rnorm(n = nDZpairs, mean = 0, sd = 1)
 		j = 1
 		for (thisSES in SESlist) {
-			thisSES = -5
+			# thisSES = -5
 			a = max(0, (avgA + (thisSES * SES_2_A_beta)))
-			ac  =  a + c
-			hac = .5 * ac
-			ace = ac + e
+			hac = (.5 * a) + c
+			ace = a + c + e
 			dzCov = matrix(nrow = 2, byrow = T, c(
 				ace, hac,
 				hac, ace)
 			);
-			dzPair = mvrnorm(n = 1, mu = c(0,0), Sigma = dzCov);
+			dzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = dzCov);
 			dzData[j,] = c(dzPair, thisSES, thisSES)
 			j = j + 1
 		}
@@ -3715,7 +3716,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, a = c(avg = .5, min
 	} else {
 		# just one set
 		ac  =  a + c
-		hac = .5 * ac
+		hac = (.5 * a) + c
 		ace = ac + e
 		mzCov = matrix(nrow = 2, byrow = T, c(
 			ace, ac,
@@ -3726,15 +3727,15 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, a = c(avg = .5, min
 			ace, hac,
 			hac, ace)
 		);
-		mzData = mvrnorm(n = nMZpairs, mu = c(0,0), Sigma = mzCov);
-		dzData = mvrnorm(n = nDZpairs, mu = c(0,0), Sigma = dzCov);
+		mzData = mvrnorm(n = nMZpairs, mu = c(0, 0), Sigma = mzCov);
+		dzData = mvrnorm(n = nDZpairs, mu = c(0, 0), Sigma = dzCov);
 		mzData = data.frame(mzData)
 		dzData = data.frame(dzData)
 
 		names(mzData) = c("T1", "T2")	
 		names(dzData) = c("T1", "T2")	
 	}
-	return(list(mzData=mzData, dzData = dzData))
+	return(list(mzData = mzData, dzData = dzData))
 }
 
 #' Simulate Mendelian Randomization data

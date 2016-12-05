@@ -156,7 +156,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 # = Core Modelling Functions =
 # ============================
 
-#' umxRAM
+#' umxRAM: Easy-to-use RAM model maker.
 #'
 #' Making it as simple as possible to create a RAM model, without doing invisible things to the model.
 #' 
@@ -422,7 +422,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}
 }
 
-#' umxModify
+#' umxModify: Add, set, or drop model paths by label.
 #' 
 #' umxModify allows you to modify, re-run and summarize an \code{\link{mxModel}},
 #' all in one line of script. 
@@ -540,7 +540,7 @@ umxReRun <- umxModify
 # ==================
 # = Twin Functions =
 # ==================
-#' umxGxE
+#' umxGxE: Implements ACE models with moderation of paths, e.g. by SES.
 #'
 #' Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
 #' of genetic (or environmental) influence varies parametrically (usuaally linear effects on path estimates)
@@ -958,7 +958,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	}
 }
 
-#' umxACE
+#' umxACE: Build and run a Cholesky (uni- or multi-variate)
 #'
 #' Make a 2-group ACE Cholesky Twin model.
 #' umxACE supports a core model in behavior genetics, known as the ACE Cholesky model
@@ -1511,7 +1511,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 # devtools::release("~/bin/umx", check = TRUE)
 # https://www.researchgate.net/publication/287346605_A_New_Approach_to_Handle_Missing_Covariate_Data_in_Twin_Research
 
-#' umxACEcov
+#' umxACEcov: Build and run a Cholesky with covariates in the covariance
 #'
 #' Make a 2-group ACE Cholesky Twin model with covariates modeled (see Details below)
 #' 
@@ -1726,7 +1726,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	}
 }
 
-#' umxCP
+#' umxCP: Build and run a Common pathway twin model
 #'
 #' Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
 #' 
@@ -1964,7 +1964,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 } # end umxCP
 
-#' umxIP
+#' umxIP: Build and run an Independent pathway twin model
 #'
 #' Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model)
 #' 
@@ -2162,7 +2162,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 } # end umxIP
 
-#' umxACESexLim
+#' umxACESexLim: Build and run a sex-limitaiton twin model (not working yet)
 #'
 #' Cholesky style sex-limitation model.
 #'
@@ -2379,7 +2379,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 
 #' umxRAM2Ordinal 
 #'
-#' umxRAM2Ordinal  converts a RAM model whose data contain ordinal vars to a threshold-based model
+#' umxRAM2Ordinal: Convert a RAM model whose data contain ordinal vars to a threshold-based model
 #'
 #' @param model An RAM model to add thresholds too.
 #' @param verbose Tell the user what was added and why (Default = TRUE)
@@ -2417,7 +2417,7 @@ umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", 
 	}
 }
 
-#' umxValues
+#' umxValues: Set values in RAM model, matrix, or path
 #'
 #' For models to be estimated, it is essential that path values start at credible values. umxValues takes on that task for you.
 #' umxValues can set start values for the free parameters in both RAM and Matrix \code{\link{mxModel}}s. It can also take an mxMatrix as input.
@@ -2547,7 +2547,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 	}
 }
 
-#' umxLabel
+#' umxLabel: Add labels to a RAM model, matrix, or path
 #'
 #' umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix based), an \code{\link{mxPath}}, or an \code{\link{mxMatrix}}
 #' This is a core function in umx: Adding labels to paths opens the door to \code{\link{umxEquate}}, as well as \code{\link{omxSetParameters}}
@@ -2611,7 +2611,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 	}
 }
 
-#' umxMatrix
+#' umxMatrix: labeled mxMatrix, with name in the first place
 #'
 #' @description
 #' umxMatrix is a wrapper for mxMatrix which labels cells buy default, and has the name parameter first in order. 
@@ -2661,7 +2661,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 # = Run Helpers =
 # =================================
 
-#' umxRun
+#' umxRun: Run an mxModel
 #'
 #' umxRun is a version of \code{\link{mxRun}} which can run also set start values, labels, and run multiple times
 #' It can also calculate the saturated and independence likelihoods necessary for most fit indices.
@@ -2761,7 +2761,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 # = Label and equate functions =
 # ==============================
 
-#' umxGetParameters
+#' umxGetParameters: Get parameters from a model
 #'
 #' Get the parameter labels from a model. Like \code{\link{omxGetParameters}},
 #' but supercharged with regular expressions for more power and ease!
@@ -2771,7 +2771,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @param free  A Boolean determining whether to return only free parameters.
 #' @param verbose How much feedback to give
 #' @export
-#' @family Modify or Compare Models
+#' @family Reporting Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -2856,7 +2856,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 #' @export
 parameters <- umxGetParameters
 
-#' umxSetParameters
+#' umxSetParameters: Set parameters in an mxModel
 #'
 #' Free or fix parameters in an \code{\link{mxModel}}.
 #' This allows similar actions that \code{\link{update}} enables
@@ -2921,7 +2921,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 	}
 }
 
-#' umxEquate
+#' umxEquate: Equate two or more paths
 #'
 #' In addition to dropping or adding parameters, a second common task in modelling
 #' is to equate parameters. umx provides a convenience function to equate parameters 
@@ -3024,7 +3024,7 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 	return(newModel)
 }
 
-#' umxFixAll
+#' umxFixAll: Fix all free parameters
 #'
 #' Fix all free parameters in a model using omxGetParameters()
 #'
@@ -3070,7 +3070,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 	return(model)
 }
 
-#' umxDrop1
+#' umxDrop1: Unfinished function to mimic drop1 in OpenMx
 #'
 #' Drops each free parameter (selected via regex), returning an \code{\link{mxCompare}}
 #' table comparing the effects. A great way to quickly determine which of several 
@@ -3230,7 +3230,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 # = RAM Helpers =
 # ===============
 
-#' umxLatent
+#' umxLatent: Helper to ease making formative and reflective latent variables
 #'
 #' Helper to ease the creation of latent variables including formative and reflective variables (see below)
 #' For formative variables, the manifests define (form) the latent.
@@ -3400,7 +3400,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 # = matrix-oriented helpers =
 # ===========================
 
-#' umxThresholdMatrix
+#' umxThresholdMatrix: Helper makes a complete threshold matrix needed in ordinal models.
 #'
 #' High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. Big time saver!
 #'
@@ -3838,7 +3838,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	return (model)
 }
 
-#' umxPath: Flexible specification of sem paths
+#' umxPath: Easier (but powerful) specification of RAM paths.
 #'
 #' @details This function returns a standard mxPath, but gives new options for specifying the path. In addition to the normal
 #' \dQuote{from} and \dQuote{to}, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
