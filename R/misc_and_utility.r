@@ -3640,7 +3640,8 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' umx_make_TwinData: Simulate twin data with control over A, C, E, and moderation
 #'
 #' @description
-#' Makes MZ and DZ twin data, optionally moderated.
+#' Makes MZ and DZ twin data, optionally moderated. Note, if you want a power calculator, see here:
+#' \url{http://www.people.vcu.edu/~bverhulst/power/power.html}
 #'
 #' @details You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of a, c,and e.
 #' a can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value avg, and swinging

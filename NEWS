@@ -1,6 +1,7 @@
-# umx 1.5.0
-* December 2016 "??"
-* IMPROVED: umx_make_TwinData defaults for simulating twin data
+# umx 1.4.8
+* December 2016 bug fix
+* FIXED: umx_make_TwinData fix bug in DZ moderator code and A+C computation
+* IMPROVED: more functionality hints in man page titles
 
 # umx 1.4.5
 * November 2016 "Usability is queen/Sincere Pumpkin Patch"
