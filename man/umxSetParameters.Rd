@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxSetParameters}
 \alias{umxSetParameters}
-\title{umxSetParameters}
+\title{umxSetParameters: Set parameters in an mxModel}
 \usage{
 umxSetParameters(model, labels, free = NULL, values = NULL,
   newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE,
@@ -69,8 +69,7 @@ m2 = umxSetParameters(m1, "^", newlabels= "m1_", regex = TRUE, test = TRUE)
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
-  \code{\link{umxFixAll}}, \code{\link{umxGetParameters}},
-  \code{\link{umxMI}},
+  \code{\link{umxFixAll}}, \code{\link{umxMI}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }

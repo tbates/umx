@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxEquate}
 \alias{umxEquate}
-\title{umxEquate}
+\title{umxEquate: Equate two or more paths}
 \usage{
 umxEquate(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE,
   name = NULL, autoRun = getOption("umx_auto_run"), comparison = TRUE)
@@ -67,8 +67,7 @@ umxCompare(m1, m2) # not good :-)
 \seealso{
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxFixAll}},
-  \code{\link{umxGetParameters}}, \code{\link{umxMI}},
-  \code{\link{umxSetParameters}},
+  \code{\link{umxMI}}, \code{\link{umxSetParameters}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxThresholdMatrix}
 \alias{umxThresholdMatrix}
-\title{umxThresholdMatrix}
+\title{umxThresholdMatrix: Helper makes a complete threshold matrix needed in ordinal models.}
 \usage{
 umxThresholdMatrix(df, sep = NA, method = c("auto", "Mehta", "allFree"),
   thresholds = c("deviationBased", "direct", "ignore", "left_censored"),

@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxValues}
 \alias{umxValues}
-\title{umxValues}
+\title{umxValues: Set values in RAM model, matrix, or path}
 \usage{
 umxValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 }

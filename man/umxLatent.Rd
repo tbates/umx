@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxLatent}
 \alias{umxLatent}
-\title{umxLatent}
+\title{umxLatent: Helper to ease making formative and reflective latent variables}
 \usage{
 umxLatent(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
   type = NULL, name = NULL, labelSuffix = "", verbose = TRUE)

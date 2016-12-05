@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxGxE}
 \alias{umxGxE}
-\title{umxGxE}
+\title{umxGxE: Implements ACE models with moderation of paths, e.g. by SES.}
 \usage{
 umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL,
   lboundACE = NA, lboundM = NA, dropMissingDef = FALSE,

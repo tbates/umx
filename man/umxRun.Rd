@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxRun}
 \alias{umxRun}
-\title{umxRun}
+\title{umxRun: Run an mxModel}
 \usage{
 umxRun(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE,
   setLabels = FALSE, intervals = FALSE, comparison = NULL,

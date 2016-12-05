@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxIP}
 \alias{umxIP}
-\title{umxIP}
+\title{umxIP: Build and run an Independent pathway twin model}
 \usage{
 umxIP(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,

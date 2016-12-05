@@ -9,23 +9,23 @@ umx_make_fake_data(dataset, digits = 2, n = NA, use.names = TRUE,
   het.ML = FALSE, het.suppress = TRUE)
 }
 \arguments{
-\item{dataset}{The original dataset you want to make a simulacrum of}
+\item{dataset}{The original dataset of which to make a simulacrum}
 
-\item{digits}{= 2}
+\item{digits}{= Round the data to the requested digits (default = 2)}
 
-\item{n}{= NA}
+\item{n}{Number of rows to generate (NA = all rows in dataset)}
 
-\item{use.names}{= T}
+\item{use.names}{Whether to name the variables (default = TRUE)}
 
-\item{use.levels}{= T}
+\item{use.levels}{= Whether to use existing levels (default = TRUE)}
 
-\item{use.miss}{= T}
+\item{use.miss}{Whether to have data missting as in original (defaults to TRUE)}
 
-\item{mvt.method}{= "eigen"}
+\item{mvt.method}{= Passed to hetcor (default = "eigen")}
 
-\item{het.ML}{= F}
+\item{het.ML}{= Passed to hetcor (default = FALSE)}
 
-\item{het.suppress}{= T}
+\item{het.suppress}{Passed to hetcor (default = TRUE)}
 }
 \value{
 - new dataframe
@@ -41,10 +41,6 @@ are used for all covariances, and the exact pattern of
 missing data present in the input is placed in the output,
 provided a new sample size is not requested. Warnings from
 the polycor::hetcor function are suppressed.
-}
-\details{
-Author:   Ryne Estabrook
-Created:  17 Aug 2010
 }
 \examples{
 fakeCars = umx_make_fake_data(mtcars)

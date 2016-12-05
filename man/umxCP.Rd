@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxCP}
 \alias{umxCP}
-\title{umxCP}
+\title{umxCP: Build and run a Common pathway twin model}
 \usage{
 umxCP(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,

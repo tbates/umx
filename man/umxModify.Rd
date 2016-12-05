@@ -3,7 +3,7 @@
 \name{umxModify}
 \alias{umxModify}
 \alias{umxReRun}
-\title{umxModify}
+\title{umxModify: Add, set, or drop model paths by label.}
 \usage{
 umxModify(lastFit, update = NULL, regex = FALSE, free = FALSE,
   value = 0, freeToStart = NA, name = NULL, verbose = FALSE,
