@@ -4,14 +4,17 @@
 \alias{umx_aggregate}
 \title{umx_aggregate}
 \usage{
-umx_aggregate(formula = DV ~ condition, data, what = c("mean_sd", "n"))
+umx_aggregate(formula = DV ~ condition, data, what = c("mean_sd", "n"),
+  kable = TRUE)
 }
 \arguments{
 \item{formula}{The aggregation formula. e.g., DV ~ condition}
 
-\item{data}{frame to aggregate with}
+\item{data}{frame to aggregate}
 
 \item{what}{function to use. Defaults to a built-in "smart" mean (sd)}
+
+\item{kable}{Report as a formatted table? (Default is TRUE)}
 }
 \value{
 - table

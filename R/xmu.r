@@ -757,7 +757,7 @@ xmu_dot_maker <- function(model, file, digraph){
 			file = paste0(model$name, ".gv")
 		}
 		cat(digraph, file = file) # write to file
-		if(umx_set_plot_format() == "DiagrammeR"){
+		if(umx_set_plot_format(silent = TRUE) == "DiagrammeR"){
 			DiagrammeR::DiagrammeR(diagram = file, type = "grViz")
 		} else {
 			if(umx_check_OS("OSX")){

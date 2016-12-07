@@ -416,9 +416,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(autoRun){
 		m1 = mxRun(m1)
 		umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
-		return(m1)
+		invisible(m1)
 	} else {
-		return(m1)
+		invisible(m1)
 	}
 }
 

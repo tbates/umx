@@ -3280,8 +3280,9 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' aggregating over some grouping factor. A common use is preparing summary tables.
 #'
 #' @param formula The aggregation formula. e.g., DV ~ condition
-#' @param data frame to aggregate with
+#' @param data frame to aggregate
 #' @param what function to use. Defaults to a built-in "smart" mean (sd)
+#' @param kable Report as a formatted table? (Default is TRUE)
 #' @return - table
 #' @export
 #' @family Reporting Functions
@@ -3295,7 +3296,7 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' \dontrun{
 #' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 #' }
-umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n")) {
+umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n"), kable = TRUE) {
 	# TODO N doesn't seem needed here?
 	# TODO other handy aggregating functions?
 	mean_sd = function(x){
@@ -3324,8 +3325,12 @@ umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n
 
 	# new way
 	tmp = data.frame(tmp)
-	tmp[,1] = paste0(as.character(tmp[,1]), " (n = ", n_s[,2], ")")
-	return(tmp)	
+	tmp[, 1] = paste0(as.character(tmp[, 1]), " (n = ", n_s[, 2], ")")
+	if(kable){
+		return(kable(tmp))
+	} else {
+		return(tmp)
+	}
 }
 
 #' umx_APA_pval
