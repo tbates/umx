@@ -6,7 +6,8 @@
 \title{umxAPA}
 \usage{
 umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
-  min = 0.001, addComparison = NA, report = c("table", "html"))
+  min = 0.001, addComparison = NA, report = c("table", "html"),
+  lower = TRUE)
 }
 \arguments{
 \item{obj}{Either a model (\link{lm}), a beta-value, or a data.frame}
@@ -24,6 +25,8 @@ umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
 \item{addComparison}{for a p-value, whether to add "</=" default (NA) adds "<" if necessary}
 
 \item{report}{what to return (default = markdown table). Use "html" to open a web page table}
+
+\item{lower}{whether to report on the lower triangle of correlations for a data.frame (Default = TRUE)}
 }
 \value{
 - string
@@ -55,11 +58,12 @@ mean_sd \tab 6.19 (1.79) \tab  3.22 (0.98) \tab 20.09 (6.03)
 4. Given only a number as obj will be treated as a p-value as returned in APA format.
 }
 \examples{
-# Generate a formatted string convey the effects in a model:  
+# Generate a formatted string describing a regression:  
 umxAPA(lm(mpg ~ wt + disp, mtcars))
 umxAPA(lm(mpg ~ wt + disp, mtcars), "disp")
 # Generate a summary table of correlations + Mean and SD:
 umxAPA(mtcars[,1:3])
+umxAPA(mtcars[,1:3], lower = TRUE)
 # Generate a CI string based on effect and se
 umxAPA(.4, .3)
 # format p-value

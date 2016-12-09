@@ -3431,27 +3431,34 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA, rounding
 #' @param min = .001 for a p-value, the smallest value to report numerically
 #' @param addComparison for a p-value, whether to add "</=" default (NA) adds "<" if necessary
 #' @param report what to return (default = markdown table). Use "html" to open a web page table
+#' @param lower whether to report on the lower triangle of correlations for a data.frame (Default = TRUE)
 #' @return - string
 #' @export
 #' @family Reporting Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' # Generate a formatted string convey the effects in a model:  
+#' # Generate a formatted string describing a regression:  
 #' umxAPA(lm(mpg ~ wt + disp, mtcars))
 #' umxAPA(lm(mpg ~ wt + disp, mtcars), "disp")
 #' # Generate a summary table of correlations + Mean and SD:
 #' umxAPA(mtcars[,1:3])
+#' umxAPA(mtcars[,1:3], digits = 3)
+#' umxAPA(mtcars[,1:3], lower = FALSE)
+#' umxAPA(mtcars[,1:3], report = "html")
 #' # Generate a CI string based on effect and se
 #' umxAPA(.4, .3)
 #' # format p-value
 #' umxAPA(.0182613)
 #' umxAPA(.000182613)
-umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("table", "html")) {
+umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("table", "html"), lower = TRUE) {
 	report = match.arg(report)
 	if(class(obj)=="data.frame"){
 		# generate a summary of correlation and means
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE)
-		cor_table = umx_apply(round, cor_table, digits = digits) # round corelations
+		cor_table = umx_apply(round, cor_table, digits = digits) # round correlations
+		if(lower){
+			cor_table[upper.tri(cor_table)] = ""
+		}
 		mean_sd = umx_apply(umx_fun_mean_sd, obj)
 		output = data.frame(rbind(cor_table, mean_sd), stringsAsFactors = FALSE)
 		if(report == "html"){
@@ -3462,7 +3469,7 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 		if(anyNA(obj)){
 			message("Some rows in dataframe had missing values.")
 		}
-	}else if( "matrix" == class(obj)){
+	} else if( "matrix" == class(obj)) {
 		# Assume these are correlations or similar numbers
 		cor_table = umx_apply(round, obj, digits = digits) # round corelations
 		output = data.frame(cor_table)
@@ -3471,7 +3478,7 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 		} else {
 			umx_print(output, digits = digits)
 		}
-	}else if( "lm" == class(obj)){
+	} else if( "lm" == class(obj)) {
 		# report lm summary table
 		if(std){
 			obj = update(obj, data = umx_scale(obj$model))
