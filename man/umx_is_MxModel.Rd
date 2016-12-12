@@ -45,4 +45,3 @@ Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_is_exogenous}},
   \code{\link{umx_is_ordered}}
 }
-

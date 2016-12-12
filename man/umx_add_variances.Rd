@@ -50,4 +50,3 @@ Other Misc: \code{\link{umxEval}},
   \code{\link{umx_object_as_str}},
   \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
 }
-

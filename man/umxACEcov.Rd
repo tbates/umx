@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxACEcov}
 \alias{umxACEcov}
-\title{umxACEcov}
+\title{umxACEcov: Build and run a Cholesky with covariates in the covariance}
 \usage{
 umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL,
@@ -90,4 +90,3 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umx_make_TwinData}}, \code{\link{umx}}
 }
-

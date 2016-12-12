@@ -81,4 +81,3 @@ m5 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[
 Other Super-easy helpers: \code{\link{umxTwoStage}},
   \code{\link{umx}}
 }
-

@@ -26,4 +26,3 @@ Other Stats Functions: \code{\link{reliability}},
   \code{\link{umx_cor}}, \code{\link{umx_means}},
   \code{\link{umx}}
 }
-

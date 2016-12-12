@@ -3,7 +3,7 @@
 \name{umxModify}
 \alias{umxModify}
 \alias{umxReRun}
-\title{umxModify}
+\title{umxModify: Add, set, or drop model paths by label.}
 \usage{
 umxModify(lastFit, update = NULL, regex = FALSE, free = FALSE,
   value = 0, freeToStart = NA, name = NULL, verbose = FALSE,
@@ -79,4 +79,3 @@ m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", co
 \references{
 - \url{http://github.com/tbates/umx}
 }
-

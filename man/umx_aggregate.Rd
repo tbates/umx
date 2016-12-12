@@ -5,14 +5,18 @@
 \title{umx_aggregate}
 \usage{
 umx_aggregate(formula = DV ~ condition, data = NA, what = c("mean_sd",
-  "n"), digits = 2)
+  "n"), digits = 2, kable = TRUE)
 }
 \arguments{
 \item{formula}{The aggregation formula. e.g., DV ~ condition}
 
-\item{data}{frame to aggregate with}
+\item{data}{frame to aggregate}
 
 \item{what}{function to use. Defaults to a built-in "smart" mean (sd)}
+
+\item{digits}{for rounding of results}
+
+\item{kable}{Report as a formatted table? (Default is TRUE)}
 }
 \value{
 - table
@@ -40,8 +44,8 @@ umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{mxSE}}, \code{\link{umxAPA}},
-  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_print}}, \code{\link{umx_show}},
-  \code{\link{umx_time}}, \code{\link{umx}}
+  \code{\link{umxGetParameters}}, \code{\link{umxSummary}},
+  \code{\link{umx_APA_pval}}, \code{\link{umx_print}},
+  \code{\link{umx_show}}, \code{\link{umx_time}},
+  \code{\link{umx}}
 }
-

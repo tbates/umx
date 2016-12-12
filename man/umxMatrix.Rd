@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxMatrix}
 \alias{umxMatrix}
-\title{umxMatrix}
+\title{umxMatrix: labeled mxMatrix, with name in the first place}
 \usage{
 umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
   free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA,
@@ -62,4 +62,3 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxReduce}}, \code{\link{umxRun}},
   \code{\link{umx}}
 }
-

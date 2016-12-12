@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxACE}
 \alias{umxACE}
-\title{umxACE}
+\title{umxACE: Build and run a Cholesky (uni- or multi-variate)}
 \usage{
 umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
   suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
@@ -250,4 +250,3 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umx_make_TwinData}}, \code{\link{umx}}
 }
-

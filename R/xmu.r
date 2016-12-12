@@ -502,9 +502,9 @@ xmuMI <- function(model, vector = TRUE) {
 	# modification indices
 	# v0.9: written Michael Culbertson
 	# v0.91: up on github; added progress bar, Bates
-	# http://openmx.psyc.virginia.edu/thread/831
-	# http://openmx.psyc.virginia.edu/thread/1019
-	# http://openmx.psyc.virginia.edu/sites/default/files/mi-new.r
+	# http://openmx.ssri.psu.edu/thread/831
+	# http://openmx.ssri.psu.edu/thread/1019
+	# http://openmx.ssri.psu.edu/sites/default/files/mi-new.r
 	steps <- 5
 	bar <- txtProgressBar (min=0, max=steps, style=3)
     utils::setTxtProgressBar(bar, 1)
@@ -757,7 +757,7 @@ xmu_dot_maker <- function(model, file, digraph){
 			file = paste0(model$name, ".gv")
 		}
 		cat(digraph, file = file) # write to file
-		if(umx_set_plot_format() == "DiagrammeR"){
+		if(umx_set_plot_format(silent = TRUE) == "DiagrammeR"){
 			DiagrammeR::DiagrammeR(diagram = file, type = "grViz")
 		} else {
 			if(umx_check_OS("OSX")){

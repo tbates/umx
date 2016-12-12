@@ -26,4 +26,3 @@ with no parameters.
 Other umx deprecated: \code{\link{umx-deprecated}},
   \code{\link{umx_get_cores}}
 }
-

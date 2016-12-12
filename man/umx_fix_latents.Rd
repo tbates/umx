@@ -45,4 +45,3 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}}, \code{\link{umx}}
 }
-

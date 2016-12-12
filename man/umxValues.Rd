@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxValues}
 \alias{umxValues}
-\title{umxValues}
+\title{umxValues: Set values in RAM model, matrix, or path}
 \usage{
 umxValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 }
@@ -55,4 +55,3 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}, \code{\link{umx}}
 }
-

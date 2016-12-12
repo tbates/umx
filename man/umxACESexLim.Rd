@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxACESexLim}
 \alias{umxACESexLim}
-\title{umxACESexLim}
+\title{umxACESexLim: Build and run a sex-limitaiton twin model (not working yet)}
 \usage{
 umxACESexLim(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
   dzoData, suffix = NULL, autoRun = getOption("umx_auto_run"))
@@ -104,4 +104,3 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umx_make_TwinData}}, \code{\link{umx}}
 }
-

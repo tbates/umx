@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxDrop1}
 \alias{umxDrop1}
-\title{umxDrop1}
+\title{umxDrop1: Unfinished function to mimic drop1 in OpenMx}
 \usage{
 umxDrop1(model, regex = NULL, maxP = 1)
 }
@@ -35,9 +35,7 @@ umxDrop1(model, regex="a_r1c1|a_r1c2")
 \seealso{
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxEquate}}, \code{\link{umxFixAll}},
-  \code{\link{umxGetParameters}}, \code{\link{umxMI}},
-  \code{\link{umxSetParameters}},
+  \code{\link{umxMI}}, \code{\link{umxSetParameters}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }
-

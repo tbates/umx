@@ -42,4 +42,3 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxValues}}, \code{\link{umx_fix_latents}},
   \code{\link{umx}}
 }
-

@@ -44,4 +44,3 @@ Other Misc: \code{\link{umx_APA_model_CI}},
   \code{\link{umx_object_as_str}},
   \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
 }
-

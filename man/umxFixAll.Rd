@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxFixAll}
 \alias{umxFixAll}
-\title{umxFixAll}
+\title{umxFixAll: Fix all free parameters}
 \usage{
 umxFixAll(model, name = "_fixed", run = FALSE, verbose = FALSE)
 }
@@ -40,9 +40,7 @@ mxCompare(m1, m2)
 \seealso{
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
-  \code{\link{umxGetParameters}}, \code{\link{umxMI}},
-  \code{\link{umxSetParameters}},
+  \code{\link{umxMI}}, \code{\link{umxSetParameters}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }
-

@@ -58,9 +58,9 @@ mxSE(A[1,6]^2, model = m1)
 - \code{\link{mxCI}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
-  \code{\link{umxAPA}}, \code{\link{umxSummary}},
-  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_print}}, \code{\link{umx_show}},
-  \code{\link{umx_time}}, \code{\link{umx}}
+  \code{\link{umxAPA}}, \code{\link{umxGetParameters}},
+  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
+  \code{\link{umx_show}}, \code{\link{umx_time}},
+  \code{\link{umx}}
 }
-

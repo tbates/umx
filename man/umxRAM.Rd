@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxRAM}
 \alias{umxRAM}
-\title{umxRAM}
+\title{umxRAM: Easy-to-use RAM model maker.}
 \usage{
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   setValues = TRUE, suffix = "", independent = NA,
@@ -119,4 +119,3 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxReduce}}, \code{\link{umxRun}},
   \code{\link{umx}}
 }
-

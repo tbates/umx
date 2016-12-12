@@ -2,15 +2,15 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_make_TwinData}
 \alias{umx_make_TwinData}
-\title{umx_make_TwinData}
+\title{umx_make_TwinData: Simulate twin data with control over A, C, E, and moderation}
 \usage{
-umx_make_TwinData(nMZpairs, nDZpairs, a = c(avg = 0.5, min = 0, max = 1), c,
-  e)
+umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, a = c(avg = 0.5, min = 0,
+  max = 1), c = NULL, e = NULL)
 }
 \arguments{
 \item{nMZpairs}{Number of MZ pairs to simulate}
 
-\item{nDZpairs}{Number of DZ pairs to simulate}
+\item{nDZpairs}{Number of DZ pairs to simulate (if omitted defaults to nMZpairs)}
 
 \item{a}{value for a, defaults to an example of moderation: c(avg=.5, min=0, max=1)}
 
@@ -22,15 +22,18 @@ umx_make_TwinData(nMZpairs, nDZpairs, a = c(avg = 0.5, min = 0, max = 1), c,
 - list of mzData and dzData data.frames
 }
 \description{
-Makes MZ and DZ twin data, optionally moderated.
+Makes MZ and DZ twin data, optionally moderated. Note, if you want a power calculator, see here:
+\url{http://www.people.vcu.edu/~bverhulst/power/power.html}
 }
 \details{
 You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of a, c,and e.
-a can take a list of values which if specified will act like a moderated heritability, with average value a[1], and swinging
-down to a[2 and up to a[3] across 4-SDs of the moderator.
+a can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value avg, and swinging
+down to min and up to max across 4-SDs of the moderator.
 }
 \examples{
-str(umx_make_TwinData(100,100, .5, .3, .4))
+str(umx_make_TwinData(nMZpairs = 100, nDZpairs = 100, a = .5, c = .3, e = .4))
+str(umx_make_TwinData(nMZpairs = 100, nDZpairs = 100, a = .5, c = .3, e = .4))
+str(umx_make_TwinData(nMZpairs = 100, a = c(avg = .5, min = 0, max = 1), c = .3, e = .4))
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
@@ -48,4 +51,3 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umx}}
 }
-

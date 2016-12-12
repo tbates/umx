@@ -29,4 +29,3 @@ Other Misc: \code{\link{umxEval}},
   \code{\link{umx_get_bracket_addresses}},
   \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
 }
-

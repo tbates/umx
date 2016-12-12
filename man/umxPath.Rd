@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxPath}
 \alias{umxPath}
-\title{umxPath: Flexible specification of sem paths}
+\title{umxPath: Easier (but powerful) specification of RAM paths.}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
   unique.bivariate = NULL, unique.pairs = NULL, forms = NULL,
@@ -198,4 +198,3 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxReduce}}, \code{\link{umxRun}},
   \code{\link{umx}}
 }
-

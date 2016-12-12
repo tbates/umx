@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxLabel}
 \alias{umxLabel}
-\title{umxLabel}
+\title{umxLabel: Add labels to a RAM model, matrix, or path}
 \usage{
 umxLabel(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
   labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE,
@@ -72,4 +72,3 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}, \code{\link{umx}}
 }
-
