@@ -306,7 +306,7 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 #' @return - mxModel if provided
 #' @export
 #' @family Get and set
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' umx_set_checkpoint(interval = 1, "evaluations", dir = "~/Desktop/")
 #' # turn off checkpointing with interval = 0
@@ -552,7 +552,7 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' @return - list of exogenous variables
 #' @export
 #' @family Test
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -590,7 +590,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @return - list of endogenous variables
 #' @export
 #' @family Test
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -632,7 +632,7 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Misc
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -674,7 +674,7 @@ umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -714,7 +714,7 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1836,7 +1836,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' install.OpenMx()
 #' }
 install.OpenMx <- function() {
-	source('http://openmx.psyc.virginia.edu/getOpenMx.R')
+	source('http://openmx.ssri.psu.edu/getOpenMx.R')
 }
 
 #' @export
@@ -1881,7 +1881,7 @@ umx_make <- function(what = c("install", "release", "win", "examples")) {
 #' @return - NULL
 #' @export
 #' @family Utility Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' a = "brian"
 #' umx_msg(a)
@@ -3462,7 +3462,7 @@ umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, valu
 #' @return - string
 #' @export
 #' @family String Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' umx_trim(" dog") # "dog"
 #' umx_trim("dog ") # "dog"
@@ -4074,7 +4074,7 @@ umx_read_lower <- function(file="", diag=TRUE, names=as.character(paste("X", 1:n
 #' @return - copy of the dataframe with new binary variables and censoring
 #' @export
 #' @family Data Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
 #' str(df)
