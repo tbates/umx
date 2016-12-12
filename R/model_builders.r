@@ -111,7 +111,7 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 	m1 <- umxRAM(model = name, data = data, autoRun = FALSE,
 		umxPath(factors, to = manifests, connect = "unique.bivariate"),
 		umxPath(v.m. = manifests),
-		umxPath(v1m0 = factors, fixedAt = 1)
+		umxPath(v1m0 = factors)
 	)
 	# Fix upper-right triangle of A-matrix factor columns at zero
 	nFac       = length(factors)

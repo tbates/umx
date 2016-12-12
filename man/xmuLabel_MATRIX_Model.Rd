@@ -54,4 +54,3 @@ Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmu_dot_make_residuals}},
   \code{\link{xmu_start_value_list}}
 }
-

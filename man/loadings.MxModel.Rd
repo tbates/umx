@@ -37,4 +37,3 @@ Other Reporting Functions: \code{\link{mxSE}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
-

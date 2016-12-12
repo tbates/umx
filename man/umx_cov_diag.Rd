@@ -39,4 +39,3 @@ umx_cov_diag(tmp2, format = "Full")
 \seealso{
 Other Building Functions: \code{\link{umx_check_names}}
 }
-

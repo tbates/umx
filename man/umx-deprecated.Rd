@@ -68,10 +68,9 @@ Change cor.prob to \code{\link{umx_cor}}
 Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 }
 \seealso{
 Other umx deprecated: \code{\link{umx_get_cores}},
   \code{\link{umx_get_optimizer}}
 }
-

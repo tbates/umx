@@ -66,4 +66,3 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxRAM}}, \code{\link{umxReduce}},
   \code{\link{umx}}
 }
-
