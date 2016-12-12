@@ -3290,17 +3290,17 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' @examples
 #' aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
 #' umx_aggregate(mpg ~ cyl, data = mtcars)
-#' umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars)
+#' umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, digits = 3)
 #' t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
 #' \dontrun{
 #' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 #' }
-umx_aggregate <- function(formula = DV ~ condition, data, what = c("mean_sd", "n")) {
+umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd", "n"), digits = 2) {
 	# TODO N doesn't seem needed here?
 	# TODO other handy aggregating functions?
 	mean_sd = function(x){
-		paste0(round(mean(x, na.rm=TRUE),2), " (",
-			   round(sd(x, na.rm=TRUE),2), ")"
+		paste0(round(mean(x, na.rm=TRUE),digits = digits), " (",
+			   round(sd(x, na.rm=TRUE),digits=digits), ")"
 		)
 	}
 	x_n = function(x){sum(!is.na(x))}
