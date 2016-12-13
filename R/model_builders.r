@@ -25,8 +25,7 @@
 #' 
 #' Bear in mind that factor scores are indeterminate and can be rotated.
 #' 
-#' This is very much early days. I will add "scores" if there is demand. Currently, you can
-#' get scores from with \code{\link{mxFactorScores}}.
+#' This is very much early days. Adding "scores" in response to demand.
 #' 
 #' todo: detect ordinal items and switch to UWLS
 #' 
@@ -36,14 +35,15 @@
 #' @param data A dataframe of manifest columns you are modeling
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
 #' @param n.obs Number of observations in covmat (if provided, default = NA)
+#' @param scores Type of scores to produce, if any. The default is none, "Regression" gives Thompson's scores. Other options are 'ML', 'WeightedML', Partial matching allows these names to be abbreviated.
 #' @param rotation A rotation to perform on the loadings (default  = "varimax" (orthogonal))
-#' @param name A name for your model.
+#' @param name A name for your model
 #' @param digits rounding (default = 2)
 #' @param report What to report
 #' @return - EFA \code{\link{mxModel}}
 #' @family Super-easy helpers
 #' @export
-#' @seealso - \code{\link{factanal}}
+#' @seealso - \code{\link{factanal}}, \code{\link{mxFactorScores}}
 #' @references - \url{http://github.com/tbates/umx}
 #' @examples
 #' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
@@ -53,12 +53,16 @@
 #' loadings(m2)
 #' \dontrun{
 #' plot(m2)
-#' m3 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
-#' m4 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
-#' m5 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
+#' m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
+#' m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
+#' m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
+#' m1 = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 #' }
-umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, report = c("1", "table", "html")){
-	message("umxEFA is beta-only, and NOT ready for prime time")
+umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, 
+	scores = c("none", 'ML', 'WeightedML', 'Regression'),
+	rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, report = c("1", "table", "html")){
+	message("umxEFA is beta-only, and not ready for prime time")
+	# "Bartlett" given Bartlett's weighted least-squares scores. 
 	# name     = "efa"
 	# factors  = 1
 	# data     = mtcars[,c("mpg", "disp", "hp", "wt", "qsec")]
@@ -94,7 +98,7 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 		}
 	}
 
-	# what about for scores? then we don't want std loadings...
+	# What about for scores? Do we want std loadings in that case?...
 	data = umx_scale(data)
 	rotation = umx_default_option(rotation, c("varimax", "promax", "none"), check = FALSE)
 	if(is.null(factors)){
@@ -133,11 +137,30 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 		print(loadings(m1))
 	}
 	umxSummary(m1, digits = digits, report = report);
-	invisible(m1)
+	if(scores != "none"){
+		x = umxFactorScores(m1, type = scores)
+	} else {
+		invisible(m1)
+	}
 }
 
 #' @export
 umxFactanal <- umxEFA
+
+umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression')) {
+	suppressMessages({
+		scores = mxFactorScores(model, type = type)
+	})
+	# Only need score from [nrow, nfac, c("score", "se")]
+	if(dim(scores)[2] == 1){
+		# drop = FALSE if only 1 factor
+		return(scores[ , , 1, drop = FALSE])
+	} else {
+		return(scores[ , , 1])
+	}
+}
+
+
 
 #' umxTwoStage
 #'
