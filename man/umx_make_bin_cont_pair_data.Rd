@@ -33,7 +33,7 @@ df = umx_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"
 df[order(df$mpg), 12:15]
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.psyc.virginia.edu}
+- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{http://openmx.ssri.psu.edu}
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

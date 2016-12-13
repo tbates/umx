@@ -22,7 +22,7 @@ b = c("brian", "sally", "jane")
 umx_msg(b)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 }
 \seealso{
 Other Utility Functions: \code{\link{qm}},

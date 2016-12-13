@@ -24,7 +24,7 @@ umx_trim("\\t dog \\n") # "dog"
 umx_trim("xlsx dog.xlsx", "\\\\.xlsx$") # "dog"
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 }
 \seealso{
 Other String Functions: \code{\link{umx_explode_twin_names}},

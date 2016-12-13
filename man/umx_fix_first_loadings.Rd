@@ -33,7 +33,7 @@ m1 = umx_fix_first_loadings(m1)
 umx_show(m1) # variance of g is fixed at 1
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},

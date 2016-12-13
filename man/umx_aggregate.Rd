@@ -30,6 +30,7 @@ aggregating over some grouping factor. A common use is preparing summary tables.
 \examples{
 aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
 umx_aggregate(mpg ~ cyl, data = mtcars)
+umx_aggregate(mpg ~ cyl, data = mtcars, kable = FALSE)
 umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, digits = 3)
 t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
 \dontrun{

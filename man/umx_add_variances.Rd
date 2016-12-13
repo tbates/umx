@@ -40,7 +40,7 @@ m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umxSummary(m1)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 }
 \seealso{
 Other Misc: \code{\link{umxEval}},

@@ -45,7 +45,7 @@ m1 = mxRun(m1)
 umx_checkpoint(0)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.psyc.virginia.edu}
+- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 }
 \seealso{
 Other Get and set: \code{\link{umx_get_checkpoint}},
