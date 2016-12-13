@@ -6,8 +6,9 @@
 \title{umxEFA}
 \usage{
 umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
-  n.obs = NULL, rotation = c("varimax", "promax", "none"), name = "efa",
-  digits = 2, report = c("1", "table", "html"))
+  n.obs = NULL, scores = c("none", "ML", "WeightedML", "Regression"),
+  rotation = c("varimax", "promax", "none"), name = "efa", digits = 2,
+  report = c("1", "table", "html"))
 }
 \arguments{
 \item{x}{Either 1: data, 2: A formula (not implemented yet), 3: A collection of variable names, or 4: A name for the model.}
@@ -20,9 +21,11 @@ umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
 
 \item{n.obs}{Number of observations in covmat (if provided, default = NA)}
 
+\item{scores}{Type of scores to produce, if any. The default is none, "Regression" gives Thompson's scores. Other options are 'ML', 'WeightedML', Partial matching allows these names to be abbreviated.}
+
 \item{rotation}{A rotation to perform on the loadings (default  = "varimax" (orthogonal))}
 
-\item{name}{A name for your model.}
+\item{name}{A name for your model}
 
 \item{digits}{rounding (default = 2)}
 
@@ -54,8 +57,7 @@ EFA reports standardized loadings: to do this, we scale the data.
 
 Bear in mind that factor scores are indeterminate and can be rotated.
 
-This is very much early days. I will add "scores" if there is demand. Currently, you can
-get scores from with \code{\link{mxFactorScores}}.
+This is very much early days. Adding "scores" in response to demand.
 
 todo: detect ordinal items and switch to UWLS
 }
@@ -67,16 +69,17 @@ m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", d
 loadings(m2)
 \dontrun{
 plot(m2)
-m3 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
-m4 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
-m5 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
+m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
+m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
+m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
+m1 = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 }
 }
 \references{
 - \url{http://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{factanal}}
+- \code{\link{factanal}}, \code{\link{mxFactorScores}}
 
 Other Super-easy helpers: \code{\link{umxTwoStage}},
   \code{\link{umx}}
