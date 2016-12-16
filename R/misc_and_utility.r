@@ -1836,7 +1836,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' install.OpenMx()
 #' }
 install.OpenMx <- function() {
-	source('http://openmx.ssri.psu.edu/getOpenMx.R')
+	source('http://http://openmx.psyc.virginia.edu/getOpenMx.R')
 }
 
 #' @export
