@@ -74,3 +74,4 @@ Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
 Other umx deprecated: \code{\link{umx_get_cores}},
   \code{\link{umx_get_optimizer}}
 }
+

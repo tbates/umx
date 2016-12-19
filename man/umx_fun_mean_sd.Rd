@@ -32,3 +32,4 @@ summaryAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
+

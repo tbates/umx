@@ -42,3 +42,4 @@ Other Get and set: \code{\link{umx_set_auto_plot}},
   \code{\link{umx_set_plot_format}},
   \code{\link{umx_set_table_format}}
 }
+

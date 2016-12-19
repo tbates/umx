@@ -84,3 +84,4 @@ m1 = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Reg
 Other Super-easy helpers: \code{\link{umxTwoStage}},
   \code{\link{umx}}
 }
+

@@ -41,3 +41,4 @@ Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_set_optimizer}},
   \code{\link{umx_set_plot_format}}
 }
+

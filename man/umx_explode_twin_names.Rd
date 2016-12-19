@@ -34,3 +34,4 @@ umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
 Other String Functions: \code{\link{umx_explode}},
   \code{\link{umx_rot}}, \code{\link{umx_trim}}
 }
+

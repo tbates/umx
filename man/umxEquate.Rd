@@ -71,3 +71,4 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }
+

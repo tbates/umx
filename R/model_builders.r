@@ -62,6 +62,7 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 	scores = c("none", 'ML', 'WeightedML', 'Regression'),
 	rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, report = c("1", "table", "html")){
 	message("umxEFA is beta-only, and not ready for prime time")
+	scores = match.arg(scores)
 	# "Bartlett" given Bartlett's weighted least-squares scores. 
 	# name     = "efa"
 	# factors  = 1

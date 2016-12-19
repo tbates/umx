@@ -32,3 +32,4 @@ Other xmu internal not for end user: \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmu_dot_make_residuals}},
   \code{\link{xmu_start_value_list}}
 }
+
