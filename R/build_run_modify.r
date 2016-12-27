@@ -291,37 +291,38 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		stop("umxRAM needs some mxData. You set this like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
 	}
 
-	nPaths       = 0 # initialise
 	foundNames   = c()
-	manifestVars = NULL
-	for (i in dot.items) {
-		thisIs = class(i)[1]
-		if(thisIs == "MxPath"){
-			foundNames = append(foundNames, c(i$from, i$to))
-		} else {
-			if(thisIs == "MxThreshold"){
-				# MxThreshold detected
+	for (thisItem in dot.items) {
+		for (i in length(thisItem)) {
+			thisIs = class(thisItem[[i]])[1]
+			if(thisIs == "MxPath"){
+				foundNames = append(foundNames, c(thisItem[[i]]$from, thisItem[[i]]$to))
 			} else {
-				# stop("I can only handle mxPaths, mxConstraints, and mxThreshold() objects.\n",
-				# "You have given me a", class(i)[1],"\n",
-				# " To include data in umxRAM, say 'data = yourData'")
-			}
+				if(thisIs == "MxThreshold"){
+					# MxThreshold detected
+				} else {
+					# stop("I can only handle mxPaths, mxConstraints, and mxThreshold() objects.\n",
+					# "You have given me a", class(i)[1],"\n",
+					# " To include data in umxRAM, say 'data = yourData'")
+				}
+			}			
 		}
 	}
 
-	# ========================
-	# = All items processed  =
-	# ========================
+	# ============================
+	# = All dot.items processed  =
+	# ============================
+
 	# ===============
 	# = Handle data =
 	# ===============
 	if(is.null(data)){
-		stop("You must include data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...)")
+		stop("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...)")
 	} else if(class(data)[1] == "data.frame") {
-		data = mxData(observed = data, type = "raw")
+			data = mxData(observed = data, type = "raw")
 	}
 
-    if(class(data)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
+  if(class(data)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
 		if(data$type == "raw"){
 			manifestVars = names(data$observed)
 			isRaw = TRUE
@@ -335,7 +336,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	} else {
 		stop("There's something wrong with the data - I expected a dataframe or mxData, but you gave me a ", class(data)[1])		
 	}
-
 	foundNames = unique(na.omit(foundNames))
 	# Anything not in data -> latent
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
@@ -349,7 +349,11 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	} else {
 		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ". ")
 	}
-	# TODO handle when the user adds mxThreshold object: this will be a model where things are not in the data and are not latent...
+	# ===========================================================
+	# = TODO handle user adding an mxThreshold object to umxRAM =
+	# ===========================================================
+	# This will be a model where things are not in the data and are not latent...
+
 	# ====================
 	# = Handle Manifests =
 	# ====================
@@ -370,7 +374,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		if(remove_unused_manifests){
 			# trim down the data to include only the used manifests
 			if(data$type == "raw"){
-				data$observed = data$observed[, manifestVars]
+				data$observed = data$observed[, manifestVars, drop = FALSE]
 			} else {
 				data$observed = umx_reorder(data$observed, manifestVars)
 			}
@@ -403,10 +407,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(setValues){
 		m1 = umxValues(m1, onlyTouchZeros = TRUE)
 	}
-	
 	if(any(umx_is_ordered(data$observed))){
 		if(thresholds == "ignore"){
-			# can't run, as ignored are incomplete
+			# Can't run, as ignored leaves model incomplete
 			autoRun = FALSE
 		} else {
 			m1 = umxRAM2Ordinal(m1, verbose = T, thresholds = thresholds, autoRun = FALSE)
@@ -2464,13 +2467,13 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# TODO: Start latent means?...
 		# TODO: Handle sub models...
 		if (length(obj$submodels) > 0) {
-			stop("Cannot yet handle submodels")
+			stop("umxValues cannot yet handle submodels")
 		}
 		if (is.null(obj$data)) {
 			stop("'model' does not contain any data")
 		}
 		if(!is.null(obj$matrices$Thresholds)){
-			message("This is a threshold RAM model... I'm not sure how to handle setting values in these yet")
+			message("This is a threshold RAM model... I'm not sure how to handle setting values in these yet. left it alone...")
 			return(obj)
 		}
 		theData   = obj$data$observed
@@ -2500,29 +2503,33 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 				warning("You are using raw data, but have not yet added paths for the means\n")
 				stop("You do this with mxPath(from = 'one', to = 'var')")
 			} else {
-				dataMeans = umx_means(theData[, manifests], ordVar = 0, na.rm = TRUE)
+				dataMeans = umx_means(theData[, manifests, drop = FALSE], ordVar = 0, na.rm = TRUE)
 				freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
 				obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
 				# covData = cov(theData, )
-				covData = umx_cov_diag(theData[, manifests], ordVar = 1, format = "diag", use = "pairwise.complete.obs")
-				covData = diag(covData)
+				covData = umx_cov_diag(theData[, manifests, drop = FALSE], ordVar = 1, format = "diag", use = "pairwise.complete.obs")
+				if(!is.null(dim(covData))){
+					# make a matrix with the diag on the diag, and zeros elsewhere
+					covData = diag(covData)
+				}
 			}
 		} else {
+			# diag diag creates a matrix with all zeros off the diagonal
 			covData = diag(diag(theData))
 		}
-		# ======================================================
-		# = Fill the symmetrical matrix with good start values =
-		# ======================================================
-		# The diagonal is variances
+		# ==========================================================
+		# = Fill the S (symmetrical) matrix with good start values =
+		# ==========================================================
+		# set S diagonal (variances)
 		if(onlyTouchZeros) {
 			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE) & obj$S$values[1:nVar, 1:nVar] == 0
 		} else {
 			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE)			
 		}
 		obj$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
-		# ================
-		# = set off diag =
-		# ================
+		# =======================
+		# = Set off-diag values =
+		# =======================
 		# TODO decide whether to leave this as independence, or set to non-zero covariances...
 		# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		# obj$matrices$S$values[1:nVar, 1:nVar][freePaths] = (covData[freePaths]/2)

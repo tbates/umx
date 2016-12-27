@@ -8,8 +8,8 @@
 \usage{
 \method{plot}{MxModel}(x = NA, std = FALSE, digits = 2, file = "name",
   pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE,
-  resid = c("circle", "line", "none"), showFixed = TRUE, showMeans = NULL,
-  ...)
+  resid = c("circle", "line", "none"), showFixed = "deprecated",
+  showMeans = "deprecated", ...)
 }
 \arguments{
 \item{x}{An \code{\link{mxModel}} from which to make a path diagram}

@@ -9,10 +9,10 @@ umx_reorder(old, newOrder)
 \arguments{
 \item{old}{a square matrix of correlation or covariances to reorder}
 
-\item{newOrder}{The order you'd like the variables to be in}
+\item{newOrder}{Variables you want in the order you wish to have}
 }
 \value{
-- the re-ordered (and/or resized) matrix
+- the re-ordered/resized matrix
 }
 \description{
 Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function
@@ -21,6 +21,7 @@ Reorder the variables in a correlation matrix. Can also remove one or more varia
 oldMatrix = cov(mtcars)
 umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
 umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
+umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

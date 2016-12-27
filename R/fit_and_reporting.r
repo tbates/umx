@@ -619,21 +619,21 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 
 	message("?umxSummary showEstimates='raw|std', digits, report= 'html', filter= 'NS' & more")
 	
-	# If the filter is off default, the user must want something, let's assume it's std ...
+	# If the filter is not default, user must want something: Assume it's what would have been the default...
 	if( filter != "ALL" & showEstimates == "none") {
-		showEstimates = "std"
+		showEstimates = "raw"
 	}else if(showEstimates == "std" && SE == FALSE){
 		message("SE must be TRUE to show std, overriding to set SE = TRUE")
 		SE = TRUE
 	}
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(refModels)) {
-		
-		# saturatedModels not passed in from outside, so get them from the model
-		# TODO improve efficiency here: compute summary only once by detecting when SaturatedLikelihood is missing
-		modelSummary = summary(model)		
+		# SaturatedModels not passed in from outside, so get them from the model
+		# TODO Improve efficiency: Compute summary only once by detecting when SaturatedLikelihood is missing
+		modelSummary = summary(model)
 		if(is.null(model$data)){
 			# TODO model with no data - no saturated solution?
+			message("Not sure I (umxSummary) know what to do with models with no data: Try summary() - it's smarter than I am.")
 		} else if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
 			refModels = mxRefModels(model, run = TRUE)
@@ -1874,17 +1874,17 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' plot(m1)
-plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE, resid = c("circle", "line", "none"), showFixed = TRUE, showMeans = NULL, ...) {
+plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE, resid = c("circle", "line", "none"), showFixed = "deprecated", showMeans = "deprecated", ...) {
 	# ==========
 	# = Setup  =
 	# ==========
-	if(!is.null(showMeans)){
-		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+	if(showMeans != "deprecated"){
+		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
 		means = showMeans
 	}	
 	
-	if(!is.null(showMeans)){
-		message("We're moving from showFixed = T/F to just fixed = T/F for simplicity")
+	if(showFixed != "deprecated"){
+		message("Change ", omxQuotes("showFixed"), " to ", omxQuotes("fixed"), "(", omxQuotes("showFixed"), " will stop working in future)")
 		fixed = showFixed
 	}	
 	resid = match.arg(resid)
@@ -2027,13 +2027,13 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", showStd = "deprecated", ...) {
 	if(showMeans != "deprecated"){
-		message("We're moving from 'showMeans'to just means = T/F for simplicity")
+		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
 		means = showMeans
-	}
+	}	
 	if(showStd != "deprecated"){
-		message("We're moving from 'showStd' to just std = T/F for simplicity")
-		std = showStd
-	}
+		message("Change ", omxQuotes("showStd"), " to ", omxQuotes("std"), "(", omxQuotes("showStd"), " will stop working in future)")
+		fixed = showFixed
+	}	
 	if(!class(x) == "MxModel.ACE"){
 		stop("The first parameter of umxPlotACE must be an ACE model, you gave me a ", class(x))
 	}
@@ -2133,9 +2133,9 @@ plot.MxModel.ACE <- umxPlotACE
 #' 	 suffix = "", autoRun = TRUE)
 #' plot(m1)
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = NULL, ...) {
-	if(!is.null(showMeans)){
-		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", ...) {
+	if(showMeans != "deprecated"){
+		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
 		means = showMeans
 	}	
 	if(!class(x) == "MxModel.ACEcov"){
@@ -2309,11 +2309,11 @@ plot.MxModel.GxE <- umxPlotGxE
 #' \dontrun{
 #' plot(yourCP_Model) # no need to remember a special name: plot works fine!
 #' }
-umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = NULL, ...) {
-	if(!is.null(showMeans)){
-		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", ...) {
+	if(showMeans != "deprecated"){
+		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
 		means = showMeans
-	}
+	}	
 	if(!class(x) == "MxModel.CP"){
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
@@ -2416,9 +2416,9 @@ plot.MxModel.CP <- umxPlotCP
 #' plot(model)
 #' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = NULL, ...) {
-	if(!is.null(showMeans)){
-		message("We're moving from showMeans = T/F to just means = T/F for simplicity")
+umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", ...) {
+	if(showMeans != "deprecated"){
+		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
 		means = showMeans
 	}	
 	if(!class(x) == "MxModel.IP"){
