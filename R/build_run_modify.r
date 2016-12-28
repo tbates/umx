@@ -291,8 +291,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		stop("umxRAM needs some mxData. You set this like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
 	}
 
-	foundNames   = c()
+	foundNames = c()
 	for (thisItem in dot.items) {
+		# sometimes we get a list, so expand everything to a list
+		if(length(thisItem) == 1){
+			thisItem = list(thisItem)
+		}
 		for (i in length(thisItem)) {
 			thisIs = class(thisItem[[i]])[1]
 			if(thisIs == "MxPath"){
@@ -2482,7 +2486,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		nVar      = length(manifests)
 
 		if(length(latents) > 0){
-			lats  =  (nVar+1):(nVar + length(latents))
+			lats = (nVar + 1):(nVar + length(latents))
 			# The diagonal is variances
 			if(onlyTouchZeros) {
 				freePaths = (obj$matrices$S$free[lats, lats] == TRUE) & obj$matrices$S$values[lats, lats] == 0
@@ -2508,9 +2512,11 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 				obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
 				# covData = cov(theData, )
 				covData = umx_cov_diag(theData[, manifests, drop = FALSE], ordVar = 1, format = "diag", use = "pairwise.complete.obs")
-				if(!is.null(dim(covData))){
-					# make a matrix with the diag on the diag, and zeros elsewhere
+				if(!is.null(dim(covData)) || length(covData) > 1){
 					covData = diag(covData)
+				} else {
+					# If this is one variable, make a matrix with the diag on the diag, and zeros elsewhere
+					# covData = diag(covData)
 				}
 			}
 		} else {
@@ -2520,17 +2526,19 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# ==========================================================
 		# = Fill the S (symmetrical) matrix with good start values =
 		# ==========================================================
-		# set S diagonal (variances)
+		# Set S diagonal (variances)
 		if(onlyTouchZeros) {
 			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE) & obj$S$values[1:nVar, 1:nVar] == 0
 		} else {
 			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE)			
 		}
 		obj$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
+
 		# =======================
 		# = Set off-diag values =
 		# =======================
 		# TODO decide whether to leave this as independence, or set to non-zero covariances...
+
 		# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		# obj$matrices$S$values[1:nVar, 1:nVar][freePaths] = (covData[freePaths]/2)
 		# offDiag = !diag(nVar)
