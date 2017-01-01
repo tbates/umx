@@ -8,8 +8,8 @@
 \usage{
 \method{plot}{MxModel}(x = NA, std = FALSE, digits = 2, file = "name",
   pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE,
-  resid = c("circle", "line", "none"), showFixed = "deprecated",
-  showMeans = "deprecated", ...)
+  resid = c("circle", "line", "none"), showMeans = "deprecated",
+  showFixed = "deprecated", ...)
 }
 \arguments{
 \item{x}{An \code{\link{mxModel}} from which to make a path diagram}
@@ -28,9 +28,9 @@
 
 \item{resid}{How to show residuals and variances default is "circle". Options are "line" & "none"}
 
-\item{showFixed}{Deprecated: just use 'fixed = TRUE'}
-
 \item{showMeans}{Deprecated: just use 'means = TRUE'}
+
+\item{showFixed}{Deprecated: just use 'fixed = TRUE'}
 
 \item{...}{Optional parameters}
 }

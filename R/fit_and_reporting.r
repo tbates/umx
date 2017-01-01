@@ -1874,7 +1874,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' plot(m1)
-plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE, resid = c("circle", "line", "none"), showFixed = "deprecated", showMeans = "deprecated", ...) {
+plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE, resid = c("circle", "line", "none"), showMeans = "deprecated", showFixed = "deprecated", ...) {
 	# ==========
 	# = Setup  =
 	# ==========
@@ -2032,7 +2032,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	}	
 	if(showStd != "deprecated"){
 		message("Change ", omxQuotes("showStd"), " to ", omxQuotes("std"), "(", omxQuotes("showStd"), " will stop working in future)")
-		fixed = showFixed
+		fixed = showStd
 	}	
 	if(!class(x) == "MxModel.ACE"){
 		stop("The first parameter of umxPlotACE must be an ACE model, you gave me a ", class(x))
