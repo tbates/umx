@@ -3305,7 +3305,6 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 #' }
 umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd", "n"), digits = 2, kable = TRUE) {
-	# TODO N doesn't seem needed here?
 	# TODO Add more aggregating functions?
 	mean_sd = function(x){
 		paste0(round(mean(x, na.rm = TRUE), digits = digits), " (",
