@@ -31,4 +31,3 @@ data(ex9_6)
 names(ex9_6)
 }
 \keyword{datasets}
-

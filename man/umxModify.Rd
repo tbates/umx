@@ -79,4 +79,3 @@ m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", co
 \references{
 - \url{http://github.com/tbates/umx}
 }
-

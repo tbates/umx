@@ -42,17 +42,16 @@ umx_print(mtcars[1:10,], file = "Rout.html")
 }
 }
 \seealso{
+Other Utility Functions: \code{\link{qm}},
+  \code{\link{umx_find_object}}, \code{\link{umx_grep}},
+  \code{\link{umx_msg}}, \code{\link{umx_names}},
+  \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_rename}}, \code{\link{umx}}
+
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{mxSE}}, \code{\link{umxAPA}},
   \code{\link{umxGetParameters}}, \code{\link{umxSummary}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
-
-Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_find_object}}, \code{\link{umx_grep}},
-  \code{\link{umx_msg}}, \code{\link{umx_names}},
-  \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_rename}}, \code{\link{umx}}
 }
-

@@ -35,4 +35,3 @@ Other Misc: \code{\link{umxEval}},
   \code{\link{umx_get_bracket_addresses}},
   \code{\link{umx_object_as_str}}, \code{\link{umx}}
 }
-

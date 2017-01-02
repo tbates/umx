@@ -25,4 +25,3 @@ install.OpenMx()
 Other Miscellaneous Functions: \code{\link{umx_get_options}},
   \code{\link{umx_pad}}
 }
-
