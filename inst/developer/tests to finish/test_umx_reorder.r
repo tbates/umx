@@ -21,4 +21,12 @@ test_that("umx_reorder works for different values", {
 	allNames = colnames(newData)
 	expect_equal(umx_reorder(old = oldData, newOrder = allNames), newData)
 
+	# =====================
+	# = what about n = 1? =
+	# =====================
+	oldData = cov(mtcars)
+	newData = cov(mtcars[,"hp", drop = FALSE])
+	allNames = colnames(newData)
+	expect_equal(umx_reorder(old = oldData, newOrder = allNames), newData)
+
 })

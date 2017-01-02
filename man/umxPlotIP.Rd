@@ -6,7 +6,7 @@
 \title{umxPlotIP}
 \usage{
 umxPlotIP(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, showMeans = NULL, ...)
+  std = TRUE, showMeans = "deprecated", ...)
 }
 \arguments{
 \item{x}{The \code{\link{umxIP}} model to plot}

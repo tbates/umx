@@ -6,7 +6,7 @@
 \title{umxPlotCP}
 \usage{
 umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, showMeans = NULL, ...)
+  std = TRUE, showMeans = "deprecated", ...)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link{mxModel}} to display graphically}

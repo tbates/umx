@@ -6,7 +6,7 @@
 \title{umxPlotACEcov}
 \usage{
 umxPlotACEcov(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, showMeans = NULL, ...)
+  std = TRUE, showMeans = "deprecated", ...)
 }
 \arguments{
 \item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}

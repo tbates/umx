@@ -2877,8 +2877,8 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #' Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function
 #'
 #' @param old a square matrix of correlation or covariances to reorder
-#' @param newOrder The order you'd like the variables to be in
-#' @return - the re-ordered (and/or resized) matrix
+#' @param newOrder Variables you want in the order you wish to have
+#' @return - the re-ordered/resized matrix
 #' @export
 #' @family Data Functions
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -2886,13 +2886,14 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #' oldMatrix = cov(mtcars)
 #' umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
 #' umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
+#' umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
 umx_reorder <- function(old, newOrder) {
 	dim_names = dimnames(old)[[1]]
 	if(!all(newOrder %in% dim_names)){
-		stop("All variable names must appear in the matrix")
+		stop("All variable names must appear in the matrix being umx_reorder'd")
 	}
 	numVarsToRetain = length(newOrder)
-	new = old[1:numVarsToRetain, 1:numVarsToRetain]
+	new = old[1:numVarsToRetain, 1:numVarsToRetain, drop = FALSE]
 	dimnames(new) = list(newOrder, newOrder)
 	for(r in newOrder) {
 		for(c in newOrder) {

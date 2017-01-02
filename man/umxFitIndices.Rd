@@ -20,6 +20,13 @@ note: This is not a full-fat fit reporter. It is not robust across multi-group d
 definition variables. It is primarily designed to add less-often reported fit indices for 
 RAM models where reviewer 2 wants something other than CFA/TLI/RMSEA :-).
 }
+\details{
+Fit information reported includes: N, deviance, N.parms, Chi, df, p.Chi, Chi.df, AICchi, AICdev, BCCchi, BCCdev, BICchi, BICdev, 
+CAICchi, CAICdev, RMSEA, SRMR, RMR, SMAR, MAR, SMAR.nodiag, MAR.nodiag, GFI, AGFI, PGFI, 
+NFI, RFI, IFI, NNFI.TLI, CFI, PRATIO, PNFI, PCFI, NCP, ECVIchi, ECVIdev, MECVIchi, MECVIdev, MFI, GH
+
+Want more? File a report at github
+}
 \examples{
 require(umx)
 data(demoOneFactor)

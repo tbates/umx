@@ -13,7 +13,7 @@ m1 <- mxModel("m1", type = "RAM",
 	umxPath(var = latents),
 	mxData(df, "raw")
 )
-m1 = umxRun(m1, setLabels = T, setValues = T)
+m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m1 = umxRun(m1); AIC(m1)
 umxSummary(m1, show = "std"); # plot(m1, showFixed = T)
 
@@ -21,7 +21,6 @@ umxSummary(m1, show = "std"); # plot(m1, showFixed = T)
 # = Test working =
 # ================
 
-testthat::expect_warning(
-	umxValues(m1),
-	"You are using raw data, but have not yet added paths for the means"
+testthat::expect_error(
+	umxValues(m1), "You do this with mxPath(from = 'one', to = 'var')"
 )
