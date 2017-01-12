@@ -83,11 +83,10 @@ Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxTwoStage}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
-  \code{\link{mxSE}}, \code{\link{umxAPA}},
-  \code{\link{umxGetParameters}}, \code{\link{umxSummary}},
-  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_print}}, \code{\link{umx_show}},
-  \code{\link{umx_time}}
+  \code{\link{umxAPA}}, \code{\link{umxGetParameters}},
+  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
+  \code{\link{umx_show}}, \code{\link{umx_time}}
 
 Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
