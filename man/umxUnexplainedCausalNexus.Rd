@@ -34,4 +34,3 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxFixAll}}, \code{\link{umxMI}},
   \code{\link{umxSetParameters}}, \code{\link{umx}}
 }
-

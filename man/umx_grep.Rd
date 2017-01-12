@@ -50,4 +50,3 @@ Other Utility Functions: \code{\link{qm}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}},
   \code{\link{umx_rename}}, \code{\link{umx}}
 }
-

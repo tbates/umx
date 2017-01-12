@@ -30,4 +30,3 @@ umx_pad(1:3, 3)
 Other Miscellaneous Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_get_options}}
 }
-

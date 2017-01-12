@@ -32,4 +32,4 @@ Suggests:
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 LazyData: true
-RoxygenNote: 5.0.1
+RoxygenNote: 5.0.1.9000

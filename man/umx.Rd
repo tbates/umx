@@ -73,6 +73,39 @@ plot(m1, std = TRUE, file = NA)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
+Other Core Modelling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
+  \code{\link{umxMatrix}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxReduce}},
+  \code{\link{umxRun}}
+
+Other Super-easy helpers: \code{\link{umxEFA}},
+  \code{\link{umxTwoStage}}
+
+Other Reporting Functions: \code{\link{loadings.MxModel}},
+  \code{\link{umxAPA}}, \code{\link{umxGetParameters}},
+  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
+  \code{\link{umx_show}}, \code{\link{umx_time}}
+
+Other Twin Modeling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
+  \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
+  \code{\link{umxSummaryACEcov}},
+  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+  \code{\link{umx_make_TwinData}}
+
+Other Modify or Compare Models: \code{\link{umxAdd1}},
+  \code{\link{umxDrop1}}, \code{\link{umxEquate}},
+  \code{\link{umxFixAll}}, \code{\link{umxMI}},
+  \code{\link{umxSetParameters}},
+  \code{\link{umxUnexplainedCausalNexus}}
+
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
@@ -80,11 +113,13 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}
 
-Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxReduce}},
-  \code{\link{umxRun}}
+Other Misc: \code{\link{umxEval}},
+  \code{\link{umx_APA_model_CI}},
+  \code{\link{umx_add_variances}}, \code{\link{umx_apply}},
+  \code{\link{umx_default_option}},
+  \code{\link{umx_get_bracket_addresses}},
+  \code{\link{umx_object_as_str}},
+  \code{\link{umx_string_to_algebra}}
 
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxFactor}}, \code{\link{umxHetCor}},
@@ -101,6 +136,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_scale_wide_twin_data}},
   \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}}
 
+<<<<<<< HEAD
 Other File Functions: \code{\link{dl_from_dropbox}},
   \code{\link{umx_make_sql_from_excel}},
   \code{\link{umx_move_file}}, \code{\link{umx_open}},
@@ -145,15 +181,25 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umx_make_TwinData}}
 
+=======
+>>>>>>> 8041b90687bf472566edca928a376dd4dea51295
 Other Utility Functions: \code{\link{qm}},
   \code{\link{umx_find_object}}, \code{\link{umx_grep}},
   \code{\link{umx_msg}}, \code{\link{umx_names}},
   \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
   \code{\link{umx_print}}, \code{\link{umx_rename}}
 
+Other Stats Functions: \code{\link{reliability}},
+  \code{\link{umxCov2cor}}, \code{\link{umx_cor}},
+  \code{\link{umx_means}}
+
+Other File Functions: \code{\link{dl_from_dropbox}},
+  \code{\link{umx_make_sql_from_excel}},
+  \code{\link{umx_move_file}}, \code{\link{umx_open}},
+  \code{\link{umx_rename_file}}
+
 Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},
   \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_CP}},
   \code{\link{umx_standardize_IP}}
 }
-
