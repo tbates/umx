@@ -21,7 +21,9 @@ Return a list of all the endogenous variables (variables with at least one incom
 require(umx)
 data(demoOneFactor)
 m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-	mxPath(from = "g", to = names(demoOneFactor))
+	umxPath("g", to = names(demoOneFactor)),
+	umxPath(var = "g", fixedAt = 1),
+	umxPath(var = names(demoOneFactor))
 )
 umx_is_endogenous(m1, manifests_only = TRUE)
 umx_is_endogenous(m1, manifests_only = FALSE)

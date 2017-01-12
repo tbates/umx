@@ -293,8 +293,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 
 	foundNames = c()
 	for (thisItem in dot.items) {
-		# sometimes we get a list, so expand everything to a list
 		if(length(thisItem) == 1){
+			# sometimes we get a list, so expand everything to a list
 			thisItem = list(thisItem)
 		}
 		for (i in length(thisItem)) {
@@ -1148,26 +1148,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
 #' dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
 #' m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
-#' umxSummary(m1)
-#' plot(m1)
-#' # =========================================================
-#' # Example with Tobin data (this is not production quality =
-#' # Definitely a work in progress!!!                        =
-#' # =========================================================
-#' 
-#' # Analyse a dataset in which only people with a BMI over 22 had their BMI recorded
-#' 
-#' require(umx)
-#' data(twinData)
-#' baseNames = c("bmi")
-#' selDVs = umx_paste_names(baseNames, "", 1:2)
-#' tmp = twinData[, c(selDVs, "zyg")]
-#' tmp$bmi1[tmp$bmi1 <= 22] = 22
-#' tmp$bmi2[tmp$bmi2 <= 22] = 22
-#' tmp = umxFactor(tmp, sep = "") # GOOD same factor for each twin!
-#' mz = tmp[tmp$zyg == 1, selDVs]
-#' dz = tmp[tmp$zyg == 3, selDVs]
-#' m1 = umxACE(selDVs = baseNames, dzData = dz, mzData = mz, suffix = "", thresholds = "left_censored")
 #' umxSummary(m1)
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
