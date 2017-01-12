@@ -21,9 +21,9 @@ Return a list of all the exogenous variables (variables with no incoming single-
 require(umx)
 data(demoOneFactor)
 m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-	umxPath(latents, to = manifests),
+	umxPath("g", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
+	umxPath(var = latents, fixedAt = 1)
 )
 umx_is_exogenous(m1, manifests_only = TRUE)
 umx_is_exogenous(m1, manifests_only = FALSE)

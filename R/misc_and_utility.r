@@ -557,9 +557,9 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' require(umx)
 #' data(demoOneFactor)
 #' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("g", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
 #' umx_is_exogenous(m1, manifests_only = TRUE)
 #' umx_is_exogenous(m1, manifests_only = FALSE)
