@@ -76,3 +76,4 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umx_make_TwinData}}, \code{\link{umx}}
 }
+

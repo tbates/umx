@@ -40,3 +40,4 @@ Other File Functions: \code{\link{dl_from_dropbox}},
   \code{\link{umx_open}}, \code{\link{umx_rename_file}},
   \code{\link{umx}}
 }
+

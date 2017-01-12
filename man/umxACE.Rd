@@ -212,6 +212,26 @@ dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
 m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
 umxSummary(m1)
 plot(m1)
+# =========================================================
+# Example with Tobin data (this is not production quality =
+# Definitely a work in progress!!!                        =
+# =========================================================
+
+# Analyse a dataset in which only people with a BMI over 22 had their BMI recorded
+
+require(umx)
+data(twinData)
+baseNames = c("bmi")
+selDVs = umx_paste_names(baseNames, "", 1:2)
+tmp = twinData[, c(selDVs, "zyg")]
+tmp$bmi1[tmp$bmi1 <= 22] = 22
+tmp$bmi2[tmp$bmi2 <= 22] = 22
+tmp = umxFactor(tmp, sep = "") # GOOD same factor for each twin!
+mz = tmp[tmp$zyg == 1, selDVs]
+dz = tmp[tmp$zyg == 3, selDVs]
+m1 = umxACE(selDVs = baseNames, dzData = dz, mzData = mz, suffix = "", thresholds = "left_censored")
+umxSummary(m1)
+plot(m1)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
@@ -228,3 +248,4 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umx_make_TwinData}}, \code{\link{umx}}
 }
+

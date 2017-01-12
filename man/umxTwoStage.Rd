@@ -81,3 +81,4 @@ Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umx}}
 }
+

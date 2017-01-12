@@ -58,3 +58,4 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}},
   \code{\link{umx}}
 }
+
