@@ -38,3 +38,4 @@ Other Modify or Compare Models: \code{\link{umxDrop1}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }
+

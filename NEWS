@@ -3,6 +3,7 @@
 * IMPROVED: umxRAM returns invisibly
 * IMPROVED: umx_aggregate can return a formatted table (kable = TRUE)
 * IMPROVED: umxAPA returns lower-triangle of data.frame correlations (by default)
+* REMOVED: umxSE now included in OpenMx 2.7.0!
 * FIXED: umx_set_plot_format uses silent = TRUE internally where needed
 
 # umx 1.4.9

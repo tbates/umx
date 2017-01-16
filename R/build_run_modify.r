@@ -293,8 +293,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 
 	foundNames = c()
 	for (thisItem in dot.items) {
-		# sometimes we get a list, so expand everything to a list
 		if(length(thisItem) == 1){
+			# sometimes we get a list, so expand everything to a list
 			thisItem = list(thisItem)
 		}
 		for (i in length(thisItem)) {

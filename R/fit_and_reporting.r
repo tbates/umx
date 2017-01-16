@@ -3451,8 +3451,8 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA, rounding
 #' umxAPA(.000182613)
 umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("table", "html"), lower = TRUE) {
 	report = match.arg(report)
-	if(class(obj)=="data.frame"){
-		# generate a summary of correlation and means
+	if(class(obj) == "data.frame"){
+		# Generate a summary of correlation and means
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE)
 		cor_table = umx_apply(round, cor_table, digits = digits) # round correlations
 		if(lower){
@@ -3460,6 +3460,7 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 		}
 		mean_sd = umx_apply(umx_fun_mean_sd, obj)
 		output = data.frame(rbind(cor_table, mean_sd), stringsAsFactors = FALSE)
+		rownames(output)[length(rownames(output))] = "Mean (SD)"
 		if(report == "html"){
 			umx_print(output, digits = digits, file = "tmp.html")
 		} else {

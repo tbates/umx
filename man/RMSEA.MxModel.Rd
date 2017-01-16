@@ -52,3 +52,4 @@ Other Reporting functions: \code{\link{RMSEA.summary.mxmodel}},
   \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
 }
+

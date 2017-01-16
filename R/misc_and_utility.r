@@ -557,7 +557,9 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' require(umx)
 #' data(demoOneFactor)
 #' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	mxPath(from = "g", to = names(demoOneFactor))
+#' 	umxPath("g", to = names(demoOneFactor)),
+#' 	umxPath(var = "g", fixedAt = 1),
+#' 	umxPath(var = names(demoOneFactor))
 #' )
 #' umx_is_exogenous(m1, manifests_only = TRUE)
 #' umx_is_exogenous(m1, manifests_only = FALSE)
@@ -595,7 +597,9 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' require(umx)
 #' data(demoOneFactor)
 #' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	mxPath(from = "g", to = names(demoOneFactor))
+#' 	umxPath("g", to = names(demoOneFactor)),
+#' 	umxPath(var = "g", fixedAt = 1),
+#' 	umxPath(var = names(demoOneFactor))
 #' )
 #' umx_is_endogenous(m1, manifests_only = TRUE)
 #' umx_is_endogenous(m1, manifests_only = FALSE)
@@ -918,7 +922,7 @@ umxFactor <- function(x = character(), levels= NULL, labels = levels, exclude = 
 				allLevels = allLevels[!is.na(allLevels)] # drop NA if present
 				# z = umxFactor(x = x[,theseNames], levels = allLevels, ordered = T, verbose = T, collapse=FALSE)
 				# z = umxFactor(x = x[,theseNames], levels = allLevels, labels = allLevels, ordered = T, verbose = T)
-				x[, theseNames] = umxFactor(x = x[,theseNames], levels = allLevels, labels = allLevels, exclude = exclude, collapse = collapse, ordered = ordered, verbose = verbose)
+				x[, theseNames] = umxFactor(x = x[, theseNames, drop = FALSE], levels = allLevels, labels = allLevels, exclude = exclude, collapse = collapse, ordered = ordered, verbose = verbose)
 			}
 		} else {
 			for (c in 1:ncols) {

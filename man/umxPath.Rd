@@ -198,3 +198,4 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxReduce}}, \code{\link{umxRun}},
   \code{\link{umx}}
 }
+
