@@ -28,4 +28,3 @@ Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},
   \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_IP}}, \code{\link{umx}}
 }
-

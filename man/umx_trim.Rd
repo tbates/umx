@@ -30,4 +30,3 @@ umx_trim("xlsx dog.xlsx", "\\\\.xlsx$") # "dog"
 Other String Functions: \code{\link{umx_explode_twin_names}},
   \code{\link{umx_explode}}, \code{\link{umx_rot}}
 }
-

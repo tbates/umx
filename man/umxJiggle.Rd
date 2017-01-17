@@ -37,4 +37,3 @@ Other Advanced Model Building Functions: \code{\link{umxLabel}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}}, \code{\link{umx}}
 }
-

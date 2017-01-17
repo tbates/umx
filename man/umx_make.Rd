@@ -23,4 +23,3 @@ umx_make(what = c("install", "release", "win", "examples"))
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
-
