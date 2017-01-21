@@ -3306,6 +3306,16 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' }
 umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd", "n"), digits = 2, kable = TRUE) {
 	# TODO Add more aggregating functions?
+	# TODO: add summaryBy ability to handle more than var on the left hand side
+	# doBy::summaryBy(Sex_T1 + Sex_T2 ~ zyg, data = twinData, FUN = function(x) { round(c(
+	# 	n    = length(x),
+	# 	mean = mean(x, na.rm = T),
+	# 	sd   = sd(x, na.rm = T)), 2)
+	# })
+	# TODO: add "suffix" to umx_aggregate to make wide data long for summary as in genEpi_TwinDescriptives
+	# genEpi_TwinDescriptives(mzData = twinData, dzData = NULL, selDVs = selDVs, groupBy = c("Sex_T1", "Sex_T2"), graph = F)
+	# genEpi_twinDescribe(twinData, varsToSummarize="Age", groupBy="Sex", suffix="_T")
+
 	mean_sd = function(x){
 		paste0(round(mean(x, na.rm = TRUE), digits = digits), " (",
 			   round(sd(x, na.rm = TRUE), digits = digits), ")"
