@@ -4,7 +4,7 @@
 \alias{umx_make}
 \title{umx_make umx using devtools}
 \usage{
-umx_make(what = c("install", "release", "win", "examples"))
+umx_make(what = c("install", "release", "win", "check", "examples"))
 }
 \arguments{
 \item{what}{whether to c("install", "release", "win", "examples")}
@@ -17,7 +17,7 @@ Easily  run devtools "install", "release", "win", or "examples".
 }
 \examples{
 \dontrun{
-umx_make(what = c("install", "release", "win", "examples"))
+umx_make(what = c("install", "release", "win", "check", "examples"))
 }
 }
 \references{

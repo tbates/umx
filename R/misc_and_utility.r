@@ -1858,17 +1858,21 @@ umx_install_OpenMx <- install.OpenMx
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' umx_make(what = c("install", "release", "win", "examples"))
+#' umx_make(what = c("install", "release", "win", "check", "examples"))
 #' }
-umx_make <- function(what = c("install", "release", "win", "examples")) {
+umx_make <- function(what = c("install", "release", "win", "check", "examples")) {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 	} else if (what == "release"){
 		devtools::release("~/bin/umx", check = TRUE)
-	}else if (what =="win"){
+	} else if (what =="win"){
 		devtools::build_win("~/bin/umx")
-	}else if(what == "examples"){
+	} else if(what == "check"){
+		# http://r-pkgs.had.co.nz/check.html
+		# R CMD check
+		devtools::check("~/bin/umx")		
+	} else if(what == "examples"){
 		devtools::run_examples("~/bin/umx")
 	}
 }

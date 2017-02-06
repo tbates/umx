@@ -4,9 +4,10 @@
 # 
 # testthat::test_package("umx")
 
+context("umx_ data helper functions")
+
 test_that("umx_reorder works for different values", {
-	require(OpenMx)
-	oldData = cov(myFADataRaw[,paste0("x",1:6)], use = "pairwise.complete.obs")
+	oldData  = cov(myFADataRaw[, paste0("x", 1:6)], use = "pairwise.complete.obs")
 	allNames = colnames(oldData)
 	expect_equal(umx_reorder(old = oldData, newOrder = allNames), oldData)
 

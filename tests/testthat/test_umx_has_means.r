@@ -29,4 +29,3 @@ test_that("umx_has_means works", {
 	expect_true(umx_has_means(m2))
 	expect_true(umx_has_means(m2run))
 })
-
