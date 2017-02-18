@@ -1,5 +1,5 @@
 ## Changes
-* Compatibility fixes, several improvements
+* Compatibility fixes
 
 ## Test environments
 * OS X 10.12.1, R version 3.3.2
