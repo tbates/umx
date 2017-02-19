@@ -1779,6 +1779,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' data(twinData) 
 #' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
 #' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
+#' twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
+#' twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
 #' selDVs = c("ht", "wt")
 #' mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
 #' dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
