@@ -71,7 +71,7 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 \description{
 The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 
-It introduces 14 new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{means}, \strong{v1m0}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
+It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{means}, \strong{v1m0}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{forms}.
 
 The new preposition \dQuote{with} means you no-longer need set arrows = 2 on covariances. Instead, you can say:
 

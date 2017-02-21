@@ -197,9 +197,10 @@ mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
 dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
+\dontrun{
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)
-
+}
 # ===================================
 # Example with covariance data only =
 # ===================================

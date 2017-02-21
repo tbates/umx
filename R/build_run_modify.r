@@ -1135,9 +1135,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
 #' mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 #' dzData <- dzData[1:80,]
+#' \dontrun{
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' umxSummary(m1)
-#' 
+#' }
 #' # ===================================
 #' # Example with covariance data only =
 #' # ===================================
@@ -3843,7 +3844,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #'
 #' @description The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 #' 
-#' It introduces 14 new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{means}, \strong{v1m0}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}.
+#' It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{means}, \strong{v1m0}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{forms}.
 #'
 #' The new preposition \dQuote{with} means you no-longer need set arrows = 2 on covariances. Instead, you can say:
 #'
@@ -3975,8 +3976,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' )
 #' umxSummary(m1, show = "std")
 #'
-
-
 #' # The following NOT YET implemented!!
 #' # umxPath("A <-> B") # same path as above using a string
 #' # umxPath("A -> B") # one-headed arrow with string syntax
@@ -4080,6 +4079,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		# = Handle formative =
 		# ====================
 		# http://davidakenny.net/cm/mvar.htm
+
 		if(is.null(from)){
 			stop("You have to have offer up at least 3 unique 'from' variables to make a formative")
 		}
@@ -4090,16 +4090,16 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 		if(length(forms) > 1){
 			# TODO think about this
-			stop("It's tricky to setup multiple forms vars in 1 line. email if you'd like this to work..")
+			stop("It's tricky to setup multiple forms vars in 1 line. e-mail if you'd like this to work..")
 		} else {
 			numPaths  = length(forms)
 			free      = rep(TRUE, numPaths)
-			free[1]   = FALSE
 			values    = rep(NA, numPaths)
+			free[1]   = FALSE
 			values[1] = 1
 		}
 
-		a = mxPath(from = from, connect = "unique.bivariate")
+		a = mxPath(from = from, connect = "unique.bivariate", arrows = 2)
 		b = mxPath(from = from, to = forms, free = free, values = values)
 		if(hasMeans){
 			c = mxPath(from = forms, arrows = 2, free = FALSE, values = 0)
