@@ -352,10 +352,10 @@ umx_standardize_RAM <- function(model, return = "parameters", Amatrix = NA, Smat
 #' # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
 #' m1 = confint(m1, parm = "A", run = TRUE)
 #' confint(m1, parm = "existing") # request existing CIs (none added yet...)
-confint.MxModel <- function(object, parm = list("existing", c("vector", "of", "names"), "default = add all"), level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
-	defaultParmString = list("existing", c("vector", "of", "names"), "default = add all")
+confint.MxModel <- function(object, parm = list("existing", "all", c("vector of names")), level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
+	parm = match.arg(parm)
 	# 1. Add CIs if needed
-	if (isTRUE(all.equal(parm, defaultParmString))) {
+	if (parm == "all"))) {
 		if(umx_has_CIs(object, "intervals")) {
 			# TODO add a count for the user
 			message(length(object$intervals), " CIs found")
@@ -2866,7 +2866,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @param object an \code{\link{mxModel}} to get the covariance matrix from
 #' @param latents Whether to select the latent variables (defaults to TRUE)
 #' @param manifests Whether to select the manifest variables (defaults to TRUE)
-#' @param digits precision of reporting. Deafult (NULL) is not not round at all.
+#' @param digits precision of reporting. NULL (Default) = no rounding.
 #' @param ... extra parameters (to match \code{\link{vcov}})
 #' @return - expected covariance matrix
 #' @export
