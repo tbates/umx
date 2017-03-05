@@ -355,7 +355,7 @@ umx_standardize_RAM <- function(model, return = "parameters", Amatrix = NA, Smat
 confint.MxModel <- function(object, parm = list("existing", "all", c("vector of names")), level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
 	parm = match.arg(parm)
 	# 1. Add CIs if needed
-	if (parm == "all"))) {
+	if (parm == "all") {
 		if(umx_has_CIs(object, "intervals")) {
 			# TODO add a count for the user
 			message(length(object$intervals), " CIs found")

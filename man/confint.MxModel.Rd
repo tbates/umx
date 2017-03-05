@@ -4,8 +4,8 @@
 \alias{confint.MxModel}
 \title{Get confidence intervals from an MxModel}
 \usage{
-\method{confint}{MxModel}(object, parm = list("existing", c("vector", "of",
-  "names"), "default = add all"), level = 0.95, run = FALSE,
+\method{confint}{MxModel}(object, parm = list("existing", "all",
+  c("vector of names")), level = 0.95, run = FALSE,
   showErrorCodes = FALSE, ...)
 }
 \arguments{

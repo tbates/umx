@@ -1,6 +1,8 @@
+http://www.nytimes.com/2012/11/13/health/dream-team-of-behavioral-scientists-advised-obama-campaign.html
 # umx 1.5.1
-* Feb 17 2017 R 3.2.2
+* March 05 2017 R 3.2.2
 * IMPROVED: umxCP example for improved compatibility with OpenMx 1.7
+* IMPROVED: Now sets a better (less likely to fail) precision for CSOLNP
 
 # umx 1.5.0
 * December 2016 feature + OpenMx 1.7.3 compatibility release
