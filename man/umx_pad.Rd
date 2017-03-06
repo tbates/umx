@@ -28,5 +28,6 @@ umx_pad(1:3, 3)
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{install.OpenMx}},
-  \code{\link{umx_get_options}}
+  \code{\link{umx_get_options}},
+  \code{\link{umx_open_CRAN_page}}
 }

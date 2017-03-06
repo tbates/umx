@@ -23,5 +23,5 @@ install.OpenMx()
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{umx_get_options}},
-  \code{\link{umx_pad}}
+  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}}
 }

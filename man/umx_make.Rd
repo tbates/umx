@@ -7,7 +7,7 @@
 umx_make(what = c("install", "release", "win", "check", "examples"))
 }
 \arguments{
-\item{what}{whether to c("install", "release", "win", "examples")}
+\item{what}{whether to "install", "release" to CRAN, check on "win", "check", or check "examples"))}
 }
 \value{
 -
@@ -17,7 +17,7 @@ Easily  run devtools "install", "release", "win", or "examples".
 }
 \examples{
 \dontrun{
-umx_make(what = c("install", "release", "win", "check", "examples"))
+umx_make(what = "release"))
 }
 }
 \references{
