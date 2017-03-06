@@ -970,6 +970,27 @@ umx_factor <- umxFactor
 # = Utility =
 # ===========
 
+# ===========
+# = Utility =
+# ===========
+
+#' Open the CRAN page for a package
+#' 
+#' On MacOS, this function opens the CRAN page for a package.
+#' Useful for looking up documentation, checking you have an
+#' up-to-date version, showing the package to people etc.
+#' @param package An \R package name.
+#' @return - 
+#' @export
+#' @family Miscellaneous Functions
+#' @examples
+#' \dontrun{
+#' umx_open_CRAN_page("umx")
+#' }
+umx_open_CRAN_page <- function(package = "umx") {
+	system(paste0("open 'https://cran.r-project.org/package=", package, "'"))
+}
+
 #' Pad an Object with NAs
 #' 
 #' This function pads an R object (list, data.frame, matrix, atomic vector)
@@ -1851,14 +1872,14 @@ umx_install_OpenMx <- install.OpenMx
 #' @description
 #' Easily  run devtools "install", "release", "win", or "examples".
 #'
-#' @param what whether to c("install", "release", "win", "examples")
+#' @param what whether to "install", "release" to CRAN, check on "win", "check", or check "examples"))
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' umx_make(what = c("install", "release", "win", "check", "examples"))
+#' umx_make(what = "release"))
 #' }
 umx_make <- function(what = c("install", "release", "win", "check", "examples")) {
 	what = match.arg(what)

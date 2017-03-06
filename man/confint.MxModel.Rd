@@ -4,9 +4,9 @@
 \alias{confint.MxModel}
 \title{Get confidence intervals from an MxModel}
 \usage{
-\method{confint}{MxModel}(object, parm = list("existing", "all",
-  c("vector of names")), level = 0.95, run = FALSE,
-  showErrorCodes = FALSE, ...)
+\method{confint}{MxModel}(object, parm = c("existing", "all",
+  "vector of names"), level = 0.95, run = FALSE, showErrorCodes = FALSE,
+  ...)
 }
 \arguments{
 \item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))}
@@ -43,15 +43,12 @@ require(umx)
 data(demoOneFactor)
 latents = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	umxPath(from = latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-m2 = confint(m1) # default: CIs added, but user prompted to set run = TRUE
+m2 = confint(m1, "all") # default: CIs added, but user prompted to set run = TRUE
 m2 = confint(m2, run = TRUE) # CIs run and reported
 # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
 m1 = confint(m1, parm = "G_to_x1", run = TRUE) 
