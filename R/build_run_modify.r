@@ -1139,6 +1139,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' umxSummary(m1)
 #' }
+#' 
 #' # ===================================
 #' # Example with covariance data only =
 #' # ===================================
@@ -1479,6 +1480,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
 		model = as(model, "MxModel.ACE") # set class so that S3 plot() dispatches.
+		if(umx_set_optimizer(silent = TRUE) == 'CSOLNP'){
+			model <- mxOption(model, "Optimality tolerance", "1e-10")
+		}
+		
 		if(autoRun){
 			model = mxRun(model)
 			umxSummary(model)
@@ -1945,6 +1950,10 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 	model = omxAssignFirstParameters(model) # Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = as(model, "MxModel.CP")
+	if(umx_set_optimizer(silent = TRUE) == 'CSOLNP'){
+		model <- mxOption(model, "Optimality tolerance", "1e-10")
+	}
+	
 	if(autoRun){
 		return(mxRun(model))
 	} else {
@@ -2143,6 +2152,10 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 	model  = omxAssignFirstParameters(model) # ensure parameters with the same label have the same start value... means, for instance.
 	model = as(model, "MxModel.IP")
+	if(umx_set_optimizer(silent = TRUE) == 'CSOLNP'){
+		model <- mxOption(model, "Optimality tolerance", "1e-10")
+	}
+	
 	if(autoRun){
 		return(mxRun(model))
 	} else {
@@ -4094,8 +4107,8 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		} else {
 			numPaths  = length(forms)
 			free      = rep(TRUE, numPaths)
-			values    = rep(NA, numPaths)
 			free[1]   = FALSE
+			values    = rep(NA, numPaths)
 			values[1] = 1
 		}
 
