@@ -201,6 +201,7 @@ dzData <- dzData[1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)
 }
+
 # ===================================
 # Example with covariance data only =
 # ===================================
