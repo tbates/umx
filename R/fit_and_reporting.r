@@ -337,39 +337,31 @@ umx_standardize_RAM <- function(model, return = "parameters", Amatrix = NA, Smat
 #' data(demoOneFactor)
 #' latents = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(from = latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' m2 = confint(m1) # default: CIs added, but user prompted to set run = TRUE
+#' m2 = confint(m1, "all") # default: CIs added, but user prompted to set run = TRUE
 #' m2 = confint(m2, run = TRUE) # CIs run and reported
 #' # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
 #' m1 = confint(m1, parm = "G_to_x1", run = TRUE) 
 #' # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
 #' m1 = confint(m1, parm = "A", run = TRUE)
 #' confint(m1, parm = "existing") # request existing CIs (none added yet...)
-confint.MxModel <- function(object, parm = list("existing", "all", c("vector of names")), level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
-	parm = match.arg(parm)
+confint.MxModel <- function(object, parm = c("existing", "all", "vector of names"), level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
+	option_list = c("existing", "all", "vector of names")
+	parm = umx_default_option(parm, option_list, check = FALSE)
 	# 1. Add CIs if needed
 	if (parm == "all") {
 		if(umx_has_CIs(object, "intervals")) {
 			# TODO add a count for the user
-			message(length(object$intervals), " CIs found")
-		} else {
-			message("Adding CIs for all free parameters")
-			CIs_to_set = names(omxGetParameters(object, free = TRUE))
-			object = mxModel(object, mxCI(CIs_to_set, interval = level))
+			message(length(object$intervals), " existing CIs found - I am removing these, and adding CIs for all free parameters")
+			object <- mxModel(object, remove=TRUE, object$intervals)
 		}
-	} else if(parm == "existing") {
-		# check there are some in existence
-		if(!umx_has_CIs(object, "intervals")) {
-			message("This model has no CIs yet. Perhaps you wanted just confint(model, run = TRUE) to add and run CIs on all free parameters? Or set parm to a list of labels you'd like CIs? Also see help(mxCI)")
-		}
-	} else {
+		CIs_to_set = names(omxGetParameters(object, free = TRUE))
+		object = mxModel(object, mxCI(CIs_to_set, interval = level))
+	} else if (parm != "existing"){
 		# add requested CIs to model
 		# TODO check that these exist
 		object = mxModel(object, mxCI(parm, interval = level))
@@ -377,6 +369,10 @@ confint.MxModel <- function(object, parm = list("existing", "all", c("vector of 
 
 	# 2. Run CIs if requested
 	if(run) {
+		# check there are some in existence
+		if(!umx_has_CIs(object, "intervals")) {
+			message("This model has no CIs yet. Perhaps you wanted to use parm = 'all' to add and run CIs on all free parameters? Or set parm to a list of labels you'd like CIs? Also see help(mxCI)")
+		}
 		object = mxRun(object, intervals = TRUE)
 	}
 	# 3. Report CIs if found in output
