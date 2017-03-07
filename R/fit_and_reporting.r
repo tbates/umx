@@ -2850,7 +2850,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' # -2.615998
 #' AIC(m1)
 extractAIC.MxModel <- function(fit, scale, k, ...) {
-	a = umxCompare(fit)
+	a = mxCompare(fit)
 	return(a[1, "AIC"])
 }
 
