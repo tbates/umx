@@ -7,7 +7,8 @@
 \usage{
 umxModify(lastFit, update = NULL, regex = FALSE, free = FALSE,
   value = 0, freeToStart = NA, name = NULL, verbose = FALSE,
-  intervals = FALSE, comparison = FALSE, dropList = "deprecated")
+  intervals = FALSE, comparison = FALSE, autoRun = TRUE,
+  dropList = "deprecated")
 }
 \arguments{
 \item{lastFit}{The \code{\link{mxModel}} you wish to update and run.}
@@ -30,6 +31,8 @@ over-rides the contents of update, and sets regex to TRUE.}
 \item{intervals}{Whether to run confidence intervals (see \code{\link{mxRun}})}
 
 \item{comparison}{Whether to run umxCompare() after umxRun}
+
+\item{autoRun}{Whether to run the modified model before returning it (default), or just to modify and return without running.}
 
 \item{dropList}{(deprecated: use 'update' instead.}
 }

@@ -459,6 +459,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' @param verbose   How much feedback to give
 #' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
 #' @param comparison Whether to run umxCompare() after umxRun
+#' @param autoRun Whether to run the modified model before returning it (default), or just to modify and return without running.
 #' @param dropList (deprecated: use 'update' instead.
 #' @return - \code{\link{mxModel}}
 #' @family Core Modeling Functions
@@ -485,7 +486,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' m2 = umxModify(m1, regex = "^G_to_x[3-5]", name = "no_G_to_x3_5") # same, but shorter
 #' m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comp = TRUE)
 #' m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", comparison = TRUE)
-umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, dropList = "deprecated") {
+umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = TRUE, dropList = "deprecated") {
 	if(dropList != "deprecated"){
 		stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
 			"umxModify(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
@@ -528,13 +529,15 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 			if(is.null(name)){ name = NA }
 			x = mxModel(lastFit, update, name = name)
 		}
-		x = mxRun(x, intervals = intervals)
-		if(comparison){
-			umxSummary(x)
-			if(free){ # new model has fewer df
-				umxCompare(x, lastFit)
-			} else {
-				umxCompare(lastFit, x)
+		if(autoRun){
+			x = mxRun(x, intervals = intervals)
+			if(comparison){
+				umxSummary(x)
+				if(free){ # new model has fewer df
+					umxCompare(x, lastFit)
+				} else {
+					umxCompare(lastFit, x)
+				}
 			}
 		}
 		return(x)
