@@ -482,8 +482,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' umxSummary(m2); umxCompare(m1, m2)
 #' # 1-line version including comparison
 #' m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
+#' #use regular expression to drop multiple paths: e.g. G to x3, x4, x5
 #' m2 = umxModify(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
-#' m2 = umxModify(m1, regex = "^G_to_x[3-5]", name = "no_G_to_x3_5") # same, but shorter
+#' # Same, but shorter
+#' m2 = umxModify(m1, regex  = "^G_to_x[3-5]", name = "no_G_to_x3_5")
+#' # Same, but don't autoRun
+#' m2 = umxModify(m1, regex  = "^G_to_x[3-5]", name = "no_G_to_x3_5", autoRun = FALSE) 
 #' m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comp = TRUE)
 #' m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", comparison = TRUE)
 umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = TRUE, dropList = "deprecated") {
