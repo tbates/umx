@@ -1487,9 +1487,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
 		model = as(model, "MxModel.ACE") # set class so that S3 plot() dispatches.
-		if(umx_set_optimizer(silent = TRUE) == 'CSOLNP'){
-			model <- mxOption(model, "Optimality tolerance", "1e-10")
-		}
 		
 		if(autoRun){
 			model = mxRun(model)
@@ -1797,6 +1794,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' selDVs = c("ht", "wt")
 #' mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
 #' dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
+#' umx_set_optimizer("SLSQP") #preferably NPSOL: CSOLNP is not good at running this model.
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 #' umxSummary(m1)
 #' umxGetParameters(m1, "^c", free = TRUE)
@@ -1809,7 +1807,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	if(!is.null(suffix)){
 		if(length(suffix) != 1){
 			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-			"i.e., set selDVs to 'obese', suffiex to '_T' and I look for 'obese_T1' and 'obese_T2' in the data...\n",
+			"i.e., set selDVs to 'obese', suffix to '_T' and I look for 'obese_T1' and 'obese_T2' in the data...\n",
 			"PS: variables have to end in 1 or 2, i.e  'example_T1' and 'example_T2'")
 		}
 		selDVs = umx_paste_names(selDVs, suffix, 1:2)
@@ -1957,10 +1955,6 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 	model = omxAssignFirstParameters(model) # Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = as(model, "MxModel.CP")
-	if(umx_set_optimizer(silent = TRUE) == 'CSOLNP'){
-		model <- mxOption(model, "Optimality tolerance", "1e-10")
-	}
-	
 	if(autoRun){
 		return(mxRun(model))
 	} else {
@@ -2159,10 +2153,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 	model  = omxAssignFirstParameters(model) # ensure parameters with the same label have the same start value... means, for instance.
 	model = as(model, "MxModel.IP")
-	if(umx_set_optimizer(silent = TRUE) == 'CSOLNP'){
-		model <- mxOption(model, "Optimality tolerance", "1e-10")
-	}
-	
+
 	if(autoRun){
 		return(mxRun(model))
 	} else {
