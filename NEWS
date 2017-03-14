@@ -1,6 +1,8 @@
-# umx 1.5.8
-* March 07 2017 R 3.2.2
-* IMPROVED: add autoRun option to umxModify
+# umx 1.5.5
+* March 17 2017 R 3.2.2
+* IMPROVED: add autoRun option to umxModify.
+* FIXED: Switch away from CSOLNP in umxCP example.
+* ROLLBACK: No longer generically alter CSOLNP tolerance.
 
 # umx 1.5.1
 * March 05 2017 R 3.2.2

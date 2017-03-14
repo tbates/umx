@@ -1,5 +1,5 @@
 ## Changes
-* Compatibility fixes & enhancements
+* Compatibility with OpenMx + enhancements
 
 ## Test environments
 * OS X 10.12.1, R version 3.3.3
