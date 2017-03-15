@@ -1,3 +1,6 @@
+#' @importFrom metafor escalc
+#' @importFrom pwr pwr.r.test
+
 #' sensitivity_analysis
 #'
 #' @description
@@ -15,9 +18,9 @@
 #' \dontrun{
 #' sensitivity_analysis(dat = data, Output.Title = "Brain volume and IQ")
 #' }
-sensitivity_analysis <- function(dat = NA, Output.Title = "No Output.Title Provided", prw.r.alternative = c("two.sided", "less", "greater")) {
+sensitivity_analysis <- function(dat = NA, Output.Title = "meta table", prw.r.alternative = c("two.sided", "less", "greater")) {
 	# require(foreign)
-	# import	pwr.r.test
+	# import pwr.r.test
 	if(is.na(dat)){
 		die("you need to provide a dataframe of meta-analytic statistics")
 	}
@@ -32,7 +35,7 @@ sensitivity_analysis <- function(dat = NA, Output.Title = "No Output.Title Provi
 	# ======================================
 	### Add z (yi) and the variance of z (vi) to the dataset (needed for calculations; e.g., for the selection models)
 	# "ZCOR" is the Fisher's r-to-z transformed correlation coefficient (Fisher, 1921).
-	dat = metafor::escalc(measure="ZCOR", ri = r, ni = N, data = dat)
+	dat = escalc(measure="ZCOR", ri = r, ni = N, data = dat) # from metafor::
 
 	### Add sei (sqrt of variance of z (vi)
 	dat$sei = sqrt(dat$vi)
