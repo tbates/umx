@@ -1682,7 +1682,7 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 #' umx_write_to_clipboard writes data to the clipboard
 #'
 #' @details
-#'
+#' TODO: Make this more robust to OS. Let me know if it fails for you.
 #' @param x something to put on the clipboard
 #' @return - 
 #' @export
@@ -1692,7 +1692,6 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 #' umx_write_to_clipboard("hello")
 #' }
 umx_write_to_clipboard <- function(x) {
-	# TODO : make robust to system choice
 	if(umx_check_OS("OSX")){
 		clipboard <- pipe("pbcopy", "w")
 		write.table(x, file = clipboard, sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
@@ -4702,7 +4701,6 @@ umx_get_optimizer <- function(model = NULL) {
 	}
 }
 
-
 #' umx_r_test
 #'
 #' @description
@@ -4714,15 +4712,24 @@ umx_get_optimizer <- function(model = NULL) {
 #' In the future it will be expanded to handle overlapping correlations, and to take corelation matrices as input.
 #'
 #' @param data the dataset
-#' @param vars the 4 vars "j & k" and "h & m" to test
+#' @param vars the 4 vars needed: "j & k" and "h & m"
+#' @param alternative two (default) or one-sided (greater less) test
 #' @return - 
 #' @export
 #' @family Stats
 #' @examples
 #' vars = c("mpg", "cyl", "disp", "hp")
 #' umx_r_test(mtcars, vars)
-umx_r_test <- function(jkhm = NULL, vars = vars, alternative = "two.sided", test = "all", alpha = 0.05, conf.level = 0.95, null.value = 0, data.name = NULL, var.labels = NULL, return.htest = FALSE) {
-	jkhm = jkhm[, vars]
+umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "greater", "less")) {
+	alternative = match.arg(alternative)
+	test         = "silver2004"
+	alpha        = 0.05
+	conf.level   = 0.95
+	null.value   = 0
+	data.name    = NULL
+	var.labels   = NULL
+	return.htest = FALSE
+	jkhm = data[, vars]
 	cors = cor(jkhm)
 	# jkhm = 1234
 	r.jk = as.numeric(cors[vars[1], vars[2]])

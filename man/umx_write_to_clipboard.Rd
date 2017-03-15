@@ -16,7 +16,7 @@ umx_write_to_clipboard(x)
 umx_write_to_clipboard writes data to the clipboard
 }
 \details{
-
+TODO: Make this more robust to OS. Let me know if it fails for you.
 }
 \examples{
 \dontrun{

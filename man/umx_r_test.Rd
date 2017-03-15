@@ -4,14 +4,15 @@
 \alias{umx_r_test}
 \title{umx_r_test}
 \usage{
-umx_r_test(jkhm = NULL, vars = vars, alternative = "two.sided",
-  test = "all", alpha = 0.05, conf.level = 0.95, null.value = 0,
-  data.name = NULL, var.labels = NULL, return.htest = FALSE)
+umx_r_test(data = NULL, vars = vars, alternative = c("two.sided",
+  "greater", "less"))
 }
 \arguments{
-\item{vars}{the 4 vars "j & k" and "h & m" to test}
-
 \item{data}{the dataset}
+
+\item{vars}{the 4 vars needed: "j & k" and "h & m"}
+
+\item{alternative}{two (default) or one-sided (greater less) test}
 }
 \value{
 -

@@ -28,7 +28,8 @@ Imports:
 Suggests:
     devtools,
     testthat,
-    gdata
+    gdata,
+    cocor
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 LazyData: true
