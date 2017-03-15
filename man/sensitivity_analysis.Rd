@@ -31,3 +31,6 @@ sensitivity_analysis(dat = data, Output.Title = "Brain volume and IQ")
 \references{
 - \url{https://github.com/tbates/umx}
 }
+\seealso{
+Other Stats: \code{\link{umx_r_test}}
+}
