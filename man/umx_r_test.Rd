@@ -25,7 +25,7 @@ i.e, two nonoverlapping (no variable in common) correlations in the same dataset
 In the future it will be expanded to handle overlapping correlations, and to take corelation matrices as input.
 }
 \examples{
-vars = ("mpg", "cyl", "disp", "hp")
+vars = c("mpg", "cyl", "disp", "hp")
 umx_r_test(mtcars, vars)
 }
 \seealso{
