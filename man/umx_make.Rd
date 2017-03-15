@@ -23,3 +23,6 @@ umx_make(what = "release"))
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
+\seealso{
+Other Miscellaneous Utility Functions: \code{\link{umx_write_to_clipboard}}
+}
