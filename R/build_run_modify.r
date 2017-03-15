@@ -54,7 +54,7 @@
 #' @importFrom stats setNames update var delete.response terms
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
-#' @importFrom cocor cocor.dep.groups.nonoverlap
+# #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
 	
 utils::globalVariables(c(
