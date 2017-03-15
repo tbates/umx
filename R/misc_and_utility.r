@@ -4719,7 +4719,7 @@ umx_get_optimizer <- function(model = NULL) {
 #' @export
 #' @family Stats
 #' @examples
-#' vars = ("mpg", "cyl", "disp", "hp")
+#' vars = cs("mpg", "cyl", "disp", "hp")
 #' umx_r_test(mtcars, vars)
 umx_r_test <- function(jkhm = NULL, vars = vars, alternative = "two.sided", test = "all", alpha = 0.05, conf.level = 0.95, null.value = 0, data.name = NULL, var.labels = NULL, return.htest = FALSE) {
 	jkhm = jkhm[, vars]
