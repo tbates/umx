@@ -1794,7 +1794,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' selDVs = c("ht", "wt")
 #' mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
 #' dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
-#' umx_set_optimizer("SLSQP") #preferably NPSOL: CSOLNP is not good at running this model.
+#' umx_set_optimizer("SLSQP") #preferably NPSOL: CSOLNP needs special options to run this model.
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 #' umxSummary(m1)
 #' umxGetParameters(m1, "^c", free = TRUE)

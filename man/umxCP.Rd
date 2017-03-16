@@ -100,6 +100,7 @@ twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to
 selDVs = c("ht", "wt")
 mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
 dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
+umx_set_optimizer("SLSQP") #preferably NPSOL: CSOLNP needs special options to run this model.
 m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 umxSummary(m1)
 umxGetParameters(m1, "^c", free = TRUE)
