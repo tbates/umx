@@ -1672,11 +1672,33 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 		o[itemNumber, ] = paste(pre, testName, itemNumber, itemText, direction, scale, type, testName, end, sep = "', '")
 		itemNumber = itemNumber + 1
 	}
-	# TODO : make robust to system choice
-	clip <- pipe("pbcopy", "w")
-	write.table(o, file = clip, row.names = F, col.names = F, quote = F)
-	close(clip)
+	umx_write_to_clipboard(x = o)
 	message("sql is on clipboard")
+}
+
+#' umx_write_to_clipboard
+#'
+#' @description
+#' umx_write_to_clipboard writes data to the clipboard
+#'
+#' @details
+#' TODO: Make this more robust to OS. Let me know if it fails for you.
+#' @param x something to put on the clipboard
+#' @return - 
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @examples
+#' \dontrun{
+#' umx_write_to_clipboard("hello")
+#' }
+umx_write_to_clipboard <- function(x) {
+	if(umx_check_OS("OSX")){
+		clipboard <- pipe("pbcopy", "w")
+		write.table(x, file = clipboard, sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+		close(clipboard)
+	} else {
+		write.table(x, file = "clipboard", sep = "\t", col.names = NA)
+	}
 }
 
 # =========================
@@ -2323,10 +2345,11 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' Check if a list of names are in the names() of a dataframe (or the of a matrix)
 #'
 #' @param namesNeeded list of variable names to find (a dataframe is also allowed)
-#' @param data data.frame (or matrix) to search in for names
+#' @param data data.frame (or matrix) to search in for names (default = NA)
 #' @param die whether to die if the check fails (defaults to TRUE)
 #' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)
 #' @param intersection Show the intersection of names
+#' @param message Some helpful text to append when dieing.
 #' @family Test
 #' @export
 #' @family Building Functions
@@ -2343,7 +2366,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' \dontrun{
 #' umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 #' }
-umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE, intersection = FALSE){
+umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALSE, intersection = FALSE, message = ""){
 	if(is.data.frame(namesNeeded)){
 		namesNeeded = names(namesNeeded)
 	}else if(is.matrix(namesNeeded)){
@@ -2367,7 +2390,7 @@ umx_check_names <- function(namesNeeded, data, die = TRUE, no_others = FALSE, in
 			if(die){
 				# print(namesInData[namesFound])
 				stop("Not all required names were found in the data. Missing were:\n",
-					paste(namesNeeded[!namesFound], collapse = "; ")
+					paste(namesNeeded[!namesFound], collapse = "; "), "\n", message
 				)
 			} else {
 				return(FALSE)
@@ -4676,4 +4699,45 @@ umx_get_optimizer <- function(model = NULL) {
 	} else {
 		mxOption(model, "Default optimizer")
 	}
+}
+
+#' umx_r_test
+#'
+#' @description
+#' umx_r_test is a wrapper around the cocor test of difference between correlations.
+#'
+#' @details
+#' Currently it handles the test of whether r.jk and r.hm differ in magnitude.
+#' i.e, two nonoverlapping (no variable in common) correlations in the same dataset.
+#' In the future it will be expanded to handle overlapping correlations, and to take corelation matrices as input.
+#'
+#' @param data the dataset
+#' @param vars the 4 vars needed: "j & k" and "h & m"
+#' @param alternative two (default) or one-sided (greater less) test
+#' @return - 
+#' @export
+#' @family Stats
+#' @examples
+#' vars = c("mpg", "cyl", "disp", "hp")
+#' umx_r_test(mtcars, vars)
+umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "greater", "less")) {
+	alternative = match.arg(alternative)
+	test         = "silver2004"
+	alpha        = 0.05
+	conf.level   = 0.95
+	null.value   = 0
+	data.name    = NULL
+	var.labels   = NULL
+	return.htest = FALSE
+	jkhm = data[, vars]
+	cors = cor(jkhm)
+	# jkhm = 1234
+	r.jk = as.numeric(cors[vars[1], vars[2]])
+	r.hm = as.numeric(cors[vars[3], vars[4]])
+	r.jh = as.numeric(cors[vars[1], vars[3]])
+	r.jm = as.numeric(cors[vars[1], vars[4]])
+	r.kh = as.numeric(cors[vars[2], vars[3]])
+	r.km = as.numeric(cors[vars[2], vars[4]])
+	n = nrow(jkhm)	
+	cocor::cocor.dep.groups.nonoverlap(r.jk, r.hm, r.jh, r.jm, r.kh, r.km, n, alternative = alternative, test = test, alpha = alpha, conf.level = conf.level, null.value = null.value, data.name = data.name, var.labels = var.labels, return.htest = return.htest)
 }
