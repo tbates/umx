@@ -324,11 +324,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(is.null(data)){
 		stop("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...)")
 	} else if(class(data)[1] == "data.frame") {
-			data = mxData(observed = data, type = "raw")
+		data = mxData(observed = data, type = "raw")
 	}
 
   if(class(data)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
 		if(data$type == "raw"){
+			# check "one" is not a column
+			if("one" %in% names(data$observed) ){
+				warning("You have a data column called 'one' which is illegal (means). I dropped it!")
+				data$observed = data$observed[ , !(names(data$observed) %in% c("one")), drop = FALSE]
+			}
 			manifestVars = names(data$observed)
 			isRaw = TRUE
 		} else {
@@ -1795,7 +1800,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' selDVs = c("ht", "wt")
 #' mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
 #' dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
-#' umx_set_optimizer("SLSQP") #preferably NPSOL: CSOLNP is not good at running this model.
+#' umx_set_optimizer("SLSQP") #preferably NPSOL: CSOLNP needs setup to run this model.
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 #' umxSummary(m1)
 #' umxGetParameters(m1, "^c", free = TRUE)
@@ -3927,6 +3932,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param v1m0 variance of 1 and mean of zero in one call.
 #' @param v.m. variance and mean, both free.
 #' @param v0m0 variance and mean, both fixed at zero.
+#' @param v.m0 variance free, mean fixed at zero.
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
 #' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
 #' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
@@ -3996,15 +4002,15 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # # manifests is a reserved word, as is latents.
 #' # # It allows the string syntax to use the manifestVars variable
 #' # umxPath("A -> manifests") 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, unique.pairs = NULL, forms = NULL, Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, unique.pairs = NULL, forms = NULL, Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
 	xmu_string2path(from)
 	n = 0
-	for (i in list(with, cov, var, forms, means, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, defn, Cholesky)) {
+	for (i in list(with, cov, var, forms, means, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, v.m0, defn, Cholesky)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, forms, means, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, defn, or Cholesky can be set: Use at one time")
+		stop("At most one of with, cov, var, forms, means, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, v.m0, defn, or Cholesky can be set: Use at one time")
 	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
@@ -4013,11 +4019,12 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 
 	n = 0
-	for (i in list(v.m. , v1m0, v0m0)) {
+	for (i in list(v.m. , v1m0, v0m0, v.m0)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n && !is.null(fixedAt)){
-		warning("When you use v.m. , v1m0, v0m0, don't also set fixedAt - I will ignore it this time")
+		warning("When you use v.m. , v1m0, v0m0, v.m0, don't also set fixedAt - I will ignore it this time")
+		fixedAt = NULL
 	}
 
 	if(!is.null(defn)){
@@ -4083,6 +4090,12 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	if(!is.null(v0m0)){
 		a = mxPath(from = v0m0, arrows = 2, free = FALSE, values = 0)
 		b = mxPath(from = "one", to = v0m0, free = FALSE, values = 0)
+		return(list(a, b))
+	}
+
+	if(!is.null(v.m0)){
+		a = mxPath(from = v.m0, arrows = 2, free = TRUE, values = 1)
+		b = mxPath(from = "one", to = v.m0, free = FALSE, values = 0)
 		return(list(a, b))
 	}
 

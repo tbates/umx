@@ -7,10 +7,11 @@
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
   unique.bivariate = NULL, unique.pairs = NULL, forms = NULL,
   Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL,
-  v.m. = NULL, v0m0 = NULL, fixedAt = NULL, freeAt = NULL,
-  firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate",
-  "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE,
-  values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL)
+  v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL,
+  freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs",
+  "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1,
+  free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA,
+  hasMeans = NULL)
 }
 \arguments{
 \item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
@@ -42,6 +43,8 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 \item{v.m.}{variance and mean, both free.}
 
 \item{v0m0}{variance and mean, both fixed at zero.}
+
+\item{v.m0}{variance free, mean fixed at zero.}
 
 \item{fixedAt}{Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)}
 
