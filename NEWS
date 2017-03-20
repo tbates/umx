@@ -1,5 +1,5 @@
 # umx 1.5.5
-* March 17 2017 R 3.2.3
+* March 20 2017 R 3.3.3
 * NEW: umx_write_to_clipboard
 * NEW: umx_r_test
 * IMPROVED: add autoRun option to umxModify.
@@ -7,7 +7,7 @@
 * ROLLBACK: No longer generically alter CSOLNP tolerance.
 
 # umx 1.5.1
-* March 05 2017 R 3.2.2
+* March 05 2017 R 3.3.2
 * IMPROVED: umxCP example for improved compatibility with OpenMx 1.7
 * IMPROVED: umx twin models now set a better (less likely to fail) precision for CSOLNP
 * IMPROVED: improved help files; document forms parameter for umxPath
