@@ -62,6 +62,8 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
+umx_set_optimizer("SLSQP")
+
 m1 <- mxModel("One Factor", type = "RAM", 
 	manifestVars = manifests, latentVars = latents, 
 	mxPath(from = latents, to = manifests),
@@ -74,7 +76,7 @@ m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1")
 umxSummary(m2); umxCompare(m1, m2)
 # 1-line version including comparison
 m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
-#use regular expression to drop multiple paths: e.g. G to x3, x4, x5
+# use regular expression to drop multiple paths: e.g. G to x3, x4, x5
 m2 = umxModify(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
 # Same, but shorter
 m2 = umxModify(m1, regex  = "^G_to_x[3-5]", name = "no_G_to_x3_5")
