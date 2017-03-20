@@ -1237,7 +1237,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' umxSummaryCP(m1, file = "Figure 3", std = TRUE)
 umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(silent=TRUE), returnStd = FALSE, 
     extended = FALSE, showRg = TRUE, comparison = NULL, std = TRUE, CIs = FALSE, ...) {
-	# TODO: detect value of DZ covariance, and if .25 set "C" to "D"
+	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D"
 	if(!std){
 		stop("TODO: I currently always standardize CP model output. e-mail tim to get this turned off")
 	}
