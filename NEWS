@@ -2,7 +2,7 @@
 * March 20 2017 R 3.3.3
 * NEW: umx_write_to_clipboard
 * NEW: umx_r_test
-* IMPROVED: add autoRun option to umxModify.
+* IMPROVED: Add autoRun option to umxModify.
 * FIXED: Switch away from CSOLNP in umxCP example.
 * ROLLBACK: No longer generically alter CSOLNP tolerance.
 
