@@ -1,4 +1,7 @@
 ## Changes
+* Last submission gave an error on the incoming check machine
+  (but not on a win test box). I've changed the optimizer for that
+  example, and it should run everywhere now.
 * Compatibility fixes with OpenMx new optimizer
 * umx feature enhancements
 
@@ -9,9 +12,6 @@
 
 ## R CMD check results
 * No ERRORs, No WARNINGs, No NOTES
-* Last submission gave an error on the incoming check machine, I've
-  changed the optimizer used which should decrease chance of model not
-  running.
 
 ## Downstream dependencies
 * No downstream dependencies.
