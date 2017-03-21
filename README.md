@@ -44,9 +44,9 @@ Some highlights include:
 
 Dozens more (?umx to see them all). Check out the "family links" in any help file also!
 
-Feel free to use, or improve, or make request via Github. Tell your friends! Publish more good science :-)
+Feel free to use, and submit code and requests via Github. Tell your friends! Publish more good science :-)
 
-Bleeding-edge development version here:
+For thrill-seekers and collaborators only: the bleeding-edge development version is here:
 
 ```splus
 install.packages("devtools")
