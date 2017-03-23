@@ -5,13 +5,16 @@
 \alias{umx_install_OpenMx}
 \title{install.OpenMx}
 \usage{
-install.OpenMx()
+install.OpenMx(loc = "http://openmx.psyc.virginia.edu/getOpenMx.R")
+}
+\arguments{
+\item{loc}{the URL from which to install parallel OpenMx}
 }
 \value{
 -
 }
 \description{
-source() the getOpenMx.R script from source repo.
+\code{\link{source}}() the getOpenMx.R script from source repo.
 }
 \examples{
 \dontrun{
