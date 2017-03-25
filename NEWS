@@ -1,3 +1,8 @@
+# umx 1.6.0
+* April 01 2017 R 3.3.3
+* IMPROVED: umx_make_TwinData better docs, more features, seed, varName, flexible
+* CHANGED: umx_make_TwinData uses variance (not path coef)
+
 # umx 1.5.5
 * March 20 2017 R 3.3.3
 * NEW: umx_write_to_clipboard

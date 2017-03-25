@@ -4344,7 +4344,9 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 	umxPath(var = latents  , fixedAt=1)
 #' )
 #' 
-#' # Now your model has informative labels, & better starts, has been run, and displays a brief summary!
+#' # umx added informative labels, created starting values, 
+#' # Ran you model (if autoRun is on), and displayed a brief summary
+#' # including a comparison if you modified a model...!
 #' 
 #' # Let's get some journal-ready fit information
 #' 

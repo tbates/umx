@@ -36,7 +36,9 @@ m1 <- umxRAM("One Factor", data = myData,
 	umxPath(var = latents  , fixedAt=1)
 )
 
-omxGetParameters(m1) # Wow! Now your model has informative labels, & better starts
+# umx added informative labels, created starting values, 
+# Ran you model (if autoRun is on), and displayed a brief summary
+# including a comparison if you modified a model...!
 
 # Let's get some journal-ready fit information
 
@@ -57,15 +59,16 @@ umxCompare(m1, m2)
 # Use umxModify to do the same thing in 1-line
 m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = TRUE)
 
-# =================================
-# = Get some Confidence intervals =
-# =================================
+# ========================
+# = Confidence intervals =
+# ========================
 
-confint(m1, run = TRUE) # lots more to learn about ?confint.MxModel
+# umxSummary() will show these, but you can also use the confint() function
+confint(m1, parm = 'all', run = TRUE) # lots more to learn about ?confint.MxModel
 
-# And make a Figure in .gv format!
+# And make a Figure in dot (.gv) format!
+plot(m1, std = TRUE)
 
-# plot(m1, std = TRUE)
 # If you just want the .dot code returned set file = NA
 plot(m1, std = TRUE, file = NA)
 }

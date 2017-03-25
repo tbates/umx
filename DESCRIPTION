@@ -1,6 +1,6 @@
 Package: umx
-Version: 1.5.5
-Date: 2017-03-07
+Version: 1.6.0
+Date: 2017-04-01
 Title: Structural Equation Modelling in R with 'OpenMx'
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))
