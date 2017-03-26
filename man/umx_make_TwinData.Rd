@@ -5,7 +5,8 @@
 \title{Simulate twin data with control over A, C, E, and moderation}
 \usage{
 umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
-  EE = NULL, sum2one = TRUE, varNames = "var", seed = 10000)
+  EE = NULL, sum2one = TRUE, varNames = "var", seed = NULL,
+  empirical = FALSE)
 }
 \arguments{
 \item{nMZpairs}{Number of MZ pairs to simulate}
@@ -22,11 +23,13 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
 
 \item{varNames}{name for var (defaults to 'var')}
 
-\item{seed}{Value for set.seed}
+\item{seed}{Allows user to set.seed() if wanting reproducible dataset}
+
+\item{empirical}{Passed to mvrnorm}
 }
 \value{
 \itemize{
-\item list of mzData and dzData data.frames
+\item list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 }
 }
 \description{
@@ -59,6 +62,10 @@ dzData = tmp[[2]];
 cov(mzData); cov(dzData)
 str(mzData); str(dzData); 
 
+# Prefer to work in path coefficient values? (little a?)
+tmp = umx_make_TwinData(200, AA = .6^2, CC = .2^2)
+# Check the correlations
+umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 
 # =============
 # = Shortcuts =

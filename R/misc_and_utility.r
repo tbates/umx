@@ -3717,8 +3717,9 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @param EE value for E variance.
 #' @param sum2one  Whether to enforce AA + CC + EE summing the one (default = TRUE)
 #' @param varNames name for var (defaults to 'var')
-#' @param seed Value for set.seed
-#' @return - list of mzData and dzData data.frames
+#' @param seed Allows user to set.seed() if wanting reproducible dataset
+#' @param empirical Passed to mvrnorm
+#' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
 #' @family Twin Modeling Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
@@ -3735,6 +3736,10 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' cov(mzData); cov(dzData)
 #' str(mzData); str(dzData); 
 #' 
+#' # Prefer to work in path coefficient values? (little a?)
+#' tmp = umx_make_TwinData(200, AA = .6^2, CC = .2^2)
+#' # Check the correlations
+#' umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 #'
 #' # =============
 #' # = Shortcuts =
@@ -3755,8 +3760,10 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' x = umx_make_TwinData(100, AA = c(avg = .7, min = 0, max = 1), CC = .55, EE = .63)
 #' str(x)
 #' @md
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, sum2one = TRUE,  varNames = "var", seed = 10000) {
-	set.seed(seed = seed)
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE) {
+	if(!is.null(seed)){
+		set.seed(seed = seed)
+	}
 	# Function caps the moderator effect at -3 and +3 SD
 	if(length(AA) == 1){
 		# standard ACE, no moderation
@@ -3792,8 +3799,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			ACE, hAC,
 			hAC, ACE)
 		);
-		mzData = mvrnorm(n = nMZpairs, mu = c(0, 0), Sigma = mzCov);
-		dzData = mvrnorm(n = nDZpairs, mu = c(0, 0), Sigma = dzCov);
+		mzData = mvrnorm(n = nMZpairs, mu = c(0, 0), Sigma = mzCov, empirical = empirical);
+		dzData = mvrnorm(n = nDZpairs, mu = c(0, 0), Sigma = dzCov, empirical = empirical);
 		mzData = data.frame(mzData)
 		dzData = data.frame(dzData)
 		names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
@@ -3828,7 +3835,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			);
 			# MASS:: package
 			print(mzCov)
-			mzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = mzCov);
+			mzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = mzCov, empirical = empirical);
 			mzData[j, ] = c(mzPair, thisSES, thisSES)
 			j = j + 1
 		}
@@ -3847,10 +3854,11 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 				ACE, hAC,
 				hAC, ACE)
 			);
-			dzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = dzCov);
+			dzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = dzCov, empirical = empirical);
 			dzData[j,] = c(dzPair, thisSES, thisSES)
 			j = j + 1
 		}
+		names(mzData) = names(dzData) = c(umx_paste_names(varNames, "_T"), "M_T1", "M_T2")
 	}
 	return(list(mzData = mzData, dzData = dzData))
 }
@@ -3887,7 +3895,7 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 	# pQTL = 0.5      # Decreaser allele frequency
 	set.seed(seed)
 	b_qtl_x  = sqrt(Vqtl) # Path coefficient between SNP and X
-	q    = 1 - pQTL # Increaser allele frequency
+	q = 1 - pQTL # Increaser allele frequency
 	a = sqrt(1/(2 * pQTL * q)) # Genotypic value for genetic variable of variance 1.0
 	# Residual variance in variable X (so variance adds up to one)
 	Vex  <- (1- Vqtl - bUX^2)

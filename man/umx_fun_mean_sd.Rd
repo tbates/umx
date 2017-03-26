@@ -25,9 +25,10 @@ to craft a custom nameless funtions. e.g.
   \item \code{\link{umx_fun_mean_sd}}: returns "mean (SD)" of x.
   \item Second item
 }
+note: if a factor is given, then the mode is returned instead of the mean and SD.
 }
 \examples{
-summaryAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
+umxAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

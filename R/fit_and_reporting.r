@@ -3258,7 +3258,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #'   \item \code{\link{umx_fun_mean_sd}}: returns "mean (SD)" of x.
 #'   \item Second item
 #' }
-#'
+#' note: if a factor is given, then the mode is returned instead of the mean and SD.
 #' @param x input
 #' @param na.rm How to handle missing (default = TRUE = remove)
 #' @param digits Rounding (default = 2)
@@ -3267,12 +3267,16 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' @family Miscellaneous Stats Helpers
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' summaryAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
+#' umxAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
 umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
-	paste0(
-		round(mean(x, na.rm = na.rm),2), " ",
-		"(", round(sd(x, na.rm=TRUE),digits = digits), ")"
+	if(!is.numeric(x)){
+		paste0("mode = ", names(which.max(table(x))))
+	} else {
+		paste0(
+			round(mean(x, na.rm = na.rm), digits), " ",
+			"(", round(sd(x, na.rm = na.rm),digits = digits), ")"
 	)
+	}
 }
 
 #' umx_aggregate
