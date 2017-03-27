@@ -422,6 +422,7 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 	message("I will now set cores to ", omxQuotes(nCores), " (they will be reset after) and run a script that hits that many cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
 	set.seed(10)
+	# nSubjects = 1000
 	numberIndicators = 12
 	numberFactors    = 3
 	fixedBMatrixF    = matrix(c(.4, .2), 2, 1, byrow = TRUE)
@@ -481,7 +482,7 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 	
 	# set rowwiseParallel
 	if(packageVersion("OpenMx") >= "2.6.1"){
-		test1$fitfunction$rowwiseParallel = rowwiseParallel
+		# test1$fitfunction$rowwiseParallel = rowwiseParallel
 	} else {
 		message("ignored rowwiseParallel: upgrade to OpenMx 2.6.1 or better to use this")
 		# ignore: this is not supported by versions before 2.6.1
@@ -970,9 +971,38 @@ umx_factor <- umxFactor
 # = Utility =
 # ===========
 
-# ===========
-# = Utility =
-# ===========
+#' Print the version of umx (and also OpenMx) under use
+#'
+#' @description
+#' umxVersion returns the version information for umx, and for OpenMx and R.
+#' Valuable for helpful big-reports
+#'
+#' @details
+#'
+#' @param model Optional to show optimizer in this model
+#' @param verbose = TRUE
+#' @param return Which package (umx or openMx to return version on
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - 
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' x = umxVersion(); x
+umxVersion <- function (model = NULL, verbose = TRUE, return = "umx") {
+	umx_vers <- try(packageVersion("umx"))
+    if (verbose) {
+        msg = paste0("umx version: ", umx_vers)
+        message(msg)
+    }
+	pvers = mxVersion(model = model, verbose = verbose)
+    
+	if(return == "umx"){
+		invisible(umx_vers)
+	} else {
+		invisible(pvers)
+	}
+}
 
 #' Open the CRAN page for a package
 #' 
