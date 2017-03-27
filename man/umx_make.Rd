@@ -24,5 +24,6 @@ umx_make(what = "release"))
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{umx_write_to_clipboard}}
+Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
+  \code{\link{umx_write_to_clipboard}}
 }

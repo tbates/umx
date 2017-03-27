@@ -131,7 +131,7 @@ sensitivity_analysis <- function(dat = NA, Output.Title = "meta table", prw.r.al
 	# ====================================================================
 
 	# Contour-enhanced funnel plot with fixed-effects trim and fill imputation
-	funnel(res.tf.fe, yaxis="seinv", level=c(90, 95), shade=c("white","darkgray"), refline = 0)
+	funnel(res.tf.fe, yaxis = "seinv", level = c(90, 95), shade = c("white", "darkgray"), refline = 0)
 
 	### Contour-enhanced funnel plot with random-effects trim and fill imputation
 	# funnel(res.tf.fe, yaxis="seinv", level=c(90, 95), shade=c("white","darkgray"), refline = 0)

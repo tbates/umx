@@ -24,5 +24,6 @@ umx_write_to_clipboard("hello")
 }
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{umx_make}}
+Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
+  \code{\link{umx_make}}
 }
