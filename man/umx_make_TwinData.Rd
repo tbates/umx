@@ -5,8 +5,8 @@
 \title{Simulate twin data with control over A, C, E, and moderation}
 \usage{
 umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
-  EE = NULL, sum2one = TRUE, varNames = "var", seed = NULL,
-  empirical = FALSE)
+  EE = NULL, nThresh = NULL, sum2one = TRUE, varNames = "var",
+  seed = NULL, empirical = FALSE)
 }
 \arguments{
 \item{nMZpairs}{Number of MZ pairs to simulate}
@@ -18,6 +18,8 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
 \item{CC}{value for C variance.}
 
 \item{EE}{value for E variance.}
+
+\item{nThresh}{If supplied, use as thresholds and return mxFactor output? (default is not too)}
 
 \item{sum2one}{Whether to enforce AA + CC + EE summing the one (default = TRUE)}
 
@@ -85,6 +87,13 @@ cov(tmp[[1]])
 
 x = umx_make_TwinData(100, AA = c(avg = .7, min = 0, max = 1), CC = .55, EE = .63)
 str(x)
+
+# =====================
+# = Threshold Example =
+# =====================
+tmp = umx_make_TwinData(100, AA = .6, CC = .2, nThresh = 3)
+str(tmp)
+umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 }
 \references{
 \itemize{

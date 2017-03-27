@@ -1044,7 +1044,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param weightVar = If provided, a vector objective will be used to weight the data. (default = NULL) 
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE)
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE)
-#' @param thresholds How to implement ordinal thresholds c("deviationBased", "left_censored")
+#' @param thresholds How to implement ordinal thresholds c("deviationBased", "WLS")
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
@@ -1164,11 +1164,11 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' selDVs = c("wt1", "wt2")
 #' mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
 #' dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
-#' m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
+#' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ = nrow(dzData), numObsMZ = nrow(mzData))
 #' umxSummary(m1)
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
+	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run")) {
 		# If given covariates, call umxACEcov
 		if(!is.null(selCovs)){
 			umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
@@ -1288,7 +1288,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				#   1. Means of binary vars fixedAt 0
 				#   2. A + C + E for binary vars is constrained to 1 
 				# 4. For Ordinal vars, first 2 thresholds fixed
-				# 5. Option to fix all (or all but the first 2??) thresholds for left-censored data.
+				# 5. WLS as an option.
+				# 6. Option to fix all (or all but the first 2??) thresholds for left-censored data.
 		        #   # TODO
 				# 	1. Simple test if results are similar for an ACE model of 1 variable
 				if(nFactors == 0) {			
@@ -1304,17 +1305,17 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 					# ==================================================
 					# = Handle 1 or more ordinal variables (no binary) =
 					# ==================================================
-					message("umxACE found ", (nOrdVars/nSib), " pairs of ordinal variables:", omxQuotes(ordVarNames),
-					"\nNo binary variables were found")			
+					message("umxACE found ", (nOrdVars/nSib), " pair(s) of ordinal variables:", omxQuotes(ordVarNames),
+					" (No binary)")			
 					if(length(contVarNames) > 0){
-						message("There were also ", length(contVarNames)/nSib, " pairs of continuous variables:", omxQuotes(contVarNames))	
+						message(length(contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(contVarNames))	
 					}else{
-						message("No continuous variables found.")
+						# message("No continuous variables found.")
 					}
 					# Means: all free, start cont at the measured value, ord @0
-					meansMatrix  = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
+					meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
 					# Thresholds
-					# for better guessing with low-freq cells
+					# for better guessing with low-frequency cells
 					allData = rbind(mzData, dzData)
 					# threshMat is is a matrix, or a list of 2 matrices and an algebra
 					threshMat = umxThresholdMatrix(allData, sep = suffix, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
@@ -1421,9 +1422,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 			# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 			# NB: top already has the means model and thresholds matrix added if necessary  - see above
 			# Additive, Common, and Unique environmental paths
-			umxLabel(mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = varStarts, byrow = T)),
-			umxLabel(mxMatrix(name = "c", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = varStarts, byrow = T)),
-			umxLabel(mxMatrix(name = "e", type = "Lower", nrow = nVar, ncol = nVar, free = T, values = varStarts, byrow = T)),  
+			umxMatrix("a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
+			umxMatrix("c", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
+			umxMatrix("e", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE), 
 		
 			mxMatrix(name = "dzAr", type = "Full", 1, 1, free = FALSE, values = dzAr),
 			mxMatrix(name = "dzCr", type = "Full", 1, 1, free = FALSE, values = dzCr),
@@ -1440,6 +1441,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 			mxAlgebra(rbind (cbind(ACE, hAC),
 			                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name = "expCovDZ")
 		)
+
+		# =======================================
+		# = 		Assemble models into supermodel =
+		# =======================================
 
 		if(!bVector){
 			model = mxModel(name, MZ, DZ, top,
@@ -1489,7 +1494,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 		if(equateMeans & (dataType == "raw")){
 			model = omxSetParameters(model,
 			  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMean14", "expMean15", "expMean16"),
-			  newlabels = paste0("expMean_r1c", 1:nVar)             # c("expMean11", "expMean12", "expMean13")
+			  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMean11", "expMean12", "expMean13")
 			)
 		}
 		# Trundle through and make sure values with the same label have the same start value... means for instance.

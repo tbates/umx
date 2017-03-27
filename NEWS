@@ -1,6 +1,7 @@
 # umx 1.6.0
 * April 01 2017 R 3.3.3
-* IMPROVED: umx_make_TwinData better docs, more features, seed, varName, flexible
+* IMPROVED: umx_make_TwinData better docs, use variance input, more features, seed, varName, flexible use
+* IMPROVED: umxAPA now reports mode for factor data
 * CHANGED: umx_make_TwinData uses variance (not path coef)
 
 # umx 1.5.5

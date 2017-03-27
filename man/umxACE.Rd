@@ -8,7 +8,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
   suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
   equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
-  "left_censored"), autoRun = getOption("umx_auto_run"))
+  "WLS"), autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE")}
@@ -44,7 +44,7 @@ SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE)}
 
-\item{thresholds}{How to implement ordinal thresholds c("deviationBased", "left_censored")}
+\item{thresholds}{How to implement ordinal thresholds c("deviationBased", "WLS")}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 }
@@ -211,7 +211,7 @@ data(twinData)
 selDVs = c("wt1", "wt2")
 mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
 dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
-m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=nrow(dzData), numObsMZ=nrow(mzData))
+m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ = nrow(dzData), numObsMZ = nrow(mzData))
 umxSummary(m1)
 plot(m1)
 }

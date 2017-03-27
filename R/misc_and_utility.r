@@ -3715,6 +3715,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @param AA value for A variance. Optionally a vecotr: c(avg=.5, min=0, max=1)
 #' @param CC value for C variance.
 #' @param EE value for E variance.
+#' @param nThresh  If supplied, use as thresholds and return mxFactor output? (default is not too)
 #' @param sum2one  Whether to enforce AA + CC + EE summing the one (default = TRUE)
 #' @param varNames name for var (defaults to 'var')
 #' @param seed Allows user to set.seed() if wanting reproducible dataset
@@ -3759,8 +3760,15 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #'
 #' x = umx_make_TwinData(100, AA = c(avg = .7, min = 0, max = 1), CC = .55, EE = .63)
 #' str(x)
+#'
+#' # =====================
+#' # = Threshold Example =
+#' # =====================
+#' tmp = umx_make_TwinData(100, AA = .6, CC = .2, nThresh = 3)
+#' str(tmp)
+#' umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 #' @md
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, nThresh = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
@@ -3860,6 +3868,24 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		}
 		names(mzData) = names(dzData) = c(umx_paste_names(varNames, "_T"), "M_T1", "M_T2")
 	}
+	if(!is.null(nThresh)){
+		# TODO combine all columns for more accuracy 
+		tmp = rbind(mzData, dzData)
+		levelLabels = paste0("level", 1:(nThresh+1))
+		for (i in 1:length(varNames)) {
+			t1 = paste0(varNames[i], sep = "_T1")
+			t2 = paste0(varNames[i], sep = "_T2")
+			cutPoints = quantile(rbind(tmp[, t1], tmp[, t2]), probs = c((1:nThresh) / (nThresh + 1)), na.rm = TRUE)
+			mzData[,t1] = cut(mzData[,t1], breaks = c(-Inf, cutPoints, Inf), labels = levelLabels) 
+			mzData[,t2] = cut(mzData[,t2], breaks = c(-Inf, cutPoints, Inf), labels = levelLabels) 
+			dzData[,t1] = cut(dzData[,t1], breaks = c(-Inf, cutPoints, Inf), labels = levelLabels) 
+			dzData[,t2] = cut(dzData[,t2], breaks = c(-Inf, cutPoints, Inf), labels = levelLabels) 
+			# Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
+			ordinalVars = umx_paste_names(varNames, "_T")
+			mzData[, ordinalVars] = umxFactor(mzData[, ordinalVars])
+			dzData[, ordinalVars] = umxFactor(dzData[, ordinalVars])
+		}
+	}	
 	return(list(mzData = mzData, dzData = dzData))
 }
 
