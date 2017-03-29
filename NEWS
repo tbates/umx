@@ -1,8 +1,13 @@
 # umx 1.6.0
 * April 01 2017 R 3.3.3
+* TIP: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
 * IMPROVED: umx_make_TwinData better docs, use variance input, more features, seed, varName, flexible use
 * IMPROVED: umxAPA now reports mode for factor data
 * CHANGED: umx_make_TwinData uses variance (not path coef)
+* CHANGED: Allow sep as a synonym for suffix in uxmACE, umxCP, umxIP
+* DOCUMENT umx_make_TwinData docs much improved
+* DOCUMENT: Examples use zygosity string from twinData instead of numeric code
+* DOCUMENT: Fix typo in umxPath docs
 
 # umx 1.5.5
 * March 20 2017 R 3.3.3

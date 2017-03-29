@@ -1046,6 +1046,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE)
 #' @param thresholds How to implement ordinal thresholds c("deviationBased", "WLS")
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param sep allowed as a synonym for "suffix"
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
@@ -1059,10 +1060,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' data(twinData) # ?twinData set from Australian twins.
 #' # Pick the variables
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- twinData[twinData$zyg == 1,]
-#' dzData <- twinData[twinData$zyg == 3,]
+#' mzData <- twinData[twinData$zygosity %in%  "MZFF", ]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummary(m1, std = FALSE)
+#' umxSummary(m1, std = FALSE) # unstandardized
 #' plot(m1)
 #' 
 #' # =========================================
@@ -1168,7 +1169,11 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' umxSummary(m1)
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run")) {
+	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep=NULL) {
+		# allow sep as synonym for suffix
+		if(!is.null(sep)){
+			suffix = sep
+		}
 		# If given covariates, call umxACEcov
 		if(!is.null(selCovs)){
 			umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
@@ -1792,10 +1797,11 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' @param numObsDZ = not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param sep allowed as a synonym for "suffix"
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -1814,8 +1820,12 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' m2 = umxModify(m1, update = "(cs_.*$)|(c_cp_)", regex = TRUE, name = "dropC")
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
-umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run")) {
+umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), sep=NULL) {
 	nSib = 2
+    # allow sep as synonym for suffix
+   if(!is.null(sep)){
+   	suffix = sep
+   }
 	# expand var names
 	if(!is.null(suffix)){
 		if(length(suffix) != 1){
@@ -2002,6 +2012,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param numObsDZ = todo: implement ordinal Number of DZ twins: Set this if you input covariance data
 #' @param numObsMZ = todo: implement ordinal Number of MZ twins: Set this if you input covariance data
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param sep allowed as a synonym for "suffix"
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -2018,10 +2029,14 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
 #' plot(m1)
-umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run")) {
+umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), sep=NULL) {
 	# TODO implement correlatedA
 	if(correlatedA){
 		message("I have not implemented correlatedA yet...")
+	}
+	 # allow sep as synonym for suffix
+	if(!is.null(sep)){
+		suffix = sep
 	}
 	nSib = 2;
 	# expand var names
@@ -3868,7 +3883,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #'
 #' @description The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 #' 
-#' It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{means}, \strong{v1m0}, \strong{v1m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{forms}.
+#' It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{means}, \strong{v1m0}, \strong{v.m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{forms}.
 #'
 #' The new preposition \dQuote{with} means you no-longer need set arrows = 2 on covariances. Instead, you can say:
 #'
