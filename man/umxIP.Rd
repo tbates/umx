@@ -8,7 +8,7 @@ umxIP(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
   equateMeans = TRUE, dzAr = 0.5, dzCr = 1, correlatedA = FALSE,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"))
+  autoRun = getOption("umx_auto_run"), sep = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "IP")}
@@ -47,6 +47,8 @@ omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \item{numObsMZ}{= todo: implement ordinal Number of MZ twins: Set this if you input covariance data}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+
+\item{sep}{allowed as a synonym for "suffix"}
 }
 \value{
 - \code{\link{mxModel}}

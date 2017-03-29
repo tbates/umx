@@ -8,7 +8,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
   suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
   equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
-  "WLS"), autoRun = getOption("umx_auto_run"))
+  "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE")}
@@ -47,6 +47,8 @@ SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \item{thresholds}{How to implement ordinal thresholds c("deviationBased", "WLS")}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+
+\item{sep}{allowed as a synonym for "suffix"}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACE
@@ -106,10 +108,10 @@ require(umx)
 data(twinData) # ?twinData set from Australian twins.
 # Pick the variables
 selDVs = c("bmi1", "bmi2")
-mzData <- twinData[twinData$zyg == 1,]
-dzData <- twinData[twinData$zyg == 3,]
+mzData <- twinData[twinData$zygosity \%in\%  "MZFF", ]
+dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-umxSummary(m1, std = FALSE)
+umxSummary(m1, std = FALSE) # unstandardized
 plot(m1)
 
 # =========================================
@@ -211,7 +213,7 @@ data(twinData)
 selDVs = c("wt1", "wt2")
 mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
 dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
-m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ = nrow(dzData), numObsMZ = nrow(mzData))
+m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 umxSummary(m1)
 plot(m1)
 }

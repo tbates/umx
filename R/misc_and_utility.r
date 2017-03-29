@@ -975,9 +975,7 @@ umx_factor <- umxFactor
 #'
 #' @description
 #' umxVersion returns the version information for umx, and for OpenMx and R.
-#' Valuable for helpful big-reports
-#'
-#' @details
+#' essential for bug-reports.
 #'
 #' @param model Optional to show optimizer in this model
 #' @param verbose = TRUE
@@ -1903,8 +1901,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @description
 #' \code{\link{source}}() the getOpenMx.R script from source repo.
 #'
-#' @aliases umx_install_OpenMx
-#' @aliases umx_update_OpenMx
+#' @aliases umx_install_OpenMx umx_update_OpenMx
 #' @param loc the URL from which to install parallel OpenMx
 #' @return - 
 #' @export
@@ -1920,6 +1917,7 @@ install.OpenMx <- function(loc = "http://openmx.psyc.virginia.edu/getOpenMx.R") 
 
 #' @export
 umx_install_OpenMx <- install.OpenMx
+
 #' @export
 umx_update_OpenMx <- install.OpenMx
 
