@@ -1,6 +1,7 @@
 # umx 1.6.0
 * April 01 2017 R 3.3.3
-* IMPROVED: `umx_make_TwinData` better docs, use variance input, more features, seed, varName, flexible use.
+* TIP: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
+* IMPROVED: `umx_make_TwinData` gains seed, varName, flexible spec, thresholding, full set of examples.
 	* NOTE: umx_make_TwinData uses **variance** input. This was ambiguous previously.
 * IMPROVED: `umxAPA` now reports mode for factor data.
 * IMPROVED: umxRAM can now be used to plot demo models without data: just add the list of manifests as a character string to `data`.
@@ -11,6 +12,11 @@
 	)
 	plot(m1)
 	```
+* IMPROVED: Allow sep as a synonym for suffix in uxmACE, umxCP, umxIP
+* CHANGED: umx_make_TwinData uses variance (not path coef)
+* DOCUMENT umx_make_TwinData docs much improved
+* DOCUMENT: Examples use zygosity string from twinData instead of numeric code
+* DOCUMENT: Fix typo in umxPath docs
 
 # umx 1.5.5
 * March 20 2017 R 3.3.3
