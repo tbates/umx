@@ -1904,6 +1904,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' \code{\link{source}}() the getOpenMx.R script from source repo.
 #'
 #' @aliases umx_install_OpenMx
+#' @aliases umx_update_OpenMx
 #' @param loc the URL from which to install parallel OpenMx
 #' @return - 
 #' @export
@@ -1919,6 +1920,8 @@ install.OpenMx <- function(loc = "http://openmx.psyc.virginia.edu/getOpenMx.R") 
 
 #' @export
 umx_install_OpenMx <- install.OpenMx
+#' @export
+umx_update_OpenMx <- install.OpenMx
 
 #' umx_make umx using devtools
 #'

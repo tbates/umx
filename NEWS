@@ -1,8 +1,16 @@
 # umx 1.6.0
 * April 01 2017 R 3.3.3
-* IMPROVED: umx_make_TwinData better docs, use variance input, more features, seed, varName, flexible use
-* IMPROVED: umxAPA now reports mode for factor data
-* CHANGED: umx_make_TwinData uses variance (not path coef)
+* IMPROVED: `umx_make_TwinData` better docs, use variance input, more features, seed, varName, flexible use.
+	* NOTE: umx_make_TwinData uses **variance** input. This was ambiguous previously.
+* IMPROVED: `umxAPA` now reports mode for factor data.
+* IMPROVED: umxRAM can now be used to plot demo models without data: just add the list of manifests as a character string to `data`.
+	```splus
+	m1 <- umxRAM("test", data = paste0("itemC", 1:4),
+		umxPath(unique.bivariate = paste0("itemC", 1:4)),
+		umxPath(var="X")
+	)
+	plot(m1)
+	```
 
 # umx 1.5.5
 * March 20 2017 R 3.3.3
@@ -95,7 +103,7 @@
 * ADDED: umx_make_MR_data to simulate SNP-based Mendelian randomization data (beta)
 * ADDED: umx_set_condensed_slots(TRUE|FALSE): Get and set matrix compression
 * ADDED: umx_get_OpenMx() (download OpenMP/parallel version of OpenMx with NPSOL)
-* ADDED: umx_cont_2_quantile(x, nlevels=)
+* ADDED: umx_cont_2_quantiles(x, nlevels = )
 * ADDED: umx_factor alias to umxFactor
 * FIXED: plot(resid = "none") was not suppressing plotting residuals
 * IMPROVED: umxFactor now handles dataframes and allows non-ordered output

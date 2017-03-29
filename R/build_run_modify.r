@@ -343,6 +343,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		if(is.null(manifestVars)){
 			stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
 		}
+	}else if (class(data) == "character"){
+		# user is just running a trial model, with no data, but provided names
+		manifestVars = data
 	} else {
 		stop("There's something wrong with the data - I expected a dataframe or mxData, but you gave me a ", class(data)[1])		
 	}
@@ -367,7 +370,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# ====================
 	# = Handle Manifests =
 	# ====================
-	unusedManifests = setdiff(manifestVars, foundNames)
+	if (class(data) == "character"){
+		# user is just running a trial model, with no data, but provided names
+		unusedManifests = c()
+	}else{
+		unusedManifests = setdiff(manifestVars, foundNames)
+	}	
 	msg_str = ""
 	if(length(unusedManifests) > 0){
 		if(length(unusedManifests) > 10){
@@ -398,9 +406,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = manifestVars,
 		latentVars  = latentVars,
-		independent = independent,
-		data, dot.items)
+		independent = independent, dot.items)
 	)
+	if (class(data) == "character"){
+		# user is just running a trial model, with no data, but provided names
+		# plot(m1)
+		return(m1)
+	}else{
+		m1 = mxModel(m1, data)
+	}
+
 	if(isRaw){
 		if(is.null(m1$matrices$M) ){
 			message("You have raw data, but no means model. I added\n",
