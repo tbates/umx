@@ -169,7 +169,9 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' @seealso - \code{\link{umxRAM}}, \code{\link{mxModel}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
+#' \dontrun{
 #' umxModel()
+#' }
 umxModel <- function(x) {
 	stop("You probably meant umxRAM?, not umxModel?")
 }

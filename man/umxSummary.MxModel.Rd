@@ -2,12 +2,12 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxSummary.MxModel}
 \alias{umxSummary.MxModel}
-\title{umxSummary.MxModel}
+\title{Shows a compact, publication-style, summary of a RAM model}
 \usage{
 \method{umxSummary}{MxModel}(model, refModels = NULL,
-  showEstimates = c("raw", "std", "none", "both", "list of column names"),
-  digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS",
-  "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...)
+  showEstimates = c("raw", "std", "none", "both"), digits = 2,
+  report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"),
+  SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = NULL, ...)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} whose fit will be reported}
@@ -30,6 +30,8 @@ If NULL will be competed on demand. If FALSE will not be computed. Only needed f
 
 \item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
 
+\item{std}{deprecated: use show = "std" instead!}
+
 \item{...}{Other parameters to control model summary}
 }
 \value{
@@ -40,21 +42,23 @@ Report the fit of a model in a compact form suitable for a journal. Emits a "war
 when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 }
 \details{
-notes on CIs and Identification
-Note, the conventional standard errors reported by OpenMx are used to produce the CIs you see in umxSummary
+Note: For some (multi-group) models, you will need to fall back on \code{\link{summary}}
+
+CIs and Identification
+This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
 These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
 
 Sometimes they appear NA. This often indicates a model which is not identified (see\url{http://davidakenny.net/cm/identify.htm}).
 This can include empirical under-identification - for instance two factors
-that are essentially identical in structure.
+that are essentially identical in structure. use \code{\link{mxCheckIdentification}} to check identification.
 
-A signature of this would be paths estimated at or close to
-zero. Fixing one or two of these to zero may fix the standard error calculation, 
+One or more paths estimated at or close to zero suggests that fixing one or two of 
+these to zero may fix the standard error calculation, 
 and alleviate the need to estimate likelihood-based or bootstrap CIs
 
 If factor loadings can flip sign and provide identical fit, this creates another form of 
-under-identification and can break confidence interval estimation, but I think
-Fixing a factor loading to 1 and estimating factor variances can help here
+under-identification and can break confidence interval estimation.
+Fixing a factor loading to 1 and estimating factor variances can help here.
 }
 \examples{
 require(umx)

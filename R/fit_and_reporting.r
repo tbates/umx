@@ -535,39 +535,42 @@ umxSummary.default <- function(model, ...){
 	stop("umxSummary is not defined for objects of class:", class(model))
 }
 
-#' umxSummary.MxModel
+#' Shows a compact, publication-style, summary of a RAM model
 #'
 #' Report the fit of a model in a compact form suitable for a journal. Emits a "warning" 
 #' when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 #' 
-#' notes on CIs and Identification
-#' Note, the conventional standard errors reported by OpenMx are used to produce the CIs you see in umxSummary
+#' Note: For some (multi-group) models, you will need to fall back on \code{\link{summary}}
+#' 
+#' CIs and Identification
+#' This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
 #' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
 #' 
 #' Sometimes they appear NA. This often indicates a model which is not identified (see\url{http://davidakenny.net/cm/identify.htm}).
 #' This can include empirical under-identification - for instance two factors
-#' that are essentially identical in structure.
+#' that are essentially identical in structure. use \code{\link{mxCheckIdentification}} to check identification.
 #' 
-#' A signature of this would be paths estimated at or close to
-#' zero. Fixing one or two of these to zero may fix the standard error calculation, 
+#' One or more paths estimated at or close to zero suggests that fixing one or two of 
+#' these to zero may fix the standard error calculation, 
 #' and alleviate the need to estimate likelihood-based or bootstrap CIs
 #' 
 #' If factor loadings can flip sign and provide identical fit, this creates another form of 
-#' under-identification and can break confidence interval estimation, but I think
-#' Fixing a factor loading to 1 and estimating factor variances can help here
+#' under-identification and can break confidence interval estimation.
+#' Fixing a factor loading to 1 and estimating factor variances can help here.
 #'
 #' @aliases umxSummary.MxModel
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param refModels Saturated models if needed for fit indices (see example below:
 #' 	If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.
 #' @param showEstimates What estimates to show. By default, the raw estimates are shown 
-#' (Options = c("raw", "std", "both", "none", "list of column names").
+#' (Options = c("raw", "std", "none", "both").
 #' @param digits How many decimal places to report (default = 2)
 #' @param report If "html", then show results in browser ("1", "table", "html")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
+#' @param std deprecated: use show = "std" instead!
 #' @param ... Other parameters to control model summary
 #' @family Reporting functions
 #' @seealso - \code{\link{umxRun}}
@@ -608,12 +611,14 @@ umxSummary.default <- function(model, ...){
 #' )
 #' m1 <- mxRun(m1)
 #' umxSummary(m1, showEstimates = "std", filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both", "list of column names"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, ...){
+umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std=NULL, ...){
 	# TODO make table take lists of models...
+	if(!is.null(std)){
+		stop("use show = 'std', not std = T")
+	}
 	report = match.arg(report)
 	filter = match.arg(filter)
-	validValuesForshowEstimates = c("raw", "std", "none", "both", "list of column names")
-	showEstimates = umx_default_option(showEstimates, validValuesForshowEstimates, check = FALSE) # to allow a user specified list
+	showEstimates = match.arg(showEstimates)
 
 	message("?umxSummary showEstimates='raw|std', digits, report= 'html', filter= 'NS' & more")
 	
@@ -661,9 +666,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 		} else {
 			nameing = c("name")
 		}
-		if(length(showEstimates) > 1) {
-			namesToShow = showEstimates # user-specified list
-		}else if(showEstimates == "both") {
+		if(showEstimates == "both") {
 			namesToShow = c(nameing, "Estimate", "SE", "Std.Estimate", "Std.SE")
 		} else if(showEstimates == "std"){
 			namesToShow = c(nameing, "Std.Estimate", "Std.SE", "CI")

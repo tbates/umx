@@ -16,7 +16,9 @@ umxModel(x)
 Catches a common typo, moving from mxModel to umx.
 }
 \examples{
+\dontrun{
 umxModel()
+}
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
