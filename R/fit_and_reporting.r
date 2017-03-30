@@ -826,7 +826,6 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		umxCompare(comparison, model, digits = 3)
 	}
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
-	# genEpi_TableFitStatistics(model, extended=extended)
 	nVar <- length(selDVs)/2;
 	# Calculate standardised variance components
 	a  <- mxEval(top.a, model); # Path coefficients

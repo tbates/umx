@@ -185,9 +185,9 @@ umxModel <- function(x) {
 #' \item{You don't need to list latentVars (detected as anything in paths but not in \code{mxData})}
 #' \item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
 #' \item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
-#' \item{You don't need to add labels: paths are automatically labelled "a_to_b" etc.
-#' \item{You don't need to set start values, they will be done for you.
-#' \item{You don't need to mxRun the model: it will run automatically, and print a summary
+#' \item{You don't need to add labels: paths are automatically labelled "a_to_b" etc.}
+#' \item{You don't need to set start values, they will be done for you.}
+#' \item{You don't need to mxRun the model: it will run automatically, and print a summary}
 #' }
 #' 
 #' umxRAM is like lm, ggplot2 etc: you give the data in a data = parameter
@@ -205,7 +205,7 @@ umxModel <- function(x) {
 #' Some software has massive behind-the-scenes defaulting and path addition. I've played with 
 #' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 #' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
-#' and \code{fix = "firstLoadings"}
+#' and \code{fix = "firstLoadings"}.
 #' 
 #' To be honest, these are not only more trouble than they are worth, they encourage errors and 
 #' poor modelling. I suggest user learn the handful of \code{\link{umxPath}}
@@ -1272,7 +1272,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				used = c(used, weightVar)
 			}
 			dataType = umx_is_cov(dzData, boolean = FALSE)
-			# compute numbers of ordinal and binary variables
+			# Compute numbers of ordinal and binary variables
 			if(dataType == "raw"){
 				if(!all(is.null(c(numObsMZ, numObsDZ)))){
 					stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
@@ -1365,8 +1365,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 					# = Handle all continuous case                          =
 					# =======================================================
 					message("All variables continuous")
-					meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
-					top = mxModel("top", umxLabel(meansMatrix))
+					meansMatrix = umxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
+					top = mxModel("top", meansMatrix)
 					MZ  = mxModel("MZ" , mxExpectationNormal("top.expCovMZ", "top.expMean"), mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
 					DZ  = mxModel("DZ" , mxExpectationNormal("top.expCovDZ", "top.expMean"), mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
 				} else if(sum(isBin) == 0){

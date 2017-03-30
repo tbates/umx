@@ -46,7 +46,7 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
+m1 <- mxModel("One Factor", type = "RAM",
 	manifestVars = manifests, latentVars = latents, 
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
@@ -59,7 +59,8 @@ umxGetParameters(m1, free = TRUE) # Informative labels: "G_to_x1", "x4_with_x4",
 # =======================================================================
 # = Create a new model, with suffixes added to paths, and model renamed =
 # =======================================================================
-m2 = umxLabel(m1, suffix= "_male", name = "male_model")
+m2 = umxLabel(m1, suffix= "_male", overRideExisting= TRUE, name = "male_model")
+umxGetParameters(m2, free = TRUE) # suffixes added
 
 # =============================
 # = Example Labeling a matrix =

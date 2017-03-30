@@ -44,6 +44,40 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 \description{
 umxRAM expedites creation of RAM models, still without doing invisible things to the model.
 }
+\details{
+Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
+\enumerate{
+\item{You don't need to set type = "RAM"}
+\item{You don't need to list manifestVars (they are detected from path usage)}
+\item{You don't need to list latentVars (detected as anything in paths but not in \code{mxData})}
+\item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
+\item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
+\item{You don't need to add labels: paths are automatically labelled "a_to_b" etc.}
+\item{You don't need to set start values, they will be done for you.}
+\item{You don't need to mxRun the model: it will run automatically, and print a summary}
+}
+
+umxRAM is like lm, ggplot2 etc: you give the data in a data = parameter
+A common error is to include data in the main list, a bit like
+saying lm(y ~ x + df) instead of lm(y ~ x, data = dd).
+
+\strong{nb}: unlike mxModel, umxRAM needs data at build time.
+
+If you are at the "sketching" stage of theory consideration, umxRAM supports
+a simple vector of manifest names to work with.
+
+
+\strong{Comparison with other software}
+
+Some software has massive behind-the-scenes defaulting and path addition. I've played with 
+similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
+and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
+and \code{fix = "firstLoadings"}.
+
+To be honest, these are not only more trouble than they are worth, they encourage errors and 
+poor modelling. I suggest user learn the handful of \code{\link{umxPath}}
+short cuts and stay clean and explicit!
+}
 \examples{
 
 # ===========================
