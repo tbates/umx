@@ -1,10 +1,12 @@
-# umx 1.6.0
-* April 01 2017 R 3.3.3
-* TIP: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
+# umx 1.7.0 (April 01 2017, R 3.4.0 (You Stupid Darkness)
+* *TIP*: umxAPA can format lots of things for you: from effects in lm -try it out!
+
+# umx 1.6.0 (April 01 2017, R 3.3.3 Another Canoe)
+* *TIP*: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
 * IMPROVED: `umx_make_TwinData` gains seed, varName, flexible spec, thresholding, full set of examples.
 	* NOTE: umx_make_TwinData uses **variance** input. This was ambiguous previously.
 * IMPROVED: `umxAPA` now reports mode for factor data.
-* IMPROVED: umxRAM can now be used to plot demo models without data: just add the list of manifests as a character string to `data`.
+* IMPROVED: umxRAM can now be used in "sketch" mode, to plot demos without data: just add the list of manifests as a character string to `data`.
 	```splus
 	m1 <- umxRAM("test", data = paste0("itemC", 1:4),
 		umxPath(unique.bivariate = paste0("itemC", 1:4)),
@@ -18,16 +20,14 @@
 * DOCUMENT: Examples use zygosity string from twinData instead of numeric code
 * DOCUMENT: Fix typo in umxPath docs
 
-# umx 1.5.5
-* March 20 2017 R 3.3.3
+# umx 1.5.5 (March 20 2017, R 3.3.3 "Another Canoe")
 * NEW: umx_write_to_clipboard
 * NEW: umx_r_test
 * IMPROVED: Add autoRun option to umxModify.
 * FIXED: Switch away from CSOLNP in umxCP example.
 * ROLLBACK: No longer generically alter CSOLNP tolerance.
 
-# umx 1.5.1
-* March 05 2017 R 3.3.2
+# umx 1.5.1 (March 05 2017 R 3.3.2)
 * IMPROVED: umxCP example for improved compatibility with OpenMx 2.7
 * IMPROVED: umx twin models now set a better (less likely to fail) precision for CSOLNP
 * IMPROVED: improved help files; document forms parameter for umxPath
@@ -37,16 +37,16 @@
 * ADD: "check" option to umx_make()
 * FIXED: umxpath(a, forms= ) arrows = 2 bug
 
-# umx 1.5.0
-* December 2016 feature + OpenMx 1.7.3 compatibility release
+# umx 1.5.0 (December 2016)
+* Features + OpenMx 1.7.3 compatibility release
 * IMPROVED: umxRAM returns invisibly
 * IMPROVED: umx_aggregate can return a formatted table (kable = TRUE)
 * IMPROVED: umxAPA returns lower-triangle of data.frame correlations (by default)
 * REMOVED: umxSE now included in OpenMx 2.7.0!
 * FIXED: umx_set_plot_format uses silent = TRUE internally where needed
 
-# umx 1.4.9
-* December 2016 bug fix
+# umx 1.4.9 (December 2016)
+* Bug fix
 * FIXED: umx_make_TwinData fix bug in DZ moderator code and A+C computation
 * IMPROVED: more functionality hints in man page titles
 
@@ -125,13 +125,12 @@
 * CHANGE: umx_residualize() ditto
 * UPDATE: Readme.md
 
-# umx 1.2.5
-* April 2016 bug fix release
+# umx 1.2.5 (April 2016 R 3.2.5 Very, Very Secure Dishes)
+* Bug fix release
 * FIX: $models bug in umxStandardizeACE
 * EXPAND: test suite
 
-# umx 1.2.0
-* April 2016 R 3.2.4 Very Secure Dishes edition
+# umx 1.2.0 (April 2016 R 3.2.4 Very Secure Dishes)
 * NEW: Plot using DiagrammeR!
 * NEW: Choose plot format!
 	* umx_set_plot_format("DiagrammeR")
@@ -170,8 +169,7 @@
 * BETTER: Help improvements (wording, seealso etc)
 * DEEP: Removed dependency on formula.tools
 
-# umx 1.1.0
-* December 2015 update
+# umx 1.1.0 (December 2015, R 3.2.3/Wooden Christmas-Tree update
 * NEW: vcov() added
 * NEW: Begin support for sex-lim twin models
 * NEW: New data file for sex-limitation
@@ -201,7 +199,7 @@
 * DROPPED umxRAM functionality to set endogenous, exogenous, and latent traits
 * DROPPED Deprecated a dozen functions.
 
-# umx 0.50.0
+# umx 0.50.0 Likely R 3.1.3 (Smooth Sidewalk) ~ 2015-03-09
 * First CRAN release! WOot!
 
 # umx 0.49.0
