@@ -16,7 +16,8 @@ A function to compute and report modifications which would improve fit.
 You will probably use \code{\link{umxMI}} instead
 }
 \seealso{
-Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
+Other xmu internal not for end user: \code{\link{umxModel}},
+  \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}},
   \code{\link{xmuLabel_RAM_Model}},

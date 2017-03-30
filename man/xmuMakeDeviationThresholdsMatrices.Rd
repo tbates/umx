@@ -21,7 +21,8 @@ Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds 
 usecase see: umxMakeThresholdMatrix
 }
 \seealso{
-Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
+Other xmu internal not for end user: \code{\link{umxModel}},
+  \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}},
   \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},

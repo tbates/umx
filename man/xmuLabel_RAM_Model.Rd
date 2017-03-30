@@ -5,7 +5,7 @@
 \title{xmuLabel_RAM_Model (not a user function)}
 \usage{
 xmuLabel_RAM_Model(model, suffix = "", labelFixedCells = TRUE,
-  overRideExisting = FALSE, verbose = FALSE)
+  overRideExisting = FALSE, verbose = FALSE, name = NULL)
 }
 \arguments{
 \item{model}{a RAM mxModel to label}
@@ -17,6 +17,8 @@ xmuLabel_RAM_Model(model, suffix = "", labelFixedCells = TRUE,
 \item{overRideExisting}{Whether to overRideExisting (Default FALSE)}
 
 \item{verbose}{how much feedback to give}
+
+\item{name}{Add optional name parameter to rename returned model (default = leave it along)}
 }
 \value{
 - The labeled \code{\link{mxModel}}
@@ -28,7 +30,8 @@ This function will label all the free parameters in a RAM \code{\link{mxModel}}
 End users should just call \code{\link{umxLabel}}
 }
 \seealso{
-Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
+Other xmu internal not for end user: \code{\link{umxModel}},
+  \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}}, \code{\link{xmuMI}},
   \code{\link{xmuMakeDeviationThresholdsMatrices}},

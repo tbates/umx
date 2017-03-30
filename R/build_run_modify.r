@@ -157,6 +157,24 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 # = Core Modelling Functions =
 # ============================
 
+
+#' Catches users typing umxModel instead of umxRAM
+#'
+#' @description
+#' Catches a common typo, moving from mxModel to umx.
+#'
+#' @param ... anything. We're just going to throw an error.
+#' @return - 
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - \code{\link{umxRAM}}, \code{\link{mxModel}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' umxModel()
+umxModel <- function(x) {
+	stop("You probably meant umxRAM?, not umxModel?")
+}
+
 #' umxRAM: Easy-to-use RAM model maker.
 #'
 #' Making it as simple as possible to create a RAM model, without doing invisible things to the model.
@@ -2597,17 +2615,21 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @param boundDiag Whether to bound the diagonal of a matrix
 #' @param verbose How much feedback to give the user (default = FALSE)
 #' @param overRideExisting = FALSE
+#' @param name Optional new name if given a model. Default (NULL) does not rename model.
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @export
 #' @examples
+#' # ==============================================================
+#' # = Show how OpenMx models are not labels, and then add labels =
+#' # ==============================================================
 #' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
+#' m1 <- mxModel("One Factor", type = "RAM",
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
@@ -2617,16 +2639,23 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxGetParameters(m1) # Default "matrix address" labels, i.e "One Factor.S[2,2]"
 #' m1 = umxLabel(m1)
 #' umxGetParameters(m1, free = TRUE) # Informative labels: "G_to_x1", "x4_with_x4", etc.
-#' # Labeling a matrix
+#' # =======================================================================
+#' # = Create a new model, with suffixes added to paths, and model renamed =
+#' # =======================================================================
+#' m2 = umxLabel(m1, suffix= "_male", overRideExisting= TRUE, name = "male_model")
+#' umxGetParameters(m2, free = TRUE) # suffixes added
+#' 
+#' # =============================
+#' # = Example Labeling a matrix =
+#' # =============================
 #' a = umxLabel(mxMatrix(name = "a", "Full", 3, 3, values = 1:9))
 #' a$labels
-#' # labels with "data." in the name are left alone
+#' # note: labels with "data." in the name are left untouched!
 #' a = mxMatrix(name = "a", "Full", 1,3, labels = c("data.a", "test", NA))
 #' umxLabel(a, verbose = TRUE)
 #' umxLabel(a, verbose = TRUE, overRideExisting = FALSE)
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
-#' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
-umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE) {	
+umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE, name = NULL) {	
 	# TODO umxLabel: Change these to an S3 method with three classes...
 	# TODO umxLabel: Check that arguments not used by a particular class are not set away from their defaults
 	# TODO umxLabel: Perhaps make "A_with_A" --> "var_A"
@@ -2637,7 +2666,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 	} else if (umx_is_RAM(obj)) { 
 		# Label a RAM model
 		if(verbose){message("RAM")}
-		return(xmuLabel_RAM_Model(model = obj, suffix = suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting, verbose = verbose))
+		return(xmuLabel_RAM_Model(model = obj, suffix = suffix, labelFixedCells = labelFixedCells, overRideExisting = overRideExisting, verbose = verbose, name = name))
 	} else if (umx_is_MxModel(obj) ) {
 		# Label a non-RAM matrix lamodel
 		return(xmuLabel_MATRIX_Model(model = obj, suffix = suffix, verbose = verbose))

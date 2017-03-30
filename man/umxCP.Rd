@@ -8,7 +8,7 @@ umxCP(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
   correlatedA = FALSE, equateMeans = T, dzAr = 0.5, dzCr = 1,
   addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"))
+  autoRun = getOption("umx_auto_run"), sep = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP")}
@@ -47,6 +47,8 @@ omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+
+\item{sep}{allowed as a synonym for "suffix"}
 }
 \value{
 - \code{\link{mxModel}}
@@ -112,7 +114,7 @@ umxCompare(m1, m2)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+- \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
 Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},

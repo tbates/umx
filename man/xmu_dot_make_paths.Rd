@@ -32,7 +32,8 @@ xmu_dot_make_paths(mxMat, stringIn, heads = NULL, fixed = TRUE,
 Makes graphviz paths
 }
 \seealso{
-Other xmu internal not for end user: \code{\link{xmuHasSquareBrackets}},
+Other xmu internal not for end user: \code{\link{umxModel}},
+  \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}},
   \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},

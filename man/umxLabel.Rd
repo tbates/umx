@@ -6,7 +6,7 @@
 \usage{
 umxLabel(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
   labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE,
-  overRideExisting = FALSE)
+  overRideExisting = FALSE, name = NULL)
 }
 \arguments{
 \item{obj}{An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}}
@@ -28,6 +28,8 @@ umxLabel(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 \item{verbose}{How much feedback to give the user (default = FALSE)}
 
 \item{overRideExisting}{= FALSE}
+
+\item{name}{Optional new name if given a model. Default (NULL) does not rename model.}
 }
 \value{
 - \code{\link{mxModel}}
@@ -37,6 +39,9 @@ umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix b
 This is a core function in umx: Adding labels to paths opens the door to \code{\link{umxEquate}}, as well as \code{\link{omxSetParameters}}
 }
 \examples{
+# ==============================================================
+# = Show how OpenMx models are not labels, and then add labels =
+# ==============================================================
 require(umx)
 data(demoOneFactor)
 latents  = c("G")
@@ -51,14 +56,20 @@ m1 <- mxModel("One Factor", type = "RAM",
 umxGetParameters(m1) # Default "matrix address" labels, i.e "One Factor.S[2,2]"
 m1 = umxLabel(m1)
 umxGetParameters(m1, free = TRUE) # Informative labels: "G_to_x1", "x4_with_x4", etc.
-# Labeling a matrix
+# =======================================================================
+# = Create a new model, with suffixes added to paths, and model renamed =
+# =======================================================================
+m2 = umxLabel(m1, suffix= "_male", name = "male_model")
+
+# =============================
+# = Example Labeling a matrix =
+# =============================
 a = umxLabel(mxMatrix(name = "a", "Full", 3, 3, values = 1:9))
 a$labels
-# labels with "data." in the name are left alone
+# note: labels with "data." in the name are left untouched!
 a = mxMatrix(name = "a", "Full", 1,3, labels = c("data.a", "test", NA))
 umxLabel(a, verbose = TRUE)
 umxLabel(a, verbose = TRUE, overRideExisting = FALSE)
-umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 }
 \references{

@@ -119,10 +119,11 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #' @param labelFixedCells Whether to labelFixedCells (Default TRUE)
 #' @param overRideExisting Whether to overRideExisting (Default FALSE)
 #' @param verbose how much feedback to give
+#' @param name Add optional name parameter to rename returned model (default = leave it along)
 #' @return - The labeled \code{\link{mxModel}}
 #' @family xmu internal not for end user
 #' @export
-xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = FALSE) {
+xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = FALSE, name = NULL) {
 	if (!umx_is_RAM(model)) {
 		stop("'model' must be an OpenMx RAM Model")
 	}
@@ -132,10 +133,6 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	freeS  = model$S$free
 	namesS = dimnames(freeS)[[1]]
 
-	# if(umx_has_means(model)){
-	# 	freeM  = model$matrices$M$free
-	# 	namesM = dimnames(freeM)[[1]]
-	# }
 	# =========================
 	# = Add asymmetric labels =
 	# =========================
@@ -189,6 +186,9 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	 	}else{
 			model$M$labels[is.na(model$M$labels)] = meanLabels[is.na(model$M$labels)]
 	 	}
+	}
+	if(!is.null(name)){
+		model = mxModel(model, name= name)
 	}
 	return(model)
 }
