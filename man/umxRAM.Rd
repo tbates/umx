@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxRAM}
 \alias{umxRAM}
-\title{umxRAM: Easy-to-use RAM model maker.}
+\title{Easy-to-use RAM model maker.}
 \usage{
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   setValues = TRUE, suffix = "", independent = NA,
@@ -42,34 +42,22 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 - \code{\link{mxModel}}
 }
 \description{
-Making it as simple as possible to create a RAM model, without doing invisible things to the model.
-}
-\details{
-Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
-\enumerate{
-\item{type defaults to "RAM"}
-\item{You don't need to list manifestVars (they are detected from path usage)}
-\item{You don't need to list latentVars (detected as anything in paths but not in \code{mxData})}
-\item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
-\item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
-}
-
-\strong{Comparison with other software}
-
-Some software has massive behind-the-scenes defaulting and path addition. I've played with 
-similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
-and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
-and \code{fix = "firstLoadings"}
-
-To be honest, these are not only more trouble than they are worth, they encourage errors and 
-poor modelling. I suggest user learn the handful of \code{\link{umxPath}}
-short cuts and stay clean and explicit!
+umxRAM expedites creation of RAM models, still without doing invisible things to the model.
 }
 \examples{
-# umxRAM is like lm, ggplot2 etc: you give the data in a data = parameter
-# A common error is to include data in the main list,
-# a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
-# nb: unlike mxModel, umxRAM needs data at build time.
+
+# ===========================
+# = Here's a simple example =
+# ===========================
+m1 = umxRAM("tim", data = mtcars,
+	umxPath(c("wt", "disp"), to = "mpg"),
+	umxPath("wt", with = "disp"),
+	umxPath(v.m. = c("wt", "disp", "mpg"))
+)
+
+# ====================================
+# = A cov model, with steps laid out =
+# ====================================
 
 # 1. For convenience, list up the manifests you will be using
 selVars = c("mpg", "wt", "disp")
@@ -80,17 +68,26 @@ myCov = mxData(cov(mtcars[,selVars]), type = "cov", numObs = nrow(mtcars) )
 # 3. Create the model (see ?umxPath for more nifty options)
 m1 = umxRAM("tim", data = myCov,
 	umxPath(c("wt", "disp"), to = "mpg"),
-	umxPath(cov = c("wt", "disp")),
-	umxPath(var = c("wt", "disp", "mpg"))
+	umxPath("wt", with = "disp"),
+	umxPath(var = selVars)
 )
 
-# 4. Print a nice summary 
+# 4. Use umxSummary to get standardized parameters, CIs etc.
 umxSummary(m1, show = "std")
 
-\dontrun{
-# 5. Draw a nice path diagram (uses DiagrameR package or Graphviz app)
+# 5. Display path diagram
 plot(m1)
 plot(m1, resid = "line")
+
+# ===================================================================================
+# = For playing around, umxRAM supports a vector of manifest names in place of data =
+# ===================================================================================
+
+m1 = umxRAM("play", data = paste0("x", 1:4),
+	umxPath("g", to = paste0("x", 1:4)),
+	umxPath(var = paste0("x", 1:4)),
+	umxPath(v1m0 = "g")
+)
 
 # =================================================
 # = This is an example of using your own labels:  =
@@ -108,11 +105,12 @@ m1$S$labels
 # wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 # disp "disp_with_mpg" "b1"          "disp_with_disp"
 }
-}
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
+\code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}
+
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
   \code{\link{umxMatrix}}, \code{\link{umxPath}},

@@ -18,10 +18,7 @@ umxVersion(model = NULL, verbose = TRUE, return = "umx")
 }
 \description{
 umxVersion returns the version information for umx, and for OpenMx and R.
-Valuable for helpful big-reports
-}
-\details{
-
+essential for bug-reports.
 }
 \examples{
 x = umxVersion(); x

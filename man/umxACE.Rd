@@ -213,7 +213,7 @@ data(twinData)
 selDVs = c("wt1", "wt2")
 mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
 dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
-m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ = nrow(dzData), numObsMZ = nrow(mzData))
+m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 umxSummary(m1)
 plot(m1)
 }

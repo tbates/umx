@@ -157,7 +157,6 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 # = Core Modelling Functions =
 # ============================
 
-
 #' Catches users typing umxModel instead of umxRAM
 #'
 #' @description
@@ -175,19 +174,32 @@ umxModel <- function(x) {
 	stop("You probably meant umxRAM?, not umxModel?")
 }
 
-#' umxRAM: Easy-to-use RAM model maker.
+#' Easy-to-use RAM model maker.
 #'
-#' Making it as simple as possible to create a RAM model, without doing invisible things to the model.
+#' umxRAM expedites creation of RAM models, still without doing invisible things to the model.
 #' 
-#' @details Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
+#' Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
 #' \enumerate{
-#' \item{type defaults to "RAM"}
+#' \item{You don't need to set type = "RAM"}
 #' \item{You don't need to list manifestVars (they are detected from path usage)}
 #' \item{You don't need to list latentVars (detected as anything in paths but not in \code{mxData})}
 #' \item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
 #' \item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
+#' \item{You don't need to add labels: paths are automatically labelled "a_to_b" etc.
+#' \item{You don't need to set start values, they will be done for you.
+#' \item{You don't need to mxRun the model: it will run automatically, and print a summary
 #' }
-#'
+#' 
+#' umxRAM is like lm, ggplot2 etc: you give the data in a data = parameter
+#' A common error is to include data in the main list, a bit like
+#' saying lm(y ~ x + df) instead of lm(y ~ x, data = dd).
+#' 
+#' \strong{nb}: unlike mxModel, umxRAM needs data at build time.
+#' 
+#' If you are at the "sketching" stage of theory consideration, umxRAM supports
+#' a simple vector of manifest names to work with.
+#' 
+#' @details
 #' \strong{Comparison with other software}
 #' 
 #' Some software has massive behind-the-scenes defaulting and path addition. I've played with 
@@ -214,35 +226,54 @@ umxModel <- function(x) {
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - \code{\link{mxModel}}
 #' @export
+#' @seealso \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}
 #' @family Core Modelling Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' # umxRAM is like lm, ggplot2 etc: you give the data in a data = parameter
-#' # A common error is to include data in the main list,
-#' # a bit like saying lm(y~x + df) instead of lm(y~x, data=dd)...
-#' # nb: unlike mxModel, umxRAM needs data at build time.
 #' 
+#' # ===========================
+#' # = Here's a simple example =
+#' # ===========================
+#' m1 = umxRAM("tim", data = mtcars,
+#' 	umxPath(c("wt", "disp"), to = "mpg"),
+#' 	umxPath("wt", with = "disp"),
+#' 	umxPath(v.m. = c("wt", "disp", "mpg"))
+#' )
+#' 
+#' # ====================================
+#' # = A cov model, with steps laid out =
+#' # ====================================
+#'
 #' # 1. For convenience, list up the manifests you will be using
 #' selVars = c("mpg", "wt", "disp")
 #' 
 #' # 2. Create an mxData object
 #' myCov = mxData(cov(mtcars[,selVars]), type = "cov", numObs = nrow(mtcars) )
-#' 
+#'
 #' # 3. Create the model (see ?umxPath for more nifty options)
 #' m1 = umxRAM("tim", data = myCov,
 #' 	umxPath(c("wt", "disp"), to = "mpg"),
-#' 	umxPath(cov = c("wt", "disp")),
-#' 	umxPath(var = c("wt", "disp", "mpg"))
+#' 	umxPath("wt", with = "disp"),
+#' 	umxPath(var = selVars)
 #' )
 #' 
-#' # 4. Print a nice summary 
+#' # 4. Use umxSummary to get standardized parameters, CIs etc.
 #' umxSummary(m1, show = "std")
 #' 
-#' \dontrun{
-#' # 5. Draw a nice path diagram (uses DiagrameR package or Graphviz app)
+#' # 5. Display path diagram
 #' plot(m1)
 #' plot(m1, resid = "line")
 #' 
+#' # ===================================================================================
+#' # = For playing around, umxRAM supports a vector of manifest names in place of data =
+#' # ===================================================================================
+#' 
+#' m1 = umxRAM("play", data = paste0("x", 1:4),
+#' 	umxPath("g", to = paste0("x", 1:4)),
+#' 	umxPath(var = paste0("x", 1:4)),
+#' 	umxPath(v1m0 = "g")
+#' )
+#'
 #' # =================================================
 #' # = This is an example of using your own labels:  =
 #' #   umxRAM will not over-ride them                =
@@ -258,7 +289,6 @@ umxModel <- function(x) {
 #'# mpg  "mpg_with_mpg"  "mpg_with_wt" "disp_with_mpg"
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
-#' }
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
@@ -361,6 +391,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		if(is.null(manifestVars)){
 			stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
 		}
+	}else if (class(data) == "character"){
+		# user is just running a trial model, with no data, but provided names
+		manifestVars = data
 	} else {
 		stop("There's something wrong with the data - I expected a dataframe or mxData, but you gave me a ", class(data)[1])		
 	}
@@ -385,7 +418,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# ====================
 	# = Handle Manifests =
 	# ====================
-	unusedManifests = setdiff(manifestVars, foundNames)
+	if (class(data) == "character"){
+		# user is just running a trial model, with no data, but provided names
+		unusedManifests = c()
+	}else{
+		unusedManifests = setdiff(manifestVars, foundNames)
+	}	
 	msg_str = ""
 	if(length(unusedManifests) > 0){
 		if(length(unusedManifests) > 10){
@@ -416,9 +454,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = manifestVars,
 		latentVars  = latentVars,
-		independent = independent,
-		data, dot.items)
+		independent = independent, dot.items)
 	)
+	if (class(data) == "character"){
+		# user is just running a trial model, with no data, but provided names
+		# plot(m1)
+		return(m1)
+	}else{
+		m1 = mxModel(m1, data)
+	}
+
 	if(isRaw){
 		if(is.null(m1$matrices$M) ){
 			message("You have raw data, but no means model. I added\n",
@@ -1183,7 +1228,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' selDVs = c("wt1", "wt2")
 #' mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
 #' dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
-#' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ = nrow(dzData), numObsMZ = nrow(mzData))
+#' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 

@@ -3,6 +3,7 @@
 \name{install.OpenMx}
 \alias{install.OpenMx}
 \alias{umx_install_OpenMx}
+\alias{umx_update_OpenMx}
 \title{install.OpenMx}
 \usage{
 install.OpenMx(loc = "http://openmx.psyc.virginia.edu/getOpenMx.R")
