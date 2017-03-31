@@ -16,7 +16,7 @@
 If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
 
 \item{showEstimates}{What estimates to show. By default, the raw estimates are shown 
-(Options = c("raw", "std", "both", "none", "list of column names").}
+(Options = c("raw", "std", "none", "both").}
 
 \item{digits}{How many decimal places to report (default = 2)}
 

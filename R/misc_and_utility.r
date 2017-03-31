@@ -1916,11 +1916,11 @@ install.OpenMx <- function(loc = "http://openmx.psyc.virginia.edu/getOpenMx.R") 
 	if(loc == "travis"){
 		# TODO special case by OS
 		browseURL("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis")
-	} else {
-		alt.expr
+	} else if (loc == "http://openmx.psyc.virginia.edu/getOpenMx.R"){
+		source(loc)
+	}else{
+		install.packages(loc)
 	}
-	"http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis"
-	source(loc)
 }
 
 #' @export
