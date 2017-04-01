@@ -39,23 +39,30 @@
 #' @importFrom DiagrammeR DiagrammeR
 #' @importFrom graphics plot
 #' @importFrom MASS mvrnorm
+
 #' @importFrom methods as getSlots is slotNames
 #' @importFrom methods setClass
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
+
 #' @importFrom numDeriv jacobian
 #' @importFrom polycor hetcor
 #' @importFrom sfsmisc nearcor
 #' @importFrom parallel detectCores
+
 #' @importFrom stats C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
 #' @importFrom stats setNames update var delete.response terms
+
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
+#' @importFrom utils browseURL install.packages
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
+
+
 	
 utils::globalVariables(c(
 	'M', 'S',
