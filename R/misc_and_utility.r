@@ -1902,7 +1902,8 @@ print.reliability <- function (x, digits = 4, ...){
 #' \code{\link{source}}() the getOpenMx.R script from source repo.
 #'
 #' @aliases umx_install_OpenMx umx_update_OpenMx
-#' @param loc the URL from which to install parallel OpenMx
+#' @param loc the URL from which to install parallel OpenMx. SET TO "travis" to
+#' go to travis and see recent build URLs
 #' @return - 
 #' @export
 #' @family Miscellaneous Functions
@@ -1912,7 +1913,14 @@ print.reliability <- function (x, digits = 4, ...){
 #' install.OpenMx()
 #' }
 install.OpenMx <- function(loc = "http://openmx.psyc.virginia.edu/getOpenMx.R") {
-	source(loc)
+	if(loc == "travis"){
+		# TODO special case by OS
+		browseURL("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis")
+	} else if (loc == "http://openmx.psyc.virginia.edu/getOpenMx.R"){
+		source(loc)
+	}else{
+		install.packages(loc)
+	}
 }
 
 #' @export

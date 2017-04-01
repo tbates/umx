@@ -9,7 +9,8 @@
 install.OpenMx(loc = "http://openmx.psyc.virginia.edu/getOpenMx.R")
 }
 \arguments{
-\item{loc}{the URL from which to install parallel OpenMx}
+\item{loc}{the URL from which to install parallel OpenMx. SET TO "travis" to
+go to travis and see recent build URLs}
 }
 \value{
 -
