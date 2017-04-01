@@ -4,7 +4,7 @@
 \alias{umxModel}
 \title{Catches users typing umxModel instead of umxRAM}
 \usage{
-umxModel(x)
+umxModel(...)
 }
 \arguments{
 \item{...}{anything. We're just going to throw an error.}

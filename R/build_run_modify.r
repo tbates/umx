@@ -172,7 +172,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' \dontrun{
 #' umxModel()
 #' }
-umxModel <- function(x) {
+umxModel <- function(...) {
 	stop("You probably meant umxRAM?, not umxModel?")
 }
 
