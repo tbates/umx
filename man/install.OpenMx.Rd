@@ -4,19 +4,21 @@
 \alias{install.OpenMx}
 \alias{umx_install_OpenMx}
 \alias{umx_update_OpenMx}
-\title{install.OpenMx}
+\title{Easily install the latest parallel/NPSOL enabled build of OpenMx.}
 \usage{
-install.OpenMx(loc = "http://openmx.psyc.virginia.edu/getOpenMx.R")
+install.OpenMx(loc = c("UVa", "latest", "travis"), url = NULL)
 }
 \arguments{
-\item{loc}{the URL from which to install parallel OpenMx. SET TO "travis" to
-go to travis and see recent build URLs}
+\item{loc}{Where to install from: "UVa" (the default), "latest" (travis build),
+or open the "travis" list of builds.}
+
+\item{url}{A custom URL if you have/need one (probably not)}
 }
 \value{
 -
 }
 \description{
-\code{\link{source}}() the getOpenMx.R script from source repo.
+You can install from UVa, from travis latest, from a custom url, or open the list of travis builds.
 }
 \examples{
 \dontrun{

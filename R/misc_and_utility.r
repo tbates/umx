@@ -1896,14 +1896,15 @@ print.reliability <- function (x, digits = 4, ...){
 # ==================
 # = Code functions =
 # ==================
-#' install.OpenMx
+#' Easily install the latest parallel/NPSOL enabled build of OpenMx.
 #'
 #' @description
-#' \code{\link{source}}() the getOpenMx.R script from source repo.
+#' You can install from UVa, from travis latest, from a custom url, or open the list of travis builds.
 #'
 #' @aliases umx_install_OpenMx umx_update_OpenMx
-#' @param loc the URL from which to install parallel OpenMx. SET TO "travis" to
-#' go to travis and see recent build URLs
+#' @param loc Where to install from: "UVa" (the default), "latest" (travis build),
+#' or open the "travis" list of builds.
+#' @param url A custom URL if you have/need one (probably not)
 #' @return - 
 #' @export
 #' @family Miscellaneous Functions
@@ -1912,12 +1913,18 @@ print.reliability <- function (x, digits = 4, ...){
 #' \dontrun{
 #' install.OpenMx()
 #' }
-install.OpenMx <- function(loc = "http://openmx.psyc.virginia.edu/getOpenMx.R") {
+install.OpenMx <- function(loc = c("UVa", "latest", "travis"), url= NULL) {	
+	loc = match.arg(loc)
+	if(!is.null(url)){
+		loc = url
+	}
 	if(loc == "travis"){
 		# TODO special case by OS
 		browseURL("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis")
-	} else if (loc == "http://openmx.psyc.virginia.edu/getOpenMx.R"){
-		source(loc)
+	}else if(loc == "latest"){
+		install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
+	} else if(loc == "UVa"){
+		source("http://openmx.psyc.virginia.edu/getOpenMx.R")
 	}else{
 		install.packages(loc)
 	}
