@@ -2399,7 +2399,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 #' umx_check_names(c("x1", "x2"), demoOneFactor)
 #' umx_check_names(c("x1", "x2"), as.matrix(demoOneFactor))
-#' umx_check_names(c("x1", "x2"), cov(demoOneFactor[,c("x1","x2")]))
+#' umx_check_names(c("x1", "x2"), cov(demoOneFactor[, c("x1","x2")]))
 #' umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 #' umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 #' umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
@@ -2448,15 +2448,15 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 	}
 }
 
-#' umx_cov_diag
+#' Get variances from a df that might contain some non-numeric columns
 #'
-#' Helper to get variances from a df that might contain some non-numeric columns.
-#' Values at non-numeric columns are set to the value passed in as ordVar.
+#' Pass in any dataframe and get variances despite some non-numeric columns.
+#' Cells involving these non-numeric columns are set to ordVar (default = 1).
 #'
 #' @param df a dataframe of raw data from which to get variances.
-#' @param ordVar The value to return at any ordinal columns (defaults to 1)
-#' @param format to return: options are c("diag", "Full", "Lower"). Defaults to diag: a vector of variances
-#' @param use passed to \code{\link{cov}} - defaults to "complete.obs" (other options are in the function )
+#' @param ordVar The value to return at any ordinal columns (defaults to 1).
+#' @param format to return: options are c("full", "diag", "lower"). Defaults to full, but this is not implemented yet.
+#' @param use passed to \code{\link{cov}} - defaults to "complete.obs" (see param default for other options).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Building Functions
@@ -2465,31 +2465,39 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' tmp = mtcars[,1:4]
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
 #' tmp$hp  = ordered(mtcars$hp)  # binary factor
-#' umx_cov_diag(tmp, ordVar = 1, use = "pair")
+#' umx_var(tmp, format= "diag", ordVar = 1, use = "pair")
 #' tmp2 = tmp[, c(1,3)]
-#' umx_cov_diag(tmp2)
-#' umx_cov_diag(tmp2, format = "Full")
-umx_cov_diag <- function(df, ordVar = 1, format = c("diag", "Full", "Lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete")){
+#' umx_var(tmp2, format= "diag")
+#' # todo: umx_var(tmp2, format = "full")
+umx_var <- function(df, ordVar = 1, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete")){
 	format = match.arg(format)
 	use    = match.arg(use)
 	if(any(umx_is_ordered(df))){
 		nCol = dim(df)[2]
-		starts = diag(ordVar, nCol, nCol)
+		out  = diag(ordVar, nCol, nCol)
 		cont = umx_is_ordered(df, continuous.only = TRUE)
 		if(any(cont)){
 			for(i in which(cont)) {
-				starts[i,i] = var(df[,i], use = use)
+				out[i,i] = var(df[,i], use = use)
 			}
 		}
-		starts = diag(starts)
+		if(format == "diag"){
+			return(diag(out))
+		} else {
+			stop("Only diag implemented yet for umx_var")
+			return(out)	
+		}
 	} else {
-		starts = diag(var(df, use = use))
-	}
-	if(format == "diag"){
-		return(starts)
-	} else {
-		message("only var list implemented")
-		return(starts)	
+		full = var(df, use = use)
+		if(format == "full"){
+			out = full
+		} else if(format == "diag") {
+			out = diag(full)
+		} else {
+		 # "lower"
+			out = diag(full)
+		}
+		return(out)
 	}
 }
 

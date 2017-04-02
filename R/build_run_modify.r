@@ -1339,10 +1339,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# ===========================
 				# = Add means matrix to top =
 				# ===========================
-				# Figure out ace starts while we are here
+				# Figure out start values while we are here
 				# varStarts will be used to fill a, c, and e
 				# mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)
-				varStarts = umx_cov_diag(mzData[, selDVs[1:nVar], drop = FALSE], ordVar = 1, use = "pairwise.complete.obs")
+				varStarts = umx_var(mzData[, selDVs[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 				if(nVar == 1){
 					varStarts = varStarts/3
 				} else {
@@ -2603,7 +2603,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 				freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
 				obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
 				# covData = cov(theData, )
-				covData = umx_cov_diag(theData[, manifests, drop = FALSE], ordVar = 1, format = "diag", use = "pairwise.complete.obs")
+				covData = umx_var(theData[, manifests, drop = FALSE], format= "diag", ordVar = 1, format = "diag", use = "pairwise.complete.obs")
 				if(!is.null(dim(covData)) || length(covData) > 1){
 					covData = diag(covData)
 				} else {

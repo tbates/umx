@@ -28,7 +28,7 @@ require(umx)
 data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 umx_check_names(c("x1", "x2"), demoOneFactor)
 umx_check_names(c("x1", "x2"), as.matrix(demoOneFactor))
-umx_check_names(c("x1", "x2"), cov(demoOneFactor[,c("x1","x2")]))
+umx_check_names(c("x1", "x2"), cov(demoOneFactor[, c("x1","x2")]))
 umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
@@ -55,5 +55,5 @@ Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_is_exogenous}},
   \code{\link{umx_is_ordered}}
 
-Other Building Functions: \code{\link{umx_cov_diag}}
+Other Building Functions: \code{\link{umx_var}}
 }
