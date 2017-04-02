@@ -1,10 +1,12 @@
-# umx 1.7.0 (Bleeding edge -expected release April 01 2017, R 3.4.0 (You Stupid Darkness)
+# umx 1.7.0 (Bleeding edge - expected in May 01 2017, R 3.4.0 (You Stupid Darkness)
 * *TIP*: umxAPA can format lots of things for you: from effects in lm -try it out!
 
-# umx 1.6.0 (April 01 2017, R 3.3.3 Another Canoe)
+# umx 1.6.0 (April 02 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
 * NEW: umxVersion (returns mxVersion() + umx version)
 * BUGFIX: install.OpenMx had a broken URL, now corrected.
+* BUGFIX: umx_cont_2_quantiles lowest threshold was empty
+* IMPROVED: umx_cont_2_quantiles now allows returning cut points, better examples, level_names
 * IMPROVED: install.OpenMx can now get UVA, latest travis(mac), or open travis page. 
 * IMPROVED: umx_make_TwinData
 	* Use variance input

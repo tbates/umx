@@ -1,7 +1,7 @@
 ## Changes
-* Check under 3.4.0
+* Edited DESCRIPTION as requested. There is not citation as yet.
 * Bug-fix in install.OpenMx
-* Multiple enhancements
+* Multiple enhancements to helper functions
 
 ## Test environments
 * OS X 10.12.4, R version 3.3.3
