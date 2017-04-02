@@ -3030,9 +3030,10 @@ umx_reorder <- function(old, newOrder) {
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
+#' str(x)
 #' levels(x)
-#' x = umx_cont_2_quantiles(mtcars[,"mpg"], 5) # quintiles
-#' x = umx_cont_2_quantiles(mtcars[,"cyl"], 10)
+#' x = umx_cont_2_quantiles(mtcars[,"mpg"], nlevels = 5) # quintiles
+#' x = umx_cont_2_quantiles(mtcars[,"cyl"], nlevels= 10)
 #' # x = umx_cont_2_quantiles(mtcars[,1:3])
 #' x = umx_cont_2_quantiles(rep(0:10, 10), nlevels = 10)
 #' x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
@@ -3040,38 +3041,28 @@ umx_reorder <- function(old, newOrder) {
 umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
 	type = match.arg(type)
 	if(is.null(nlevels)){
-		stop("You must set the number of levels to threshold data, i.e., 'nlevels = 10' for deciles")
+		stop("You must set the number of levels, i.e., 'nlevels = 10'  to threshold data into deciles")
 	}
-	# TODO: check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed columnwise
+	# TODO: check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed column-wise
 	if(is.data.frame(x) && dim(x)[2] > 1){
 		stop("Can't handle multiple column actions yet: email tim and rip him a new one")
 	} else {
 		if(!is.numeric(x) ){
 			stop("This is for numeric variables. you gave me a ", typeof(x))
 		} else {
-			# x = mtcars[,"cyl"]
-			myBreaks = quantile(x, seq(0, 1, by = 1/nlevels), type = 8, na.rm = TRUE)
-			myBreaks = unique(myBreaks)
-		  myLabels = myBreaks
-			myBreaks = c(-Inf, myBreaks)
-			# myBreaks[length(myBreaks)] = Inf
-			# myLabels = NULL
-		  # if(max(myBreaks) == max(x)){
-		  # 				myBreaks = myBreaks[1:(length(myBreaks)-1)]
-		  # 				myLabels = myBreaks[2:length(myBreaks)]
-		  # } else {
-		  # 				myLabels = c(myBreaks[2:(length(myBreaks)-1)], paste0("_", max(x)))
-		  # }
+			cutPoints   = quantile(x, probs = c((1:(nlevels-1)) / (nlevels)), type = 8, na.rm = TRUE)
+			levelLabels = paste0("level", 1:(nlevels))
+			cutPoints   = c(-Inf, cutPoints, Inf)
 			if(type == "mxFactor"){
-				out = cut(x, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 
+				out = cut(x, breaks = cutPoints, labels = levelLabels, ordered_result = TRUE); 
 				out = mxFactor(out, levels = levels(out))
 			} else if (type == "ordered") {
-				out = cut(x, breaks = myBreaks, labels = myLabels, ordered_result = TRUE); 		
+				out = cut(x, breaks = cutPoints, labels = levelLabels, ordered_result = TRUE); 		
 			} else {
-				out = cut(x, breaks = myBreaks, labels = myLabels); 
+				out = cut(x, breaks = cutPoints, labels = levelLabels); 
 			}
 			if(verbose){
-				message("Scores ranged from ", min(x), " to ", max(x), ". Cuts made at ", omxQuotes(myBreaks))
+				message("Scores ranged from ", min(x), " to ", max(x), ". Cuts made at ", omxQuotes(cutPoints))
 			}
 			return(out)
 		}
@@ -3776,7 +3767,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @param empirical Passed to mvrnorm
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
-#' @family Twin Modeling Functions
+#' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' # =====================================================================

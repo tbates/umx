@@ -81,6 +81,5 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryIP}},
-  \code{\link{umx_make_TwinData}}, \code{\link{umx}}
+  \code{\link{umxSummaryIP}}, \code{\link{umx}}
 }

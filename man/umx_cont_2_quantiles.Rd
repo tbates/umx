@@ -31,9 +31,10 @@ all deciles up to the fourth, then these will be merged into one level.
 }
 \examples{
 x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
+str(x)
 levels(x)
-x = umx_cont_2_quantiles(mtcars[,"mpg"], 5) # quintiles
-x = umx_cont_2_quantiles(mtcars[,"cyl"], 10)
+x = umx_cont_2_quantiles(mtcars[,"mpg"], nlevels = 5) # quintiles
+x = umx_cont_2_quantiles(mtcars[,"cyl"], nlevels= 10)
 # x = umx_cont_2_quantiles(mtcars[,1:3])
 x = umx_cont_2_quantiles(rep(0:10, 10), nlevels = 10)
 x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
@@ -49,6 +50,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_as_numeric}}, \code{\link{umx_cov2raw}},
   \code{\link{umx_lower2full}},
   \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_make_fake_data}},
   \code{\link{umx_merge_CIs}},

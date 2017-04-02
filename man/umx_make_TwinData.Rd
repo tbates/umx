@@ -101,15 +101,19 @@ umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 }
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
-  \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotCP}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
-  \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+Other Data Functions: \code{\link{umxCovData}},
+  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
+  \code{\link{umxPadAndPruneForDefVars}},
+  \code{\link{umx_as_numeric}},
+  \code{\link{umx_cont_2_quantiles}},
+  \code{\link{umx_cov2raw}}, \code{\link{umx_lower2full}},
+  \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_bin_cont_pair_data}},
+  \code{\link{umx_make_fake_data}},
+  \code{\link{umx_merge_CIs}},
+  \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
+  \code{\link{umx_residualize}}, \code{\link{umx_round}},
+  \code{\link{umx_scale_wide_twin_data}},
+  \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}},
   \code{\link{umx}}
 }
