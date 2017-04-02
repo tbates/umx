@@ -5,7 +5,7 @@
 \title{umx_cont_2_quantiles}
 \usage{
 umx_cont_2_quantiles(x, nlevels = NULL, type = c("mxFactor", "ordered",
-  "unordered"), verbose = FALSE)
+  "unordered"), verbose = FALSE, returnCutpoints = FALSE)
 }
 \arguments{
 \item{x}{a variable to recode as ordinal (email me if you'd like this upgraded to handle df input)}
@@ -31,14 +31,17 @@ all deciles up to the fourth, then these will be merged into one level.
 }
 \examples{
 x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
-str(x)
-levels(x)
-x = umx_cont_2_quantiles(mtcars[,"mpg"], nlevels = 5) # quintiles
-x = umx_cont_2_quantiles(mtcars[,"cyl"], nlevels= 10)
-# x = umx_cont_2_quantiles(mtcars[,1:3])
+x = data.frame(x)
+str(x); levels(x)
+table(x)
+\dontrun{
+ggplot2::qplot(x$x)
+y = mxDataWLS(x, type = "WLS")
+}
+x = umx_cont_2_quantiles(mtcars[, "mpg"], nlevels = 5) # quintiles
+x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10)
 x = umx_cont_2_quantiles(rep(0:10, 10), nlevels = 10)
 x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
-str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

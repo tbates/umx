@@ -7,7 +7,7 @@ Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
 Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
 License: GPL-3
 URL: http://github.com/tbates/umx
-Description: Quickly create, run, and report structural equation and twin models
+Description: Quickly create, run, and report structural equation and twin models.
     '?umx' to learn more.
 Depends:
     R (>= 3.2.0),

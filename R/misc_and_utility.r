@@ -3021,52 +3021,74 @@ umx_reorder <- function(old, newOrder) {
 #'
 #' @param x a variable to recode as ordinal (email me if you'd like this upgraded to handle df input)
 #' @param nlevels How many bins or levels (at most) to use (i.e., 10 = deciles)
-#' @param type what to return (Default is "mxFactor") options include
-#' "ordered" and "unordered")
+#' @param type what to return (Default is "mxFactor") options: "ordered" and "unordered")
 #' @param verbose report the min, max, and decile cuts used (default = FALSE)
+#' @param returnCutpoints just return the cutpoints, for use directly
 #' @return - recoded variable as an \code{\link{mxFactor}}
 #' @export
 #' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
-#' str(x)
-#' levels(x)
-#' x = umx_cont_2_quantiles(mtcars[,"mpg"], nlevels = 5) # quintiles
-#' x = umx_cont_2_quantiles(mtcars[,"cyl"], nlevels= 10)
-#' # x = umx_cont_2_quantiles(mtcars[,1:3])
-#' x = umx_cont_2_quantiles(rep(0:10, 10), nlevels = 10)
+#' x = data.frame(x)
+#' str(x); levels(x)
+#' table(x)
+#' \dontrun{
+#' ggplot2::qplot(x$x)
+#' y = mxDataWLS(x, type = "WLS")
+#' }
+#' 
+#'# ===========================
+#'# = Use with twin variables =
+#'# ===========================
+#' 
+#' x = twinData
+#' y = rbind(x$wt1, x$wt2) 
+#' cuts  = umx_cont_2_quantiles(y, nlevels = 10, returnCutpoints = T)
+#' x$wt1 = umx_cont_2_quantiles(x$wt1, nlevels = cuts) # use same for both...
+#' x$wt2 = umx_cont_2_quantiles(x$wt2, nlevels = cuts) # use same for both...
+#' str(x[, c("wt1", "wt2")])
+#' 
+#' # More examples
+#' 
+#' x = umx_cont_2_quantiles(mtcars[, "mpg"], nlevels = 5) # quintiles
+#' x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10) # more than integers exist
 #' x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
-#' str(umx_cont_2_quantiles(rnorm(10000), nlevels = 4, verbose = TRUE))
-umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE){
+umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE, returnCutpoints = FALSE){
+	# TODO: check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed column-wise
 	type = match.arg(type)
+	if(is.data.frame(x) && dim(x)[2] > 1){
+		stop("I can only handle single vectors: email tim and rip him a new one")
+	}
+	if(!is.numeric(x) ){
+		stop("This is for numeric variables. you gave me a ", typeof(x))
+	}
 	if(is.null(nlevels)){
 		stop("You must set the number of levels, i.e., 'nlevels = 10'  to threshold data into deciles")
-	}
-	# TODO: check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed column-wise
-	if(is.data.frame(x) && dim(x)[2] > 1){
-		stop("Can't handle multiple column actions yet: email tim and rip him a new one")
+	} else if(length(nlevels) > 1){
+		# Levels being provided as a list of levels
+		cutPoints = nlevels
+		nlevels   = length(cutPoints) + 1
 	} else {
-		if(!is.numeric(x) ){
-			stop("This is for numeric variables. you gave me a ", typeof(x))
-		} else {
-			cutPoints   = quantile(x, probs = c((1:(nlevels-1)) / (nlevels)), type = 8, na.rm = TRUE)
-			levelLabels = paste0("level", 1:(nlevels))
-			cutPoints   = c(-Inf, cutPoints, Inf)
-			if(type == "mxFactor"){
-				out = cut(x, breaks = cutPoints, labels = levelLabels, ordered_result = TRUE); 
-				out = mxFactor(out, levels = levels(out))
-			} else if (type == "ordered") {
-				out = cut(x, breaks = cutPoints, labels = levelLabels, ordered_result = TRUE); 		
-			} else {
-				out = cut(x, breaks = cutPoints, labels = levelLabels); 
-			}
-			if(verbose){
-				message("Scores ranged from ", min(x), " to ", max(x), ". Cuts made at ", omxQuotes(cutPoints))
-			}
-			return(out)
+		cutPoints = quantile(x, probs = c((1:(nlevels-1)) / (nlevels)), type = 8, na.rm = TRUE)
+		if(returnCutpoints){
+			return(cutPoints)
 		}
 	}
+	levelLabels = paste0("level", 1:(nlevels))
+	cutPoints   = c(-Inf, cutPoints, Inf)
+	if(type == "mxFactor"){
+		out = cut(x, breaks = cutPoints, labels = levelLabels, ordered_result = TRUE); 
+		out = mxFactor(out, levels = levels(out))
+	} else if (type == "ordered") {
+		out = cut(x, breaks = cutPoints, labels = levelLabels, ordered_result = TRUE); 		
+	} else {
+		out = cut(x, breaks = cutPoints, labels = levelLabels); 
+	}
+	if(verbose){
+		message("Scores ranged from ", min(x), " to ", max(x), ". Cuts made at ", omxQuotes(cutPoints))
+	}
+	return(out)
 }
 
 #' umx_has_square_brackets
