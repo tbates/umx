@@ -1,13 +1,11 @@
 ## Changes
-* Last submission gave an error on the incoming check machine
-  (but not on a win test box). I've changed the optimizer for that
-  example, and it should run everywhere now.
-* Compatibility fixes with OpenMx new optimizer
-* umx feature enhancements
+* Check under 3.4.0
+* Bug-fix in install.OpenMx
+* Multiple enhancements
 
 ## Test environments
 * OS X 10.12.4, R version 3.3.3
-* Win (64-bit) R Under development (unstable) (2017-03-17 r72361)
+* Win (64-bit) R Under development (3.4.0 alpha (2017-03-31 r72459)
 * 64-bit Linux (Scientific Linux 6), R 3.3.3
 
 ## R CMD check results
