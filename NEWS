@@ -30,6 +30,7 @@
 * DOCUMENT umx_make_TwinData docs much improved
 * DOCUMENT: Examples use zygosity string from twinData instead of numeric code
 * DOCUMENT: Fix typo in umxPath docs
+* INCOMPATIBLE: renamed umx_cov_diag to umx_var
 
 # umx 1.5.5 (March 20 2017, R 3.3.3 "Another Canoe")
 * NEW: umx_write_to_clipboard
