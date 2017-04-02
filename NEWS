@@ -1,10 +1,10 @@
 # umx 1.7.0 (Bleeding edge -expected release April 01 2017, R 3.4.0 (You Stupid Darkness)
 * *TIP*: umxAPA can format lots of things for you: from effects in lm -try it out!
 
-
 # umx 1.6.0 (April 01 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
 * NEW: umxVersion (returns mxVersion() + umx version)
+* BUGFIX: install.OpenMx had a broken URL, now corrected.
 * IMPROVED: umx_make_TwinData
 	* Use variance input
 	* Option to set seed
@@ -78,7 +78,7 @@
 * IMPROVED: umxEquate supports autoRun and compare
 * IMPROVED: umx_names can, as a convenience, take string vectors
 * RENAME: umxGetOpenMx aliased to install.OpenMx or umx_install_OpenMx
-* IMPROVED: umxFitIndices new indices + computes refModels automatically
+* IMPROVED: umxFitIndices additional fit-indices and now automatically computes refModels if needed.
 * IMPROVED: umxRAM remove_unused_manifests no longer updates manifestVars + leaves variable in data by default.
 * RENAME: plot() "showFixed" deprecated in favour of easier to type "fixed"
 

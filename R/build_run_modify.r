@@ -39,23 +39,30 @@
 #' @importFrom DiagrammeR DiagrammeR
 #' @importFrom graphics plot
 #' @importFrom MASS mvrnorm
+
 #' @importFrom methods as getSlots is slotNames
 #' @importFrom methods setClass
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
+
 #' @importFrom numDeriv jacobian
 #' @importFrom polycor hetcor
 #' @importFrom sfsmisc nearcor
 #' @importFrom parallel detectCores
+
 #' @importFrom stats C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
 #' @importFrom stats setNames update var delete.response terms
+
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
+#' @importFrom utils browseURL install.packages
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
+
+
 	
 utils::globalVariables(c(
 	'M', 'S',
@@ -172,7 +179,7 @@ methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 #' \dontrun{
 #' umxModel()
 #' }
-umxModel <- function(x) {
+umxModel <- function(...) {
 	stop("You probably meant umxRAM?, not umxModel?")
 }
 
@@ -1332,10 +1339,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# ===========================
 				# = Add means matrix to top =
 				# ===========================
-				# Figure out ace starts while we are here
+				# Figure out start values while we are here
 				# varStarts will be used to fill a, c, and e
 				# mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)
-				varStarts = umx_cov_diag(mzData[, selDVs[1:nVar], drop = FALSE], ordVar = 1, use = "pairwise.complete.obs")
+				varStarts = umx_var(mzData[, selDVs[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 				if(nVar == 1){
 					varStarts = varStarts/3
 				} else {
@@ -2596,7 +2603,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 				freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
 				obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
 				# covData = cov(theData, )
-				covData = umx_cov_diag(theData[, manifests, drop = FALSE], ordVar = 1, format = "diag", use = "pairwise.complete.obs")
+				covData = umx_var(theData[, manifests, drop = FALSE], format= "diag", ordVar = 1, format = "diag", use = "pairwise.complete.obs")
 				if(!is.null(dim(covData)) || length(covData) > 1){
 					covData = diag(covData)
 				} else {
