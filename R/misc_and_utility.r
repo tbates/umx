@@ -3044,7 +3044,7 @@ umx_reorder <- function(old, newOrder) {
 #' 
 #' x = twinData
 #' y = rbind(x$wt1, x$wt2) 
-#' cuts  = umx_cont_2_quantiles(y, nlevels = 10, returnCutpoints = T)
+#' cuts  = umx_cont_2_quantiles(y, nlevels = 10, returnCutpoints = TRUE)
 #' x$wt1 = umx_cont_2_quantiles(x$wt1, nlevels = cuts) # use same for both...
 #' x$wt2 = umx_cont_2_quantiles(x$wt2, nlevels = cuts) # use same for both...
 #' str(x[, c("wt1", "wt2")])
