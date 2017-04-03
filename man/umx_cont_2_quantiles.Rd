@@ -12,10 +12,11 @@ umx_cont_2_quantiles(x, nlevels = NULL, type = c("mxFactor", "ordered",
 
 \item{nlevels}{How many bins or levels (at most) to use (i.e., 10 = deciles)}
 
-\item{type}{what to return (Default is "mxFactor") options include
-"ordered" and "unordered")}
+\item{type}{what to return (Default is "mxFactor") options: "ordered" and "unordered")}
 
 \item{verbose}{report the min, max, and decile cuts used (default = FALSE)}
+
+\item{returnCutpoints}{just return the cutpoints, for use directly}
 }
 \value{
 - recoded variable as an \code{\link{mxFactor}}
@@ -38,9 +39,22 @@ table(x)
 ggplot2::qplot(x$x)
 y = mxDataWLS(x, type = "WLS")
 }
+
+# ===========================
+# = Use with twin variables =
+# ===========================
+
+x = twinData
+y = rbind(x$wt1, x$wt2) 
+cuts  = umx_cont_2_quantiles(y, nlevels = 10, returnCutpoints = T)
+x$wt1 = umx_cont_2_quantiles(x$wt1, nlevels = cuts) # use same for both...
+x$wt2 = umx_cont_2_quantiles(x$wt2, nlevels = cuts) # use same for both...
+str(x[, c("wt1", "wt2")])
+
+# More examples
+
 x = umx_cont_2_quantiles(mtcars[, "mpg"], nlevels = 5) # quintiles
-x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10)
-x = umx_cont_2_quantiles(rep(0:10, 10), nlevels = 10)
+x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10) # more than integers exist
 x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 }
 \references{
