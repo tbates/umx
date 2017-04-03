@@ -24,11 +24,12 @@ umx_cont_2_quantiles(x, nlevels = NULL, type = c("mxFactor", "ordered",
 \description{
 Recode a continuous variable into n-quantiles (default = deciles (10 levels)).
 It returns an \code{\link{mxFactor}}, with the levels labeled with the max value
-in each quantile (i.e., open on the left-side).
+in each quantile (i.e., open on the left-side). quantiles are labeld "quantile1"
+"quantile2" etc.
 }
 \details{
-\strong{Note}: Redundant bins are merged. i.e., if the same score identifies
-all deciles up to the fourth, then these will be merged into one level.
+\strong{Note}: Redundant quantiles are merged. i.e., if the same score identifies
+all deciles up to the fourth, then these will be merged into one bin, labeled "quantile4".
 }
 \examples{
 x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)

@@ -3014,10 +3014,11 @@ umx_reorder <- function(old, newOrder) {
 #'
 #' Recode a continuous variable into n-quantiles (default = deciles (10 levels)).
 #' It returns an \code{\link{mxFactor}}, with the levels labeled with the max value
-#' in each quantile (i.e., open on the left-side).
+#' in each quantile (i.e., open on the left-side). quantiles are labeld "quantile1"
+#' "quantile2" etc.
 #' 
-#' \strong{Note}: Redundant bins are merged. i.e., if the same score identifies
-#' all deciles up to the fourth, then these will be merged into one level.
+#' \strong{Note}: Redundant quantiles are merged. i.e., if the same score identifies
+#' all deciles up to the fourth, then these will be merged into one bin, labeled "quantile4".
 #'
 #' @param x a variable to recode as ordinal (email me if you'd like this upgraded to handle df input)
 #' @param nlevels How many bins or levels (at most) to use (i.e., 10 = deciles)
@@ -3063,21 +3064,27 @@ umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordere
 	if(!is.numeric(x) ){
 		stop("This is for numeric variables. you gave me a ", typeof(x))
 	}
+
 	if(is.null(nlevels)){
 		stop("You must set the number of levels, i.e., 'nlevels = 10'  to threshold data into deciles")
 	} else if(length(nlevels) > 1){
-		# Levels being provided as a list of levels
+		# Levels contains a list of cutpoints
 		cutPoints = nlevels
 		nlevels   = length(cutPoints) + 1
+		levelLabels = paste0("quantile", 1:(nlevels))
 	} else {
 		cutPoints = quantile(x, probs = c((1:(nlevels-1)) / (nlevels)), type = 8, na.rm = TRUE)
-		cutPoints = unique(cutPoints) ## needed to collapse overlapping quantiles
+		levelLabels = paste0("quantile", 1:(nlevels))
+		## needed to collapse overlapping quantiles
+		uniqueItems = !duplicated(cutPoints)
+		cutPoints   = cutPoints[uniqueItems]
+		levelLabels = levelLabels[uniqueItems]
+
 		# (happens with highly skewed data).
 		if(returnCutpoints){
 			return(cutPoints)
 		}
 	}
-	levelLabels = paste0("level", 1:(nlevels))
 	cutPoints   = c(-Inf, cutPoints, Inf)
 	if(type == "mxFactor"){
 		out = cut(x, breaks = cutPoints, labels = levelLabels, ordered_result = TRUE); 
@@ -3940,7 +3947,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 	if(!is.null(nThresh)){
 		# TODO combine all columns for more accuracy 
 		tmp = rbind(mzData, dzData)
-		levelLabels = paste0("level", 1:(nThresh+1))
+		levelLabels = paste0("quantile", 1:(nThresh+1))
 		for (i in 1:length(varNames)) {
 			t1 = paste0(varNames[i], sep = "_T1")
 			t2 = paste0(varNames[i], sep = "_T2")
