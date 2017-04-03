@@ -3071,6 +3071,8 @@ umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordere
 		nlevels   = length(cutPoints) + 1
 	} else {
 		cutPoints = quantile(x, probs = c((1:(nlevels-1)) / (nlevels)), type = 8, na.rm = TRUE)
+		cutPoints = unique(cutPoints) ## needed to collapse overlapping quantiles
+		# (happens with highly skewed data).
 		if(returnCutpoints){
 			return(cutPoints)
 		}
