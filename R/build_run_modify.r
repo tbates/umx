@@ -1142,6 +1142,20 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
 #' umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
+#'
+#' # ==============================
+#' # = Univariate model of height =
+#' # ==============================
+#'
+#' # This variable has a large variance, but umx picks good starts.
+#' # Example also shows ability to lbound the diagonal of a, c, and e at 0.
+#' m1 = umxACE(selDVs = "ht", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
+#'# 'log Lik.' -11985.57 (df=4)
+#'# Standardized solution
+#'# |    |   a1|   c1|   e1|
+#'# |:---|----:|----:|----:|
+#'# |ht1 | 0.92| 0.14| 0.36|
+#' m2 = umxModify(m1, update= "c_r1c1", comparison = TRUE)
 #' 
 #' 
 #' # =====================================
@@ -2389,6 +2403,10 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' # for (i in 1:4) { m2 <- mxRun(m2); print(m2 $output$mi) }
 #' }
 umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, suffix = NULL, autoRun = getOption("umx_auto_run")){
+	stop(paste0("Don't use! Not checked!\n",
+	"e-mail timothy.c.bates@gmail.com if you would like sex lim model implement in umx.\n",
+	"PS: You want to be using correlated factors, not ACE !"))
+
 	if(is.null(suffix)){
 		stop("umx functions now require the suffix parameter is set,
 		and selDVs is just a list of variable's base names")

@@ -175,7 +175,7 @@
 #' }
 umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, C_or_A = "A", suffix = NA){
 	# Correlated factors sex limitations
-	message("Don't use! Not checked!")
+	stop("Don't use! Not checked!")
 	if(is.na(suffix)){
 		stop("Please provide suffixes")
 	}
