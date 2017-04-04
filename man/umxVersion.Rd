@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umxVersion}
 \alias{umxVersion}
-\title{Print the version of umx (and also OpenMx) under use}
+\title{Print the version of umx, along with detail from  OpenMx and general system info.}
 \usage{
 umxVersion(model = NULL, verbose = TRUE, return = "umx")
 }
@@ -27,7 +27,7 @@ x = umxVersion(); x
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
--
+- \code{\link{packageVersion}}
 
 Other Miscellaneous Utility Functions: \code{\link{umx_make}},
   \code{\link{umx_write_to_clipboard}}
