@@ -8,7 +8,7 @@ umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
   free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA,
   byrow = getOption("mxByrow"), dimnames = NA,
   condenseSlots = getOption("mxCondenseMatrixSlots"), ...,
-  joinKey = as.character(NA), joinModel = as.character(NA))
+  joinKey = as.character(NA), joinModel = as.character(NA), jiggle = NA)
 }
 \arguments{
 \item{name}{The name of the matrix (Default = NA). Note the different order compared to mxMatrix!}
@@ -40,6 +40,8 @@ umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
 \item{joinKey}{See mxMatrix documentation: Defaults to as.character(NA)}
 
 \item{joinModel}{See mxMatrix documentation: Defaults to as.character(NA)}
+
+\item{jiggle}{= NA passed to umxLabel to jiggle start values (default does nothing)}
 }
 \value{
 - \code{\link{mxMatrix}}

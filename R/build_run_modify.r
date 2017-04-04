@@ -1966,7 +1966,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' umxCompare(m1, m2)
 umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), sep=NULL) {
 	nSib = 2
-    # allow sep as synonym for suffix
+    # Allow sep as synonym for suffix
    if(!is.null(sep)){
    	suffix = sep
    }
@@ -2005,12 +2005,12 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 
 	if(dataType == "raw"){
-		obsMZmeans = colMeans(mzData, na.rm = T);
+		obsMZmeans = colMeans(mzData, na.rm = TRUE);
 		top = mxModel("top", 
 			# means (not yet equated across twins)
-			umxLabel(mxMatrix(name = "expMean", type = "Full" , nrow = 1, ncol = (nVar * nSib), 
+			umxMatrix("expMean", type = "Full" , nrow = 1, ncol = (nVar * nSib), 
 				free = TRUE, values = obsMZmeans, dimnames = list("means", selDVs)
-			))
+			)
 		) 
 		MZ = mxModel("MZ", 
 			mxData(mzData, type = "raw"),
@@ -2038,9 +2038,9 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 	# TODO Improve starts in umxCP
 	if(correlatedA){
-		a_cp_matrix = umxLabel(mxMatrix("Lower", nFac, nFac, free = TRUE, values = .7, name = "a_cp"), jiggle = .05) # Latent common factor
+		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = .7, jiggle = .05) # Latent common factor
 	} else {
-		a_cp_matrix = umxLabel(mxMatrix("Diag", nFac, nFac, free = TRUE, values = .7, name = "a_cp"), jiggle =.05)
+		a_cp_matrix = umxMatrix("a_cp", "Diag", nFac, nFac, free = TRUE, values = .7, jiggle = .05)
 	}
 
 	model = mxModel(name,
@@ -2049,7 +2049,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			mxMatrix(name = "dzCr", "Full", 1, 1, free = FALSE, values = dzCr),	
 			# Latent common factor genetic paths
 			a_cp_matrix,
-			umxLabel(mxMatrix(name="c_cp", "Diag", nFac, nFac, free = TRUE, values =  0), jiggle = .05), # latent common factor Common #environmental path coefficients
+			umxLabel(mxMatrix(name="c_cp", "Diag", nFac, nFac, free = TRUE, values =  0), jiggle = .05), # latent common factor Common environmental path coefficients
 			umxLabel(mxMatrix(name="e_cp", "Diag", nFac, nFac, free = TRUE, values = .7), jiggle = .05), # latent common factor Unique environmental path coefficients
 			# Constrain variance of latent phenotype factor to 1.0
 			# Multiply by each path coefficient by its inverse to get variance component
@@ -2061,10 +2061,10 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			mxAlgebra(diag2vec(L)             , name = "diagL"),
 			mxConstraint(diagL == nFac_Unit   , name = "fix_CP_variances_to_1"),
 
-			umxLabel(mxMatrix(name = "as", "Lower", nVar, nVar, free = T, values = .5), jiggle = .05), # Additive genetic path 
-			umxLabel(mxMatrix(name = "cs", "Lower", nVar, nVar, free = T, values = .1), jiggle = .05), # Common environmental path 
-			umxLabel(mxMatrix(name = "es", "Lower", nVar, nVar, free = T, values = .6), jiggle = .05), # Unique environmental path
-			umxLabel(mxMatrix(name = "cp_loadings", "Full" , nVar, nFac, free = T, values = .6), jiggle = .05), # loadings on latent phenotype
+			umxMatrix(name = "as", "Lower", nVar, nVar, free = T, values = .5, jiggle = .05)         , # Additive genetic path 
+			umxMatrix(name = "cs", "Lower", nVar, nVar, free = T, values = .1, jiggle = .05)         , # Common environmental path 
+			umxMatrix(name = "es", "Lower", nVar, nVar, free = T, values = .6, jiggle = .05)         , # Unique environmental path
+			umxMatrix(name = "cp_loadings", "Full" , nVar, nFac, free = T, values = .6, jiggle = .05), # loadings on latent phenotype
 			# Quadratic multiplication to add cp_loading effects
 			mxAlgebra(cp_loadings %&% A_cp + as %*% t(as), name = "A"), # Additive genetic variance
 			mxAlgebra(cp_loadings %&% C_cp + cs %*% t(cs), name = "C"), # Common environmental variance
@@ -2823,6 +2823,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param ... Additional parameters (!! not currently supported by umxMatrix)
 #' @param joinKey See mxMatrix documentation: Defaults to as.character(NA)
 #' @param joinModel See mxMatrix documentation: Defaults to as.character(NA)
+#' @param jiggle = NA passed to umxLabel to jiggle start values (default does nothing)
 #' @return - \code{\link{mxMatrix}}
 #' @export
 #' @family Core Modelling Functions
@@ -2830,7 +2831,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umxMatrix("test", "Full", 1, 1)
-umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA, byrow = getOption('mxByrow'), dimnames = NA, condenseSlots=getOption('mxCondenseMatrixSlots'), ..., joinKey=as.character(NA), joinModel=as.character(NA)) {
+umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA, byrow = getOption('mxByrow'), dimnames = NA, condenseSlots=getOption('mxCondenseMatrixSlots'), ..., joinKey=as.character(NA), joinModel=as.character(NA), jiggle = NA) {
 	legalMatrixTypes = c("Diag", "Full", "Iden", "Lower", "Sdiag", "Stand", "Symm", "Unit",  "Zero")
 	if(name %in% legalMatrixTypes){
 		stop("You used ", name, "as the name of your matrix. You might be used to mxMatrix, where type comes first? But it is not a legal matrix name.")
@@ -2841,9 +2842,9 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 	} else {
 		setLabels = FALSE
 	} 
-	x = mxMatrix(type = type, nrow = nrow, ncol = ncol, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound, byrow = byrow, dimnames = dimnames, name = name, condenseSlots=condenseSlots, joinKey = joinKey, joinModel = joinModel, ...)
+	x = mxMatrix(type = type, nrow = nrow, ncol = ncol, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound, byrow = byrow, dimnames = dimnames, name = name, condenseSlots = condenseSlots, joinKey = joinKey, joinModel = joinModel, ...)
 	if(setLabels){
-		x = umxLabel(x)
+		x = umxLabel(x, jiggle = jiggle)
 	}
 	return(x)
 }
