@@ -55,10 +55,7 @@ omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 }
 \description{
 Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model)
-}
-\details{
 The following figure shows the IP model diagramatically:
-
 \figure{IP.png}
 }
 \examples{
