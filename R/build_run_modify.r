@@ -1110,7 +1110,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param addCI Whether to add intervals to compute CIs (defaults to TRUE)
 #' @param numObsDZ = Number of DZ twins: Set this if you input covariance data
 #' @param numObsMZ = Number of MZ twins: Set this if you input covariance data
-#' @param boundDiag = (optional) lbound for diagonal of the a, c, and e matrices.
+#' @param boundDiag = (optional) numeric lbound for diagonal of the a, c, and e matrices, e.g. 0
 #' @param weightVar = If provided, a vector objective will be used to weight the data. (default = NULL) 
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE)
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE)
@@ -1240,7 +1240,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep=NULL) {
-		# allow sep as synonym for suffix
+		# Allow sep as synonym for suffix
 		if(!is.null(sep)){
 			suffix = sep
 		}
@@ -1556,9 +1556,20 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 			)
 		}
 		if(!is.null(boundDiag)){
-			diag(model$top$matrices$a$lbound) = boundDiag
-			diag(model$top$matrices$c$lbound) = boundDiag
-			diag(model$top$matrices$e$lbound) = boundDiag
+			if(!is.numeric(boundDiag)){
+				stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))
+			} else {				
+				newLbound = model$top$matrices$a@lbound
+				if(length(boundDiag) > 1 ){
+					if(length(boundDiag) != length(diag(newLbound)) ){
+						stop("Typically boundDiag is 1 digit: if more, must be size of diag(a)")
+					}
+				}
+				diag(newLbound) = boundDiag; 
+				model$top$a$lbound = newLbound
+				model$top$c$lbound = newLbound
+				model$top$e$lbound = newLbound
+			}
 		}
 		if(addStd){
 			newTop = mxModel(model$top,
