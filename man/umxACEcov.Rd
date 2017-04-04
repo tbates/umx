@@ -53,19 +53,17 @@ umxACEcov supplements the \code{\link{umxACE}} Cholesky model with covariates.
 \examples{
 require(umx)
 data(twinData)
-# dupliate age to  age1 & age2
+# replicate age to age1 & age2
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = c("bmi") # Set the DV
 selCovs = c("age") # Set the IV
 selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes = 1:2)
 # 80 rows so example runs fast
-mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
-dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
-# This will also work on OpenMx 2.5 or better
-# mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
-# dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
+mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
+dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
-	dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE)
+   dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
+)
 umxSummary(m1)
 plot(m1)
 }

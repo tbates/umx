@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxACE}
 \alias{umxACE}
-\title{umxACE: Build and run a Cholesky (uni- or multi-variate)}
+\title{umxACE: Build and run a 2-group Cholesky (uni- or multi-variate)}
 \usage{
 umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
   suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
@@ -54,29 +54,26 @@ SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 - \code{\link{mxModel}} of subclass mxModel.ACE
 }
 \description{
-Make a 2-group ACE Cholesky Twin model.
-umxACE supports a core model in behavior genetics, known as the ACE Cholesky model
-(Cardon and Neale, 1996). #' This model decomposes phenotypic variance into Additive genetic,
-unique environmental (E) and, optionally, either common or shared-environment (C) or 
-non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
-and multiple examples.
 A common task in twin modelling involves using the genetic and environmental differences 
 between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 to model the genetic and environmental structure of one, or, typically, several phenotypes
-(measured behaviors).
+(measured behaviors). umxACE supports modeling with the ACE Cholesky model, a core model 
+in behavior genetics (Cardon and Neale, 1996).
 }
 \details{
 This model decomposes phenotypic variance into Additive genetic,
 unique environmental (E) and, optionally, either common or shared-environment (C) or 
-non-additive genetic effects (D). This latter restriction emerges due to a lack of degrees of 
-freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}. The Cholesky or 
-lower-triangle decomposition allows a model which is both sure to be solvable, and also to 
-account for all the variance (with some restrictions) in the data. This model creates as 
-many latent A C and E variables as there are phenotypes, and, moving from left to 
-right, decomposes the variance in each component into successively restricted 
+non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
+and multiple examples.
+
+The Cholesky or lower-triangle decomposition allows a model which is both sure to be 
+solvable, and also to account for all the variance (with some restrictions) in the data. 
+This model creates as many latent A C and E variables as there are phenotypes, and, moving 
+from left to right, decomposes the variance in each component into successively restricted 
 factors. The following figure shows how the ACE model appears as a path diagram:
 
 \figure{ACE.png}
+
 
 \strong{Data Input}
 The function flexibly accepts raw data, and also summary covariance data 
@@ -85,7 +82,7 @@ The function flexibly accepts raw data, and also summary covariance data
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
 ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
-data in any combination. An experimental feature is under development to allow Tobit modelling.
+data in any combination. An experimental feature is under development to allow Tobit modelling. 
 
 The function also supports weighting of individual data rows. In this case,
 the model is estimated for each row individually, then each row likelihood
@@ -98,6 +95,9 @@ The umxACE function supports varying the DZ genetic association (defaulting to .
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
+
+\emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
+of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}.
 }
 \examples{
 

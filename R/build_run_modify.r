@@ -1052,32 +1052,28 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	}
 }
 
-#' umxACE: Build and run a Cholesky (uni- or multi-variate)
+#' umxACE: Build and run a 2-group Cholesky (uni- or multi-variate)
 #'
-#' Make a 2-group ACE Cholesky Twin model.
-#' umxACE supports a core model in behavior genetics, known as the ACE Cholesky model
-#' (Cardon and Neale, 1996). #' This model decomposes phenotypic variance into Additive genetic,
-#' unique environmental (E) and, optionally, either common or shared-environment (C) or 
-#' non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
-#' and multiple examples.
-
 #' A common task in twin modelling involves using the genetic and environmental differences 
 #' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 #' to model the genetic and environmental structure of one, or, typically, several phenotypes
-#' (measured behaviors).
+#' (measured behaviors). umxACE supports modeling with the ACE Cholesky model, a core model 
+#' in behavior genetics (Cardon and Neale, 1996).
 #' 
 #' This model decomposes phenotypic variance into Additive genetic,
 #' unique environmental (E) and, optionally, either common or shared-environment (C) or 
-#' non-additive genetic effects (D). This latter restriction emerges due to a lack of degrees of 
-#' freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}. The Cholesky or 
-#' lower-triangle decomposition allows a model which is both sure to be solvable, and also to 
-#' account for all the variance (with some restrictions) in the data. This model creates as 
-#' many latent A C and E variables as there are phenotypes, and, moving from left to 
-#' right, decomposes the variance in each component into successively restricted 
+#' non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
+#' and multiple examples.
+#' 
+#' The Cholesky or lower-triangle decomposition allows a model which is both sure to be 
+#' solvable, and also to account for all the variance (with some restrictions) in the data. 
+#' This model creates as many latent A C and E variables as there are phenotypes, and, moving 
+#' from left to right, decomposes the variance in each component into successively restricted 
 #' factors. The following figure shows how the ACE model appears as a path diagram:
 #' 
 #' \figure{ACE.png}
 #' 
+#' @details
 #' \strong{Data Input}
 #' The function flexibly accepts raw data, and also summary covariance data 
 #' (in which case the user must also supple numbers of observations for the two input data sets).
@@ -1099,6 +1095,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
 #'
+#' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
+#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}.
 #' @param name The name of the model (defaults to"ACE")
 #' @param selDVs The variables to include from the data
 #' @param selCovs (optional) covariates to include from the data (do not include suffix in names)
@@ -1336,23 +1334,31 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 					# no weights
 				}
 
-				# ===========================
-				# = Add means matrix to top =
-				# ===========================
+				# =====================================
+				# = Add means and var matrices to top =
+				# =====================================
 				# Figure out start values while we are here
 				# varStarts will be used to fill a, c, and e
 				# mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)
 				varStarts = umx_var(mzData[, selDVs[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+				
+				# ==============================
+				# = Better start value project =
+				# ==============================
+				# 2017-04-03 04:34PM toggled to sqrt()
+				# TODO repeat for cov data (below) and other.
 				if(nVar == 1){
-					varStarts = varStarts/3
+					# sqrt to switch from var to path coefficient scale
+					varStarts = sqrt(varStarts)/3
 				} else {
-					varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
+					varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
 				}
 				varStarts = matrix(varStarts, nVar, nVar)
 
 				# Mean starts (used across all raw solutions
-				obsMZmeans = umx_means(mzData[, selDVs], ordVar = 0, na.rm = TRUE)
+				obsMZmeans   = umx_means(mzData[, selDVs], ordVar = 0, na.rm = TRUE)
 				meanDimNames = list("means", selDVs)		
+
 				# Smarter but not guaranteed
 				# a_val = e_val = t(chol(xmu_cov_factor(mzData, use = "pair"))) * .6
 				# c_val = t(chol(cov(mzData, use = "pair"))) * .1
@@ -1466,12 +1472,15 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				}
 				umx_check(!is.null(numObsMZ), "stop", paste0("You must set numObsMZ with ", dataType, " data"))
 				umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with ", dataType, " data"))
+
 				# TODO should keep this just as mzData?
 				het_mz = umx_reorder(mzData, selDVs)		
 				het_dz = umx_reorder(dzData, selDVs)
 				varStarts = diag(het_mz)
+
 				if(nVar == 1){
-					varStarts = varStarts/3
+					# 2017-04-03 04:34PM: sqrt to switch from var to path coefficient scale
+					varStarts = sqrt(varStarts)/3
 				} else {
 					varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
 				}
@@ -1632,19 +1641,17 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' # dupliate age to  age1 & age2
+#' # replicate age to age1 & age2
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = c("bmi") # Set the DV
 #' selCovs = c("age") # Set the IV
 #' selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes = 1:2)
 #' # 80 rows so example runs fast
-#' mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
-#' dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
-#' # This will also work on OpenMx 2.5 or better
-#' # mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
-#' # dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
+#' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
+#' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
-#' 	dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE)
+#'    dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
+#' )
 #' umxSummary(m1)
 #' plot(m1)
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
@@ -1653,9 +1660,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		name = "ADEcov"
 	}
 
-	# ==============
-	# = run checks =
-	# ==============
+	# ==================
+	# = Validate input =
+	# ==================
 	if(any(umx_is_ordered(dzData))){
 		stop("Sorry: umxACEcov can't handle ordinal yet: e-mail tim and chew him out")
 	}
@@ -1707,31 +1714,53 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	obsMZmeans  = umx_means(mzData[, selVars], ordVar = 0, na.rm = TRUE)
 	meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib),
 			free = TRUE, values = obsMZmeans, labels = meanLabels, dimnames = meanDimNames)
-	# TODO this should be variance not correlation...
-	varStarts = diag(umxHetCor(mzData[,selDVs]))
+	# 2017-04-04 04:37AM change from umxHetCor and selDVs, which looks like a bug
+	# varStarts = diag(umxHetCor(mzData[,selDVs]))
+	varStarts = umx_var(mzData[, selDVs[1:nDV], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 	if(nDV == 1){
-		varStarts = varStarts/3
+		# 2017-04-03 04:34PM: sqrt to switch from var to path coefficient scale
+		varStarts = sqrt(varStarts)/3
 	} else {
-		varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
+		varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
 	}
-	# TODO fix varStarts to include covs also
 	varStarts = matrix(varStarts, nDV, nDV)
-
+	# ===========================================
+	# = TODO fix varStarts to include covs also =
+	# ===========================================
+	covStarts = umx_var(mzData[, selCovs[1:nCov], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+	if(nCov == 1){
+		covStarts = sqrt(covStarts)
+	} else {
+		covStarts = t(chol(diag(covStarts))) # Set to Cholesky form.
+	}
+	covStarts = matrix(covStarts, nDV, nDV)
+	
+	
 	top = mxModel("top",
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of.
 		# NB: top already has the means model and thresholds matrix added if necessary  - see above.
 		# Additive, Common, and Unique environmental paths.
 		# Matrices a, c, e to store a, c, e path coefficients.
-		umxLabel(mxMatrix(name = "a", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE, dimnames = list(baseDVs, baseDVs))),
-		umxLabel(mxMatrix(name = "c", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE)),
-		umxLabel(mxMatrix(name = "e", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE)),  
+		# 2017-04-03 09:30PM: Swapped a, c, e from full to generalize to multivariate (were Full)
+		umxMatrix(name = "a", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE, dimnames = list(baseDVs, baseDVs)),
+		umxMatrix(name = "c", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),
+		umxMatrix(name = "e", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),  
 
 		mxMatrix(name = "dzAr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzAr),
 		mxMatrix(name = "dzCr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzCr),
 
 		meansMatrix,
-		mxMatrix(name = "lowerB", 'Lower', nrow = nCov, ncol = nCov, values = 0.5, free = TRUE),
-		mxMatrix(name = "lowerW", 'Lower', nrow = nCov, ncol = nCov, values = 0.5, free = TRUE),
+# ====================================
+# = 	#	TODO see which of these works =
+# ====================================
+		# general (between-pair) cov of covariates
+		# mxMatrix(name = "lowerB", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts/2), free = TRUE),
+		# specific (within-pair) cov of covariates
+		# mxMatrix(name = "lowerW", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts/2), free = TRUE),
+		# OR
+		mxMatrix(name = "lowerB", 'Lower', nrow = nCov, ncol = nCov, values = .6, free = TRUE),
+		mxMatrix(name = "lowerW", 'Lower', nrow = nCov, ncol = nCov, values = .6, free = TRUE),
+
 		mxAlgebra(name= "CovB"  , lowerB %*% t(lowerB)),
 		mxAlgebra(name= "CovW"  , lowerW %*% t(lowerW)),
 		mxAlgebra(name= "CovWB" , CovW + CovB),
@@ -1822,6 +1851,13 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' to model the genetic and environmental structure of multiple phenotypes
 #' (measured behaviors).
 #' 
+#' Common-pathway path diagram:
+#' 
+#' \figure{CP.png}
+#' 
+#' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotye.
+#' 
+#' @details
 #' Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
 #' into Additive genetic, unique environmental (E) and, optionally, either
 #' common or shared-environment (C) or 
@@ -1830,11 +1866,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 #' Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
 #' C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
 #' 
-#' Common-pathway path diagram:
-#' 
-#' \figure{CP.png}
-#' 
-#' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotye.
 #' 
 #' \strong{Data Input}
 #' Currently, the umxCP function accepts only raw data. This may change in future versions.
@@ -1964,7 +1995,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			mxFitFunctionML()
 		)
 	}
-
+	# TODO Improve starts in umxCP
 	if(correlatedA){
 		a_cp_matrix = umxLabel(mxMatrix("Lower", nFac, nFac, free = TRUE, values = .7, name = "a_cp"), jiggle = .05) # Latent common factor
 	} else {
@@ -2060,9 +2091,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' umxIP: Build and run an Independent pathway twin model
 #'
 #' Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model)
-#' 
 #' The following figure shows the IP model diagramatically:
-#' 
 #' \figure{IP.png}
 #'
 #' @param name The name of the model (defaults to "IP")

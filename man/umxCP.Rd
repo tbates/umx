@@ -64,6 +64,13 @@ umxCP supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins re
 to model the genetic and environmental structure of multiple phenotypes
 (measured behaviors).
 
+Common-pathway path diagram:
+
+\figure{CP.png}
+
+As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotye.
+
+
 Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or 
@@ -72,11 +79,6 @@ non-additive genetic effects (D).
 Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
 C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
 
-Common-pathway path diagram:
-
-\figure{CP.png}
-
-As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotye.
 
 \strong{Data Input}
 Currently, the umxCP function accepts only raw data. This may change in future versions.
