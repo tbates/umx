@@ -971,7 +971,7 @@ umx_factor <- umxFactor
 # = Utility =
 # ===========
 
-#' Print the version of umx (and also OpenMx) under use
+#' Print the version of umx, along with detail from  OpenMx and general system info.
 #'
 #' @description
 #' umxVersion returns the version information for umx, and for OpenMx and R.
@@ -983,7 +983,7 @@ umx_factor <- umxFactor
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - 
+#' @seealso - \code{\link{packageVersion}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' x = umxVersion(); x
