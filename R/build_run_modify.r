@@ -1826,6 +1826,22 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	model = mxModel(name, MZ, DZ, top,
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
+	if(!is.null(boundDiag)){
+		if(!is.numeric(boundDiag)){
+			stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))
+		} else {				
+			newLbound = model$top$matrices$a@lbound
+			if(length(boundDiag) > 1 ){
+				if(length(boundDiag) != length(diag(newLbound)) ){
+					stop("Typically boundDiag is 1 digit: if more, must be size of diag(a)")
+				}
+			}
+			diag(newLbound) = boundDiag; 
+			model$top$a$lbound = newLbound
+			model$top$c$lbound = newLbound
+			model$top$e$lbound = newLbound
+		}
+	}
 	
 	if(addStd){
 		newTop = mxModel(model$top,

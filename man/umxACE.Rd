@@ -36,7 +36,7 @@ SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data}
 
-\item{boundDiag}{= (optional) lbound for diagonal of the a, c, and e matrices.}
+\item{boundDiag}{= (optional) numeric lbound for diagonal of the a, c, and e matrices, e.g. 0}
 
 \item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL)}
 

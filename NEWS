@@ -1,14 +1,11 @@
-# umx 1.7.0 (Bleeding edge - expected in May 01 2017, R 3.4.0 (You Stupid Darkness)
+# umx 1.8.0 (Bleeding edge - expected May 2017, R 3.4.0 (You Stupid Darkness)
 * *TIP*: umxAPA can format lots of things for you: from effects in lm -try it out!
 
-# umx 1.6.0 (April 02 2017, R 3.3.3 Another Canoe)
+# umx 1.7.5 (April 04 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
 * NEW: umxVersion (returns mxVersion() + umx version)
-* BUGFIX: install.OpenMx had a broken URL, now corrected.
-* BUGFIX: umx_cont_2_quantiles lowest threshold was empty
-* IMPROVED: umx_cont_2_quantiles now allows returning cut points, better examples, level_names
-* IMPROVED: install.OpenMx can now get UVA, latest travis(mac), or open travis page. 
-* IMPROVED: umx_make_TwinData
+* IMPROVED: umxACE univariate a, c, & e start  values much better!
+* NEWFEATURES: umx_make_TwinData
 	* Use variance input
 	* Option to set seed
 	* Add varName to datasets
@@ -19,7 +16,10 @@
 	* Option to allow A+C+E ≠ 1
 	* Full set of examples
 	* NOTE: umx_make_TwinData uses **variance** input. This was ambiguous previously.
-* IMPROVED: umxRAM can now be used in "sketch" mode, to plot demos without data: just add the list of manifests as a character string to `data`.
+	* Docs much improved.
+* NEWFEATURES: install.OpenMx can install UVA parallel, travis latest (on mac) or opening the travis list.
+	* BUGFIX: install.OpenMx had a broken URL, now corrected.
+* NEWFEATURES: umxRAM can now be used in "sketch" mode, to plot demos without data: just add the list of manifests as a character string to `data`.
 	```splus
 	m1 <- umxRAM("test", data = paste0("itemC", 1:4),
 		umxPath(unique.bivariate = paste0("itemC", 1:4)),
@@ -27,10 +27,11 @@
 	)
 	plot(m1)
 	```
-* IMPROVED: `umxAPA` now reports mode for factor data
-* IMPROVED: Allow `umxLabel` to rename the returned model
+* NEWFEATURES: umx_cont_2_quantiles now allows returning cut points, better examples, level_names
+	* BUGFIX: umx_cont_2_quantiles lowest threshold was empty
+* NEWFEATURES: `umxAPA` now reports mode for factor data
+* NEWFEATURES: Allow `umxLabel` to rename the returned model
 * IMPROVED: Allow sep as a synonym for suffix in uxmACE, umxCP, umxIP
-* DOCUMENT umx_make_TwinData docs much improved
 * DOCUMENT: Examples use zygosity string from twinData instead of numeric code
 * DOCUMENT: Fix typo in umxPath docs
 * INCOMPATIBLE: renamed umx_cov_diag to umx_var
