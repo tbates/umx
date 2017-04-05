@@ -108,9 +108,9 @@ require(umx)
 data(twinData) # ?twinData set from Australian twins.
 # Pick the variables
 selDVs = c("bmi1", "bmi2")
-mzData <- twinData[twinData$zygosity \%in\%  "MZFF", ]
+mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData) # -2ll= 9659
 umxSummary(m1, std = FALSE) # unstandardized
 plot(m1)
 
@@ -119,7 +119,7 @@ plot(m1)
 # =========================================
 m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # ADE is better
-umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
+umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled ACE
 
 # ==============================
 # = Univariate model of height =
@@ -133,8 +133,7 @@ m1 = umxACE(selDVs = "ht", dzData = dzData, mzData = mzData, sep = "", boundDiag
 # |    |   a1|   c1|   e1|
 # |:---|----:|----:|----:|
 # |ht1 | 0.92| 0.14| 0.36|
-m2 = umxModify(m1, update= "c_r1c1", comparison = TRUE)
-
+m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
 
 # =====================================
 # = Bivariate height and weight model =
