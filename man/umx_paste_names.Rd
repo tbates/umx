@@ -2,34 +2,63 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_paste_names}
 \alias{umx_paste_names}
-\title{umx_paste_names}
+\title{Concatenate base variable names with suffixes to create wide-format variable names (i.e twin-format)}
 \usage{
-umx_paste_names(varNames, sep = "", suffixes = 1:2)
+umx_paste_names(varNames, sep = "", suffixes = 1:2, covNames = NULL)
 }
 \arguments{
-\item{varNames}{a list of _base_ names, e.g c("bmi", "IQ")}
+\item{varNames}{a list of \emph{base} names, e.g c("bmi", "IQ")}
 
 \item{sep}{A string separating the name and the twin suffix, e.g. "_T" (default is "")}
 
 \item{suffixes}{a list of terminal suffixes differentiating the twins default = c("1", "2"))}
+
+\item{covNames}{a list of \emph{base} names for covariates (sorted last in list), e.g c("age", "sex")}
 }
 \value{
-- vector of suffixed var names, i.e., c("a_T1", "b_T1", "a_T2", "b_T2")
+\itemize{
+\item vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
+}
 }
 \description{
-Helper to add suffixes to names: useful for expanding base names for variables (e.g. "bmi")
-into fully specified family-wise row names for variables c("bmi_T1", "bmi_T2")
-Use sep to add a constant like "_T" after each base variable name.
-This is then suffixed with e.g. "1", "2".
+It's easier to work with base names, rather than the twice-as-long hard-to-typo list of column names.
+\code{umx_paste_names} adds suffixes to names so you can work with that nice short list.
+So, you provide \code{bmi}, and you get back fully specified family-wise names: \code{c("bmi_T1", "bmi_T2")}
+}
+\details{
+Method 1: \strong{Use complete suffixes}
+
+You can provide complete suffixes like "_T1" and "_T2". This has the benefit of being explicit
+and very general:\preformatted{umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
+}
+
+\emph{Method 2}: Use sep and a suffix vector
+
+Alternatively, you can use \code{sep} to add a constant like "_T" after each basename, along
+with a vector of suffixes. This has the benefit of showing what is varying:
+This is then suffixed with e.g. "1", "2".\preformatted{umx_paste_names(c("var1", "var2"), sep = "_T", suffixes = 1:2)
+}
+
+\strong{Working with covariates}
+
+If you are using \code{\link{umxACEcov}}, you \strong{need} to keep all the covariates at the end of the list.
+Here's how:\preformatted{umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
+}
+
+note: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
+T1vars, T2 vars, T1 covs, T2 covs. This is what \code{covNames} accomplishes.
 }
 \examples{
 # two styles doing the same thing: first is more general
-umx_paste_names("bmi", "_T", 1:2)
 umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
+umx_paste_names("bmi", sep = "_T", suffixes = 1:2)
 varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
+umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Utility Functions: \code{\link{qm}},

@@ -1997,29 +1997,62 @@ umx_msg <- function(x) {
 # ====================
 # = String Functions =
 # ====================
-#' umx_paste_names
+#' Concatenate base variable names with suffixes to create wide-format variable names (i.e twin-format)
 #'
-#' Helper to add suffixes to names: useful for expanding base names for variables (e.g. "bmi")
-#' into fully specified family-wise row names for variables c("bmi_T1", "bmi_T2")
-#' Use sep to add a constant like "_T" after each base variable name.
+#' @description
+#' It's easier to work with base names, rather than the twice-as-long hard-to-typo list of column names.
+#' `umx_paste_names` adds suffixes to names so you can work with that nice short list.
+#' So, you provide `bmi`, and you get back fully specified family-wise names: `c("bmi_T1", "bmi_T2")`
+#' 
+#' @details
+#' Method 1: **Use complete suffixes**
+#' 
+#' You can provide complete suffixes like "_T1" and "_T2". This has the benefit of being explicit
+#' and very general:
+#'
+#'     umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
+#'
+#' *Method 2*: Use sep and a suffix vector
+#' 
+#' Alternatively, you can use `sep` to add a constant like "_T" after each basename, along
+#' with a vector of suffixes. This has the benefit of showing what is varying:
 #' This is then suffixed with e.g. "1", "2".
 #'
+#'     umx_paste_names(c("var1", "var2"), sep = "_T", suffixes = 1:2)
+#'
+#' **Working with covariates**
+#' 
+#' If you are using \code{\link{umxACEcov}}, you **need** to keep all the covariates at the end of the list.
+#' Here's how:
+#' 
+#'     umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
+#' 
+#' note: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
+#' T1vars, T2 vars, T1 covs, T2 covs. This is what `covNames` accomplishes.
 #' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
 #' @param sep A string separating the name and the twin suffix, e.g. "_T" (default is "")
 #' @param suffixes a list of terminal suffixes differentiating the twins default = c("1", "2"))
-#' @return - vector of suffixed var names, i.e., c("a_T1", "b_T1", "a_T2", "b_T2")
+#' @param covNames a list of _base_ names for covariates (sorted last in list), e.g c("age", "sex")
+#' @return - vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
 #' @export
 #' @family Utility Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' # two styles doing the same thing: first is more general
-#' umx_paste_names("bmi", "_T", 1:2)
 #' umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
+#' umx_paste_names("bmi", sep = "_T", suffixes = 1:2)
 #' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
-umx_paste_names <- function(varNames, sep = "", suffixes = 1:2) {
+#' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
+#' @md
+umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL) {
 	nameList = c()
 	for (ID in suffixes) {
 		nameList = c(nameList, paste0(varNames, sep, ID))
+	}
+	if(!is.null(covNames)){
+		for (ID in suffixes) {
+			nameList = c(nameList, paste0(covNames, sep, ID))
+		}
 	}
 	return(nameList)
 }
@@ -4027,7 +4060,7 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 #' dataset must consist either of numeric variables or ordered 
 #' factors. When one or more ordered factors are included, 
 #' then a heterogeneous correlation matrix is computed using 
-#' John Fox's polycor package. Pairwise complete observations 
+#' John Fox&rsquo;s polycor package. Pairwise complete observations 
 #' are used for all covariances, and the exact pattern of 
 #' missing data present in the input is placed in the output,
 #' provided a new sample size is not requested. Warnings from

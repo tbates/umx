@@ -124,12 +124,12 @@ utils::globalVariables(c(
 	'CovB',
 	'CovW',
 	'CovWB',
-	'tb_CovWB_b',
-	'tb_CovB_b',
-	'tb_CovWB',
-	'tb_CovB',
-	'CovWB_b',
-	'CovB_b',
+	'bCovWBb',
+	'bCovBb',
+	'bCovWB',
+	'bCovB',
+	'CovWBb',
+	'CovBb',
 
 	'Iden',
 	'nDv',
@@ -1669,7 +1669,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = c("bmi") # Set the DV
 #' selCovs = c("age") # Set the IV
-#' selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes = 1:2)
+#' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
 #' # 80 rows so example runs fast
 #' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 #' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
@@ -1678,6 +1678,18 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' )
 #' umxSummary(m1)
 #' plot(m1)
+#' # ====================
+#' # = A bivaraite test =
+#' # ====================
+#' selDVs  = c("ht", "wt") # Set the DV
+#' selCovs = c("age") # Set the IV
+#' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
+#' # 80 rows so example runs fast enough on CRAN
+#' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
+#' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
+#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
+#'    dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
+#' )
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	nSib = 2 # Number of siblings in a twin pair
 	if(dzCr == .25 && name == "ACE"){
@@ -1743,7 +1755,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	varStarts = umx_var(mzData[, selDVs[1:nDV], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 	if(nDV == 1){
 		# 2017-04-03 04:34PM: sqrt to switch from var to path coefficient scale
-		varStarts = sqrt(varStarts)/3
+		varStarts = sqrt(varStarts/3)
 	} else {
 		varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
 	}
@@ -1757,7 +1769,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	} else {
 		covStarts = t(chol(diag(covStarts))) # Set to Cholesky form.
 	}
-	covStarts = matrix(covStarts, nDV, nDV)
+	covStarts = matrix(covStarts, nCov, nCov)
 	
 	
 	top = mxModel("top",
@@ -1765,25 +1777,26 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		# NB: top already has the means model and thresholds matrix added if necessary  - see above.
 		# Additive, Common, and Unique environmental paths.
 		# Matrices a, c, e to store a, c, e path coefficients.
-		# 2017-04-03 09:30PM: Swapped a, c, e from full to generalize to multivariate (were Full)
-		umxMatrix(name = "a", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE, dimnames = list(baseDVs, baseDVs)),
-		umxMatrix(name = "c", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),
-		umxMatrix(name = "e", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),  
+		umxMatrix(name = "a", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE, dimnames = list(baseDVs, baseDVs)),
+		umxMatrix(name = "c", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),
+		umxMatrix(name = "e", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),  
 
 		mxMatrix(name = "dzAr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzAr),
 		mxMatrix(name = "dzCr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzCr),
 
 		meansMatrix,
-# ====================================
-# = 	#	TODO see which of these works =
-# ====================================
-		# general (between-pair) cov of covariates
-		# mxMatrix(name = "lowerB", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts/2), free = TRUE),
-		# specific (within-pair) cov of covariates
-		# mxMatrix(name = "lowerW", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts/2), free = TRUE),
-		# OR
-		mxMatrix(name = "lowerB", 'Lower', nrow = nCov, ncol = nCov, values = .6, free = TRUE),
-		mxMatrix(name = "lowerW", 'Lower', nrow = nCov, ncol = nCov, values = .6, free = TRUE),
+
+		# ====================================
+		# = 	#	TODO see which of these works =
+		# ====================================
+
+		# # general (between-pair) cov of covariates
+		umxMatrix("lowerB", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts * .8), free = TRUE),
+		# # specific (within-pair) cov of covariates
+		umxMatrix("lowerW", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts * .2), free = TRUE),
+		# # OR
+		# umxMatrix("lowerB", 'Lower', nrow = nCov, ncol = nCov, values = .6, free = TRUE),
+		# umxMatrix("lowerW", 'Lower', nrow = nCov, ncol = nCov, values = .6, free = TRUE),
 
 		mxAlgebra(name= "CovB"  , lowerB %*% t(lowerB)),
 		mxAlgebra(name= "CovW"  , lowerW %*% t(lowerW)),

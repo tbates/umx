@@ -57,7 +57,7 @@ data(twinData)
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = c("bmi") # Set the DV
 selCovs = c("age") # Set the IV
-selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes = 1:2)
+selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
 # 80 rows so example runs fast
 mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
@@ -66,6 +66,18 @@ m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
 )
 umxSummary(m1)
 plot(m1)
+# ====================
+# = A bivaraite test =
+# ====================
+selDVs  = c("ht", "wt") # Set the DV
+selCovs = c("age") # Set the IV
+selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
+# 80 rows so example runs fast enough on CRAN
+mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
+dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
+m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
+   dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
+)
 }
 \references{
 - Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 

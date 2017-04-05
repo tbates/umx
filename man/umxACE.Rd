@@ -128,12 +128,12 @@ umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled AC
 # This variable has a large variance, but umx picks good starts.
 # Example also shows ability to lbound the diagonal of a, c, and e at 0.
 m1 = umxACE(selDVs = "ht", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
+m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
 # 'log Lik.' -11985.57 (df=4)
 # Standardized solution
 # |    |   a1|   c1|   e1|
 # |:---|----:|----:|----:|
 # |ht1 | 0.92| 0.14| 0.36|
-m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
 
 # =====================================
 # = Bivariate height and weight model =
