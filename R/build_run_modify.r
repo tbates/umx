@@ -1130,9 +1130,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' data(twinData) # ?twinData set from Australian twins.
 #' # Pick the variables
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- twinData[twinData$zygosity %in%  "MZFF", ]
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData) # -2ll= 9659
 #' umxSummary(m1, std = FALSE) # unstandardized
 #' plot(m1)
 #' 
@@ -1141,7 +1141,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # =========================================
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
-#' umxSummary(m2, compare = m1) # nb: though this is ADE, columns are labeled ACE
+#' umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled ACE
 #'
 #' # ==============================
 #' # = Univariate model of height =
@@ -1155,8 +1155,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #'# |    |   a1|   c1|   e1|
 #'# |:---|----:|----:|----:|
 #'# |ht1 | 0.92| 0.14| 0.36|
-#' m2 = umxModify(m1, update= "c_r1c1", comparison = TRUE)
-#' 
+#' m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
 #' 
 #' # =====================================
 #' # = Bivariate height and weight model =
@@ -1800,25 +1799,25 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		mxAlgebra(name = "ACE", A + C + E),
 		mxAlgebra(name = "AC" , A + C),
 		mxAlgebra(name = "hAC", (dzAr * A) + C),
-		mxAlgebra(name = "tb_CovWB_b", (t(beta) %*% CovWB) %*% beta),
-		mxAlgebra(name = "tb_CovB_b" , (t(beta) %*% CovB) %*% beta),
-		mxAlgebra(name = "tb_CovWB"  , t(beta) %*% CovWB),
-		mxAlgebra(name = "tb_CovB"   , t(beta) %*% CovB),
-		mxAlgebra(name = "CovWB_b"   ,   CovWB %*% beta),
-		mxAlgebra(name = "CovB_b"    ,   CovB  %*% beta),
+		mxAlgebra(name = "bCovWBb", (t(beta) %*% CovWB) %*% beta),
+		mxAlgebra(name = "bCovBb" , (t(beta) %*% CovB)  %*% beta),
+		mxAlgebra(name = "bCovWB" ,  t(beta) %*% CovWB),
+		mxAlgebra(name = "bCovB"  ,  t(beta) %*% CovB),
+		mxAlgebra(name = "CovWBb" ,    CovWB %*% beta),
+		mxAlgebra(name = "CovBb"  ,    CovB  %*% beta),
 		# Algebra for expected variance/covariance matrix #in MZ twins
 		mxAlgebra(name = "expCovMZ", expression = rbind(
-			cbind(ACE + tb_CovWB_b, AC  + tb_CovB_b , tb_CovWB, tb_CovB),
-			cbind(AC  + tb_CovB_b , ACE + tb_CovWB_b, tb_CovB , tb_CovWB),
-			cbind(CovWB_b         , CovB_b          , CovWB   , CovB),
-			cbind(CovB_b          , CovWB_b         , CovB    , CovWB))
+			cbind(ACE + bCovWBb, AC  + bCovBb , bCovWB, bCovB),
+			cbind(AC  + bCovBb , ACE + bCovWBb, bCovB , bCovWB),
+			cbind(CovWBb       , CovBb        , CovWB , CovB),
+			cbind(CovBb        , CovWBb       , CovB  , CovWB))
 		),
 		# Algebra for expected variance/covariance matrix #in DZ twins
 		mxAlgebra(name = "expCovDZ", expression = rbind(
-			cbind(ACE + tb_CovWB_b, hAC + tb_CovB_b , tb_CovWB, tb_CovB),
-			cbind(hAC + tb_CovB_b , ACE + tb_CovWB_b, tb_CovB , tb_CovWB),
-			cbind(CovWB_b         , CovB_b          , CovWB   , CovB),
-			cbind(CovB_b          , CovWB_b         , CovB    , CovWB))
+			cbind(ACE + bCovWBb, hAC + bCovBb , bCovWB, bCovB),
+			cbind(hAC + bCovBb , ACE + bCovWBb, bCovB , bCovWB),
+			cbind(CovWBb       , CovBb        , CovWB , CovB),
+			cbind(CovBb        , CovWBb       , CovB  , CovWB))
 		)
 	) # end top
 
