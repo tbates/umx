@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_is_MxData}
 \alias{umx_is_MxData}
-\title{umx_is_ordered}
+\title{Check if an object is an mxData object}
 \usage{
 umx_is_MxData(x)
 }

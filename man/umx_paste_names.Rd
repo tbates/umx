@@ -4,7 +4,8 @@
 \alias{umx_paste_names}
 \title{Concatenate base variable names with suffixes to create wide-format variable names (i.e twin-format)}
 \usage{
-umx_paste_names(varNames, sep = "", suffixes = 1:2, covNames = NULL)
+umx_paste_names(varNames, sep = "", suffixes = 1:2, covNames = NULL,
+  prefix = NULL)
 }
 \arguments{
 \item{varNames}{a list of \emph{base} names, e.g c("bmi", "IQ")}
@@ -14,6 +15,8 @@ umx_paste_names(varNames, sep = "", suffixes = 1:2, covNames = NULL)
 \item{suffixes}{a list of terminal suffixes differentiating the twins default = c("1", "2"))}
 
 \item{covNames}{a list of \emph{base} names for covariates (sorted last in list), e.g c("age", "sex")}
+
+\item{prefix}{a string to pre=pend to each label, e.g c("mean_age", "mean_sex")}
 }
 \value{
 \itemize{
@@ -54,6 +57,7 @@ umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
 umx_paste_names("bmi", sep = "_T", suffixes = 1:2)
 varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
+umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 }
 \references{
 \itemize{

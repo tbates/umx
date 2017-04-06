@@ -2033,6 +2033,7 @@ umx_msg <- function(x) {
 #' @param sep A string separating the name and the twin suffix, e.g. "_T" (default is "")
 #' @param suffixes a list of terminal suffixes differentiating the twins default = c("1", "2"))
 #' @param covNames a list of _base_ names for covariates (sorted last in list), e.g c("age", "sex")
+#' @param prefix a string to pre=pend to each label, e.g c("mean_age", "mean_sex")
 #' @return - vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
 #' @export
 #' @family Utility Functions
@@ -2043,8 +2044,9 @@ umx_msg <- function(x) {
 #' umx_paste_names("bmi", sep = "_T", suffixes = 1:2)
 #' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
+#' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 #' @md
-umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL) {
+umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
 	nameList = c()
 	for (ID in suffixes) {
 		nameList = c(nameList, paste0(varNames, sep, ID))
@@ -2053,6 +2055,10 @@ umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL)
 		for (ID in suffixes) {
 			nameList = c(nameList, paste0(covNames, sep, ID))
 		}
+	}
+
+	if(!is.null(prefix)){
+		nameList = paste0(prefix, nameList)
 	}
 	return(nameList)
 }
@@ -2565,11 +2571,11 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 			stop("argument df must be a dataframe. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 		}
 	}
-	if(any(umx_is_ordered(df, strict = F))){
+	if(any(umx_is_ordered(df, strict = FALSE))){
 		# Set the default outcome
 		means = rep(ordVar, times = dim(df)[2])
-		# Get variables where mean makes snes
-		cont = umx_is_ordered(df, continuous.only = TRUE)
+		# Get variables where mean makes sense
+		cont = umx_is_ordered(df, continuous.only = TRUE, strict = FALSE)
 		if(any(cont)){
 			for(i in which(cont)) {
 				means[i] = mean(df[, i], na.rm = na.rm)
@@ -2581,7 +2587,7 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 	return(means)
 }
 
-#' umx_is_ordered
+#' Check if an object is an mxData object
 #'
 #' Is the input an MxData?
 #'
@@ -2602,7 +2608,7 @@ umx_is_MxData <- function(x) {
 	}
 }
 
-#' umx_is_ordered
+#' Test if one or more variables in a dataframe are ordered
 #'
 #' Return the names of any ordinal variables in a dataframe
 #'

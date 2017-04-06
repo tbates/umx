@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_is_ordered}
 \alias{umx_is_ordered}
-\title{umx_is_ordered}
+\title{Test if one or more variables in a dataframe are ordered}
 \usage{
 umx_is_ordered(df, names = FALSE, strict = TRUE, binary.only = FALSE,
   ordinal.only = FALSE, continuous.only = FALSE)

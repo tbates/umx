@@ -1690,6 +1690,17 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
 #'    dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
 #' )
+#'
+#'
+#' # Univariate bmi without covariate of age for comparison
+#' m2     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
+#' x      = umx_residualize("bmi", "age", suffixes=1:2, twinData)
+#' mzData = subset(x, zygosity == "MZFF", selVars)[1:80, ]
+#' dzData = subset(x, zygosity == "DZFF", selVars)[1:80, ]
+#' m3     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
+#' 
+#' 
+#' 
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	nSib = 2 # Number of siblings in a twin pair
 	if(dzCr == .25 && name == "ACE"){
@@ -1722,13 +1733,13 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		baseDVs = selDVs
 		baseCovs = selCovs
 		# fill out full trait names
-		selDVs  = umx_paste_names(selDVs, suffix, 1:2)
-		selCovs = umx_paste_names(selCovs, suffix, 1:2)
+		selDVs  = umx_paste_names(baseDVs , sep = suffix, suffixes = (1:nSib) )
+		selCovs = umx_paste_names(baseCovs, sep = suffix, suffixes = (1:nSib) )
 	}
 
 	nDV  = length(baseDVs)
 	nCov = length(baseCovs)
-	nVar = nDV + nCov # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+	nVar = nDV + nCov # Number of variables per **INDIVIDUAL** ( so * 2 for a family)
 
 	selVars = c(selDVs, selCovs)
 	umx_check_names(selVars, mzData)
@@ -1739,30 +1750,40 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	mzData = mzData[, selVars]
 	dzData = dzData[, selVars]
 
-	meanDimNames = list(NULL, selVars)
+	# ===============
+	# = Setup means =
+	# ===============
+	# c(T1 DV means, T1 DV means, T1 COV means, T1 COV means)
 	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
 	if(equateMeans){
-		meanLabels = c(rep(paste0("expMean_", baseDVs), nSib), rep(paste0("expMean_", baseCovs), nSib))
-	}else{
+		meanDimNames  = list(NULL, selVars)
+		meanLabels    = umx_paste_names(var = baseDVs, cov = baseCovs, suff = c("", ""), prefix = "expMean_")
+		DVmeanStarts  = umx_means(mzData[, selDVs[1:nDV]  , drop = FALSE], ordVar = 0, na.rm = TRUE)
+		CovMeanStarts = umx_means(mzData[, selCovs[1:nCov], drop = FALSE], ordVar = 0, na.rm = TRUE)
+		meanStarts    = c(DVmeanStarts, DVmeanStarts, CovMeanStarts, CovMeanStarts)
+		# meansMatrix = umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, labels = meanLabels, dimnames = meanDimNames)
+	} else {
 		stop("Currently, means must be equated... why?")
 	}
 	
-	obsMZmeans  = umx_means(mzData[, selVars], ordVar = 0, na.rm = TRUE)
-	meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib),
-			free = TRUE, values = obsMZmeans, labels = meanLabels, dimnames = meanDimNames)
-	# 2017-04-04 04:37AM change from umxHetCor and selDVs (instead of selVars)
-	# varStarts = diag(umxHetCor(mzData[,selDVs]))
-	varStarts = umx_var(mzData[, selDVs[1:nDV], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+	# make beta labels
+	betaLabels = paste0(rep(paste0("var", 1:nDV), each=nCov), rep(paste0("beta", 1:nCov), times = nDV))
+	betaLabels = matrix(betaLabels, nrow = nCov, ncol  = nDV, byrow = FALSE)
+
+	# =====================
+	# = Set up varStarts  =
+	# =====================
+
+	# DVS
+	DVvarStarts = umx_var(mzData[, selDVs[1:nDV], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 	if(nDV == 1){
-		# 2017-04-03 04:34PM: sqrt to switch from var to path coefficient scale
-		varStarts = sqrt(varStarts/3)
+		DVvarStarts = sqrt(DVvarStarts/3)
 	} else {
-		varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
+		DVvarStarts = t(chol(diag(DVvarStarts/3))) # Divide variance up equally, and set to Cholesky form.
 	}
-	varStarts = matrix(varStarts, nDV, nDV)
-	# ===========================================
-	# = TODO fix varStarts to include covs also =
-	# ===========================================
+	DVvarStarts = matrix(DVvarStarts, nDV, nDV)
+	
+	# covs
 	covStarts = umx_var(mzData[, selCovs[1:nCov], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 	if(nCov == 1){
 		covStarts = sqrt(covStarts)
@@ -1774,46 +1795,39 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	
 	top = mxModel("top",
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of.
-		# NB: top already has the means model and thresholds matrix added if necessary  - see above.
-		# Additive, Common, and Unique environmental paths.
-		# Matrices a, c, e to store a, c, e path coefficients.
-		umxMatrix(name = "a", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE, dimnames = list(baseDVs, baseDVs)),
-		umxMatrix(name = "c", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),
-		umxMatrix(name = "e", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),  
-
 		mxMatrix(name = "dzAr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzAr),
 		mxMatrix(name = "dzCr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzCr),
 
-		meansMatrix,
-
-		# ====================================
-		# = 	#	TODO see which of these works =
-		# ====================================
-
-		# # general (between-pair) cov of covariates
-		umxMatrix("lowerB", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts * .8), free = TRUE),
-		# # specific (within-pair) cov of covariates
-		umxMatrix("lowerW", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts * .2), free = TRUE),
-		# # OR
-		# umxMatrix("lowerB", 'Lower', nrow = nCov, ncol = nCov, values = .6, free = TRUE),
-		# umxMatrix("lowerW", 'Lower', nrow = nCov, ncol = nCov, values = .6, free = TRUE),
-
-		mxAlgebra(name= "CovB"  , lowerB %*% t(lowerB)),
-		mxAlgebra(name= "CovW"  , lowerW %*% t(lowerW)),
-		mxAlgebra(name= "CovWB" , CovW + CovB),
-		
+		# Matrices a, c, e to store a, c, e path coefficients.
+		umxMatrix(name = "a", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = DVvarStarts, byrow = TRUE, dimnames = list(baseDVs, baseDVs)),
+		umxMatrix(name = "c", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = DVvarStarts, byrow = TRUE),
+		umxMatrix(name = "e", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = DVvarStarts, byrow = TRUE),  
 		# Matrices A, C,E + compute variance components
 		mxAlgebra(name = "A", a %*% t(a)),
 		mxAlgebra(name = "C", c %*% t(c)),
 		mxAlgebra(name = "E", e %*% t(e)),
-		# Declare a vector for the regression parameters
-		mxMatrix(name = "beta", type = "Full", nrow = nCov, ncol  = 1, free = TRUE, values = 0, labels = paste0("beta", 1:nCov)),
+
+		umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, labels = meanLabels, dimnames = meanDimNames),
+
+		# general (between-pair) cov of covariates
+		umxMatrix("lowerB", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts * .4), free = TRUE),
+		# # specific (within-pair) cov of covariates
+		umxMatrix("lowerW", 'Lower', nrow = nCov, ncol = nCov, values = (covStarts * .6), free = TRUE),
+
+		mxAlgebra(name= "CovB" , lowerB %*% t(lowerB)),
+		mxAlgebra(name= "CovW" , lowerW %*% t(lowerW)),
+		mxAlgebra(name= "CovWB", CovW + CovB),
+		
+		# ========================================
+		# = Beta matrix of regression parameters =
+		# ========================================
+		mxMatrix(name = "beta", type = "Full", nrow = nCov, ncol  = nDV, free = TRUE, values = 0, labels = betaLabels),
 		# Some handy component algebras
 		mxAlgebra(name = "ACE", A + C + E),
 		mxAlgebra(name = "AC" , A + C),
 		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 
-		mxAlgebra(name = "bCovWBb", (t(beta) %*% CovWB) %*% beta),
+		mxAlgebra(name = "bCovWBb", (t(beta) %*% CovWB) %*% beta), # output is[nDV * nDV] to match ACE
 		mxAlgebra(name = "bCovBb" , (t(beta) %*% CovB)  %*% beta),
 		mxAlgebra(name = "bCovWB" ,  t(beta) %*% CovWB),
 		mxAlgebra(name = "bCovB"  ,  t(beta) %*% CovB),
@@ -1823,15 +1837,15 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		mxAlgebra(name = "expCovMZ", expression = rbind(
 			cbind(ACE + bCovWBb, AC  + bCovBb , bCovWB, bCovB),
 			cbind(AC  + bCovBb , ACE + bCovWBb, bCovB , bCovWB),
-			cbind(CovWBb       , CovBb        , CovWB , CovB),
-			cbind(CovBb        , CovWBb       , CovB  , CovWB))
+			cbind(       CovWBb,        CovBb , CovWB , CovB),
+			cbind(       CovBb ,        CovWBb, CovB  , CovWB))
 		),
 		# Algebra for expected variance/covariance matrix #in DZ twins
 		mxAlgebra(name = "expCovDZ", expression = rbind(
 			cbind(ACE + bCovWBb, hAC + bCovBb , bCovWB, bCovB),
 			cbind(hAC + bCovBb , ACE + bCovWBb, bCovB , bCovWB),
-			cbind(CovWBb       , CovBb        , CovWB , CovB),
-			cbind(CovBb        , CovWBb       , CovB  , CovWB))
+			cbind(       CovWBb,        CovBb ,  CovWB,  CovB),
+			cbind(       CovBb ,        CovWBb,  CovB ,  CovWB))
 		)
 	) # end top
 
