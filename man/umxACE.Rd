@@ -199,18 +199,17 @@ plot(m1)
 require(umx)
 data(twinData)
 # Cut to form category of 20\% obese subjects
+# and make into mxFactors (ensure ordered is TRUE, and require levels)
 cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 obesityLevels = c('normal', 'obese')
 twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-# Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+
 selDVs = c("wt", "obese")
-mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
-dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
-mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
-dzData <- dzData[1:80,]
+mzData <- twinData[twinData$zygosity \%in\% "MZFF", umx_paste_names(selDVs, "", 1:2)]
+dzData <- twinData[twinData$zygosity \%in\% "DZFF", umx_paste_names(selDVs, "", 1:2)]
 \dontrun{
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)

@@ -2,6 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_cont_2_quantiles}
 \alias{umx_cont_2_quantiles}
+\alias{umx2ord}
 \title{umx_cont_2_quantiles}
 \usage{
 umx_cont_2_quantiles(x, nlevels = NULL, type = c("mxFactor", "ordered",
@@ -55,6 +56,7 @@ str(x[, c("wt1", "wt2")])
 # More examples
 
 x = umx_cont_2_quantiles(mtcars[, "mpg"], nlevels = 5) # quintiles
+x = umx2ord(mtcars[, "mpg"], nlevels = 5) # using shorter alias
 x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10) # more than integers exist
 x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 }
