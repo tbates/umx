@@ -78,6 +78,17 @@ dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
    dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
 )
+
+
+# Univariate bmi without covariate of age for comparison
+m2     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
+x      = umx_residualize("bmi", "age", suffixes=1:2, twinData)
+mzData = subset(x, zygosity == "MZFF", selVars)[1:80, ]
+dzData = subset(x, zygosity == "DZFF", selVars)[1:80, ]
+m3     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
+
+
+
 }
 \references{
 - Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
