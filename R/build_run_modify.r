@@ -1129,7 +1129,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.
 #' # Pick the variables
-#' selDVs = c("ht", "ht2")
+#' selDVs = c("ht1", "ht2")
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData) # -2ll= 9659

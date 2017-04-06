@@ -107,7 +107,7 @@ of degrees of freedom to simultaneously model C and D with only MZ and DZ twin p
 require(umx)
 data(twinData) # ?twinData from Australian twins.
 # Pick the variables
-selDVs = c("ht", "ht2")
+selDVs = c("ht1", "ht2")
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData) # -2ll= 9659
