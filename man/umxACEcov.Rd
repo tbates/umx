@@ -67,7 +67,7 @@ m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
 umxSummary(m1)
 plot(m1)
 # ====================
-# = A bivaraite test =
+# = A bivariate test =
 # ====================
 selDVs  = c("ht", "wt") # Set the DV
 selCovs = c("age") # Set the IV

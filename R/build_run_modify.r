@@ -1679,7 +1679,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' umxSummary(m1)
 #' plot(m1)
 #' # ====================
-#' # = A bivaraite test =
+#' # = A bivariate test =
 #' # ====================
 #' selDVs  = c("ht", "wt") # Set the DV
 #' selCovs = c("age") # Set the IV
@@ -1702,8 +1702,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	if(any(umx_is_ordered(dzData))){
 		stop("Sorry: umxACEcov can't handle ordinal yet: e-mail tim and chew him out")
 	}
-	if(nrow(dzData)==0){ stop("Your DZ dataset has no rows!") }
-	if(nrow(mzData)==0){ stop("Your MZ dataset has no rows!") }
+	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
+	if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
 	# Look for name conflicts
 	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
 	if(!identical(character(0), badNames)){
@@ -1742,7 +1742,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	meanDimNames = list(NULL, selVars)
 	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
 	if(equateMeans){
-		meanLabels = c(rep(paste0("expMean_", baseDVs), nSib), paste0("expMean_", selCovs))
+		meanLabels = c(rep(paste0("expMean_", baseDVs), nSib), rep(paste0("expMean_", baseCovs), nSib))
 	}else{
 		stop("Currently, means must be equated... why?")
 	}
@@ -1750,7 +1750,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	obsMZmeans  = umx_means(mzData[, selVars], ordVar = 0, na.rm = TRUE)
 	meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib),
 			free = TRUE, values = obsMZmeans, labels = meanLabels, dimnames = meanDimNames)
-	# 2017-04-04 04:37AM change from umxHetCor and selDVs, which looks like a bug
+	# 2017-04-04 04:37AM change from umxHetCor and selDVs (instead of selVars)
 	# varStarts = diag(umxHetCor(mzData[,selDVs]))
 	varStarts = umx_var(mzData[, selDVs[1:nDV], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 	if(nDV == 1){
@@ -1777,9 +1777,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		# NB: top already has the means model and thresholds matrix added if necessary  - see above.
 		# Additive, Common, and Unique environmental paths.
 		# Matrices a, c, e to store a, c, e path coefficients.
-		umxMatrix(name = "a", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE, dimnames = list(baseDVs, baseDVs)),
-		umxMatrix(name = "c", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),
-		umxMatrix(name = "e", type = "Full", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),  
+		umxMatrix(name = "a", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE, dimnames = list(baseDVs, baseDVs)),
+		umxMatrix(name = "c", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),
+		umxMatrix(name = "e", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = varStarts, byrow = TRUE),  
 
 		mxMatrix(name = "dzAr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzAr),
 		mxMatrix(name = "dzCr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzCr),
@@ -1811,7 +1811,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		# Some handy component algebras
 		mxAlgebra(name = "ACE", A + C + E),
 		mxAlgebra(name = "AC" , A + C),
-		mxAlgebra(name = "hAC", (dzAr * A) + C),
+		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
+
 		mxAlgebra(name = "bCovWBb", (t(beta) %*% CovWB) %*% beta),
 		mxAlgebra(name = "bCovBb" , (t(beta) %*% CovB)  %*% beta),
 		mxAlgebra(name = "bCovWB" ,  t(beta) %*% CovWB),
@@ -2081,9 +2082,9 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			mxAlgebra(cp_loadings %&% A_cp + as %*% t(as), name = "A"), # Additive genetic variance
 			mxAlgebra(cp_loadings %&% C_cp + cs %*% t(cs), name = "C"), # Common environmental variance
 			mxAlgebra(cp_loadings %&% E_cp + es %*% t(es), name = "E"), # Unique environmental variance
-			mxAlgebra(A+C+E, name = "ACE"),
-			mxAlgebra(A+C  , name = "AC" ),
-			mxAlgebra( (dzAr %x% A) + (dzCr %x% C),name="hAC"),
+			mxAlgebra(name = "ACE", A+C+E),
+			mxAlgebra(name = "AC" , A+C),
+			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 			mxAlgebra(rbind (cbind(ACE, AC), 
 			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name="expCovMZ"),
 			mxAlgebra(rbind (cbind(ACE, hAC),
@@ -2254,9 +2255,9 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			mxAlgebra(name = "C", ci%*%t(ci) + cs%*%t(cs) ), # Common environmental variance
 			mxAlgebra(name = "E", ei%*%t(ei) + es%*%t(es) ), # Unique environmental variance
 
-			mxAlgebra(name="ACE", A+C+E),
-			mxAlgebra(name="AC" , A+C  ),
-			mxAlgebra( (dzAr %x% A) + (dzCr %x% C),name="hAC"),
+			mxAlgebra(name = "ACE", A+C+E),
+			mxAlgebra(name = "AC" , A+C  ),
+			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 			mxAlgebra(rbind (cbind(ACE, AC), 
 			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name = "expCovMZ"),
 			mxAlgebra(rbind (cbind(ACE, hAC),
