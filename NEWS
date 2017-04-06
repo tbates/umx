@@ -1,14 +1,12 @@
-# umx 1.8.0 (Bleeding edge - expected May 2017, R 3.4.0 (You Stupid Darkness)
+# umx 1.8.0 (Bleeding edge - expected to drop May 2017, R 3.4.0 (You Stupid Darkness)
 * *TIP*: umxAPA can format lots of things for you: from effects in lm -try it out!
 * Numerous fixes to umxACEcov, to the point where this is now usable multivariate!
-	* the means were off, and not correctly equated
-	* variances were not getting good starts
-	* matrices not configured to scale up to more than 1 DV
+	* older versions worked with 1 DV only, and had poor start values
 
 # umx 1.7.5 (April 04 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
-* NEW: umxVersion (returns mxVersion() + umx version)
-* IMPROVED: umxACE univariate a, c, & e start  values much better!
+* NEW: umxVersion (returns mxVersion() + umx version).
+* IMPROVED: umxACE start values much better for univariate models.
 * NEWFEATURES: umx_make_TwinData
 	* Use variance input
 	* Option to set seed

@@ -1123,55 +1123,56 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' 
-#' # ===========================
-#' # = Univariate model of BMI =
-#' # ===========================
+#' # ============================
+#' # = How heritable is height? =
+#' # ============================
 #' require(umx)
-#' data(twinData) # ?twinData set from Australian twins.
+#' data(twinData) # ?twinData from Australian twins.
 #' # Pick the variables
-#' selDVs = c("bmi1", "bmi2")
+#' selDVs = c("ht", "ht2")
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData) # -2ll= 9659
 #' umxSummary(m1, std = FALSE) # unstandardized
+#' # tip: with report = "html", umxSummary can print the table to your browser!
 #' plot(m1)
 #' 
-#' # =========================================
-#' # = ADE model (DZ correlation set to .25) =
-#' # =========================================
+#' # ========================================================
+#' # = Evidence for dominance ? (DZ correlation set to .25) =
+#' # ========================================================
 #' m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
 #' umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled ACE
 #'
 #' # ==============================
-#' # = Univariate model of height =
+#' # = Univariate model of weight =
 #' # ==============================
 #'
-#' # This variable has a large variance, but umx picks good starts.
-#' # Example also shows ability to lbound the diagonal of a, c, and e at 0.
-#' m1 = umxACE(selDVs = "ht", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
+#' # Things to note:
+#' # 1. This variable has a large variance, but umx picks good starts.
+#' # 2. umxACE can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
+#' # 3. umxACE picks the variables it needs from the data.
+#' # 4. You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
+#' m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
+
+#' # We can modify this model, dropping shared environment, and see a comparison
 #' m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
-#'# 'log Lik.' -11985.57 (df=4)
-#'# Standardized solution
-#'# |    |   a1|   c1|   e1|
-#'# |:---|----:|----:|----:|
-#'# |ht1 | 0.92| 0.14| 0.36|
-#' 
+
 #' # =====================================
 #' # = Bivariate height and weight model =
 #' # =====================================
 #' data(twinData)
-#' selDVs = c("ht", "wt") # umx will add suffix (in this case "") + "1" or '2'
 #' mzData <- twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
 #' dzData <- twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
 #' mzData <- mzData[1:80,] # quicker run to keep CRAN happy
 #' dzData <- dzData[1:80,]
+#' selDVs = c("ht", "wt") # umx will add suffix (in this case "") + "1" or '2'
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' umxSummary(m1)
 #' 
-#' # ================================================================
-#' # = Well done! Now you can make and compare twin models in R :-) =
-#' # ================================================================
+#' # =========================================================
+#' # = Well done! Now you can make modify twin models in umx =
+#' # =========================================================
 #' 
 #'
 #' # ===================
@@ -1179,7 +1180,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # ===================
 #' require(umx)
 #' data(twinData)
-#' # Cut bmi colum to form ordinal obesity variables
+#' # Cut bmi column to form ordinal obesity variables
 #' ordDVs = c("obese1", "obese2")
 #' selDVs = c("obese")
 #' obesityLevels = c('normal', 'overweight', 'obese')
@@ -1757,7 +1758,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
 	if(equateMeans){
 		meanDimNames  = list(NULL, selVars)
-		meanLabels    = umx_paste_names(var = baseDVs, cov = baseCovs, suff = c("", ""), prefix = "expMean_")
+		meanLabels    = umx_paste_names(varNames = baseDVs, covNames = baseCovs, suffixes = c('',''), prefix = "expMean_")
 		DVmeanStarts  = umx_means(mzData[, selDVs[1:nDV]  , drop = FALSE], ordVar = 0, na.rm = TRUE)
 		CovMeanStarts = umx_means(mzData[, selCovs[1:nCov], drop = FALSE], ordVar = 0, na.rm = TRUE)
 		meanStarts    = c(DVmeanStarts, DVmeanStarts, CovMeanStarts, CovMeanStarts)
