@@ -1663,24 +1663,30 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' Educational Achievement Data. Behavior Genetics. doi:10.1007/s10519-015-9771-1
 #'
 #' @examples
+# ================================
+# = BMI, with Age as a covariate =
+# ================================
 #' require(umx)
 #' data(twinData)
-#' # replicate age to age1 & age2
+#' # Replicate age to age1 & age2
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = c("bmi") # Set the DV
 #' selCovs = c("age") # Set the IV
 #' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
-#' # 80 rows so example runs fast
+#' # 80 rows so example runs fast for CRAN
 #' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 #' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
-#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
-#'    dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
-#' )
+#'
+#' # The model
+#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix = "")
 #' umxSummary(m1)
 #' plot(m1)
-#' # ====================
-#' # = A bivariate test =
-#' # ====================
+#' # note: see below for a comparison of this same model, with age residualised
+#' # outside the model.
+#'
+#' # =======================
+#' # = A bivariate example =
+#' # =======================
 #' selDVs  = c("ht", "wt") # Set the DV
 #' selCovs = c("age") # Set the IV
 #' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
@@ -1698,9 +1704,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' mzData = subset(x, zygosity == "MZFF", selVars)[1:80, ]
 #' dzData = subset(x, zygosity == "DZFF", selVars)[1:80, ]
 #' m3     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
-#' 
-#' 
-#' 
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
 	nSib = 2 # Number of siblings in a twin pair
 	if(dzCr == .25 && name == "ACE"){
