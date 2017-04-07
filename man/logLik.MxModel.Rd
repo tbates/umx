@@ -12,15 +12,18 @@
 \item{...}{Optional parameters}
 }
 \value{
-- the log likelihood
+\itemize{
+\item the log likelihood
+}
 }
 \description{
-Returns the log likelihood for an OpenMx model. This helper also 
+Returns the log likelihood for an OpenMx model. This helper also
 enables \code{\link{AIC}}(model); \code{\link{BIC}}(model).
 }
 \details{
-For logLik for other types of object, see \code{\link{AIC}}.
-
+\emph{note}: this is the (natrual) log of the likelihood, not -2\emph{log(likelihood). To
+recovert -2}ll, multiply the returned value by -2
+For logLik for other types of object, see \code{\link{logLik}}.
 
 hat-tip Andreas Brandmaier
 }
@@ -41,10 +44,14 @@ logLik(m1)
 AIC(m1)
 }
 \references{
-- \url{http://openmx.ssri.psu.edu/thread/931#comment-4858}
+\itemize{
+\item \url{http://openmx.ssri.psu.edu/thread/931#comment-4858}
+}
 }
 \seealso{
-- \code{\link{logLik}}, \code{\link{AIC}}, \code{\link{umxCompare}}
+\itemize{
+\item \code{\link{logLik}}, \code{\link{AIC}}, \code{\link{umxCompare}}
+}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

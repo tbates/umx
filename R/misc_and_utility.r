@@ -3059,6 +3059,7 @@ umx_reorder <- function(old, newOrder) {
 #' \strong{Note}: Redundant quantiles are merged. i.e., if the same score identifies
 #' all deciles up to the fourth, then these will be merged into one bin, labeled "quantile4".
 #'
+#' @aliases umx2ord
 #' @param x a variable to recode as ordinal (email me if you'd like this upgraded to handle df input)
 #' @param nlevels How many bins or levels (at most) to use (i.e., 10 = deciles)
 #' @param type what to return (Default is "mxFactor") options: "ordered" and "unordered")
@@ -3092,6 +3093,7 @@ umx_reorder <- function(old, newOrder) {
 #' # More examples
 #' 
 #' x = umx_cont_2_quantiles(mtcars[, "mpg"], nlevels = 5) # quintiles
+#' x = umx2ord(mtcars[, "mpg"], nlevels = 5) # using shorter alias
 #' x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10) # more than integers exist
 #' x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE, returnCutpoints = FALSE){
@@ -3138,6 +3140,9 @@ umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordere
 	}
 	return(out)
 }
+
+#' @export
+umx2ord <- umx_cont_2_quantiles
 
 #' umx_has_square_brackets
 #'

@@ -2994,7 +2994,10 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' Returns the log likelihood for an OpenMx model. This helper also 
 #' enables \code{\link{AIC}}(model); \code{\link{BIC}}(model).
 #'
-#' For logLik for other types of object, see \code{\link{AIC}}.
+#' *note*: this is the (natrual) log of the likelihood, not -2*log(likelihood). To
+#' recovert -2*ll, multiply the returned value by -2
+#' For logLik for other types of object, see \code{\link{logLik}}.
+#' 
 #' @details
 #' hat-tip Andreas Brandmaier
 #'
@@ -3022,24 +3025,25 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' logLik(m1)
 #' AIC(m1)
+#'@md
 logLik.MxModel <- function(object, ...) {
 	model = object # just to be clear that object is a model
-	Minus2LogLikelihood <- NA
+	logLikelihood = NA
 	if (!is.null(model$output) & !is.null(model$output$Minus2LogLikelihood)){
-		Minus2LogLikelihood <- (-0.5) * model$output$Minus2LogLikelihood		
+		logLikelihood = (-0.5) * model$output$Minus2LogLikelihood		
 	}
 	if (!is.null(model$data)){
-		attr(Minus2LogLikelihood,"nobs") <- model$data$numObs
+		attr(logLikelihood,"nobs") = model$data$numObs
 	}else{ 
-		attr(Minus2LogLikelihood,"nobs") <- NA
+		attr(logLikelihood,"nobs") = NA
 	}
 	if (!is.null(model$output)){
-		attr(Minus2LogLikelihood,"df") <- length(model$output$estimate)	
+		attr(logLikelihood,"df") = length(model$output$estimate)	
 	} else {
-		attr(Minus2LogLikelihood, "df") <- NA
+		attr(logLikelihood, "df") = NA
 	}
-	class(Minus2LogLikelihood) <- "logLik"
-	return(Minus2LogLikelihood);
+	class(logLikelihood) = "logLik"
+	return(logLikelihood);
 }
 
 #' umxFitIndices

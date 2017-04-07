@@ -53,22 +53,27 @@ umxACEcov supplements the \code{\link{umxACE}} Cholesky model with covariates.
 \examples{
 require(umx)
 data(twinData)
-# replicate age to age1 & age2
+# Replicate age to age1 & age2
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = c("bmi") # Set the DV
 selCovs = c("age") # Set the IV
 selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
-# 80 rows so example runs fast
+# 80 rows so example runs fast for CRAN
+mzData = subset(twinData, zygosity == "MZFF", selVars)
+dzData = subset(twinData, zygosity == "DZFF", selVars)
 mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
-m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
-   dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
-)
+
+# The model
+m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix = "")
 umxSummary(m1)
 plot(m1)
-# ====================
-# = A bivariate test =
-# ====================
+# note: see below for a comparison of this same model, with age residualised
+# outside the model.
+
+# =======================
+# = A bivariate example =
+# =======================
 selDVs  = c("ht", "wt") # Set the DV
 selCovs = c("age") # Set the IV
 selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
@@ -86,9 +91,6 @@ x      = umx_residualize("bmi", "age", suffixes=1:2, twinData)
 mzData = subset(x, zygosity == "MZFF", selVars)[1:80, ]
 dzData = subset(x, zygosity == "DZFF", selVars)[1:80, ]
 m3     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
-
-
-
 }
 \references{
 - Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
