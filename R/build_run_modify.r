@@ -1674,6 +1674,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' selCovs = c("age") # Set the IV
 #' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
 #' # 80 rows so example runs fast for CRAN
+#' mzData = subset(twinData, zygosity == "MZFF", selVars)
+#' dzData = subset(twinData, zygosity == "DZFF", selVars)
 #' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 #' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
 #'
