@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{extractAIC.MxModel}
 \alias{extractAIC.MxModel}
-\title{extractAIC from MxModel}
+\title{Extract AIC from MxModel}
 \usage{
 \method{extractAIC}{MxModel}(fit, scale, k, ...)
 }

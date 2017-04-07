@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{logLik.MxModel}
 \alias{logLik.MxModel}
-\title{logLik.MxModel}
+\title{Extract log Likelihood from an MxModel}
 \usage{
 \method{logLik}{MxModel}(object, ...)
 }
@@ -19,6 +19,9 @@ Returns the log likelihood for an OpenMx model. This helper also
 enables \code{\link{AIC}}(model); \code{\link{BIC}}(model).
 }
 \details{
+For logLik for other types of object, see \code{\link{AIC}}.
+
+
 hat-tip Andreas Brandmaier
 }
 \examples{
@@ -41,7 +44,7 @@ AIC(m1)
 - \url{http://openmx.ssri.psu.edu/thread/931#comment-4858}
 }
 \seealso{
-- \code{\link{AIC}}, \code{\link{umxCompare}}
+- \code{\link{logLik}}, \code{\link{AIC}}, \code{\link{umxCompare}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

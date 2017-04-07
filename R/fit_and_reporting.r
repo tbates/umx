@@ -2820,7 +2820,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 # = Pull model components =
 # =========================
 
-#' extractAIC from MxModel
+#' Extract AIC from MxModel
 #'
 #' Returns the AIC for an OpenMx model
 #' helper function for \code{\link{logLik.MxModel}} (which enables AIC(model); logLik(model); BIC(model)
@@ -2989,20 +2989,22 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 	return(expMean)
 }
 
-#' logLik.MxModel
+#' Extract log Likelihood from an MxModel
 #'
 #' Returns the log likelihood for an OpenMx model. This helper also 
 #' enables \code{\link{AIC}}(model); \code{\link{BIC}}(model).
 #'
+#' For logLik for other types of object, see \code{\link{AIC}}.
+#' @details
 #' hat-tip Andreas Brandmaier
 #'
 #' @method logLik MxModel
-#' @rdname logLik
+#' @rdname logLik.MxModel
 #' @export
 #' @param object the \code{\link{mxModel}} from which to get the log likelihood
 #' @param ... Optional parameters
 #' @return - the log likelihood
-#' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}
+#' @seealso - \code{\link{logLik}}, \code{\link{AIC}}, \code{\link{umxCompare}}
 #' @family Reporting functions
 #' @references - \url{http://openmx.ssri.psu.edu/thread/931#comment-4858}
 #' @examples

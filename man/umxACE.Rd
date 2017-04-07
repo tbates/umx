@@ -8,7 +8,8 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
   suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
   equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
-  "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL)
+  "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL,
+  optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE")}
@@ -49,6 +50,8 @@ SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 
 \item{sep}{allowed as a synonym for "suffix"}
+
+\item{optimizer}{optionally set the optimizer (default NULL does nothing)}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACE

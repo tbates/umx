@@ -1117,6 +1117,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param thresholds How to implement ordinal thresholds c("deviationBased", "WLS")
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @param sep allowed as a synonym for "suffix"
+#' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
@@ -1252,7 +1253,15 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' umxSummary(m1)
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep=NULL) {
+	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL) {
+
+		# =================
+		# = Set optimizer =
+		# =================
+		if(!is.null(optimizer)){
+			umx_set_optimizer(optimizer)
+		}
+
 		# Allow sep as synonym for suffix
 		if(!is.null(sep)){
 			suffix = sep
