@@ -1,5 +1,5 @@
 Package: umx
-Version: 1.7.5
+Version: 1.8.0
 Date: 2017-04-01
 Title: Structural Equation Modelling in R with 'OpenMx'
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
@@ -11,7 +11,7 @@ Description: Quickly create, run, and report structural equation and twin models
     See '?umx' to learn more.
 Depends:
     R (>= 3.2.0),
-    OpenMx (>= 2.5.0)
+    OpenMx (>= 2.7.9)
 Imports:
     DiagrammeR,
     knitr,

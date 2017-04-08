@@ -4,42 +4,47 @@
 \alias{umxACEcov}
 \title{umxACEcov: Build and run a Cholesky with covariates in the covariance}
 \usage{
-umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL,
+umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL,
   equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
-  "left_censored"), autoRun = getOption("umx_auto_run"))
+  "left_censored"), autoRun = getOption("umx_auto_run"), suffix = NULL,
+  optimizer = NULL)
 }
 \arguments{
-\item{name}{The name of the model (defaults to"ACE")}
+\item{name}{The name of the model (defaults to"ACE").}
 
-\item{selDVs}{The variables to include from the data (do not include suffixes)}
+\item{selDVs}{The variables to include from the data (do not include suffixes).}
 
-\item{selCovs}{The covariates to include from the data (do not include suffixes)}
+\item{selCovs}{The covariates to include from the data (do not include suffixes).}
 
-\item{dzData}{The DZ dataframe}
+\item{dzData}{The DZ dataframe.}
 
-\item{mzData}{The MZ dataframe}
+\item{mzData}{The MZ dataframe.}
 
-\item{suffix}{suffix for twin 1 and twin 2, often "_T" Used to expand selDVs into
-full column names, i,e "dep" -->  c("dep_T1", "dep_T2")}
+\item{sep}{Seperator test between basename for twin variable names, often "_T".
+Used to expand selDVs into full column names, i,e "dep" -->  c("dep_T1", "dep_T2").}
 
-\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
+\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
-\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)}
+\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
-\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE)}
+\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
 
-\item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE)}
+\item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE).}
 
-\item{boundDiag}{= Whether to bound the diagonal of the a, c, and e matrices}
+\item{boundDiag}{= Whether to bound the diagonal of the a, c, and e matrices.}
 
-\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE)}
+\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
-\item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE)}
+\item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
 
-\item{thresholds}{How to implement ordinal thresholds: c("deviationBased", "left_censored")}
+\item{thresholds}{How to implement ordinal thresholds: c("deviationBased", "left_censored").}
 
-\item{autoRun}{Whether to run the model and return it, or just return it}
+\item{autoRun}{Whether to run the model and return it, or just return it.}
+
+\item{suffix}{synonym for 'sep' (see above).}
+
+\item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACEcov
@@ -64,11 +69,11 @@ dzData = subset(twinData, zygosity == "DZFF", selVars)
 mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
 
-# The model
+# BMI, covarying for age in an ACE model
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix = "")
 umxSummary(m1)
 plot(m1)
-# note: see below for a comparison of this same model, with age residualised
+# note: see below for a comparison with the lm-based age-residualisation approach
 # outside the model.
 
 # =======================
@@ -93,13 +98,13 @@ dzData = subset(x, zygosity == "DZFF", selVars)[1:80, ]
 m3     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
 }
 \references{
-- Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
+Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
 and genotype on self-report drunkenness following a challenge dose of alcohol. 
-Behavior Genetics, 19, 63-78. doi:10.1007/BF01065884
+Behavior Genetics, 19, 63-78. doi:\url{https://doi.org/10.1007/BF01065884}.
 
 Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach 
 to Handle Missing Covariate Data in Twin Research : With an Application to
-Educational Achievement Data. Behavior Genetics. doi:10.1007/s10519-015-9771-1
+Educational Achievement Data. Behavior Genetics. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{plot.MxModel}},

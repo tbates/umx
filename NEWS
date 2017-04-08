@@ -2,8 +2,9 @@
 * *TIP*: umxAPA can format lots of things for you: from effects in lm -try it out!
 * NEW: umxACEcov now working!
 	* older versions worked with 1 DV only, couldn't handle multivariate means, had poor start values.
+* NEW: `optimiser` parameter for umxACE and other twin models
+* IMPROVED: twin models now print summary when `autoRun`
 * DOCUMENT logic.MxModel Rd page for logic.MxModel.
-* NEW: optimiser = “” parameter for umxACE.
 
 # umx 1.7.5 (April 04 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
