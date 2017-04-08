@@ -50,27 +50,27 @@ Used to expand selDVs into full column names, i,e "dep" -->  c("dep_T1", "dep_T2
 - \code{\link{mxModel}} of subclass mxModel.ACEcov
 }
 \description{
-Make a 2-group ACE Cholesky Twin model with covariates modeled (see Details below)
-}
-\details{
-umxACEcov supplements the \code{\link{umxACE}} Cholesky model with covariates.
+Many researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models by including them in
+the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}}.
+Both these approaches require all covariates be non-missing, thus dropping all rows with any missing covariate.
+This can be wasteful of data. umxACEcov models the covariates in the expected covariance matrix, preserving all data.
+The model is this one: #' \figure{ACEcov.png}
 }
 \examples{
 require(umx)
 data(twinData)
 # Replicate age to age1 & age2
 twinData$age1 = twinData$age2 = twinData$age
-selDVs  = c("bmi") # Set the DV
-selCovs = c("age") # Set the IV
-selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
 # 80 rows so example runs fast for CRAN
-mzData = subset(twinData, zygosity == "MZFF", selVars)
-dzData = subset(twinData, zygosity == "DZFF", selVars)
-mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
-dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
+mzData = subset(twinData, zygosity == "MZFF")[1:80, ]
+dzData = subset(twinData, zygosity == "DZFF")[1:80, ]
+\dontrun{
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
+}
 
 # BMI, covarying for age in an ACE model
-m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix = "")
+m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
 umxSummary(m1)
 plot(m1)
 # note: see below for a comparison with the lm-based age-residualisation approach

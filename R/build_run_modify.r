@@ -1640,10 +1640,11 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 
 #' umxACEcov: Build and run a Cholesky with covariates in the covariance
 #'
-#' Make a 2-group ACE Cholesky Twin model with covariates modeled (see Details below)
+#' Many researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models by including them in
+#' the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}}.
+#' Both these approaches require all covariates be non-missing, thus dropping all rows with any missing covariate.
+#' This can be wasteful of data. umxACEcov models the covariates in the expected covariance matrix, preserving all data.
 #' 
-#' umxACEcov supplements the \code{\link{umxACE}} Cholesky model with covariates.
-#'
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data (do not include suffixes).
 #' @param selCovs The covariates to include from the data (do not include suffixes).
