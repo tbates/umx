@@ -4071,7 +4071,7 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 #' dataset must consist either of numeric variables or ordered 
 #' factors. When one or more ordered factors are included, 
 #' then a heterogeneous correlation matrix is computed using 
-#' John Fox&rsquo;s polycor package. Pairwise complete observations 
+#' John Fox's polycor package. Pairwise complete observations 
 #' are used for all covariances, and the exact pattern of 
 #' missing data present in the input is placed in the output,
 #' provided a new sample size is not requested. Warnings from

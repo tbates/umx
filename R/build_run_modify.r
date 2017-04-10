@@ -1286,7 +1286,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 
 			if(!is.null(suffix)){
 				if(length(suffix) > 1){
-					stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+					stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
 					"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
 				}
 				selDVs = umx_paste_names(selDVs, suffix, 1:2)
@@ -1640,36 +1640,43 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 
 #' umxACEcov: Build and run a Cholesky with covariates in the covariance
 #'
-#' Make a 2-group ACE Cholesky Twin model with covariates modeled (see Details below)
+#' Many researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models by including them in
+#' the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}}.
+#' Both these approaches require all covariates be non-missing, thus dropping all rows with any missing covariate.
+#' This can be wasteful of data. umxACEcov models the covariates in the expected covariance matrix, preserving all data.
+#' The following figure shows how the ACE model appears as a path diagram:
+#' \if{html}{\figure{ACEcov_variance_model.png}{options: width="75\%" alt="Figure: ACEcov_variance_model.png"}}
+#' \if{latex}{\figure{ACEcov_variance_model.png}{options: width=7cm}}
 #' 
-#' umxACEcov supplements the \code{\link{umxACE}} Cholesky model with covariates.
-#'
-#' @param name The name of the model (defaults to"ACE")
-#' @param selDVs The variables to include from the data (do not include suffixes)
-#' @param selCovs The covariates to include from the data (do not include suffixes)
-#' @param dzData The DZ dataframe
-#' @param mzData The MZ dataframe
-#' @param suffix suffix for twin 1 and twin 2, often "_T" Used to expand selDVs into
-#' full column names, i,e "dep" -->  c("dep_T1", "dep_T2")
-#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
-#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
-#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
-#' @param addCI Whether to add intervals to compute CIs (defaults to TRUE)
-#' @param boundDiag = Whether to bound the diagonal of the a, c, and e matrices
-#' @param equateMeans Whether to equate the means across twins (defaults to TRUE)
-#' @param thresholds How to implement ordinal thresholds: c("deviationBased", "left_censored")
-#' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE)
-#' @param autoRun Whether to run the model and return it, or just return it
+#' @param name The name of the model (defaults to"ACE").
+#' @param selDVs The variables to include from the data (do not include suffixes).
+#' @param selCovs The covariates to include from the data (do not include suffixes).
+#' @param dzData The DZ dataframe.
+#' @param mzData The MZ dataframe.
+#' @param sep Seperator test between basename for twin variable names, often "_T".
+#' Used to expand selDVs into full column names, i,e "dep" -->  c("dep_T1", "dep_T2").
+#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
+#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
+#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
+#' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
+#' @param boundDiag = Whether to bound the diagonal of the a, c, and e matrices.
+#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
+#' @param thresholds How to implement ordinal thresholds: c("deviationBased", "left_censored").
+#' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
+#' @param autoRun Whether to run the model and return it, or just return it.
+#' @param suffix synonym for 'sep' (see above).
+#' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @export
 #' @family Twin Modeling Functions
-#' @references - Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
+#' @references 
+#' Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
 #' and genotype on self-report drunkenness following a challenge dose of alcohol. 
-#' Behavior Genetics, 19, 63-78. doi:10.1007/BF01065884
+#' Behavior Genetics, 19, 63-78. doi:\url{https://doi.org/10.1007/BF01065884}.
 #' 
 #' Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach 
 #' to Handle Missing Covariate Data in Twin Research : With an Application to
-#' Educational Achievement Data. Behavior Genetics. doi:10.1007/s10519-015-9771-1
+#' Educational Achievement Data. Behavior Genetics. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
 #'
 #' @examples
 # ================================
@@ -1679,20 +1686,19 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' data(twinData)
 #' # Replicate age to age1 & age2
 #' twinData$age1 = twinData$age2 = twinData$age
-#' selDVs  = c("bmi") # Set the DV
-#' selCovs = c("age") # Set the IV
-#' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
 #' # 80 rows so example runs fast for CRAN
-#' mzData = subset(twinData, zygosity == "MZFF", selVars)
-#' dzData = subset(twinData, zygosity == "DZFF", selVars)
-#' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
-#' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
+#' mzData = subset(twinData, zygosity == "MZFF")[1:80, ]
+#' dzData = subset(twinData, zygosity == "DZFF")[1:80, ]
+#' \dontrun{
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
+#' }
 #'
-#' # The model
-#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix = "")
+#' # BMI, covarying for age in an ACE model
+#' m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
 #' umxSummary(m1)
 #' plot(m1)
-#' # note: see below for a comparison of this same model, with age residualised
+#' # note: see below for a comparison with the lm-based age-residualisation approach
 #' # outside the model.
 #'
 #' # =======================
@@ -1710,25 +1716,27 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #'
 #'
 #' # Univariate bmi without covariate of age for comparison
-#' m2     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
-#' x      = umx_residualize("bmi", "age", suffixes=1:2, twinData)
-#' mzData = subset(x, zygosity == "MZFF", selVars)[1:80, ]
-#' dzData = subset(x, zygosity == "DZFF", selVars)[1:80, ]
-#' m3     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
-umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run")) {
+#' m2 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+#' resid_data = umx_residualize("bmi", "age", suffixes=1:2, twinData)
+#' mzData = subset(resid_data, zygosity == "MZFF", selVars)
+#' dzData = subset(resid_data, zygosity == "DZFF", selVars)
+#' m3     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run"), suffix = NULL, optimizer = NULL) {
 	nSib = 2 # Number of siblings in a twin pair
+	if(!is.null(optimizer)){
+		umx_set_optimizer(optimizer)
+	}
 	if(dzCr == .25 && name == "ACE"){
 		name = "ADEcov"
+	}
+	# Allow sep as synonym for suffix
+	if(!is.null(sep)){
+		suffix = sep
 	}
 
 	# ==================
 	# = Validate input =
 	# ==================
-	if(any(umx_is_ordered(dzData))){
-		stop("Sorry: umxACEcov can't handle ordinal yet: e-mail tim and chew him out")
-	}
-	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
-	if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
 	# Look for name conflicts
 	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
 	if(!identical(character(0), badNames)){
@@ -1737,11 +1745,11 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	}
 
 	if(is.null(suffix)){
-		stop("I need a suffix, like '_T'. I will add 1 and 2 afterwards... \n",
+		stop("I need a sep, like '_T'. (I will add 1 and 2 after it...) \n",
 		"i.e., selDVs should be 'bmi' etc, and I will re-name to 'bmi_T1' and 'bmi_T2' etc.")
 	}else if(length(suffix) > 1){
-			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
+			stop("suffix should be just one word, like '_T'. I will add 1 and 2 after that...\n",
+			"i.e., if variables are like 'var_T1', give me selVars = 'var' and sep = '_T'")
 	}else{
 		# stash base names for use later
 		baseDVs = selDVs
@@ -1764,6 +1772,12 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	mzData = mzData[, selVars]
 	dzData = dzData[, selVars]
 
+	if(any(umx_is_ordered(dzData, strict = FALSE))){
+		stop("Sorry: umxACEcov can't handle ordinal yet: e-mail tim and chew him out")
+	}
+	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
+	if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
+
 	# ===============
 	# = Setup means =
 	# ===============
@@ -1775,13 +1789,12 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		DVmeanStarts  = umx_means(mzData[, selDVs[1:nDV]  , drop = FALSE], ordVar = 0, na.rm = TRUE)
 		CovMeanStarts = umx_means(mzData[, selCovs[1:nCov], drop = FALSE], ordVar = 0, na.rm = TRUE)
 		meanStarts    = c(DVmeanStarts, DVmeanStarts, CovMeanStarts, CovMeanStarts)
-		# meansMatrix = umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, labels = meanLabels, dimnames = meanDimNames)
 	} else {
 		stop("Currently, means must be equated... why?")
 	}
 	
 	# make beta labels
-	betaLabels = paste0(rep(paste0("var", 1:nDV), each=nCov), rep(paste0("beta", 1:nCov), times = nDV))
+	betaLabels = paste0(rep(paste0("var", 1:nDV), each = nCov), rep(paste0("beta", 1:nCov), times = nDV))
 	betaLabels = matrix(betaLabels, nrow = nCov, ncol  = nDV, byrow = FALSE)
 
 	# =====================
@@ -1845,8 +1858,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 		mxAlgebra(name = "bCovBb" , (t(beta) %*% CovB)  %*% beta),
 		mxAlgebra(name = "bCovWB" ,  t(beta) %*% CovWB),
 		mxAlgebra(name = "bCovB"  ,  t(beta) %*% CovB),
-		mxAlgebra(name = "CovWBb" ,    CovWB %*% beta),
-		mxAlgebra(name = "CovBb"  ,    CovB  %*% beta),
+		mxAlgebra(name = "CovWBb" ,              CovWB %*% beta),
+		mxAlgebra(name = "CovBb"  ,               CovB %*% beta),
 		# Algebra for expected variance/covariance matrix #in MZ twins
 		mxAlgebra(name = "expCovMZ", expression = rbind(
 			cbind(ACE + bCovWBb, AC  + bCovBb , bCovWB, bCovB),
@@ -1914,9 +1927,11 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, suffix =
 	}
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
-	model = as(model, "MxModel.ACEcov") # set class so that S3 plot() dispatches.
+	model = as(model, "MxModel.ACEcov") # set class so umxSummary, plot, etc work.
 	if(autoRun){
-		return(mxRun(model))
+		model = mxRun(model)
+		umxSummary(model)
+		return(model)
 	} else {
 		return(model)
 	}
@@ -2164,7 +2179,9 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	model = omxAssignFirstParameters(model) # Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = as(model, "MxModel.CP")
 	if(autoRun){
-		return(mxRun(model))
+		model = mxRun(model)
+		umxSummary(model)
+		return(model)
 	} else {
 		return(model)
 	}
@@ -2366,7 +2383,9 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	model = as(model, "MxModel.IP")
 
 	if(autoRun){
-		return(mxRun(model))
+		model = mxRun(model)
+		umxSummary(model)
+		return(model)
 	} else {
 		return(model)
 	}
@@ -2581,7 +2600,9 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 	)
 	model = umxLabel(model)
 	if(autoRun){
-		return(mxRun(model))
+		model = mxRun(model)
+		umxSummary(model)
+		return(model)
 	} else {
 		return(model)
 	}
