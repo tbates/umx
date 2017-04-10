@@ -23,7 +23,8 @@ test_that("umxACE works", {
 	# Do height
 	m1 = umxACE(selDVs = "ht", dzData = dzData, mzData = mzData, sep = "")
 	expect_lt(m1$output$Minus2LogLikelihood, -11985.56)	
-	
+	# TODO Add more umxACE model tests
+	# Add umxACEcov comparison test with lm-based solution
 	# expect_gt()
 	# expect_match(as.numeric(logLik(m1)))
 })
