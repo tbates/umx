@@ -8,7 +8,7 @@ umxCP(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
   correlatedA = FALSE, equateMeans = T, dzAr = 0.5, dzCr = 1,
   addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"), sep = NULL)
+  autoRun = getOption("umx_auto_run"), optimizer = NULL, sep = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP")}
@@ -47,6 +47,8 @@ omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+
+\item{optimizer}{optionally set the optimizer (default NULL does nothing)}
 
 \item{sep}{allowed as a synonym for "suffix"}
 }

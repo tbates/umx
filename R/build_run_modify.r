@@ -233,6 +233,7 @@ umxModel <- function(...) {
 #' @param refModels pass in reference models if available. Use FALSE to supress computing these if not provided.
 #' @param thresholds Whether to use deviation-based threshold modeling for ordinal data (if any is detected), direct, or do nothing.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @seealso \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}
@@ -298,7 +299,15 @@ umxModel <- function(...) {
 #'# mpg  "mpg_with_mpg"  "mpg_with_wt" "disp_with_mpg"
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run")) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+	
+	# =================
+	# = Set optimizer =
+	# =================
+	if(!is.null(optimizer)){
+		umx_set_optimizer(optimizer)
+	}
+	
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
 	legalThresholdsOptions = c("deviationBased", "direct", "ignore", "left_censored")
@@ -654,6 +663,7 @@ umxReRun <- umxModify
 #' @param lboundM   = numeric: If !is.na, then lbound the moderators at this value (default = NA)
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @return - GxE \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -675,8 +685,17 @@ umxReRun <- umxModify
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' m2 = umxModify(m1, "am_.*", regex=TRUE, comparison = TRUE)
-umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run")) {
+
+
+umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2;
+# =================
+# = Set optimizer =
+# =================
+	if(!is.null(optimizer)){
+		umx_set_optimizer(optimizer)
+	}
+
 	if(!is.null(suffix)){
 		if(length(suffix) > 1){
 			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
@@ -1997,6 +2016,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param numObsDZ = not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @param sep allowed as a synonym for "suffix"
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -2020,8 +2040,16 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' m2 = umxModify(m1, update = "(cs_.*$)|(c_cp_)", regex = TRUE, name = "dropC")
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
-umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), sep=NULL) {
+umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, sep=NULL) {
 	nSib = 2
+
+	# =================
+	# = Set optimizer =
+	# =================
+	if(!is.null(optimizer)){
+		umx_set_optimizer(optimizer)
+	}
+	
     # Allow sep as synonym for suffix
    if(!is.null(sep)){
    	suffix = sep
@@ -2212,6 +2240,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param numObsDZ = todo: implement ordinal Number of DZ twins: Set this if you input covariance data
 #' @param numObsMZ = todo: implement ordinal Number of MZ twins: Set this if you input covariance data
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @param sep allowed as a synonym for "suffix"
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -2229,8 +2258,16 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
 #' plot(m1)
-umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), sep=NULL) {
+umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, sep=NULL) {
 	# TODO implement correlatedA
+
+	# =================
+	# = Set optimizer =
+	# =================
+	if(!is.null(optimizer)){
+		umx_set_optimizer(optimizer)
+	}
+
 	if(correlatedA){
 		message("I have not implemented correlatedA yet...")
 	}
