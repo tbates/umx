@@ -1644,6 +1644,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}}.
 #' Both these approaches require all covariates be non-missing, thus dropping all rows with any missing covariate.
 #' This can be wasteful of data. umxACEcov models the covariates in the expected covariance matrix, preserving all data.
+#' The following figure shows how the ACE model appears as a path diagram:
+#' \if{html}{\figure{ACEcov_variance_model.png}{options: width="75\%" alt="Figure: ACEcov_variance_model.png"}}
+#' \if{latex}{\figure{ACEcov_variance_model.png}{options: width=7cm}}
 #' 
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data (do not include suffixes).
@@ -1713,11 +1716,11 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #'
 #'
 #' # Univariate bmi without covariate of age for comparison
-#' m2     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
-#' x      = umx_residualize("bmi", "age", suffixes=1:2, twinData)
-#' mzData = subset(x, zygosity == "MZFF", selVars)[1:80, ]
-#' dzData = subset(x, zygosity == "DZFF", selVars)[1:80, ]
-#' m3     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
+#' m2 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+#' resid_data = umx_residualize("bmi", "age", suffixes=1:2, twinData)
+#' mzData = subset(resid_data, zygosity == "MZFF", selVars)
+#' dzData = subset(resid_data, zygosity == "DZFF", selVars)
+#' m3     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run"), suffix = NULL, optimizer = NULL) {
 	nSib = 2 # Number of siblings in a twin pair
 	if(!is.null(optimizer)){

@@ -54,7 +54,9 @@ Many researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twi
 the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}}.
 Both these approaches require all covariates be non-missing, thus dropping all rows with any missing covariate.
 This can be wasteful of data. umxACEcov models the covariates in the expected covariance matrix, preserving all data.
-The model is this one: #' \figure{ACEcov.png}
+The following figure shows how the ACE model appears as a path diagram:
+\if{html}{\figure{ACEcov_variance_model.png}{options: width="75\%" alt="Figure: ACEcov_variance_model.png"}}
+\if{latex}{\figure{ACEcov_variance_model.png}{options: width=7cm}}
 }
 \examples{
 require(umx)
@@ -91,11 +93,11 @@ m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
 
 
 # Univariate bmi without covariate of age for comparison
-m2     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
-x      = umx_residualize("bmi", "age", suffixes=1:2, twinData)
-mzData = subset(x, zygosity == "MZFF", selVars)[1:80, ]
-dzData = subset(x, zygosity == "DZFF", selVars)[1:80, ]
-m3     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix="")
+m2 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+resid_data = umx_residualize("bmi", "age", suffixes=1:2, twinData)
+mzData = subset(resid_data, zygosity == "MZFF", selVars)
+dzData = subset(resid_data, zygosity == "DZFF", selVars)
+m3     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 }
 \references{
 Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
