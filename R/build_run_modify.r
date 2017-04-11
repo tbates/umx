@@ -1742,6 +1742,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' m3     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run"), suffix = NULL, optimizer = NULL) {
 	nSib = 2 # Number of siblings in a twin pair
+	warning("This function is pre=beta and results not guaranteed!!")
 	if(!is.null(optimizer)){
 		umx_set_optimizer(optimizer)
 	}
@@ -1880,14 +1881,14 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 		mxAlgebra(name = "CovWBb" ,              CovWB %*% beta),
 		mxAlgebra(name = "CovBb"  ,               CovB %*% beta),
 		# Algebra for expected variance/covariance matrix #in MZ twins
-		mxAlgebra(name = "expCovMZ", expression = rbind(
+		mxAlgebra(name = "expCovMZ", dimnames = list(names(mzData), names(mzData)), expression = rbind(
 			cbind(ACE + bCovWBb, AC  + bCovBb , bCovWB, bCovB),
 			cbind(AC  + bCovBb , ACE + bCovWBb, bCovB , bCovWB),
 			cbind(       CovWBb,        CovBb , CovWB , CovB),
 			cbind(       CovBb ,        CovWBb, CovB  , CovWB))
 		),
 		# Algebra for expected variance/covariance matrix #in DZ twins
-		mxAlgebra(name = "expCovDZ", expression = rbind(
+		mxAlgebra(name = "expCovDZ", dimnames = list(names(dzData), names(dzData)), expression = rbind(
 			cbind(ACE + bCovWBb, hAC + bCovBb , bCovWB, bCovB),
 			cbind(hAC + bCovBb , ACE + bCovWBb, bCovB , bCovWB),
 			cbind(       CovWBb,        CovBb ,  CovWB,  CovB),
