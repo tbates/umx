@@ -611,7 +611,7 @@ umxSummary.default <- function(model, ...){
 #' )
 #' m1 <- mxRun(m1)
 #' umxSummary(m1, showEstimates = "std", filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std=NULL, ...){
+umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = NULL, ...){
 	# TODO make table take lists of models...
 	if(!is.null(std)){
 		stop("use show = 'std', not std = T")
@@ -2025,7 +2025,6 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 #' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' plot(m1)
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", showStd = "deprecated", ...) {
 	if(showMeans != "deprecated"){

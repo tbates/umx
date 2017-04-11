@@ -751,6 +751,15 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	return(toAdd)
 }
 
+#' Internal umx function to help plotting graphvix
+#'
+#' @description
+#' Helper to print a digraph to file and open it
+#' @param model an \code{\link{mxModel}} to get the name from 
+#' @param file either "name" (use model name) or a file name
+#' @param digraph graphvix code for a model
+#' @return -
+#' @family xmu
 xmu_dot_maker <- function(model, file, digraph){
 	if(!is.na(file)){
 		if(file == "name"){
@@ -758,7 +767,8 @@ xmu_dot_maker <- function(model, file, digraph){
 		}
 		cat(digraph, file = file) # write to file
 		if(umx_set_plot_format(silent = TRUE) == "DiagrammeR"){
-			DiagrammeR::DiagrammeR(diagram = file, type = "grViz")
+				# message("attempting plot")
+				DiagrammeR::DiagrammeR(diagram = file, type = "grViz")
 		} else {
 			if(umx_check_OS("OSX")){
 				umx_open(file);
