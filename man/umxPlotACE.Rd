@@ -40,7 +40,6 @@ selDVs = c("bmi1", "bmi2")
 mzData <- subset(twinData, ZYG == "MZFF", selDVs)
 dzData <- subset(twinData, ZYG == "DZFF", selDVs)
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-plot(m1)
 plot(m1, std = FALSE) # don't standardize
 }
 \references{

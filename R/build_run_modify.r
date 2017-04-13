@@ -249,7 +249,8 @@ umxModel <- function(...) {
 #' 	umxPath("wt", with = "disp"),
 #' 	umxPath(v.m. = c("wt", "disp", "mpg"))
 #' )
-#' 
+#' plot(m1, std=TRUE, means=FALSE)
+#'
 #' # ====================================
 #' # = A cov model, with steps laid out =
 #' # ====================================
@@ -1742,7 +1743,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' m3     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run"), suffix = NULL, optimizer = NULL) {
 	nSib = 2 # Number of siblings in a twin pair
-	warning("This function is pre=beta and results not guaranteed!!")
+	warning("This function yields results which are very optimizer- and start-value sensitive. Consider it pre=beta and results not guaranteed!!")
 	if(!is.null(optimizer)){
 		umx_set_optimizer(optimizer)
 	}
@@ -2257,8 +2258,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' dzData <- subset(twinData, ZYG == "DZFF")
 #' selDVs = c("ht", "wt") # These will be expanded into "ht1" "ht2"
 #' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
-#' umxSummary(m1)
-#' plot(m1)
+#' # umxSummary(m1)
 umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, sep=NULL) {
 	# TODO implement correlatedA
 

@@ -90,6 +90,7 @@ m1 = umxRAM("tim", data = mtcars,
 	umxPath("wt", with = "disp"),
 	umxPath(v.m. = c("wt", "disp", "mpg"))
 )
+plot(m1, std=TRUE, means=FALSE)
 
 # ====================================
 # = A cov model, with steps laid out =

@@ -768,7 +768,7 @@ xmu_dot_maker <- function(model, file, digraph){
 		cat(digraph, file = file) # write to file
 		if(umx_set_plot_format(silent = TRUE) == "DiagrammeR"){
 				# message("attempting plot")
-				DiagrammeR::DiagrammeR(diagram = file, type = "grViz")
+				print(DiagrammeR::DiagrammeR(diagram = file, type = "grViz"))
 		} else {
 			if(umx_check_OS("OSX")){
 				umx_open(file);

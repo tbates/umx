@@ -19,14 +19,3 @@ xmu_dot_maker(model, file, digraph)
 \description{
 Helper to print a digraph to file and open it
 }
-\examples{
-require(umx)
-data(twinData)
-selDVs = c("wt1", "wt2")
-mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
-dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
-m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
-# should have plotted?
-umxSummary(m1, showEstimates = "std") # opens a plot of the model
-plot(m1)
-}

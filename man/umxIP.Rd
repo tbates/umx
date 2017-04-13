@@ -69,8 +69,7 @@ mzData <- subset(twinData, ZYG == "MZFF")
 dzData <- subset(twinData, ZYG == "DZFF")
 selDVs = c("ht", "wt") # These will be expanded into "ht1" "ht2"
 m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
-umxSummary(m1)
-plot(m1)
+# umxSummary(m1)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
