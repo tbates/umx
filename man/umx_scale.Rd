@@ -7,7 +7,7 @@
 umx_scale(df, varsToScale = NULL, coerce = FALSE)
 }
 \arguments{
-\item{df}{a dataframe to scale}
+\item{df}{a dataframe to scale (or a numeric vector)}
 
 \item{varsToScale}{(leave blank for all)}
 

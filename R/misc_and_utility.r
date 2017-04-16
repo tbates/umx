@@ -3229,7 +3229,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #'
 #' Scale data columns, skipping ordinal
 #'
-#' @param df a dataframe to scale
+#' @param df a dataframe to scale (or a numeric vector)
 #' @param varsToScale (leave blank for all)
 #' @param coerce Whether to coerce non-numerics to numeric (Defaults to FALSE)
 #' @return - new dataframe with scaled variables
@@ -3245,7 +3245,8 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE){
 		if(is.numeric(df)){
 			return(scale(df))
 		}else{
-			stop(paste0("umx_scale takes a dataframe (or numeric vector) as its first argument. ", quote(df), " isn't a dataframe"))
+			msg = paste0(quote(df), " isn't a dataframe, it's a", class(df))
+			stop(paste0("umx_scale takes a dataframe (or numeric vector) as its first argument.", msg))
 		}
 	}else{
 		# For each column, if numeric, scale

@@ -11,7 +11,7 @@ umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
   report = c("1", "table", "html"))
 }
 \arguments{
-\item{x}{Either 1: data, 2: A formula (not implemented yet), 3: A collection of variable names, or 4: A name for the model.}
+\item{x}{Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.}
 
 \item{factors}{Either number of factors to request or a vector of factor names.}
 
