@@ -3232,6 +3232,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @param df a dataframe to scale (or a numeric vector)
 #' @param varsToScale (leave blank for all)
 #' @param coerce Whether to coerce non-numerics to numeric (Defaults to FALSE)
+#' @param verbose Whether to report which columns were scaled (default FALSE)
 #' @return - new dataframe with scaled variables
 #' @export
 #' @family Data Functions
@@ -3240,7 +3241,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' data(twinData) 
 #' df = umx_scale(twinData, varsToScale = NULL)
 #' plot(wt1 ~ wt2, data = df)
-umx_scale <- function(df, varsToScale = NULL, coerce = FALSE){
+umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, verbose = FALSE){
 	if(!is.data.frame(df)){
 		if(is.numeric(df)){
 			return(scale(df))
@@ -3257,7 +3258,9 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE){
 			stop("coerce not implemented yet")
 		}
 		varsToScale = varsToScale[umx_is_numeric(df[,varsToScale])]
-		message("Vars I will scale are:", paste(varsToScale, ", "))
+		if(verbose){
+			message("Vars I will scale are:", paste(varsToScale, ", "))
+		}
 		df[ ,varsToScale] = scale(df[ ,varsToScale])
 		return(df)
 	}
