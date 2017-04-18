@@ -71,7 +71,7 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 	if (!is.null(data)){
 		# x must be formula, or column list && covmat and n.obs must be NULL
 		if(!is.null(covmat) || !is.null(n.obs)){
-			stop("Covmat and n.obs must be empty when using 'data =' ...")
+			stop("covmat and n.obs must be empty when using 'data =' ...")
 		}
 		if(!is.null(x)){
 			if(length(x) > 1) {
