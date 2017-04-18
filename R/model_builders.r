@@ -30,7 +30,7 @@
 #' todo: detect ordinal items and switch to UWLS
 #' 
 #' @aliases umxFactanal umxEFA
-#' @param x Either 1: data, 2: A formula (not implemented yet), 3: A collection of variable names, or 4: A name for the model.
+#' @param x Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.
 #' @param factors Either number of factors to request or a vector of factor names.
 #' @param data A dataframe of manifest columns you are modeling
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
@@ -58,10 +58,10 @@
 #' m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
 #' m1 = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 #' }
-umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, 
+umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, 
 	scores = c("none", 'ML', 'WeightedML', 'Regression'),
 	rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, report = c("1", "table", "html")){
-	message("umxEFA is beta-only, and not ready for prime time")
+	message("umxEFA is beta, send requests to tim.bates@ed.ac.uk")
 	scores = match.arg(scores)
 	# "Bartlett" given Bartlett's weighted least-squares scores. 
 	# name     = "efa"
@@ -80,30 +80,37 @@ umxEFA <- function(x= NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = 
 			} else if (inherits(x,"formula")){
 				stop("Nice formula! Sadly I can't handle formulae yet: email tim and abuse him about this failing")
 				# todo: handle is.formula()
+			}else{
+				name = x
 			}
+		}else{
+			name = "EFA"
 		}
 	} else if(!is.null(covmat) || !is.null(n.obs)){
 		# data must be NULL
-		stop("Covmat support not yet implemented - but you may as well be using factanal...")
+		stop("Covmat support not yet implemented - but with cov data, you may as well be using factanal()...")
 		if(!is.null(data)){
 			stop("You can't offer up both a data.frame and a covmat.")
 		}
 	} else {
-		# x must be data
+		# data is empty, so x must be data
 		if(!is.null(x)){
-			if(is.data.frame(x) || is.matrix(x)){
+			if(is.data.frame(x)){
 				data = x # get data from x
+			}else if (is.matrix(x)){
+				data = as.data.frame(x)
 			}
 		} else if(is.null(data)){
 			stop("You need to provide a data.frame to analyse: this can be in x, or data, or covmat")
 		}
+		name = "EFA"
 	}
 
 	# What about for scores? Do we want std loadings in that case?...
 	data = umx_scale(data)
 	rotation = umx_default_option(rotation, c("varimax", "promax", "none"), check = FALSE)
 	if(is.null(factors)){
-		stop("You need to request at least 1 latent factor.")
+		stop("You need to request at least 1 latent factor, e.g.: factors = 4")
 	} else if( length(factors)==1 && class(factors)=="numeric"){
 		factors = paste0("F", c(1:factors))
 	}

@@ -4,14 +4,16 @@
 \alias{umx_scale}
 \title{umx_scale}
 \usage{
-umx_scale(df, varsToScale = NULL, coerce = FALSE)
+umx_scale(df, varsToScale = NULL, coerce = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{df}{a dataframe to scale}
+\item{df}{a dataframe to scale (or a numeric vector)}
 
 \item{varsToScale}{(leave blank for all)}
 
 \item{coerce}{Whether to coerce non-numerics to numeric (Defaults to FALSE)}
+
+\item{verbose}{Whether to report which columns were scaled (default FALSE)}
 }
 \value{
 - new dataframe with scaled variables
