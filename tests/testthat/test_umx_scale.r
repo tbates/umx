@@ -7,9 +7,15 @@
 context("umx_ data helper functions")
 
 test_that("umx_scale works for different inputs", {
-	# no error on expected input
-	mxData(mtcars)
-	expect_error(umx_scale(mtcars), regex = NA)
+	# ==============================
+	# = no error on expected input =
+	# ==============================
+	expect_error(umx_scale(mtcars), regex = NA) # NA = no error expected
+	
+	# ==================
+	# = error expected =
+	# ==================
+	expect_error(umx_scale(mxData(mtcars, type = "raw")))
 
 	# can ignore factors...
 	mtcars$am = umxFactor(mtcars$am)
