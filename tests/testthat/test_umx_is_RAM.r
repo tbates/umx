@@ -23,7 +23,7 @@ m2 <- mxModel("One Factor",
 	mxMatrix("Diag", 5, 5, values = 1, free = T, name = "U"), 
 	mxAlgebra(A %*% L %*% t(A) + U, name = "R"), 
 	mxExpectationNormal("R", dimnames = names(demoOneFactor)),
-	mxFitFunctionML() 
+	mxFitFunctionML(),
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m2 = mxRun(m2)
