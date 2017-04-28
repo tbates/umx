@@ -1,7 +1,3 @@
-# Did I live?
-# Did I love?
-# Did I matter?
-
 # library(testthat)
 # test_file("~/bin/umx/tests/testthat/test_umxACE.r") 
 # test_package("umx")
@@ -13,13 +9,22 @@ test_that("umxACEcov works", {
 	data(twinData)
 	# Replicate age to age1 & age2
 	twinData$age1 = twinData$age2 = twinData$age
-	selDVs  = c("bmi") # Set the DV
-	selCovs = c("age") # Set the IV
-	selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
-	mzData = subset(twinData, zygosity == "MZFF", selVars)
-	dzData = subset(twinData, zygosity == "DZFF", selVars)
+	mzData = subset(twinData, zygosity == "MZFF")
+	dzData = subset(twinData, zygosity == "DZFF")
 	# BMI, covarying for age in an ACE model
-	m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
+
+	# As of 2017-04-27 giving far too high estimate for C?
+	m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
+	# 'log Lik.' -18277.81 (df=8)
+	# |    |   a1|   c1|   e1|
+	# |:---|----:|----:|----:|
+	# |bmi | 0.71| 0.48| 0.52|
+	m2 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
+	# 'log Lik.' 9659.215 (df=4)
+	# |     |   a1|c1 |   e1|
+	# |:----|----:|:--|----:|
+	# |bmi1 | 0.86|.  | 0.51|
+
 	umxSummary(m1)
 	plot(m1)
 
@@ -35,9 +40,8 @@ test_that("umxACEcov works", {
 	umxSummary(m1)
 	expect_lt(m1$output$Minus2LogLikelihood, -11471.91)
 
-
 	# Do height
-	m1 = umxACEcov(selDVs = "ht", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
+	m1 = umxACEcov(selDVs = "ht", selCovs = "age", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
 	umxSummary(m1)
 	expect_lt(m1$output$Minus2LogLikelihood, 264563.4)	
 	# 'log Lik.' -11985.57 (df=4)
@@ -52,18 +56,6 @@ test_that("umxACEcov works", {
 	# expect_match(as.numeric(logLik(m1)))
 })
 
-
-dAIC      = c(2, 0, 4, 4, 12)
-rel_LL    = exp(-.5 * dAIC)
-sumRel_LL = sum(rel_LL)
-rel_LL/sumRel_LL
-
-
-
-
-
-
-
-
-
-
+# Did I live?
+# Did I love?
+# Did I matter?

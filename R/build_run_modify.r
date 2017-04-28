@@ -1736,14 +1736,16 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #'
 #'
 #' # Univariate bmi without covariate of age for comparison
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
 #' m2 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 #' resid_data = umx_residualize("bmi", "age", suffixes=1:2, twinData)
-#' mzData = subset(resid_data, zygosity == "MZFF", selVars)
-#' dzData = subset(resid_data, zygosity == "DZFF", selVars)
+#' mzData = subset(resid_data, zygosity == "MZFF")
+#' dzData = subset(resid_data, zygosity == "DZFF")
 #' m3     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run"), suffix = NULL, optimizer = NULL) {
 	nSib = 2 # Number of siblings in a twin pair
-	warning("This function yields results which are very optimizer- and start-value sensitive. Consider it pre=beta and results not guaranteed!!")
+	warning("This function is optimizer and start-value sensitive. Consider it pre-beta with results not guaranteed for multivariate!!")
 	if(!is.null(optimizer)){
 		umx_set_optimizer(optimizer)
 	}

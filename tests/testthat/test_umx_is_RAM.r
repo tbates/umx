@@ -22,7 +22,8 @@ m2 <- mxModel("One Factor",
 	mxMatrix("Symm", 1, 1, values = 1, free = F, name = "L"), 
 	mxMatrix("Diag", 5, 5, values = 1, free = T, name = "U"), 
 	mxAlgebra(A %*% L %*% t(A) + U, name = "R"), 
-	mxMLObjective("R", dimnames = names(demoOneFactor)), 
+	mxExpectationNormal("R", dimnames = names(demoOneFactor)),
+	mxFitFunctionML() 
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m2 = mxRun(m2)

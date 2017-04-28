@@ -93,10 +93,12 @@ m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
 
 
 # Univariate bmi without covariate of age for comparison
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
 m2 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 resid_data = umx_residualize("bmi", "age", suffixes=1:2, twinData)
-mzData = subset(resid_data, zygosity == "MZFF", selVars)
-dzData = subset(resid_data, zygosity == "DZFF", selVars)
+mzData = subset(resid_data, zygosity == "MZFF")
+dzData = subset(resid_data, zygosity == "DZFF")
 m3     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 }
 \references{
