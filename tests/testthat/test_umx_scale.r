@@ -11,7 +11,7 @@ test_that("umx_scale works for different inputs", {
 	# = no error on expected input =
 	# ==============================
 	expect_error(umx_scale(mtcars), regex = NA) # NA = no error expected
-	
+		
 	# ==================
 	# = error expected =
 	# ==================
