@@ -7,7 +7,7 @@
 umx_set_plot_format(umx.plot.format = NULL, silent = FALSE)
 }
 \arguments{
-\item{umx.plot.format}{format for plots (if empty, returns the current value of umx.plot.format)}
+\item{umx.plot.format}{format for plots (if empty, returns the current value of umx.plot.format). If "TRUE", then toggles}
 
 \item{silent}{If TRUE, no message will be printed.}
 }

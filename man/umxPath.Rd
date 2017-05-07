@@ -5,9 +5,9 @@
 \title{umxPath: Easier (but powerful) specification of RAM paths.}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
-  unique.bivariate = NULL, unique.pairs = NULL, forms = NULL,
-  Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL,
-  v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL,
+  fromEach = NULL, unique.bivariate = NULL, unique.pairs = NULL,
+  forms = NULL, Cholesky = NULL, defn = NULL, means = NULL,
+  v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL,
   freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs",
   "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1,
   free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA,

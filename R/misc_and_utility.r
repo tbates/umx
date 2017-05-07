@@ -32,7 +32,7 @@ umx_get_options <- function() {
 #'
 #' Set output format of plots (default = "DiagrammeR", alternative is "graphviz")
 #'
-#' @param umx.plot.format format for plots (if empty, returns the current value of umx.plot.format)
+#' @param umx.plot.format format for plots (if empty, returns the current value of umx.plot.format). If "TRUE", then toggles
 #' @param silent If TRUE, no message will be printed.
 #' @return - Current umx.plot.format setting
 #' @export
@@ -55,7 +55,16 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 		}
 		invisible(getOption("umx.plot.format"))
 	} else {
-		umx_check(umx.plot.format %in% c("graphviz", "DiagrammeR"), "stop", "valid options are 'graphviz' or 'DiagrammeR'")
+		if(umx.plot.format == TRUE){
+			# if T then toggle
+			if(getOption("umx.plot.format") == "graphviz"){
+				umx.plot.format = "DiagrammeR"
+			} else {
+				umx.plot.format = "graphviz"
+			}
+		} else {
+			umx_check(umx.plot.format %in% c("graphviz", "DiagrammeR"), "stop", "valid options are 'graphviz' or 'DiagrammeR'")
+		}
 		options("umx.plot.format" = umx.plot.format)
 	}
 }

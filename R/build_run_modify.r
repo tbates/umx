@@ -4284,15 +4284,15 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # # manifests is a reserved word, as is latents.
 #' # # It allows the string syntax to use the manifestVars variable
 #' # umxPath("A -> manifests") 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, unique.pairs = NULL, forms = NULL, Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, fromEach = NULL, unique.bivariate = NULL, unique.pairs = NULL, forms = NULL, Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
 	xmu_string2path(from)
 	n = 0
-	for (i in list(with, cov, var, forms, means, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, v.m0, defn, Cholesky)) {
+	for (i in list(with, cov, var, forms, means, fromEach, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, v.m0, defn, Cholesky)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, forms, means, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, v.m0, defn, or Cholesky can be set: Use at one time")
+		stop("At most one of with, cov, var, forms, means, fromEach, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, v.m0, defn, or Cholesky can be set: Use at one time")
 	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
@@ -4501,6 +4501,24 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			from    = unique.bivariate
 			arrows  = 2
 			connect = "unique.bivariate"
+		}
+	} else if(!is.null(fromEach)){
+		# ===========================
+		# = Handle fromEach =
+		# ===========================
+		if(!is.null(from)){
+			stop("To use fromEach, 'from=' should be empty.\n",
+			"Just say 'fromEach = c(\"X\",\"Y\").'\n",
+			"or 'fromEach = c(\"X\",\"Y\"), to = \"Z\"")
+		} else {
+			if(is.null(to)){
+				to = NA				
+			} else {
+				to = to	
+			}
+			from    = unique.pairs
+			arrows  = 1
+			connect = "unique.pairs"
 		}
 	} else if(!is.null(unique.pairs)){
 		# ===========================
