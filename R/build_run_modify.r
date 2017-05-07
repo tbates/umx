@@ -4289,7 +4289,9 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	xmu_string2path(from)
 	n = 0
 	for (i in list(with, cov, var, forms, means, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, v.m0, defn, Cholesky)) {
-		if(!is.null(i)){ n = n + 1}
+		if(!is.null(i)){
+			n = n + 1
+		}
 	}
 	if(n > 1){
 		stop("At most one of with, cov, var, forms, means, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, v.m0, defn, or Cholesky can be set: Use at one time")
