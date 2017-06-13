@@ -1,10 +1,16 @@
-# umx 1.8.0 (Bleeding edge - expected to drop May 2017, R 3.4.0 (You Stupid Darkness)
+# umx 1.8.0 (Bleeding edge - expected to drop June 2017, R 3.4.0 (You Stupid Darkness)
 * *TIP*: umxAPA can format lots of things for you: from effects in lm -try it out!
-* NEW: umxACEcov now working!
+* umxACEcov improved, but still not working well for multivariate
 	* older versions worked with 1 DV only, couldn't handle multivariate means, had poor start values.
 * NEW: `optimiser` parameter for umxACE and other twin models
+* NEW umx_twin_long2wide: merges long data on famID, for an unlimited number of individuals in a family (twinIDs)
 * IMPROVED: twin models now print summary when `autoRun`
+* IMPROVED: models now plot by default
 * DOCUMENT logic.MxModel Rd page for logic.MxModel.
+* IMPROVED: lound diag to 0 by default in umxACE
+* IMPROVED: Better default model name for  umxACEcov;
+* IMPROVED: More helpful default core list for umx_check_parallel (1 and n-1); plus improved formating of times
+* FIXED: Removed superfluous print call from umx_MakeTwinData
 
 # umx 1.7.5 (April 04 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables: These will be removed for you!
