@@ -406,7 +406,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #'
 #' Shows how many cores you are using, and runs a test script so user can check CPU usage
 #'
-#' @param nCores How many cores to run (defaults to -1 (all available))
+#' @param nCores How many cores to run (defaults to c(1, max/2). -1 = all available.
 #' @param testScript A user-provided script to run (NULL)
 #' @param rowwiseParallel Whether to parallel-ize rows (default) or gradient computation 
 #' @param nSubjects Number of rows to model (Default = 1000) Reduce for quicker runs.
@@ -419,7 +419,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' # On a fast machine, takes a minute with 1 core
 #' umx_check_parallel()
 #' }
-umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
+umx_check_parallel <- function(nCores = c(1, parallel::detectCores()/2), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
 	if(!is.null(testScript)){
 		stop("test script not implemented yet - beat on tim to do it!")
 	}
@@ -519,7 +519,7 @@ umx_check_parallel <- function(nCores = -1, testScript = NULL, rowwiseParallel =
 	}
 	umx_set_cores(oldCores)
 	# umx_time(models, autoRun= F)
-	invisible(umx_time(models, autoRun = FALSE))
+	invisible(umx_time(models, formatStr = "%M %OS3", autoRun = FALSE))
 }
 
 # ======================================
@@ -2160,6 +2160,103 @@ umxCov2cor <- function(x) {
 # = Reporting & Graphing helpers =
 # ================================
 
+#' umx_show
+#'
+#' Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
+#'
+#' @param model an \code{\link{mxModel}} to show data from
+#' @param what legal options are "values" (default), "free", or "labels")
+#' @param show filter on what to show c("all", "free", "fixed")
+#' @param matrices to show  (default is c("S", "A")). "Thresholds" in beta
+#' @param digits precision to report, defaults to rounding to 2 decimal places
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Reporting Functions
+#' @references - \url{http://tbates.github.io}
+#' @examples
+#' require(umx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' umx_show(m1)
+#' umx_show(m1, digits = 3)
+#' umx_show(m1, matrices = "S")
+#' umx_show(m1, what = "free")
+#' umx_show(m1, what = "labels")
+#' umx_show(m1, what = "free", matrices = "A")
+umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2) {
+	if(!umx_is_RAM(model)){
+		stop("Only RAM models by default: what would you like me to do with this type of model?")
+	}
+	what = match.arg(what)
+	show = match.arg(show)
+	
+	if("thresholds" %in% matrices){
+		# TODO threshold printing not finalized yet
+		if(!is.null(model$deviations_for_thresh)){
+			dev = TRUE
+			x = model$deviations_for_thresh
+		} else {
+			dev = FALSE
+			x = model$threshMat
+		}
+		if(what == "values"){
+			if(dev){
+				v = model$lowerOnes_for_thresh$values %*% x$values
+			} else {
+				v = x$values
+			}
+			if(show == "free"){
+				v[x$free == FALSE] = NA
+			} else if (show == "fixed") {
+				v[x$free == TRUE] = NA
+			}
+			umx_print(v, zero.print = ".", digits = digits)		
+		}else if(what == "free"){
+			umx_print(data.frame(x$free) , zero.print = ".", digits = digits)
+		}else if(what == "labels"){
+			l = x$labels
+			if(show == "free"){
+				l[x$free == FALSE] = ""
+			} else if (show=="fixed") {
+				l[x$free == TRUE] = ""
+			}
+			umx_print(l, zero.print = ".", digits = digits)
+		}
+	} else {
+		for (w in matrices) {
+			message("Showing ", what, " for:", w, " matrix:")
+			if(what == "values"){
+				umx_print(data.frame(model$matrices[[w]]$values), zero.print = ".", digits = digits)		
+			}else if(what == "free"){
+				umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
+			}else if(what == "labels"){
+				x = model$matrices[[w]]$labels
+				if(show=="free"){
+					x[model$matrices[[w]]$free!=TRUE] = ""
+				} else if (show=="fixed") {
+					x[model$matrices[[w]]$free==TRUE] = ""
+				}
+				umx_print(x, zero.print = ".", digits = digits)
+			}else if(what == "nonzero_or_free"){
+				message("99 means the value is fixed, but is non-zero")
+				values = model$matrices[[w]]$values
+				Free   = model$matrices[[w]]$free
+				values[!Free & values !=0] = 99
+				umx_print(data.frame(values) , zero.print = ".", digits = digits)
+			}
+		}
+	}
+}
+
 #' umx_time
 #'
 #' A function to compactly report how long a model took to execute. Comes with some preset styles
@@ -3690,106 +3787,67 @@ umx_rot <- function(vec){
 # =================================
 # = Data: Read, Prep, Clean, Fake =
 # =================================
-
-
-#' umx_show
+#' Take a long twin-data file and make it wide (one family per row)
 #'
-#' Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
+#' @description
+#' umx_twin_long2wide merges on famID, for an unlimited number of twinIDs.
 #'
-#' @param model an \code{\link{mxModel}} to show data from
-#' @param what legal options are "values" (default), "free", or "labels")
-#' @param show filter on what to show c("all", "free", "fixed")
-#' @param matrices to show  (default is c("S", "A")). "Thresholds" in beta
-#' @param digits precision to report, defaults to rounding to 2 decimal places
-#' @return - \code{\link{mxModel}}
+#' @details
+#'
+#' @param data The long data file
+#' @param famID  The unique identifier for members of a family
+#' @param twinID The twinID. Typically 1, 2, 50 51, etc...
+#' @param zygosity type: Typically MZFF, DZFF MZMM, DZMM DZOS
+#' @param vars2keep = The variables you wish to analyse (these will be renamed with "_TtwinID")
+#' @return - wide dataframe
 #' @export
-#' @family Reporting Functions
-#' @references - \url{http://tbates.github.io}
+#' @family Data Functions
+#' @seealso - \code{\link{merge}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' umx_show(m1)
-#' umx_show(m1, digits = 3)
-#' umx_show(m1, matrices = "S")
-#' umx_show(m1, what = "free")
-#' umx_show(m1, what = "labels")
-#' umx_show(m1, what = "free", matrices = "A")
-umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2) {
-	if(!umx_is_RAM(model)){
-		stop("Only RAM models by default: what would you like me to do with this type of model?")
-	}
-	what = match.arg(what)
-	show = match.arg(show)
-	
-	if("thresholds" %in% matrices){
-		# TODO threshold printing not finalized yet
-		if(!is.null(model$deviations_for_thresh)){
-			dev = TRUE
-			x = model$deviations_for_thresh
-		} else {
-			dev = FALSE
-			x = model$threshMat
-		}
-		if(what == "values"){
-			if(dev){
-				v = model$lowerOnes_for_thresh$values %*% x$values
-			} else {
-				v = x$values
-			}
-			if(show == "free"){
-				v[x$free == FALSE] = NA
-			} else if (show == "fixed") {
-				v[x$free == TRUE] = NA
-			}
-			umx_print(v, zero.print = ".", digits = digits)		
-		}else if(what == "free"){
-			umx_print(data.frame(x$free) , zero.print = ".", digits = digits)
-		}else if(what == "labels"){
-			l = x$labels
-			if(show == "free"){
-				l[x$free == FALSE] = ""
-			} else if (show=="fixed") {
-				l[x$free == TRUE] = ""
-			}
-			umx_print(l, zero.print = ".", digits = digits)
-		}
+#' wide = umx_twin_long2wide(data= df, famID = "FID", twinID = "TID", zygosity = "Zyg", vars2keep = c("E", "N"))
+#' \dontrun{
+#' 
+#' }
+umx_twin_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA) {
+	if(typeof(vars2keep) == "character"){
+		# Check user provided list
+		umx_check_names(vars2keep, data = data, die = TRUE)
 	} else {
-		for (w in matrices) {
-			message("Showing ", what, " for:", w, " matrix:")
-			if(what == "values"){
-				umx_print(data.frame(model$matrices[[w]]$values), zero.print = ".", digits = digits)		
-			}else if(what == "free"){
-				umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
-			}else if(what == "labels"){
-				x = model$matrices[[w]]$labels
-				if(show=="free"){
-					x[model$matrices[[w]]$free!=TRUE] = ""
-				} else if (show=="fixed") {
-					x[model$matrices[[w]]$free==TRUE] = ""
-				}
-				umx_print(x, zero.print = ".", digits = digits)
-			}else if(what == "nonzero_or_free"){
-				message("99 means the value is fixed, but is non-zero")
-				values = model$matrices[[w]]$values
-				Free   = model$matrices[[w]]$free
-				values[!Free & values !=0] = 99
-				umx_print(data.frame(values) , zero.print = ".", digits = digits)
-			}
-		}
+		# vars that are not ID columns
+		message("Keeping everything")
+		vars2keep = setdiff(names(data), IDVars)
 	}
+	
+	levelsOfTwinID = unique(data[,twinID])
+  message("Found ", length(levelsOfTwinID), " levels of twinID: ", omxQuotes(levelsOfTwinID))
+
+	if(NA %in% levelsOfTwinID){
+	  message("Some subjects have NA as twinID!")
+	}
+	# levelsOfTwinID = c(1,2,50,51)
+
+	IDVars = c(famID, twinID, zygosity)
+	allVars = c(IDVars, vars2keep)
+	famIDPlus_vars2keep = c(famID, vars2keep)
+	# ==================================
+	# = merge each twinID to the right =
+	# ==================================
+	cat(paste0("doing: "))
+	for(i in seq_along(levelsOfTwinID)) {
+		newNames = paste0(vars2keep, "_T", levelsOfTwinID[i])
+		if(i == 1){
+			previous = data[data[,twinID] %in% levelsOfTwinID[i], allVars]
+			previous = umx_rename(previous, replace = newNames, old = vars2keep)
+		} else {
+			current  = data[data[,twinID] %in% levelsOfTwinID[i], famIDPlus_vars2keep]
+			current  = umx_rename(current, replace = newNames, old = vars2keep)			
+			previous = merge(previous, current, by = famID, all.x = TRUE, all.y = TRUE)
+		}
+		cat(paste0(levelsOfTwinID[i], " "))
+	}
+  return(previous)
 }
-
-
 
 #' umx_swap_a_block
 #'
@@ -3974,8 +4032,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 				ACE, AC,
 				AC , ACE)
 			);
+			# print(mzCov)
 			# MASS:: package
-			print(mzCov)
 			mzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = mzCov, empirical = empirical);
 			mzData[j, ] = c(mzPair, thisSES, thisSES)
 			j = j + 1

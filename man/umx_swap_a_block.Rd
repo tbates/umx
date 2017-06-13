@@ -48,5 +48,6 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
   \code{\link{umx_residualize}}, \code{\link{umx_round}},
   \code{\link{umx_scale_wide_twin_data}},
-  \code{\link{umx_scale}}, \code{\link{umx}}
+  \code{\link{umx_scale}},
+  \code{\link{umx_twin_long2wide}}, \code{\link{umx}}
 }

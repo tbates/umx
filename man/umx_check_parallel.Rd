@@ -4,11 +4,11 @@
 \alias{umx_check_parallel}
 \title{umx_check_parallel}
 \usage{
-umx_check_parallel(nCores = -1, testScript = NULL, rowwiseParallel = TRUE,
-  nSubjects = 1000)
+umx_check_parallel(nCores = c(1, parallel::detectCores()/2),
+  testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000)
 }
 \arguments{
-\item{nCores}{How many cores to run (defaults to -1 (all available))}
+\item{nCores}{How many cores to run (defaults to c(1, max/2). -1 = all available.}
 
 \item{testScript}{A user-provided script to run (NULL)}
 

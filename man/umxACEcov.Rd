@@ -5,7 +5,7 @@
 \title{umxACEcov: Build and run a Cholesky with covariates in the covariance}
 \usage{
 umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
-  dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = NULL,
+  dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0,
   equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
   "left_censored"), autoRun = getOption("umx_auto_run"), suffix = NULL,
   optimizer = NULL)

@@ -6,7 +6,7 @@
 \usage{
 umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
   suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
-  numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
+  numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, weightVar = NULL,
   equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
   "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL,
   optimizer = NULL)
@@ -37,7 +37,7 @@ SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data}
 
-\item{boundDiag}{= (optional) numeric lbound for diagonal of the a, c, and e matrices, e.g. 0}
+\item{boundDiag}{= Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8}
 
 \item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL)}
 
