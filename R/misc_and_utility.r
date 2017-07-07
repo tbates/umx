@@ -1702,9 +1702,11 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 		}
 		itemText = df[lineNumber, "itemText"]
 		# Any more cells in <itemBreak>?
-		items = df[lineNumber, 5:nCols]
-		if(any(!is.na(items))){
-			itemText = paste0(itemText, "<itemBreak>", paste(items[!is.na(items)], collapse = "<itemBreak>"))
+		if(nCols > 5){
+			items = df[lineNumber, 5:nCols]
+			if(any(!is.na(items))){
+				itemText = paste0(itemText, "<itemBreak>", paste(items[!is.na(items)], collapse = "<itemBreak>"))
+			}
 		}
 		o[itemNumber, ] = paste(pre, testName, itemNumber, itemText, direction, scale, type, testName, end, sep = "', '")
 		itemNumber = itemNumber + 1
