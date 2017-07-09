@@ -3521,7 +3521,7 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 	} else if( "lme" == class(obj)) {
 		# report lm summary table
 		if(std){
-			obj = update(obj, data = umx_scale(obj$model))
+			obj = update(obj, data = umx_scale(obj$data))
 		}
 		model_coefficients = summary(obj)$tTable
 		conf = intervals(obj)$fixed
