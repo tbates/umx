@@ -3502,7 +3502,6 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 			obj = update(obj, data = umx_scale(obj$model))
 		}
 		model_coefficients = summary(obj)$coefficients
-		model_coefficients = summary(obj)$coefficients
 		conf = confint(obj)
 		if(is.null(se)){
 			se = dimnames(model_coefficients)[[1]]
@@ -3518,6 +3517,28 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
 			   "t = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))		
+		}
+	} else if( "lme" == class(obj)) {
+		# report lm summary table
+		if(std){
+			obj = update(obj, data = umx_scale(obj$model))
+		}
+		model_coefficients = summary(obj)$tTable
+		conf = intervals(obj)$fixed
+		if(is.null(se)){
+			se = dimnames(model_coefficients)[[1]]
+		}
+		for (i in se) {
+			lower   = conf[i, "lower"]
+			upper   = conf[i, "upper"]
+			b       = conf[i, "est."]
+			tval    = model_coefficients[i, "t-value"]
+			numDF   = model_coefficients[i, "DF"]
+			pval    = model_coefficients[i, "p-value"]
+			print(paste0(i, " \u03B2 = ", round(b, digits), 
+			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
+			   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
+			))
 		}
 	} else {
 		if(is.null(se)){
