@@ -320,7 +320,6 @@ umx_standardize_RAM <- function(model, return = "parameters", Amatrix = NA, Smat
 #' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. 
 #' Even a few CIs can take too long to make running the default.
 #'
-#' @rdname confint.MxModel
 #' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))
 #' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
 #' @param level	The confidence level required (default = .95)
@@ -340,16 +339,16 @@ umx_standardize_RAM <- function(model, return = "parameters", Amatrix = NA, Smat
 #' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 #' 	umxPath(from = latents, to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' m2 = confint(m1, "all") # default: CIs added, but user prompted to set run = TRUE
-#' m2 = confint(m2, run = TRUE) # CIs run and reported
+#' m2 = umxConfint(m1, "all") # default: CIs added, but user prompted to set run = TRUE
+#' m2 = umxConfint(m2, run = TRUE) # CIs run and reported
 #' # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
-#' m1 = confint(m1, parm = "G_to_x1", run = TRUE) 
+#' m1 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
 #' # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
-#' m1 = confint(m1, parm = "A", run = TRUE)
-#' confint(m1, parm = "existing") # request existing CIs (none added yet...)
-confint.MxModel <- function(object, parm = c("existing", "all", "vector of names"), level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
+#' m1 = umxConfint(m1, parm = "A", run = TRUE)
+#' umxConfint(m1, parm = "existing") # request existing CIs (none added yet...)
+umxConfint <- function(object, parm = c("existing", "all", "vector of names"), level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
 	option_list = c("existing", "all", "vector of names")
 	parm = umx_default_option(parm, option_list, check = FALSE)
 	# 1. Add CIs if needed
