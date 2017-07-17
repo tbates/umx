@@ -2410,7 +2410,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 		if(class(x)=="matrix"){
 			x = data.frame(x)
 		} else {
-			message("Sorry, umx_print currently only prints data.frames. File a request to print '", class(x), "' objects")
+			message("Sorry, umx_print currently only prints data.frames. File a request to print '", class(x), "' objects\n or perhaps you want umx_msg?")
 			return()
 		}
 	}

@@ -3523,11 +3523,12 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 			obj = update(obj, data = umx_scale(obj$data))
 		}
 		model_coefficients = summary(obj)$tTable
-		conf = intervals(obj)$fixed
+		conf = intervals(obj, which = "fixed")[[1]]
 		if(is.null(se)){
 			se = dimnames(model_coefficients)[[1]]
 		}
 		for (i in se) {
+			# umx_msg(i)
 			lower   = conf[i, "lower"]
 			upper   = conf[i, "upper"]
 			b       = conf[i, "est."]
