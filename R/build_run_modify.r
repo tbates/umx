@@ -881,10 +881,10 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 	}
 	model = as(model, "MxModel.GxE")
 	if(autoRun){
-		return(mxRun(model))
-	} else {
-		return(model)
+		model = mxRun(model)
+		umxSummary(model)
 	}
+	return(model)
 }
 
 #' umxGxE_window
