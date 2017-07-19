@@ -1538,10 +1538,10 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
 umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
 	report = match.arg(report)
-	umx_has_been_run(model, stop=TRUE)
+	umx_has_been_run(model, stop = TRUE)
 	
-	if(any(!is.null(c(file, returnStd, std, CIs, ...) ))){
-		message("I haven't implemented file, returnStd, extended, std, comparison or CIs yet...")
+	if(any(!is.null(c(returnStd, std, CIs) ))){
+		message("For GxE, returnStd, extended, std, comparison or CIs are not yet implemented...")
 	}
 
 	if(is.null(model)){
@@ -2241,7 +2241,7 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	if(!class(x) == "MxModel.GxE"){
 		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x))
 	}
-	model = x # to emphasise that x has to be a umxGxE model
+	model = x # to remind us that x has to be a umxGxE model
 	# get unique values of moderator
 	mzData = model$MZ$data$observed
 	dzData = model$DZ$data$observed
@@ -2261,9 +2261,9 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	am  = model$top$matrices$am$values
 	cm  = model$top$matrices$cm$values
 	em  = model$top$matrices$em$values
-	Va  = (a + am * defVarValues)^2
-	Vc  = (c + cm * defVarValues)^2
-	Ve  = (e + em * defVarValues)^2
+	Va  = (c(a) + c(am) * defVarValues)^2
+	Vc  = (c(c) + c(cm) * defVarValues)^2
+	Ve  = (c(e) + c(em) * defVarValues)^2
 	Vt  = Va + Vc + Ve
 	out    = as.matrix(cbind(Va, Vc, Ve, Vt))
 	outStd = as.matrix(cbind(Va/Vt, Vc/Vt, Ve/Vt))
@@ -2274,12 +2274,13 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 		graphics::par(mfrow = c(1, 2)) # one row, two columns for raw and std variance
 		# par(mfrow = c(2, 1)) # two rows, one column for raw and std variance
 	}
-	graphics::matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = 1:4, xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects")
-	graphics::legend(location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = 1:4)
-	# legend(location, legend= c("Va", "Vc", "Ve", "Vt"), lty = 1:4, col = 1:4)
-	graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = 1:4, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
-	# legend(location, legend= c("Va", "Vc", "Ve"), lty = 1:4, col = 1:4)
-	graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = 1:4)
+	acergb = c("red", "green", "blue", "black")
+	graphics::matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = acergb, xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects")
+	graphics::legend(location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb)
+	# legend(location, legend= c("Va", "Vc", "Ve", "Vt"), lty = 1:4, col = acergb)
+	graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
+	# legend(location, legend= c("Va", "Vc", "Ve"), lty = 1:4, col = acergb)
+	graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb)
 	graphics::par(mfrow = c(1, 1)) # back to black
 }
 

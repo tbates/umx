@@ -3792,7 +3792,7 @@ umx_rot <- function(vec){
 #' Take a long twin-data file and make it wide (one family per row)
 #'
 #' @description
-#' umx_twin_long2wide merges on famID, for an unlimited number of twinIDs.
+#' umx_long2wide merges on famID, for an unlimited number of twinIDs.
 #'
 #' @details
 #'
@@ -3807,17 +3807,18 @@ umx_rot <- function(vec){
 #' @seealso - \code{\link{merge}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' wide = umx_twin_long2wide(data= df, famID = "FID", twinID = "TID", zygosity = "Zyg", vars2keep = c("E", "N"))
 #' \dontrun{
-#' 
+#' wide = umx_long2wide(data= df, famID = "FID", twinID = "TID", zygosity = "Zyg", vars2keep = c("E", "N"))
+#' wide = umx_long2wide(data= df, famID = "FID", twinID = "TID", zygosity = "Zyg")
 #' }
-umx_twin_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA) {
+umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA) {
+	IDVars = c(famID, twinID, zygosity)
 	if(typeof(vars2keep) == "character"){
 		# Check user provided list
 		umx_check_names(vars2keep, data = data, die = TRUE)
 	} else {
 		# vars that are not ID columns
-		message("Keeping everything")
+		# message("Keeping all variables")
 		vars2keep = setdiff(names(data), IDVars)
 	}
 	
@@ -3829,13 +3830,12 @@ umx_twin_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, var
 	}
 	# levelsOfTwinID = c(1,2,50,51)
 
-	IDVars = c(famID, twinID, zygosity)
 	allVars = c(IDVars, vars2keep)
 	famIDPlus_vars2keep = c(famID, vars2keep)
 	# ==================================
 	# = merge each twinID to the right =
 	# ==================================
-	cat(paste0("doing: "))
+	# cat(paste0("doing: "))
 	for(i in seq_along(levelsOfTwinID)) {
 		newNames = paste0(vars2keep, "_T", levelsOfTwinID[i])
 		if(i == 1){
@@ -3846,7 +3846,7 @@ umx_twin_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, var
 			current  = umx_rename(current, replace = newNames, old = vars2keep)			
 			previous = merge(previous, current, by = famID, all.x = TRUE, all.y = TRUE)
 		}
-		cat(paste0(levelsOfTwinID[i], " "))
+		# cat(paste0(levelsOfTwinID[i], " "))
 	}
   return(previous)
 }
