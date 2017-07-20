@@ -4,7 +4,7 @@
 \alias{umxReduce}
 \title{umxReduce}
 \usage{
-umxReduce(model, report = "html", baseFileName = "tmp")
+umxReduce(model, report = "markdown", baseFileName = "tmp")
 }
 \arguments{
 \item{report}{How to report the results. "html" = open in browser}

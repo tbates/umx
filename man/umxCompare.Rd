@@ -5,7 +5,7 @@
 \title{umxCompare}
 \usage{
 umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
-  report = c("2", "1", "html"), file = "tmp.html")
+  report = c("markdown", "report", "html"), file = "tmp.html")
 }
 \arguments{
 \item{base}{The base \code{\link{mxModel}} for comparison}
@@ -16,11 +16,11 @@ umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
 
 \item{digits}{rounding for p etc.}
 
-\item{report}{Optionally (report = "2") add sentences for inclusion in a paper, or ("html")
+\item{report}{Optionally: "markdown", "report" (add sentences for inclusion in a paper), "html"
 create a web table and open your default browser.
 (handy for getting tables into Word, and other text systems!)}
 
-\item{file}{file to write html too if report=3 (defaults to "tmp.html")}
+\item{file}{file to write html too if report = "html" (defaults to "tmp.html")}
 }
 \description{
 umxCompare compares two or more \code{\link{mxModel}}s. It has several nice features:

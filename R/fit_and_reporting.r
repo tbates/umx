@@ -67,7 +67,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduce <- function(model, report = "html", baseFileName = "tmp") {
+umxReduce <- function(model, report = "markdown", baseFileName = "tmp") {
 	umx_is_MxModel(model)
 	if(class(model) == "MxModel.GxE"){		
 		# Reduce GxE Model
@@ -100,13 +100,14 @@ umxReduce <- function(model, report = "html", baseFileName = "tmp") {
 			no_c_acem
 		)
 
-		umxCompare(c(model, no_c_cem), comparisons, all = TRUE, report = report)
-		umxCompare(no_c_cm, no_c_cem, all = TRUE, report = report)
+		# ====================
+		# = everything table =
+		# ====================
+		
+		umxCompare(model,  comparisons, all = TRUE, report = report, file = paste0(baseFileName, "1.html"))
+		umxCompare(no_c_cem, no_c_acem, all = TRUE, report = report, file = paste0(baseFileName, "2.html"))
 
-		umxCompare(model, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = "1")
-		umxCompare(model, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = report, file = paste0(baseFileName, ".html"))
-		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report = "1")
-		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report = report, file = paste0(baseFileName, 2, ".html"))
+		# umxCompare(no_c_cm, no_c_cem, all = TRUE, report = report)
 		# return(result)
 	} else {
 		stop("Only GxE implemented so far. Feel free to let me know what you want...")
@@ -1594,10 +1595,10 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
 #' @param digits rounding for p etc.
-#' @param report Optionally (report = "2") add sentences for inclusion in a paper, or ("html")
+#' @param report Optionally: "markdown", "report" (add sentences for inclusion in a paper), "html"
 #' create a web table and open your default browser.
 #' (handy for getting tables into Word, and other text systems!)
-#' @param file file to write html too if report=3 (defaults to "tmp.html")
+#' @param file file to write html too if report = "html" (defaults to "tmp.html")
 #' @family Reporting functions
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRAM}},
 #' @references - \url{http://www.github.com/tbates/umx/}
@@ -1625,7 +1626,7 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 #' umxCompare(m1, c(m2, m3))
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("2", "1", "html"), file = "tmp.html") {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "report", "html"), file = "tmp.html") {
 	report = match.arg(report)
 	if(is.null(comparison)){
 		comparison <- base
@@ -1669,7 +1670,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), digits = digits, addComparison = NA)
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
-	if(report != "1"){
+	if(report == "report"){
 		n_rows = dim(tablePub)[1]
 		for (i in 1:n_rows) {
 			thisPValue = tableOut[i, 9]
