@@ -67,22 +67,43 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduce <- function(m1, report = "html", baseFileName = "tmp") {
-	umx_is_MxModel(m1)
-	if(class(m1) == "MxModel.GxE"){
+umxReduce <- function(model, report = "html", baseFileName = "tmp") {
+	umx_is_MxModel(model)
+	if(class(model) == "MxModel.GxE"){		
 		# Reduce GxE Model
-		no_c   = umxModify(m1, "c_r1c1" , name = "no_c"   )
-		no_a   = umxModify(m1, "a_r1c1" , name = "no_a"   )
-		no_em  = umxModify(m1, "em_r1c1", name = "no_em"  )
-		no_cm  = umxModify(m1, "cm_r1c1", name = "no_cm"  )
-		no_am  = umxModify(m1, "am_r1c1", name = "no_am"  )
-		no_lin = umxModify(m1, "lin11"  , name = "no_lin" )  # big linear effect of ses on brain size
-		no_sq  = umxModify(m1, "quad11" , name = "no_quad")  # no ^2 effect of ses on brain size
-		# good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
+		# Good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
+		no_lin       = umxModify(model, update = "lin11"   , name = "No_lin_mean" )
+		no_sq        = umxModify(model, update = "quad11"  , name = "No_quad_mean")
+		nomeans      = umxModify(model, regex  = "lin|quad", name = "No_means_moderation")
 
-		no_c_cm   = umxModify(no_c    , "cm_r1c1", name = "no_c_no_cm")
-		no_c_cem  = umxModify(no_c_cm , "em_r1c1", name = "no_c_no_em")
-		no_c_acem = umxModify(no_c_cem, "am_r1c1", name = "no_a_c_or_em")
+		noA          = umxModify(model, update = "a_r1c1" , name = "dropA")
+		noC          = umxModify(model, update = "c_r1c1" , name = "dropC")
+
+		noAmod       = umxModify(model, update = "am_r1c1", name = "no_mod_on_A")
+		noCmod       = umxModify(model, update = "cm_r1c1", name = "no_mod_on_C")
+		noEmod       = umxModify(model, update = "em_r1c1", name = "no_mod_on_E")
+
+		noACEmod     = umxModify(model, regex  = "[ace]m" , name = "no_moderation")
+
+		no_a_am      = umxModify(noA  , update = "am_r1c1", name = "no_A_no_mod_on_A")
+		no_c_cm      = umxModify(noC  , update = "cm_r1c1", name = "no_C_no_mod_on_C")
+		no_c_cem     = umxModify(no_c_cm , update = "em_r1c1", name = "no_c_no_em")
+
+		no_c_acem    = umxModify(no_c_cem, update = "am_r1c1", name = "no_a_c_or_em")
+
+		comparisons = c(
+			no_lin, no_sq, nomeans, 
+			noA, noC,
+			noAmod, noCmod, noEmod,
+			noACEmod,
+			no_a_am, no_c_cm, no_c_cem,
+			no_c_acem
+		)
+
+		umxCompare(c(model, no_c_cem), comparisons, all = TRUE)
+		umxCompare(c(model, no_c_cem), comparisons, all = TRUE, report = report)
+		umxCompare(no_c_cm, no_c_cem, all = TRUE, report = report)
+
 		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = "1")
 		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = report, file = paste0(baseFileName, ".html"))
 		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report = "1")
@@ -810,7 +831,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 #' umxSummaryACE(m1, file = "name", std = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
@@ -1536,7 +1557,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #' umxSummaryGxE(m1)
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("1", "2", "html"), ...) {
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), ...) {
 	report = match.arg(report)
 	umx_has_been_run(model, stop = TRUE)
 	
@@ -1551,34 +1572,7 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 	umxPlotGxE(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
 
 	if(reduce){
-		modelnomeans  = umxModify(model , update="lin|quad", regex= TRUE, name = "no_moderation_of_means")
-
-		noACEmod     = umxModify(model, update = "[ace]m"       , regex = TRUE, name = "no_moderation")
-		noA          = umxModify(model, update = "a_r1c1"       , regex = TRUE, name = "dropA")
-		noC          = umxModify(model, update = "c_r1c1"       , regex = TRUE, name = "dropC")
-		noE          = umxModify(model, update = "e_r1c1"       , regex = TRUE, name = "dropE")
-		noAmod       = umxModify(model, update = "^am"          , regex = TRUE, name = "no_mod_on_A")
-		noCmod       = umxModify(model, update = "^cm"          , regex = TRUE, name = "no_mod_on_C")
-		noEmod       = umxModify(model, update = "^em"          , regex = TRUE, name = "no_mod_on_E")
-		noA_noAmod   = umxModify(model, update = "^(a|am)_r1c1" , regex = TRUE, name = "no_A_no_mod_on_A")
-		noC_noCmod   = umxModify(model, update = "^(c|cm)_r1c1" , regex = TRUE, name = "no_C_no_mod_on_C")
-		noC_noCEmod  = umxModify(model, update = "^(c|[ce]m)_r" , regex = TRUE, name = "no_C_no_mod_on_C_or_E")
-		noC_noACEmod = umxModify(model, update = "^c|([ace]m)_r", regex = TRUE, name = "no_C_no_mod_on_A_C_or_E")
-
-		comparisons = c(
-			noACEmod,
-			noA, noC,
-			noAmod     , noCmod, noEmod,
-			noA_noAmod , noC_noCmod,
-			noC_noCEmod, noC_noACEmod
-		)
-
-		mxCompare(model, modelnomeans)
-		umx_drop_ok(model, modelnomeans, text = NULL)
-
-		format(mxCompare(c(model, noC_noCEmod), comparisons, all = T), scientific = FALSE, digits = 5)
-		umxCompare(c(model, noC_noCEmod), comparisons, all = TRUE, report = report)
-		umxCompare(c(noC_noCmod), noC_noCEmod, all = TRUE, report = report)
+		umxReduce(model = model, report = report)
 	}
 }
 

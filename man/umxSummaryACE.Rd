@@ -7,7 +7,7 @@
 \usage{
 umxSummaryACE(model, digits = 2, file = getOption("umx_auto_plot"),
   comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE,
-  report = c("1", "2", "html"), returnStd = FALSE, extended = FALSE,
+  report = c("markdown", "html"), returnStd = FALSE, extended = FALSE,
   zero.print = ".", ...)
 }
 \arguments{
