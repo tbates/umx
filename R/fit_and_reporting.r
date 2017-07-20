@@ -100,12 +100,11 @@ umxReduce <- function(model, report = "html", baseFileName = "tmp") {
 			no_c_acem
 		)
 
-		umxCompare(c(model, no_c_cem), comparisons, all = TRUE)
 		umxCompare(c(model, no_c_cem), comparisons, all = TRUE, report = report)
 		umxCompare(no_c_cm, no_c_cem, all = TRUE, report = report)
 
-		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = "1")
-		umxCompare(m1, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = report, file = paste0(baseFileName, ".html"))
+		umxCompare(model, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = "1")
+		umxCompare(model, c(no_c, no_a, no_em, no_cm, no_am, no_lin, no_sq), report = report, file = paste0(baseFileName, ".html"))
 		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report = "1")
 		umxCompare(no_c, c(no_c_cm, no_c_cem, no_c_acem), report = report, file = paste0(baseFileName, 2, ".html"))
 		# return(result)
