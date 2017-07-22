@@ -6,8 +6,8 @@
 \title{umxSummaryCP}
 \usage{
 umxSummaryCP(model, digits = 2, file = umx_set_auto_plot(silent = TRUE),
-  returnStd = FALSE, extended = FALSE, showRg = TRUE, comparison = NULL,
-  std = TRUE, CIs = FALSE, ...)
+  returnStd = FALSE, extended = FALSE, showRg = FALSE,
+  comparison = NULL, std = TRUE, CIs = FALSE, ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxCP}} model to summarize}
@@ -20,7 +20,7 @@ umxSummaryCP(model, digits = 2, file = umx_set_auto_plot(silent = TRUE),
 
 \item{extended}{how much to report (FALSE)}
 
-\item{showRg}{Whether to show the genetic correlations (FALSE) (Not implemented!)}
+\item{showRg}{Whether to show the genetic correlations (FALSE)}
 
 \item{comparison}{Whether to run mxCompare on a comparison model (NULL)}
 

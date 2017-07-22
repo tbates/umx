@@ -6,7 +6,7 @@
 \title{umxSummaryIP}
 \usage{
 umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
-  returnStd = FALSE, std = TRUE, showRg = TRUE, comparison = NULL,
+  returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL,
   CIs = FALSE, ...)
 }
 \arguments{
@@ -16,11 +16,11 @@ umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
-\item{returnStd}{Whether to return the standardized form of the model (default = F)}
+\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
 \item{std}{= Whether to show the standardized model (TRUE)}
 
-\item{showRg}{= whether to show the genetic correlations (F)}
+\item{showRg}{= whether to show the genetic correlations (FALSE)}
 
 \item{comparison}{Whether to run mxCompare on a comparison model (NULL)}
 

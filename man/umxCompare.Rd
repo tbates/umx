@@ -49,7 +49,7 @@ m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
 mxCompare(m1, m2) # what OpenMx gives by default
-umxCompare(m1, m2, report = "2") # Add English-sentence descriptions
+umxCompare(m1, m2, report = "report") # Add English-sentence descriptions
 \dontrun{
 umxCompare(m1, m2, report = "html") # Open table in browser
 }

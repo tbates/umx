@@ -72,43 +72,40 @@ umxReduce <- function(model, report = "markdown", baseFileName = "tmp") {
 	if(class(model) == "MxModel.GxE"){		
 		# Reduce GxE Model
 		# Good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
-		no_lin       = umxModify(model, update = "lin11"   , name = "No_lin_mean" )
-		no_sq        = umxModify(model, update = "quad11"  , name = "No_quad_mean")
-		nomeans      = umxModify(model, regex  = "lin|quad", name = "No_means_moderation")
+		no_lin_mean = umxModify(model, update = "lin11" , name = "No_lin_mean" )
+		no_sq_mean  = umxModify(model, update = "quad11" , name = "No_quad_mean")
+		nomeans     = umxModify(model, regex = "lin|quad", name = "No_means_moderation")
 
-		noA          = umxModify(model, update = "a_r1c1" , name = "dropA")
-		noC          = umxModify(model, update = "c_r1c1" , name = "dropC")
+		noA          = umxModify(model, update = "a_r1c1" , name = "DropA")
+		noC          = umxModify(model, update = "c_r1c1" , name = "DropC")
 
-		noAmod       = umxModify(model, update = "am_r1c1", name = "no_mod_on_A")
-		noCmod       = umxModify(model, update = "cm_r1c1", name = "no_mod_on_C")
-		noEmod       = umxModify(model, update = "em_r1c1", name = "no_mod_on_E")
+		noAmod       = umxModify(model, update = "am_r1c1", name = "No_mod_on_A")
+		noCmod       = umxModify(model, update = "cm_r1c1", name = "No_mod_on_C")
+		noEmod       = umxModify(model, update = "em_r1c1", name = "No_mod_on_E")
 
-		noACEmod     = umxModify(model, regex  = "[ace]m" , name = "no_moderation")
+		noACEmod     = umxModify(model, regex  = "[ace]m" , name = "No_moderation")
 
-		no_a_am      = umxModify(noA  , update = "am_r1c1", name = "no_A_no_mod_on_A")
-		no_c_cm      = umxModify(noC  , update = "cm_r1c1", name = "no_C_no_mod_on_C")
-		no_c_cem     = umxModify(no_c_cm , update = "em_r1c1", name = "no_c_no_em")
+		no_a_am     = umxModify(noA , update = "am_r1c1", name = "No_A_no_mod_on_A")
+		no_c_no_cm  = umxModify(noC , update = "cm_r1c1", name = "No_C_no_mod_on_C")
+		no_c_no_cem = umxModify(no_c_no_cm, update = "em_r1c1", name = "No_c_no_ce_mod")
 
-		no_c_acem    = umxModify(no_c_cem, update = "am_r1c1", name = "no_a_c_or_em")
+		no_c_no_moderation    = umxModify(no_c_no_cem, update = "am_r1c1", name = "No_c_no_moderation")
 
 		comparisons = c(
-			no_lin, no_sq, nomeans, 
+			no_lin_mean, no_sq_mean, nomeans, 
 			noA, noC,
 			noAmod, noCmod, noEmod,
 			noACEmod,
-			no_a_am, no_c_cm, no_c_cem,
-			no_c_acem
+			no_a_am, no_c_no_cm, no_c_no_cem,
+			no_c_no_moderation
 		)
 
 		# ====================
 		# = everything table =
 		# ====================
 		
-		umxCompare(model,  comparisons, all = TRUE, report = report, file = paste0(baseFileName, "1.html"))
-		umxCompare(no_c_cem, no_c_acem, all = TRUE, report = report, file = paste0(baseFileName, "2.html"))
-
-		# umxCompare(no_c_cm, no_c_cem, all = TRUE, report = report)
-		# return(result)
+		umxCompare(model,  comparisons            , all = TRUE, report = report, file = paste0(baseFileName, "1.html"))
+		# umxCompare(no_c_no_cem, no_c_no_moderation, all = TRUE, report = report, file = paste0(baseFileName, "2.html"))
 	} else {
 		stop("Only GxE implemented so far. Feel free to let me know what you want...")
 		# TODO if we get an MxModel.ACE, lets 
@@ -1230,7 +1227,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param extended how much to report (FALSE)
-#' @param showRg Whether to show the genetic correlations (FALSE) (Not implemented!)
+#' @param showRg Whether to show the genetic correlations (FALSE)
 #' @param std Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)
 #' @param comparison Whether to run mxCompare on a comparison model (NULL)
 #' @param CIs Confidence intervals (F)
@@ -1258,7 +1255,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' umxSummaryCP(m1, ext = TRUE, file = "name")
 #' umxSummaryCP(m1, file = "Figure 3", std = TRUE)
 umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(silent=TRUE), returnStd = FALSE, 
-    extended = FALSE, showRg = TRUE, comparison = NULL, std = TRUE, CIs = FALSE, ...) {
+    extended = FALSE, showRg = FALSE, comparison = NULL, std = TRUE, CIs = FALSE, ...) {
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D"
 	if(!std){
 		stop("TODO: I currently always standardize CP model output. e-mail tim to get this turned off")
@@ -1384,8 +1381,8 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' @param model A fitted \code{\link{umxIP}} model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
-#' @param returnStd Whether to return the standardized form of the model (default = F)
-#' @param showRg = whether to show the genetic correlations (F)
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
+#' @param showRg = whether to show the genetic correlations (FALSE)
 #' @param std = Whether to show the standardized model (TRUE)
 #' @param comparison Whether to run mxCompare on a comparison model (NULL)
 #' @param CIs Confidence intervals (F)
@@ -1411,7 +1408,7 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 #' }
 umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
-    returnStd = FALSE, std = TRUE, showRg = TRUE, comparison = NULL, CIs = FALSE, ...) {
+    returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL, CIs = FALSE, ...) {
 	if(class(model)[1] != "MxModel.IP"){
 		stop("You used umxSummaryIP on model of class ", class(model)[1], "not 'MxModel.IP'")
 	}
@@ -1619,7 +1616,7 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
 #' umxCompare(m1, m2)
 #' mxCompare(m1, m2) # what OpenMx gives by default
-#' umxCompare(m1, m2, report = "2") # Add English-sentence descriptions
+#' umxCompare(m1, m2, report = "report") # Add English-sentence descriptions
 #' \dontrun{
 #' umxCompare(m1, m2, report = "html") # Open table in browser
 #' }
