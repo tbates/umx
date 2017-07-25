@@ -203,5 +203,5 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}
+  \code{\link{umx_wide2long}}, \code{\link{umx}}
 }

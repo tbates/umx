@@ -3851,6 +3851,51 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
   return(previous)
 }
 
+#' Change data 2-twin family data from wide to long format
+#'
+#' @description
+#' Just detects the data columns for twin 1, and twin 2, then returns them stacked
+#' on top of each other (rbind) with the non-twin specific columns copied for each as well.
+#'
+#' @details
+#'
+#' @param df a dataframe containing twin data
+#' @param sep the string between the var name and twin suffix, i.e., var_T1 = _T
+#' @return - long-format dataframe
+#' @export
+#' @family Data Functions
+#' @family Twin Modeling Functions
+#' @examples
+#' head(twinData)
+umx_wide2long <- function(df, sep = "_T") {
+	# Assumes 2 twins... email for generalization to unlimited family size.
+	# 1. get the suffixed names
+	T1 = umx_names(twinData, paste0(".", sep, "1"))
+	T2 = umx_names(twinData, paste0(".", sep, "2"))
+	# 1b and non-twin names
+	nonTwinColNames = setdiff(umx_names(twinData), c(T1, T2))
+
+	# 2. Remove the suffixes
+	T1base = T1
+	T2base = T2
+	m <- regexpr("_T1", T1base)
+	regmatches(T1base, m) <- ""
+	m <- regexpr("_T2", T2base)
+	regmatches(T2base, m) <- ""
+	# check they're the same
+	if(!setequal(T1base, T2base)){
+		stop("Twin names don't match")
+	}
+
+	# 3. 
+	b1 = twinData[,c(nonTwinColNames, T1)]
+	names(b1)<- c(nonTwinColNames, T1base)
+	b2 = twinData[,c(nonTwinColNames, T2)]
+	names(b2)<- c(nonTwinColNames, T1base)
+	ld = rbind(b1, b2)
+	return(ld)
+}
+
 #' umx_swap_a_block
 #'
 #' Swap a block of rows of a datset between two lists variables (typically twin 1 and twin2)

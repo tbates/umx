@@ -43,5 +43,5 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
   \code{\link{umx_residualize}}, \code{\link{umx_round}},
   \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}},
-  \code{\link{umx}}
+  \code{\link{umx_wide2long}}, \code{\link{umx}}
 }
