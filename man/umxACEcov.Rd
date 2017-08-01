@@ -49,15 +49,6 @@ Used to expand selDVs into full column names, i,e "dep" -->  c("dep_T1", "dep_T2
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACEcov
 }
-\description{
-Many researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models by including them in
-the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}}.
-Both these approaches require all covariates be non-missing, thus dropping all rows with any missing covariate.
-This can be wasteful of data. umxACEcov models the covariates in the expected covariance matrix, preserving all data.
-The following figure shows how the ACE model appears as a path diagram:
-\if{html}{\figure{ACEcov_variance_model.png}{options: width="75\%" alt="Figure: ACEcov_variance_model.png"}}
-\if{latex}{\figure{ACEcov_variance_model.png}{options: width=7cm}}
-}
 \examples{
 require(umx)
 data(twinData)

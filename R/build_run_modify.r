@@ -1,18 +1,3 @@
-# install.packages("~/Dropbox/shared folders/OpenMx_binaries/OpenMx2.6.0-MZ-OSX/3.2/OpenMx_2.6.0.tgz")
-# install.packages("curl")
-# install.packages("devtools")
-# install.packages("digest")
-# install.packages("git2r")
-# install.packages("httr")
-# install.packages("jsonlite")
-# install.packages("memoise")
-# install.packages("openssl")
-# install.packages("R6")
-# install.packages("Rcpp")
-# install.packages("rstudioapi")
-# install.packages("withr")
-
-
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -1648,20 +1633,15 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 	}
 } #end umxACE
 
-
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# devtools::release("~/bin/umx", check = TRUE)
-# https://www.researchgate.net/publication/287346605_A_New_Approach_to_Handle_Missing_Covariate_Data_in_Twin_Research
-
 #' umxACEcov: Build and run a Cholesky with covariates in the covariance
 #'
+#' @description
 #' Many researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models by including them in
 #' the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}}.
 #' Both these approaches require all covariates be non-missing, thus dropping all rows with any missing covariate.
 #' This can be wasteful of data. umxACEcov models the covariates in the expected covariance matrix, preserving all data.
 #' The following figure shows how the ACE model appears as a path diagram:
-#' \if{html}{\figure{ACEcov_variance_model.png}{options: width="75\%" alt="Figure: ACEcov_variance_model.png"}}
-#' \if{latex}{\figure{ACEcov_variance_model.png}{options: width=7cm}}
+#' {\figure{ACEcovVarianceModel.png}{options: width="75\%" alt="Figure: ACEcov variance model diagram"}
 #' 
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data (do not include suffixes).
