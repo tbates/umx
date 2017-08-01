@@ -1,5 +1,3 @@
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# devtools::check("~/bin/umx")
 # =====================
 # = Model Diagnostics =
 # =====================
@@ -452,6 +450,8 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 #' @param which What CIs to add: c("ALL", NA, "list of your making")
 #' @param remove = FALSE (if set, removes existing specified CIs from the model)
 #' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary". 
+#' @param interval The interval for newly added CIs (defaults to 0.95)
+#' @param type The type of CI (defaults to "both", options are "lower" and  "upper")
 #' @param showErrorCodes Whether to show errors (default == TRUE)
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 #' @return - \code{\link{mxModel}}
@@ -481,8 +481,8 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 #' # Don't force update of CIs, but if they were just added, then calculate them
 #' umxCI(model, run = "if necessary")
 #' }
-umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary"), showErrorCodes = TRUE) {
-	# TODO superceed this with confint? just need parameters to hold the 95% etc...
+umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary"), interval = 0.95, type=c("both", "lower", "upper"), showErrorCodes = TRUE) {
+	# Note: OpenMx now overloads confint, returning SE-based intervals.
 	run = match.arg(run)
 	which = umx_default_option(which, c("ALL", NA, "list of your making"), check = FALSE)
 	if(remove){
@@ -491,7 +491,7 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 		} else {
 			CIs = which 
 		}
-		if(length(names(model$intervals))>0){
+		if(length(names(model$intervals)) > 0){
 			model = mxModel(model, mxCI(CIs), remove = TRUE)
 		} else {
 			message("model has no intervals to remove")
@@ -505,7 +505,7 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 		} else {
 			CIs = which 
 		}
-		model = mxModel(model, mxCI(CIs))
+		model = mxModel(model, mxCI(CIs, interval = interval, type = type))
 	}
     
 	if(run == "yes" | (!umx_has_CIs(model) & run == "if necessary")) {

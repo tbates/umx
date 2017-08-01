@@ -1,15 +1,25 @@
-# umx 1.8.0 (Bleeding edge - expected to drop June 2017, R 3.4.0 (You Stupid Darkness)
+# umx 1.8.0 (July 2017, R 3.4.1 (Single Candle)
 * *TIP*: umxAPA can format lots of things for you: from effects in lm -try it out!
-* umxACEcov improved, but still not working well for multivariate
-	* older versions worked with 1 DV only, couldn't handle multivariate means, had poor start values.
-* NEW: `optimiser` parameter for umxACE and other twin models
-* NEW umx_twin_long2wide: merges long data on famID, for an unlimited number of individuals in a family (twinIDs)
+* NEW: `optimiser` parameter for umxACE and other twin models: Set the optimizer in your model code!
+* NEW umx_long2wide: Merges long data on famID, for an unlimited number of individuals in a family (twinIDs)
+* NEW umx_wide2long: Takes a family (currently limited to 2) df, and returns a long-format version.
+* IMPROVED: Auto run/plot for umxGxE
+* IMPROVED: switched umxGxE plot colors to the universal ACE -> RGB scheme
+* IMPROVED: umxCI supports setting interval and type
 * IMPROVED: twin models now print summary when `autoRun`
 * IMPROVED: models now plot by default
-* DOCUMENT logic.MxModel Rd page for logic.MxModel.
+* umxACEcov improved, but still not working well for multivariate
+	* older versions worked with 1 DV only, couldn't handle multivariate means, had poor start values.
 * IMPROVED: lound diag to 0 by default in umxACE
 * IMPROVED: Better default model name for  umxACEcov;
 * IMPROVED: More helpful default core list for umx_check_parallel (1 and n-1); plus improved formating of times
+* IMPROVED: umxReduce does a much better job reporting automated umxGxE model reduction.
+* IMPROVED: umxAPA handles lme models
+* IMPROVED: umxPrint error messages
+* DOCUMENT logic.MxModel Rd page for logic.MxModel.
+* CHANGE: Rg is now off by default for umx twin model summaries
+* CHANGE: OpenMx now supports confint, so this has been dropped from umx (added alias to umxConfint)
+* CHANGE: OpenMx now supports anova, so this has been dropped from umx
 * FIXED: Removed superfluous print call from umx_MakeTwinData
 
 # umx 1.7.5 (April 04 2017, R 3.3.3 Another Canoe)

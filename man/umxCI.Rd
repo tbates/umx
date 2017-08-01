@@ -5,8 +5,8 @@
 \title{umxCI}
 \usage{
 umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
-  remove = FALSE, run = c("no", "yes", "if necessary"),
-  showErrorCodes = TRUE)
+  remove = FALSE, run = c("no", "yes", "if necessary"), interval = 0.95,
+  type = c("both", "lower", "upper"), showErrorCodes = TRUE)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on}
@@ -16,6 +16,10 @@ umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
 \item{remove}{= FALSE (if set, removes existing specified CIs from the model)}
 
 \item{run}{Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".}
+
+\item{interval}{The interval for newly added CIs (defaults to 0.95)}
+
+\item{type}{The type of CI (defaults to "both", options are "lower" and  "upper")}
 
 \item{showErrorCodes}{Whether to show errors (default == TRUE)}
 }

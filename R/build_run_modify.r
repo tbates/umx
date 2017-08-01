@@ -1,8 +1,4 @@
-# umx_open("~/bin/umx/R/misc_and_utility.r")
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# devtools::release("~/bin/umx", check = TRUE)
-# devtools::build_win("~/bin/umx")
-# devtools::run_examples("~/bin/umx")
+# install.packages("~/Dropbox/shared folders/OpenMx_binaries/OpenMx2.6.0-MZ-OSX/3.2/OpenMx_2.6.0.tgz")
 # install.packages("curl")
 # install.packages("devtools")
 # install.packages("digest")
@@ -16,8 +12,6 @@
 # install.packages("rstudioapi")
 # install.packages("withr")
 
-# install.packages("~/Dropbox/shared folders/OpenMx_binaries/OpenMx2.6.0-MZ-OSX/3.2/OpenMx_2.6.0.tgz")
-# "curl", "jsonlite", "R6"
 
 # ===============================
 # = Highlevel models (ACE, GxE) =
