@@ -3864,13 +3864,14 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @family Data Functions
 #' @family Twin Modeling Functions
 #' @examples
+#' long = umx_wide2long(df = twinData, sep = "_T")
 umx_wide2long <- function(df, sep = "_T") {
 	# Assumes 2 twins... email for generalization to unlimited family size.
 	# 1. get the suffixed names
-	T1 = umx_names(twinData, paste0(".", sep, "1"))
-	T2 = umx_names(twinData, paste0(".", sep, "2"))
+	T1 = umx_names(df, paste0(".", sep, "1"))
+	T2 = umx_names(df, paste0(".", sep, "2"))
 	# 1b and non-twin names
-	nonTwinColNames = setdiff(umx_names(twinData), c(T1, T2))
+	nonTwinColNames = setdiff(umx_names(df), c(T1, T2))
 
 	# 2. Remove the suffixes
 	T1base = T1
@@ -3885,9 +3886,9 @@ umx_wide2long <- function(df, sep = "_T") {
 	}
 
 	# 3. 
-	b1 = twinData[,c(nonTwinColNames, T1)]
+	b1 = df[,c(nonTwinColNames, T1)]
 	names(b1) <- c(nonTwinColNames, T1base)
-	b2 = twinData[,c(nonTwinColNames, T2)]
+	b2 = df[,c(nonTwinColNames, T2)]
 	names(b2) <- c(nonTwinColNames, T1base)
 	ld = rbind(b1, b2)
 	return(ld)

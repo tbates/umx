@@ -18,6 +18,9 @@ umx_wide2long(df, sep = "_T")
 Just detects the data columns for twin 1, and twin 2, then returns them stacked
 on top of each other (rbind) with the non-twin specific columns copied for each as well.
 }
+\examples{
+long = umx_wide2long(df = twinData, sep = "_T")
+}
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxFactor}}, \code{\link{umxHetCor}},
