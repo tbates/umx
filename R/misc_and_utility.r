@@ -3808,8 +3808,8 @@ umx_rot <- function(vec){
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' wide = umx_long2wide(data= df, famID = "FID", twinID = "TID", zygosity = "Zyg", vars2keep = c("E", "N"))
-#' wide = umx_long2wide(data= df, famID = "FID", twinID = "TID", zygosity = "Zyg")
+#' wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg", vars2keep = c("E", "N"))
+#' wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg")
 #' }
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA) {
 	IDVars = c(famID, twinID, zygosity)
@@ -3857,8 +3857,6 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' Just detects the data columns for twin 1, and twin 2, then returns them stacked
 #' on top of each other (rbind) with the non-twin specific columns copied for each as well.
 #'
-#' @details
-#'
 #' @param df a dataframe containing twin data
 #' @param sep the string between the var name and twin suffix, i.e., var_T1 = _T
 #' @return - long-format dataframe
@@ -3866,7 +3864,6 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @family Data Functions
 #' @family Twin Modeling Functions
 #' @examples
-#' head(twinData)
 umx_wide2long <- function(df, sep = "_T") {
 	# Assumes 2 twins... email for generalization to unlimited family size.
 	# 1. get the suffixed names
@@ -3889,9 +3886,9 @@ umx_wide2long <- function(df, sep = "_T") {
 
 	# 3. 
 	b1 = twinData[,c(nonTwinColNames, T1)]
-	names(b1)<- c(nonTwinColNames, T1base)
+	names(b1) <- c(nonTwinColNames, T1base)
 	b2 = twinData[,c(nonTwinColNames, T2)]
-	names(b2)<- c(nonTwinColNames, T1base)
+	names(b2) <- c(nonTwinColNames, T1base)
 	ld = rbind(b1, b2)
 	return(ld)
 }

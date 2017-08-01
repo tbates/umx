@@ -7,11 +7,11 @@
 umxReduce(model, report = "markdown", baseFileName = "tmp")
 }
 \arguments{
+\item{model}{an \code{\link{mxModel}} to reduce}
+
 \item{report}{How to report the results. "html" = open in browser}
 
 \item{baseFileName}{file (I add the html) to use when report = "html" (defaults to "tmp")}
-
-\item{m1}{an \code{\link{mxModel}} to reduce}
 }
 \value{
 -

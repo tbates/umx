@@ -53,7 +53,8 @@ umxSummary(m1, show = "std")
 m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
 m1 = mxRun(m1, intervals = TRUE)
 residuals(m1, run = TRUE) # get CIs on all free parameters
-confint(m1, run = TRUE) # get CIs on all free parameters
+confint(m1) # OpenMx's SE-based CIs
+umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
 m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 \references{

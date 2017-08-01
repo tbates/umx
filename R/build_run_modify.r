@@ -32,8 +32,9 @@
 
 #' @importFrom DiagrammeR DiagrammeR
 #' @importFrom graphics plot
-#' @importFrom MASS mvrnorm
+#' @importFrom nlme intervals
 
+#' @importFrom MASS mvrnorm
 #' @importFrom methods as getSlots is slotNames
 #' @importFrom methods setClass
 # methods::setClass is called during build not package source code.
@@ -2989,7 +2990,8 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
 #' m1 = mxRun(m1, intervals = TRUE)
 #' residuals(m1, run = TRUE) # get CIs on all free parameters
-#' confint(m1, run = TRUE) # get CIs on all free parameters
+#' confint(m1) # OpenMx's SE-based CIs
+#' umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
 #' m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, comparison = NULL, setStarts = NULL){
 	# TODO: return change in -2LL for models being re-run
@@ -4202,6 +4204,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2".
 #' nb: from, to, and with must be left empty (their default)
 #' @param unique.pairs equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)
+#' @param fromEach Like unique.pairs, but with one head arrows
 #' @param forms Paired with from, this will build a formative variable. from vars form the latent.
 #' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate among froms.
 #' @param Cholesky Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.
@@ -4280,7 +4283,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # # manifests is a reserved word, as is latents.
 #' # # It allows the string syntax to use the manifestVars variable
 #' # umxPath("A -> manifests") 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, fromEach = NULL, unique.bivariate = NULL, unique.pairs = NULL, forms = NULL, Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
 	xmu_string2path(from)
 	n = 0
@@ -4512,7 +4515,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			} else {
 				to = to	
 			}
-			from    = unique.pairs
+			from    = fromEach
 			arrows  = 1
 			connect = "unique.pairs"
 		}

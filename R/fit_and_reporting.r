@@ -54,7 +54,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #'
 #' Reduce a model - this is a work in progress.
 #'
-#' @param m1 an \code{\link{mxModel}} to reduce
+#' @param model an \code{\link{mxModel}} to reduce
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName file (I add the html) to use when report = "html" (defaults to "tmp")
 #' @return - 
@@ -3480,7 +3480,7 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 		}
 	} else if( "matrix" == class(obj)) {
 		# Assume these are correlations or similar numbers
-		cor_table = umx_apply(round, obj, digits = digits) # round corelations
+		cor_table = umx_apply(round, obj, digits = digits) # round correlations
 		output = data.frame(cor_table)
 		if(report == "html"){
 			umx_print(output, digits = digits, file = "tmp.html")

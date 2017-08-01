@@ -29,8 +29,8 @@ umx_long2wide merges on famID, for an unlimited number of twinIDs.
 }
 \examples{
 \dontrun{
-wide = umx_long2wide(data= df, famID = "FID", twinID = "TID", zygosity = "Zyg", vars2keep = c("E", "N"))
-wide = umx_long2wide(data= df, famID = "FID", twinID = "TID", zygosity = "Zyg")
+wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg", vars2keep = c("E", "N"))
+wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg")
 }
 }
 \references{

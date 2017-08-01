@@ -5,7 +5,7 @@
 \title{umxPath: Easier (but powerful) specification of RAM paths.}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
-  fromEach = NULL, unique.bivariate = NULL, unique.pairs = NULL,
+  unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL,
   forms = NULL, Cholesky = NULL, defn = NULL, means = NULL,
   v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL,
   freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs",
@@ -28,6 +28,8 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 nb: from, to, and with must be left empty (their default)}
 
 \item{unique.pairs}{equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)}
+
+\item{fromEach}{Like unique.pairs, but with one head arrows}
 
 \item{forms}{Paired with from, this will build a formative variable. from vars form the latent.
 Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate among froms.}
