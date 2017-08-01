@@ -1,47 +1,51 @@
 # library(testthat)
-# library(umx)
-# testthat::test_file("~/bin/umx/tests/testthat/test_umx_is_cov.r")
-# 
+# test_file("~/bin/umx/tests/testthat/test_umxACE.r") 
 # test_package("umx")
+library(umx)
+context("twin models")
 
-# ==================
-# = Test umxACEcov =
-# ==================
+test_that("umxACE works", {
+	data(twinData) # ?twinData set from Australian twins.
+	mzData <- twinData[twinData$zygosity %in%  "MZFF", ]
+	dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 
-require(umx)
-data(twinData)
-tmpTwin <- twinData
-tmpTwin$age1 = tmpTwin$age2 = tmpTwin$age
-tr(twinData)
-selDVs  = c("bmi")
-selCovs = c("age")
-selVars = umx_paste_names(c(selDVs, selCovs), textConstant = "", suffixes= 1:2)
+	# Do weight
+	m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "")
+	# m1$output$Minus2LogLikelihood
+	# Check -2ll low enough
+	expect_lt(-2*logLik(m1), 27287.24)
 
-# just top 200 so example runs in a couple of secs
-mzData = subset(tmpTwin, zyg == 1, selVars)[1:200, ]
-dzData = subset(tmpTwin, zyg == 3, selVars)[1:200, ]
-# TODO update for new dataset variable zygosity
-# mzData = subset(tmpTwin, zygosity == "MZFF", selVars)[1:200, ]
-# dzData = subset(tmpTwin, zygosity == "DZFF", selVars)[1:200, ]
-m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE)
-plot(m1)
-umxSummary(m1, showStd = TRUE)
+	# Check no error with boundDiag
+	m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag=0)
 
-# ===============
-# = Test umxACE =
-# ===============
+	# Can't pass TRUE to boundDiag
+	expect_error({
+		# TRUE is not legal
+		m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = TRUE)		
+	})
 
-tmpTwin <- twinData
-# Set zygosity to a factor
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-tmpTwin$zyg = factor(tmpTwin$zyg, levels = 1:5, labels = labList)
-selDVs = c("bmi1", "bmi2") # nb: Can also give base name, (i.e., "bmi") AND set suffix.
-# the function will then make the varnames for each twin using this:
-# for example. "VarSuffix1" "VarSuffix2"
-mzData <- tmpTwin[tmpTwin$zyg %in% "MZFF", selDVs]
-dzData <- tmpTwin[tmpTwin$zyg %in% "DZFF", selDVs]
-mzData <- mzData[1:200,] # just top 200 so example runs in a couple of secs
-dzData <- dzData[1:200,]
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-umxSummary(m1)
-plot(m1)
+	# Do height
+	m1 = umxACE(selDVs = "ht", dzData = dzData, mzData = mzData, sep = "")
+	# Check -2ll low enough
+	expect_lt(-2*logLik(m1), -11985.56)	
+
+	# Check across optimizers
+	m1 = umxACE(selDVs = "ht", dzData = dzData, mzData = mzData, sep = "", opt= "NPSOL"); expect_lt(-2*logLik(m1), -11985.56)	
+	m1 = umxACE(selDVs = "ht", dzData = dzData, mzData = mzData, sep = "", opt= "SLSQP"); expect_lt(-2*logLik(m1), -11985.56)	
+
+	# CSOLNP used to code 6...
+	m1 = umxACE(selDVs = "ht", dzData = dzData, mzData = mzData, sep = "", opt= "CSOLNP"); expect_lt(-2*logLik(m1), -11985.56)	
+
+	# ========================================================
+	# = Evidence for dominance ? (DZ correlation set to .25) =
+	# ========================================================
+	m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
+	umxCompare(m2, m1) # ADE is better
+	umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled ACE
+	# TODO Add more umxACE model tests
+	# Add umxACEcov comparison test with lm-based solution
+	# expect_gt()
+	# expect_match(as.numeric(logLik(m1)))
+})
+
+

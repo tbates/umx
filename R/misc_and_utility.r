@@ -3794,8 +3794,6 @@ umx_rot <- function(vec){
 #' @description
 #' umx_long2wide merges on famID, for an unlimited number of twinIDs.
 #'
-#' @details
-#'
 #' @param data The long data file
 #' @param famID  The unique identifier for members of a family
 #' @param twinID The twinID. Typically 1, 2, 50 51, etc...
@@ -3808,7 +3806,8 @@ umx_rot <- function(vec){
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg", vars2keep = c("E", "N"))
+#' k = c("E", "N")
+#' wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg", vars2keep = k)
 #' wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg")
 #' }
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA) {
@@ -3867,6 +3866,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' long = umx_wide2long(df = twinData, sep = "_T")
 umx_wide2long <- function(df, sep = "_T") {
 	# Assumes 2 twins... email for generalization to unlimited family size.
+
 	# 1. get the suffixed names
 	T1 = umx_names(df, paste0(".", sep, "1"))
 	T2 = umx_names(df, paste0(".", sep, "2"))
@@ -3880,6 +3880,7 @@ umx_wide2long <- function(df, sep = "_T") {
 	regmatches(T1base, m) <- ""
 	m <- regexpr("_T2", T2base)
 	regmatches(T2base, m) <- ""
+	
 	# check they're the same
 	if(!setequal(T1base, T2base)){
 		stop("Twin names don't match")
@@ -3887,9 +3888,9 @@ umx_wide2long <- function(df, sep = "_T") {
 
 	# 3. 
 	b1 = df[,c(nonTwinColNames, T1)]
-	names(b1) <- c(nonTwinColNames, T1base)
+	names(b1) = c(nonTwinColNames, T1base)
 	b2 = df[,c(nonTwinColNames, T2)]
-	names(b2) <- c(nonTwinColNames, T1base)
+	names(b2) = c(nonTwinColNames, T1base)
 	ld = rbind(b1, b2)
 	return(ld)
 }

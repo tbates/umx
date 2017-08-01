@@ -4669,7 +4669,8 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # ========================
 #' 
 #' # umxSummary() will show these, but you can also use the confint() function
-#' confint(m1, parm = 'all', run = TRUE) # lots more to learn about ?confint.MxModel
+#' confint(m1) # OpenMx's SE-based confidence intervals
+#' umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
 #' 
 #' # And make a Figure in dot (.gv) format!
 #' plot(m1, std = TRUE)
