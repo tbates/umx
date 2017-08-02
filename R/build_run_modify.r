@@ -1633,23 +1633,24 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 	}
 } #end umxACE
 
-#' umxACEcov: Build and run a Cholesky with covariates in the covariance
+#' Run a Cholesky with covariates in the expected covariance matrix, not the means.
 #'
-#' @description
-#' Many researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models by including them in
-#' the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}}.
-#' Both these approaches require all covariates be non-missing, thus dropping all rows with any missing covariate.
-#' This can be wasteful of data. umxACEcov models the covariates in the expected covariance matrix, preserving all data.
+#' Often, researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models by including them in
+#' the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}} (or umx's 
+#' \code{\link{umx_residualize}}).
+#' Both these approaches require all covariates be non-missing, thus dropping any rows which are missing one or more covariates.
+#' This is wasteful of data. umxACEcov models the covariates in the expected covariance matrix, thus allowing
+#' all data to be preserved.
 #' The following figure shows how the ACE model appears as a path diagram:
-#' {\figure{ACEcovVarianceModel.png}{options: width="75\%" alt="Figure: ACEcov variance model diagram"}
+#' \figure{ACEcovVarianceModel.png}{options: width="75\%" alt="Figure: ACEcov variance model diagram"}
 #' 
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data (do not include suffixes).
 #' @param selCovs The covariates to include from the data (do not include suffixes).
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep Seperator test between basename for twin variable names, often "_T".
-#' Used to expand selDVs into full column names, i,e "dep" -->  c("dep_T1", "dep_T2").
+#' @param sep Seperator text between basename for twin variable names. Often "_T".
+#' Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T2").
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).

@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxACEcov}
 \alias{umxACEcov}
-\title{umxACEcov: Build and run a Cholesky with covariates in the covariance}
+\title{Run a Cholesky with covariates in the expected covariance matrix, not the means.}
 \usage{
 umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0,
@@ -21,8 +21,8 @@ umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
 
 \item{mzData}{The MZ dataframe.}
 
-\item{sep}{Seperator test between basename for twin variable names, often "_T".
-Used to expand selDVs into full column names, i,e "dep" -->  c("dep_T1", "dep_T2").}
+\item{sep}{Seperator text between basename for twin variable names. Often "_T".
+Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T2").}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -48,6 +48,16 @@ Used to expand selDVs into full column names, i,e "dep" -->  c("dep_T1", "dep_T2
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACEcov
+}
+\description{
+Often, researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models by including them in
+the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}} (or umx's 
+\code{\link{umx_residualize}}).
+Both these approaches require all covariates be non-missing, thus dropping any rows which are missing one or more covariates.
+This is wasteful of data. umxACEcov models the covariates in the expected covariance matrix, thus allowing
+all data to be preserved.
+The following figure shows how the ACE model appears as a path diagram:
+\figure{ACEcovVarianceModel.png}{options: width="75\%" alt="Figure: ACEcov variance model diagram"}
 }
 \examples{
 require(umx)
