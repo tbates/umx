@@ -3,7 +3,7 @@
 \name{umxSummaryACE}
 \alias{umxSummaryACE}
 \alias{umxSummary.MxModel.ACE}
-\title{umxSummaryACE}
+\title{Shows a compact, publication-style, summary of a umx Cholesky ACE model}
 \usage{
 umxSummaryACE(model, digits = 2, file = getOption("umx_auto_plot"),
   comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE,
@@ -40,7 +40,20 @@ Defaults to NA = do not create plot output}
 - optional \code{\link{mxModel}}
 }
 \description{
-Summarise a Cholesky model returned by \\code{\link{umxACE}}.
+Summarise a fitted Cholesky model returned by \\code{\link{umxACE}}. Can control digits, report comparison model fits,
+optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
+drawing the tables to a web broswer where they may readily be copied into non-markdown programs like Word.
+}
+\details{
+See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
+
+View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+
+View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+
+View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+
+View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
 }
 \examples{
 require(umx)

@@ -4607,8 +4607,7 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL) {
 	if(is.null(diag)){
 		stop("please set diag explicitly to TRUE or FALSE")
-	}
-	if( !diag %in% c(TRUE, FALSE) ){
+	} else if( !diag %in% c(TRUE, FALSE) ){
 		stop("diag must be one of TRUE or FALSE.")
 	}
 
@@ -4617,13 +4616,6 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 		# upper triangle
 		mat = lower.data
 		mat[upper.tri(mat)] <- t(mat)[upper.tri(mat)]
-		if(!is.null(dimnames)){
-			if(typeof(dimnames)=="list"){
-				dimnames(mat) = dimnames
-			} else {
-				dimnames(mat) = list(dimnames, dimnames)
-			}
-		}
 	} else {
 		len = length(lower.data)
 		if(diag) {
@@ -4655,6 +4647,7 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 			mat[upper.tri(mat, diag = FALSE)] <-tmat[upper.tri(tmat, diag = FALSE)]
 		}
 	}
+
 	if(!is.null(dimnames)){
 		if(typeof(dimnames) == "list"){
 			dimnames(mat) = dimnames

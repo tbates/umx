@@ -521,7 +521,7 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 	invisible(model)
 }
 
-#' umxSummary.default
+#' Shows a compact, publication-style, summary of umx models
 #'
 #' @description
 #' Report the fit of a OpenMx model or specialized model class (such as ACE, CP etc.)
@@ -788,10 +788,22 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 	}
 }
 
-#' umxSummaryACE
+#' Shows a compact, publication-style, summary of a umx Cholesky ACE model
 #'
-#' Summarise a Cholesky model returned by \\code{\link{umxACE}}.
+#' Summarise a fitted Cholesky model returned by \\code{\link{umxACE}}. Can control digits, report comparison model fits,
+#' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
+#' drawing the tables to a web broswer where they may readily be copied into non-markdown programs like Word.
 #'
+#' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
+#' 
+#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+#' 
+#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+#' 
+#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+#' 
+#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+
 #' @aliases umxSummary.MxModel.ACE
 #' @param model an \code{\link{mxModel}} to summarize
 #' @param digits round to how many digits (default = 2)
@@ -2809,6 +2821,68 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 # =========================
 # = Pull model components =
 # =========================
+
+#' Quickly pull Estimates from a model, filtering by name and value
+#'
+#' @description
+#' Often you want to see the estimates from a model, and often you don't want all of them.
+#' umx_parameters helps in this case, allowing you to select parameters matching a name filter,
+#' and also to only show parameters above or below a certain value.
+#'
+#' @details
+#' It's on my todo list to implement filtering by significance
+#'
+#' @param x an \code{\link{mxModel}} or summary from which to report parameter estimates.
+#' @param pattern a string to match in the parameter names. Default .* matches all. \code{\link{regex}} allowed!
+#' @param thresh optional: Filter out estimates 'below' or 'above' a certain value (default = "all").
+#' @param value Combine with thresh to set a minimum or maximum for which estimates to show.
+#' @return - list of matching parameters, filtered by name and value
+#' @export
+#' @family Reporting Functions
+#' @seealso - \code{\link{parameters}}, \code{\link{umxSummary}}, \code{\link{umx_names}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' umx_parameters(m1, "_to_", "below", .1)
+#' umx_parameters(cp4, "_cp_", "above", .5)
+#' }
+umx_parameters = function(x, pattern = ".*", thresh = c("all", "above", "below", "NS", "sig"), b = NULL) {	
+	# x = cp4
+	if(class(thresh) == "numeric"){
+		stop("you might not have specified the parameter value (b) by name.
+		say: umx_parameters(cp4, '_cp_', b = .1)
+		or specify all arguments:
+		say: umx_parameters(cp4, '_cp_', 'below', .1)
+		")
+	}
+	thresh <- match.arg(thresh)
+
+	if(!is.null(b) && (thresh == "all")){
+		message("Ignoring b (cutoff) and thresh = all. Set above or below to pick a beta to cut on.")
+	}
+	if(class(x) != "summary.mxmodel"){
+		x = summary(x)
+	}
+	x = x$parameters
+	parList = umx_names(x$name, pattern)
+
+	if(thresh == "above"){
+		filter = x$name %in% parList & abs(x$Estimate) > min
+	} else if(thresh == "below"){
+		filter = x$name %in% parList & abs(x$Estimate) < min
+	} else if(thresh == "NS"){
+		stop("NS and Sig not implemented yet: email tim to get this done.")
+	} else if(thresh == "sig"){
+		stop("NS and Sig not implemented yet: email tim to get this done.")
+	}
+
+	if(sum(filter) == 0){
+		message("Nothing found matching that pattern and minimum absolute value.")
+	} else {
+		umx_round(x[filter, c("name", "Estimate")], 2)
+	}
+}
+
 
 #' Extract AIC from MxModel
 #'
