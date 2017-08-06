@@ -3124,11 +3124,9 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 	return(TRUE)
 }
 
-
-
-#' umx_reorder
+#' Reorder or drop variables from a correlation/covariance matrix.
 #'
-#' Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function
+#' Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function.
 #'
 #' @param old a square matrix of correlation or covariances to reorder
 #' @param newOrder Variables you want in the order you wish to have
@@ -3142,7 +3140,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #' umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 #' umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
 umx_reorder <- function(old, newOrder) {
-	if(!umx_is_cov(mzData, boolean = TRUE)){
+	if(!umx_is_cov(old, boolean = TRUE)){
 		stop("You don't appear to have offered up a covariance matrix.")
 	}
 	dim_names = dimnames(old)[[1]]
