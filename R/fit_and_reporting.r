@@ -1666,7 +1666,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 
 	tablePub = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
-	# names(tablePub)     <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
+	# names(tablePub)   <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
 	names(tablePub)     <- c("Model"     , "EP", "\u2206 -2LL", "\u2206 df", "p", "AIC", "Compare with Model")
 	# U+2206 = math delta
 	# Fix problem where base model has compare set to its own name, and name set to NA
@@ -1702,7 +1702,13 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	
 	if(report == "html"){
-		R2HTML::HTML(tablePub, file = file, Border = 0, append = FALSE, sortableDF = TRUE);
+		tableHTML = tablePub
+		names(tableHTML)   <- c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
+	  print(xtable(tableHTML), type = "HTML", file = file, sanitize.text.function=function(x){x})
+
+		# digitList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
+		# nsmallList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
+		# R2HTML::HTML(tableHTML, file = file, Border = 0, append = FALSE, sortableDF = TRUE, digits = digitList)# , nsmall = nsmallList);
 		umx_open(file)
 	} else {
 		umx_print(tablePub)
