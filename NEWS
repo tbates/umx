@@ -3,14 +3,13 @@
 * NEW: `optimiser` parameter for umxACE and other twin models: Set the optimizer in your model code!
 * NEW umx_long2wide: Merges long data on famID, for an unlimited number of individuals in a family (twinIDs)
 * NEW umx_wide2long: Takes a family (currently limited to 2) df, and returns a long-format version.
-* NEW `forEach` option in `umxPath` (like one.headed version of "unique.pairs").
-* IMPROVED: Auto run/plot for umxGxE
-* IMPROVED: switched umxGxE plot colors to the universal ACE -> RGB scheme
-* IMPROVED: umxCI supports setting interval and type
-* IMPROVED: twin models now print summary when `autoRun`
+* NEW `umx_parameters` function, report parameter estimates, filtering by name and value!
+* IMPROVED: umxCI supports setting interval and type (for Conor Dolan)
+* IMPROVED `forEach` option in `umxPath` (like one.headed version of "unique.pairs").
 * IMPROVED: models now plot by default
-* umxACEcov improved, but still not working well for multivariate
-	* older versions worked with 1 DV only, couldn't handle multivariate means, had poor start values.
+* IMPROVED: Twin models now print summary when `autoRun`
+* IMPROVED: switched umxGxE plot colors to the universal ACE -> RGB scheme
+* IMPROVED: umxACEcov Now tries to detect violations: Age and Sex are good examples
 * IMPROVED: lound diag to 0 by default in umxACE
 * IMPROVED: Better default model name for  umxACEcov;
 * IMPROVED: More helpful default core list for umx_check_parallel (1 and n-1); plus improved formating of times
