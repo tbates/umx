@@ -2833,9 +2833,10 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' It's on my todo list to implement filtering by significance
 #'
 #' @param x an \code{\link{mxModel}} or summary from which to report parameter estimates.
-#' @param pattern a string to match in the parameter names. Default .* matches all. \code{\link{regex}} allowed!
 #' @param thresh optional: Filter out estimates 'below' or 'above' a certain value (default = "all").
-#' @param value Combine with thresh to set a minimum or maximum for which estimates to show.
+#' @param b Combine with thresh to set a minimum or maximum for which estimates to show.
+#' @param pattern Optional string to match in the parameter names. Default '.*' matches all. \code{\link{regex}} allowed!
+#' @param std Standardize output: NOT IMPLEMENTED YET
 #' @return - list of matching parameters, filtered by name and value
 #' @export
 #' @family Reporting Functions
@@ -2846,7 +2847,10 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' umx_parameters(m1, "_to_", "below", .1)
 #' umx_parameters(cp4, "_cp_", "above", .5)
 #' }
-umx_parameters = function(x, pattern = ".*", thresh = c("all", "above", "below", "NS", "sig"), b = NULL) {	
+umx_parameters = function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE) {	
+	if(std){
+		stop("Sorry, std not implemented yet: Standardize the model and provide as input or summary")
+	}
 	# x = cp4
 	if(class(thresh) == "numeric"){
 		stop("you might not have specified the parameter value (b) by name.
@@ -2867,9 +2871,11 @@ umx_parameters = function(x, pattern = ".*", thresh = c("all", "above", "below",
 	parList = umx_names(x$name, pattern)
 
 	if(thresh == "above"){
-		filter = x$name %in% parList & abs(x$Estimate) > min
+		filter = x$name %in% parList & abs(x$Estimate) > b
 	} else if(thresh == "below"){
-		filter = x$name %in% parList & abs(x$Estimate) < min
+		filter = x$name %in% parList & abs(x$Estimate) < b
+	} else if(thresh == "all"){
+		filter = x$name %in% parList
 	} else if(thresh == "NS"){
 		stop("NS and Sig not implemented yet: email tim to get this done.")
 	} else if(thresh == "sig"){
@@ -2877,7 +2883,7 @@ umx_parameters = function(x, pattern = ".*", thresh = c("all", "above", "below",
 	}
 
 	if(sum(filter) == 0){
-		message("Nothing found matching that pattern and minimum absolute value.")
+		message(paste0("Nothing found matching pattern ", omxQuotes(pattern), " and minimum absolute value ", thresh, " ", b, "."))
 	} else {
 		umx_round(x[filter, c("name", "Estimate")], 2)
 	}

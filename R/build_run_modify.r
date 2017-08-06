@@ -1321,11 +1321,12 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				binVarNames    = names(mzData)[isBin]
 				contVarNames   = names(mzData)[!isFactor]
 			} else {
-				# summary data
-				isFactor = isOrd = isBin = c()
+				# Summary data
+				isFactor = isOrd    = isBin    = c()
 				nFactors = nOrdVars = nBinVars = 0
 				factorVarNames = ordVarNames = binVarNames = contVarNames = c()
 			}
+
 			if(nFactors > 0 & is.null(suffix)){
 				stop("Please set suffix.\n",
 				"Why: You have included ordinal or binary variables. I need to know which variables are for twin 1 and which for twin2.\n",
@@ -1495,18 +1496,18 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				umx_check(!is.null(numObsMZ), "stop", paste0("You must set numObsMZ with ", dataType, " data"))
 				umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with ", dataType, " data"))
 
-				# TODO should keep this just as mzData?
-				het_mz = umx_reorder(mzData, selDVs)		
+				# Drop unused variables from matrix
+				het_mz = umx_reorder(mzData, selDVs)
 				het_dz = umx_reorder(dzData, selDVs)
 				varStarts = diag(het_mz)
 
 				if(nVar == 1){
 					# 2017-04-03 04:34PM: sqrt to switch from var to path coefficient scale
 					varStarts = sqrt(varStarts)/3
+					varStarts = matrix(varStarts, nVar, nVar)
 				} else {
 					varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
 				}
-				varStarts = matrix(varStarts, nVar, nVar)
 
 				top = mxModel("top")
 				MZ = mxModel("MZ", 

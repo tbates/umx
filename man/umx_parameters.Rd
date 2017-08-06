@@ -4,17 +4,19 @@
 \alias{umx_parameters}
 \title{Quickly pull Estimates from a model, filtering by name and value}
 \usage{
-umx_parameters(x, pattern = ".*", thresh = c("all", "above", "below", "NS",
-  "sig"), b = NULL)
+umx_parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
+  b = NULL, pattern = ".*", std = FALSE)
 }
 \arguments{
 \item{x}{an \code{\link{mxModel}} or summary from which to report parameter estimates.}
 
-\item{pattern}{a string to match in the parameter names. Default .* matches all. \code{\link{regex}} allowed!}
-
 \item{thresh}{optional: Filter out estimates 'below' or 'above' a certain value (default = "all").}
 
-\item{value}{Combine with thresh to set a minimum or maximum for which estimates to show.}
+\item{b}{Combine with thresh to set a minimum or maximum for which estimates to show.}
+
+\item{pattern}{Optional string to match in the parameter names. Default '.*' matches all. \code{\link{regex}} allowed!}
+
+\item{std}{Standardize output: NOT IMPLEMENTED YET}
 }
 \value{
 - list of matching parameters, filtered by name and value

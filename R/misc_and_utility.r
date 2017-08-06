@@ -3142,6 +3142,9 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #' umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 #' umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
 umx_reorder <- function(old, newOrder) {
+	if(!umx_is_cov(mzData, boolean = TRUE)){
+		stop("You don't appear to have offered up a covariance matrix.")
+	}
 	dim_names = dimnames(old)[[1]]
 	if(!all(newOrder %in% dim_names)){
 		stop("All variable names must appear in the matrix being umx_reorder'd")
