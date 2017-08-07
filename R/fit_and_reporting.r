@@ -1703,7 +1703,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	
 	if(report == "html"){
 		tableHTML = tablePub
-		names(tableHTML)   <- c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
+		names(tableHTML) <- c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
 	  print(xtable(tableHTML), type = "HTML", file = file, sanitize.text.function=function(x){x})
 
 		# digitList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_reorder}
 \alias{umx_reorder}
-\title{umx_reorder}
+\title{Reorder or drop variables from a correlation/covariance matrix.}
 \usage{
 umx_reorder(old, newOrder)
 }
@@ -15,7 +15,7 @@ umx_reorder(old, newOrder)
 - the re-ordered/resized matrix
 }
 \description{
-Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function
+Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function.
 }
 \examples{
 oldMatrix = cov(mtcars)

@@ -57,7 +57,7 @@ Both these approaches require all covariates be non-missing, thus dropping any r
 This is wasteful of data. umxACEcov models the covariates in the expected covariance matrix, thus allowing
 all data to be preserved.
 The following figure shows how the ACE model appears as a path diagram:
-\figure{ACEcovVarianceModel.png}{options: width="75\%" alt="Figure: ACEcov variance model diagram"}
+\figure{ACEcovVarianceModel.png}{options: width="75\%"}
 }
 \examples{
 require(umx)

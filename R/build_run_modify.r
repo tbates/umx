@@ -29,7 +29,6 @@
 #' @importFrom polycor hetcor
 #' @importFrom sfsmisc nearcor
 #' @importFrom parallel detectCores
-#' @importFrom xtable xtable
 
 #' @importFrom stats C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
@@ -46,6 +45,7 @@ NULL
 
 	
 utils::globalVariables(c(
+	'xtable',
 	'M', 'S',
 	'A', 'E',
 	'a', 'c', 'e', 
@@ -1644,7 +1644,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' This is wasteful of data. umxACEcov models the covariates in the expected covariance matrix, thus allowing
 #' all data to be preserved.
 #' The following figure shows how the ACE model appears as a path diagram:
-#' \figure{ACEcovVarianceModel.png}{options: width="75\%" alt="Figure: ACEcov variance model diagram"}
+#' \figure{ACEcovVarianceModel.png}{options: width="75\%"}
 #' 
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data (do not include suffixes).
