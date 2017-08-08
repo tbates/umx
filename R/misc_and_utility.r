@@ -3709,8 +3709,9 @@ umx_explode <- function(delimiter = character(), string) {
 #' Convenient equivalent of grep("fa[rl].*", names(df), value = TRUE, ignore.case = TRUE)
 #' Can handle dataframe (uses names), model (uses parameter names), or a vector of strings.
 #'
-#' @param df dataframe to get names from
-#' @param pattern = "find.*"
+#' @param df dataframe from which to get names.
+#' @param pattern used to filter-out only some names (supports wild card/regular expressions)
+#' @param replacement if not NULL, replaces the found string.
 #' @param ignore.case default = TRUE (opposite default to grep)
 #' @param perl = FALSE
 #' @param value = default = TRUE (opposite default to grep)
@@ -3719,13 +3720,15 @@ umx_explode <- function(delimiter = character(), string) {
 #' @param invert = FALSE
 #' @return - vector of matches
 #' @export
+#' @seealso - \code{\link{grep}}, \code{\link{sub}}
 #' @family Utility Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' umx_names(mtcars, "mpg") #"mpg" "cyl" "disp" "hp" "drat" "wt" "qsec" "vs" "am" "gear" "carb"
+#' umx_names(mtcars, "mpg") # just "mpg" matches
 #' umx_names(mtcars, "^d") # "disp", drat
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
-umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
+#' umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
+umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
 	if(class(df) == "data.frame"){
 		nameVector = names(df)
 	} else if(class(df) == "character"){
@@ -3736,8 +3739,13 @@ umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, valu
 	if(is.null(nameVector)){
 		stop(paste0("umx_names requires a dataframe or something else with names() or parameters(), ", umx_object_as_str(df), " is a ", typeof(df)))
 	}
-	grep(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, value = value,
+	if(is.null(replacement)){
+		grep(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, value = value,
 	     fixed = fixed, useBytes = useBytes, invert = invert)
+	} else {
+		sub(pattern = pattern, replacement = replacement, x = nameVector, ignore.case = FALSE, perl = perl,
+		    fixed = fixed, useBytes = useBytes)
+	}
 }
 
 #' umx_trim
@@ -3749,7 +3757,7 @@ umx_names <- function(df, pattern = ".*", ignore.case = TRUE, perl = FALSE, valu
 #' @return - string
 #' @export
 #' @family String Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' umx_trim(" dog") # "dog"
 #' umx_trim("dog ") # "dog"

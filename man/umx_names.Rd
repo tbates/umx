@@ -4,13 +4,16 @@
 \alias{umx_names}
 \title{umx_names}
 \usage{
-umx_names(df, pattern = ".*", ignore.case = TRUE, perl = FALSE,
-  value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE)
+umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
+  perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE,
+  invert = FALSE)
 }
 \arguments{
-\item{df}{dataframe to get names from}
+\item{df}{dataframe from which to get names.}
 
-\item{pattern}{= "find.*"}
+\item{pattern}{used to filter-out only some names (supports wild card/regular expressions)}
+
+\item{replacement}{if not NULL, replaces the found string.}
 
 \item{ignore.case}{default = TRUE (opposite default to grep)}
 
@@ -32,14 +35,17 @@ Convenient equivalent of grep("fa[rl].*", names(df), value = TRUE, ignore.case =
 Can handle dataframe (uses names), model (uses parameter names), or a vector of strings.
 }
 \examples{
-umx_names(mtcars, "mpg") #"mpg" "cyl" "disp" "hp" "drat" "wt" "qsec" "vs" "am" "gear" "carb"
+umx_names(mtcars, "mpg") # just "mpg" matches
 umx_names(mtcars, "^d") # "disp", drat
 umx_names(mtcars, "r[ab]") # "drat", "carb"
+umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
+- \code{\link{grep}}, \code{\link{sub}}
+
 Other Utility Functions: \code{\link{qm}},
   \code{\link{umx_find_object}}, \code{\link{umx_grep}},
   \code{\link{umx_msg}}, \code{\link{umx_paste_names}},
