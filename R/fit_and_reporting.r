@@ -1603,8 +1603,8 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' @param base The base \code{\link{mxModel}} for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
-#' @param digits rounding for p etc.
-#' @param report Optionally: "markdown", "report" (add sentences for inclusion in a paper), "html"
+#' @param digits rounding for p-values etc.
+#' @param report "markdown" (default), "inline" (a sentence suitable for inclusion in a paper), or "html".
 #' create a web table and open your default browser.
 #' (handy for getting tables into Word, and other text systems!)
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
@@ -1635,8 +1635,12 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 #' umxCompare(m1, c(m2, m3))
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "report", "html"), file = "tmp.html") {
-	report = match.arg(report)
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "inline", "html", "report"), file = "tmp.html") {
+	report = match.arg(report)		
+	if(	report == "report"){
+		message("inline-style report is being renamed to 'inline' instead of 'report'. Please change this for the future")
+		report = "inline"
+	}
 	if(is.null(comparison)){
 		comparison <- base
 	} else if (is.null(base)) {
@@ -1679,7 +1683,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), digits = digits, addComparison = NA)
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
-	if(report == "report"){
+	if(report == "inline"){
 		n_rows = dim(tablePub)[1]
 		for (i in 1:n_rows) {
 			thisPValue = tableOut[i, 9]
@@ -2307,6 +2311,7 @@ plot.MxModel.GxE <- umxPlotGxE
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param showMeans deprecated: replace with just 'means'
+#' @param format = c("current", "graphviz", "DiagrammeR") 
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @family Plotting functions
@@ -2319,7 +2324,7 @@ plot.MxModel.GxE <- umxPlotGxE
 #' \dontrun{
 #' plot(yourCP_Model) # no need to remember a special name: plot works fine!
 #' }
-umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", ...) {
+umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), showMeans = "deprecated", ...) {
 	if(showMeans != "deprecated"){
 		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
 		means = showMeans
@@ -2396,6 +2401,9 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
+	if(format!="current"){
+		umx_set_plot_format(format)
+	}
 	xmu_dot_maker(model, file, digraph)
 }
 

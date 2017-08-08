@@ -5,7 +5,7 @@
 \title{umxCompare}
 \usage{
 umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
-  report = c("markdown", "report", "html"), file = "tmp.html")
+  report = c("markdown", "inline", "html", "report"), file = "tmp.html")
 }
 \arguments{
 \item{base}{The base \code{\link{mxModel}} for comparison}
@@ -14,9 +14,9 @@ umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
 
 \item{all}{Whether to make all possible comparisons if there is more than one base model (defaults to T)}
 
-\item{digits}{rounding for p etc.}
+\item{digits}{rounding for p-values etc.}
 
-\item{report}{Optionally: "markdown", "report" (add sentences for inclusion in a paper), "html"
+\item{report}{"markdown" (default), "inline" (a sentence suitable for inclusion in a paper), or "html".
 create a web table and open your default browser.
 (handy for getting tables into Word, and other text systems!)}
 

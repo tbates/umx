@@ -6,7 +6,8 @@
 \title{umxPlotCP}
 \usage{
 umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, showMeans = "deprecated", ...)
+  std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
+  showMeans = "deprecated", ...)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link{mxModel}} to display graphically}
@@ -18,6 +19,8 @@ umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
 \item{means}{Whether to show means paths (defaults to FALSE)}
 
 \item{std}{Whether to standardize the model (defaults to TRUE)}
+
+\item{format}{= c("current", "graphviz", "DiagrammeR")}
 
 \item{showMeans}{deprecated: replace with just 'means'}
 

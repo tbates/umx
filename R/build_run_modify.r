@@ -1644,7 +1644,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' This is wasteful of data. umxACEcov models the covariates in the expected covariance matrix, thus allowing
 #' all data to be preserved.
 #' The following figure shows how the ACE model appears as a path diagram:
-#' \figure{ACEcovVarianceModel.png}{options: width="75\%"}
+#' \figure{ACEcovVarianceModel.png}
 #' 
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data (do not include suffixes).
