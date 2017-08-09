@@ -751,13 +751,13 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	return(toAdd)
 }
 
-#' Internal umx function to help plotting graphvix
+#' Internal umx function to help plotting graphviz
 #'
 #' @description
 #' Helper to print a digraph to file and open it
 #' @param model an \code{\link{mxModel}} to get the name from 
 #' @param file either "name" (use model name) or a file name
-#' @param digraph graphvix code for a model
+#' @param digraph graphviz code for a model
 #' @return -
 #' @family xmu
 xmu_dot_maker <- function(model, file, digraph){

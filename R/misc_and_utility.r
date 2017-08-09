@@ -1355,12 +1355,12 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 
 #' umx_rename_file
 #'
-#' rename files. On OS X, the function can access the current frontmost Finder window.
+#' rename files. On OS X, the function can access the current front-most Finder window.
 #' The file renaming is fast and, because you can use regular expressions, powerful
 #'
 #' @param findStr The (regex) string to find, i.e., "c[ao]t"
 #' @param replaceStr The (regex) replacement string "\1 are not dogs"
-#' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.
+#' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
 #' @param listPattern A pre-filter for files
 #' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
 #' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
@@ -1458,11 +1458,11 @@ dl_from_dropbox <- function(x, key=NULL){
 #' Use the pushbullet service to push a note. You can also initialise this
 #' service by providing your autho_key one time
 #'
-#' If you supply auth_key, It will be writen to "~/.pushbulletkey"
+#' If you supply auth_key, It will be written to "~/.pushbulletkey"
 #' \code{\link{umx_pb_note}}(auth_key="mykeystring")
-#' once it exists there, you dont need to store it in code, so code is sharable.
+#' once it exists there, you do not need to store it in code, so code is sharable.
 #' 
-#' You can get your authaurization key at \url{https://www.pushbullet.com} in 
+#' You can get your authorization key at \url{https://www.pushbullet.com} in 
 #' the "account" section.
 #' 
 #' \strong{Note}: You can show the existing stored key using "GET"
@@ -1507,10 +1507,10 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 
 #' umx_move_file
 #'
-#' move files. On OS X, the function can access the current frontmost Finder window.
+#' move files. On OS X, the function can access the current front-most Finder window.
 #' The file moves are fast and, because you can use regular expressions, powerful
 #'
-#' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.
+#' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
 #' @param findStr = regex string select files to move (WARNING: NOT IMPLEMENTED YET)
 #' @param fileNameList List of files to move
 #' @param destFolder Folder to move files into
@@ -1634,7 +1634,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #'
 #' Unlikely to be of use to anyone but the package author :-)
 #' Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
-#' On OS X, the function can access the current frontmost Finder window.
+#' On OS X, the function can access the current front-most Finder window.
 #' 
 #' The file name should be the name of the test.
 #' Columns should be headed:
@@ -1643,7 +1643,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' The SQL fields generated are:
 #' itemID, test, native_item_number, item_text, direction, scale, format, author
 #'
-#' @param theFile The xlsx file to read. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose file dialog will be thrown.
+#' @param theFile The xlsx file to read. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose file dialog will be thrown.
 #' @family File Functions
 #' @return - 
 #' @export
@@ -2382,7 +2382,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #'
 #' A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
 #' Its most useful characteristics are allowing you to change how NA and zero appear.
-#' and supressing values below a certain cut-off.
+#' and suppressing values below a certain cut-off.
 #' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 #'
 #' @param x A data.frame to print (matrices will be coerced to data.frame)
@@ -3162,7 +3162,7 @@ umx_reorder <- function(old, newOrder) {
 #'
 #' Recode a continuous variable into n-quantiles (default = deciles (10 levels)).
 #' It returns an \code{\link{mxFactor}}, with the levels labeled with the max value
-#' in each quantile (i.e., open on the left-side). quantiles are labeld "quantile1"
+#' in each quantile (i.e., open on the left-side). quantiles are labeled "quantile1"
 #' "quantile2" etc.
 #' 
 #' \strong{Note}: Redundant quantiles are merged. i.e., if the same score identifies
@@ -3689,14 +3689,14 @@ qm <- function(..., rowMarker = "|") {
 # ================================
 #' umx_explode - like the php function `explode` 
 #'
-#' Takes a string and returns an array of delimtted strings (by default, each character)
+#' Takes a string and returns an array of delimitted strings (by default, each character)
 #'
 #' @param delimiter what to break the string on. Default is empty string ""
 #' @param string an character string, e.g. "dog"
 #' @return - a vector of strings, e.g. c("d", "o", "g")
 #' @export
 #' @family String Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://www.php.net/}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://php.net/manual/en/function.explode.php}
 #' @examples
 #' umx_explode("", "dog") # "d" "o" "g"
 #' umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
@@ -3753,7 +3753,7 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 #' returns string w/o leading or trailing whitespace
 #'
 #' @param string to trim
-#' @param removeThis if not NULl then this string is removed whereever found in 'string'
+#' @param removeThis if not NULl then this string is removed wherever found in 'string'
 #' @return - string
 #' @export
 #' @family String Functions
@@ -4208,7 +4208,7 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 #' @param n Number of rows to generate (NA = all rows in dataset)
 #' @param use.names Whether to name the variables (default = TRUE)
 #' @param use.levels = Whether to use existing levels (default = TRUE)
-#' @param use.miss Whether to have data missting as in original (defaults to TRUE)
+#' @param use.miss Whether to have data missing as in original (defaults to TRUE)
 #' @param mvt.method = Passed to hetcor (default = "eigen")
 #' @param het.ML = Passed to hetcor (default = FALSE)
 #' @param het.suppress Passed to hetcor (default = TRUE)
@@ -5045,7 +5045,7 @@ umx_get_optimizer <- function(model = NULL) {
 #' @details
 #' Currently it handles the test of whether r.jk and r.hm differ in magnitude.
 #' i.e, two nonoverlapping (no variable in common) correlations in the same dataset.
-#' In the future it will be expanded to handle overlapping correlations, and to take corelation matrices as input.
+#' In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
 #'
 #' @param data the dataset
 #' @param vars the 4 vars needed: "j & k" and "h & m"

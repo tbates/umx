@@ -9,7 +9,7 @@
 #'   \item ht_T1  Height of twin 1 (cm)
 #'   \item wt_T1  Weight of twin 1 (kg)
 #'   \item bmi_T1 BMI of twin 1
-#'   \item bml_T1 BMI of twin 1
+#'   \item bml_T1 log BMI of twin 1
 #'   \item bic_T1 Biceps Skinfold of twin 1
 #'   \item caf_T1 Calf Skinfold of twin 1
 #'   \item ssc_T1 Subscapular SSkinfold of twin 1
@@ -18,7 +18,7 @@
 #'   \item ht_T2  Height of twin 2
 #'   \item wt_T2  Weight of twin 2
 #'   \item bmi_T2 BMI of twin 2
-#'   \item bml_T2 BMI of twin 2
+#'   \item bml_T2 log BMI of twin 2
 #'   \item bic_T2 Biceps Skinfold of twin 2
 #'   \item caf_T2 Calf Skinfold of twin 2
 #'   \item ssc_T2 Subscapular Skinfold of twin 2

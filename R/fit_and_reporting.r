@@ -326,7 +326,7 @@ umx_standardize_RAM <- function(model, return = "parameters", Amatrix = NA, Smat
 #'
 #' Implements confidence interval function for OpenMx models.
 #' Note: Currently requested CIs are added to existing CIs, and all are run, 
-#' even if they alrady exist in the output. This might change in the future.
+#' even if they already exist in the output. This should change in the future.
 #'
 #' @details Unlike \code{\link{confint}}, if parm is missing, all CIs requested will be added to the model, 
 #' but (because these can take time to run) by default only CIs already computed will be reported.
@@ -416,7 +416,7 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 		'4' = 'The major iteration limit was reached (Mx status BLUE).',
 		'5' = 'not used',
 		'6' = 'The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)',
-		'7' = 'The function derivates returned by funcon or funobj appear to be incorrect.',
+		'7' = 'The function derivatives returned by funcon or funobj appear to be incorrect.',
 		'8' = 'not used',
 		'9' = 'An input parameter was invalid')
 		if(any(model_CI_OK !=0) && showErrorCodes){
@@ -442,14 +442,15 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 #' \item 3: The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.
 #' \item 4: The major iteration limit was reached (Mx status BLUE).
 #' \item 6: The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)
-#' \item 7: The function derivates returned by funcon or funobj appear to be incorrect.
+#' \item 7: The function derivatives returned by funcon or funobj appear to be incorrect.
 #' \item 9: An input parameter was invalid
 #' }
 #' 
 #' @param model The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on
 #' @param which What CIs to add: c("ALL", NA, "list of your making")
 #' @param remove = FALSE (if set, removes existing specified CIs from the model)
-#' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary". 
+#' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".
+#' 'show' means print the intervals if computed, or list their names if not.
 #' @param interval The interval for newly added CIs (defaults to 0.95)
 #' @param type The type of CI (defaults to "both", options are "lower" and  "upper")
 #' @param showErrorCodes Whether to show errors (default == TRUE)
@@ -464,24 +465,31 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	mxPath(latents, to = manifests),
+#' 	mxPath(var = manifests),
+#' 	mxPath(var = latents, fixedAt = 1)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' m1$intervals # none yet list()
 #' m1 = umxCI(m1)
 #' m1$intervals # $G_to_x1
 #' m1 = umxCI(m1, remove = TRUE) # Add CIs for all free parameters, and return model
+#' data(twinData) 
+#' selDVs = c("bmi1","bmi2")
+#' mzData <- as.matrix(subset(twinData, zygosity == "MZFF", selDVs))
+#' dzData <- as.matrix(subset(twinData, zygosity == "DZFF", selDVs))
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' \dontrun{
-#' umxCI(model, run = "yes") # force update of CIs
+#' umxCI(m1, run = "show") # show what will be requested
+#' umxCI(m1, run = "yes") # actually compute the CIs
 #' # Don't force update of CIs, but if they were just added, then calculate them
-#' umxCI(model, run = "if necessary")
+#' umxCI(m1, run = "if necessary")
+#' m1 = umxCI(m1, remove = TRUE) # remove them all
+#' m1$intervals # none!
+#' umxParameters(m1) # see what's available
+#' m1 = umxCI(m1, "a_r1c1", run = "yes")
 #' }
-umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary"), interval = 0.95, type=c("both", "lower", "upper"), showErrorCodes = TRUE) {
+umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary", "show"), interval = 0.95, type = c("both", "lower", "upper"), showErrorCodes = TRUE) {
 	# Note: OpenMx now overloads confint, returning SE-based intervals.
 	run = match.arg(run)
 	which = umx_default_option(which, c("ALL", NA, "list of your making"), check = FALSE)
@@ -496,27 +504,36 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 		} else {
 			message("model has no intervals to remove")
 		}
+		invisible(model)
 	} else {
-		# TODO Avoid duplicating existing CIs?
+		# Adding CIs
+		# TODO Avoid duplicating existing CIs
 		# TODO Add each CI individually
 		# TODO Break them out into separate models and reassemble if on cluster?
-		if(which == "ALL"){
-			CIs = names(omxGetParameters(model, free = TRUE))
+		if(is.na(which)){
+			# nothing to add
 		} else {
-			CIs = which 
+			if(which == "ALL"){
+				CIs = names(omxGetParameters(model, free = TRUE))
+			} else {
+				CIs = which 
+			}
+			model = mxModel(model, mxCI(CIs, interval = interval, type = type))
 		}
-		model = mxModel(model, mxCI(CIs, interval = interval, type = type))
 	}
-    
 	if(run == "yes" | (!umx_has_CIs(model) & run == "if necessary")) {
 		model = mxRun(model, intervals = TRUE)
 	} else {
 		message("Not running CIs, run == ", run)
 	}
 
+	if(run == "show") {
+		print("CI requests in the model:")
+		print(names(model$intervals))
+	}
 	if(umx_has_CIs(model)){
-		message("### CIs for model ", model$name)
-		confint(model, showErrorCodes = showErrorCodes)
+		message("### Computed CIs in model ", model$name)
+		umxConfint(model, showErrorCodes = showErrorCodes)
 	}
 	invisible(model)
 }
@@ -792,7 +809,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 #'
 #' Summarise a fitted Cholesky model returned by \\code{\link{umxACE}}. Can control digits, report comparison model fits,
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
-#' drawing the tables to a web broswer where they may readily be copied into non-markdown programs like Word.
+#' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
 #' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 #' 
@@ -948,7 +965,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
 		# discard rows named NA
 		CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
-
+		# TODO fix for singleton CIs
 		# These can be names ("top.a_std[1,1]") or labels ("a11")
 		# imxEvalByName finds them both
 		# outList = c();
@@ -1595,7 +1612,7 @@ umxSummary.MxModel.GxE <- umxSummaryGxE
 #' 1. It supports direct control of rounding, and reports p-values rounded to APA style.
 #' 2. It reports the table in your preferred markdown format (relies on knitr)
 #' 3. The table columns are arranged in a method suitable for easy comparison for readers.
-#' 4. By default, it also reports the output as an ENglish sentence suitable for a paper.
+#' 4. By default, it also reports the output as an English sentence suitable for a paper.
 #' 5. It can open tabular output in a browser (report = "html")
 #' 
 #' note: If you leave comparison blank, it will just give fit info for the base model
@@ -2332,7 +2349,8 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	if(!class(x) == "MxModel.CP"){
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
-	model = x # just to emphasise that x has to be a model 
+	format = match.arg(format)
+	model = x # just to emphasize that x has to be a model 
 	if(std){
 		model = umx_standardize_CP(model)
 	}
@@ -2401,7 +2419,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
-	if(format!="current"){
+	if(format != "current"){
 		umx_set_plot_format(format)
 	}
 	xmu_dot_maker(model, file, digraph)
@@ -2586,10 +2604,10 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #'
 #' umxUnexplainedCausalNexus report the effect of a change (delta) in a variable (from) on an output (to)
 #'
-#' @param from A variable in the model that you want to imput the effect of a change
+#' @param from A variable in the model for which you want to compute the effect of a change.
 #' @param delta A the amount to simulate changing \"from\" by. 
-#' @param to The dependent variable that you want to watch changing
-#' @param model The model containing from and to
+#' @param to The dependent variable that you want to watch changing.
+#' @param model The model containing from and to.
 #' @seealso - \code{\link{umxRun}}, \code{\link{mxCompare}}
 #' @family Modify or Compare Models
 #' @references - http://www.github.com/tbates/umx/
@@ -2844,7 +2862,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' and also to only show parameters above or below a certain value.
 #'
 #' @details
-#' It's on my todo list to implement filtering by significance
+#' It is on my todo list to implement filtering by significance, and to add standardizing.
 #'
 #' @param x an \code{\link{mxModel}} or summary from which to report parameter estimates.
 #' @param thresh optional: Filter out estimates 'below' or 'above' a certain value (default = "all").
@@ -2861,7 +2879,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' umx_parameters(m1, "_to_", "below", .1)
 #' umx_parameters(cp4, "_cp_", "above", .5)
 #' }
-umx_parameters = function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE) {	
+umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE) {	
 	if(std){
 		stop("Sorry, std not implemented yet: Standardize the model and provide as input or summary")
 	}
@@ -2903,12 +2921,14 @@ umx_parameters = function(x, thresh = c("all", "above", "below", "NS", "sig"), b
 	}
 }
 
+#' @export
+umxParameters <- umx_parameters
 
 #' Extract AIC from MxModel
 #'
 #' Returns the AIC for an OpenMx model
 #' helper function for \code{\link{logLik.MxModel}} (which enables AIC(model); logLik(model); BIC(model)
-#' Original Author: brandmaier
+#' Original Author: Brandmaier
 #'
 #' @method extractAIC MxModel
 #' @rdname extractAIC.MxModel
@@ -3078,8 +3098,8 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' Returns the log likelihood for an OpenMx model. This helper also 
 #' enables \code{\link{AIC}}(model); \code{\link{BIC}}(model).
 #'
-#' *note*: this is the (natrual) log of the likelihood, not -2*log(likelihood). To
-#' recovert -2*ll, multiply the returned value by -2
+#' *note*: this is the (natural) log of the likelihood, not -2*log(likelihood). To
+#' recover -2*ll, multiply the returned value by -2
 #' For logLik for other types of object, see \code{\link{logLik}}.
 #' 
 #' @details
@@ -3343,8 +3363,8 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 
 #' umx_fun
 #'
-#' Misellaneous functions that are handy in summary and other tasks where you might otherwise have
-#' to craft a custom nameless funtions. e.g.
+#' Miscellaneous functions that are handy in summary and other tasks where you might otherwise have
+#' to craft a custom nameless functions. e.g.
 #' 
 #' \itemize{
 #'   \item \code{\link{umx_fun_mean_sd}}: returns "mean (SD)" of x.
@@ -3645,7 +3665,7 @@ summaryAPA <- umxAPA
 #' Look up CIs for free parameters in a model, and return as APA-formatted text string
 #'
 #' @param model an \code{\link{mxModel}} to get CIs from
-#' @param cellLabel the label of the cell to interogate for a CI, e.g. "ai_r1c1"
+#' @param cellLabel the label of the cell to interrogate for a CI, e.g. "ai_r1c1"
 #' @param prefix This submodel to look in (i.e. "top.")
 #' @param suffix The suffix for algebras ("_std")
 #' @param digits = 2

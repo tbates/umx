@@ -27,7 +27,7 @@ umx_parameters helps in this case, allowing you to select parameters matching a 
 and also to only show parameters above or below a certain value.
 }
 \details{
-It's on my todo list to implement filtering by significance
+It is on my todo list to implement filtering by significance, and to add standardizing.
 }
 \examples{
 \dontrun{

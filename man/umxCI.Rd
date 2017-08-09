@@ -5,8 +5,9 @@
 \title{umxCI}
 \usage{
 umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
-  remove = FALSE, run = c("no", "yes", "if necessary"), interval = 0.95,
-  type = c("both", "lower", "upper"), showErrorCodes = TRUE)
+  remove = FALSE, run = c("no", "yes", "if necessary", "show"),
+  interval = 0.95, type = c("both", "lower", "upper"),
+  showErrorCodes = TRUE)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on}
@@ -15,7 +16,8 @@ umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
 
 \item{remove}{= FALSE (if set, removes existing specified CIs from the model)}
 
-\item{run}{Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".}
+\item{run}{Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".
+'show' means print the intervals if computed, or list their names if not.}
 
 \item{interval}{The interval for newly added CIs (defaults to 0.95)}
 
@@ -49,22 +51,29 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	mxPath(latents, to = manifests),
+	mxPath(var = manifests),
+	mxPath(var = latents, fixedAt = 1)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m1$intervals # none yet list()
 m1 = umxCI(m1)
 m1$intervals # $G_to_x1
 m1 = umxCI(m1, remove = TRUE) # Add CIs for all free parameters, and return model
+data(twinData) 
+selDVs = c("bmi1","bmi2")
+mzData <- as.matrix(subset(twinData, zygosity == "MZFF", selDVs))
+dzData <- as.matrix(subset(twinData, zygosity == "DZFF", selDVs))
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 \dontrun{
-umxCI(model, run = "yes") # force update of CIs
+umxCI(m1, run = "show") # show what will be requested
+umxCI(m1, run = "yes") # actually compute the CIs
 # Don't force update of CIs, but if they were just added, then calculate them
-umxCI(model, run = "if necessary")
+umxCI(m1, run = "if necessary")
+m1 = umxCI(m1, remove = TRUE) # remove them all
+m1$intervals # none!
+umxParameters(m1) # see what's available
+m1 = umxCI(m1, "a_r1c1", run = "yes")
 }
 }
 \references{

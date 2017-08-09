@@ -628,7 +628,7 @@ umxReRun <- umxModify
 #' umxGxE: Implements ACE models with moderation of paths, e.g. by SES.
 #'
 #' Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
-#' of genetic (or environmental) influence varies parametrically (usuaally linear effects on path estimates)
+#' of genetic (or environmental) influence varies parametrically (usually linear effects on path estimates)
 #' across levels of environment. umxGxE allows detecting,
 #' testing, and visualizing  G xE (or C or E x E) interaction forms.
 #' 
@@ -871,7 +871,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 #' umxGxE_window
 #'
 #' Make a 2-group GxE (moderated ACE) model using LOSEM. In GxE interaction studies, typically,
-#' the hypothesis that the strength of genetic influence varies parametrically (usuaally linear effects
+#' the hypothesis that the strength of genetic influence varies parametrically (usually linear effects
 #' on path estimates) across levels of environment. Of course, the function linking genetic influence
 #' and context is not necessarily linear, but may react more steeply at the extremes, or take other, unknown forms.
 #' To avoid obscuring the underlying shape of the interaction effect, local structural equation
@@ -1086,7 +1086,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' 
 #' The function also supports weighting of individual data rows. In this case,
 #' the model is estimated for each row individually, then each row likelihood
-#' is multiplied by its weight, and these weighted likelyhoods summed to form
+#' is multiplied by its weight, and these weighted likelihoods summed to form
 #' the model-likelihood, which is to be minimised.
 #' This feature is used in the non-linear GxE model functions.
 #' 
@@ -1955,7 +1955,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 
 #' \figure{CP.png}
 #' 
-#' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotye.
+#' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
 #' 
 #' @details
 #' Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
@@ -2411,7 +2411,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	}
 } # end umxIP
 
-#' umxACESexLim: Build and run a sex-limitaiton twin model (not working yet)
+#' umxACESexLim: Build and run a sex-limitation twin model (not working yet)
 #'
 #' Cholesky style sex-limitation model.
 #'
@@ -2419,7 +2419,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' ACE Cholesky modeling. It implements a correlation approach to ensure that order of variables
 #' does NOT affect ability of model to account for DZOS data.
 #'  
-#' Restrictions include the assumtion that twin means and variances can be equated across birth
+#' Restrictions include the assumption that twin means and variances can be equated across birth
 #' order within zygosity groups.
 #' 
 #' Note: Qualitative sex differences are differences in the latent A, C, or E latent variables
@@ -2894,7 +2894,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param type The type of the matrix (Default = "Full")
 #' @param nrow Number of rows in the matrix: Must be set
 #' @param ncol Number of columns in the matrix: Must be set
-#' @param free Whether cells are free (Defaul FALSE)
+#' @param free Whether cells are free (Default FALSE)
 #' @param values The values of the matrix (Default NA)
 #' @param labels Either whether to label the matrix (default TRUE), OR a vector of labels to apply.
 #' @param lbound Lower bounds on cells (Defaults to NA)
@@ -2948,7 +2948,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s) (defaults to TRUE - why would you want anything else?)
 #' @param setValues Whether to set the starting values of free parameters (defaults to F)
 #' @param setLabels Whether to set the labels (defaults to F)
-#' @param intervals Whether to run mxCI confindence intervals (defaults to F)
+#' @param intervals Whether to run mxCI confidence intervals (defaults to F)
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @param setStarts Deprecated way to setValues
 #' @return - \code{\link{mxModel}}
@@ -3217,7 +3217,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @param model   An \code{\link{mxModel}} within which to equate parameters
 #' @param master  A list of "master" labels to which slave labels will be equated
 #' @param slave   A list of slave labels which will be updated to match master labels, thus equating the parameters
-#' @param free    Should parameter(s) initally be free? (default = TRUE)
+#' @param free    Should parameter(s) initially be free? (default = TRUE)
 #' @param verbose Whether to give verbose feedback (default = TRUE)
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
@@ -3405,7 +3405,7 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 
 #' umxAdd1
 #'
-#' Add each of a set of paths you provide to the model, returning a table of theire effect on fit
+#' Add each of a set of paths you provide to the model, returning a table of their effects on fit.
 #'
 #' @param model an \code{\link{mxModel}} to alter
 #' @param pathList1 a list of variables to generate a set of paths
@@ -4189,7 +4189,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param unique.pairs equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)
 #' @param fromEach Like unique.pairs, but with one head arrows
 #' @param forms Paired with from, this will build a formative variable. from vars form the latent.
-#' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate among froms.
+#' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' vars.
 #' @param Cholesky Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.
 #' @param defn latent variable, var@0 mean fixed, with label-based as data source
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).

@@ -18,7 +18,7 @@
 #' 
 #' \emph{notes}: In an EFA, all items may load on all factors.
 #' For identification we need m^2 degrees of freedom. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
-#' We get another m(m-1)/2 degrees of freemdom by fixing the upper-right hand corner of the factor loadings
+#' We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of the factor loadings
 #' component of the A matrix. The manifest variances are also lbounded at 0.
 #' 
 #' EFA reports standardized loadings: to do this, we scale the data.
