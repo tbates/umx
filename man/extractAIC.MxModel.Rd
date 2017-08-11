@@ -21,7 +21,7 @@
 \description{
 Returns the AIC for an OpenMx model
 helper function for \code{\link{logLik.MxModel}} (which enables AIC(model); logLik(model); BIC(model)
-Original Author: brandmaier
+Original Author: Brandmaier
 }
 \examples{
 require(umx)

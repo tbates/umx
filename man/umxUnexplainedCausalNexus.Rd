@@ -7,13 +7,13 @@
 umxUnexplainedCausalNexus(from, delta, to, model)
 }
 \arguments{
-\item{from}{A variable in the model that you want to imput the effect of a change}
+\item{from}{A variable in the model for which you want to compute the effect of a change.}
 
 \item{delta}{A the amount to simulate changing \"from\" by.}
 
-\item{to}{The dependent variable that you want to watch changing}
+\item{to}{The dependent variable that you want to watch changing.}
 
-\item{model}{The model containing from and to}
+\item{model}{The model containing from and to.}
 }
 \description{
 umxUnexplainedCausalNexus report the effect of a change (delta) in a variable (from) on an output (to)

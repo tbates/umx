@@ -10,7 +10,7 @@ umx_APA_model_CI(model, cellLabel, prefix = "top.", suffix = "_std",
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get CIs from}
 
-\item{cellLabel}{the label of the cell to interogate for a CI, e.g. "ai_r1c1"}
+\item{cellLabel}{the label of the cell to interrogate for a CI, e.g. "ai_r1c1"}
 
 \item{prefix}{This submodel to look in (i.e. "top.")}
 

@@ -25,7 +25,7 @@ umx_cont_2_quantiles(x, nlevels = NULL, type = c("mxFactor", "ordered",
 \description{
 Recode a continuous variable into n-quantiles (default = deciles (10 levels)).
 It returns an \code{\link{mxFactor}}, with the levels labeled with the max value
-in each quantile (i.e., open on the left-side). quantiles are labeld "quantile1"
+in each quantile (i.e., open on the left-side). quantiles are labeled "quantile1"
 "quantile2" etc.
 }
 \details{

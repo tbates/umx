@@ -35,7 +35,7 @@ e.g.: 'bmi' --> c("bmi_T1", "bmi_T2")}
 }
 \description{
 Make a 2-group GxE (moderated ACE) model using LOSEM. In GxE interaction studies, typically,
-the hypothesis that the strength of genetic influence varies parametrically (usuaally linear effects
+the hypothesis that the strength of genetic influence varies parametrically (usually linear effects
 on path estimates) across levels of environment. Of course, the function linking genetic influence
 and context is not necessarily linear, but may react more steeply at the extremes, or take other, unknown forms.
 To avoid obscuring the underlying shape of the interaction effect, local structural equation

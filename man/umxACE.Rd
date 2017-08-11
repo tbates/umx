@@ -89,7 +89,7 @@ data in any combination. An experimental feature is under development to allow T
 
 The function also supports weighting of individual data rows. In this case,
 the model is estimated for each row individually, then each row likelihood
-is multiplied by its weight, and these weighted likelyhoods summed to form
+is multiplied by its weight, and these weighted likelihoods summed to form
 the model-likelihood, which is to be minimised.
 This feature is used in the non-linear GxE model functions.
 

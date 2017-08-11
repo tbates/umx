@@ -9,7 +9,7 @@ umx_trim(string, removeThis = NULL)
 \arguments{
 \item{string}{to trim}
 
-\item{removeThis}{if not NULl then this string is removed whereever found in 'string'}
+\item{removeThis}{if not NULl then this string is removed wherever found in 'string'}
 }
 \value{
 - string

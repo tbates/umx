@@ -32,7 +32,7 @@ nb: from, to, and with must be left empty (their default)}
 \item{fromEach}{Like unique.pairs, but with one head arrows}
 
 \item{forms}{Paired with from, this will build a formative variable. from vars form the latent.
-Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate among froms.}
+Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' vars.}
 
 \item{Cholesky}{Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxACESexLim}
 \alias{umxACESexLim}
-\title{umxACESexLim: Build and run a sex-limitaiton twin model (not working yet)}
+\title{umxACESexLim: Build and run a sex-limitation twin model (not working yet)}
 \usage{
 umxACESexLim(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
   dzoData, suffix = NULL, autoRun = getOption("umx_auto_run"))
@@ -38,7 +38,7 @@ This is a multi-variate capable Quantitative & Qualitative Sex-Limitation script
 ACE Cholesky modeling. It implements a correlation approach to ensure that order of variables
 does NOT affect ability of model to account for DZOS data.
  
-Restrictions include the assumtion that twin means and variances can be equated across birth
+Restrictions include the assumption that twin means and variances can be equated across birth
 order within zygosity groups.
 
 Note: Qualitative sex differences are differences in the latent A, C, or E latent variables

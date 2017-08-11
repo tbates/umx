@@ -18,11 +18,11 @@ Use the pushbullet service to push a note. You can also initialise this
 service by providing your autho_key one time
 }
 \details{
-If you supply auth_key, It will be writen to "~/.pushbulletkey"
+If you supply auth_key, It will be written to "~/.pushbulletkey"
 \code{\link{umx_pb_note}}(auth_key="mykeystring")
-once it exists there, you dont need to store it in code, so code is sharable.
+once it exists there, you do not need to store it in code, so code is sharable.
 
-You can get your authaurization key at \url{https://www.pushbullet.com} in 
+You can get your authorization key at \url{https://www.pushbullet.com} in 
 the "account" section.
 
 \strong{Note}: You can show the existing stored key using "GET"

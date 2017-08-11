@@ -19,7 +19,7 @@ umx_make_fake_data(dataset, digits = 2, n = NA, use.names = TRUE,
 
 \item{use.levels}{= Whether to use existing levels (default = TRUE)}
 
-\item{use.miss}{Whether to have data missting as in original (defaults to TRUE)}
+\item{use.miss}{Whether to have data missing as in original (defaults to TRUE)}
 
 \item{mvt.method}{= Passed to hetcor (default = "eigen")}
 

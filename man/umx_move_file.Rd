@@ -8,7 +8,7 @@ umx_move_file(baseFolder = NA, findStr = NULL, fileNameList = NA,
   destFolder = NA, test = TRUE, overwrite = FALSE)
 }
 \arguments{
-\item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current frontmost Finder window. If it is blank, a choose folder dialog will be thrown.}
+\item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.}
 
 \item{findStr}{= regex string select files to move (WARNING: NOT IMPLEMENTED YET)}
 
@@ -24,7 +24,7 @@ umx_move_file(baseFolder = NA, findStr = NULL, fileNameList = NA,
 -
 }
 \description{
-move files. On OS X, the function can access the current frontmost Finder window.
+move files. On OS X, the function can access the current front-most Finder window.
 The file moves are fast and, because you can use regular expressions, powerful
 }
 \examples{

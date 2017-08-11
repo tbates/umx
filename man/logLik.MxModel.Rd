@@ -21,8 +21,8 @@ Returns the log likelihood for an OpenMx model. This helper also
 enables \code{\link{AIC}}(model); \code{\link{BIC}}(model).
 }
 \details{
-\emph{note}: this is the (natrual) log of the likelihood, not -2\emph{log(likelihood). To
-recovert -2}ll, multiply the returned value by -2
+\emph{note}: this is the (natural) log of the likelihood, not -2\emph{log(likelihood). To
+recover -2}ll, multiply the returned value by -2
 For logLik for other types of object, see \code{\link{logLik}}.
 
 hat-tip Andreas Brandmaier

@@ -42,7 +42,7 @@ Defaults to NA = do not create plot output}
 \description{
 Summarise a fitted Cholesky model returned by \\code{\link{umxACE}}. Can control digits, report comparison model fits,
 optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
-drawing the tables to a web broswer where they may readily be copied into non-markdown programs like Word.
+drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 }
 \details{
 See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
