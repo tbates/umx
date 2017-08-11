@@ -111,7 +111,7 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #'
 #' Set autoPlot default for models like umxACE umxGxE etc
 #'
-#' @param autoPlot If NA or "name", sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
+#' @param autoPlot If TRUE, sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
 #' @param silent If TRUE, no message will be printed.
 #' @return - Current umx_auto_plot setting
 #' @export
@@ -121,20 +121,25 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #' library(umx)
 #' umx_set_auto_plot() # print current state
 #' old = umx_set_auto_plot(silent = TRUE) # store existing value
-#' umx_set_auto_plot("name")  # set to "name"
+#' umx_set_auto_plot("name") # set to on ("name")
+#' umx_set_auto_plot(FALSE)  # set to off (NA)
+#' umx_set_auto_plot(TRUE)   # set to on "name"
 #' umx_set_auto_plot(old)    # reinstate
 umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 	if(is.null(autoPlot)) {
 		if(!silent){
 			message("Current plot format is ", omxQuotes(getOption("umx_auto_plot")),
-				". Valid options are NA or 'name'.", 
-				" 'name' will auto-plot, using the name of the model as the plot name."
+				". 'name' means auto-plot is on (defaulting to the name of the model).", 
+				" Use TRUE to turn on, FALSE to turn off."
 			)
 		}
 		invisible(getOption("umx_auto_plot"))
-	} else {
-		umx_check(autoPlot %in% c(NA, "name"), "stop", "autoPlot should be either NA or 'name'")
-		options("umx_auto_plot" = autoPlot)
+	} else{
+		if(autoPlot == 'name' || autoPlot){
+			options("umx_auto_plot" = "name")
+		}else{
+			options("umx_auto_plot" = NA)		
+		}
 	}
 }
 
@@ -3344,6 +3349,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @param verbose Whether to report which columns were scaled (default FALSE)
 #' @return - new dataframe with scaled variables
 #' @export
+#' @seealso umx_scale_wide_twin_data
 #' @family Data Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -3523,6 +3529,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' @param data a wide dataframe
 #' @return - new dataframe with variables scaled in place
 #' @export
+#' @seealso umx_scale
 #' @family Data Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
