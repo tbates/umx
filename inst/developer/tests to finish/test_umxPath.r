@@ -106,6 +106,6 @@ testthat::expect_error(umxPath(cov = c("a","b", "c")))
 # From illegal for means
 testthat::expect_error(umxPath(from = "z", means=c("a","b", "c")))
 
-# only 1 of with var cov unique.bivaraite and  means can be set
+# only 1 of with var cov unique.bivariate and means can be set
 testthat::expect_error(umxPath(with = "A", unique.bivariate = c("A","B"), to = "A", cov = "A", means = "A", fixedAt = 1, firstAt = 1))
 testthat::expect_error(umxPath(with = "A", means = "A", fixedAt = 1, firstAt = 1))

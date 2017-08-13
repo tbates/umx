@@ -653,9 +653,7 @@ sensitivity_analysis <- function(dat = NA, Output.Title = "meta table", prw.r.al
 	  (((observed.significant - expected.significant)^2) / (k - expected.significant))
 	  ## Chi-square statistical significance
 	p.sig.chi.square <-  1 - pchisq(chi.square, 1) 
-
-	print(paste0("chi-square (Ioannidis & Trikalinos, 2007, p 246:", chi.square, ", p = ", p.sig.chi.square))
-	# # TODO (U+03A7
+	print(paste0("\u03C7\u00B2 (Ioannidis & Trikalinos, 2007, p 246:", chi.square, ", p = ", p.sig.chi.square))
 
 	# ===================================
 	# = binomial test for 10 or greater =

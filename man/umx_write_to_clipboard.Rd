@@ -16,12 +16,10 @@ umx_write_to_clipboard(x)
 umx_write_to_clipboard writes data to the clipboard
 }
 \details{
-TODO: Make this more robust to OS. Let me know if it fails for you.
+Works on Mac. Let me know if it fails on windows or Unix.
 }
 \examples{
-\dontrun{
 umx_write_to_clipboard("hello")
-}
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{umxVersion}},

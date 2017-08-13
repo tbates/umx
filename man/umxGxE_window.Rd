@@ -50,22 +50,17 @@ library(umx);
 # ==============================
 # = 1. Open and clean the data =
 # ==============================
-# umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin
+# umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin.
+# The model assumes two groups (MZ and DZ). Moderator can't be missing
 mod = "age" # The name of the moderator column in the dataset
 selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 data(twinData) # Dataset of Australian twins, built into OpenMx
-# The twinData consist of two cohorts. First we label them
-# TODO: Q for OpenMx team: can I add a cohort column to this dataset?
-twinData$cohort = 1; twinData$cohort[twinData$zyg \%in\% 6:10] = 2
-twinData$zyg[twinData$cohort == 2] = twinData$zyg[twinData$cohort == 2]-5
-# And set a plain-English label
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
-# The model also assumes two groups: MZ and DZ. Moderator can't be missing
+# The twinData consist of two cohorts: "younger" and "older".
+# zygosity is a factor. levels =  MZFF, MZMM, DZFF, DZMM, DZOS.
 # Delete missing moderator rows
-twinData = twinData[!is.na(twinData[mod]),]
-mzData = subset(twinData, ZYG == "MZFF", c(selDVs, mod))
-dzData = subset(twinData, ZYG == "DZFF", c(selDVs, mod))
+twinData = twinData[!is.na(twinData[mod]), ]
+mzData = subset(twinData, zygosity == "MZFF", c(selDVs, mod))
+dzData = subset(twinData, zygosity == "DZFF", c(selDVs, mod))
 
 # ========================
 # = 2. Run the analyses! =

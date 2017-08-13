@@ -21,11 +21,6 @@ this is a simple helper to cludge them together.
 \examples{
 \dontrun{
 umx_merge_CIs(m1, m2)
-# TODO remove duplicates...
-# TODO (check they are the same as well!)
-# TODO Support arbitrarily long list of input models with ...
-# TODO check the models are the same, with same fit
-# TODO check the models have CIs
 }
 }
 \references{

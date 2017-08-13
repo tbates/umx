@@ -7,17 +7,18 @@
 umx_fix_first_loadings(model, latents = NULL, at = 1)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to set}
+\item{model}{An \code{\link{mxModel}} to set.}
 
-\item{latents}{(If NULL then all latentVars in model)}
+\item{latents}{Which latents to fix from (NULL = all).}
 
-\item{at}{(Default = 1)}
+\item{at}{The value to fix the first path at (Default = 1).}
 }
 \value{
 - \code{\link{mxModel}}
 }
 \description{
-Fix the loading of the first path from each latent at selected value (default = 1).
+Fix the loading of the first path from each latent at selected value. 
+Note: latents with fixed variance are skipped.
 }
 \examples{
 require(umx)
@@ -30,7 +31,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 m1 = umx_fix_first_loadings(m1)
-umx_show(m1) # variance of g is fixed at 1
+umx_show(m1) # path from g to var1 fixed @ 1.
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}

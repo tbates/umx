@@ -370,7 +370,6 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 	# 1. Add CIs if needed
 	if (parm == "all") {
 		if(umx_has_CIs(object, "intervals")) {
-			# TODO add a count for the user
 			message(length(object$intervals), " existing CIs found - I am removing these, and adding CIs for all free parameters")
 			object <- mxModel(object, remove=TRUE, object$intervals)
 		}
@@ -2632,7 +2631,6 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 	# [history](http://www.github.com/tbates/umx/thread/2076)
 	# Called by: umxUnexplainedCausalNexus
 	# TODO:  Special case for latent variables
-	# FIXME: Update for fitfunction/expectation
 	expectation <- model$objective
 	A <- NULL
 	S <- NULL
@@ -2647,26 +2645,15 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 		newData <- data$observed
 	}
 	
-	if(is.list(expectation)) {  # New fit-function style
-		eCov  <- model$fitfunction$info$expCov
-		eMean <- model$fitfunction$info$expMean
-		expectation <- model$expectation
-		if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
-			A <- eval(substitute(model$X$values, list(X=expectation$A)))
-			S <- eval(substitute(model$X$values, list(X=expectation$S)))
-			if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation$M)) {
-				M <- eval(substitute(model$X$values, list(X=expectation$M)))
-			}
-		}
-	} else { # Old objective-style
-		eCov <- model$objective$info$expCov
-		eMean <- model$objective$info$expMean
-		if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
-			A <- eval(substitute(model$X$values, list(X=expectation$A)))
-			S <- eval(substitute(model$X$values, list(X=expectation$S)))
-			if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation$M)) {
-				M <- eval(substitute(model$X$values, list(X=expectation$M)))
-			}
+	# New fit-function style
+	eCov  <- model$fitfunction$info$expCov
+	eMean <- model$fitfunction$info$expMean
+	expectation <- model$expectation
+	if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
+		A <- eval(substitute(model$X$values, list(X=expectation$A)))
+		S <- eval(substitute(model$X$values, list(X=expectation$S)))
+		if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation$M)) {
+			M <- eval(substitute(model$X$values, list(X=expectation$M)))
 		}
 	}
 

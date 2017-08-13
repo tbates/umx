@@ -921,6 +921,7 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 # handle sem-style strings
 
 xmu_string2path <- function(from) {
+	# TODO implement sem strings to umxPaths
 	if(!is.null(from)){
 		if(length(from) > 1){
 			isSEMstyle = grepl("[<>]", x = from[1])	
@@ -928,18 +929,18 @@ xmu_string2path <- function(from) {
 			isSEMstyle = grepl("[<>]", x = from)				
 		}
 		if(isSEMstyle){
-			stop("sem-style string syntax not yet implemented. In the mean time, try the other features, like with, var, means = , fixedAt = , fixFirst = ")
-
+			message("sem-style string syntax not yet implemented. In the mean time, try other features, such as fixedAt = , with, var, means = , fixFirst = ")
+			# A with B; A to B
 			if("from contains an arrow"){
 				# parse into paths
 			} else {
 				if(!is.null(with)){
-					to = with
-					arrows = 2
+					to      = with
+					arrows  = 2
 					connect = "single"
 				} else {
-					to = to
-					arrows = 1
+					to      = to
+					arrows  = 1
 					connect = "single"
 				}
 			}	
@@ -949,8 +950,6 @@ xmu_string2path <- function(from) {
 			allOneLine = gsub("\n+", ";", a, ignore.case = TRUE)
 			# regularizedArrows = gsub("[ \t]?^<-?>[ \t]?", "->", allOneLine, ignore.case = TRUE)
 			# regularizedArrows = gsub("[ \t]?-?>[ \t]?", "<-", regularizedArrows, ignore.case = TRUE)
-
-			# TODO remove duplicate ; 
 			pathList = umx_explode(";", allOneLine)
 			for (aPath in pathList) {
 				if(length(umx_explode("<->", aPath))==3){
