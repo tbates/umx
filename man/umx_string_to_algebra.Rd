@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_string_to_algebra}
 \alias{umx_string_to_algebra}
-\title{umx_string_to_algebra}
+\title{Convert a string to an OpenMx algebra}
 \usage{
 umx_string_to_algebra(algString, name = NA, dimnames = NA)
 }
@@ -17,7 +17,8 @@ umx_string_to_algebra(algString, name = NA, dimnames = NA)
 - \code{\link{mxAlgebra}}
 }
 \description{
-This is useful because it lets you use paste() and rep() to quickly and easily insert values from R variables into the string, then parse the string as an mxAlgebra argument. The use case this time was to include a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent.
+This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), then parse the string as an mxAlgebra argument.
+A use case is including a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent.
 }
 \examples{
 \dontrun{

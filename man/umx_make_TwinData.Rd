@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_make_TwinData}
 \alias{umx_make_TwinData}
-\title{Simulate twin data with control over A, C, E, and moderation}
+\title{Simulate twin data with control over A, C, and E parameters, as well as moderation of A.}
 \usage{
 umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
   EE = NULL, nThresh = NULL, sum2one = TRUE, varNames = "var",
@@ -48,7 +48,7 @@ You can omit nDZpairs. You can also give any 2 of A, C, or E and the function wi
 
 \strong{Moderation}
 
-AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value avg, and swinging
+AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritibility, with average value avg, and swinging
 down to min and up to max across 3 SDs of the moderator.
 }
 \examples{

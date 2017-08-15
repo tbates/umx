@@ -28,7 +28,7 @@ umxEquate(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE,
 - \code{\link{mxModel}}
 }
 \description{
-In addition to dropping or adding parameters, a second common task in modelling
+In addition to dropping or adding parameters, a second common task in modeling
 is to equate parameters. umx provides a convenience function to equate parameters 
 by setting one or more parameters (the "slave" set) equal to one or more "master" 
 parameters. These parameters are picked out via their labels, and setting two or more

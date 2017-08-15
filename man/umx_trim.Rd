@@ -2,20 +2,20 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_trim}
 \alias{umx_trim}
-\title{umx_trim}
+\title{Trim whitespace surrounding a string.}
 \usage{
 umx_trim(string, removeThis = NULL)
 }
 \arguments{
 \item{string}{to trim}
 
-\item{removeThis}{if not NULl then this string is removed wherever found in 'string'}
+\item{removeThis}{if not NULL then this string is removed wherever found in 'string'}
 }
 \value{
 - string
 }
 \description{
-returns string w/o leading or trailing whitespace
+Returns string w/o leading or trailing whitespace
 }
 \examples{
 umx_trim(" dog") # "dog"

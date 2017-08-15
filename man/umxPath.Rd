@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxPath}
 \alias{umxPath}
-\title{umxPath: Easier (but powerful) specification of RAM paths.}
+\title{Easier (and powerful) specification of paths in SEM.}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
   unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL,
@@ -74,7 +74,7 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 - 1 or more \code{\link{mxPath}}s
 }
 \description{
-The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
+The goal of this function is to enable quick-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 
 It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{means}, \strong{v1m0}, \strong{v.m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{forms}.
 

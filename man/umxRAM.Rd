@@ -32,7 +32,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 
 \item{showEstimates}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
 
-\item{refModels}{pass in reference models if available. Use FALSE to supress computing these if not provided.}
+\item{refModels}{pass in reference models if available. Use FALSE to suppress computing these if not provided.}
 
 \item{thresholds}{Whether to use deviation-based threshold modeling for ordinal data (if any is detected), direct, or do nothing.}
 
@@ -77,7 +77,7 @@ and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = 
 and \code{fix = "firstLoadings"}.
 
 To be honest, these are not only more trouble than they are worth, they encourage errors and 
-poor modelling. I suggest user learn the handful of \code{\link{umxPath}}
+poor modeling. I suggest user learn the handful of \code{\link{umxPath}}
 short cuts and stay clean and explicit!
 }
 \examples{

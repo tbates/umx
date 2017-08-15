@@ -41,7 +41,6 @@ m1 = umxValues(m1)
 mxEval(S, m1) # plausible variances
 umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
-# todo: handle complex guided matrix value starts...
 }
 \references{
 - \url{http://www.github.com/tbates/umx}, \url{https://tbates.github.io}

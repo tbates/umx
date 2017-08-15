@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umxHetCor}
 \alias{umxHetCor}
-\title{umxHetCor}
+\title{Creqte a matrix of correlations for variables of diverse types (binary, ordinal, continuous)}
 \usage{
 umxHetCor(data, ML = FALSE, use = c("pairwise.complete.obs",
   "complete.obs"), treatAllAsFactor = FALSE, verbose = FALSE)

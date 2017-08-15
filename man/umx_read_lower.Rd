@@ -10,7 +10,7 @@ umx_read_lower(file = "", diag = TRUE, names = as.character(paste("X",
 \arguments{
 \item{file}{Path to a file to read (Default "" will read from user input)}
 
-\item{diag}{Whether the data unclude the diagonal or not: Defaults to TRUE}
+\item{diag}{Whether the data include the diagonal. Defaults to TRUE}
 
 \item{names}{The default names for the variables.
 Defaults to as.character(paste("X", 1:n, sep=""))}

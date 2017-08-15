@@ -313,7 +313,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 #' xmuMakeThresholdsMatrices (not a user function)
 #'
 #' You should not be calling this directly.
-#' This is not as reliable a strategy and likely to be superceeded...
+#' This is not as reliable a strategy and likely to be superseded...
 #'
 #' @param df a \code{\link{data.frame}} containing the data for your \code{\link{mxData}} statement
 #' @param droplevels a binary asking if empty levels should be dropped (defaults to FALSE)
@@ -367,7 +367,7 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
 	)
 }
 
-#' Make deviation threshold matrics
+#' Make a deviation-based threshold matrix for ordinal models.
 #'
 #' Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
 #' usecase see: umxMakeThresholdMatrix
@@ -706,7 +706,7 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 #'
 #' Make two-headed paths
 #'
-#' @param pathList A pathlist
+#' @param pathList A list of paths
 #' @return - added items
 #' @export
 #' @family xmu internal not for end user

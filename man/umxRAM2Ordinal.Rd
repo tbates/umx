@@ -19,7 +19,7 @@ umxRAM2Ordinal(model, verbose = T, thresholds = c("deviationBased",
 
 \item{showEstimates}{= Whether to show estimates in the summary (if autorunning) TRUE}
 
-\item{refModels}{pass in reference models if available. Use FALSE to supress computing these if not provided.}
+\item{refModels}{pass in reference models if available. Use FALSE to suppress computing these if not provided.}
 
 \item{autoRun}{= whether to run the model before returning it: defaults to getOption("umx_auto_run"))}
 }

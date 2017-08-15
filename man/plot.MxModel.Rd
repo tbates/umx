@@ -4,7 +4,7 @@
 \alias{plot.MxModel}
 \alias{plot}
 \alias{umxPlot}
-\title{Create a graphical figure from an MxModel}
+\title{Create and display a graphical path diagram for a model.}
 \usage{
 \method{plot}{MxModel}(x = NA, std = FALSE, digits = 2, file = "name",
   pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE,
@@ -35,22 +35,21 @@
 \item{...}{Optional parameters}
 }
 \description{
-Create graphical path diagrams from your OpenMx models!
+plot() produces SEM diagrams in graphviz format, and relies on \code{\link{DiagrammeR}} (or a 
+graphviz application) to create the image. 
+The commercial application \dQuote{OmniGraffle} is great for editing these images.
 }
 \details{
-plot() produces SEM diagrams in graphviz format, and relies on DiagrammeR (or a 
-graphviz application) to create the image. 
-The commercial application Omnigraffle is great for editing these images.
+On unix and windows, \code{\link{plot}}() will create a pdf and open it in your default pdf reader.
 
-On unix and windows, plot() will create a pdf and open it in your default pdf reader.
+\emph{Note:} DiagrammeR is supported out of the box.  By default, plots open in your browser.
 
-If you use umx_set_plot_format("graphviz"), files will open in with a graphviz helper.
-
-\emph{Note:} DiagrammeR is supported out of the box. If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
+If you use umx_set_plot_format("graphviz"), they will open in a graphviz helper app (if installed).
+If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
 On OS X we try and open an app: you may need to associate the \sQuote{.gv}
 extension with the graphviz app.
 Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}, 
-select Graphviz.app (or OmniGraffle professional),
+select graphviz.app (or OmniGraffle professional),
 then set \dQuote{change all}.
 }
 \examples{

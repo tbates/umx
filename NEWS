@@ -62,7 +62,7 @@
 	* BUGFIX: umx_cont_2_quantiles lowest threshold was empty
 * NEWFEATURES: `umxAPA` now reports mode for factor data
 * NEWFEATURES: Allow `umxLabel` to rename the returned model
-* IMPROVED: Allow sep as a synonym for suffix in uxmACE, umxCP, umxIP
+* IMPROVED: sep is now the preferred seperator (synonym for suffix in uxmACE, umxCP, umxIP)
 * DOCUMENT: Examples use zygosity string from twinData instead of numeric code
 * DOCUMENT: Fix typo in umxPath docs
 * INCOMPATIBLE: renamed umx_cov_diag to umx_var

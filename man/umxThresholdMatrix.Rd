@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxThresholdMatrix}
 \alias{umxThresholdMatrix}
-\title{umxThresholdMatrix: Helper makes a complete threshold matrix needed in ordinal models.}
+\title{Create the threshold matrix needed for modeling ordinal data.}
 \usage{
 umxThresholdMatrix(df, sep = NA, method = c("auto", "Mehta", "allFree"),
   thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
@@ -10,7 +10,7 @@ umxThresholdMatrix(df, sep = NA, method = c("auto", "Mehta", "allFree"),
   suffixes = "deprecated", verbose = FALSE)
 }
 \arguments{
-\item{df}{the data being modelled (to allow access to the factor levels and quantiles within these for each variable)}
+\item{df}{the data being modeled (to allow access to the factor levels and quantiles within these for each variable)}
 
 \item{sep}{(optional) string for wide (twin) data, separating the base name from a numeric suffix (e.g. "_T")}
 

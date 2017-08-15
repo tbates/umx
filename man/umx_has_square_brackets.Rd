@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_has_square_brackets}
 \alias{umx_has_square_brackets}
-\title{umx_has_square_brackets}
+\title{Check if a label contains square brackets}
 \usage{
 umx_has_square_brackets(input)
 }
@@ -13,7 +13,7 @@ umx_has_square_brackets(input)
 - boolean
 }
 \description{
-Helper function, checking if a label has sqaure brackets
+Helper function to check if a label has square brackets, e.g. "A[1,1]"
 }
 \examples{
 umx_has_square_brackets("[hello]")

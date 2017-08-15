@@ -20,7 +20,7 @@ umxCP(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
 \item{mzData}{The MZ dataframe}
 
 \item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, you can
-omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
+omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{nFac}{How many common factors (default = 1)}
 
@@ -93,7 +93,7 @@ data in any combination.
 \strong{Additional features}
 The umxCP function supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
+from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
 }
 \examples{

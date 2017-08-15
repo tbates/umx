@@ -19,7 +19,7 @@ an \code{\link{mxRAMObjective}} object, and an \code{\link{mxData}} object
 }
 \description{
 You should not be calling this directly.
-This is not as reliable a strategy and likely to be superceeded...
+This is not as reliable a strategy and likely to be superseded...
 }
 \examples{
 # x = mtcars
