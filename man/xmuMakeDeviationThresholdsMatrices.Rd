@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.r
 \name{xmuMakeDeviationThresholdsMatrices}
 \alias{xmuMakeDeviationThresholdsMatrices}
-\title{Make deviation threshold matrics}
+\title{Make a deviation-based threshold matrix for ordinal models.}
 \usage{
 xmuMakeDeviationThresholdsMatrices(df, droplevels, verbose)
 }

@@ -27,7 +27,7 @@
 #' 
 #' This is very much early days. Adding "scores" in response to demand.
 #' 
-#' todo: detect ordinal items and switch to UWLS
+#' TODO: detect ordinal items and switch to UWLS
 #' 
 #' @aliases umxFactanal umxEFA
 #' @param x Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.

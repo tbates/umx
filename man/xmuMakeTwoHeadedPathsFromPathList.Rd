@@ -7,7 +7,7 @@
 xmuMakeTwoHeadedPathsFromPathList(pathList)
 }
 \arguments{
-\item{pathList}{A pathlist}
+\item{pathList}{A list of paths}
 }
 \value{
 - added items

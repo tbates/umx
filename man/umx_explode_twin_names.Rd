@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_explode_twin_names}
 \alias{umx_explode_twin_names}
-\title{umx_explode_twin_names}
+\title{Break twin variable names (BMI_T1, BMI_T2) into base variable names (BMI, "_T", 1:2)}
 \usage{
 umx_explode_twin_names(df, sep = "_T")
 }
@@ -12,12 +12,12 @@ umx_explode_twin_names(df, sep = "_T")
 \item{sep}{text constant separating name from numeric 1:2 twin index}
 }
 \value{
-- list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+- list(baseNames, sep, twinIndexes)
 }
 \description{
-Break names like Dep_T1 into a list of base names, a seperator, and a 
+Break names like Dep_T1 into a list of base names, a separator, and a 
 vector of twin indexes. e.g. c("Dep_T1", "Dep_T2") 
--> list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+-> list(baseNames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
 }
 \examples{
 require(umx)

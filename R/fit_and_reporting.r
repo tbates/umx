@@ -246,17 +246,10 @@ umx_standardize_RAM <- function(model, return = "parameters", Amatrix = NA, Smat
 		message("Model has not been run yet")
 		return(model)
 	}
-	# Get the names of the A, S and M matrices 
-	if("expectation" %in% slotNames(model)){
-		# openMx 2
-		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model$expectation$A}
-		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model$expectation$S}
-		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model$expectation$M}
-	} else {
-		if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model$objective$A}
-		if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model$objective$S}
-		if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model$objective$M}
-	}
+	# Get the names of the A, S and M matrices
+	if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model$expectation$A}
+	if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model$expectation$S}
+	if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model$expectation$M}
 	# Get the A and S matrices, and make an identity matrix
 	A <- model[[nameA]]
 	S <- model[[nameS]]
@@ -1245,9 +1238,9 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 
 
-#' umxSummaryCP
+#' Display information for a common-pathway model (from umxCP)
 #'
-#' Summarise a Commmon Pathway model, as returned by \code{\link{umxCP}}
+#' Summarise a Common-Pathway model, as returned by \code{\link{umxCP}}
 #'
 #' @aliases umxSummary.MxModel.CP
 #' @param model A fitted \code{\link{umxCP}} model to summarize
@@ -1724,10 +1717,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	if(report == "html"){
 		tableHTML = tablePub
 		names(tableHTML) <- c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
-	  print(xtable::xtable(tableHTML), type = "HTML", file = file, sanitize.text.function=function(x){x})
-
+		print(xtable::xtable(tableHTML), type = "HTML", file = file, sanitize.text.function = function(x){x})
 		# digitList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
-		# nsmallList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
+		# nsmallList        =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
 		# R2HTML::HTML(tableHTML, file = file, Border = 0, append = FALSE, sortableDF = TRUE, digits = digitList)# , nsmall = nsmallList);
 		umx_open(file)
 	} else {
@@ -1853,24 +1845,23 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 # = Graphics =
 # ============
 
-#' Create a graphical figure from an MxModel
+#' Create and display a graphical path diagram for a model.
 #'
-#' Create graphical path diagrams from your OpenMx models!
-#' 
-#' plot() produces SEM diagrams in graphviz format, and relies on DiagrammeR (or a 
+#' plot() produces SEM diagrams in graphviz format, and relies on \code{\link{DiagrammeR}} (or a 
 #' graphviz application) to create the image. 
-#' The commercial application Omnigraffle is great for editing these images.
+#' The commercial application \dQuote{OmniGraffle} is great for editing these images.
 #' 
 #'
-#' On unix and windows, plot() will create a pdf and open it in your default pdf reader.
+#' On unix and windows, \code{\link{plot}}() will create a pdf and open it in your default pdf reader.
 #' 
-#' If you use umx_set_plot_format("graphviz"), files will open in with a graphviz helper.
+#' \emph{Note:} DiagrammeR is supported out of the box.  By default, plots open in your browser. 
 #' 
-#' \emph{Note:} DiagrammeR is supported out of the box. If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
+#' If you use umx_set_plot_format("graphviz"), they will open in a graphviz helper app (if installed).
+#' If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
 #' On OS X we try and open an app: you may need to associate the \sQuote{.gv}
 #' extension with the graphviz app.
 #' Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}, 
-#' select Graphviz.app (or OmniGraffle professional),
+#' select graphviz.app (or OmniGraffle professional),
 #' then set \dQuote{change all}.
 #'
 #' @aliases plot umxPlot
@@ -2617,7 +2608,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' }
 umxUnexplainedCausalNexus <- function(from, delta, to, model) {
 	manifests = model@manifestVars
-	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to support string varnames 
+	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to allow access by name
 	dimnames(partialDataRow) = list("val", manifests)
 	partialDataRow[1, from] <- delta # delta is in raw "from" units
 	partialDataRow[1, to]   <- NA
@@ -2849,7 +2840,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' and also to only show parameters above or below a certain value.
 #'
 #' @details
-#' It is on my todo list to implement filtering by significance, and to add standardizing.
+#' It is on my TODO list to implement filtering by significance, and to add standardizing.
 #'
 #' @param x an \code{\link{mxModel}} or summary from which to report parameter estimates.
 #' @param thresh optional: Filter out estimates 'below' or 'above' a certain value (default = "all").

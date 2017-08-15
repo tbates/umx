@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxACE}
 \alias{umxACE}
-\title{umxACE: Build and run a 2-group Cholesky (uni- or multi-variate)}
+\title{Build and run a 2-group Cholesky twin model (uni-variate or multi-variate).}
 \usage{
 umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
   suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
@@ -23,7 +23,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
 \item{mzData}{The MZ dataframe}
 
 \item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, simplifies
-SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
+selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
 
@@ -57,7 +57,7 @@ SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 - \code{\link{mxModel}} of subclass mxModel.ACE
 }
 \description{
-A common task in twin modelling involves using the genetic and environmental differences 
+A common task in twin modeling involves using the genetic and environmental differences 
 between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 to model the genetic and environmental structure of one, or, typically, several phenotypes
 (measured behaviors). umxACE supports modeling with the ACE Cholesky model, a core model 
@@ -85,18 +85,18 @@ The function flexibly accepts raw data, and also summary covariance data
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
 ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
-data in any combination. An experimental feature is under development to allow Tobit modelling. 
+data in any combination. An experimental feature is under development to allow Tobit modeling. 
 
 The function also supports weighting of individual data rows. In this case,
 the model is estimated for each row individually, then each row likelihood
 is multiplied by its weight, and these weighted likelihoods summed to form
-the model-likelihood, which is to be minimised.
+the model-likelihood, which is to be minimized.
 This feature is used in the non-linear GxE model functions.
 
 \strong{Additional features}
 The umxACE function supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
+from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
 
 \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack

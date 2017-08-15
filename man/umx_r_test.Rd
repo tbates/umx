@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_r_test}
 \alias{umx_r_test}
-\title{umx_r_test}
+\title{Test the difference between correlations for significance.}
 \usage{
 umx_r_test(data = NULL, vars = vars, alternative = c("two.sided",
   "greater", "less"))
@@ -22,7 +22,7 @@ umx_r_test is a wrapper around the cocor test of difference between correlations
 }
 \details{
 Currently it handles the test of whether r.jk and r.hm differ in magnitude.
-i.e, two nonoverlapping (no variable in common) correlations in the same dataset.
+i.e, two non-overlapping (no variable in common) correlations in the same dataset.
 In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
 }
 \examples{

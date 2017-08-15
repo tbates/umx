@@ -59,7 +59,7 @@ Bear in mind that factor scores are indeterminate and can be rotated.
 
 This is very much early days. Adding "scores" in response to demand.
 
-todo: detect ordinal items and switch to UWLS
+TODO: detect ordinal items and switch to UWLS
 }
 \examples{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")

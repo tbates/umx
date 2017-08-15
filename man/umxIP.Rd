@@ -20,7 +20,7 @@ umxIP(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
 \item{mzData}{The MZ dataframe}
 
 \item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, you can
-omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
+omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{nFac}{How many common factors (default = 1)}
 
@@ -42,9 +42,9 @@ omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{addCI}{Whether to add the interval requests for CIs (defaults to TRUE)}
 
-\item{numObsDZ}{= todo: implement ordinal Number of DZ twins: Set this if you input covariance data}
+\item{numObsDZ}{= TODO: implement ordinal Number of DZ twins: Set this if you input covariance data}
 
-\item{numObsMZ}{= todo: implement ordinal Number of MZ twins: Set this if you input covariance data}
+\item{numObsMZ}{= TODO: implement ordinal Number of MZ twins: Set this if you input covariance data}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 
@@ -57,7 +57,7 @@ omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 }
 \description{
 Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model)
-The following figure shows the IP model diagramatically:
+The following figure shows the IP model diagrammatically:
 \figure{IP.png}
 }
 \examples{

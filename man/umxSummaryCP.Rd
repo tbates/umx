@@ -3,7 +3,7 @@
 \name{umxSummaryCP}
 \alias{umxSummaryCP}
 \alias{umxSummary.MxModel.CP}
-\title{umxSummaryCP}
+\title{Display information for a common-pathway model (from umxCP)}
 \usage{
 umxSummaryCP(model, digits = 2, file = umx_set_auto_plot(silent = TRUE),
   returnStd = FALSE, extended = FALSE, showRg = FALSE,
@@ -34,7 +34,7 @@ umxSummaryCP(model, digits = 2, file = umx_set_auto_plot(silent = TRUE),
 - optional \code{\link{mxModel}}
 }
 \description{
-Summarise a Commmon Pathway model, as returned by \code{\link{umxCP}}
+Summarise a Common-Pathway model, as returned by \code{\link{umxCP}}
 }
 \examples{
 require(umx)

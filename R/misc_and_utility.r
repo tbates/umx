@@ -835,15 +835,15 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	return (model)
 }
 
-#' umx_explode_twin_names
+#' Break twin variable names (BMI_T1, BMI_T2) into base variable names (BMI, "_T", 1:2)
 #'
-#' Break names like Dep_T1 into a list of base names, a seperator, and a 
+#' Break names like Dep_T1 into a list of base names, a separator, and a 
 #' vector of twin indexes. e.g. c("Dep_T1", "Dep_T2") 
-#' -> list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+#' -> list(baseNames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
 #'
 #' @param df vector of names or data.frame containing the data
 #' @param sep text constant separating name from numeric 1:2 twin index
-#' @return - list(varnames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+#' @return - list(baseNames, sep, twinIndexes)
 #' @export
 #' @family String Functions
 #' @examples
@@ -857,7 +857,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
 #' umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
 umx_explode_twin_names <- function(df, sep = "_T") {
-	# debugonce(umx::umx_explode_twin_names)
 	if(is.data.frame(df)){
 		names_in_df = names(df)
 	} else {
@@ -990,7 +989,7 @@ umx_factor <- umxFactor
 # = Utility =
 # ===========
 
-#' Print the version of umx, along with detail from  OpenMx and general system info.
+#' Get or print the version of umx, along with detail from OpenMx and general system info.
 #'
 #' @description
 #' umxVersion returns the version information for umx, and for OpenMx and R.
@@ -998,7 +997,7 @@ umx_factor <- umxFactor
 #'
 #' @param model Optional to show optimizer in this model
 #' @param verbose = TRUE
-#' @param return Which package (umx or openMx to return version on
+#' @param return Which package (umx or OpenMx to return version on
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -1012,12 +1011,12 @@ umxVersion <- function (model = NULL, verbose = TRUE, return = "umx") {
         msg = paste0("umx version: ", umx_vers)
         message(msg)
     }
-	pvers = mxVersion(model = model, verbose = verbose)
+	OpenMx_vers = mxVersion(model = model, verbose = verbose)
     
 	if(return == "umx"){
 		invisible(umx_vers)
 	} else {
-		invisible(pvers)
+		invisible(OpenMx_vers)
 	}
 }
 
@@ -3246,9 +3245,9 @@ umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordere
 #' @export
 umx2ord <- umx_cont_2_quantiles
 
-#' umx_has_square_brackets
+#' Check if a label contains square brackets
 #'
-#' Helper function, checking if a label has sqaure brackets
+#' Helper function to check if a label has square brackets, e.g. "A[1,1]"
 #'
 #' @param input The label to check for square brackets (string input)
 #' @return - boolean
@@ -3258,7 +3257,6 @@ umx2ord <- umx_cont_2_quantiles
 #' @examples
 #' umx_has_square_brackets("[hello]")
 #' umx_has_square_brackets("goodbye")
-
 umx_has_square_brackets <- function (input) {
     match1 <- grep("[", input, fixed = TRUE)
     match2 <- grep("]", input, fixed = TRUE)
@@ -3266,9 +3264,10 @@ umx_has_square_brackets <- function (input) {
 }
 
 
-#' umx_string_to_algebra
+#' Convert a string to an OpenMx algebra
 #'
-#' This is useful because it lets you use paste() and rep() to quickly and easily insert values from R variables into the string, then parse the string as an mxAlgebra argument. The use case this time was to include a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. 
+#' This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), then parse the string as an mxAlgebra argument.
+#' A use case is including a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. 
 #'
 #' @param algString a string to turn into an algebra
 #' @param name of the returned algebra
@@ -3386,12 +3385,12 @@ umx_is_numeric <- function(df, cols = TRUE){
 	return(bIsNumeric)
 }
 
-#' umx_residualize
+#' Easily residualize variables in long or wide dataframes, returning them changed in-place.
 #'
-#' @description Residualise one or more variables residualised against covariates, and return a
+#' @description Residualize one or more variables residualised against covariates, and return a
 #' complete dataframe with residualized variable in place.
-#' Optionally, this also works on wide (ie., twin) data. Just supply suffixes to identify
-#' the paired-wide columns (see examples)
+#' Optionally, this also works on wide (i.e., twin) data. Just supply suffixes to identify
+#' the paired-wide columns (see examples).
 #' 
 #' @details In R, residuals for a variable can be found with the following statement:
 #' 
@@ -3414,7 +3413,7 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' @family Data Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' # Residualise mpg on cylinders and displacement
+#' # Residualize mpg on cylinders and displacement
 #' r1 = umx_residualize("mpg", c("cyl", "disp"), data = mtcars)
 #' r2 = residuals(lm(mpg ~ cyl + disp, data = mtcars, na.action = na.exclude))
 #' all(r1$mpg == r2)
@@ -3435,7 +3434,7 @@ umx_is_numeric <- function(df, cols = TRUE){
 #' umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)[1:5,12:17]
 #' 
 #' # ===================================
-#' # = Residualise several DVs at once =
+#' # = Residualize several DVs at once =
 #' # ===================================
 #' df1 = umx_residualize(c("mpg", "hp"), cov = c("cyl", "disp"), data = tmp)
 #' df2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
@@ -3743,12 +3742,12 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	}
 }
 
-#' umx_trim
+#' Trim whitespace surrounding a string.
 #'
-#' returns string w/o leading or trailing whitespace
+#' Returns string w/o leading or trailing whitespace
 #'
 #' @param string to trim
-#' @param removeThis if not NULl then this string is removed wherever found in 'string'
+#' @param removeThis if not NULL then this string is removed wherever found in 'string'
 #' @return - string
 #' @export
 #' @family String Functions
@@ -3932,7 +3931,8 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 # =================
 # = Simulate Data =
 # =================
-#' Simulate twin data with control over A, C, E, and moderation
+
+#' Simulate twin data with control over A, C, and E parameters, as well as moderation of A.
 #' @description
 #' Makes MZ and DZ twin data, optionally with moderated A. y default, the three variance components must sum to 1.
 #' 
@@ -3947,7 +3947,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' 
 #' **Moderation**
 #' 
-#' AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value avg, and swinging
+#' AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritibility, with average value avg, and swinging
 #' down to min and up to max across 3 SDs of the moderator.
 #'
 #'
@@ -4391,7 +4391,7 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' that includes just the lower triangle of a correlation matrix.
 #'
 #' @param file Path to a file to read (Default "" will read from user input)
-#' @param diag Whether the data unclude the diagonal or not: Defaults to TRUE
+#' @param diag Whether the data include the diagonal. Defaults to TRUE
 #' @param names The default names for the variables.
 #' Defaults to as.character(paste("X", 1:n, sep=""))
 #' @param ensurePD Whether to coerce the resultant matrix to positive definite (Defaults to FALSE)
@@ -4452,7 +4452,7 @@ umx_read_lower <- function(file="", diag=TRUE, names=as.character(paste("X", 1:n
 	return(X)
 }
     
-#' umx_make_bin_cont_pair_data
+#' Make pairs of  bin & continuous columns to represent censored data
 #'
 #' Takes a dataframe of left-censored variables (vars with a floor effect) and does two things to it:
 #' 1. It creates new binary (1/0) copies of each column (with the suffix "bin"). These contain 0 where
@@ -4520,7 +4520,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 	return(data)
 }
 
-#' umxHetCor
+#' Creqte a matrix of correlations for variables of diverse types (binary, ordinal, continuous)
 #'
 #' umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
 #'
@@ -4690,7 +4690,7 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 
 	numTwinsPerFamily = length(suffixes)
 	message("Working with ", numTwinsPerFamily, " twins per family:", paste(suffixes, collapse = ", "))
-	message("Checking varnames: ", paste(varNames, collapse = ", "))
+	message("Checking varNames: ", paste(varNames, collapse = ", "))
 	# get mean values for each definition Variable
 	meanDefVarValues = colMeans(df[, paste0(defNames, suffixes[1]), drop=F], na.rm = TRUE)
 	numRows = dim(df)[1]
@@ -5031,14 +5031,14 @@ umx_get_optimizer <- function(model = NULL) {
 	}
 }
 
-#' umx_r_test
+#' Test the difference between correlations for significance.
 #'
 #' @description
 #' umx_r_test is a wrapper around the cocor test of difference between correlations.
 #'
 #' @details
 #' Currently it handles the test of whether r.jk and r.hm differ in magnitude.
-#' i.e, two nonoverlapping (no variable in common) correlations in the same dataset.
+#' i.e, two non-overlapping (no variable in common) correlations in the same dataset.
 #' In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
 #'
 #' @param data the dataset

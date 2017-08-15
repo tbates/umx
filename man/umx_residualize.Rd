@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_residualize}
 \alias{umx_residualize}
-\title{umx_residualize}
+\title{Easily residualize variables in long or wide dataframes, returning them changed in-place.}
 \usage{
 umx_residualize(var, covs = NULL, suffixes = NULL, data)
 }
@@ -21,10 +21,10 @@ Up to you to check all variables are present!}
 - dataframe with var residualized in place (i.e under its original column name)
 }
 \description{
-Residualise one or more variables residualised against covariates, and return a
+Residualize one or more variables residualised against covariates, and return a
 complete dataframe with residualized variable in place.
-Optionally, this also works on wide (ie., twin) data. Just supply suffixes to identify
-the paired-wide columns (see examples)
+Optionally, this also works on wide (i.e., twin) data. Just supply suffixes to identify
+the paired-wide columns (see examples).
 }
 \details{
 In R, residuals for a variable can be found with the following statement:
@@ -38,7 +38,7 @@ In addition, it has the powerful feature of operating on a list of variables, an
 wide data, expanding the var name using a set of variable-name suffixes.
 }
 \examples{
-# Residualise mpg on cylinders and displacement
+# Residualize mpg on cylinders and displacement
 r1 = umx_residualize("mpg", c("cyl", "disp"), data = mtcars)
 r2 = residuals(lm(mpg ~ cyl + disp, data = mtcars, na.action = na.exclude))
 all(r1$mpg == r2)
@@ -59,7 +59,7 @@ tmp$disp_T1 = tmp$disp_T2 = tmp$disp
 umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)[1:5,12:17]
 
 # ===================================
-# = Residualise several DVs at once =
+# = Residualize several DVs at once =
 # ===================================
 df1 = umx_residualize(c("mpg", "hp"), cov = c("cyl", "disp"), data = tmp)
 df2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))

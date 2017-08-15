@@ -197,7 +197,7 @@ umxModel <- function(...) {
 #' and \code{fix = "firstLoadings"}.
 #' 
 #' To be honest, these are not only more trouble than they are worth, they encourage errors and 
-#' poor modelling. I suggest user learn the handful of \code{\link{umxPath}}
+#' poor modeling. I suggest user learn the handful of \code{\link{umxPath}}
 #' short cuts and stay clean and explicit!
 #' 
 #' @param model A model to update (or set to string to use as name for new model)
@@ -210,7 +210,7 @@ umxModel <- function(...) {
 #' @param independent Whether the model is independent (default = NA)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
 #' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
-#' @param refModels pass in reference models if available. Use FALSE to supress computing these if not provided.
+#' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
 #' @param thresholds Whether to use deviation-based threshold modeling for ordinal data (if any is detected), direct, or do nothing.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
@@ -686,7 +686,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 		selDefs = umx_paste_names(selDefs, suffix, 1:2)
 	}
 	if(any(selDefs %in% selDVs)) {
-		warning("selDefs was found in selDVs: You probably gave me all the vars in SelDVs instead of just the DEPENDENT variable");
+		warning("selDefs was found in selDVs: You probably gave me all the vars in selDVs instead of just the DEPENDENT variable");
 	}
 	if(length(selDVs)/nSib!=1){
 		stop("DV list must be 1 variable (2 twins)... You tried ", length(selDVs)/nSib)
@@ -867,7 +867,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 	return(model)
 }
 
-#' umxGxE_window
+#' Implement the moving-window form of GxE analysis.
 #'
 #' Make a 2-group GxE (moderated ACE) model using LOSEM. In GxE interaction studies, typically,
 #' the hypothesis that the strength of genetic influence varies parametrically (usually linear effects
@@ -877,7 +877,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 #' modeling (LOSEM) may be used, and GxE_window implements this. LOSEM is a non-parametric,
 #' estimating latent interaction effects across the range of a measured moderator using a
 #' windowing function which is walked along the context dimension, and which weights subjects
-#' near the centrre of the window highly relative to subjects far above or below the window centre.
+#' near the center of the window highly relative to subjects far above or below the window center.
 #' This allows detecting and visualizing arbitrary GxE (or CxE or ExE) interaction forms.
 #' 
 #' @param selDVs The dependent variables for T1 and T2, e.g. c("bmi_T1", "bmi_T2")
@@ -1047,9 +1047,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	}
 }
 
-#' umxACE: Build and run a 2-group Cholesky (uni- or multi-variate)
+#' Build and run a 2-group Cholesky twin model (uni-variate or multi-variate).
 #'
-#' A common task in twin modelling involves using the genetic and environmental differences 
+#' A common task in twin modeling involves using the genetic and environmental differences 
 #' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 #' to model the genetic and environmental structure of one, or, typically, several phenotypes
 #' (measured behaviors). umxACE supports modeling with the ACE Cholesky model, a core model 
@@ -1076,18 +1076,18 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' \strong{Ordinal Data}
 #' In an important capability, the model transparently handles ordinal (binary or multi-level
 #' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
-#' data in any combination. An experimental feature is under development to allow Tobit modelling. 
+#' data in any combination. An experimental feature is under development to allow Tobit modeling. 
 #' 
 #' The function also supports weighting of individual data rows. In this case,
 #' the model is estimated for each row individually, then each row likelihood
 #' is multiplied by its weight, and these weighted likelihoods summed to form
-#' the model-likelihood, which is to be minimised.
+#' the model-likelihood, which is to be minimized.
 #' This feature is used in the non-linear GxE model functions.
 #' 
 #' \strong{Additional features}
 #' The umxACE function supports varying the DZ genetic association (defaulting to .5)
 #' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-#' from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
+#' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
 #'
 #' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
@@ -1098,7 +1098,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
 #' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, simplifies
-#' SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
@@ -1969,7 +1969,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' \strong{Additional features}
 #' The umxCP function supports varying the DZ genetic association (defaulting to .5)
 #' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-#' from 1 (the default for modelling family-level effects shared 100% by twins in a pair),
+#' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
 #'
 #' @param name The name of the model (defaults to "CP")
@@ -1977,7 +1977,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
 #' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
-#' omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param nFac How many common factors (default = 1)
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
@@ -2193,7 +2193,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' umxIP: Build and run an Independent pathway twin model
 #'
 #' Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model)
-#' The following figure shows the IP model diagramatically:
+#' The following figure shows the IP model diagrammatically:
 #' \figure{IP.png}
 #'
 #' @param name The name of the model (defaults to "IP")
@@ -2201,7 +2201,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
 #' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
-#' omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param nFac How many common factors (default = 1)
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
@@ -2212,8 +2212,8 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param correlatedA Whether factors are allowed to correlate (not implemented yet: FALSE)
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
 #' @param addCI Whether to add the interval requests for CIs (defaults to TRUE)
-#' @param numObsDZ = todo: implement ordinal Number of DZ twins: Set this if you input covariance data
-#' @param numObsMZ = todo: implement ordinal Number of MZ twins: Set this if you input covariance data
+#' @param numObsDZ = TODO: implement ordinal Number of DZ twins: Set this if you input covariance data
+#' @param numObsMZ = TODO: implement ordinal Number of MZ twins: Set this if you input covariance data
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @param sep allowed as a synonym for "suffix"
@@ -2424,7 +2424,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @param dzfData The DZ female dataframe
 #' @param dzoData The DZ opposite-sex dataframe. (be sure and get in right order)
 #' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
-#' omit suffixes in SelDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @return - ACE sexlim model
 #' @export
@@ -2632,7 +2632,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 #' @param thresholds How to implement thresholds: c("deviationBased", "direct", "ignore", "left_censored")
 #' @param name = A new name for the modified model (NULL means leave it as it)
 #' @param showEstimates = Whether to show estimates in the summary (if autorunning) TRUE
-#' @param refModels pass in reference models if available. Use FALSE to supress computing these if not provided.
+#' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
 #' @param autoRun = whether to run the model before returning it: defaults to getOption("umx_auto_run"))
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -2696,7 +2696,6 @@ umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", 
 #' mxEval(S, m1) # plausible variances
 #' umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 #' umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
-#' # todo: handle complex guided matrix value starts...
 umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 	if(is.numeric(obj) ) {
 		# Use obj as the mean, return a list of length n, with sd = sd
@@ -3189,7 +3188,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 
 #' umxEquate: Equate two or more paths
 #'
-#' In addition to dropping or adding parameters, a second common task in modelling
+#' In addition to dropping or adding parameters, a second common task in modeling
 #' is to equate parameters. umx provides a convenience function to equate parameters 
 #' by setting one or more parameters (the "slave" set) equal to one or more "master" 
 #' parameters. These parameters are picked out via their labels, and setting two or more
@@ -3664,7 +3663,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 # = matrix-oriented helpers =
 # ===========================
 
-#' umxThresholdMatrix: Helper makes a complete threshold matrix needed in ordinal models.
+#' Create the threshold matrix needed for modeling ordinal data.
 #'
 #' High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. Big time saver!
 #'
@@ -3679,7 +3678,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #'
 #' For \strong{direct}, it returns a thresholdsMatrix (named threshMatName)
 #'
-#' @param df the data being modelled (to allow access to the factor levels and quantiles within these for each variable)
+#' @param df the data being modeled (to allow access to the factor levels and quantiles within these for each variable)
 #' @param sep (optional) string for wide (twin) data, separating the base name from a numeric suffix (e.g. "_T")
 #' @param method How to set the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)
 #' @param thresholds How to implement thresholds: "deviationBased" (default), "direct", "ignore", "left_censored"
@@ -4101,7 +4100,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	return (model)
 }
 
-#' umxPath: Easier (but powerful) specification of RAM paths.
+#' Easier (and powerful) specification of paths in SEM.
 #'
 #' @details This function returns a standard mxPath, but gives new options for specifying the path. In addition to the normal
 #' \dQuote{from} and \dQuote{to}, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
@@ -4109,7 +4108,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' Finally, (in future) it will allow sem-style \dQuote{A->B} string specification.
 #'
-#' @description The goal of this function is to enable quck-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
+#' @description The goal of this function is to enable quick-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 #' 
 #' It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{means}, \strong{v1m0}, \strong{v.m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{forms}.
 #'

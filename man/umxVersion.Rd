@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umxVersion}
 \alias{umxVersion}
-\title{Print the version of umx, along with detail from  OpenMx and general system info.}
+\title{Get or print the version of umx, along with detail from OpenMx and general system info.}
 \usage{
 umxVersion(model = NULL, verbose = TRUE, return = "umx")
 }
@@ -11,7 +11,7 @@ umxVersion(model = NULL, verbose = TRUE, return = "umx")
 
 \item{verbose}{= TRUE}
 
-\item{return}{Which package (umx or openMx to return version on}
+\item{return}{Which package (umx or OpenMx to return version on}
 }
 \value{
 - \code{\link{mxModel}}

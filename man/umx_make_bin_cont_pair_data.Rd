@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_make_bin_cont_pair_data}
 \alias{umx_make_bin_cont_pair_data}
-\title{umx_make_bin_cont_pair_data}
+\title{Make pairs of  bin & continuous columns to represent censored data}
 \usage{
 umx_make_bin_cont_pair_data(data, vars = NULL, suffixes = NULL)
 }
