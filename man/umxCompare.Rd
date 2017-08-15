@@ -27,7 +27,7 @@ umxCompare compares two or more \code{\link{mxModel}}s. It has several nice feat
 1. It supports direct control of rounding, and reports p-values rounded to APA style.
 2. It reports the table in your preferred markdown format (relies on knitr)
 3. The table columns are arranged in a method suitable for easy comparison for readers.
-4. By default, it also reports the output as an ENglish sentence suitable for a paper.
+4. By default, it also reports the output as an English sentence suitable for a paper.
 5. It can open tabular output in a browser (report = "html")
 }
 \details{

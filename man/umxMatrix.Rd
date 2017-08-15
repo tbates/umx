@@ -19,7 +19,7 @@ umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
 
 \item{ncol}{Number of columns in the matrix: Must be set}
 
-\item{free}{Whether cells are free (Defaul FALSE)}
+\item{free}{Whether cells are free (Default FALSE)}
 
 \item{values}{The values of the matrix (Default NA)}
 

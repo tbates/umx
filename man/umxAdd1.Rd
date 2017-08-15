@@ -21,7 +21,7 @@ umxAdd1(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP = 1)
 a table of fit changes
 }
 \description{
-Add each of a set of paths you provide to the model, returning a table of theire effect on fit
+Add each of a set of paths you provide to the model, returning a table of their effects on fit.
 }
 \examples{
 \dontrun{

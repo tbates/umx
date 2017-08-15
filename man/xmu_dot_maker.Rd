@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.r
 \name{xmu_dot_maker}
 \alias{xmu_dot_maker}
-\title{Internal umx function to help plotting graphvix}
+\title{Internal umx function to help plotting graphviz}
 \usage{
 xmu_dot_maker(model, file, digraph)
 }
@@ -11,7 +11,7 @@ xmu_dot_maker(model, file, digraph)
 
 \item{file}{either "name" (use model name) or a file name}
 
-\item{digraph}{graphvix code for a model}
+\item{digraph}{graphviz code for a model}
 }
 \value{
 -

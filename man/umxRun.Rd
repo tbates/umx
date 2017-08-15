@@ -22,7 +22,7 @@ for the summary (they are not very accurate, so if you use \code{\link{mxCI}} or
 
 \item{setLabels}{Whether to set the labels (defaults to F)}
 
-\item{intervals}{Whether to run mxCI confindence intervals (defaults to F)}
+\item{intervals}{Whether to run mxCI confidence intervals (defaults to F)}
 
 \item{comparison}{Whether to run umxCompare() after umxRun}
 

@@ -14,7 +14,7 @@ umxEquate(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE,
 
 \item{slave}{A list of slave labels which will be updated to match master labels, thus equating the parameters}
 
-\item{free}{Should parameter(s) initally be free? (default = TRUE)}
+\item{free}{Should parameter(s) initially be free? (default = TRUE)}
 
 \item{verbose}{Whether to give verbose feedback (default = TRUE)}
 

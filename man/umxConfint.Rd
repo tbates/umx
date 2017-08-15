@@ -26,7 +26,7 @@ umxConfint(object, parm = c("existing", "all", "vector of names"),
 \description{
 Implements confidence interval function for OpenMx models.
 Note: Currently requested CIs are added to existing CIs, and all are run, 
-even if they alrady exist in the output. This might change in the future.
+even if they already exist in the output. This should change in the future.
 }
 \details{
 Unlike \code{\link{confint}}, if parm is missing, all CIs requested will be added to the model, 

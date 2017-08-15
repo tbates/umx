@@ -70,7 +70,7 @@ Common-pathway path diagram:
 
 \figure{CP.png}
 
-As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotye.
+As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
 
 
 Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance

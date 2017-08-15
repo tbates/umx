@@ -23,7 +23,7 @@ umx_r_test is a wrapper around the cocor test of difference between correlations
 \details{
 Currently it handles the test of whether r.jk and r.hm differ in magnitude.
 i.e, two nonoverlapping (no variable in common) correlations in the same dataset.
-In the future it will be expanded to handle overlapping correlations, and to take corelation matrices as input.
+In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
 }
 \examples{
 vars = c("mpg", "cyl", "disp", "hp")

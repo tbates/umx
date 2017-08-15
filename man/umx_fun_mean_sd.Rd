@@ -17,8 +17,8 @@ umx_fun_mean_sd(x, na.rm = TRUE, digits = 2)
 - function result
 }
 \description{
-Misellaneous functions that are handy in summary and other tasks where you might otherwise have
-to craft a custom nameless funtions. e.g.
+Miscellaneous functions that are handy in summary and other tasks where you might otherwise have
+to craft a custom nameless functions. e.g.
 }
 \details{
 \itemize{

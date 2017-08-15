@@ -36,7 +36,7 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL,
 }
 \description{
 Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
-of genetic (or environmental) influence varies parametrically (usuaally linear effects on path estimates)
+of genetic (or environmental) influence varies parametrically (usually linear effects on path estimates)
 across levels of environment. umxGxE allows detecting,
 testing, and visualizing  G xE (or C or E x E) interaction forms.
 }
