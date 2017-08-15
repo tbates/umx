@@ -1667,14 +1667,14 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' and genotype on self-report drunkenness following a challenge dose of alcohol. 
 #' Behavior Genetics, 19, 63-78. doi:\url{https://doi.org/10.1007/BF01065884}.
 #' 
-#' Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach 
+#' Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
 #' to Handle Missing Covariate Data in Twin Research : With an Application to
 #' Educational Achievement Data. Behavior Genetics. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
 #'
 #' @examples
-# ================================
-# = BMI, with Age as a covariate =
-# ================================
+# =====================================
+# = BMI, can't use Age as a covariate =
+# =====================================
 #' require(umx)
 #' data(twinData)
 #' # Replicate age to age1 & age2
@@ -1687,7 +1687,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' }
 #'
-#' # BMI, covarying for age in an ACE model
+#' # BMI, trying to use age as cov in an ACE model.
 #' m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
 #' umxSummary(m1)
 #' plot(m1)

@@ -13,7 +13,7 @@ require(OpenMx)
 data(demoOneFactor)
 latents  = c("g")
 manifests = names(demoOneFactor)
-m1 <- umxRAM(data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+m1 <- umxRAM("test", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)

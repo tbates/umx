@@ -465,9 +465,9 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
 #' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	mxPath(latents, to = manifests),
-#' 	mxPath(var = manifests),
-#' 	mxPath(var = latents, fixedAt = 1)
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
 #' m1$intervals # none yet list()
 #' m1 = umxCI(m1)
@@ -2843,6 +2843,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 
 #' Quickly pull Estimates from a model, filtering by name and value
 #'
+#' @alias umxParameters
 #' @description
 #' Often you want to see the estimates from a model, and often you don't want all of them.
 #' umx_parameters helps in this case, allowing you to select parameters matching a name filter,
