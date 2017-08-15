@@ -39,10 +39,9 @@
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages
+#' @importFrom xtable xtable
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
-
-
 	
 utils::globalVariables(c(
 	'xtable',
