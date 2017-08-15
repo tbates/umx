@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxGxE_window}
 \alias{umxGxE_window}
-\title{umxGxE_window}
+\title{Implement the moving-window form of GxE analysis.}
 \usage{
 umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
   dzData = dzData, suffix = NA, weightCov = FALSE, target = NULL,
@@ -42,7 +42,7 @@ To avoid obscuring the underlying shape of the interaction effect, local structu
 modeling (LOSEM) may be used, and GxE_window implements this. LOSEM is a non-parametric,
 estimating latent interaction effects across the range of a measured moderator using a
 windowing function which is walked along the context dimension, and which weights subjects
-near the center of the window highly relative to subjects far above or below the window centre.
+near the center of the window highly relative to subjects far above or below the window center.
 This allows detecting and visualizing arbitrary GxE (or CxE or ExE) interaction forms.
 }
 \examples{
