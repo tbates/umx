@@ -1707,7 +1707,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				if(tableOut[i, 9] < .05){
 					did_didnot = ". This caused a significant loss of fit "
 				} else {
-					did_didnot = ". This did not lower fit significantly"
+					did_didnot = ". This did not lower fit significantly "
 				}
 				message(
 				"The hypothesis that ", tablePub[i,"Model"], 
@@ -1715,7 +1715,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				" from ", tablePub[i,"Compare with Model"], 
 				did_didnot, 
 				"(\u03C7\u00B2(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2), # \u03A7 = Chi \u00B2 = superscript 2
-				", p = ", tablePub[i,"p"], ")."
+				", p = ", tablePub[i,"p"], ": AIC = ", round(tablePub[i,"AIC"], digits), ")."
 				)
 			}
 		}
@@ -1724,7 +1724,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	if(report == "html"){
 		tableHTML = tablePub
 		names(tableHTML) <- c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
-	  print(xtable(tableHTML), type = "HTML", file = file, sanitize.text.function=function(x){x})
+	  print(xtable::xtable(tableHTML), type = "HTML", file = file, sanitize.text.function=function(x){x})
 
 		# digitList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
 		# nsmallList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
