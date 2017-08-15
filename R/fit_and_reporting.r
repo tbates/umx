@@ -370,7 +370,6 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 	# 1. Add CIs if needed
 	if (parm == "all") {
 		if(umx_has_CIs(object, "intervals")) {
-			# TODO add a count for the user
 			message(length(object$intervals), " existing CIs found - I am removing these, and adding CIs for all free parameters")
 			object <- mxModel(object, remove=TRUE, object$intervals)
 		}
@@ -466,9 +465,9 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
 #' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	mxPath(latents, to = manifests),
-#' 	mxPath(var = manifests),
-#' 	mxPath(var = latents, fixedAt = 1)
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
 #' m1$intervals # none yet list()
 #' m1 = umxCI(m1)
@@ -1708,7 +1707,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				if(tableOut[i, 9] < .05){
 					did_didnot = ". This caused a significant loss of fit "
 				} else {
-					did_didnot = ". This did not lower fit significantly"
+					did_didnot = ". This did not lower fit significantly "
 				}
 				message(
 				"The hypothesis that ", tablePub[i,"Model"], 
@@ -1716,7 +1715,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				" from ", tablePub[i,"Compare with Model"], 
 				did_didnot, 
 				"(\u03C7\u00B2(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2), # \u03A7 = Chi \u00B2 = superscript 2
-				", p = ", tablePub[i,"p"], ")."
+				", p = ", tablePub[i,"p"], ": AIC = ", round(tablePub[i,"AIC"], digits), ")."
 				)
 			}
 		}
@@ -1725,7 +1724,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	if(report == "html"){
 		tableHTML = tablePub
 		names(tableHTML) <- c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
-	  print(xtable(tableHTML), type = "HTML", file = file, sanitize.text.function=function(x){x})
+	  print(xtable::xtable(tableHTML), type = "HTML", file = file, sanitize.text.function=function(x){x})
 
 		# digitList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
 		# nsmallList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
@@ -2632,7 +2631,6 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 	# [history](http://www.github.com/tbates/umx/thread/2076)
 	# Called by: umxUnexplainedCausalNexus
 	# TODO:  Special case for latent variables
-	# FIXME: Update for fitfunction/expectation
 	expectation <- model$objective
 	A <- NULL
 	S <- NULL
@@ -2647,26 +2645,15 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 		newData <- data$observed
 	}
 	
-	if(is.list(expectation)) {  # New fit-function style
-		eCov  <- model$fitfunction$info$expCov
-		eMean <- model$fitfunction$info$expMean
-		expectation <- model$expectation
-		if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
-			A <- eval(substitute(model$X$values, list(X=expectation$A)))
-			S <- eval(substitute(model$X$values, list(X=expectation$S)))
-			if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation$M)) {
-				M <- eval(substitute(model$X$values, list(X=expectation$M)))
-			}
-		}
-	} else { # Old objective-style
-		eCov <- model$objective$info$expCov
-		eMean <- model$objective$info$expMean
-		if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
-			A <- eval(substitute(model$X$values, list(X=expectation$A)))
-			S <- eval(substitute(model$X$values, list(X=expectation$S)))
-			if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation$M)) {
-				M <- eval(substitute(model$X$values, list(X=expectation$M)))
-			}
+	# New fit-function style
+	eCov  <- model$fitfunction$info$expCov
+	eMean <- model$fitfunction$info$expMean
+	expectation <- model$expectation
+	if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
+		A <- eval(substitute(model$X$values, list(X=expectation$A)))
+		S <- eval(substitute(model$X$values, list(X=expectation$S)))
+		if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation$M)) {
+			M <- eval(substitute(model$X$values, list(X=expectation$M)))
 		}
 	}
 
@@ -2880,6 +2867,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' umx_parameters(cp4, "_cp_", "above", .5)
 #' }
 umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE) {	
+	# TODO rationalize umxParameters and UmxGetParameters
 	if(std){
 		stop("Sorry, std not implemented yet: Standardize the model and provide as input or summary")
 	}
@@ -2921,6 +2909,7 @@ umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), 
 	}
 }
 
+#' @rdname umx_parameters
 #' @export
 umxParameters <- umx_parameters
 

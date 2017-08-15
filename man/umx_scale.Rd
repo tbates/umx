@@ -30,6 +30,8 @@ plot(wt1 ~ wt2, data = df)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
+umx_scale_wide_twin_data
+
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxFactor}}, \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},

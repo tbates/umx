@@ -25,13 +25,13 @@ Pass in any dataframe and get variances despite some non-numeric columns.
 Cells involving these non-numeric columns are set to ordVar (default = 1).
 }
 \examples{
-tmp = mtcars[,1:4]
+tmp     = mtcars[,1:4]
 tmp$cyl = ordered(mtcars$cyl) # ordered factor
 tmp$hp  = ordered(mtcars$hp)  # binary factor
-umx_var(tmp, format= "diag", ordVar = 1, use = "pair")
+umx_var(tmp, format = "diag", ordVar = 1, use = "pair")
 tmp2 = tmp[, c(1,3)]
-umx_var(tmp2, format= "diag")
-# todo: umx_var(tmp2, format = "full")
+umx_var(tmp2, format = "diag")
+umx_var(tmp2, format = "full")
 }
 \references{
 - \url{http://tbates.github.io}

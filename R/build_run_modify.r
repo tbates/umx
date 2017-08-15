@@ -899,22 +899,17 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 #' # ==============================
 #' # = 1. Open and clean the data =
 #' # ==============================
-#' # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin
+#' # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin.
+#' # The model assumes two groups (MZ and DZ). Moderator can't be missing
 #' mod = "age" # The name of the moderator column in the dataset
 #' selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 #' data(twinData) # Dataset of Australian twins, built into OpenMx
-#' # The twinData consist of two cohorts. First we label them
-#' # TODO: Q for OpenMx team: can I add a cohort column to this dataset?
-#' twinData$cohort = 1; twinData$cohort[twinData$zyg %in% 6:10] = 2
-#' twinData$zyg[twinData$cohort == 2] = twinData$zyg[twinData$cohort == 2]-5
-#' # And set a plain-English label
-#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
-#' # The model also assumes two groups: MZ and DZ. Moderator can't be missing
+#' # The twinData consist of two cohorts: "younger" and "older".
+#' # zygosity is a factor. levels =  MZFF, MZMM, DZFF, DZMM, DZOS.
 #' # Delete missing moderator rows
-#' twinData = twinData[!is.na(twinData[mod]),]
-#' mzData = subset(twinData, ZYG == "MZFF", c(selDVs, mod))
-#' dzData = subset(twinData, ZYG == "DZFF", c(selDVs, mod))
+#' twinData = twinData[!is.na(twinData[mod]), ]
+#' mzData = subset(twinData, zygosity == "MZFF", c(selDVs, mod))
+#' dzData = subset(twinData, zygosity == "DZFF", c(selDVs, mod))
 #' 
 #' # ========================
 #' # = 2. Run the analyses! =
@@ -1672,14 +1667,14 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' and genotype on self-report drunkenness following a challenge dose of alcohol. 
 #' Behavior Genetics, 19, 63-78. doi:\url{https://doi.org/10.1007/BF01065884}.
 #' 
-#' Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach 
+#' Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
 #' to Handle Missing Covariate Data in Twin Research : With an Application to
 #' Educational Achievement Data. Behavior Genetics. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
 #'
 #' @examples
-# ================================
-# = BMI, with Age as a covariate =
-# ================================
+# =====================================
+# = BMI, can't use Age as a covariate =
+# =====================================
 #' require(umx)
 #' data(twinData)
 #' # Replicate age to age1 & age2
@@ -1692,12 +1687,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' }
 #'
-#' # BMI, covarying for age in an ACE model
+#' # Trying to use identical var (like age) as cov is illegal
 #' m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
-#' umxSummary(m1)
-#' plot(m1)
-#' # note: see below for a comparison with the lm-based age-residualisation approach
-#' # outside the model.
+#' # note: see below for using lm-based age-residualisation approach
 #'
 #' # =======================
 #' # = A bivariate example =
@@ -2867,9 +2859,9 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE, name = NULL) {	
 	# TODO umxLabel: Change these to an S3 method with three classes...
-	# TODO umxLabel: Check that arguments not used by a particular class are not set away from their defaults
-	# TODO umxLabel: Perhaps make "A_with_A" --> "var_A"
-	# TODO umxLabel: Perhaps make "one_to_x2" --> "mean_x2" best left as is
+	# 	Check that arguments not used by a particular class are not set away from their defaults
+	# 	Perhaps make "A_with_A" --> "var_A"
+	# 	Perhaps make "one_to_x2" --> "mean_x2" best left as is
 	if (is(obj, "MxMatrix") ) { 
 		# Label an mxMatrix
 		xmuLabel_Matrix(mx_matrix = obj, baseName = baseName, setfree = setfree, drop = drop, labelFixedCells = labelFixedCells, jiggle = jiggle, boundDiag = boundDiag, suffix = suffix, verbose = verbose, overRideExisting = overRideExisting)
@@ -3078,7 +3070,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 	# 	model$MZ$matrices
 	# 2. Simplify handling
 		# allow umxGetParameters to function like omxGetParameters()[name filter]
-	# 3. All user to request values, free, etc.
+	# 3. Allow user to request values, free, etc.
 	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(methods::is(inputTarget, "MxMatrix")) {
@@ -3174,7 +3166,6 @@ parameters <- umxGetParameters
 #' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
 #' m2 = umxSetParameters(m1, "^", newlabels= "m1_", regex = TRUE, test = TRUE)
 umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE, strict = TRUE, name = NULL, regex = FALSE, test = FALSE) {
-	# TODO Add update() S3 function?
 	nothingDoing = all(is.null(c(free, values, newlabels)))
 	if(nothingDoing){
 		warning("You are not setting anything: set one or more of free, values, or newLabels to update a parameter")
@@ -3421,8 +3412,6 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' model = umxAdd1(model)
 #' }
 umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP = 1) {
-	# DONE: RAM paths
-	# TODO add non-RAM
 	if ( is.null(model$output) ) stop("Provided model hasn't been run: use mxRun(model) first")
 	# stop if there is no output
 	if ( length(model$output) < 1 ) stop("Provided model has no output. use mxRun() first!")
@@ -3450,7 +3439,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 	}else{
 		stop("You idiot :-) : arrows must be either 1 or 2, you tried", arrows)
 	}
-	# TODO fix count? or drop giving it?
+	# TODO fix count? or drop giving it? in umxAdd1
 	message("You gave me ", length(pathList1), "source variables. I made ", length(toAdd), " paths from these.")
 
 	# Just keep the ones that are not already free... (if any)
@@ -4009,7 +3998,6 @@ umxThresholdMatrix <- function(df, sep = NA, method = c("auto", "Mehta", "allFre
 			}	
 			threshMat$values[, thisVarName] = values
 		} # end for each factor variable
-		# TODO describe what we have at this point
 	
 		if(thresholds == "deviationBased") {
 			if(verbose) {
@@ -4378,7 +4366,6 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		}
 
 		if(length(forms) > 1){
-			# TODO think about this
 			stop("It's tricky to setup multiple forms vars in 1 line. e-mail if you'd like this to work..")
 		} else {
 			numPaths  = length(forms)
@@ -4552,7 +4539,6 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	# Handle firstAt
 	if(!is.null(firstAt)){
 		if(length(from) > 1 && length(to) > 1){
-			# TODO think about this
 			stop("It's not wise to use firstAt with multiple from sources AND multiple to targets. I'd like to think about this before implementing it..")
 		} else {
 			numPaths = max(length(from), length(to))

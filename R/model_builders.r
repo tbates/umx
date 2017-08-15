@@ -79,7 +79,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs =
 				data = data[,x]
 			} else if (inherits(x,"formula")){
 				stop("Nice formula! Sadly I can't handle formulae yet: email tim and abuse him about this failing")
-				# todo: handle is.formula()
+				# TODO: handle is.formula()
 			}else{
 				name = x
 			}
@@ -88,7 +88,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs =
 		}
 	} else if(!is.null(covmat) || !is.null(n.obs)){
 		# data must be NULL
-		stop("Covmat support not yet implemented - but with cov data, you may as well be using factanal()...")
+		stop("With cov data, you may as well be using factanal()...")
 		if(!is.null(data)){
 			stop("You can't offer up both a data.frame and a covmat.")
 		}

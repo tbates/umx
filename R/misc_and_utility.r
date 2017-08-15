@@ -111,7 +111,7 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #'
 #' Set autoPlot default for models like umxACE umxGxE etc
 #'
-#' @param autoPlot If NA or "name", sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
+#' @param autoPlot If TRUE, sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
 #' @param silent If TRUE, no message will be printed.
 #' @return - Current umx_auto_plot setting
 #' @export
@@ -121,20 +121,25 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #' library(umx)
 #' umx_set_auto_plot() # print current state
 #' old = umx_set_auto_plot(silent = TRUE) # store existing value
-#' umx_set_auto_plot("name")  # set to "name"
+#' umx_set_auto_plot("name") # set to on ("name")
+#' umx_set_auto_plot(FALSE)  # set to off (NA)
+#' umx_set_auto_plot(TRUE)   # set to on "name"
 #' umx_set_auto_plot(old)    # reinstate
 umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 	if(is.null(autoPlot)) {
 		if(!silent){
 			message("Current plot format is ", omxQuotes(getOption("umx_auto_plot")),
-				". Valid options are NA or 'name'.", 
-				" 'name' will auto-plot, using the name of the model as the plot name."
+				". 'name' means auto-plot is on (defaulting to the name of the model).", 
+				" Use TRUE to turn on, FALSE to turn off."
 			)
 		}
 		invisible(getOption("umx_auto_plot"))
-	} else {
-		umx_check(autoPlot %in% c(NA, "name"), "stop", "autoPlot should be either NA or 'name'")
-		options("umx_auto_plot" = autoPlot)
+	} else{
+		if(autoPlot == 'name' || autoPlot){
+			options("umx_auto_plot" = "name")
+		}else{
+			options("umx_auto_plot" = NA)		
+		}
 	}
 }
 
@@ -155,7 +160,6 @@ umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 #' umx_set_auto_run(FALSE)  # set to FALSE
 #' umx_set_auto_run(old)    # reinstate
 umx_set_auto_run <- function(autoRun = NA, silent = FALSE) {
-	# TODO implement umx_set_auto_run
 	if(is.na(autoRun)) {
 		if(!silent){
 			message(
@@ -720,11 +724,11 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 
 #' umx_fix_first_loadings
 #'
-#' Fix the loading of the first path from each latent at selected value (default = 1).
-#'
-#' @param model an \code{\link{mxModel}} to set
-#' @param latents (If NULL then all latentVars in model)
-#' @param at (Default = 1)
+#' Fix the loading of the first path from each latent at selected value. 
+#' Note: latents with fixed variance are skipped.
+#' @param model An \code{\link{mxModel}} to set.
+#' @param latents Which latents to fix from (NULL = all).
+#' @param at The value to fix the first path at (Default = 1).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Advanced Model Building Functions
@@ -740,30 +744,36 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umx_fix_first_loadings(m1)
-#' umx_show(m1) # variance of g is fixed at 1
+#' umx_show(m1) # path from g to var1 fixed @ 1.
 umx_fix_first_loadings <- function(model, latents = NULL, at = 1) {
-	# TODO: SHould this apply when the first loading is a latents?
-	# TODO: Must not apply this twice
 	umx_check_model(model, type = "RAM")
 	if(is.null(latents)){
-		latenVarList = model@latentVars
+		latentVarList = model@latentVars
 	} else {
-		latenVarList = latents
+		latentVarList = latents
 	}
-	for (i in latenVarList) {
-		# i = "ind60"
-		firstFreeRow = which(model$matrices$A$free[,i])[1]
-		# check that there is not already a factor fixed prior to this one
-		if(firstFreeRow == 1){
-			# must be ok
-			model$A@free[firstFreeRow, i]   = FALSE
-			model$A@values[firstFreeRow, i] = at
+	if(length(latentVarList)==0){
+		stop("You appear to have no latents in this model...")
+	}
+
+	for (thisLatent in latentVarList) {
+		# thisLatent = "ind60"
+		if(!model$A$free[thisLatent, thisLatent]){
+			# "this latent is fixed... don't scale first loading"
 		} else {
-			if(any(model$matrices$A$values[1:(firstFreeRow-1), i] == at)){
-				message("I skipped factor '", i, "'. It looks like it already has a loading fixed at ", at)
+			firstFreeRow = which(model$A$free[, thisLatent])[1]
+			# check that there is not already a factor fixed prior to this one
+			if(firstFreeRow == 1){
+				# must be ok
+				model$A@free[firstFreeRow, thisLatent]   = FALSE
+				model$A@values[firstFreeRow, thisLatent] = at
 			} else {
-				model$A@free[firstFreeRow, i]   = FALSE
-				model$A@values[firstFreeRow, i] = at				
+				if(any(model$matrices$A$values[1:(firstFreeRow-1), thisLatent] == at)){
+					message("I skipped factor '", thisLatent, "'. It looks like it already has a loading fixed at ", at)
+				} else {
+					model$A@free[firstFreeRow, thisLatent]   = FALSE
+					model$A@values[firstFreeRow, thisLatent] = at				
+				}
 			}
 		}
 	}
@@ -1103,29 +1113,14 @@ umx_apply <- function(FUN, of, by = "columns", ...) {
 		by = 2		
 	}
 	apply(of, by, FUN, ...)
-
-	# TODO fix all this...
-	# lapply if list
-	# tapply if vector?
-	# out = c()
-	# if(fromEach == "column"){
-	# 	for(n in 1:ncol(of_DF)){
-	# 		out[n] = nlevels(of_DataFrame[,n])
-	# 	}
-	# } else {
-	# 	for(n in 1:nrow(of_DF)){
-	# 		out[n] = nlevels(of_DataFrame[n,])
-	# 	}
-	# }
-	# return(out)
 }
 
 #' umx_as_numeric
 #' 
 #' Convert each column of a dataframe to numeric
 #'
-#' @param df a \code{\link{data.frame}} to convert
-#' @param force whether to force conversion to numeric for non-numeric columns (defaults to FALSE)
+#' @param df A \code{\link{data.frame}} to convert
+#' @param force Whether to force conversion to numeric for non-numeric columns (defaults to FALSE)
 #' @return - data.frame
 #' @family Data Functions
 #' @export
@@ -1136,7 +1131,7 @@ umx_apply <- function(FUN, of, by = "columns", ...) {
 #' df$mpg = c(letters,letters[1:6]); str(df)
 #' df = umx_as_numeric(df)
 umx_as_numeric <- function(df, force = FALSE) {
-	# TODO handle case of not being a data.frame...
+	# TODO handle umx_as_numeric for matrices, vectors...
 	colsToConvert = names(df)
 	if(!force){
 		# just the numeric names
@@ -1344,7 +1339,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 			}
 		}
 	} else {
-		# TODO	assume this is just a string or vector of strings
+		# TODO	check input is string or vector of strings
 		return(grep(grepString, df, value = TRUE, ignore.case = ignore.case))
 	}
 }
@@ -1505,10 +1500,10 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 	invisible(system(cmd, intern=TRUE))
 }
 
-#' umx_move_file
+#' Move files
 #'
-#' move files. On OS X, the function can access the current front-most Finder window.
-#' The file moves are fast and, because you can use regular expressions, powerful
+#' On OS X, umx_move_file can access the current front-most Finder window.
+#' The file moves are fast and, because you can use regular expressions, powerful.
 #'
 #' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
 #' @param findStr = regex string select files to move (WARNING: NOT IMPLEMENTED YET)
@@ -1526,7 +1521,7 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 #' umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= FALSE)
 #' }
 umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, destFolder = NA, test = TRUE, overwrite = FALSE) {
-	# TODO implement findStr
+	# TODO umx_move_file: implement findStr
 	if(!is.null(findStr)){
 		stop("Have not implemented findStr yet")
 	}
@@ -1721,15 +1716,13 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 #' umx_write_to_clipboard writes data to the clipboard
 #'
 #' @details
-#' TODO: Make this more robust to OS. Let me know if it fails for you.
+#' Works on Mac. Let me know if it fails on windows or Unix.
 #' @param x something to put on the clipboard
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @examples
-#' \dontrun{
 #' umx_write_to_clipboard("hello")
-#' }
 umx_write_to_clipboard <- function(x) {
 	if(umx_check_OS("OSX")){
 		clipboard <- pipe("pbcopy", "w")
@@ -1930,7 +1923,6 @@ install.OpenMx <- function(loc = c("UVa", "latest", "travis"), url= NULL) {
 		loc = url
 	}
 	if(loc == "travis"){
-		# TODO special case by OS
 		browseURL("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis")
 	}else if(loc == "latest"){
 		install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
@@ -2088,14 +2080,15 @@ umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL,
 #' @examples
 #' \dontrun{
 #' umx_merge_CIs(m1, m2)
-#' # TODO remove duplicates...
-#' # TODO (check they are the same as well!)
-#' # TODO Support arbitrarily long list of input models with ...
-#' # TODO check the models are the same, with same fit
-#' # TODO check the models have CIs
 #' }
 umx_merge_CIs <- function(m1, m2) {
-	# cludge together
+	# TODO in umx_merge_CIs
+	# 1. remove duplicates...
+	# 2. (check they are the same as well!)
+	# 3. Support arbitrarily long list of input models with ...
+	# 4. check the models are the same, with same fit
+	# 5. check the models have CIs
+	# kluge together
 	a  = m1$output$confidenceIntervals
 	b  = m2$output$confidenceIntervals
 	a_names = attr(a, "dimnames")[[1]]
@@ -2134,7 +2127,7 @@ umx_merge_CIs <- function(m1, m2) {
 #' umxCovData(mtcars, c("mpg", "hp"))
 #' 
 umxCovData = function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
-	# TODO correct numObs
+	# TODO use 'use' to compute numObs in umxCovData
 	use = match.arg(use)
 	umx_check_names(columns, df)
 	return(mxData(cov(df[, columns], use = use), type = "cov", numObs = nrow(df)))
@@ -2616,13 +2609,13 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' @family Building Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
-#' tmp = mtcars[,1:4]
+#' tmp     = mtcars[,1:4]
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
 #' tmp$hp  = ordered(mtcars$hp)  # binary factor
-#' umx_var(tmp, format= "diag", ordVar = 1, use = "pair")
+#' umx_var(tmp, format = "diag", ordVar = 1, use = "pair")
 #' tmp2 = tmp[, c(1,3)]
-#' umx_var(tmp2, format= "diag")
-#' # todo: umx_var(tmp2, format = "full")
+#' umx_var(tmp2, format = "diag")
+#' umx_var(tmp2, format = "full")
 umx_var <- function(df, ordVar = 1, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete")){
 	format = match.arg(format)
 	use    = match.arg(use)
@@ -3344,6 +3337,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @param verbose Whether to report which columns were scaled (default FALSE)
 #' @return - new dataframe with scaled variables
 #' @export
+#' @seealso umx_scale_wide_twin_data
 #' @family Data Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -3523,6 +3517,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' @param data a wide dataframe
 #' @return - new dataframe with variables scaled in place
 #' @export
+#' @seealso umx_scale
 #' @family Data Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -4955,7 +4950,6 @@ umx_standardize_CP <- function(fit){
 		fit$top$es$values = fit$top$es_std$result # standardized es
 		return(fit)
 	} else {
-		# TODO let this work directly... not hard..
 		selDVs = dimnames(fit$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2;
 		nFac   = dim(fit$top$matrices$a_cp)[[1]]	

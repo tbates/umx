@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_move_file}
 \alias{umx_move_file}
-\title{umx_move_file}
+\title{Move files}
 \usage{
 umx_move_file(baseFolder = NA, findStr = NULL, fileNameList = NA,
   destFolder = NA, test = TRUE, overwrite = FALSE)
@@ -24,8 +24,8 @@ umx_move_file(baseFolder = NA, findStr = NULL, fileNameList = NA,
 -
 }
 \description{
-move files. On OS X, the function can access the current front-most Finder window.
-The file moves are fast and, because you can use regular expressions, powerful
+On OS X, umx_move_file can access the current front-most Finder window.
+The file moves are fast and, because you can use regular expressions, powerful.
 }
 \examples{
 \dontrun{

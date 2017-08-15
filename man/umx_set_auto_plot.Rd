@@ -7,7 +7,7 @@
 umx_set_auto_plot(autoPlot = NULL, silent = FALSE)
 }
 \arguments{
-\item{autoPlot}{If NA or "name", sets the umx_auto_plot option. Else returns the current value of umx_auto_plot}
+\item{autoPlot}{If TRUE, sets the umx_auto_plot option. Else returns the current value of umx_auto_plot}
 
 \item{silent}{If TRUE, no message will be printed.}
 }
@@ -21,7 +21,9 @@ Set autoPlot default for models like umxACE umxGxE etc
 library(umx)
 umx_set_auto_plot() # print current state
 old = umx_set_auto_plot(silent = TRUE) # store existing value
-umx_set_auto_plot("name")  # set to "name"
+umx_set_auto_plot("name") # set to on ("name")
+umx_set_auto_plot(FALSE)  # set to off (NA)
+umx_set_auto_plot(TRUE)   # set to on "name"
 umx_set_auto_plot(old)    # reinstate
 }
 \references{

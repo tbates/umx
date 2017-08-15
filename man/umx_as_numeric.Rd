@@ -7,9 +7,9 @@
 umx_as_numeric(df, force = FALSE)
 }
 \arguments{
-\item{df}{a \code{\link{data.frame}} to convert}
+\item{df}{A \code{\link{data.frame}} to convert}
 
-\item{force}{whether to force conversion to numeric for non-numeric columns (defaults to FALSE)}
+\item{force}{Whether to force conversion to numeric for non-numeric columns (defaults to FALSE)}
 }
 \value{
 - data.frame

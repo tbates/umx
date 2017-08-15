@@ -2,10 +2,14 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umx_parameters}
 \alias{umx_parameters}
+\alias{umxParameters}
 \title{Quickly pull Estimates from a model, filtering by name and value}
 \usage{
 umx_parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
   b = NULL, pattern = ".*", std = FALSE)
+
+umxParameters(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL,
+  pattern = ".*", std = FALSE)
 }
 \arguments{
 \item{x}{an \code{\link{mxModel}} or summary from which to report parameter estimates.}
