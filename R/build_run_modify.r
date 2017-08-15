@@ -868,7 +868,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 	return(model)
 }
 
-#' umxGxE_window
+#' Implement the moving-window form of GxE analysis.
 #'
 #' Make a 2-group GxE (moderated ACE) model using LOSEM. In GxE interaction studies, typically,
 #' the hypothesis that the strength of genetic influence varies parametrically (usually linear effects
@@ -878,7 +878,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 #' modeling (LOSEM) may be used, and GxE_window implements this. LOSEM is a non-parametric,
 #' estimating latent interaction effects across the range of a measured moderator using a
 #' windowing function which is walked along the context dimension, and which weights subjects
-#' near the center of the window highly relative to subjects far above or below the window centre.
+#' near the center of the window highly relative to subjects far above or below the window center.
 #' This allows detecting and visualizing arbitrary GxE (or CxE or ExE) interaction forms.
 #' 
 #' @param selDVs The dependent variables for T1 and T2, e.g. c("bmi_T1", "bmi_T2")
