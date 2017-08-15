@@ -72,12 +72,9 @@ mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
 }
 
-# BMI, covarying for age in an ACE model
+# Trying to use identical var (like age) as cov is illegal
 m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
-umxSummary(m1)
-plot(m1)
-# note: see below for a comparison with the lm-based age-residualisation approach
-# outside the model.
+# note: see below for using lm-based age-residualisation approach
 
 # =======================
 # = A bivariate example =
@@ -107,7 +104,7 @@ Neale, M. C., & Martin, N. G. (1989). The effects of age, sex,
 and genotype on self-report drunkenness following a challenge dose of alcohol. 
 Behavior Genetics, 19, 63-78. doi:\url{https://doi.org/10.1007/BF01065884}.
 
-Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach 
+Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
 to Handle Missing Covariate Data in Twin Research : With an Application to
 Educational Achievement Data. Behavior Genetics. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
 }

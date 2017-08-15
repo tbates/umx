@@ -2843,7 +2843,6 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 
 #' Quickly pull Estimates from a model, filtering by name and value
 #'
-#' @alias umxParameters
 #' @description
 #' Often you want to see the estimates from a model, and often you don't want all of them.
 #' umx_parameters helps in this case, allowing you to select parameters matching a name filter,
@@ -2868,6 +2867,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' umx_parameters(cp4, "_cp_", "above", .5)
 #' }
 umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE) {	
+	# TODO rationalize umxParameters and UmxGetParameters
 	if(std){
 		stop("Sorry, std not implemented yet: Standardize the model and provide as input or summary")
 	}
@@ -2909,6 +2909,7 @@ umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), 
 	}
 }
 
+#' @rdname umx_parameters
 #' @export
 umxParameters <- umx_parameters
 

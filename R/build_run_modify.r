@@ -1687,12 +1687,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' }
 #'
-#' # BMI, trying to use age as cov in an ACE model.
+#' # Trying to use identical var (like age) as cov is illegal
 #' m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
-#' umxSummary(m1)
-#' plot(m1)
-#' # note: see below for a comparison with the lm-based age-residualisation approach
-#' # outside the model.
+#' # note: see below for using lm-based age-residualisation approach
 #'
 #' # =======================
 #' # = A bivariate example =
@@ -3073,7 +3070,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE
 	# 	model$MZ$matrices
 	# 2. Simplify handling
 		# allow umxGetParameters to function like omxGetParameters()[name filter]
-	# 3. All user to request values, free, etc.
+	# 3. Allow user to request values, free, etc.
 	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(methods::is(inputTarget, "MxMatrix")) {
