@@ -87,6 +87,7 @@
 # umx 1.5.0 (December 2016)
 * Features + OpenMx 1.7.3 compatibility release
 * IMPROVED: umxRAM returns invisibly
+* IMPROVED: umx_aggregate can summarise multiple DVs in a table
 * IMPROVED: umx_aggregate can return a formatted table (kable = TRUE)
 * IMPROVED: umxAPA returns lower-triangle of data.frame correlations (by default)
 * REMOVED: umxSE now included in OpenMx 2.7.0!

@@ -3380,7 +3380,7 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #'
 #' @param formula The aggregation formula. e.g., DV ~ condition
 #' @param data frame to aggregate
-#' @param what function to use. Defaults to a built-in "smart" mean (sd)
+#' @param what function to use. Defaults to reporting "mean (sd)"
 #' @param digits for rounding of results
 #' @param kable Report as a formatted table? (Default is TRUE)
 #' @return - table
@@ -3391,6 +3391,8 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' @examples
 #' aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
 #' umx_aggregate(mpg ~ cyl, data = mtcars)
+#' umx_aggregate(mpg ~ cyl, data = mtcars, what = "n")
+#' umx_aggregate(mpg ~ cyl, data = mtcars, what = function(x){sum(!is.na(x))})
 #' umx_aggregate(mpg ~ cyl, data = mtcars, kable = FALSE)
 #' umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, digits = 3)
 #' t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
@@ -3416,7 +3418,7 @@ umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd
 	}
 	x_n = function(x){sum(!is.na(x))}
 
-	what = umx_default_option(what, c("mean_sd", "n"), check = FALSE)
+	what = umx_match.arg(what, c("mean_sd", "n"), check = FALSE)
 	if(what == "mean_sd"){
 		FUN = mean_sd
 	} else if(what == "n"){

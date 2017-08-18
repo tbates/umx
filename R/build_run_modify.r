@@ -336,7 +336,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}
 
 	if(is.null(data)){
-		stop("umxRAM needs some mxData. You set this like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
+		stop("umxRAM needs some mxData (or at last a list of variable names to use umxRAM in sketch mode). You set data like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
 	}
 
 	foundNames = c()

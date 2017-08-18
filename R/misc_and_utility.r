@@ -3544,11 +3544,10 @@ umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
 	return(data)
 }
 
-#' umx_default_option
+#' Select first item in list of options, while being flexible about choices.
 #'
-#' Handle parameter options given as a default list in a function.
-#' This is just a version of x = \code{\link{match.arg}}(x) which
-#' allows items not in the list.
+#' Like a smart version of \code{\link{match.arg}}: Handles selecting parameter options when default is a list.
+#' Unlike  x = \code{\link{match.arg}}(x) this allows items not in the list.
 #'
 #' @aliases umx_match.arg
 #' @param x the value chosen (may be the default option list)
@@ -3581,10 +3580,16 @@ umx_default_option <- function(x, option_list, check = TRUE){
 	}
 	if (length(x) != 1){
 	    stop(paste("argument must be ONE of ", paste(sQuote(option_list), collapse = ", "), "you tried:", paste(sQuote(x), collapse = ", ")))
-	}else if (!(x %in% option_list) & check) {
-	    stop(paste("argument must be one of ", paste(sQuote(option_list), collapse = ", ")))
-	} else {
-		return(x)
+	}else{
+		if(check){
+			if(!(x %in% option_list) & check) {
+				stop(paste("argument must be one of ", paste(sQuote(option_list), collapse = ", ")))
+			} else {
+			}
+		} else {
+			# don't check
+			return(x)
+		}
 	}
 }
 

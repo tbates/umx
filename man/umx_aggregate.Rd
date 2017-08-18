@@ -12,7 +12,7 @@ umx_aggregate(formula = DV ~ condition, data = NA, what = c("mean_sd",
 
 \item{data}{frame to aggregate}
 
-\item{what}{function to use. Defaults to a built-in "smart" mean (sd)}
+\item{what}{function to use. Defaults to reporting "mean (sd)"}
 
 \item{digits}{for rounding of results}
 
@@ -30,6 +30,8 @@ aggregating over some grouping factor. A common use is preparing summary tables.
 \examples{
 aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
 umx_aggregate(mpg ~ cyl, data = mtcars)
+umx_aggregate(mpg ~ cyl, data = mtcars, what = "n")
+umx_aggregate(mpg ~ cyl, data = mtcars, what = function(x){sum(!is.na(x))})
 umx_aggregate(mpg ~ cyl, data = mtcars, kable = FALSE)
 umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, digits = 3)
 t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
