@@ -3561,7 +3561,11 @@ umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
 #' @examples
 #' option_list = c("default", "par.observed", "empirical")
 #' umx_default_option("par.observed", option_list)
+#' 
+#' # An example of checking a bad item and stopping
+#' \dontrun{
 #' umx_default_option("bad", option_list)
+#' }
 #' umx_default_option("allow me", option_list, check = FALSE)
 #' umx_default_option(option_list, option_list)
 #' option_list = c(NULL, "par.observed", "empirical")
@@ -3956,7 +3960,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #'
 #' @param nMZpairs Number of MZ pairs to simulate
 #' @param nDZpairs Number of DZ pairs to simulate (if omitted defaults to nMZpairs)
-#' @param AA value for A variance. Optionally a vecotr: c(avg=.5, min=0, max=1)
+#' @param AA value for A variance. Optionally a vector: c(avg= .5, min= 0, max= 1)
 #' @param CC value for C variance.
 #' @param EE value for E variance.
 #' @param nThresh  If supplied, use as thresholds and return mxFactor output? (default is not too)

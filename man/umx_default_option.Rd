@@ -24,7 +24,11 @@ Unlike  x = \code{\link{match.arg}}(x) this allows items not in the list.
 \examples{
 option_list = c("default", "par.observed", "empirical")
 umx_default_option("par.observed", option_list)
+
+# An example of checking a bad item and stopping
+\dontrun{
 umx_default_option("bad", option_list)
+}
 umx_default_option("allow me", option_list, check = FALSE)
 umx_default_option(option_list, option_list)
 option_list = c(NULL, "par.observed", "empirical")

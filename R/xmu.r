@@ -370,7 +370,7 @@ xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
 #' Make a deviation-based mxRAMObjective for ordinal models.
 #'
 #' Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
-#' usecase see: umxMakeThresholdMatrix
+#' use-case see: umxMakeThresholdMatrix
 #'
 #' @param df a dataframe
 #' @param droplevels whether to droplevels or not

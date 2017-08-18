@@ -13,7 +13,7 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
 
 \item{nDZpairs}{Number of DZ pairs to simulate (if omitted defaults to nMZpairs)}
 
-\item{AA}{value for A variance. Optionally a vecotr: c(avg=.5, min=0, max=1)}
+\item{AA}{value for A variance. Optionally a vector: c(avg= .5, min= 0, max= 1)}
 
 \item{CC}{value for C variance.}
 

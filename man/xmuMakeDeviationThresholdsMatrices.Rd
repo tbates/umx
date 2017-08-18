@@ -18,7 +18,7 @@ xmuMakeDeviationThresholdsMatrices(df, droplevels, verbose)
 }
 \description{
 Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
-usecase see: umxMakeThresholdMatrix
+use-case see: umxMakeThresholdMatrix
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},
