@@ -3559,32 +3559,30 @@ umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
 #' @seealso - \code{\link{match.arg}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
-#' \dontrun{
 #' option_list = c("default", "par.observed", "empirical")
 #' umx_default_option("par.observed", option_list)
 #' umx_default_option("bad", option_list)
 #' umx_default_option("allow me", option_list, check = FALSE)
 #' umx_default_option(option_list, option_list)
 #' option_list = c(NULL, "par.observed", "empirical")
-#' umx_default_option(option_list, option_list) # fails with NULL!!!!!
+#'  # fails with NULL!!!!!
+#' umx_default_option(option_list, option_list)
 #' option_list = c(NA, "par.observed", "empirical")
 #' umx_default_option(option_list, option_list) # use NA instead
 #' option_list = c(TRUE, FALSE, NA)
 #' umx_default_option(option_list, option_list) # works with non character
-#' }
 umx_default_option <- function(x, option_list, check = TRUE){
-	# often the R-built in code will work...
+	# often Rs match.arg  will work...
 	# filter = match.arg(filter)
 	if (identical(x, option_list)) {
 	    x = option_list[1]
-	}
-	if (length(x) != 1){
-	    stop(paste("argument must be ONE of ", paste(sQuote(option_list), collapse = ", "), "you tried:", paste(sQuote(x), collapse = ", ")))
+			return(x)
 	}else{
 		if(check){
-			if(!(x %in% option_list) & check) {
-				stop(paste("argument must be one of ", paste(sQuote(option_list), collapse = ", ")))
+			if((x %in% option_list)) {
+				return(x)
 			} else {
+				stop(paste("argument must be one of ", paste(sQuote(option_list), collapse = ", ")))
 			}
 		} else {
 			# don't check

@@ -28,13 +28,28 @@ In particular, it has some handy base functions that simplify the task of summar
 aggregating over some grouping factor. A common use is preparing summary tables.
 }
 \examples{
+# =====================================
+# = Basic use, compare with aggregate =
+# =====================================
 aggregate(mpg ~ cyl, FUN = mean, na.rm = TRUE, data = mtcars)
 umx_aggregate(mpg ~ cyl, data = mtcars)
+
+# =============================================
+# = Use different (or user-defined) functions =
+# =============================================
 umx_aggregate(mpg ~ cyl, data = mtcars, what = "n")
 umx_aggregate(mpg ~ cyl, data = mtcars, what = function(x){sum(!is.na(x))})
+
+# turn off table markdown table
 umx_aggregate(mpg ~ cyl, data = mtcars, kable = FALSE)
+
+# ============================================
+# = More than one item on the left hand side =
+# ============================================
 umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, digits = 3)
+# Transpose table
 t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
+
 \dontrun{
 umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 }

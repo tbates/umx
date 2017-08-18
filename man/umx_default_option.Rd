@@ -22,19 +22,18 @@ Like a smart version of \code{\link{match.arg}}: Handles selecting parameter opt
 Unlike  x = \code{\link{match.arg}}(x) this allows items not in the list.
 }
 \examples{
-\dontrun{
 option_list = c("default", "par.observed", "empirical")
 umx_default_option("par.observed", option_list)
 umx_default_option("bad", option_list)
 umx_default_option("allow me", option_list, check = FALSE)
 umx_default_option(option_list, option_list)
 option_list = c(NULL, "par.observed", "empirical")
-umx_default_option(option_list, option_list) # fails with NULL!!!!!
+ # fails with NULL!!!!!
+umx_default_option(option_list, option_list)
 option_list = c(NA, "par.observed", "empirical")
 umx_default_option(option_list, option_list) # use NA instead
 option_list = c(TRUE, FALSE, NA)
 umx_default_option(option_list, option_list) # works with non character
-}
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

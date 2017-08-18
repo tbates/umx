@@ -341,7 +341,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 
 	foundNames = c()
 	for (thisItem in dot.items) {
-		if(length(thisItem) == 1){
+		if(!is.list(thisItem)){
 			# sometimes we get a list, so expand everything to a list
 			thisItem = list(thisItem)
 		}
@@ -353,7 +353,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 				if(thisIs == "MxThreshold"){
 					# MxThreshold detected
 				} else {
-					# stop("I can only handle mxPaths, mxConstraints, and mxThreshold() objects.\n",
+					# TODO: currently not checking for unsupported items.
+					# stop("I can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
 					# "You have given me a", class(i)[1],"\n",
 					# " To include data in umxRAM, say 'data = yourData'")
 				}
@@ -456,7 +457,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		independent = independent, dot.items)
 	)
 	if (class(data) == "character"){
-		# user is just running a trial model, with no data, but provided names
+		# user is just running a trial model, with no data, but provided names for sketch mode
 		# plot(m1)
 		return(m1)
 	}else{
