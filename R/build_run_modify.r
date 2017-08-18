@@ -1495,15 +1495,15 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, suffix 
 				# Drop unused variables from matrix
 				het_mz = umx_reorder(mzData, selDVs)
 				het_dz = umx_reorder(dzData, selDVs)
-				varStarts = diag(het_mz)
-
+				varStarts = diag(het_mz)[1:nVar]
+				
 				if(nVar == 1){
 					# 2017-04-03 04:34PM: sqrt to switch from var to path coefficient scale
 					varStarts = sqrt(varStarts)/3
-					varStarts = matrix(varStarts, nVar, nVar)
 				} else {
 					varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
 				}
+				varStarts = matrix(varStarts, nVar, nVar)
 
 				top = mxModel("top")
 				MZ = mxModel("MZ", 

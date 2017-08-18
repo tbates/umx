@@ -4626,9 +4626,25 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 #' 	0.0760, 0.0702, 0.2784, 0.1988, 0.1147, 0.1021, 0.0931, -0.0438, 0.2087
 #' )
 #' umx_lower2full(tmp, diag = FALSE)
+#' 	
+#' 	# An example with byrow = FALSE
+#' 	
+#' 	ldiag = c(
+#' 	1, -.17, -.22, -.19, -.12, .81, -.02, -.26, -.2, -.15,
+#' 	1, .11, .2, .21, -.01, .7, .1, .7, .1, .17, .22,
+#' 	1, .52, .68, -.12, .09, .49, .27, .46,
+#' 	1, .5, -.06, .17, .26, .80, .31,
+#' 	1, -.1, .19, .36, .23, .42,
+#' 	1, .02, -19, -.06, -.06,
+#' 	1, .1, .18, .27,
+#' 	1, .51, .7,
+#' 	1, .55, 
+#' 	1)
+#' umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
+
 umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL) {
 	if(is.null(diag)){
-		stop("please set diag explicitly to TRUE or FALSE")
+		stop("Please set diag explicitly to TRUE or FALSE")
 	} else if( !diag %in% c(TRUE, FALSE) ){
 		stop("diag must be one of TRUE or FALSE.")
 	}
@@ -4641,12 +4657,13 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 	} else {
 		len = length(lower.data)
 		if(diag) {
-			# len*2 = ((x+.5)^2)-.25
+			# len * 2 = ((x+.5)^2)-.25
 			size = len * 2
 			size = size + .25
 			size = sqrt(size)
 			size = size - .5;
 		}else{
+			# no diag
 			# len = (x*((x+1)/2))-x	
 			# .5*(x-1)*x
 			size = len * 2
