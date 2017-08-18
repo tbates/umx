@@ -3434,12 +3434,14 @@ umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd
 	x_n = function(x){sum(!is.na(x))}
 
 	what = umx_match.arg(what, c("mean_sd", "n"), check = FALSE)
-	if(what == "mean_sd"){
+	if(class(what)=="function"){
+		FUN = what
+	} else if(class(what) != "character"){
+		stop("umx_aggregate what should be a built-in name like 'mean_sd', or a function, you gave me a", class(what))
+	} else if(what == "mean_sd"){
 		FUN = mean_sd
 	} else if(what == "n"){
 		FUN = x_n
-	}else{
-		FUN = what
 	}
 	tmp = aggregate(formula, FUN = FUN, data = data)
 	n_s = aggregate(formula, FUN = x_n, data = data)

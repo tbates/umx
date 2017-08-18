@@ -3572,7 +3572,7 @@ umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
 #' option_list = c(TRUE, FALSE, NA)
 #' umx_default_option(option_list, option_list) # works with non character
 umx_default_option <- function(x, option_list, check = TRUE){
-	# often Rs match.arg  will work...
+	# Often Rs match.arg  will work...
 	# filter = match.arg(filter)
 	if (identical(x, option_list)) {
 	    x = option_list[1]
