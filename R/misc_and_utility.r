@@ -1751,18 +1751,25 @@ umx_write_to_clipboard <- function(x) {
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_cor(myFADataRaw[1:8,])
-
 umx_cor <- function (X, df = nrow(X) - 2, use = c("pairwise.complete.obs", "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2, type= c("r and p-value", "smart")) {
 	# see also
 	# hmisc::rcorr( )
 	use = match.arg(use)
-	warning("don't use this until we are computing n properly")
+	warning("TODO: assumes no missing data, n is just nrow() !!")
 	# nvar    = dim(x)[2]
 	# nMatrix = diag(NA, nrow= nvar)
 	# for (i in 1:nvar) {
 	# 	x[,i]
 	# }
-	R <- cor(X, use = use)
+	numericCols = rep(FALSE, ncol(X))
+	for (i in 1:ncol(X)) {
+		numericCols[i] = is.numeric(X[,i])
+	}
+	if(ncol(X) > sum(numericCols)){
+		message("dropped ", ncol(X) - sum(numericCols), " non-numeric columns.")
+	}
+	
+	R <- cor(X[,numericCols], use = use)
 	above <- upper.tri(R)
 	below <- lower.tri(R)
 	r2 <- R[above]^2

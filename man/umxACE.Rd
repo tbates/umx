@@ -4,54 +4,55 @@
 \alias{umxACE}
 \title{Build and run a 2-group Cholesky twin model (uni-variate or multi-variate).}
 \usage{
-umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
-  suffix = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
-  numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, weightVar = NULL,
-  equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
-  "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL,
-  optimizer = NULL)
+umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
+  "random"), dzData, mzData, suffix = NULL, dzAr = 0.5, dzCr = 1,
+  addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
+  boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
+  thresholds = c("deviationBased", "WLS"),
+  autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL)
 }
 \arguments{
-\item{name}{The name of the model (defaults to"ACE")}
+\item{name}{The name of the model (defaults to"ACE").}
 
-\item{selDVs}{The variables to include from the data}
+\item{selDVs}{The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").}
 
 \item{selCovs}{(optional) covariates to include from the data (do not include suffix in names)}
 
-\item{dzData}{The DZ dataframe}
+\item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
 
-\item{mzData}{The MZ dataframe}
+\item{dzData}{The DZ dataframe.}
 
-\item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, simplifies
-selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
+\item{mzData}{The MZ dataframe.}
 
-\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
+\item{suffix}{Allowed as a synonym for "suffix".}
 
-\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)}
+\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
-\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE)}
+\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
-\item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE)}
+\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
 
-\item{numObsDZ}{= Number of DZ twins: Set this if you input covariance data}
+\item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE).}
 
-\item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data}
+\item{numObsDZ}{= Number of DZ twins: Set this if you input covariance data.}
+
+\item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data.}
 
 \item{boundDiag}{= Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8}
 
-\item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL)}
+\item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL).}
 
-\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE)}
+\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
-\item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE)}
+\item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
 
-\item{thresholds}{How to implement ordinal thresholds c("deviationBased", "WLS")}
+\item{thresholds}{How to implement ordinal thresholds c("deviationBased", "WLS").}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{sep}{allowed as a synonym for "suffix"}
+\item{sep}{The seperator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.}
 
-\item{optimizer}{optionally set the optimizer (default NULL does nothing)}
+\item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACE

@@ -10,6 +10,7 @@
 * NEW `?umx_long2wide`: Merges long data on famID, for an unlimited number of individuals in a family (twinIDs).
 * NEW `?umx_wide2long`: Takes a wide df (currently limited to 2 per family), & returns a long-format version.
 * NEW: `optimiser` parameter for umxACE and other twin models: Set the optimizer in your model code!
+* IMPROVED: umx_cor automatically drops non-numeric columns.
 * IMPROVED: html tables by switching to `xtable` (`R2HTML` is abandoned & strips decimals from AIC, ignores c(nsmall)...
 * IMPROVED: Plotting: Models now plot by default. Turn off with `umx_set_auto_plot(FALSE)`.
 * IMPROVED: CIs: `umxCI` now supports setting interval and one- or two-sided type (h/t @Conor Dolan).
@@ -30,7 +31,7 @@
 * CHANGE: `confint`. OpenMx now supports this, so I dropped it from umx (added alias to `umxConfint`).
 * CHANGE: `anova`. OpenMx now supports, this so I dropped it from `umx`.
 * CHANGE: `umx_fix_first_loadings` now skips latents with fixed variance.
-* FIXED: Removed superfluous print call from umx_MakeTwinData.
+* FIXED: Removed superfluous print call from `umx_MakeTwinData`.
 
 # umx 1.7.5 (April 04 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables (umx removes them for you!)

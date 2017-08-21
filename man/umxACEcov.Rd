@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxACEcov}
 \alias{umxACEcov}
-\title{Run a Cholesky with covariates in the expected covariance matrix, not the means.}
+\title{Run a Cholesky with covariates, either fixed (def var in the means) or random (in the expected covariance matrix)}
 \usage{
 umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0,
@@ -50,13 +50,21 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 - \code{\link{mxModel}} of subclass mxModel.ACEcov
 }
 \description{
-Often, researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models by including them in
-the means model, or by residualizing the DVs for the covariates, for instance in \code{\link{lm}} (or umx's 
-\code{\link{umx_residualize}}).
-Both these approaches require all covariates be non-missing, thus dropping any rows which are missing one or more covariates.
-This is wasteful of data. umxACEcov models the covariates in the expected covariance matrix, thus allowing
-all data to be preserved.
-The following figure shows how the ACE model appears as a path diagram:
+Often, researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models.
+A simple method is to regressing covariates from the data (see \code{\link{umx_residualize}}).
+A second method (supported in umxACEcov) is to include the covariates in the means model. This is the
+'fixed' option for covariates models them in the mean as definition variables.
+On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
+covariates must be non-NA, thus dropping any rows where onr or more covariates are missing.
+This is wasteful of data.
+}
+\details{
+The umxACEcov 'random' option models the covariates in the expected covariance matrix, thus allowing
+all data to be preserved. The downside is that this method has a strong assumption
+of multivariate normality. Covariates like age, which are perfectly correlated in twins cannot be used.
+Covariates like sex, which are ordinal, violate the normality assumption.
+
+The following figure shows how the ACE model with random covariates appears as a path diagram:
 \figure{ACEcovVarianceModel.png}
 }
 \examples{
@@ -72,32 +80,40 @@ mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
 }
 
-# Trying to use identical var (like age) as cov is illegal
+# =====================================================================
+# = Trying to use identical var (like age) as a random cov is ILLEGAL =
+# =====================================================================
 m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
-# note: see below for using lm-based age-residualisation approach
 
-# =======================
-# = A bivariate example =
-# =======================
+# ========================================================
+# = Use an lm-based age-residualisation approach instead =
+# ========================================================
+
+resid_data = umx_residualize("bmi", "age", suffixes=1:2, twinData)
+mzData = subset(resid_data, zygosity == "MZFF")
+dzData = subset(resid_data, zygosity == "DZFF")
+m2     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+
+# Univariate bmi without covariate of age for comparison
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
+m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+
+\dontrun{
+# ===========================================================================
+# = A bivariate example (need a dataset with a viable covariate to do this) =
+# ===========================================================================
 selDVs  = c("ht", "wt") # Set the DV
-selCovs = c("age") # Set the IV
+selCovs = c("wt") # Set the COV
 selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
-# 80 rows so example runs fast enough on CRAN
+# 80 rows so example runs fast on CRAN
 mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
    dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
 )
+}
 
-
-# Univariate bmi without covariate of age for comparison
-mzData = subset(twinData, zygosity == "MZFF")
-dzData = subset(twinData, zygosity == "DZFF")
-m2 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
-resid_data = umx_residualize("bmi", "age", suffixes=1:2, twinData)
-mzData = subset(resid_data, zygosity == "MZFF")
-dzData = subset(resid_data, zygosity == "DZFF")
-m3     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 }
 \references{
 Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
