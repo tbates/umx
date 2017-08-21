@@ -24,7 +24,7 @@ umx_aggregate(formula = DV ~ condition, data = NA, what = c("mean_sd",
 \description{
 R's built-in \code{\link{aggregate}} function is extremely useful and powerful, allowing
 xtabs based on a formula. umx_aggregate just tries to make using it a bit easier.
-In particular, it has some handy base functions that simplify the task of summarising data
+In particular, it has some handy base functions that simplify the task of summarizing data
 aggregating over some grouping factor. A common use is preparing summary tables.
 }
 \examples{

@@ -4910,7 +4910,7 @@ umx_standardize_ACE <- function(fit) {
 #' data(twinData)
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = c("bmi")
-#' selCovs = c("age")
+#' selCovs = c("ht") # silly example
 #' selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes= 1:2)
 #' mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
 #' dzData = subset(twinData, zyg == 3, selVars)[1:80, ]

@@ -21,7 +21,7 @@ umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
 
 \item{mzData}{The MZ dataframe.}
 
-\item{sep}{Seperator text between basename for twin variable names. Often "_T".
+\item{sep}{Separator text between basename for twin variable names. Often "_T".
 Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T2").}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
@@ -83,7 +83,9 @@ dzData = subset(twinData, zygosity == "DZFF")
 # =====================================================================
 # = Trying to use identical var (like age) as a random cov is ILLEGAL =
 # =====================================================================
+\dontrun{
 m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
+}
 
 # ========================================================
 # = Use an lm-based age-residualisation approach instead =
@@ -101,10 +103,10 @@ m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix 
 
 \dontrun{
 # ===========================================================================
-# = A bivariate example (need a dataset with a viable covariate to do this) =
+# = A bivariate example (need a dataset with a VIABLE COVARIATE to do this) =
 # ===========================================================================
 selDVs  = c("ht", "wt") # Set the DV
-selCovs = c("wt") # Set the COV
+selCovs = c("income") # Set the COV
 selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
 # 80 rows so example runs fast on CRAN
 mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
