@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umx_standardize_RAM}
 \alias{umx_standardize_RAM}
-\title{umx_standardize_RAM}
+\title{Return a standardized version of a Structural Model}
 \usage{
 umx_standardize_RAM(model, return = "parameters", Amatrix = NA,
   Smatrix = NA, Mmatrix = NA)

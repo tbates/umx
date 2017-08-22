@@ -3,7 +3,7 @@
 \name{umxAPA}
 \alias{umxAPA}
 \alias{summaryAPA}
-\title{umxAPA}
+\title{Creates nicely formatted journal style summaries of lm models, p-values, data-frames etc.}
 \usage{
 umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
   min = 0.001, addComparison = NA, report = c("table", "html"),
@@ -32,7 +32,7 @@ umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
 - string
 }
 \description{
-This function creates object summaries used in reporting models, effects, and summarizing data.
+umxAPA creates summaries from a range of inputs. Use it for reporting lm models, effects, and summarizing data.
 
 1. Given an lm, will return a formated effect, including 95\% CI 
 in square brackets, for one of the effects (specified by name in se). e.g.:

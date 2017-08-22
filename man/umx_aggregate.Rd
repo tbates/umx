@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umx_aggregate}
 \alias{umx_aggregate}
-\title{umx_aggregate}
+\title{Convenient formula-based cross-tabs & built-in summary functions}
 \usage{
 umx_aggregate(formula = DV ~ condition, data = NA, what = c("mean_sd",
   "n"), digits = 2, kable = TRUE)
@@ -22,10 +22,21 @@ umx_aggregate(formula = DV ~ condition, data = NA, what = c("mean_sd",
 - table
 }
 \description{
-R's built-in \code{\link{aggregate}} function is extremely useful and powerful, allowing
-xtabs based on a formula. umx_aggregate just tries to make using it a bit easier.
-In particular, it has some handy base functions that simplify the task of summarising data
-aggregating over some grouping factor. A common use is preparing summary tables.
+A common task is preparing summary tables, aggregating over some grouping factor.
+Like mean and sd of age, by sex. R's \code{\link{aggregate}} function is useful and powerful, allowing
+xtabs based on a formula.
+
+umx_aggregate makes using it a bit easier. In particular, it has some common functions 
+for summarising data built-in, like "mean (sd)" (the default).
+
+\code{umx_aggregate(mpg ~ cyl, data = mtcars, what = "mean_sd")}
+
+\tabular{ll}{
+cyl        \tab mpg\cr
+4 (n = 11) \tab 26.66 (4.51)\cr
+6 (n = 7)  \tab 19.74 (1.45)\cr
+8 (n = 14) \tab 15.1 (2.56)\cr
+}
 }
 \examples{
 # =====================================

@@ -2,10 +2,9 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umx_APA_pval}
 \alias{umx_APA_pval}
-\title{umx_APA_pval}
+\title{Round p-values according to APA guidelines}
 \usage{
-umx_APA_pval(p, min = 0.001, digits = 3, addComparison = NA,
-  rounding = NULL)
+umx_APA_pval(p, min = 0.001, digits = 3, addComparison = NA)
 }
 \arguments{
 \item{p}{The p-value to round}
@@ -15,14 +14,14 @@ umx_APA_pval(p, min = 0.001, digits = 3, addComparison = NA,
 \item{digits}{Number of decimals to which to round (default = 3)}
 
 \item{addComparison}{Whether to add '=' '<' etc. (NA adds when needed)}
-
-\item{rounding}{deprecated - please replace 'rounding' with 'digits'}
 }
 \value{
 - p-value formatted in APA style
 }
 \description{
-round a p value so you get < .001 instead of .000000002 or 1.00E-09
+umx_APA_pval formats p-values, rounded correctly. So you get '< .001' instead of .000000002 or 1.00E-09.
+
+You set the precision with digits. Optionally, you can add '=' '<' etc. The default for addComparison (NA) adds these when needed.
 }
 \examples{
 umx_APA_pval(.052347)
@@ -32,7 +31,7 @@ umx_APA_pval(c(1.23E-3, .5))
 umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 }
 \seealso{
-- \code{\link{round}}
+- \code{\link{umxAPA}}, \code{\link{round}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umxAPA}}, \code{\link{umxGetParameters}},

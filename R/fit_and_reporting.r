@@ -115,7 +115,7 @@ umxReduce <- function(model, report = "markdown", baseFileName = "tmp") {
 
 #' Get residuals from an MxModel
 #'
-#' Return the \code{\link{residuals}} from an OpenMx RAM model
+#' Return the \code{\link{residuals}} from an OpenMx RAM model. You can format these (with digits), and supress small values.
 #'
 #' @rdname residuals.MxModel
 #' @param object An fitted \code{\link{mxModel}} from which to get residuals
@@ -202,7 +202,7 @@ loadings.MxModel <- function(x, ...) {
 	x$A$values[x@manifestVars, x@latentVars, drop = FALSE]
 }
 
-#' umx_standardize_RAM
+#' Return a standardized version of a Structural Model
 #'
 #' umx_standardize_RAM takes a RAM-style model, and returns standardized version.
 #'
@@ -1598,16 +1598,22 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 umxSummary.MxModel.GxE <- umxSummaryGxE
 
 
-#' umxCompare
+#' Print a comparison table of one or more \code{\link{mxModel}}s, formatted nicely.
 #'
+#' @description
 #' umxCompare compares two or more \code{\link{mxModel}}s. It has several nice features:
-#' 1. It supports direct control of rounding, and reports p-values rounded to APA style.
-#' 2. It reports the table in your preferred markdown format (relies on knitr)
-#' 3. The table columns are arranged in a method suitable for easy comparison for readers.
-#' 4. By default, it also reports the output as an English sentence suitable for a paper.
-#' 5. It can open tabular output in a browser (report = "html")
 #' 
-#' note: If you leave comparison blank, it will just give fit info for the base model
+#' 1. It supports direct control of rounding, and reports p-values rounded to APA style.
+#' 
+#' 2. It reports the table in your preferred format (default is markdown, options include latex)
+#' 
+#' 3. Table columns are arranged to make for easy comparison for readers.
+#' 
+#' 4. report = 'inline', will provide an English sentence suitable for a paper.
+#' 
+#' 5. report = "html" opens a web table in your browser to paste into a word processor.
+#' 
+#' \emph{Note}: If you leave comparison blank, it will just give fit info for the base model
 #'
 #' @param base The base \code{\link{mxModel}} for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
@@ -2116,7 +2122,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 #' @export
 plot.MxModel.ACE <- umxPlotACE
 
-#' umxPlotACEcov
+#' Make a graphical display of an ACE model with covariates.
 #'
 #' Make a graphical display of an ACE model with covariates.
 #'
@@ -3371,12 +3377,24 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 	}
 }
 
-#' umx_aggregate
+#' Convenient formula-based cross-tabs & built-in summary functions
 #'
-#' R's built-in \code{\link{aggregate}} function is extremely useful and powerful, allowing
-#' xtabs based on a formula. umx_aggregate just tries to make using it a bit easier.
-#' In particular, it has some handy base functions that simplify the task of summarising data
-#' aggregating over some grouping factor. A common use is preparing summary tables.
+#' @description
+#' A common task is preparing summary tables, aggregating over some grouping factor.
+#' Like mean and sd of age, by sex. R's \code{\link{aggregate}} function is useful and powerful, allowing
+#' xtabs based on a formula.
+#' 
+#' umx_aggregate makes using it a bit easier. In particular, it has some common functions 
+#' for summarising data built-in, like "mean (sd)" (the default).
+#' 
+#' \code{umx_aggregate(mpg ~ cyl, data = mtcars, what = "mean_sd")}
+#' 
+#' \tabular{ll}{
+#' cyl        \tab mpg\cr
+#' 4 (n = 11) \tab 26.66 (4.51)\cr
+#' 6 (n = 7)  \tab 19.74 (1.45)\cr
+#' 8 (n = 14) \tab 15.1 (2.56)\cr
+#' }
 #'
 #' @param formula The aggregation formula. e.g., DV ~ condition
 #' @param data frame to aggregate
@@ -3454,30 +3472,28 @@ umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd
 	}
 }
 
-#' umx_APA_pval
+#' Round p-values according to APA guidelines
 #'
-#' round a p value so you get < .001 instead of .000000002 or 1.00E-09
+#' @description
+#' umx_APA_pval formats p-values, rounded correctly. So you get '< .001' instead of .000000002 or 1.00E-09.
+#' 
+#' You set the precision with digits. Optionally, you can add '=' '<' etc. The default for addComparison (NA) adds these when needed.
 #'
 #' @param p The p-value to round
 #' @param min Values below min will be reported as "< min"
 #' @param digits Number of decimals to which to round (default = 3)
 #' @param addComparison Whether to add '=' '<' etc. (NA adds when needed)
-#' @param rounding deprecated - please replace 'rounding' with 'digits'
 #' @family Reporting Functions
 #' @return - p-value formatted in APA style
 #' @export
-#' @seealso - \code{\link{round}}
+#' @seealso - \code{\link{umxAPA}}, \code{\link{round}}
 #' @examples
 #' umx_APA_pval(.052347)
 #' umx_APA_pval(1.23E-3)
 #' umx_APA_pval(1.23E-4)
 #' umx_APA_pval(c(1.23E-3, .5))
 #' umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
-umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA, rounding = NULL) {
-	if(!is.null(rounding)){
-		message("rounding deprecated - please replace 'rounding' with 'digits'")
-		digits = rounding
-	}
+umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 	# leave addComparison as NA to add only when needed
 	if(length(p) > 1){
 		o = rep(NA, length(p))
@@ -3515,10 +3531,10 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA, rounding
 	}
 }
 
-#' umxAPA
+#' Creates nicely formatted journal style summaries of lm models, p-values, data-frames etc.
 #'
 #' @description
-#' This function creates object summaries used in reporting models, effects, and summarizing data.
+#' umxAPA creates summaries from a range of inputs. Use it for reporting lm models, effects, and summarizing data.
 #' 
 #' 1. Given an lm, will return a formated effect, including 95\% CI 
 #' in square brackets, for one of the effects (specified by name in se). e.g.:
