@@ -1099,7 +1099,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param covMethod How to treat covariates: "fixed" (default) or "random".
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep The seperator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.
+#' @param sep The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
@@ -1266,7 +1266,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
 				stop("Implementing this for version 2.0")
-				umxACEdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
+				# umxACEdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			} else if(covMethod == "random") {
 				umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			}
@@ -1659,7 +1659,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' @param selCovs The covariates to include from the data (do not include suffixes).
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep Seperator text between basename for twin variable names. Often "_T".
+#' @param sep Separator text between basename for twin variable names. Often "_T".
 #' Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T2").
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
@@ -1703,7 +1703,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' # =====================================================================
 #' # = Trying to use identical var (like age) as a random cov is ILLEGAL =
 #' # =====================================================================
+#' \dontrun{
 #' m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
+#' }
 #'
 #' # ========================================================
 #' # = Use an lm-based age-residualisation approach instead =
@@ -1721,10 +1723,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' 
 #' \dontrun{
 #' # ===========================================================================
-#' # = A bivariate example (need a dataset with a viable covariate to do this) =
+#' # = A bivariate example (need a dataset with a VIABLE COVARIATE to do this) =
 #' # ===========================================================================
 #' selDVs  = c("ht", "wt") # Set the DV
-#' selCovs = c("wt") # Set the COV
+#' selCovs = c("income") # Set the COV
 #' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
 #' # 80 rows so example runs fast on CRAN
 #' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]

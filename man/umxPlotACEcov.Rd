@@ -36,7 +36,7 @@ require(umx)
 data(twinData)
 # Pick the variables. We will use base names (i.e., "bmi") and set suffix.
 selDVs  = c("bmi")
-selCovs = c("age")
+selCovs = c("ht")
 selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes= 1:2)
 # just top few pairs so example runs quickly
 mzData = subset(twinData, zyg == 1, selVars)[1:100, ]

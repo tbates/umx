@@ -3,7 +3,7 @@
 \name{umxSummaryIP}
 \alias{umxSummaryIP}
 \alias{umxSummary.MxModel.IP}
-\title{umxSummaryIP}
+\title{Present the results of an independent-pathway twin model in table and graphical form}
 \usage{
 umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
   returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL,
@@ -32,7 +32,7 @@ umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
 - optional \code{\link{mxModel}}
 }
 \description{
-Summarise a Independent Pathway model, as returned by \code{\link{umxIP}}
+Summarize a Independent Pathway model, as returned by \code{\link{umxIP}}
 }
 \examples{
 require(umx)

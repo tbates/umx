@@ -3,7 +3,7 @@
 \name{umxSummaryACEcov}
 \alias{umxSummaryACEcov}
 \alias{umxSummary.MxModel.ACEcov}
-\title{umxSummaryACEcov}
+\title{Present results of a twin ACE-model with covariates in table and graphical forms.}
 \usage{
 umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),
   returnStd = FALSE, extended = FALSE, showRg = FALSE, std = TRUE,
@@ -39,7 +39,7 @@ umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),
 - optional \code{\link{mxModel}}
 }
 \description{
-Summarise a Cholesky model as returned by umxACEcov
+Summarize a Cholesky model with covariates, as returned by \code{\link{umxACEcov}}
 }
 \examples{
 require(umx)

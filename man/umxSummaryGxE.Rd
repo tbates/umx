@@ -39,7 +39,7 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
 - optional \code{\link{mxModel}}
 }
 \description{
-Summarise a Moderation model, as returned by \code{\link{umxGxE}}
+Summarize a Moderation model, as returned by \code{\link{umxGxE}}
 }
 \examples{
 # The total sample has been subdivided into a young cohort, 

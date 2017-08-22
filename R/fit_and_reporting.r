@@ -799,7 +799,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 
 #' Shows a compact, publication-style, summary of a umx Cholesky ACE model
 #'
-#' Summarise a fitted Cholesky model returned by \\code{\link{umxACE}}. Can control digits, report comparison model fits,
+#' Summarize a fitted Cholesky model returned by \\code{\link{umxACE}}. Can control digits, report comparison model fits,
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
@@ -1027,9 +1027,9 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 #' @export
 umxSummary.MxModel.ACE <- umxSummaryACE
 
-#' umxSummaryACEcov
+#' Present results of a twin ACE-model with covariates in table and graphical forms.
 #'
-#' Summarise a Cholesky model as returned by umxACEcov
+#' Summarize a Cholesky model with covariates, as returned by \code{\link{umxACEcov}}
 #'
 #' @aliases umxSummary.MxModel.ACEcov
 #' @param model a \code{\link{umxACEcov}} model to summarize
@@ -1238,9 +1238,9 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 
 
-#' Display information for a common-pathway model (from umxCP)
+#' Present the results of a Common-pathway twin model in table and graphical form
 #'
-#' Summarise a Common-Pathway model, as returned by \code{\link{umxCP}}
+#' Summarizes a Common-Pathway model, as returned by \code{\link{umxCP}}
 #'
 #' @aliases umxSummary.MxModel.CP
 #' @param model A fitted \code{\link{umxCP}} model to summarize
@@ -1394,9 +1394,9 @@ umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(silent=TRUE
 #' @export
 umxSummary.MxModel.CP <- umxSummaryCP
 
-#' umxSummaryIP
+#' Present the results of an independent-pathway twin model in table and graphical form
 #'
-#' Summarise a Independent Pathway model, as returned by \code{\link{umxIP}}
+#' Summarize a Independent Pathway model, as returned by \code{\link{umxIP}}
 #'
 #' @aliases umxSummary.MxModel.IP
 #' @param model A fitted \code{\link{umxIP}} model to summarize
@@ -1530,7 +1530,7 @@ umxSummary.MxModel.IP <- umxSummaryIP
 
 #' umxSummaryGxE
 #'
-#' Summarise a Moderation model, as returned by \code{\link{umxGxE}}
+#' Summarize a Moderation model, as returned by \code{\link{umxGxE}}
 #'
 #' @aliases umxSummary.MxModel.GxE
 #' @param model A fitted \code{\link{umxGxE}} model to summarize
@@ -2147,7 +2147,7 @@ plot.MxModel.ACE <- umxPlotACE
 #' data(twinData)
 #' # Pick the variables. We will use base names (i.e., "bmi") and set suffix.
 #' selDVs  = c("bmi")
-#' selCovs = c("age")
+#' selCovs = c("ht")
 #' selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes= 1:2)
 #' # just top few pairs so example runs quickly
 #' mzData = subset(twinData, zyg == 1, selVars)[1:100, ]
