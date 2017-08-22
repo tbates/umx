@@ -3,6 +3,9 @@
 # = Not used directly by users =
 # ========================================
 
+# =====================
+# = Reporting helpers =
+# =====================
 xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 	# model = mxRun(model)
 	tryCatch({
@@ -15,6 +18,56 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 		message("Error incurred trying to run summary ")
 		message(e)
 	})
+}
+
+# ===================================
+# = Data and model checking helpers =
+# ===================================
+
+#' Check basic aspects of input for twin models
+#'
+#' @description
+#' Check that DVs are in the data, that the data have rows, set the optimizer if requested
+#'
+#' @param selDVs the variables expected to be in the data
+#' @param dzData the dat for DZ twins
+#' @param mzData the MZ twin data
+#' @param optimizer if you want to change it
+#' @param suffix creating variable names
+#' @param nSib Likely 2 (the default)
+#' @return
+#' @export
+#' @family Twin Modeling Functions
+#' @family Miscellaneous Functions
+#' @seealso - \code{\link{umxLabel}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, suffix = suffix, nSib = 2) {
+		# =================
+		# = Set optimizer =
+		# =================
+		if(!is.null(optimizer)){
+			umx_set_optimizer(optimizer)
+		}
+		if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
+		if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
+		# Look for name conflicts
+		badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
+		if(!identical(character(0), badNames)){
+			stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
+			"BadNames included: ", omxQuotes(badNames) )
+		}
+	if(is.null(suffix)){
+		stop("The umx twin functions are moving to specifying variable names and  just separator like '_T'.
+		If your column names are like 'obese_T1' and 'obese_T2' etc., Please set selVars = 'obese', sep = '_T'")		
+	}
+	if(length(suffix) > 1){
+		stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+		"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
+	}
+	selDVs = umx_paste_names(selDVs, suffix, 1:nSib)
+	umx_check_names(selDVs, mzData)
+	umx_check_names(selDVs, dzData)
 }
 
 #' xmu_check_levels_identical
@@ -66,6 +119,10 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 	}
 	return(allIdentical)
 }
+
+# ==========================
+# = Model building helpers =
+# ==========================
 
 #' xmuLabel_MATRIX_Model (not a user function)
 #'

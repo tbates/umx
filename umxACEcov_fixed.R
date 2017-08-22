@@ -1,40 +1,10 @@
-xmu_twin_check <- function(selDVs, dzData = dzData, mxData = mxData, optimizer = optimizer, suffix = suffix, nSib = 2) {
-		# =================
-		# = Set optimizer =
-		# =================
-		if(!is.null(optimizer)){
-			umx_set_optimizer(optimizer)
-		}
-		if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
-		if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
-		# Look for name conflicts
-		badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
-		if(!identical(character(0), badNames)){
-			stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
-			"BadNames included: ", omxQuotes(badNames) )
-		}
-	if(is.null(suffix)){
-		stop("The umx twin functions are moving to specifying variable names and  just separator like '_T'.
-		If your column names are like 'obese_T1' and 'obese_T2' etc., Please set selVars = 'obese', sep = '_T'")		
-	}
-	if(length(suffix) > 1){
-		stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-		"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
-	}
-	selDVs = umx_paste_names(selDVs, suffix, 1:nSib)
-	umx_check_names(selDVs, mzData)
-	umx_check_names(selDVs, dzData)
-}
-
-umxACE_cov_fixed <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), suffix = NULL) {
-
+umxACE_cov_fixed <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), suffix = NULL) {
 		nSib = 2 # number of siblings in a twin pair
-		if(!is.null(sep)){ suffix = sep }
 		thresholds = match.arg(thresholds)
+		if(!is.null(sep)){ suffix = sep }
 		if(dzCr == .25 && name == "ACE"){ name = "ADE"}
-		xmu_twin_check(selDVs, dzData = dzData, mxData = mxData, optimizer = optimizer, suffix = suffix)
-		baseDV_names = selDVs
+		xmu_twin_check(selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, suffix = suffix)
+		baseDV_names  = selDVs
 		baseCov_names = selCovs
 		selDVs  = umx_paste_names(selDVs , suffix, 1:nSib)
 		selCovs = umx_paste_names(selCovs, suffix, 1:nSib)
@@ -92,14 +62,9 @@ umxACE_cov_fixed <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzDat
 		# =====================================
 		# = Add means and var matrices to top =
 		# =====================================
-		# Figure out start values while we are here
-		# varStarts will be used to fill a, c, and e
-		# mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)
+		# Figure out start values for a, c, and e
 		varStarts = umx_var(mzData[, selDVs[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 		
-		# ==============================
-		# = Better start value project =
-		# ==============================
 		if(nVar == 1){
 			# sqrt to switch from var to path coefficient scale
 			varStarts = sqrt(varStarts)/3
@@ -135,45 +100,51 @@ umxACE_cov_fixed <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzDat
 			# =====================================================================
 			# make a def matrix containing covariates
 
+			# copies to debug
+			nSib    = 2
+			baseDV_names  = c("ht", "wt")
+			# TODO: add intercept to incoming cov list
+			# baseCov_names = c("intercept", "age", "sex")
+			baseCov_names = c("age", "sex")
+			nVar    = length(baseDV_names)
+			nCov    = length(baseCov_names)
+			selDVs  = umx_paste_names(baseDV_names, "_T")
+			selCovs = umx_paste_names(baseCov_names, "_T")
+
+			# Bits for top
+			bLabs      = paste0("cov", rep(1:nCov, each = nVar*nSib), "b_", rep(baseDV_names, nCov))
+			bdimnames  = list(paste0(rep(paste0("cov", 1:nCov, "b"), nSib), paste0("_t", rep(1:nSib, each=nCov))), umx_paste_names(paste0("var", 1:length(baseDV_names), "_T")))
+			intLabs      = paste0("cov", rep(1:nCov, each = nVar*nSib), "b_", rep(baseDV_names, nCov))
+			# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEma.R
+			# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEja.R
+			# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEca.R
+
 			top = mxModel("top", 
 				# TODO support quadratic betas on means 
-				# Matrices for betas, and intercept
-								
-				mean  = [m1, m2, m3]
-				
-				# cols of betas: 1 col for each variable
-				# b= [b1_v1, b1_v2, b1_v3]
-				# 	 [b2_v1, b2_v2, b2_v3]
-				# 	 [b3_v1, b3_v2, b3_v3]
-				baseDV_names  = c("ht", "wt", "IQ")
-				baseCov_names = c("age", "sex")
-				selDVs  = umx_paste_names(baseDV_names, "_T")
-				selCovs = umx_paste_names(baseCov_names, "_T")
-				nVar    = length(baseDV_names)
-				nCov    = length(baseCov_names)
-				nSib    = 2
-				bLabs   = paste0("b", rep(1:nCov, each = nVar), "_", rep(baseDV_names, nCov))
-				bdimnames = list(paste0(rep(paste0("b", 1:nCov), nSib), paste0("_t", rep(1:nSib, each=nCov))), baseDV_names)
-				b = umxMatrix("b", "Full", nrow = nCov*nSib, ncol = nVar, free = TRUE, values = .01, labels = bLabs, dimnames = bdimnames, byrow = TRUE)
-				umxMatrix("Means", "Full", nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
-				# TODO equate means later?
-				# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEma.R
-				# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEja.R
-				# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEca.R
+				# TODO allow means to differ? (why?)
+				# Matrices for betas [nCov*2, nVar*2], and intercepts [1, nVar*2]
+				umxMatrix("betas", "Full", nrow = nCov*nSib, ncol = nVar*nSib, free = TRUE, values = .01, labels = bLabs, dimnames = bdimnames, byrow = TRUE)
+				umxMatrix("Intercepts", "Full", nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, labels = , dimnames = meanDimNames)
 			)
 
+			defCov_dimnames = list("defCov", paste0(baseCov_names, "_t", rep(1:nSib, each = nCov)))
+			# defCovs$values
+			# betas$values %*% defCovs$values
 			MZ = mxModel("MZ", 
-				# 1-row matrix of defVars for t1 and t2
-				ddimnames = list("defCov", paste0(baseCov_names, "_t", rep(1:nSib, each=nCov))))
-				d = umxMatrix("defVars", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, labels = paste0("data.", selCovs), dimnames = ddimnames)
-				b$values %*% d$values
+				# row of defCovs for t1 and t2
+				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, 
+						   labels = paste0("data.", selCovs), dimnames = defCov_dimnames)
 				# Create Algebra for expected Mean Matrices
-				mxAlgebra(name = "expMean",   top.Means + cbind(t(b %*% defVars), t(b %*% defVars)))			
-				mxAlgebra(name = "expMeanMZ", cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad)),
+				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas))
 				mxExpectationNormal("top.expCovMZ", "top.expMean"), 
 				mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw")
 			)
 			DZ = mxModel("DZ", 
+				# row of defCovs for t1 and t2
+				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, 
+					   labels = paste0("data.", selCovs), dimnames = defCov_dimnames)
+				# Create Algebra for expected Mean Matrices
+				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas))
 				mxExpectationNormal("top.expCovDZ", "top.expMean"), 
 				mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw")
 			)
