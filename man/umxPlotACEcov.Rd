@@ -3,7 +3,7 @@
 \name{umxPlotACEcov}
 \alias{umxPlotACEcov}
 \alias{plot.MxModel.ACEcov}
-\title{umxPlotACEcov}
+\title{Make a graphical display of an ACE model with covariates.}
 \usage{
 umxPlotACEcov(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, showMeans = "deprecated", ...)
@@ -81,5 +81,6 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx_wide2long}}, \code{\link{umx}}
+  \code{\link{umx_wide2long}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }

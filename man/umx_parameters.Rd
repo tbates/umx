@@ -3,7 +3,7 @@
 \name{umx_parameters}
 \alias{umx_parameters}
 \alias{umxParameters}
-\title{Quickly pull Estimates from a model, filtering by name and value}
+\title{Display path estimates from a model, filtering by name and value.}
 \usage{
 umx_parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
   b = NULL, pattern = ".*", std = FALSE)
@@ -27,7 +27,7 @@ umxParameters(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL,
 }
 \description{
 Often you want to see the estimates from a model, and often you don't want all of them.
-umx_parameters helps in this case, allowing you to select parameters matching a name filter,
+\code{\link{umx_parameters}} helps in this case, allowing you to select parameters matching a name filter,
 and also to only show parameters above or below a certain value.
 }
 \details{

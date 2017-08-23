@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxFitIndices}
 \alias{umxFitIndices}
-\title{umxFitIndices}
+\title{Get additional fit-indices for a model with umxFitIndices}
 \usage{
 umxFitIndices(model, refModels = mxRefModels(model, run = TRUE))
 }

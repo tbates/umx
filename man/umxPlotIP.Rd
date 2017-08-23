@@ -3,10 +3,11 @@
 \name{umxPlotIP}
 \alias{umxPlotIP}
 \alias{plot.MxModel.IP}
-\title{umxPlotIP}
+\title{Draw a graphical figure for a Independent Pathway model}
 \usage{
 umxPlotIP(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, showMeans = "deprecated", ...)
+  std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
+  showMeans = "deprecated", ...)
 }
 \arguments{
 \item{x}{The \code{\link{umxIP}} model to plot}
@@ -19,6 +20,8 @@ umxPlotIP(x = NA, file = "name", digits = 2, means = FALSE,
 
 \item{std}{whether to standardize the model (defaults to TRUE)}
 
+\item{format}{= c("current", "graphviz", "DiagrammeR")}
+
 \item{showMeans}{Deprecated: replace with just 'means' for simplicity.}
 
 \item{...}{Optional additional parameters}
@@ -27,7 +30,7 @@ umxPlotIP(x = NA, file = "name", digits = 2, means = FALSE,
 - optionally return the dot code
 }
 \description{
-Make a graphical display of an Independent Pathway model
+Options include digits (rounding), showing means or not, standardization, and which output format is desired.
 }
 \examples{
 \dontrun{
@@ -69,5 +72,6 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotGxE}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx_wide2long}}, \code{\link{umx}}
+  \code{\link{umx_wide2long}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }

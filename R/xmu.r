@@ -1,7 +1,6 @@
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# ========================================
-# = Not used directly by users =
-# ========================================
+# ==============================================================================
+# = Not used directly by users subject to arbitrary change and deprecation !!  =
+# ==============================================================================
 
 # =====================
 # = Reporting helpers =
@@ -35,13 +34,13 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 #' @param optimizer if you want to change it
 #' @param suffix creating variable names
 #' @param nSib Likely 2 (the default)
-#' @return
+#' @return -
 #' @export
 #' @family Twin Modeling Functions
 #' @family Miscellaneous Functions
 #' @seealso - \code{\link{umxLabel}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-#' @examples
+#' # TODO examples
 xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, suffix = suffix, nSib = 2) {
 		# =================
 		# = Set optimizer =

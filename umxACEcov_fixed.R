@@ -1,8 +1,17 @@
-umxACE_cov_fixed <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), suffix = NULL) {
+#' require(umx)
+#' data(twinData) # ?twinData from Australian twins.
+#' # Pick the variables
+#' selDVs  = "ht"
+#' selCovs = "wt"
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
+
+umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), suffix = NULL) {
 		nSib = 2 # number of siblings in a twin pair
 		thresholds = match.arg(thresholds)
 		if(!is.null(sep)){ suffix = sep }
-		if(dzCr == .25 && name == "ACE"){ name = "ADE"}
+		if(dzCr == .25 && name == "ACEcov"){ name = "ADEcov"}
 		xmu_twin_check(selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, suffix = suffix)
 		baseDV_names  = selDVs
 		baseCov_names = selCovs
@@ -99,53 +108,59 @@ umxACE_cov_fixed <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzDat
 			# = Create Matrices for Covariates and linear Regression Coefficients =
 			# =====================================================================
 			# make a def matrix containing covariates
-
-			# copies to debug
-			nSib    = 2
-			baseDV_names  = c("ht", "wt")
-			# TODO: add intercept to incoming cov list
-			# baseCov_names = c("intercept", "age", "sex")
-			baseCov_names = c("age", "sex")
-			nVar    = length(baseDV_names)
-			nCov    = length(baseCov_names)
-			selDVs  = umx_paste_names(baseDV_names, "_T")
-			selCovs = umx_paste_names(baseCov_names, "_T")
-
-			# Bits for top
-			bLabs      = paste0("cov", rep(1:nCov, each = nVar*nSib), "b_", rep(baseDV_names, nCov))
-			bdimnames  = list(paste0(rep(paste0("cov", 1:nCov, "b"), nSib), paste0("_t", rep(1:nSib, each=nCov))), umx_paste_names(paste0("var", 1:length(baseDV_names), "_T")))
-			intLabs      = paste0("cov", rep(1:nCov, each = nVar*nSib), "b_", rep(baseDV_names, nCov))
 			# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEma.R
 			# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEja.R
 			# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEca.R
+
+			# copies to debug
+			# nSib = 2
+			# baseDV_names  = c("ht", "wt")
+			# # TODO: add intercept to incoming cov list
+			# # baseCov_names = c("intercept", "age", "sex")
+			# baseCov_names = c("age", "sex")
+			# nVar    = length(baseDV_names)
+			# nCov    = length(baseCov_names)
+			# selDVs  = umx_paste_names(baseDV_names, "_T")
+			# selCovs = umx_paste_names(baseCov_names, "_T")
+			# obsMZmeans = rep(0, length(selDVs))
+
+			# Bits for top
+			# betas is a [nCov, nVar*nSib] matrix
+			betaLabels = paste0("cov", rep(1:nCov, each = nVar*nSib), "b_", rep(baseDV_names, nCov))
+			# b_dimnames = list(paste0(rep(paste0("cov", 1:nCov, "b"), nSib), paste0("_t", rep(1:nSib, each=nCov))), umx_paste_names(paste0("var", 1:length(baseDV_names), "_T")))
+			b_dimnames = list(paste0(paste0("cov", 1:nCov, "b")), umx_paste_names(paste0("var", 1:length(baseDV_names), "_T")))
+			
+			# Intercepts is a [1, nVar*nSib] matrix
+			intLabels    = paste0("intercept_", rep(baseDV_names, 2))
+			intDimNames = list("means", selDVs)		
 
 			top = mxModel("top", 
 				# TODO support quadratic betas on means 
 				# TODO allow means to differ? (why?)
 				# Matrices for betas [nCov*2, nVar*2], and intercepts [1, nVar*2]
-				umxMatrix("betas", "Full", nrow = nCov*nSib, ncol = nVar*nSib, free = TRUE, values = .01, labels = bLabs, dimnames = bdimnames, byrow = TRUE)
-				umxMatrix("Intercepts", "Full", nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, labels = , dimnames = meanDimNames)
+				# betas just [nCov, nVar*2]????
+				# umxMatrix("betas"     , "Full", nrow = nCov*nSib, ncol = nVar*nSib, free = TRUE, values = .01, labels = betaLabels, dimnames = b_dimnames, byrow = TRUE)
+				umxMatrix("betas"     , "Full", nrow = nCov, ncol = nVar*nSib, free = TRUE, values = .01, labels = betaLabels, dimnames = b_dimnames, byrow = TRUE),
+				umxMatrix("Intercepts", "Full", nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, labels = intLabels, dimnames = intDimNames)
 			)
 
-			defCov_dimnames = list("defCov", paste0(baseCov_names, "_t", rep(1:nSib, each = nCov)))
-			# defCovs$values
+			defCov_dimnames = list("defCov", selCovs)
 			# betas$values %*% defCovs$values
-			MZ = mxModel("MZ", 
-				# row of defCovs for t1 and t2
-				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, 
-						   labels = paste0("data.", selCovs), dimnames = defCov_dimnames)
+
+			MZ = mxModel("MZ",
+				# row of data.Covariates for T1 & T2 [1, nCov*nSib]
+				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, labels = paste0("data.", selCovs), dimnames = defCov_dimnames),
 				# Create Algebra for expected Mean Matrices
-				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas))
-				mxExpectationNormal("top.expCovMZ", "top.expMean"), 
+				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas)),
+				mxExpectationNormal("top.expCovMZ", "expMean"),
 				mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw")
 			)
 			DZ = mxModel("DZ", 
 				# row of defCovs for t1 and t2
-				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, 
-					   labels = paste0("data.", selCovs), dimnames = defCov_dimnames)
-				# Create Algebra for expected Mean Matrices
-				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas))
-				mxExpectationNormal("top.expCovDZ", "top.expMean"), 
+				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, labels = paste0("data.", selCovs), dimnames = defCov_dimnames),
+				# Algebra for expected Mean Matrices
+				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas)),
+				mxExpectationNormal("top.expCovDZ", "expMean"), 
 				mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw")
 			)
 		} else if(sum(isBin) == 0){
@@ -166,8 +181,8 @@ umxACE_cov_fixed <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzDat
 			allData = rbind(mzData, dzData)
 			# threshMat is is a matrix, or a list of 2 matrices and an algebra
 			threshMat = umxThresholdMatrix(allData, sep = suffix, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
-			mzExpect = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
-			dzExpect = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
+			mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
+			dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
 			top = mxModel("top", umxLabel(meansMatrix), threshMat)
 			MZ  = mxModel("MZ", mzExpect, mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
 			DZ  = mxModel("DZ", dzExpect, mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
@@ -317,10 +332,11 @@ umxACE_cov_fixed <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzDat
 	}
 	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
 	if(equateMeans){
-		model = omxSetParameters(model,
-		  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMean14", "expMean15", "expMean16"),
-		  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMean11", "expMean12", "expMean13")
-		)
+		message("mean are equated by default")
+		# model = omxSetParameters(model,
+		  # labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMean14", "expMean15", "expMean16"),
+		  # newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMean11", "expMean12", "expMean13")
+		# )
 	}
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxReduce}
 \alias{umxReduce}
-\title{umxReduce}
+\title{Reduce a model - this is a work in progress}
 \usage{
 umxReduce(model, report = "markdown", baseFileName = "tmp")
 }
@@ -17,7 +17,11 @@ umxReduce(model, report = "markdown", baseFileName = "tmp")
 -
 }
 \description{
-Reduce a model - this is a work in progress.
+This function can perform model reduction for some stylized models. For instance, for 
+\code{\link{umxGxE}}, this function tests dropping means-moderation, a`,c` & e`, a& a` etc.
+}
+\details{
+It's a work in progress, with more automations coming as demand emerges.
 }
 \examples{
 \dontrun{

@@ -2,12 +2,12 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{loadings.MxModel}
 \alias{loadings.MxModel}
-\title{loadings.MxModel}
+\title{Extract factor loadings from an EFA (factor analysis).}
 \usage{
 \method{loadings}{MxModel}(x, ...)
 }
 \arguments{
-\item{x}{A RAM model to get which to get loadings}
+\item{x}{A RAM model from which to get loadings.}
 
 \item{...}{Other parameters (currently unused)}
 }
@@ -15,9 +15,9 @@
 - loadings matrix
 }
 \description{
-loadings extracts the factor loadings from an OpenMx EFA (factor analysis) model. 
-It behaves equivalently to stats::loadings in returning the loadings from an 
-EFA (factor analysis), but doesn't store the rotation matrix.
+loadings extracts the factor loadings from an EFA (factor analysis) model.
+It behaves equivalently to stats::loadings, returning the loadings from an 
+EFA (factor analysis). However it doesn't store the rotation matrix.
 }
 \examples{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")

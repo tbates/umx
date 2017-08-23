@@ -3,7 +3,7 @@
 \name{umxPlotGxE}
 \alias{umxPlotGxE}
 \alias{plot.MxModel.GxE}
-\title{umxPlotGxE}
+\title{Plot the results of a GxE univariate test for moderation of ACE components.}
 \usage{
 umxPlotGxE(x, xlab = NA, location = "topleft", separateGraphs = FALSE,
   ...)
@@ -24,7 +24,9 @@ see ?legend for alternatives like bottomright}
 -
 }
 \description{
-Plot GxE results (univariate environmental moderation of ACE components)
+Plot GxE results (univariate environmental moderation of ACE components).
+Options include plotting the raw and standardized graphs separately, or in a combined panel.
+You can also set the label for the x axis (xlab), and choose the location of the legend.
 }
 \examples{
 require(umx)
@@ -76,5 +78,6 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx_wide2long}}, \code{\link{umx}}
+  \code{\link{umx_wide2long}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }

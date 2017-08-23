@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxExpMeans}
 \alias{umxExpMeans}
-\title{umxExpMean}
+\title{Extract the expected means matrix from an \code{\link{mxModel}}}
 \usage{
 umxExpMeans(model, manifests = TRUE, latents = NULL, digits = NULL)
 }

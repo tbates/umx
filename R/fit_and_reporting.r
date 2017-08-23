@@ -2,9 +2,10 @@
 # = Model Diagnostics =
 # =====================
 
-#' mxDiagnostic
-#'
 #' Diagnose problems in a model - this is a work in progress.
+#'
+#' The goal of this function is to diagnose problems in a model and return suggestions to the user.
+#' It is a work in progress, and probably is not of any use as yet.
 #'
 #' @param model an \code{\link{mxModel}} to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
@@ -50,10 +51,12 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 # = Fit and Reporting Helpers =
 # =============================
 
-#' umxReduce
+#' Reduce a model - this is a work in progress
 #'
-#' Reduce a model - this is a work in progress.
+#' This function can perform model reduction for some stylized models. For instance, for 
+#' \code{\link{umxGxE}}, this function tests dropping means-moderation, a`,c` & e`, a& a` etc.
 #'
+#' It's a work in progress, with more automations coming as demand emerges.
 #' @param model an \code{\link{mxModel}} to reduce
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName file (I add the html) to use when report = "html" (defaults to "tmp")
@@ -181,13 +184,13 @@ loadings.default <- function(x, ...) stats::loadings(x, ...)
 
 # TODO: alternative approach would be to use setGeneric("loadings")
 
-#' loadings.MxModel
+#' Extract factor loadings from an EFA (factor analysis).
 #'
-#' loadings extracts the factor loadings from an OpenMx EFA (factor analysis) model. 
-#' It behaves equivalently to stats::loadings in returning the loadings from an 
-#' EFA (factor analysis), but doesn't store the rotation matrix.
+#' loadings extracts the factor loadings from an EFA (factor analysis) model.
+#' It behaves equivalently to stats::loadings, returning the loadings from an 
+#' EFA (factor analysis). However it doesn't store the rotation matrix.
 #'
-#' @param x A RAM model to get which to get loadings 
+#' @param x A RAM model from which to get loadings.
 #' @param ... Other parameters (currently unused)
 #' @return - loadings matrix
 #' @export
@@ -422,7 +425,7 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 	invisible(object)
 }
 
-#' umxCI
+#' Add (and, optionally, run) confidence intervals to a structural model.
 #'
 #' umxCI adds mxCI() calls for all free parameters in a model, 
 #' runs the CIs, and reports a neat summary.
@@ -2231,9 +2234,11 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 #' @export
 plot.MxModel.ACEcov <- umxPlotACEcov
 
-#' umxPlotGxE
+#' Plot the results of a GxE univariate test for moderation of ACE components.
 #'
-#' Plot GxE results (univariate environmental moderation of ACE components)
+#' Plot GxE results (univariate environmental moderation of ACE components).
+#' Options include plotting the raw and standardized graphs separately, or in a combined panel.
+#' You can also set the label for the x axis (xlab), and choose the location of the legend.
 #'
 #' @aliases plot.MxModel.GxE
 #' @param x A fitted \code{\link{umxGxE}} model to plot
@@ -2313,9 +2318,9 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 #' @export
 plot.MxModel.GxE <- umxPlotGxE
 
-#' umxPlotCP
-#'
 #' Draw a graphical figure for a Common Pathway model
+#'
+#' Options include digits (rounding), showing means or not, and which output format is desired.
 #'
 #' @aliases plot.MxModel.CP
 #' @param x The Common Pathway \code{\link{mxModel}} to display graphically
@@ -2424,9 +2429,9 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 #' @export
 plot.MxModel.CP <- umxPlotCP
 
-#' umxPlotIP
+#' Draw a graphical figure for a Independent Pathway model
 #'
-#' Make a graphical display of an Independent Pathway model
+#' Options include digits (rounding), showing means or not, standardization, and which output format is desired.
 #'
 #' @aliases plot.MxModel.IP
 #' @param x The \code{\link{umxIP}} model to plot
@@ -2434,6 +2439,7 @@ plot.MxModel.CP <- umxPlotCP
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std whether to standardize the model (defaults to TRUE)
+#' @param format = c("current", "graphviz", "DiagrammeR")
 #' @param showMeans Deprecated: replace with just 'means' for simplicity.
 #' @param ... Optional additional parameters
 #' @return - optionally return the dot code
@@ -2448,7 +2454,8 @@ plot.MxModel.CP <- umxPlotCP
 #' plot(model)
 #' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", ...) {
+umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), showMeans = "deprecated", ...) {
+	format = match.arg(format)
 	if(showMeans != "deprecated"){
 		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
 		means = showMeans
@@ -2456,6 +2463,7 @@ umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	if(!class(x) == "MxModel.IP"){
 		stop("The first parameter of umxPlotIP must be an IP model, you gave me a ", class(x))
 	}
+	
 	model = x # to emphasise that x has to be an umxIP model
 	if(std){
 		model = umx_standardize_IP(model)
@@ -2522,16 +2530,21 @@ umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
+	if(format != "current"){
+		umx_set_plot_format(format)
+	}
 	xmu_dot_maker(model, file, digraph)
 }
 #' @export
 plot.MxModel.IP <- umxPlotIP
 
-#' umxMI
-#'
 #' Report modifications which would improve fit.
+#'
+#' This function uses the mechanical modification-indices approach to detect single paths which, if added
+#' or dropped, would improve fit.
+#' 
 #' Notes:
-#' 1. Runs much fast with full = FALSE (but this doesn't allow the model to re-fit around the newly-
+#' 1. Runs much faster with full = FALSE (but this doesn't allow the model to re-fit around the newly-
 #' freed parameter).
 #' 2. Compared to mxMI, this function returns top changes, and also suppresses the run message.
 #' 3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link{mxMI}}
@@ -2838,11 +2851,11 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 # = Pull model components =
 # =========================
 
-#' Quickly pull Estimates from a model, filtering by name and value
+#' Display path estimates from a model, filtering by name and value.
 #'
 #' @description
 #' Often you want to see the estimates from a model, and often you don't want all of them.
-#' umx_parameters helps in this case, allowing you to select parameters matching a name filter,
+#' \code{\link{umx_parameters}} helps in this case, allowing you to select parameters matching a name filter,
 #' and also to only show parameters above or below a certain value.
 #'
 #' @details
@@ -3023,7 +3036,7 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 vcov.MxModel <- umxExpCov
 
 
-#' umxExpMean
+#' Extract the expected means matrix from an \code{\link{mxModel}}
 #'
 #' Extract the expected means matrix from an \code{\link{mxModel}}
 #'
@@ -3136,7 +3149,7 @@ logLik.MxModel <- function(object, ...) {
 	return(logLikelihood);
 }
 
-#' umxFitIndices
+#' Get additional fit-indices for a model with umxFitIndices
 #'
 #' A list of fit indices. Originated in this thread: http://openmx.ssri.psu.edu/thread/765
 #' note: This is not a full-fat fit reporter. It is not robust across multi-group designs,

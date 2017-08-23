@@ -3,7 +3,7 @@
 \name{umxPlotCP}
 \alias{umxPlotCP}
 \alias{plot.MxModel.CP}
-\title{umxPlotCP}
+\title{Draw a graphical figure for a Common Pathway model}
 \usage{
 umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
@@ -30,7 +30,7 @@ umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
 - Optionally return the dot code
 }
 \description{
-Draw a graphical figure for a Common Pathway model
+Options include digits (rounding), showing means or not, and which output format is desired.
 }
 \examples{
 \dontrun{
@@ -71,5 +71,6 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx_wide2long}}, \code{\link{umx}}
+  \code{\link{umx_wide2long}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }

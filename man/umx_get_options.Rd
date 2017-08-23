@@ -17,5 +17,6 @@ umx_get_options()
 }
 \seealso{
 Other Miscellaneous Functions: \code{\link{install.OpenMx}},
-  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}}
+  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
+  \code{\link{xmu_twin_check}}
 }

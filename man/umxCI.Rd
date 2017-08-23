@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxCI}
 \alias{umxCI}
-\title{umxCI}
+\title{Add (and, optionally, run) confidence intervals to a structural model.}
 \usage{
 umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
   remove = FALSE, run = c("no", "yes", "if necessary", "show"),

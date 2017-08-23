@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxMI}
 \alias{umxMI}
-\title{umxMI}
+\title{Report modifications which would improve fit.}
 \usage{
 umxMI(model = NA, matrices = NA, full = TRUE, numInd = NA,
   typeToShow = "both", decreasing = TRUE)
@@ -21,9 +21,12 @@ umxMI(model = NA, matrices = NA, full = TRUE, numInd = NA,
 \item{decreasing}{How to sort (default = TRUE, decreasing)}
 }
 \description{
-Report modifications which would improve fit.
+This function uses the mechanical modification-indices approach to detect single paths which, if added
+or dropped, would improve fit.
+}
+\details{
 Notes:
-1. Runs much fast with full = FALSE (but this doesn't allow the model to re-fit around the newly-
+1. Runs much faster with full = FALSE (but this doesn't allow the model to re-fit around the newly-
 freed parameter).
 2. Compared to mxMI, this function returns top changes, and also suppresses the run message.
 3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link{mxMI}}
