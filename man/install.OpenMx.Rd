@@ -6,7 +6,8 @@
 \alias{umx_update_OpenMx}
 \title{Easily install the latest parallel/NPSOL enabled build of OpenMx.}
 \usage{
-install.OpenMx(loc = c("UVa", "latest", "travis"), url = NULL)
+install.OpenMx(loc = c("UVa", "travis", "CRAN", "travis list"), url = NULL,
+  lib, repos = getOption("repos"))
 }
 \arguments{
 \item{loc}{Where to install from: "UVa" (the default), "latest" (travis build),
@@ -18,7 +19,11 @@ or open the "travis" list of builds.}
 -
 }
 \description{
-You can install from UVa, from travis latest, from a custom url, or open the list of travis builds.
+You can:
+1. Install from UVa (default: This is where we maintain binaries supporting parallel procesing and MPSOL)
+2. Install the latest travis built (currently mac only)
+3. Install from a custom url.
+4. Open the list of travis builds in a browswer.
 }
 \examples{
 \dontrun{

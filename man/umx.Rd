@@ -94,7 +94,8 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_show}}, \code{\link{umx_time}}
 
 Other Twin Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
+  \code{\link{umxACESexLim}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
   \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxE}}, \code{\link{umxIP}},

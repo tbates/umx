@@ -1909,11 +1909,15 @@ print.reliability <- function (x, digits = 4, ...){
 #' Easily install the latest parallel/NPSOL enabled build of OpenMx.
 #'
 #' @description
-#' You can install from UVa, from travis latest, from a custom url, or open the list of travis builds.
+#' You can:
+#' 1. Install from UVa (default: This is where we maintain binaries supporting parallel procesing and MPSOL)
+#' 2. Install the latest travis built (currently mac only)
+#' 3. Install from a custom url.
+#' 4. Open the list of travis builds in a browswer.
 #'
 #' @aliases umx_install_OpenMx umx_update_OpenMx
-#' @param loc Where to install from: "UVa" (the default), "latest" (travis build),
-#' or open the "travis" list of builds.
+#' @param loc Where to install from: "UVa" (the default), "travis" (latest build),
+#' or open the travis list of builds on the web to view/pick a url.
 #' @param url A custom URL if you have/need one (probably not)
 #' @return - 
 #' @export
@@ -1923,19 +1927,19 @@ print.reliability <- function (x, digits = 4, ...){
 #' \dontrun{
 #' install.OpenMx()
 #' }
-install.OpenMx <- function(loc = c("UVa", "latest", "travis"), url= NULL) {	
+install.OpenMx <- function(loc = c("UVa", "travis", "CRAN", "open travis build page"), url= NULL, lib, repos = getOption("repos")) {	
 	loc = match.arg(loc)
 	if(!is.null(url)){
-		loc = url
-	}
-	if(loc == "travis"){
-		browseURL("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis")
-	}else if(loc == "latest"){
-		install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
+		install.packages(loc)
 	} else if(loc == "UVa"){
 		source("http://openmx.psyc.virginia.edu/getOpenMx.R")
-	}else{
-		install.packages(loc)
+	}else if(loc == "travis"){
+		install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
+		# install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz", lib = lib, repos=repos)
+	} else if(loc == "CRAN"){
+		install.packages("OpenMx", lib= lib, repos = repos)
+	} else if(loc == "open travis build page"){
+		browseURL("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis")
 	}
 }
 

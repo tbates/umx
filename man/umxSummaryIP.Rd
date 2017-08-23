@@ -57,7 +57,8 @@ umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 - \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
 Other Twin Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
+  \code{\link{umxACESexLim}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
   \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxE}}, \code{\link{umxIP}},

@@ -42,20 +42,18 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' # TODO examples
 xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, suffix = suffix, nSib = 2) {
-		# =================
-		# = Set optimizer =
-		# =================
-		if(!is.null(optimizer)){
-			umx_set_optimizer(optimizer)
-		}
-		if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
-		if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
-		# Look for name conflicts
-		badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
-		if(!identical(character(0), badNames)){
-			stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
-			"BadNames included: ", omxQuotes(badNames) )
-		}
+	# = Set optimizer =
+	if(!is.null(optimizer)){
+		umx_set_optimizer(optimizer)
+	}
+	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
+	if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
+	# Look for name conflicts
+	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
+	if(!identical(character(0), badNames)){
+		stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
+		"BadNames included: ", omxQuotes(badNames) )
+	}
 	if(is.null(suffix)){
 		stop("The umx twin functions are moving to specifying variable names and  just separator like '_T'.
 		If your column names are like 'obese_T1' and 'obese_T2' etc., Please set selVars = 'obese', sep = '_T'")		
