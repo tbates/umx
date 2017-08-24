@@ -158,8 +158,9 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# copies to debug
 			# nSib            = 2
 			# baseDV_names    = c("ht", "wt")
-			# # baseCov_names = c("intercept", "age", "sex")
 			# baseCov_names   = c("age", "sex")
+			# baseDV_names    = c("ht")
+			# baseCov_names   = c("age")
 			# nDVs            = length(baseDV_names)
 			# nCov            = length(baseCov_names)
 			# selDVs          = umx_paste_names(baseDV_names, "_T")
