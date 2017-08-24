@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxACEcov_fixed.R
 \name{umxACE_cov_fixed}
 \alias{umxACE_cov_fixed}
-\title{Run a Cholesky with covariates, either fixed (def var in the means) or random (in the expected covariance matrix)}
+\title{Run a Cholesky with covariates  ("fixed" / definition variables in the means style)}
 \usage{
 umxACE_cov_fixed(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData,
   sep = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
@@ -50,10 +50,10 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 - \code{\link{mxModel}} of subclass mxModel.ACEcov
 }
 \description{
-Often, researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models.
+Often, it is appropriate to include covariates in models.
 A simple method is to regressing covariates from the data (see \code{\link{umx_residualize}}).
-A second method (supported in umxACEcov) is to include the covariates in the means model. This is the
-'fixed' option for covariates models them in the mean as definition variables.
+A second method, implemented here, is including covariates in the means model.
+This 'fixed' effects option treats the covariates as definition variables.
 On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
 covariates must be non-NA, thus dropping any rows where onr or more covariates are missing.
 This is wasteful of data.
@@ -62,9 +62,10 @@ This is wasteful of data.
 The following figure shows how the ACE model with fixed covariates appears as a path diagram:
 \figure{ACEcov_means.png}
 
-The alternative is the umxACEcov 'random' option models the covariates in the expected covariance matrix, thus allowing
-all data to be preserved. The downside is that this method has a strong assumption
-of multivariate normality. Covariates like age, which are perfectly correlated in twins cannot be used.
+\emph{note}: An alternative is the \code{\link{umxACEcov}} 'random' option. This model adds covariates to
+the expected covariance matrix, thus allowing all data to be preserved.
+The (BIG) downside is that this method has a strong assumption of multivariate normality.
+Covariates like age, which are perfectly correlated in twins cannot be used.
 Covariates like sex, which are ordinal, violate the normality assumption.
 }
 \examples{
@@ -75,6 +76,7 @@ selDVs  = "ht"
 selCovs = "wt"
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
+m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
 m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "", auto=F)
 }
 \seealso{

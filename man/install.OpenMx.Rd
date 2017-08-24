@@ -6,12 +6,12 @@
 \alias{umx_update_OpenMx}
 \title{Easily install the latest parallel/NPSOL enabled build of OpenMx.}
 \usage{
-install.OpenMx(loc = c("UVa", "travis", "CRAN", "travis list"), url = NULL,
-  lib, repos = getOption("repos"))
+install.OpenMx(loc = c("UVa", "travis", "CRAN", "open travis build page"),
+  url = NULL, lib, repos = getOption("repos"))
 }
 \arguments{
-\item{loc}{Where to install from: "UVa" (the default), "latest" (travis build),
-or open the "travis" list of builds.}
+\item{loc}{Where to install from: "UVa" (the default), "travis" (latest build),
+or open the travis list of builds on the web to view/pick a url.}
 
 \item{url}{A custom URL if you have/need one (probably not)}
 }

@@ -1,9 +1,10 @@
-#' Run a Cholesky with covariates, either fixed (def var in the means) or random (in the expected covariance matrix)
+#' Run a Cholesky with covariates  ("fixed" / definition variables in the means style)
 #'
-#' Often, researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models.
+#' Often, it is appropriate to include covariates in models.
 #' A simple method is to regressing covariates from the data (see \code{\link{umx_residualize}}).
-#' A second method (supported in umxACEcov) is to include the covariates in the means model. This is the
-#' 'fixed' option for covariates models them in the mean as definition variables.
+#' A second method, implemented here, is including covariates in the means model.
+
+#' This 'fixed' effects option treats the covariates as definition variables.
 #' On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
 #' covariates must be non-NA, thus dropping any rows where onr or more covariates are missing.
 #' This is wasteful of data.
@@ -11,12 +12,11 @@
 #' The following figure shows how the ACE model with fixed covariates appears as a path diagram:
 #' \figure{ACEcov_means.png}
 #' 
-#' The alternative is the umxACEcov 'random' option models the covariates in the expected covariance matrix, thus allowing
-#' all data to be preserved. The downside is that this method has a strong assumption
-#' of multivariate normality. Covariates like age, which are perfectly correlated in twins cannot be used.
+#' \emph{note}: An alternative is the \code{\link{umxACEcov}} 'random' option. This model adds covariates to
+#' the expected covariance matrix, thus allowing all data to be preserved.
+#' The (BIG) downside is that this method has a strong assumption of multivariate normality.
+#' Covariates like age, which are perfectly correlated in twins cannot be used.
 #' Covariates like sex, which are ordinal, violate the normality assumption.
-#'
-#'
 #' 
 #' @param name The name of the model (defaults to"ACEcov").
 #' @param selDVs The variables to include from the data (do not include suffixes).
@@ -47,6 +47,7 @@
 #' selCovs = "wt"
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
 #' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "", auto=F)
 
 umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), suffix = NULL) {
@@ -60,7 +61,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		selDVs  = umx_paste_names(selDVs , suffix, 1:nSib)
 		selCovs = umx_paste_names(selCovs, suffix, 1:nSib)
 		nCov = length(baseCov_names)
-		nVar = length(baseDV_names); # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+		nDVs = length(baseDV_names); # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 		used = c(selDVs, selCovs)
 		if(!is.null(weightVar)){
 			used = c(used, weightVar)
@@ -114,15 +115,15 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		# = Add means and var matrices to top =
 		# =====================================
 		# Figure out start values for a, c, and e
-		varStarts = umx_var(mzData[, selDVs[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+		varStarts = umx_var(mzData[, selDVs[1:nDVs], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 		
-		if(nVar == 1){
+		if(nDVs == 1){
 			# sqrt to switch from var to path coefficient scale
 			varStarts = sqrt(varStarts)/3
 		} else {
 			varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
 		}
-		varStarts = matrix(varStarts, nVar, nVar)
+		varStarts = matrix(varStarts, nDVs, nDVs)
 
 		# Mean starts
 		obsMZmeans   = umx_means(mzData[, selDVs], ordVar = 0, na.rm = TRUE)
@@ -155,48 +156,47 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# http://ibg.colorado.edu/cdrom2016/maes/UnivariateAnalysis/twoa/twoACEca.R
 
 			# copies to debug
-			# nSib = 2
-			# baseDV_names  = c("ht", "wt")
-			# # TODO: add intercept to incoming cov list
+			# nSib            = 2
+			# baseDV_names    = c("ht", "wt")
 			# # baseCov_names = c("intercept", "age", "sex")
-			# baseCov_names = c("age", "sex")
-			# nVar    = length(baseDV_names)
-			# nCov    = length(baseCov_names)
-			# selDVs  = umx_paste_names(baseDV_names, "_T")
-			# selCovs = umx_paste_names(baseCov_names, "_T")
-			# obsMZmeans = rep(0, length(selDVs))
+			# baseCov_names   = c("age", "sex")
+			# nDVs            = length(baseDV_names)
+			# nCov            = length(baseCov_names)
+			# selDVs          = umx_paste_names(baseDV_names, "_T")
+			# selCovs         = umx_paste_names(baseCov_names, "_T")
+			# obsMZmeans      = rep(0, length(selDVs))
 
-			# Bits for top
-			# betas is a [nCov, nVar*nSib] matrix
-			betaLabels = paste0("cov", rep(1:nCov, each = nVar*nSib), "b_", rep(baseDV_names, nCov))
-			b_dimnames = list(paste0(paste0("cov", 1:nCov, "b")), umx_paste_names(paste0("var", 1:length(baseDV_names), "_T")))
-			
-			# Intercepts is a [1, nVar*nSib] matrix
-			# intLabels   = paste0("intercept_", selDVs)
-			intDimNames = list("int", selDVs)
+			# ================
+			# = Bits for top =
+			# ================
+			# 1. betas is an [nCov, nDVs * nSib] matrix
+			# TODO: add intercept to incoming cov list
+			# TODO support quadratic betas on means
+			betaLabels = paste0("b", rep(1:nCov, each = nDVs * nSib), "_", rep(baseDV_names, nCov))
+			betaLabels = matrix(betaLabels, nrow = (nCov * nSib), ncol = (nDVs * nSib), byrow = TRUE)
+			#      [,1]      [,2]      [,3]      [,4]
+			# [1,] "b1_ht" "b1_wt" "b1_ht" "b1_wt"
+			# [2,] "b2_ht" "b2_wt" "b2_ht" "b2_wt"
+			# [3,] "b1_ht" "b1_wt" "b1_ht" "b1_wt"
+			# [4,] "b2_ht" "b2_wt" "b2_ht" "b2_wt"
+ 			betaDims = list(paste0("cov", 1:nCov, "_T", rep(1:nSib, each = nCov)), umx_paste_names(paste0("var", 1:length(baseDV_names), "_T")))
+			# "cov1_T1" "cov2_T1" "cov1_T2" "cov2_T2"
+			# "var1_T1" "var2_T1" "var1_T2" "var2_T2"
+			# top.betas = [nCov * nSib, nDVs * nSib]
+			betas = umxMatrix("betas", "Full", nrow = nCov * nSib, ncol = nDVs*nSib, free = TRUE, values = .01, labels = betaLabels, dimnames = betaDims)
+			# 2. Intercepts is a [1, nDVs*nSib] matrix (not yet equated across twins...)
+			Intercepts = umxMatrix("Intercepts", "Full", nrow = 1, ncol = (nDVs * nSib), free = TRUE, values = obsMZmeans, dimnames = list("int", selDVs))
 
-			top = mxModel("top", 
-				# TODO support quadratic betas on means 
-				# Matrices for betas [nCov, nVar*2], and intercepts [1, nVar*2]
-				umxMatrix("betas"     , "Full", nrow = nCov, ncol = nVar*nSib, free = TRUE, values = .01, labels = betaLabels, dimnames = b_dimnames, byrow = TRUE),
-				umxMatrix("Intercepts", "Full", nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = intDimNames)
-			)
-
-			defCov_dimnames = list("defCov", selCovs)
-			# betas$values %*% defCovs$values
+			top = mxModel("top", betas, Intercepts)
 
 			MZ = mxModel("MZ",
-				# row of data.Covariates for T1 & T2 [1, nCov*nSib]
-				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, labels = paste0("data.", selCovs), dimnames = defCov_dimnames),
-				# Create Algebra for expected Mean Matrices
+				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, labels = paste0("data.", selCovs), dimnames = list("defCov", selCovs)),
 				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas), dimnames = list(NULL, selDVs)),
 				mxExpectationNormal("top.expCovMZ", "expMean"),
 				mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw")
 			)
 			DZ = mxModel("DZ", 
-				# row of defCovs for t1 and t2
-				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, labels = paste0("data.", selCovs), dimnames = defCov_dimnames),
-				# Algebra for expected Mean Matrices
+				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, labels = paste0("data.", selCovs), dimnames = list("defCov", selCovs)),
 				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas), dimnames = list(NULL, selDVs)),
 				mxExpectationNormal("top.expCovDZ", "expMean"), 
 				mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw")
@@ -213,7 +213,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 				# message("No continuous variables found.")
 			}
 			# Means: all free, start cont at the measured value, ord @0
-			meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
+			meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nDVs * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
 			# Thresholds
 			# for better guessing with low-frequency cells
 			allData = rbind(mzData, dzData)
@@ -249,7 +249,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# ===========================================================================
 			# Fill with zeros: default for ordinals and binary...
 			meansFree = (!isBin) # fix the binary variables at zero
-			meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = obsMZmeans, dimnames = meanDimNames)
+			meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = nDVs*nSib, free = meansFree, values = obsMZmeans, dimnames = meanDimNames)
 
 			# = Thresholds =
 			# For better guessing with low-freq cells
@@ -269,7 +269,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# ===================================
 			# Algebra to pick out the ord vars
 			# TODO check this way of using twin 1 to pick where the bin vars are is robust...
-			the_bin_cols = which(isBin)[1:nVar] # columns in which the bin vars appear for twin 1, i.e., c(1,3,5,7)
+			the_bin_cols = which(isBin)[1:nDVs] # columns in which the bin vars appear for twin 1, i.e., c(1,3,5,7)
 			binBracketLabels = paste0("Vtot[", the_bin_cols, ",", the_bin_cols, "]")
 
 			top = mxModel(top,
@@ -289,9 +289,9 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 		# NB: top already has the means model and thresholds matrix added if necessary  - see above
 		# Additive, Common, and Unique environmental paths
-		umxMatrix("a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
-		umxMatrix("c", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
-		umxMatrix("e", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE), 
+		umxMatrix("a", type = "Lower", nrow = nDVs, ncol = nDVs, free = TRUE, values = varStarts, byrow = TRUE),
+		umxMatrix("c", type = "Lower", nrow = nDVs, ncol = nDVs, free = TRUE, values = varStarts, byrow = TRUE),
+		umxMatrix("e", type = "Lower", nrow = nDVs, ncol = nDVs, free = TRUE, values = varStarts, byrow = TRUE), 
 	
 		mxMatrix(name = "dzAr", type = "Full", 1, 1, free = FALSE, values = dzAr),
 		mxMatrix(name = "dzCr", type = "Full", 1, 1, free = FALSE, values = dzCr),
@@ -310,9 +310,6 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 					rbind(cbind(ACE, hAC),
 					      cbind(hAC, ACE)), dimnames = list(selDVs, selDVs))
 	)
-	save("m1", file="m1.rda")
-	system(paste("open ",shQuote(getwd(), type = "csh")))
-	
 	# =======================================
 	# = 		Assemble models into supermodel =
 	# =======================================
@@ -358,7 +355,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 	}
 	if(addStd){
 		newTop = mxModel(model$top,
-			mxMatrix(name  = "I", "Iden", nVar, nVar), # nVar Identity matrix
+			mxMatrix(name  = "I", "Iden", nDVs, nDVs), # nDVs Identity matrix
 			mxAlgebra(name = "Vtot", A + C+ E),        # Total variance
 			# TODO test that these are identical in all cases
 			# mxAlgebra(vec2diag(1/sqrt(diag2vec(Vtot))), name = "SD"), # Total variance
@@ -375,10 +372,10 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
 	if(equateMeans){
 		# in basic ACE models, this acts on expMean.
-		# Here, we equate halves of the [1* (nVar * nSib)] Intercepts matrix
+		# Here, we equate halves of the [1* (nDVs * nSib)] Intercepts matrix
 		model = omxSetParameters(model,
-		  labels    = paste0("Intercepts_r1c", (nVar + 1):(nVar * nSib)), # c("Intercepts14", "Intercepts15", "Intercepts16"),
-		  newlabels = paste0("Intercepts_r1c", 1:nVar)                    # c("Intercepts11", "Intercepts12", "Intercepts13")
+		  labels    = paste0("Intercepts_r1c", (nDVs + 1):(nDVs * nSib)), # c("Intercepts14", "Intercepts15", "Intercepts16"),
+		  newlabels = paste0("Intercepts_r1c", 1:nDVs)                    # c("Intercepts11", "Intercepts12", "Intercepts13")
 		)
 	}
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
