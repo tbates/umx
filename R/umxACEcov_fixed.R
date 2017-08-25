@@ -55,7 +55,9 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		thresholds = match.arg(thresholds)
 		if(!is.null(sep)){ suffix = sep }
 		if(dzCr == .25 && name == "ACEcov"){ name = "ADEcov"}
-		xmu_twin_check(selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, suffix = suffix)
+		xmu_twin_check(selDVs= c(selDVs, selCovs), dzData = dzData, mzData = mzData, optimizer = optimizer, suffix = suffix)
+
+		
 		baseDV_names  = selDVs
 		baseCov_names = selCovs
 		selDVs  = umx_paste_names(selDVs , suffix, 1:nSib)
@@ -69,6 +71,20 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		# Drop unused columns
 		mzData = mzData[, used]
 		dzData = dzData[, used]
+		
+		# Drop rows with missing covariates
+		OK = complete.cases(mzData[, selCovs])
+		if(sum(!OK)<nrow(mzData)){
+			message(sum(!OK), " cases in dzData do not have complete covariates, and are being dropped from the model.")
+			mzData = mzData[OK,]
+		}
+
+		OK = complete.cases(dzData[, selCovs])
+		if(sum(!OK)<nrow(dzData)){
+			message(sum(!OK), " cases in dzData do not have complete covariates, and are being dropped from the model.")
+			dzData = dzData[OK,]
+		}
+
 		# Compute numbers of ordinal and binary variables
 		isFactor = umx_is_ordered(mzData[, selDVs])                      # T/F list of factor columns
 		isOrd    = umx_is_ordered(mzData[, selDVs], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
@@ -170,35 +186,31 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# ================
 			# = Bits for top =
 			# ================
-			# 1. betas is an [nCov, nDVs * nSib] matrix
+			# 1. betas is an [nCov, nDVs] matrix
 			# TODO: add intercept to incoming cov list
 			# TODO support quadratic betas on means
-			betaLabels = paste0("b", rep(1:nCov, each = nDVs * nSib), "_", rep(baseDV_names, nCov))
-			betaLabels = matrix(betaLabels, nrow = (nCov * nSib), ncol = (nDVs * nSib), byrow = TRUE)
-			#      [,1]      [,2]      [,3]      [,4]
-			# [1,] "b1_ht" "b1_wt" "b1_ht" "b1_wt"
-			# [2,] "b2_ht" "b2_wt" "b2_ht" "b2_wt"
-			# [3,] "b1_ht" "b1_wt" "b1_ht" "b1_wt"
-			# [4,] "b2_ht" "b2_wt" "b2_ht" "b2_wt"
- 			betaDims = list(paste0("cov", 1:nCov, "_T", rep(1:nSib, each = nCov)), umx_paste_names(paste0("var", 1:length(baseDV_names), "_T")))
-			# "cov1_T1" "cov2_T1" "cov1_T2" "cov2_T2"
-			# "var1_T1" "var2_T1" "var1_T2" "var2_T2"
-			# top.betas = [nCov * nSib, nDVs * nSib]
-			betas = umxMatrix("betas", "Full", nrow = nCov * nSib, ncol = nDVs*nSib, free = TRUE, values = .01, labels = betaLabels, dimnames = betaDims)
+			
+			T1Covs = selCovs[1:nCov]
+			T2Covs = selCovs[(nCov+1):length(selCovs)]
+			betaLabels = paste0("b", rep(1:nCov, each = nDVs), "_", rep(baseDV_names, nCov))
+ 			betaDims = list(paste0("bcov", 1:nCov), paste0("var", 1:(nDVs/nSib)))
+			betas = umxMatrix("betas", "Full", nrow = nCov, ncol = nDVs, free = TRUE, values = .01, labels = betaLabels, dimnames = betaDims)
+
 			# 2. Intercepts is a [1, nDVs*nSib] matrix (not yet equated across twins...)
 			Intercepts = umxMatrix("Intercepts", "Full", nrow = 1, ncol = (nDVs * nSib), free = TRUE, values = obsMZmeans, dimnames = list("int", selDVs))
 
 			top = mxModel("top", betas, Intercepts)
-
 			MZ = mxModel("MZ",
-				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, labels = paste0("data.", selCovs), dimnames = list("defCov", selCovs)),
-				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas), dimnames = list(NULL, selDVs)),
+				umxMatrix("defCovT1", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", T1Covs), dimnames = list("defCovT1", T1Covs)),
+				umxMatrix("defCovT2", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", T2Covs), dimnames = list("defCovT2", T2Covs)),
+				mxAlgebra(name = "expMean", top.Intercepts + cbind(defCovT1 %*% top.betas, defCovT2 %*% top.betas), dimnames = list(NULL, selDVs)),
 				mxExpectationNormal("top.expCovMZ", "expMean"),
 				mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw")
 			)
 			DZ = mxModel("DZ", 
-				umxMatrix("defCovs", "Full", nrow = 1, ncol = (nCov * nSib), free = FALSE, labels = paste0("data.", selCovs), dimnames = list("defCov", selCovs)),
-				mxAlgebra(name = "expMean", top.Intercepts + (defCovs %*% top.betas), dimnames = list(NULL, selDVs)),
+				umxMatrix("defCovT1", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", T1Covs), dimnames = list("defCovT1", T1Covs)),
+				umxMatrix("defCovT2", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", T2Covs), dimnames = list("defCovT2", T2Covs)),
+				mxAlgebra(name = "expMean", top.Intercepts + cbind(defCovT1 %*% top.betas, defCovT2 %*% top.betas), dimnames = list(NULL, selDVs)),
 				mxExpectationNormal("top.expCovDZ", "expMean"), 
 				mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw")
 			)
@@ -296,7 +308,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 	
 		mxMatrix(name = "dzAr", type = "Full", 1, 1, free = FALSE, values = dzAr),
 		mxMatrix(name = "dzCr", type = "Full", 1, 1, free = FALSE, values = dzCr),
-		# Multiply by each path coefficient by its inverse to get variance component
+		# Multiply each path coefficient by its inverse to get variance component
 		# Quadratic multiplication to add common_loadings
 		mxAlgebra(name = "A", a %*% t(a)), # additive genetic variance
 		mxAlgebra(name = "C", c %*% t(c)), # common environmental variance

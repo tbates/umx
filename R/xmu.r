@@ -46,25 +46,31 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, optimizer =
 	if(!is.null(optimizer)){
 		umx_set_optimizer(optimizer)
 	}
+	# check data has rows
 	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
+	
 	# Look for name conflicts
 	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
 	if(!identical(character(0), badNames)){
 		stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
 		"BadNames included: ", omxQuotes(badNames) )
 	}
+
+	# enforce presence of suffix
 	if(is.null(suffix)){
 		stop("The umx twin functions are moving to specifying variable names and  just separator like '_T'.
 		If your column names are like 'obese_T1' and 'obese_T2' etc., Please set selVars = 'obese', sep = '_T'")		
-	}
-	if(length(suffix) > 1){
+	}else if(length(suffix) > 1){
 		stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
 		"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
 	}
+	
+	# expand and check all names in the data
 	selDVs = umx_paste_names(selDVs, suffix, 1:nSib)
 	umx_check_names(selDVs, mzData)
 	umx_check_names(selDVs, dzData)
+
 }
 
 #' xmu_check_levels_identical
