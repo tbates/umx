@@ -73,11 +73,10 @@ require(umx)
 data(twinData) # ?twinData from Australian twins.
 # Pick the variables
 selDVs  = "ht"
-selCovs = "wt"
+selCovs = "age"
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
-m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "", auto=F)
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{plot.MxModel}},
