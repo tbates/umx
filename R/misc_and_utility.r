@@ -1916,9 +1916,11 @@ print.reliability <- function (x, digits = 4, ...){
 #' 4. Open the list of travis builds in a browswer.
 #'
 #' @aliases umx_install_OpenMx umx_update_OpenMx
-#' @param loc Where to install from: "UVa" (the default), "travis" (latest build),
+#' @param loc Which install to get: "UVa" (the default), "travis" (latest build),
 #' or open the travis list of builds on the web to view/pick a url.
 #' @param url A custom URL if you have/need one (probably not)
+#' @param repos Which repository to use (ignored currently)
+#' @param lib Where to install the package
 #' @return - 
 #' @export
 #' @family Miscellaneous Functions
@@ -3379,21 +3381,75 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, verbose = FALSE){
 	}
 }
 
-umx_is_numeric <- function(df, cols = TRUE){
-	if(cols != TRUE){
-		stop(paste0("Can't handle anything by columns yet"))
-	}
+#' Check if variables in a dataframe are in a list of classes.
+#'
+#' @description
+#' Checks the class of each column in a dataframe, seeing if they are %in% a list of classes.
+#' Returns a vector of TRUE and FALSE, or, if all ==TRUE, a single binary (the default).
+#'
+#' @param df A dataframe to check
+#' @param classes vector of valid classes, e.g. numeric
+#' @param all Whether to return a single all() Boolean or each column individually.
+#' @return - Boolean or Boolean vector
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - \code{\link{umx_is_numeric}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' umx_is_class(mtcars, "character") # FALSE
+#' umx_is_class(mtcars, "numeric") # TRUE
+#' umx_is_class(mtcars, "numeric", all = FALSE) # vector of TRUE
+#' umx_is_class(twinData[,c(13, 17)], classes = "character", all=T)
+umx_is_class <- function(df, classes, all = TRUE){
 	if(!is.data.frame(df)){
 		stop(paste0("First argument should be a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
 	}
 	colNames = names(df)
-	bIsNumeric = rep(F, length(colNames))
+	bIsOK = rep(FALSE, length(colNames))
+	i = 1
+	for (n in colNames) {
+		bIsOK[i] = (class(df[, n]) %in% classes)
+		i = i + 1
+	}
+	if(all){
+		return(all(bIsOK))
+	} else {
+		return(bIsOK)
+	}
+}
+
+#' Check if variables in a dataframe are numeric
+#'
+#' @description
+#' Checks across columns of a dataframe, return a vector of TRUE and FALSE, 
+#' or, if all ==TRUE, a single binary (the default).
+#'
+#' @param df A dataframe to check
+#' @param all Whether to return a single all() Boolean or each column individually.
+#' @return - Boolean or Boolean vector
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - \code{\link{umx_is_class}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' umx_is_numeric(mtcars) # TRUE
+#' umx_is_numeric(mtcars, all=FALSE) # vector of TRUE
+umx_is_numeric <- function(df, all = TRUE){
+	if(!is.data.frame(df)){
+		stop(paste0("First argument should be a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+	}
+	colNames = names(df)
+	bIsNumeric = rep(FALSE, length(colNames))
 	i = 1
 	for (n in colNames) {
 		bIsNumeric[i] = is.numeric(df[,n])
 		i = i + 1
 	}
-	return(bIsNumeric)
+	if(all){
+		return(all(bIsNumeric))
+	} else {
+		return(bIsNumeric)
+	}
 }
 
 #' Easily residualize variables in long or wide dataframes, returning them changed in-place.

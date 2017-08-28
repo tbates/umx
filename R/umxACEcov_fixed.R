@@ -1,16 +1,21 @@
 #' Run a Cholesky with covariates  ("fixed" / definition variables in the means style)
 #'
 #' Often, it is appropriate to include covariates in models.
-#' A simple method is to regressing covariates from the data (see \code{\link{umx_residualize}}).
-#' A second method, implemented here, is including covariates in the means model.
-
-#' This 'fixed' effects option treats the covariates as definition variables.
-#' On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
-#' covariates must be non-NA, thus dropping any rows where onr or more covariates are missing.
-#' This is wasteful of data.
+#' One simple method is to regress covariates from the data using lm. 'fixed' effects approach.
+#' umx makes this easy, even on twin data, and with complex regression formulae: see \code{\link{umx_residualize}}.
 #' 
+#' However, while these estimates are unbiased, doing this regression in the means element of the twin model
+#' allows correct tests for significance. Also, if DVs are not continuous, the lm-based approach
+#' cannot be used.
+#' 
+#' For this reason, we have implemented umxACE_cov_fixed, which allows including covariates as definition variables.
 #' The following figure shows how the ACE model with fixed covariates appears as a path diagram:
 #' \figure{ACEcov_means.png}
+#' 
+#' @details
+#' On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
+#' covariates must be non-NA, thus dropping any rows where one or more covariates are missing.
+#' This is wasteful of data, but often cannot be avoided (though see note below).
 #' 
 #' \emph{note}: An alternative is the \code{\link{umxACEcov}} 'random' option. This model adds covariates to
 #' the expected covariance matrix, thus allowing all data to be preserved.
@@ -33,12 +38,14 @@
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param thresholds How to implement ordinal thresholds: c("deviationBased", "left_censored").
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
+#' @param weightVar
 #' @param autoRun Whether to run the model and return it, or just return it.
 #' @param suffix synonym for 'sep' (see above).
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
-#' @export
+#' @seealso umx_residualize umxACE
 #' @family Twin Modeling Functions
+#' @export
 #' @examples
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.
@@ -49,6 +56,23 @@
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
 #' m2 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+#' # =======================
+#' # = lm-based equivalent =
+#' # =======================
+#' df_res = umx_residualize(ht ~ age, suffixes = c("1", "2"), data = twinData)
+#' mzData <- df_res[df_res$zygosity %in% "MZFF", ]
+#' dzData <- df_res[df_res$zygosity %in% "DZFF", ]
+#' m3 = umxACE("lm_based", selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+#' # ===============================
+#' # = Example with two covariates =
+#' # ===============================
+#' selDVs  = "wt"
+#' selCovs = c("age", "cohort")
+#' twinData$cohort1 = twinData$cohort2 = as.numeric(as.factor(twinData$cohort))
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), suffix = NULL) {
 		nSib = 2 # number of siblings in a twin pair
 		thresholds = match.arg(thresholds)
@@ -220,8 +244,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# ==================================================
 			# = Handle 1 or more ordinal variables (no binary) =
 			# ==================================================
-			message("umxACE found ", (nOrdVars/nSib), " pair(s) of ordinal variables:", omxQuotes(ordVarNames),
-			" (No binary)")			
+			message("umxACE found ", (nOrdVars/nSib), " pair(s) of ordinal variables:", omxQuotes(ordVarNames), " (No binary)")		
 			if(length(contVarNames) > 0){
 				message(length(contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(contVarNames))	
 			}else{
@@ -278,6 +301,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			top = mxModel("top", umxLabel(meansMatrix), threshMat)
 			MZ  = mxModel("MZ", mzExpect, mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
 			DZ  = mxModel("DZ", dzExpect, mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
+
 
 			# ===================================
 			# = Constrain Ordinal variance @1  =
@@ -350,7 +374,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 				mxFitFunctionAlgebra("dzWeightedCov")
 			),
 			mxFitFunctionMultigroup(c("MZw", "DZw"))
-		)
+		)				
 	}
 	if(!is.null(boundDiag)){
 		if(!is.numeric(boundDiag)){
