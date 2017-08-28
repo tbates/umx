@@ -77,6 +77,7 @@ selCovs = "age"
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
+m2 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{plot.MxModel}},
