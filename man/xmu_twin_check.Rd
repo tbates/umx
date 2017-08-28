@@ -4,8 +4,8 @@
 \alias{xmu_twin_check}
 \title{Check basic aspects of input for twin models}
 \usage{
-xmu_twin_check(selDVs, dzData = dzData, mzData = mzData,
-  optimizer = optimizer, suffix = suffix, nSib = 2)
+xmu_twin_check(selDVs, dzData = dzData, mzData = mzData, optimizer = NULL,
+  suffix = suffix, nSib = 2)
 }
 \arguments{
 \item{selDVs}{the variables expected to be in the data}
@@ -48,5 +48,6 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
 
 Other Miscellaneous Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_get_options}},
+  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
   \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}}
 }

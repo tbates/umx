@@ -51,16 +51,22 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 }
 \description{
 Often, it is appropriate to include covariates in models.
-A simple method is to regressing covariates from the data (see \code{\link{umx_residualize}}).
-A second method, implemented here, is including covariates in the means model.
-This 'fixed' effects option treats the covariates as definition variables.
-On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
-covariates must be non-NA, thus dropping any rows where onr or more covariates are missing.
-This is wasteful of data.
+One simple method is to regress covariates from the data using lm. 'fixed' effects approach.
+umx makes this easy, even on twin data, and with complex regression formulae: see \code{\link{umx_residualize}}.
 }
 \details{
+However, while these estimates are unbiased, doing this regression in the means element of the twin model
+allows correct tests for significance. Also, if DVs are not continuous, the lm-based approach
+cannot be used.
+
+For this reason, we have implemented umxACE_cov_fixed, which allows including covariates as definition variables.
 The following figure shows how the ACE model with fixed covariates appears as a path diagram:
 \figure{ACEcov_means.png}
+
+
+On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
+covariates must be non-NA, thus dropping any rows where one or more covariates are missing.
+This is wasteful of data, but often cannot be avoided (though see note below).
 
 \emph{note}: An alternative is the \code{\link{umxACEcov}} 'random' option. This model adds covariates to
 the expected covariance matrix, thus allowing all data to be preserved.
@@ -78,8 +84,26 @@ mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
 m2 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+# =======================
+# = lm-based equivalent =
+# =======================
+df_res = umx_residualize(ht ~ age, suffixes = c("1", "2"), data = twinData)
+mzData <- df_res[df_res$zygosity \%in\% "MZFF", ]
+dzData <- df_res[df_res$zygosity \%in\% "DZFF", ]
+m3 = umxACE("lm_based", selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+# ===============================
+# = Example with two covariates =
+# ===============================
+selDVs  = "ht"
+selCovs = c("age", "cohort")
+twinData$cohort1 = twinData$cohort2 = as.numeric(as.factor(twinData$cohort))
+mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
+m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
 }
 \seealso{
+umx_residualize umxACE
+
 Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
   \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
