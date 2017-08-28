@@ -29,6 +29,7 @@ umx_pad(1:3, 3)
 \seealso{
 Other Miscellaneous Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_get_options}},
+  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
   \code{\link{umx_open_CRAN_page}},
   \code{\link{xmu_twin_check}}
 }
