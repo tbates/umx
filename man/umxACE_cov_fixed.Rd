@@ -94,12 +94,13 @@ m3 = umxACE("lm_based", selDVs = selDVs, dzData = dzData, mzData = mzData, sep =
 # ===============================
 # = Example with two covariates =
 # ===============================
-selDVs  = "ht"
+selDVs  = "wt"
 selCovs = c("age", "cohort")
 twinData$cohort1 = twinData$cohort2 = as.numeric(as.factor(twinData$cohort))
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 }
 \seealso{
 umx_residualize umxACE
