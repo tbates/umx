@@ -34,6 +34,8 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 
 \item{boundDiag}{= Whether to bound the diagonal of the a, c, and e matrices.}
 
+\item{weightVar}{Variable containing the (Optional) weights to apply to data.}
+
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}

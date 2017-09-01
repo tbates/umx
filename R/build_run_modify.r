@@ -4140,7 +4140,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #'
 #' @description The goal of this function is to enable quick-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
 #' 
-#' It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{means}, \strong{v1m0}, \strong{v.m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{Cholesky}, \strong{defn}, \strong{forms}.
+#' It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{means}, \strong{v1m0}, \strong{v0m0,} \strong{v.m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{fromEach}, \strong{Cholesky}, \strong{defn}, \strong{forms}.
 #'
 #' The new preposition \dQuote{with} means you no-longer need set arrows = 2 on covariances. Instead, you can say:
 #'
@@ -4172,12 +4172,18 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' \code{umxPath(v.m. = "A")}
 #' 
-#' umxPath exposes \dQuote{unique.bivariate} so you don't have to remember
+#' umxPath exposes \dQuote{unique.bivariate} and \dQuote{unique.pairs} so you don't have to remember
 #' how to fill in connect = in mxPath (you can still use connect if you wish).
 #' 
-#' So, to create paths A<->B, B<->C, and A<->C, you would say:
+#' So, to create paths creates A<->A, B<->B, and A->B, you would say:
 #' 
+#' \code{umxPath(unique.pairs = c('A',"B"))} 
+#' 
+#' To create paths A<->B, B<->C, and A<->C, you would say:
 #' \code{umxPath(unique.bivariate = c('A',"B","C"))}
+#' 
+#' \code{umxPath(fromEach = c('A',"B","C"))} Creates one-headed arrows on the unique.bivariate pattern
+#' 
 #' 
 #' Setting up a latent trait, you can fix the loading of the first path with
 #' 
@@ -4185,11 +4191,11 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
 #' 
-#' A new feature is the ability to create Cholesky-pattern connections:
+#' To create Cholesky-pattern connections:
 #' 
 #' \code{umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))}
 #' 
-#' Finally, a feature, not implemented in this release, but intended for the future is
+#' Finally, not implemented in this release, but intended for the future is
 #' John Fox "sem"-package style notation,
 #' 
 #' i.e., "A -> B; X <-> B; "
