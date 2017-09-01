@@ -38,10 +38,10 @@
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param thresholds How to implement ordinal thresholds: c("deviationBased", "left_censored").
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
-#' @param weightVar Variable containing the (Optional) weights to apply to data.
+#' @param weightVar (optional) Variable containing the weights to apply to data.
 #' @param autoRun Whether to run the model and return it, or just return it.
-#' @param suffix synonym for 'sep' (see above).
-#' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
+#' @param optimizer (optionally) set the optimizer. Default (NULL) does nothing.
+#' @param suffix deprecated synonym for 'sep' (see above).
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @seealso umx_residualize umxACE
 #' @family Twin Modeling Functions
