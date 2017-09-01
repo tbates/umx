@@ -34,17 +34,19 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 
 \item{boundDiag}{= Whether to bound the diagonal of the a, c, and e matrices.}
 
+\item{weightVar}{(optional) variable which contains weights.}
+
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
 
 \item{thresholds}{How to implement ordinal thresholds: c("deviationBased", "left_censored").}
 
-\item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
+\item{optimizer}{(optionally) set the optimizer. Default (NULL) does nothing.}
 
 \item{autoRun}{Whether to run the model and return it, or just return it.}
 
-\item{suffix}{synonym for 'sep' (see above).}
+\item{suffix}{deprecated synonym for 'sep' (see above).}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACEcov
