@@ -68,8 +68,9 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduce <- function(model, report = "markdown", baseFileName = "tmp") {
+umxReduce <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp") {
 	umx_is_MxModel(model)
+	report = match.arg(report)
 	if(class(model) == "MxModel.GxE"){		
 		# Reduce GxE Model
 		# Good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
@@ -105,7 +106,7 @@ umxReduce <- function(model, report = "markdown", baseFileName = "tmp") {
 		# = everything table =
 		# ====================
 		
-		umxCompare(model,  comparisons            , all = TRUE, report = report, file = paste0(baseFileName, "1.html"))
+		umxCompare(model, comparisons, all = TRUE, report = report, file = paste0(baseFileName, "1.html"))
 		# umxCompare(no_c_no_cem, no_c_no_moderation, all = TRUE, report = report, file = paste0(baseFileName, "2.html"))
 	} else {
 		stop("Only GxE implemented so far. Feel free to let me know what you want...")
@@ -640,7 +641,7 @@ umxSummary.default <- function(model, ...){
 #' )
 #' m1 <- mxRun(m1)
 #' umxSummary(m1, showEstimates = "std", filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = NULL, ...){
+umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = NULL, ...){
 	# TODO make table take lists of models...
 	if(!is.null(std)){
 		stop("use show = 'std', not std = T")
@@ -2047,12 +2048,10 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
-#' selDVs = c("bmi1", "bmi2")
-#' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
-#' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
-#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' selDVs = "bmi"
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", showStd = "deprecated", ...) {
 	if(showMeans != "deprecated"){

@@ -34,12 +34,10 @@ Make a graphical display of an ACE model
 \examples{
 require(umx)
 data(twinData)
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
-selDVs = c("bmi1", "bmi2")
-mzData <- subset(twinData, ZYG == "MZFF", selDVs)
-dzData <- subset(twinData, ZYG == "DZFF", selDVs)
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+selDVs = "bmi"
+mzData <- subset(twinData, zygosity == "MZFF")
+dzData <- subset(twinData, zygosity == "DZFF")
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 plot(m1, std = FALSE) # don't standardize
 }
 \references{

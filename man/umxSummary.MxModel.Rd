@@ -6,7 +6,7 @@
 \usage{
 \method{umxSummary}{MxModel}(model, refModels = NULL,
   showEstimates = c("raw", "std", "none", "both"), digits = 2,
-  report = c("1", "table", "html"), filter = c("ALL", "NS", "SIG"),
+  report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"),
   SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = NULL, ...)
 }
 \arguments{

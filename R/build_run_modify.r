@@ -458,7 +458,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	)
 	if (class(data) == "character"){
 		# user is just running a trial model, with no data, but provided names for sketch mode
-		# plot(m1)
+		if(autoRun && ("name" == umx_set_auto_plot(silent=TRUE))){
+			plot(m1)
+		}
 		return(m1)
 	}else{
 		m1 = mxModel(m1, data)
