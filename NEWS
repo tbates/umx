@@ -1,21 +1,33 @@
 # umx 1.9.0 in progress (September 2017, R unstable)
 * *TIP*: Show small estimated paths with `umx_parameters(model, "below", .1)`
 * *TIP*: `?umxRAM` has a sketch mode. just set `data` to a list of manifest variable names.
-* IMPROVED: set plot format in umxACE with `format = "graphviz" or "DiagrammeR"`
+* NEW `?umxACEcov_fixed` Beta1: Handles main effects of covariates in the means of continuous variables.
+* NEW: `optimiser` parameter for umxACE and other twin models: Set the optimizer in your model code!
+* NEW: `umx_is_numeric` boolean check if variables in a dataframe are numeric.
+* NEW: `umx_is_class` boolean check if variables in a dataframe match a desired class.
+* NEW: `umx_twin_check` internal function for common input checks.
+* FIXED: `umxACE` was broken with large cov inputs h/t @NathanGillespie.
+* FIXED: `umxAggregate` now actually supports user functions as input...
+* IMPROVED: umxSummary "inline" reporting now includes AIC.
+* IMPROVED: `umxACE` gains ability to set plot format: `format = "graphviz" or "DiagrammeR"`
+* IMPROVED: `umx_set_auto_plot` take TRUE/FALSE as input.
+* IMPROVED: `umx_names`: added a replace option to munge the names
+* IMPROVED: `umxRAM` in "sketch mode" now plots models automatically.
+* IMPROVED: `install.OpenMx` from UVa, travis, or open travis build page.
+* IMPROVED: `umx_cor` automatically drops non-numeric columns.
+* IMPROVED: `umxCI` now supports setting interval and one- or two-sided type (h/t @Conor Dolan).
+* INTERNAL: Switch from R2HTML to xtable
 
-# umx 1.8.0 (August 2017, R 3.4.1 (Single Candle)
+# umx 1.8.0 (September 2017, R 3.4.1 (Single Candle)
 * *TIP*: `?umxAPA` can format lots of things for you: from dataframes to p-values - try it out! Let me know what you'd like.
 * NEW `?umx_parameters` function, report parameter estimates, filtering by name and value!
 	* aliased as `umxParameters`
 	* `umx_parameters(model, "below", .1, "loading")`
 * NEW `?umx_long2wide`: Merges long data on famID, for an unlimited number of individuals in a family (twinIDs).
 * NEW `?umx_wide2long`: Takes a wide df (currently limited to 2 per family), & returns a long-format version.
-* NEW: `optimiser` parameter for umxACE and other twin models: Set the optimizer in your model code!
-* IMPROVED: umxRAM in "sketch mode" now plots models automatically
-* IMPROVED: umx_cor automatically drops non-numeric columns.
+* FIXED: Removed superfluous print call from `umx_MakeTwinData`.
 * IMPROVED: html tables by switching to `xtable` (`R2HTML` is abandoned & strips decimals from AIC, ignores c(nsmall)...
 * IMPROVED: Plotting: Models now plot by default. Turn off with `umx_set_auto_plot(FALSE)`.
-* IMPROVED: CIs: `umxCI` now supports setting interval and one- or two-sided type (h/t @Conor Dolan).
 * IMPROVED `forEach` option in `umxPath`. This is a one.headed version of "unique.pairs".
 * IMPROVED: Output: Twin models now show summary when `autoRun`.
 * IMPROVED: Graphics: `umxGxE` plot colors now use the universal ACE -> RGB scheme.
@@ -24,7 +36,7 @@
 * IMPROVED: Stability: Stop on covs that are identical across twins in `umxACEcov`!
 * IMPROVED: Better default model name for  `umxACEcov`;
 * IMPROVED: More helpful default core list for `umx_check_parallel` (1 and n-1);
-* IMPROVED: Output formating of times in `umx_check_parallel`
+* IMPROVED: Output formatting of times in `umx_check_parallel`
 * IMPROVED: `umxReduce` does a much better job reporting automated umxGxE model reduction.
 * IMPROVED: `umxAPA` handles lme models.
 * IMPROVED: `umxPrint` error messages.
@@ -33,7 +45,6 @@
 * CHANGE: `confint`. OpenMx now supports this, so I dropped it from umx (added alias to `umxConfint`).
 * CHANGE: `anova`. OpenMx now supports, this so I dropped it from `umx`.
 * CHANGE: `umx_fix_first_loadings` now skips latents with fixed variance.
-* FIXED: Removed superfluous print call from `umx_MakeTwinData`.
 
 # umx 1.7.5 (April 04 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables (umx removes them for you!)

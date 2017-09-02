@@ -2033,13 +2033,11 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @examples
 #' require(umx)
 #' data(twinData) 
-#' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
 #' twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
 #' twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
 #' selDVs = c("ht", "wt")
-#' mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
-#' dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
+#' mzData <- subset(twinData, zygosity == "MZFF", umx_paste_names(selDVs, "", 1:2))
+#' dzData <- subset(twinData, zygosity == "DZFF", umx_paste_names(selDVs, "", 1:2))
 #' umx_set_optimizer("SLSQP") #preferably NPSOL: CSOLNP needs setup to run this model.
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 #' umxSummary(m1)
@@ -2257,10 +2255,8 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
-#' mzData <- subset(twinData, ZYG == "MZFF")
-#' dzData <- subset(twinData, ZYG == "DZFF")
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
 #' selDVs = c("ht", "wt") # These will be expanded into "ht1" "ht2"
 #' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
 #' # umxSummary(m1)

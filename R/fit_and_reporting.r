@@ -840,11 +840,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
-#' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
 #' umxSummaryACE(m1)
@@ -1056,11 +1054,9 @@ umxSummary.MxModel.ACE <- umxSummaryACE
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- subset(twinData, ZYG == "MZFF", selDVs)
-#' dzData <- subset(twinData, ZYG == "DZFF", selDVs)
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
 #' umxSummaryACE(m1)
@@ -1265,13 +1261,11 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' @examples
 #' require(umx)
 #' data(twinData) 
-#' zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
 #' twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
 #' twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
 #' selDVs = c("ht", "wt")
-#' mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
-#' dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
+#' mzData <- subset(twinData, zygosity == "MZFF", umx_paste_names(selDVs, "", 1:2))
+#' dzData <- subset(twinData, zygosity == "DZFF", umx_paste_names(selDVs, "", 1:2))
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 #' umxSummaryCP(m1, file = NA) # suppress plot creation with file
 #' umxSummary(m1, file = NA) # generic summary is the same
@@ -1281,6 +1275,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' umxSummaryCP(m1, file = "Figure 3", std = TRUE)
 umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(silent=TRUE), returnStd = FALSE, 
     extended = FALSE, showRg = FALSE, comparison = NULL, std = TRUE, CIs = FALSE, ...) {
+	# TODO: example doesn't need to spec var names in data select
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D"
 	if(!std){
 		stop("TODO: I currently always standardize CP model output. e-mail tim to get this turned off")
@@ -1420,11 +1415,9 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' selDVs = c("ht1", "wt1", "ht2", "wt2")
-#' mzData <- subset(twinData, ZYG == "MZFF")
-#' dzData <- subset(twinData, ZYG == "DZFF")
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' m1 = umxRun(m1)
 #' umxSummaryIP(m1)
@@ -1562,14 +1555,12 @@ umxSummary.MxModel.IP <- umxSummaryIP
 #  # use ?twinData to learn about this data set.
 #' require(umx)
 #' data(twinData) 
-#' labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-#' twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = c("bmi1", "bmi2")
 #' selDefs = c("age1", "age2")
 #' selVars = c(selDVs, selDefs)
-#' mzData  = subset(twinData, ZYG == "MZFF", selVars)
-#' dzData  = subset(twinData, ZYG == "DZMM", selVars)
+#' mzData  = subset(twinData, zygosity == "MZFF", selVars)
+#' dzData  = subset(twinData, zygosity == "DZMM", selVars)
 #' # Exclude cases with missing Def
 #' mzData <- mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
 #' dzData <- dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
