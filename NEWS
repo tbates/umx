@@ -10,6 +10,7 @@
 * NEW: `umx_twin_check` internal function for common input checks.
 * FIXED: `umxACE` was broken with large cov inputs h/t @NathanGillespie.
 * FIXED: `umxAggregate` now actually supports user functions as input...
+* IMPROVED: umxParameters now supports `digits`.
 * IMPROVED: umxSummary "inline" reporting now includes AIC.
 * IMPROVED: `umxACE` gains ability to set plot format: `format = "graphviz" or "DiagrammeR"`
 * IMPROVED: `umx_set_auto_plot` take TRUE/FALSE as input.
@@ -19,6 +20,7 @@
 * IMPROVED: `umx_cor` automatically drops non-numeric columns.
 * IMPROVED: `umxCI` now supports setting interval and one- or two-sided type (h/t @Conor Dolan).
 * INTERNAL: Switch from R2HTML to xtable
+* MINOR: umxParameters now supports non-run models
 
 # umx 1.8.0 (September 2017, R 3.4.1 (Single Candle)
 * *TIP*: `?umxAPA` can format lots of things for you: from dataframes to p-values - try it out! Let me know what you'd like.
