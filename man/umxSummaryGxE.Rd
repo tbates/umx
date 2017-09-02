@@ -48,14 +48,12 @@ Summarize a Moderation model, as returned by \code{\link{umxGxE}}
 # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
 require(umx)
 data(twinData) 
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = c("bmi1", "bmi2")
 selDefs = c("age1", "age2")
 selVars = c(selDVs, selDefs)
-mzData  = subset(twinData, ZYG == "MZFF", selVars)
-dzData  = subset(twinData, ZYG == "DZMM", selVars)
+mzData  = subset(twinData, zygosity == "MZFF", selVars)
+dzData  = subset(twinData, zygosity == "DZMM", selVars)
 # Exclude cases with missing Def
 mzData <- mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
 dzData <- dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]

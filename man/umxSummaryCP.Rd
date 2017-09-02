@@ -39,13 +39,11 @@ Summarizes a Common-Pathway model, as returned by \code{\link{umxCP}}
 \examples{
 require(umx)
 data(twinData) 
-zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
 twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
 twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
 selDVs = c("ht", "wt")
-mzData <- subset(twinData, ZYG == "MZFF", umx_paste_names(selDVs, "", 1:2))
-dzData <- subset(twinData, ZYG == "DZFF", umx_paste_names(selDVs, "", 1:2))
+mzData <- subset(twinData, zygosity == "MZFF", umx_paste_names(selDVs, "", 1:2))
+dzData <- subset(twinData, zygosity == "DZFF", umx_paste_names(selDVs, "", 1:2))
 m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 umxSummaryCP(m1, file = NA) # suppress plot creation with file
 umxSummary(m1, file = NA) # generic summary is the same

@@ -44,11 +44,9 @@ Summarize a Cholesky model with covariates, as returned by \code{\link{umxACEcov
 \examples{
 require(umx)
 data(twinData)
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 selDVs = c("bmi1", "bmi2")
-mzData <- subset(twinData, ZYG == "MZFF", selDVs)
-dzData <- subset(twinData, ZYG == "DZFF", selDVs)
+mzData <- subset(twinData, zygosity == "MZFF")
+dzData <- subset(twinData, zygosity == "DZFF")
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 umxSummaryACE(m1)

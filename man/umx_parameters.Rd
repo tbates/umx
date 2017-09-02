@@ -6,10 +6,10 @@
 \title{Display path estimates from a model, filtering by name and value.}
 \usage{
 umx_parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
-  b = NULL, pattern = ".*", std = FALSE)
+  b = NULL, pattern = ".*", std = FALSE, digits = 2)
 
 umxParameters(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL,
-  pattern = ".*", std = FALSE)
+  pattern = ".*", std = FALSE, digits = 2)
 }
 \arguments{
 \item{x}{an \code{\link{mxModel}} or summary from which to report parameter estimates.}
@@ -21,6 +21,8 @@ umxParameters(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL,
 \item{pattern}{Optional string to match in the parameter names. Default '.*' matches all. \code{\link{regex}} allowed!}
 
 \item{std}{Standardize output: NOT IMPLEMENTED YET}
+
+\item{digits}{Round to how many digits (2 = default).}
 }
 \value{
 - list of matching parameters, filtered by name and value

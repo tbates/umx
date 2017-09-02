@@ -5,15 +5,17 @@
 \alias{umxReRun}
 \title{umxModify: Add, set, or drop model paths by label.}
 \usage{
-umxModify(lastFit, update = NULL, regex = FALSE, free = FALSE,
-  value = 0, freeToStart = NA, name = NULL, verbose = FALSE,
-  intervals = FALSE, comparison = FALSE, autoRun = TRUE,
-  dropList = "deprecated")
+umxModify(lastFit, update = NULL, master = NULL, regex = FALSE,
+  free = FALSE, value = 0, freeToStart = NA, name = NULL,
+  verbose = FALSE, intervals = FALSE, comparison = FALSE,
+  autoRun = TRUE, dropList = "deprecated")
 }
 \arguments{
 \item{lastFit}{The \code{\link{mxModel}} you wish to update and run.}
 
 \item{update}{What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.}
+
+\item{master}{If you set master, then the labels in update will be equated (slaved) to those provided in master.}
 
 \item{regex}{Whether or not update is a regular expression (defaults to FALSE). If you provide a string, it
 over-rides the contents of update, and sets regex to TRUE.}

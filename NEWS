@@ -2,6 +2,8 @@
 * *TIP*: Show small estimated paths with `umx_parameters(model, "below", .1)`
 * *TIP*: `?umxRAM` has a sketch mode. just set `data` to a list of manifest variable names.
 * NEW `?umxACEcov_fixed` Beta1: Handles main effects of covariates in the means of continuous variables.
+* NEW `umxModify` can now equate parameters (set master = ), update is slave set of labels.
+	* As a result, umxEquate now doesn't autoRun by default. Let me know if this is a pain.
 * NEW: `optimiser` parameter for umxACE and other twin models: Set the optimizer in your model code!
 * NEW: `umx_is_numeric` boolean check if variables in a dataframe are numeric.
 * NEW: `umx_is_class` boolean check if variables in a dataframe match a desired class.

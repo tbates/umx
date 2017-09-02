@@ -63,10 +63,8 @@ The following figure shows the IP model diagrammatically:
 \examples{
 require(umx)
 data(twinData)
-zygList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = zygList)
-mzData <- subset(twinData, ZYG == "MZFF")
-dzData <- subset(twinData, ZYG == "DZFF")
+mzData <- subset(twinData, zygosity == "MZFF")
+dzData <- subset(twinData, zygosity == "DZFF")
 selDVs = c("ht", "wt") # These will be expanded into "ht1" "ht2"
 m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
 # umxSummary(m1)

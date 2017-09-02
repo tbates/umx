@@ -2856,6 +2856,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @param b Combine with thresh to set a minimum or maximum for which estimates to show.
 #' @param pattern Optional string to match in the parameter names. Default '.*' matches all. \code{\link{regex}} allowed!
 #' @param std Standardize output: NOT IMPLEMENTED YET
+#' @param digits Round to how many digits (2 = default).
 #' @return - list of matching parameters, filtered by name and value
 #' @export
 #' @family Reporting Functions
@@ -2866,8 +2867,9 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' umx_parameters(m1, "_to_", "below", .1)
 #' umx_parameters(cp4, "_cp_", "above", .5)
 #' }
-umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE) {	
+umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {	
 	# TODO rationalize umxParameters and UmxGetParameters
+	# TODO  add filtering by significance (based on SEs)
 	if(std){
 		stop("Sorry, std not implemented yet: Standardize the model and provide as input or summary")
 	}
@@ -2885,9 +2887,20 @@ umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), 
 		message("Ignoring b (cutoff) and thresh = all. Set above or below to pick a beta to cut on.")
 	}
 	if(class(x) != "summary.mxmodel"){
-		x = summary(x)
+		if(umx_has_been_run(x)){
+			x = summary(x)
+		} else {
+			message("Model has not been run.")
+		}
 	}
-	x = x$parameters
+	if(class(x) != "summary.mxmodel"){
+		# must be a model that hasn't been run, make up a similar dataframe
+		x = omxGetParameters(x)
+		x = data.frame(name = names(x), Estimate = as.numeric(x), stringsAsFactors = FALSE)
+	} else {
+		x = x$parameters
+	}
+
 	parList = umx_names(x$name, pattern)
 
 	if(thresh == "above"){
@@ -2905,7 +2918,7 @@ umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), 
 	if(sum(filter) == 0){
 		message(paste0("Nothing found matching pattern ", omxQuotes(pattern), " and minimum absolute value ", thresh, " ", b, "."))
 	} else {
-		umx_round(x[filter, c("name", "Estimate")], 2)
+		umx_round(x[filter, c("name", "Estimate")], digits = digits)
 	}
 }
 

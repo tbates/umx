@@ -521,6 +521,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' @aliases umxReRun umxModify
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
+#' @param master If you set master, then the labels in update will be equated (slaved) to those provided in master.
 #' @param regex    Whether or not update is a regular expression (defaults to FALSE). If you provide a string, it
 #' over-rides the contents of update, and sets regex to TRUE.
 #' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
@@ -563,7 +564,13 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' m2 = umxModify(m1, regex  = "^G_to_x[3-5]", name = "no_G_to_x3_5", autoRun = FALSE) 
 #' m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comp = TRUE)
 #' m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", comparison = TRUE)
-umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = TRUE, dropList = "deprecated") {
+umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = TRUE, dropList = "deprecated") {
+	if(!is.null(master)){
+		x = umxEquate(lastFit, master = master, slave = update, free = freeToStart, verbose = verbose, name = name, autoRun = autoRun, comparison = comparison)
+		return(x)
+	}
+
+
 	if(dropList != "deprecated"){
 		stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
 			"umxModify(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
@@ -3241,6 +3248,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @return - \code{\link{mxModel}}
 #' @export
+#' @seealso \code{\link{umxModify}}, \code{\link{umxCompare}}
 #' @family Modify or Compare Models
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -3256,10 +3264,11 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' # By default, umxEquate just equates master and slave labels
 #' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
-#' m2 = mxRun(m2) # have to run the model again...
-#' umxCompare(m1, m2) # not good :-)
-umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE, name = NULL, autoRun = getOption("umx_auto_run"), comparison = TRUE) {	
+#' # Set autoRun = TRUE and comparison = TRUE to run and output a comparison
+#' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings", autoRun = TRUE, comparison = TRUE)
+umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE, name = NULL, autoRun = FALSE, comparison = TRUE) {	
 	free = umx_default_option(free, c(TRUE, FALSE, NA))
 	if(!umx_is_MxModel(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])
@@ -4180,9 +4189,9 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' To create paths A<->B, B<->C, and A<->C, you would say:
 #' \code{umxPath(unique.bivariate = c('A',"B","C"))}
 #' 
-#' \code{umxPath(fromEach = c('A',"B","C"))} Creates one-headed arrows on the unique.bivariate pattern
-#' 
-#' 
+#' \code{umxPath(fromEach = c('A',"B","C"))} Creates one-headed arrows on the all.bivariate pattern
+#'
+#'
 #' Setting up a latent trait, you can fix the loading of the first path with
 #' 
 #' \code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)}  
@@ -4206,8 +4215,8 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2".
 #' nb: from, to, and with must be left empty (their default)
+#' @param fromEach Like all.bivariate, but with one head arrows. 'to' can be set.
 #' @param unique.pairs equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)
-#' @param fromEach Like unique.pairs, but with one head arrows
 #' @param forms Paired with from, this will build a formative variable. from vars form the latent.
 #' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' vars.
 #' @param Cholesky Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.
@@ -4251,6 +4260,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 #' umxPath(cov = c("A", "B"))  # Covariance A <-> B
 #' umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
+#' umxPath(fromEach = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 #' umxPath(unique.pairs = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 #' umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 #' # A worked example
@@ -4519,7 +4529,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			}
 			from    = fromEach
 			arrows  = 1
-			connect = "unique.pairs"
+			connect = "all.bivariate"
 		}
 	} else if(!is.null(unique.pairs)){
 		# ===========================

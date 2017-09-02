@@ -37,11 +37,9 @@ Summarize a Independent Pathway model, as returned by \code{\link{umxIP}}
 \examples{
 require(umx)
 data(twinData)
-labList = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
-twinData$ZYG = factor(twinData$zyg, levels = 1:5, labels = labList)
 selDVs = c("ht1", "wt1", "ht2", "wt2")
-mzData <- subset(twinData, ZYG == "MZFF")
-dzData <- subset(twinData, ZYG == "DZFF")
+mzData <- subset(twinData, zygosity == "MZFF")
+dzData <- subset(twinData, zygosity == "DZFF")
 m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
 m1 = umxRun(m1)
 umxSummaryIP(m1)

@@ -29,7 +29,7 @@ nb: from, to, and with must be left empty (their default)}
 
 \item{unique.pairs}{equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)}
 
-\item{fromEach}{Like unique.pairs, but with one head arrows}
+\item{fromEach}{Like all.bivariate, but with one head arrows. 'to' can be set.}
 
 \item{forms}{Paired with from, this will build a formative variable. from vars form the latent.
 Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' vars.}
@@ -118,7 +118,7 @@ So, to create paths creates A<->A, B<->B, and A->B, you would say:
 To create paths A<->B, B<->C, and A<->C, you would say:
 \code{umxPath(unique.bivariate = c('A',"B","C"))}
 
-\code{umxPath(fromEach = c('A',"B","C"))} Creates one-headed arrows on the unique.bivariate pattern
+\code{umxPath(fromEach = c('A',"B","C"))} Creates one-headed arrows on the all.bivariate pattern
 
 
 Setting up a latent trait, you can fix the loading of the first path with
@@ -161,6 +161,7 @@ umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
 umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 umxPath(cov = c("A", "B"))  # Covariance A <-> B
 umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
+umxPath(fromEach = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 umxPath(unique.pairs = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 # A worked example

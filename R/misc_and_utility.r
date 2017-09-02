@@ -63,7 +63,7 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 				umx.plot.format = "graphviz"
 			}
 		} else {
-			umx_check(umx.plot.format %in% c("graphviz", "DiagrammeR"), "stop", "valid options are 'graphviz' or 'DiagrammeR'")
+			umx_check(umx.plot.format %in% c("graphviz", "DiagrammeR"), "stop", "valid options are 'graphviz' or 'DiagrammeR'. Use TRUE to toggle)")
 		}
 		options("umx.plot.format" = umx.plot.format)
 	}
