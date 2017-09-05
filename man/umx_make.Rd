@@ -4,10 +4,13 @@
 \alias{umx_make}
 \title{umx_make umx using devtools}
 \usage{
-umx_make(what = c("install", "release", "win", "check", "examples"))
+umx_make(what = c("install", "release", "win", "check", "examples"),
+  pkg = "~/bin/umx")
 }
 \arguments{
 \item{what}{whether to "install", "release" to CRAN, check on "win", "check", or check "examples"))}
+
+\item{pkg}{tbe package to use. Defaults to umx.}
 }
 \value{
 -

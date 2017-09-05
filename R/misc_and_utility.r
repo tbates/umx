@@ -1957,6 +1957,7 @@ umx_update_OpenMx <- install.OpenMx
 #' Easily  run devtools "install", "release", "win", or "examples".
 #'
 #' @param what whether to "install", "release" to CRAN, check on "win", "check", or check "examples"))
+#' @param pkg tbe local path to your package. Defaults to my path to umx.
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -1965,20 +1966,20 @@ umx_update_OpenMx <- install.OpenMx
 #' \dontrun{
 #' umx_make(what = "release"))
 #' }
-umx_make <- function(what = c("install", "release", "win", "check", "examples")) {
+umx_make <- function(what = c("install", "release", "win", "check", "examples"), pkg = "~/bin/umx") {
 	what = match.arg(what)
 	if(what == "install"){
-		devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
 	} else if (what == "release"){
-		devtools::release("~/bin/umx", check = TRUE)
+		devtools::release(pkg = pkg, check = TRUE)
 	} else if (what =="win"){
-		devtools::build_win("~/bin/umx")
+		devtools::build_win(pkg = pkg)
 	} else if(what == "check"){
 		# http://r-pkgs.had.co.nz/check.html
 		# R CMD check
-		devtools::check("~/bin/umx")		
+		devtools::check(pkg = pkg)		
 	} else if(what == "examples"){
-		devtools::run_examples("~/bin/umx")
+		devtools::run_examples(pkg = pkg)
 	}
 }
 

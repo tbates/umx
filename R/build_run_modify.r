@@ -1,3 +1,5 @@
+# usethis::use_vignette("guide_for_OpenMx_users", base_path ="~/bin/umx")
+
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -647,7 +649,7 @@ umxReRun <- umxModify
 #' @param name The name of the model (defaults to "G_by_E")
 #' @param selDVs The dependent variable (e.g. IQ)
 #' @param selDefs The definition variable (e.g. socio economic status)
-#' @param suffix Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
+#' @param sep Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
 #' @param dzData The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
 #' @param mzData The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
 #' @param lboundACE = numeric: If !is.na, then lbound the main effects at this value (default = NA)
@@ -655,10 +657,11 @@ umxReRun <- umxModify
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
+#' @param suffix Use sep instead (deprecated)
 #' @return - GxE \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, \strong{6}, 554-571. Retrieved from https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187
 #' @examples
 #' require(umx)
@@ -670,19 +673,23 @@ umxReRun <- umxModify
 #' mzData  = subset(twinData, zyg == 1, selVars)[1:80,]
 #' dzData  = subset(twinData, zyg == 3, selVars)[1:80,]
 #' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
-#' 	dzData = dzData, mzData = mzData, dropMissing = TRUE)
+#' 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
 #' # Plot Moderation
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' m2 = umxModify(m1, "am_.*", regex=TRUE, comparison = TRUE)
-
-
-umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+#' # The umxReduce function knows how to test all relevant hypotheses
+#' # about model reduction for GxE models, reporting these in a nice table.
+#' umxReduce(m1)
+umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = NULL) {
 	nSib = 2;
-# =================
-# = Set optimizer =
-# =================
+	if(is.null(suffix)){
+		suffix = sep
+	}
+	# =================
+	# = Set optimizer =
+	# =================
 	if(!is.null(optimizer)){
 		umx_set_optimizer(optimizer)
 	}
@@ -698,7 +705,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, suffix = NU
 	if(any(selDefs %in% selDVs)) {
 		warning("selDefs was found in selDVs: You probably gave me all the vars in selDVs instead of just the DEPENDENT variable");
 	}
-	if(length(selDVs)/nSib!=1){
+	if(length(selDVs)/nSib != 1){
 		stop("DV list must be 1 variable (2 twins)... You tried ", length(selDVs)/nSib)
 	}
 	if(length(selDefs) != 2){
@@ -2043,13 +2050,13 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
 #' twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
 #' selDVs = c("ht", "wt")
-#' mzData <- subset(twinData, zygosity == "MZFF", umx_paste_names(selDVs, "", 1:2))
-#' dzData <- subset(twinData, zygosity == "DZFF", umx_paste_names(selDVs, "", 1:2))
-#' umx_set_optimizer("SLSQP") #preferably NPSOL: CSOLNP needs setup to run this model.
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
+#' umx_set_optimizer("SLSQP") # preferably NPSOL: CSOLNP needs setup to run this model.
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 #' umxSummary(m1)
-#' umxGetParameters(m1, "^c", free = TRUE)
-#' m2 = umxModify(m1, update = "(cs_.*$)|(c_cp_)", regex = TRUE, name = "dropC")
+#' umxParameters(m1, patt = "^c")
+#' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
 umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, sep=NULL) {

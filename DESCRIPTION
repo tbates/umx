@@ -27,12 +27,15 @@ Imports:
     sfsmisc,
     utils,
 	xtable
-Suggests:
+Suggests: 
     devtools,
     testthat,
     gdata,
-    cocor
+    cocor,
+    knitr,
+    rmarkdown
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 LazyData: true
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr

@@ -1,7 +1,9 @@
 # umx
 ![alt text](https://zenodo.org/badge/5184/tbates/umx.svg)
 
-umx is a structural equation modelling package designed to make SEM easier to build, modify, and report.
+[![CRAN status](http://www.r-pkg.org/badges/version/umx)](https://cran.r-project.org/package=umx)
+
+umx is a structural equation modeling package designed to make SEM easier to build, modify, and report.
 
 It includes high-level functions for complex models such as multi-group twin models, as well as for graphical model output.
 
@@ -27,7 +29,7 @@ Some highlights include:
 	* `plot(model, std=T, digits = 3, file = "name")` # *Graphical, editable output of model in your browser!*
 3. Modify models
 	* `umxModify()` *# Modify and run a model. You can add objects, drop or add paths, including by regular-expression label matching), re-name the model, re-run, and even return the comparison. All in 1 line *
-	* `umxGetParameters(model, regex = "as_r_2c_[0-9]", free = T)` *# A powerful assistant to get labels from a model. like `omxGetParameters` but uses regular expressions.*
+	* `umxParameters(m1, "below", .1, pattern="_to_"))` *# A powerful assistant to get labels from a model (e.g. all 'to' params, below .1 in value)*
 4. Twin modeling!
 	* `umxACE()` *# Twin ACE modeling with aplomb* paths are labeled! Works with `plot()` and `umxSummary`!
 	* `umxCP()`, `umxIP()`, `umxGxE()`, `umxCP()` …
@@ -37,8 +39,6 @@ Some highlights include:
 	* `umx_set_optimizer()`
 6. Many more miscellaneous helpers e.g.
 	* `umx_time(model)`  *# Report the time taken by a model in a compact programable format*
-	* `umxStart()` *# Add plausible start values to RAM or matrix models, or matrices: **very** helpful*
-	* `umxLabel()` *# Add systematic labels to paths ("var1_to_var2") and matrix cells ("a_r1c1"). This is great for setting, equating and dropping paths by label!*
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
 	* Dozens more (?umx to see them all). Check out the "family links" in any help file also!
 
