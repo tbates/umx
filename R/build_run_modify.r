@@ -257,11 +257,25 @@ umxModel <- function(...) {
 #' plot(m1)
 #' plot(m1, resid = "line")
 #' 
-#' # ===================================================================================
-#' # = For playing around, umxRAM supports a vector of manifest names in place of data =
-#' # ===================================================================================
+#' # ===============================
+#' # = Using umxRAM in Sketch mode =
+#' # ===============================
+#' # No data needed: just list variable names!
+#' # Resulting model will be plotted automatically
+#'m1 = umxRAM("what does unique pairs do, I wonder", data = c("B", "C"),
+#'	# B<->B, C<->C, B<->C
+#'	umxPath(unique.pairs = c("B", "C"))
+#')
 #' 
-#' m1 = umxRAM("play", data = paste0("x", 1:4),
+#'m1 = umxRAM("ring around the rosey", data = c("B", "C"),
+#'	# A->B, A->C, B->A, B->C, C->A, C->B
+#'	umxPath(fromEach = c("A", "B", "C"))
+#')
+#'m1 = umxRAM("fromEach with to", data = c("B", "C"),
+#'	# B->D, C->D
+#'	umxPath(fromEach = c("B", "C"), to= "D")
+#')
+#' m1 = umxRAM("CFA_play", data = paste0("x", 1:4),
 #' 	umxPath("g", to = paste0("x", 1:4)),
 #' 	umxPath(var = paste0("x", 1:4)),
 #' 	umxPath(v1m0 = "g")
@@ -3068,101 +3082,6 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 # ==============================
 # = Label and equate functions =
 # ==============================
-
-#' umxGetParameters: Get parameters from a model
-#'
-#' Get the parameter labels from a model. Like \code{\link{omxGetParameters}},
-#' but supercharged with regular expressions for more power and ease!
-#'
-#' @param inputTarget An object to get parameters from: could be a RAM \code{\link{mxModel}}
-#' @param regex A regular expression to filter the labels defaults to NA - just returns all labels)
-#' @param free  A Boolean determining whether to return only free parameters.
-#' @param verbose How much feedback to give
-#' @export
-#' @family Reporting Functions
-#' @references - \url{http://www.github.com/tbates/umx}
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxRun(m1)
-#' umxGetParameters(m1)
-#' m1 = umxRun(m1, setLabels = TRUE)
-#' umxGetParameters(m1)
-#' umxGetParameters(m1, free = TRUE) # only the free parameter
-#' umxGetParameters(m1, free = FALSE) # only parameters which are fixed
-#' \dontrun{
-#' # Complex regex patterns
-#' umxGetParameters(m2, regex = "S_r_[0-9]c_6", free = TRUE) # Column 6 of matrix "as"
-#' }
-umxGetParameters <- function(inputTarget, regex = NA, free = NA, verbose = FALSE) {
-	# TODO
-	# 1. Be nice to offer a method to handle submodels
-	# 	model$aSubmodel$matrices$aMatrix$labels
-	# 	model$MZ$matrices
-	# 2. Simplify handling
-		# allow umxGetParameters to function like omxGetParameters()[name filter]
-	# 3. Allow user to request values, free, etc.
-	if(umx_is_MxModel(inputTarget)) {
-		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
-	} else if(methods::is(inputTarget, "MxMatrix")) {
-		if(is.na(free)) {
-			topLabels = inputTarget$labels
-		} else {
-			topLabels = inputTarget$labels[inputTarget$free==free]
-		}
-	}else{
-		stop("I am sorry Dave, umxGetParameters needs either a model or an mxMatrix: you offered a ", class(inputTarget)[1])
-	}
-	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
-	if( length(regex) > 1 || !is.na(regex) ) {
-		if(length(regex) > 1){
-			# assume regex is a list of labels
-			theLabels = theLabels[theLabels %in% regex]
-			if(length(regex) != length(theLabels)){
-				msg = "Not all labels found! Missing were:\n"
-				stop(msg, regex[!(regex %in% theLabels)]);
-			}
-		} else {
-			# it's a grep string
-			if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
-				regex = paste0("^", regex, "[0-9]*$"); # anchor to the start of the string
-				anchored = TRUE
-				if(verbose == TRUE) {
-					message("note: anchored regex to beginning of string and allowed only numeric follow\n");
-				}
-			}else{
-				anchored = FALSE
-			}
-			theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # return more detail
-		}
-		if(length(theLabels) == 0){
-			msg = "Found no matching labels!\n"
-			if(anchored == TRUE){
-				msg = paste0(msg, "note: anchored regex to beginning of string and allowed only numeric follow:\"", regex, "\"")
-			}
-			if(umx_is_MxModel(inputTarget)){
-				msg = paste0(msg, "\nUse umxGetParameters(", deparse(substitute(inputTarget)), ") to see all parameters in the model")
-			}else{
-				msg = paste0(msg, "\nUse umxGetParameters() without a pattern to see all parameters in the model")
-			}
-			stop(msg);
-		}
-	}
-	return(theLabels)
-}
-
-#' @rdname umxGetParameters
-#' @export
-parameters <- umxGetParameters
 
 #' umxSetParameters: Set parameters in an mxModel
 #'

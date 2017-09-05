@@ -116,11 +116,25 @@ umxSummary(m1, show = "std")
 plot(m1)
 plot(m1, resid = "line")
 
-# ===================================================================================
-# = For playing around, umxRAM supports a vector of manifest names in place of data =
-# ===================================================================================
+# ===============================
+# = Using umxRAM in Sketch mode =
+# ===============================
+# No data needed: just list variable names!
+# Resulting model will be plotted automatically
+m1 = umxRAM("what does unique pairs do, I wonder", data = c("B", "C"),
+# B<->B, C<->C, B<->C
+umxPath(unique.pairs = c("B", "C"))
+)
 
-m1 = umxRAM("play", data = paste0("x", 1:4),
+m1 = umxRAM("ring around the rosey", data = c("B", "C"),
+# A->B, A->C, B->A, B->C, C->A, C->B
+umxPath(fromEach = c("A", "B", "C"))
+)
+m1 = umxRAM("fromEach with to", data = c("B", "C"),
+# B->D, C->D
+umxPath(fromEach = c("B", "C"), to= "D")
+)
+m1 = umxRAM("CFA_play", data = paste0("x", 1:4),
 	umxPath("g", to = paste0("x", 1:4)),
 	umxPath(var = paste0("x", 1:4)),
 	umxPath(v1m0 = "g")

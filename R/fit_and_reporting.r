@@ -2568,6 +2568,8 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 	if(is.na(matrices)){
 		if(umx_is_RAM(model)){
 			matrices = c("A", "S")
+		}else{
+			message("You need to tell me which matrices to test (this is not a RAM model, so I don't know.)")
 		}
 	}
 	suppressMessages({MI = mxMI(model = model, matrices = matrices, full = full)})
@@ -2584,12 +2586,12 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 			# nothing significant, display top 3 or so
 			mostPossible = length(MIlist)
 			numInd = min(3, mostPossible)
-			suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
+			suggestions = sort(MIlist, decreasing = decreasing)[1:numInd]
 		} else {
-			suggestions = sort(MIlist[MIlist > thresh], decreasing = TRUE)
+			suggestions = sort(MIlist[MIlist > thresh], decreasing = decreasing)
 		}		
 	} else {
-		suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
+		suggestions = sort(MIlist, decreasing = decreasing)[1:numInd]
 	}
 	print(suggestions)
 	invisible(MI)
@@ -2851,7 +2853,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @details
 #' It is on my TODO list to implement filtering by significance, and to add standardizing.
 #'
-#' @param x an \code{\link{mxModel}} or summary from which to report parameter estimates.
+#' @param x an \code{\link{mxModel}} or model summary from which to report parameter estimates.
 #' @param thresh optional: Filter out estimates 'below' or 'above' a certain value (default = "all").
 #' @param b Combine with thresh to set a minimum or maximum for which estimates to show.
 #' @param pattern Optional string to match in the parameter names. Default '.*' matches all. \code{\link{regex}} allowed!
@@ -2863,10 +2865,20 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @seealso - \code{\link{parameters}}, \code{\link{umxSummary}}, \code{\link{umx_names}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' \dontrun{
-#' umx_parameters(m1, "_to_", "below", .1)
-#' umx_parameters(cp4, "_cp_", "above", .5)
-#' }
+#' require(umx)
+#' data(demoOneFactor)
+#' manifests = names(demoOneFactor)
+#' m1 <- umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
+#' 	umxPath(from = "G", to = manifests),
+#' 	umxPath(v.m. = manifests),
+#' 	umxPath(v1m0 = "G")
+#' )
+#' # Parameters with values below .1
+#' umx_parameters(m1, "below", .1)
+#' # Parameters with values above .5
+#' umx_parameters(m1, "above", .5)
+#' # Parameters with values below .1 and containing "_to_" in their label
+#' umx_parameters(m1, "below", .1, "_to_")
 umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {	
 	# TODO rationalize umxParameters and UmxGetParameters
 	# TODO  add filtering by significance (based on SEs)
@@ -2925,6 +2937,104 @@ umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), 
 #' @rdname umx_parameters
 #' @export
 umxParameters <- umx_parameters
+
+#' @rdname umx_parameters
+#' @export
+parameters <- umx_parameters
+
+#' umxGetParameters: Get parameters from a model
+#'
+#' Get the parameter labels from a model. Like \code{\link{omxGetParameters}},
+#' but supercharged with regular expressions for more power and ease!
+#'
+#' @param inputTarget An object to get parameters from: could be a RAM \code{\link{mxModel}}
+#' @param regex A regular expression to filter the labels defaults to NA - just returns all labels)
+#' @param free  A Boolean determining whether to return only free parameters.
+#' @param fetch What to return: "values" (default) or "free", "lbound", "ubound", or "all"
+#' @param verbose How much feedback to give
+#' @export
+#' @family Reporting Functions
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' require(umx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1)
+#' umxGetParameters(m1)
+#' m1 = umxRun(m1, setLabels = TRUE)
+#' umxGetParameters(m1)
+#' umxGetParameters(m1, free = TRUE) # only parameters which are free 
+#' umxGetParameters(m1, free = FALSE) # only parameters which are fixed
+#' \dontrun{
+#' # Complex regex patterns
+#' umxGetParameters(m2, regex = "as_r_[0-9]c_6", free = TRUE) # Column 6 of matrix "as"
+#' }
+umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("values", "free", "lbound", "ubound", "all"), verbose = FALSE) {
+	# TODO
+	# 1. Be nice to offer a method to handle sub-models
+	# 	model$aSubmodel$matrices$aMatrix$labels
+	# 	model$MZ$matrices
+	# 2. Simplify handling
+		# allow umxGetParameters to function like omxGetParameters()[name filter]
+	# 3. Allow user to request values, free, etc. (already done with umx_parameters)
+	fetch = match.arg(fetch)
+	if(umx_is_MxModel(inputTarget)) {
+		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
+	} else if(methods::is(inputTarget, "MxMatrix")) {
+		if(is.na(free)) {
+			topLabels = inputTarget$labels
+		} else {
+			topLabels = inputTarget$labels[inputTarget$free==free]
+		}
+	}else{
+		stop("I am sorry Dave, umxGetParameters needs either a model or an mxMatrix: you offered a ", class(inputTarget)[1])
+	}
+	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
+	if( length(regex) > 1 || !is.na(regex) ) {
+		if(length(regex) > 1){
+			# assume regex is a list of labels
+			theLabels = theLabels[theLabels %in% regex]
+			if(length(regex) != length(theLabels)){
+				msg = "Not all labels found! Missing were:\n"
+				stop(msg, regex[!(regex %in% theLabels)]);
+			}
+		} else {
+			# it's a grep string
+			if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
+				regex = paste0("^", regex, "[0-9]*$"); # anchor to the start of the string
+				anchored = TRUE
+				if(verbose == TRUE) {
+					message("note: anchored regex to beginning of string and allowed only numeric follow\n");
+				}
+			}else{
+				anchored = FALSE
+			}
+			theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # return more detail
+		}
+		if(length(theLabels) == 0){
+			msg = "Found no matching labels!\n"
+			if(anchored == TRUE){
+				msg = paste0(msg, "note: anchored regex to beginning of string and allowed only numeric follow:\"", regex, "\"")
+			}
+			if(umx_is_MxModel(inputTarget)){
+				msg = paste0(msg, "\nUse umxGetParameters(", deparse(substitute(inputTarget)), ") to see all parameters in the model")
+			}else{
+				msg = paste0(msg, "\nUse umxGetParameters() without a pattern to see all parameters in the model")
+			}
+			stop(msg);
+		}
+	}
+	return(theLabels)
+}
+
 
 #' Extract AIC from MxModel
 #'
@@ -2995,6 +3105,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
 	# TODO integrate with mxGetExpected(model, "covariance")
+	# mxGetExpected(m1, component= c("means", "covariance", "standVector") )
 	if(object$data$type == "raw"){
 		manifestNames = names(object$data$observed)
 	} else {

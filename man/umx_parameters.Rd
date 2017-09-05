@@ -3,6 +3,7 @@
 \name{umx_parameters}
 \alias{umx_parameters}
 \alias{umxParameters}
+\alias{parameters}
 \title{Display path estimates from a model, filtering by name and value.}
 \usage{
 umx_parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
@@ -10,9 +11,12 @@ umx_parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
 
 umxParameters(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL,
   pattern = ".*", std = FALSE, digits = 2)
+
+parameters(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL,
+  pattern = ".*", std = FALSE, digits = 2)
 }
 \arguments{
-\item{x}{an \code{\link{mxModel}} or summary from which to report parameter estimates.}
+\item{x}{an \code{\link{mxModel}} or model summary from which to report parameter estimates.}
 
 \item{thresh}{optional: Filter out estimates 'below' or 'above' a certain value (default = "all").}
 
@@ -36,10 +40,20 @@ and also to only show parameters above or below a certain value.
 It is on my TODO list to implement filtering by significance, and to add standardizing.
 }
 \examples{
-\dontrun{
-umx_parameters(m1, "_to_", "below", .1)
-umx_parameters(cp4, "_cp_", "above", .5)
-}
+require(umx)
+data(demoOneFactor)
+manifests = names(demoOneFactor)
+m1 <- umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
+	umxPath(from = "G", to = manifests),
+	umxPath(v.m. = manifests),
+	umxPath(v1m0 = "G")
+)
+# Parameters with values below .1
+umx_parameters(m1, "below", .1)
+# Parameters with values above .5
+umx_parameters(m1, "above", .5)
+# Parameters with values below .1 and containing "_to_" in their label
+umx_parameters(m1, "below", .1, "_to_")
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
