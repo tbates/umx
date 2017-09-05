@@ -2568,6 +2568,8 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 	if(is.na(matrices)){
 		if(umx_is_RAM(model)){
 			matrices = c("A", "S")
+		}else{
+			message("You need to tell me which matrices to test (this is not a RAM model, so I don't know.)")
 		}
 	}
 	suppressMessages({MI = mxMI(model = model, matrices = matrices, full = full)})
@@ -2584,12 +2586,12 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 			# nothing significant, display top 3 or so
 			mostPossible = length(MIlist)
 			numInd = min(3, mostPossible)
-			suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
+			suggestions = sort(MIlist, decreasing = decreasing)[1:numInd]
 		} else {
-			suggestions = sort(MIlist[MIlist > thresh], decreasing = TRUE)
+			suggestions = sort(MIlist[MIlist > thresh], decreasing = decreasing)
 		}		
 	} else {
-		suggestions = sort(MIlist, decreasing = TRUE)[1:numInd]
+		suggestions = sort(MIlist, decreasing = decreasing)[1:numInd]
 	}
 	print(suggestions)
 	invisible(MI)
@@ -3103,6 +3105,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
 	# TODO integrate with mxGetExpected(model, "covariance")
+	# mxGetExpected(m1, component= c("means", "covariance", "standVector") )
 	if(object$data$type == "raw"){
 		manifestNames = names(object$data$observed)
 	} else {

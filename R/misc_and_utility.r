@@ -90,16 +90,17 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 #' umx_set_table_format("") # get available options
 #' umx_set_table_format(old)    # reinstate
 umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
+	legal = c('latex', 'html', 'markdown', 'pandoc', 'rst')
 	if(is.null(knitr.table.format)) {
 		if(!silent){
 			message("Current format is", omxQuotes(getOption("knitr.table.format")), 
-				". Valid options are latex, html, markdown, pandoc, or rst"
+				". Valid options are ", omxQuotes(legal)
 			)
 		}
 		invisible(getOption("knitr.table.format"))		
 	} else {
-		if(!knitr.table.format %in% c("latex", "html", "markdown", "pandoc", "rst")){
-			message("legal options are latex, html, markdown, pandoc, rst")
+		if(!knitr.table.format %in% legal){
+			message("legal options are ", omxQuotes(legal))
 		} else {
 			options("knitr.table.format" = knitr.table.format)
 		}
@@ -2571,14 +2572,14 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 	}else if(is.matrix(namesNeeded)){
 		namesNeeded = dimnames(namesNeeded)[[2]]
 	} else if (!typeof(namesNeeded)=="character"){
-		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a", typeof(namesInData))
+		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesInData))
 	}
 	if(is.data.frame(data)){
 		namesInData = names(data)
 	}else if(is.matrix(data)){
 		namesInData = dimnames(data)[[2]]
 	} else {
-		stop("data has to be a dataframe or matrix. You gave me a", typeof(data))
+		stop("data has to be a dataframe or matrix. You gave me a ", typeof(data))
 	}
 	if(intersection){
 		namesFound = intersect(namesNeeded, namesInData)
