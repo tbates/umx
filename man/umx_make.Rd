@@ -10,7 +10,7 @@ umx_make(what = c("install", "release", "win", "check", "examples"),
 \arguments{
 \item{what}{whether to "install", "release" to CRAN, check on "win", "check", or check "examples"))}
 
-\item{pkg}{tbe package to use. Defaults to umx.}
+\item{pkg}{tbe local path to your package. Defaults to my path to umx.}
 }
 \value{
 -

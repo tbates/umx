@@ -2879,9 +2879,13 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' umx_parameters(m1, "above", .5)
 #' # Parameters with values below .1 and containing "_to_" in their label
 #' umx_parameters(m1, "below", .1, "_to_")
-umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {	
-	# TODO rationalize umxParameters and UmxGetParameters
+umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {
+	# TODO rationalize umxParameters and umxGetParameters
 	# TODO  add filtering by significance (based on SEs)
+	# TODO offer a method to handle sub-models
+	# 	model$aSubmodel$matrices$aMatrix$labels
+	# 	model$MZ$matrices
+	
 	if(std){
 		stop("Sorry, std not implemented yet: Standardize the model and provide as input or summary")
 	}

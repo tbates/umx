@@ -102,13 +102,13 @@ data(twinData)
 twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
 twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
 selDVs = c("ht", "wt")
-mzData <- subset(twinData, zygosity == "MZFF", umx_paste_names(selDVs, "", 1:2))
-dzData <- subset(twinData, zygosity == "DZFF", umx_paste_names(selDVs, "", 1:2))
-umx_set_optimizer("SLSQP") #preferably NPSOL: CSOLNP needs setup to run this model.
+mzData <- subset(twinData, zygosity == "MZFF")
+dzData <- subset(twinData, zygosity == "DZFF")
+umx_set_optimizer("SLSQP") # preferably NPSOL: CSOLNP needs setup to run this model.
 m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 umxSummary(m1)
-umxGetParameters(m1, "^c", free = TRUE)
-m2 = umxModify(m1, update = "(cs_.*$)|(c_cp_)", regex = TRUE, name = "dropC")
+umxParameters(m1, patt = "^c")
+m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 umxSummaryCP(m2, comparison = m1, file = NA)
 umxCompare(m1, m2)
 }
