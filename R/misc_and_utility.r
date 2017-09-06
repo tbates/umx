@@ -21,6 +21,7 @@
 umx_get_options <- function() {
 	umx_set_auto_plot()
 	umx_set_plot_format()
+	umx_set_plot_file_suffix()
 	umx_set_table_format()
 	umx_set_optimizer()
 	message(umx_set_cores(silent = TRUE), " cores will be used")
@@ -28,9 +29,51 @@ umx_get_options <- function() {
 	umx_set_condensed_slots()
 }
 
-#' umx_set_plot_format
+#' Set output suffix used in umx plot (structural diagrams) files to disk 
 #'
-#' Set output format of plots (default = "DiagrammeR", alternative is "graphviz")
+#' Set output file suffix (default = "gv", alternative is "dot"). If you call this with no
+#' value, it will return the current setting. If you call it with TRUE, it toggles the setting.
+#'
+#' @param umx.plot.suffix the suffix for plots files (if empty, returns the current value of umx.plot.format). If "TRUE", then toggles
+#' @param silent If TRUE, no message will be printed.
+#' @return - Current umx.plot.suffix setting
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' umx_set_plot_file_suffix() # print current state
+#' old = umx_set_plot_file_suffix(silent = TRUE) # store current value
+#' umx_set_plot_file_suffix("dot")
+#' umx_set_plot_file_suffix("gv")
+#' umx_set_plot_file_suffix(old) # reinstate
+umx_set_plot_file_suffix <- function(umx.plot.suffix = NULL, silent = FALSE) {
+	if(is.null(umx.plot.suffix)) {
+		if(!silent){
+			message("Current format is", 
+				omxQuotes(getOption("umx.plot.suffix")),
+				". Valid options are 'gv' or 'dot'. Use TRUE to toggle"
+			)
+		}
+		invisible(getOption("umx.plot.suffix"))
+	} else {
+		if(umx.plot.suffix == TRUE){
+			# if T then toggle
+			if(getOption("umx.plot.suffix") == "gv"){
+				umx.plot.suffix = "dot"
+			} else {
+				umx.plot.suffix = "gv"
+			}
+		} else {
+			umx_check(umx.plot.suffix %in% c("gv", "dot"), "stop", "valid options are 'gv' or 'dot'. Use TRUE to toggle)")
+		}
+		options("umx.plot.suffix" = umx.plot.suffix)
+	}
+}
+
+#' Set output format of plots (structural diagrams) in umx
+#'
+#' Set output format of plots (default = "DiagrammeR", alternative is "graphviz"). If you call this with no
+#' value, it will return the current setting. If you call it with TRUE, it toggles the setting.
 #'
 #' @param umx.plot.format format for plots (if empty, returns the current value of umx.plot.format). If "TRUE", then toggles
 #' @param silent If TRUE, no message will be printed.
@@ -50,7 +93,7 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 		if(!silent){
 			message("Current format is", 
 				omxQuotes(getOption("umx.plot.format")),
-				". Valid options are 'graphviz' or 'DiagrammeR'"
+				". Valid options are 'graphviz' or 'DiagrammeR'. Use TRUE to toggle"
 			)
 		}
 		invisible(getOption("umx.plot.format"))

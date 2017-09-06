@@ -828,7 +828,7 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 xmu_dot_maker <- function(model, file, digraph){
 	if(!is.na(file)){
 		if(file == "name"){
-			file = paste0(model$name, ".gv")
+			file = paste0(model$name, ".", umx_set_plot_file_suffix())
 		}
 		cat(digraph, file = file) # write to file
 		if(umx_set_plot_format(silent = TRUE) == "DiagrammeR"){

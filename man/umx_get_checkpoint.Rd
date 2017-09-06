@@ -39,6 +39,7 @@ Other Get and set: \code{\link{umx_set_auto_plot}},
   \code{\link{umx_set_condensed_slots}},
   \code{\link{umx_set_cores}},
   \code{\link{umx_set_optimizer}},
+  \code{\link{umx_set_plot_file_suffix}},
   \code{\link{umx_set_plot_format}},
   \code{\link{umx_set_table_format}}
 }

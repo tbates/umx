@@ -3,10 +3,9 @@ umx depends on OpenMx.
 See the umx and OpenMx home pages for more.
 
  - (\url{http://github.com/tbates/umx})
-  - (\url{http://openmx.psyc.virginia.edu})
+  - (\url{http://openmx.ssri.psu.edu})
 
-Note: In addition to the version of OpenMx on CRAN, an advanced (parallel and
-NPSOL-enabled) version of OpenMx is available from
-\url{http://openmx.psyc.virginia.edu}. To install it use:
+Note: In addition to the version of OpenMx on CRAN, a version with
+NPSOL-enabled is available. To install it use:
 
 source('http://openmx.psyc.virginia.edu/getOpenMx.R')

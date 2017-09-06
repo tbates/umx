@@ -8,6 +8,7 @@
 * NEW: `umx_is_numeric` boolean check if variables in a dataframe are numeric.
 * NEW: `umx_is_class` boolean check if variables in a dataframe match a desired class.
 * NEW: `umx_twin_check` internal function for common input checks.
+* NEW: `umx_set_plot_file_suffix(c("gv", "dot")` function (to control the filename used for figures)
 * FIXED: `umxACE` was broken with large cov inputs h/t @NathanGillespie.
 * FIXED: `umxAggregate` now actually supports user functions as input...
 * IMPROVED: umxParameters now supports `digits`.

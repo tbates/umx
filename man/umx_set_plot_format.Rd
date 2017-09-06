@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_set_plot_format}
 \alias{umx_set_plot_format}
-\title{umx_set_plot_format}
+\title{Set output format of plots (structural diagrams) in umx}
 \usage{
 umx_set_plot_format(umx.plot.format = NULL, silent = FALSE)
 }
@@ -15,7 +15,8 @@ umx_set_plot_format(umx.plot.format = NULL, silent = FALSE)
 - Current umx.plot.format setting
 }
 \description{
-Set output format of plots (default = "DiagrammeR", alternative is "graphviz")
+Set output format of plots (default = "DiagrammeR", alternative is "graphviz"). If you call this with no
+value, it will return the current setting. If you call it with TRUE, it toggles the setting.
 }
 \examples{
 library(umx)
@@ -36,5 +37,6 @@ Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_set_condensed_slots}},
   \code{\link{umx_set_cores}},
   \code{\link{umx_set_optimizer}},
+  \code{\link{umx_set_plot_file_suffix}},
   \code{\link{umx_set_table_format}}
 }

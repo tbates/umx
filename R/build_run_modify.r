@@ -7,6 +7,7 @@
 	# TODO make sure mxCondenseMatrixSlots not needed now that $ get and set are working properly
 	# umx_set_condensed_slots(FALSE)
 	umx_set_plot_format('DiagrammeR')
+	umx_set_plot_file_suffix("gv")
 
 	if(is.null(getOption('knitr.table.format'))){
 		umx_set_table_format('markdown')
