@@ -21,10 +21,16 @@ Checks the class of each column in a dataframe, seeing if they are %in% a list o
 Returns a vector of TRUE and FALSE, or, if all ==TRUE, a single binary (the default).
 }
 \examples{
+# Are the variables in mtcars type character?
 umx_is_class(mtcars, "character") # FALSE
+# They're all numeric data
 umx_is_class(mtcars, "numeric") # TRUE
-umx_is_class(mtcars, "numeric", all = FALSE) # vector of TRUE
-umx_is_class(twinData[,c(13, 17)], classes = "character", all=T)
+# Show the test-result for each variable in mtcars
+umx_is_class(mtcars, "numeric") # TRUE
+# Are they _either_ a char OR a num?
+umx_is_class(mtcars, c("character", "numeric"))
+# Is zygosity a factor (note we don't drop = F to keep as dataframe)
+umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

@@ -84,7 +84,8 @@ selDVs  = "ht"
 selCovs = "age"
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
-m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
+m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, 
+	     dzData = dzData, mzData = mzData, sep = "")
 m2 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 # =======================
 # = lm-based equivalent =
@@ -101,7 +102,8 @@ selCovs = c("age", "cohort")
 twinData$cohort1 = twinData$cohort2 = as.numeric(as.factor(twinData$cohort))
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
-m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
+m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs,
+	     dzData = dzData, mzData = mzData, sep = "")
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 }
 \seealso{

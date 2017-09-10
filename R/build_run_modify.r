@@ -114,6 +114,16 @@ utils::globalVariables(c(
 	'CovWBb',
 	'CovBb',
 
+	# from umxACE_cov_fixed
+	'top.Intercepts',
+	'defCovT1',
+	'top.betas',
+	'defCovT2',
+	'defCovT1',
+	'defCovT2',
+	'top.Intercepts',
+	'top.betas',
+
 	'Iden',
 	'nDv',
 
@@ -3122,10 +3132,15 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' 	umxPath(v.m. = manifests),
 #' 	umxPath(v1m0 = latents)
 #' )
-#' parameters(m1, free=TRUE)
+#' parameters(m1)
+#' umxSetParameters(m1, regex = "^", newlabels= "m1_", test = TRUE)
 #' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
-#' m2 = umxSetParameters(m1, "^", newlabels= "m1_", regex = TRUE, test = TRUE)
+#' parameters(m2)
 umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE, strict = TRUE, name = NULL, regex = FALSE, test = FALSE) {
+	if(is.character(regex)){
+		labels = regex
+		regex = TRUE
+	}
 	nothingDoing = all(is.null(c(free, values, newlabels)))
 	if(nothingDoing){
 		warning("You are not setting anything: set one or more of free, values, or newLabels to update a parameter")
@@ -3192,9 +3207,10 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' )
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' # By default, umxEquate just equates master and slave labels
-#' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
+#' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Eq x1 x2 loadings")
 #' # Set autoRun = TRUE and comparison = TRUE to run and output a comparison
-#' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings", autoRun = TRUE, comparison = TRUE)
+#' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Eq x1 x2 loadings", 
+#' 	     autoRun = TRUE, comparison = TRUE)
 umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = TRUE, name = NULL, autoRun = FALSE, comparison = TRUE) {	
 	free = umx_default_option(free, c(TRUE, FALSE, NA))
 	if(!umx_is_MxModel(model)){

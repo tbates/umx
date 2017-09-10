@@ -54,7 +54,8 @@
 #' selCovs = "age"
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
+#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, 
+#' 	     dzData = dzData, mzData = mzData, sep = "")
 #' m2 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' # =======================
 #' # = lm-based equivalent =
@@ -71,7 +72,8 @@
 #' twinData$cohort1 = twinData$cohort2 = as.numeric(as.factor(twinData$cohort))
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "")
+#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs,
+#' 	     dzData = dzData, mzData = mzData, sep = "")
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), suffix = NULL) {
 		nSib = 2 # number of siblings in a twin pair

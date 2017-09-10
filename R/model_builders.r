@@ -39,7 +39,7 @@
 #' @param rotation A rotation to perform on the loadings (default  = "varimax" (orthogonal))
 #' @param name A name for your model
 #' @param digits rounding (default = 2)
-#' @param report What to report
+#' @param report Report as markdown to the console, or open a table in browser ("html")
 #' @return - EFA \code{\link{mxModel}}
 #' @family Super-easy helpers
 #' @export
@@ -60,7 +60,7 @@
 #' }
 umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, 
 	scores = c("none", 'ML', 'WeightedML', 'Regression'),
-	rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, report = c("1", "table", "html")){
+	rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, report = c("markdown", "html")){
 	message("umxEFA is beta, send requests to tim.bates@ed.ac.uk")
 	scores = match.arg(scores)
 	# "Bartlett" given Bartlett's weighted least-squares scores. 
@@ -111,7 +111,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs =
 	rotation = umx_default_option(rotation, c("varimax", "promax", "none"), check = FALSE)
 	if(is.null(factors)){
 		stop("You need to request at least 1 latent factor, e.g.: factors = 4")
-	} else if( length(factors)==1 && class(factors)=="numeric"){
+	} else if( length(factors) == 1 && class(factors) == "numeric"){
 		factors = paste0("F", c(1:factors))
 	}
 	# TODO adapt to input datatype, i.e., add cov handler
@@ -126,7 +126,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs =
 	nManifests = length(manifests)
 	if(nFac > 1){
 		for(i in 2:nFac){
-			m1$A$free[1:(i-1), factors[i]] = FALSE
+			m1$A$free[1:(i-1)  , factors[i]] = FALSE
 			m1$A$values[1:(i-1), factors[i]] = 0
 		}
 	}

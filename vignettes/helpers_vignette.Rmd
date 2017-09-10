@@ -1,0 +1,63 @@
+\section{Appendix: Miscellaneous help functions} % (fold)
+\label{sec:sec_misc_functions}
+
+In this short article, it is not appropriate to cover all the minor functions of \pkg{umx}. In this appendix we highlight some that are most likely to be useful to new users. 
+
+It is important to be know what options are set and be able to control them. \pkg{umx} can display all option settings with the function \code{umx_get_options}. This displays the whether automatic running and plotting are on or off, the output format for plots (``graphviz'' or ``DiagrammeR''), and tables printed to the console (latex, html, markdown, pandoc, or rst). It also shows the current optimizer ('CSOLNP', 'SLSQP', or 'NPSOL'), number of cores to be used. Each of these are settable with built-in functions. Calling these functions with no input will return the current state of that option.
+
+\begin{CodeInput}
+umx_set_auto_plot(c("TRUE", "FALSE")
+umx_set_auto_run(c("TRUE", "FALSE")
+umx_set_plot_format(c('graphviz', 'DiagrammeR'))
+umx_set_table_format(c("latex", "html", "markdown", "pandoc", "rst")
+umx_set_cores(n)
+umx_set_optimizer(c('CSOLNP', 'SLSQP', 'NPSOL'))
+\end{CodeInput}
+
+Because developer versions of the \pkg{OpenMx} package on which \pkg{umx} depends are often updated on travis ahead of CRAN, the \code{install.OpenMx} function simplifies getting the NPSOL version of \pkg{OpenMx}, a current travis or CRAN build.
+
+There is a suite of input-checking functions, which may be of use to advanced users building their own functions. These are used in \pkg{umx} to provide feedback to the user, enabling them to more rapidly correct inputs, telling them what was expected and also what they provided when functions fail. These have prefixes \code{umx_is_} and \code{umx_has_} and \code{umx_check} and can check the OS on which the user is running \pkg{umx}, whether an object is a \pkg{umx} RAM model, if it has been run etc.
+
+Because binary and ordinal columns must be treated differently from continuous variables and from each other, \pkg{umx} includes functions to check the type of columns in a dataframe, e.g. \code{umx_is_ordered}. \code{umxFactor} simplifies creating the ordered factors required for ordinal data.
+
+\pkg{umx} also includes functions to compute heterochoric correlation matrices suitable for analysis (\code{umx_hetcor}). The package also supports flexibly scaling or residualizing wide-format twin data with \code{umx_scale_wide_twin_data} and \code{umx_residualize}) respectively. The package also supports simulating data for twin modeling (\code{umx_make_TwinData}) and for Mendelian Randomization (\code{umx_make_MR_data}).
+
+An example of simulating twin data is shown in this code snippet:
+
+\begin{CodeInput}
+# Simulate 1 variable 'var' in 100 MZ and 100 DZ pairs,
+# with Additive and unique variance = .5
+x = umx_make_TwinData(nMZpairs = 100, AA = .5, CC = 0, EE= .5)
+# output feedback
+   AA    CC    EE
+  0.50  0.00  0.50
+   a     c     e
+  0.71  0.00  0.71
+
+# Use the simulated data.
+m1  = umxACE(selDVs = "var", dzData = x$dzData, mzData = x$mzData, sep = "_T")
+\end{CodeInput}
+
+Another common task is the construction of variable name lists which repeat for each twin, expanding base names for variables (e.g., ``bmi'') into fully specified family-wise row names for variables c(``bmi\_T1'',\ ``bmi\_T2''). umx simplifies this task with the \code{umx\_paste\_names} helper. This allows the user to list just the handful of base names, an optional string dividing this base name from the twin-specific suffix, and list of twin suffixes. So, to produce the desired output list. So:
+
+\code{umx\_paste\_names(c("bmi", "IQ"), "\_T", 1:2)}
+
+yields the vector:
+
+\code{c("bmi\_T1", "IQ\_T1", "bmi\_T2", "IQ\_T2")}
+
+Because a common mistake for users is to use variable names that don't exist, the function \code{umx_check_names} is provided to give better feedback in checking these names exist:
+
+\begin{CodeInput}
+umx_check_names(c("wt", "airbag"), mtcars)
+
+Error in umx_check_names(c("wt", "airbag"), mtcars) : 
+  Not all required names were found in the data. Missing were:
+airbag
+\end{CodeInput}
+
+Twin and cohort datasets often contain many hundreds or even thousands of variables. Users often also import data from SPSS with short variable names. To ease searching these, \pkg{umx} includes grep-enabled search function \code{umx\_names}. This functions like the built-in \code{names} function, but allows the user to filter the list of found names. This is implemented using regular expressions Thus in a dataframe ``df'' containing many names where the user may only want variables beginning with``DSM\_'', this call would achieve the goal: \code{umx\_names(df, pattern = "\^{}DSM\_")}
+
+\pkg{umx} also contains functions to aid processing strings (\code{umx\_rot}; \code{umx\_trim}, \code{umx\_explode}, \code{umx\_grep}), printing (\code{umx\_print}; \code{umx\_msg}), find and changing variable names (\code{umx\_names}, \code{umx\_grep}, \code{umx\_rename}). Useful functions are included for APA-style summary-report tables for input including dataframes, \code{"lm"} models, which are formatted in publication-friendly formats via \code{umxAPA}.
+
+% section sec_misc_functions (end)
