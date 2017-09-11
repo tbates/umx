@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage{url,Sweave}
+%\VignetteIndexEntry{Using car functions inside user functions}
+\newcommand{\R}{{\normalfont\textsf{R}}{}}
+\newcommand{\car}{\texttt{car}}
+\newcommand{\effects}{\texttt{effects}}
+\newcommand{\code}[1]{\texttt{#1}}
+\usepackage[authoryear,round]{natbib}
+\bibliographystyle{plainnat}
+
+<<echo=FALSE>>=
+options(width=80, digits=4, useFancyQuotes=FALSE, prompt=" ", continue=" ")
+@
+
+\title{Using \umx{}: A guide for \OpenMx{} users}
+\author{Timothy C. Bates\footnote{Department of Psychology, University of Edinburgh}}
+\date{\today}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The \umx{} package \citep{BatesUmx17} provides over 100 functions for use in structural equation modeling and behavior genetics research. These support model building, modification, comparison, and creation of publication ready reports and graphs. Some functions are new (like \umxACE{}), some are S3 methods for functions the user already know (like \plot{}), others are wrappers around several functions \OpenMx{}, typically just with a ``umx'' prefix instead of ``mx''. This document introduces \umx{} from the perspective of an \OpenMx{} user.
+\end{abstract}
+
+\section{umxRAM and umxPath for OpenMx users} % (fold)
+\label{sec:app_OpenMx_differences}
+
+For users who have already learned base \pkg{OpenMx}, \code{umxRAM} and \code{umxPath} will be familiar, but distinct in around seven important ways. In \pkg{OpenMx}, path-based models are specified by passing \code{type = "RAM"} to the \code{mxModel} function, along with a vector of manifest variable names, another of latent variable names, a series of \code{mxPath}s, and an \code{mxData} object. The following code implements a structural model using the displacement (disp), weight (wt) and miles per gallon (mpg) variables from the mtcars dataset into the model, and proposing that disp and wt are correlated, and both cause reduced mpg. First in base \pkg{OpenMx} functions:
+
+\begin{CodeInput}
+library("OpenMx")
+m1 <- mxModel("big", type= "RAM",
+  latentVars = NULL,
+  manifestVars = c("disp", "wt", "mpg"),
+  mxPath(from = c("disp", "wt"), to = "mpg", values = 0),
+  mxPath(from = "disp", to = "wt", arrows = 2, values = .1),
+  mxPath(from = c("disp", "wt", "mpg"), arrows = 2, values = 1),
+  mxPath(from = "one", to = c("disp", "wt", "mpg"), values = 3),
+  mxData(mtcars, type = "raw")
+)
+m1 = mxRun(m1)
+summary(m1)
+\end{CodeInput}
+
+By contrast, this is the same model using \code{umx}:
+
+\begin{CodeInput}
+library("umx")
+m1 <- umxRAM("big", data = mtcars,
+  umxPath(c("disp", "wt"), to = "mpg"),
+  umxPath("disp", with = "wt"),
+  umxPath(v.m. = c("disp", "wt", "mpg"))
+)
+plot(m1)
+\end{CodeInput}
+
+The first change from \pkg{OpenMx} to \pkg{umx}, is that a dedicated path-based model function is provided: \code{umxRAM}. This frees the user from having to specify model type. As with R functions such as \code{"lm"}, \code{umxRAM} provides a \code{data= parameter} for the model data. 
+
+Second, \code{umxRAM} detects which variable names have been used in creating the model, and maps these to the data. This saves the user having to specify the OpenMx objects \code{manifestVars} and \code{latentVars} because \code{umxRAM} automatically adds names not found in the data to the latent variable list. The user is given feedback including which manifests have been detected, which latent variables were created, and which data columns were dropped from the data.frame, and how the data have been interpreted (see above for example of this feedback). \code{umxRAM} also automatically drops unused variables from the modelled data.
+
+Third, \code{umxRAM} automatically labels paths in a consistent fashion. A path from \code{a} to \code{b} for instance, is labeled \code{a\_to\_b}. Two-headed paths are labeled in a similar consistent fashion, e.g., \code{a\_with\_b} (name order is sorted to avoid unambiguity). Fourth, \code{umx} sets starting values that are likely to allow model estimation to begin successfully. This can save experts valuable time.
+
+Fifth, as a convenience, by default \code{umxRAM} automatically runs the model, and prints a user summary. Sixth, \code{umx} implements S3 functions supporting graphical output and table-based reporting via \code{plot()} and \code{umxSummary}, as well as generic and core R S3 functions including \code{confint}, and \code{residuals} that users are used to using e.g., with \code{lm} objects.
+
+Finally, but importantly, \code{umxPath} extends \code{mxPath} in several ways. \code{umxPath} provides additional adjectives supporting more explicit path descriptions that involve fewer keystrokes. For example, to create a 2-headed path fixed at 1, \code{with} and \code{fixedAt} allow the user to say: \code{umxPath("a", with= "b", fixedAt = 1)}. This is easier to type, to read, and to maintain than:
+
+\code{mxPath(from = "a", to = "b", arrows = 2, free = FALSE, values = 1)}
+
+Similarly, to aid readability, rather than specifying a means model thus: \code{ mxPath(from = "one", to = "b")}, the user can say:
+
+\code{umxPath(means = "b")}
+
+Other parameters compress multiple statements into a single call. For instance a common task is specifying variable means and variances. Common cases include making a normalized latent variable (mean == 0, variance == 1) or allowing these parameters to be estimated. Using \code{umxPath}, the user can specify these using the \code{v1m0} and \code{v.m.} parameters respectively. The character \code{.} was chosen by analogy with the wild-card character which matches any value in regular expressions. As an example, the following shows the 2-lines of \pkg{umx} code, followed by the four lines of \pkg{OpenMx} code which they replicate:
+
+In \pkg{umx}, the user can fix variance and mean of ``g'' to 1 and zero respectively, and estimated variance and means for the three manifest variables as follows:
+
+\begin{CodeInput}
+umxPath(v1m0 = "g") 
+umxPath(v.m. = c("disp", "wt", "mpg"))
+\end{CodeInput}
+
+The same effects in base-\pkg{OpenMx} are as follows:
+
+\begin{CodeInput}
+mxPath(from = "g", arrows = 2, free = FALSE, values = 1),
+mxPath(from = "one", to =  "g", free = FALSE, values = 0),
+mxPath(from = c("disp", "wt", "mpg"), arrows=2, free = TRUE, values = .1),
+mxPath(from = "one", to =  c("disp", "wt", "mpg"), free = TRUE, values = 10)
+
+\end{CodeInput}
+
+% section app_OpenMx_differences (end)

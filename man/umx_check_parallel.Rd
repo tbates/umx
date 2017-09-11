@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_check_parallel}
 \alias{umx_check_parallel}
-\title{umx_check_parallel}
+\title{Check if OpenMx is using OpenMP, test cores, and get timings}
 \usage{
 umx_check_parallel(nCores = c(1, parallel::detectCores()/2),
   testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000)
@@ -20,7 +20,22 @@ umx_check_parallel(nCores = c(1, parallel::detectCores()/2),
 - NULL
 }
 \description{
-Shows how many cores you are using, and runs a test script so user can check CPU usage
+Shows how many cores you are using, and runs a test script so user can check CPU usage.
+}
+\details{
+Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz Core i7/4cores desktop.
+
+R: 3.4.1 (2017-06-30); MacOS: 10.13
+
+umx: 1.9.0; OpenMx: 2.7.16.26 [GIT v2.7.16-26-gd46131ce-dirty] / 2.7.16.31
+
+\tabular{rllll}{
+2017-09-07 \tab Clang OpenMP \tab 1 core  \tab 01 min, 12.9 sec    \tab                     \cr
+2017-09-07 \tab Clang OpenMP \tab 4 core  \tab 00 min, 32.2 sec    \tab (\U0394: -40.70 sec)\cr
+2017-09-07 \tab Clang no-OpenMP \tab 1 core  \tab 01 min, 9.9 sec  \tab                     \cr
+2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 6.2 sec  \tab                     \cr
+2017-09-07 \tab TRAVIS          \tab 4 cores \tab 00 min, 21.1 sec \tab (\U0394 45 seconds) \cr
+}
 }
 \examples{
 \dontrun{
