@@ -58,9 +58,10 @@ m1 <- mxModel("One Factor", type = "RAM",
 )
 m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 # By default, umxEquate just equates master and slave labels
-m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings")
+m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Eq x1 x2 loadings")
 # Set autoRun = TRUE and comparison = TRUE to run and output a comparison
-m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Equate x1 and x2 loadings", autoRun = TRUE, comparison = TRUE)
+m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Eq x1 x2 loadings", 
+	     autoRun = TRUE, comparison = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

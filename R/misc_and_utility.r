@@ -1092,7 +1092,9 @@ umxVersion <- function (model = NULL, verbose = TRUE, return = "umx") {
 #' umx_open_CRAN_page("umx")
 #' }
 umx_open_CRAN_page <- function(package = "umx") {
-	system(paste0("open 'https://cran.r-project.org/package=", package, "'"))
+	for (p in package) {
+	system(paste0("open 'https://cran.r-project.org/package=", p, "'"))		
+	}
 }
 
 #' Pad an Object with NAs
@@ -3455,13 +3457,20 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, verbose = FALSE){
 #' @seealso - \code{\link{umx_is_numeric}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
+#' # Are the variables in mtcars type character?
 #' umx_is_class(mtcars, "character") # FALSE
+#' # They're all numeric data
 #' umx_is_class(mtcars, "numeric") # TRUE
-#' umx_is_class(mtcars, "numeric", all = FALSE) # vector of TRUE
-#' umx_is_class(twinData[,c(13, 17)], classes = "character", all=T)
+#' # Show the test-result for each variable in mtcars
+#' umx_is_class(mtcars, "numeric") # TRUE
+#' # Are they _either_ a char OR a num?
+#' umx_is_class(mtcars, c("character", "numeric"))
+#' # Is zygosity a factor (note we don't drop = F to keep as dataframe)
+#' umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
 umx_is_class <- function(df, classes, all = TRUE){
 	if(!is.data.frame(df)){
-		stop(paste0("First argument should be a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+		return(class(df %in% classes))
+		# stop(paste0("First argument should be a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
 	}
 	colNames = names(df)
 	bIsOK = rep(FALSE, length(colNames))

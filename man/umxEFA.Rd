@@ -8,7 +8,7 @@
 umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
   n.obs = NULL, scores = c("none", "ML", "WeightedML", "Regression"),
   rotation = c("varimax", "promax", "none"), name = "efa", digits = 2,
-  report = c("1", "table", "html"))
+  report = c("markdown", "html"))
 }
 \arguments{
 \item{x}{Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.}
@@ -29,7 +29,7 @@ umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
 
 \item{digits}{rounding (default = 2)}
 
-\item{report}{What to report}
+\item{report}{Report as markdown to the console, or open a table in browser ("html")}
 }
 \value{
 - EFA \code{\link{mxModel}}

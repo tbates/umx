@@ -32,7 +32,6 @@ Suggests:
     testthat,
     gdata,
     cocor,
-    knitr,
     rmarkdown
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
