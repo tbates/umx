@@ -2632,12 +2632,16 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 	}else if(is.matrix(namesNeeded)){
 		namesNeeded = dimnames(namesNeeded)[[2]]
 	} else if (!typeof(namesNeeded)=="character"){
+		namesNeeded = namesNeeded
+	} else{
 		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesInData))
 	}
 	if(is.data.frame(data)){
-		namesInData = names(data)
+		data = names(data)
 	}else if(is.matrix(data)){
-		namesInData = dimnames(data)[[2]]
+		data = dimnames(data)[[2]]
+	} else if (!typeof(data)=="character"){
+		data = data
 	} else {
 		stop("data has to be a dataframe or matrix. You gave me a ", typeof(data))
 	}

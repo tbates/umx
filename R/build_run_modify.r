@@ -4266,9 +4266,12 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 	if(!is.null(defn)){
 		if(is.na(labels)){
-			stop("You must provide the name of the data source for your definition variable in labels! e.g. \"data.age\" ")
+			stop("You must provide the name of the data source for your definition variable in labels! e.g. \"age\"
+			I'll convert that into \"data.age\" ")
 		} else if(length(labels) > 1){
 			stop("Labels must consist of just one data variable (data source) name!")			
+		}else if (length(grep("data\\.", labels, value = FALSE))==0){
+			labels = paste0("data.", labels)
 		}
 		a = umxPath(var = defn, fixedAt = 0)
 		b = umxPath(means = defn, free = FALSE, labels = labels)
