@@ -2634,7 +2634,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 	} else if (!typeof(namesNeeded)=="character"){
 		namesNeeded = namesNeeded
 	} else{
-		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesInData))
+		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesNeeded))
 	}
 	if(is.data.frame(data)){
 		data = names(data)
