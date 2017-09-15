@@ -64,7 +64,7 @@ umxConfint(m1, parm = "existing") # request existing CIs (none added yet...)
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
   \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{logLik.MxModel}}, \code{\link{plot.MxModel}},
+  \code{\link{plot.MxModel}},
   \code{\link{residuals.MxModel}},
   \code{\link{umxCI_boot}}, \code{\link{umxCI}},
   \code{\link{umxCompare}}, \code{\link{umxExpCov}},

@@ -62,7 +62,7 @@ Original written by \url{http://openmx.ssri.psu.edu/users/bwiernik}
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
   \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{logLik.MxModel}}, \code{\link{plot.MxModel}},
+  \code{\link{plot.MxModel}},
   \code{\link{residuals.MxModel}}, \code{\link{umxCI}},
   \code{\link{umxCompare}}, \code{\link{umxConfint}},
   \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
