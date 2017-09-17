@@ -148,10 +148,10 @@ utils::globalVariables(c(
 # = plot, etc can then operate on these                             =
 # ===================================================================
 methods::setClass("MxModel.ACE"   , contains = "MxModel")
+methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 methods::setClass("MxModel.GxE"   , contains = "MxModel")
 methods::setClass("MxModel.CP"    , contains = "MxModel")
 methods::setClass("MxModel.IP"    , contains = "MxModel")
-methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 
 # ============================
 # = Core Modelling Functions =

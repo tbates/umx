@@ -80,16 +80,16 @@ plot(m1, std = TRUE, file = NA)
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
   \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxReduce}},
-  \code{\link{umxRun}}
+  \code{\link{umxRAM}}, \code{\link{umxReduceACE}},
+  \code{\link{umxReduceGxE}}, \code{\link{umxRun}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxTwoStage}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umxAPA}}, \code{\link{umxGetParameters}},
-  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}},
+  \code{\link{umxReduce}}, \code{\link{umxSummary}},
+  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_parameters}}, \code{\link{umx_print}},
   \code{\link{umx_show}}, \code{\link{umx_time}}
 

@@ -2,40 +2,46 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxReduce}
 \alias{umxReduce}
-\title{Reduce a model - this is a work in progress}
+\title{Reduce models, and report the results.}
 \usage{
 umxReduce(model, report = c("markdown", "inline", "html", "report"),
-  baseFileName = "tmp")
+  baseFileName = "tmp", ...)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to reduce}
+\item{model}{The \code{\link{mxModel}} which will be reduced.}
 
 \item{report}{How to report the results. "html" = open in browser}
 
-\item{baseFileName}{file (I add the html) to use when report = "html" (defaults to "tmp")}
-}
-\value{
--
+\item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
+
+\item{...}{Other parameters to control model summary}
 }
 \description{
-This function can perform model reduction for some stylized models. For instance, for 
-\code{\link{umxGxE}}, this function tests dropping means-moderation, a`,c` & e`, a& a` etc.
-}
-\details{
-It's a work in progress, with more automations coming as demand emerges.
-}
-\examples{
-\dontrun{
-model = umxReduce(model)
-}
-}
-\references{
-- \url{http://tbates.github.io}
+Given an OpenMx model (currently ACE and GxE are supported - ask for more!)
+umxReduce will conduct a formalised reduction process
+
+\strong{GxE model reduction}
+For \code{\link{umxGxE}} models, each form of moderation is tested
+singley and jointly.
+Also, C is removed, and moderation tested in this model.
+
+\strong{ACE model reduction}
+For \code{\link{umxACE}} models, each form of moderation is tested singley and jointly.
+Also, C is removed, and moderation tested in this model.
+
+It reports the results in a table. Set the format of the table with
+\code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
+table for pasting into a word processor.
+
+umxReduce is a work in progress, with more automations coming as demand emerges.
+I am thinking for RAM models to drop NS paths, and report that test.
 }
 \seealso{
-Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
+Other Reporting Functions: \code{\link{loadings.MxModel}},
+  \code{\link{umxAPA}}, \code{\link{umxGetParameters}},
+  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}},
+  \code{\link{umx_parameters}}, \code{\link{umx_print}},
+  \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
