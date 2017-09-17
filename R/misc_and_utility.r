@@ -181,9 +181,12 @@ umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 	} else{
 		if(autoPlot == 'name' || autoPlot){
 			options("umx_auto_plot" = "name")
+			autoPlot = TRUE
 		}else{
 			options("umx_auto_plot" = NA)		
+			autoPlot = FALSE
 		}
+		invisible(autoPlot)
 	}
 }
 
@@ -2637,11 +2640,11 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesNeeded))
 	}
 	if(is.data.frame(data)){
-		data = names(data)
+		namesInData = names(data)
 	}else if(is.matrix(data)){
-		data = dimnames(data)[[2]]
-	} else if (!typeof(data)=="character"){
-		data = data
+		namesInData = dimnames(data)[[2]]
+	} else if (!typeof(data) == "character"){
+		namesInData = data
 	} else {
 		stop("data has to be a dataframe or matrix. You gave me a ", typeof(data))
 	}

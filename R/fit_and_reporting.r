@@ -184,18 +184,29 @@ umxReduce.MxModel.GxE <- umxReduceGxE
 #' m2 = umxReduce(m1)
 umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", ...) {
 	report = match.arg(report)
-		alternate_A_model = model
+	oldAutoPlot = umx_set_auto_plot(FALSE, silent = TRUE)
+	CE = umxModify(model, regex = "a_r[0-9]+c[0-9]+" , name = "CE")
+	AE = umxModify(model, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
 	if(model$top$dzAr$values == .5){
-		alternate_A_model =	model$top$dzAr$values = .25
-		alternate_A_model$name =	"ADE"
-	} else {
-		alternate_A_model =	model$top$dzAr$values = .5
-		alternate_A_model$name =	"ACE"
+		ADE = umxModify(model, 'dzAr_r1c1', value = .25, name = "ADE")
+		if(-2*logLik(model) > -2*logLik(ADE)){
+			message("A dominance model is preferred, set dzAr = .25.")
+			umxCompare(ADE, c(model, CE, AE), all = TRUE, report = report)
+		}else{
+			umxCompare(model, c(ADE, CE, AE), all = TRUE, report = report)
+		}
+	}else	if(model$top$dzAr$values == .25){
+		ACE = umxModify(model, 'dzAr_r1c1', value = .5, name = "ACE")
+		if(-2*logLik(model) > -2*logLik(ACE)){
+			message("An ACE model is preferred, set dzAr = .5 .")
+			umxCompare(ACE, c(model, CE, AE), all = TRUE, report = report)
+		}else{
+			umxCompare(model, c(ADE, CE, AE), all = TRUE, report = report)
+		}
+	}else{
+		message(model$top$dzAr$values, " is an odd number for dzAr, isn't it?")		
 	}
-	alternate_A_model = mxRun(alternate_A_model)
-	CE = umxModify(model, regex = "a_r[0-9]+c[0-9]+" , name = "Drop_Additive_genetic_effect")
-	AE = umxModify(model, regex = "c_r[0-9]+c[0-9]+" , name = "Drop_Shared_environment")
-	umxCompare(model, c(alternate_A_model, CE, AE), all = TRUE, report = report, file = paste0(baseFileName, "1.html"))
+	umx_set_auto_plot(oldAutoPlot, silent = TRUE)
 }
 #' @export
 umxReduce.MxModel.ACE <- umxReduceACE
