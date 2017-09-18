@@ -3156,7 +3156,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 #' @param k not used
 #' @param ... any other parameters (not used)
 #' @return - AIC value
-#' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
+#' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik}}
 #' @family Reporting functions
 #' @references - \url{http://openmx.ssri.psu.edu/thread/931#comment-4858}
 #' @examples

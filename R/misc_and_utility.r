@@ -169,7 +169,7 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #' umx_set_auto_plot(FALSE)  # set to off (internally stored as NA)
 #' umx_set_auto_plot(old)    # reinstate
 umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
-	if(is.null(autoPlot)) {
+	if(is.null(autoPlot)){
 		if(!silent){
 			message("Current plot format is ", omxQuotes(getOption("umx_auto_plot")),
 				". 'name' means auto-plot is on (defaulting to the name of the model).", 
@@ -181,14 +181,13 @@ umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 		} else {
 			autoPlot = TRUE
 		}
-	} else{
+	}else{
 		if(is.na(autoPlot) || autoPlot %in% FALSE){
-			options("umx_auto_plot" = "name")
-			autoPlot = TRUE
-		if(autoPlot == 'name' || autoPlot){
-		}else{
 			options("umx_auto_plot" = NA)		
 			autoPlot = FALSE
+		} else if(autoPlot == 'name' || autoPlot){
+			options("umx_auto_plot" = "name")
+			autoPlot = TRUE
 		}
 	}
 	invisible(autoPlot)

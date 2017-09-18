@@ -33,7 +33,7 @@
 #' @importFrom sfsmisc nearcor
 #' @importFrom parallel detectCores
 
-#' @importFrom stats C aggregate as.formula coef complete.cases
+#' @importFrom stats AIC C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
@@ -45,6 +45,8 @@
 #' @importFrom xtable xtable
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
+
+
 	
 utils::globalVariables(c(
 	'xtable',
