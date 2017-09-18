@@ -42,6 +42,6 @@ umxDiagnose(m1)
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxLatent}}, \code{\link{umxMatrix}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxReduce}}, \code{\link{umxRun}},
-  \code{\link{umx}}
+  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
+  \code{\link{umxRun}}, \code{\link{umx}}
 }

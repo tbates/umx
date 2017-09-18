@@ -181,9 +181,12 @@ umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 	} else{
 		if(autoPlot == 'name' || autoPlot){
 			options("umx_auto_plot" = "name")
+			autoPlot = TRUE
 		}else{
 			options("umx_auto_plot" = NA)		
+			autoPlot = FALSE
 		}
+		invisible(autoPlot)
 	}
 }
 
@@ -455,18 +458,18 @@ umx_get_checkpoint <- function(model = NULL) {
 #' Shows how many cores you are using, and runs a test script so user can check CPU usage.
 #'
 #' @details
-#' Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz Core i7/4cores desktop.
+#' Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz Quad-core i7 desktop.
 #' 
 #' R: 3.4.1 (2017-06-30); MacOS: 10.13
 #' 
 #' umx: 1.9.0; OpenMx: 2.7.16.26 [GIT v2.7.16-26-gd46131ce-dirty] / 2.7.16.31
 #' 
 #' \tabular{rllll}{
-#'	2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.9 sec \tab                     \cr
-#'	2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.2 sec \tab (\U0394: -40.70 sec)\cr
-#'	2017-09-07 \tab Clang no-OpenMP \tab 1 core  \tab 01 min, 9.9 sec  \tab                     \cr
-#'	2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 6.2 sec  \tab                     \cr
-#'	2017-09-07 \tab TRAVIS          \tab 4 cores \tab 00 min, 21.1 sec \tab (\U0394 45 seconds) \cr
+#'	2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.9 sec \tab                          \cr
+#'	2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.2 sec \tab Delta: -40.70 sec \cr
+#'	2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 9.9 sec  \tab                          \cr
+#'	2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 6.2 sec  \tab                          \cr
+#'	2017-09-07 \tab TRAVIS          \tab 4 cores \tab 00 min, 21.1 sec \tab Delta: 45 seconds \cr
 #' }
 #' @param nCores How many cores to run (defaults to c(1, max/2). -1 = all available.
 #' @param testScript A user-provided script to run (NULL)
@@ -2640,7 +2643,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 		namesInData = names(data)
 	}else if(is.matrix(data)){
 		namesInData = dimnames(data)[[2]]
-	} else if (!typeof(data)=="character"){
+	} else if (!typeof(data) == "character"){
 		namesInData = data
 	} else {
 		stop("data has to be a dataframe or matrix. You gave me a ", typeof(data))

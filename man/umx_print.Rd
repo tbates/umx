@@ -50,8 +50,8 @@ Other Utility Functions: \code{\link{qm}},
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umxAPA}}, \code{\link{umxGetParameters}},
-  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}},
+  \code{\link{umxReduce}}, \code{\link{umxSummary}},
+  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_parameters}}, \code{\link{umx_show}},
   \code{\link{umx_time}}, \code{\link{umx}}
 }

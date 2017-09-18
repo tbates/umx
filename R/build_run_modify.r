@@ -148,10 +148,10 @@ utils::globalVariables(c(
 # = plot, etc can then operate on these                             =
 # ===================================================================
 methods::setClass("MxModel.ACE"   , contains = "MxModel")
+methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 methods::setClass("MxModel.GxE"   , contains = "MxModel")
 methods::setClass("MxModel.CP"    , contains = "MxModel")
 methods::setClass("MxModel.IP"    , contains = "MxModel")
-methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 
 # ============================
 # = Core Modelling Functions =
@@ -1316,7 +1316,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 			if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
 			thresholds = match.arg(thresholds)
 			nSib = 2 # number of siblings in a twin pair
-			if(dzCr == .25 && name == "ACE"){
+			if(dzCr == .25 & name == "ACE"){
 				name = "ADE"
 			}
 			# look for name conflicts
@@ -1577,8 +1577,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 			umxMatrix("c", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
 			umxMatrix("e", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE), 
 		
-			mxMatrix(name = "dzAr", type = "Full", 1, 1, free = FALSE, values = dzAr),
-			mxMatrix(name = "dzCr", type = "Full", 1, 1, free = FALSE, values = dzCr),
+			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 			# Multiply by each path coefficient by its inverse to get variance component
 			# Quadratic multiplication to add common_loadings
 			mxAlgebra(name = "A", a %*% t(a)), # additive genetic variance
@@ -1666,9 +1666,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		if(autoRun){
 			model = mxRun(model)
 			umxSummary(model)
-			if(!is.na(umx_set_auto_plot(silent = TRUE))){
-				plot(model)
-			}
+			# if(!is.na(umx_set_auto_plot(silent = TRUE))){
+				# plot(model)
+			# }
 		} else {
 			# --
 		}
@@ -1886,8 +1886,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	
 	top = mxModel("top",
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of.
-		mxMatrix(name = "dzAr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzAr),
-		mxMatrix(name = "dzCr", type = "Full", nrow = 1, ncol = 1, free = FALSE, values = dzCr),
+		umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+		umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 
 		# Matrices a, c, e to store a, c, e path coefficients.
 		umxMatrix(name = "a", type = "Lower", nrow = nDV, ncol = nDV, free = TRUE, values = DVvarStarts, byrow = TRUE, dimnames = list(baseDVs, baseDVs)),
@@ -2173,8 +2173,8 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 
 	model = mxModel(name,
 		mxModel(top,
-			mxMatrix(name = "dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
-			mxMatrix(name = "dzCr", "Full", 1, 1, free = FALSE, values = dzCr),	
+			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 			# Latent common factor genetic paths
 			a_cp_matrix,
 			umxLabel(mxMatrix(name="c_cp", "Diag", nFac, nFac, free = TRUE, values =  0), jiggle = .05), # latent common factor Common environmental path coefficients
@@ -2253,10 +2253,8 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	if(autoRun){
 		model = mxRun(model)
 		umxSummary(model)
-		return(model)
-	} else {
-		return(model)
 	}
+	return(model)
 } # end umxCP
 
 #' umxIP: Build and run an Independent pathway twin model
@@ -2369,8 +2367,8 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			umxLabel(mxMatrix("Lower", nVar, nVar, free=T, values=.0, name="cs"), jiggle=.05), # Common environmental path 
 			umxLabel(mxMatrix("Lower", nVar, nVar, free=T, values=.6, name="es"), jiggle=.05), # Unique environmental path.
 
-			mxMatrix("Full", 1, 1, free = FALSE, values = dzAr, name = "dzAr"),
-			mxMatrix("Full", 1, 1, free = FALSE, values = dzCr, name = "dzCr"),
+			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 
 			# Multiply by each path coefficient by its inverse to get variance component
 			# Sum the squared independent and specific paths to get total variance in each component
@@ -2463,10 +2461,8 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	if(autoRun){
 		model = mxRun(model)
 		umxSummary(model)
-		return(model)
-	} else {
-		return(model)
 	}
+	return(model)
 } # end umxIP
 
 #' umxACESexLim: Build and run a sex-limitation twin model (not working yet)

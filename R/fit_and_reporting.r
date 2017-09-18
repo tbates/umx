@@ -51,15 +51,57 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 # = Fit and Reporting Helpers =
 # =============================
 
-#' Reduce a model - this is a work in progress
+#' Reduce models, and report the results.
 #'
-#' This function can perform model reduction for some stylized models. For instance, for 
-#' \code{\link{umxGxE}}, this function tests dropping means-moderation, a`,c` & e`, a& a` etc.
+#' @description
+#' Given an OpenMx model (currently ACE and GxE are supported - ask for more!)
+#' umxReduce will conduct a formalised reduction process
 #'
-#' It's a work in progress, with more automations coming as demand emerges.
+#' \strong{GxE model reduction}
+#' For \code{\link{umxGxE}} models, each form of moderation is tested
+#' singley and jointly.
+#' Also, C is removed, and moderation tested in this model.
+#' 
+#' \strong{ACE model reduction}
+#' For \code{\link{umxACE}} models, each form of moderation is tested singley and jointly.
+#' Also, C is removed, and moderation tested in this model.
+#' 
+#' It reports the results in a table. Set the format of the table with
+#' \code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
+#' table for pasting into a word processor.
+#' 
+#' umxReduce is a work in progress, with more automations coming as demand emerges.
+#' I am thinking for RAM models to drop NS paths, and report that test.
+#'
+#' @param model The \code{\link{mxModel}} which will be reduced.
+#' @param report How to report the results. "html" = open in browser
+#' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
+#' @param ... Other parameters to control model summary
+#' @family Reporting Functions
+#' @family Twin Reporting Functions
+#' \url{http://www.github.com/tbates/umx}
+#' @export
+umxReduce <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", ...){
+	UseMethod("umxReduce", model)
+}
+
+#' @export
+umxReduce.default <- function(model, ...){
+	stop("umxReduce is not defined for objects of class:", class(model))
+}
+
+#' Reduce a GxE model.
+#'
+#' This function can perform model reduction for \code{\link{umxGxE}}, 
+#' testing dropping means-moderation, a`,c` & e`, as well as c & c`, a & a` etc.
+#'
+#' It reports the results in a table. Set the format of the table with
+#' \code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
+#' table for pasting into a word processor.
 #' @param model an \code{\link{mxModel}} to reduce
 #' @param report How to report the results. "html" = open in browser
-#' @param baseFileName file (I add the html) to use when report = "html" (defaults to "tmp")
+#' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
+#' @param ... Other parameters to control model summary
 #' @return - 
 #' @export
 #' @family Core Modelling Functions
@@ -68,7 +110,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduce <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp") {
+umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp") {
 	umx_is_MxModel(model)
 	report = match.arg(report)
 	if(class(model) == "MxModel.GxE"){		
@@ -116,6 +158,66 @@ umxReduce <- function(model, report = c("markdown", "inline", "html", "report"),
 		# 3. report fit table
 	}
 }
+#' @export
+umxReduce.MxModel.GxE <- umxReduceGxE
+
+#' Reduce an ACE model.
+#'
+#' This function can perform model reduction on \code{\link{umxACE}} models,
+#' testing dropping A and C, as well as an ADE or ACE model, displaying the results
+#' in a table, and returning the best model.
+#'
+#' Most suitable for univariate models.
+#'
+#' Suggestions for more sophisticated automation accepted
+#'
+#' @param model an \code{\link{mxModel}} to reduce
+#' @param report How to report the results. "html" = open in browser
+#' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
+#' @param ... Other parameters to control model summary
+#' @return best fitting model
+#' @export
+#' @family Core Modelling Functions
+#' @references - \url{http://tbates.github.io}
+#' @examples
+#' data(twinData)
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
+#' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
+#' m2 = umxReduce(m1)
+umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", ...) {
+	report = match.arg(report)
+	oldAutoPlot = umx_set_auto_plot(FALSE, silent = TRUE)
+	CE = umxModify(model, regex = "a_r[0-9]+c[0-9]+" , name = "CE")
+	AE = umxModify(model, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
+	if(model$top$dzCr$values == 1){
+		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE")
+		if(-2*logLik(model) > -2*logLik(ADE)){
+			message("A dominance model is preferred, set dzCr = .25.")
+			umxCompare(ADE, c(model, CE, AE), all = TRUE, report = report)
+		}else{
+			umxCompare(model, c(ADE, CE, AE), all = TRUE, report = report)
+		}
+		best = c(ADE, model, CE, AE)[which.min(AIC(ADE, model, CE, AE)[,"AIC"])][[1]]
+	}else	if(model$top$dzCr$values == .25){
+		ACE = umxModify(model, 'dzCr_r1c1', value = 1, name = "ACE")
+		if(-2*logLik(model) > -2*logLik(ACE)){
+			message("An ACE model is preferred, set dzCr = 1.")
+			umxCompare(ACE, c(model, CE, AE), all = TRUE, report = report)
+		}else{
+			umxCompare(model, c(ADE, CE, AE), all = TRUE, report = report)
+		}
+		
+		best = c(ADE, model, CE, AE)[which.min(AIC(ADE, model, CE, AE)[,"AIC"])][[1]]
+	}else{
+		message(model$top$dzCr$values, " is an odd number for dzCr, isn't it? I was expecting 1 (C) or .25 (D)")		
+		best = model
+	}
+	umx_set_auto_plot(oldAutoPlot, silent = TRUE)
+	invisible(best)
+}
+#' @export
+umxReduce.MxModel.ACE <- umxReduceACE
 
 #' Get residuals from an MxModel
 #'
@@ -862,7 +964,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 	} else {
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(comparison)){
-		message("-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
 		print(-2 * logLik(model));			
 	} else {
 		message("Comparison of model with parent model:")
@@ -1076,7 +1178,7 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	} else {
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(comparison)){
-		message("-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		message(model$name, "-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
 		print(-2 * logLik(model));			
 	} else {
 		message("Comparison of model with parent model:")
@@ -1292,7 +1394,7 @@ umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(silent=TRUE
 		}
 		umx_has_been_run(model, stop = TRUE)
 		if(is.null(comparison)){
-			message("-2 \u00d7 log(Likelihood)") # x
+			message(model$name, " -2 \u00d7 log(Likelihood)") # x
 			print(-2 * logLik(model))
 		}else{
 			message("Comparison of model with parent model:")
@@ -1439,7 +1541,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	}
 
 	if(is.null(comparison)){
-		message("-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
 		print(-2 * logLik(model));			
 	}else{
 		message("Comparison of model with parent model:")
