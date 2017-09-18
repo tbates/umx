@@ -110,7 +110,7 @@ umxReduce.default <- function(model, ...){
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp") {
+umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", ...) {
 	umx_is_MxModel(model)
 	report = match.arg(report)
 	if(class(model) == "MxModel.GxE"){		
@@ -1375,7 +1375,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' 		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
 #' umxSummaryCP(m1, ext = TRUE, file = "name")
 #' umxSummaryCP(m1, file = "Figure 3", std = TRUE)
-umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(silent=TRUE), returnStd = FALSE, 
+umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, 
     extended = FALSE, showRg = FALSE, comparison = NULL, std = TRUE, CIs = FALSE, ...) {
 	# TODO: example doesn't need to spec var names in data select
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D"

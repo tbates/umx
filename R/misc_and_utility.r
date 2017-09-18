@@ -165,9 +165,8 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #' library(umx)
 #' umx_set_auto_plot() # print current state
 #' old = umx_set_auto_plot(silent = TRUE) # store existing value
-#' umx_set_auto_plot("name") # set to on ("name")
-#' umx_set_auto_plot(FALSE)  # set to off (NA)
-#' umx_set_auto_plot(TRUE)   # set to on "name"
+#' umx_set_auto_plot(TRUE)   # set to on (internally stored as "name")
+#' umx_set_auto_plot(FALSE)  # set to off (internally stored as NA)
 #' umx_set_auto_plot(old)    # reinstate
 umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 	if(is.null(autoPlot)) {
@@ -177,17 +176,22 @@ umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 				" Use TRUE to turn on, FALSE to turn off."
 			)
 		}
-		invisible(getOption("umx_auto_plot"))
+		if(is.na(getOption("umx_auto_plot"))){
+			autoPlot = FALSE
+		} else {
+			autoPlot = TRUE
+		}
 	} else{
-		if(autoPlot == 'name' || autoPlot){
+		if(is.na(autoPlot) || autoPlot %in% FALSE){
 			options("umx_auto_plot" = "name")
 			autoPlot = TRUE
+		if(autoPlot == 'name' || autoPlot){
 		}else{
 			options("umx_auto_plot" = NA)		
 			autoPlot = FALSE
 		}
-		invisible(autoPlot)
 	}
+	invisible(autoPlot)
 }
 
 #' umx_set_auto_run
@@ -466,7 +470,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' 
 #' \tabular{rllll}{
 #'	2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.9 sec \tab                          \cr
-#'	2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.2 sec \tab Delta: -40.70 sec \cr
+#'	2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.2 sec \tab \eqn{\Delta}{Δ}: -40.70 sec \cr
 #'	2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 9.9 sec  \tab                          \cr
 #'	2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 6.2 sec  \tab                          \cr
 #'	2017-09-07 \tab TRAVIS          \tab 4 cores \tab 00 min, 21.1 sec \tab Delta: 45 seconds \cr

@@ -426,9 +426,6 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 	if(autoRun){
 		model = mxRun(model)
 		umxSummary(model)
-		if(!is.na(umx_set_auto_plot(silent = TRUE))){
-			plot(model)
-		}
 	}
 	return(model)
 } # end umxACE
