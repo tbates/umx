@@ -1316,7 +1316,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 			if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
 			thresholds = match.arg(thresholds)
 			nSib = 2 # number of siblings in a twin pair
-			if(dzCr == .25 && name == "ACE"){
+			if(dzCr == .25 & name == "ACE"){
 				name = "ADE"
 			}
 			# look for name conflicts

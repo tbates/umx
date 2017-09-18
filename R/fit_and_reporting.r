@@ -163,16 +163,19 @@ umxReduce.MxModel.GxE <- umxReduceGxE
 
 #' Reduce an ACE model.
 #'
-#' This function can perform model reduction \code{\link{umxACE}} models,
-#' testing dropping means-moderation, a and c.
-#' 
+#' This function can perform model reduction on \code{\link{umxACE}} models,
+#' testing dropping A and C, as well as an ADE or ACE model, displaying the results
+#' in a table, and returning the best model.
+#'
+#' Most suitable for univariate models.
+#'
 #' Suggestions for more sophisticated automation accepted
 #'
 #' @param model an \code{\link{mxModel}} to reduce
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param ... Other parameters to control model summary
-#' @return - 
+#' @return best fitting model
 #' @export
 #' @family Core Modelling Functions
 #' @references - \url{http://tbates.github.io}
@@ -187,26 +190,31 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	oldAutoPlot = umx_set_auto_plot(FALSE, silent = TRUE)
 	CE = umxModify(model, regex = "a_r[0-9]+c[0-9]+" , name = "CE")
 	AE = umxModify(model, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
-	if(model$top$dzAr$values == .5){
-		ADE = umxModify(model, 'dzAr_r1c1', value = .25, name = "ADE")
+	if(model$top$dzCr$values == 1){
+		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE")
 		if(-2*logLik(model) > -2*logLik(ADE)){
-			message("A dominance model is preferred, set dzAr = .25.")
+			message("A dominance model is preferred, set dzCr = .25.")
 			umxCompare(ADE, c(model, CE, AE), all = TRUE, report = report)
 		}else{
 			umxCompare(model, c(ADE, CE, AE), all = TRUE, report = report)
 		}
-	}else	if(model$top$dzAr$values == .25){
-		ACE = umxModify(model, 'dzAr_r1c1', value = .5, name = "ACE")
+		best = c(ADE, model, CE, AE)[which.min(AIC(ADE, model, CE, AE)[,"AIC"])][[1]]
+	}else	if(model$top$dzCr$values == .25){
+		ACE = umxModify(model, 'dzCr_r1c1', value = 1, name = "ACE")
 		if(-2*logLik(model) > -2*logLik(ACE)){
-			message("An ACE model is preferred, set dzAr = .5 .")
+			message("An ACE model is preferred, set dzCr = 1.")
 			umxCompare(ACE, c(model, CE, AE), all = TRUE, report = report)
 		}else{
 			umxCompare(model, c(ADE, CE, AE), all = TRUE, report = report)
 		}
+		
+		best = c(ADE, model, CE, AE)[which.min(AIC(ADE, model, CE, AE)[,"AIC"])][[1]]
 	}else{
-		message(model$top$dzAr$values, " is an odd number for dzAr, isn't it?")		
+		message(model$top$dzCr$values, " is an odd number for dzCr, isn't it? I was expecting 1 (C) or .25 (D)")		
+		best = model
 	}
 	umx_set_auto_plot(oldAutoPlot, silent = TRUE)
+	invisible(best)
 }
 #' @export
 umxReduce.MxModel.ACE <- umxReduceACE
@@ -956,7 +964,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 	} else {
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(comparison)){
-		message("-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
 		print(-2 * logLik(model));			
 	} else {
 		message("Comparison of model with parent model:")
@@ -1170,7 +1178,7 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	} else {
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(comparison)){
-		message("-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		message(model$name, "-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
 		print(-2 * logLik(model));			
 	} else {
 		message("Comparison of model with parent model:")
@@ -1386,7 +1394,7 @@ umxSummaryCP <- function(model, digits = 2, file = umx_set_auto_plot(silent=TRUE
 		}
 		umx_has_been_run(model, stop = TRUE)
 		if(is.null(comparison)){
-			message("-2 \u00d7 log(Likelihood)") # x
+			message(model$name, " -2 \u00d7 log(Likelihood)") # x
 			print(-2 * logLik(model))
 		}else{
 			message("Comparison of model with parent model:")
@@ -1533,7 +1541,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	}
 
 	if(is.null(comparison)){
-		message("-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
 		print(-2 * logLik(model));			
 	}else{
 		message("Comparison of model with parent model:")

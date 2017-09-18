@@ -17,13 +17,16 @@ umxReduceACE(model, report = c("markdown", "inline", "html", "report"),
 \item{...}{Other parameters to control model summary}
 }
 \value{
--
+best fitting model
 }
 \description{
-This function can perform model reduction \code{\link{umxACE}} models,
-testing dropping means-moderation, a and c.
+This function can perform model reduction on \code{\link{umxACE}} models,
+testing dropping A and C, as well as an ADE or ACE model, displaying the results
+in a table, and returning the best model.
 }
 \details{
+Most suitable for univariate models.
+
 Suggestions for more sophisticated automation accepted
 }
 \examples{
