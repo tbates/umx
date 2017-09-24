@@ -3751,22 +3751,43 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @family Reporting Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' # Generate a formatted string describing a regression:  
+#' # =============================
+#' # = Report regression results =
+#' # =============================
 #' umxAPA(lm(mpg ~ wt + disp, mtcars))
 #' umxAPA(lm(mpg ~ wt + disp, mtcars), "disp")
-#' # Generate a summary table of correlations + Mean and SD:
+#' # ===============================================================
+#' # = Generate summary of dataframe: Correlations + Means and SDs =
+#' # ===============================================================
 #' umxAPA(mtcars[,1:3])
 #' umxAPA(mtcars[,1:3], digits = 3)
 #' umxAPA(mtcars[,1:3], lower = FALSE)
 #' umxAPA(mtcars[,1:3], report = "html")
-#' # Generate a CI string based on effect and se
+#' # ===============================================
+#' # = Generate a CI string based on effect and se =
+#' # ===============================================
 #' umxAPA(.4, .3)
-#' # format p-value
+#' # ====================
+#' # = Format a p-value =
+#' # ====================
 #' umxAPA(.0182613)
 #' umxAPA(.000182613)
+#' # ====================
+#' # = Format a p-value =
+#' # ====================
+#' data(twinData)
+#' selDVs = c("wt1", "wt2")
+#' mzData <- subset(twinData, zygosity %in% c("MZFF", "MZMM"))
+#' dzData <- subset(twinData, zygosity %in% c("DZFF", "DZMM", "DZOS"))
+#' x = cor.test(~ wt1 + wt2, data = mzData)
+#' umxAPA(x)
 umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("table", "html"), lower = TRUE) {
 	report = match.arg(report)
-	if(class(obj) == "data.frame"){
+	if(class(obj) == "htest"){
+		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), ", ", round(obj$conf.int[2], digits), "]")
+		o = paste0(o, ", t(", x$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
+		return(o)
+	}else if(class(obj) == "data.frame"){
 		# Generate a summary of correlation and means
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE)
 		cor_table = umx_apply(round, cor_table, digits = digits) # round correlations

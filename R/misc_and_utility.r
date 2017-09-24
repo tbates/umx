@@ -2141,6 +2141,8 @@ umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL,
 	}
 	return(nameList)
 }
+#' @export
+vars <- umx_paste_names
 
 #' umx_merge_CIs
 #'
