@@ -41,7 +41,7 @@ AIC(m1)
 - \url{http://openmx.ssri.psu.edu/thread/931#comment-4858}
 }
 \seealso{
-- \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik.MxModel}}
+- \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

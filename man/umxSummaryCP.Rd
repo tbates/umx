@@ -5,7 +5,7 @@
 \alias{umxSummary.MxModel.CP}
 \title{Present the results of a Common-pathway twin model in table and graphical form}
 \usage{
-umxSummaryCP(model, digits = 2, file = umx_set_auto_plot(silent = TRUE),
+umxSummaryCP(model, digits = 2, file = getOption("umx_auto_plot"),
   returnStd = FALSE, extended = FALSE, showRg = FALSE,
   comparison = NULL, std = TRUE, CIs = FALSE, ...)
 }

@@ -14,7 +14,7 @@
 		# options('knitr.table.format' = "markdown")
 	}
 	umx_set_auto_run(TRUE)
-	umx_set_auto_plot("name")
+	umx_set_auto_plot(TRUE)
 	packageStartupMessage("For an overview type '?umx'")
 }
 
@@ -33,7 +33,7 @@
 #' @importFrom sfsmisc nearcor
 #' @importFrom parallel detectCores
 
-#' @importFrom stats C aggregate as.formula coef complete.cases
+#' @importFrom stats AIC C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
@@ -45,6 +45,8 @@
 #' @importFrom xtable xtable
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
+
+
 	
 utils::globalVariables(c(
 	'xtable',
@@ -485,7 +487,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	)
 	if (class(data) == "character"){
 		# user is just running a trial model, with no data, but provided names for sketch mode
-		if(autoRun && ("name" == umx_set_auto_plot(silent=TRUE))){
+		if(autoRun && umx_set_auto_plot(silent = TRUE)){
 			plot(m1)
 		}
 		return(m1)
@@ -1666,11 +1668,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		if(autoRun){
 			model = mxRun(model)
 			umxSummary(model)
-			# if(!is.na(umx_set_auto_plot(silent = TRUE))){
-				# plot(model)
-			# }
-		} else {
-			# --
 		}
 		return(model)
 	}
