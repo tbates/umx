@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umxCov2cor}
 \alias{umxCov2cor}
-\title{umxCov2cor}
+\title{Convert a covariance matrix into a correlation matrix}
 \usage{
 umxCov2cor(x)
 }
@@ -13,7 +13,7 @@ umxCov2cor(x)
 - a correlation matrix
 }
 \description{
-Version of cov2cor that forces upper and lower triangles to be identical (rather than nearly identical)
+umxCov2cor like \code{\link{cov2cor}} that forces upper and lower triangles to be identical (rather than nearly identical)
 }
 \examples{
 umxCov2cor(cov(mtcars))

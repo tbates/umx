@@ -2193,30 +2193,42 @@ umx_merge_CIs <- function(m1, m2) {
 # = Statistical tools =
 # =====================
 
-#' umxCovData
+#' Convert a dataframe into a cov mxData object
 #'
-#' convert a dataframe in an mxData object of type "cov"
+#' umxCovData converts a dataframe into an mxData, taking the covariance, defaulting to nrow as the numObs,
+#' and optionally adding means.
 #'
-#' @param df the dataframe to covert to a covariance matrix
-#' @param columns = manifests
-#' @param use = Default is "complete.obs"
-#' @return - \code{\link{mxModel}}
+#' @param df the dataframe to covert to an mxData type cov object.
+#' @param columns = Which columns to keep (default is all).
+#' @param use = Default is "complete.obs".
+#' @return - \code{\link{mxData}} of type = cov
 #' @export
 #' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umxCovData(mtcars, c("mpg", "hp"))
-#' 
-umxCovData = function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
+umxCovData <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
 	# TODO use 'use' to compute numObs in umxCovData
 	use = match.arg(use)
+	if(anyNA(columns)){
+		columns = names(df)
+	}
+	df = df[,columns]
+	if(use == "complete.obs"){
+		df = df[complete.cases(df), ]
+	} else {
+		if(anyNA(df)){
+			message("numObs was set to nrow, but if as the data contain NAs, this is too liberal!")
+		}
+	}
+	numObs = nrow(df)
 	umx_check_names(columns, df)
-	return(mxData(cov(df[, columns], use = use), type = "cov", numObs = nrow(df)))
+	return(mxData(cov(df[, columns], use = use), type = "cov", numObs = numObs))
 }
 
-#' umxCov2cor
+#' Convert a covariance matrix into a correlation matrix
 #'
-#' Version of cov2cor that forces upper and lower triangles to be identical (rather than nearly identical)
+#' umxCov2cor like \code{\link{cov2cor}} that forces upper and lower triangles to be identical (rather than nearly identical)
 #'
 #' @param x something that cov2cor can work on (matrix, df, etc.)
 #' @return - a correlation matrix
@@ -3813,9 +3825,9 @@ qm <- function(..., rowMarker = "|") {
 # # by default replicated 100 times
 # benchmark(1:10^6)
 # # simple test functions used in subsequent examples
-# random.array = function(rows, cols, dist=rnorm)
+# random.array <- function(rows, cols, dist=rnorm)
 # array(dist(rows*cols), c(rows, cols))
-# random.replicate = function(rows, cols, dist=rnorm)
+# random.replicate <- function(rows, cols, dist=rnorm)
 # replicate(cols, dist(rows))
 # 
 # library("microbenchmark")
@@ -4088,9 +4100,11 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 
 #' Simulate twin data with control over A, C, and E parameters, as well as moderation of A.
 #' @description
-#' Makes MZ and DZ twin data, optionally with moderated A. y default, the three variance components must sum to 1.
+#' Makes MZ and DZ twin data, optionally with moderated A. By default, the three variance components must sum to 1.
 #' 
 #' See examples for how to use this: it is pretty flexible.
+#' 
+#' If you provide 2 varNames, they will be used. Ifyou provide one, it will be expanded to var_T1 and var_T2
 #' 
 #' Note, if you want a power calculator, see \href{http://www.people.vcu.edu/~bverhulst/power/power.html}{here}.
 #' You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
@@ -4206,7 +4220,11 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		dzData = mvrnorm(n = nDZpairs, mu = c(0, 0), Sigma = dzCov, empirical = empirical);
 		mzData = data.frame(mzData)
 		dzData = data.frame(dzData)
-		names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
+		if(length(varNames) > 1){
+			names(mzData) = names(dzData) = varNames
+		} else {
+			names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
+		}
 	} else {
 		# Moderator example
 		if(any(c(is.null(AA), is.null(CC), is.null(EE)))){

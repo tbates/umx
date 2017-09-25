@@ -540,11 +540,37 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' @param autoRun Whether to run the supermodel before returning it (default = TRUE)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family
+#' @family Core Modelling Functions
 #' @seealso - \code{\link{mxFitFunctionMultigroup}}, \code{\link{umxRAM}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' m1 = umxSuperModel(name = 'top')
+#' library(umx)
+#' # Simulate some data
+#' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
+#' # Group 1
+#' ds1 = tmp[[1]];
+#' # Group 2
+#' ds2 = tmp[[2]];
+#' cov(ds1); cov(ds2)
+#' 
+#' manifests = names(ds1)
+#' # Model 1
+#' m1 <- mxModel("m1", type = "RAM",manifestVars = manifests,
+#' 	mxPath("x", to = "y", labels = "beta"),
+#' 	mxPath(manifests, arrows = 2, labels=c("Var_x", "Resid_y_grp1")),
+#' 	mxPath("one", to = manifests, labels=c("Mean_x", "Mean_y")),
+#' 	mxData(cov(ds1), type = "cov", numObs = nrow(ds1), means=colMeans(ds1))
+#' )
+#' # Model 2
+#' m2 <- mxModel("m2", type = "RAM",manifestVars = manifests,
+#' 	mxPath("x", to = "y", labels = "beta"),
+#' 	mxPath(manifests, arrows = 2, labels=c("Var_x", "Resid_y_grp2")),
+#' 	mxPath("one", to = manifests, labels=c("Mean_x", "Mean_y")),
+#' 	mxData(cov(ds1), type = "cov", numObs = nrow(ds2), means=colMeans(ds2))
+#' )
+#' # Place m1 and m2 into a supermodel, and autoRun it
+#' m3 = umxSuperModel('top', m1, m2)
+#' summary(m3)
 umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...	
 	nModels = length(dot.items)
@@ -552,10 +578,10 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 	modelNames = c()
 	for(modelIndex in 1:nModels) {
 		thisModel = dot.items[[modelIndex]]
-		if(class(thisModel) == "MxModel"){
+		if(umx_is_MxModel(thisModel)){
 			modelNames[modelIndex] = thisModel$name
 		} else {
-		 	stop("Only mxModels can be included in a group, item ", aModel)
+		 	stop("Only mxModels can be included in a group, item ", aModel, " was a ", class(dot.items[[aModel]]))
 		}
 	}
 	# multiple group fit function sums the likelihoods of its component models

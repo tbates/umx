@@ -81,7 +81,8 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
   \code{\link{umxMatrix}}, \code{\link{umxPath}},
   \code{\link{umxRAM}}, \code{\link{umxReduceACE}},
-  \code{\link{umxReduceGxE}}, \code{\link{umxRun}}
+  \code{\link{umxReduceGxE}}, \code{\link{umxRun}},
+  \code{\link{umxSuperModel}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxTwoStage}}

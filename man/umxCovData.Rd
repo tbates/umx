@@ -2,27 +2,27 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umxCovData}
 \alias{umxCovData}
-\title{umxCovData}
+\title{Convert a dataframe into a cov mxData object}
 \usage{
 umxCovData(df, columns = NA, use = c("complete.obs", "everything",
   "all.obs", "na.or.complete", "pairwise.complete.obs"))
 }
 \arguments{
-\item{df}{the dataframe to covert to a covariance matrix}
+\item{df}{the dataframe to covert to an mxData type cov object.}
 
-\item{columns}{= manifests}
+\item{columns}{= Which columns to keep (default is all).}
 
-\item{use}{= Default is "complete.obs"}
+\item{use}{= Default is "complete.obs".}
 }
 \value{
-- \code{\link{mxModel}}
+- \code{\link{mxData}} of type = cov
 }
 \description{
-convert a dataframe in an mxData object of type "cov"
+umxCovData converts a dataframe into an mxData, taking the covariance, defaulting to nrow as the numObs,
+and optionally adding means.
 }
 \examples{
 umxCovData(mtcars, c("mpg", "hp"))
-
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
