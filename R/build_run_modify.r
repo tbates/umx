@@ -320,7 +320,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
-	legalThresholdsOptions = c("deviationBased", "direct", "ignore", "left_censored")
 	thresholds = match.arg(thresholds)
 
 	if(typeof(model) == "character"){
@@ -527,6 +526,45 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	} else {
 		invisible(m1)
 	}
+}
+
+#' Make a multi-group model
+#'
+#' @description
+#' umxSuperModel takes 1 or more models and wraps them in a supermodel with a
+#' \code{\link{mxFitFunctionMultigroup}} fit function that minimises the sum of the
+#' fits of the sub-models.
+#'
+#' @param name he name of the super model (default is 'top')
+#' @param ...  models to group together
+#' @param autoRun Whether to run the supermodel before returning it (default = TRUE)
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family
+#' @seealso - \code{\link{mxFitFunctionMultigroup}}, \code{\link{umxRAM}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' m1 = umxSuperModel(name = 'top')
+umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
+	dot.items = list(...) # grab all the dot items: mxPaths, etc...	
+	nModels = length(dot.items)
+	# get list of model names
+	modelNames = c()
+	for(modelIndex in 1:nModels) {
+		thisModel = dot.items[[modelIndex]]
+		if(class(thisModel) == "MxModel"){
+			modelNames[modelIndex] = thisModel$name
+		} else {
+		 	stop("Only mxModels can be included in a group, item ", aModel)
+		}
+	}
+	# multiple group fit function sums the likelihoods of its component models
+	newModel <- mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
+	if(autoRun){
+		newModel = mxRun(newModel)
+		umxSummary(newModel)
+	}			
+	return(newModel)
 }
 
 #' umxModify: Add, set, or drop model paths by label.
