@@ -3785,7 +3785,7 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 	report = match.arg(report)
 	if(class(obj) == "htest"){
 		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), ", ", round(obj$conf.int[2], digits), "]")
-		o = paste0(o, ", t(", x$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
+		o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
 		return(o)
 	}else if(class(obj) == "data.frame"){
 		# Generate a summary of correlation and means

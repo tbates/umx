@@ -2977,7 +2977,7 @@ umx_is_MxModel <- function(obj, listOK = FALSE) {
 			}
 		}
 	} else {
-		testVal  = isS4(obj) & is(obj, "MxModel")	
+		testVal = isS4(obj) & is(obj, "MxModel")
 	}
 	return(testVal)
 }

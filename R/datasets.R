@@ -2,20 +2,69 @@
 #'
 #' Measures of happiness and related variables in Twins, and their brothers and sisters.
 #'
+#' @details
+#' Several scales in the data are described in  van der Aa et al (2010).
+#' General Family Functioning (GFF) refers to adolescents' evaluations general family health
+#' vs. pathology. It assesses problem solving, communication, roles within the household,
+#' affection, and control. GFF was assessed with a Dutch translation of the General Functioning
+#' subscale of the McMaster Family Assessment Device (FAD) (Epstein et al., 1983).
+#' 
+#' Family Conflict (FC) refers to adolescents' evaluations of the amount of openly 
+#' expressed anger, aggression, and conflict among family members. Conflict
+#' sub-scale of the Family Environment Scale (FES) (Moos, 1974)
+#' 
+#' Quality of life in general (QLg) was assessed with the 10-step Cantril
+#' Ladder from best- to worst-possible life (Cantril, 1965).
+#' 
 #' \describe{
-#'   \item{divorce}{Parent's divorce status: married = 1, divorced = 0?????}
-#'   \item{zyg1}{Zygosity of twin 1}
-#'   \item{sex1}{Sex of twin 1}
-#'   \item{age1}{Age of twin 1}
-#'   \item{gff1}{General family functioning for twin 1}
-#'   \item{fc1}{Family conflict for twin 1}
-#'   \item{qol1}{Quality of life for twin 1}
-#'   \item{hap1}{General happiness for twin 1}
-#'   \item{sat1}{Satisfaction with life for twin 1}
-#'   \item{AD1}{Anxiety and Depression for twin 1}
-#'   \item{SOMA1}{Somatic complaints for twin 1}
-#'   \item{SOC1}{Social problems for twin 1}
-#'   \item{THOU1}{Thought disorder problems for twin 1}
+#'   \item{divorce}{Parent's divorce status: 0 = No, 1 = Yes}
+#'   \item{zyg6}{Six-level measure of zygosity}
+#'   \item{zyg2}{Two-level measure of zygosity}
+#'
+#'   \item{sex_T1}{Sex of twin 1}
+#'   \item{age_T1}{Age of twin 1}
+#'   \item{gff_T1}{General family functioning for twin 1}
+#'   \item{fc_T1}{Family conflict subscale of the FES}
+#'   \item{qol_T1}{Quality of life for twin 1}
+#'   \item{hap_T1}{General happiness for twin 1}
+#'   \item{sat_T1}{Satisfaction with life for twin 1}
+#'   \item{AD_T1}{Anxiety and Depression for twin 1}
+#'   \item{SOMA_T1}{Somatic complaints for twin 1}
+#'   \item{SOC_T1}{Social problems for twin 1}
+#'   \item{THOU_T1}{Thought disorder problems for twin 1}
+#'   \item{sex_T2}{Sex of twin 2}
+#'   \item{age_T2}{Age of twin 2}
+#'   \item{gff_T2}{General family functioning for twin 2}
+#'   \item{fc_T2}{Family conflict subscale of the FES}
+#'   \item{qol_T2}{Quality of life for twin 2}
+#'   \item{hap_T2}{General happiness for twin 2}
+#'   \item{sat_T2}{Satisfaction with life for twin 2}
+#'   \item{AD_T2}{Anxiety and Depression for twin 2}
+#'   \item{SOMA_T2}{Somatic complaints for twin 2}
+#'   \item{SOC_T2}{Social problems for twin 2}
+#'   \item{THOU_T2}{Thought disorder problems for twin 2}
+#'   \item{sex_a}{Sex of sib 1}
+#'   \item{age_a}{Age of sib 1}
+#'   \item{gff_a}{General family functioning for sib 1}
+#'   \item{fc_a}{Family conflict subscale of the FES}
+#'   \item{qol_a}{Quality of life for sib 1}
+#'   \item{hap_a}{General happiness for sib 1}
+#'   \item{sat_a}{Satisfaction with life for sib 1}
+#'   \item{AD_a}{Anxiety and Depression for sib 1}
+#'   \item{SOMA_a}{Somatic complaints for sib 1}
+#'   \item{SOC_a}{Social problems for sib 1}
+#'   \item{THOU_a}{Thought disorder problems for sib 1}
+#'   \item{sex_s}{Sex of sib 2}
+#'   \item{age_s}{Age of sib 2}
+#'   \item{gff_s}{General family functioning for sib 2}
+#'   \item{fc_s}{Family conflict subscale of the FES}
+#'   \item{qol_s}{Quality of life for sib 2}
+#'   \item{hap_s}{General happiness for sib 2}
+#'   \item{sat_s}{Satisfaction with life for sib 2}
+#'   \item{AD_s}{Anxiety and Depression for sib 2}
+#'   \item{SOMA_s}{Somatic complaints for sib 2}
+#'   \item{SOC_s}{Social problems for sib 2}
+#'   \item{THOU_s}{Thought disorder problems for sib 2}
 #' }
 #' @docType data
 #' @keywords datasets
@@ -23,13 +72,17 @@
 #' @usage data(GFF)
 #' @format A data frame with 1000 rows and 8 variables:
 #' @source \url{Meike paper?}
+#' @references van der Aa, N., Boomsma, D. I., Rebollo-Mesa, I., Hudziak, J. J., & Bartels, 
+#' M. (2010). Moderation of genetic factors by parental divorce in adolescents' 
+#' evaluations of family functioning and subjective wellbeing. Twin Research 
+#' and Human Genetics, 13(2), 143-162. doi:10.1375/twin.13.2.143
 #' @examples
 #' data(GFF)
 #' # Twin 1 variables (end in '_T1')
-#' umx_names(GFF, "1$") 
+#' umx_names(GFF, "1$")
 NULL
 
-
+GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T))
 #' Anthropometric data on twins
 #'
 #' A dataset containing height, weight, bmi, and skin-fold fat measures in several
