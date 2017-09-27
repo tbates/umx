@@ -3971,6 +3971,7 @@ umx_rot <- function(vec){
 #' @return - wide dataframe
 #' @export
 #' @family Data Functions
+#' @family Twin Modeling Functions
 #' @seealso - \code{\link{merge}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -4025,42 +4026,58 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' Just detects the data columns for twin 1, and twin 2, then returns them stacked
 #' on top of each other (rbind) with the non-twin specific columns copied for each as well.
 #'
-#' @param df a dataframe containing twin data
+#' @param data a dataframe containing twin data.
 #' @param sep the string between the var name and twin suffix, i.e., var_T1 = _T
+#' @param verbose Report the non-twin and twin columns (default = FALSE).
 #' @return - long-format dataframe
 #' @export
 #' @family Data Functions
 #' @family Twin Modeling Functions
 #' @examples
 #' long = umx_wide2long(df = twinData, sep = "_T")
-umx_wide2long <- function(df, sep = "_T") {
-	# Assumes 2 twins... email for generalization to unlimited family size.
+umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
+	# TODO Assumes 2 twins: Good to generalize to unlimited family size.
+	# TODO Detect data overwriting? like if age exists, but data have age1 and age2?
+	# TODO Report non-twin columns
+	# TODO Report twin columns
 
 	# 1. get the suffixed names
-	T1 = umx_names(df, paste0(".", sep, "1"))
-	T2 = umx_names(df, paste0(".", sep, "2"))
+	T1 = umx_names(data, paste0(".", sep, "1"))
+	T2 = umx_names(data, paste0(".", sep, "2"))
 	# 1b and non-twin names
-	nonTwinColNames = setdiff(umx_names(df), c(T1, T2))
+	nonTwinColNames = setdiff(umx_names(data), c(T1, T2))
 
 	# 2. Remove the suffixes
 	T1base = T1
 	T2base = T2
-	m <- regexpr("_T1", T1base)
+	m <- regexpr(paste0(sep, "1$"), T1base)
 	regmatches(T1base, m) <- ""
-	m <- regexpr("_T2", T2base)
+	m <- regexpr(paste0(sep, "2$"), T2base)
 	regmatches(T2base, m) <- ""
 	
-	# check they're the same
+	# Check they're the same
 	if(!setequal(T1base, T2base)){
 		stop("Twin names don't match")
 	}
 
 	# 3. 
-	b1 = df[,c(nonTwinColNames, T1)]
+	b1 = data[, c(nonTwinColNames, T1)]
+	b2 = data[, c(nonTwinColNames, T2)]
 	names(b1) = c(nonTwinColNames, T1base)
-	b2 = df[,c(nonTwinColNames, T2)]
 	names(b2) = c(nonTwinColNames, T1base)
 	ld = rbind(b1, b2)
+
+	twinColumns = T1base
+	if(verbose){
+		umx_msg(nonTwinColNames)
+		umx_msg(twinColumns)
+	}
+	if(length(intersect(nonTwinColNames, twinColumns)) > 0){
+		message("Hmm... A variable already existed matching one of the de-suffixed twin variables... 
+		A second column with the same name will be created. the issue is with:", 
+			omxQuotes(intersect(nonTwinColNames, twinColumns))
+		)
+	}
 	return(ld)
 }
 

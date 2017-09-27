@@ -73,6 +73,6 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotGxE}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx_wide2long}}, \code{\link{umx}},
-  \code{\link{xmu_twin_check}}
+  \code{\link{umx_long2wide}}, \code{\link{umx_wide2long}},
+  \code{\link{umx}}, \code{\link{xmu_twin_check}}
 }

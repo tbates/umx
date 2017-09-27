@@ -4,12 +4,14 @@
 \alias{umx_wide2long}
 \title{Change data 2-twin family data from wide to long format}
 \usage{
-umx_wide2long(df, sep = "_T")
+umx_wide2long(data, sep = "_T", verbose = FALSE)
 }
 \arguments{
-\item{df}{a dataframe containing twin data}
+\item{data}{a dataframe containing twin data.}
 
 \item{sep}{the string between the var name and twin suffix, i.e., var_T1 = _T}
+
+\item{verbose}{Report the non-twin and twin columns (default = FALSE).}
 }
 \value{
 - long-format dataframe
@@ -51,5 +53,6 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}, \code{\link{xmu_twin_check}}
+  \code{\link{umx_long2wide}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }
