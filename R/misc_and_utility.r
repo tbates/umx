@@ -3975,13 +3975,22 @@ umx_rot <- function(vec){
 #' @seealso - \code{\link{merge}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' \dontrun{
-#' k = c("E", "N")
-#' wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg", vars2keep = k)
-#' wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg")
+#' tmp = twinData[, -2]
+#' tmp$twinID1 = 1
+#' tmp$twinID2 = 2
+#' long = umx_wide2long(data = tmp, sep = "")
+#' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity")
+#' names(wide) # might want to rename vars like "part_T1" to "part" and delete T2 copy 
+#' k = c("bmi", "wt")
+#' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", vars2keep = k)
+#' names(wide)
+#' # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"   
 #' }
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA) {
+	# TODO add other vars to keep (like things which don't vary in a family)
+	# call this "ignore"? "passalong"?
 	IDVars = c(famID, twinID, zygosity)
+	umx_check_names(IDVars, data = data, die = TRUE)
 	if(typeof(vars2keep) == "character"){
 		# Check user provided list
 		umx_check_names(vars2keep, data = data, die = TRUE)
@@ -4001,8 +4010,10 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 
 	allVars = c(IDVars, vars2keep)
 	famIDPlus_vars2keep = c(famID, vars2keep)
+	# umx_msg(allVars)
+	# umx_msg(famIDPlus_vars2keep)
 	# ==================================
-	# = merge each twinID to the right =
+	# = Merge each twinID to the right =
 	# ==================================
 	# cat(paste0("doing: "))
 	for(i in seq_along(levelsOfTwinID)) {
@@ -4020,7 +4031,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
   return(previous)
 }
 
-#' Change data 2-twin family data from wide to long format
+#' Change data 2-twin family data from wide to long format.
 #'
 #' @description
 #' Just detects the data columns for twin 1, and twin 2, then returns them stacked
@@ -4034,7 +4045,10 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @family Data Functions
 #' @family Twin Modeling Functions
 #' @examples
-#' long = umx_wide2long(df = twinData, sep = "_T")
+#' long = umx_wide2long(df = twinData, sep = "")
+#' long = umx_wide2long(df = twinData, sep = "", verbose = TRUE)
+#' str(long)
+#' str(twinData)
 umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 	# TODO Assumes 2 twins: Good to generalize to unlimited family size.
 	# TODO Detect data overwriting? like if age exists, but data have age1 and age2?

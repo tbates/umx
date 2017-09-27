@@ -24,13 +24,6 @@ umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
 \description{
 umx_long2wide merges on famID, for an unlimited number of twinIDs.
 }
-\examples{
-\dontrun{
-k = c("E", "N")
-wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg", vars2keep = k)
-wide = umx_long2wide(data= df, famID= "FID", twinID= "TID", zygosity= "Zyg")
-}
-}
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }

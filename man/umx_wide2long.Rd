@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_wide2long}
 \alias{umx_wide2long}
-\title{Change data 2-twin family data from wide to long format}
+\title{Change data 2-twin family data from wide to long format.}
 \usage{
 umx_wide2long(data, sep = "_T", verbose = FALSE)
 }
@@ -21,7 +21,10 @@ Just detects the data columns for twin 1, and twin 2, then returns them stacked
 on top of each other (rbind) with the non-twin specific columns copied for each as well.
 }
 \examples{
-long = umx_wide2long(df = twinData, sep = "_T")
+long = umx_wide2long(df = twinData, sep = "")
+long = umx_wide2long(df = twinData, sep = "", verbose = TRUE)
+str(long)
+str(twinData)
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},
