@@ -268,14 +268,14 @@ umxModel <- function(...) {
 #' 
 #' # 5. Display path diagram
 #' plot(m1)
-#' plot(m1, resid = "line")
+#' plot(m1, std = TRUE, resid = "line")
 #' 
 #' # ===============================
 #' # = Using umxRAM in Sketch mode =
 #' # ===============================
 #' # No data needed: just list variable names!
 #' # Resulting model will be plotted automatically
-#'m1 = umxRAM("what does unique pairs do, I wonder", data = c("B", "C"),
+#' m1 = umxRAM("what does unique pairs do, I wonder", data = c("B", "C"),
 #'	# B<->B, C<->C, B<->C
 #'	umxPath(unique.pairs = c("B", "C"))
 #')
