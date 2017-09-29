@@ -3984,8 +3984,7 @@ umx_rot <- function(vec){
 #' k = c("bmi", "wt")
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", vars2keep = k)
 #' names(wide)
-#' # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"   
-#' }
+#' # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA) {
 	# TODO add other vars to keep (like things which don't vary in a family)
 	# call this "ignore"? "passalong"?

@@ -24,6 +24,18 @@ umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
 \description{
 umx_long2wide merges on famID, for an unlimited number of twinIDs.
 }
+\examples{
+tmp = twinData[, -2]
+tmp$twinID1 = 1
+tmp$twinID2 = 2
+long = umx_wide2long(data = tmp, sep = "")
+wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity")
+names(wide) # might want to rename vars like "part_T1" to "part" and delete T2 copy 
+k = c("bmi", "wt")
+wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", vars2keep = k)
+names(wide)
+# "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
+}
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }

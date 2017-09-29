@@ -586,6 +586,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 	}
 	# multiple group fit function sums the likelihoods of its component models
 	newModel <- mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
+	newModel = omxAssignFirstParameters(newModel) 
 	if(autoRun){
 		newModel = mxRun(newModel)
 		umxSummary(newModel)
