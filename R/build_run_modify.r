@@ -535,8 +535,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' \code{\link{mxFitFunctionMultigroup}} fit function that minimises the sum of the
 #' fits of the sub-models.
 #'
-#' @param name he name of the super model (default is 'top')
-#' @param ...  models to group together
+#' @param name The name for the container model (default = 'top')
+#' @param ...  Models forming the multiple groups contained in the supermodel.
 #' @param autoRun Whether to run the supermodel before returning it (default = TRUE)
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -586,7 +586,9 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 	}
 	# multiple group fit function sums the likelihoods of its component models
 	newModel <- mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
-	newModel = omxAssignFirstParameters(newModel) 
+	# Trundle through and make sure values with the same label have the same start value... means for instance.
+	newModel = omxAssignFirstParameters(newModel)
+	
 	if(autoRun){
 		newModel = mxRun(newModel)
 		umxSummary(newModel)
