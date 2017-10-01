@@ -151,11 +151,7 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		umxCompare(model, comparisons, all = TRUE, report = report, file = paste0(baseFileName, "1.html"))
 		# umxCompare(no_c_no_cem, no_c_no_moderation, all = TRUE, report = report, file = paste0(baseFileName, "2.html"))
 	} else {
-		stop("Only GxE implemented so far. Feel free to let me know what you want...")
-		# TODO if we get an MxModel.ACE, lets 
-		# 1. make umxCP, and umxIP
-		# 2. also relaxed CP/IP?
-		# 3. report fit table
+		stop("This function is for GxE. Feel free to let me know what you want...")
 	}
 }
 #' @export
@@ -476,7 +472,7 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 		object = mxModel(object, mxCI(CIs_to_set, interval = level))
 	} else if (parm != "existing"){
 		# add requested CIs to model
-		# TODO check that these exist
+		# TODO umxConfint: Check that these CIs exist
 		object = mxModel(object, mxCI(parm, interval = level))
 	}
 

@@ -7,9 +7,9 @@
 umxSuperModel(name = "top", ..., autoRun = TRUE)
 }
 \arguments{
-\item{name}{he name of the super model (default is 'top')}
+\item{name}{The name for the container model (default = 'top')}
 
-\item{...}{models to group together}
+\item{...}{Models forming the multiple groups contained in the supermodel.}
 
 \item{autoRun}{Whether to run the supermodel before returning it (default = TRUE)}
 }

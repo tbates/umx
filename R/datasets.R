@@ -1,6 +1,7 @@
-#' Dataset on general family functioning.
+#' Twin data: General Family Functioning, divorce, and wellbeing.
 #'
-#' Measures of happiness and related variables in Twins, and their brothers and sisters.
+#' Measures of family functioning, happiness and related variables in twins, and
+#' their brothers and sisters. (see details)
 #'
 #' @details
 #' Several scales in the data are described in  van der Aa et al (2010).
@@ -16,6 +17,7 @@
 #' Quality of life in general (QLg) was assessed with the 10-step Cantril
 #' Ladder from best- to worst-possible life (Cantril, 1965).
 #' 
+#' GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T))
 #' \describe{
 #'   \item{divorce}{Parent's divorce status: 0 = No, 1 = Yes}
 #'   \item{zyg6}{Six-level measure of zygosity}
@@ -82,7 +84,7 @@
 #' umx_names(GFF, "1$")
 NULL
 
-GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T))
+
 #' Anthropometric data on twins
 #'
 #' A dataset containing height, weight, bmi, and skin-fold fat measures in several

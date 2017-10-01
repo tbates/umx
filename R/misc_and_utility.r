@@ -1033,7 +1033,7 @@ umxFactor <- function(x = character(), levels= NULL, labels = levels, exclude = 
 			if(is.null(levels)) {
 				levels = levels(x)
 			} else {
-				# TODO Check the provided levels match the data!
+				# TODO umxFactor: Check provided levels match the data!
 				if(!levels(x) == levels){
 					message("the levels you provided are not those I see in the data")
 				}
@@ -1196,7 +1196,7 @@ umx_apply <- function(FUN, of, by = "columns", ...) {
 #' df$mpg = c(letters,letters[1:6]); str(df)
 #' df = umx_as_numeric(df)
 umx_as_numeric <- function(df, force = FALSE) {
-	# TODO handle umx_as_numeric for matrices, vectors...
+	# TODO umx_as_numeric: Handle matrices, vectors...
 	colsToConvert = names(df)
 	if(!force){
 		# just the numeric names
@@ -1354,8 +1354,9 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 #' @param ignore.case whether to be case sensitive or not (default TRUE = ignore case)
 #' @param useNames whether to search the names as well as the labels (for SPSS files with label metadata)
 #' @return - list of matched column names and/or labels
-#' @seealso - \code{\link{grep}} umx_aggregate
-#' @family Utility Functions
+#' @seealso - \code{\link{grep}} \code{\link{umx_names}} \code{\link{umx_aggregate}}
+#' @family Miscellaneous Utility Functions
+#' @family String Functions
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1404,7 +1405,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 			}
 		}
 	} else {
-		# TODO	check input is string or vector of strings
+		# TODO	umx_grep: Check input is string or vector of strings
 		return(grep(grepString, df, value = TRUE, ignore.case = ignore.case))
 	}
 }
@@ -1434,7 +1435,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = TRUE)
 #' }
 umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", listPattern = NA, test = TRUE, overwrite = FALSE) {
-	# TODO: add recursive support to rename
+	# TODO: umx_rename_file: Add recursive support
 	# cd "/Users/tim/Desktop/"
 	# find "The Strain" -name "*.mp4"  -exec mv {} "The Strain" \;
 	if(is.na(replaceStr)){
@@ -1821,7 +1822,7 @@ umx_cor <- function (X, df = nrow(X) - 2, use = c("pairwise.complete.obs", "comp
 	# see also
 	# hmisc::rcorr( )
 	use = match.arg(use)
-	warning("TODO: assumes no missing data, n is just nrow() !!")
+	warning("TODO: umx_cor assumes no missing data, n is just nrow() !!")
 	# nvar    = dim(x)[2]
 	# nMatrix = diag(NA, nrow= nvar)
 	# for (i in 1:nvar) {
@@ -2163,7 +2164,7 @@ vars <- umx_paste_names
 #' umx_merge_CIs(m1, m2)
 #' }
 umx_merge_CIs <- function(m1, m2) {
-	# TODO in umx_merge_CIs
+	# TODO umx_merge_CIs has 5 things todo :-(
 	# 1. remove duplicates...
 	# 2. (check they are the same as well!)
 	# 3. Support arbitrarily long list of input models with ...
@@ -2208,7 +2209,7 @@ umx_merge_CIs <- function(m1, m2) {
 #' @examples
 #' umxCovData(mtcars, c("mpg", "hp"))
 umxCovData <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
-	# TODO use 'use' to compute numObs in umxCovData
+	# TODO umxCovData: Use 'use' to compute numObs in umxCovData
 	use = match.arg(use)
 	if(anyNA(columns)){
 		columns = names(df)
@@ -2288,7 +2289,7 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	show = match.arg(show)
 	
 	if("thresholds" %in% matrices){
-		# TODO threshold printing not finalized yet
+		# TODO umx_show: Threshold printing not yet finalized
 		if(!is.null(model$deviations_for_thresh)){
 			dev = TRUE
 			x = model$deviations_for_thresh
@@ -2401,7 +2402,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 		stop("You must set the first parameter to 'start', 'stop', a model, or a list of models.\nYou offered up a", class(x))
 	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
-	# TODO output a nicely formatted table
+	# TODO umx_time: Output a nicely formatted table
 	for(i in 1:length(x)) {			
 		if(length(x) > 1) {
 			m = x[[i]]
@@ -3083,9 +3084,9 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umx_has_means(m1)
 umx_has_means <- function(model) {
-	# TODO check for type? check for run
+	# TODO umx_has_means check run?
 	if(!umx_is_RAM(model)){
-		stop("Can only run on RAM models so far")
+		stop("TODO umx_has_means Can only run on RAM models so far")
 	}
 	return(!is.null(model$matrices$M))
 }
@@ -3177,8 +3178,8 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' umx_check_model(m1, beenRun = FALSE)
 #' }
 umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, hasMeans = NULL, checkSubmodels = FALSE) {
-	# TODO hasSubmodels = FALSE
-	# TODO fix all these so they respect true and false...
+	# TODO umx_check_model check hasSubmodels = FALSE
+	# TODO umx_check_model fix so it respects true and false...
 	if (!umx_is_MxModel(obj)) {
 		stop("'model' must be an mxModel")
 	}
@@ -3296,7 +3297,7 @@ umx_reorder <- function(old, newOrder) {
 #' x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10) # more than integers exist
 #' x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE, returnCutpoints = FALSE){
-	# TODO: check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed column-wise
+	# TODO: umx_cont_2_quantiles: Check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed column-wise
 	type = match.arg(type)
 	if(is.data.frame(x) && dim(x)[2] > 1){
 		stop("I can only handle single vectors: email tim and rip him a new one")
@@ -3400,7 +3401,7 @@ umx_object_as_str<- function(x) {
 #' umxEval
 #'
 #' Takes an expression as a string, and evaluates it as an expression in model, optionally computing the result.
-#' # TODO Currently broken...
+#' # TODO umxEval Currently broken... delete submit as update to OpenMx?
 #'
 #' @param expstring an expression string, i.e, "a + b"
 #' @param model an \code{\link{mxModel}} to evaluate in
@@ -3888,6 +3889,18 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(mtcars, "^d") # "disp", drat
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
 #' umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
+#' \dontrun{
+#' # TODO umx_names: Add GFF examples to umx_names
+#' 
+#' umx_names(nl, "1$")
+#' # "zyg" "sex1"  "age1"  "gff1"  "fc1"   "qol1"  "hap1"  "sat1"  "AD1" "SOMA1" "SOC1"  "THOU1"
+#' umx_names(nl, "2$")
+#' 
+#' umx_names(nl, "b$")
+#' umx_names(nl, "s$")
+#' umx_names(nl, "[^12bs]$")
+#' # "divorce"
+#' }
 umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
 	if(class(df) == "data.frame"){
 		nameVector = names(df)
@@ -4049,10 +4062,10 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' str(long)
 #' str(twinData)
 umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
-	# TODO Assumes 2 twins: Good to generalize to unlimited family size.
-	# TODO Detect data overwriting? like if age exists, but data have age1 and age2?
-	# TODO Report non-twin columns
-	# TODO Report twin columns
+	# TODO umx_wide2long Assumes 2 twins: Good to generalize to unlimited family size.
+	# TODO umx_wide2long Detect data overwriting? like if age exists, but data have age1 and age2?
+	# TODO umx_wide2long Report non-twin columns
+	# TODO umx_wide2long Report twin columns
 
 	# 1. get the suffixed names
 	T1 = umx_names(data, paste0(".", sep, "1"))
@@ -4312,7 +4325,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		names(mzData) = names(dzData) = c(umx_paste_names(varNames, "_T"), "M_T1", "M_T2")
 	}
 	if(!is.null(nThresh)){
-		# TODO combine all columns for more accuracy 
+		# TODO umx_make_TwinData: Combine all columns for more accuracy 
 		tmp = rbind(mzData, dzData)
 		levelLabels = paste0("quantile", 1:(nThresh+1))
 		for (i in 1:length(varNames)) {

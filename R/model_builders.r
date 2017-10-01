@@ -27,7 +27,7 @@
 #' 
 #' This is very much early days. Adding "scores" in response to demand.
 #' 
-#' TODO: detect ordinal items and switch to UWLS
+#' TODO: umxEFA: Detect ordinal items and switch to UWLS
 #' 
 #' @aliases umxFactanal umxEFA
 #' @param x Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.
@@ -79,7 +79,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs =
 				data = data[,x]
 			} else if (inherits(x,"formula")){
 				stop("Nice formula! Sadly I can't handle formulae yet: email tim and abuse him about this failing")
-				# TODO: handle is.formula()
+				# TODO: umxEFA: Handle is.formula()
 			}else{
 				name = x
 			}
@@ -114,7 +114,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs =
 	} else if( length(factors) == 1 && class(factors) == "numeric"){
 		factors = paste0("F", c(1:factors))
 	}
-	# TODO adapt to input datatype, i.e., add cov handler
+	# TODO umxEFA: Adapt to input datatype, i.e., add cov handler
 	manifests <- names(data)
 	m1 <- umxRAM(model = name, data = data, autoRun = FALSE,
 		umxPath(factors, to = manifests, connect = "unique.bivariate"),

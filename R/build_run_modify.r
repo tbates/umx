@@ -3687,7 +3687,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	} else {
 		return(paths)
 	}
-	# TODO	shift this to a test file
+	# TODO: umxLatent: shift this to a test file
 	# readMeasures = paste("test", 1:3, sep="")
 	# bad usages
 	# mxLatent("Read") # no too defined
