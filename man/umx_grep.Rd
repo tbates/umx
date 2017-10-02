@@ -42,11 +42,13 @@ umx_grep(spss_df, "labeltext", output = "name")
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{grep}} umx_aggregate
+- \code{\link{grep}} \code{\link{umx_names}} \code{\link{umx_aggregate}}
 
-Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_find_object}}, \code{\link{umx_msg}},
-  \code{\link{umx_names}}, \code{\link{umx_paste_names}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_rename}}, \code{\link{umx}}
+Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
+  \code{\link{umx_make}},
+  \code{\link{umx_write_to_clipboard}}
+
+Other String Functions: \code{\link{umx_explode_twin_names}},
+  \code{\link{umx_explode}}, \code{\link{umx_rot}},
+  \code{\link{umx_trim}}
 }

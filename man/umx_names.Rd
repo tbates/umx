@@ -39,6 +39,18 @@ umx_names(mtcars, "mpg") # just "mpg" matches
 umx_names(mtcars, "^d") # "disp", drat
 umx_names(mtcars, "r[ab]") # "drat", "carb"
 umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
+\dontrun{
+# TODO umx_names: Add GFF examples to umx_names
+
+umx_names(nl, "1$")
+# "zyg" "sex1"  "age1"  "gff1"  "fc1"   "qol1"  "hap1"  "sat1"  "AD1" "SOMA1" "SOC1"  "THOU1"
+umx_names(nl, "2$")
+
+umx_names(nl, "b$")
+umx_names(nl, "s$")
+umx_names(nl, "[^12bs]$")
+# "divorce"
+}
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
@@ -47,8 +59,8 @@ umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 - \code{\link{grep}}, \code{\link{sub}}
 
 Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_find_object}}, \code{\link{umx_grep}},
-  \code{\link{umx_msg}}, \code{\link{umx_paste_names}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_rename}}, \code{\link{umx}}
+  \code{\link{umx_find_object}}, \code{\link{umx_msg}},
+  \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_print}}, \code{\link{umx_rename}},
+  \code{\link{umx}}
 }

@@ -28,5 +28,6 @@ umx_make(what = "release"))
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
+  \code{\link{umx_grep}},
   \code{\link{umx_write_to_clipboard}}
 }

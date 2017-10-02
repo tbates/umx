@@ -29,6 +29,7 @@ x = umxVersion(); x
 \seealso{
 - \code{\link{packageVersion}}
 
-Other Miscellaneous Utility Functions: \code{\link{umx_make}},
+Other Miscellaneous Utility Functions: \code{\link{umx_grep}},
+  \code{\link{umx_make}},
   \code{\link{umx_write_to_clipboard}}
 }

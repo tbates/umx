@@ -26,5 +26,6 @@ umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 }
 \seealso{
 Other String Functions: \code{\link{umx_explode_twin_names}},
-  \code{\link{umx_rot}}, \code{\link{umx_trim}}
+  \code{\link{umx_grep}}, \code{\link{umx_rot}},
+  \code{\link{umx_trim}}
 }

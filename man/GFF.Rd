@@ -3,7 +3,7 @@
 \docType{data}
 \name{GFF}
 \alias{GFF}
-\title{Dataset on general family functioning.}
+\title{Twin data: General Family Functioning, divorce, and wellbeing.}
 \format{A data frame with 1000 rows and 8 variables:}
 \source{
 \url{Meike paper?}
@@ -12,7 +12,8 @@
 data(GFF)
 }
 \description{
-Measures of happiness and related variables in Twins, and their brothers and sisters.
+Measures of family functioning, happiness and related variables in twins, and
+their brothers and sisters. (see details)
 }
 \details{
 Several scales in the data are described in  van der Aa et al (2010).
@@ -28,6 +29,7 @@ sub-scale of the Family Environment Scale (FES) (Moos, 1974)
 Quality of life in general (QLg) was assessed with the 10-step Cantril
 Ladder from best- to worst-possible life (Cantril, 1965).
 
+GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T))
 \describe{
   \item{divorce}{Parent's divorce status: 0 = No, 1 = Yes}
   \item{zyg6}{Six-level measure of zygosity}

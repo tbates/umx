@@ -199,7 +199,7 @@
 #' umxSummary(m1)
 #' plot(m1)
 
-umxACEvv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
+umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL) {
 
 		covMethod = match.arg(covMethod)
@@ -548,7 +548,7 @@ umxACEvv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed"
 				mxAlgebra(name = "Vtot", A + C+ E),       # Total variance
 				# TODO test that these are identical in all cases
 				# mxAlgebra(vec2diag(1/diag2vec(Vtot)), name = "Var"), # Total variance
-				mxAlgebra(name = "Var", solve((I * Vtot)), # Total variance
+				mxAlgebra(name = "Var", solve(I * Vtot)), # Total variance
 				mxAlgebra(name = "A_std", Var %*% A), # standardized A
 				mxAlgebra(name = "C_std", Var %*% C), # standardized C
 				mxAlgebra(name = "E_std", Var %*% E)  # standardized E

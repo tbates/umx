@@ -20,7 +20,7 @@ umxEval(expstring, model, compute = FALSE, show = FALSE)
 }
 \description{
 Takes an expression as a string, and evaluates it as an expression in model, optionally computing the result.
-# TODO Currently broken...
+# TODO umxEval Currently broken... delete submit as update to OpenMx?
 }
 \examples{
 m1 = mxModel("fit",
