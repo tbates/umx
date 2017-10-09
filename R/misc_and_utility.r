@@ -3471,7 +3471,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verbose = FALSE){
 	if(!is.data.frame(df)){
 		if(is.numeric(df)){
-			df = scale(df)
+			df = scale(df)[,1]
 		}else{
 			msg = paste0(quote(df), " isn't a dataframe, it's a", class(df))
 			stop(paste0("umx_scale takes a dataframe (or numeric vector) as its first argument.", msg))
