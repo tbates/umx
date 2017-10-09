@@ -105,23 +105,6 @@ selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
 tmp = umxThresholdMatrix(twinData[,selDVs], sep = "", verbose = TRUE)
 str(tmp)
 
-# ===================
-# = "left_censored" =
-# ===================
-
-x = round(10 * rnorm(1000, mean = -.2))
-y = round(5 * rnorm(1000))
-x[x < 0] = 0; y[y < 0] = 0
-df  = data.frame(x1 = x, x2 = y)
-df  = umxFactor(df); #str(df)
-table(df)
-tmp = umxThresholdMatrix(df, thresholds = "left_censored"); class(tmp)
-any(tmp$free) # all fixed.
-tmp$labels
-df  = umxFactor(data.frame(x_T1 = x, x_T2 = y), sep="_T"); #str(df)
-tmp = umxThresholdMatrix(df, sep="_T", thresholds = "left_censored"); class(tmp)
-any(tmp$free) # all fixed.
-tmp$labels
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
