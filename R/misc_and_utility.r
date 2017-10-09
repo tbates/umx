@@ -1,3 +1,18 @@
+#
+#   Copyright 2007-2017 The OpenMx Project
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+# 
+#        http://www.apache.org/licenses/LICENSE-2.0
+# 
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
 # so umx_swap_a_block()
@@ -2088,14 +2103,16 @@ umx_msg <- function(x) {
 #' So, you provide `bmi`, and you get back fully specified family-wise names: `c("bmi_T1", "bmi_T2")`
 #' 
 #' @details
-#' Method 1: **Use complete suffixes**
+#' **Method 1**: *Use complete suffixes*
 #' 
 #' You can provide complete suffixes like "_T1" and "_T2". This has the benefit of being explicit
 #' and very general:
 #'
 #'     umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
 #'
-#' *Method 2*: Use sep and a suffix vector
+#' *Note*: for quick typing, `vars` is an alias for `umx_paste_names`
+#'
+#' **Method 2**: *Use sep and a suffix vector.*
 #' 
 #' Alternatively, you can use `sep` to add a constant like "_T" after each basename, along
 #' with a vector of suffixes. This has the benefit of showing what is varying:
@@ -2103,14 +2120,14 @@ umx_msg <- function(x) {
 #'
 #'     umx_paste_names(c("var1", "var2"), sep = "_T", suffixes = 1:2)
 #'
-#' **Working with covariates**
+#' *Working with covariates*
 #' 
 #' If you are using \code{\link{umxACEcov}}, you **need** to keep all the covariates at the end of the list.
 #' Here's how:
 #' 
 #'     umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
 #' 
-#' note: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
+#' *note*: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
 #' T1vars, T2 vars, T1 covs, T2 covs. This is what `covNames` accomplishes.
 #' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
 #' @param sep A string separating the name and the twin suffix, e.g. "_T" (default is "")
@@ -2128,6 +2145,8 @@ umx_msg <- function(x) {
 #' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+#' # For quick-typing, vars is an alias for umx_paste_names
+#' vars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 #' @md
 umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
 	nameList = c()
@@ -2146,6 +2165,7 @@ umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL,
 	return(nameList)
 }
 #' @export
+#' @aliases umx_paste_names
 vars <- umx_paste_names
 
 #' umx_merge_CIs
@@ -3425,14 +3445,19 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 	return(eval(substitute(mxEval(x, model, compute, show), list(x = parse(text=expstring)[[1]]))))
 }
 
-#' umx_scale
+#' Scale data columns, skipping non-scalable columns
 #'
-#' Scale data columns, skipping ordinal
+#' umx_scale applies scale to a data.frame. It scale numeric columns, and is smart enough
+#' to skip non-scalable columns (string, factor, etc.).
 #'
-#' @param df a dataframe to scale (or a numeric vector)
-#' @param varsToScale (leave blank for all)
+#' Also strips-off the attributes which scale adds ("scaled:center" and 
+#' "scaled:scale" (set attr= TRUE) to keep these.
+#'
+#' @param df A dataframe to scale (or a numeric vector)
+#' @param varsToScale (leave blank to scale all)
 #' @param coerce Whether to coerce non-numerics to numeric (Defaults to FALSE)
 #' @param verbose Whether to report which columns were scaled (default FALSE)
+#' @param attr to strip off the attributes scale creates (FALSE by default)
 #' @return - new dataframe with scaled variables
 #' @export
 #' @seealso umx_scale_wide_twin_data
@@ -3440,12 +3465,13 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
-#' df = umx_scale(twinData, varsToScale = NULL)
+#' df = umx_scale(twinData, varsToScale = c("wt1", "wt2"))
+#' df = umx_scale(twinData,  attr= TRUE)
 #' plot(wt1 ~ wt2, data = df)
-umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, verbose = FALSE){
+umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verbose = FALSE){
 	if(!is.data.frame(df)){
 		if(is.numeric(df)){
-			return(scale(df))
+			df = scale(df)[,1]
 		}else{
 			msg = paste0(quote(df), " isn't a dataframe, it's a", class(df))
 			stop(paste0("umx_scale takes a dataframe (or numeric vector) as its first argument.", msg))
@@ -3456,15 +3482,24 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, verbose = FALSE){
 			varsToScale = names(df)
 		}
 		if(coerce){
+			# TODO umx_scale: implement coerce
 			stop("coerce not implemented yet")
 		}
-		varsToScale = varsToScale[umx_is_numeric(df[,varsToScale])]
+		varsToScale = varsToScale[umx_is_numeric(df[,varsToScale], all = FALSE)]
 		if(verbose){
 			message("Vars I will scale are:", paste(varsToScale, ", "))
 		}
-		df[ ,varsToScale] = scale(df[ ,varsToScale])
-		return(df)
+		if(length(varsToScale)==1){
+			df[ ,varsToScale] = scale(df[ ,varsToScale])[,1, drop=T]
+		} else {
+			df[ ,varsToScale] = scale(df[ ,varsToScale])
+		}
 	}
+	if(!attr){
+		attr(df, which = "scaled:center") = NULL
+		attr(df, which = "scaled:scale")  = NULL
+	}
+	return(df)
 }
 
 #' Check if variables in a dataframe are in a list of classes.
@@ -3975,34 +4010,53 @@ umx_rot <- function(vec){
 #'
 #' @description
 #' umx_long2wide merges on famID, for an unlimited number of twinIDs.
+#' Note: this assumes if zygosity or any passalong variables are NA in the first
+#' family member, they are NA everywhere. i.e., it doesn't hunt for values that
+#' are present elsewhere to try and self-heal missing data.
 #'
-#' @param data The long data file
+#' @param data The original (long-format) data file
 #' @param famID  The unique identifier for members of a family
 #' @param twinID The twinID. Typically 1, 2, 50 51, etc...
-#' @param zygosity type: Typically MZFF, DZFF MZMM, DZMM DZOS
-#' @param vars2keep = The variables you wish to analyse (these will be renamed with "_TtwinID")
-#' @return - wide dataframe
+#' @param zygosity Typically MZFF, DZFF MZMM, DZMM DZOS
+#' @param vars2keep = The variables you wish to analyse (these will be renamed with paste0("_T", twinID)
+#' @param passalong = Variables you wish to pass-through (keep, even though they aren't twin vars)
+#' @return - dataframe in wide format
 #' @export
 #' @family Data Functions
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{merge}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
+#' # ================================================================
+#' # = First we have to make a long format file to base the demo on =
+#' # ================================================================
+# # 1. Drop the 'age' column (we have age1 and age2, and age won't make sense in a long format
 #' tmp = twinData[, -2]
+# # 2. Add fake twinID identifiers for each twin, else this data set won't have twinID
 #' tmp$twinID1 = 1
 #' tmp$twinID2 = 2
 #' long = umx_wide2long(data = tmp, sep = "")
+#' #
+#' # OK. Now to demo long2wide...
+#' # Keeping all columns
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity")
 #' names(wide) # might want to rename vars like "part_T1" to "part" and delete T2 copy 
+#' # Just keep bmi and wt
 #' k = c("bmi", "wt")
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", vars2keep = k)
 #' names(wide)
 #' # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
-umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA) {
-	# TODO add other vars to keep (like things which don't vary in a family)
-	# call this "ignore"? "passalong"?
+#' # Keep bmi and wt, and pass through 'cohort'
+#' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
+#' 	vars2keep = k, passalong = "cohort")
+umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA, passalong = NA) {
 	IDVars = c(famID, twinID, zygosity)
 	umx_check_names(IDVars, data = data, die = TRUE)
+
+	if(!is.na(passalong )){
+		umx_check_names(passalong, data = data, die = TRUE)
+	}
+
 	if(typeof(vars2keep) == "character"){
 		# Check user provided list
 		umx_check_names(vars2keep, data = data, die = TRUE)
@@ -4020,14 +4074,17 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	}
 	# levelsOfTwinID = c(1,2,50,51)
 
-	allVars = c(IDVars, vars2keep)
+	if(!is.na(passalong)){
+		allVars = c(IDVars, passalong, vars2keep)
+	}else{
+		allVars = c(IDVars, vars2keep)		
+	}
 	famIDPlus_vars2keep = c(famID, vars2keep)
-	# umx_msg(allVars)
-	# umx_msg(famIDPlus_vars2keep)
+
 	# ==================================
 	# = Merge each twinID to the right =
 	# ==================================
-	# cat(paste0("doing: "))
+	# Extract all the twins of type i, merge by famid with existing blocks 
 	for(i in seq_along(levelsOfTwinID)) {
 		newNames = paste0(vars2keep, "_T", levelsOfTwinID[i])
 		if(i == 1){
@@ -4040,6 +4097,16 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 		}
 		# cat(paste0(levelsOfTwinID[i], " "))
 	}
+	# TODO umx_long2wide bother to check if zygosity is not NA in some member of family?
+	# 	to avoid problem of NA if NA in first family member found?
+	# TODO How to get unique values of passalong?
+	# if(!is.na(passalong)){
+		# One last look for the passalong columns
+		# current  = data[, c(famID, passalong)]
+		# previous = merge(previous, current, by = famID, all.x = TRUE, all.y = TRUE)
+		# x = names(previous)
+		# x[-which(names(x) %in% passalong)]
+	# }
   return(previous)
 }
 

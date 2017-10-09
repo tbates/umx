@@ -2,16 +2,19 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_scale}
 \alias{umx_scale}
-\title{umx_scale}
+\title{Scale data columns, skipping non-scalable columns}
 \usage{
-umx_scale(df, varsToScale = NULL, coerce = FALSE, verbose = FALSE)
+umx_scale(df, varsToScale = NULL, coerce = FALSE, attr = FALSE,
+  verbose = FALSE)
 }
 \arguments{
-\item{df}{a dataframe to scale (or a numeric vector)}
+\item{df}{A dataframe to scale (or a numeric vector)}
 
-\item{varsToScale}{(leave blank for all)}
+\item{varsToScale}{(leave blank to scale all)}
 
 \item{coerce}{Whether to coerce non-numerics to numeric (Defaults to FALSE)}
+
+\item{attr}{to strip off the attributes scale creates (FALSE by default)}
 
 \item{verbose}{Whether to report which columns were scaled (default FALSE)}
 }
@@ -19,11 +22,17 @@ umx_scale(df, varsToScale = NULL, coerce = FALSE, verbose = FALSE)
 - new dataframe with scaled variables
 }
 \description{
-Scale data columns, skipping ordinal
+umx_scale applies scale to a data.frame. It scale numeric columns, and is smart enough
+to skip non-scalable columns (string, factor, etc.).
+}
+\details{
+Also strips-off the attributes which scale adds ("scaled:center" and 
+"scaled:scale" (set attr= TRUE) to keep these.
 }
 \examples{
 data(twinData) 
-df = umx_scale(twinData, varsToScale = NULL)
+df = umx_scale(twinData, varsToScale = c("wt1", "wt2"))
+df = umx_scale(twinData,  attr= TRUE)
 plot(wt1 ~ wt2, data = df)
 }
 \references{

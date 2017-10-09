@@ -29,26 +29,28 @@ It's easier to work with base names, rather than the twice-as-long hard-to-typo 
 So, you provide \code{bmi}, and you get back fully specified family-wise names: \code{c("bmi_T1", "bmi_T2")}
 }
 \details{
-Method 1: \strong{Use complete suffixes}
+\strong{Method 1}: \emph{Use complete suffixes}
 
 You can provide complete suffixes like "_T1" and "_T2". This has the benefit of being explicit
 and very general:\preformatted{umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
 }
 
-\emph{Method 2}: Use sep and a suffix vector
+\emph{Note}: for quick typing, \code{vars} is an alias for \code{umx_paste_names}
+
+\strong{Method 2}: \emph{Use sep and a suffix vector.}
 
 Alternatively, you can use \code{sep} to add a constant like "_T" after each basename, along
 with a vector of suffixes. This has the benefit of showing what is varying:
 This is then suffixed with e.g. "1", "2".\preformatted{umx_paste_names(c("var1", "var2"), sep = "_T", suffixes = 1:2)
 }
 
-\strong{Working with covariates}
+\emph{Working with covariates}
 
 If you are using \code{\link{umxACEcov}}, you \strong{need} to keep all the covariates at the end of the list.
 Here's how:\preformatted{umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
 }
 
-note: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
+\emph{note}: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
 T1vars, T2 vars, T1 covs, T2 covs. This is what \code{covNames} accomplishes.
 }
 \examples{
@@ -58,6 +60,8 @@ umx_paste_names("bmi", sep = "_T", suffixes = 1:2)
 varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+# For quick-typing, vars is an alias for umx_paste_names
+vars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 }
 \references{
 \itemize{

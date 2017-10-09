@@ -29,7 +29,6 @@ sub-scale of the Family Environment Scale (FES) (Moos, 1974)
 Quality of life in general (QLg) was assessed with the 10-step Cantril
 Ladder from best- to worst-possible life (Cantril, 1965).
 
-GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T))
 \describe{
   \item{divorce}{Parent's divorce status: 0 = No, 1 = Yes}
   \item{zyg6}{Six-level measure of zygosity}
@@ -82,6 +81,8 @@ GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = 
 }
 }
 \examples{
+# for me to read this data into umx for storage
+# GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\\t", as.is = c(T))
 data(GFF)
 # Twin 1 variables (end in '_T1')
 umx_names(GFF, "1$")

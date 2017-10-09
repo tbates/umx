@@ -5,36 +5,51 @@
 \title{Take a long twin-data file and make it wide (one family per row)}
 \usage{
 umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
-  vars2keep = NA)
+  vars2keep = NA, passalong = NA)
 }
 \arguments{
-\item{data}{The long data file}
+\item{data}{The original (long-format) data file}
 
 \item{famID}{The unique identifier for members of a family}
 
 \item{twinID}{The twinID. Typically 1, 2, 50 51, etc...}
 
-\item{zygosity}{type: Typically MZFF, DZFF MZMM, DZMM DZOS}
+\item{zygosity}{Typically MZFF, DZFF MZMM, DZMM DZOS}
 
-\item{vars2keep}{= The variables you wish to analyse (these will be renamed with "_TtwinID")}
+\item{vars2keep}{= The variables you wish to analyse (these will be renamed with paste0("_T", twinID)}
+
+\item{passalong}{= Variables you wish to pass-through (keep, even though they aren't twin vars)}
 }
 \value{
-- wide dataframe
+- dataframe in wide format
 }
 \description{
 umx_long2wide merges on famID, for an unlimited number of twinIDs.
+Note: this assumes if zygosity or any passalong variables are NA in the first
+family member, they are NA everywhere. i.e., it doesn't hunt for values that
+are present elsewhere to try and self-heal missing data.
 }
 \examples{
+# ================================================================
+# = First we have to make a long format file to base the demo on =
+# ================================================================
 tmp = twinData[, -2]
 tmp$twinID1 = 1
 tmp$twinID2 = 2
 long = umx_wide2long(data = tmp, sep = "")
+#
+# OK. Now to demo long2wide...
+# Keeping all columns
 wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity")
 names(wide) # might want to rename vars like "part_T1" to "part" and delete T2 copy 
+# Just keep bmi and wt
 k = c("bmi", "wt")
 wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", vars2keep = k)
 names(wide)
 # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
+# Keep bmi and wt, and pass through 'cohort'
+wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
+	vars2keep = k, passalong = "cohort")
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

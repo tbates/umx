@@ -1,3 +1,18 @@
+#
+#   Copyright 2007-2017 The OpenMx Project
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+# 
+#        http://www.apache.org/licenses/LICENSE-2.0
+# 
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 #' Twin data: General Family Functioning, divorce, and wellbeing.
 #'
 #' Measures of family functioning, happiness and related variables in twins, and
@@ -17,7 +32,6 @@
 #' Quality of life in general (QLg) was assessed with the 10-step Cantril
 #' Ladder from best- to worst-possible life (Cantril, 1965).
 #' 
-#' GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T))
 #' \describe{
 #'   \item{divorce}{Parent's divorce status: 0 = No, 1 = Yes}
 #'   \item{zyg6}{Six-level measure of zygosity}
@@ -79,6 +93,8 @@
 #' evaluations of family functioning and subjective wellbeing. Twin Research 
 #' and Human Genetics, 13(2), 143-162. doi:10.1375/twin.13.2.143
 #' @examples
+#' # for me to read this data into umx for storage
+#' # GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T))
 #' data(GFF)
 #' # Twin 1 variables (end in '_T1')
 #' umx_names(GFF, "1$")
