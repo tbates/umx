@@ -2083,12 +2083,18 @@ umx_make <- function(what = c("install", "release", "win", "check", "examples"),
 #' umx_msg(a)
 #' b = c("brian", "sally", "jane")
 #' umx_msg(b)
+#' umx_msg(mtcars)
 umx_msg <- function(x) {
-  nm = deparse(substitute(x) )
-	if(length(x) > 1) {
-		message(nm, " = ", omxQuotes(x))	
+	nm = deparse(substitute(x) )
+	if(is.data.frame(x)){
+		message(nm, " = ")
+		str(x)
 	} else {
-		message(nm, " = ", x)	
+		if(length(x) > 1) {
+			message(nm, " = ", omxQuotes(x))	
+		} else {
+			message(nm, " = ", x)	
+		}
 	}
 }
 

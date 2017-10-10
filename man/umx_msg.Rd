@@ -20,6 +20,7 @@ a = "brian"
 umx_msg(a)
 b = c("brian", "sally", "jane")
 umx_msg(b)
+umx_msg(mtcars)
 }
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
