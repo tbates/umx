@@ -2018,8 +2018,12 @@ install.OpenMx <- function(loc = c("UVa", "travis", "CRAN", "open travis build p
 	} else if(loc == "UVa"){
 		source("http://openmx.psyc.virginia.edu/getOpenMx.R")
 	}else if(loc == "travis"){
-		install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
-		# install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz", lib = lib, repos=repos)
+		if(umx_check_OS("OSX")){
+			install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
+			# install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz", lib = lib, repos=repos)
+		} else {
+			stop(paste("Sorry, travis builds are only available for MacOS :-("))
+		}
 	} else if(loc == "CRAN"){
 		install.packages("OpenMx", lib= lib, repos = repos)
 	} else if(loc == "open travis build page"){

@@ -33,12 +33,11 @@
 #' Ladder from best- to worst-possible life (Cantril, 1965).
 #' 
 #' \describe{
-#'   \item{divorce}{Parent's divorce status: 0 = No, 1 = Yes}
-#'   \item{zyg6}{Six-level measure of zygosity}
-#'   \item{zyg2}{Two-level measure of zygosity}
-#'
-#'   \item{sex_T1}{Sex of twin 1}
-#'   \item{age_T1}{Age of twin 1}
+#'   \item{zyg6}{Six-level measure of zygosity: 'MZMM', 'DZMM', 'MZFF', 'DZFF', 'DZMF', 'DZFM'}
+#'   \item{zyg2}{Two-level measure of zygosity: 'MZ', 'DZ'}
+#'   \item{divorce}{Parental divorce status: 0 = No, 1 = Yes}
+#'   \item{sex_T1}{Sex of twin 1: 0 = "male", 1 = "female"}
+#'   \item{age_T1}{Age of twin 1 (years)}
 #'   \item{gff_T1}{General family functioning for twin 1}
 #'   \item{fc_T1}{Family conflict subscale of the FES}
 #'   \item{qol_T1}{Quality of life for twin 1}
@@ -59,28 +58,28 @@
 #'   \item{SOMA_T2}{Somatic complaints for twin 2}
 #'   \item{SOC_T2}{Social problems for twin 2}
 #'   \item{THOU_T2}{Thought disorder problems for twin 2}
-#'   \item{sex_a}{Sex of sib 1}
-#'   \item{age_a}{Age of sib 1}
-#'   \item{gff_a}{General family functioning for sib 1}
-#'   \item{fc_a}{Family conflict subscale of the FES}
-#'   \item{qol_a}{Quality of life for sib 1}
-#'   \item{hap_a}{General happiness for sib 1}
-#'   \item{sat_a}{Satisfaction with life for sib 1}
-#'   \item{AD_a}{Anxiety and Depression for sib 1}
-#'   \item{SOMA_a}{Somatic complaints for sib 1}
-#'   \item{SOC_a}{Social problems for sib 1}
-#'   \item{THOU_a}{Thought disorder problems for sib 1}
-#'   \item{sex_s}{Sex of sib 2}
-#'   \item{age_s}{Age of sib 2}
-#'   \item{gff_s}{General family functioning for sib 2}
-#'   \item{fc_s}{Family conflict subscale of the FES}
-#'   \item{qol_s}{Quality of life for sib 2}
-#'   \item{hap_s}{General happiness for sib 2}
-#'   \item{sat_s}{Satisfaction with life for sib 2}
-#'   \item{AD_s}{Anxiety and Depression for sib 2}
-#'   \item{SOMA_s}{Somatic complaints for sib 2}
-#'   \item{SOC_s}{Social problems for sib 2}
-#'   \item{THOU_s}{Thought disorder problems for sib 2}
+#'   \item{sex_Ta}{Sex of sib 1}
+#'   \item{age_Ta}{Age of sib 1}
+#'   \item{gff_Ta}{General family functioning for sib 1}
+#'   \item{fc_Ta}{Family conflict subscale of the FES}
+#'   \item{qol_Ta}{Quality of life for sib 1}
+#'   \item{hap_Ta}{General happiness for sib 1}
+#'   \item{sat_Ta}{Satisfaction with life for sib 1}
+#'   \item{AD_Ta}{Anxiety and Depression for sib 1}
+#'   \item{SOMA_Ta}{Somatic complaints for sib 1}
+#'   \item{SOC_Ta}{Social problems for sib 1}
+#'   \item{THOU_Ta}{Thought disorder problems for sib 1}
+#'   \item{sex_Ts}{Sex of sib 2}
+#'   \item{age_Ts}{Age of sib 2}
+#'   \item{gff_Ts}{General family functioning for sib 2}
+#'   \item{fc_Ts}{Family conflict subscale of the FES}
+#'   \item{qol_Ts}{Quality of life for sib 2}
+#'   \item{hap_Ts}{General happiness for sib 2}
+#'   \item{sat_Ts}{Satisfaction with life for sib 2}
+#'   \item{AD_Ts}{Anxiety and Depression for sib 2}
+#'   \item{SOMA_Ts}{Somatic complaints for sib 2}
+#'   \item{SOC_Ts}{Social problems for sib 2}
+#'   \item{THOU_Ts}{Thought disorder problems for sib 2}
 #' }
 #' @docType data
 #' @keywords datasets
@@ -92,23 +91,53 @@
 #' evaluations of family functioning and subjective wellbeing. Twin Research 
 #' and Human Genetics, 13(2), 143-162. doi:10.1375/twin.13.2.143
 #' @examples
+#' # Twin 1 variables (end in '_T1')
+#' data(GFF)
+#' umx_names(GFF, "1$") # Just twin 1 variables
+#' str(GFF) # first few rows
+#' umxACE()
+
 #' # How I coded this data from the Boulder example
 #' 
-# GFF = read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T), na.strings=-999)
+# GFF = read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T), na.strings = -999)
 # x   = umx_rename(GFF, old = "zyg2"     , replace = "zyg_2grp"); names(x)
 # x   = umx_rename(x  , old = "zyg"      , replace = "zyg_6grp"); names(x)
 # x   = umx_rename(x , grep = "([12bs])$", replace = "_T\\1")   ; names(x)
-# table(x$sex_Tb) # all 0 so male = 0
-# table(x$sex_Ts) # all 1 so female = 1
 # x$sex_T1 = factor(x$sex_T1, levels = 0:1, labels = c("male", "female"))
 # x$sex_T2 = factor(x$sex_T2, levels = 0:1, labels = c("male", "female"))
 # x$sex_Tb = factor(x$sex_Tb, levels = 0:1, labels = c("male", "female"))
 # x$sex_Ts = factor(x$sex_Ts, levels = 0:1, labels = c("male", "female"))
-#
+# x$zyg_6grp = factor(x$zyg_6grp, levels = 1:6, labels = c("MZMM", "DZMM", "MZFF", "DZFF", "DZFM", "DZMF"))
 
-#' data(GFF)
-#' # Twin 1 variables (end in '_T1')
-#' umx_names(GFF, "1$")
+# GFF = GFF[, c("zyg_6grp", "zyg_2grp", "divorce", "sex_T1", "age_T1", "gff_T1", "fc_T1", "qol_T1", "hap_T1", "sat_T1", "AD_T1", "SOMA_T1", "SOC_T1", "THOU_T1", "sex_T2", "age_T2", "gff_T2", "fc_T2", "qol_T2", "hap_T2", "sat_T2", "AD_T2", "SOMA_T2", "SOC_T2", "THOU_T2", "sex_Tb", "age_Tb", "gff_Tb", "fc_Tb","qol_Tb", "hap_Tb", "sat_Tb", "AD_Tb","SOMA_Tb","SOC_Tb", "THOU_Tb","sex_Ts", "age_Ts", "gff_Ts", "fc_Ts", "qol_Ts", "hap_Ts", "sat_Ts", "AD_Ts","SOMA_Ts","SOC_Ts", "THOU_Ts")]
+
+# save("GFF", file = "GFF.rda")
+# system(paste("open ",shQuote(getwd(), type = "csh")))
+
+# ===============================
+# = Figure out what things are. =
+# ===============================
+# table(x$sex_Tb) # all 0 so male = 0
+# table(x$sex_Ts) # all 1 so female = 1
+# umx_aggregate(sex_T2 ~ zyg_6grp, data = x)
+# |zyg_6grp    |sex_T2             |
+# |:-----------|:------------------|
+# |1 (n = 448) |male 448; female 0 |
+# |2 (n = 389) |male 389; female 0 |
+# |3 (n = 668) |male 0; female 668 |
+# |4 (n = 484) |male 0; female 484 |
+# |5 (n = 504) |male 0; female 504 |
+# |6 (n = 407) |male 407; female 0 |
+# umx_aggregate(sex_T1 ~ zyg_6grp, data = x)
+# |zyg_6grp    |sex_T1             |
+# |:-----------|:------------------|
+# |1 (n = 457) |male 457; female 0 |
+# |2 (n = 391) |male 391; female 0 |
+# |3 (n = 661) |male 0; female 661 |
+# |4 (n = 478) |male 0; female 478 |
+# |5 (n = 426) |male 426; female 0 |
+# |6 (n = 460) |male 0; female 460 |
+
 NULL
 
 

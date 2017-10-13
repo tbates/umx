@@ -27,12 +27,11 @@ Quality of life in general (QLg) was assessed with the 10-step Cantril
 Ladder from best- to worst-possible life (Cantril, 1965).
 
 \describe{
-  \item{divorce}{Parent's divorce status: 0 = No, 1 = Yes}
-  \item{zyg6}{Six-level measure of zygosity}
-  \item{zyg2}{Two-level measure of zygosity}
-
-  \item{sex_T1}{Sex of twin 1}
-  \item{age_T1}{Age of twin 1}
+  \item{zyg6}{Six-level measure of zygosity: 'MZMM', 'DZMM', 'MZFF', 'DZFF', 'DZMF', 'DZFM'}
+  \item{zyg2}{Two-level measure of zygosity: 'MZ', 'DZ'}
+  \item{divorce}{Parental divorce status: 0 = No, 1 = Yes}
+  \item{sex_T1}{Sex of twin 1: 0 = "male", 1 = "female"}
+  \item{age_T1}{Age of twin 1 (years)}
   \item{gff_T1}{General family functioning for twin 1}
   \item{fc_T1}{Family conflict subscale of the FES}
   \item{qol_T1}{Quality of life for twin 1}
@@ -53,36 +52,36 @@ Ladder from best- to worst-possible life (Cantril, 1965).
   \item{SOMA_T2}{Somatic complaints for twin 2}
   \item{SOC_T2}{Social problems for twin 2}
   \item{THOU_T2}{Thought disorder problems for twin 2}
-  \item{sex_a}{Sex of sib 1}
-  \item{age_a}{Age of sib 1}
-  \item{gff_a}{General family functioning for sib 1}
-  \item{fc_a}{Family conflict subscale of the FES}
-  \item{qol_a}{Quality of life for sib 1}
-  \item{hap_a}{General happiness for sib 1}
-  \item{sat_a}{Satisfaction with life for sib 1}
-  \item{AD_a}{Anxiety and Depression for sib 1}
-  \item{SOMA_a}{Somatic complaints for sib 1}
-  \item{SOC_a}{Social problems for sib 1}
-  \item{THOU_a}{Thought disorder problems for sib 1}
-  \item{sex_s}{Sex of sib 2}
-  \item{age_s}{Age of sib 2}
-  \item{gff_s}{General family functioning for sib 2}
-  \item{fc_s}{Family conflict subscale of the FES}
-  \item{qol_s}{Quality of life for sib 2}
-  \item{hap_s}{General happiness for sib 2}
-  \item{sat_s}{Satisfaction with life for sib 2}
-  \item{AD_s}{Anxiety and Depression for sib 2}
-  \item{SOMA_s}{Somatic complaints for sib 2}
-  \item{SOC_s}{Social problems for sib 2}
-  \item{THOU_s}{Thought disorder problems for sib 2}
+  \item{sex_Ta}{Sex of sib 1}
+  \item{age_Ta}{Age of sib 1}
+  \item{gff_Ta}{General family functioning for sib 1}
+  \item{fc_Ta}{Family conflict subscale of the FES}
+  \item{qol_Ta}{Quality of life for sib 1}
+  \item{hap_Ta}{General happiness for sib 1}
+  \item{sat_Ta}{Satisfaction with life for sib 1}
+  \item{AD_Ta}{Anxiety and Depression for sib 1}
+  \item{SOMA_Ta}{Somatic complaints for sib 1}
+  \item{SOC_Ta}{Social problems for sib 1}
+  \item{THOU_Ta}{Thought disorder problems for sib 1}
+  \item{sex_Ts}{Sex of sib 2}
+  \item{age_Ts}{Age of sib 2}
+  \item{gff_Ts}{General family functioning for sib 2}
+  \item{fc_Ts}{Family conflict subscale of the FES}
+  \item{qol_Ts}{Quality of life for sib 2}
+  \item{hap_Ts}{General happiness for sib 2}
+  \item{sat_Ts}{Satisfaction with life for sib 2}
+  \item{AD_Ts}{Anxiety and Depression for sib 2}
+  \item{SOMA_Ts}{Somatic complaints for sib 2}
+  \item{SOC_Ts}{Social problems for sib 2}
+  \item{THOU_Ts}{Thought disorder problems for sib 2}
 }
 }
 \examples{
+# Twin 1 variables (end in '_T1')
+data(GFF)
+umx_names(GFF, "1$")
 # How I coded this data from the Boulder example
 
-data(GFF)
-# Twin 1 variables (end in '_T1')
-umx_names(GFF, "1$")
 }
 \references{
 van der Aa, N., Boomsma, D. I., Rebollo-Mesa, I., Hudziak, J. J., & Bartels, 
