@@ -5,9 +5,6 @@
 \alias{GFF}
 \title{Twin data: General Family Functioning, divorce, and wellbeing.}
 \format{A data frame with 1000 rows and 8 variables:}
-\source{
-\url{Meike paper?}
-}
 \usage{
 data(GFF)
 }
@@ -81,8 +78,8 @@ Ladder from best- to worst-possible life (Cantril, 1965).
 }
 }
 \examples{
-# for me to read this data into umx for storage
-# GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\\t", as.is = c(T))
+# How I coded this data from the Boulder example
+
 data(GFF)
 # Twin 1 variables (end in '_T1')
 umx_names(GFF, "1$")

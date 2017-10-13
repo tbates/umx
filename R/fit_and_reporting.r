@@ -1,5 +1,5 @@
 #
-#   Copyright 2007-2017 The OpenMx Project
+#   Copyright 2007-2017 Copyright 2007-2017 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -3633,9 +3633,13 @@ umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd
 	# genEpi_twinDescribe(twinData, varsToSummarize="Age", groupBy="Sex", suffix="_T")
 
 	mean_sd = function(x){
-		paste0(round(mean(x, na.rm = TRUE), digits = digits), " (",
-			   round(sd(x, na.rm = TRUE), digits = digits), ")"
-		)
+		if(is.numeric(x)){
+			paste0(round(mean(x, na.rm = TRUE), digits = digits), " (",
+				   round(sd(x, na.rm = TRUE), digits = digits), ")"
+			)
+		} else {
+			paste0(names(table(x))," ", table(x), collapse = "; ")
+		}
 	}
 	x_n = function(x){sum(!is.na(x))}
 

@@ -1,5 +1,5 @@
 #
-#   Copyright 2007-2017 The OpenMx Project
+#  Copyright 2007-2017 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -87,14 +87,25 @@
 #' @name GFF
 #' @usage data(GFF)
 #' @format A data frame with 1000 rows and 8 variables:
-#' @source \url{Meike paper?}
 #' @references van der Aa, N., Boomsma, D. I., Rebollo-Mesa, I., Hudziak, J. J., & Bartels, 
 #' M. (2010). Moderation of genetic factors by parental divorce in adolescents' 
 #' evaluations of family functioning and subjective wellbeing. Twin Research 
 #' and Human Genetics, 13(2), 143-162. doi:10.1375/twin.13.2.143
 #' @examples
-#' # for me to read this data into umx for storage
-#' # GFF <- read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T))
+#' # How I coded this data from the Boulder example
+#' 
+# GFF = read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T), na.strings=-999)
+# x   = umx_rename(GFF, old = "zyg2"     , replace = "zyg_2grp"); names(x)
+# x   = umx_rename(x  , old = "zyg"      , replace = "zyg_6grp"); names(x)
+# x   = umx_rename(x , grep = "([12bs])$", replace = "_T\\1")   ; names(x)
+# table(x$sex_Tb) # all 0 so male = 0
+# table(x$sex_Ts) # all 1 so female = 1
+# x$sex_T1 = factor(x$sex_T1, levels = 0:1, labels = c("male", "female"))
+# x$sex_T2 = factor(x$sex_T2, levels = 0:1, labels = c("male", "female"))
+# x$sex_Tb = factor(x$sex_Tb, levels = 0:1, labels = c("male", "female"))
+# x$sex_Ts = factor(x$sex_Ts, levels = 0:1, labels = c("male", "female"))
+#
+
 #' data(GFF)
 #' # Twin 1 variables (end in '_T1')
 #' umx_names(GFF, "1$")
