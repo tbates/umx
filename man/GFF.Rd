@@ -79,7 +79,9 @@ Ladder from best- to worst-possible life (Cantril, 1965).
 \examples{
 # Twin 1 variables (end in '_T1')
 data(GFF)
-umx_names(GFF, "1$")
+umx_names(GFF, "1$") # Just twin 1 variables
+str(GFF) # first few rows
+umxACE()
 # How I coded this data from the Boulder example
 
 }

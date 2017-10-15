@@ -5,28 +5,25 @@
 \title{umxRun: Run an mxModel}
 \usage{
 umxRun(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE,
-  setLabels = FALSE, intervals = FALSE, comparison = NULL,
-  setStarts = NULL)
+  setLabels = FALSE, intervals = FALSE, comparison = NULL)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to run.}
 
 \item{n}{The maximum number of times you want to run the model trying to get a code green run (defaults to 1)}
 
-\item{calc_SE}{Whether to calculate standard errors (not used when n = 1)
-for the summary (they are not very accurate, so if you use \code{\link{mxCI}} or \code{\link{umxCI}}, you can turn this off)}
+\item{calc_SE}{Whether to calculate standard errors (ignored when n = 1)
+for the summary (if you use \code{\link{mxCI}} or \code{\link{umxCI}}, you can turn this off)}
 
 \item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s) (defaults to TRUE - why would you want anything else?)}
 
-\item{setValues}{Whether to set the starting values of free parameters (defaults to F)}
+\item{setValues}{Whether to set the starting values of free parameters (default = FALSE)}
 
-\item{setLabels}{Whether to set the labels (defaults to F)}
+\item{setLabels}{Whether to set the labels (default =  FALSE)}
 
-\item{intervals}{Whether to run mxCI confidence intervals (defaults to F)}
+\item{intervals}{Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE}
 
 \item{comparison}{Whether to run umxCompare() after umxRun}
-
-\item{setStarts}{Deprecated way to setValues}
 }
 \value{
 - \code{\link{mxModel}}

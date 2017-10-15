@@ -2,7 +2,8 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_print}
 \alias{umx_print}
-\title{umx_print}
+\title{Print tables in a range of formats (markdown default, see \code{\link{umx_set_table_format}} for other formats)
+or as a web browser table.}
 \usage{
 umx_print(x, digits = getOption("digits"), quote = FALSE, na.print = "",
   zero.print = "0", justify = "none", file = c(NA, "tmp.html"),
@@ -21,27 +22,27 @@ umx_print(x, digits = getOption("digits"), quote = FALSE, na.print = "",
 
 \item{justify}{Parameter passed to print (defaults to "none")}
 
-\item{file}{whether to write to a file (defaults to NA (no file). Use "tmp.html" to open as tables in browser.}
+\item{file}{whether to write to a file (defaults to NA (no file). Use "tmp.html" to open table in browser.}
 
 \item{suppress}{minimum numeric value to print (default =  NULL, print all values, no matter how small)}
 
 \item{...}{Optional parameters for print}
 }
+\value{
+- A dataframe of text
+}
 \description{
-A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
-Its most useful characteristics are allowing you to change how NA and zero appear.
-and suppressing values below a certain cut-off.
+To aid interpretability of printed tables from OpenMx (and elsewhere)
+you can change how NA and zero appear, and suppressing values below a certain cut-off.
 By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 }
 \examples{
 umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
-\dontrun{
-umx_print(model)
-# open in browser
-umx_print(mtcars[1:10,], file = "Rout.html")
-}
+umx_print(mtcars[1:10,], file = "tmp.html")
 }
 \seealso{
+\code{\link{umx_set_table_format}}
+
 Other Utility Functions: \code{\link{qm}},
   \code{\link{umx_find_object}}, \code{\link{umx_msg}},
   \code{\link{umx_names}}, \code{\link{umx_paste_names}},

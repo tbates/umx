@@ -5,7 +5,7 @@
 \title{Reduce an ACE model.}
 \usage{
 umxReduceACE(model, report = c("markdown", "inline", "html", "report"),
-  baseFileName = "tmp", ...)
+  baseFileName = "tmp", intervals = TRUE, ...)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to reduce}
@@ -14,10 +14,12 @@ umxReduceACE(model, report = c("markdown", "inline", "html", "report"),
 
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
 
+\item{intervals}{Recompute CIs (if any included) on the best model (default = TRUE)}
+
 \item{...}{Other parameters to control model summary}
 }
 \value{
-best fitting model
+Best fitting model
 }
 \description{
 This function can perform model reduction on \code{\link{umxACE}} models,

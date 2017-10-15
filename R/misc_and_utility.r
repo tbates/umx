@@ -2495,11 +2495,13 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 	invisible(timeString)
 }
 
-#' umx_print
+
+
+#' Print tables in a range of formats (markdown default, see \code{\link{umx_set_table_format}} for other formats)
+#' or as a web browser table.
 #'
-#' A helper to aid the interpretability of printed tables from OpenMx (and elsewhere).
-#' Its most useful characteristics are allowing you to change how NA and zero appear.
-#' and suppressing values below a certain cut-off.
+#' To aid interpretability of printed tables from OpenMx (and elsewhere)
+#' you can change how NA and zero appear, and suppressing values below a certain cut-off.
 #' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 #'
 #' @param x A data.frame to print (matrices will be coerced to data.frame)
@@ -2508,19 +2510,17 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @param na.print String to replace NA with (default to blank "")
 #' @param zero.print String to replace 0.000 with  (defaults to "0")
 #' @param justify Parameter passed to print (defaults to "none")
-#' @param file whether to write to a file (defaults to NA (no file). Use "tmp.html" to open as tables in browser.
+#' @param file whether to write to a file (defaults to NA (no file). Use "tmp.html" to open table in browser.
 #' @param suppress minimum numeric value to print (default =  NULL, print all values, no matter how small)
 #' @param ... Optional parameters for print
+#' @return - A dataframe of text
 #' @export
+#' @seealso \code{\link{umx_set_table_format}} 
 #' @family Utility Functions
 #' @family Reporting Functions
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
-#' \dontrun{
-#' umx_print(model)
-#' # open in browser
-#' umx_print(mtcars[1:10,], file = "Rout.html")
-#' }
+#' umx_print(mtcars[1:10,], file = "tmp.html")
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
 	# depends on R2HTML::HTML and knitr::kable
 	if(class(x)!="data.frame"){

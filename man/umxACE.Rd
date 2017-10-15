@@ -2,14 +2,15 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxACE}
 \alias{umxACE}
-\title{Build and run a 2-group Cholesky twin model (uni-variate or multi-variate).}
+\title{Build and run a 2-group Cholesky twin model (uni-variate or multi-variate)}
 \usage{
 umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
   "random"), dzData, mzData, suffix = NULL, dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
   thresholds = c("deviationBased", "WLS"),
-  autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL)
+  autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL,
+  intervals = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -53,19 +54,21 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 \item{sep}{The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
+
+\item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACE
 }
 \description{
-A common task in twin modeling involves using the genetic and environmental differences 
-between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
-to model the genetic and environmental structure of one, or, typically, several phenotypes
-(measured behaviors). umxACE supports modeling with the ACE Cholesky model, a core model 
-in behavior genetics (Cardon and Neale, 1996).
-}
-\details{
-This model decomposes phenotypic variance into Additive genetic,
+Implementing a core task in twin modeling, umxACE models the genetic and environmental
+structure of one or more phenotypes (measured variables) using the Cholesky ACE model
+(Cardon and Neale, 1996).
+
+Classical twin modeling uses the genetic and environmental differences 
+among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
+
+The Cholesky decomposes this phenotypic variance into Additive genetic,
 unique environmental (E) and, optionally, either common or shared-environment (C) or 
 non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
 and multiple examples.
@@ -77,8 +80,8 @@ from left to right, decomposes the variance in each component into successively 
 factors. The following figure shows how the ACE model appears as a path diagram:
 
 \figure{ACE.png}
-
-
+}
+\details{
 \strong{Data Input}
 The function flexibly accepts raw data, and also summary covariance data 
 (in which case the user must also supple numbers of observations for the two input data sets).

@@ -40,7 +40,7 @@ Defaults to NA = do not create plot output}
 - optional \code{\link{mxModel}}
 }
 \description{
-Summarize a fitted Cholesky model returned by \\code{\link{umxACE}}. Can control digits, report comparison model fits,
+Summarize a fitted Cholesky model returned by \code{\link{umxACE}}. Can control digits, report comparison model fits,
 optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 }
@@ -62,7 +62,6 @@ selDVs = c("bmi1", "bmi2")
 mzData <- subset(twinData, zygosity == "MZFF")
 dzData <- subset(twinData, zygosity == "DZFF")
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-m1 = umxRun(m1)
 umxSummaryACE(m1)
 \dontrun{
 umxSummaryACE(m1, file = NA);

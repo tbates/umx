@@ -1173,15 +1173,17 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	}
 }
 
-#' Build and run a 2-group Cholesky twin model (uni-variate or multi-variate).
+#' Build and run a 2-group Cholesky twin model (uni-variate or multi-variate)
 #'
-#' A common task in twin modeling involves using the genetic and environmental differences 
-#' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
-#' to model the genetic and environmental structure of one, or, typically, several phenotypes
-#' (measured behaviors). umxACE supports modeling with the ACE Cholesky model, a core model 
-#' in behavior genetics (Cardon and Neale, 1996).
+#' @description
+#' Implementing a core task in twin modeling, umxACE models the genetic and environmental
+#' structure of one or more phenotypes (measured variables) using the Cholesky ACE model
+#' (Cardon and Neale, 1996).
 #' 
-#' This model decomposes phenotypic variance into Additive genetic,
+#' Classical twin modeling uses the genetic and environmental differences 
+#' among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
+#' 
+#' The Cholesky decomposes this phenotypic variance into Additive genetic,
 #' unique environmental (E) and, optionally, either common or shared-environment (C) or 
 #' non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
 #' and multiple examples.
@@ -1239,6 +1241,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param suffix Allowed as a synonym for "suffix".
+#' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
@@ -1374,7 +1377,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' umxSummary(m1)
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL) {
+	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL, intervals = FALSE) {
 
 		covMethod = match.arg(covMethod)
 		# =================
@@ -1733,7 +1736,11 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 			)
 			model = mxModel(model, newTop)
 			if(addCI){
-				model = mxModel(model, mxCI(c('top.a_std', 'top.c_std', 'top.e_std')))
+				if(addStd){
+					model = mxModel(model, mxCI(c('top.a_std', 'top.c_std', 'top.e_std')))
+				}else{
+					model = mxModel(model, mxCI(c('top.a', 'top.c', 'top.e')))
+				}
 			}
 		}
 		# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
@@ -1748,7 +1755,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		model = as(model, "MxModel.ACE") # set class so that S3 plot() dispatches.
 		
 		if(autoRun){
-			model = mxRun(model)
+			model = mxRun(model, intervals = intervals)
 			umxSummary(model)
 		}
 		return(model)
@@ -3075,14 +3082,13 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #'
 #' @param model The \code{\link{mxModel}} you wish to run.
 #' @param n The maximum number of times you want to run the model trying to get a code green run (defaults to 1)
-#' @param calc_SE Whether to calculate standard errors (not used when n = 1)
-#' for the summary (they are not very accurate, so if you use \code{\link{mxCI}} or \code{\link{umxCI}}, you can turn this off)
+#' @param calc_SE Whether to calculate standard errors (ignored when n = 1)
+#' for the summary (if you use \code{\link{mxCI}} or \code{\link{umxCI}}, you can turn this off)
 #' @param calc_sat Whether to calculate the saturated and independence models (for raw \code{\link{mxData}} \code{\link{mxModel}}s) (defaults to TRUE - why would you want anything else?)
-#' @param setValues Whether to set the starting values of free parameters (defaults to F)
-#' @param setLabels Whether to set the labels (defaults to F)
-#' @param intervals Whether to run mxCI confidence intervals (defaults to F)
+#' @param setValues Whether to set the starting values of free parameters (default = FALSE)
+#' @param setLabels Whether to set the labels (default =  FALSE)
+#' @param intervals Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE
 #' @param comparison Whether to run umxCompare() after umxRun
-#' @param setStarts Deprecated way to setValues
 #' @return - \code{\link{mxModel}}
 #' @family Core Modelling Functions
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -3108,14 +3114,10 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' confint(m1) # OpenMx's SE-based CIs
 #' umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
 #' m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
-umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, comparison = NULL, setStarts = NULL){
-	# TODO: return change in -2LL for models being re-run
-	# TODO: stash saturated model for re-use
+umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, comparison = NULL){
+	# TODO: Return change in -2LL for models being re-run
+	# TODO: Stash saturated model for re-use
 	# TODO: Optimise for speed
-	if(!is.null(setStarts)){
-		message("change setStarts to setValues (more consistent)")
-		setValues = setStarts
-	}
 	if(setLabels){
 		model = umxLabel(model)
 	}
