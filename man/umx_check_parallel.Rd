@@ -30,11 +30,15 @@ R: 3.4.1 (2017-06-30); MacOS: 10.13
 umx: 1.9.0; OpenMx: 2.7.16.26 [GIT v2.7.16-26-gd46131ce-dirty] / 2.7.16.31
 
 \tabular{rllll}{
-2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.9 sec \tab                          \cr
-2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.2 sec \tab \eqn{\Delta}{Δ}: -40.70 sec \cr
-2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 9.9 sec  \tab                          \cr
-2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 6.2 sec  \tab                          \cr
-2017-09-07 \tab TRAVIS          \tab 4 cores \tab 00 min, 21.1 sec \tab Delta: 45 seconds \cr
+date       \tab type            \tab x core  \tab XX min, XX>XX sec \tab                              \cr                  
+date       \tab type            \tab y core  \tab XX min, XX>XX sec \tab \eqn{\Delta}{Δ}: -xx.xxx)    \cr
+2017-10-16 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 08.38 sec \tab                              \cr                  
+2017-10-16 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 24.89 sec \tab \eqn{\Delta}{Δ}: -43.488)    \cr
+2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.90 sec \tab                              \cr
+2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.20 sec \tab \eqn{\Delta}{Δ}: -40.70 sec  \cr
+2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 09.90 sec \tab                              \cr
+2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 06.20 sec \tab                              \cr
+2017-09-07 \tab TRAVIS          \tab 4 core  \tab 00 min, 21.10 sec \tab \eqn{\Delta}{Δ}: -45.00 sec  \cr
 }
 }
 \examples{

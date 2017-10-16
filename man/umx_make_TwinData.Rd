@@ -6,7 +6,7 @@
 \usage{
 umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
   EE = NULL, nThresh = NULL, sum2one = TRUE, varNames = "var",
-  seed = NULL, empirical = FALSE)
+  seed = NULL, empirical = FALSE, MZr = NULL, DZr = NULL)
 }
 \arguments{
 \item{nMZpairs}{Number of MZ pairs to simulate}
@@ -28,6 +28,10 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
 \item{seed}{Allows user to set.seed() if wanting reproducible dataset}
 
 \item{empirical}{Passed to mvrnorm}
+
+\item{MZr}{If MZr and DZr are set (default = NULL), the function simply returns dataframes of the request size and correlation}
+
+\item{DZr=}{NULL}
 }
 \value{
 \itemize{
@@ -95,6 +99,13 @@ str(x)
 # =====================
 tmp = umx_make_TwinData(100, AA = .6, CC = .2, nThresh = 3)
 str(tmp)
+umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
+
+
+# ========================
+# = Just use MZr and DZr =
+# ========================
+tmp = umx_make_TwinData(100, MZr = .86, DZr= .60, varNames= "IQ")
 umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 }
 \references{

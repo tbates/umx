@@ -483,12 +483,17 @@ umx_get_checkpoint <- function(model = NULL) {
 #' umx: 1.9.0; OpenMx: 2.7.16.26 [GIT v2.7.16-26-gd46131ce-dirty] / 2.7.16.31
 #' 
 #' \tabular{rllll}{
-#'	2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.9 sec \tab                          \cr
-#'	2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.2 sec \tab \eqn{\Delta}{Δ}: -40.70 sec \cr
-#'	2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 9.9 sec  \tab                          \cr
-#'	2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 6.2 sec  \tab                          \cr
-#'	2017-09-07 \tab TRAVIS          \tab 4 cores \tab 00 min, 21.1 sec \tab Delta: 45 seconds \cr
+#'	date       \tab type            \tab x core  \tab XX min, XX>XX sec \tab                              \cr                  
+#'	date       \tab type            \tab y core  \tab XX min, XX>XX sec \tab \eqn{\Delta}{Δ}: -xx.xxx)    \cr
+#'	2017-10-16 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 08.38 sec \tab                              \cr                  
+#'	2017-10-16 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 24.89 sec \tab \eqn{\Delta}{Δ}: -43.488)    \cr
+#'	2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.90 sec \tab                              \cr
+#'	2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.20 sec \tab \eqn{\Delta}{Δ}: -40.70 sec  \cr
+#'	2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 09.90 sec \tab                              \cr
+#'	2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 06.20 sec \tab                              \cr
+#'	2017-09-07 \tab TRAVIS          \tab 4 core  \tab 00 min, 21.10 sec \tab \eqn{\Delta}{Δ}: -45.00 sec  \cr
 #' }
+#' 
 #' @param nCores How many cores to run (defaults to c(1, max/2). -1 = all available.
 #' @param testScript A user-provided script to run (NULL)
 #' @param rowwiseParallel Whether to parallel-ize rows (default) or gradient computation 
@@ -4249,6 +4254,8 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @param varNames name for var (defaults to 'var')
 #' @param seed Allows user to set.seed() if wanting reproducible dataset
 #' @param empirical Passed to mvrnorm
+#' @param MZr If MZr and DZr are set (default = NULL), the function simply returns dataframes of the request size and correlation
+#' @param DZr= NULL
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
 #' @family Data Functions
@@ -4296,12 +4303,42 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' tmp = umx_make_TwinData(100, AA = .6, CC = .2, nThresh = 3)
 #' str(tmp)
 #' umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
+#'
+#'
+#' # ========================
+#' # = Just use MZr and DZr =
+#' # ========================
+#' tmp = umx_make_TwinData(100, MZr = .86, DZr= .60, varNames = "IQ")
+#' umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 #' @md
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, nThresh = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, nThresh = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE, MZr= NULL, DZr= NULL) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
 	# Function caps the moderator effect at -3 and +3 SD
+	if(!is.null(MZr)){
+		if(is.null(DZr)){
+			stop("Both MZr and DZr must be set if you want to generate that kind of data.")
+		}
+		mzCov = matrix(nrow = 2, byrow = T, c(
+			1, MZr,
+			MZr, 1)
+		);
+		dzCov = matrix(nrow = 2, byrow = T, c(
+			1, DZr,
+			DZr, 1)
+		);
+		mzData = mvrnorm(n = nMZpairs, mu = c(0, 0), Sigma = mzCov, empirical = empirical);
+		dzData = mvrnorm(n = nDZpairs, mu = c(0, 0), Sigma = dzCov, empirical = empirical);
+		mzData = data.frame(mzData)
+		dzData = data.frame(dzData)
+		if(length(varNames) > 1){
+			names(mzData) = names(dzData) = varNames
+		} else {
+			names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
+		}
+		return(list(mzData = mzData, dzData = dzData))
+	}
 	if(length(AA) == 1){
 		# standard ACE, no moderation
 		if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 2){
