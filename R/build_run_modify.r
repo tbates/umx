@@ -4357,33 +4357,46 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 
 	if(!is.null(Cholesky)){
-		if(!(length(to) >= length(Cholesky))){
+		if(arrows!=1){
+			stop("Cholesky paths are one-headed: you set arrows= to something other than 1")
+		}
+		from  = Cholesky
+		nFrom = length(from)
+		nTo   = length(to)
+		if(!(nTo >= nFrom)){
 			stop("Must have at least as many 'to' vars as latents for Cholesky: you gave me ",
-			length(to), " to vars and ", length(Cholesky), " Cholesky latents")
+			nTo, " to vars and ", nFrom, " Cholesky latents")
 		}
 		if(!is.na(labels)){
-			stop("I don't yet support labels for Cholesky")
+			message("setting labels for Cholesky is tricky: Leave blank to have me do this for you automatically.")
 		}
-		if(length(lbound) > 1){
-			stop("I don't yet support multiple lbounds for Cholesky")
+		if(!is.na(lbound)){
+			message("setting lbounds for Cholesky is tricky: Leave blank to have me bound the diagonal for you automatically.")
+		}else{
+			lbound = matrix(NA, nrow = nFrom, ncol = nTo); diag(lbound) = 1e-6
+			lbound = lbound[upper.tri(lbound, diag = TRUE)]			
 		}
-		if(length(ubound) > 1){
-			stop("I don't yet support multiple ubounds for Cholesky")
+		if(!is.na(ubound)){
+			message("nb setting ubounds (other than as uniform) is tricky for Cholesky, make sure you're getting what you expected or leave it blank.")
 		}
-		n = 1
-		max_to = length(to)
-		for(i in seq_along(Cholesky)) {
-			a = mxPath(from = Cholesky[i], to = to[n:max_to], arrows = 1, free = free, lbound = lbound, ubound = ubound)
-			if(n == 1){
-				out = a
-			} else if(n == 2) {
-				out = list(out, a)
-			} else {
-				out = c(out, a)
-			}
-			n = n + 1
+		if(!is.na(values)){
+			message("nb setting values is tricky for Cholesky, make sure you're getting what you expected, or leave it blank.")
 		}
-		return(out)
+		labelList = fromList = toList =c()
+		n = nTo
+		for(i in seq_along(from)) {
+			thisFrom  = rep(from[i], n)
+			thisTo    = to[i:nTo]
+			fromList  = c(fromList, thisFrom)
+			toList    = c(toList, thisTo)
+			# Needn't bother with this as it will all be taken care of in umxLabel...
+			labelList = c(labelList, paste(thisFrom, thisTo, sep = '_to_'))
+			n = (n - 1)
+		}
+		if(!is.na(labels)){
+			labelList = labels
+		}
+		return(mxPath(from = fromList, to = toList, arrows = 1, free = free, labels = labelList, lbound = lbound, ubound = ubound, values = values))
 	}
 	if(!is.null(v1m0)){
 		# TODO lbound ubound unlikely to be applied to two things, and can't affect result... error if they're not NULL?

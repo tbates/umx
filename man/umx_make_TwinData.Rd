@@ -105,7 +105,7 @@ umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 # ========================
 # = Just use MZr and DZr =
 # ========================
-tmp = umx_make_TwinData(100, MZr = .86, DZr= .60, varNames= "IQ")
+tmp = umx_make_TwinData(100, MZr = .86, DZr= .60, varNames = "IQ")
 umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 }
 \references{
