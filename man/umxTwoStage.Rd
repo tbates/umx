@@ -8,16 +8,16 @@ umxTwoStage(formula, instruments, data, subset, weights, contrasts = NULL,
   name = "tsls", ...)
 }
 \arguments{
-\item{formula}{for structural equation to be estimated; a regression constant is implied if not explicitly omitted.}
+\item{formula}{The structural equation to be estimated; a regression constant is implied if not explicitly omitted.}
 
-\item{instruments}{one-sided formula specifying instrumental variables.}
+\item{instruments}{A one-sided formula specifying instrumental variables.}
 
 \item{data}{data.frame containing the variables in the model.}
 
 \item{subset}{[optional] vector specifying a subset of observations to be used in fitting the model.}
 
 \item{weights}{[optional] vector of weights to be used in the fitting process;
-if specified should be a non-negative numeric vector with one entry for each observation,
+If specified should be a non-negative numeric vector with one entry for each observation,
 to be used to compute weighted 2SLS estimates.}
 
 \item{contrasts}{an optional list. See the contrasts.arg argument of model.matrix.default.}
@@ -35,7 +35,7 @@ For ease of learning, the function is modeled closely on the \code{\link[sem]{ts
 }
 \details{
 The example is a Mendelian Randomization \url{https://en.wikipedia.org/wiki/Mendelian_randomization} 
-analysis to show the value of two-stage.
+analysis to show the utility of two-stage regression.
 }
 \examples{
 library(umx)
@@ -45,7 +45,7 @@ library(umx)
 # = Mendelian randomization analysis =
 # ====================================
 
-# Note: in practice: many more subjects are desireable - this just to let example run fast
+# Note: in practice: many more subjects are desirable - this just to let example run fast
 df = umx_make_MR_data(1000) 
 m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 coef(m1)
@@ -61,13 +61,13 @@ df = umx_make_MR_data(1e5)
 m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 
 # ======================
-# = now with sem::tsls =
+# = Now with sem::tsls =
 # ======================
 # library(sem) # will require you to install X11
 m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 coef(m1)
 coef(m2)
-m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1,"qtl"] = NA))
+m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 }
 }
 \references{

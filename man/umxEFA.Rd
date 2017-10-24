@@ -7,8 +7,8 @@
 \usage{
 umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
   n.obs = NULL, scores = c("none", "ML", "WeightedML", "Regression"),
-  rotation = c("varimax", "promax", "none"), name = "efa", digits = 2,
-  report = c("markdown", "html"))
+  minManifests = NA, rotation = c("varimax", "promax", "none"),
+  name = "efa", digits = 2, report = c("markdown", "html"))
 }
 \arguments{
 \item{x}{Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.}
@@ -22,6 +22,8 @@ umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
 \item{n.obs}{Number of observations in covmat (if provided, default = NA)}
 
 \item{scores}{Type of scores to produce, if any. The default is none, "Regression" gives Thompson's scores. Other options are 'ML', 'WeightedML', Partial matching allows these names to be abbreviated.}
+
+\item{minManifests}{The least number of variables required to return a score for a participant (Default = NA).}
 
 \item{rotation}{A rotation to perform on the loadings (default  = "varimax" (orthogonal))}
 
@@ -39,16 +41,21 @@ Perform full-information maximum-likelihood factor analysis on a data matrix.
 as in \code{\link{factanal}}, you need only specify the number of factors and offer up
 some manifest data, e.g:
                                                              
-umxEFA(factors = 2, data = mtcars)
+\code{umxEFA(factors = 2, data = mtcars)}
 }
 \details{
 Equivalently, you can also give a list of factor names:
 
-umxEFA(factors = c("g", "v"), data = mtcars)
+\code{umxEFA(factors = c("g", "v"), data = mtcars)}
+
+The factor model is implemented as a structural eqaution model, e.g.
 
 \figure{umxEFA.png}
 
-\emph{notes}: In an EFA, all items may load on all factors.
+You can request \code{scores} from the model. Unlike factanal, these can cope with missing data.
+
+
+In an EFA, all items may load on all factors.
 For identification we need m^2 degrees of freedom. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
 We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of the factor loadings
 component of the A matrix. The manifest variances are also lbounded at 0.
@@ -57,9 +64,7 @@ EFA reports standardized loadings: to do this, we scale the data.
 
 Bear in mind that factor scores are indeterminate and can be rotated.
 
-This is very much early days. Adding "scores" in response to demand.
-
-TODO: umxEFA: Detect ordinal items and switch to UWLS
+This is very much early days.
 }
 \examples{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")

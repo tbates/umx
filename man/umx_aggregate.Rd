@@ -73,6 +73,7 @@ umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
+  \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
   \code{\link{umx_parameters}}, \code{\link{umx_print}},

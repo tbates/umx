@@ -21,6 +21,14 @@
 # = OpenMx wrappers =
 # ===================
 
+#' A recipe easter-egg for umx
+#'
+#' How to cook steak.
+#'
+#' @return - 
+umxBrownie <- function() {
+		
+}
 # ==============================
 # = Get and set OpenMx options =
 # ==============================
@@ -1463,7 +1471,7 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 	if(is.na(replaceStr)){
 		stop("Please set a replacement string")
 	}
-
+	replaceStr = escapeRegex(replaceStr)
 	# uppercase = u$1
 	if(baseFolder == "Finder"){
 		baseFolder = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")

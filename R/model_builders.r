@@ -13,25 +13,30 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # ==================
 # = Model Builders =
 # ==================
+
 #' umxEFA
 #'
 #' Perform full-information maximum-likelihood factor analysis on a data matrix.
 #' as in \code{\link{factanal}}, you need only specify the number of factors and offer up
 #' some manifest data, e.g:
 #'                                                              
-#' umxEFA(factors = 2, data = mtcars)
+#' \code{umxEFA(factors = 2, data = mtcars)}
 #' 
 #' Equivalently, you can also give a list of factor names:
 #' 
-#' umxEFA(factors = c("g", "v"), data = mtcars)
+#' \code{umxEFA(factors = c("g", "v"), data = mtcars)}
+#' 
+#' The factor model is implemented as a structural eqaution model, e.g.
 #' 
 #' \figure{umxEFA.png}
 #' 
-#' \emph{notes}: In an EFA, all items may load on all factors.
+#' You can request \code{scores} from the model. Unlike factanal, these can cope with missing data.
+#' 
+#' @details
+#' In an EFA, all items may load on all factors.
 #' For identification we need m^2 degrees of freedom. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
 #' We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of the factor loadings
 #' component of the A matrix. The manifest variances are also lbounded at 0.
@@ -40,9 +45,8 @@
 #' 
 #' Bear in mind that factor scores are indeterminate and can be rotated.
 #' 
-#' This is very much early days. Adding "scores" in response to demand.
+#' This is very much early days.
 #' 
-#' TODO: umxEFA: Detect ordinal items and switch to UWLS
 #' 
 #' @aliases umxFactanal umxEFA
 #' @param x Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.
@@ -50,8 +54,9 @@
 #' @param data A dataframe of manifest columns you are modeling
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
 #' @param n.obs Number of observations in covmat (if provided, default = NA)
-#' @param scores Type of scores to produce, if any. The default is none, "Regression" gives Thompson's scores. Other options are 'ML', 'WeightedML', Partial matching allows these names to be abbreviated.
 #' @param rotation A rotation to perform on the loadings (default  = "varimax" (orthogonal))
+#' @param scores Type of scores to produce, if any. The default is none, "Regression" gives Thompson's scores. Other options are 'ML', 'WeightedML', Partial matching allows these names to be abbreviated.
+#' @param minManifests The least number of variables required to return a score for a participant (Default = NA).
 #' @param name A name for your model
 #' @param digits rounding (default = 2)
 #' @param report Report as markdown to the console, or open a table in browser ("html")
@@ -74,8 +79,9 @@
 #' m1 = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 #' }
 umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, 
-	scores = c("none", 'ML', 'WeightedML', 'Regression'),
+	scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
 	rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, report = c("markdown", "html")){
+	# TODO: umxEFA: Detect ordinal items and switch to UWLS
 	message("umxEFA is beta, send requests to tim.bates@ed.ac.uk")
 	scores = match.arg(scores)
 	# "Bartlett" given Bartlett's weighted least-squares scores. 
@@ -161,7 +167,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs =
 	}
 	umxSummary(m1, digits = digits, report = report);
 	if(scores != "none"){
-		x = umxFactorScores(m1, type = scores)
+		x = umxFactorScores(m1, type = scores, minManifests = minManifests)
 	} else {
 		invisible(m1)
 	}
@@ -170,9 +176,26 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs =
 #' @export
 umxFactanal <- umxEFA
 
-umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression')) {
+#' Return factor scores from a model as an easily consumable dataframe.
+#' @description
+#' umxFactorScores takes a model, and computes factors scores using the selected method (one 
+#' of 'ML', 'WeightedML', or 'Regression')
+#' It is a simple wrapper around mxFactorScores. For missing data, you must specify the least number of 
+#' variables allowed for a score (subjects with fewer than minManifests will return a score of NA.
+#' @param model The model to generate scores from.
+#' @param type  The method used to compute the score ('ML', 'WeightedML', or 'Regression').
+#' @param minManifests The least number of variables required to return a score for a participant (Default = NA).
+#' @return - dataframe of scores.
+#' @export
+#' @family Reporting Functions
+#' @seealso - \code{\link{mxFactorScores}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' m1 = umxEFA(mtcars, factors = 2)
+#' x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), minManifests = NA) {
 	suppressMessages({
-		scores = mxFactorScores(model, type = type)
+		scores = mxFactorScores(model, type = type, minManifests = minManifests)
 	})
 	# Only need score from [nrow, nfac, c("score", "se")]
 	if(dim(scores)[2] == 1){
@@ -184,21 +207,20 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression')) {
 }
 
 
-
 #' umxTwoStage
 #'
 #' umxTwoStage implements 2-stage least squares regression in Structural Equation Modeling.
 #' For ease of learning, the function is modeled closely on the \code{\link[sem]{tsls}}.
 #' 
 #' The example is a Mendelian Randomization \url{https://en.wikipedia.org/wiki/Mendelian_randomization} 
-#' analysis to show the value of two-stage.
+#' analysis to show the utility of two-stage regression.
 #'
-#' @param formula	for structural equation to be estimated; a regression constant is implied if not explicitly omitted.
-#' @param instruments	one-sided formula specifying instrumental variables.
+#' @param formula	The structural equation to be estimated; a regression constant is implied if not explicitly omitted.
+#' @param instruments	A one-sided formula specifying instrumental variables.
 #' @param data data.frame containing the variables in the model.
 #' @param subset [optional] vector specifying a subset of observations to be used in fitting the model.
 #' @param weights [optional] vector of weights to be used in the fitting process;
-#' if specified should be a non-negative numeric vector with one entry for each observation,
+#' If specified should be a non-negative numeric vector with one entry for each observation,
 #' to be used to compute weighted 2SLS estimates.
 #' @param contrasts	an optional list. See the contrasts.arg argument of model.matrix.default.
 #' @param name for the model (defaults to "tsls")
@@ -218,7 +240,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression')) {
 #' # = Mendelian randomization analysis =
 #' # ====================================
 #' 
-#'# Note: in practice: many more subjects are desireable - this just to let example run fast
+#' # Note: in practice: many more subjects are desirable - this just to let example run fast
 #' df = umx_make_MR_data(1000) 
 #' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
@@ -234,14 +256,14 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression')) {
 #' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 #' 
 #' # ======================
-#' # = now with sem::tsls =
+#' # = Now with sem::tsls =
 #' # ======================
 #' # library(sem) # will require you to install X11
 #' m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
 #' coef(m2)
-# # Try with missing value for one subect: A beneift of the FIML approach in OpenMx.
-#' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1,"qtl"] = NA))
+# # Try with missing value for one subject: A benefit of the FIML approach in OpenMx.
+#' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 #' }
 umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
 	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxTwoStage: email maintainer to prioritize")	

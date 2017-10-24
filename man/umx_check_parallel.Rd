@@ -30,8 +30,10 @@ R: 3.4.1 (2017-06-30); MacOS: 10.13
 umx: 1.9.0; OpenMx: 2.7.16.26 [GIT v2.7.16-26-gd46131ce-dirty] / 2.7.16.31
 
 \tabular{rllll}{
-date       \tab type            \tab x core  \tab XX min, XX>XX sec \tab                              \cr                  
-date       \tab type            \tab y core  \tab XX min, XX>XX sec \tab \eqn{\Delta}{Δ}: -xx.xxx)    \cr
+date       \tab type            \tab x core  \tab 01 min, XX.XX sec \tab                              \cr                  
+date       \tab type            \tab y core  \tab XX min, XX.XX sec \tab \eqn{\Delta}{Δ}: -xx.xxx)    \cr
+2017-10-16 \tab v2.7.18-9-g159b7337-dirty            \tab x core  \tab 01 min, 07.30 sec \tab                              \cr                  
+2017-10-16 \tab v2.7.18-9-g159b7337-dirty            \tab y core  \tab 00 min, 22.63 sec \tab \eqn{\Delta}{Δ}: -44.676)    \cr
 2017-10-16 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 08.38 sec \tab                              \cr                  
 2017-10-16 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 24.89 sec \tab \eqn{\Delta}{Δ}: -43.488)    \cr
 2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.90 sec \tab                              \cr
