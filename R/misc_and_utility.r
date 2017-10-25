@@ -4078,7 +4078,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	IDVars = c(famID, twinID, zygosity)
 	umx_check_names(IDVars, data = data, die = TRUE)
 
-	if(!is.na(passalong )){
+	if(!anyNA(passalong)){
 		umx_check_names(passalong, data = data, die = TRUE)
 	}
 
