@@ -76,7 +76,7 @@
 #' m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 #' m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
 #' m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
-#' m1 = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
+#' x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 #' }
 umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs = NULL, 
 	scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
@@ -193,14 +193,19 @@ umxFactanal <- umxEFA
 #' @examples
 #' m1 = umxEFA(mtcars, factors = 2)
 #' x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+#' m1 = umxEFA(mtcars, factors = 1)
+#' x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
 umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), minManifests = NA) {
 	suppressMessages({
 		scores = mxFactorScores(model, type = type, minManifests = minManifests)
 	})
-	# Only need score from [nrow, nfac, c("score", "se")]
+	# Only need score from [nrow, nfac, c("Scores", "StandardErrors")]
 	if(dim(scores)[2] == 1){
 		# drop = FALSE if only 1 factor
-		return(scores[ , , 1, drop = FALSE])
+		out = scores[ , 1, "Scores"]
+		out = data.frame(out)
+		names(out) <- dimnames(scores)[[2]]
+		return(out)
 	} else {
 		return(scores[ , , 1])
 	}

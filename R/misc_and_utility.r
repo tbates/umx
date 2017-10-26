@@ -1602,7 +1602,7 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 #' The file moves are fast and, because you can use regular expressions, powerful.
 #'
 #' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
-#' @param findStr = regex string select files to move (WARNING: NOT IMPLEMENTED YET)
+#' @param regex = regex string select files to move (WARNING: NOT IMPLEMENTED YET)
 #' @param fileNameList List of files to move
 #' @param destFolder Folder to move files into
 #' @param test Boolean determining whether to change the names, or just report on what would have happened
@@ -1616,10 +1616,10 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 #' dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
 #' umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= FALSE)
 #' }
-umx_move_file <- function(baseFolder = NA, findStr = NULL, fileNameList = NA, destFolder = NA, test = TRUE, overwrite = FALSE) {
-	# TODO umx_move_file: implement findStr
-	if(!is.null(findStr)){
-		stop("Have not implemented findStr yet")
+umx_move_file <- function(baseFolder = NA, regex = NULL, fileNameList = NA, destFolder = NA, test = TRUE, overwrite = FALSE) {
+	# TODO umx_move_file: implement regular expressions to find files to move
+	if(!is.null(regex)){
+		stop("Have not implemented regex yet")
 	}
 
 	if(is.na(destFolder)){

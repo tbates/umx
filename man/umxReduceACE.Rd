@@ -8,7 +8,7 @@ umxReduceACE(model, report = c("markdown", "inline", "html", "report"),
   baseFileName = "tmp", intervals = TRUE, ...)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to reduce}
+\item{model}{an ACE or ADE \code{\link{mxModel}} to reduce}
 
 \item{report}{How to report the results. "html" = open in browser}
 
@@ -27,15 +27,18 @@ testing dropping A and C, as well as an ADE or ACE model, displaying the results
 in a table, and returning the best model.
 }
 \details{
-Most suitable for univariate models.
+It is designed for testing univariate models. You can offer up either the ACE or ADE base model.
 
-Suggestions for more sophisticated automation accepted
+Suggestions for more sophisticated automation welcomed!
 }
 \examples{
 data(twinData)
 mzData <- subset(twinData, zygosity == "MZFF")
 dzData <- subset(twinData, zygosity == "DZFF")
 m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
+m2 = umxReduce(m1)
+umxSummary(m2)
+m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .25)
 m2 = umxReduce(m1)
 }
 \references{
@@ -48,4 +51,18 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxRAM}}, \code{\link{umxReduceGxE}},
   \code{\link{umxRun}}, \code{\link{umxSuperModel}},
   \code{\link{umx}}
+
+Other Twin Modeling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxACESexLim}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
+  \code{\link{umxACEv}}, \code{\link{umxACE}},
+  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
+  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
+  \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
+  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+  \code{\link{umx_long2wide}}, \code{\link{umx_wide2long}},
+  \code{\link{umx}}, \code{\link{xmu_twin_check}}
 }

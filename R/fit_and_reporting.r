@@ -178,11 +178,11 @@ umxReduce.MxModel.GxE <- umxReduceGxE
 #' testing dropping A and C, as well as an ADE or ACE model, displaying the results
 #' in a table, and returning the best model.
 #'
-#' Most suitable for univariate models.
+#' It is designed for testing univariate models. You can offer up either the ACE or ADE base model.
 #'
-#' Suggestions for more sophisticated automation accepted
+#' Suggestions for more sophisticated automation welcomed!
 #'
-#' @param model an \code{\link{mxModel}} to reduce
+#' @param model an ACE or ADE \code{\link{mxModel}} to reduce
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
@@ -190,6 +190,8 @@ umxReduce.MxModel.GxE <- umxReduceGxE
 #' @return Best fitting model
 #' @export
 #' @family Core Modelling Functions
+#' @family Twin Modeling Functions
+#' @family Twin Reporting Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' data(twinData)
@@ -197,39 +199,51 @@ umxReduce.MxModel.GxE <- umxReduceGxE
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #' m2 = umxReduce(m1)
+#' umxSummary(m2)
+#' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .25)
+#' m2 = umxReduce(m1)
 umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", intervals = TRUE, ...) {
 	report = match.arg(report)
 	oldAutoPlot = umx_set_auto_plot(FALSE, silent = TRUE)
-	CE = umxModify(model, regex = "a_r[0-9]+c[0-9]+" , name = "CE")
-	AE = umxModify(model, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
 	if(model$top$dzCr$values == 1){
-		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE")
-		if(-2*logLik(model) > -2*logLik(ADE)){
-			message("A dominance model is preferred, set dzCr = .25.")
-			umxCompare(ADE, c(model, CE, AE), all = TRUE, report = report)
+		message("You gave me an ACE model")		
+		ACE = model
+		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE_model")
+		if(-2*logLik(ACE) > -2*logLik(ADE)){
+			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE")
+			AE = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
+			message("A dominance model is preferred, set dzCr = 0.25")
 		}else{
-			umxCompare(model, c(ADE, CE, AE), all = TRUE, report = report)
+			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE")
+			AE = umxModify(ACE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
 		}
-		best = c(ADE, model, CE, AE)[which.min(AIC(ADE, model, CE, AE)[,"AIC"])][[1]]
-	}else	if(model$top$dzCr$values == .25){
-		ACE = umxModify(model, 'dzCr_r1c1', value = 1, name = "ACE")
-		if(-2*logLik(model) > -2*logLik(ACE)){
-			message("An ACE model is preferred, set dzCr = 1.")
-			umxCompare(ACE, c(model, CE, AE), all = TRUE, report = report)
+	}else if(model$top$dzCr$values == .25){
+		message("You gave me an ADE model")
+		ADE = model
+		ACE = umxModify(ADE, 'dzCr_r1c1', value = 1, name = "ACE_model")
+		AE  = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
+		if(-2*logLik(ADE) > -2*logLik(ACE)){
+			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE")
+			message("An ACE model is preferred, set dzCr = 1.0")
 		}else{
-			umxCompare(model, c(ADE, CE, AE), all = TRUE, report = report)
+			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE")
 		}
-		
-		best = c(ADE, model, CE, AE)[which.min(AIC(ADE, model, CE, AE)[,"AIC"])][[1]]
 	}else{
-		message(model$top$dzCr$values, " is an odd number for dzCr, isn't it? I was expecting 1 (C) or .25 (D)")		
-		best = model
+		stop(model$top$dzCr$values, " is an odd number for dzCr, isn't it? I was expecting 1 (C) or .25 (D)",
+		"\nPerhaps you're smart, and are doing an assortative mating test? e-mail tim to get this added here.")
+		# TODO umxReduceACE handle odd values of dzCr as assortative mating etc?
+		bestModel = model
+	}
+	# = Show fit table =
+	umxCompare(ACE, c(ADE, CE, AE), all = TRUE, report = report)
+	whichBest = which.min(AIC(ACE, ADE, CE, AE)[,"AIC"])[1]
+	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
+	message("The ", omxQuotes(bestModel$name), " model is the best fitting model.")
+	if(intervals){
+		bestModel = mxRun(bestModel, intervals = intervals)
 	}
 	umx_set_auto_plot(oldAutoPlot, silent = TRUE)
-	if(intervals){
-		best = mxRun(best, intervals = intervals)
-	}
-	invisible(best)
+	invisible(bestModel)
 }
 #' @export
 umxReduce.MxModel.ACE <- umxReduceACE

@@ -1,4 +1,3 @@
-#
 #   Copyright 2007-2017 Copyright 2007-2017 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +18,6 @@
 # = Highlevel models (ACE, GxE) =
 # ===============================
 .onAttach <- function(libname, pkgname){
-	# TODO make sure mxCondenseMatrixSlots not needed now that $ get and set are working properly
 	# umx_set_condensed_slots(FALSE)
 	umx_set_plot_format('DiagrammeR')
 	umx_set_plot_file_suffix("gv")
@@ -396,7 +394,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 				if(thisIs == "MxThreshold"){
 					# MxThreshold detected
 				} else {
-					# TODO: currently not checking for unsupported items.
+					# TODO: umxRAM currently not checking for unsupported items.
 					# stop("I can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
 					# "You have given me a", class(i)[1],"\n",
 					# " To include data in umxRAM, say 'data = yourData'")
@@ -681,7 +679,6 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 		return(x)
 	}
 
-
 	if(dropList != "deprecated"){
 		stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
 			"umxModify(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
@@ -708,7 +705,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 	}
 
 	if(is.null(update)){
-		message("As you haven't asked to do anything: the parameters that are free to be dropped are:")
+		message("You haven't asked to do anything: the parameters that are free to be dropped are:")
 		print(umxGetParameters(lastFit))
 		stop()
 	}else{
@@ -720,8 +717,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 			}
 			x = omxSetParameters(lastFit, labels = theLabels, free = free, values = value, name = name)		
 		} else {
-			# TODO Label and start new object
-			if(is.null(name)){ name = NA }
+			# TODO umxModify: if object is RAM, add re-label and re-start new object?
+			if(is.null(name)){ name = NA } # i.e. do nothing
 			x = mxModel(lastFit, update, name = name)
 		}
 		if(autoRun){
@@ -889,7 +886,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 			# TODO:	Add covariates to G x E model
 			# if(0){
-				# TODO: if there are covs
+				# TODO: umxGxE If there are covs
 				# mxMatrix(name = "betas" , "Full", nrow = nCov, ncol = nVar, free = T, values = 0.05, labels = paste0("beta_", covariates))
 			# }
 		),
@@ -1390,6 +1387,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		if(!is.null(sep)){
 			suffix = sep
 		}
+		if(dzCr == .25 & (name == "ACE")){
+			name = "ADE"
+		}
 		# If given covariates, call umxACEcov
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
@@ -1403,9 +1403,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 			if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
 			thresholds = match.arg(thresholds)
 			nSib = 2 # number of siblings in a twin pair
-			if(dzCr == .25 & name == "ACE"){
-				name = "ADE"
-			}
 			# look for name conflicts
 			badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
 			if(!identical(character(0), badNames)){
@@ -2238,7 +2235,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 		)
 	} else {
 		top = mxModel("top") # no means
-		# TODO add alernative fit types?
+		# TODO umxCP: Add alternative fit types? (WLS?)
 		MZ = mxModel("MZ", 
 			mxData(mzData, type = "cov", numObs = numObsMZ),
 			mxExpectationNormal("top.expCovMZ"),
@@ -2250,7 +2247,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			mxFitFunctionML()
 		)
 	}
-	# TODO Improve starts in umxCP
+	# TODO umxCP: Improve start values (Mike?) 
 	if(correlatedA){
 		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = .7, jiggle = .05) # Latent common factor
 	} else {
@@ -2330,7 +2327,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 		)
 		model = mxModel(model, newTop)
 		if(addCI){
-			# TODO break these out into single labels.
+			# TODO umxCP: break these CIs out into single labels?
 			model = mxModel(model, mxCI(c('top.as_std', 'top.cs_std', 'top.es_std', 'top.cp_loadings_std')))
 		}
 	}
