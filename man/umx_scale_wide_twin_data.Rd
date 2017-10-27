@@ -7,7 +7,7 @@
 umx_scale_wide_twin_data(varsToScale, suffix, data)
 }
 \arguments{
-\item{varsToScale}{The base names of the variables ("weight" etc)}
+\item{varsToScale}{The base names of the variables ("weight" etc.)}
 
 \item{suffix}{The suffix that distinguishes each case, e.g. "_T")}
 

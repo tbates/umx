@@ -22,11 +22,11 @@ umxReduce will conduct a formalised reduction process
 
 \strong{GxE model reduction}
 For \code{\link{umxGxE}} models, each form of moderation is tested
-singley and jointly.
+on its own, and jointly.
 Also, C is removed, and moderation tested in this model.
 
 \strong{ACE model reduction}
-For \code{\link{umxACE}} models, each form of moderation is tested singley and jointly.
+For \code{\link{umxACE}} models, each form of moderation is tested on its own, and jointly.
 Also, C is removed, and moderation tested in this model.
 
 It reports the results in a table. Set the format of the table with

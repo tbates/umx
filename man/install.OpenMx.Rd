@@ -24,10 +24,10 @@ or open the travis list of builds on the web to view/pick a url.}
 }
 \description{
 You can:
-1. Install from UVa (default: This is where we maintain binaries supporting parallel procesing and MPSOL)
+1. Install from UVa (default: This is where we maintain binaries supporting parallel processing and NPSOL)
 2. Install the latest travis built (currently mac only)
 3. Install from a custom url.
-4. Open the list of travis builds in a browswer.
+4. Open the list of travis builds in a browser.
 }
 \examples{
 \dontrun{

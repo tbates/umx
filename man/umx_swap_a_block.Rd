@@ -19,7 +19,7 @@ umx_swap_a_block(theData, rowSelector, T1Names, T2Names)
 - dataframe
 }
 \description{
-Swap a block of rows of a datset between two lists variables (typically twin 1 and twin2)
+Swap a block of rows of a dataset between two lists variables (typically twin 1 and twin2)
 }
 \examples{
 test = data.frame(

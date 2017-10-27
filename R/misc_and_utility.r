@@ -21,7 +21,7 @@
 # = OpenMx wrappers =
 # ===================
 
-#' A recipe easter-egg for umx
+#' A recipe Easter-egg for umx
 #'
 #' How to cook steak.
 #'
@@ -176,7 +176,7 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 
 #' umx_set_auto_plot
 #'
-#' Set autoPlot default for models like umxACE umxGxE etc
+#' Set autoPlot default for models like umxACE umxGxE etc.
 #'
 #' @param autoPlot If TRUE, sets the umx_auto_plot option. Else returns the current value of umx_auto_plot
 #' @param silent If TRUE, no message will be printed.
@@ -218,7 +218,7 @@ umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 
 #' umx_set_auto_run
 #'
-#' Set autorun default for models like umxACE umxGxE etc
+#' Set autoRun default for models like umxACE umxGxE etc.
 #'
 #' @param autoRun If TRUE or FALSE, sets the umx_auto_run option. Else returns the current value of umx_auto_run
 #' @param silent If TRUE, no message will be printed.
@@ -1291,7 +1291,7 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' # alternate style
 #' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 #' umx_check_names("displacement", data = x, die = TRUE)
-#' # This will warn that "disp" doesn't exist (anymore)
+#' # This will warn that "disp" does not exist (anymore)
 #' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 #' x = umx_rename(x, grep = "lacement", replace = "") # using grep to revert to disp
 #' umx_names(x, "^d") # all names begining with a d
@@ -1471,7 +1471,7 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 	if(is.na(replaceStr)){
 		stop("Please set a replacement string")
 	}
-	replaceStr = escapeRegex(replaceStr)
+	replaceStr = Hmisc::escapeRegex(replaceStr)
 	# uppercase = u$1
 	if(baseFolder == "Finder"){
 		baseFolder = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
@@ -1547,7 +1547,7 @@ dl_from_dropbox <- function(x, key=NULL){
 #' umx_pb_note
 #'
 #' Use the pushbullet service to push a note. You can also initialise this
-#' service by providing your autho_key one time
+#' service by providing your key one time
 #'
 #' If you supply auth_key, It will be written to "~/.pushbulletkey"
 #' \code{\link{umx_pb_note}}(auth_key="mykeystring")
@@ -2007,10 +2007,10 @@ print.reliability <- function (x, digits = 4, ...){
 #'
 #' @description
 #' You can:
-#' 1. Install from UVa (default: This is where we maintain binaries supporting parallel procesing and MPSOL)
+#' 1. Install from UVa (default: This is where we maintain binaries supporting parallel processing and NPSOL)
 #' 2. Install the latest travis built (currently mac only)
 #' 3. Install from a custom url.
-#' 4. Open the list of travis builds in a browswer.
+#' 4. Open the list of travis builds in a browser.
 #'
 #' @aliases umx_install_OpenMx umx_update_OpenMx
 #' @param loc Which install to get: "UVa" (the default), "travis" (latest build),
@@ -2057,30 +2057,34 @@ umx_update_OpenMx <- install.OpenMx
 #' @description
 #' Easily  run devtools "install", "release", "win", or "examples".
 #'
-#' @param what whether to "install", "release" to CRAN, check on "win", "check", or check "examples"))
-#' @param pkg tbe local path to your package. Defaults to my path to umx.
+#' @param what whether to "install", "release" to CRAN, check on "win", "check", or "examples"))
+#' @param pkg the local path to your package. Defaults to my path to umx.
+#' @param check Whether to run check on the package before release.
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' umx_make(what = "release"))
+#' umx_make(what = "install"))  # just installs the package
+#' umx_make(what = "examples")) # run the examples
+#' umx_make(what = "check"))    # run R CMD check
+#' umx_make(what = "win"))      # check on win-builder
+#' umx_make(what = "release"))  # release to CRAN
 #' }
-umx_make <- function(what = c("install", "release", "win", "check", "examples"), pkg = "~/bin/umx") {
+umx_make <- function(what = c("install", "examples", "check", "win", "release" ), pkg = "~/bin/umx", check = FALSE) {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
-	} else if (what == "release"){
-		devtools::release(pkg = pkg, check = TRUE)
-	} else if (what =="win"){
-		devtools::build_win(pkg = pkg)
-	} else if(what == "check"){
-		# http://r-pkgs.had.co.nz/check.html
-		# R CMD check
-		devtools::check(pkg = pkg)		
 	} else if(what == "examples"){
 		devtools::run_examples(pkg = pkg)
+	} else if(what == "check"){
+		# http://r-pkgs.had.co.nz/check.html
+		devtools::check(pkg = pkg)		
+	} else if (what =="win"){
+		devtools::check_win(pkg = pkg)
+	} else if (what == "release"){
+		devtools::release(pkg = pkg, check = check)
 	}
 }
 
@@ -2088,15 +2092,17 @@ umx_make <- function(what = c("install", "release", "win", "check", "examples"),
 # = User interaction functions =
 # ==============================
 
-#' umx_msg
+#' Print the name and compact contents of variable.
 #'
 #' Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy.
+#' This is primarily useful for inline debugging, where seeing "nVar = NULL" can be useful,
+#' and the code \code{umxMsg(nVar)} makes this easy.
 #'
-#' @param  x the thing you want to print
+#' @param  x the thing you want to pretty-print
 #' @return - NULL
 #' @export
 #' @family Utility Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' a = "brian"
 #' umx_msg(a)
@@ -2196,7 +2202,7 @@ vars <- umx_paste_names
 #' umx_merge_CIs
 #'
 #' if you compute some CIs in one model and some in another (copy of the same model, perhaps to get some parallelism),
-#' this is a simple helper to cludge them together.
+#' this is a simple helper to kludge them together.
 #'
 #' @param m1 first copy of the model
 #' @param m2 second copy of the model
@@ -3607,7 +3613,7 @@ umx_is_numeric <- function(df, all = TRUE){
 
 #' Easily residualize variables in long or wide dataframes, returning them changed in-place.
 #'
-#' @description Residualize one or more variables residualised against covariates, and return a
+#' @description Residualize one or more variables residualized against covariates, and return a
 #' complete dataframe with residualized variable in place.
 #' Optionally, this also works on wide (i.e., twin) data. Just supply suffixes to identify
 #' the paired-wide columns (see examples).
@@ -3731,7 +3737,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #'
 #' Scale wide data across all cases: currently twins
 #'
-#' @param varsToScale The base names of the variables ("weight" etc)
+#' @param varsToScale The base names of the variables ("weight" etc.)
 #' @param suffix The suffix that distinguishes each case, e.g. "_T")
 #' @param data a wide dataframe
 #' @return - new dataframe with variables scaled in place
@@ -3849,7 +3855,7 @@ qm <- function(..., rowMarker = "|") {
 	eval(parse(text = args))
 }
 
-# easier to read variant that doesn't accept matrices as arguments...
+# easier to read variant that does not accept matrices as arguments...
 # qm <- function(..., colsep = "|") {
 # 	# Get the arguments as a list
 # 	arg <- eval(substitute(alist(...)))
@@ -3910,7 +3916,7 @@ qm <- function(..., rowMarker = "|") {
 # ================================
 #' umx_explode - like the php function `explode` 
 #'
-#' Takes a string and returns an array of delimitted strings (by default, each character)
+#' Takes a string and returns an array of delimited strings (by default, each character)
 #'
 #' @param delimiter what to break the string on. Default is empty string ""
 #' @param string an character string, e.g. "dog"
@@ -4036,7 +4042,7 @@ umx_rot <- function(vec){
 #' @description
 #' umx_long2wide merges on famID, for an unlimited number of twinIDs.
 #' Note: this assumes if zygosity or any passalong variables are NA in the first
-#' family member, they are NA everywhere. i.e., it doesn't hunt for values that
+#' family member, they are NA everywhere. i.e., it does not hunt for values that
 #' are present elsewhere to try and self-heal missing data.
 #'
 #' @param data The original (long-format) data file
@@ -4044,7 +4050,7 @@ umx_rot <- function(vec){
 #' @param twinID The twinID. Typically 1, 2, 50 51, etc...
 #' @param zygosity Typically MZFF, DZFF MZMM, DZMM DZOS
 #' @param vars2keep = The variables you wish to analyse (these will be renamed with paste0("_T", twinID)
-#' @param passalong = Variables you wish to pass-through (keep, even though they aren't twin vars)
+#' @param passalong = Variables you wish to pass-through (keep, even though not twin vars)
 #' @return - dataframe in wide format
 #' @export
 #' @family Data Functions
@@ -4068,7 +4074,8 @@ umx_rot <- function(vec){
 #' names(wide) # might want to rename vars like "part_T1" to "part" and delete T2 copy 
 #' # Just keep bmi and wt
 #' k = c("bmi", "wt")
-#' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", vars2keep = k)
+#' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", 
+#'     zygosity= "zygosity", vars2keep = k)
 #' names(wide)
 #' # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
 #' # Keep bmi and wt, and pass through 'cohort'
@@ -4201,7 +4208,7 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 
 #' umx_swap_a_block
 #'
-#' Swap a block of rows of a datset between two lists variables (typically twin 1 and twin2)
+#' Swap a block of rows of a dataset between two lists variables (typically twin 1 and twin2)
 #'
 #' @param theData a data frame to swap within
 #' @param rowSelector rows to swap amongst columns
@@ -4239,7 +4246,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' 
 #' See examples for how to use this: it is pretty flexible.
 #' 
-#' If you provide 2 varNames, they will be used. Ifyou provide one, it will be expanded to var_T1 and var_T2
+#' If you provide 2 varNames, they will be used. If you provide one, it will be expanded to var_T1 and var_T2
 #' 
 #' Note, if you want a power calculator, see \href{http://www.people.vcu.edu/~bverhulst/power/power.html}{here}.
 #' You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
@@ -4250,7 +4257,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' 
 #' **Moderation**
 #' 
-#' AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritibility, with average value avg, and swinging
+#' AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value = avg, and swinging
 #' down to min and up to max across 3 SDs of the moderator.
 #'
 #'
@@ -4265,7 +4272,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @param seed Allows user to set.seed() if wanting reproducible dataset
 #' @param empirical Passed to mvrnorm
 #' @param MZr If MZr and DZr are set (default = NULL), the function simply returns dataframes of the request size and correlation
-#' @param DZr= NULL
+#' @param DZr NULL
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
 #' @family Data Functions
@@ -4859,7 +4866,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 	return(data)
 }
 
-#' Creqte a matrix of correlations for variables of diverse types (binary, ordinal, continuous)
+#' Create a matrix of correlations for variables of diverse types (binary, ordinal, continuous)
 #'
 #' umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
 #'
@@ -5259,7 +5266,7 @@ umx_standardize_ACEcov <- function(fit) {
 			fit$top$c$values = fit$top$c_std$result # standardized c
 			fit$top$e$values = fit$top$e_std$result # standardized e
 		} else {
-			stop("Please run umxACEcov(..., std = TRUE). All I do is copy a_std values into a etc, so model has to have been run!")
+			stop("Please run umxACEcov(..., std = TRUE). All I do is copy a_std values into a..., so model has to have been run!")
 		}
 		return(fit)
 	}
@@ -5289,7 +5296,7 @@ umx_standardize_IP <- function(fit){
 		fit$top$cs$values = fit$top$cs_std$result # standardized cs
 		fit$top$es$values = fit$top$es_std$result # standardized es
 	} else {
-		stop("Please run umxIP(..., std = TRUE). All I do is copy ai_std values into ai etc, so they have to be run!")
+		stop("Please run umxIP(..., std = TRUE). All I do is copy ai_std values into ai..., so they have to be run!")
 	}
 	return(fit)
 }

@@ -24,7 +24,8 @@ fits of the sub-models.
 \examples{
 library(umx)
 # Simulate some data
-tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
+tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
+		AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
 # Group 1
 ds1 = tmp[[1]];
 # Group 2

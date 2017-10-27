@@ -74,11 +74,11 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #'
 #' \strong{GxE model reduction}
 #' For \code{\link{umxGxE}} models, each form of moderation is tested
-#' singley and jointly.
+#' on its own, and jointly.
 #' Also, C is removed, and moderation tested in this model.
 #' 
 #' \strong{ACE model reduction}
-#' For \code{\link{umxACE}} models, each form of moderation is tested singley and jointly.
+#' For \code{\link{umxACE}} models, each form of moderation is tested on its own, and jointly.
 #' Also, C is removed, and moderation tested in this model.
 #' 
 #' It reports the results in a table. Set the format of the table with
@@ -231,7 +231,7 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	}else{
 		stop(model$top$dzCr$values, " is an odd number for dzCr, isn't it? I was expecting 1 (C) or .25 (D)",
 		"\nPerhaps you're smart, and are doing an assortative mating test? e-mail tim to get this added here.")
-		# TODO umxReduceACE handle odd values of dzCr as assortative mating etc?
+		# TODO umxReduceACE handle odd values of dzCr as assortative mating etc.?
 		bestModel = model
 	}
 	# = Show fit table =
@@ -250,7 +250,7 @@ umxReduce.MxModel.ACE <- umxReduceACE
 
 #' Get residuals from an MxModel
 #'
-#' Return the \code{\link{residuals}} from an OpenMx RAM model. You can format these (with digits), and supress small values.
+#' Return the \code{\link{residuals}} from an OpenMx RAM model. You can format these (with digits), and suppress small values.
 #'
 #' @rdname residuals.MxModel
 #' @param object An fitted \code{\link{mxModel}} from which to get residuals
@@ -320,7 +320,7 @@ loadings.default <- function(x, ...) stats::loadings(x, ...)
 #'
 #' loadings extracts the factor loadings from an EFA (factor analysis) model.
 #' It behaves equivalently to stats::loadings, returning the loadings from an 
-#' EFA (factor analysis). However it doesn't store the rotation matrix.
+#' EFA (factor analysis). However it does not store the rotation matrix.
 #'
 #' @param x A RAM model from which to get loadings.
 #' @param ... Other parameters (currently unused)
@@ -1425,7 +1425,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' umxSummaryCP(m1, file = "Figure 3", std = TRUE)
 umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, 
     extended = FALSE, showRg = FALSE, comparison = NULL, std = TRUE, CIs = FALSE, ...) {
-	# TODO: example doesn't need to spec var names in data select
+	# TODO: example does not need to spec var names in data select
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D"
 	if(!std){
 		stop("TODO: I currently always standardize CP model output. e-mail tim to get this turned off")
@@ -2684,7 +2684,7 @@ plot.MxModel.IP <- umxPlotIP
 #' or dropped, would improve fit.
 #' 
 #' Notes:
-#' 1. Runs much faster with full = FALSE (but this doesn't allow the model to re-fit around the newly-
+#' 1. Runs much faster with full = FALSE (but this does not allow the model to re-fit around the newly-
 #' freed parameter).
 #' 2. Compared to mxMI, this function returns top changes, and also suppresses the run message.
 #' 3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link{mxMI}}
@@ -3765,7 +3765,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @description
 #' umxAPA creates summaries from a range of inputs. Use it for reporting lm models, effects, and summarizing data.
 #' 
-#' 1. Given an lm, will return a formated effect, including 95\% CI 
+#' 1. Given an lm, will return a formatted effect, including 95\% CI 
 #' in square brackets, for one of the effects (specified by name in se). e.g.:
 #' \code{\link{umxAPA}}(m1, "wt") yields:
 #' 

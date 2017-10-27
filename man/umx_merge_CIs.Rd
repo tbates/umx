@@ -16,7 +16,7 @@ umx_merge_CIs(m1, m2)
 }
 \description{
 if you compute some CIs in one model and some in another (copy of the same model, perhaps to get some parallelism),
-this is a simple helper to cludge them together.
+this is a simple helper to kludge them together.
 }
 \examples{
 \dontrun{

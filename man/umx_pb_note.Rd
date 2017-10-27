@@ -15,7 +15,7 @@ umx_pb_note(title = "test", body = "body", auth_key = c(NA, "GET"))
 }
 \description{
 Use the pushbullet service to push a note. You can also initialise this
-service by providing your autho_key one time
+service by providing your key one time
 }
 \details{
 If you supply auth_key, It will be written to "~/.pushbulletkey"

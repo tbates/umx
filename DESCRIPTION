@@ -1,7 +1,7 @@
 Package: umx
 Version: 1.9.0
-Date: 2017-08-20
-Title: Structural Equation Modelling in R with 'OpenMx'
+Date: 2017-10-27
+Title: Structural Equation Modeling in R with 'OpenMx'
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))
 Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
@@ -29,10 +29,11 @@ Imports:
     utils,
 	xtable
 Suggests: 
-    devtools,
-    testthat,
-    gdata,
     cocor,
+    devtools,
+    gdata,
+	Hmisc,
+    testthat,
     rmarkdown
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)

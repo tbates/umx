@@ -21,7 +21,7 @@ Up to you to check all variables are present!}
 - dataframe with var residualized in place (i.e under its original column name)
 }
 \description{
-Residualize one or more variables residualised against covariates, and return a
+Residualize one or more variables residualized against covariates, and return a
 complete dataframe with residualized variable in place.
 Optionally, this also works on wide (i.e., twin) data. Just supply suffixes to identify
 the paired-wide columns (see examples).

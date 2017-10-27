@@ -282,7 +282,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		} else if(sum(isBin) > 0){
 			if(thresholds == "left_censored"){
 				# TODO this is easy, no? binary is fixed threshold anyhow...
-				stop("left_censored doesn't make sense for binary variables. I also can't handle mixtures of censored and binary yet, sorry")
+				stop("left_censored does not make sense for binary variables. I also can't handle mixtures of censored and binary yet, sorry")
 			}
 			# =======================================================
 			# = Handle case of at least 1 binary variable           =

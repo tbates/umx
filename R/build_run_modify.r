@@ -54,8 +54,9 @@
 
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
-#' @importFrom utils browseURL install.packages
+#' @importFrom utils browseURL install.packages str
 #' @importFrom xtable xtable
+# #' @importFrom Hmisc escapeRegex
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
 
@@ -160,7 +161,7 @@ utils::globalVariables(c(
 
 # ===================================================================
 # = Define some class containers to allow specialised model objects =
-# = plot, etc can then operate on these                             =
+# = plot, etc. can then operate on these                             =
 # ===================================================================
 methods::setClass("MxModel.ACE"   , contains = "MxModel")
 methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
@@ -207,7 +208,7 @@ umxModel <- function(...) {
 #' \item{You don't need to mxRun the model: it will run automatically, and print a summary}
 #' }
 #' 
-#' umxRAM is like lm, ggplot2 etc: you give the data in a data = parameter
+#' umxRAM is like lm, ggplot2 etc.: you give the data in a data = parameter
 #' A common error is to include data in the main list, a bit like
 #' saying lm(y ~ x + df) instead of lm(y ~ x, data = dd).
 #' 
@@ -559,7 +560,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' @examples
 #' library(umx)
 #' # Simulate some data
-#' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
+#' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
+#' 		AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
 #' # Group 1
 #' ds1 = tmp[[1]];
 #' # Group 2
@@ -594,7 +596,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 		if(umx_is_MxModel(thisModel)){
 			modelNames[modelIndex] = thisModel$name
 		} else {
-		 	stop("Only mxModels can be included in a group, item ", aModel, " was a ", class(dot.items[[aModel]]))
+		 	stop("Only mxModels can be included in a group, item ", thisModel, " was a ", class(dot.items[[thisModel]]))
 		}
 	}
 	# multiple group fit function sums the likelihoods of its component models
@@ -619,7 +621,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
 #' 
 #' Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
-#' fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_andCr", comparison = TRUE)
+#' fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_and_Cr", comparison = TRUE)
 #' 
 #' If you are just starting out, you might find it easier to be more explicit. Like this: 
 #' 
@@ -1302,7 +1304,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # ===================
 #' require(umx)
 #' data(twinData)
-#' # Cut bmi column to form ordinal obesity variables
+#' # Cut BMI column to form ordinal obesity variables
 #' ordDVs = c("obese1", "obese2")
 #' selDVs = c("obese")
 #' obesityLevels = c('normal', 'overweight', 'obese')
@@ -1324,7 +1326,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # ============================================
 #' data(twinData)
 #' selDVs = c("wt", "obese")
-#' # Cut bmi column to form ordinal obesity variables
+#' # Cut BMI column to form ordinal obesity variables
 #' ordDVs = c("obese1", "obese2")
 #' obesityLevels = c('normal', 'overweight', 'obese')
 #' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
@@ -1559,7 +1561,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 				} else if(sum(isBin) > 0){
 					if(thresholds == "left_censored"){
 						# TODO this is easy, no? binary is fixed threshold anyhow...
-						stop("left_censored doesn't make sense for binary variables. I also can't handle mixtures of censored and binary yet, sorry")
+						stop("left_censored does not make sense for binary variables. I also can't handle mixtures of censored and binary yet, sorry")
 					}
 					# =======================================================
 					# = Handle case of at least 1 binary variable           =
@@ -1766,7 +1768,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' A second method (supported in umxACEcov) is to include the covariates in the means model. This is the
 #' 'fixed' option for covariates models them in the mean as definition variables.
 #' On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
-#' covariates must be non-NA, thus dropping any rows where onr or more covariates are missing.
+#' covariates must be non-NA, thus dropping any rows where one or more covariates are missing.
 #' This is wasteful of data.
 #' 
 #' The umxACEcov 'random' option models the covariates in the expected covariance matrix, thus allowing
@@ -1840,7 +1842,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' dzData = subset(resid_data, zygosity == "DZFF")
 #' m2     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 #'
-#' # Univariate bmi without covariate of age for comparison
+#' # Univariate BMI without covariate of age for comparison
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
@@ -1886,7 +1888,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 
 	if(is.null(suffix)){
 		stop("I need a sep, like '_T'. (I will add 1 and 2 after it...) \n",
-		"i.e., selDVs should be 'bmi' etc, and I will re-name to 'bmi_T1' and 'bmi_T2' etc.")
+		"i.e., selDVs should be 'bmi' etc., and I will re-name to 'bmi_T1' and 'bmi_T2' etc.")
 	}else if(length(suffix) > 1){
 			stop("suffix should be just one word, like '_T'. I will add 1 and 2 after that...\n",
 			"i.e., if variables are like 'var_T1', give me selVars = 'var' and sep = '_T'")
@@ -2075,7 +2077,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	}
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
-	model = as(model, "MxModel.ACEcov") # set class so umxSummary, plot, etc work.
+	model = as(model, "MxModel.ACEcov") # set class so umxSummary, plot, etc. work.
 	if(autoRun){
 		model = mxRun(model)
 		umxSummary(model)
@@ -2777,7 +2779,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 #' @param verbose Tell the user what was added and why (Default = TRUE)
 #' @param thresholds How to implement thresholds: c("deviationBased", "direct", "ignore", "left_censored")
 #' @param name = A new name for the modified model (NULL means leave it as it)
-#' @param showEstimates = Whether to show estimates in the summary (if autorunning) TRUE
+#' @param showEstimates = Whether to show estimates in the summary (if autoRun) TRUE
 #' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
 #' @param autoRun = whether to run the model before returning it: defaults to getOption("umx_auto_run"))
 #' @return - \code{\link{mxModel}}
@@ -3037,7 +3039,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param ubound Upper bounds on cells (Defaults to NA)
 #' @param byrow  Whether to fill the matrix down columns or across rows first (Default = getOption('mxByrow')
 #' @param dimnames NA
-#' @param condenseSlots Whether to save memory by NULLing out unused matrix elements, like labels, ubnound etc. Default = getOption('mxCondenseMatrixSlots')
+#' @param condenseSlots Whether to save memory by NULLing out unused matrix elements, like labels, ubounds etc. Default = getOption('mxCondenseMatrixSlots')
 #' @param ... Additional parameters (!! not currently supported by umxMatrix)
 #' @param joinKey See mxMatrix documentation: Defaults to as.character(NA)
 #' @param joinModel See mxMatrix documentation: Defaults to as.character(NA)

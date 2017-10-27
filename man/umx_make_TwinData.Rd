@@ -31,7 +31,7 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
 
 \item{MZr}{If MZr and DZr are set (default = NULL), the function simply returns dataframes of the request size and correlation}
 
-\item{DZr=}{NULL}
+\item{DZr}{NULL}
 }
 \value{
 \itemize{
@@ -43,7 +43,7 @@ Makes MZ and DZ twin data, optionally with moderated A. By default, the three va
 
 See examples for how to use this: it is pretty flexible.
 
-If you provide 2 varNames, they will be used. Ifyou provide one, it will be expanded to var_T1 and var_T2
+If you provide 2 varNames, they will be used. If you provide one, it will be expanded to var_T1 and var_T2
 
 Note, if you want a power calculator, see \href{http://www.people.vcu.edu/~bverhulst/power/power.html}{here}.
 You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
@@ -54,7 +54,7 @@ You can omit nDZpairs. You can also give any 2 of A, C, or E and the function wi
 
 \strong{Moderation}
 
-AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritibility, with average value avg, and swinging
+AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value = avg, and swinging
 down to min and up to max across 3 SDs of the moderator.
 }
 \examples{

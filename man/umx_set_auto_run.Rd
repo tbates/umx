@@ -15,7 +15,7 @@ umx_set_auto_run(autoRun = NA, silent = FALSE)
 - Current umx_auto_run setting
 }
 \description{
-Set autorun default for models like umxACE umxGxE etc
+Set autoRun default for models like umxACE umxGxE etc.
 }
 \examples{
 library(umx)

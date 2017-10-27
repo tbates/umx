@@ -51,7 +51,7 @@ As an example, this one-liner drops a path labelled "Cs", and returns the update
 \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
 
 Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
-fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_andCr", comparison = TRUE)
+fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_and_Cr", comparison = TRUE)
 
 If you are just starting out, you might find it easier to be more explicit. Like this:
 

@@ -59,7 +59,7 @@ Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxMode
 \item{You don't need to mxRun the model: it will run automatically, and print a summary}
 }
 
-umxRAM is like lm, ggplot2 etc: you give the data in a data = parameter
+umxRAM is like lm, ggplot2 etc.: you give the data in a data = parameter
 A common error is to include data in the main list, a bit like
 saying lm(y ~ x + df) instead of lm(y ~ x, data = dd).
 

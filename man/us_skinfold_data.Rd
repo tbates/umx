@@ -9,7 +9,7 @@
 data(us_skinfold_data)
 }
 \description{
-A dataset containing height, weight, bmi, and skin-fold fat measures in several
+A dataset containing height, weight, BMI, and skin-fold fat measures in several
 hundred US twin families participating in the MCV Cardiovascular Twin Study (PI Schieken)
 }
 \details{
@@ -22,7 +22,7 @@ hundred US twin families participating in the MCV Cardiovascular Twin Study (PI 
   \item bml_T1 log BMI of twin 1
   \item bic_T1 Biceps Skinfold of twin 1
   \item caf_T1 Calf Skinfold of twin 1
-  \item ssc_T1 Subscapular SSkinfold of twin 1
+  \item ssc_T1 Subscapular Skinfold of twin 1
   \item sil_T1 Suprailiacal Skinfold of twin 1
   \item tri_T1 Triceps Skinfold of twin 1
   \item ht_T2  Height of twin 2

@@ -15,7 +15,7 @@ umx_set_auto_plot(autoPlot = NULL, silent = FALSE)
 - Current umx_auto_plot setting
 }
 \description{
-Set autoPlot default for models like umxACE umxGxE etc
+Set autoPlot default for models like umxACE umxGxE etc.
 }
 \examples{
 library(umx)

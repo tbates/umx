@@ -163,7 +163,7 @@ umxSummary(m1)
 # ===================
 require(umx)
 data(twinData)
-# Cut bmi column to form ordinal obesity variables
+# Cut BMI column to form ordinal obesity variables
 ordDVs = c("obese1", "obese2")
 selDVs = c("obese")
 obesityLevels = c('normal', 'overweight', 'obese')
@@ -185,7 +185,7 @@ umxSummary(m1)
 # ============================================
 data(twinData)
 selDVs = c("wt", "obese")
-# Cut bmi column to form ordinal obesity variables
+# Cut BMI column to form ordinal obesity variables
 ordDVs = c("obese1", "obese2")
 obesityLevels = c('normal', 'overweight', 'obese')
 cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)

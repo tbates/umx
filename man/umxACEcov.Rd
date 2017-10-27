@@ -55,7 +55,7 @@ A simple method is to regressing covariates from the data (see \code{\link{umx_r
 A second method (supported in umxACEcov) is to include the covariates in the means model. This is the
 'fixed' option for covariates models them in the mean as definition variables.
 On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
-covariates must be non-NA, thus dropping any rows where onr or more covariates are missing.
+covariates must be non-NA, thus dropping any rows where one or more covariates are missing.
 This is wasteful of data.
 }
 \details{
@@ -96,7 +96,7 @@ mzData = subset(resid_data, zygosity == "MZFF")
 dzData = subset(resid_data, zygosity == "DZFF")
 m2     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
 
-# Univariate bmi without covariate of age for comparison
+# Univariate BMI without covariate of age for comparison
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
 m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")

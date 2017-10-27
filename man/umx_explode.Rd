@@ -15,7 +15,7 @@ umx_explode(delimiter = character(), string)
 - a vector of strings, e.g. c("d", "o", "g")
 }
 \description{
-Takes a string and returns an array of delimitted strings (by default, each character)
+Takes a string and returns an array of delimited strings (by default, each character)
 }
 \examples{
 umx_explode("", "dog") # "d" "o" "g"

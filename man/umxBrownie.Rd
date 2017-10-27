@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umxBrownie}
 \alias{umxBrownie}
-\title{A recipe easter-egg for umx}
+\title{A recipe Easter-egg for umx}
 \usage{
 umxBrownie()
 }

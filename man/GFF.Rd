@@ -17,7 +17,7 @@ Several scales in the data are described in  van der Aa et al (2010).
 General Family Functioning (GFF) refers to adolescents' evaluations general family health
 vs. pathology. It assesses problem solving, communication, roles within the household,
 affection, and control. GFF was assessed with a Dutch translation of the General Functioning
-subscale of the McMaster Family Assessment Device (FAD) (Epstein et al., 1983).
+sub-scale of the McMaster Family Assessment Device (FAD) (Epstein et al., 1983).
 
 Family Conflict (FC) refers to adolescents' evaluations of the amount of openly 
 expressed anger, aggression, and conflict among family members. Conflict
@@ -27,13 +27,13 @@ Quality of life in general (QLg) was assessed with the 10-step Cantril
 Ladder from best- to worst-possible life (Cantril, 1965).
 
 \describe{
-  \item{zyg6}{Six-level measure of zygosity: 'MZMM', 'DZMM', 'MZFF', 'DZFF', 'DZMF', 'DZFM'}
-  \item{zyg2}{Two-level measure of zygosity: 'MZ', 'DZ'}
+  \item{zyg_6grp}{Six-level measure of zygosity: 'MZMM', 'DZMM', 'MZFF', 'DZFF', 'DZMF', 'DZFM'}
+  \item{zyg_2grp}{Two-level measure of zygosity: 'MZ', 'DZ'}
   \item{divorce}{Parental divorce status: 0 = No, 1 = Yes}
   \item{sex_T1}{Sex of twin 1: 0 = "male", 1 = "female"}
   \item{age_T1}{Age of twin 1 (years)}
   \item{gff_T1}{General family functioning for twin 1}
-  \item{fc_T1}{Family conflict subscale of the FES}
+  \item{fc_T1}{Family conflict sub-scale of the FES}
   \item{qol_T1}{Quality of life for twin 1}
   \item{hap_T1}{General happiness for twin 1}
   \item{sat_T1}{Satisfaction with life for twin 1}
@@ -44,7 +44,7 @@ Ladder from best- to worst-possible life (Cantril, 1965).
   \item{sex_T2}{Sex of twin 2}
   \item{age_T2}{Age of twin 2}
   \item{gff_T2}{General family functioning for twin 2}
-  \item{fc_T2}{Family conflict subscale of the FES}
+  \item{fc_T2}{Family conflict sub-scale of the FES}
   \item{qol_T2}{Quality of life for twin 2}
   \item{hap_T2}{General happiness for twin 2}
   \item{sat_T2}{Satisfaction with life for twin 2}
@@ -55,7 +55,7 @@ Ladder from best- to worst-possible life (Cantril, 1965).
   \item{sex_Ta}{Sex of sib 1}
   \item{age_Ta}{Age of sib 1}
   \item{gff_Ta}{General family functioning for sib 1}
-  \item{fc_Ta}{Family conflict subscale of the FES}
+  \item{fc_Ta}{Family conflict sub-scale of the FES}
   \item{qol_Ta}{Quality of life for sib 1}
   \item{hap_Ta}{General happiness for sib 1}
   \item{sat_Ta}{Satisfaction with life for sib 1}
@@ -66,7 +66,7 @@ Ladder from best- to worst-possible life (Cantril, 1965).
   \item{sex_Ts}{Sex of sib 2}
   \item{age_Ts}{Age of sib 2}
   \item{gff_Ts}{General family functioning for sib 2}
-  \item{fc_Ts}{Family conflict subscale of the FES}
+  \item{fc_Ts}{Family conflict sub-scale of the FES}
   \item{qol_Ts}{Quality of life for sib 2}
   \item{hap_Ts}{General happiness for sib 2}
   \item{sat_Ts}{Satisfaction with life for sib 2}
@@ -81,7 +81,12 @@ Ladder from best- to worst-possible life (Cantril, 1965).
 data(GFF)
 umx_names(GFF, "1$") # Just twin 1 variables
 str(GFF) # first few rows
-umxACE()
+
+m1 = umxACE(selDVs= "gff", sep = "_T",
+	mzData = subset(GFF, zyg_2grp == "MZ"), 
+	dzData = subset(GFF, zyg_2grp == "DZ")
+)
+
 # How I coded this data from the Boulder example
 
 }

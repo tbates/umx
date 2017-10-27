@@ -26,7 +26,7 @@ or dropped, would improve fit.
 }
 \details{
 Notes:
-1. Runs much faster with full = FALSE (but this doesn't allow the model to re-fit around the newly-
+1. Runs much faster with full = FALSE (but this does not allow the model to re-fit around the newly-
 freed parameter).
 2. Compared to mxMI, this function returns top changes, and also suppresses the run message.
 3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link{mxMI}}

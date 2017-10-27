@@ -19,7 +19,7 @@
 - matrix of residuals
 }
 \description{
-Return the \code{\link{residuals}} from an OpenMx RAM model. You can format these (with digits), and supress small values.
+Return the \code{\link{residuals}} from an OpenMx RAM model. You can format these (with digits), and suppress small values.
 }
 \examples{
 require(umx)

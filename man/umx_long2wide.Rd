@@ -18,7 +18,7 @@ umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
 
 \item{vars2keep}{= The variables you wish to analyse (these will be renamed with paste0("_T", twinID)}
 
-\item{passalong}{= Variables you wish to pass-through (keep, even though they aren't twin vars)}
+\item{passalong}{= Variables you wish to pass-through (keep, even though not twin vars)}
 }
 \value{
 - dataframe in wide format
@@ -26,7 +26,7 @@ umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
 \description{
 umx_long2wide merges on famID, for an unlimited number of twinIDs.
 Note: this assumes if zygosity or any passalong variables are NA in the first
-family member, they are NA everywhere. i.e., it doesn't hunt for values that
+family member, they are NA everywhere. i.e., it does not hunt for values that
 are present elsewhere to try and self-heal missing data.
 }
 \examples{
@@ -44,7 +44,8 @@ wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygo
 names(wide) # might want to rename vars like "part_T1" to "part" and delete T2 copy 
 # Just keep bmi and wt
 k = c("bmi", "wt")
-wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", vars2keep = k)
+wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", 
+    zygosity= "zygosity", vars2keep = k)
 names(wide)
 # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
 # Keep bmi and wt, and pass through 'cohort'

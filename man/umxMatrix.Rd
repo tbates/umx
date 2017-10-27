@@ -33,7 +33,7 @@ umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
 
 \item{dimnames}{NA}
 
-\item{condenseSlots}{Whether to save memory by NULLing out unused matrix elements, like labels, ubnound etc. Default = getOption('mxCondenseMatrixSlots')}
+\item{condenseSlots}{Whether to save memory by NULLing out unused matrix elements, like labels, ubounds etc. Default = getOption('mxCondenseMatrixSlots')}
 
 \item{...}{Additional parameters (!! not currently supported by umxMatrix)}
 

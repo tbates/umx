@@ -34,7 +34,7 @@ umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
 \description{
 umxAPA creates summaries from a range of inputs. Use it for reporting lm models, effects, and summarizing data.
 
-1. Given an lm, will return a formated effect, including 95\% CI 
+1. Given an lm, will return a formatted effect, including 95\% CI 
 in square brackets, for one of the effects (specified by name in se). e.g.:
 \code{\link{umxAPA}}(m1, "wt") yields:
 

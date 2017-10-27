@@ -17,7 +17,7 @@
 \description{
 loadings extracts the factor loadings from an EFA (factor analysis) model.
 It behaves equivalently to stats::loadings, returning the loadings from an 
-EFA (factor analysis). However it doesn't store the rotation matrix.
+EFA (factor analysis). However it does not store the rotation matrix.
 }
 \examples{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")

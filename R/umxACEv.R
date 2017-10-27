@@ -400,7 +400,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				} else if(sum(isBin) > 0){
 					if(thresholds == "left_censored"){
 						# TODO this is easy, no? binary is fixed threshold anyhow...
-						stop("left_censored doesn't make sense for binary variables. I also can't handle mixtures of censored and binary yet, sorry")
+						stop("left_censored does not make sense for binary variables. I also can't handle mixtures of censored and binary yet, sorry")
 					}
 					# =======================================================
 					# = Handle case of at least 1 binary variable           =
@@ -562,11 +562,11 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				mxMatrix(name  = "I", "Iden", nVar, nVar), # nVar Identity matrix
 				mxAlgebra(name = "Vtot", A + C+ E),       # Total variance
 				# TODO test that these are identical in all cases
-				# mxAlgebra(vec2diag(1/diag2vec(Vtot)), name = "Var"), # Total variance
-				mxAlgebra(name = "Var", solve(I * Vtot)), # Total variance
-				mxAlgebra(name = "A_std", Var %*% A), # standardized A
-				mxAlgebra(name = "C_std", Var %*% C), # standardized C
-				mxAlgebra(name = "E_std", Var %*% E)  # standardized E
+				# mxAlgebra(vec2diag(1/diag2vec(Vtot)), name = "Vtot"), # Total variance
+				mxAlgebra(name = "Vtot", solve(I * Vtot)), # Total variance
+				mxAlgebra(name = "A_std", Vtot %*% A), # standardized A
+				mxAlgebra(name = "C_std", Vtot %*% C), # standardized C
+				mxAlgebra(name = "E_std", Vtot %*% E)  # standardized E
 			)
 			model = mxModel(model, newTop)
 			if(addCI){

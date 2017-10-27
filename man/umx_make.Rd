@@ -4,13 +4,15 @@
 \alias{umx_make}
 \title{umx_make umx using devtools}
 \usage{
-umx_make(what = c("install", "release", "win", "check", "examples"),
-  pkg = "~/bin/umx")
+umx_make(what = c("install", "examples", "check", "win", "release"),
+  pkg = "~/bin/umx", check = FALSE)
 }
 \arguments{
-\item{what}{whether to "install", "release" to CRAN, check on "win", "check", or check "examples"))}
+\item{what}{whether to "install", "release" to CRAN, check on "win", "check", or "examples"))}
 
-\item{pkg}{tbe local path to your package. Defaults to my path to umx.}
+\item{pkg}{the local path to your package. Defaults to my path to umx.}
+
+\item{check}{Whether to run check on the package before release.}
 }
 \value{
 -
@@ -20,7 +22,11 @@ Easily  run devtools "install", "release", "win", or "examples".
 }
 \examples{
 \dontrun{
-umx_make(what = "release"))
+umx_make(what = "install"))  # just installs the package
+umx_make(what = "examples")) # run the examples
+umx_make(what = "check"))    # run R CMD check
+umx_make(what = "win"))      # check on win-builder
+umx_make(what = "release"))  # release to CRAN
 }
 }
 \references{

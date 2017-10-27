@@ -151,7 +151,7 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 #'
 #' This function will label all the free parameters in a (non-RAM) OpenMx \code{\link{mxModel}}
 #' nb: We don't assume what each matrix is for. Instead, the function just sticks labels like "a_r1c1" into each cell
-#' i.e., matrixname _ r rowNumber c colNumber
+#' i.e., matrix-name + _ + r + rowNumber + c + colNumber
 #' 
 #' End users should just call \code{\link{umxLabel}}
 #' 

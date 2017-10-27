@@ -29,7 +29,7 @@
 #' 
 #' \code{umxEFA(factors = c("g", "v"), data = mtcars)}
 #' 
-#' The factor model is implemented as a structural eqaution model, e.g.
+#' The factor model is implemented as a structural equation model, e.g.
 #' 
 #' \figure{umxEFA.png}
 #' 

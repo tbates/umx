@@ -17,7 +17,7 @@ umxRAM2Ordinal(model, verbose = T, thresholds = c("deviationBased",
 
 \item{name}{= A new name for the modified model (NULL means leave it as it)}
 
-\item{showEstimates}{= Whether to show estimates in the summary (if autorunning) TRUE}
+\item{showEstimates}{= Whether to show estimates in the summary (if autoRun) TRUE}
 
 \item{refModels}{pass in reference models if available. Use FALSE to suppress computing these if not provided.}
 

@@ -38,7 +38,7 @@ x = umx_rename(x, replace = c(cyl = "cylinder"))
 # alternate style
 x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 umx_check_names("displacement", data = x, die = TRUE)
-# This will warn that "disp" doesn't exist (anymore)
+# This will warn that "disp" does not exist (anymore)
 x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 x = umx_rename(x, grep = "lacement", replace = "") # using grep to revert to disp
 umx_names(x, "^d") # all names begining with a d
