@@ -2059,7 +2059,7 @@ umx_update_OpenMx <- install.OpenMx
 #'
 #' @param what whether to "install", "release" to CRAN, check on "win", "check", or "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
-#' @param check Whether to run check on the package before release.
+#' @param check Whether to run check on the package before release (default = TRUE)
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -2072,7 +2072,7 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "win"))      # check on win-builder
 #' umx_make(what = "release"))  # release to CRAN
 #' }
-umx_make <- function(what = c("install", "examples", "check", "win", "release" ), pkg = "~/bin/umx", check = FALSE) {
+umx_make <- function(what = c("install", "examples", "check", "win", "release" ), pkg = "~/bin/umx", check = TRUE) {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);

@@ -5,14 +5,14 @@
 \title{umx_make umx using devtools}
 \usage{
 umx_make(what = c("install", "examples", "check", "win", "release"),
-  pkg = "~/bin/umx", check = FALSE)
+  pkg = "~/bin/umx", check = TRUE)
 }
 \arguments{
 \item{what}{whether to "install", "release" to CRAN, check on "win", "check", or "examples"))}
 
 \item{pkg}{the local path to your package. Defaults to my path to umx.}
 
-\item{check}{Whether to run check on the package before release.}
+\item{check}{Whether to run check on the package before release (default = TRUE)}
 }
 \value{
 -
