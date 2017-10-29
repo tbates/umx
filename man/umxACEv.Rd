@@ -86,7 +86,7 @@ The function flexibly accepts raw data, and also summary covariance data
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
 ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
-data in any combination. An experimental feature is under development to allow Tobit modeling. 
+data in any combination. 
 
 The function also supports weighting of individual data rows. In this case,
 the model is estimated for each row individually, then each row likelihood
@@ -114,7 +114,7 @@ data(twinData) # ?twinData from Australian twins.
 selDVs = c("ht1", "ht2")
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
-m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData) # -2ll= 9659
+m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
 umxSummary(m1, std = FALSE) # unstandardized
 # tip: with report = "html", umxSummary can print the table to your browser!
 plot(m1)

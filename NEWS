@@ -1,18 +1,33 @@
 # umx 1.9.0 (Octoberber 2017, R unstable)
 * *TIP*: Show small estimated paths with `umx_parameters(model, "below", .1)`
 * *TIP*: `?umxRAM` has a sketch mode. just set `data` to a list of manifest variable names.
+* NEW: CIs in output tables!
 * NEW `?umxACEcov_fixed` Beta1: Handles main effects of covariates in the means of continuous variables.
 * NEW `umxModify` can now equate parameters (set master = ), update is slave set of labels.
 	* As a result, umxEquate now doesn't autoRun by default. Let me know if this is a pain.
+* NEW: Dataset on general family functioning in twins. ?GFF
+* NEW: `umxSuperModel` function to automate multiple-group model creation.
 * NEW: `optimiser` parameter for umxACE and other twin models: Set the optimizer in your model code!
 * NEW: `umx_is_numeric` boolean check if variables in a dataframe are numeric.
 * NEW: `umx_is_class` boolean check if variables in a dataframe match a desired class.
 * NEW: `umx_twin_check` internal function for common input checks.
-* NEW: `umx_set_plot_file_suffix(c("gv", "dot")` function (to control the filename used for figures)
+* NEW: `umx_set_plot_file_suffix(c("gv", "dot")` function (to control the filename used for figures)/
 * FIXED: `umxACE` was broken with large cov inputs h/t @NathanGillespie.
 * FIXED: `umxAggregate` now actually supports user functions as input...
-* IMPROVED: umxParameters now supports `digits`.
-* IMPROVED: umxSummary "inline" reporting now includes AIC.
+* BEGINNING: to add `umxACEv` variance components method
+* IMPROVED: `umxPath(Cholesky = )` method: supports labels, bounds, lbound at 0.
+* IMPROVED: `umxPath(Cholesky = )` method: return one statement instead of a list for clarity.
+* IMPROVED: `umxACE` and `umxReduce.ACE` run intervals
+* IMPROVED: `umxReduce` works better with `umxACE` models.
+* IMPROVED: `umxEFA` Supports `minManifests`.
+* IMPROVED: `umxEFA` Works better when returning a single factor score.
+* IMPROVED: `umxParameters` now supports `digits`.
+* IMPROVED: `umxSummary` "inline" reporting now includes AIC.
+* IMPROVED: `umx_aggregate` works  with factor input/
+	* umx_aggregate(sex_T1 ~ zyg_2grp, data = x)
+* IMPROVED: `umx_long2wide` can `passalong` variables.
+* IMPROVED: `umx_wide2long` much more powerful
+* IMPROVED: `umx_msg` supports dataframes
 * IMPROVED: `umxACE` gains ability to set plot format: `format = "graphviz" or "DiagrammeR"`
 * IMPROVED: `umx_set_auto_plot` take TRUE/FALSE as input.
 * IMPROVED: `umx_names`: added a replace option to munge the names
@@ -20,8 +35,8 @@
 * IMPROVED: `install.OpenMx` from UVa, travis, or open travis build page.
 * IMPROVED: `umx_cor` automatically drops non-numeric columns.
 * IMPROVED: `umxCI` now supports setting interval and one- or two-sided type (h/t @Conor Dolan).
-* INTERNAL: Switch from R2HTML to xtable
-* MINOR: umxParameters now supports non-run models
+* INTERNAL: Switch from `R2HTML` to `xtable`
+* MINOR: `umxParameters` now supports non-run models
 
 # umx 1.8.0 (September 2017, R 3.4.1 (Single Candle)
 * *TIP*: `?umxAPA` can format lots of things for you: from dataframes to p-values - try it out! Let me know what you'd like.

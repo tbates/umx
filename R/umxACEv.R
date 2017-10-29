@@ -42,7 +42,7 @@
 #' \strong{Ordinal Data}
 #' In an important capability, the model transparently handles ordinal (binary or multi-level
 #' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
-#' data in any combination. An experimental feature is under development to allow Tobit modeling. 
+#' data in any combination. 
 #' 
 #' The function also supports weighting of individual data rows. In this case,
 #' the model is estimated for each row individually, then each row likelihood
@@ -94,7 +94,7 @@
 #' selDVs = c("ht1", "ht2")
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData) # -2ll= 9659
+#' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' umxSummary(m1, std = FALSE) # unstandardized
 #' # tip: with report = "html", umxSummary can print the table to your browser!
 #' plot(m1)
@@ -217,6 +217,7 @@
 umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL) {
 
+		message("This is STRICTLY experimental, and unlikely to be working (prep for Boulder 2018 use of variance components modeling)")
 		covMethod = match.arg(covMethod)
 		# =================
 		# = Set optimizer =
@@ -262,7 +263,6 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 			umx_check_names(selDVs, dzData)
 			# message("selDVs: ", omxQuotes(selDVs))
 			nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
-
 			used = selDVs
 			if(!is.null(weightVar)){
 				used = c(used, weightVar)
@@ -335,23 +335,17 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				# ==============================
 				# = Better start value project =
 				# ==============================
-				# 2017-04-03 04:34PM toggled to sqrt()
-				# TODO repeat for other twin models . 2017-08-19 12:21PM umxACEvcov done
+				# TODO check varStarts for variance coefficients version!!!!
 				if(nVar == 1){
-					# sqrt to switch from var to path coefficient scale
-					varStarts = sqrt(varStarts)/3
+					varStarts = varStarts/3
 				} else {
-					varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
+					varStarts = diag(varStarts/3) # Divide variance up equally, and set to Cholesky form.
 				}
 				varStarts = matrix(varStarts, nVar, nVar)
 
 				# Mean starts (used across all raw solutions
 				obsMZmeans   = umx_means(mzData[, selDVs], ordVar = 0, na.rm = TRUE)
 				meanDimNames = list("means", selDVs)		
-
-				# Smarter but not guaranteed
-				# a_val = e_val = t(chol(xmu_cov_factor(mzData, use = "pair"))) * .6
-				# c_val = t(chol(cov(mzData, use = "pair"))) * .1
 
 				# ===============================
 				# = Notes: Ordinal requires:    =
@@ -447,7 +441,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 					top = mxModel(top,
 						# Algebra to compute total variances and standard deviations
-						mxAlgebra(name = "Vtot", A + C+ E), # Total variance (redundant but is OK)
+						# mxAlgebra(name = "Vtot", A + C+ E), # Total variance (redundant but is OK)
 						mxMatrix(name  = "binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
 						mxMatrix(name  = "Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
 						mxConstraint(name = "constrain_Bin_var_to_1", binLabels == Unit_nBinx1)
@@ -541,29 +535,30 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				mxFitFunctionMultigroup(c("MZw", "DZw"))
 			)
 		}
+		
 		if(!is.null(boundDiag)){
 			if(!is.numeric(boundDiag)){
 				stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))
 			} else {				
-				newLbound = model$top$matrices$a@lbound
+				newLbound = model$top$matrices$A@lbound
 				if(length(boundDiag) > 1 ){
 					if(length(boundDiag) != length(diag(newLbound)) ){
 						stop("Typically boundDiag is 1 digit: if more, must be size of diag(a)")
 					}
 				}
 				diag(newLbound) = boundDiag; 
-				model$top$a$lbound = newLbound
-				model$top$c$lbound = newLbound
-				model$top$e$lbound = newLbound
+				model$top$A$lbound = newLbound
+				model$top$C$lbound = newLbound
+				model$top$E$lbound = newLbound
 			}
 		}
 		if(addStd){
 			newTop = mxModel(model$top,
 				mxMatrix(name  = "I", "Iden", nVar, nVar), # nVar Identity matrix
-				mxAlgebra(name = "Vtot", A + C+ E),       # Total variance
+				mxAlgebra(name = "Vtot", A + C+ E),        # Total variance
 				# TODO test that these are identical in all cases
-				# mxAlgebra(vec2diag(1/diag2vec(Vtot)), name = "Vtot"), # Total variance
-				mxAlgebra(name = "Vtot", solve(I * Vtot)), # Total variance
+				# mxAlgebra(vec2diag(1/diag2vec(Vtot)), name = "Vtot"), # total variance --> SD
+				# mxAlgebra(name = "SD", solve(I * Vtot)), # total variance --> SD 
 				mxAlgebra(name = "A_std", Vtot %*% A), # standardized A
 				mxAlgebra(name = "C_std", Vtot %*% C), # standardized C
 				mxAlgebra(name = "E_std", Vtot %*% E)  # standardized E
@@ -582,7 +577,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 		}
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
-		model = as(model, "MxModel.ACE") # set class so that S3 plot() dispatches.
+		model = as(model, "MxModel.ACEv") # set class so that S3 plot() dispatches.
 		
 		if(autoRun){
 			model = mxRun(model)
@@ -596,3 +591,237 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 		return(model)
 	}
 } # end umxACEvv
+
+
+#' @aliases umxSummary.MxModel.ACE
+#' @param model an \code{\link{mxModel}} to summarize
+#' @param digits round to how many digits (default = 2)
+#' @param file The name of the dot file to write: "name" = use the name of the model.
+#' Defaults to NA = do not create plot output
+#' @param comparison you can run mxCompare on a comparison model (NULL)
+#' @param std Whether to standardize the output (default = TRUE)
+#' @param showRg = whether to show the genetic correlations (FALSE)
+#' @param CIs Whether to show Confidence intervals if they exist (T)
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
+#' @param report If "html", then open an html table of the results
+#' @param extended how much to report (FALSE)
+#' @param zero.print How to show zeros (".")
+#' @param ... Other parameters to control model summary
+#' @return - optional \code{\link{mxModel}}
+#' @export
+#' @family Twin Modeling Functions
+#' @family Reporting functions
+#' @seealso - \code{\link{umxACE}} 
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' require(umx)
+#' data(twinData)
+#' selDVs = c("bmi1", "bmi2")
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' umxSummaryACE(m1)
+#' \dontrun{
+#' umxSummaryACE(m1, file = NA);
+#' umxSummaryACE(m1, file = "name", std = TRUE)
+#' stdFit = umxSummaryACE(m1, returnStd = TRUE);
+#' }
+umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+	report = match.arg(report)
+	# depends on R2HTML::HTML
+	if(typeof(model) == "list"){ # call self recursively
+		for(thisFit in model) {
+			message("Output for Model: ", thisFit$name)
+			umxSummaryACE(thisFit, digits = digits, file = file, showRg = showRg, std = std, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
+		}
+	} else {
+	umx_has_been_run(model, stop = TRUE)
+	if(is.null(comparison)){
+		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		print(-2 * logLik(model));			
+	} else {
+		message("Comparison of model with parent model:")
+		umxCompare(comparison, model, digits = 3)
+	}
+	selDVs = dimnames(model$top.expCovMZ)[[1]]
+	nVar <- length(selDVs)/2;
+	# TODO umxSummaryACE these already exist if a_std exists..
+	# TODO replace all this with umx_standardizeACE
+	# Calculate standardized variance components
+
+	# a  <- mxEval(top.a, model); # Path coefficients
+	# c  <- mxEval(top.c, model);
+	# e  <- mxEval(top.e, model);
+
+	A  <- mxEval(top.A, model); # Variances
+	C  <- mxEval(top.C, model);
+	E  <- mxEval(top.E, model);
+
+	if(std){
+		message("Standardized solution")
+		Vtot = A + C + E;         # Total variance
+		I  <- diag(nVar);         # nVar Identity matrix
+		SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations
+		# (same as "(\sqrt(I.Vtot))~"
+
+		# Standardized _path_ coefficients ready to be stacked together
+		a_std <- SD %*% a; # Standardized path coefficients
+		c_std <- SD %*% c;
+		e_std <- SD %*% e;
+		aClean = a_std
+		cClean = c_std
+		eClean = e_std
+	} else {
+		message("Raw solution")
+		aClean = a
+		cClean = c
+		eClean = e
+	}
+
+	aClean[upper.tri(aClean)] = NA
+	cClean[upper.tri(cClean)] = NA
+	eClean[upper.tri(eClean)] = NA
+	rowNames = sub("_.1$", "", selDVs[1:nVar])
+	Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames, stringsAsFactors = FALSE);
+
+	if(model$top$dzCr$values == .25){
+		colNames = c("a", "d", "e")
+	} else {
+		colNames = c("a", "c", "e")
+	}
+	names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
+	if(report == "html"){
+		# depends on R2HTML::HTML
+		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
+		umx_open("tmp.html")
+	}
+	
+	if(extended == TRUE) {
+		message("Unstandardized path coefficients")
+		aClean = a
+		cClean = c
+		eClean = e
+		aClean[upper.tri(aClean)] = NA
+		cClean[upper.tri(cClean)] = NA
+		eClean[upper.tri(eClean)] = NA
+		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
+		names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+		umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
+	}
+
+	# Pre & post multiply covariance matrix by inverse of standard deviations
+	if(showRg) {
+		message("Genetic correlations")
+		NAmatrix <- matrix(NA, nVar, nVar);
+		rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error = function(err) return(NAmatrix)); # genetic correlations
+		rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error = function(err) return(NAmatrix)); # C correlations
+		rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error = function(err) return(NAmatrix)); # E correlations
+		rAClean = rA
+		rCClean = rC
+		rEClean = rE
+		rAClean[upper.tri(rAClean)] = NA
+		rCClean[upper.tri(rCClean)] = NA
+		rEClean[upper.tri(rEClean)] = NA
+		genetic_correlations = data.frame(cbind(rAClean, rCClean, rEClean), row.names = rowNames);
+		names(genetic_correlations) <- rowNames
+	 	# Make a nice table.
+		names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
+		umx_print(genetic_correlations, digits = digits, zero.print = zero.print)
+	}
+	hasCIs = umx_has_CIs(model)
+		if(hasCIs & CIs) {
+			# TODO umxACE CI code: Need to refactor into some function calls...
+			# TODO and then add to umxSummaryIP and CP
+			message("Creating CI-based report!")
+			# CIs exist, get lower and upper CIs as a dataframe
+			CIlist = data.frame(model$output$confidenceIntervals)
+			# Drop rows fixed to zero
+			CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
+			# discard rows named NA
+			CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
+			# TODO fix for singleton CIs
+			# These can be names ("top.a_std[1,1]") or labels ("a11")
+			# imxEvalByName finds them both
+			# outList = c();
+			# for(aName in row.names(CIlist)) {
+			# 	outList <- append(outList, imxEvalByName(aName, model))
+			# }
+			# # Add estimates into the CIlist
+			# CIlist$estimate = outList
+			# reorder to match summary
+			CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
+			CIlist$fullName = row.names(CIlist)
+			# Initialise empty matrices for the CI results
+			rows = dim(model$top$matrices$a$labels)[1]
+			cols = dim(model$top$matrices$a$labels)[2]
+			a_CI = c_CI = e_CI = matrix(NA, rows, cols)
+
+			# iterate over each CI
+			labelList = imxGenerateLabels(model)			
+			rowCount = dim(CIlist)[1]
+			# return(CIlist)
+			for(n in 1:rowCount) { # n = 1
+				thisName = row.names(CIlist)[n] # thisName = "a11"
+					# convert labels to [bracket] style
+					if(!umx_has_square_brackets(thisName)) {
+					nameParts = labelList[which(row.names(labelList) == thisName),]
+					CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
+				}
+				fullName = CIlist$fullName[n]
+
+				thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
+				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
+				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
+				CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
+				thisString = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
+
+				if(grepl("^a", thisMatrixName)) {
+					a_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else if(grepl("^c", thisMatrixName)){
+					c_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else if(grepl("^e", thisMatrixName)){
+					e_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else{
+					stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
+				}
+			}
+			# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
+			# TODO umxSummaryACE: Add option to use mxSE
+			# print(a_CI)
+			# print(c_CI)
+			# print(e_CI)
+			Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = rowNames, stringsAsFactors = FALSE)
+			names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+			Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
+			if(report == "html"){
+				# depends on R2HTML::HTML
+				R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
+				umx_open("tmpCI.html")
+			}
+			CI_Fit = model
+			CI_Fit$top$a$values = a_CI
+			CI_Fit$top$c$values = c_CI
+			CI_Fit$top$e$values = e_CI
+		} # end Use CIs
+	} # end list catcher?
+	
+	
+	if(!is.na(file)) {
+		# message("making dot file")
+		if(hasCIs & CIs){
+			umxPlotACE(CI_Fit, file = file, std = FALSE)
+		} else {
+			umxPlotACE(model, file = file, std = std)
+		}
+	}
+	if(returnStd) {
+		if(CIs){
+			message("If you asked for CIs, returned model is not runnable (contains CIs not parameter values)")
+		}
+		umx_standardize_ACE(model)
+	}
+}
+
+#' @export
+umxSummary.MxModel.ACEv <- umxSummaryACEv

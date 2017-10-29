@@ -1725,8 +1725,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		if(addStd){
 			newTop = mxModel(model$top,
 				mxMatrix(name  = "I", "Iden", nVar, nVar), # nVar Identity matrix
-				mxAlgebra(name = "Vtot", A + C+ E),       # Total variance
-				# TODO test that these are identical in all cases
+				mxAlgebra(name = "Vtot", A + C+ E),        # Total variance
+				# TODO test that these are identical in all cases.
 				# mxAlgebra(vec2diag(1/sqrt(diag2vec(Vtot))), name = "SD"), # Total variance
 				mxAlgebra(name = "SD", solve(sqrt(I * Vtot))), # Total variance
 				mxAlgebra(name = "a_std", SD %*% a), # standardized a
