@@ -3192,8 +3192,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 
 #' Extract AIC from MxModel
 #'
-#' Returns the AIC for an OpenMx model
-#' helper function for \code{\link{logLik.MxModel}} (which enables AIC(model); logLik(model); BIC(model)
+#' Returns the AIC for an OpenMx model.
 #' Original Author: Brandmaier
 #'
 #' @method extractAIC MxModel

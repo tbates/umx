@@ -235,7 +235,9 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				stop("Implementing this for version 2.0")
 				# umxACEvdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			} else if(covMethod == "random") {
-				umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
+				message("umxACEvcov not yet implemented")
+				# TODO implement umxACEvcov or refactor
+				# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			}
 		} else {
 			if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
@@ -593,11 +595,27 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 } # end umxACEvv
 
 
-#' @aliases umxSummary.MxModel.ACE
+#' Shows a compact, publication-style, summary of a variance-based Cholesky ACE model.
+#'
+#' Summarize a fitted Cholesky model returned by \code{\link{umxACEv}}. Can control digits, report comparison model fits,
+#' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
+#' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
+#'
+#' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
+#' 
+#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+#' 
+#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+#' 
+#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+#' 
+#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+#' 
+#' @aliases umxSummary.MxModel.ACEv
 #' @param model an \code{\link{mxModel}} to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: "name" = use the name of the model.
-#' Defaults to NA = do not create plot output
+#' Defaults to NA = no plot.
 #' @param comparison you can run mxCompare on a comparison model (NULL)
 #' @param std Whether to standardize the output (default = TRUE)
 #' @param showRg = whether to show the genetic correlations (FALSE)
@@ -611,7 +629,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 #' @export
 #' @family Twin Modeling Functions
 #' @family Reporting functions
-#' @seealso - \code{\link{umxACE}} 
+#' @seealso - \code{\link{umxACEv}} 
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -620,13 +638,13 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 #' mzData <- subset(twinData, zygosity == "MZFF")
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummaryACE(m1)
+#' umxSummary(m1)
 #' \dontrun{
-#' umxSummaryACE(m1, file = NA);
-#' umxSummaryACE(m1, file = "name", std = TRUE)
+#' umxSummary(m1, file = NA);
+#' umxSummary(m1, file = "name", std = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
@@ -645,7 +663,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 	}
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
 	nVar <- length(selDVs)/2;
-	# TODO umxSummaryACE these already exist if a_std exists..
+	# TODO umxSummaryACEv these already exist if a_std exists..
 	# TODO replace all this with umx_standardizeACE
 	# Calculate standardized variance components
 
@@ -661,33 +679,30 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		message("Standardized solution")
 		Vtot = A + C + E;         # Total variance
 		I  <- diag(nVar);         # nVar Identity matrix
-		SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations
-		# (same as "(\sqrt(I.Vtot))~"
-
-		# Standardized _path_ coefficients ready to be stacked together
-		a_std <- SD %*% a; # Standardized path coefficients
-		c_std <- SD %*% c;
-		e_std <- SD %*% e;
-		aClean = a_std
-		cClean = c_std
-		eClean = e_std
+		# Standardized _variance_ coefficients ready to be stacked together
+		A_std <- Vtot %*% A; # Standardized variance coefficients
+		C_std <- Vtot %*% C;
+		E_std <- Vtot %*% E;
+		AClean = A_std
+		CClean = C_std
+		EClean = E_std
 	} else {
 		message("Raw solution")
-		aClean = a
-		cClean = c
-		eClean = e
+		AClean = A
+		CClean = C
+		EClean = E
 	}
 
-	aClean[upper.tri(aClean)] = NA
-	cClean[upper.tri(cClean)] = NA
-	eClean[upper.tri(eClean)] = NA
+	AClean[upper.tri(AClean)] = NA
+	CClean[upper.tri(CClean)] = NA
+	EClean[upper.tri(EClean)] = NA
 	rowNames = sub("_.1$", "", selDVs[1:nVar])
-	Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames, stringsAsFactors = FALSE);
+	Estimates = data.frame(cbind(AClean, CClean, EClean), row.names = rowNames, stringsAsFactors = FALSE);
 
 	if(model$top$dzCr$values == .25){
-		colNames = c("a", "d", "e")
+		colNames = c("A", "D", "E")
 	} else {
-		colNames = c("a", "c", "e")
+		colNames = c("A", "C", "E")
 	}
 	names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
 	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
@@ -699,13 +714,13 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 	
 	if(extended == TRUE) {
 		message("Unstandardized path coefficients")
-		aClean = a
-		cClean = c
-		eClean = e
-		aClean[upper.tri(aClean)] = NA
-		cClean[upper.tri(cClean)] = NA
-		eClean[upper.tri(eClean)] = NA
-		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
+		AClean = A
+		CClean = C
+		EClean = E
+		AClean[upper.tri(AClean)] = NA
+		CClean[upper.tri(CClean)] = NA
+		EClean[upper.tri(EClean)] = NA
+		unStandardizedEstimates = data.frame(cbind(AClean, CClean, EClean), row.names = rowNames);
 		names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
 		umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
 	}
@@ -755,7 +770,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			# Initialise empty matrices for the CI results
 			rows = dim(model$top$matrices$a$labels)[1]
 			cols = dim(model$top$matrices$a$labels)[2]
-			a_CI = c_CI = e_CI = matrix(NA, rows, cols)
+			A_CI = C_CI = E_CI = matrix(NA, rows, cols)
 
 			# iterate over each CI
 			labelList = imxGenerateLabels(model)			
@@ -783,15 +798,15 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 				} else if(grepl("^e", thisMatrixName)){
 					e_CI[thisMatrixRow, thisMatrixCol] = thisString
 				} else{
-					stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
+					stop(paste("Illegal matrix name: must begin with A, C, or E. You sent: ", thisMatrixName))
 				}
 			}
 			# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
 			# TODO umxSummaryACE: Add option to use mxSE
-			# print(a_CI)
-			# print(c_CI)
-			# print(e_CI)
-			Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = rowNames, stringsAsFactors = FALSE)
+			# print(A_CI)
+			# print(C_CI)
+			# print(E_CI)
+			Estimates = data.frame(cbind(A_CI, C_CI, E_CI), row.names = rowNames, stringsAsFactors = FALSE)
 			names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
 			Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
 			if(report == "html"){
@@ -800,26 +815,30 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 				umx_open("tmpCI.html")
 			}
 			CI_Fit = model
-			CI_Fit$top$a$values = a_CI
-			CI_Fit$top$c$values = c_CI
-			CI_Fit$top$e$values = e_CI
+			CI_Fit$top$a$values = A_CI
+			CI_Fit$top$c$values = C_CI
+			CI_Fit$top$e$values = E_CI
 		} # end Use CIs
 	} # end list catcher?
 	
 	
 	if(!is.na(file)) {
 		# message("making dot file")
-		if(hasCIs & CIs){
-			umxPlotACE(CI_Fit, file = file, std = FALSE)
-		} else {
-			umxPlotACE(model, file = file, std = std)
-		}
+		# TODO create plot method for ACEv
+		message("Standarize ACE and plot methods not yet implemented... All a lot of work.")
+		# if(hasCIs & CIs){
+		# 	umxPlotACE(CI_Fit, file = file, std = FALSE)
+		# } else {
+		#	umxPlotACE(model, file = file, std = std)
+		# }
 	}
 	if(returnStd) {
 		if(CIs){
 			message("If you asked for CIs, returned model is not runnable (contains CIs not parameter values)")
 		}
-		umx_standardize_ACE(model)
+		# todo: allow umx_standardize_ACEv
+		message("standarize ACE v not yet implemented...")
+		# umx_standardize_ACE(model)
 	}
 }
 

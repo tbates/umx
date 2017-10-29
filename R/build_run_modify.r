@@ -164,6 +164,7 @@ utils::globalVariables(c(
 # = plot, etc. can then operate on these                             =
 # ===================================================================
 methods::setClass("MxModel.ACE"   , contains = "MxModel")
+methods::setClass("MxModel.ACEv"  , contains = "MxModel")
 methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 methods::setClass("MxModel.GxE"   , contains = "MxModel")
 methods::setClass("MxModel.CP"    , contains = "MxModel")

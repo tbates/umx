@@ -2082,7 +2082,8 @@ umx_make <- function(what = c("install", "examples", "check", "win", "release" )
 		# http://r-pkgs.had.co.nz/check.html
 		devtools::check(pkg = pkg)		
 	} else if (what =="win"){
-		devtools::check_win(pkg = pkg)
+		# devtools::make_win(pkg = pkg)
+		devtools::build_win(pkg = pkg)
 	} else if (what == "release"){
 		devtools::release(pkg = pkg, check = check)
 	}

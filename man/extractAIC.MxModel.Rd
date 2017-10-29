@@ -19,8 +19,7 @@
 - AIC value
 }
 \description{
-Returns the AIC for an OpenMx model
-helper function for \code{\link{logLik.MxModel}} (which enables AIC(model); logLik(model); BIC(model)
+Returns the AIC for an OpenMx model.
 Original Author: Brandmaier
 }
 \examples{
@@ -54,6 +53,7 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
   \code{\link{umxSummary.MxModel}},
+  \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
 }
