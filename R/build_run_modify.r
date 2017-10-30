@@ -812,7 +812,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 		selDefs = umx_paste_names(selDefs, suffix, 1:2)
 	}
 	if(any(selDefs %in% selDVs)) {
-		warning("selDefs was found in selDVs: You probably gave me all the vars in selDVs instead of just the DEPENDENT variable");
+		warning("selDefs was found in selDVs: You probably gave me all the variables in selDVs instead of just the DEPENDENT variable");
 	}
 	if(length(selDVs)/nSib != 1){
 		stop("DV list must be 1 variable (2 twins)... You tried ", length(selDVs)/nSib)
@@ -1226,7 +1226,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param covMethod How to treat covariates: "fixed" (default) or "random".
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.
+#' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
@@ -1519,10 +1519,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 				# = Notes: Ordinal requires:    =
 				# ===============================
 				# 1. Set to mxFactor
-				# 2. For Binary vars:
-				#   1. Means of binary vars fixedAt 0
-				#   2. A + C + E for binary vars is constrained to 1 
-				# 4. For Ordinal vars, first 2 thresholds fixed
+				# 2. For Binary variables:
+				#   1. Means of binary variables fixedAt 0
+				#   2. A + C + E for binary variables is constrained to 1 
+				# 4. For Ordinal variables, first 2 thresholds fixed
 				# 5. WLS as an option.
 				# 6. Option to fix all (or all but the first 2??) thresholds for left-censored data.
 		        #   # TODO
@@ -1602,9 +1602,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 					# ===================================
 					# = Constrain Ordinal variance @1  =
 					# ===================================
-					# Algebra to pick out the ord vars
-					# TODO check this way of using twin 1 to pick where the bin vars are is robust...
-					the_bin_cols = which(isBin)[1:nVar] # columns in which the bin vars appear for twin 1, i.e., c(1,3,5,7)
+					# Algebra to pick out the ordinal variables
+					# TODO check using twin 1 to pick where the bin variables are is robust...
+					the_bin_cols = which(isBin)[1:nVar] # columns in which the bin variables appear for twin 1, i.e., c(1,3,5,7)
 					binBracketLabels = paste0("Vtot[", the_bin_cols, ",", the_bin_cols, "]")
 
 					top = mxModel(top,
@@ -2197,7 +2197,6 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	umx_check_names(selDVs, dzData)
 	# message("selDVs: ", omxQuotes(selDVs))
 	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
-	vars = selDVs[1:nVar]
 	dataType = umx_is_cov(dzData)
 	if(dataType == "raw") {
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
@@ -2439,7 +2438,6 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 
 	obsMZmeans = colMeans(mzData, na.rm=TRUE);
 	nVar       = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
-	vars       = selDVs[1:nVar]
 	model = mxModel(name,
 		mxModel("top",
 			umxLabel(mxMatrix("Full", 1, nVar*nSib, free=T, values=obsMZmeans, dimnames=list("means", selDVs), name="expMean")), # Means 
@@ -2588,7 +2586,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' # = Load and Process Data =
 #' # =========================
 #' data('us_skinfold_data')
-#' # rescale vars
+#' # rescale variables
 #' us_skinfold_data[,c('bic_T1', 'bic_T2')] <- us_skinfold_data[,c('bic_T1', 'bic_T2')]/3.4
 #' us_skinfold_data[,c('tri_T1', 'tri_T2')] <- us_skinfold_data[,c('tri_T1', 'tri_T2')]/3
 #' us_skinfold_data[,c('caf_T1', 'caf_T2')] <- us_skinfold_data[,c('caf_T1', 'caf_T2')]/3
@@ -2774,7 +2772,7 @@ umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 
 #' umxRAM2Ordinal 
 #'
-#' umxRAM2Ordinal: Convert a RAM model whose data contain ordinal vars to a threshold-based model
+#' umxRAM2Ordinal: Convert a RAM model whose data contain ordinal variables to a threshold-based model
 #'
 #' @param model An RAM model to add thresholds too.
 #' @param verbose Tell the user what was added and why (Default = TRUE)
@@ -3609,7 +3607,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 	if(!is.null(formedBy) && !is.null(forms)) { stop("Error in mxLatent: Only one of forms or formedBy can be set") }
 	if(is.null(data)){ stop("Error in mxLatent: you have to provide the data that will be used in the model") }
 	# ==========================================================
-	# = NB: If any vars are ordinal, a call to umxMakeThresholdsMatrices will be made
+	# = NB: If any variables are ordinal, a call to umxMakeThresholdsMatrices will be made
 	isCov = umx_is_cov(data, boolean = TRUE)
 	if( any(!is.null(forms))) {
 		manifests <- forms
@@ -4230,17 +4228,17 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' 
 #' @param from either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"
-#' @param to one or more target variables for one-headed paths, e.g "A" or c("A","B") 
-#' @param with same as "to = vars, arrows = 2". nb: from, to= and var=  must be left empty (their default)
-#' @param var equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)
-#' @param cov equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)
+#' @param to one or more target variables for one-headed paths, e.g "A" or c("A","B").
+#' @param with 2-headed path from<--> with. to= and var=  must be left empty.
+#' @param var equivalent to setting from and arrows = 2". nb: from, to, and with must be left empty.
+#' @param cov convenience equivalent to with for 2 variabales. nb: from, to, and with must be left empty.
 #' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2".
 #' nb: from, to, and with must be left empty (their default)
 #' @param fromEach Like all.bivariate, but with one head arrows. 'to' can be set.
 #' @param unique.pairs equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)
-#' @param forms Paired with from, this will build a formative variable. from vars form the latent.
-#' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' vars.
-#' @param Cholesky Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.
+#' @param forms Build a formative variable. 'from' variables form the latent.
+#' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' variables.
+#' @param Cholesky Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.
 #' @param defn latent variable, var@0 mean fixed, with label-based as data source
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
 #' @param v1m0 variance of 1 and mean of zero in one call.
@@ -4364,8 +4362,8 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		nFrom = length(from)
 		nTo   = length(to)
 		if(!(nTo >= nFrom)){
-			stop("Must have at least as many 'to' vars as latents for Cholesky: you gave me ",
-			nTo, " to vars and ", nFrom, " Cholesky latents")
+			stop("Must have at least as many 'to' variables as latents for Cholesky: you gave me ",
+			nTo, " to variables and ", nFrom, " Cholesky latents")
 		}
 		if(!is.na(labels)){
 			message("setting labels for Cholesky is tricky: Leave blank to have me do this for you automatically.")
@@ -4445,7 +4443,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		}
 
 		if(length(forms) > 1){
-			stop("It's tricky to setup multiple forms vars in 1 line. e-mail if you'd like this to work..")
+			stop("It's tricky to setup multiple forms variables in 1 line. e-mail if you'd like this to work..")
 		} else {
 			numPaths  = length(forms)
 			free      = rep(TRUE, numPaths)

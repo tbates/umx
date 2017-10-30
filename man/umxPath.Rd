@@ -16,13 +16,13 @@ umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 \arguments{
 \item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
 
-\item{to}{one or more target variables for one-headed paths, e.g "A" or c("A","B")}
+\item{to}{one or more target variables for one-headed paths, e.g "A" or c("A","B").}
 
-\item{with}{same as "to = vars, arrows = 2". nb: from, to= and var=  must be left empty (their default)}
+\item{with}{2-headed path from<--> with. to= and var=  must be left empty.}
 
-\item{var}{equivalent to setting "from = vars, arrows = 2". nb: from, to, and with must be left empty (their default)}
+\item{var}{equivalent to setting from and arrows = 2". nb: from, to, and with must be left empty.}
 
-\item{cov}{equivalent to setting "from = X, to = Y, arrows = 2". nb: from, to, and with must be left empty (their default)}
+\item{cov}{convenience equivalent to with for 2 variabales. nb: from, to, and with must be left empty.}
 
 \item{unique.bivariate}{equivalent to setting "connect = "unique.bivariate", arrows = 2".
 nb: from, to, and with must be left empty (their default)}
@@ -31,10 +31,10 @@ nb: from, to, and with must be left empty (their default)}
 
 \item{fromEach}{Like all.bivariate, but with one head arrows. 'to' can be set.}
 
-\item{forms}{Paired with from, this will build a formative variable. from vars form the latent.
-Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' vars.}
+\item{forms}{Build a formative variable. 'from' variables form the latent.
+Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' variables.}
 
-\item{Cholesky}{Treat \strong{Cholesky} vars as latent and \strong{to} as measured, and connect as in an ACE model.}
+\item{Cholesky}{Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.}
 
 \item{defn}{latent variable, var@0 mean fixed, with label-based as data source}
 

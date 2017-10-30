@@ -45,8 +45,9 @@ umxPlotIP(model, file = NA)
 - \code{\link{plot}()}, \code{\link{umxSummary}()}
 
 Other Plotting functions: \code{\link{plot.MxModel}},
-  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}}
+  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
+  \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxE}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
@@ -57,8 +58,8 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxCompare}}, \code{\link{umxConfint}},
   \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
   \code{\link{umxFitIndices}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
-  \code{\link{umxPlotGxE}},
+  \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
+  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxSummary.MxModel}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}},
