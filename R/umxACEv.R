@@ -1,4 +1,3 @@
-#
 #   Copyright 2007-2017 Copyright 2007-2017 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -118,7 +117,8 @@
 #' m1 = umxACEv(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
 
 #' # We can modify this model, dropping shared environment, and see a comparison
-#' m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
+# # TODO change c to C etc
+#' m2 = umxModify(m1, update = "C_r1c1", comparison = TRUE)
 
 #' # =====================================
 #' # = Bivariate height and weight model =
@@ -557,13 +557,17 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 		if(addStd){
 			newTop = mxModel(model$top,
 				mxMatrix(name  = "I", "Iden", nVar, nVar), # nVar Identity matrix
-				mxAlgebra(name = "Vtot", A + C+ E),        # Total variance
-				# TODO test that these are identical in all cases
 				# mxAlgebra(vec2diag(1/diag2vec(Vtot)), name = "Vtot"), # total variance --> SD
-				# mxAlgebra(name = "SD", solve(I * Vtot)), # total variance --> SD 
-				mxAlgebra(name = "A_std", Vtot %*% A), # standardized A
-				mxAlgebra(name = "C_std", Vtot %*% C), # standardized C
-				mxAlgebra(name = "E_std", Vtot %*% E)  # standardized E
+				mxAlgebra(name = "Vtot", A + C+ E),        # Total variance
+				mxAlgebra(name = "InvSD", sqrt(solve(I * Vtot))), # total variance --> 1/SD
+				# TODO test that these are identical in all cases
+
+				# Standardized _variance_ coefficients ready to be stacked together
+				A_std = InvSD %&% A # Standardized variance coefficients
+
+				mxAlgebra(name = "A_std", InvSD %&% A), # standardized A
+				mxAlgebra(name = "C_std", InvSD %&% C), # standardized C
+				mxAlgebra(name = "E_std", InvSD %&% E)  # standardized E
 			)
 			model = mxModel(model, newTop)
 			if(addCI){
@@ -678,12 +682,15 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 
 	if(std){
 		message("Standardized solution")
-		Vtot = A + C + E;         # Total variance
-		I  <- diag(nVar);         # nVar Identity matrix
+		Vtot  = A + C + E; # Total variance
+		I     = diag(nVar); # nVar Identity matrix
+		InvSD = sqrt(solve(I * Vtot))
+
 		# Standardized _variance_ coefficients ready to be stacked together
-		A_std <- Vtot %*% A; # Standardized variance coefficients
-		C_std <- Vtot %*% C;
-		E_std <- Vtot %*% E;
+		A_std = InvSD %&% A 	# Standardized variance coefficients
+		C_std = InvSD %&% C
+		E_std = InvSD %&% E
+		
 		AClean = A_std
 		CClean = C_std
 		EClean = E_std
@@ -700,10 +707,9 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	rowNames = sub("_.1$", "", selDVs[1:nVar])
 	Estimates = data.frame(cbind(AClean, CClean, EClean), row.names = rowNames, stringsAsFactors = FALSE);
 
+	colNames = c("A", "C", "E")
 	if(model$top$dzCr$values == .25){
 		colNames = c("A", "D", "E")
-	} else {
-		colNames = c("A", "C", "E")
 	}
 	names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
 	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
@@ -881,8 +887,8 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 		# TODO need to implement umx_standardize_ACEv
 		# model = umx_standardize_ACE(model)
 	}
-	message("I have not yet implemented the plot method for umxACEv")
-	return()
+	message("I am  just starting to implement the plot method for umxACEv")
+	# return()
 	out = "";
 	latents  = c();
 	if(model$MZ$data$type == "raw"){
@@ -897,12 +903,12 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 		if(class(value) == "numeric") {
 			value = round(value, digits)
 		}
-		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
-			from    = sub('([ace])_r([0-9]+)c([0-9]+)', '\\1\\3', thisParam, perl = T);  # a c or e
-			target  = as.numeric(sub('([ace])_r([0-9]+)c([0-9]+)', '\\2', thisParam, perl = T));
+		if (grepl("^[ACE]_r[0-9]+c[0-9]+", thisParam)) { # a c e
+			from    = sub('([ACE])_r([0-9]+)c([0-9]+)', '\\1\\3', thisParam, perl = T);  # a c or e
+			target  = as.numeric(sub('([ACE])_r([0-9]+)c([0-9]+)', '\\2', thisParam, perl = T));
 			target  = selDVs[as.numeric(target)]
 			latents = append(latents, from)
-			show = T
+			show    = TRUE
 		} else { # means probably
 			if(means){
 				show = TRUE
@@ -929,8 +935,8 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 
 	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
 	# grep('a', latents, value=T)
-	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
-	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value=T), collapse="; "), "};\n") # {rank=min; c1; e1}
+	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; a1; a2}
+	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
 	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
 	xmu_dot_maker(model, file, digraph)
 } # end umxPlotACE
