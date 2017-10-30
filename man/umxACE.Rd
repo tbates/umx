@@ -51,7 +51,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{sep}{The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.}
+\item{sep}{The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 

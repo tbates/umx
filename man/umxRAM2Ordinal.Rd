@@ -27,7 +27,7 @@ umxRAM2Ordinal(model, verbose = T, thresholds = c("deviationBased",
 - \code{\link{mxModel}}
 }
 \description{
-umxRAM2Ordinal: Convert a RAM model whose data contain ordinal vars to a threshold-based model
+umxRAM2Ordinal: Convert a RAM model whose data contain ordinal variables to a threshold-based model
 }
 \examples{
 \dontrun{
