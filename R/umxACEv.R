@@ -96,7 +96,7 @@
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' umxSummary(m1, std = FALSE) # unstandardized
-#' # TODO: tip == with report = "html", umxSummary can print the table to your browser!
+#' # tip: with report = "html", umxSummary can print the table to your browser!
 #' plot(m1)
 #' 
 #' # ========================================================
@@ -116,9 +116,9 @@
 #' # 3. umxACEv picks the variables it needs from the data.
 #' # 4. You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
 #' m1 = umxACEv(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
-
+#'
 #' # We can modify this model, dropping shared environment, and see a comparison
-#' m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
+#' m2 = umxModify(m1, update = "C_r1c1", comparison = TRUE)
 
 #' # =====================================
 #' # = Bivariate height and weight model =
@@ -845,95 +845,3 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 
 #' @export
 umxSummary.MxModel.ACEv <- umxSummaryACEv
-
-
-#' Make a graphical display of an ACE variance model
-#'
-#' Plots an ACE model graphically, opening the result in the browser (or a graphviz application).
-#'
-#' @aliases plot.MxModel.ACEv
-#' @param x \code{\link{mxModel}} to plot (created by umxACEv in order to inherit the MxModel.ACE class)
-#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
-#' @param digits How many decimals to include in path loadings (default is 2)
-#' @param means Whether to show means paths (default is FALSE)
-#' @param std Whether to standardize the model (default is TRUE)
-#' @param ... Additional (optional) parameters
-#' @return - optionally return the dot code
-#' @export
-#' @family Plotting functions
-#' @family Reporting functions
-#' @references - \url{http://www.github.com/tbates/umx}
-#' @examples
-#' require(umx)
-#' data(twinData)
-#' selDVs = "bmi"
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
-#' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
-#' plot(m1, std = FALSE) # don't standardize
-umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, ...) {
-	if(!class(x) == "MxModel.ACEv"){
-		stop("The first parameter of umxPlotACE must be an ACE model, you gave me a ", class(x))
-	}
-	model = x # Just to be clear that x is a model
-	if(std){
-		message("TODO need to implement umx_standardize_ACEv")
-		# TODO need to implement umx_standardize_ACEv
-		# model = umx_standardize_ACE(model)
-	}
-	message("I have not yet implemented the plot method for umxACEv")
-	return()
-	out = "";
-	latents  = c();
-	if(model$MZ$data$type == "raw"){
-		selDVs = names(model$MZ$data$observed)
-	}else{
-		selDVs = dimnames(model$MZ$data$observed)[[1]]
-	}
-	varCount = length(selDVs)/2;
-	parameterKeyList = omxGetParameters(model);
-	for(thisParam in names(parameterKeyList) ) {
-		value = parameterKeyList[thisParam]
-		if(class(value) == "numeric") {
-			value = round(value, digits)
-		}
-		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
-			from    = sub('([ace])_r([0-9]+)c([0-9]+)', '\\1\\3', thisParam, perl = T);  # a c or e
-			target  = as.numeric(sub('([ace])_r([0-9]+)c([0-9]+)', '\\2', thisParam, perl = T));
-			target  = selDVs[as.numeric(target)]
-			latents = append(latents, from)
-			show = T
-		} else { # means probably
-			if(means){
-				show = TRUE
-			} else {
-				show = FALSE
-			}
-			from   = thisParam;
-			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl=T) 
-		}
-		if(show){
-			out = paste0(out, from, " -> ", target, " [label = \"", value, "\"]", ";\n")
-		}
-	}
-	preOut = "\t# Latents\n"
-	latents = unique(latents)
-	for(var in latents) {
-	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
-	}
-
-	preOut = paste0(preOut, "\n\t# Manifests\n")
-	for(var in selDVs[1:varCount]) {
-	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
-	}
-
-	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
-	# grep('a', latents, value=T)
-	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
-	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value=T), collapse="; "), "};\n") # {rank=min; c1; e1}
-	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
-	xmu_dot_maker(model, file, digraph)
-} # end umxPlotACE
-
-#' @export
-plot.MxModel.ACEv <- umxPlotACEv

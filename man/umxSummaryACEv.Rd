@@ -62,11 +62,12 @@ selDVs = c("bmi1", "bmi2")
 mzData <- subset(twinData, zygosity == "MZFF")
 dzData <- subset(twinData, zygosity == "DZFF")
 m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 umxSummary(m1)
 \dontrun{
 umxSummary(m1, file = NA);
 umxSummary(m1, file = "name", std = TRUE)
-stdFit = umxSummary(m1, returnStd = TRUE);
+stdFit = umxSummary(m1, returnStd = TRUE)
 }
 }
 \references{
