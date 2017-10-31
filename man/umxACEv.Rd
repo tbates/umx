@@ -137,7 +137,7 @@ umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled AC
 # 4. You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
 m1 = umxACEv(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
 # We can modify this model, dropping shared environment, and see a comparison
-m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
+m2 = umxModify(m1, update = "C_r1c1", comparison = TRUE)
 # =====================================
 # = Bivariate height and weight model =
 # =====================================

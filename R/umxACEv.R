@@ -460,17 +460,12 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with ", dataType, " data"))
 
 				# Drop unused variables from matrix
-				het_mz = umx_reorder(mzData, selDVs)
-				het_dz = umx_reorder(dzData, selDVs)
+				het_mz    = umx_reorder(mzData, selDVs)
+				het_dz    = umx_reorder(dzData, selDVs)
+
+				# start variances
 				varStarts = diag(het_mz)[1:nVar]
-				
-				if(nVar == 1){
-					# 2017-04-03 04:34PM: sqrt to switch from var to path coefficient scale
-					varStarts = sqrt(varStarts)/3
-				} else {
-					varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
-				}
-				varStarts = matrix(varStarts, nVar, nVar)
+				varStarts = matrix(varStarts/3, nVar, nVar)
 
 				top = mxModel("top")
 				MZ = mxModel("MZ", 
@@ -562,9 +557,8 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				mxAlgebra(name = "InvSD", sqrt(solve(I * Vtot))), # total variance --> 1/SD
 				# TODO test that these are identical in all cases
 
-				# Standardized _variance_ coefficients ready to be stacked together
-				A_std = InvSD %&% A # Standardized variance coefficients
-
+				# Standardised _variance_ coefficients ready to be stacked together
+				# A_std = InvSD %&% A 
 				mxAlgebra(name = "A_std", InvSD %&% A), # standardized A
 				mxAlgebra(name = "C_std", InvSD %&% C), # standardized C
 				mxAlgebra(name = "E_std", InvSD %&% E)  # standardized E
@@ -588,11 +582,6 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 		if(autoRun){
 			model = mxRun(model)
 			umxSummary(model)
-			# if(!is.na(umx_set_auto_plot(silent = TRUE))){
-				# plot(model)
-			# }
-		} else {
-			# --
 		}
 		return(model)
 	}
@@ -832,7 +821,7 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	if(!is.na(file)) {
 		# message("making dot file")
 		# TODO create plot method for ACEv
-		message("Standarize ACE and plot methods not yet implemented... All a lot of work.")
+		message("Standarize ACEv and plot var-comp methods not yet implemented.")
 		# if(hasCIs & CIs){
 		# 	umxPlotACE(CI_Fit, file = file, std = FALSE)
 		# } else {

@@ -28,6 +28,7 @@
 	}
 	umx_set_auto_run(TRUE)
 	umx_set_auto_plot(TRUE)
+	umx_complete_dollar()
 	packageStartupMessage("For an overview type '?umx'")
 }
 
@@ -60,8 +61,6 @@
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
 
-
-	
 utils::globalVariables(c(
 	'xtable',
 	'M', 'S',

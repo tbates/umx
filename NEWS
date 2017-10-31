@@ -1,5 +1,5 @@
 # umx 1.9.0 (Octoberber 2017, R unstable)
-* *TIP*: Show small estimated paths with `umx_parameters(model, "below", .1)`
+* *TIP*: Filter paths by estimated size with `umx_parameters(model, "below", .1)`
 * *TIP*: `?umxRAM` has a sketch mode. just set `data` to a list of manifest variable names.
 * NEW: CIs in output tables!
 * NEW `?umxACEcov_fixed` Beta1: Handles main effects of covariates in the means of continuous variables.

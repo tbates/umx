@@ -337,118 +337,6 @@ loadings.MxModel <- function(x, ...) {
 	x$A$values[x@manifestVars, x@latentVars, drop = FALSE]
 }
 
-#' Return a standardized version of a Structural Model
-#'
-#' umx_standardize_RAM takes a RAM-style model, and returns standardized version.
-#'
-#' @param model The \code{\link{mxModel}} you wish to standardise
-#' @param return What to return. Valid options: "parameters", "matrices", or "model"
-#' @param Amatrix Optionally tell the function what the name of the asymmetric matrix is (defaults to RAM standard A)
-#' @param Smatrix Optionally tell the function what the name of the symmetric matrix is (defaults to RAM standard S)
-#' @param Mmatrix Optionally tell the function what the name of the means matrix is (defaults to RAM standard M)
-#' @return - a \code{\link{mxModel}} or else parameters or matrices if you request those
-#' @family Reporting functions
-#' @references - \url{http://github.com/tbates/umx}
-#' @export
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' m1 = umx_standardize_RAM(m1, return = "model")
-#' summary(m1)
-umx_standardize_RAM <- function(model, return = "parameters", Amatrix = NA, Smatrix = NA, Mmatrix = NA) {
-	if (!(return == "parameters"|return == "matrices"|return == "model")) stop("Invalid 'return' parameter. Do you want do get back parameters, matrices or model?")
-	suppliedNames = all(!is.na(c(Amatrix,Smatrix)))
-	# if the objective function isn't RAMObjective, you need to supply Amatrix and Smatrix
-
-	if (!umx_is_RAM(model) & !suppliedNames ){
-		stop("I need either type = RAM model or the names of the equivalent of the A and S matrices.")
-	}
-	output <- model$output
-	# Stop if there is no objective function
-	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
-	# Stop if there is no output
-	if (length(output) < 1){
-		message("Model has not been run yet")
-		return(model)
-	}
-	# Get the names of the A, S and M matrices
-	if (is.character(Amatrix)){nameA <- Amatrix} else {nameA <- model$expectation$A}
-	if (is.character(Smatrix)){nameS <- Smatrix} else {nameS <- model$expectation$S}
-	if (is.character(Mmatrix)){nameM <- Mmatrix} else {nameM <- model$expectation$M}
-	# Get the A and S matrices, and make an identity matrix
-	A <- model[[nameA]]
-	S <- model[[nameS]]
-	I <- diag(nrow(S$values))
-	
-	# this can fail (non-invertable etc. so we wrap it in try-catch)
-	tryCatch({	
-		# Calculate the expected covariance matrix
-		IA <- solve(I - A$values)
-		expCov <- IA %*% S$values %*% t(IA)
-		# Return 1/SD to a diagonal matrix
-		invSDs <- 1/sqrt(diag(expCov))
-		# Give the inverse SDs names, because mxSummary treats column names as characters
-		names(invSDs) <- as.character(1:length(invSDs))
-		if (!is.null(dimnames(A$values))){names(invSDs) <- as.vector(dimnames(S$values)[[2]])}
-		# Put the inverse SDs into a diagonal matrix (might as well recycle my I matrix from above)
-		diag(I) <- invSDs
-		# Standardize the A, S and M matrices
-		#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
-		#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
-		stdA <- I %*% A$values %*% solve(I)
-		stdS <- I %*% S$values %*% I
-		# Populate the model
-		model[[nameA]]$values[,] <- stdA
-		model[[nameS]]$values[,] <- stdS
-		if (!is.na(nameM)){model[[nameM]]$values[,] <- rep(0, length(invSDs))}
-	}, warning = function(cond) {
-	    # warning-handler-code
-        message(cond)
-	}, error = function(cond) {
-	    cat("The model could not be standardized")
-        message(cond)
-	}, finally = {
-	    # cleanup-code
-	})
-
-	# Return the model, if asked
-	if(return=="model"){
-		return(model)
-	}else if(return=="matrices"){
-		# return the matrices, if asked
-		matrices <- list(model[[nameA]], model[[nameS]])
-		names(matrices) <- c("A", "S")
-		return(matrices)
-	}else if(return == "parameters"){
-		# return the parameters
-		#recalculate summary based on standardised matrices
-		p <- summary(model)$parameters
-		p <- p[(p[,2] == nameA)|(p[,2] == nameS),]
-		## get the rescaling factor
-		# this is for the A matrix
-		rescale <- invSDs[p$row] * 1/invSDs[p$col]
-		# this is for the S matrix
-		rescaleS <- invSDs[p$row] * invSDs[p$col]
-		# put the A and the S together
-		rescale[p$matrix == "S"] <- rescaleS[p$matrix == "S"]
-		# rescale
-		p[,5] <- p[,5] * rescale
-		p[,6] <- p[,6] * rescale
-		# rename the columns
-		# names(p)[5:6] <- c("Std. Estimate", "Std.Std.Error")
-		return(p)		
-	}
-}
 
 #' Get confidence intervals from an MxModel
 #'
@@ -3989,4 +3877,45 @@ umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std",
 		return(result)
 	}
 	# if estimate differs...
+}
+
+#' Test the difference between correlations for significance.
+#'
+#' @description
+#' umx_r_test is a wrapper around the cocor test of difference between correlations.
+#'
+#' @details
+#' Currently it handles the test of whether r.jk and r.hm differ in magnitude.
+#' i.e, two non-overlapping (no variable in common) correlations in the same dataset.
+#' In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
+#'
+#' @param data the dataset
+#' @param vars the 4 vars needed: "j & k" and "h & m"
+#' @param alternative two (default) or one-sided (greater less) test
+#' @return - 
+#' @export
+#' @family Stats
+#' @examples
+#' vars = c("mpg", "cyl", "disp", "hp")
+#' umx_r_test(mtcars, vars)
+umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "greater", "less")) {
+	alternative = match.arg(alternative)
+	test         = "silver2004"
+	alpha        = 0.05
+	conf.level   = 0.95
+	null.value   = 0
+	data.name    = NULL
+	var.labels   = NULL
+	return.htest = FALSE
+	jkhm = data[, vars]
+	cors = cor(jkhm)
+	# jkhm = 1234
+	r.jk = as.numeric(cors[vars[1], vars[2]])
+	r.hm = as.numeric(cors[vars[3], vars[4]])
+	r.jh = as.numeric(cors[vars[1], vars[3]])
+	r.jm = as.numeric(cors[vars[1], vars[4]])
+	r.kh = as.numeric(cors[vars[2], vars[3]])
+	r.km = as.numeric(cors[vars[2], vars[4]])
+	n = nrow(jkhm)	
+	cocor::cocor.dep.groups.nonoverlap(r.jk, r.hm, r.jh, r.jm, r.kh, r.km, n, alternative = alternative, test = test, alpha = alpha, conf.level = conf.level, null.value = null.value, data.name = data.name, var.labels = var.labels, return.htest = return.htest)
 }
