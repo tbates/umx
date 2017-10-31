@@ -28,7 +28,7 @@
 	}
 	umx_set_auto_run(TRUE)
 	umx_set_auto_plot(TRUE)
-	umx_complete_dollar()
+	# umx_complete_dollar()
 	packageStartupMessage("For an overview type '?umx'")
 }
 
