@@ -4,7 +4,7 @@
 \alias{umx_standardize_CP}
 \title{umx_standardize_CP}
 \usage{
-umx_standardize_CP(model)
+umx_standardize_CP(model, ...)
 }
 \arguments{
 \item{model}{an \code{\link{umxCP}} model to standardize}

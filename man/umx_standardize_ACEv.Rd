@@ -7,9 +7,9 @@
 umx_standardize_ACEv(model, ...)
 }
 \arguments{
-\item{...}{Other parameters.}
+\item{model}{An \code{\link{umxACEv}} model to standardize.}
 
-\item{fit}{An \code{\link{umxACEv}} model to standardize.}
+\item{...}{Other parameters.}
 }
 \value{
 - A standardized \code{\link{umxACEv}} model.
