@@ -22,7 +22,9 @@ umxValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 For models to be estimated, it is essential that path values start at credible values. umxValues takes on that task for you.
 umxValues can set start values for the free parameters in both RAM and Matrix \code{\link{mxModel}}s. It can also take an mxMatrix as input.
 It tries to be smart in guessing starts from the values in your data and the model type.
-note: If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
+}
+\details{
+\emph{note}: If you give umxValues a numeric input, it will use obj as the mean, and return a list of length n, with sd = sd.
 }
 \examples{
 require(umx)

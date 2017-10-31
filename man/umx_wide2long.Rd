@@ -21,8 +21,8 @@ Just detects the data columns for twin 1, and twin 2, then returns them stacked
 on top of each other (rbind) with the non-twin specific columns copied for each as well.
 }
 \examples{
-long = umx_wide2long(df = twinData, sep = "")
-long = umx_wide2long(df = twinData, sep = "", verbose = TRUE)
+long = umx_wide2long(data = twinData, sep = "")
+long = umx_wide2long(data = twinData, sep = "", verbose = TRUE)
 str(long)
 str(twinData)
 }

@@ -3,21 +3,21 @@
 \name{umxPlotACEv}
 \alias{umxPlotACEv}
 \alias{plot.MxModel.ACEv}
-\title{Make a graphical display of an ACE variance model}
+\title{Produce a graphical display of an ACE variance-components twin model}
 \usage{
 umxPlotACEv(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, ...)
 }
 \arguments{
-\item{x}{\code{\link{mxModel}} to plot (created by umxACEv in order to inherit the MxModel.ACE class)}
+\item{x}{\code{\link{umxACEv}} model to plot.}
 
-\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+\item{file}{The name of the dot file to write: Default ("name") = use the name of the model. NA = don't plot.}
 
-\item{digits}{How many decimals to include in path loadings (default is 2)}
+\item{digits}{How many decimals to include in path loadings (default = 2)}
 
-\item{means}{Whether to show means paths (default is FALSE)}
+\item{means}{Whether to show means paths (default = FALSE)}
 
-\item{std}{Whether to standardize the model (default is TRUE)}
+\item{std}{Whether to standardize the model (default = TRUE)}
 
 \item{...}{Additional (optional) parameters}
 }

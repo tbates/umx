@@ -1,3 +1,9 @@
+# Poems you should know by heart
+# https://en.wikipedia.org/wiki/O_Captain!_My_Captain!
+# https://en.wikipedia.org/wiki/The_Second_Coming_(poem)
+# https://en.wikipedia.org/wiki/Invictus
+# http://www.poetryfoundation.org/poem/173698get
+
 #
 #   Copyright 2007-2017 Copyright 2007-2017 Timothy C. Bates
 #
@@ -2161,6 +2167,7 @@ umx_msg <- function(x) {
 #' 
 #' *note*: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
 #' T1vars, T2 vars, T1 covs, T2 covs. This is what `covNames` accomplishes.
+#' @aliases tvars
 #' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
 #' @param sep A string separating the name and the twin suffix, e.g. "_T" (default is "")
 #' @param suffixes a list of terminal suffixes differentiating the twins default = c("1", "2"))
@@ -2177,8 +2184,8 @@ umx_msg <- function(x) {
 #' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
-#' # For quick-typing, vars is an alias for umx_paste_names
-#' vars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+#' # For quick-typing, tVars is an alias for umx_paste_names
+#' tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 #' @md
 umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
 	nameList = c()
@@ -2197,8 +2204,7 @@ umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL,
 	return(nameList)
 }
 #' @export
-#' @aliases umx_paste_names
-vars <- umx_paste_names
+tvars <- umx_paste_names
 
 #' umx_merge_CIs
 #'
@@ -4157,8 +4163,8 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @family Data Functions
 #' @family Twin Modeling Functions
 #' @examples
-#' long = umx_wide2long(df = twinData, sep = "")
-#' long = umx_wide2long(df = twinData, sep = "", verbose = TRUE)
+#' long = umx_wide2long(data = twinData, sep = "")
+#' long = umx_wide2long(data = twinData, sep = "", verbose = TRUE)
 #' str(long)
 #' str(twinData)
 umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
@@ -5178,11 +5184,124 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 	# Use case: include a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. With this function, the code goes:
 }
 
+# =============================
+# = Standardization Functions =
+# =============================
+
+
+#' Return a standardized version of a Structural Model
+#'
+#' umx_standardize takes umx models, including RAM and twin models, and returns a standardized version.
+#'
+#'
+#' @description
+#' Return the standardized version of a model (such as ACE, CP etc.)
+#'
+#' Versions exist for RAM, ACE, ACEv, ACEcov, IP, CP and GxE models.
+#'
+#' @param model The \code{\link{mxModel}} whose fit will be reported.
+#' @param ... Other parameters.
+#' @family Advanced Helpers
+#' \url{http://www.github.com/tbates/umx}
+#' @export
+umx_standardize <- function(model, ...){
+	UseMethod("umx_standardize", model)
+}
+
+#' @export
+umx_standardize.default <- function(model, ...){
+	stop("umx_standardize is not defined for objects of class:", class(model))
+}
+
+#' Return a standardized version of a Structural Model
+#'
+#' umx_standardize_RAM takes a RAM-style model, and returns standardized version.
+#'
+#' @param model The \code{\link{mxModel}} you wish to standardise
+#' @param ... Other options
+#' @return - standarized RAM model.
+#' @family Reporting functions
+#' @references - \url{http://github.com/tbates/umx}
+#' @export
+#' @examples
+#' require(umx)
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' m1 <- mxModel("One Factor", type = "RAM", 
+#' 	manifestVars = manifests, latentVars = latents, 
+#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = manifests, arrows = 2),
+#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' )
+#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' m1 = umx_standardize_RAM(m1, return = "model")
+#' m1 = umx_standardize(m1, return = "model")
+#' summary(m1)
+umx_standardize_RAM <- function(model, ...) {
+	if (!umx_is_RAM(model)){
+		stop("I need a RAM model")
+	}
+	output <- model$output
+	# Stop if there is no objective function.
+	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
+	# Stop if there is no output
+	if (length(output) < 1){
+		message("Model has not been run yet")
+		return(model)
+	}
+	# Get the names of the A, S and M matrices
+	nameA <- model$expectation$A
+	nameS <- model$expectation$S
+	nameM <- model$expectation$M
+	# Get the A and S matrices, and make an identity matrix
+	A <- model[[nameA]]
+	S <- model[[nameS]]
+	I <- diag(nrow(S$values))
+	
+	# this can fail (non-invertible etc. so we wrap it in try-catch)
+	tryCatch({	
+		# Calculate the expected covariance matrix
+		IA <- solve(I - A$values)
+		expCov <- IA %*% S$values %*% t(IA)
+		# Return 1/SD to a diagonal matrix
+		InvSD <- 1/sqrt(diag(expCov))
+		# Give the inverse SDs names, because mxSummary treats column names as characters
+		names(InvSD) <- as.character(1:length(InvSD))
+		if (!is.null(dimnames(A$values))){names(InvSD) <- as.vector(dimnames(S$values)[[2]])}
+		# Put the inverse SDs into a diagonal matrix (might as well recycle I matrix from above)
+		diag(I) <- InvSD
+		# Standardize the A, S and M matrices
+		#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
+		#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
+		stdA <- I %*% A$values %*% solve(I)
+		stdS <- I %*% S$values %*% I
+		# Populate the model
+		model[[nameA]]$values[,] <- stdA
+		model[[nameS]]$values[,] <- stdS
+		if (!is.na(nameM)){model[[nameM]]$values[,] <- rep(0, length(InvSD))}
+	}, warning = function(cond) {
+	    # warning-handler-code
+        message(cond)
+	}, error = function(cond) {
+	    cat("The model could not be standardized")
+        message(cond)
+	}, finally = {
+	    # cleanup-code
+	})
+	# Return the model, if asked
+	invisible(model)
+}
+#' @export
+umx_standardize.MxModel <- umx_standardize_RAM
+
 #' umx_standardize_ACE
 #'
 #' Standardize an ACE model
 #'
-#' @param fit an \code{\link{umxACE}} model to standardize
+#' @param model an \code{\link{umxACE}} model to standardize
+#' @param ... Other options
 #' @return - Standardized ACE \code{\link{umxACE}} model
 #' @export
 #' @family zAdvanced Helpers
@@ -5195,45 +5314,48 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #' dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
 #' m1  = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' std = umx_standardize_ACE(m1)
-umx_standardize_ACE <- function(fit) {
-	if(typeof(fit) == "list"){ # call self recursively
-		for(thisFit in fit) {
-			message("Output for Model: ",thisFit$name)
-			umx_standardize_ACE(thisFit)
+umx_standardize_ACE <- function(model, ...) {
+	if(typeof(model) == "list"){ # Call self recursively
+		for(thisFit in model) {
+			message("Output for Model: ", thisFit$name)
+			umx_standardize(thisFit)
 		}
 	} else {
-		if(!umx_has_been_run(fit)){
+		if(!umx_has_been_run(model)){
 			stop("I can only standardize ACE models that have been run. Just do\n",
 			"yourModel = mxRun(yourModel)")
 		}
-		selDVs = dimnames(fit$top.expCovMZ)[[1]]
+		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar <- length(selDVs)/2;
 		# Calculate standardised variance components
-		a  <- mxEval(top.a, fit);   # Path coefficients
-		c  <- mxEval(top.c, fit);
-		e  <- mxEval(top.e, fit);
+		a  <- mxEval(top.a, model); # Path coefficients
+		c  <- mxEval(top.c, model);
+		e  <- mxEval(top.e, model);
 
-		A  <- mxEval(top.A, fit);   # Variances
-		C  <- mxEval(top.C, fit);
-		E  <- mxEval(top.E, fit);
-		Vtot = A+C+E;               # Total variance
+		A  <- mxEval(top.A, model); # Variances
+		C  <- mxEval(top.C, model);
+		E  <- mxEval(top.E, model);
+		Vtot = A + C + E;           # Total variance
 		I  <- diag(nVar);           # nVar Identity matrix
 		SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
 	
 		# Standardized _path_ coefficients ready to be stacked together
-		fit$top$a$values = SD %*% a; # Standardized path coefficients
-		fit$top$c$values = SD %*% c;
-		fit$top$e$values = SD %*% e;
-		return(fit)
+		model$top$a$values = SD %*% a; # Standardized path coefficients
+		model$top$c$values = SD %*% c;
+		model$top$e$values = SD %*% e;
+		return(model)
 	}
 }
+#' @export
+umx_standardize.MxModel.ACE <- umx_standardize_ACE
 
 
 #' umx_standardize_ACEcov
 #'
 #' Standardize an ACE model with covariates
 #'
-#' @param fit an \code{\link{umxACEcov}} model to standardize
+#' @param model an \code{\link{umxACEcov}} model to standardize
+#' @param ... Other options
 #' @return - Standardized \code{\link{umxACEcov}} model
 #' @export
 #' @family zAdvanced Helpers
@@ -5250,95 +5372,103 @@ umx_standardize_ACE <- function(fit) {
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 #' 	 suffix = "", autoRun = TRUE)
 #' fit = umx_standardize_ACEcov(m1)
-umx_standardize_ACEcov <- function(fit) {
-	if(typeof(fit) == "list"){ # call self recursively
-		for(thisFit in fit) {
+umx_standardize_ACEcov <- function(model, ...) {
+	if(typeof(model) == "list"){ # call self recursively
+		for(thisFit in model) {
 			message("Output for Model: ",thisFit$name)
-			umx_standardize_ACEcov(thisFit)
+			umx_standardize(thisFit)
 		}
 	} else {
-		if(!umx_has_been_run(fit)){
+		if(!umx_has_been_run(model)){
 			stop("I can only standardize models that have been run. Just do\n",
 			"yourModel = mxRun(yourModel)")
 		}
-		if(!is.null(fit$top$a_std)){
+		if(!is.null(model$top$a_std)){
 			# Standardized general path components
-			fit$top$a$values = fit$top$a_std$result # standardized a
-			fit$top$c$values = fit$top$c_std$result # standardized c
-			fit$top$e$values = fit$top$e_std$result # standardized e
+			model$top$a$values = model$top$a_std$result # standardized a
+			model$top$c$values = model$top$c_std$result # standardized c
+			model$top$e$values = model$top$e_std$result # standardized e
 		} else {
 			stop("Please run umxACEcov(..., std = TRUE). All I do is copy a_std values into a..., so model has to have been run!")
 		}
-		return(fit)
+		return(model)
 	}
 }
 
+#' @export
+umx_standardize.MxModel.ACEcov <- umx_standardize_ACEcov
+
+
 #' umx_standardize_IP
 #'
-#' This function simply inserts the standardized IP components into the ai ci ei and as cs es matrices
+#' This function simply copys the standardized IP components into the ai ci ei and as cs es matrices
 #'
-#' @param fit an \code{\link{umxIP}} model to standardize
+#' @param model an \code{\link{umxIP}} model to standardize
+#' @param ... Other options
 #' @return - standardized IP \code{\link{umxIP}} model
 #' @export
 #' @family zAdvanced Helpers
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' fit = umx_standardize_IP(fit)
+#' model = umx_standardize_IP(model)
 #' }
-umx_standardize_IP <- function(fit){
-	if(!is.null(fit$top$ai_std)){
+umx_standardize_IP <- function(model, ...){
+	if(!is.null(model$top$ai_std)){
 		# Standardized general path components
-		fit$top$ai$values = fit$top$ai_std$result # standardized ai
-		fit$top$ci$values = fit$top$ci_std$result # standardized ci
-		fit$top$ei$values = fit$top$ei_std$result # standardized ei
+		model$top$ai$values = model$top$ai_std$result # standardized ai
+		model$top$ci$values = model$top$ci_std$result # standardized ci
+		model$top$ei$values = model$top$ei_std$result # standardized ei
 	    # Standardized specific coeficients
-		fit$top$as$values = fit$top$as_std$result # standardized as
-		fit$top$cs$values = fit$top$cs_std$result # standardized cs
-		fit$top$es$values = fit$top$es_std$result # standardized es
+		model$top$as$values = model$top$as_std$result # standardized as
+		model$top$cs$values = model$top$cs_std$result # standardized cs
+		model$top$es$values = model$top$es_std$result # standardized es
 	} else {
 		stop("Please run umxIP(..., std = TRUE). All I do is copy ai_std values into ai..., so they have to be run!")
 	}
-	return(fit)
+	return(model)
 }
+#' @export
+umx_standardize.MxModel.IP <- umx_standardize_IP
 
 #' umx_standardize_CP
 #'
 #' This function simply inserts the standardized CP components into the ai ci ei and as cs es matrices
 #'
-#' @param fit an \code{\link{umxCP}} model to standardize
+#' @param model an \code{\link{umxCP}} model to standardize
+#' @param ... Other options
 #' @return - standardized \code{\link{umxCP}} model
 #' @export
 #' @family zAdvanced Helpers
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' fit = umx_standardize_CP(fit)
+#' model = umx_standardize_CP(model)
 #' }
-umx_standardize_CP <- function(fit){
-	if(!is.null(fit$top$ai_std)){
+umx_standardize_CP <- function(model, ...){
+	if(!is.null(model$top$ai_std)){
 		# Standardized general path components
-		fit$top$matrices$cp_loadings$values = fit$top$algebras$cp_loadings_std$result # standardized cp loadings
-		# Standardized specific path coefficienfitts
-		fit$top$as$values = fit$top$as_std$result # standardized as
-		fit$top$cs$values = fit$top$cs_std$result # standardized cs
-		fit$top$es$values = fit$top$es_std$result # standardized es
-		return(fit)
+		model$top$matrices$cp_loadings$values = model$top$algebras$cp_loadings_std$result # standardized cp loadings
+		# Standardized specific path coefficienmodelts
+		model$top$as$values = model$top$as_std$result # standardized as
+		model$top$cs$values = model$top$cs_std$result # standardized cs
+		model$top$es$values = model$top$es_std$result # standardized es
+		return(model)
 	} else {
-		selDVs = dimnames(fit$top.expCovMZ)[[1]]
+		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2;
-		nFac   = dim(fit$top$matrices$a_cp)[[1]]	
+		nFac   = dim(model$top$matrices$a_cp)[[1]]	
 		# Calculate standardised variance components
-		a_cp  = mxEval(top.a_cp , fit); # nFac * nFac matrix of path coefficients flowing into the cp_loadings array
-		c_cp  = mxEval(top.c_cp , fit);
-		e_cp  = mxEval(top.e_cp , fit);
-		as = mxEval(top.as, fit); # Specific factor path coefficients
-		cs = mxEval(top.cs, fit);
-		es = mxEval(top.es, fit);
-		cp_loadings = mxEval(top.cp_loadings, fit); # nVar * nFac matrix
-		A  = mxEval(top.A, fit);  # Variances
-		C  = mxEval(top.C, fit);
-		E  = mxEval(top.E, fit);
+		a_cp  = mxEval(top.a_cp , model); # nFac * nFac matrix of path coefficients flowing into the cp_loadings array
+		c_cp  = mxEval(top.c_cp , model);
+		e_cp  = mxEval(top.e_cp , model);
+		as = mxEval(top.as, model); # Specific factor path coefficients
+		cs = mxEval(top.cs, model);
+		es = mxEval(top.es, model);
+		cp_loadings = mxEval(top.cp_loadings, model); # nVar * nFac matrix
+		A  = mxEval(top.A, model);  # Variances
+		C  = mxEval(top.C, model);
+		E  = mxEval(top.E, model);
 		Vtot = A + C + E; # total variance
 		nVarIden = diag(nVar)
 		SD       = solve(sqrt(nVarIden * Vtot)); # inverse of diagonal matrix of standard deviations  (in classic MX -> "(\sqrt(I.Vtot))~"
@@ -5348,101 +5478,13 @@ umx_standardize_CP <- function(fit){
 		cs_std = SD %*% cs;
 		es_std = SD %*% es;
 	    # Standardized common and specific path coefficients
-		fit$top$cp_loadings$values = std_commonLoadings # standardized cp loadings
-		fit$top$as$values = as_std # standardized as
-		fit$top$cs$values = cs_std # standardized cs
-		fit$top$es$values = es_std # standardized es
-		return(fit)
+		model$top$cp_loadings$values = std_commonLoadings # standardized cp loadings
+		model$top$as$values = as_std # standardized as
+		model$top$cs$values = cs_std # standardized cs
+		model$top$es$values = es_std # standardized es
+		return(model)
 	}
 }
-# Poems you should know by heart
-# https://en.wikipedia.org/wiki/O_Captain!_My_Captain!
-# https://en.wikipedia.org/wiki/The_Second_Coming_(poem)
-# https://en.wikipedia.org/wiki/Invictus
-# http://www.poetryfoundation.org/poem/173698get
-
-
-# ==============
-# = Deprecated =
-# ==============
-#' umx_get_cores
-#'
-#' This function is now deprecated: Get the number of cores using \\code{\link{umx_set_cores}}
-#' with no parameters.
-#'
-#' @param model an (optional) model to get from. If left NULL, the global option is returned
-#' @return - number of cores
 #' @export
-#' @family umx deprecated
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
-#' # Deprecated function: to get cores, use umx_set_cores() with no value
-umx_get_cores <- function(model = NULL) {
-	message("Deprecated function: to get cores, use umx_set_cores() with no value")
-	# depends on parallel::detectCores
-	n = mxOption(model, "Number of Threads")
-	message(n, "/", parallel::detectCores())
-	invisible(n)
-}
+umx_standardize.MxModel.CP <- umx_standardize_CP
 
-#' umx_get_optimizer
-#'
-#' This function is now deprecated: Get the current optimizer, use \\code{\link{umx_set_optimizer}}
-#' with no parameters.
-#'
-#' @param model (optional) model to get from. If left NULL, the global option is returned
-#' @return - the optimizer  - a string
-#' @export
-#' @family umx deprecated
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
-#' # Deprecated function: to get cores, use umx_set_cores() with no value
-umx_get_optimizer <- function(model = NULL) {
-	message("Deprecated function: to get optimizer, call umx_set_optimizer() with no value")
-	if(is.null(model)){
-		mxOption(NULL, "Default optimizer")
-	} else {
-		mxOption(model, "Default optimizer")
-	}
-}
-
-#' Test the difference between correlations for significance.
-#'
-#' @description
-#' umx_r_test is a wrapper around the cocor test of difference between correlations.
-#'
-#' @details
-#' Currently it handles the test of whether r.jk and r.hm differ in magnitude.
-#' i.e, two non-overlapping (no variable in common) correlations in the same dataset.
-#' In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
-#'
-#' @param data the dataset
-#' @param vars the 4 vars needed: "j & k" and "h & m"
-#' @param alternative two (default) or one-sided (greater less) test
-#' @return - 
-#' @export
-#' @family Stats
-#' @examples
-#' vars = c("mpg", "cyl", "disp", "hp")
-#' umx_r_test(mtcars, vars)
-umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "greater", "less")) {
-	alternative = match.arg(alternative)
-	test         = "silver2004"
-	alpha        = 0.05
-	conf.level   = 0.95
-	null.value   = 0
-	data.name    = NULL
-	var.labels   = NULL
-	return.htest = FALSE
-	jkhm = data[, vars]
-	cors = cor(jkhm)
-	# jkhm = 1234
-	r.jk = as.numeric(cors[vars[1], vars[2]])
-	r.hm = as.numeric(cors[vars[3], vars[4]])
-	r.jh = as.numeric(cors[vars[1], vars[3]])
-	r.jm = as.numeric(cors[vars[1], vars[4]])
-	r.kh = as.numeric(cors[vars[2], vars[3]])
-	r.km = as.numeric(cors[vars[2], vars[4]])
-	n = nrow(jkhm)	
-	cocor::cocor.dep.groups.nonoverlap(r.jk, r.hm, r.jh, r.jm, r.kh, r.km, n, alternative = alternative, test = test, alpha = alpha, conf.level = conf.level, null.value = null.value, data.name = data.name, var.labels = var.labels, return.htest = return.htest)
-}

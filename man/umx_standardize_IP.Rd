@@ -4,20 +4,22 @@
 \alias{umx_standardize_IP}
 \title{umx_standardize_IP}
 \usage{
-umx_standardize_IP(fit)
+umx_standardize_IP(model, ...)
 }
 \arguments{
-\item{fit}{an \code{\link{umxIP}} model to standardize}
+\item{model}{an \code{\link{umxIP}} model to standardize}
+
+\item{...}{Other options}
 }
 \value{
 - standardized IP \code{\link{umxIP}} model
 }
 \description{
-This function simply inserts the standardized IP components into the ai ci ei and as cs es matrices
+This function simply copys the standardized IP components into the ai ci ei and as cs es matrices
 }
 \examples{
 \dontrun{
-fit = umx_standardize_IP(fit)
+model = umx_standardize_IP(model)
 }
 }
 \references{
@@ -25,6 +27,7 @@ fit = umx_standardize_IP(fit)
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},
+  \code{\link{umx_standardize_ACEv}},
   \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_CP}}, \code{\link{umx}}
 }

@@ -1,4 +1,3 @@
-#
 #   Copyright 2007-2017 Copyright 2007-2017 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -118,6 +117,7 @@
 #' m1 = umxACEv(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
 #'
 #' # We can modify this model, dropping shared environment, and see a comparison
+# # TODO change c to C etc
 #' m2 = umxModify(m1, update = "C_r1c1", comparison = TRUE)
 
 #' # =====================================
@@ -329,10 +329,9 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				# =====================================
 				# = Add means and var matrices to top =
 				# =====================================
-				# Figure out start values while we are here
-				# varStarts will be used to fill a, c, and e
+				# Figure out start values for raw data (used to fill a, c, and e)
 				# mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)
-				varStarts = umx_var(mzData[, selDVs[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+				varStarts = umx_var(mzData[, selDVs[1:nVar], drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
 				
 				# ==============================
 				# = Better start value project =
@@ -341,7 +340,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				if(nVar == 1){
 					varStarts = varStarts/3
 				} else {
-					varStarts = diag(varStarts/3) # Divide variance up equally, and set to Cholesky form.
+					varStarts = diag(varStarts/3) # Divide variance up equally
 				}
 				varStarts = matrix(varStarts, nVar, nVar)
 
@@ -382,7 +381,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 						# message("No continuous variables found.")
 					}
 					# Means: all free, start cont at the measured value, ord @0
-					meansMatrix = mxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
+					meansMatrix = umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
 					# Thresholds
 					# for better guessing with low-frequency cells
 					allData = rbind(mzData, dzData)
@@ -460,17 +459,12 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with ", dataType, " data"))
 
 				# Drop unused variables from matrix
-				het_mz = umx_reorder(mzData, selDVs)
-				het_dz = umx_reorder(dzData, selDVs)
+				het_mz    = umx_reorder(mzData, selDVs)
+				het_dz    = umx_reorder(dzData, selDVs)
+
+				# start variances
 				varStarts = diag(het_mz)[1:nVar]
-				
-				if(nVar == 1){
-					# 2017-04-03 04:34PM: sqrt to switch from var to path coefficient scale
-					varStarts = sqrt(varStarts)/3
-				} else {
-					varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
-				}
-				varStarts = matrix(varStarts, nVar, nVar)
+				varStarts = matrix(varStarts/3, nVar, nVar)
 
 				top = mxModel("top")
 				MZ = mxModel("MZ", 
@@ -557,13 +551,16 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 		if(addStd){
 			newTop = mxModel(model$top,
 				mxMatrix(name  = "I", "Iden", nVar, nVar), # nVar Identity matrix
-				mxAlgebra(name = "Vtot", A + C+ E),        # Total variance
-				# TODO test that these are identical in all cases
 				# mxAlgebra(vec2diag(1/diag2vec(Vtot)), name = "Vtot"), # total variance --> SD
-				# mxAlgebra(name = "SD", solve(I * Vtot)), # total variance --> SD 
-				mxAlgebra(name = "A_std", Vtot %*% A), # standardized A
-				mxAlgebra(name = "C_std", Vtot %*% C), # standardized C
-				mxAlgebra(name = "E_std", Vtot %*% E)  # standardized E
+				mxAlgebra(name = "Vtot", A + C+ E),        # Total variance
+				mxAlgebra(name = "InvSD", sqrt(solve(I * Vtot))), # total variance --> 1/SD
+				# TODO test that these are identical in all cases
+
+				# Standardised _variance_ coefficients ready to be stacked together
+				# A_std = InvSD %&% A 
+				mxAlgebra(name = "A_std", InvSD %&% A), # standardized A
+				mxAlgebra(name = "C_std", InvSD %&% C), # standardized C
+				mxAlgebra(name = "E_std", InvSD %&% E)  # standardized E
 			)
 			model = mxModel(model, newTop)
 			if(addCI){
@@ -584,11 +581,6 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 		if(autoRun){
 			model = mxRun(model)
 			umxSummary(model)
-			# if(!is.na(umx_set_auto_plot(silent = TRUE))){
-				# plot(model)
-			# }
-		} else {
-			# --
 		}
 		return(model)
 	}
@@ -678,12 +670,15 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 
 	if(std){
 		message("Standardized solution")
-		Vtot = A + C + E;         # Total variance
-		I  <- diag(nVar);         # nVar Identity matrix
+		Vtot  = A + C + E; # Total variance
+		I     = diag(nVar); # nVar Identity matrix
+		InvSD = sqrt(solve(I * Vtot))
+
 		# Standardized _variance_ coefficients ready to be stacked together
-		A_std <- Vtot %*% A; # Standardized variance coefficients
-		C_std <- Vtot %*% C;
-		E_std <- Vtot %*% E;
+		A_std = InvSD %&% A 	# Standardized variance coefficients
+		C_std = InvSD %&% C
+		E_std = InvSD %&% E
+		
 		AClean = A_std
 		CClean = C_std
 		EClean = E_std
@@ -700,10 +695,9 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	rowNames = sub("_.1$", "", selDVs[1:nVar])
 	Estimates = data.frame(cbind(AClean, CClean, EClean), row.names = rowNames, stringsAsFactors = FALSE);
 
+	colNames = c("A", "C", "E")
 	if(model$top$dzCr$values == .25){
 		colNames = c("A", "D", "E")
-	} else {
-		colNames = c("A", "C", "E")
 	}
 	names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
 	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
@@ -826,7 +820,7 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	if(!is.na(file)) {
 		# message("making dot file")
 		# TODO create plot method for ACEv
-		message("Standarize ACE and plot methods not yet implemented... All a lot of work.")
+		message("Standarize ACEv and plot var-comp methods not yet implemented.")
 		# if(hasCIs & CIs){
 		# 	umxPlotACE(CI_Fit, file = file, std = FALSE)
 		# } else {
@@ -844,4 +838,144 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 }
 
 #' @export
+
 umxSummary.MxModel.ACEv <- umxSummaryACEv
+
+#' Produce a graphical display of an ACE variance-components twin model
+#'
+#' Plots an ACE model graphically, opening the result in the browser (or a graphviz application).
+#'
+#' @aliases plot.MxModel.ACEv
+#' @param x \code{\link{umxACEv}} model to plot.
+#' @param file The name of the dot file to write: Default ("name") = use the name of the model. NA = don't plot.
+#' @param digits How many decimals to include in path loadings (default = 2)
+#' @param means Whether to show means paths (default = FALSE)
+#' @param std Whether to standardize the model (default = TRUE)
+#' @param ... Additional (optional) parameters
+#' @return - optionally return the dot code
+#' @export
+#' @family Plotting functions
+#' @family Reporting functions
+#' @references - \url{http://www.github.com/tbates/umx}
+#' @examples
+#' require(umx)
+#' data(twinData)
+#' selDVs = "bmi"
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
+#' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+#' plot(m1, std = FALSE) # don't standardize
+umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, ...) {
+	if(!class(x) == "MxModel.ACEv"){
+		stop("The first parameter of umxPlotACE must be an ACEv model, you gave me a ", class(x))
+	}
+	model = x # Just to be clear that x is a model
+	if(std){
+		model = umx_standardize(model)
+	}
+	out = "";
+	latents = c();
+	if(model$MZ$data$type == "raw"){
+		selDVs = names(model$MZ$data$observed)
+	}else{
+		selDVs = dimnames(model$MZ$data$observed)[[1]]
+	}
+	varCount = length(selDVs)/2;
+	parameterKeyList = omxGetParameters(model);
+	for(thisParam in names(parameterKeyList) ) {
+		value = parameterKeyList[thisParam]
+		if(class(value) == "numeric") {
+			value = round(value, digits)
+		}
+		if (grepl("^[ACE]_r[0-9]+c[0-9]+", thisParam)) { # a c e
+			from    = sub('([ACE])_r([0-9]+)c([0-9]+)', '\\1\\3', thisParam, perl = TRUE);  # a c or e
+			target  = as.numeric(sub('([ACE])_r([0-9]+)c([0-9]+)', '\\2', thisParam, perl = TRUE));
+			target  = selDVs[as.numeric(target)]
+			latents = append(latents, from)
+			showThis = TRUE
+		} else { # means probably
+			if(means){
+				showThis = TRUE
+			} else {
+				showThis = FALSE
+			}
+			from   = thisParam;
+			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl=TRUE) 
+		}
+		if(showThis){
+			out = paste0(out, from, " -> ", target, " [label = \"", value, "\"]", ";\n")
+		}
+	}
+	preOut = "\t# Latents\n"
+	latents = unique(latents)
+	for(var in latents) {
+	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+	}
+
+	preOut = paste0(preOut, "\n\t# Manifests\n")
+	for(var in selDVs[1:varCount]) {
+	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
+	}
+
+	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
+	# grep('a', latents, value=T)
+	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; a1; a2}
+	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
+	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
+	xmu_dot_maker(model, file, digraph)
+} # end umxPlotACE
+
+#' @export
+plot.MxModel.ACEv <- umxPlotACEv
+
+
+#' Standardize an ACE variance components model (ACEv)
+#'
+#' umx_standardize_ACE allows umx_standardize to standardize an ACE variance components model.
+#'
+#' @param model An \code{\link{umxACEv}} model to standardize.
+#' @param ... Other parameters.
+#' @return - A standardized \code{\link{umxACEv}} model.
+#' @export
+#' @family zAdvanced Helpers
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' require(umx)
+#' data(twinData)
+#' selDVs = c("bmi1", "bmi2")
+#' mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
+#' dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
+#' m1  = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' std = umx_standardize(m1)
+umx_standardize_ACEv <- function(model, ...) {
+	if(typeof(model) == "list"){ # call self recursively
+		for(thisFit in model) {
+			message("Output for Model: ", thisFit$name)
+			umx_standardize(thisFit)
+		}
+	} else {
+		if(!umx_has_been_run(model)){
+			stop("I can only standardize ACEv models that have been run. Just do\n",
+			"yourModel = mxRun(yourModel)")
+		}
+		selDVs = dimnames(model$top.expCovMZ)[[1]]
+		nVar <- length(selDVs)/2;
+		# Calculate standardised variance components
+
+		A  <- mxEval(top.A, model);   # Variances
+		C  <- mxEval(top.C, model);
+		E  <- mxEval(top.E, model);
+		Vtot = A + C + E;  # Total variance
+		I  <- diag(nVar);  # nVar Identity matrix
+		# Inverse of diagonal matrix of standard deviations. In old money, this was (\sqrt(I.Vtot))~
+		InvSD <- solve(sqrt(I * Vtot)) 
+	
+		# Standardized _path_ coefficients ready to be stacked together
+		model$top$A$values = InvSD %&% A; # Standardized variance components
+		model$top$C$values = InvSD %&% C;
+		model$top$E$values = InvSD %&% E;
+		return(model)
+	}
+}
+#' @export
+umx_standardize.MxModel.ACEv <- umx_standardize_ACEv

@@ -4,10 +4,12 @@
 \alias{umx_standardize_ACE}
 \title{umx_standardize_ACE}
 \usage{
-umx_standardize_ACE(fit)
+umx_standardize_ACE(model, ...)
 }
 \arguments{
-\item{fit}{an \code{\link{umxACE}} model to standardize}
+\item{model}{an \code{\link{umxACE}} model to standardize}
+
+\item{...}{Other options}
 }
 \value{
 - Standardized ACE \code{\link{umxACE}} model
@@ -29,6 +31,7 @@ std = umx_standardize_ACE(m1)
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},
+  \code{\link{umx_standardize_ACEv}},
   \code{\link{umx_standardize_CP}},
   \code{\link{umx_standardize_IP}}, \code{\link{umx}}
 }

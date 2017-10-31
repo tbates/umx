@@ -28,6 +28,7 @@
 	}
 	umx_set_auto_run(TRUE)
 	umx_set_auto_plot(TRUE)
+	# umx_complete_dollar()
 	packageStartupMessage("For an overview type '?umx'")
 }
 
@@ -60,8 +61,6 @@
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
 
-
-	
 utils::globalVariables(c(
 	'xtable',
 	'M', 'S',
@@ -116,6 +115,8 @@ utils::globalVariables(c(
 	'MZW', 'DZW',
 	'fmCOV','mfCOV',
 
+	# from umxACEv
+	'InvSD',
 	# from umxACEcov
 	'varStarts',
 	'lowerB',
@@ -1494,11 +1495,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 				# mxMatrix(name = "a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE)
 				varStarts = umx_var(mzData[, selDVs[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 				
-				# ==============================
-				# = Better start value project =
-				# ==============================
-				# 2017-04-03 04:34PM toggled to sqrt()
-				# TODO repeat for other twin models . 2017-08-19 12:21PM umxACEcov done
+				# TODO repeat sqrt start values for other twin models.
+					# 2017-08-19 12:21PM umxACEcov done
 				if(nVar == 1){
 					# sqrt to switch from var to path coefficient scale
 					varStarts = sqrt(varStarts)/3
@@ -2172,7 +2170,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' umxCompare(m1, m2)
 umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, sep=NULL) {
 	nSib = 2
-
 	# =================
 	# = Set optimizer =
 	# =================
@@ -2262,8 +2259,8 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 			# Latent common factor genetic paths
 			a_cp_matrix,
-			umxLabel(mxMatrix(name="c_cp", "Diag", nFac, nFac, free = TRUE, values =  0), jiggle = .05), # latent common factor Common environmental path coefficients
-			umxLabel(mxMatrix(name="e_cp", "Diag", nFac, nFac, free = TRUE, values = .7), jiggle = .05), # latent common factor Unique environmental path coefficients
+			umxMatrix("c_cp", "Diag", nFac, nFac, free = TRUE, values =  0, jiggle = .05), # latent common factor Common environmental path coefficients
+			umxMatrix("e_cp", "Diag", nFac, nFac, free = TRUE, values = .7, jiggle = .05), # latent common factor Unique environmental path coefficients
 			# Constrain variance of latent phenotype factor to 1.0
 			# Multiply by each path coefficient by its inverse to get variance component
 			mxAlgebra(name="A_cp", a_cp %*% t(a_cp)), # A_cp variance
@@ -2274,16 +2271,16 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			mxAlgebra(diag2vec(L)             , name = "diagL"),
 			mxConstraint(diagL == nFac_Unit   , name = "fix_CP_variances_to_1"),
 
-			umxMatrix(name = "as", "Lower", nVar, nVar, free = T, values = .5, jiggle = .05)         , # Additive genetic path 
-			umxMatrix(name = "cs", "Lower", nVar, nVar, free = T, values = .1, jiggle = .05)         , # Common environmental path 
-			umxMatrix(name = "es", "Lower", nVar, nVar, free = T, values = .6, jiggle = .05)         , # Unique environmental path
-			umxMatrix(name = "cp_loadings", "Full" , nVar, nFac, free = T, values = .6, jiggle = .05), # loadings on latent phenotype
+			umxMatrix("as",          "Lower", nVar, nVar, free = TRUE, values = .5, jiggle = .05), # Additive genetic path 
+			umxMatrix("cs",          "Lower", nVar, nVar, free = TRUE, values = .1, jiggle = .05), # Common environmental path 
+			umxMatrix("es",          "Lower", nVar, nVar, free = TRUE, values = .6, jiggle = .05), # Unique environmental path
+			umxMatrix("cp_loadings", "Full" , nVar, nFac, free = TRUE, values = .6, jiggle = .05), # loadings on latent phenotype
 			# Quadratic multiplication to add cp_loading effects
 			mxAlgebra(cp_loadings %&% A_cp + as %*% t(as), name = "A"), # Additive genetic variance
 			mxAlgebra(cp_loadings %&% C_cp + cs %*% t(cs), name = "C"), # Common environmental variance
 			mxAlgebra(cp_loadings %&% E_cp + es %*% t(es), name = "E"), # Unique environmental variance
-			mxAlgebra(name = "ACE", A+C+E),
-			mxAlgebra(name = "AC" , A+C),
+			mxAlgebra(name = "ACE", A + C + E),
+			mxAlgebra(name = "AC" , A+ C),
 			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 			mxAlgebra(rbind (cbind(ACE, AC), 
 			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name="expCovMZ"),
@@ -2431,7 +2428,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 		if(is.null(numObsDZ)){ stop(paste0("You must set numObsDZ with ", dataType, " data"))}
 		het_mz = umx_reorder(mzData, selDVs)		
 		het_dz = umx_reorder(dzData, selDVs)
-		stop("COV not fully implemented yet for IP...")
+		stop("COV not fully implemented yet for IP... Not sure if there's any demand, so email me if you see this")
 	} else {
 		stop("Datatype ", omxQuotes(dataType), " not understood")
 	}
@@ -2443,13 +2440,13 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			umxLabel(mxMatrix("Full", 1, nVar*nSib, free=T, values=obsMZmeans, dimnames=list("means", selDVs), name="expMean")), # Means 
 			# (not yet equated for the two twins)
 			# Matrices ac, cc, and ec to store a, c, and e path coefficients for independent general factors
-			umxLabel(mxMatrix("Full", nVar, nFac, free=T, values=.6, name="ai"), jiggle=.05), # latent common factor Additive genetic path 
-			umxLabel(mxMatrix("Full", nVar, nFac, free=T, values=.0, name="ci"), jiggle=.05), # latent common factor Common #environmental path coefficient
-			umxLabel(mxMatrix("Full", nVar, nFac, free=T, values=.6, name="ei"), jiggle=.05), # latent common factor Unique environmental path #coefficient
+			umxMatrix("ai", "Full", nVar, nFac, free=TRUE, values=.6, jiggle=.05), # latent common factor Additive genetic path 
+			umxMatrix("ci", "Full", nVar, nFac, free=TRUE, values=.0, jiggle=.05), # latent common factor Common #environmental path coefficient
+			umxMatrix("ei", "Full", nVar, nFac, free=TRUE, values=.6, jiggle=.05), # latent common factor Unique environmental path #coefficient
 			# Matrices as, cs, and es to store a, c, and e path coefficients for specific factors
-			umxLabel(mxMatrix("Lower", nVar, nVar, free=T, values=.6, name="as"), jiggle=.05), # Additive genetic path 
-			umxLabel(mxMatrix("Lower", nVar, nVar, free=T, values=.0, name="cs"), jiggle=.05), # Common environmental path 
-			umxLabel(mxMatrix("Lower", nVar, nVar, free=T, values=.6, name="es"), jiggle=.05), # Unique environmental path.
+			umxMatrix("as", "Lower", nVar, nVar, free=TRUE, values=.6, jiggle=.05), # Additive genetic path 
+			umxMatrix("cs", "Lower", nVar, nVar, free=TRUE, values=.0, jiggle=.05), # Common environmental path 
+			umxMatrix("es", "Lower", nVar, nVar, free=TRUE, values=.6, jiggle=.05), # Unique environmental path.
 
 			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
@@ -2472,13 +2469,11 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			mxMatrix("Iden", nrow = nVar, name = "I"),
 			mxAlgebra(solve(sqrt(I * ACE)), name = "iSD")
 		),
-		mxModel("MZ", 
-			mxData(mzData, type = "raw"),
+		mxModel("MZ", mxData(mzData, type = "raw"),
 			mxExpectationNormal("top.expCovMZ", "top.expMean"), 
 			mxFitFunctionML()
 		),
-		mxModel("DZ", 
-			mxData(dzData, type = "raw"), 
+		mxModel("DZ", mxData(dzData, type = "raw"), 
 			mxExpectationNormal("top.expCovDZ", "top.expMean"), 
 			mxFitFunctionML()
 		),
@@ -2815,11 +2810,12 @@ umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", 
 #' For models to be estimated, it is essential that path values start at credible values. umxValues takes on that task for you.
 #' umxValues can set start values for the free parameters in both RAM and Matrix \code{\link{mxModel}}s. It can also take an mxMatrix as input.
 #' It tries to be smart in guessing starts from the values in your data and the model type.
-#' note: If you give it a numeric input, it will use obj as the mean, return a list of length n, with sd = sd
+#' 
+#' \emph{note}: If you give umxValues a numeric input, it will use obj as the mean, and return a list of length n, with sd = sd.
 #'
 #' @param obj The RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.
 #' @param sd Optional Standard Deviation for start values
-#' @param n  Optional Mean for start values
+#' @param n Optional Mean for start values
 #' @param onlyTouchZeros Don't alter parameters that appear to have already been started (useful for speeding \code{\link{umxModify}})
 #' @return - \code{\link{mxModel}} with updated start values
 #' @export

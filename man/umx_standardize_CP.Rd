@@ -4,10 +4,12 @@
 \alias{umx_standardize_CP}
 \title{umx_standardize_CP}
 \usage{
-umx_standardize_CP(fit)
+umx_standardize_CP(model)
 }
 \arguments{
-\item{fit}{an \code{\link{umxCP}} model to standardize}
+\item{model}{an \code{\link{umxCP}} model to standardize}
+
+\item{...}{Other options}
 }
 \value{
 - standardized \code{\link{umxCP}} model
@@ -17,7 +19,7 @@ This function simply inserts the standardized CP components into the ai ci ei an
 }
 \examples{
 \dontrun{
-fit = umx_standardize_CP(fit)
+model = umx_standardize_CP(model)
 }
 }
 \references{
@@ -25,6 +27,7 @@ fit = umx_standardize_CP(fit)
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},
+  \code{\link{umx_standardize_ACEv}},
   \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_IP}}, \code{\link{umx}}
 }

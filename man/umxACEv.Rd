@@ -116,7 +116,7 @@ mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
 umxSummary(m1, std = FALSE) # unstandardized
-# TODO: tip == with report = "html", umxSummary can print the table to your browser!
+# tip: with report = "html", umxSummary can print the table to your browser!
 plot(m1)
 
 # ========================================================
@@ -136,8 +136,9 @@ umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled AC
 # 3. umxACEv picks the variables it needs from the data.
 # 4. You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
 m1 = umxACEv(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
+
 # We can modify this model, dropping shared environment, and see a comparison
-m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
+m2 = umxModify(m1, update = "C_r1c1", comparison = TRUE)
 # =====================================
 # = Bivariate height and weight model =
 # =====================================

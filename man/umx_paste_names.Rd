@@ -2,6 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_paste_names}
 \alias{umx_paste_names}
+\alias{tvars}
 \title{Concatenate base variable names with suffixes to create wide-format variable names (i.e twin-format)}
 \usage{
 umx_paste_names(varNames, sep = "", suffixes = 1:2, covNames = NULL,
@@ -60,8 +61,8 @@ umx_paste_names("bmi", sep = "_T", suffixes = 1:2)
 varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
-# For quick-typing, vars is an alias for umx_paste_names
-vars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+# For quick-typing, tVars is an alias for umx_paste_names
+tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 }
 \references{
 \itemize{

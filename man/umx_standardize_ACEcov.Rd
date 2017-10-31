@@ -4,10 +4,12 @@
 \alias{umx_standardize_ACEcov}
 \title{umx_standardize_ACEcov}
 \usage{
-umx_standardize_ACEcov(fit)
+umx_standardize_ACEcov(model, ...)
 }
 \arguments{
-\item{fit}{an \code{\link{umxACEcov}} model to standardize}
+\item{model}{an \code{\link{umxACEcov}} model to standardize}
+
+\item{...}{Other options}
 }
 \value{
 - Standardized \code{\link{umxACEcov}} model
@@ -32,7 +34,8 @@ fit = umx_standardize_ACEcov(m1)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other zAdvanced Helpers: \code{\link{umx_standardize_ACE}},
+Other zAdvanced Helpers: \code{\link{umx_standardize_ACEv}},
+  \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_CP}},
   \code{\link{umx_standardize_IP}}, \code{\link{umx}}
 }

@@ -167,6 +167,7 @@ Other File Functions: \code{\link{dl_from_dropbox}},
   \code{\link{umx_rename_file}}
 
 Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},
+  \code{\link{umx_standardize_ACEv}},
   \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_CP}},
   \code{\link{umx_standardize_IP}}
