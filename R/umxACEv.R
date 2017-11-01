@@ -113,24 +113,25 @@
 #' # 1. This variable has a large variance, but umx picks good starts.
 #' # 2. umxACEv can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
 #' # 3. umxACEv picks the variables it needs from the data.
-#' # 4. You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
-#' m1 = umxACEv(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
+#' 
+#' # You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
+#' m1 = umxACEv(selDVs = "wt", sep = '', dzData = dzData, mzData = mzData, boundDiag = 0)
 #'
-#' # We can modify this model, dropping shared environment, and see a comparison
-# # TODO change c to C etc
+#' # We can modify this model, dropping shared environment, and see a comparison:
 #' m2 = umxModify(m1, update = "C_r1c1", comparison = TRUE)
 
 #' # =====================================
 #' # = Bivariate height and weight model =
 #' # =====================================
+#' 
 #' data(twinData)
-#' mzData <- twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
-#' dzData <- twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
-#' mzData <- mzData[1:80,] # quicker run to keep CRAN happy
-#' dzData <- dzData[1:80,]
-#' selDVs = c("ht", "wt") # umx will add suffix (in this case "") + "1" or '2'
-#' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
-#' umxSummary(m1)
+#' twinData$ht1 = twinData$ht1 *1000 # convert m to mm
+#' twinData$ht2 = twinData$ht2 *1000
+#' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
+#' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
+#' mzData = mzData[1:80,] # quicker run to keep CRAN happy
+#' dzData = dzData[1:80,]
+#' m1 = umxACEv(selDVs = c("ht", "wt"), suffix = '', dzData = dzData, mzData = mzData)
 #' 
 #' # =========================================================
 #' # = Well done! Now you can make modify twin models in umx =
@@ -275,7 +276,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				if(!all(is.null(c(numObsMZ, numObsDZ)))){
 					stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 				}
-				# Drop unused columns from mz and dzData
+				# Drop unused columns from MZ and dzData
 				mzData = mzData[, used]
 				dzData = dzData[, used]
 				isFactor = umx_is_ordered(mzData[, selDVs])                      # T/F list of factor columns

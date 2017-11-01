@@ -16,10 +16,11 @@
 #' Run a Cholesky with covariates  ("fixed" / definition variables in the means style)
 #'
 #' Often, it is appropriate to include covariates in models.
-#' One simple method is to regress covariates from the data using lm. 'fixed' effects approach.
-#' umx makes this easy, even on twin data, and with complex regression formulae: see \code{\link{umx_residualize}}.
+#' A simple method is to regress covariates from the data using \code{\link{lm}}.
+#' This is a 'fixed' effects approach.
+#' \code{\link{umx_residualize}} makes this easier, even on twin data, and with complex regression formulae.
 #' 
-#' However, while these estimates are unbiased, doing this regression in the means element of the twin model
+#' While these estimates are unbiased, modeling this regression in the means element of the twin model
 #' allows correct tests for significance. Also, if DVs are not continuous, the lm-based approach
 #' cannot be used.
 #' 
