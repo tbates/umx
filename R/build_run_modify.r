@@ -789,9 +789,11 @@ umxReRun <- umxModify
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' m2 = umxModify(m1, "am_.*", regex=TRUE, comparison = TRUE)
+#' \dontrun{
 #' # The umxReduce function knows how to test all relevant hypotheses
 #' # about model reduction for GxE models, reporting these in a nice table.
 #' umxReduce(m1)
+#' }
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = NULL) {
 	nSib = 2;
 	if(is.null(suffix)){
