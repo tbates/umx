@@ -4,7 +4,7 @@
 \alias{umx_make}
 \title{umx_make umx using devtools}
 \usage{
-umx_make(what = c("install", "examples", "check", "win", "release"),
+umx_make(what = c("install", "examples", "check", "win", "rhub", "release"),
   pkg = "~/bin/umx", check = TRUE)
 }
 \arguments{

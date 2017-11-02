@@ -2078,7 +2078,7 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "win"))      # check on win-builder
 #' umx_make(what = "release"))  # release to CRAN
 #' }
-umx_make <- function(what = c("install", "examples", "check", "win", "release" ), pkg = "~/bin/umx", check = TRUE) {
+umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release" ), pkg = "~/bin/umx", check = TRUE) {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
@@ -2090,6 +2090,9 @@ umx_make <- function(what = c("install", "examples", "check", "win", "release" )
 	} else if (what =="win"){
 		# devtools::make_win(pkg = pkg)
 		devtools::build_win(pkg = pkg)
+	} else if (what =="rhub"){
+		# devtools::make_rhub(pkg = pkg)
+		devtools::check_rhub(pkg = pkg)
 	} else if (what == "release"){
 		devtools::release(pkg = pkg, check = check)
 	}
