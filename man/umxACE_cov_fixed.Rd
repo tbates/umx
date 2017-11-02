@@ -53,17 +53,18 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 }
 \description{
 Often, it is appropriate to include covariates in models.
-One simple method is to regress covariates from the data using lm. 'fixed' effects approach.
-umx makes this easy, even on twin data, and with complex regression formulae: see \code{\link{umx_residualize}}.
+A simple method is to regress covariates from the data using \code{\link{lm}}.
+This is a 'fixed' effects approach.
+\code{\link{umx_residualize}} makes this easier, even on twin data, and with complex regression formulae.
 }
 \details{
-However, while these estimates are unbiased, doing this regression in the means element of the twin model
+While these estimates are unbiased, modeling this regression in the means element of the twin model
 allows correct tests for significance. Also, if DVs are not continuous, the lm-based approach
 cannot be used.
 
 For this reason, we have implemented umxACE_cov_fixed, which allows including covariates as definition variables.
 The following figure shows how the ACE model with fixed covariates appears as a path diagram:
-\figure{ACEcov_means.png}
+\figure{ACEcovOnMeans.png}
 
 
 On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 

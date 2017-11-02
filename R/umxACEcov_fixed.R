@@ -26,7 +26,7 @@
 #' 
 #' For this reason, we have implemented umxACE_cov_fixed, which allows including covariates as definition variables.
 #' The following figure shows how the ACE model with fixed covariates appears as a path diagram:
-#' \figure{ACEcov_means.png}
+#' \figure{ACEcovOnMeans.png}
 #' 
 #' @details
 #' On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 

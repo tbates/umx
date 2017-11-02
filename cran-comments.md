@@ -1,16 +1,20 @@
 ## Changes
-* Multiple enhancements across many old and new functions.
-This package has not been undated on CRAN for several months now, because OpenMx is a dependency
-and it is failing checks on MacOS due to issues which we have repeatedly failed to resolve.
+I would appreciate if you can please upload this new version of umx (with over 60 new features, fixes and enhancements) .
 
-I would appreciate being able ot update umx while we continue to negotiate with CRAN/Simon to find out 
-why we can build OpenMx just fine locally, and build with travis, but the package is failing for one version
-of one platform on the CRAN buiild with a new non-standard build chain. 
+The package likely can't be tested on El Capitan, as CRAN currently lacks a binary build of OpenMx for El Cap.
+
+However, it runs perfectly on the other platforms, and on local builds of OpenMx under El Capitan.
+
+Requiring umx to be checked against OpenMx on El Cap on CRAN is preventing users and students from using the
+any of the new features and fixes implemented since R 3.4.0...
+
+We continue to communicate with CRAN/Simon to find out  why we can build OpenMx locally, and on travis,
+but it is failing for the El Cap MacOS binary under the new CRAN custom tool chain.
 
 ## Test environments
 * OS X 10.13.0, R version 3.4.2
-* Win (64-bit) R Under development (unstable) (2017-07-31 r73003)
-* 64-bit Linux (Scientific Linux 6), R 3.4.1
+* Win R Under development (unstable) (2017-09-12 r73242)
+* 64-bit Linux (Scientific Linux 6), R 3.4.2
 
 ## R CMD check results
 * No ERRORs, No WARNINGs, No NOTES

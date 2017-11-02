@@ -4106,7 +4106,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	}
 	
 	levelsOfTwinID = unique(data[,twinID])
-  message("Found ", length(levelsOfTwinID), " levels of twinID: ", omxQuotes(levelsOfTwinID))
+  	message("Found ", length(levelsOfTwinID), " levels of twinID: ", omxQuotes(levelsOfTwinID))
 
 	if(NA %in% levelsOfTwinID){
 	  message("Some subjects have NA as twinID!")
@@ -4136,9 +4136,9 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 		}
 		# cat(paste0(levelsOfTwinID[i], " "))
 	}
-	# TODO umx_long2wide bother to check if zygosity is not NA in some member of family?
+	# TODO umx_long2wide: Bother to check if zygosity is not NA in some member of family?
 	# 	to avoid problem of NA if NA in first family member found?
-	# TODO How to get unique values of passalong?
+	# TODO umx_long2wide: How to get unique values of passalong?
 	# if(!is.na(passalong)){
 		# One last look for the passalong columns
 		# current  = data[, c(famID, passalong)]
@@ -4148,6 +4148,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	# }
   return(previous)
 }
+
 
 #' Change data 2-twin family data from wide to long format.
 #'
