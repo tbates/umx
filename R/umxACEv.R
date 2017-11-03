@@ -218,7 +218,7 @@
 umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL) {
 
-		message("This is STRICTLY experimental, and unlikely to be working (prep for Boulder 2018 use of variance components modeling)")
+		message("This is STRICTLY experimental, and not complete (prep for Boulder 2018 use of variance components modeling)")
 		covMethod = match.arg(covMethod)
 		# =================
 		# = Set optimizer =
@@ -233,7 +233,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 		# If given covariates, call umxACEvcov
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
-				stop("Implementing this for version 2.0")
+				stop("Implementing fixed means effects for version 2.0")
 				# umxACEvdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			} else if(covMethod == "random") {
 				message("umxACEvcov not yet implemented")
@@ -540,7 +540,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 				newLbound = model$top$matrices$A@lbound
 				if(length(boundDiag) > 1 ){
 					if(length(boundDiag) != length(diag(newLbound)) ){
-						stop("Typically boundDiag is 1 digit: if more, must be size of diag(a)")
+						stop("Typically boundDiag is 1 digit: if more, must be size of diag(A)")
 					}
 				}
 				diag(newLbound) = boundDiag; 
@@ -817,24 +817,18 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 		} # end Use CIs
 	} # end list catcher?
 	
-	
 	if(!is.na(file)) {
-		# message("making dot file")
-		# TODO create plot method for ACEv
-		message("Standarize ACEv and plot var-comp methods not yet implemented.")
-		# if(hasCIs & CIs){
-		# 	umxPlotACE(CI_Fit, file = file, std = FALSE)
-		# } else {
-		#	umxPlotACE(model, file = file, std = std)
-		# }
+		if(hasCIs & CIs){
+			umxPlotACEv(CI_Fit, file = file, std = FALSE)
+		} else {
+			umxPlotACEv(model, file = file, std = std)
+		}
 	}
 	if(returnStd) {
 		if(CIs){
 			message("If you asked for CIs, returned model is not runnable (contains CIs not parameter values)")
 		}
-		# todo: allow umx_standardize_ACEv
-		message("standarize ACE v not yet implemented...")
-		# umx_standardize_ACE(model)
+		umx_standardize(model)
 	}
 }
 

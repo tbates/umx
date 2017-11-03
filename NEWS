@@ -1,4 +1,4 @@
-# umx 1.9.0 (October 2017, R 3.4.2)
+# umx 1.9.1 (November 2017, R 3.4.2)
 * *TIP*: Filter paths by estimated size with `umx_parameters(model, "below", .1)`
 * *TIP*: `?umxRAM` has a sketch mode. just set `data` to a list of manifest variable names.
 * NEW `?umxACEv` Beta1: Variance component version of ACE. Hammer on it for Boulder workshop!

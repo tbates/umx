@@ -19,7 +19,9 @@ umx_write_to_clipboard writes data to the clipboard
 Works on Mac. Let me know if it fails on windows or Unix.
 }
 \examples{
+\dontrun{
 umx_write_to_clipboard("hello")
+}
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{umxVersion}},

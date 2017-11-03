@@ -1,4 +1,6 @@
 ## Changes
+As requested,  removed paste example.
+
 I would appreciate if you can please upload this new version of umx (with over 60 new features, fixes and enhancements) .
 
 The package likely can't be tested on El Capitan, as CRAN currently lacks a binary build of OpenMx for El Cap.
