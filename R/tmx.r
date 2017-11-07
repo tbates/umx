@@ -20,3 +20,28 @@
 tmx_is.identified <- function(nVariables, nFactors){
 	as.logical(1 + sign((nVariables * (nVariables - 1)/2) - nVariables * nFactors + nFactors * (nFactors - 1) / 2) )
 }
+
+
+#' Test if a factor model is identified
+#'
+#' @description
+#' Test if a factor model is identified by establishing if the number of variables is equal too or grater than
+#' the number of model parameters. See also \code{\link{mxCheckIdentification}} for checking actual models.
+#'
+#' @param u The XXXX (default = .5)
+#' @param v The XXXX (default = .5)
+#' @param h The XXXX (default = .5)
+#' @param d The XXXX (default = 1)
+#' @return - 
+#' @export
+#' @family Teaching Functions
+#' @seealso - 
+#' @references - \url{https://github.com/tbates/umx}, \url{https://github.com/tbates/BGBook/issues/23#issuecomment-333834075}
+#' @examples
+#' tmxGenotypicEffect(u = .5, v=.5, h=.5, d = 1)
+tmxGenotypicEffect <- function(u = .5, v=.5, h=.5, d = 1){
+	message("not done yet")
+	# TODO: tmxGenotypicEffect: output plot of Genotypic Effect ~ Gene Doe
+	# TODO: tmxGenotypicEffect: output plot of Genotypic Effect ~ Gene Doe
+}
+
