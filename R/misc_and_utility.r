@@ -29,11 +29,23 @@
 
 #' A recipe Easter-egg for umx
 #'
+#' @description
 #' How to cook steak.
+#' @details TODO: add info on skillet choice, meat-cuts.
 #'
 #' @return - 
+#' @export
+#' @family String Functions
+#' @seealso - \code{\link{omxBrownie}}
+#' @references - \url{https://github.com/tbates/umx}
+#' @examples
+#' umxBrownie()
 umxBrownie <- function() {
-		
+	message("Rub steak in salt, put it back in the fridge for 1-4 hours.\n",
+	"Place steak on a hot cast-iron skillet, with a little peanut oil.\n",
+	"Turn steaks as often as you wish. Control heat to below smoke point.\n",
+	"Remove and eat when internal temp reaches 140 \u0080 F.\n"
+	)
 }
 # ==============================
 # = Get and set OpenMx options =
