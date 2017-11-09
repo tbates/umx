@@ -48,7 +48,8 @@ Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
   \code{\link{umx_make}},
   \code{\link{umx_write_to_clipboard}}
 
-Other String Functions: \code{\link{umx_explode_twin_names}},
+Other String Functions: \code{\link{umxBrownie}},
+  \code{\link{umx_explode_twin_names}},
   \code{\link{umx_explode}}, \code{\link{umx_rot}},
   \code{\link{umx_trim}}
 }

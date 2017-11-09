@@ -30,7 +30,7 @@ tmx_is.identified(nVariables = 5, nFactors = 2) # TRUE
 \seealso{
 - \code{\link{mxCheckIdentification}}
 
-Other Teaching Functions: \code{\link{tmxGenotypicEffect}}
+Other Teaching Functions: \code{\link{tmx_GenotypicEffect}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
