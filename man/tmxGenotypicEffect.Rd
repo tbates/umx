@@ -2,7 +2,7 @@
 % Please edit documentation in R/tmx.r
 \name{tmxGenotypicEffect}
 \alias{tmxGenotypicEffect}
-\title{Test if a factor model is identified}
+\title{Graphical display of genotypic effects}
 \usage{
 tmxGenotypicEffect(u = 0.5, v = 0.5, h = 0.5, d = 1)
 }
@@ -19,8 +19,8 @@ tmxGenotypicEffect(u = 0.5, v = 0.5, h = 0.5, d = 1)
 -
 }
 \description{
-Test if a factor model is identified by establishing if the number of variables is equal too or grater than
-the number of model parameters. See also \code{\link{mxCheckIdentification}} for checking actual models.
+The d and h increments of the gene difference A – a. Aa may lie on either side of m and the sign of h will
+vary accordingly; in the case illustrated h would be negative. (Adapted from Mather and Jinks, 1977, p. 32).
 }
 \examples{
 tmxGenotypicEffect(u = .5, v=.5, h=.5, d = 1)

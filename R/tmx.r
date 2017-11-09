@@ -22,11 +22,11 @@ tmx_is.identified <- function(nVariables, nFactors){
 }
 
 
-#' Test if a factor model is identified
+#' Graphical display of genotypic effects
 #'
 #' @description
-#' Test if a factor model is identified by establishing if the number of variables is equal too or grater than
-#' the number of model parameters. See also \code{\link{mxCheckIdentification}} for checking actual models.
+#' The d and h increments of the gene difference A – a. Aa may lie on either side of m and the sign of h will
+#' vary accordingly; in the case illustrated h would be negative. (Adapted from Mather and Jinks, 1977, p. 32).
 #'
 #' @param u The XXXX (default = .5)
 #' @param v The XXXX (default = .5)
