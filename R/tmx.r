@@ -28,7 +28,6 @@
 #' @export
 #' @family Teaching Functions
 #' @seealso - 
-
 #' @references - \url{http://www.vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf},
 #'  \url{https://github.com/tbates/umx},
 #'  \url{https://github.com/tbates/BGBook/issues/23#issuecomment-333834075}
@@ -123,4 +122,3 @@ tmx_GenotypicEffect <- function(p = .5, q = .5, a = 1, d = .5, m = 0, show = TRU
 tmx_is.identified <- function(nVariables, nFactors){
 	as.logical(1 + sign((nVariables * (nVariables - 1)/2) - nVariables * nFactors + nFactors * (nFactors - 1) / 2) )
 }
-
