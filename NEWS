@@ -1,5 +1,8 @@
-# umx 1.9.1 (November 2017, R 3.4.2)
+# umx 1.9.2 (December 2017, R 3.4.2)
 * *TIP*: Filter paths by estimated size with `umx_parameters(model, "below", .1)`
+* NEW:  `tnx_genotypic_effect`
+
+# umx 1.9.1 (November 2017, R 3.4.2)
 * *TIP*: `?umxRAM` has a sketch mode. just set `data` to a list of manifest variable names.
 * NEW `?umxACEv` Beta1: Variance component version of ACE. Hammer on it for Boulder workshop!
 * NEW: CIs in output tables!

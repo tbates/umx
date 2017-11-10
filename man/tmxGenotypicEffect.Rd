@@ -2,7 +2,7 @@
 % Please edit documentation in R/tmx.r
 \name{tmxGenotypicEffect}
 \alias{tmxGenotypicEffect}
-\title{Graphical display of genotypic effects}
+\title{Graphical display of genotypic effects. piglot}
 \usage{
 tmxGenotypicEffect(u = 0.5, v = 0.5, h = 0.5, d = 1)
 }
@@ -21,12 +21,13 @@ tmxGenotypicEffect(u = 0.5, v = 0.5, h = 0.5, d = 1)
 \description{
 The d and h increments of the gene difference A – a. Aa may lie on either side of m and the sign of h will
 vary accordingly; in the case illustrated h would be negative. (Adapted from Mather and Jinks, 1977, p. 32).
+See also https://github.com/tbates/BGBook/issues/23#issuecomment-333834075
 }
 \examples{
 tmxGenotypicEffect(u = .5, v=.5, h=.5, d = 1)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://github.com/tbates/BGBook/issues/23#issuecomment-333834075}
+- \url{https://github.com/tbates/umx}
 }
 \seealso{
 -

@@ -25,7 +25,8 @@ umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://php.net/manual/en/function.explode.php}
 }
 \seealso{
-Other String Functions: \code{\link{umx_explode_twin_names}},
+Other String Functions: \code{\link{umxBrownie}},
+  \code{\link{umx_explode_twin_names}},
   \code{\link{umx_grep}}, \code{\link{umx_rot}},
   \code{\link{umx_trim}}
 }

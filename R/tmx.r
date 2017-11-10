@@ -22,11 +22,12 @@ tmx_is.identified <- function(nVariables, nFactors){
 }
 
 
-#' Graphical display of genotypic effects
+#' Graphical display of genotypic effects. piglot
 #'
 #' @description
 #' The d and h increments of the gene difference A – a. Aa may lie on either side of m and the sign of h will
 #' vary accordingly; in the case illustrated h would be negative. (Adapted from Mather and Jinks, 1977, p. 32).
+#' See book issue 23
 #'
 #' @param u The XXXX (default = .5)
 #' @param v The XXXX (default = .5)
@@ -36,10 +37,10 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' @export
 #' @family Teaching Functions
 #' @seealso - 
-#' @references - \url{https://github.com/tbates/umx}, \url{https://github.com/tbates/BGBook/issues/23#issuecomment-333834075}
+#' @references - \url{https://github.com/tbates/umx}
 #' @examples
-#' tmxGenotypicEffect(u = .5, v=.5, h=.5, d = 1)
-tmxGenotypicEffect <- function(u = .5, v=.5, h=.5, d = 1){
+#' tmx_genotypic_effect(p = .5, q = .5, d = .5, a = 1, m= 0)
+tmx_genotypic_effect <- function(p = .5, q = .5, d = .5, a = 1, m= 0){
 	message("not done yet")
 	# TODO: tmxGenotypicEffect: output plot of Genotypic Effect ~ Gene Doe
 	# TODO: tmxGenotypicEffect: output plot of Genotypic Effect ~ Gene Doe

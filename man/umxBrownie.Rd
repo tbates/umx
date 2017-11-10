@@ -12,3 +12,19 @@ umxBrownie()
 \description{
 How to cook steak.
 }
+\details{
+TODO: add info on skillet choice, meat-cuts.
+}
+\examples{
+umxBrownie()
+}
+\references{
+- \url{https://github.com/tbates/umx}
+}
+\seealso{
+- \code{\link{omxBrownie}}
+
+Other String Functions: \code{\link{umx_explode_twin_names}},
+  \code{\link{umx_explode}}, \code{\link{umx_grep}},
+  \code{\link{umx_rot}}, \code{\link{umx_trim}}
+}

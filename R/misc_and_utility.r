@@ -2105,10 +2105,12 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 		# http://r-pkgs.had.co.nz/check.html
 		devtools::check(pkg = pkg)		
 	} else if (what =="win"){
-		# devtools::make_win(pkg = pkg)
-		devtools::build_win(pkg = pkg)
+		# old =
+		# devtools::build_win(pkg = pkg)
+
+		# new =
+		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
-		# devtools::make_rhub(pkg = pkg)
 		# devtools::check_rhub(pkg = pkg)
 	} else if (what == "release"){
 		devtools::release(pkg = pkg, check = check)
