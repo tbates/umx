@@ -44,7 +44,6 @@
 #'  \url{https://github.com/tbates/umx}
 #' @examples
 #' library(umx);
-#' library(ggplot2);
 #' tmx_genotypic_effect(p = .5, q =.5, a =.5, d = 1, m = 0)
 #' p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .0, m = 0, show = TRUE);
 #' p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .5, m = 0, show = TRUE); 
@@ -52,6 +51,7 @@
 #' # p + geom_point() + geom_text(hjust = 0, nudge_x = 0.05)
 #' # ggsave(paste0(base, "c03_genotypic_effect_by_gene_dose.pdf"), width = 4.6, height = 4.6)
 tmx_genotypic_effect <- function(p = .75, q = .25, a = .5, d = .25, m = 0, show = TRUE){
+	require(ggplot2)
 	# Genotypes AA Aa aa Frequency p2 2pq q2
 	df <- data.frame(stringsAsFactors = FALSE,
 		Genotypes = c("Frequency", "fraction"),
@@ -91,12 +91,11 @@ tmx_genotypic_effect <- function(p = .75, q = .25, a = .5, d = .25, m = 0, show 
 		dose     = c(0     , 1     , 2    ),
 		genotype = c("aa"  , "Aa"  , "AA" ),
 		value    = c(G_aa  , G_Aa  , G_AA  ),
-		freq     = c(G_aa_f, G_Aa_f, G_AA_f)
+		freq     = factor(c(G_aa_f, G_Aa_f, G_AA_f))
 	)
 	# Plot regression line, and points (sized to frequency)
 	thePlot = qplot(x = dose, y = value, geom = "point", size = freq, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
-	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2))
-	message("Genotypic Values")
+	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2)) # just label the legal values: 0, 1, 2
 	print(thePlot)
 
 	# ================================================
@@ -107,7 +106,7 @@ tmx_genotypic_effect <- function(p = .75, q = .25, a = .5, d = .25, m = 0, show 
 		dose     = c(0    , 1    , 2    ),
 		genotype = c("aa" , "Aa" , "AA" ),
 		effect   = c(-a    , d    , a   ),
-		freq     = c(Gaa_f, GAa_f, GAA_f)
+		freq     = c(G_aa_f, G_Aa_f, G_AA_f)
 	)
 	message("Genotypic Effects")
 	umx_print(df)
@@ -121,20 +120,26 @@ tmx_genotypic_effect <- function(p = .75, q = .25, a = .5, d = .25, m = 0, show 
 	thePlot = qplot(x = dose, y = (dose-1 * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
 	thePlot = thePlot + theme(text = element_text(family = "Optima", size= 14)) # face = "bold"
 	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2))
+	
 	# 2. Add labels to plot, in the data coordinates.
-	thePlot = thePlot + cowplot::draw_label("m", x = 1, y = m, hjust = 0, vjust = 0, fontfamily="Optima")
+	thePlot = thePlot + geom_point(aes(x = 1, y=m), color="red") + cowplot::draw_label("m", x = 1+.1, y = m, fontfamily="Optima")
 
+	# set the y axis
+	# TODO: lave numbers on y axis, add text labels beside these?
 	if(d == 0){
 		thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, a), labels = c("-a", "d = m", "+a"))
 	} else {
 		thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, d, a), labels = c("-a", "m", "d", "+a"))
 	}
 	# TODO: plot points on the line, add text labels beside these
-	thePlot = thePlot + cowplot::draw_label("aa", x = 0, y = -a, fontfamily="Optima", hjust = 0, vjust = 0)
-	# thePlot = thePlot + geom_text("aa", x = 0, y = -d, hjust = .1)
-	# thePlot = thePlot + cowplot::draw_text("aa", x = 0, y = -a)
-	thePlot = thePlot + cowplot::draw_text("Aa", x = 1, y =  d, fontfamily="Optima")
-	thePlot = thePlot + cowplot::draw_text("AA", x = 2, y =  a, fontfamily="Optima")
+	thePlot = thePlot + geom_point(aes(x = 0, y= -a), color="red") + cowplot::draw_label("aa", x = 0+.1, y = -a, fontfamily="Optima")
+	thePlot = thePlot + geom_point(aes(x = 1, y=  d), color="red") + cowplot::draw_label("Aa", x = 1-.1, y =  d, fontfamily="Optima")
+	thePlot = thePlot + geom_point(aes(x = 2, y=  a), color="red") + cowplot::draw_label("AA", x = 2, y =  a-.1, fontfamily="Optima")
+
+	# thePlot = thePlot + cowplot::draw_label("aa", x = 0, y = -a, fontfamily="Optima")
+	# thePlot = thePlot + cowplot::draw_label("Aa", x = 1, y =  d, fontfamily="Optima")
+	# thePlot = thePlot + cowplot::draw_label("AA", x = 2, y =  a, fontfamily="Optima")
+	thePlot = thePlot + expand_limits(y = c(-a, a))
 	if(show){
 		print(thePlot)
 	}

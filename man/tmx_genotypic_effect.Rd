@@ -46,7 +46,6 @@ https://github.com/tbates/BGBook/issues/23#issuecomment-333834075
 }
 \examples{
 library(umx);
-library(ggplot2);
 tmx_genotypic_effect(p = .5, q =.5, a =.5, d = 1, m = 0)
 p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .0, m = 0, show = TRUE);
 p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .5, m = 0, show = TRUE); 
