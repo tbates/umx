@@ -26,8 +26,10 @@ tmx_genotypic_effect allows you to explore the concept of genotypic effect at a 
 The d and h increments of the gene difference A – a. Aa may lie on either side of m and the sign of h will
 vary accordingly; in the case illustrated h would be negative. (Adapted from Mather and Jinks, 1977, p. 32).
 See book issue 23
-This function lets you explore the simplest two–allele system (A and a), with three possible genotypes, AA, Aa, and aa.
-Parameter "a" is half the measured difference between the homozygotes AA and aa. The point between the two homozygotes is "m" -- the mean effect of homozygous genotypes. "d" defines the measured deviation effect of the heterozygote Aa, relative to this expected midpoint. "a" and "d" are genotypic effects.
+This function lets you explore the simplest two–allele system (B and b), with three possible genotypes, BB, Bb, and bb.
+Parameter "b" is half the measured difference between the homozygotes BB and bb. The point between the two homozygotes 
+is "m" -- the mean effect of homozygous genotypes. "d" defines the measured deviation effect of the heterozygote Aa, 
+relative to this expected midpoint. "a" and "d" are genotypic effects.
 
 old system:
 
