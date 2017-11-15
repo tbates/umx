@@ -4,7 +4,7 @@
 \alias{tmx_genotypic_effect}
 \title{Graphical display of genotypic effects.}
 \usage{
-tmx_genotypic_effect(p = 0.75, q = 0.25, a = 0.5, d = 0.25, m = 0,
+tmx_genotypic_effect(p = 0.75, q = (1 - p), a = 0.5, d = 0.25, m = 0,
   show = TRUE)
 }
 \arguments{
@@ -49,6 +49,17 @@ https://github.com/tbates/BGBook/issues/23#issuecomment-333834075
 \examples{
 library(umx);
 tmx_genotypic_effect(p = .5, q =.5, a =.5, d = 1, m = 0)
+
+# ================
+# = No dominance =
+# ================
+tmx_genotypic_effect(p = .5, a = 1, d = 0, m = 0, show = TRUE);
+
+# ======================
+# = Complete dominance =
+# ======================
+tmx_genotypic_effect(p = .5, a = 1, d = 0, m = 0, show = TRUE);
+
 p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .0, m = 0, show = TRUE);
 p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .5, m = 0, show = TRUE); 
 p

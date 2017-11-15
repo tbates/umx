@@ -47,13 +47,46 @@
 #' @examples
 #' library(umx);
 #' tmx_genotypic_effect(p = .5, q =.5, a =.5, d = 1, m = 0)
+#' 
+#' # ================
+#' # = No dominance =
+#' # ================
+#' tmx_genotypic_effect(p = .5, a = 1, d = 0, m = 0, show = TRUE);
+#' 
+#' # ======================
+#' # = Complete dominance =
+#' # ======================
+#' tmx_genotypic_effect(p = .5, a = 1, d = 0, m = 0, show = TRUE);
+#' 
 #' p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .0, m = 0, show = TRUE);
 #' p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .5, m = 0, show = TRUE); 
 #' p
 #' # p + geom_point() + geom_text(hjust = 0, nudge_x = 0.05)
 #' # ggsave(paste0(base, "c03_genotypic_effect_by_gene_dose.pdf"), width = 4.6, height = 4.6)
-tmx_genotypic_effect <- function(p = .75, q = .25, a = .5, d = .25, m = 0, show = TRUE){
+tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, show = TRUE){
+	# TODO Print this, with marginal sum? put tables and plot on one page in browser?
+	# high blood pressure will be defined as >=130/80 millimeters of mercury (previous guideline = 140/90)
 	require(ggplot2)
+
+	if(!(p+q)==1){
+		stop("p+q must = 1.0 Yours sum to ", p+q)
+	}
+
+	residual_with_line <- function(thePlot, lab, x, y, b, d, m, xoffset = .1) {
+		# 1. plot the residual descender/ascender line
+		segs <- data.frame(
+			x1 = x,
+			y1 = (x - 1) * b + .5 * d + m,
+			y2 = y
+		)
+		# thePlot + geom_segment(aes(x = x1, y = y1, xend = x1, yend = y2), arrow = arrow(length=unit(0.30,"cm")), data = segs)
+		thePlot = thePlot + geom_segment(aes(x = x1, y = y1, xend = x1, yend = y2), data = segs)
+		# 2. plot the point
+		thePlot = thePlot + geom_point(aes(x = x1, y = y2), color = "black", data = segs) 
+		# 3. label the point
+		thePlot = thePlot + cowplot::draw_label(lab, x = (x + xoffset), y = y, fontfamily = "Optima", fontface = "italic")
+		return(thePlot)
+	}
 	# Genotypes BB Bb bb Frequency p2 2pq q2
 	df <- data.frame(stringsAsFactors = FALSE,
 		Genotypes = c("Frequency", "fraction"),
@@ -86,7 +119,6 @@ tmx_genotypic_effect <- function(p = .75, q = .25, a = .5, d = .25, m = 0, show 
 	
 	# mu = 2 * p^2 + 2 * p * q
 	# meanDose = 2 * p^2 + 2 * p * q  # eq 3.14
-	# TODO Print this, with marginal sum? put tables and plot on one page in browser?
 	# df$effect * df$freq; sum(df$effect * df$freq) # sums to zero
 	# TODO add examples on page 57
 	df <- data.frame(stringsAsFactors = FALSE,
@@ -97,7 +129,7 @@ tmx_genotypic_effect <- function(p = .75, q = .25, a = .5, d = .25, m = 0, show 
 	)
 	# Plot regression line, and points (sized to frequency)
 	thePlot = qplot(x = dose, y = value, geom = "point", size = freq, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
-	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2)) # just label the legal values: 0, 1, 2
+	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2)) # Just label the legal values: 0, 1, 2
 	print(thePlot)
 
 	# ================================================
@@ -113,56 +145,52 @@ tmx_genotypic_effect <- function(p = .75, q = .25, a = .5, d = .25, m = 0, show 
 	message("Genotypic Effects")
 	umx_print(df)
 
+  # ==================
+  # = 1. Create plot =
+  # ==================
+	# 1. Compute slope (b) of genotypic-effect regression line.
+	# isn't this value?
+	# b = a + (q - p) * d
+	# thePlot = qplot(x = dose, y = ((dose - 1) * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
+	b = a
+	thePlot = qplot(x = dose, y = ((dose - 1) * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
+
+	thePlot = thePlot + theme(text = element_text(family = "Optima", size= 14)) # face = "bold"
+	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2))
+
 	# =====================================
 	# = Plot regression line, and points. =
 	# =====================================
-	# 1. Compute slope (b) of genotypic-effect regression line.
-	b  = a + (q - p) * d
 	# 2. Plot genotypic-effect regression line.
-	thePlot = qplot(x = dose, y = (dose-1 * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
-	thePlot = thePlot + theme(text = element_text(family = "Optima", size= 14)) # face = "bold"
-	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2))
-	
+	# thePlot = thePlot + geom_abline(intercept = (.5 * d) + m, slope = b)
+
 	# 2. Add labels to plot, in the data coordinates.
-	# don't draw m, misleading
-	# thePlot = thePlot + geom_point(aes(x = 1, y=m), color="red") + cowplot::draw_label("m", x = 1+.1, y = m, fontfamily="Optima")
+	# thePlot = thePlot + geom_point(aes(x = 1, y=m), color="red") + cowplot::draw_label("m", x = 1+.1, y = m, fontfamily = "Optima")
 
 	# set the y axis
-	# TODO: lave numbers on y axis, add text labels beside these?
-	if(d == 0){
-		thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, a), labels = c("-a", "d = m", "+a"))
+	# Leave numbers on y axis, add text labels beside these.
+	innerLoc = -.2
+	thePlot = thePlot + cowplot::draw_label("-a", x = innerLoc, y = -a, fontfamily = "Optima", fontface = "italic")
+	thePlot = thePlot + cowplot::draw_label( "a", x = innerLoc, y =  a, fontfamily = "Optima", fontface = "italic")
+	if(d == m){
+		# thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, a), labels = c("-a", "d = m", "+a"))
+		thePlot = thePlot + cowplot::draw_label( "d=m", x = innerLoc, y =  m, fontfamily = "Optima", fontface = "italic")
 	} else {
-		thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, d, a), labels = c("-a", "m", "d", "+a"))
+		# thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, d, a), labels = c("-a", "m", "d", "+a"))
+		thePlot = thePlot + cowplot::draw_label( "m", x = innerLoc, y =  m, fontfamily = "Optima", fontface = "italic")
+		thePlot = thePlot + cowplot::draw_label( "d", x = innerLoc, y =  d, fontfamily = "Optima", fontface = "italic")
 	}
-	# TODO: plot points on the line, add text labels beside these
-	addArrow <- function(thePlot, x1, b, d, m, y2) {
-		segs <- data.frame(
-			x1 = x1,
-			y1 = (x1 - 1) * b + .5 * d + m,
-			y2 = y2
-		)
-		# thePlot + geom_segment(aes(x = x1, y = y1, xend = x1, yend = y2), arrow = arrow(length=unit(0.30,"cm")), data = segs)
-		thePlot + geom_segment(aes(x = x1, y = y1, xend = x1, yend = y2), arrow = arrow(length=unit(0.10,"cm")), data = segs)
-	}
-	# bb
-	thePlot = thePlot + geom_point(aes(x = 0, y = -a), color = "black") 
-	thePlot = thePlot + cowplot::draw_label("bb", x = 0+.1, y = -a, fontfamily = "Optima")
-	thePlot = addArrow(thePlot, x1 = 0, b=b, d=d, m=m, y2=-a)
-	# Bb
-	thePlot = thePlot + geom_point(aes(x = 1, y= d), color = "black") 
-	thePlot = thePlot + cowplot::draw_label("Bb", x = (1-.1), y =  d, fontfamily = "Optima")
-	thePlot = addArrow(thePlot, x1 = 1, b=b, d=d, m=m, y2=d)
-	# BB
-	thePlot = thePlot + geom_point(aes(x = 2, y= a), color = "black") 
-	thePlot = thePlot + cowplot::draw_label("BB", x = 2, y =  (a -.1), fontfamily = "Optima")
-	thePlot = addArrow(thePlot, x1 = 2, b = b, d = d, m = m, y2 = a)
 
-	thePlot = thePlot + expand_limits(y = c(-a, a))
+	# 2. Plot bb, Bb, and BB points, with text labels, and vertical line segment showing residual from regression
+	thePlot = residual_with_line(thePlot, lab = "bb", x = 0, y = -a, b = b, d = d, m = m)
+	thePlot = residual_with_line(thePlot, lab = "Bb", x = 1, y =  d, b = b, d = d, m = m)
+	thePlot = residual_with_line(thePlot, lab = "BB", x = 2, y =  a, b = b, d = d, m = m)
+
+	thePlot = thePlot + expand_limits(y = c(-a, a), x = c(-.2, 2.2))
 	if(show){
 		print(thePlot)
 	}
-	thePlot
-	# high blood pressure will be defined as >=130/80 millimeters of mercury (previous guideline = 140/90)
+	invisible(thePlot)
 }
 
 #' Test if a factor model is identified
