@@ -66,7 +66,7 @@
 tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, show = TRUE){
 	# TODO Print this, with marginal sum? put tables and plot on one page in browser?
 	# high blood pressure will be defined as >=130/80 millimeters of mercury (previous guideline = 140/90)
-	require(ggplot2)
+	require(cowplot)
 
 	if(!(p+q)==1){
 		stop("p+q must = 1.0 Yours sum to ", p+q)
@@ -84,7 +84,7 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 		# 2. plot the point
 		thePlot = thePlot + geom_point(aes(x = x1, y = y2), color = "black", data = segs) 
 		# 3. label the point
-		thePlot = thePlot + cowplot::draw_label(lab, x = (x + xoffset), y = y, fontfamily = "Optima", fontface = "italic")
+		thePlot = thePlot + cowplot::draw_label(lab, x = (x + xoffset), y = y, fontfamily = "Times", fontface = "italic")
 		return(thePlot)
 	}
 	# Genotypes BB Bb bb Frequency p2 2pq q2
@@ -155,7 +155,7 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 	b = a
 	thePlot = qplot(x = dose, y = ((dose - 1) * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
 
-	thePlot = thePlot + theme(text = element_text(family = "Optima", size= 14)) # face = "bold"
+	thePlot = thePlot + theme(text = element_text(family = "Times", size= 14)) # face = "bold"
 	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2))
 
 	# =====================================
@@ -165,20 +165,20 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 	# thePlot = thePlot + geom_abline(intercept = (.5 * d) + m, slope = b)
 
 	# 2. Add labels to plot, in the data coordinates.
-	# thePlot = thePlot + geom_point(aes(x = 1, y=m), color="red") + cowplot::draw_label("m", x = 1+.1, y = m, fontfamily = "Optima")
+	# thePlot = thePlot + geom_point(aes(x = 1, y=m), color="red") + cowplot::draw_label("m", x = 1+.1, y = m, fontfamily = "Times")
 
 	# set the y axis
 	# Leave numbers on y axis, add text labels beside these.
 	innerLoc = -.2
-	thePlot = thePlot + cowplot::draw_label("-a", x = innerLoc, y = -a, fontfamily = "Optima", fontface = "italic")
-	thePlot = thePlot + cowplot::draw_label( "a", x = innerLoc, y =  a, fontfamily = "Optima", fontface = "italic")
+	thePlot = thePlot + cowplot::draw_label("-a", x = innerLoc, y = -a, fontfamily = "Times", fontface = "italic")
+	thePlot = thePlot + cowplot::draw_label( "a", x = innerLoc, y =  a, fontfamily = "Times", fontface = "italic")
 	if(d == m){
 		# thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, a), labels = c("-a", "d = m", "+a"))
-		thePlot = thePlot + cowplot::draw_label( "d=m", x = innerLoc, y =  m, fontfamily = "Optima", fontface = "italic")
+		thePlot = thePlot + cowplot::draw_label( "d=m", x = innerLoc, y =  m, fontfamily = "Times", fontface = "italic")
 	} else {
 		# thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, d, a), labels = c("-a", "m", "d", "+a"))
-		thePlot = thePlot + cowplot::draw_label( "m", x = innerLoc, y =  m, fontfamily = "Optima", fontface = "italic")
-		thePlot = thePlot + cowplot::draw_label( "d", x = innerLoc, y =  d, fontfamily = "Optima", fontface = "italic")
+		thePlot = thePlot + cowplot::draw_label( "m", x = innerLoc, y =  m, fontfamily = "Times", fontface = "italic")
+		thePlot = thePlot + cowplot::draw_label( "d", x = innerLoc, y =  d, fontfamily = "Times", fontface = "italic")
 	}
 
 	# 2. Plot bb, Bb, and BB points, with text labels, and vertical line segment showing residual from regression
