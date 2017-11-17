@@ -34,7 +34,7 @@
 #' https://github.com/tbates/BGBook/issues/23#issuecomment-333834075
 #' 
 #' @param p The frequency of the A allele (default .5)
-#' @param q The frequency of the a allele (default .5)
+#' @param q The frequency of the a allele (default 1-p)
 #' @param a Half the difference between the AA and aa homozygotes (default .5)
 #' @param m The value of the midpoint between the homozygotes (default 0)
 #' @param d The deviation of the heterozygote from m (default 1)
@@ -128,6 +128,11 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 		freq     = factor(c(G_bb_f, G_Bb_f, G_BB_f))
 	)
 	# Plot regression line, and points (sized to frequency)
+	# slope for the genotypic value plot
+	b = a + (q - p) * d
+	thePlot = qplot(x = dose, y = value, geom = "point", size = freq, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
+	thePlot = qplot(x = dose, y = ((dose - 1) * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
+	
 	thePlot = qplot(x = dose, y = value, geom = "point", size = freq, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
 	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2)) # Just label the legal values: 0, 1, 2
 	print(thePlot)
@@ -149,8 +154,6 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
   # = 1. Create plot =
   # ==================
 	# 1. Compute slope (b) of genotypic-effect regression line.
-	# isn't this value?
-	# b = a + (q - p) * d
 	# thePlot = qplot(x = dose, y = ((dose - 1) * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
 	b = a
 	thePlot = qplot(x = dose, y = ((dose - 1) * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
