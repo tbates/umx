@@ -45,7 +45,7 @@ umx_grep(spss_df, "labeltext", output = "name")
 - \code{\link{grep}} \code{\link{umx_names}} \code{\link{umx_aggregate}}
 
 Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
-  \code{\link{umx_make}},
+  \code{\link{umx_array_shift}}, \code{\link{umx_make}},
   \code{\link{umx_write_to_clipboard}}
 
 Other String Functions: \code{\link{umxBrownie}},

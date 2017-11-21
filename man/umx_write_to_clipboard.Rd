@@ -25,5 +25,6 @@ umx_write_to_clipboard("hello")
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
-  \code{\link{umx_grep}}, \code{\link{umx_make}}
+  \code{\link{umx_array_shift}}, \code{\link{umx_grep}},
+  \code{\link{umx_make}}
 }
