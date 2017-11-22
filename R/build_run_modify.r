@@ -300,10 +300,12 @@ umxModel <- function(...) {
 #'	# A->B, A->C, B->A, B->C, C->A, C->B
 #'	umxPath(fromEach = c("A", "B", "C"))
 #')
+#' 
 #'m1 = umxRAM("fromEach with to", data = c("B", "C"),
 #'	# B->D, C->D
 #'	umxPath(fromEach = c("B", "C"), to= "D")
 #')
+#' 
 #' m1 = umxRAM("CFA_play", data = paste0("x", 1:4),
 #' 	umxPath("g", to = paste0("x", 1:4)),
 #' 	umxPath(var = paste0("x", 1:4)),
@@ -535,13 +537,20 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		}
 	}
 	m1 = omxAssignFirstParameters(m1)
+
 	if(autoRun){
-		m1 = mxRun(m1)
-		umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
-		invisible(m1)
-	} else {
-		invisible(m1)
+		tryCatch({
+			m1 = mxRun(m1)
+			umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
+		}, warning = function(w) {
+			message("Warning incurred trying to run model")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run model")
+			message(e)
+		})
 	}
+	invisible(m1)
 }
 
 #' Make a multi-group model
@@ -607,10 +616,19 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 	newModel = omxAssignFirstParameters(newModel)
 	
 	if(autoRun){
-		newModel = mxRun(newModel)
-		umxSummary(newModel)
+		tryCatch({
+			newModel = mxRun(newModel)
+			umxSummary(newModel)
+		}, warning = function(w) {
+			message("Warning incurred trying to run model. try mxTryHard on it.")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run model. try mxTryHard on it.")
+			message(e)
+		})
 	}			
 	return(newModel)
+	
 }
 
 #' umxModify: Add, set, or drop model paths by label.
