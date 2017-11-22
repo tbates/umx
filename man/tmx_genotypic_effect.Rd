@@ -10,7 +10,7 @@ tmx_genotypic_effect(p = 0.75, q = (1 - p), a = 0.5, d = 0.25, m = 0,
 \arguments{
 \item{p}{The frequency of the A allele (default .5)}
 
-\item{q}{The frequency of the a allele (default .5)}
+\item{q}{The frequency of the a allele (default 1-p)}
 
 \item{a}{Half the difference between the AA and aa homozygotes (default .5)}
 

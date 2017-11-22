@@ -4236,9 +4236,69 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 	return(ld)
 }
 
+#' Stack data like stack() does, with more control.
+#'
+#' @description
+#' Operates like \code{\link{stack}}, but can preserve ("passalong") other variables on each row,
+#' and allows the user control over the values and group column names for ease of use.
+#'
+#' @param x a dataframe containing twin data.
+#' @param select The variables to stack (wide 2 long)
+#' @param passalong Variables to preserve on each row (e.g. age)
+#' @param valuesName The name for the new stacked column (default = "values")
+#' @param groupName The name for the column containing the grouping variable (default = "ind")
+#' @return - long-format dataframe
+#' @export
+#' @family Data Functions
+#' @examples
+#' 
+#' # Base-R stack function
+#' df = stack(mtcars, select = c("disp", "hp"), drop=FALSE)
+#' 
+#' # umx_stack, with additional variables passed along 
+#' df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
+#' str(df) # ind is a factor, with levels select
+#' qplot(x = mpg, y= values, color=ind, data = df)
+#' df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
+#' qplot(x = mpg, y= values, group="ind", data = df)
+umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "ind") {
+	# TODO: rewrite to create the full size in one go, and slot in blocks
+	# initialize new dataframe
+	df = x[c(passalong, select[1])]
+	# rename
+	names(df)= c(passalong, valuesName)
+	# stack remaining columns
+	for(thisVar in select[2:length(select)]) {
+		tmp = x[c(passalong, thisVar)]
+		names(tmp)= c(passalong, valuesName)
+		df = rbind(df, tmp)
+	}
+	# Add column indicating origin of each value
+	df[,groupName]= factor(rep(select, each = dim(x)[1]))
+	return(df)
+}
+
+#' Like the php array_shift function: shifts an item off the beginning of a list
+#' 
+#' Returns x[1]. Has the SIDE EFFECT of assigning x to x[2:end] in the container environment.
+#'
+#' @param x the vector to shift
+#' @return - first item of x
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @examples
+#' x = c("Alice", "Bob", "Carol")
+#' umx_array_shift(x) # returns "Alice"
+#' x # now only 2 items (altered in containing environment)
+umx_array_shift <- function(x){
+	item1 = x[1]
+	x <<- x[2:length(x)]
+	return(item1)
+}
+
 #' umx_swap_a_block
 #'
-#' Swap a block of rows of a dataset between two lists variables (typically twin 1 and twin2)
+#' Swap a block of rows of a dataset between two sets of variables (typically twin 1 and twin 2)
 #'
 #' @param theData a data frame to swap within
 #' @param rowSelector rows to swap amongst columns

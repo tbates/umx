@@ -70,6 +70,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_merge_CIs}}, \code{\link{umx_reorder}},
   \code{\link{umx_residualize}}, \code{\link{umx_round}},
   \code{\link{umx_scale_wide_twin_data}},
-  \code{\link{umx_scale}}, \code{\link{umx_swap_a_block}},
+  \code{\link{umx_scale}}, \code{\link{umx_stack}},
+  \code{\link{umx_swap_a_block}},
   \code{\link{umx_wide2long}}, \code{\link{umx}}
 }
