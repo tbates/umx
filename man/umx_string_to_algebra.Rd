@@ -29,10 +29,12 @@ alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " \%*\% "), name =
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Misc: \code{\link{umxEval}},
-  \code{\link{umx_APA_model_CI}},
-  \code{\link{umx_add_variances}}, \code{\link{umx_apply}},
-  \code{\link{umx_default_option}},
+Other Advanced Model Building Functions: \code{\link{umxJiggle}},
+  \code{\link{umxLabel}}, \code{\link{umxRAM2Ordinal}},
+  \code{\link{umxThresholdMatrix}},
+  \code{\link{umxValues}}, \code{\link{umx_add_variances}},
+  \code{\link{umx_fix_first_loadings}},
+  \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_object_as_str}}, \code{\link{umx}}
+  \code{\link{umx}}
 }

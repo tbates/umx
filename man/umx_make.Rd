@@ -33,7 +33,7 @@ umx_make(what = "release"))  # release to CRAN
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
-  \code{\link{umx_array_shift}}, \code{\link{umx_grep}},
-  \code{\link{umx_write_to_clipboard}}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
+  \code{\link{umxBrownie}}, \code{\link{umxVersion}},
+  \code{\link{umx_open_CRAN_page}}, \code{\link{umx}}
 }

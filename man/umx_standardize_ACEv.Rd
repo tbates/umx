@@ -30,7 +30,8 @@ std = umx_standardize(m1)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},
+Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},
+  \code{\link{umx_standardize_ACEcov}},
   \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_CP}},
   \code{\link{umx_standardize_IP}}, \code{\link{umx}}

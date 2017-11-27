@@ -35,10 +35,14 @@ umx_APA_model_CI(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std"
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Misc: \code{\link{umxEval}},
-  \code{\link{umx_add_variances}}, \code{\link{umx_apply}},
-  \code{\link{umx_default_option}},
-  \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_object_as_str}},
-  \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
+Other Reporting Functions: \code{\link{loadings.MxModel}},
+  \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
+  \code{\link{umxEval}}, \code{\link{umxFactorScores}},
+  \code{\link{umxGetParameters}},
+  \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
+  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}},
+  \code{\link{umx_parameters}}, \code{\link{umx_print}},
+  \code{\link{umx_show}}, \code{\link{umx_time}},
+  \code{\link{umx}}
 }

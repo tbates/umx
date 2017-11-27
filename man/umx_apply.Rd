@@ -32,12 +32,4 @@ umx_apply(mean, by = "rows", of = mtcars[1:3,], na.rm = TRUE)
 }
 \seealso{
 - \code{\link{umx_aggregate}}
-
-Other Misc: \code{\link{umxEval}},
-  \code{\link{umx_APA_model_CI}},
-  \code{\link{umx_add_variances}},
-  \code{\link{umx_default_option}},
-  \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_object_as_str}},
-  \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
 }

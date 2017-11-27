@@ -19,7 +19,8 @@ Tests if an input has square brackets
 xmuHasSquareBrackets("A[1,2]")
 }
 \seealso{
-Other xmu internal not for end user: \code{\link{umxModel}},
+Other xmu internal not for end user: \code{\link{umxHetCor}},
+  \code{\link{umxModel}}, \code{\link{umx}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}},
   \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},

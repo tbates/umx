@@ -46,11 +46,9 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx_long2wide}}, \code{\link{umx_wide2long}},
   \code{\link{umx}}
 
-Other Miscellaneous Functions: \code{\link{install.OpenMx}},
-  \code{\link{umx_get_options}},
+Other Check or test: \code{\link{umx_check_names}},
   \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
-  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}}
+  \code{\link{umx}}
 }

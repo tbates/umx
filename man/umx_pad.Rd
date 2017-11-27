@@ -27,9 +27,22 @@ umx_pad(1:3, 3)
 - \url{https://github.com/kevinushey/Kmisc/tree/master/man}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{install.OpenMx}},
-  \code{\link{umx_get_options}},
-  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
-  \code{\link{umx_open_CRAN_page}},
-  \code{\link{xmu_twin_check}}
+Other Data Functions: \code{\link{umxCovData}},
+  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
+  \code{\link{umxPadAndPruneForDefVars}},
+  \code{\link{umx_array_shift}},
+  \code{\link{umx_as_numeric}},
+  \code{\link{umx_cont_2_quantiles}},
+  \code{\link{umx_cov2raw}}, \code{\link{umx_long2wide}},
+  \code{\link{umx_lower2full}},
+  \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
+  \code{\link{umx_make_bin_cont_pair_data}},
+  \code{\link{umx_make_fake_data}},
+  \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
+  \code{\link{umx_residualize}},
+  \code{\link{umx_scale_wide_twin_data}},
+  \code{\link{umx_scale}}, \code{\link{umx_stack}},
+  \code{\link{umx_swap_a_block}},
+  \code{\link{umx_wide2long}}, \code{\link{umx}}
 }

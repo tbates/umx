@@ -24,7 +24,7 @@ umxBrownie()
 \seealso{
 - \code{\link{omxBrownie}}
 
-Other String Functions: \code{\link{umx_explode_twin_names}},
-  \code{\link{umx_explode}}, \code{\link{umx_grep}},
-  \code{\link{umx_rot}}, \code{\link{umx_trim}}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
+  \code{\link{umxVersion}}, \code{\link{umx_make}},
+  \code{\link{umx_open_CRAN_page}}, \code{\link{umx}}
 }

@@ -130,10 +130,12 @@ m1 = umxRAM("ring around the rosey", data = c("B", "C"),
 # A->B, A->C, B->A, B->C, C->A, C->B
 umxPath(fromEach = c("A", "B", "C"))
 )
+
 m1 = umxRAM("fromEach with to", data = c("B", "C"),
 # B->D, C->D
 umxPath(fromEach = c("B", "C"), to= "D")
 )
+
 m1 = umxRAM("CFA_play", data = paste0("x", 1:4),
 	umxPath("g", to = paste0("x", 1:4)),
 	umxPath(var = paste0("x", 1:4)),

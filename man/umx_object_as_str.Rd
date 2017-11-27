@@ -22,10 +22,8 @@ umx_object_as_str(mtcars) # "mtcars"
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Misc: \code{\link{umxEval}},
-  \code{\link{umx_APA_model_CI}},
-  \code{\link{umx_add_variances}}, \code{\link{umx_apply}},
-  \code{\link{umx_default_option}},
-  \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
+Other String Functions: \code{\link{umx_explode_twin_names}},
+  \code{\link{umx_explode}}, \code{\link{umx_grep}},
+  \code{\link{umx_rot}}, \code{\link{umx_trim}},
+  \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
 }

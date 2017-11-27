@@ -29,7 +29,9 @@ umx_set_auto_plot(old)    # reinstate
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Get and set: \code{\link{umx_get_checkpoint}},
+Other Get and set: \code{\link{umx_default_option}},
+  \code{\link{umx_get_checkpoint}},
+  \code{\link{umx_get_options}},
   \code{\link{umx_set_auto_run}},
   \code{\link{umx_set_checkpoint}},
   \code{\link{umx_set_condensed_slots}},
@@ -37,5 +39,5 @@ Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_set_optimizer}},
   \code{\link{umx_set_plot_file_suffix}},
   \code{\link{umx_set_plot_format}},
-  \code{\link{umx_set_table_format}}
+  \code{\link{umx_set_table_format}}, \code{\link{umx}}
 }

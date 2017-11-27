@@ -33,3 +33,9 @@ umxAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
+\seealso{
+Other Miscellaneous Stats Helpers: \code{\link{reliability}},
+  \code{\link{umxCov2cor}}, \code{\link{umx_cor}},
+  \code{\link{umx_means}}, \code{\link{umx_round}},
+  \code{\link{umx_var}}, \code{\link{umx}}
+}

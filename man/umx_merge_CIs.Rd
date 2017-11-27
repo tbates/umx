@@ -27,21 +27,9 @@ umx_merge_CIs(m1, m2)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Data Functions: \code{\link{umxCovData}},
-  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
-  \code{\link{umxPadAndPruneForDefVars}},
-  \code{\link{umx_as_numeric}},
-  \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_cov2raw}}, \code{\link{umx_long2wide}},
-  \code{\link{umx_lower2full}},
-  \code{\link{umx_make_MR_data}},
-  \code{\link{umx_make_TwinData}},
-  \code{\link{umx_make_bin_cont_pair_data}},
-  \code{\link{umx_make_fake_data}},
-  \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
-  \code{\link{umx_residualize}}, \code{\link{umx_round}},
-  \code{\link{umx_scale_wide_twin_data}},
-  \code{\link{umx_scale}}, \code{\link{umx_stack}},
-  \code{\link{umx_swap_a_block}},
-  \code{\link{umx_wide2long}}, \code{\link{umx}}
+Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},
+  \code{\link{umx_standardize_ACEv}},
+  \code{\link{umx_standardize_ACE}},
+  \code{\link{umx_standardize_CP}},
+  \code{\link{umx_standardize_IP}}, \code{\link{umx}}
 }

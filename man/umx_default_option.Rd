@@ -45,10 +45,15 @@ umx_default_option(option_list, option_list) # works with non character
 \seealso{
 - \code{\link{match.arg}}
 
-Other Misc: \code{\link{umxEval}},
-  \code{\link{umx_APA_model_CI}},
-  \code{\link{umx_add_variances}}, \code{\link{umx_apply}},
-  \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_object_as_str}},
-  \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
+Other Get and set: \code{\link{umx_get_checkpoint}},
+  \code{\link{umx_get_options}},
+  \code{\link{umx_set_auto_plot}},
+  \code{\link{umx_set_auto_run}},
+  \code{\link{umx_set_checkpoint}},
+  \code{\link{umx_set_condensed_slots}},
+  \code{\link{umx_set_cores}},
+  \code{\link{umx_set_optimizer}},
+  \code{\link{umx_set_plot_file_suffix}},
+  \code{\link{umx_set_plot_format}},
+  \code{\link{umx_set_table_format}}, \code{\link{umx}}
 }

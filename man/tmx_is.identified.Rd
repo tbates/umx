@@ -33,10 +33,12 @@ tmx_is.identified(nVariables = 5, nFactors = 2) # TRUE
 Other Teaching Functions: \code{\link{tmx_genotypic_effect}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
-  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
-  \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}},
+  \code{\link{umxAPA}}, \code{\link{umxEval}},
+  \code{\link{umxFactorScores}},
+  \code{\link{umxGetParameters}},
+  \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
+  \code{\link{umxSummary}}, \code{\link{umx_APA_model_CI}},
+  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_parameters}}, \code{\link{umx_print}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}

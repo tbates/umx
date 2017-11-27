@@ -666,6 +666,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' @param dropList (deprecated: use 'update' instead.
 #' @return - \code{\link{mxModel}}
 #' @family Core Modeling Functions
+#' @family Modify or Compare Models
 #' @references - \url{http://github.com/tbates/umx}
 #' @export
 #' @examples
@@ -4679,16 +4680,22 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' @family Core Modelling Functions
 #' @family Super-easy helpers
-#' @family Reporting Functions
 #' @family Twin Modeling Functions
+#' @family Reporting Functions
+#' @family Plotting functions
 #' @family Modify or Compare Models
-#' @family Advanced Model Building Functions
-#' @family Misc
+#' @family Get and set
+#' @family Check or test
 #' @family Data Functions
+#' @family Twin Data functions
 #' @family Utility Functions
-#' @family Stats Functions
 #' @family File Functions
+#' @family String Functions
+#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Utility Functions
+#' @family Advanced Model Building Functions
 #' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @references - \url{http://www.github.com/tbates/umx}
 #' 
 #' @examples

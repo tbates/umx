@@ -44,12 +44,9 @@ umx_grep(spss_df, "labeltext", output = "name")
 \seealso{
 - \code{\link{grep}} \code{\link{umx_names}} \code{\link{umx_aggregate}}
 
-Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
-  \code{\link{umx_array_shift}}, \code{\link{umx_make}},
-  \code{\link{umx_write_to_clipboard}}
-
-Other String Functions: \code{\link{umxBrownie}},
-  \code{\link{umx_explode_twin_names}},
-  \code{\link{umx_explode}}, \code{\link{umx_rot}},
-  \code{\link{umx_trim}}
+Other String Functions: \code{\link{umx_explode_twin_names}},
+  \code{\link{umx_explode}},
+  \code{\link{umx_object_as_str}}, \code{\link{umx_rot}},
+  \code{\link{umx_trim}},
+  \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
 }

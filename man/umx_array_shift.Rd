@@ -21,7 +21,21 @@ umx_array_shift(x) # returns "Alice"
 x # now only 2 items (altered in containing environment)
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{umxVersion}},
-  \code{\link{umx_grep}}, \code{\link{umx_make}},
-  \code{\link{umx_write_to_clipboard}}
+Other Data Functions: \code{\link{umxCovData}},
+  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
+  \code{\link{umxPadAndPruneForDefVars}},
+  \code{\link{umx_as_numeric}},
+  \code{\link{umx_cont_2_quantiles}},
+  \code{\link{umx_cov2raw}}, \code{\link{umx_long2wide}},
+  \code{\link{umx_lower2full}},
+  \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
+  \code{\link{umx_make_bin_cont_pair_data}},
+  \code{\link{umx_make_fake_data}}, \code{\link{umx_pad}},
+  \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
+  \code{\link{umx_residualize}},
+  \code{\link{umx_scale_wide_twin_data}},
+  \code{\link{umx_scale}}, \code{\link{umx_stack}},
+  \code{\link{umx_swap_a_block}},
+  \code{\link{umx_wide2long}}, \code{\link{umx}}
 }

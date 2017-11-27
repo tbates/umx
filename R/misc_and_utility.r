@@ -35,7 +35,7 @@
 #'
 #' @return - 
 #' @export
-#' @family String Functions
+#' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{omxBrownie}}
 #' @references - \url{https://github.com/tbates/umx}
 #' @examples
@@ -56,7 +56,7 @@ umxBrownie <- function() {
 #'
 #' @return - message
 #' @export
-#' @family Miscellaneous Functions
+#' @family Get and set
 #' @examples
 #' umx_get_options()
 umx_get_options <- function() {
@@ -761,7 +761,7 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' @param values = List of values (default = NULL)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Misc
+#' @family Advanced Model Building Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 #' @examples
 #' require(umx)
@@ -1140,7 +1140,7 @@ umxVersion <- function (model = NULL, verbose = TRUE, return = "umx") {
 #' @param package An \R package name.
 #' @return - 
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
 #' @examples
 #' \dontrun{
 #' umx_open_CRAN_page("umx")
@@ -1160,7 +1160,7 @@ umx_open_CRAN_page <- function(package = "umx") {
 #' @param n The final length of each object.
 #' @return - padded object
 #' @export
-#' @family Miscellaneous Functions
+#' @family Data Functions
 #' @references - \url{https://github.com/kevinushey/Kmisc/tree/master/man}
 #' @examples
 #' umx_pad(1:3, 4)
@@ -1211,7 +1211,7 @@ umx_pad <- function(x, n) {
 #' @return - object
 #' @export
 #' @seealso - \code{\link{umx_aggregate}} 
-#' @family Misc
+#' @family Miscellaneous Stats Helpers✓
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' umx_apply(mean, mtcars, by = "columns")
@@ -1403,7 +1403,6 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 #' @param useNames whether to search the names as well as the labels (for SPSS files with label metadata)
 #' @return - list of matched column names and/or labels
 #' @seealso - \code{\link{grep}} \code{\link{umx_names}} \code{\link{umx_aggregate}}
-#' @family Miscellaneous Utility Functions
 #' @family String Functions
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -1834,7 +1833,8 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 #' @param x something to put on the clipboard
 #' @return - 
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family String Functions
+#' @family File Functions
 #' @examples
 #' \dontrun{
 #' umx_write_to_clipboard("hello")
@@ -1866,7 +1866,7 @@ umx_write_to_clipboard <- function(x) {
 #' @param digits rounding of answers
 #' @param type Unused argument for future directions
 #' @return - Matrix of correlations and p-values
-#' @family Stats Functions
+#' @family Miscellaneous Stats Helpers
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1925,7 +1925,7 @@ rowMin <- function(df, na.rm= TRUE) {
 #' @param digits how many digits to round to (defaults to getOption("digits"))
 #' @param coerce whether to make the column numeric if it is not (default = FALSE)
 #' @return - \code{\link{mxModel}}
-#' @family Data Functions
+#' @family Miscellaneous Stats Helpers
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -1968,7 +1968,7 @@ specify_decimal <- function(x, k){
 #' @param S A square, symmetric, numeric covariance matrix
 #' @return - 
 #' @export
-#' @family Stats Functions
+#' @family Miscellaneous Stats Helpers
 #' @references - \url{https://cran.r-project.org/package=Rcmdr}
 #' @examples
 #' # treat vehicle aspects as items of a test
@@ -2043,7 +2043,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @param lib Where to install the package
 #' @return - 
 #' @export
-#' @family Miscellaneous Functions
+#' @family Miscellaneous Utility Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -2236,7 +2236,7 @@ tvars <- umx_paste_names
 #' @param m1 first copy of the model
 #' @param m2 second copy of the model
 #' @return - \code{\link{mxModel}}
-#' @family Data Functions
+#' @family zAdvanced Helpers
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -2314,7 +2314,7 @@ umxCovData <- function(df, columns = NA, use = c("complete.obs", "everything", "
 #' @param x something that cov2cor can work on (matrix, df, etc.)
 #' @return - a correlation matrix
 #' @export
-#' @family Stats Functions
+#' @family Miscellaneous Stats Helpers
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umxCov2cor(cov(mtcars))
@@ -2713,7 +2713,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' @param message Some helpful text to append when dieing.
 #' @family Test
 #' @export
-#' @family Building Functions
+#' @family Check or test
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -2784,7 +2784,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' @param use passed to \code{\link{cov}} - defaults to "complete.obs" (see param default for other options).
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Building Functions
+#' @family Miscellaneous Stats Helpers
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' tmp     = mtcars[,1:4]
@@ -2836,7 +2836,7 @@ umx_var <- function(df, ordVar = 1, format = c("full", "diag", "lower"), use = c
 #' @param na.rm passed to mean - defaults to "na.rm"
 #' @return - frame of means
 #' @export
-#' @family Stats Functions
+#' @family Miscellaneous Stats Helpers
 #' @examples
 #' tmp = mtcars[,1:4]
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
@@ -3453,7 +3453,7 @@ umx_has_square_brackets <- function (input) {
 #' @param dimnames of the returned algebra
 #' @return - \code{\link{mxAlgebra}}
 #' @export
-#' @family Misc
+#' @family Advanced Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -3470,7 +3470,7 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' @param x an object
 #' @return - name as string
 #' @export
-#' @family Misc
+#' @family String Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' umx_object_as_str(mtcars) # "mtcars"
@@ -3489,7 +3489,7 @@ umx_object_as_str<- function(x) {
 #' @param show Whether to show??? (default = FALSE)
 #' @return - an openmx algebra (formula)
 #' @export
-#' @family Misc
+#' @family Reporting Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' m1 = mxModel("fit",
@@ -3573,7 +3573,7 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verb
 #' @param all Whether to return a single all() Boolean or each column individually.
 #' @return - Boolean or Boolean vector
 #' @export
-#' @family Miscellaneous Functions
+#' @family Check or test
 #' @seealso - \code{\link{umx_is_numeric}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -3616,7 +3616,7 @@ umx_is_class <- function(df, classes, all = TRUE){
 #' @param all Whether to return a single all() Boolean or each column individually.
 #' @return - Boolean or Boolean vector
 #' @export
-#' @family Miscellaneous Functions
+#' @family Check or test
 #' @seealso - \code{\link{umx_is_class}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -3666,6 +3666,7 @@ umx_is_numeric <- function(df, all = TRUE){
 #' @return - dataframe with var residualized in place (i.e under its original column name)
 #' @export
 #' @family Data Functions
+#' @family Twin Data functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' # Residualize mpg on cylinders and displacement
@@ -3773,6 +3774,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' @export
 #' @seealso umx_scale
 #' @family Data Functions
+#' @family Twin Data functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
@@ -3810,7 +3812,7 @@ umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
 #' @param check Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE) 
 #' @return - one validated option
 #' @export
-#' @family Misc
+#' @family Get and set
 #' @seealso - \code{\link{match.arg}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -4083,7 +4085,7 @@ umx_rot <- function(vec){
 #' @return - dataframe in wide format
 #' @export
 #' @family Data Functions
-#' @family Twin Modeling Functions
+#' @family Twin Data functions
 #' @seealso - \code{\link{merge}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -4184,7 +4186,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @return - long-format dataframe
 #' @export
 #' @family Data Functions
-#' @family Twin Modeling Functions
+#' @family Twin Data functions
 #' @examples
 #' long = umx_wide2long(data = twinData, sep = "")
 #' long = umx_wide2long(data = twinData, sep = "", verbose = TRUE)
@@ -4285,7 +4287,7 @@ umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "
 #' @param x the vector to shift
 #' @return - first item of x
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family Data Functions
 #' @examples
 #' x = c("Alice", "Bob", "Carol")
 #' umx_array_shift(x) # returns "Alice"
@@ -4366,6 +4368,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
 #' @family Data Functions
+#' @family Twin Data functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' # =====================================================================
@@ -4967,6 +4970,8 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @param verbose How much to tell the user about what was done.
 #' @return - A matrix of correlations
 #' @family Data Functions
+#' @family Stats
+#' @family xmu internal not for end user
 #' @export
 #' @references - 
 #' @examples
@@ -5202,7 +5207,7 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 #' @param newName = NA
 #' @return - a list of bracket style labels
 #' @export
-#' @family Misc
+#' @family Advanced Model Building Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -5284,7 +5289,7 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported.
 #' @param ... Other parameters.
-#' @family Advanced Helpers
+#' @family Advanced Model Building Functions
 #' \url{http://www.github.com/tbates/umx}
 #' @export
 umx_standardize <- function(model, ...){

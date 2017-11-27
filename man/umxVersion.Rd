@@ -29,7 +29,7 @@ x = umxVersion(); x
 \seealso{
 - \code{\link{packageVersion}}
 
-Other Miscellaneous Utility Functions: \code{\link{umx_array_shift}},
-  \code{\link{umx_grep}}, \code{\link{umx_make}},
-  \code{\link{umx_write_to_clipboard}}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
+  \code{\link{umxBrownie}}, \code{\link{umx_make}},
+  \code{\link{umx_open_CRAN_page}}, \code{\link{umx}}
 }

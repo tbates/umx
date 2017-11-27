@@ -29,3 +29,6 @@ In the future it will be expanded to handle overlapping correlations, and to tak
 vars = c("mpg", "cyl", "disp", "hp")
 umx_r_test(mtcars, vars)
 }
+\seealso{
+Other Stats: \code{\link{umxHetCor}}
+}

@@ -56,7 +56,7 @@ plot(m1, std = FALSE) # don't standardize
 Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}
+  \code{\link{umxPlotIP}}, \code{\link{umx}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
@@ -87,6 +87,5 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx_long2wide}}, \code{\link{umx_wide2long}},
   \code{\link{umx}}, \code{\link{xmu_twin_check}}
 }

@@ -87,7 +87,6 @@ Other Twin Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx_long2wide}}, \code{\link{umx_wide2long}},
   \code{\link{umx}}, \code{\link{xmu_twin_check}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

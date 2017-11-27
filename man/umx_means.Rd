@@ -27,7 +27,8 @@ tmp$hp  = ordered(mtcars$hp)  # binary factor
 umx_means(tmp, ordVar = 0, na.rm = TRUE)
 }
 \seealso{
-Other Stats Functions: \code{\link{reliability}},
+Other Miscellaneous Stats Helpers: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umx_cor}},
-  \code{\link{umx}}
+  \code{\link{umx_fun_mean_sd}}, \code{\link{umx_round}},
+  \code{\link{umx_var}}, \code{\link{umx}}
 }

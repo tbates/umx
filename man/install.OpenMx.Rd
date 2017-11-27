@@ -38,8 +38,7 @@ install.OpenMx()
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Functions: \code{\link{umx_get_options}},
-  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
-  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
-  \code{\link{xmu_twin_check}}
+Other Miscellaneous Utility Functions: \code{\link{umxBrownie}},
+  \code{\link{umxVersion}}, \code{\link{umx_make}},
+  \code{\link{umx_open_CRAN_page}}, \code{\link{umx}}
 }

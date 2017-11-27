@@ -37,5 +37,8 @@ umx_var(tmp2, format = "full")
 - \url{http://tbates.github.io}
 }
 \seealso{
-Other Building Functions: \code{\link{umx_check_names}}
+Other Miscellaneous Stats Helpers: \code{\link{reliability}},
+  \code{\link{umxCov2cor}}, \code{\link{umx_cor}},
+  \code{\link{umx_fun_mean_sd}}, \code{\link{umx_means}},
+  \code{\link{umx_round}}, \code{\link{umx}}
 }

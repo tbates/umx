@@ -52,7 +52,7 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 #' @return -
 #' @export
 #' @family Twin Modeling Functions
-#' @family Miscellaneous Functions
+#' @family Check or test
 #' @seealso - \code{\link{umxLabel}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' # TODO examples

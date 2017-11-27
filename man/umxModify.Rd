@@ -90,3 +90,11 @@ m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", co
 \references{
 - \url{http://github.com/tbates/umx}
 }
+\seealso{
+Other Modify or Compare Models: \code{\link{umxAdd1}},
+  \code{\link{umxDrop1}}, \code{\link{umxEquate}},
+  \code{\link{umxFixAll}}, \code{\link{umxMI}},
+  \code{\link{umxSetParameters}},
+  \code{\link{umxUnexplainedCausalNexus}},
+  \code{\link{umx}}
+}

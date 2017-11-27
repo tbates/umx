@@ -120,6 +120,7 @@ umxReduce.default <- function(model, ...){
 #' @return - 
 #' @export
 #' @family Core Modelling Functions
+#' @family Reporting Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -3830,7 +3831,7 @@ summaryAPA <- umxAPA
 #' @param verbose = FALSE
 #' @return - the CI string, e.g. ".73 [-.2, .98]"
 #' @export
-#' @family Misc
+#' @family Reporting Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{

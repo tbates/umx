@@ -63,10 +63,11 @@ umx_parameters(m1, "below", .1, "_to_")
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
-  \code{\link{umxFactorScores}},
-  \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxSummary}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
-  \code{\link{umx_show}}, \code{\link{umx_time}},
-  \code{\link{umx}}
+  \code{\link{umxEval}}, \code{\link{umxFactorScores}},
+  \code{\link{umxGetParameters}},
+  \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
+  \code{\link{umxSummary}}, \code{\link{umx_APA_model_CI}},
+  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
+  \code{\link{umx_print}}, \code{\link{umx_show}},
+  \code{\link{umx_time}}, \code{\link{umx}}
 }

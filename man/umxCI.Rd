@@ -29,11 +29,11 @@ umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
 - \code{\link{mxModel}}
 }
 \description{
-umxCI adds mxCI() calls for all free parameters in a model, 
-runs the CIs, and reports a neat summary.
+umxCI adds mxCI() calls for requested (default all) parameters in a model, 
+runs these CIs if necessary, and reports them in a neat summary.
 }
 \details{
-This function also reports any problems computing a CI. The codes are standard OpenMx errors and warnings
+umxCI also reports any problems computing a CI. The codes are standard OpenMx errors and warnings
 \itemize{
 \item 1: The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN)
 \item 2: The linear constraints and bounds could not be satisfied. The problem has no feasible solution.
@@ -56,15 +56,18 @@ m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numOb
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
 )
-m1$intervals # none yet list()
+m1$intervals # none yet - empty list()
 m1 = umxCI(m1)
 m1$intervals # $G_to_x1
-m1 = umxCI(m1, remove = TRUE) # Add CIs for all free parameters, and return model
+m1 = umxCI(m1, remove = TRUE) # remove CIs from the model and return it
+
+# ========================
+# = A twin model example =
+# ========================
 data(twinData) 
-selDVs = c("bmi1","bmi2")
-mzData <- as.matrix(subset(twinData, zygosity == "MZFF", selDVs))
-dzData <- as.matrix(subset(twinData, zygosity == "DZFF", selDVs))
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+mzData <- subset(twinData, zygosity == "MZFF")
+dzData <- subset(twinData, zygosity == "DZFF")
+m1 = umxACE(selDVs = c("bmi1","bmi2"), dzData = dzData, mzData = mzData)
 \dontrun{
 umxCI(m1, run = "show") # show what will be requested
 umxCI(m1, run = "yes") # actually compute the CIs
@@ -72,7 +75,9 @@ umxCI(m1, run = "yes") # actually compute the CIs
 umxCI(m1, run = "if necessary")
 m1 = umxCI(m1, remove = TRUE) # remove them all
 m1$intervals # none!
-umxParameters(m1) # see what's available
+# Show what parameters are available to get CIs on
+umxParameters(m1) 
+# Request a CI by label:
 m1 = umxCI(m1, "a_r1c1", run = "yes")
 }
 }
@@ -80,7 +85,7 @@ m1 = umxCI(m1, "a_r1c1", run = "yes")
 - http://www.github.com/tbates/umx/
 }
 \seealso{
-- \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRun}}
+- \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{mxRAM}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
