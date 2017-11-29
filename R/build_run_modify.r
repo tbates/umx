@@ -3585,7 +3585,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @param verbose  Default is TRUE as this function does quite a lot
 #' @return - path list
 #' @export
-#' @family Core Modelling Functions
+#' @family Advanced Model Building Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -4678,17 +4678,18 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' devtools::install_github("tbates/umx")
 #' 
+#' @family Teaching and testing Functions
 #' @family Core Modelling Functions
+#' @family Reporting Functions
+#' @family Modify or Compare Models
+#' @family Plotting functions
 #' @family Super-easy helpers
 #' @family Twin Modeling Functions
-#' @family Reporting Functions
-#' @family Plotting functions
-#' @family Modify or Compare Models
+#' @family Twin Reporting Functions
+#' @family Twin Data functions
 #' @family Get and set
 #' @family Check or test
 #' @family Data Functions
-#' @family Twin Data functions
-#' @family Utility Functions
 #' @family File Functions
 #' @family String Functions
 #' @family Miscellaneous Stats Helpers

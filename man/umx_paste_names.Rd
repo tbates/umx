@@ -70,9 +70,9 @@ tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 }
 }
 \seealso{
-Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_find_object}}, \code{\link{umx_msg}},
-  \code{\link{umx_names}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_rename}},
-  \code{\link{umx}}
+Other String Functions: \code{\link{umx_explode_twin_names}},
+  \code{\link{umx_explode}}, \code{\link{umx_grep}},
+  \code{\link{umx_object_as_str}}, \code{\link{umx_rot}},
+  \code{\link{umx_trim}},
+  \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
 }

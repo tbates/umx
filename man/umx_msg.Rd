@@ -28,9 +28,10 @@ umx_msg(mtcars)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_find_object}}, \code{\link{umx_names}},
-  \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_rename}},
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
+  \code{\link{qm}}, \code{\link{umxBrownie}},
+  \code{\link{umxVersion}}, \code{\link{umx_find_object}},
+  \code{\link{umx_make}}, \code{\link{umx_open_CRAN_page}},
+  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
   \code{\link{umx}}
 }

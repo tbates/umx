@@ -110,14 +110,11 @@ m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 \seealso{
 umx_residualize umxACE
 
-Other Twin Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxACESexLim}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxReduceACE}},
+Other Twin Modeling Functions: \code{\link{umxACESexLim}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
+  \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},

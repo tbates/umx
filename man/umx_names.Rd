@@ -58,9 +58,13 @@ umx_names(nl, "[^12bs]$")
 \seealso{
 - \code{\link{grep}}, \code{\link{sub}}
 
-Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_find_object}}, \code{\link{umx_msg}},
-  \code{\link{umx_paste_names}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_rename}},
+Other Reporting Functions: \code{\link{loadings.MxModel}},
+  \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
+  \code{\link{umxEval}}, \code{\link{umxFactorScores}},
+  \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
+  \code{\link{umxSummary}}, \code{\link{umx_APA_model_CI}},
+  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
+  \code{\link{umx_parameters}}, \code{\link{umx_print}},
+  \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }

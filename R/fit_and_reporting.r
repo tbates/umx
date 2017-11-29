@@ -27,7 +27,7 @@
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
 #' @return - helpful messages and perhaps a modified model
 #' @export
-#' @family Core Modelling Functions
+#' @family Teaching and Testing functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -119,8 +119,7 @@ umxReduce.default <- function(model, ...){
 #' @param ... Other parameters to control model summary
 #' @return - 
 #' @export
-#' @family Core Modelling Functions
-#' @family Reporting Functions
+#' @family Twin Reporting Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -190,8 +189,6 @@ umxReduce.MxModel.GxE <- umxReduceGxE
 #' @param ... Other parameters to control model summary
 #' @return Best fitting model
 #' @export
-#' @family Core Modelling Functions
-#' @family Twin Modeling Functions
 #' @family Twin Reporting Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
@@ -1927,8 +1924,6 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},
 #' @family Core Modelling Functions
 #' @family Plotting functions
-#' @family Reporting functions
-#' @family Twin Modeling Functions
 #' @references - \url{http://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 #' @examples
 #' require(umx)
@@ -2079,7 +2074,8 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' @return - optionally return the dot code
 #' @export
 #' @family Plotting functions
-#' @family Reporting functions
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxACE}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -2175,8 +2171,8 @@ plot.MxModel.ACE <- umxPlotACE
 #' @return - optionally return the dot code
 #' @export
 #' @family Plotting functions
-#' @family Reporting functions
-#' @family Twin Modeling Functions
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxACE}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' require(umx)
@@ -2283,9 +2279,7 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 #' @param separateGraphs (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - 
-#' @family Reporting functions
 #' @family Plotting functions
-#' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxGxE}}
@@ -2367,11 +2361,10 @@ plot.MxModel.GxE <- umxPlotGxE
 #' @param format = c("current", "graphviz", "DiagrammeR") 
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
-#' @family Plotting functions
-#' @family Reporting functions
-#' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxCP}}
+#' @family Plotting functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -2479,10 +2472,9 @@ plot.MxModel.CP <- umxPlotCP
 #' @param ... Optional additional parameters
 #' @return - optionally return the dot code
 #' @export
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()}
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxIP}}
 #' @family Plotting functions
-#' @family Reporting functions
-#' @family Twin Modeling Functions
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -3901,7 +3893,7 @@ umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std",
 #' @param alternative two (default) or one-sided (greater less) test
 #' @return - 
 #' @export
-#' @family Stats
+#' @family Miscellaneous Stats Helpers
 #' @examples
 #' vars = c("mpg", "cyl", "disp", "hp")
 #' umx_r_test(mtcars, vars)

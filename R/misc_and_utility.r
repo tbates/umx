@@ -1266,7 +1266,7 @@ umx_as_numeric <- function(df, force = FALSE) {
 #' @return - a list of objects matching the class and name
 #' @export
 #' @references - 
-#' @family Utility Functions
+#' @family Miscellaneous Utility Functions
 #' @examples
 #' \dontrun{
 #' umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
@@ -1301,7 +1301,7 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @param test whether to report a "dry run" - and not actually change anything (defaults to false)
 #' @return - dataframe with columns renamed.
 #' @export
-#' @family Utility Functions
+#' @family Data Functions
 #' @examples
 #' # Re-name "cyl" to "cylinder"
 #' x = mtcars
@@ -1579,7 +1579,7 @@ dl_from_dropbox <- function(x, key=NULL){
 #' @param body of the note
 #' @param auth_key optional authkey (default = NA, set to value of your key to store key.
 #' @export
-#' @family Utility Functions
+#' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{umx_msg}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -2130,7 +2130,7 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 #' @param  x the thing you want to pretty-print
 #' @return - NULL
 #' @export
-#' @family Utility Functions
+#' @family Miscellaneous Utility Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' a = "brian"
@@ -2197,7 +2197,7 @@ umx_msg <- function(x) {
 #' @param prefix a string to pre=pend to each label, e.g c("mean_age", "mean_sex")
 #' @return - vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
 #' @export
-#' @family Utility Functions
+#' @family String Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' # two styles doing the same thing: first is more general
@@ -2566,7 +2566,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @return - A dataframe of text
 #' @export
 #' @seealso \code{\link{umx_set_table_format}} 
-#' @family Utility Functions
+#' @family Miscellaneous Utility Functions
 #' @family Reporting Functions
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
@@ -3665,7 +3665,6 @@ umx_is_numeric <- function(df, all = TRUE){
 #' @param data The dataframe containing all the variables
 #' @return - dataframe with var residualized in place (i.e under its original column name)
 #' @export
-#' @family Data Functions
 #' @family Twin Data functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
@@ -3773,7 +3772,6 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' @return - new dataframe with variables scaled in place
 #' @export
 #' @seealso umx_scale
-#' @family Data Functions
 #' @family Twin Data functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
@@ -3863,7 +3861,7 @@ umx_match.arg <- umx_default_option
 #' @param ... the components of your matrix
 #' @param rowMarker mark the end of each row
 #' @return - matrix
-#' @family Utility Functions
+#' @family Miscellaneous Utility Functions
 #' @references \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
 #' @export
 #' @examples
@@ -3979,7 +3977,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' @return - vector of matches
 #' @export
 #' @seealso - \code{\link{grep}}, \code{\link{sub}}
-#' @family Utility Functions
+#' @family Reporting Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' umx_names(mtcars, "mpg") # just "mpg" matches
@@ -4084,7 +4082,6 @@ umx_rot <- function(vec){
 #' @param passalong = Variables you wish to pass-through (keep, even though not twin vars)
 #' @return - dataframe in wide format
 #' @export
-#' @family Data Functions
 #' @family Twin Data functions
 #' @seealso - \code{\link{merge}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
@@ -4185,7 +4182,6 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @param verbose Report the non-twin and twin columns (default = FALSE).
 #' @return - long-format dataframe
 #' @export
-#' @family Data Functions
 #' @family Twin Data functions
 #' @examples
 #' long = umx_wide2long(data = twinData, sep = "")
@@ -4367,7 +4363,6 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @param DZr NULL
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
-#' @family Data Functions
 #' @family Twin Data functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -4970,8 +4965,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @param verbose How much to tell the user about what was done.
 #' @return - A matrix of correlations
 #' @family Data Functions
-#' @family Stats
-#' @family xmu internal not for end user
+#' @family Miscellaneous Stats Helpers
 #' @export
 #' @references - 
 #' @examples

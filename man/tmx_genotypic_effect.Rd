@@ -73,5 +73,6 @@ p
 \seealso{
 -
 
-Other Teaching Functions: \code{\link{tmx_is.identified}}
+Other Teaching and testing Functions: \code{\link{tmx_is.identified}},
+  \code{\link{umx}}
 }

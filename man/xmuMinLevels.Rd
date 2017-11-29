@@ -23,9 +23,8 @@ xmuMinLevels(umxFactor(mtcars))
 xmuMinLevels(umxFactor(mtcars), what = "name")
 }
 \seealso{
-Other xmu internal not for end user: \code{\link{umxHetCor}},
-  \code{\link{umxModel}}, \code{\link{umx}},
-  \code{\link{xmuHasSquareBrackets}},
+Other xmu internal not for end user: \code{\link{umxModel}},
+  \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}},
   \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},

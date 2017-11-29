@@ -38,33 +38,18 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_array_shift}},
   \code{\link{umx_as_numeric}},
   \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_cov2raw}}, \code{\link{umx_long2wide}},
-  \code{\link{umx_lower2full}},
+  \code{\link{umx_cov2raw}}, \code{\link{umx_lower2full}},
   \code{\link{umx_make_MR_data}},
-  \code{\link{umx_make_TwinData}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_make_fake_data}}, \code{\link{umx_pad}},
-  \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
-  \code{\link{umx_residualize}},
-  \code{\link{umx_scale_wide_twin_data}},
-  \code{\link{umx_scale}}, \code{\link{umx_stack}},
-  \code{\link{umx_swap_a_block}},
-  \code{\link{umx_wide2long}}, \code{\link{umx}}
+  \code{\link{umx_read_lower}}, \code{\link{umx_rename}},
+  \code{\link{umx_reorder}}, \code{\link{umx_scale}},
+  \code{\link{umx_stack}}, \code{\link{umx_swap_a_block}},
+  \code{\link{umx}}
 
-Other Stats: \code{\link{umx_r_test}}
-
-Other xmu internal not for end user: \code{\link{umxModel}},
-  \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},
-  \code{\link{xmuLabel_MATRIX_Model}},
-  \code{\link{xmuLabel_Matrix}},
-  \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},
-  \code{\link{xmuMakeDeviationThresholdsMatrices}},
-  \code{\link{xmuMakeOneHeadedPathsFromPathList}},
-  \code{\link{xmuMakeTwoHeadedPathsFromPathList}},
-  \code{\link{xmuMaxLevels}}, \code{\link{xmuMinLevels}},
-  \code{\link{xmuPropagateLabels}},
-  \code{\link{xmu_check_levels_identical}},
-  \code{\link{xmu_dot_make_paths}},
-  \code{\link{xmu_dot_make_residuals}},
-  \code{\link{xmu_start_value_list}}
+Other Miscellaneous Stats Helpers: \code{\link{reliability}},
+  \code{\link{umxCov2cor}}, \code{\link{umx_cor}},
+  \code{\link{umx_fun_mean_sd}}, \code{\link{umx_means}},
+  \code{\link{umx_r_test}}, \code{\link{umx_round}},
+  \code{\link{umx_var}}, \code{\link{umx}}
 }

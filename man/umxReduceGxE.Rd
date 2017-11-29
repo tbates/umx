@@ -37,20 +37,6 @@ model = umxReduce(model)
 - \url{http://tbates.github.io}
 }
 \seealso{
-Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxReduceACE}},
-  \code{\link{umxRun}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
-
-Other Reporting Functions: \code{\link{loadings.MxModel}},
-  \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
-  \code{\link{umxEval}}, \code{\link{umxFactorScores}},
-  \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxSummary}}, \code{\link{umx_APA_model_CI}},
-  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_parameters}}, \code{\link{umx_print}},
-  \code{\link{umx_show}}, \code{\link{umx_time}},
+Other Twin Reporting Functions: \code{\link{umxReduceACE}},
   \code{\link{umx}}
 }

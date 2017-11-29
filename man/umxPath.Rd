@@ -205,9 +205,7 @@ umxSummary(m1, show = "std")
 - \code{\link{mxPath}}
 
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
   \code{\link{umxMatrix}}, \code{\link{umxRAM}},
-  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
   \code{\link{umxRun}}, \code{\link{umxSuperModel}},
   \code{\link{umx}}
 }

@@ -93,14 +93,11 @@ umxCompare(m2, m1)
 \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxReduceACE}},
+Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
+  \code{\link{umxACE}}, \code{\link{umxCF_SexLim}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},

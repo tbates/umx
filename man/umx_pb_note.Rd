@@ -38,9 +38,10 @@ umx_pb_note("done!", umx_time(m1))
 \seealso{
 - \code{\link{umx_msg}}
 
-Other Utility Functions: \code{\link{qm}},
-  \code{\link{umx_find_object}}, \code{\link{umx_msg}},
-  \code{\link{umx_names}}, \code{\link{umx_paste_names}},
-  \code{\link{umx_print}}, \code{\link{umx_rename}},
-  \code{\link{umx}}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
+  \code{\link{qm}}, \code{\link{umxBrownie}},
+  \code{\link{umxVersion}}, \code{\link{umx_find_object}},
+  \code{\link{umx_make}}, \code{\link{umx_msg}},
+  \code{\link{umx_open_CRAN_page}},
+  \code{\link{umx_print}}, \code{\link{umx}}
 }

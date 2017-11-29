@@ -40,7 +40,7 @@
 #' @param d The deviation of the heterozygote from m (default 1)
 #' @return - 
 #' @export
-#' @family Teaching Functions
+#' @family Teaching and testing Functions
 #' @seealso - 
 #' @references - \url{http://www.vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf},
 #'  \url{https://github.com/tbates/umx}
@@ -206,7 +206,7 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 #' @param nFactors the number of factors posited.
 #' @return - Binary
 #' @export
-#' @family Teaching Functions
+#' @family Teaching and testing Functions
 #' @family Reporting Functions
 #' @seealso - \code{\link{mxCheckIdentification}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

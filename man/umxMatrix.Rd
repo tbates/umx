@@ -59,9 +59,7 @@ umxMatrix("test", "Full", 1, 1)
 - \code{\link{umxLabel}}
 
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
   \code{\link{umxRun}}, \code{\link{umxSuperModel}},
   \code{\link{umx}}
 }

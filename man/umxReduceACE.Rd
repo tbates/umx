@@ -45,24 +45,6 @@ m2 = umxReduce(m1)
 - \url{http://tbates.github.io}
 }
 \seealso{
-Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxDiagnose}}, \code{\link{umxLatent}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxReduceGxE}},
-  \code{\link{umxRun}}, \code{\link{umxSuperModel}},
+Other Twin Reporting Functions: \code{\link{umxReduceGxE}},
   \code{\link{umx}}
-
-Other Twin Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxACESexLim}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}, \code{\link{xmu_twin_check}}
 }

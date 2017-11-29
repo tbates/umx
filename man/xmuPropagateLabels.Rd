@@ -35,9 +35,8 @@ m1 <- mxModel("One Factor", type = "RAM",
 m1 = umx:::xmuPropagateLabels(m1, suffix = "MZ")
 }
 \seealso{
-Other xmu internal not for end user: \code{\link{umxHetCor}},
-  \code{\link{umxModel}}, \code{\link{umx}},
-  \code{\link{xmuHasSquareBrackets}},
+Other xmu internal not for end user: \code{\link{umxModel}},
+  \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}},
   \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},

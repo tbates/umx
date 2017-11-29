@@ -70,10 +70,8 @@ plot(m1)
 \seealso{
 - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},
 
-Other Core Modelling Functions: \code{\link{umxDiagnose}},
-  \code{\link{umxLatent}}, \code{\link{umxMatrix}},
+Other Core Modelling Functions: \code{\link{umxMatrix}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
   \code{\link{umxRun}}, \code{\link{umxSuperModel}},
   \code{\link{umx}}
 
@@ -81,34 +79,4 @@ Other Plotting functions: \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
   \code{\link{umxPlotIP}}, \code{\link{umx}}
-
-Other Reporting functions: \code{\link{RMSEA.MxModel}},
-  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
-  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{residuals.MxModel}},
-  \code{\link{umxCI_boot}}, \code{\link{umxCI}},
-  \code{\link{umxCompare}}, \code{\link{umxConfint}},
-  \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
-  \code{\link{umxFitIndices}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}},
-  \code{\link{umxSummary.MxModel}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}},
-  \code{\link{umx_standardize_RAM}}
-
-Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxReduceACE}},
-  \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}, \code{\link{xmu_twin_check}}
 }

@@ -33,16 +33,12 @@ Check that DVs are in the data, that the data have rows, set the optimizer if re
 \seealso{
 - \code{\link{umxLabel}}
 
-Other Twin Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxACESexLim}},
+Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCF_SexLim}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxReduceACE}},
-  \code{\link{umxSummaryACEcov}},
+  \code{\link{umxIP}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},

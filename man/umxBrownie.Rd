@@ -25,6 +25,9 @@ umxBrownie()
 - \code{\link{omxBrownie}}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
-  \code{\link{umxVersion}}, \code{\link{umx_make}},
-  \code{\link{umx_open_CRAN_page}}, \code{\link{umx}}
+  \code{\link{qm}}, \code{\link{umxVersion}},
+  \code{\link{umx_find_object}}, \code{\link{umx_make}},
+  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
+  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
+  \code{\link{umx}}
 }
