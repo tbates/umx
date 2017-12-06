@@ -337,6 +337,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}
 	
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
+	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
 	thresholds = match.arg(thresholds)
 
