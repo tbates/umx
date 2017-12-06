@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_make_sql_from_excel}
 \alias{umx_make_sql_from_excel}
-\title{umx_make_sql_from_excel}
+\title{Convert an excel spreadsheet in a text file on sql statements.}
 \usage{
 umx_make_sql_from_excel(theFile = "Finder")
 }
@@ -15,7 +15,7 @@ umx_make_sql_from_excel(theFile = "Finder")
 \description{
 Unlikely to be of use to anyone but the package author :-)
 Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
-On OS X, the function can access the current front-most Finder window.
+On MacOS, the function can access the current front-most Finder window.
 }
 \details{
 The file name should be the name of the test.
@@ -24,6 +24,13 @@ itemText	direction	scale	type	[optional	response	options]
 
 The SQL fields generated are:
 itemID, test, native_item_number, item_text, direction, scale, format, author
+
+
+tabbedPlus: list scored from 0 to n-1
+tabbedVertPlus: tabbed, but vertical lay-out 
+number	2+2<itemBreak>min='0' max='7' step='1'
+5fm Scored 1-5, anchored: Strongly Disagree | Disagree  | Neutral | Agree | Strongly Agree
+intro (not) scored, and sequenced as item 0
 }
 \examples{
 \dontrun{

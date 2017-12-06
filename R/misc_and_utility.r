@@ -1738,11 +1738,11 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 	return(isTarget)
 }
 
-#' umx_make_sql_from_excel
+#' Convert an excel spreadsheet in a text file on sql statements.
 #'
 #' Unlikely to be of use to anyone but the package author :-)
 #' Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
-#' On OS X, the function can access the current front-most Finder window.
+#' On MacOS, the function can access the current front-most Finder window.
 #' 
 #' The file name should be the name of the test.
 #' Columns should be headed:
@@ -1750,6 +1750,16 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' 
 #' The SQL fields generated are:
 #' itemID, test, native_item_number, item_text, direction, scale, format, author
+#' @details
+#' tabbedPlus: list scored from 0 to n-1
+#' 
+#' tabbedVertPlus: tabbed, but vertical lay-out 
+#' 
+#' number	2+2<itemBreak>min='0' max='7' step='1'
+#' 
+#' 5fm Scored 1-5, anchored: Strongly Disagree | Disagree  | Neutral | Agree | Strongly Agree
+#' 
+#' intro (not) scored, and sequenced as item 0
 #'
 #' @param theFile The xlsx file to read. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose file dialog will be thrown.
 #' @family File Functions
@@ -1758,8 +1768,10 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' # An example xcel spreadsheet
+#' # An example Excel spreadsheet
+#' # local uncompiled path
 #' fp = system.file("inst/extdata", "GQ6.sql.xlsx", package = "umx")
+#' # installed path
 #' fp = system.file("extdata", "GQ6.sql.xlsx", package = "umx")
 #' umx_open(fp)
 #' umx_make_sql_from_excel() # Using file selected in front-most Finder window
