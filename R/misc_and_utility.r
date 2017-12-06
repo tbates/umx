@@ -2075,7 +2075,7 @@ umx_install_OpenMx <- install.OpenMx
 #' @export
 umx_update_OpenMx <- install.OpenMx
 
-#' umx_make umx using devtools
+#' "make" the umx package using devtools: release to CRAN etc.
 #'
 #' @description
 #' Easily  run devtools "install", "release", "win", or "examples".
