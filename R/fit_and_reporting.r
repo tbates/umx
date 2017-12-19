@@ -618,7 +618,7 @@ umxSummary.default <- function(model, ...){
 #' @param showEstimates What estimates to show. By default, the raw estimates are shown 
 #' (Options = c("raw", "std", "none", "both").
 #' @param digits How many decimal places to report (default = 2)
-#' @param report If "html", then show results in browser ("1", "table", "html")
+#' @param report If "html", then show results in browser (alternative = "markdown")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
@@ -3676,13 +3676,15 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' 
 #' @aliases summaryAPA
 #' @param obj Either a model (\link{lm}), a beta-value, or a data.frame
-#' @param se If b is a model, then name of the parameter of interest, else the SE (standard-error)
+#' @param se If b is a model, then se can be the name of the parameter of interest. Otherwise, SE will b
+#' used as a standard-error (returning a CI) OR if a CI is offered (vector of lower and upper)
+#' the SE will be returned.
 #' @param std If obj is an lm, whether to re-run the model on standardized data and report std betas
 #' @param digits Round numbers to how many values
 #' @param use If obj is a data.frame, how to handle NA (default = "complete")
 #' @param min = .001 for a p-value, the smallest value to report numerically
 #' @param addComparison for a p-value, whether to add "</=" default (NA) adds "<" if necessary
-#' @param report what to return (default = markdown table). Use "html" to open a web page table
+#' @param report what to return (default = markdown table). Use "html" to open a web table.
 #' @param lower whether to report on the lower triangle of correlations for a data.frame (Default = TRUE)
 #' @return - string
 #' @export
@@ -3705,6 +3707,8 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' # = Generate a CI string based on effect and se =
 #' # ===============================================
 #' umxAPA(.4, .3)
+#' # Input beta and CI, and back out the SE
+#' umxAPA(-0.030, c(-0.073, 0.013), dig=3)
 #' # ====================
 #' # = Format a p-value =
 #' # ====================
@@ -3719,7 +3723,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' dzData <- subset(twinData, zygosity %in% c("DZFF", "DZMM", "DZOS"))
 #' x = cor.test(~ wt1 + wt2, data = mzData)
 #' umxAPA(x)
-umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("table", "html"), lower = TRUE) {
+umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE) {
 	report = match.arg(report)
 	if(class(obj) == "htest"){
 		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), ", ", round(obj$conf.int[2], digits), "]")
@@ -3801,8 +3805,13 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 		if(is.null(se)){
 			# p-value
 			umx_APA_pval(obj, min = min, digits = digits, addComparison = addComparison)
+		} else if(length(se)==2){
+			# beta and CI
+			# lower = b - (1.96 * se)
+			# upper = b + (1.96 * se)
+			print(paste0("\u03B2 = ", round(obj, digits), ", se =", round((se[2] - se[1])/(1.96 * 2), digits)))
 		} else {
-			# beta and SE
+			# obj = beta and SE
 			print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), ", ", round(obj + (1.96 * se), digits), "]"))
 		}
 	}

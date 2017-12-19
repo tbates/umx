@@ -12,7 +12,9 @@ umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
 \arguments{
 \item{obj}{Either a model (\link{lm}), a beta-value, or a data.frame}
 
-\item{se}{If b is a model, then name of the parameter of interest, else the SE (standard-error)}
+\item{se}{If b is a model, then se can be the name of the parameter of interest. Otherwise, SE will b
+used as a standard-error (returning a CI) OR if a CI is offered (vector of lower and upper)
+the SE will be returned.}
 
 \item{std}{If obj is an lm, whether to re-run the model on standardized data and report std betas}
 
@@ -74,6 +76,8 @@ umxAPA(mtcars[,1:3], report = "html")
 # = Generate a CI string based on effect and se =
 # ===============================================
 umxAPA(.4, .3)
+# Input beta and CI, and back out the SE
+umxAPA(-0.030, c(-0.073, 0.013), dig=3)
 # ====================
 # = Format a p-value =
 # ====================

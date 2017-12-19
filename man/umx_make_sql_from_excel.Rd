@@ -27,15 +27,21 @@ itemID, test, native_item_number, item_text, direction, scale, format, author
 
 
 tabbedPlus: list scored from 0 to n-1
+
 tabbedVertPlus: tabbed, but vertical lay-out 
+
 number	2+2<itemBreak>min='0' max='7' step='1'
+
 5fm Scored 1-5, anchored: Strongly Disagree | Disagree  | Neutral | Agree | Strongly Agree
+
 intro (not) scored, and sequenced as item 0
 }
 \examples{
 \dontrun{
-# An example xcel spreadsheet
+# An example Excel spreadsheet
+# local uncompiled path
 fp = system.file("inst/extdata", "GQ6.sql.xlsx", package = "umx")
+# installed path
 fp = system.file("extdata", "GQ6.sql.xlsx", package = "umx")
 umx_open(fp)
 umx_make_sql_from_excel() # Using file selected in front-most Finder window

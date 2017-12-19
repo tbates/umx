@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_make}
 \alias{umx_make}
-\title{umx_make umx using devtools}
+\title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
 umx_make(what = c("install", "examples", "check", "win", "rhub", "release"),
   pkg = "~/bin/umx", check = TRUE)
