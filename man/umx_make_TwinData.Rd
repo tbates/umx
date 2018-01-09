@@ -6,14 +6,15 @@
 \usage{
 umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
   EE = NULL, nThresh = NULL, sum2one = TRUE, varNames = "var",
-  seed = NULL, empirical = FALSE, MZr = NULL, DZr = NULL)
+  seed = NULL, empirical = FALSE, MZr = NULL, DZr = NULL, Amod = NULL,
+  Cmod = NULL, Emod = NULL)
 }
 \arguments{
 \item{nMZpairs}{Number of MZ pairs to simulate}
 
 \item{nDZpairs}{Number of DZ pairs to simulate (if omitted defaults to nMZpairs)}
 
-\item{AA}{value for A variance. Optionally a vector: c(avg= .5, min= 0, max= 1)}
+\item{AA}{value for A variance. NOTE: See options for use in GxE and Bivariate GxE}
 
 \item{CC}{value for C variance.}
 
@@ -32,6 +33,12 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
 \item{MZr}{If MZr and DZr are set (default = NULL), the function simply returns dataframes of the request size and correlation}
 
 \item{DZr}{NULL}
+
+\item{Amod}{Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)}
+
+\item{Cmod}{Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)}
+
+\item{Emod}{Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)}
 }
 \value{
 \itemize{
@@ -53,9 +60,20 @@ You supply the number of pairs of each zygosity that wish to simulate (nMZpairs,
 You can omit nDZpairs. You can also give any 2 of A, C, or E and the function will add the value which makes the ACE total = 1.
 
 \strong{Moderation}
-
+\strong{Univariate GxE Data}
 AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value = avg, and swinging
 down to min and up to max across 3 SDs of the moderator.
+
+\strong{Bivariate GxE Data}
+
+To simulate data with a moderator that is not shared by both twins.
+Moderated heritability is specified via the bivariate relationship (AA, CC, EE) and two moderators in each component.
+AA   = list(a11 = .4, a12 = .1, a22 = .15)
+CC   = list(c11 = .2, c12 = .1, c22 = .10)
+EE   = list(e11 = .4, e12 = .3, e22 = .25)
+Amod = list(Beta_a1 = .025, Beta_a2 = .025)
+Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
+Emod = list(Beta_e1 = .025, Beta_e2 = .025)
 }
 \examples{
 # =====================================================================
@@ -107,6 +125,16 @@ umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 # ========================
 tmp = umx_make_TwinData(100, MZr = .86, DZr= .60, varNames = "IQ")
 umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
+
+# Bivariate GxSES example
+
+AA   = list(a11 = .4, a12 = .1, a22 = .15)
+CC   = list(c11 = .2, c12 = .1, c22 = .10)
+EE   = list(e11 = .4, e12 = .3, e22 = .25)
+Amod = list(Beta_a1 = .025, Beta_a2 = .025)
+Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
+Emod = list(Beta_e1 = .025, Beta_e2 = .025)
+tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod, Emod =Emod)
 }
 \references{
 \itemize{

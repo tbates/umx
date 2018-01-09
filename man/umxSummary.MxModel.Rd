@@ -20,7 +20,7 @@ If NULL will be competed on demand. If FALSE will not be computed. Only needed f
 
 \item{digits}{How many decimal places to report (default = 2)}
 
-\item{report}{If "html", then show results in browser ("1", "table", "html")}
+\item{report}{If "html", then show results in browser (alternative = "markdown")}
 
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 

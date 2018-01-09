@@ -6,7 +6,7 @@
 \title{Creates nicely formatted journal style summaries of lm models, p-values, data-frames etc.}
 \usage{
 umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
-  min = 0.001, addComparison = NA, report = c("table", "html"),
+  min = 0.001, addComparison = NA, report = c("markdown", "html"),
   lower = TRUE)
 }
 \arguments{
@@ -26,7 +26,7 @@ the SE will be returned.}
 
 \item{addComparison}{for a p-value, whether to add "</=" default (NA) adds "<" if necessary}
 
-\item{report}{what to return (default = markdown table). Use "html" to open a web page table}
+\item{report}{what to return (default = markdown table). Use "html" to open a web table.}
 
 \item{lower}{whether to report on the lower triangle of correlations for a data.frame (Default = TRUE)}
 }
