@@ -248,7 +248,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # Note: in practice: many more subjects are desirable - this just to let example run fast
 #' df = umx_make_MR_data(1000) 
 #' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
-#' coef(m1)
+#' parameters(m1)
 #' plot(m1)
 #' 
 #' # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)

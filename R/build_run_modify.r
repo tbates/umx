@@ -741,6 +741,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 			}
 			x = omxSetParameters(lastFit, labels = theLabels, free = free, values = value, name = name)		
 		} else {
+			# Add objects passed in under "update"
 			# TODO umxModify: if object is RAM, add re-label and re-start new object?
 			if(is.null(name)){ name = NA } # i.e. do nothing
 			x = mxModel(lastFit, update, name = name)
@@ -887,13 +888,13 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	model = mxModel(name,
 		mxModel("top",
 			# Matrices a, c, and e to store a, c, and e path coefficients
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[1], name = "a" ), jiggle = .0001),
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[2], name = "c" ), jiggle = .0001),
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[3], name = "e" ), jiggle = .0001),
+			umxMatrix("a", "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[1]),
+			umxMatrix("c", "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[2]),
+			umxMatrix("e", "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[3]),
 			# Matrices to store moderated path coefficients                       
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0, name = "am" )),
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0, name = "cm" )),
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0, name = "em" )),
+			umxMatrix("am", "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0),
+			umxMatrix("cm", "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0),
+			umxMatrix("em", "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0),
 
 			# Matrices A, C, and E compute non-moderated variance components 
 			mxAlgebra(name = "A", a %*% t(a) ),
@@ -918,7 +919,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 		),
 		mxModel("MZ",
 			# matrices for covariates (just on the means)
-			# Matrix for moderating/interacting variable
+			# Matrices for moderating/interacting variable
 			umxMatrix("Def1", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[1])), # c("data.age1")
 			umxMatrix("Def2", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[2])), # c("data.age2")
 			# Algebra for expected mean vector
@@ -937,34 +938,36 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			# } else {
 				# mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeans")
 			# },
-			mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeanMZ"),
+			mxAlgebra(name = "expMeanMZ", cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad)),
 
 			# Compute ACE variance components
-			mxAlgebra((top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def1), name = "A11"),
-			mxAlgebra((top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def1), name = "C11"),
-			mxAlgebra((top.e + top.em %*% Def1) %*% t(top.e+ top.em %*% Def1), name = "E11"),
-                                                                    
-			mxAlgebra((top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def2), name = "A12"),
-			mxAlgebra((top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def2), name = "C12"),
-                                                                    
-			mxAlgebra((top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def1), name = "A21"),
-			mxAlgebra((top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def1), name = "C21"),
-                                                                    
-			mxAlgebra((top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def2), name = "A22"),
-			mxAlgebra((top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def2), name = "C22"),
-			mxAlgebra((top.e + top.em %*% Def2) %*% t(top.e+ top.em %*% Def2), name = "E22"),
+			mxAlgebra(name = "A11", (top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def1)),
+			mxAlgebra(name = "C11", (top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def1)),
+			mxAlgebra(name = "E11", (top.e + top.em %*% Def1) %*% t(top.e+ top.em %*% Def1)),
+                                       
+			mxAlgebra(name = "A12", (top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def2)),
+			mxAlgebra(name = "C12", (top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def2)),
+
+			mxAlgebra(name = "A21", (top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def1)),
+			mxAlgebra(name = "C21", (top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def1)),
+
+			mxAlgebra(name = "A22", (top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def2)),
+			mxAlgebra(name = "C22", (top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def2)),
+			mxAlgebra(name = "E22", (top.e + top.em %*% Def2) %*% t(top.e+ top.em %*% Def2)),
 
 			# Algebra for expected variance/covariance matrix and expected mean vector in MZ
-			mxAlgebra(rbind(cbind(A11+C11+E11, A12+C12),
-			                cbind(A21+C21    , A22+C22+E22) ), name = "expCovMZ"),
+			mxAlgebra(name = "expCovMZ", rbind(
+						cbind(A11+C11+E11, A12+C12),
+			      cbind(A21+C21    , A22+C22+E22))
+			),
 			# Data & Objective
 			mxData(mzData, type = "raw"),
 			mxExpectationNormal("expCovMZ", means = "expMeanMZ", dimnames = selDVs),
 			mxFitFunctionML()
 		),
 	    mxModel("DZ",
-			mxMatrix("Full", nrow=1, ncol=1, free=F, labels=paste("data.",selDefs[1],sep=""), name="Def1"), # twin1  c("data.divorce1")
-			mxMatrix("Full", nrow=1, ncol=1, free=F, labels=paste("data.",selDefs[2],sep=""), name="Def2"), # twin2  c("data.divorce2")
+			umxMatrix("Def1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # twin1  c("data.divorce1")
+			umxMatrix("Def2", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[2])), # twin2  c("data.divorce2")
 			# Compute ACE variance components
 			mxAlgebra((top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def1), name="A11"),
 			mxAlgebra((top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def1), name="C11"),
@@ -995,7 +998,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			# mxAlgebra(top.betas%*%rbind(Def2, Def2^2), name="Def2R"),
 			# mxAlgebra( cbind(top.Means+Def1R, top.Means+Def2R), name="expMeans"),
 			# Data & Objective
-	        mxData(dzData, type = "raw"),
+	    mxData(dzData, type = "raw"),
 			mxExpectationNormal("expCovDZ", means = "expMeanDZ", dimnames = selDVs),
 			mxFitFunctionML()
 	    ),
@@ -4280,8 +4283,20 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @seealso - \code{\link{mxPath}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
+#' # A worked example
+#' data(demoOneFactor)
+#' latents  = c("G")
+#' manifests = names(demoOneFactor)
+#' myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = myData,
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#' umxSummary(m1, show = "std")
 #' require(umx)
-#' # Some examples of paths with umxPath
+#' #
+#' # Examples of each path type, and option
 #' umxPath("A", to = "B") # One-headed path from A to B
 #' umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @@1
 #' umxPath("A", to = c("B", "C"), fixedAt = 1:2) # same, with more than 1 value
@@ -4300,17 +4315,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath(fromEach = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 #' umxPath(unique.pairs = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 #' umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
-#' # A worked example
-#' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)
-#' myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' m1 <- umxRAM("One Factor", data = myData,
-#' 	umxPath(latents, to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#' umxSummary(m1, show = "std")
 #'
 #' # ====================
 #' # = Cholesky example =
