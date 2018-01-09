@@ -571,31 +571,33 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' library(umx)
-#' # Simulate some data
+#' # Simulate two sets of data in which X and Y correlate ~ .4
 #' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
 #' 		AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
 #' # Group 1
 #' ds1 = tmp[[1]];
+#' m1Data = mxData(cov(ds1), type = "cov", numObs = nrow(ds1), means=colMeans(ds1))
 #' # Group 2
 #' ds2 = tmp[[2]];
-#' cov(ds1); cov(ds2)
+#' m2Data = mxData(cov(ds2), type = "cov", numObs = nrow(ds2), means=colMeans(ds2))
+#' cor(ds1); cor(ds2)
 #' 
 #' manifests = names(ds1)
 #' # Model 1
-#' m1 <- mxModel("m1", type = "RAM",manifestVars = manifests,
-#' 	mxPath("x", to = "y", labels = "beta"),
-#' 	mxPath(manifests, arrows = 2, labels=c("Var_x", "Resid_y_grp1")),
-#' 	mxPath("one", to = manifests, labels=c("Mean_x", "Mean_y")),
-#' 	mxData(cov(ds1), type = "cov", numObs = nrow(ds1), means=colMeans(ds1))
+#' m1 <- umxRAM("m1", data = m1Data,
+#' 	umxPath("x", to = "y", labels = "beta"),
+#' 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
+#' 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
 #' )
 #' # Model 2
-#' m2 <- mxModel("m2", type = "RAM",manifestVars = manifests,
-#' 	mxPath("x", to = "y", labels = "beta"),
-#' 	mxPath(manifests, arrows = 2, labels=c("Var_x", "Resid_y_grp2")),
-#' 	mxPath("one", to = manifests, labels=c("Mean_x", "Mean_y")),
-#' 	mxData(cov(ds1), type = "cov", numObs = nrow(ds2), means=colMeans(ds2))
+#' m2 <- umxRAM("m2", data = m2Data,
+#' 	umxPath("x", to = "y", labels = "beta"),
+#' 	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
+#' 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))
 #' )
 #' # Place m1 and m2 into a supermodel, and autoRun it
+#' # NOTE: umxSummary is not yet smart/certain enough to compute saturated models etc
+#' # and report multiple groups correctly.
 #' m3 = umxSuperModel('top', m1, m2)
 #' summary(m3)
 umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {

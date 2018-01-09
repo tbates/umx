@@ -41,10 +41,10 @@
 #' @examples
 #' umxBrownie()
 umxBrownie <- function() {
-	message("Rub steak in salt, put it back in the fridge for 1-4 hours.\n",
+	message("Rub steak in a table spoon of salt, put it back in the fridge for 1-4 hours.\n",
 	"Place steak on a hot cast-iron skillet, with a little peanut oil.\n",
 	"Turn steaks as often as you wish. Control heat to below smoke point.\n",
-	"Remove and eat when internal temp reaches 140 \u0080 F.\n"
+	"Remove and eat when internal temp reaches 130 \u0080 F.\n"
 	)
 }
 # ==============================
@@ -4356,23 +4356,36 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' You can omit nDZpairs. You can also give any 2 of A, C, or E and the function will add the value which makes the ACE total = 1.
 #' 
 #' **Moderation**
-#' 
+#' **Univariate GxE Data**
 #' AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value = avg, and swinging
 #' down to min and up to max across 3 SDs of the moderator.
 #'
+#' **Bivariate GxE Data**
+#' 
+#' To simulate data with a moderator that is not shared by both twins.
+#' Moderated heritability is specified via the bivariate relationship (AA, CC, EE) and two moderators in each component.
+#' AA   = list(a11 = .4, a12 = .1, a22 = .15)
+#' CC   = list(c11 = .2, c12 = .1, c22 = .10)
+#' EE   = list(e11 = .4, e12 = .3, e22 = .25)
+#' Amod = list(Beta_a1 = .025, Beta_a2 = .025)
+#' Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
+#' Emod = list(Beta_e1 = .025, Beta_e2 = .025)
 #'
 #' @param nMZpairs Number of MZ pairs to simulate
 #' @param nDZpairs Number of DZ pairs to simulate (if omitted defaults to nMZpairs)
-#' @param AA value for A variance. Optionally a vector: c(avg= .5, min= 0, max= 1)
+#' @param AA value for A variance. NOTE: See options for use in GxE and Bivariate GxE
 #' @param CC value for C variance.
 #' @param EE value for E variance.
-#' @param nThresh  If supplied, use as thresholds and return mxFactor output? (default is not too)
-#' @param sum2one  Whether to enforce AA + CC + EE summing the one (default = TRUE)
+#' @param MZr If MZr and DZr are set (default = NULL), the function simply returns dataframes of the request size and correlation
+#' @param DZr NULL
+#' @param Amod Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)
+#' @param Cmod Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)
+#' @param Emod Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)
 #' @param varNames name for var (defaults to 'var')
 #' @param seed Allows user to set.seed() if wanting reproducible dataset
 #' @param empirical Passed to mvrnorm
-#' @param MZr If MZr and DZr are set (default = NULL), the function simply returns dataframes of the request size and correlation
-#' @param DZr NULL
+#' @param nThresh  If supplied, use as thresholds and return mxFactor output? (default is not too)
+#' @param sum2one  Whether to enforce AA + CC + EE summing the one (default = TRUE)
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
 #' @family Twin Data functions
@@ -4427,15 +4440,25 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' # ========================
 #' tmp = umx_make_TwinData(100, MZr = .86, DZr= .60, varNames = "IQ")
 #' umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
+#' 
+#' # Bivariate GxSES example
+#' 
+#' AA   = list(a11 = .4, a12 = .1, a22 = .15)
+#' CC   = list(c11 = .2, c12 = .1, c22 = .10)
+#' EE   = list(e11 = .4, e12 = .3, e22 = .25)
+#' Amod = list(Beta_a1 = .025, Beta_a2 = .025)
+#' Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
+#' Emod = list(Beta_e1 = .025, Beta_e2 = .025)
+#' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod, Emod =Emod)
 #' @md
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, nThresh = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE, MZr= NULL, DZr= NULL) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, nThresh = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE, MZr= NULL, DZr= NULL, Amod = NULL, Cmod = NULL, Emod = NULL) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
 	# Function caps the moderator effect at -3 and +3 SD
 	if(!is.null(MZr)){
 		if(is.null(DZr)){
-			stop("Both MZr and DZr must be set if you want to generate that kind of data.")
+			stop("Both MZr and DZr must be set if you want to generate data matching MZ and DZ correlations.")
 		}
 		mzCov = matrix(nrow = 2, byrow = T, c(
 			1, MZr,
@@ -4499,6 +4522,109 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		} else {
 			names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
 		}
+	}else if(!is.null(Amod)){
+		# Bivariate Moderation example
+		
+		# Moderator (M) path components
+		am = sqrt(AA$a11) # The Cholesky moderator A coefficients.
+		cm = sqrt(CC$c11) # The Cholesky moderator C coefficients.
+		em = sqrt(EE$e11) # The Cholesky moderator E coefficients.
+
+		# Cross paths M -> T in Cholesky
+		a12  = sqrt(AA$a12)	# A covariances in terms of Cholesky paths
+		c12  = sqrt(CC$c12)	# C
+		e12  = sqrt(EE$e12)	# E
+		Beta_a1 = Amod$Beta_a1	# A paths are moderated
+		Beta_c1 = Cmod$Beta_c1	# C mod
+		Beta_e1 = Emod$Beta_e1	# E mod
+
+		# Trait "T"
+		a22 = sqrt(AA$a22)	# A variance components of the trait ModelA (see above)
+		c22 = sqrt(CC$c22)	# C
+		e22 = sqrt(EE$e22)	# E	
+		Beta_a2 = Amod$Beta_a2	# A moderation
+		Beta_c2 = Cmod$Beta_c2	# C
+		Beta_e2 = Emod$Beta_e2	# E
+
+		# We simulate data by generating scores on the latent variables A, C, E of
+		# the moderator and A2, C2, and E2 of the trait, conditional on the moderator. 
+		# These are uncorrelated as the latter is trait | moderator.
+		# This is consistent with the Cholesky decomposition as depicted in model A
+
+		# Define the expected correlation matrices for MZ and DZ
+		sMZtmp = zero = matrix(data = 0, nrow = 6, ncol = 6)
+		diag(sMZtmp) = 1
+		sDZtmp = sMZtmp
+		sMZtmp[4, 1] = sMZtmp[1, 4] = 1.0 # A
+		sDZtmp[4, 1] = sDZtmp[1, 4] = 0.5 # A
+		sMZtmp[5, 2] = sMZtmp[2, 5] = sDZtmp[5, 2] = sDZtmp[2, 5] = 1 # C
+
+		# varNames = c('defm_T1', 'defm_T2', 't_T1', 'm_T1', 'm_T2', 't_T2')
+		# dimnames(sMZtmp) = list(varNames, varNames)
+
+		sigmaMZ = rbind(cbind(sMZtmp, zero),
+						cbind(zero, sMZtmp))
+		sigmaDZ = rbind(cbind(sDZtmp, zero),
+						cbind(zero, sDZtmp))
+
+		# Latent scores: A C E (m)   A C E (t|m)
+		# M data cols 1:6, Trait conditional on M cols 7-12
+		MZLatent = mvrnorm(nMZpairs, mu = rep(0, 12), Sigma = sigmaMZ, emp = empirical)
+		DZLatent = mvrnorm(nDZpairs, mu = rep(0, 12), Sigma = sigmaDZ, emp = empirical)
+
+		# Data matrices to be filled with content
+		tdatmz = mdatmz = matrix(data = 0, nrow = nMZpairs, ncol = 2)
+		tdatdz = mdatdz = matrix(data = 0, nrow = nDZpairs, ncol = 2)
+
+		# Create the phenotypic scores
+		for (i in 1:nMZpairs) {
+			# Generate Twin 1 phenotypic moderation score
+			mod = am * MZLatent[i, 1] + cm * MZLatent[i, 2] + em * MZLatent[i, 3] 
+			# create the phenotypic trait score, depending on M and on T|M
+			#           T|M                                            M
+			atmp1 = (a22 + Beta_a2 * mod) * MZLatent[i, 1+6] + (a12 + Beta_a1 * mod) * MZLatent[i, 1]
+			ctmp1 = (c22 + Beta_c2 * mod) * MZLatent[i, 2+6] + (c12 + Beta_c1 * mod) * MZLatent[i, 2]
+			etmp1 = (e22 + Beta_e2 * mod) * MZLatent[i, 3+6] + (e12 + Beta_e1 * mod) * MZLatent[i, 3]
+			j = 1 # J = 1 twin 1 mz.
+			mdatmz[i,j] = mod			# moderator
+			tdatmz[i,j] = atmp1 + ctmp1 + etmp1	# trait
+
+			# twin2
+			mod = am * MZLatent[i, 4] + cm * MZLatent[i, 5] + em * MZLatent[i, 6]
+			atmp1 = (a22 + Beta_a2 * mod) * MZLatent[i, 4+6] + (a12 + Beta_a1 * mod) * MZLatent[i, 4]
+			ctmp1 = (c22 + Beta_c2 * mod) * MZLatent[i, 5+6] + (c12 + Beta_c1 * mod) * MZLatent[i, 5]
+			etmp1 = (e22 + Beta_e2 * mod) * MZLatent[i, 6+6] + (e12 + Beta_e1 * mod) * MZLatent[i, 6]
+			j = 2	# twin 2
+			mdatmz[i, j] = mod
+			tdatmz[i, j] = atmp1 + ctmp1 + etmp1
+		} 
+
+		# Same for DZ twins (might differ in number)
+		for (i in 1:nDZpairs) {
+			j = 1
+			mod = am * DZLatent[i, 1] + cm * DZLatent[i, 2] + em * DZLatent[i, 3]
+			atmp1 = (a22 + Beta_a2 * mod) * DZLatent[i, 1+6] + (a12 + Beta_a1 * mod) * DZLatent[i, 1]
+			ctmp1 = (c22 + Beta_c2 * mod) * DZLatent[i, 2+6] + (c12 + Beta_c1 * mod) * DZLatent[i, 2]
+			etmp1 = (e22 + Beta_e2 * mod) * DZLatent[i, 3+6] + (e12 + Beta_e1 * mod) * DZLatent[i, 3]
+			mdatdz[i,j] = mod
+			tdatdz[i,j] = atmp1 + ctmp1 + etmp1
+			j = 2 # twin 2
+			mod = am * DZLatent[i, 4] + cm * DZLatent[i, 5] + em * DZLatent[i, 6]
+			atmp1 = (a22 + Beta_a2 * mod) * DZLatent[i, 4+6] + (a12 + Beta_a1 * mod) * DZLatent[i, 4]
+			ctmp1 = (c22 + Beta_c2 * mod) * DZLatent[i, 5+6] + (c12 + Beta_c1 * mod) * DZLatent[i, 5]
+			etmp1 = (e22 + Beta_e2 * mod) * DZLatent[i, 6+6] + (e12 + Beta_e1 * mod) * DZLatent[i, 6]
+			mdatdz[i,j] = mod
+			tdatdz[i,j] = atmp1 + ctmp1 + etmp1
+		}
+
+		# Convert to data frames, reorder columns and add names. 
+		mzData = as.data.frame(cbind(mdatmz, mdatmz, tdatmz))
+		dzData = as.data.frame(cbind(mdatdz, mdatdz, tdatdz))
+		mzData = mzData[,c(1, 2, 3, 5, 4, 6)]
+		dzData = dzData[,c(1, 2, 3, 5, 4, 6)]
+		# TODO use var names
+		colnames(mzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
+		colnames(dzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
 	} else {
 		# Moderator example
 		if(any(c(is.null(AA), is.null(CC), is.null(EE)))){
