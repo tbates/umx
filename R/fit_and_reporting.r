@@ -689,7 +689,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 		modelSummary = summary(model)
 		if(is.null(model$data)){
 			# TODO model with no data - no saturated solution?
-			message("Not sure I (umxSummary) know what to do with models with no data: Try summary() - it's smarter than I am.")
+			message("Top model doesn't contain data. You might want to use summary() instead of umxSummary() for this model.")
 		} else if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
 			refModels = mxRefModels(model, run = TRUE)

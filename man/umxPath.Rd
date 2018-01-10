@@ -144,8 +144,20 @@ There are also new terms to describe fixing values: \dQuote{fixedAt} and \dQuote
 Finally, (in future) it will allow sem-style \dQuote{A->B} string specification.
 }
 \examples{
+# A worked example
+data(demoOneFactor)
+latents  = c("G")
+manifests = names(demoOneFactor)
+myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = myData,
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
+)
+umxSummary(m1, show = "std")
 require(umx)
-# Some examples of paths with umxPath
+#
+# Examples of each path type, and option
 umxPath("A", to = "B") # One-headed path from A to B
 umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @1
 umxPath("A", to = c("B", "C"), fixedAt = 1:2) # same, with more than 1 value
@@ -164,17 +176,6 @@ umxPath(unique.bivariate = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, 
 umxPath(fromEach = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 umxPath(unique.pairs = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
-# A worked example
-data(demoOneFactor)
-latents  = c("G")
-manifests = names(demoOneFactor)
-myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-m1 <- umxRAM("One Factor", data = myData,
-	umxPath(latents, to = manifests),
-	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
-)
-umxSummary(m1, show = "std")
 
 # ====================
 # = Cholesky example =
