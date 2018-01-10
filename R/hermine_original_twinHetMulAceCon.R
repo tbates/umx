@@ -4,15 +4,15 @@
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
-# 
+#
 #        http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #   Unless required by applicable law or agreed to in writing, software
 #   distributed under the License is distributed on an "AS IS" BASIS,
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
+#
 # # ------------------------------------------------------------------------------
 # # Program: twinHetMulAceCon.R
 # #  Author: Hermine Maes
@@ -322,7 +322,7 @@
 # # 1 Nonscalar Sex Limitation
 # # Quantitative Sex Differences & Qualitative Sex Differences for A
 # # Male and female paths, plus male and female Ra, Rc and Re between variables
-# # Male-Female correlations in DZO group between A factors Rao FREE, 
+# # Male-Female correlations in DZO group between A factors Rao FREE,
 # # Rc constrained across male/female and oppsex
 # # ---------------------------------------------------------------------------------------------------------------------|
 #

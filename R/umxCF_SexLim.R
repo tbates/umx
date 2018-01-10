@@ -13,7 +13,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#' umxCF_SexLim
+#' Multivariate twin analysis with sex limitation
 #'
 #' Build a multivariate twin analysis with sex limitation based on a correlated factors model.
 #' This allows Quantitative & Qualitative Sex-Limitation. The correlation approach ensures that variable order
@@ -37,27 +37,10 @@
 #' \emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489. 
 #' @examples
 #' \dontrun{
-#' # Load Libraries
-#' require(umx)
-#' # Create Functions to Assign Labels
-#' laLower <- function(la,nVar) {
-#' 	paste(la,rev(nVar+1-sequence(1:nVar)),rep(1:nVar,nVar:1),sep="_")
-#' }
-#' laSdiag <- function(la,nVar) {
-#' 	paste(la,rev(nVar+1-sequence(1:(nVar-1))),rep(1:(nVar-1),(nVar-1):1),sep="_") 
-#' }
-#' laFull  <- function(la,nVar) {
-#' 	paste(la,1:nVar,rep(1:nVar,each=nVar),sep="_") 
-#' }
-#' laDiag  <- function(la,nVar) {
-#' 	paste(la,1:nVar,1:nVar,sep="_") 
-#' }
-#' laSymm  <- function(la,nVar) {
-#' 	paste(la,rev(nVar+1-sequence(1:nVar)),rep(1:nVar,nVar:1),sep="_") 
-#' }
 #' # =========================
 #' # = Load and Process Data =
 #' # =========================
+#' require(umx)
 #' data("us_skinfold_data")
 #' # rescale vars
 #' us_skinfold_data[,c('bic_T1', 'bic_T2')] <- us_skinfold_data[,c('bic_T1', 'bic_T2')]/3.4
@@ -65,12 +48,12 @@
 #' us_skinfold_data[,c('caf_T1', 'caf_T2')] <- us_skinfold_data[,c('caf_T1', 'caf_T2')]/3
 #' us_skinfold_data[,c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[,c('ssc_T1', 'ssc_T2')]/5
 #' us_skinfold_data[,c('sil_T1', 'sil_T2')] <- us_skinfold_data[,c('sil_T1', 'sil_T2')]/5
-#' # describe(us_skinfold_data, skew = FALSE)
+#' # psych::describe(us_skinfold_data, skew = FALSE)
 #' 
 #' # Select Variables for Analysis
 #' varList = c('ssc','sil','caf','tri','bic')
-#' selVars = umx_paste_names(varList, "_T", 1:2)
-#' nVar = length(selVars)
+#' selVars = tvars(varList, "_T")
+#' nVar    = length(selVars)
 #' 
 #' # Data objects for Multiple Groups
 #' mzmData = subset(us_skinfold_data, zyg == 1, selVars)
@@ -79,10 +62,11 @@
 #' dzfData = subset(us_skinfold_data, zyg == 4, selVars)
 #' dzoData = subset(us_skinfold_data, zyg == 5, selVars)
 #'
-#' m1 = umxACESexLim(selDVs = varList, suffix = "_T",
+#' m1 = umxSexLim(selDVs = varList, sep = "_T",
 #'        mzmData = mzmData, dzmData = dzmData, 
 #'        mzfData = mzfData, dzfData = dzfData, 
-#'        dzoData = dzoData)
+#'        dzoData = dzoData
+#' )
 #' m1 = mxRun(m1)
 #' summary(m1)
 #'
@@ -188,17 +172,19 @@
 #' #  	mxCompare(m3, m4)[2,]
 #' # )
 #' }
-umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, C_or_A = "A", suffix = NA){
+umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, C_or_A = "A", sep = NA){
 	# Correlated factors sex limitations
-	stop("Don't use! Not checked!")
+	# stop("Don't use! Not checked!")
+	suffix = sep
 	if(is.na(suffix)){
-		stop("Please provide suffixes")
+		stop("Please provide sep (e.g. '_T')")
 	}
 	selVars = umx_paste_names(selDVs, suffix, 1:2)
 	# Algebra to Constrain Correlation Matrices to be Positive Definite
 
-	# get awesome mean-starts
-	svMe = colMeans(mzmData[,1:nVar], na.rm = TRUE) # c(5,8,4,4,8) # start value for means
+	# Decent starts for means
+	obsMean = umx_means(mzmData[,1:nVar])
+	svMe = colMeans(mzmData[,1:nVar], na.rm = TRUE)
 	# dimnames for Algebras generated to hold Parameter Estimates and Derived Variance Components
 	colZm <- paste0(varList, rep(c('Am', 'Cm', 'Em'), each = nVar))
 	colZf <- paste0(varList, rep(c('Af', 'Cf', 'Ef'), each = nVar))
@@ -206,23 +192,23 @@ umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 	m1 = mxModel(name,
 		mxModel("top",
 		# Matrices a, c, and e to store Path Coefficients
-		mxMatrix(name = "am", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
-		mxMatrix(name = "cm", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
-		mxMatrix(name = "em", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
-		mxMatrix(name = "af", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
-		mxMatrix(name = "cf", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
-		mxMatrix(name = "ef", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
+		umxMatrix("am", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
+		umxMatrix("cm", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
+		umxMatrix("em", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
+		umxMatrix("af", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
+		umxMatrix("cf", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
+		umxMatrix("ef", "Diag" , nrow = nVar, free = TRUE, values = .5, lbound = .0001),
 
-		mxMatrix(name = "Ram", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
-		mxMatrix(name = "Rcm", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
-		mxMatrix(name = "Rem", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
-		mxMatrix(name = "Raf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
-		mxMatrix(name = "Rcf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
-		mxMatrix(name = "Ref", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
+		umxMatrix("Ram", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
+		umxMatrix("Rcm", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
+		umxMatrix("Rem", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
+		umxMatrix("Raf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
+		umxMatrix("Rcf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
+		umxMatrix("Ref", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
 
 		# Opposite-Sex parameters: Rao, Rco, Amf, Cmf
 		if(C_or_A == "A"){
-			# Quantitative Sex Differences & Qualitative Sex Differences for C
+			# Quantitative & Qualitative Sex Differences for C
 			{
 				Rao = mxMatrix(name = "Rao", "Full", nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound = -1, ubound = 1)
 				Rco = mxMatrix(name = "Rco", "Symm", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1)
@@ -232,7 +218,7 @@ umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 				list(Rao, Rco)
 			}
 		} else if (C_or_A == "C"){
-			# Quantitative Sex Differences & Qualitative Sex Differences for C
+			# Quantitative & Qualitative Sex Differences for C
 			{
 				Rao = mxMatrix(name = "Rao", "Symm", nrow=nVar, ncol=nVar, free=TRUE, values=.4, lbound=-1, ubound=1)
 				Rco = mxMatrix(name = "Rco", "Full", nrow=nVar, ncol=nVar, free=TRUE, values= 1, lbound=-1, ubound=1)
@@ -277,9 +263,9 @@ umxCF_SexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData,
 		mxConstraint(name = "constr", minCor > pos1by6),
 
 		# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins
-		mxMatrix(name = "expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(selDVs, "Mm")),
-		mxMatrix(name = "expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(selDVs, "Mf")),
-		mxMatrix(name = "expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(selDVs, rep(c("Mm", "Mf"), each = nVar))),
+		umxMatrix("expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(selDVs, "Mm")),
+		umxMatrix("expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(selDVs, "Mf")),
+		umxMatrix("expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(selDVs, rep(c("Mm", "Mf"), each = nVar))),
 
 		# Matrix & Algebra for expected Variance/Covariance Matrices in MZ & DZ twins
 		mxAlgebra(name = "expCovMZm", rbind(cbind(Vm, Am + Cm), cbind(Am + Cm, Vm))),

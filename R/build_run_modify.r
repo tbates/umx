@@ -245,6 +245,7 @@ umxModel <- function(...) {
 #' @param thresholds Whether to use deviation-based threshold modeling for ordinal data (if any is detected), direct, or do nothing.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
+#' @param verbose Whether to tell the user what latents and manifests were created etc. (Default = FALSE)
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @seealso \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}
@@ -327,7 +328,7 @@ umxModel <- function(...) {
 #'# mpg  "mpg_with_mpg"  "mpg_with_wt" "disp_with_mpg"
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run"), optimizer = NULL, verbose = FALSE) {
 	
 	# =================
 	# = Set optimizer =
@@ -382,9 +383,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		# do we care?
 	}
 
-	if(is.null(data)){
-		stop("umxRAM needs some mxData (or at last a list of variable names to use umxRAM in sketch mode). You set data like in lm(), with data = mxData().\nDid you perhaps just add the mxData along with the paths?")
-	}
 
 	foundNames = c()
 	for (thisItem in dot.items) {
@@ -416,13 +414,15 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# ===============
 	# = Handle data =
 	# ===============
+	
 	if(is.null(data)){
-		stop("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...)")
+		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at last a list of variable names to use umxRAM in sketch mode)")
+		stop("Did you perhaps just add the data along with the paths instead of via data = ?")
 	} else if(class(data)[1] == "data.frame") {
 		data = mxData(observed = data, type = "raw")
 	}
 
-  if(class(data)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
+	if(class(data)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
 		if(data$type == "raw"){
 			# check "one" is not a column
 			if("one" %in% names(data$observed) ){
@@ -438,18 +438,18 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		if(is.null(manifestVars)){
 			stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
 		}
-	}else if (class(data) == "character"){
+	} else if (class(data) == "character"){
 		# user is just running a trial model, with no data, but provided names
 		manifestVars = data
 	} else {
-		stop("There's something wrong with the data - I expected a dataframe or mxData, but you gave me a ", class(data)[1])		
+		stop("There's something wrong with the data - I expected a dataframe, mxData, or a vector of names, but you gave me a ", class(data)[1])		
 	}
 	foundNames = unique(na.omit(foundNames))
 	# Anything not in data -> latent
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
 	nLatent = length(latentVars)
 	# Report on which latents were created
-	if(nLatent == 0){
+	if(nLatent == 0 && verbose){
 		# message("No latent variables were created.\n")
 		latentVars = NA
 	} else if (nLatent == 1){
@@ -496,7 +496,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			msg_str = paste0(msg_str, ") left in data.")
 		}		
 	}
-	message("ManifestVars set to: ", paste(manifestVars, collapse = ", "), ". ", msg_str)
+	if(verbose){
+		message("ManifestVars set to: ", paste(manifestVars, collapse = ", "), ". ", msg_str)
+	}
 
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = manifestVars,
@@ -576,10 +578,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' 		AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
 #' # Group 1
 #' ds1 = tmp[[1]];
-#' m1Data = mxData(cov(ds1), type = "cov", numObs = nrow(ds1), means=colMeans(ds1))
+#' m1Data = mxData(cov(ds1), type = "cov", numObs = nrow(ds1), means=umx_means(ds1))
 #' # Group 2
 #' ds2 = tmp[[2]];
-#' m2Data = mxData(cov(ds2), type = "cov", numObs = nrow(ds2), means=colMeans(ds2))
+#' m2Data = mxData(cov(ds2), type = "cov", numObs = nrow(ds2), means=umx_means(ds2))
 #' cor(ds1); cor(ds2)
 #' 
 #' manifests = names(ds1)
@@ -601,7 +603,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' m3 = umxSuperModel('top', m1, m2)
 #' summary(m3)
 umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
-	dot.items = list(...) # grab all the dot items: mxPaths, etc...	
+	dot.items = list(...) # grab all the dot items: models...	
 	nModels = length(dot.items)
 	# get list of model names
 	modelNames = c()
