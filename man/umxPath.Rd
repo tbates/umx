@@ -96,9 +96,11 @@ To specify a mean, you just say
 
 \code{umxPath(mean = "A")}, which is equivalent to \code{mxPath(from = "one", to = "A")}.
 
-To fix a path at a value, instead of to \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)} you can say:
+To fix a path at a value, you can say:
 
 \code{umxPath(var = "A", fixedAt = 1)} .
+
+instead of \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)} 
 
 The common task of creating a variable with variance fixed at 1 and mean at 0 is done thus:
 
@@ -121,9 +123,9 @@ To create paths A<->B, B<->C, and A<->C, you would say:
 \code{umxPath(fromEach = c('A',"B","C"))} Creates one-headed arrows on the all.bivariate pattern
 
 
-Setting up a latent trait, you can fix the loading of the first path with
+Setting up a latent trait, you can scale with a fixed first path thus:
 
-\code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)}  
+\code{umxPath("A", to = c("B","C","D"),  firstAt = 1)}  
 
 This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
 

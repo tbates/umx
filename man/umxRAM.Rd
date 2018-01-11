@@ -9,7 +9,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std",
   "both", "list of column names"), refModels = NULL,
   thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
-  autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  autoRun = getOption("umx_auto_run"), optimizer = NULL, verbose = FALSE)
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
@@ -39,6 +39,8 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
+
+\item{verbose}{Whether to tell the user what latents and manifests were created etc. (Default = FALSE)}
 }
 \value{
 - \code{\link{mxModel}}
