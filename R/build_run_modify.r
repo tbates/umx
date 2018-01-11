@@ -639,8 +639,9 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' umxModify: Add, set, or drop model paths by label.
 #' 
 #' umxModify allows you to modify, re-run and summarize an \code{\link{mxModel}},
-#' all in one line of script. 
-#' You can add paths, or other model elements, set paths or drop them.
+#' all in one line of script.
+#' 
+#' You can add paths, or other model elements, set path values (default is 0), or replace labels.
 #' As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
 #' 
 #' \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
@@ -654,6 +655,9 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' fit2 = mxRun(fit2)
 #' summary(fit2)
 #' 
+#' @details
+#' Note: A (minor) limitation is that because the defaul value is 0, this is ignored when using newlabels. You can't simultaneously set value to 0 and relabel cells.
+#' 
 #' @aliases umxReRun umxModify
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
@@ -662,6 +666,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' over-rides the contents of update, and sets regex to TRUE.
 #' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
 #' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
+#' @param newlabels   If not NULL, used as a replacement set of labels (can be regular expression). value and free are ignored!
 #' @param freeToStart Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)
 #' @param name      The name for the new model
 #' @param verbose   How much feedback to give
@@ -676,32 +681,39 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' @export
 #' @examples
 #' require(umx)
+#' umx_set_optimizer("SLSQP")
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' umx_set_optimizer("SLSQP")
 #' 
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1")
-#' umxSummary(m2); umxCompare(m1, m2)
-#' # 1-line version including comparison
+#' 
 #' m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
-#' # use regular expression to drop multiple paths: e.g. G to x3, x4, x5
-#' m2 = umxModify(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
-#' # Same, but shorter
-#' m2 = umxModify(m1, regex  = "^G_to_x[3-5]", name = "no_G_to_x3_5")
+#' 
+#' # Use regular expression to drop multiple paths: e.g. G to x3, x4, x5
+#' m2 = umxModify(m1, regex = "^G_to_x[3-5]", name = "no_G_to_x3_5", comp = TRUE)
+#' 
 #' # Same, but don't autoRun
 #' m2 = umxModify(m1, regex  = "^G_to_x[3-5]", name = "no_G_to_x3_5", autoRun = FALSE) 
-#' m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comp = TRUE)
+#' 
+#' # Fix a value at a non-zero value
+#' m2 = umxModify(m1, update = "G_to_x1", value = .35, name = "fix_G_x1_at_35", comp = TRUE)
+#' 
+#' # Free a fixed value
 #' m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", comparison = TRUE)
-umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free = FALSE, value = 0, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = TRUE, dropList = "deprecated") {
+#' umxCompare(m1,m3)
+#' 
+#' # Re-write a label
+#' m2 = umxModify(m1, update = "G_to_x1", newlabels= "A_rose_by_any_other_name", name = "does_smell_as_sweet", comparison = TRUE)
+#' m2 = umxModify(m1, regex = "G_to_x([12])", newlabels= "G_to_1_or_2", name = "same_in_2_places", comparison = TRUE)
+#' 
+#' # Regular expressions let you even use pieces of the old names in creating new ones!
+#' m2 = umxModify(m1, regex = "G_to_x([0-9])", newlabels= "loading_for_path\\1", name = "Using a piece of the search string", comparison = TRUE)
+umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = TRUE, dropList = "deprecated") {
 	if(!is.null(master)){
 		x = umxEquate(lastFit, master = master, slave = update, free = freeToStart, verbose = verbose, name = name, autoRun = autoRun, comparison = comparison)
 		return(x)
@@ -731,25 +743,34 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 		update = free
 		free = TRUE
 	}
-
+	
 	if(is.null(update)){
 		message("You haven't asked to do anything: the parameters that are free to be dropped are:")
 		print(umxGetParameters(lastFit))
 		stop()
 	}else{
 		if(regex | typeof(update) == "character") {
+			# handle labels as input
 			if (regex) {
 				theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
-			}else {
+				if(!is.null(newlabels)){
+					newlabels = sub(update, newlabels, theLabels, ignore.case = FALSE)
+				}
+			} else {
 				theLabels = update
 			}
-			x = omxSetParameters(lastFit, labels = theLabels, free = free, values = value, name = name)		
+			if(!is.null(newlabels)){
+				x = omxSetParameters(lastFit, labels = theLabels, newlabels = newlabels, name = name)
+			} else {
+				x = omxSetParameters(lastFit, labels = theLabels, free = free, values = value, name = name)
+			}
 		} else {
 			# Add objects passed in under "update"
 			# TODO umxModify: if object is RAM, add re-label and re-start new object?
 			if(is.null(name)){ name = NA } # i.e. do nothing
 			x = mxModel(lastFit, update, name = name)
 		}
+		x = omxAssignFirstParameters(x)
 		if(autoRun){
 			x = mxRun(x, intervals = intervals)
 			if(comparison){
@@ -3243,7 +3264,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 	}
 	nothingDoing = all(is.null(c(free, values, newlabels)))
 	if(nothingDoing){
-		warning("You are not setting anything: set one or more of free, values, or newLabels to update a parameter")
+		warning("You are not setting anything: set one or more of free, values, or newlabels to update a parameter")
 	}
 	if(regex){
 		oldLabels = umxGetParameters(model, regex = labels)
@@ -4211,9 +4232,11 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' \code{umxPath(mean = "A")}, which is equivalent to \code{mxPath(from = "one", to = "A")}.
 #' 
-#' To fix a path at a value, instead of to \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)} you can say:
+#' To fix a path at a value, you can say:
 #' 
 #' \code{umxPath(var = "A", fixedAt = 1)} .
+#' 
+#' instead of \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)} 
 #' 
 #' The common task of creating a variable with variance fixed at 1 and mean at 0 is done thus:
 #' 
@@ -4236,9 +4259,9 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' \code{umxPath(fromEach = c('A',"B","C"))} Creates one-headed arrows on the all.bivariate pattern
 #'
 #'
-#' Setting up a latent trait, you can fix the loading of the first path with
+#' Setting up a latent trait, you can scale with a fixed first path thus:
 #' 
-#' \code{mxPath(A, to = c(B,C,D), fixFirst = TRUE)}  
+#' \code{umxPath("A", to = c("B","C","D"),  firstAt = 1)}  
 #' 
 #' This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
 #' 

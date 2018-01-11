@@ -6,8 +6,8 @@
 \title{umxModify: Add, set, or drop model paths by label.}
 \usage{
 umxModify(lastFit, update = NULL, master = NULL, regex = FALSE,
-  free = FALSE, value = 0, freeToStart = NA, name = NULL,
-  verbose = FALSE, intervals = FALSE, comparison = FALSE,
+  free = FALSE, value = 0, newlabels = NULL, freeToStart = NA,
+  name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE,
   autoRun = TRUE, dropList = "deprecated")
 }
 \arguments{
@@ -23,6 +23,8 @@ over-rides the contents of update, and sets regex to TRUE.}
 \item{free}{The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)}
 
 \item{value}{The value to set the parameters whose labels you specify too (defaults to 0)}
+
+\item{newlabels}{If not NULL, used as a replacement set of labels (can be regular expression). value and free are ignored!}
 
 \item{freeToStart}{Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)}
 
@@ -43,11 +45,12 @@ over-rides the contents of update, and sets regex to TRUE.}
 }
 \description{
 umxModify allows you to modify, re-run and summarize an \code{\link{mxModel}},
-all in one line of script. 
-You can add paths, or other model elements, set paths or drop them.
-As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
+all in one line of script.
 }
 \details{
+You can add paths, or other model elements, set path values (default is 0), or replace labels.
+As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
+
 \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
 
 Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
@@ -58,34 +61,44 @@ If you are just starting out, you might find it easier to be more explicit. Like
 fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
 fit2 = mxRun(fit2)
 summary(fit2)
+
+
+Note: A (minor) limitation is that because the defaul value is 0, this is ignored when using newlabels. You can't simultaneously set value to 0 and relabel cells.
 }
 \examples{
 require(umx)
+umx_set_optimizer("SLSQP")
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-umx_set_optimizer("SLSQP")
 
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1")
-umxSummary(m2); umxCompare(m1, m2)
-# 1-line version including comparison
+
 m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
-# use regular expression to drop multiple paths: e.g. G to x3, x4, x5
-m2 = umxModify(m1, update = "^G_to_x[3-5]", regex = TRUE, name = "no_G_to_x3_5", comp = TRUE)
-# Same, but shorter
-m2 = umxModify(m1, regex  = "^G_to_x[3-5]", name = "no_G_to_x3_5")
+
+# Use regular expression to drop multiple paths: e.g. G to x3, x4, x5
+m2 = umxModify(m1, regex = "^G_to_x[3-5]", name = "no_G_to_x3_5", comp = TRUE)
+
 # Same, but don't autoRun
 m2 = umxModify(m1, regex  = "^G_to_x[3-5]", name = "no_G_to_x3_5", autoRun = FALSE) 
-m2 = umxModify(m1, update = "G_to_x1", value = .2, name = "fix_G_x1_at_point2", comp = TRUE)
+
+# Fix a value at a non-zero value
+m2 = umxModify(m1, update = "G_to_x1", value = .35, name = "fix_G_x1_at_35", comp = TRUE)
+
+# Free a fixed value
 m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", comparison = TRUE)
+umxCompare(m1,m3)
+
+# Re-write a label
+m2 = umxModify(m1, update = "G_to_x1", newlabels= "A_rose_by_any_other_name", name = "does_smell_as_sweet", comparison = TRUE)
+m2 = umxModify(m1, regex = "G_to_x([12])", newlabels= "G_to_1_or_2", name = "same_in_2_places", comparison = TRUE)
+
+# Regular expressions let you even use pieces of the old names in creating new ones!
+m2 = umxModify(m1, regex = "G_to_x([0-9])", newlabels= "loading_for_path\\\\1", name = "Using a piece of the search string", comparison = TRUE)
 }
 \references{
 - \url{http://github.com/tbates/umx}
