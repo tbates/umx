@@ -248,7 +248,7 @@ umxModel <- function(...) {
 #' @param verbose Whether to tell the user what latents and manifests were created etc. (Default = FALSE)
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @seealso \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}
+#' @seealso \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, , \code{\link{umxSuperModel}}
 #' @family Core Modelling Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
