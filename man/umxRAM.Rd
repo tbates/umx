@@ -164,7 +164,7 @@ m1$S$labels
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-\code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}
+\code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, , \code{\link{umxSuperModel}}
 
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxMatrix}}, \code{\link{umxPath}},

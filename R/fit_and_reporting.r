@@ -2183,21 +2183,14 @@ plot.MxModel.ACE <- umxPlotACE
 #' selDVs  = c("bmi")
 #' selCovs = c("ht")
 #' selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes= 1:2)
-#' # just top few pairs so example runs quickly
-#' mzData = subset(twinData, zyg == 1, selVars)[1:100, ]
-#' dzData = subset(twinData, zyg == 3, selVars)[1:100, ]
-#' # TODO update for new dataset variable zygosity
-#' # mzData = subset(twinData, zygosity == "MZFF", selVars)[1:200, ]
-#' # dzData = subset(twinData, zygosity == "DZFF", selVars)[1:200, ]
+#' # Just top few pairs so example runs quickly
+#' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:100, ]
+#' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:100, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
-#' 	 suffix = "", autoRun = TRUE)
+#' 	 sep = "", autoRun = TRUE)
 #' plot(m1)
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", ...) {
-	if(showMeans != "deprecated"){
-		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
-		means = showMeans
-	}	
+umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, ...) {
 	if(!class(x) == "MxModel.ACEcov"){
 		stop("The first parameter of umxPlotACEcov must be an ACEcov model, you gave me a ", class(x))
 	}

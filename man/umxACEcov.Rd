@@ -7,8 +7,7 @@
 umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0,
   equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
-  "left_censored"), autoRun = getOption("umx_auto_run"), suffix = NULL,
-  optimizer = NULL)
+  "left_censored"), autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -41,8 +40,6 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 \item{thresholds}{How to implement ordinal thresholds: c("deviationBased", "left_censored").}
 
 \item{autoRun}{Whether to run the model and return it, or just return it.}
-
-\item{suffix}{synonym for 'sep' (see above).}
 
 \item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
 }

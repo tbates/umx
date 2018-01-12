@@ -6,7 +6,7 @@
 \title{Make a graphical display of an ACE model with covariates.}
 \usage{
 umxPlotACEcov(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, showMeans = "deprecated", ...)
+  std = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
@@ -19,9 +19,9 @@ umxPlotACEcov(x = NA, file = "name", digits = 2, means = FALSE,
 
 \item{std}{Whether to standardize the model (default is TRUE)}
 
-\item{showMeans}{DEPRECATED use "means" instead}
-
 \item{...}{Additional (optional) parameters}
+
+\item{showMeans}{DEPRECATED use "means" instead}
 }
 \value{
 - optionally return the dot code
@@ -38,14 +38,11 @@ data(twinData)
 selDVs  = c("bmi")
 selCovs = c("ht")
 selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes= 1:2)
-# just top few pairs so example runs quickly
-mzData = subset(twinData, zyg == 1, selVars)[1:100, ]
-dzData = subset(twinData, zyg == 3, selVars)[1:100, ]
-# TODO update for new dataset variable zygosity
-# mzData = subset(twinData, zygosity == "MZFF", selVars)[1:200, ]
-# dzData = subset(twinData, zygosity == "DZFF", selVars)[1:200, ]
+# Just top few pairs so example runs quickly
+mzData = subset(twinData, zygosity == "MZFF", selVars)[1:100, ]
+dzData = subset(twinData, zygosity == "DZFF", selVars)[1:100, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
-	 suffix = "", autoRun = TRUE)
+	 sep = "", autoRun = TRUE)
 plot(m1)
 plot(m1, std = FALSE) # don't standardize
 }

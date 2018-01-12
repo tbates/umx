@@ -91,7 +91,6 @@ umxGxE_bi <- function(name = "G_by_E_bivariate", selDVs, selDefs, dzData, mzData
 
 			# TODO:	Add covariates to G x E model
 			# if(0){
-				# TODO: umxGxE If there are covs
 				# mxMatrix(name = "betas" , "Full", nrow = nCov, ncol = nVar, free = T, values = 0.05, labels = paste0("beta_", covariates))
 			# }
 		),

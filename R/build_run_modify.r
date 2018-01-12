@@ -168,8 +168,10 @@ methods::setClass("MxModel.ACE"   , contains = "MxModel")
 methods::setClass("MxModel.ACEv"  , contains = "MxModel")
 methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 methods::setClass("MxModel.GxE"   , contains = "MxModel")
+methods::setClass("MxModel.GxEbiv", contains = "MxModel.GxE")
 methods::setClass("MxModel.CP"    , contains = "MxModel")
 methods::setClass("MxModel.IP"    , contains = "MxModel")
+methods::setClass("MxModel.SexLimCF", contains = "MxModel")
 
 # ============================
 # = Core Modelling Functions =
@@ -1845,7 +1847,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' @param thresholds How to implement ordinal thresholds: c("deviationBased", "left_censored").
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param autoRun Whether to run the model and return it, or just return it.
-#' @param suffix synonym for 'sep' (see above).
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @export
@@ -1911,7 +1912,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' )
 #' }
 #'
-umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run"), suffix = NULL, optimizer = NULL) {
+umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "left_censored"), autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	# TODO sub-class umxACEcov (random covariates) fn to support umxSummary and plot 
 	nSib = 2 # Number of siblings in a twin pair
 	if(!is.null(optimizer)){
@@ -1920,7 +1921,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	if(dzCr == .25 && name == "ACEcov"){
 		name = "ADEcov"
 	}
-	# Allow sep as synonym for suffix
 	if(!is.null(sep)){
 		suffix = sep
 	}

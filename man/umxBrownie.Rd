@@ -13,7 +13,7 @@ umxBrownie()
 How to cook steak.
 }
 \details{
-TODO: add info on skillet choice, meat-cuts.
+TODO: add info on skillet choice, meat-cuts. Keji book as reference.
 }
 \examples{
 umxBrownie()
