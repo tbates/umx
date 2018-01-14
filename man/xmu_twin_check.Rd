@@ -42,7 +42,7 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}
+  \code{\link{umxSummarySexLim}}, \code{\link{umx}}
 
 Other Check or test: \code{\link{umx_check_names}},
   \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},

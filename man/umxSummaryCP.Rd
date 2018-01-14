@@ -66,6 +66,7 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryGxE}},
-  \code{\link{umxSummaryIP}}, \code{\link{umx}},
+  \code{\link{umxSummaryIP}},
+  \code{\link{umxSummarySexLim}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }

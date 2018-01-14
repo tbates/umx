@@ -92,7 +92,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	umx_check_names(selVars, data = dzfData, die = TRUE); dzfData = dzfData[, selVars]
 	umx_check_names(selVars, data = dzoData, die = TRUE); dzoData = dzoData[, selVars]
 
-	# Start means at actual means of some group (done!!!)
+	# Start means at actual means of some group 
 	obsMean = umx_means(mzmData[, selVars[1:nVar], drop = FALSE])
 	
 	varStarts = umx_var(mzmData[, selVars[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
@@ -104,11 +104,11 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	varStarts = matrix(varStarts, nVar, nVar)
 	
 
-	# Helpful dimnames for Algebra-based Estimates and Derived Variance Component output (see "VarsZm") (done!!!)
+	# Helpful dimnames for Algebra-based Estimates and Derived Variance Component output (see "VarsZm") 
 	colZm <- paste0(selDVs, rep(c('Am', 'Cm', 'Em'), each = nVar))
 	colZf <- paste0(selDVs, rep(c('Af', 'Cf', 'Ef'), each = nVar))
 
-	# Make Rao and Rco matrices (done!!!)
+	# Make Rao and Rco matrices 
 	if(A_or_C == "A"){
 			# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is symm) (labels trimmed to ra at end)
 			# # TODO Check Stand (symmetric with 1's on diagonal) OK (was Symm fixed diag@1)			
@@ -123,10 +123,8 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 	m1 = mxModel(name,
 		mxModel("top",
-			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
-		
-			# ✓ Path Coefficient matrices a, c, and e for males and females (done!!!)
-			# TODO Better starts here? @mikeneale?
+			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),		
+			# ✓ Path Coefficient matrices a, c, and e for males and females 
 			umxMatrix("am", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 			umxMatrix("cm", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 			umxMatrix("em", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
@@ -134,7 +132,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			umxMatrix("cf", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 			umxMatrix("ef", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 
-			# Matrices for Correlation Coefficients within/across Individuals (done!!!)
+			# Matrices for Correlation Coefficients within/across Individuals 
 			# Stand = symmetric with 1's on diagonal
 			# NOTE: one of # (Rc[fmo]) or (Ra[fmo]) are equated (labeled "rc") (bottom of script)
 			umxMatrix("Ram", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
@@ -146,7 +144,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 			Rao_and_Rco_matrices,
 
-			# Algebra Male and female variance components (done!!!)
+			# Algebra Male and female variance components 
 			mxAlgebra(name = "Am", Ram %&% am),
 			mxAlgebra(name = "Cm", Rcm %&% cm),
 			mxAlgebra(name = "Em", Rem %&% em),
@@ -155,12 +153,11 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			mxAlgebra(name = "Cf", Rcf %&% cf),
 			mxAlgebra(name = "Ef", Ref %&% ef),
 
-			# Opposite-Sex parameters: Rao, Rco, Amf, Cmf (done!!!)
+			# Opposite-Sex parameters: Rao, Rco, Amf, Cmf 
 			mxAlgebra(name = "Amf", am %*% (Rao) %*% t(af)),
 			mxAlgebra(name = "Cmf", cm %*% (Rco) %*% t(cf)),
-			
 
-			# Constrain the 6 R*(f|m) Eigen values to be positive (done!!!)
+			# Constrain the 6 R*(f|m) Eigen values to be positive 
 			umxMatrix("pos1by6", "Full", nrow = 1, ncol = 6, free = FALSE, values = .0001),
 			mxAlgebra(name = "minCor", cbind(
 				min(eigenval(Ram)), min(eigenval(Rcm)), min(eigenval(Rem)),
@@ -168,26 +165,26 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			),
 			mxConstraint(name = "Keep_it_Positive_Baby", minCor > pos1by6),
 
-			# Algebra for Total variances and standard deviations (of diagonals) (done!!!)
+			# Algebra for Total variances and standard deviations (of diagonals) 
 			umxMatrix("I", "Iden", nrow = nVar),
 			mxAlgebra(name = "Vm", Am + Cm + Em),
 			mxAlgebra(name = "Vf", Af + Cf + Ef),
 			mxAlgebra(name = "iSDm", solve(sqrt(I * Vm))),
 			mxAlgebra(name = "iSDf", solve(sqrt(I * Vf))),
 
-			# Algebras for Parameter Estimates and Derived Variance Components (done!!!)
-			mxAlgebra(name = "VarsZm", cbind(Am/Vm, Cm/Vm, Em/Vm), dimnames = list(NULL, colZm)),
-			mxAlgebra(name = "CorsZm", cbind(Ram, Rcm, Rem)      , dimnames = list(NULL, colZm)),
+			# Algebras for Parameter Estimates and Derived Variance Components 
+			mxAlgebra(name = "VarsZm", cbind(Am/Vm, Cm/Vm, Em/Vm), dimnames = list(selDVs, colZm)),
+			mxAlgebra(name = "CorsZm", cbind(Ram, Rcm, Rem)      , dimnames = list(selDVs, colZm)),
 
-			mxAlgebra(name = "VarsZf", cbind(Af/Vf, Cf/Vf, Ef/Vf), dimnames = list(NULL, colZf)),
-			mxAlgebra(name = "CorsZf", cbind(Raf, Rcf, Ref)      , dimnames = list(NULL, colZf)),
+			mxAlgebra(name = "VarsZf", cbind(Af/Vf, Cf/Vf, Ef/Vf), dimnames = list(selDVs, colZf)),
+			mxAlgebra(name = "CorsZf", cbind(Raf, Rcf, Ref)      , dimnames = list(selDVs, colZf)),
 
 			# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins (done!!)
 			umxMatrix("expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, "Mm")),
 			umxMatrix("expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, "Mf")),
 			umxMatrix("expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, rep(c("Mm", "Mf"), each = nVar))),
 
-			# Matrix & Algebra for expected Variance/Covariance Matrices in MZ & DZ twins (done!!!)
+			# Matrix & Algebra for expected Variance/Covariance Matrices in MZ & DZ twins 
 			mxAlgebra(name = "expCovMZm", rbind(cbind(Vm,         Am + Cm)  , cbind(        Am + Cm, Vm))),
 			mxAlgebra(name = "expCovDZm", rbind(cbind(Vm, 0.5 %x% Am + Cm)  , cbind(0.5 %x% Am + Cm, Vm))),
 			mxAlgebra(name = "expCovMZf", rbind(cbind(Vf,         Af + Cf)  , cbind(        Af + Cf, Vf))),
@@ -195,7 +192,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			mxAlgebra(name = "expCovDZo", rbind(cbind(Vm, 0.5 %x% Amf + Cmf), cbind(0.5 %x% t(Amf) + t(Cmf), Vf)))
 		), # end of top
 
-		# 5 group models (done!!!)
+		# 5 group models 
 		mxModel("MZm",
 			mxExpectationNormal("top.expCovMZm", means = "top.expMeanGm", dimnames = selVars),
 			mxFitFunctionML(), mxData(mzmData, type = "raw")
@@ -230,12 +227,262 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	}
 
 	# Tests: equate means would be expMeanGm, expMeanGf, expMeanGo
-	m1 = as(m1, "MxModel.SexLimCF") # set class so umxSummary, plot, etc. work.
+	m1 = as(m1, "MxModel.SexLim") # set class so umxSummary, plot, etc. work.
 	if(autoRun){
 		m1 = mxRun(m1)
-		umxSummary(m1)
-		return(m1)
+		tryCatch({
+			umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
+		}, warning = function(w) {
+			message("Warning incurred trying to run summary")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run model")
+			message(e)
+		})
+	}
+	invisible(m1)
+}
+
+#' Shows a compact, publication-style, summary of a umx Sex Limitation model
+#'
+#' Summarize a fitted Cholesky model returned by \code{\link{umxSexLim}}. Can control digits, report comparison model fits,
+#' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
+#' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
+#'
+#' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
+#' 
+#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+#' 
+#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+#' 
+#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+#' 
+#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+
+#' @aliases umxSummary.MxModel.SexLim
+#' @param model a \code{\link{umxSexLim}} model to summarize
+#' @param digits round to how many digits (default = 2)
+#' @param file The name of the dot file to write: "name" = use the name of the model.
+#' Defaults to NA = do not create plot output
+#' @param comparison you can run mxCompare on a comparison model (NULL)
+#' @param std Whether to standardize the output (default = TRUE)
+#' @param showRg = whether to show the genetic correlations (FALSE)
+#' @param CIs Whether to show Confidence intervals if they exist (T)
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
+#' @param report If "html", then open an html table of the results
+#' @param extended how much to report (FALSE)
+#' @param zero.print How to show zeros (".")
+#' @param ... Other parameters to control model summary
+#' @return - optional \code{\link{mxModel}}
+#' @export
+#' @family Twin Modeling Functions
+#' @family Reporting functions
+#' @seealso - \code{\link{umxACE}} 
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' require(umx)
+#' data(twinData)
+#' selDVs = c("bmi1", "bmi2")
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
+#' m1 = umxSexLim(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' umxSummary(m1)
+#' \dontrun{
+#' umxSummary(m1, file = NA);
+#' umxSummarySexLim(m1, file = "name", std = TRUE)
+#' stdFit = umxSummarySexLim(m1, returnStd = TRUE);
+#' }
+umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+	message("umxSummarySexLim not working yet :-( use summary()")
+	report = match.arg(report)
+	# Depends on R2HTML::HTML
+	if(typeof(model) == "list"){ # call self recursively
+		for(thisFit in model) {
+			message("Output for Model: ", thisFit$name)
+			umxSummarySexLim(thisFit, digits = digits, file = file, showRg = showRg, std = std, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
+		}
 	} else {
-		return(m1)
+	umx_has_been_run(model, stop = TRUE)
+	if(is.null(comparison)){
+		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		print(-2 * logLik(model));			
+	} else {
+		message("Comparison of model with parent model:")
+		umxCompare(comparison, model, digits = 3)
+	}
+
+	selVars = model$MZm$expectation$dims
+	selDVs  = dimnames(model$top$VarsZm$result)[[1]]
+	nVar    = length(selDVs)
+	# umx_msg(selDVs) # [1] "ssc_T1" "sil_T1" "caf_T1" "tri_T1" "bic_T1" "ssc_T2" "sil_T2" "caf_T2" "tri_T2" "bic_T2"
+	# selDVs = dimnames(model$top.expCovMZ)[[1]]
+
+	if(std){
+		message("Standardized solution")
+		# cbind(Am/Vm, Cm/Vm, Em/Vm), dimnames = list(selDVs, colZm)),
+		tmpm = model$top$VarsZm$result
+		tmpf = model$top$VarsZf$result
+		Am = diag(tmpm[1:5, 1:nVar])
+		Cm = diag(tmpm[1:5, (nVar+1):(nVar*2)])
+		Em = diag(tmpm[1:5, (nVar*2+1):(nVar*3)])
+		Af = diag(tmpf[1:5, 1:nVar])
+		Cf = diag(tmpf[1:5, (nVar+1):(nVar*2)])
+		Ef = diag(tmpf[1:5, (nVar*2+1):(nVar*3)])
+		Estimates = data.frame(rbind(Am, Cm, Em, Af, Cf, Ef))
+		names(Estimates) = selDVs
+		umx_print(Estimates, digits = 2)
+
+		tmpm = m1$top$CorsZm$result
+		RAm = tmpm[1:5, 1:nVar]
+		RCm = tmpm[1:5, (nVar+1):(nVar*2)]
+		REm = tmpm[1:5, (nVar*2+1):(nVar*3)]
+
+		tmpf = m1$top$CorsZf$result
+		RAf = tmpf[1:5, 1:nVar]
+		RCf = tmpf[1:5, (nVar+1):(nVar*2)]
+		REf = tmpf[1:5, (nVar*2+1):(nVar*3)]
+
+		message("Genetic Factor Correlations")
+		RAboth = RAm
+		RAboth[upper.tri(RAboth)] = RAf[upper.tri(RAf)]
+		umxAPA(RAboth)
+
+		message("C Factor Correlations")
+		RCboth = RCm
+		RCboth[upper.tri(RCboth)] = RCf[upper.tri(RCf)]
+		umxAPA(RCboth)
+
+		message("E Factor Correlations")
+		REboth = REm
+		REboth[upper.tri(REboth)] = REf[upper.tri(REf)]
+		umxAPA(REboth)
+
+	} else {
+		message("Raw solution not yet implemented")
+		# TODO add raw solution for sexlim
+	}
+
+
+	if(model$top$dzCr$values == .25){
+		colNames = c("a", "d", "e")
+	} else {
+		colNames = c("a", "c", "e")
+	}
+	names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
+	if(report == "html"){
+		# depends on R2HTML::HTML
+		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
+		umx_open("tmp.html")
+	}
+	
+	if(extended == TRUE) {
+		message("Unstandardized path coefficients")
+		aClean = a
+		cClean = c
+		eClean = e
+		aClean[upper.tri(aClean)] = NA
+		cClean[upper.tri(cClean)] = NA
+		eClean[upper.tri(eClean)] = NA
+		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
+		names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+		umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
+	}
+
+
+	hasCIs = umx_has_CIs(model)
+		if(hasCIs & CIs) {
+			# TODO umxACE CI code: Need to refactor into some function calls...
+			# TODO and then add to umxSummaryIP and CP
+			message("Creating CI-based report!")
+			# CIs exist, get lower and upper CIs as a dataframe
+			CIlist = data.frame(model$output$confidenceIntervals)
+			# Drop rows fixed to zero
+			CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
+			# discard rows named NA
+			CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
+			# TODO fix for singleton CIs
+			# These can be names ("top.a_std[1,1]") or labels ("a11")
+			# imxEvalByName finds them both
+			# outList = c();
+			# for(aName in row.names(CIlist)) {
+			# 	outList <- append(outList, imxEvalByName(aName, model))
+			# }
+			# # Add estimates into the CIlist
+			# CIlist$estimate = outList
+			# reorder to match summary
+			CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
+			CIlist$fullName = row.names(CIlist)
+			# Initialise empty matrices for the CI results
+			rows = dim(model$top$matrices$a$labels)[1]
+			cols = dim(model$top$matrices$a$labels)[2]
+			a_CI = c_CI = e_CI = matrix(NA, rows, cols)
+
+			# iterate over each CI
+			labelList = imxGenerateLabels(model)			
+			rowCount = dim(CIlist)[1]
+			# return(CIlist)
+			for(n in 1:rowCount) { # n = 1
+				thisName = row.names(CIlist)[n] # thisName = "a11"
+					# convert labels to [bracket] style
+					if(!umx_has_square_brackets(thisName)) {
+					nameParts = labelList[which(row.names(labelList) == thisName),]
+					CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
+				}
+				fullName = CIlist$fullName[n]
+
+				thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
+				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
+				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
+				CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
+				thisString = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
+
+				if(grepl("^a", thisMatrixName)) {
+					a_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else if(grepl("^c", thisMatrixName)){
+					c_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else if(grepl("^e", thisMatrixName)){
+					e_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else{
+					stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
+				}
+			}
+			# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
+			# TODO umxSummarySexLim: Add option to use mxSE
+			# print(a_CI)
+			# print(c_CI)
+			# print(e_CI)
+			Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = rowNames, stringsAsFactors = FALSE)
+			names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+			Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
+			if(report == "html"){
+				# depends on R2HTML::HTML
+				R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
+				umx_open("tmpCI.html")
+			}
+			CI_Fit = model
+			CI_Fit$top$a$values = a_CI
+			CI_Fit$top$c$values = c_CI
+			CI_Fit$top$e$values = e_CI
+		} # end Use CIs
+	} # end list catcher?
+	
+	
+	if(!is.na(file)) {
+		# message("making dot file")
+		if(hasCIs & CIs){
+			umxPlotACE(CI_Fit, file = file, std = FALSE)
+		} else {
+			umxPlotACE(model, file = file, std = std)
+		}
+	}
+	if(returnStd) {
+		if(CIs){
+			message("If you asked for CIs, returned model is not runnable (contains CIs not parameter values)")
+		}
+		umx_standardize_ACE(model)
 	}
 }
+
+#' @export
+umxSummary.MxModel.SexLim <- umxSummarySexLim

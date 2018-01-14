@@ -118,6 +118,7 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+  \code{\link{umxSummarySexLim}},
   \code{\link{xmu_twin_check}}
 
 Other Twin Reporting Functions: \code{\link{umxReduceACE}},

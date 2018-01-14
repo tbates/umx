@@ -49,5 +49,6 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxSummary.MxModel}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}},
+  \code{\link{umxSummarySexLim}},
   \code{\link{umx_standardize_RAM}}
 }

@@ -171,7 +171,7 @@ methods::setClass("MxModel.GxE"   , contains = "MxModel")
 methods::setClass("MxModel.GxEbiv", contains = "MxModel.GxE")
 methods::setClass("MxModel.CP"    , contains = "MxModel")
 methods::setClass("MxModel.IP"    , contains = "MxModel")
-methods::setClass("MxModel.SexLimCF", contains = "MxModel")
+methods::setClass("MxModel.SexLim", contains = "MxModel")
 
 # ============================
 # = Core Modelling Functions =
@@ -2313,10 +2313,10 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			umxMatrix("e_cp", "Diag", nFac, nFac, free = TRUE, values = .7, jiggle = .05), # latent common factor Unique environmental path coefficients
 			# Constrain variance of latent phenotype factor to 1.0
 			# Multiply by each path coefficient by its inverse to get variance component
-			mxAlgebra(name="A_cp", a_cp %*% t(a_cp)), # A_cp variance
-			mxAlgebra(name="C_cp", c_cp %*% t(c_cp)), # C_cp variance
-			mxAlgebra(name="E_cp", e_cp %*% t(e_cp)), # E_cp variance
-			mxAlgebra(name = "L" , A_cp + C_cp + E_cp), # total common factor covariance (a+c+e)
+			mxAlgebra(name = "A_cp", a_cp %*% t(a_cp)), # A_cp variance
+			mxAlgebra(name = "C_cp", c_cp %*% t(c_cp)), # C_cp variance
+			mxAlgebra(name = "E_cp", e_cp %*% t(e_cp)), # E_cp variance
+			mxAlgebra(name = "L"   , A_cp + C_cp + E_cp), # total common factor covariance (a+c+e)
 			mxMatrix("Unit", nrow=nFac, ncol=1, name = "nFac_Unit"),
 			mxAlgebra(diag2vec(L)             , name = "diagL"),
 			mxConstraint(diagL == nFac_Unit   , name = "fix_CP_variances_to_1"),
@@ -2352,7 +2352,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
-	
+
 	if(!freeLowerC){
 		toset  = model$top$matrices$cs$labels[lower.tri(model$top$matrices$cs$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)

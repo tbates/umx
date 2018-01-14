@@ -84,7 +84,8 @@ Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umx}}, \code{\link{xmu_twin_check}}
+  \code{\link{umxSummarySexLim}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
@@ -95,6 +96,8 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
   \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
   \code{\link{umxSummary.MxModel}},
-  \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}},
+  \code{\link{umxSummaryACE}},
+  \code{\link{umxSummarySexLim}},
+  \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
 }

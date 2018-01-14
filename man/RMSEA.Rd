@@ -35,6 +35,8 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
   \code{\link{umxSummary.MxModel}},
   \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umx_drop_ok}},
+  \code{\link{umxSummaryACE}},
+  \code{\link{umxSummarySexLim}},
+  \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
 }
