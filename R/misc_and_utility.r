@@ -4390,6 +4390,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
 #' @family Twin Data functions
+#' @seealso - \code{\link{umxGxEbiv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' # =====================================================================
@@ -4442,7 +4443,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' tmp = umx_make_TwinData(100, MZr = .86, DZr= .60, varNames = "IQ")
 #' umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 #' 
-#' # Bivariate GxSES example
+#' # Bivariate GxSES example (see umxGxEbiv)
 #' 
 #' AA   = list(a11 = .4, a12 = .1, a22 = .15)
 #' CC   = list(c11 = .2, c12 = .1, c22 = .10)

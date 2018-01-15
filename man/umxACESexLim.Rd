@@ -66,8 +66,8 @@ selVars = umx_paste_names(varList, "_T", 1:2)
 
 # Data objects for Multiple Groups
 mzmData = subset(us_skinfold_data, zyg == 1, selVars)
-dzmData = subset(us_skinfold_data, zyg == 3, selVars)
 mzfData = subset(us_skinfold_data, zyg == 2, selVars)
+dzmData = subset(us_skinfold_data, zyg == 3, selVars)
 dzfData = subset(us_skinfold_data, zyg == 4, selVars)
 dzoData = subset(us_skinfold_data, zyg == 5, selVars)
 
@@ -96,9 +96,9 @@ umxCompare(m2, m1)
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},
   \code{\link{umxACE}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSummaryACEcov}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},

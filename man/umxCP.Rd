@@ -95,6 +95,23 @@ The umxCP function supports varying the DZ genetic association (defaulting to .5
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
+
+\strong{Matrices and Labels in CP model}
+A good way to see which matrices are used in umxCP is to run an example model and plot it.
+
+Matrices as, cs, and es contain the variable-specifc path loadings on their diagonal. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
+All the shared matrices are in the model "top". So to see the  as values, you can simply execute:
+
+m1$top#as$values
+
+The common-pathway loadings on the factors are in matrices a_cp, c_cp, e_cp.
+
+The common factors themselves are in the matrix cp_loadings (an nVar * 1 matrix)
+
+Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+
+m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
 }
 \examples{
 require(umx)
@@ -121,9 +138,9 @@ umxCompare(m1, m2)
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSummaryACEcov}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},

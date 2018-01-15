@@ -1245,7 +1245,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' solvable, and also to account for all the variance (with some restrictions) in the data. 
 #' This model creates as many latent A C and E variables as there are phenotypes, and, moving 
 #' from left to right, decomposes the variance in each component into successively restricted 
-#' factors. The following figure shows how the ACE model appears as a path diagram:
+#' factors. The following figure shows how the ACE model appears as a path diagram: See the details section below
+#' for additional information on using umxACE.
 #' 
 #' \figure{ACE.png}
 #' 
@@ -1271,8 +1272,21 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
 #'
+#' \strong{Matrices and Labels in ACE model}
+#' a, c, and e contain the path loadings of the Cholesky ACE factor model.
+#' So labels relevant to modifying the model are of the form "a_r1c1", "c_r1c1" etc.
+#'
+#' Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say
+#'
+#'    m2 = umxModify(m1, update = "c_r3c2")
+#'	
+#' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+#' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+#'
+#' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
+#'
 #' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
-#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}.
+#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Cardon and Neale, 1996).
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").
 #' @param selCovs (optional) covariates to include from the data (do not include suffix in names)
@@ -1327,13 +1341,19 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # ==============================
 #'
 #' # Things to note:
+#' 
 #' # 1. This variable has a large variance, but umx picks good starts.
-#' # 2. umxACE can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
+#' 
+#' # 2. umxACE can figure out variable names: provide sep= "_T" and selVar = "wt" -> "wt_T1" "wt_T2"
+#' 
 #' # 3. umxACE picks the variables it needs from the data.
 #' # 4. You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
+#' 
 #' m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
 
-#' # We can modify this model, dropping shared environment, and see a comparison
+#' # MODEL MODIFICATION
+#' # We can modify this model, say testing shared environment, and see a comparison:
+#' 
 #' m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
 
 #' # =====================================
@@ -1410,8 +1430,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
 #' 
 #' selDVs = c("wt", "obese")
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", umx_paste_names(selDVs, "", 1:2)]
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", umx_paste_names(selDVs, "", 1:2)]
+#' mzData <- twinData[twinData$zygosity %in% "MZFF"]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF"]
 #' \dontrun{
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' umxSummary(m1)
@@ -2176,6 +2196,23 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 #' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
+#'
+#' \strong{Matrices and Labels in CP model}
+#' A good way to see which matrices are used in umxCP is to run an example model and plot it.
+#'
+#' Matrices as, cs, and es contain the variable-specifc path loadings on their diagonal. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
+#' All the shared matrices are in the model "top". So to see the  as values, you can simply execute:
+#' 
+#' m1$top#as$values
+#' 
+#' The common-pathway loadings on the factors are in matrices a_cp, c_cp, e_cp.
+#'
+#' The common factors themselves are in the matrix cp_loadings (an nVar * 1 matrix)
+#'	
+#' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+#' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+#'
+#' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
 #'
 #' @param name The name of the model (defaults to "CP")
 #' @param selDVs The variables to include

@@ -77,7 +77,8 @@ The Cholesky or lower-triangle decomposition allows a model which is both sure t
 solvable, and also to account for all the variance (with some restrictions) in the data. 
 This model creates as many latent A C and E variables as there are phenotypes, and, moving 
 from left to right, decomposes the variance in each component into successively restricted 
-factors. The following figure shows how the ACE model appears as a path diagram:
+factors. The following figure shows how the ACE model appears as a path diagram: See the details section below
+for additional information on using umxACE.
 
 \figure{ACE.png}
 }
@@ -103,8 +104,21 @@ to allow exploring assortative mating effects, as well as varying the DZ \dQuote
 from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
 
+\strong{Matrices and Labels in ACE model}
+a, c, and e contain the path loadings of the Cholesky ACE factor model.
+So labels relevant to modifying the model are of the form "a_r1c1", "c_r1c1" etc.
+
+Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say
+
+   m2 = umxModify(m1, update = "c_r3c2")
+
+Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+
+m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
+
 \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
-of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}.
+of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Cardon and Neale, 1996).
 }
 \examples{
 
@@ -134,12 +148,18 @@ umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled AC
 # ==============================
 
 # Things to note:
+
 # 1. This variable has a large variance, but umx picks good starts.
-# 2. umxACE can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
+
+# 2. umxACE can figure out variable names: provide sep= "_T" and selVar = "wt" -> "wt_T1" "wt_T2"
+
 # 3. umxACE picks the variables it needs from the data.
 # 4. You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
+
 m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
-# We can modify this model, dropping shared environment, and see a comparison
+# MODEL MODIFICATION
+# We can modify this model, say testing shared environment, and see a comparison:
+
 m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
 # =====================================
 # = Bivariate height and weight model =
@@ -172,8 +192,8 @@ twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels =
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
-dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
+mzData <- twinData[zygosity == "MZFF", tvars(selDVs, "")]
+dzData <- twinData[zygosity == "DZFF", tvars(selDVs, "")]
 mzData <- mzData[1:80,] # just top 80 pairs to run fast
 dzData <- dzData[1:80,]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
@@ -193,8 +213,8 @@ twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels =
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-mzData <- twinData[twinData$zyg == 1,] # umxACE can trim out unused variables on its own
-dzData <- twinData[twinData$zyg == 3,]
+mzData <- twinData[twinData$zygosity \%in\%  "MZFF",] # umxACE can trim out unused variables on its own
+dzData <- twinData[twinData$zygosity \%in\%  "DZFF",]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
@@ -215,8 +235,8 @@ ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
 
 selDVs = c("wt", "obese")
-mzData <- twinData[twinData$zygosity \%in\% "MZFF", umx_paste_names(selDVs, "", 1:2)]
-dzData <- twinData[twinData$zygosity \%in\% "DZFF", umx_paste_names(selDVs, "", 1:2)]
+mzData <- twinData[twinData$zygosity \%in\% "MZFF"]
+dzData <- twinData[twinData$zygosity \%in\% "DZFF"]
 \dontrun{
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)
@@ -229,8 +249,8 @@ umxSummary(m1)
 require(umx)
 data(twinData)
 selDVs = c("wt1", "wt2")
-mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
-dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
+mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", selDVs], use = "complete")
+dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", selDVs], use = "complete")
 m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 umxSummary(m1)
 plot(m1)
@@ -242,9 +262,9 @@ plot(m1)
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
   \code{\link{umxACEv}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSummaryACEcov}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},

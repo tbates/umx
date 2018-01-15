@@ -1,14 +1,15 @@
-#' umxGxE: Implements ACE models with moderation of paths, e.g. by SES.
+#' umxGxEbiv: Implements bivariate ACE models with moderation of variable paths by a moderator.
 #'
-#' Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
+#' Make a 2-group bivariate GxE model (Dolan 2012). GxE interaction studies test the hypothesis that the strength
 #' of genetic (or environmental) influence varies parametrically (usually linear effects on path estimates)
-#' across levels of environment. umxGxE allows detecting,
-#' testing, and visualizing  G xE (or C or E x E) interaction forms.
+#' across levels of environment. umxGxE allows use of this model in cases where twins are not identical on the moderator (or, rarely, are not completely independent).
+#' It supports testing, and visualizing  G xE (or C or E x E) interaction forms.
 #' 
 #' The following figure the GxE model as a path diagram:
+#' # TODO Add bivariate GxE model diagram!!
 #' \figure{GxE.png}
 #'
-#' @param name The name of the model (defaults to "G_by_E")
+#' @param name The name of the model (defaults to "GxEbiv")
 #' @param selDVs The dependent variable (e.g. IQ)
 #' @param selDefs The definition variable (e.g. socio economic status)
 #' @param sep Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
@@ -19,12 +20,13 @@
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
-#' @param suffix Use sep instead (deprecated)
-#' @return - GxE \code{\link{mxModel}}
+#' @return - GxEbiv \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
-#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, \strong{6}, 554-571. Retrieved from https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187
+#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, 
+#' \strong{6}, 554-571. Retrieved from https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187,
+#' van der Sluis, S., Posthuma, D., & Dolan, C. V. (2012). A note on false positives and power in G x E modelling of twin data. \emph{Behavior Genetics}, \strong{42}, 170-186. doi:10.1007/s10519-011-9480-3
 #' @examples
 #' require(umx)
 #' data(twinData) 
