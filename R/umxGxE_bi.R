@@ -1,4 +1,4 @@
-#' umxGxEbiv: Implements bivariate ACE models with moderation of variable paths by a moderator.
+#' Bivariate ACE models with moderation of variable paths by a moderator.
 #'
 #' Make a 2-group bivariate GxE model (Dolan 2012). GxE interaction studies test the hypothesis that the strength
 #' of genetic (or environmental) influence varies parametrically (usually linear effects on path estimates)
@@ -31,15 +31,14 @@
 #' require(umx)
 #' data(twinData) 
 #' twinData$age1 = twinData$age2 = twinData$age
-#' selDVs  = c("bmi1", "bmi2")
-#' selDefs = c("age1", "age2")
-#' selVars = c(selDVs, selDefs)
-#' mzData  = subset(twinData, zygosity == c("MZFF" "MZMM"), selVars)[1:80,]
-#' dzData  = subset(twinData, zygosity == c("DZFF" "DZMM" "DZOS"), selVars)[1:80,]
-#' m1 = umxGxEbiv(selDVs = selDVs, selDefs = selDefs, 
+#' selDVs  = "wt"
+#' selDefs = "ht"
+#' mzData  = subset(twinData, zygosity == c("MZFF" "MZMM"))[1:80,]
+#' dzData  = subset(twinData, zygosity == c("DZFF" "DZMM" "DZOS"))[1:80,]
+#' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
 #' 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
 #' # Plot Moderation
-#' umxSummaryGxEbiv(m1)
+#' umxSummaryGxE_biv(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' m2 = umxModify(m1, "am_.*", regex = TRUE, comparison = TRUE)
@@ -48,7 +47,7 @@
 #' # about model reduction for GxE models, reporting these in a nice table.
 #' umxReduce(m1)
 #' }
-umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2;
 	suffix = sep
 	# =================
