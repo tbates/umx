@@ -1,4 +1,52 @@
-umxGxE_bi <- function(name = "G_by_E_bivariate", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+#' umxGxE: Implements ACE models with moderation of paths, e.g. by SES.
+#'
+#' Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
+#' of genetic (or environmental) influence varies parametrically (usually linear effects on path estimates)
+#' across levels of environment. umxGxE allows detecting,
+#' testing, and visualizing  G xE (or C or E x E) interaction forms.
+#' 
+#' The following figure the GxE model as a path diagram:
+#' \figure{GxE.png}
+#'
+#' @param name The name of the model (defaults to "G_by_E")
+#' @param selDVs The dependent variable (e.g. IQ)
+#' @param selDefs The definition variable (e.g. socio economic status)
+#' @param sep Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
+#' @param dzData The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
+#' @param mzData The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
+#' @param lboundACE = numeric: If !is.na, then lbound the main effects at this value (default = NA)
+#' @param lboundM   = numeric: If !is.na, then lbound the moderators at this value (default = NA)
+#' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
+#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param optimizer optionally set the optimizer (default NULL does nothing)
+#' @param suffix Use sep instead (deprecated)
+#' @return - GxE \code{\link{mxModel}}
+#' @export
+#' @family Twin Modeling Functions
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
+#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, \strong{6}, 554-571. Retrieved from https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187
+#' @examples
+#' require(umx)
+#' data(twinData) 
+#' twinData$age1 = twinData$age2 = twinData$age
+#' selDVs  = c("bmi1", "bmi2")
+#' selDefs = c("age1", "age2")
+#' selVars = c(selDVs, selDefs)
+#' mzData  = subset(twinData, zygosity == c("MZFF" "MZMM"), selVars)[1:80,]
+#' dzData  = subset(twinData, zygosity == c("DZFF" "DZMM" "DZOS"), selVars)[1:80,]
+#' m1 = umxGxEbiv(selDVs = selDVs, selDefs = selDefs, 
+#' 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
+#' # Plot Moderation
+#' umxSummaryGxEbiv(m1)
+#' umxSummary(m1, location = "topright")
+#' umxSummary(m1, separateGraphs = FALSE)
+#' m2 = umxModify(m1, "am_.*", regex = TRUE, comparison = TRUE)
+#' \dontrun{
+#' # TODO: The umxReduce function knows how to test all relevant hypotheses
+#' # about model reduction for GxE models, reporting these in a nice table.
+#' umxReduce(m1)
+#' }
+umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2;
 	suffix = sep
 	# =================

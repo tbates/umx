@@ -1785,9 +1785,10 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 	} else if(theFile == "") {
 		theFile = file.choose(new = FALSE) ## choose a file
 		message("Using selected file:", theFile)
-	}else{
-		umx_check(file.exists(theFile), message= paste0("file:'", theFile, "' does not exist..."))
+	} else if(theFile == "make") {
+		theFile = system.file("extdata", "GQ6.sql.xlsx", package = "umx")
 	}
+	umx_check(file.exists(theFile), message= paste0("file:'", theFile, "' does not exist..."))
 	# remove suffix (i.e., .xlsx )
 	testName = umx_trim(basename(theFile), "\\..+$")
 	

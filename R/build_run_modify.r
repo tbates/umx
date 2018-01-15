@@ -828,8 +828,8 @@ umxReRun <- umxModify
 #' selDVs  = c("bmi1", "bmi2")
 #' selDefs = c("age1", "age2")
 #' selVars = c(selDVs, selDefs)
-#' mzData  = subset(twinData, zyg == 1, selVars)[1:80,]
-#' dzData  = subset(twinData, zyg == 3, selVars)[1:80,]
+#' mzData  = subset(twinData, zygosity == "MZFF", selVars)[1:80,]
+#' dzData  = subset(twinData, zygosity == "DZFF", selVars)[1:80,]
 #' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
 #' 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
 #' # Plot Moderation
@@ -1367,8 +1367,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 #' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-#' mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
-#' dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
+#' mzData <- twinData[zygosity == "MZFF", tvars(selDVs, "")]
+#' dzData <- twinData[zygosity == "DZFF", tvars(selDVs, "")]
 #' mzData <- mzData[1:80,] # just top 80 pairs to run fast
 #' dzData <- dzData[1:80,]
 #' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
@@ -1388,8 +1388,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 #' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-#' mzData <- twinData[twinData$zyg == 1,] # umxACE can trim out unused variables on its own
-#' dzData <- twinData[twinData$zyg == 3,]
+#' mzData <- twinData[twinData$zygosity %in%  "MZFF",] # umxACE can trim out unused variables on its own
+#' dzData <- twinData[twinData$zygosity %in%  "DZFF",]
 #' mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 #' dzData <- dzData[1:80,]
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
@@ -1424,8 +1424,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' require(umx)
 #' data(twinData)
 #' selDVs = c("wt1", "wt2")
-#' mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
-#' dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
+#' mz = cov(twinData[twinData$zygosity %in%  "MZFF", selDVs], use = "complete")
+#' dz = cov(twinData[twinData$zygosity %in%  "DZFF", selDVs], use = "complete")
 #' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
@@ -2644,8 +2644,8 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 #' 
 #' # Data objects for Multiple Groups
 #' mzmData = subset(us_skinfold_data, zyg == 1, selVars)
-#' dzmData = subset(us_skinfold_data, zyg == 3, selVars)
 #' mzfData = subset(us_skinfold_data, zyg == 2, selVars)
+#' dzmData = subset(us_skinfold_data, zyg == 3, selVars)
 #' dzfData = subset(us_skinfold_data, zyg == 4, selVars)
 #' dzoData = subset(us_skinfold_data, zyg == 5, selVars)
 #' 
