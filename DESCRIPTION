@@ -1,7 +1,7 @@
 Package: umx
-Version: 1.9.2
-Date: 2017-11-02
-Title: Structural Equation Modeling in R with 'OpenMx'
+Version: 2.0.0
+Date: 2018-01-29
+Title: Structural Equation and Twin Modeling in R
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com"))
 Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
@@ -21,18 +21,18 @@ Imports:
     methods,
     mvtnorm,
     nlme,
-	numDeriv,
+    numDeriv,
     polycor,
     R2HTML,
     RCurl,
     sfsmisc,
     utils,
-	xtable
+    xtable
 Suggests: 
     cocor,
     devtools,
     gdata,
-	Hmisc,
+    Hmisc,
     testthat,
     rmarkdown
 BugReports: http://github.com/tbates/umx/issues

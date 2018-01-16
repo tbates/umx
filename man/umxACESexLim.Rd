@@ -96,7 +96,7 @@ umxCompare(m2, m1)
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},
   \code{\link{umxACE}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
+  \code{\link{umxGxE_biv}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxE}}, \code{\link{umxIP}},
   \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},

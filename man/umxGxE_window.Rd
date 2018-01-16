@@ -92,7 +92,7 @@ Nonparametric Estimates of Gene x Environment Interaction Using Local Structural
 Other Twin Modeling Functions: \code{\link{umxACESexLim}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxEbiv}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
   \code{\link{umxGxE}}, \code{\link{umxIP}},
   \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},

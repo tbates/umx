@@ -1,6 +1,19 @@
+# umx 2.0.0 (January 29 2018, R 3.4.3 Birthday edition)
+* NEW: `umxSexLim` multi-variate twin sex-limitation!
+* NEW: `umxGxE_biv` bivariate Gene-environment interaction model.
+* NEW: `umxGxE_biv` bivariate Gene-environment interaction model.
+* NEW: `umx_make_TwinData` Can now make bivariate moderated twin data.
+* NEW: `umx_stack` Slightly more powerful version of base stack.
+* NEW: `umx_array_shift` Shifts an item off the beginning of a list.
+* IMPROVED: `umxRAM` can take lists of paths as input (contributed by @bwiernik).
+* IMPROVED: `umxModify` can write newlabels.
+* IMPROVED: Help pages and examples improved and reorganized.
+* IMPROVED: `umxAPA` can back-out an SE if given b and CI.
+* Beta: Beginning a `umxGroup` function as part of measurement invariance support.
+
 # umx 1.9.2 (December 2017, R 3.4.2)
 * *TIP*: Filter paths by estimated size with `umx_parameters(model, "below", .1)`
-* NEW:  `tnx_genotypic_effect`
+* NEW:  `tmx_genotypic_effect` Part of a suite of teaching functions for biometric genetics!
 
 # umx 1.9.1 (November 2017, R 3.4.2)
 * *TIP*: `?umxRAM` has a sketch mode. just set `data` to a list of manifest variable names.
