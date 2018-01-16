@@ -85,7 +85,7 @@ m1 = umxCI(m1, "a_r1c1", run = "yes")
 - http://www.github.com/tbates/umx/
 }
 \seealso{
-- \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{mxRAM}}
+- \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

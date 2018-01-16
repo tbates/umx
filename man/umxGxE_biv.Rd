@@ -5,7 +5,7 @@
 \title{Bivariate ACE models with moderation of variable paths by a moderator.}
 \usage{
 umxGxE_biv(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = NULL,
-  lboundM = NA, dropMissingDef = FALSE,
+  lboundACE = NA, lboundM = NA, dropMissingDef = FALSE,
   autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
@@ -21,18 +21,18 @@ umxGxE_biv(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 \item{sep}{Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2}
 
-\item{lboundM}{= numeric: If !is.na, then lbound the moderators at this value (default = NA)}
+\item{lboundACE}{If !NA, then lbound the main effects at this value (default = NA)}
+
+\item{lboundM}{If !NA, then lbound the moderators at this value (default = NA)}
 
 \item{dropMissingDef}{Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE}
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
-
-\item{lboundACE}{= numeric: If !is.na, then lbound the main effects at this value (default = NA)}
 }
 \value{
-- GxEbiv \code{\link{mxModel}}
+- GxE_biv \code{\link{mxModel}}
 }
 \description{
 Make a 2-group bivariate GxE model (Dolan 2012). GxE interaction studies test the hypothesis that the strength
@@ -51,8 +51,8 @@ data(twinData)
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = "wt"
 selDefs = "ht"
-mzData  = subset(twinData, zygosity == c("MZFF" "MZMM"))[1:80,]
-dzData  = subset(twinData, zygosity == c("DZFF" "DZMM" "DZOS"))[1:80,]
+mzData  = subset(twinData, zygosity \%in\%  c("MZFF", "MZMM"))[1:80,]
+dzData  = subset(twinData, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))[1:80,]
 m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
 # Plot Moderation

@@ -33,11 +33,12 @@
 #' Neale, M. C. (2005). Quantitative Genetics. In Encyclopedia of Life Sciences. New York: John Wiley & Sons, Ltd.
 #' https://github.com/tbates/BGBook/issues/23#issuecomment-333834075
 #' 
-#' @param p The frequency of the A allele (default .5)
-#' @param q The frequency of the a allele (default 1-p)
-#' @param a Half the difference between the AA and aa homozygotes (default .5)
-#' @param m The value of the midpoint between the homozygotes (default 0)
-#' @param d The deviation of the heterozygote from m (default 1)
+#' @param p The frequency of the A allele (Default .5)
+#' @param q The frequency of the a allele (Default 1-p)
+#' @param a Half the difference between the AA and aa homozygotes (Default .5)
+#' @param m The value of the midpoint between the homozygotes (Default 0)
+#' @param d The deviation of the heterozygote from m (Default 1)
+#' @param show Whether to draw the plot or just return it (Default = TRUE)
 #' @return - 
 #' @export
 #' @family Teaching and testing Functions
@@ -66,7 +67,6 @@
 tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, show = TRUE){
 	# TODO Print this, with marginal sum? put tables and plot on one page in browser?
 	# high blood pressure will be defined as >=130/80 millimeters of mercury (previous guideline = 140/90)
-	require(cowplot)
 
 	if(!(p+q)==1){
 		stop("p+q must = 1.0 Yours sum to ", p+q)
@@ -80,9 +80,9 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 			y2 = y
 		)
 		# thePlot + geom_segment(aes(x = x1, y = y1, xend = x1, yend = y2), arrow = arrow(length=unit(0.30,"cm")), data = segs)
-		thePlot = thePlot + geom_segment(aes(x = x1, y = y1, xend = x1, yend = y2), data = segs)
+		thePlot = thePlot + ggplot2::geom_segment(aes(x = x1, y = y1, xend = x1, yend = y2), data = segs)
 		# 2. plot the point
-		thePlot = thePlot + geom_point(aes(x = x1, y = y2), color = "black", data = segs) 
+		thePlot = thePlot + ggplot2::geom_point(aes(x = x1, y = y2), color = "black", data = segs) 
 		# 3. label the point
 		thePlot = thePlot + cowplot::draw_label(lab, x = (x + xoffset), y = y, fontfamily = "Times", fontface = "italic")
 		return(thePlot)
@@ -130,7 +130,7 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 	# Plot regression line, and points (sized to frequency)
 	# slope for the genotypic value plot
 	b = a + (q - p) * d
-	thePlot = qplot(x = dose, y = value, geom = "point", size = freq, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
+	thePlot = ggplot2::qplot(x = dose, y = value, geom = "point", size = freq, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
 	thePlot = qplot(x = dose, y = ((dose - 1) * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
 	
 	thePlot = qplot(x = dose, y = value, geom = "point", size = freq, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
@@ -172,16 +172,17 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 
 	# set the y axis
 	# Leave numbers on y axis, add text labels beside these.
+	# cowplot::draw_label
 	innerLoc = -.2
-	thePlot = thePlot + cowplot::draw_label("-a", x = innerLoc, y = -a, fontfamily = "Times", fontface = "italic")
-	thePlot = thePlot + cowplot::draw_label( "a", x = innerLoc, y =  a, fontfamily = "Times", fontface = "italic")
+	thePlot = thePlot + draw_label("-a", x = innerLoc, y = -a, fontfamily = "Times", fontface = "italic")
+	thePlot = thePlot + draw_label( "a", x = innerLoc, y =  a, fontfamily = "Times", fontface = "italic")
 	if(d == m){
 		# thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, a), labels = c("-a", "d = m", "+a"))
-		thePlot = thePlot + cowplot::draw_label( "d=m", x = innerLoc, y =  m, fontfamily = "Times", fontface = "italic")
+		thePlot = thePlot + draw_label( "d=m", x = innerLoc, y =  m, fontfamily = "Times", fontface = "italic")
 	} else {
 		# thePlot = thePlot + scale_y_continuous(breaks = c(-a, m, d, a), labels = c("-a", "m", "d", "+a"))
-		thePlot = thePlot + cowplot::draw_label( "m", x = innerLoc, y =  m, fontfamily = "Times", fontface = "italic")
-		thePlot = thePlot + cowplot::draw_label( "d", x = innerLoc, y =  d, fontfamily = "Times", fontface = "italic")
+		thePlot = thePlot + draw_label( "m", x = innerLoc, y =  m, fontfamily = "Times", fontface = "italic")
+		thePlot = thePlot + draw_label( "d", x = innerLoc, y =  d, fontfamily = "Times", fontface = "italic")
 	}
 
 	# 2. Plot bb, Bb, and BB points, with text labels, and vertical line segment showing residual from regression

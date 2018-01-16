@@ -20,8 +20,6 @@ umxPlotACEcov(x = NA, file = "name", digits = 2, means = FALSE,
 \item{std}{Whether to standardize the model (default is TRUE)}
 
 \item{...}{Additional (optional) parameters}
-
-\item{showMeans}{DEPRECATED use "means" instead}
 }
 \value{
 - optionally return the dot code

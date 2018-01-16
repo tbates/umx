@@ -5,9 +5,9 @@
 #' does NOT affect ability of model to account for DZOS data.
 #' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
 #'
-#' @param name    The name of the model (Default = "CF_sexlim")
+#' @param name    The name of the model (Default = "sexlim")
 #' @param selDVs  BASE NAMES of the variables in the analysis. You MUST provide suffixes.
-#' @param C_or_A  Whether to model sex-limitation on C or on A. (Defaults to "A")
+#' @param A_or_C  Whether to model sex-limitation on A or on C. (Defaults to "A")
 #' @param mzmData Dataframe containing the MZ male data
 #' @param dzmData Dataframe containing the DZ male data
 #' @param mzfData Dataframe containing the MZ female data
@@ -231,7 +231,8 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	if(autoRun){
 		m1 = mxRun(m1)
 		tryCatch({
-			umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
+			umxSummary(m1)
+			# umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
 		}, warning = function(w) {
 			message("Warning incurred trying to run summary")
 			message(w)

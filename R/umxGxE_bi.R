@@ -15,12 +15,12 @@
 #' @param sep Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
 #' @param dzData The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
 #' @param mzData The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
-#' @param lboundACE = numeric: If !is.na, then lbound the main effects at this value (default = NA)
-#' @param lboundM   = numeric: If !is.na, then lbound the moderators at this value (default = NA)
+#' @param lboundACE If !NA, then lbound the main effects at this value (default = NA)
+#' @param lboundM If !NA, then lbound the moderators at this value (default = NA)
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
-#' @return - GxEbiv \code{\link{mxModel}}
+#' @return - GxE_biv \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
@@ -33,8 +33,8 @@
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = "wt"
 #' selDefs = "ht"
-#' mzData  = subset(twinData, zygosity == c("MZFF" "MZMM"))[1:80,]
-#' dzData  = subset(twinData, zygosity == c("DZFF" "DZMM" "DZOS"))[1:80,]
+#' mzData  = subset(twinData, zygosity %in%  c("MZFF", "MZMM"))[1:80,]
+#' dzData  = subset(twinData, zygosity %in%  c("DZFF", "DZMM", "DZOS"))[1:80,]
 #' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
 #' 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
 #' # Plot Moderation
@@ -47,7 +47,7 @@
 #' # about model reduction for GxE models, reporting these in a nice table.
 #' umxReduce(m1)
 #' }
-umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2;
 	suffix = sep
 	# =================

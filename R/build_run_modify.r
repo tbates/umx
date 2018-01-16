@@ -32,31 +32,33 @@
 	packageStartupMessage("For an overview type '?umx'")
 }
 
-#' @importFrom DiagrammeR DiagrammeR
 #' @importFrom graphics plot
-#' @importFrom nlme intervals
-
-#' @importFrom MASS mvrnorm
 #' @importFrom methods as getSlots is slotNames
 #' @importFrom methods setClass
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
-
-#' @importFrom numDeriv jacobian
-#' @importFrom polycor hetcor
-#' @importFrom sfsmisc nearcor
-#' @importFrom parallel detectCores
-
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
 #' @importFrom stats setNames update var delete.response terms
-
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages str
+
+#' @importFrom cowplot draw_label
+#' @importFrom ggplot2 qplot scale_x_continuous theme element_text scale_x_continuous
+#' @importFrom ggplot2 expand_limits aes geom_point geom_segment
+
+#' @importFrom DiagrammeR DiagrammeR
+#' @importFrom MASS mvrnorm
+#' @importFrom nlme intervals
+#' @importFrom numDeriv jacobian
+#' @importFrom polycor hetcor
+#' @importFrom parallel detectCores
+#' @importFrom sfsmisc nearcor
 #' @importFrom xtable xtable
+
 # #' @importFrom Hmisc escapeRegex
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
@@ -156,7 +158,24 @@ utils::globalVariables(c(
 	"C", "logLik", "var", 'SD', 'StdDev',
 	'binLabels', 'Unit_nBinx1',
 	
-	'correlatedA', 'minCor', 'pos1by6', 'varList', 'Im1', 'IZ', 'ZI', 'Z'
+	'correlatedA', 'minCor', 'pos1by6', 'varList', 'Im1', 'IZ', 'ZI', 'Z',
+	
+	# used in tmx_genotypic_effect
+	"x1", "y1", "y2", "dose",	"value", "freq"
+	# umxGxE_biv
+	# lboundACE, refModels, showEstimates
+	# m1
+	# rowNames
+	# m1
+	# rowNames
+	# umxGxE_biv: no visible binding for global variable ‘lboundACE’
+	# umxSummary.MxModel.SexLim: no visible binding for global variable ‘m1’
+	# umxSummary.MxModel.SexLim: no visible binding for global variable ‘rowNames’
+	# umxSummarySexLim: no visible binding for global variable ‘m1’
+	# umxSummarySexLim: no visible binding for global variable ‘rowNames’
+	# Undefined global functions or variables:
+	  # aes draw_label element_text expand_limits lboundACE m1 qplot
+	  # refModels rowNames scale_x_continuous showEstimates theme
 	)
 )
 
@@ -710,11 +729,19 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' umxCompare(m1,m3)
 #' 
 #' # Re-write a label
-#' m2 = umxModify(m1, update = "G_to_x1", newlabels= "A_rose_by_any_other_name", name = "does_smell_as_sweet", comparison = TRUE)
-#' m2 = umxModify(m1, regex = "G_to_x([12])", newlabels= "G_to_1_or_2", name = "same_in_2_places", comparison = TRUE)
+#' newLabel = "A_rose_by_any_other_name"
+#' newModelName = "model_doth_smell_as_sweet"
+#' m2 = umxModify(m1, update = "G_to_x1", newlabels= newLabel, name = newModelName, comparison = TRUE)
+#' # Change labels in 2 places
+#' newLabel = "G_to_1_or_2"
+#' m2 = umxModify(m1, regex = newLabel, newlabels= x, name = "equated", comparison = TRUE)
 #' 
-#' # Regular expressions let you even use pieces of the old names in creating new ones!
-#' m2 = umxModify(m1, regex = "G_to_x([0-9])", newlabels= "loading_for_path\\1", name = "Using a piece of the search string", comparison = TRUE)
+#' # Advanced!
+#' # Regular expressions let you use pieces of the old names in creating new ones!
+#' searchString = "G_to_x([0-9])"
+#' newLabel = "loading_for_path\\1" # use value in regex group 1
+#' m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", comparison = TRUE)
+#' 
 umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = TRUE, dropList = "deprecated") {
 	if(!is.null(master)){
 		x = umxEquate(lastFit, master = master, slave = update, free = freeToStart, verbose = verbose, name = name, autoRun = autoRun, comparison = comparison)
@@ -1408,7 +1435,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 #' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-#' mzData <- twinData[twinData$zygosity %in%  "MZFF",] # umxACE can trim out unused variables on its own
+#' # umxACE can trim out unused variables on its own: just select the rows you want.
+#' mzData <- twinData[twinData$zygosity %in%  "MZFF",] 
 #' dzData <- twinData[twinData$zygosity %in%  "DZFF",]
 #' mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 #' dzData <- dzData[1:80,]
@@ -1472,7 +1500,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 				stop("Implementing this for version 2.0")
 				# umxACEdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			} else if(covMethod == "random") {
-				umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
+				umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			}
 		} else {
 			if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }

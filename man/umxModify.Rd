@@ -94,11 +94,19 @@ m3 = umxModify(m2, update = "G_to_x1", free = TRUE, name = "free_G_x1_again", co
 umxCompare(m1,m3)
 
 # Re-write a label
-m2 = umxModify(m1, update = "G_to_x1", newlabels= "A_rose_by_any_other_name", name = "does_smell_as_sweet", comparison = TRUE)
-m2 = umxModify(m1, regex = "G_to_x([12])", newlabels= "G_to_1_or_2", name = "same_in_2_places", comparison = TRUE)
+newLabel = "A_rose_by_any_other_name"
+newModelName = "model_doth_smell_as_sweet"
+m2 = umxModify(m1, update = "G_to_x1", newlabels= newLabel, name = newModelName, comparison = TRUE)
+# Change labels in 2 places
+newLabel = "G_to_1_or_2"
+m2 = umxModify(m1, regex = newLabel, newlabels= x, name = "equated", comparison = TRUE)
 
-# Regular expressions let you even use pieces of the old names in creating new ones!
-m2 = umxModify(m1, regex = "G_to_x([0-9])", newlabels= "loading_for_path\\\\1", name = "Using a piece of the search string", comparison = TRUE)
+# Advanced!
+# Regular expressions let you use pieces of the old names in creating new ones!
+searchString = "G_to_x([0-9])"
+newLabel = "loading_for_path\\\\1" # use value in regex group 1
+m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", comparison = TRUE)
+
 }
 \references{
 - \url{http://github.com/tbates/umx}

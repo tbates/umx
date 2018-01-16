@@ -8,15 +8,17 @@ tmx_genotypic_effect(p = 0.75, q = (1 - p), a = 0.5, d = 0.25, m = 0,
   show = TRUE)
 }
 \arguments{
-\item{p}{The frequency of the A allele (default .5)}
+\item{p}{The frequency of the A allele (Default .5)}
 
-\item{q}{The frequency of the a allele (default 1-p)}
+\item{q}{The frequency of the a allele (Default 1-p)}
 
-\item{a}{Half the difference between the AA and aa homozygotes (default .5)}
+\item{a}{Half the difference between the AA and aa homozygotes (Default .5)}
 
-\item{d}{The deviation of the heterozygote from m (default 1)}
+\item{d}{The deviation of the heterozygote from m (Default 1)}
 
-\item{m}{The value of the midpoint between the homozygotes (default 0)}
+\item{m}{The value of the midpoint between the homozygotes (Default 0)}
+
+\item{show}{Whether to draw the plot or just return it (Default = TRUE)}
 }
 \value{
 -

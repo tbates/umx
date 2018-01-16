@@ -9,7 +9,7 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
   autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
-\item{name}{The name of the model (Default = "CF_sexlim")}
+\item{name}{The name of the model (Default = "sexlim")}
 
 \item{selDVs}{BASE NAMES of the variables in the analysis. You MUST provide suffixes.}
 
@@ -25,11 +25,11 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 
 \item{sep}{Suffix used for twin variable naming. Allows using just the base names in selVars}
 
+\item{A_or_C}{Whether to model sex-limitation on A or on C. (Defaults to "A")}
+
 \item{autoRun}{Whether to run the model and return it, or just return it.}
 
 \item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
-
-\item{C_or_A}{Whether to model sex-limitation on C or on A. (Defaults to "A")}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.CFSexLim

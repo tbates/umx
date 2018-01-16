@@ -471,7 +471,7 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 #' @return - \code{\link{mxModel}}
 #' @family Reporting functions
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{mxRAM}}
+#' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
 #' @references - http://www.github.com/tbates/umx/
 #' @export
 #' @examples
@@ -2166,7 +2166,6 @@ plot.MxModel.ACE <- umxPlotACE
 #' @param digits How many decimals to include in path loadings (default is 2)
 #' @param means Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
-#' @param showMeans DEPRECATED use "means" instead
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
