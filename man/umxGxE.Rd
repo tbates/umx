@@ -74,12 +74,12 @@ umxReduce(m1)
 \seealso{
 - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
 
-Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
-  \code{\link{umxGxE_window}}, \code{\link{umxIP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
+Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
+  \code{\link{umxACE}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_biv}}, \code{\link{umxGxE_window}},
+  \code{\link{umxIP}}, \code{\link{umxSexLim}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},

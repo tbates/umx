@@ -2,7 +2,6 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxModify}
 \alias{umxModify}
-\alias{umxReRun}
 \title{umxModify: Add, set, or drop model paths by label.}
 \usage{
 umxModify(lastFit, update = NULL, master = NULL, regex = FALSE,
@@ -63,7 +62,7 @@ fit2 = mxRun(fit2)
 summary(fit2)
 
 
-Note: A (minor) limitation is that because the defaul value is 0, this is ignored when using newlabels. You can't simultaneously set value to 0 and relabel cells.
+Note: A (minor) limitation is that you cannot simultaneously set value to 0 AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
 }
 \examples{
 require(umx)

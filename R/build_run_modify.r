@@ -161,21 +161,8 @@ utils::globalVariables(c(
 	'correlatedA', 'minCor', 'pos1by6', 'varList', 'Im1', 'IZ', 'ZI', 'Z',
 	
 	# used in tmx_genotypic_effect
-	"x1", "y1", "y2", "dose",	"value", "freq"
-	# umxGxE_biv
-	# lboundACE, refModels, showEstimates
-	# m1
-	# rowNames
-	# m1
-	# rowNames
-	# umxGxE_biv: no visible binding for global variable ‘lboundACE’
-	# umxSummary.MxModel.SexLim: no visible binding for global variable ‘m1’
-	# umxSummary.MxModel.SexLim: no visible binding for global variable ‘rowNames’
-	# umxSummarySexLim: no visible binding for global variable ‘m1’
-	# umxSummarySexLim: no visible binding for global variable ‘rowNames’
-	# Undefined global functions or variables:
-	  # aes draw_label element_text expand_limits lboundACE m1 qplot
-	  # refModels rowNames scale_x_continuous showEstimates theme
+	"x1", "y1", "y2", "dose", "value", "freq"
+	
 	)
 )
 
@@ -677,9 +664,9 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' summary(fit2)
 #' 
 #' @details
-#' Note: A (minor) limitation is that because the defaul value is 0, this is ignored when using newlabels. You can't simultaneously set value to 0 and relabel cells.
+#' Note: A (minor) limitation is that you cannot simultaneously set value to 0 AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
 #' 
-#' @aliases umxReRun umxModify
+#' @aliases umxModify
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
 #' @param master If you set master, then the labels in update will be equated (slaved) to those provided in master.
@@ -814,9 +801,6 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 		return(x)
 	}
 }
-
-#' @export
-umxReRun <- umxModify
 
 # ==================
 # = Twin Functions =
@@ -1414,10 +1398,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 #' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-#' mzData <- twinData[zygosity == "MZFF", tvars(selDVs, "")]
-#' dzData <- twinData[zygosity == "DZFF", tvars(selDVs, "")]
-#' mzData <- mzData[1:80,] # just top 80 pairs to run fast
-#' dzData <- dzData[1:80,]
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' mzData <- mzData[1:80, ] # Just top 80 pairs to run fast
+#' dzData <- dzData[1:80, ]
 #' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' umxSummary(m1)
@@ -1458,8 +1442,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
 #' 
 #' selDVs = c("wt", "obese")
-#' mzData <- twinData[twinData$zygosity %in% "MZFF"]
-#' dzData <- twinData[twinData$zygosity %in% "DZFF"]
+#' mzData <- twinData[twinData$zygosity %in% "MZFF",]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF",]
 #' \dontrun{
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 #' umxSummary(m1)
@@ -2659,222 +2643,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 	return(model)
 } # end umxIP
 
-#' umxACESexLim: Build and run a sex-limitation twin model (not working yet)
-#'
-#' Cholesky style sex-limitation model.
-#'
-#' This is a multi-variate capable Quantitative & Qualitative Sex-Limitation script using
-#' ACE Cholesky modeling. It implements a correlation approach to ensure that order of variables
-#' does NOT affect ability of model to account for DZOS data.
-#'  
-#' Restrictions include the assumption that twin means and variances can be equated across birth
-#' order within zygosity groups.
-#' 
-#' Note: Qualitative sex differences are differences in the latent A, C, or E latent variables
-#' Note: Quantitative sex differences are differences in the path loadings from A, C, or E 
-#' to the measured variables
-#' @param name The name of the model (defaults to "ACE_sexlim")
-#' @param selDVs The variables to include. If you provide a suffix, you can use just the base names.
-#' @param mzmData The MZ male dataframe
-#' @param dzmData The DZ male dataframe
-#' @param mzfData The DZ female dataframe
-#' @param dzfData The DZ female dataframe
-#' @param dzoData The DZ opposite-sex dataframe. (be sure and get in right order)
-#' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
-#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
-#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
-#' @return - ACE sexlim model
-#' @export
-#' @family Twin Modeling Functions
-#' @references - Neale et al., (2006). Multivariate genetic analysis of sex-lim and GxE interaction, Twin Research & Human Genetics.,
-#' \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-#' @examples
-#' \dontrun{
-#' # Load Libraries
-#' require(umx);
-#' # =========================
-#' # = Load and Process Data =
-#' # =========================
-#' data('us_skinfold_data')
-#' # rescale variables
-#' us_skinfold_data[,c('bic_T1', 'bic_T2')] <- us_skinfold_data[,c('bic_T1', 'bic_T2')]/3.4
-#' us_skinfold_data[,c('tri_T1', 'tri_T2')] <- us_skinfold_data[,c('tri_T1', 'tri_T2')]/3
-#' us_skinfold_data[,c('caf_T1', 'caf_T2')] <- us_skinfold_data[,c('caf_T1', 'caf_T2')]/3
-#' us_skinfold_data[,c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[,c('ssc_T1', 'ssc_T2')]/5
-#' us_skinfold_data[,c('sil_T1', 'sil_T2')] <- us_skinfold_data[,c('sil_T1', 'sil_T2')]/5
-#' 
-#' # Select Variables for Analysis
-#' varList = c('ssc','sil','caf','tri','bic')
-#' selVars = umx_paste_names(varList, "_T", 1:2)
-#' 
-#' # Data objects for Multiple Groups
-#' mzmData = subset(us_skinfold_data, zyg == 1, selVars)
-#' mzfData = subset(us_skinfold_data, zyg == 2, selVars)
-#' dzmData = subset(us_skinfold_data, zyg == 3, selVars)
-#' dzfData = subset(us_skinfold_data, zyg == 4, selVars)
-#' dzoData = subset(us_skinfold_data, zyg == 5, selVars)
-#' 
-#' m1 = umxACESexLim(selDVs = varList, suffix = "_T",
-#'        mzmData = mzmData, dzmData = dzmData, 
-#'        mzfData = mzfData, dzfData = dzfData, 
-#'        dzoData = dzoData)
-#' m1 = mxRun(m1)
-#' # ===================================================
-#' # = Test switching specific a from Males to females =
-#' # ===================================================
-#' m2 = umxSetParameters(m1, labels = "asm_.*", free = FALSE, values = 0, regex = TRUE)
-#' m2 = umxSetParameters(m1, labels = "asf_.*", free = TRUE , values = 0, regex = TRUE)
-#' m2 = mxRun(m2)
-#' summary(m2)
-#' umxCompare(m2, m1)
-#' # does fit move on repeated execution?
-#' # for (i in 1:4) { m2 <- mxRun(m2); print(m2 $output$mi) }
-#' }
-umxACESexLim <- function(name = "ACE_sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, suffix = NULL, autoRun = getOption("umx_auto_run")){
-	stop(paste0("Don't use! Not checked!\n",
-	"e-mail timothy.c.bates@gmail.com if you would like sex lim model implement in umx.\n",
-	"PS: You want to be using correlated factors, not ACE !"))
 
-	if(is.null(suffix)){
-		stop("umx functions now require the suffix parameter is set,
-		and selDVs is just a list of variable's base names")
-	}
-	 selDVs = umx_paste_names(selDVs, suffix, 1:2)
-
-	# ==========================
-	# = Cholesky (Ch) Approach =
-	# ==========================
-	# 1 Nonscalar Sex Limitation 
-	# Quantitative Sex Differences & Qualitative Sex Differences for A
-	# Male and female Cholesky paths, and male- OR female-specific A paths to be estimated
-	nVar = length(selDVs)/2 # number of variables
-	# Starting Values
-	svMe = colMeans(mzmData[, 1:nVar], na.rm = TRUE) # c(5,8,4,4,8) # start value for means
-	laMe  = paste0( selDVs, "_Mean")
-	svPaD = vech(diag(.2, nVar, nVar))  # start values for diagonal of covariance matrix
-	svPeD = vech(diag(.8, nVar, nVar))  # start values for diagonal of covariance matrix
-	lbPaD = diag(.0001, nVar, nVar)   # lower bounds for diagonal of covariance matrix
-	lbPaD[lower.tri(lbPaD)] = -10     # lower bounds for below diagonal elements
-	lbPaD[upper.tri(lbPaD)] = NA      # lower bounds for above diagonal elements
-
-	# Algebra to Constrain Correlation Matrices to be Positive Definite
-	# mean-starts computed
-	svMe = colMeans(mzmData[,1:nVar], na.rm = TRUE) # c(5,8,4,4,8) # start value for means
-	# dimnames for Algebras generated to hold Parameter Estimates and Derived Variance Components
-	colZm = paste0(varList , rep(c('Am', 'Cm', 'Em'), each = nVar))
-	colZf = paste0(varList , rep(c('Af', 'Cf', 'Ef'), each = nVar))
-	colSZm = paste0(varList, rep(c('Asm','Csm')     , each = nVar))
-	colSZf = paste0(varList, rep(c('Asf','Csf')     , each = nVar))
-
-	model = mxModel(name,
-		mxModel("top",
-			# Matrices a, c, and e to store Path Coefficients
-			# Male & female parameters <- am cm em, Ram, Rcm, Rem, Am, Cm, Em, Vm, VarsZm, CorsZm
-			# Female parameters (parsZf) = Af, Cf, Ef, Raf, Rcf, Ref, Af, Cf, Ef, Vf, VarsZf, CorsZf
-			mxMatrix(name = "am", "Lower", nrow = nVar, free = TRUE, values = svPaD, lbound = lbPaD),
-			mxMatrix(name = "cm", "Lower", nrow = nVar, free = TRUE, values = svPaD, lbound = lbPaD),
-			mxMatrix(name = "em", "Lower", nrow = nVar, free = TRUE, values = svPeD, lbound = lbPaD),
-			mxMatrix(name = "af", "Lower", nrow = nVar, free = TRUE, values = svPaD, lbound = lbPaD),
-			mxMatrix(name = "cf", "Lower", nrow = nVar, free = TRUE, values = svPaD, lbound = lbPaD),
-			mxMatrix(name = "ef", "Lower", nrow = nVar, free = TRUE, values = svPeD, lbound = lbPaD),
-
-			mxMatrix(name = "asm", "Lower", nrow = nVar, ncol = nVar, free = TRUE , values = 0, lbound = lbPaD),
-			mxMatrix(name = "asf", "Lower", nrow = nVar, ncol = nVar, free = FALSE, values = 0, lbound = lbPaD),
-			mxMatrix(name = "csm", "Lower", nrow = nVar, ncol = nVar, free = FALSE, values = 0, lbound = lbPaD),
-			mxMatrix(name = "csf", "Lower", nrow = nVar, ncol = nVar, free = FALSE, values = 0, lbound = lbPaD),
-
-			# Matrices A, C, and E compute variance components
-			mxAlgebra(name = "Am" , am %*% t(am)),
-			mxAlgebra(name = "Cm" , cm %*% t(cm)),
-			mxAlgebra(name = "Em" , em %*% t(em)),
-			mxAlgebra(name = "Af" , af %*% t(af)),
-			mxAlgebra(name = "Cf" , cf %*% t(cf)),
-			mxAlgebra(name = "Ef" , ef %*% t(ef)),
-			mxAlgebra(name = "Amf", am %*% t(af)),
-			mxAlgebra(name = "Cmf", cm %*% t(cf)),
-
-			# Sex-specific effects to test Qualitative Sex Effects
-			mxAlgebra(name = "Asm", asm %*% t(asm)),
-			mxAlgebra(name = "Asf", asf %*% t(asf)),
-			mxAlgebra(name = "Csm", csm %*% t(csm)),
-			mxAlgebra(name = "Csf", csf %*% t(csf)),
-
-			# Algebra to compute total variances and standard deviations (diagonal only)
-			mxAlgebra(name = "Vm", Am + Cm + Em + Asm + Csm),
-			mxAlgebra(name = "Vf", Af + Cf + Ef + Asf + Csf),
-			mxMatrix(name  = "I", "Iden", nrow = nVar),
-			mxAlgebra(name = "iSDm", solve(sqrt(I * Vm))),
-			mxAlgebra(name = "iSDf", solve(sqrt(I * Vf))),
-		
-			# Matrices and Algebra to compute Genetic and Environmental Correlations
-			mxMatrix(name = "I"  , "Iden", nrow = nVar),
-			mxMatrix(name = "Z"  , "Zero", nrow = (nVar - 1), ncol = 1),
-			mxMatrix(name = "Im1", "Iden", nrow = (nVar - 1), ncol = (nVar - 1)),
-			mxAlgebra(name = "ZI", cbind(Z, Im1)),
-			mxAlgebra(name = "IZ", cbind(Im1, Z)),
-			mxAlgebra(name = "rAm", ZI %*% (solve(sqrt(I * Am)) %&% Am) %*% t(IZ)),
-			mxAlgebra(name = "rCm", ZI %*% (solve(sqrt(I * Cm)) %&% Cm) %*% t(IZ)),
-			mxAlgebra(name = "rEm", ZI %*% (solve(sqrt(I * Em)) %&% Em) %*% t(IZ)),
-			mxAlgebra(name = "rAf", ZI %*% (solve(sqrt(I * Af)) %&% Af) %*% t(IZ)),
-			mxAlgebra(name = "rCf", ZI %*% (solve(sqrt(I * Cf)) %&% Cf) %*% t(IZ)),
-			mxAlgebra(name = "rEf", ZI %*% (solve(sqrt(I * Ef)) %&% Ef) %*% t(IZ)),
-
-			mxConstraint(name = "constRa", vech(rAf) == vech(rAm)),
-			mxConstraint(name = "constRc", vech(rCf) == vech(rCm)),
-			mxConstraint(name = "constRe", vech(rEf) == vech(rEm)),
-
-			# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins
-			mxMatrix(name = "expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(varList, "Mm")),
-			mxMatrix(name = "expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(varList, "Mf")),
-			mxMatrix(name = "expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = svMe, labels = paste0(varList, rep(c("Mm","Mf"), each = nVar))),
-
-			# Algebras generated to hold Parameter Estimates and Derived Variance Components
-			mxAlgebra(name = "VarsZm", cbind(Am/Vm,Cm/Vm,Em/Vm), dimnames = list(NULL, colZm)),
-			mxAlgebra(name = "VarsZf", cbind(Af/Vf,Cf/Vf,Ef/Vf), dimnames = list(NULL, colZf)),
-			mxAlgebra(name = "VarSZm", cbind(Asm/Vm,Csm/Vm), dimnames = list(NULL, colSZm)),
-			mxAlgebra(name = "VarSZf", cbind(Asf/Vf,Csf/Vf), dimnames = list(NULL, colSZf)),
-			mxAlgebra(name = "CorsZm", cbind(solve(sqrt(I*(Am+Asm))) %&% (Am+Asm),solve(sqrt(I*(Cm+Csm))) %&% (Cm+Csm),solve(sqrt(I*Em)) %&% Em), dimnames = list(NULL, colZm)),
-			mxAlgebra(name = "CorsZf", cbind(solve(sqrt(I*(Af+Asf))) %&% (Af+Asf),solve(sqrt(I*(Cf+Csf))) %&% (Cf+Csf),solve(sqrt(I*Ef)) %&% Ef), dimnames = list(NULL, colZf)),
-
-			# Matrix & Algebra for expected Variance/Covariance Matrices in MZ & DZ twins
-			mxAlgebra(name = "expCovMZm", rbind(cbind(Vm, Am + Cm + Asm + Csm), cbind(Am + Cm + Asm + Csm, Vm))),
-			mxAlgebra(name = "expCovDZm", rbind(cbind(Vm, 0.5 %x% (Am + Asm) + Cm + Csm), cbind(0.5 %x% (Am + Asm) + Cm + Csm, Vm))),
-			mxAlgebra(name = "expCovMZf", rbind(cbind(Vf, Af + Cf + Asf + Csf), cbind(Af + Cf + Asf + Csf, Vf))),
-			mxAlgebra(name = "expCovDZf", rbind(cbind(Vf, 0.5 %x% (Af + Asf) + Cf + Csf), cbind(0.5 %x% (Af + Asf) + Cf + Csf, Vf))),
-			mxAlgebra(name = "expCovDZo", rbind(cbind(Vm, 0.5 %x% Amf + Cmf), cbind(0.5 %x% t(Amf) + t(Cmf), Vf)))
-		),
-
-		mxModel("MZm", mxData(mzmData, type = "raw"),
-			mxExpectationNormal("top.expCovMZm", means = "top.expMeanGm", dimnames =  selDVs),
-			mxFitFunctionML()
-		),
-		mxModel("DZm", mxData(dzmData, type = "raw"),
-			mxExpectationNormal("top.expCovDZm", means = "top.expMeanGm", dimnames =  selDVs),
-			mxFitFunctionML()
-		),
-		mxModel("MZf", mxData(mzfData, type = "raw"),
-			mxExpectationNormal("top.expCovMZf", means = "top.expMeanGf", dimnames =  selDVs),
-			mxFitFunctionML()
-		),
-		mxModel("DZf", mxData(dzfData, type = "raw"),
-			mxExpectationNormal("top.expCovDZf", means = "top.expMeanGf", dimnames =  selDVs),
-			mxFitFunctionML()
-		),
-		mxModel("DZo", mxData(dzoData, type = "raw"),
-			mxExpectationNormal("top.expCovDZo", means = "top.expMeanGo", dimnames =  selDVs),
-			mxFitFunctionML()
-		),
-		mxFitFunctionMultigroup(c("MZf", "DZf", "MZm", "DZm", "DZo"))
-	)
-	model = umxLabel(model)
-	if(autoRun){
-		model = mxRun(model)
-		umxSummary(model)
-		return(model)
-	} else {
-		return(model)
-	}
-}
 
 # =====================================
 # = Advanced Build and Modify helpers =

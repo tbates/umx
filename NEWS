@@ -10,6 +10,8 @@
 * IMPROVED: Help pages and examples improved and reorganized.
 * IMPROVED: `umxAPA` can back-out an SE if given b and CI.
 * Beta: Beginning a `umxGroup` function as part of measurement invariance support.
+* DEPRECATED LONG ENOUGH: Dropped support for umxReRun (use umxModify) 
+* DEPRECATED LONG ENOUGH: Dropped support for suffix in some places (use sep) 
 
 # umx 1.9.2 (December 2017, R 3.4.2)
 * *TIP*: Filter paths by estimated size with `umx_parameters(model, "below", .1)`

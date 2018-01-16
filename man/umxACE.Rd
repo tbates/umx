@@ -192,10 +192,10 @@ twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels =
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-mzData <- twinData[zygosity == "MZFF", tvars(selDVs, "")]
-dzData <- twinData[zygosity == "DZFF", tvars(selDVs, "")]
-mzData <- mzData[1:80,] # just top 80 pairs to run fast
-dzData <- dzData[1:80,]
+mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
+mzData <- mzData[1:80, ] # Just top 80 pairs to run fast
+dzData <- dzData[1:80, ]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)
@@ -236,8 +236,8 @@ ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
 
 selDVs = c("wt", "obese")
-mzData <- twinData[twinData$zygosity \%in\% "MZFF"]
-dzData <- twinData[twinData$zygosity \%in\% "DZFF"]
+mzData <- twinData[twinData$zygosity \%in\% "MZFF",]
+dzData <- twinData[twinData$zygosity \%in\% "DZFF",]
 \dontrun{
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
 umxSummary(m1)
@@ -260,12 +260,12 @@ plot(m1)
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{umxACESexLim}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_biv}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
+Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxSexLim}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},

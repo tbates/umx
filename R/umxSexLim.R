@@ -83,7 +83,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	if(is.na(suffix)){
 		stop("Please provide sep (e.g. '_T')")
 	}
-	nVar = length(selDVs) # (was "nv": ntv is this x 2;  nvm1 = nv - 1
+	nVar = length(selDVs)
 	selVars = umx_paste_names(selDVs, suffix, 1:2)
 	# Check names, and drop unused columns from data
 	umx_check_names(selVars, data = mzmData, die = TRUE); mzmData = mzmData[, selVars]
@@ -121,7 +121,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	}
 	Rao_and_Rco_matrices = list(Rao, Rco)
 
-	m1 = mxModel(name,
+	model = mxModel(name,
 		mxModel("top",
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),		
 			# ✓ Path Coefficient matrices a, c, and e for males and females 
@@ -214,25 +214,25 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			mxFitFunctionML(), mxData(dzoData, type = "raw")
 		),
 		mxFitFunctionMultigroup(c("MZf", "DZf", "MZm", "DZm", "DZo"))
-	) # end m1
+	) # end model
 
 	# Non-scalar (full) sex-lim label tweaks
 	
 	if(A_or_C == "A"){
 		# (Rcf|Rcm|Rco) => "rc"
-		m1 = umxModify(m1, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
+		model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
 	}else if (A_or_C == "C"){
 		# (Raf|Ram|Rao) => "ra"
-		m1 = umxModify(m1, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
+		model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
 	}
 
 	# Tests: equate means would be expMeanGm, expMeanGf, expMeanGo
-	m1 = as(m1, "MxModel.SexLim") # set class so umxSummary, plot, etc. work.
+	model = as(model, "MxModel.SexLim") # set class so umxSummary, plot, etc. work.
 	if(autoRun){
-		m1 = mxRun(m1)
+		model = mxRun(model)
 		tryCatch({
-			umxSummary(m1)
-			# umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
+			umxSummary(model)
+			# umxSummary(model, refModels = refModels, showEstimates = showEstimates)
 		}, warning = function(w) {
 			message("Warning incurred trying to run summary")
 			message(w)
@@ -241,7 +241,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			message(e)
 		})
 	}
-	invisible(m1)
+	invisible(model)
 }
 
 #' Shows a compact, publication-style, summary of a umx Sex Limitation model
@@ -378,16 +378,16 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	}
 	
 	if(extended == TRUE) {
-		message("Unstandardized path coefficients")
-		aClean = a
-		cClean = c
-		eClean = e
-		aClean[upper.tri(aClean)] = NA
-		cClean[upper.tri(cClean)] = NA
-		eClean[upper.tri(eClean)] = NA
-		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
-		names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-		umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
+		message("TODO: implement Unstandardized path coefficients for SexLim summary")
+		# aClean = a
+		# cClean = c
+		# eClean = e
+		# aClean[upper.tri(aClean)] = NA
+		# cClean[upper.tri(cClean)] = NA
+		# eClean[upper.tri(eClean)] = NA
+		# unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
+		# names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+		# umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
 	}
 
 
