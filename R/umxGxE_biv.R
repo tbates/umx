@@ -1,15 +1,16 @@
 #' Bivariate ACE models with moderation of variable paths by a moderator.
 #'
-#' Make a 2-group bivariate GxE model (Dolan 2012). GxE interaction studies test the hypothesis that the strength
+#' Creates and runs a 2-group bivariate GxE model (Purcell, 2002; van der Sluis et al., 2012). GxE interaction studies test the hypothesis that the strength
 #' of genetic (or environmental) influence varies parametrically (usually linear effects on path estimates)
-#' across levels of environment. umxGxE allows use of this model in cases where twins are not identical on the moderator (or, rarely, are not completely independent).
-#' It supports testing, and visualizing  G xE (or C or E x E) interaction forms.
+#' across levels of environment. umxGxE_biv allows use of this model in cases where twins are not identical on the moderator (or, rarely, are not completely independent).
+#' It supports testing, and visualizing GxE bivariate (or C or E x E) interactions.
 #' 
-#' The following figure the GxE model as a path diagram:
-#' # TODO Add bivariate GxE model diagram!!
-#' \figure{GxE.png}
-#'
-#' @param name The name of the model (defaults to "GxEbiv")
+#' The following figure shows the GxE model as a path diagram: *note*: Only Twin 1 is shown.
+#' Twin 1 and twin 2 A, C, and E latent traits are connected in the standard fashion, with the
+#' covariance of the T1 and T2 latent genetic traits set to .5 for DZ and 1.0 for MZ pairs.
+#' For the sake of clarity, C, and E paths are omitted here. These mirror those for A.
+#' ![](GxE.png)
+#' @param name The name of the model (defaults to "GxE_biv")
 #' @param selDVs The dependent variable (e.g. IQ)
 #' @param selDefs The definition variable (e.g. socio economic status)
 #' @param sep Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
@@ -19,14 +20,20 @@
 #' @param lboundM If !NA, then lbound the moderators at this value (default = NA)
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param optimizer optionally set the optimizer (default NULL does nothing)
+#' @param optimizer Optionally set the optimizer (default NULL does nothing)
 #' @return - GxE_biv \code{\link{mxModel}}
 #' @export
+#' @md
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
-#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, 
-#' \strong{6}, 554-571. Retrieved from https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187,
-#' van der Sluis, S., Posthuma, D., & Dolan, C. V. (2012). A note on false positives and power in G x E modelling of twin data. \emph{Behavior Genetics}, \strong{42}, 170-186. doi:10.1007/s10519-011-9480-3
+#' @references
+#' - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, 
+#' \strong{6}, 554-571. [url](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187).
+#' 
+#' - van der Sluis, S., Posthuma, D., & Dolan, C. V. (2012). A note on false positives and
+#' power in G x E modelling of twin data. \emph{Behavior Genetics}, 
+#' \strong{42}, 170-186. doi:[10.1007/s10519-011-9480-3](https://doi.org/10.1007/s10519-011-9480-3).
+#'
 #' @examples
 #' require(umx)
 #' data(twinData) 
@@ -49,21 +56,19 @@
 #' }
 umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2;
-	suffix = sep
 	# =================
 	# = Set optimizer =
 	# =================
 	if(!is.null(optimizer)){
 		umx_set_optimizer(optimizer)
 	}
-
-	if(!is.null(suffix)){
-		if(length(suffix) > 1){
+	if(!is.null(sep)){
+		if(length(sep) > 1){
 			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
 			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
 		}
-		selDVs  = umx_paste_names(selDVs , suffix, 1:2)
-		selDefs = umx_paste_names(selDefs, suffix, 1:2)
+		selDVs  = umx_paste_names(selDVs , sep, 1:2)
+		selDefs = umx_paste_names(selDefs, sep, 1:2)
 	}
 	if(any(selDefs %in% selDVs)) {
 		warning("selDefs was found in selDVs: You probably gave me all the variables in selDVs instead of just the DEPENDENT variable");
@@ -114,116 +119,149 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 	
 	model = mxModel(name,
 		mxModel("top",
-			# Matrices a, c, and e to store a, c, and e path coefficients
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[1], name = "a" ), jiggle = .0001),
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[2], name = "c" ), jiggle = .0001),
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[3], name = "e" ), jiggle = .0001),
-			# Matrices to store moderated path coefficients                       
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0, name = "am" )),
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0, name = "cm" )),
-			umxLabel(mxMatrix("Lower", nrow = nVar, ncol = nVar, free = TRUE, values = 0, name = "em" )),
+			# ACE model moderator – Cholesky elements
+			# path coefficients a, c, e
+			# Defined as scalars (1x1)
+			# TODO Can all of these 1x1s be wrapped up into something bigger?
+			# A chol
+			# a0m  = a11
+			# a0mt = a21
+			# a0t  = a22
+			# a1mt = aBeta1
+			# a1t  = aBeta2
 
-			# Matrices A, C, and E compute non-moderated variance components 
-			mxAlgebra(name = "A", a %*% t(a) ),
-			mxAlgebra(name = "C", c %*% t(c) ),
-			mxAlgebra(name = "E", e %*% t(e) ),
-			# Algebra to compute total variances and inverse of standard deviations (diagonal only)
-			mxAlgebra(name = "V", A + C + E),
-			mxMatrix(name  = "I", "Iden", nrow = nVar, ncol = nVar),
-			mxAlgebra(name = "iSD", solve(sqrt(I * V)) ),
+			# ACE model moderator main effects parameters
+			# a0m = a11
+			umxMatrix("a11", "Lower", nrow=1, ncol=1, free=TRUE, values=.6), 
+			umxMatrix("c11", "Lower", nrow=1, ncol=1, free=TRUE, values=.6), 
+			umxMatrix("e11", "Lower", nrow=1, ncol=1, free=TRUE, values=.6),
 
+			# ACE model moderator-trait covariances: main effects
+			# a0mt = a21
+			umxMatrix("a21", "Lower", nrow=1, ncol=1, free=TRUE, values=.6), 
+			umxMatrix("c21", "Lower", nrow=1, ncol=1, free=TRUE, values=.6),
+			umxMatrix("e21", "Lower", nrow=1, ncol=1, free=TRUE, values=.6),
+
+			# ACE model trait-specific main effects parameters
+			# a0t = a22
+			umxMatrix("a22", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
+			umxMatrix("c22", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
+			umxMatrix("e22", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
+
+
+			# ACE model  moderator-trait covariances: moderation
+			# a1mt = aBeta1?
+			umxMatrix("aBeta1", "Lower", nrow=1, ncol=1, free=TRUE, values = .0), 
+			umxMatrix("cBeta1", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
+			umxMatrix("eBeta1", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),	
+
+			# ACE model trait 1 moderator effects
+			# a1t = aBeta2?
+			umxMatrix("aBeta2", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
+			umxMatrix("cBeta2", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
+			umxMatrix("eBeta2", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
+	
+			# Assemble parameters into Cholesky decomposition for twin 1 and twin 2 
+			umxMatrix("PsAmz", "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0, 1, 0, 1, 0, 1, 1, 0, 1)),
+			umxMatrix("PsAdz", "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0,.5, 0, 1, 0,.5, 1, 0, 1)),
+			umxMatrix("PsC"  , "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0, 1, 0, 1, 0, 1, 1, 0, 1)),
+	
 			# Matrix & Algebra for expected means vector (non-moderated)
-			mxMatrix(name = "Means", "Full", nrow = 1, ncol = nVar, free = TRUE, values = obsMean, labels = "mean"), # needs mods for multivariate!
-			# Matrices for betas
-			mxMatrix(name = "betaLin" , "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "lin11"), 
-			mxMatrix(name = "betaQuad", "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "quad11")
+			# TODO start means at obsMean
+			# TODO allow other covs on means?
+			umxMatrix("expMean", "Full", nrow = 1, ncol = 4, free = TRUE, values = 0, labels = c("meanm","meant","meanm","meant")),
 
-			# TODO:	Add covariates to G x E model
+			# TODO:	Add covariates to G x E biv model
 			# if(0){
 				# mxMatrix(name = "betas" , "Full", nrow = nCov, ncol = nVar, free = T, values = 0.05, labels = paste0("beta_", covariates))
 			# }
 		),
 		mxModel("MZ",
-			# matrices for covariates (just on the means)
-			# Matrix for moderating/interacting variable
-			umxMatrix("Def1", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[1])), # c("data.age1")
-			umxMatrix("Def2", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[2])), # c("data.age2")
-			# Algebra for expected mean vector
-			# TODO simplify this algebra... one for each twin... not 4* cov...
-			mxAlgebra(top.betaLin %*% Def1  , name = "Def1Rlin"),
-			mxAlgebra(top.betaQuad%*% Def1^2, name = "Def1Rquad"),
-			mxAlgebra(top.betaLin %*% Def2  , name = "Def2Rlin"),
-			mxAlgebra(top.betaQuad%*% Def2^2, name = "Def2Rquad"),
-			# if(0){ # TODO if there are covs
-			# 	mxMatrix(name = "covsT1", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", covsT1)),
-			# 	mxMatrix(name = "covsT2", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", covsT2)),
-			# 	mxAlgebra(top.betas %*% covsT1, name = "predMeanT1"),
-			# 	mxAlgebra(top.betas %*% covsT2, name = "predMeanT2"),
-			# 	mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad + predMeanT1,
-			# 	                 top.Means + Def2Rlin + Def2Rquad + predMeanT2), name = "expMeans")
-			# } else {
-				# mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeans")
-			# },
-			mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeanMZ"),
+			# Definition variables to create moderated paths (M -> T)
+			umxMatrix("m1", "Full", nrow = 1, ncol = 1, free = FALSE, labels = paste0("data.", selDefs[1])),
+			umxMatrix("m2", "Full", nrow = 1, ncol = 1, free = FALSE, labels = paste0("data.", selDefs[2])),
 
-			# Compute ACE variance components
-			mxAlgebra((top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def1), name = "A11"),
-			mxAlgebra((top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def1), name = "C11"),
-			mxAlgebra((top.e + top.em %*% Def1) %*% t(top.e+ top.em %*% Def1), name = "E11"),
-                                                                    
-			mxAlgebra((top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def2), name = "A12"),
-			mxAlgebra((top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def2), name = "C12"),
-                                                                    
-			mxAlgebra((top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def1), name = "A21"),
-			mxAlgebra((top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def1), name = "C21"),
-                                                                    
-			mxAlgebra((top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def2), name = "A22"),
-			mxAlgebra((top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def2), name = "C22"),
-			mxAlgebra((top.e + top.em %*% Def2) %*% t(top.e+ top.em %*% Def2), name = "E22"),
+			# Matrices generated to hold A and E computed Variance Components
+			# This is a Cholesky decomposition of A for twin 1 and twin 2 (mz and dz) 
+			# note that m1 appears in the top left part (twin 1) and m2 in the bottom right part (twin 2)
 
-			# Algebra for expected variance/covariance matrix and expected mean vector in MZ
-			mxAlgebra(rbind(cbind(A11+C11+E11, A12+C12),
-			                cbind(A21+C21    , A22+C22+E22) ), name = "expCovMZ"),
-			# Data & Objective
+			# A chol
+			# a0m  = a11
+			# a0mt = a21
+			# a0t  = a22
+			# a1mt = aBeta1
+			# a1t  = aBeta2
+
+			mxAlgebra(name = "chA", rbind(
+				cbind(top.a11, 0, 0, 0),
+				cbind(top.a21 + m1 %x% top.aBeta1, top.a22 + m1 %x% top.aBeta2, 0, 0),
+				cbind(0                 , 0               , top.a11, 0),
+				cbind(0                 , 0               , top.a21 + m2 %x% top.aBeta1, top.a22 + m2 %x% top.aBeta2))
+			),
+
+			# C chol
+			mxAlgebra(name = "chC", rbind(
+				cbind(top.c11, 0, 0, 0),
+				cbind(top.c21 + m1 %x% top.cBeta1, top.c22 + m1 %x% top.cBeta2, 0  , 0),
+				cbind(0                 ,0                , top.c11, 0),
+				cbind(0                 ,0                , top.c21 + m2 %x% top.cBeta1, top.c22 + m2 %x% top.cBeta2))
+			),
+			# E chol
+			mxAlgebra(name = "chE", rbind(
+				cbind(top.e11, 0, 0 , 0),
+				cbind(top.e21 + m1 %x% top.eBeta1, top.e22 + m1 %x% top.eBeta2, 0 , 0),
+				cbind(0                 ,0                ,top.e11, 0),
+				cbind(0                 ,0                ,top.e21 + m2 %x% top.eBeta1, top.e22 + m2 %x% top.eBeta2))
+			),
+
+			# Get the expected covariance matrices 
+			mxAlgebra(name = "Amz", chA %&% PsAmz),  # variance component A
+			mxAlgebra(name = "C"  , chC %&% PsC  ),  # variance component C
+			mxAlgebra(name = "E"  , chE %*% t(chE)), # variance component E
+
+			# Assemble phenotypic 4 x 4 MZ cov matrix 
+			mxAlgebra(name = "expCovMZ", Amz + C + E), 
 			mxData(mzData, type = "raw"),
-			mxExpectationNormal("expCovMZ", means = "expMeanMZ", dimnames = selDVs),
+			mxExpectationNormal("expCovMZ", means = "top.expMean", dimnames = selDVs),
 			mxFitFunctionML()
 		),
 	    mxModel("DZ",
-			mxMatrix("Full", nrow=1, ncol=1, free=F, labels=paste("data.",selDefs[1],sep=""), name="Def1"), # twin1  c("data.divorce1")
-			mxMatrix("Full", nrow=1, ncol=1, free=F, labels=paste("data.",selDefs[2],sep=""), name="Def2"), # twin2  c("data.divorce2")
-			# Compute ACE variance components
-			mxAlgebra((top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def1), name="A11"),
-			mxAlgebra((top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def1), name="C11"),
-			mxAlgebra((top.e+ top.em%*% Def1) %*% t(top.e+ top.em%*% Def1), name="E11"),
+			# defs, e.g twin1  c("data.divorce1")
+			umxMatrix("m1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # "data.defm1"
+			umxMatrix("m2", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[2])), # "data.defm2"
 
-			mxAlgebra((top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def2), name="A12"),
-			mxAlgebra((top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def2), name="C12"),
+			# Matrices generated to hold A and E computed Variance Components
+			# A
+			mxAlgebra(name ="chA", rbind(
+				cbind(top.a11, 0, 0, 0),
+				cbind(top.a21 + m1 %x% top.aBeta1, top.a22 + m1 %x% top.aBeta2, 0, 0),
+				cbind(0, 0, top.a11, 0),
+				cbind(0, 0, top.a21 + m2 %x% top.aBeta1, top.a22 + m2 %x% top.aBeta2))
+			),
+			# C chol
+			mxAlgebra(name ="chC", rbind(
+				cbind(top.c11, 0, 0, 0),
+				cbind(top.c21 + m1 %x% top.cBeta1, top.c22 + m1 %x% top.cBeta2, 0, 0),
+				cbind(0, 0, top.c11, 0),
+				cbind(0, 0, top.c21 + m2 %x% top.cBeta1, top.c22 + m2 %x% top.cBeta2))
+			),
+			# E chol
+			mxAlgebra(name ="chE", rbind(
+				cbind(top.e11, 0, 0, 0),
+				cbind(top.e21 + m1 %x% top.eBeta1, top.e22 + m1 %x% top.eBeta2, 0, 0),
+				cbind(0, 0, top.e11, 0),
+				cbind(0, 0, top.e21 + m2 %x% top.eBeta1, top.e22 + m2 %x% top.eBeta2))
+			),
 
-			mxAlgebra((top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def1), name="A21"),
-			mxAlgebra((top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def1), name="C21"),
+			mxAlgebra(name = "Adz", chA %*% PsAdz %*% t(chA)),  # variance component A
+			mxAlgebra(name = "C"  , chC %*% PsC   %*% t(chC)),  # variance component C
+			mxAlgebra(name = "E"  , chE %*% t(chE)),            # variance component E
 
-			mxAlgebra((top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def2), name="A22"),
-			mxAlgebra((top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def2), name="C22"),
-			mxAlgebra((top.e+ top.em%*% Def2) %*% t(top.e+ top.em%*% Def2), name="E22"),
-
-			# Expected DZ variance/covariance matrix
-			mxAlgebra(rbind(cbind(A11+C11+E11  , 0.5%x%A12+C12),
-			                cbind(0.5%x%A21+C21, A22+C22+E22) ), name="expCovDZ"),
-			# mxAlgebra(rbind(cbind(A11+C11+E11  , 0.5%x%A21+C21),
-			#                 cbind(0.5%x%A12+C12, A22+C22+E22) ), name="expCov"),
-			# Algebra for expected mean vector
-			mxAlgebra(top.betaLin %*% Def1  , name = "Def1Rlin"),
-			mxAlgebra(top.betaQuad%*% Def1^2, name = "Def1Rquad"),
-			mxAlgebra(top.betaLin %*% Def2  , name = "Def2Rlin"),
-			mxAlgebra(top.betaQuad%*% Def2^2, name = "Def2Rquad"),
-			mxAlgebra(cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeanDZ"),
-			# mxAlgebra(top.betas%*%rbind(Def1, Def1^2), name="Def1R"),
-			# mxAlgebra(top.betas%*%rbind(Def2, Def2^2), name="Def2R"),
-			# mxAlgebra( cbind(top.Means+Def1R, top.Means+Def2R), name="expMeans"),
+			# Algebra for expected Variance/Covariance Matrices in MZ & DZ twins
+			mxAlgebra(name = "expCovDZ", Adz + C + E),
 			# Data & Objective
-	        mxData(dzData, type = "raw"),
-			mxExpectationNormal("expCovDZ", means = "expMeanDZ", dimnames = selDVs),
+			mxData(dzData, type = "raw"),
+			mxExpectationNormal("expCovDZ", means = "top.expMean", dimnames = selDVs),
 			mxFitFunctionML()
 	    ),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
