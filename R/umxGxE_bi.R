@@ -36,7 +36,7 @@
 #' mzData  = subset(twinData, zygosity %in%  c("MZFF", "MZMM"))[1:80,]
 #' dzData  = subset(twinData, zygosity %in%  c("DZFF", "DZMM", "DZOS"))[1:80,]
 #' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
-#' 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
+#' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 #' # Plot Moderation
 #' umxSummaryGxE_biv(m1)
 #' umxSummary(m1, location = "topright")
@@ -69,10 +69,12 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 		warning("selDefs was found in selDVs: You probably gave me all the variables in selDVs instead of just the DEPENDENT variable");
 	}
 	if(length(selDVs)/nSib != 1){
-		stop("selDVs list must be 1 variable... You tried ", length(selDVs)/nSib)
+		umx_msg(selDVs)
+		stop("selDVs list must be 1 variable... You tried ", length(selDVs)/nSib, " or perhaps you didn't set sep= ?")
 	}
 	if(length(selDefs) != 2){
-		warning("selDefs must be length = 2");
+		umx_msg(selDefs)
+		warning("selDefs must be length = 2. Or perhaps you didn't set sep = ?");
 	}
 
 	umx_check_names(selDVs, mzData)

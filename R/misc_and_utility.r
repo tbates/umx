@@ -2119,10 +2119,10 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 		devtools::check(pkg = pkg)		
 	} else if (what =="win"){
 		# old =
-		# devtools::build_win(pkg = pkg)
+		devtools::build_win(pkg = pkg)
 
 		# new =
-		devtools::check_win_devel(pkg = pkg)
+		# devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
 		# devtools::check_rhub(pkg = pkg)
 	} else if (what == "release"){

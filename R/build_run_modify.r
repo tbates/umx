@@ -2212,8 +2212,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' \strong{Matrices and Labels in CP model}
 #' A good way to see which matrices are used in umxCP is to run an example model and plot it.
 #'
-#' Matrices as, cs, and es contain the variable-specifc path loadings on their diagonal. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
-#' All the shared matrices are in the model "top". So to see the  as values, you can simply execute:
+#' The diagonals of matrices as, cs, and es contain the path loadings specific to each variable. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
+#' All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
 #' 
 #' m1$top#as$values
 #' 
@@ -2918,7 +2918,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param ubound Upper bounds on cells (Defaults to NA)
 #' @param byrow  Whether to fill the matrix down columns or across rows first (Default = getOption('mxByrow')
 #' @param dimnames NA
-#' @param condenseSlots Whether to save memory by NULLing out unused matrix elements, like labels, ubounds etc. Default = getOption('mxCondenseMatrixSlots')
+#' @param condenseSlots Whether to save memory by NULLing out unused matrix elements, like labels, ubound etc. Default = getOption('mxCondenseMatrixSlots')
 #' @param ... Additional parameters (!! not currently supported by umxMatrix)
 #' @param joinKey See mxMatrix documentation: Defaults to as.character(NA)
 #' @param joinModel See mxMatrix documentation: Defaults to as.character(NA)
@@ -4258,7 +4258,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 			lbound = lbound[upper.tri(lbound, diag = TRUE)]			
 		}
 		if(!is.na(ubound)){
-			message("nb setting ubounds (other than as uniform) is tricky for Cholesky, make sure you're getting what you expected or leave it blank.")
+			message("nb setting ubound (other than as uniform) is tricky for Cholesky, make sure you're getting what you expected or leave it blank.")
 		}
 		if(!is.na(values)){
 			message("nb setting values is tricky for Cholesky, make sure you're getting what you expected, or leave it blank.")

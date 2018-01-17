@@ -99,8 +99,8 @@ to .25 to model dominance effects.
 \strong{Matrices and Labels in CP model}
 A good way to see which matrices are used in umxCP is to run an example model and plot it.
 
-Matrices as, cs, and es contain the variable-specifc path loadings on their diagonal. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
-All the shared matrices are in the model "top". So to see the  as values, you can simply execute:
+The diagonals of matrices as, cs, and es contain the path loadings specific to each variable. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
+All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
 
 m1$top#as$values
 

@@ -54,7 +54,7 @@ selDefs = "ht"
 mzData  = subset(twinData, zygosity \%in\%  c("MZFF", "MZMM"))[1:80,]
 dzData  = subset(twinData, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))[1:80,]
 m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
-	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
+	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 # Plot Moderation
 umxSummaryGxE_biv(m1)
 umxSummary(m1, location = "topright")

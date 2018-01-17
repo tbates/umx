@@ -333,12 +333,12 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		names(Estimates) = selDVs
 		umx_print(Estimates, digits = 2)
 
-		tmpm = m1$top$CorsZm$result
+		tmpm = model$top$CorsZm$result
 		RAm = tmpm[1:5, 1:nVar]
 		RCm = tmpm[1:5, (nVar+1):(nVar*2)]
 		REm = tmpm[1:5, (nVar*2+1):(nVar*3)]
 
-		tmpf = m1$top$CorsZf$result
+		tmpf = model$top$CorsZf$result
 		RAf = tmpf[1:5, 1:nVar]
 		RCf = tmpf[1:5, (nVar+1):(nVar*2)]
 		REf = tmpf[1:5, (nVar*2+1):(nVar*3)]
@@ -453,18 +453,20 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 			# print(a_CI)
 			# print(c_CI)
 			# print(e_CI)
-			Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = rowNames, stringsAsFactors = FALSE)
-			names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-			Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-			if(report == "html"){
+
+			message("TODO implement CI report for umxSexLim")
+			# Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = rowNames, stringsAsFactors = FALSE)
+			# names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+			# Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
+			# if(report == "html"){
 				# depends on R2HTML::HTML
-				R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
-				umx_open("tmpCI.html")
-			}
-			CI_Fit = model
-			CI_Fit$top$a$values = a_CI
-			CI_Fit$top$c$values = c_CI
-			CI_Fit$top$e$values = e_CI
+				# R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T);
+				# umx_open("tmpCI.html")
+			# }
+			# CI_Fit = model
+			# CI_Fit$top$a$values = a_CI
+			# CI_Fit$top$c$values = c_CI
+			# CI_Fit$top$e$values = e_CI
 		} # end Use CIs
 	} # end list catcher?
 	
