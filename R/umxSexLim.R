@@ -474,7 +474,8 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	if(!is.na(file)) {
 		# message("making dot file")
 		if(hasCIs & CIs){
-			umxPlotACE(CI_Fit, file = file, std = FALSE)
+			# TODO turn plot of CI_Fit back on
+			# umxPlotACE(CI_Fit, file = file, std = FALSE)
 		} else {
 			umxPlotACE(model, file = file, std = std)
 		}

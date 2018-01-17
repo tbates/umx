@@ -160,9 +160,17 @@ utils::globalVariables(c(
 	
 	'correlatedA', 'minCor', 'pos1by6', 'varList', 'Im1', 'IZ', 'ZI', 'Z',
 	
-	# used in tmx_genotypic_effect
-	"x1", "y1", "y2", "dose", "value", "freq"
+	# Used in tmx_genotypic_effect
+	"x1", "y1", "y2", "dose", "value", "freq",
 	
+	# Used in umxGxE_biv
+	"Adz", "Amz",
+	"PsAdz", "PsAmz", "PsC", 
+	"chA", "chC", "chE", 
+	"top.a11", "top.a21", "top.a22", 
+	"top.c11", "top.c21", "top.c22", 
+	"top.e11", "top.e21", "top.e22", 
+	"top.aBeta1", "top.aBeta2", "top.eBeta1", "top.eBeta2", "top.cBeta1", "top.cBeta2"	
 	)
 )
 
