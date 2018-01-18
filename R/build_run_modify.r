@@ -2910,6 +2910,14 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 	}
 }
 
+# TODO implement umxDefVar
+# umxDefVar(selDefs[1], name ="mod1"){
+# umxDefVar(colName = selDefs[1], name ="mod1"){
+# 	# "data.defmod1"
+# 	# TODO handle vector of colNames, return list of matrices
+# 	umxMatrix(name, "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", colName))
+# }
+
 #' umxMatrix: labeled mxMatrix, with name in the first place
 #'
 #' @description
