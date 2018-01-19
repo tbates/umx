@@ -218,7 +218,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 			# Assemble phenotypic 4 x 4 MZ cov matrix 
 			mxAlgebra(name = "expCovMZ", Amz + C + E), 
 			mxData(mzData, type = "raw"),
-			mxExpectationNormal("expCovMZ", means = "top.expMean", dimnames = selDVs),
+			mxExpectationNormal("expCovMZ", means = "top.expMean", dimnames = selVars),
 			mxFitFunctionML()
 		),
 	    mxModel("DZ",
@@ -257,7 +257,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 			mxAlgebra(name = "expCovDZ", Adz + C + E),
 			# Data & Objective
 			mxData(dzData, type = "raw"),
-			mxExpectationNormal("expCovDZ", means = "top.expMean", dimnames = selDVs),
+			mxExpectationNormal("expCovDZ", means = "top.expMean", dimnames = selVars),
 			mxFitFunctionML()
 	    ),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
