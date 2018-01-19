@@ -867,7 +867,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 #' mzData <- subset(twinData, zygosity == "MZFF")
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummaryACE(m1)
+#' umxSummary(m1)
 #' \dontrun{
 #' umxSummaryACE(m1, file = NA);
 #' umxSummaryACE(m1, file = "name", std = TRUE)
@@ -882,78 +882,78 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			umxSummaryACE(thisFit, digits = digits, file = file, showRg = showRg, std = std, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
 		}
 	} else {
-	umx_has_been_run(model, stop = TRUE)
-	if(is.null(comparison)){
-		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
-		print(-2 * logLik(model));			
-	} else {
-		message("Comparison of model with parent model:")
-		umxCompare(comparison, model, digits = 3)
-	}
-	selDVs = dimnames(model$top.expCovMZ)[[1]]
-	nVar <- length(selDVs)/2;
-	# TODO umxSummaryACE these already exist if a_std exists..
-	# TODO replace all this with umx_standardizeACE
-	# Calculate standardised variance components
-	a  <- mxEval(top.a, model); # Path coefficients
-	c  <- mxEval(top.c, model);
-	e  <- mxEval(top.e, model);
-	A  <- mxEval(top.A, model); # Variances
-	C  <- mxEval(top.C, model);
-	E  <- mxEval(top.E, model);
+		umx_has_been_run(model, stop = TRUE)
+		if(is.null(comparison)){
+			message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+			print(-2 * logLik(model));			
+		} else {
+			message("Comparison of model with parent model:")
+			umxCompare(comparison, model, digits = 3)
+		}
+		selDVs = dimnames(model$top.expCovMZ)[[1]]
+		nVar <- length(selDVs)/2;
+		# TODO umxSummaryACE these already exist if a_std exists..
+		# TODO replace all this with umx_standardizeACE
+		# Calculate standardised variance components
+		a  <- mxEval(top.a, model); # Path coefficients
+		c  <- mxEval(top.c, model);
+		e  <- mxEval(top.e, model);
+		A  <- mxEval(top.A, model); # Variances
+		C  <- mxEval(top.C, model);
+		E  <- mxEval(top.E, model);
 
-	if(std){
-		message("Standardized solution")
-		Vtot = A + C + E;         # Total variance
-		I  <- diag(nVar);         # nVar Identity matrix
-		SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations
-		# (same as "(\sqrt(I.Vtot))~"
+		if(std){
+			message("Standardized solution")
+			Vtot = A + C + E;         # Total variance
+			I  <- diag(nVar);         # nVar Identity matrix
+			SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations
+			# (same as "(\sqrt(I.Vtot))~"
 
-		# Standardized _path_ coefficients ready to be stacked together
-		a_std <- SD %*% a; # Standardized path coefficients
-		c_std <- SD %*% c;
-		e_std <- SD %*% e;
-		aClean = a_std
-		cClean = c_std
-		eClean = e_std
-	} else {
-		message("Raw solution")
-		aClean = a
-		cClean = c
-		eClean = e
-	}
+			# Standardized _path_ coefficients ready to be stacked together
+			a_std <- SD %*% a; # Standardized path coefficients
+			c_std <- SD %*% c;
+			e_std <- SD %*% e;
+			aClean = a_std
+			cClean = c_std
+			eClean = e_std
+		} else {
+			message("Raw solution")
+			aClean = a
+			cClean = c
+			eClean = e
+		}
 
-	aClean[upper.tri(aClean)] = NA
-	cClean[upper.tri(cClean)] = NA
-	eClean[upper.tri(eClean)] = NA
-	rowNames = sub("_.1$", "", selDVs[1:nVar])
-	Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames, stringsAsFactors = FALSE);
-
-	if(model$top$dzCr$values == .25){
-		colNames = c("a", "d", "e")
-	} else {
-		colNames = c("a", "c", "e")
-	}
-	names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-	if(report == "html"){
-		# depends on R2HTML::HTML
-		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
-		umx_open("tmp.html")
-	}
-	
-	if(extended == TRUE) {
-		message("Unstandardized path coefficients")
-		aClean = a
-		cClean = c
-		eClean = e
 		aClean[upper.tri(aClean)] = NA
 		cClean[upper.tri(cClean)] = NA
 		eClean[upper.tri(eClean)] = NA
-		unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
-		names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-		umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
-	}
+		rowNames = sub("_.1$", "", selDVs[1:nVar])
+		Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames, stringsAsFactors = FALSE);
+
+		if(model$top$dzCr$values == .25){
+			colNames = c("a", "d", "e")
+		} else {
+			colNames = c("a", "c", "e")
+		}
+		names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+		Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
+		if(report == "html"){
+			# depends on R2HTML::HTML
+			R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
+			umx_open("tmp.html")
+		}
+	
+		if(extended == TRUE) {
+			message("Unstandardized path coefficients")
+			aClean = a
+			cClean = c
+			eClean = e
+			aClean[upper.tri(aClean)] = NA
+			cClean[upper.tri(cClean)] = NA
+			eClean[upper.tri(eClean)] = NA
+			unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
+			names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+			umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
+		}
 
 	# Pre & post multiply covariance matrix by inverse of standard deviations
 	if(showRg) {

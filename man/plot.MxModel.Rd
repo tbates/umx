@@ -77,6 +77,7 @@ Other Core Modelling Functions: \code{\link{umxMatrix}},
 
 Other Plotting functions: \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umx}}
+  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxE_biv}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
+  \code{\link{umx}}
 }

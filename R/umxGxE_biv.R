@@ -269,10 +269,170 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 	if(!is.na(lboundM)){
 		model = omxSetParameters(model, labels = c('am_r1c1', 'cm_r1c1', 'em_r1c1'), lbound = lboundM)
 	}
-	model = as(model, "MxModel.GxE")
+	model = as(model, "MxModel.GxE_biv")
 	if(autoRun){
 		model = mxRun(model)
 		umxSummary(model)
 	}
 	return(model)
 }
+
+#' Summarize a bivariate GxE twin model
+#'
+#' umxSummaryGxE_biv summarize a Moderation model, as returned by \code{\link{umxGxE_biv}}.
+#'
+#' @aliases umxSummary.MxModel.GxE_biv
+#' @param model A fitted \code{\link{umxGxE_biv}} model to summarize
+#' @param digits round to how many digits (default = 2)
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
+#' @param std Whether to show the standardized model (not implemented! TRUE)
+#' @param CIs Confidence intervals (FALSE)
+#' @param xlab label for the x-axis of plot
+#' @param location default = "topleft"
+#' @param comparison mxCompare model with comparison (defaut = NULL).
+#' @param reduce  Whether to run and tabulate a complete model reduction...(Defaults to FALSE)
+#' @param separateGraphs Std and raw plots in separate graphs? (default = FALSE)
+#' @param report markdown or html (html opens in browswer)
+#' @param ... Optional additional parameters
+#' @return - optional \code{\link{mxModel}}
+#' @family Twin Modeling Functions
+#' @export
+#' @seealso - \code{\link{umxGxE_biv}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+#' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
+#' @examples
+#' # The total sample has been subdivided into a young cohort, 
+#' # aged 18-30 years, and an older cohort aged 31 and above.
+#' # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
+#' # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
+#  # use ?twinData to learn about this data set.
+#' require(umx)
+#' data(twinData) 
+#' twinData$age1 = twinData$age2 = twinData$age
+#' selDVs  = c("bmi1", "bmi2")
+#' selDefs = c("age1", "age2")
+#' mzData  = subset(twinData, zygosity == "MZFF")
+#' dzData  = subset(twinData, zygosity == "DZMM")
+#' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
+#' # Plot Moderation
+#' umxSummary(m1)
+#' umxSummary(m1, location = "topright")
+#' umxSummary(m1, separateGraphs = FALSE)
+umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, comparison = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), ...) {
+	report = match.arg(report)
+	umx_has_been_run(model, stop = TRUE)
+	
+	if(any(!is.null(c(returnStd, std, CIs) ))){
+		message("For GxE, returnStd, extended, std, comparison or CIs are not yet implemented...")
+	}
+
+	if(is.null(model)){
+		message("umxSummaryGxE calls plot.MxModel.GxE for a twin moderation plot. A use example is:\n umxSummaryGxE(model, location = \"topright\")")
+		stop();
+	}
+	if(is.null(comparison)){
+		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		print(-2 * logLik(model));			
+	} else {
+		message("Comparison of model with parent model:")
+		umxCompare(comparison, model, digits = 3)
+	}
+	selDVs = model$MZm$expectation$dims
+	nVar <- length(selDVs)/2;
+	# TODO umxSummaryACE these already exist if a_std exists..
+	# TODO replace all this with umx_standardizeACE
+	# Calculate standardised variance components
+	chA  <- mxEval(MZ.chA, model); # Path coefficients
+	print(chA)
+	# umxPlotGxE_biv(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
+
+	if(reduce){
+		umxReduce(model = model, report = report)
+	}
+}
+
+#' @export
+umxSummary.MxModel.GxE_biv <- umxSummaryGxE_biv
+
+
+#' Plot the results of a GxE univariate test for moderation of ACE components.
+#'
+#' Plot GxE results (univariate environmental moderation of ACE components).
+#' Options include plotting the raw and standardized graphs separately, or in a combined panel.
+#' You can also set the label for the x axis (xlab), and choose the location of the legend.
+#'
+#' @aliases plot.MxModel.GxE_biv
+#' @param x A fitted \code{\link{umxGxE_biv}} model to plot
+#' @param xlab String to use for the x label (default = NA, which will use the variable name)
+#' @param location Where to plot the legend (default = "topleft")
+#' see ?legend for alternatives like bottomright
+#' @param separateGraphs (default = FALSE)
+#' @param ... Optional additional parameters
+#' @return - 
+#' @family Plotting functions
+#' @export
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxGxE_biv}}
+#' @references - \url{http://tbates.github.io}
+#' @examples
+#' require(umx)
+#' data(twinData) 
+#' twinData$age1 = twinData$age2 = twinData$age
+#' selDVs  = c("bmi1", "bmi2")
+#' selDefs = c("age1", "age2")
+#' selVars = c(selDVs, selDefs)
+#' mzData  = subset(twinData, zyg == 1, selVars)
+#' dzData  = subset(twinData, zyg == 3, selVars)
+#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+#'  	dzData = dzData, mzData = mzData, dropMissing = TRUE)
+#' plot(m1)
+#' umxPlotGxE_biv(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+umxPlotGxE_biv <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
+	if(class(x) != "MxModel.GxE_biv"){
+		stop("The first parameter of umxPlotGxE must be a GxE_biv model, you gave me a ", class(x))
+	}
+	model = x # to remind us that x has to be a umxGxE model
+	# get unique values of moderator
+	mzData = model$MZ$data$observed
+	dzData = model$DZ$data$observed
+	selDefs = names(mzData)[3:4]
+	if(is.na(xlab)){
+		xlab = selDefs[1]
+	}
+	mz1 = as.vector(mzData[,selDefs[1]])
+	mz2 = as.vector(mzData[,selDefs[2]])
+	dz1 = as.vector(dzData[,selDefs[1]])
+	dz2 = as.vector(dzData[,selDefs[2]])
+	allValuesOfDefVar= c(mz1,mz2,dz1,dz2)
+	defVarValues = sort(unique(allValuesOfDefVar))
+	a   = model$top$matrices$a$values
+	c   = model$top$matrices$c$values
+	e   = model$top$matrices$e$values
+	am  = model$top$matrices$am$values
+	cm  = model$top$matrices$cm$values
+	em  = model$top$matrices$em$values
+	Va  = (c(a) + c(am) * defVarValues)^2
+	Vc  = (c(c) + c(cm) * defVarValues)^2
+	Ve  = (c(e) + c(em) * defVarValues)^2
+	Vt  = Va + Vc + Ve
+	out    = as.matrix(cbind(Va, Vc, Ve, Vt))
+	outStd = as.matrix(cbind(Va/Vt, Vc/Vt, Ve/Vt))
+	
+	if(separateGraphs){
+		print("Outputting two graphs")
+	}else{
+		graphics::par(mfrow = c(1, 2)) # one row, two columns for raw and std variance
+		# par(mfrow = c(2, 1)) # two rows, one column for raw and std variance
+	}
+	acergb = c("red", "green", "blue", "black")
+	graphics::matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = acergb, xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects")
+	graphics::legend(location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb)
+	# legend(location, legend= c("Va", "Vc", "Ve", "Vt"), lty = 1:4, col = acergb)
+	graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
+	# legend(location, legend= c("Va", "Vc", "Ve"), lty = 1:4, col = acergb)
+	graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb)
+	graphics::par(mfrow = c(1, 1)) # back to black
+}
+
+#' @export
+plot.MxModel.GxE_biv <- umxPlotGxE_biv
