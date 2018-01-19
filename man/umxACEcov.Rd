@@ -88,15 +88,15 @@ m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData
 # = Use an lm-based age-residualisation approach instead =
 # ========================================================
 
-resid_data = umx_residualize("bmi", "age", suffixes=1:2, twinData)
+resid_data = umx_residualize("bmi", "age", sep = 1:2, twinData)
 mzData = subset(resid_data, zygosity == "MZFF")
 dzData = subset(resid_data, zygosity == "DZFF")
-m2     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+m2     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 
 # Univariate BMI without covariate of age for comparison
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
-m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 
 \dontrun{
 # ===========================================================================
@@ -104,12 +104,12 @@ m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix 
 # ===========================================================================
 selDVs  = c("ht", "wt") # Set the DV
 selCovs = c("income") # Set the COV
-selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
+selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", sep = 1:2)
 # 80 rows so example runs fast on CRAN
 mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
-   dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
+   dzData = dzData, mzData = mzData, sep = "", autoRun = TRUE
 )
 }
 
@@ -132,6 +132,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}

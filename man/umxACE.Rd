@@ -5,12 +5,12 @@
 \title{Build and run a 2-group Cholesky twin model (uni-variate or multi-variate)}
 \usage{
 umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
-  "random"), dzData, mzData, suffix = NULL, dzAr = 0.5, dzCr = 1,
+  "random"), dzData, mzData, sep = NULL, dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
   thresholds = c("deviationBased", "WLS"),
-  autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL,
-  intervals = FALSE)
+  autoRun = getOption("umx_auto_run"), suffix = "deprecated",
+  optimizer = NULL, intervals = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -25,7 +25,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{mzData}{The MZ dataframe.}
 
-\item{suffix}{Allowed as a synonym for "suffix".}
+\item{sep}{The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -51,7 +51,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{sep}{The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.}
+\item{suffix}{Allowed as a synonym for "suffix".}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
@@ -268,6 +268,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}

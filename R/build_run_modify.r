@@ -182,7 +182,7 @@ methods::setClass("MxModel.ACE"   , contains = "MxModel")
 methods::setClass("MxModel.ACEv"  , contains = "MxModel")
 methods::setClass("MxModel.ACEcov", contains = "MxModel.ACE")
 methods::setClass("MxModel.GxE"   , contains = "MxModel")
-methods::setClass("MxModel.GxEbiv", contains = "MxModel.GxE")
+methods::setClass("MxModel.GxE_biv", contains = "MxModel.GxE")
 methods::setClass("MxModel.CP"    , contains = "MxModel")
 methods::setClass("MxModel.IP"    , contains = "MxModel")
 methods::setClass("MxModel.SexLim", contains = "MxModel")
@@ -191,7 +191,7 @@ methods::setClass("MxModel.SexLim", contains = "MxModel")
 # = Core Modelling Functions =
 # ============================
 
-#' Catches users typing umxModel instead of umxRAM
+#' Catches users typing umxModel instead of umxRAM.
 #'
 #' @description
 #' Catches a common typo, moving from mxModel to umx.
@@ -1469,8 +1469,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
-umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL, intervals = FALSE) {
+umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
+	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), suffix = "deprecated", optimizer = NULL, intervals = FALSE) {
 
 		covMethod = match.arg(covMethod)
 		# =================
@@ -1480,8 +1480,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 			umx_set_optimizer(optimizer)
 		}
 		# Allow sep as synonym for suffix
-		if(!is.null(sep)){
-			suffix = sep
+		if (suffix != "deprecated"){
+			warning("Just a message, but please use 'sep = ' instead of 'suffix = '")
+			sep = suffix			
 		}
 		if(dzCr == .25 & (name == "ACE")){
 			name = "ADE"
@@ -1490,9 +1491,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
 				stop("Implementing this for version 2.0")
-				# umxACEdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, suffix = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
+				# umxACEdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			} else if(covMethod == "random") {
-				umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = suffix, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
+				umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			}
 		} else {
 			if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
@@ -1506,12 +1507,12 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 				"BadNames included: ", omxQuotes(badNames) )
 			}
 
-			if(!is.null(suffix)){
-				if(length(suffix) > 1){
+			if(!is.null(sep)){
+				if(length(sep) > 1){
 					stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
 					"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
 				}
-				selDVs = umx_paste_names(selDVs, suffix, 1:2)
+				selDVs = umx_paste_names(selDVs, sep, 1:2)
 			}
 			umx_check_names(selDVs, mzData)
 			umx_check_names(selDVs, dzData)
@@ -1549,13 +1550,13 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 				factorVarNames = ordVarNames = binVarNames = contVarNames = c()
 			}
 
-			if(nFactors > 0 & is.null(suffix)){
-				stop("Please set suffix.\n",
+			if(nFactors > 0 & is.null(sep)){
+				stop("Please set sep.\n",
 				"Why: You have included ordinal or binary variables. I need to know which variables are for twin 1 and which for twin2.\n",
 				"The way I do this is enforcing some naming rules. For example, if you have 2 variables:\n",
 				" obesity and depression called: 'obesity_T1', 'dep_T1', 'obesity_T2' and 'dep_T2', you should call umxACE with:\n",
-				"selDVs = c('obesity','dep'), suffix = '_T' \n",
-				"suffix is just one word, appearing in all variables (e.g. '_T').\n",
+				"selDVs = c('obesity','dep'), sep = '_T' \n",
+				"sep is just one word, appearing in all variables (e.g. '_T').\n",
 				"This is assumed to be followed by '1' '2' etc...")
 			}
 
@@ -1643,7 +1644,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 					# for better guessing with low-frequency cells
 					allData = rbind(mzData, dzData)
 					# threshMat is is a matrix, or a list of 2 matrices and an algebra
-					threshMat = umxThresholdMatrix(allData, sep = suffix, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
+					threshMat = umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
 					mzExpect = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 					dzExpect = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
 					top = mxModel("top", umxLabel(meansMatrix), threshMat)
@@ -1680,7 +1681,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 					# For better guessing with low-freq cells
 					allData = rbind(mzData, dzData)
 					# threshMat may be a three item list of matrices and algebra
-					threshMat = umxThresholdMatrix(allData, sep = suffix, thresholds = thresholds, threshMatName = "threshMat", verbose = TRUE)
+					threshMat = umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = TRUE)
 
 					mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 					dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")
@@ -1927,15 +1928,15 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' # = Use an lm-based age-residualisation approach instead =
 #' # ========================================================
 #'
-#' resid_data = umx_residualize("bmi", "age", suffixes=1:2, twinData)
+#' resid_data = umx_residualize("bmi", "age", sep = 1:2, twinData)
 #' mzData = subset(resid_data, zygosity == "MZFF")
 #' dzData = subset(resid_data, zygosity == "DZFF")
-#' m2     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+#' m2     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #'
 #' # Univariate BMI without covariate of age for comparison
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
-#' m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, suffix = "")
+#' m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #' 
 #' \dontrun{
 #' # ===========================================================================
@@ -1943,12 +1944,12 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' # ===========================================================================
 #' selDVs  = c("ht", "wt") # Set the DV
 #' selCovs = c("income") # Set the COV
-#' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes = 1:2)
+#' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", sep = 1:2)
 #' # 80 rows so example runs fast on CRAN
 #' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
 #' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
-#'    dzData = dzData, mzData = mzData, suffix = "", autoRun = TRUE
+#'    dzData = dzData, mzData = mzData, sep = "", autoRun = TRUE
 #' )
 #' }
 #'
@@ -1961,9 +1962,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	if(dzCr == .25 && name == "ACEcov"){
 		name = "ADEcov"
 	}
-	if(!is.null(sep)){
-		suffix = sep
-	}
 
 	# ==================
 	# = Validate input =
@@ -1975,19 +1973,19 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 		"BadNames included: ", omxQuotes(badNames) )
 	}
 
-	if(is.null(suffix)){
+	if(is.null(sep)){
 		stop("I need a sep, like '_T'. (I will add 1 and 2 after it...) \n",
 		"i.e., selDVs should be 'bmi' etc., and I will re-name to 'bmi_T1' and 'bmi_T2' etc.")
-	}else if(length(suffix) > 1){
-			stop("suffix should be just one word, like '_T'. I will add 1 and 2 after that...\n",
+	}else if(length(sep) > 1){
+			stop("sep should be just one word, like '_T'. I will add 1 and 2 after that...\n",
 			"i.e., if variables are like 'var_T1', give me selVars = 'var' and sep = '_T'")
 	}else{
 		# stash base names for use later
 		baseDVs  = selDVs
 		baseCovs = selCovs
 		# fill out full trait names
-		selDVs  = umx_paste_names(baseDVs , sep = suffix, suffixes = (1:nSib) )
-		selCovs = umx_paste_names(baseCovs, sep = suffix, suffixes = (1:nSib) )
+		selDVs  = umx_paste_names(baseDVs , sep = sep, suffixes = (1:nSib) )
+		selCovs = umx_paste_names(baseCovs, sep = sep, suffixes = (1:nSib) )
 	}
 
 	nDV  = length(baseDVs)
@@ -2004,7 +2002,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	dzData = dzData[, selVars]
 	# check covariates are not identical across twins
 	for (i in baseCovs) {
-		checkVars = umx_paste_names(i , sep = suffix, suffixes = (1:nSib) )
+		checkVars = umx_paste_names(i , sep = sep, suffixes = (1:nSib) )
 		if(cor(mzData[, checkVars], use = "com")[2, 1] == 1){
 			stop("The covariate ", omxQuotes(i), " is identical for twin 1 and twin 2... That's not allowed for random-effects covariates. Try modeling this as a def var in the means instead.")
 		}		
@@ -2238,7 +2236,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param selDVs The variables to include
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
+#' @param sep The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
 #' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
 #' @param nFac How many common factors (default = 1)
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
@@ -2254,7 +2252,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
-#' @param sep allowed as a synonym for "suffix"
+#' @param suffix allowed as a synonym for sep (will be deprecated).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -2275,7 +2273,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
-umxCP <- function(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, sep=NULL) {
+umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = NULL) {
 	nSib = 2
 	# =================
 	# = Set optimizer =

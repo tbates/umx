@@ -104,7 +104,8 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
 Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
   \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}}
+  \code{\link{umxPlotGxE_biv}}, \code{\link{umxPlotGxE}},
+  \code{\link{umxPlotIP}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxTwoStage}}
@@ -117,6 +118,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
   \code{\link{xmu_twin_check}}

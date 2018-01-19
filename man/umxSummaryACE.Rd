@@ -62,7 +62,7 @@ selDVs = c("bmi1", "bmi2")
 mzData <- subset(twinData, zygosity == "MZFF")
 dzData <- subset(twinData, zygosity == "DZFF")
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-umxSummaryACE(m1)
+umxSummary(m1)
 \dontrun{
 umxSummaryACE(m1, file = NA);
 umxSummaryACE(m1, file = "name", std = TRUE)
@@ -82,6 +82,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxGxE}}, \code{\link{umxIP}},
   \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxModel}
 \alias{umxModel}
-\title{Catches users typing umxModel instead of umxRAM}
+\title{Catches users typing umxModel instead of umxRAM.}
 \usage{
 umxModel(...)
 }

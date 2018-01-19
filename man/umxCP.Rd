@@ -4,11 +4,11 @@
 \alias{umxCP}
 \title{umxCP: Build and run a Common pathway twin model}
 \usage{
-umxCP(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
+umxCP(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
   correlatedA = FALSE, equateMeans = T, dzAr = 0.5, dzCr = 1,
   addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"), optimizer = NULL, sep = NULL)
+  autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP")}
@@ -19,7 +19,7 @@ umxCP(name = "CP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
 
 \item{mzData}{The MZ dataframe}
 
-\item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, you can
+\item{sep}{The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
 omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{nFac}{How many common factors (default = 1)}
@@ -50,7 +50,7 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
 
-\item{sep}{allowed as a synonym for "suffix"}
+\item{suffix}{allowed as a synonym for sep (will be deprecated).}
 }
 \value{
 - \code{\link{mxModel}}
@@ -143,6 +143,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
