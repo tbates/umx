@@ -35,12 +35,15 @@ twinData$age1 = twinData$age2 = twinData$age
 selDVs  = c("bmi1", "bmi2")
 selDefs = c("age1", "age2")
 selVars = c(selDVs, selDefs)
-mzData  = subset(twinData, zyg == 1, selVars)
-dzData  = subset(twinData, zyg == 3, selVars)
-m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+df = umx_scale(twinData[, c("zygosity", selVars)])
+mzData  = subset(twinData, zygosity \%in\% c("MZFF", "MZMM"))
+dzData  = subset(twinData, zygosity \%in\% c("DZFF", "DZMM", "DZFM", "DZMF"))
+m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
  	dzData = dzData, mzData = mzData, dropMissing = TRUE)
 plot(m1)
 umxPlotGxE_biv(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+m2 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+ 	dzData = dzData, mzData = mzData, dropMissing = TRUE)
 }
 \references{
 - \url{http://tbates.github.io}

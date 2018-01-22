@@ -2791,10 +2791,12 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' Pass in any dataframe and get variances despite some non-numeric columns.
 #' Cells involving these non-numeric columns are set to ordVar (default = 1).
 #'
-#' @param df a dataframe of raw data from which to get variances.
+#' @param df A dataframe of raw data from which to get variances.
 #' @param ordVar The value to return at any ordinal columns (defaults to 1).
 #' @param format to return: options are c("full", "diag", "lower"). Defaults to full, but this is not implemented yet.
-#' @param use passed to \code{\link{cov}} - defaults to "complete.obs" (see param default for other options).
+#' @param use Passed to \code{\link{cov}} - defaults to "complete.obs" (see param default for other options).
+#' @param digits Ignored if NULL. Set for easy printing.
+#' @param strict Whether to allow non-ordered factors to be processed (default = FALSE (no)).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Miscellaneous Stats Helpers
@@ -2804,13 +2806,13 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
 #' tmp$hp  = ordered(mtcars$hp)  # binary factor
 #' umx_var(tmp, format = "diag", ordVar = 1, use = "pair")
-#' tmp2 = tmp[, c(1,3)]
+#' tmp2 = tmp[, c(1, 3)]
 #' umx_var(tmp2, format = "diag")
 #' umx_var(tmp2, format = "full")
-umx_var <- function(df, ordVar = 1, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete")){
+umx_var <- function(df, ordVar = 1, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), digits = NULL, strict = TRUE){
 	format = match.arg(format)
 	use    = match.arg(use)
-	if(any(umx_is_ordered(df))){
+	if(any(umx_is_ordered(df, strict = strict))){
 		nCol = dim(df)[2]
 		out  = diag(ordVar, nCol, nCol)
 		cont = umx_is_ordered(df, continuous.only = TRUE)
@@ -2835,7 +2837,11 @@ umx_var <- function(df, ordVar = 1, format = c("full", "diag", "lower"), use = c
 		 # "lower"
 			out = diag(full)
 		}
-		return(out)
+		if(!is.null(digits)){
+			return(round(out, digits))
+		} else {
+			return(out)
+		}
 	}
 }
 
@@ -4452,6 +4458,28 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
 #' Emod = list(Beta_e1 = .025, Beta_e2 = .025)
 #' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod, Emod =Emod)
+#'# List of 2
+#'#  $ mzData:'data.frame':	5000 obs. of  6 variables:
+#'#   ..$ defM_T1: num [1:5000] -1.424 -1.606 -0.749 -0.358 -0.208 ...
+#'#   ..$ defM_T2: num [1:5000] -1.703 -1.125 -1.136 0.366 -0.864 ...
+#'#   ..$ M_T1   : num [1:5000] -1.424 -1.606 -0.749 -0.358 -0.208 ...
+#'#   ..$ var_T1 : num [1:5000] -1.1197 -0.3074 -0.4156 -0.4149 0.0739 ...
+#'#   ..$ M_T2   : num [1:5000] -1.703 -1.125 -1.136 0.366 -0.864 ...
+#'#   ..$ var_T2 : num [1:5000] 0.381 -1.275 -1.114 1.297 -1.53 ...
+#'#  $ dzData:'data.frame':	5000 obs. of  6 variables:
+#'#   ..$ defM_T1: num [1:5000] 0.253 -0.402 0.545 -1.494 -0.278 ...
+#'#   ..$ defM_T2: num [1:5000] 1.7587 0.3025 -0.3864 0.0737 0.514 ...
+#'#   ..$ M_T1   : num [1:5000] 0.253 -0.402 0.545 -1.494 -0.278 ...
+#'#   ..$ var_T1 : num [1:5000] -0.835 -0.305 -0.299 -1.576 -0.26 ...
+#'#   ..$ M_T2   : num [1:5000] 1.7587 0.3025 -0.3864 0.0737 0.514 ...
+#'#   ..$ var_T2 : num [1:5000] -0.418 0.678 -0.78 -0.312 -0.272 ...
+#' 
+#' # TODO tmx example showing how moderation of A introduces heteroskedasticity in a regression model.
+#' # More residual variance at one extreme of the x axis (moderator) 
+#' # m1 = lm(var_T1~ M_T1, data = x); 
+#' # x = rbind(tmp[[1]], tmp[[2]])
+#' # plot(residuals(m1)~ x$M_T1, data=x)
+ 
 #' @md
 umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, nThresh = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE, MZr= NULL, DZr= NULL, Amod = NULL, Cmod = NULL, Emod = NULL) {
 	if(!is.null(seed)){

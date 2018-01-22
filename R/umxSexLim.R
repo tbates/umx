@@ -294,7 +294,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' stdFit = umxSummarySexLim(m1, returnStd = TRUE);
 #' }
 umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
-	message("umxSummarySexLim not working yet :-( use summary()")
+	message("umxSummarySexLim is a work-in-progress.\nUse summary() for any relevant stats currently not being tabulated or plotted")
 	report = match.arg(report)
 	# Depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
@@ -305,8 +305,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	} else {
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(comparison)){
-		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
-		print(-2 * logLik(model));			
+		message(model$name, " -2 \u00d7 log(Likelihood) = ", -2 * logLik(model)) # \u00d7 = times sign
 	} else {
 		message("Comparison of model with parent model:")
 		umxCompare(comparison, model, digits = 3)
