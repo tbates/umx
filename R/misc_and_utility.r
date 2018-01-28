@@ -2183,7 +2183,7 @@ umx_msg <- function(x) {
 #'
 #'     umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
 #'
-#' *Note*: for quick typing, `vars` is an alias for `umx_paste_names`
+#' *Note*: for quick typing, `tvars` is an alias for `umx_paste_names`
 #'
 #' **Method 2**: *Use sep and a suffix vector.*
 #' 
@@ -2219,7 +2219,7 @@ umx_msg <- function(x) {
 #' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
-#' # For quick-typing, tVars is an alias for umx_paste_names
+#' # For quick-typing, tvars is an alias for umx_paste_names
 #' tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 #' @md
 umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
@@ -2586,7 +2586,9 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' umx_print(mtcars[1:10,], file = "tmp.html")
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
 	# depends on R2HTML::HTML and knitr::kable
-	if(class(x)!="data.frame"){
+	if(class(x)=="character"){
+		print(x)
+	}else if(class(x)!="data.frame"){
 		if(class(x)=="matrix"){
 			x = data.frame(x)
 		} else {
@@ -2594,6 +2596,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 			return()
 		}
 	}
+
 	if(dim(x)[1] == 0){
 		return()
 	} else {
