@@ -1113,7 +1113,7 @@ umx_factor <- umxFactor
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{packageVersion}}
+#' @seealso - \code{\link{packageVersion}}, \code{\link{install.OpenMx}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' x = umxVersion(); x
@@ -1124,7 +1124,8 @@ umxVersion <- function (model = NULL, verbose = TRUE, return = "umx") {
         message(msg)
     }
 	OpenMx_vers = mxVersion(model = model, verbose = verbose)
-    
+	message('You can update OpenMx thusly:\ninstall.OpenMx(loc = c("UVa", "travis", "CRAN", "open travis build page")')
+	
 	if(return == "umx"){
 		invisible(umx_vers)
 	} else {
@@ -2043,19 +2044,20 @@ print.reliability <- function (x, digits = 4, ...){
 #'
 #' @description
 #' You can:
-#' 1. Install from UVa (default: This is where we maintain binaries supporting parallel processing and NPSOL)
-#' 2. Install the latest travis built (currently mac only)
-#' 3. Install from a custom url.
-#' 4. Open the list of travis builds in a browser.
+#' 1. Install from UVa (default: This is where we maintain binaries supporting parallel processing and NPSOL).
+#' 2. Install the latest travis built (currently MacOS only).
+#' 3. Install from CRAN.
+#' 4. Open the list of travis builds in a browser window.
 #'
-#' @aliases umx_install_OpenMx umx_update_OpenMx
+#' @aliases umx_install_OpenMx umx_update_OpenMx.
 #' @param loc Which install to get: "UVa" (the default), "travis" (latest build),
 #' or open the travis list of builds on the web to view/pick a url.
-#' @param url A custom URL if you have/need one (probably not)
-#' @param repos Which repository to use (ignored currently)
-#' @param lib Where to install the package
+#' @param url A custom URL if you have/need one (probably not).
+#' @param repos Which repository to use (ignored currently).
+#' @param lib Where to install the package.
 #' @return - 
 #' @export
+#' @seealso \code{\link{umxVersion}}
 #' @family Miscellaneous Utility Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples

@@ -27,7 +27,7 @@ x = umxVersion(); x
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-- \code{\link{packageVersion}}
+- \code{\link{packageVersion}}, \code{\link{install.OpenMx}}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
