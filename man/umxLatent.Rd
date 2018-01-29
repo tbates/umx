@@ -5,18 +5,21 @@
 \title{umxLatent: Helper to ease making formative and reflective latent variables}
 \usage{
 umxLatent(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
-  type = NULL, name = NULL, labelSuffix = "", verbose = TRUE)
+  type = NULL, fixManifestVariances = FALSE, name = NULL,
+  labelSuffix = "", verbose = TRUE)
 }
 \arguments{
 \item{latent}{the name of the latent variable (string)}
 
-\item{formedBy}{the list of variables forming this latent}
+\item{formedBy}{the list of manifest variables which latent reflects.}
 
-\item{forms}{the list of variables which this latent forms (leave blank for formedBy)}
+\item{forms}{the list of variables which this latent forms (leave blank if using formedBy)}
 
 \item{data}{the dataframe being used in this model}
 
-\item{type}{= \"exogenous|endogenous\"}
+\item{type}{of the latent variable: "exogenous" or "endogenous"}
+
+\item{fixManifestVariances}{defaults to FALSE. Allows a model consisting of just a reflective latent to be identified.}
 
 \item{name}{A name for the path NULL}
 
@@ -34,37 +37,34 @@ This function takes care of intercorrelating manifests for formatives, and fixin
 }
 \details{
 The following figures show how a reflective and a formative variable look as path diagrams:
+
+Note, a reflective latent on its own is not identified as a complete model.
+Fixing manifest variances at their observed values can allow this case.
+
+Reflective (manifests reflect the  value of the latent variable)
 \figure{reflective.png}
-formative\figure{formative.png}
+
+Formative (manifests provide the value of the latent variable)
+\figure{formative.png}
 }
 \examples{
-\dontrun{
 library(umx)
 data(demoOneFactor)
 latents = c("G")
 manifests = names(demoOneFactor) # x1-5
 theData = cov(demoOneFactor)
-m1 = mxModel("reflective", type = "RAM",
-manifestVars = manifests,
-latentVars   = latents,
-# Factor loadings
-umxLatent("G", forms = manifests, type = "exogenous", data = theData),
-mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+df = mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+m1 = umxRAM("reflective", data = df,
+	umxLatent("G", forms = manifests, type = "exogenous", data = theData)
 )
-m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE); umxSummary(m1, show="std")
-plot(m1)
+umxSummary(m1, show="std")
+plot(m1, std = TRUE)
 
-m2 = mxModel("formative", type = "RAM",
-manifestVars = manifests,
-latentVars   = latents,
-# Factor loadings
-umxLatent("G", formedBy = manifests, data = theData),
-mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+m2 = umxRAM("formative", data = df,  fixManifestVariances=TRUE,
+umxLatent("G", formedBy = manifests, data = theData)
 )
-m2 = umxRun(m2, setValues = TRUE, setLabels = TRUE);
 umxSummary(m2, show = "std")
-plot(m2)
-}
+plot(m2, std = TRUE)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

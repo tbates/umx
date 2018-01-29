@@ -24,9 +24,9 @@ or open the travis list of builds on the web to view/pick a url.}
 }
 \description{
 You can:
-1. Install from UVa (default: This is where we maintain binaries supporting parallel processing and NPSOL)
-2. Install the latest travis built (currently MacOS only)
-3. Install from a custom url.
+1. Install from UVa (default: This is where we maintain binaries supporting parallel processing and NPSOL).
+2. Install the latest travis built (currently MacOS only).
+3. Install from CRAN.
 4. Open the list of travis builds in a browser window.
 }
 \examples{
