@@ -36,19 +36,21 @@
 #'
 #' @examples
 #' require(umx)
-#' data(twinData) 
-#' twinData$age1 = twinData$age2 = twinData$age
+#' data(twinData)
 #' selDVs  = "wt"
 #' selDefs = "ht"
-#' mzData  = subset(twinData, zygosity %in%  c("MZFF", "MZMM"))[1:80,]
-#' dzData  = subset(twinData, zygosity %in%  c("DZFF", "DZMM", "DZOS"))[1:80,]
+#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
+#' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
+#' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
+#'
 #' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
 #' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
+#'
 #' # Plot Moderation
 #' umxSummaryGxE_biv(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
-#' m2 = umxModify(m1, regex = "am_.*", comparison = TRUE)
+#' m2 = umxModify(m1, update = c("cBeta2_r1c1", "eBeta1_r1c1", "eBeta2_r1c1"), comparison = TRUE)
 #' \dontrun{
 #' # TODO: The umxReduce function knows how to test all relevant hypotheses
 #' # about model reduction for GxE models, reporting these in a nice table.
@@ -86,13 +88,14 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 	umx_check_names(selDVs, dzData)
 	message("selDVs: ", omxQuotes(selDVs))
 
-	selVars   = c(selDVs, selDefs)
+	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for gxe")
+	# TODO umxGxE_biv Check Defs are not correlated 1 or 0
 	obsMean   = mean(colMeans(mzData[,selDVs], na.rm = TRUE)); # Just one average mean for all twins
 	nVar      = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	rawVar    = diag(var(mzData[,selDVs], na.rm = TRUE))[1]
-	startMain = sqrt(c(.8, .0 ,.6) * rawVar)	
-	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for gxe")
+	startMain = sqrt(c(.8, .0 ,.6) * rawVar)
 	
+	selVars   = c(selDVs, selDefs)
 	# drop any unused variables
 	dzData = dzData[,selVars]
 	mzData = mzData[,selVars]
@@ -161,8 +164,8 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 			umxMatrix("aBeta2", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
 			umxMatrix("cBeta2", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
 			umxMatrix("eBeta2", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
-	
-			# Assemble parameters into Cholesky decomposition for twin 1 and twin 2 
+
+			# Assemble Cholesky decomposition for twin 1 and twin 2 
 			umxMatrix("PsAmz", "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0, 1, 0, 1, 0, 1, 1, 0, 1)),
 			umxMatrix("PsAdz", "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0,.5, 0, 1, 0,.5, 1, 0, 1)),
 			umxMatrix("PsC"  , "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0, 1, 0, 1, 0, 1, 1, 0, 1)),
@@ -202,6 +205,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 				cbind(0                 ,0                , top.c11, 0),
 				cbind(0                 ,0                , top.c21 + mod2 %x% top.cBeta1, top.c22 + mod2 %x% top.cBeta2))
 			),
+
 			# E chol
 			mxAlgebra(name = "chE", rbind(
 				cbind(top.e11, 0, 0 , 0),
@@ -221,17 +225,19 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 			mxExpectationNormal("expCovMZ", means = "top.expMean", dimnames = selVars),
 			mxFitFunctionML()
 		),
-	    mxModel("DZ",
+	  mxModel("DZ",
 			# defs, e.g twin1  c("data.divorce1")
 			umxMatrix("mod1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # "data.defmod1"
 			umxMatrix("mod2", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[2])), # "data.defmod2"
 
-			# Matrices generated to hold A and E computed Variance Components
-			# A
+			# ========================================
+			# = Compute a, c, e, Cholesky components =
+			# ========================================
+
 			mxAlgebra(name ="chA", rbind(
-				cbind(top.a11, 0, 0, 0),
+				cbind(top.a11                      , 0                            , 0, 0),
 				cbind(top.a21 + mod1 %x% top.aBeta1, top.a22 + mod1 %x% top.aBeta2, 0, 0),
-				cbind(0, 0, top.a11, 0),
+				cbind(0, 0, top.a11                      , 0                            ),
 				cbind(0, 0, top.a21 + mod2 %x% top.aBeta1, top.a22 + mod2 %x% top.aBeta2))
 			),
 			# C chol
@@ -251,7 +257,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 
 			mxAlgebra(name = "Adz", chA %*% top.PsAdz %*% t(chA)),  # variance component A
 			mxAlgebra(name = "C"  , chC %*% top.PsC   %*% t(chC)),  # variance component C
-			mxAlgebra(name = "E"  , chE %*% t(chE)),            # variance component E
+			mxAlgebra(name = "E"  , chE %*% t(chE)              ),  # variance component E
 
 			# Algebra for expected Variance/Covariance Matrices in MZ & DZ twins
 			mxAlgebra(name = "expCovDZ", Adz + C + E),
@@ -259,7 +265,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 			mxData(dzData, type = "raw"),
 			mxExpectationNormal("expCovDZ", means = "top.expMean", dimnames = selVars),
 			mxFitFunctionML()
-	    ),
+	  ),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
 
@@ -271,10 +277,18 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 	}
 	model = as(model, "MxModel.GxE_biv")
 	if(autoRun){
-		model = mxRun(model)
-		umxSummary(model)
+		tryCatch({
+			model = mxRun(model)
+			umxSummary(model, refModels = refModels, showEstimates = showEstimates)
+		}, warning = function(w) {
+			message("Warning incurred trying to run or summarize the model")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run or summarize model")
+			message(e)
+		})
 	}
-	return(model)
+	invisible(model)
 }
 
 #' Summarize a bivariate GxE twin model
@@ -301,19 +315,15 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 #' @seealso - \code{\link{umxGxE_biv}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
-#' # The total sample has been subdivided into a young cohort, 
-#' # aged 18-30 years, and an older cohort aged 31 and above.
-#' # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
-#' # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-#  # use ?twinData to learn about this data set.
-#' require(umx)
 #' data(twinData) 
-#' twinData$age1 = twinData$age2 = twinData$age
-#' selDVs  = c("bmi1", "bmi2")
-#' selDefs = c("age1", "age2")
-#' mzData  = subset(twinData, zygosity == "MZFF")
-#' dzData  = subset(twinData, zygosity == "DZMM")
-#' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
+#' selDVs  = "wt"
+#' selDefs = "ht"
+#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
+#' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
+#' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
+#'
+#' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
+#' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 #' # Plot Moderation
 #' umxSummary(m1)
 #' umxSummary(m1, location = "topright")
@@ -327,12 +337,11 @@ umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "t
 	}
 
 	if(is.null(model)){
-		message("umxSummaryGxE calls plot.MxModel.GxE for a twin moderation plot. A use example is:\n umxSummaryGxE(model, location = \"topright\")")
+		message("umxSummaryGxE_biv calls plot.MxModel.GxE_biv for a twin moderation plot. A use example is:\n umxSummaryGxE_biv(model, location = \"topright\")")
 		stop();
 	}
 	if(is.null(comparison)){
-		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
-		print(-2 * logLik(model));			
+		message(model$name, " -2 \u00d7 log(Likelihood) = ", -2 * logLik(model)) # \u00d7 = times sign
 	} else {
 		message("Comparison of model with parent model:")
 		umxCompare(comparison, model, digits = 3)
@@ -342,11 +351,43 @@ umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "t
 	# TODO umxSummaryACE these already exist if a_std exists..
 	# TODO replace all this with umx_standardizeACE
 	# Calculate standardised variance components
-	chA  <- mxEval(MZ.chA, model); # Path coefficients
-	print(chA)
+	# chA  <- model$MZ.chA$values # Path coefficients
+	# message("chA")
+	# umx_print(chA)
+
+	tmp = cbind(model$top.aBeta1$values, model$top.cBeta1$values, model$top.eBeta1$values)
+	tmp = data.frame(tmp)
+	names(tmp) <-c("aBeta1", "cBeta1", "eBeta1")
+	message("Betas on defVar effects")
+	umx_print(tmp, digits=3)
+	
+	tmp = cbind(model$top.aBeta2$values, model$top.cBeta2$values, model$top.eBeta2$values)
+	tmp = data.frame(tmp)
+	message("Betas on DV effects")
+	names(tmp) <-c("aBeta2", "cBeta2", "eBeta2")
+	umx_print(tmp, digits = 3)
+
+	# message("Amz")
+	# print(model$MZ$Amz$result) # chA %*% top.PsAdz %*% t(chA)),  # variance component A
+	# message("Adz")
+	# umx_print(model$DZ$Adz$result) # chA %*% top.PsAdz %*% t(chA)),  # variance component A
+
+	# message("C from DZ model")
+	# umx_print(model$DZ$C$result) # chA %*% top.PsAdz %*% t(chA)),  # variance component A
+	# message("E from DZ model")
+	# umx_print(model$DZ$E$result) # chA %*% top.PsAdz %*% t(chA)),  # variance component A
+	tmp = rbind(
+		cbind(model$top$a11$values, NA                  , model$top$c11$values, NA                  , model$top$e11$values, NA),
+		cbind(model$top$a21$values, model$top$a22$values, model$top$c21$values, model$top$c22$values, model$top$e21$values, model$top$e22$values)
+	)
+	tmp = data.frame(tmp)
+	names(tmp) <-c("a1", "a2", "c1", "c2","e1", "e2")
+	umx_print(tmp, digits = 3)
+
 	# umxPlotGxE_biv(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
 
 	if(reduce){
+		# TODO not implemented!
 		umxReduce(model = model, report = report)
 	}
 }
@@ -377,21 +418,21 @@ umxSummary.MxModel.GxE_biv <- umxSummaryGxE_biv
 #' @examples
 #' require(umx)
 #' data(twinData) 
-#' twinData$age1 = twinData$age2 = twinData$age
-#' selDVs  = c("bmi1", "bmi2")
-#' selDefs = c("age1", "age2")
-#' selVars = c(selDVs, selDefs)
-#' mzData  = subset(twinData, zyg == 1, selVars)
-#' dzData  = subset(twinData, zyg == 3, selVars)
-#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
-#'  	dzData = dzData, mzData = mzData, dropMissing = TRUE)
+#' selDVs  = "wt"; selDefs = "ht"
+#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
+#' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
+#' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
+#'
+#' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
+#' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
+#' # Plot Moderation
 #' plot(m1)
-#' umxPlotGxE_biv(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+#' umxPlotGxE_biv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
 umxPlotGxE_biv <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
 	if(class(x) != "MxModel.GxE_biv"){
 		stop("The first parameter of umxPlotGxE must be a GxE_biv model, you gave me a ", class(x))
 	}
-	model = x # to remind us that x has to be a umxGxE model
+	model = x # to remind us that x has to be a umxGxE_biv model
 	# get unique values of moderator
 	mzData = model$MZ$data$observed
 	dzData = model$DZ$data$observed
@@ -399,25 +440,50 @@ umxPlotGxE_biv <- function(x, xlab = NA, location = "topleft", separateGraphs = 
 	if(is.na(xlab)){
 		xlab = selDefs[1]
 	}
-	mz1 = as.vector(mzData[,selDefs[1]])
-	mz2 = as.vector(mzData[,selDefs[2]])
-	dz1 = as.vector(dzData[,selDefs[1]])
-	dz2 = as.vector(dzData[,selDefs[2]])
-	allValuesOfDefVar= c(mz1,mz2,dz1,dz2)
+	mzdef1 = as.vector(mzData[,selDefs[1]])
+	mzdef2 = as.vector(mzData[,selDefs[2]])
+	dzdef1 = as.vector(dzData[,selDefs[1]])
+	dzdef2 = as.vector(dzData[,selDefs[2]])
+	allValuesOfDefVar= c(mzdef1,mzdef2, dzdef1, dzdef2)
 	defVarValues = sort(unique(allValuesOfDefVar))
-	a   = model$top$matrices$a$values
-	c   = model$top$matrices$c$values
-	e   = model$top$matrices$e$values
-	am  = model$top$matrices$am$values
-	cm  = model$top$matrices$cm$values
-	em  = model$top$matrices$em$values
-	Va  = (c(a) + c(am) * defVarValues)^2
-	Vc  = (c(c) + c(cm) * defVarValues)^2
-	Ve  = (c(e) + c(em) * defVarValues)^2
+	
+	a11 = model$top.a11$values
+	a21 = model$top.a21$values
+	a22 = model$top.a22$values
+	Ba1 = model$top.aBeta1$values
+	Ba2 = model$top.aBeta2$values
+
+	c11 = model$top.c11$values
+	c21 = model$top.c21$values
+	c22 = model$top.c22$values
+	Bc1 = model$top.cBeta1$values
+	Bc2 = model$top.cBeta2$values
+
+	e11 = model$top.e11$values
+	e21 = model$top.e21$values
+	e22 = model$top.e22$values
+	Be1 = model$top.eBeta1$values
+	Be2 = model$top.eBeta2$values	
+
+	Va  = (c(a21 + a22) + (defVarValues * c(Ba1 + Ba2)))^2
+	Vc  = (c(c21 + c22) + (defVarValues * c(Bc1 + Bc2)))^2
+	Ve  = (c(e21 + e22) + (defVarValues * c(Be1 + Be2)))^2
 	Vt  = Va + Vc + Ve
+
 	out    = as.matrix(cbind(Va, Vc, Ve, Vt))
 	outStd = as.matrix(cbind(Va/Vt, Vc/Vt, Ve/Vt))
-	
+	# message("Va, Vc, Ve, Vt")
+	# umx_print(out   , digits = 2)
+	# message("std: Va, Vc, Ve")
+	# umx_print(outStd, digits = 2)
+
+	tmp= data.frame(rbind(
+		cbind(a11, NA , c11,  NA, e11,  NA, Ba1, Bc1, Be1),
+		cbind(a21, a22, c21, c22, e21, e22, Ba2, Bc2, Be2))
+	)
+	names(tmp) = c("a1", "a2", "c1", "c2", "e1", "e2", "a_betas", "c_betas", "e_betas")
+	umx_print(tmp, digits=2)
+
 	if(separateGraphs){
 		print("Outputting two graphs")
 	}else{

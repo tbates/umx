@@ -31,16 +31,16 @@ You can also set the label for the x axis (xlab), and choose the location of the
 \examples{
 require(umx)
 data(twinData) 
-twinData$age1 = twinData$age2 = twinData$age
-selDVs  = c("bmi1", "bmi2")
-selDefs = c("age1", "age2")
-selVars = c(selDVs, selDefs)
-mzData  = subset(twinData, zyg == 1, selVars)
-dzData  = subset(twinData, zyg == 3, selVars)
-m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
- 	dzData = dzData, mzData = mzData, dropMissing = TRUE)
+selDVs  = "wt"; selDefs = "ht"
+df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
+mzData  = subset(df, zygosity \%in\%  c("MZFF", "MZMM"))
+dzData  = subset(df, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))
+
+m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
+	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
+# Plot Moderation
 plot(m1)
-umxPlotGxE_biv(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+umxPlotGxE_biv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
 }
 \references{
 - \url{http://tbates.github.io}

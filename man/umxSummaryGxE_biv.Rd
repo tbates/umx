@@ -45,18 +45,15 @@ umxSummaryGxE_biv(model = NULL, digits = 2, xlab = NA,
 umxSummaryGxE_biv summarize a Moderation model, as returned by \code{\link{umxGxE_biv}}.
 }
 \examples{
-# The total sample has been subdivided into a young cohort, 
-# aged 18-30 years, and an older cohort aged 31 and above.
-# Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
-# 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-require(umx)
 data(twinData) 
-twinData$age1 = twinData$age2 = twinData$age
-selDVs  = c("bmi1", "bmi2")
-selDefs = c("age1", "age2")
-mzData  = subset(twinData, zygosity == "MZFF")
-dzData  = subset(twinData, zygosity == "DZMM")
-m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
+selDVs  = "wt"
+selDefs = "ht"
+df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
+mzData  = subset(df, zygosity \%in\%  c("MZFF", "MZMM"))
+dzData  = subset(df, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))
+
+m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
+	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 # Plot Moderation
 umxSummary(m1)
 umxSummary(m1, location = "topright")

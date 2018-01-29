@@ -51,19 +51,21 @@ For the sake of clarity, C, and E paths are omitted here. These mirror those for
 }
 \examples{
 require(umx)
-data(twinData) 
-twinData$age1 = twinData$age2 = twinData$age
+data(twinData)
 selDVs  = "wt"
 selDefs = "ht"
-mzData  = subset(twinData, zygosity \%in\%  c("MZFF", "MZMM"))[1:80,]
-dzData  = subset(twinData, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))[1:80,]
+df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
+mzData  = subset(df, zygosity \%in\%  c("MZFF", "MZMM"))
+dzData  = subset(df, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))
+
 m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
+
 # Plot Moderation
 umxSummaryGxE_biv(m1)
 umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = FALSE)
-m2 = umxModify(m1, regex = "am_.*", comparison = TRUE)
+m2 = umxModify(m1, update = c("cBeta2_r1c1", "eBeta1_r1c1", "eBeta2_r1c1"), comparison = TRUE)
 \dontrun{
 # TODO: The umxReduce function knows how to test all relevant hypotheses
 # about model reduction for GxE models, reporting these in a nice table.

@@ -6,16 +6,20 @@
 \usage{
 umx_var(df, ordVar = 1, format = c("full", "diag", "lower"),
   use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs",
-  "na.or.complete"))
+  "na.or.complete"), digits = NULL, strict = TRUE)
 }
 \arguments{
-\item{df}{a dataframe of raw data from which to get variances.}
+\item{df}{A dataframe of raw data from which to get variances.}
 
 \item{ordVar}{The value to return at any ordinal columns (defaults to 1).}
 
 \item{format}{to return: options are c("full", "diag", "lower"). Defaults to full, but this is not implemented yet.}
 
-\item{use}{passed to \code{\link{cov}} - defaults to "complete.obs" (see param default for other options).}
+\item{use}{Passed to \code{\link{cov}} - defaults to "complete.obs" (see param default for other options).}
+
+\item{digits}{Ignored if NULL. Set for easy printing.}
+
+\item{strict}{Whether to allow non-ordered factors to be processed (default = FALSE (no)).}
 }
 \value{
 - \code{\link{mxModel}}
@@ -29,7 +33,7 @@ tmp     = mtcars[,1:4]
 tmp$cyl = ordered(mtcars$cyl) # ordered factor
 tmp$hp  = ordered(mtcars$hp)  # binary factor
 umx_var(tmp, format = "diag", ordVar = 1, use = "pair")
-tmp2 = tmp[, c(1,3)]
+tmp2 = tmp[, c(1, 3)]
 umx_var(tmp2, format = "diag")
 umx_var(tmp2, format = "full")
 }
