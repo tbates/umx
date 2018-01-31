@@ -63,8 +63,8 @@ dzmData = subset(us_skinfold_data, zyg == 3)
 dzfData = subset(us_skinfold_data, zyg == 4)
 dzoData = subset(us_skinfold_data, zyg == 5)
 
-m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun=F,
-			mzmData = mzmData, dzmData = dzmData, 
+m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun=FALSE,
+	  mzmData = mzmData, dzmData = dzmData, 
        mzfData = mzfData, dzfData = dzfData, 
        dzoData = dzoData)
 umxSummary(m1)
