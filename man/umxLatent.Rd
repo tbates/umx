@@ -41,7 +41,7 @@ The following figures show how a reflective and a formative variable look as pat
 Note, a reflective latent on its own is not identified as a complete model.
 Fixing manifest variances at their observed values can allow this case.
 
-Reflective (manifests reflect the  value of the latent variable)
+Reflective (manifests reflect the value of the latent variable)
 \figure{reflective.png}
 
 Formative (manifests provide the value of the latent variable)
@@ -60,8 +60,8 @@ m1 = umxRAM("reflective", data = df,
 umxSummary(m1, show="std")
 plot(m1, std = TRUE)
 
-m2 = umxRAM("formative", data = df,  fixManifestVariances=TRUE,
-umxLatent("G", formedBy = manifests, data = theData)
+m2 = umxRAM("formative", data = df,
+umxLatent("G", formedBy = manifests, data = df, fixManifestVariances=TRUE)
 )
 umxSummary(m2, show = "std")
 plot(m2, std = TRUE)

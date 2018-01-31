@@ -279,7 +279,9 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 	if(autoRun){
 		tryCatch({
 			model = mxRun(model)
-			umxSummary(model, refModels = refModels, showEstimates = showEstimates)
+			umxSummary(model)
+			# TODO allow refModels and estimate control? 
+			# umxSummary(model, refModels = refModels, showEstimates = showEstimates)
 		}, warning = function(w) {
 			message("Warning incurred trying to run or summarize the model")
 			message(w)

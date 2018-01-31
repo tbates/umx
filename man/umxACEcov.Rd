@@ -88,7 +88,7 @@ m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData
 # = Use an lm-based age-residualisation approach instead =
 # ========================================================
 
-resid_data = umx_residualize("bmi", "age", sep = 1:2, twinData)
+resid_data = umx_residualize("bmi", "age", suffixes = 1:2, twinData)
 mzData = subset(resid_data, zygosity == "MZFF")
 dzData = subset(resid_data, zygosity == "DZFF")
 m2     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")

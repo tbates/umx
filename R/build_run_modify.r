@@ -164,13 +164,16 @@ utils::globalVariables(c(
 	"x1", "y1", "y2", "dose", "value", "freq",
 	
 	# Used in umxGxE_biv
+	"mod1", "mod2", 
 	"Adz", "Amz",
-	"PsAdz", "PsAmz", "PsC", 
+	"PsAdz"    , "PsAmz"    , "PsC", 
+	"top.PsAdz", "top.PsAmz", "top.PsC",
 	"chA", "chC", "chE", 
 	"top.a11", "top.a21", "top.a22", 
 	"top.c11", "top.c21", "top.c22", 
 	"top.e11", "top.e21", "top.e22", 
-	"top.aBeta1", "top.aBeta2", "top.eBeta1", "top.eBeta2", "top.cBeta1", "top.cBeta2"	
+	"top.aBeta1", "top.aBeta2", "top.eBeta1", "top.eBeta2", "top.cBeta1", "top.cBeta2"
+	
 	)
 )
 
@@ -1928,7 +1931,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' # = Use an lm-based age-residualisation approach instead =
 #' # ========================================================
 #'
-#' resid_data = umx_residualize("bmi", "age", sep = 1:2, twinData)
+#' resid_data = umx_residualize("bmi", "age", suffixes = 1:2, twinData)
 #' mzData = subset(resid_data, zygosity == "MZFF")
 #' dzData = subset(resid_data, zygosity == "DZFF")
 #' m2     = umxACE("resid", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
@@ -3562,8 +3565,8 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 			paths = list(p1, p2, p3)
 		}else{
 			# Add means: fix latent mean @0, and add freely estimated means to manifests
-			p4 = mxPath(from = "one", to = latent   , arrows = 1, free = FALSE, values = 0)
-			p5 = mxPath(from = "one", to = manifests, arrows = 1, free = TRUE, values = means)
+			p4 = umxPath(means = latent, fixedAt=0)
+			p5 = umxPath(means = manifests, values = means)
 			paths = list(p1, p2, p3, p4, p5)
 		}
 	} else {
@@ -3584,8 +3587,8 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 			paths = list(p1, p2, p3, p4)
 		}else{
 			# Add means (latent @ 0, manifests free)
-			p5 = umxPath(one = latent, fixedAt = 0)
-			p6 = umxPath(one = manifests, free = TRUE, values = means)
+			p5 = umxPath(means = latent, fixedAt = 0)
+			p6 = umxPath(means = manifests, free = TRUE, values = means)
 			paths = list(p1, p2, p3, p4, p5, p6)
 		}
 	}
