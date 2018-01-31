@@ -3693,6 +3693,15 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' umxAPA(lm(mpg ~ wt + disp, mtcars), "disp")
 #' 
 #' # try an lme, glm, or htest
+#' df = mtcars
+#' df$mpg_thresh = 0
+#' df$mpg_thresh[df$mpg>16] = 1
+#' m1 = glm(mpg_thresh ~ wt + gear,data = df, family = binomial)
+#' umxAPA(m1)
+#' 
+#' # A t-Test
+#' m1 = t.test(1:10, y = c(7:20))
+#' umxAPA(m1)
 #' 
 #' # ========================================================
 #' # = Summarize a DATA FRAME: Correlations + Means and SDs =
