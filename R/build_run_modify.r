@@ -731,8 +731,9 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' newModelName = "model_doth_smell_as_sweet"
 #' m2 = umxModify(m1, update = "G_to_x1", newlabels= newLabel, name = newModelName, comparison = TRUE)
 #' # Change labels in 2 places
+#' labsToUpdate = c("G_to_x1", "G_to_x2")
 #' newLabel = "G_to_1_or_2"
-#' m2 = umxModify(m1, regex = newLabel, newlabels= x, name = "equated", comparison = TRUE)
+#' m2 = umxModify(m1, update = labsToUpdate, newlabels= newLabel, name = "equated", comparison = TRUE)
 #' 
 #' # Advanced!
 #' # Regular expressions let you use pieces of the old names in creating new ones!
@@ -3488,11 +3489,14 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' umxSummary(m1, show="std")
 #' plot(m1, std = TRUE)
 #' 
+#' \dontrun{
+#' # I don't recommend using umxLatent at present: It's not a direction I am moving umx in
 #' m2 = umxRAM("formative", data = df,
 #'	umxLatent("G", formedBy = manifests, data = df, fixManifestVariances=TRUE)
 #' )
 #' umxSummary(m2, show = "std")
 #' plot(m2, std = TRUE)
+#' }
 umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  fixManifestVariances = FALSE, name = NULL, labelSuffix = "", verbose = TRUE) {
 	# Purpose: make a latent variable formed/or formed by some manifests
 	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
@@ -4207,6 +4211,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # ====================
 #' # = Cholesky example =
 #' # ====================
+#' \dontrun{
 #' latents   = paste0("A", 1:3)
 #' manifests = names(demoOneFactor)
 #' myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
@@ -4215,7 +4220,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' umxSummary(m1, show = "std")
+#' }
 #'
 #' # The following NOT YET implemented!!
 #' # umxPath("A <-> B") # same path as above using a string

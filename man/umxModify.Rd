@@ -97,8 +97,9 @@ newLabel = "A_rose_by_any_other_name"
 newModelName = "model_doth_smell_as_sweet"
 m2 = umxModify(m1, update = "G_to_x1", newlabels= newLabel, name = newModelName, comparison = TRUE)
 # Change labels in 2 places
+labsToUpdate = c("G_to_x1", "G_to_x2")
 newLabel = "G_to_1_or_2"
-m2 = umxModify(m1, regex = newLabel, newlabels= x, name = "equated", comparison = TRUE)
+m2 = umxModify(m1, update = labsToUpdate, newlabels= newLabel, name = "equated", comparison = TRUE)
 
 # Advanced!
 # Regular expressions let you use pieces of the old names in creating new ones!

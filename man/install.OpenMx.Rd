@@ -3,7 +3,6 @@
 \name{install.OpenMx}
 \alias{install.OpenMx}
 \alias{umx_install_OpenMx}
-\alias{umx_update_OpenMx.}
 \title{Easily install the latest parallel/NPSOL enabled build of OpenMx.}
 \usage{
 install.OpenMx(loc = c("UVa", "travis", "CRAN", "open travis build page"),

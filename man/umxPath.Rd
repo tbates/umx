@@ -182,6 +182,7 @@ umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 # ====================
 # = Cholesky example =
 # ====================
+\dontrun{
 latents   = paste0("A", 1:3)
 manifests = names(demoOneFactor)
 myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
@@ -190,7 +191,7 @@ m1 <- umxRAM("Chol", data = myData,
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1.0)
 )
-umxSummary(m1, show = "std")
+}
 
 # The following NOT YET implemented!!
 # umxPath("A <-> B") # same path as above using a string

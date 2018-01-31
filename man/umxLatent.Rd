@@ -60,11 +60,14 @@ m1 = umxRAM("reflective", data = df,
 umxSummary(m1, show="std")
 plot(m1, std = TRUE)
 
+\dontrun{
+# I don't recommend using umxLatent at present: It's not a direction I am moving umx in
 m2 = umxRAM("formative", data = df,
 umxLatent("G", formedBy = manifests, data = df, fixManifestVariances=TRUE)
 )
 umxSummary(m2, show = "std")
 plot(m2, std = TRUE)
+}
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

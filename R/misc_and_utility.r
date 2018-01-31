@@ -2049,7 +2049,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' 3. Install from CRAN.
 #' 4. Open the list of travis builds in a browser window.
 #'
-#' @aliases umx_install_OpenMx umx_update_OpenMx.
+#' @aliases umx_update_OpenMx
 #' @param loc Which install to get: "UVa" (the default), "travis" (latest build),
 #' or open the travis list of builds on the web to view/pick a url.
 #' @param url A custom URL if you have/need one (probably not).
@@ -2083,9 +2083,6 @@ install.OpenMx <- function(loc = c("UVa", "travis", "CRAN", "open travis build p
 		browseURL("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis")
 	}
 }
-
-#' @export
-umx_install_OpenMx <- install.OpenMx
 
 #' @export
 umx_update_OpenMx <- install.OpenMx

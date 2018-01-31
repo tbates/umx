@@ -3694,7 +3694,9 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' umxAPA(mtcars[,1:3])
 #' umxAPA(mtcars[,1:3], digits = 3)
 #' umxAPA(mtcars[,1:3], lower = FALSE)
+#' \dontrun{
 #' umxAPA(mtcars[,1:3], report = "html")
+#' }
 #' # ===============================================
 #' # = Generate a CI string based on effect and se =
 #' # ===============================================
