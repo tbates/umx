@@ -41,7 +41,6 @@ does NOT affect ability of model to account for DZOS data.
 Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
 }
 \examples{
-# see examples page for now
 # =========================
 # = Load and Process Data =
 # =========================
@@ -67,8 +66,8 @@ m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun=FALSE,
 	  mzmData = mzmData, dzmData = dzmData, 
        mzfData = mzfData, dzfData = dzfData, 
        dzoData = dzoData)
-umxSummary(m1)
-summary(m1)$Mi
+# umxSummary(m1)
+# summary(m1)$Mi
 
 }
 \references{

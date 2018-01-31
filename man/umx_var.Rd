@@ -43,7 +43,8 @@ umx_var(tmp2, format = "full")
 \seealso{
 Other Miscellaneous Stats Helpers: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umxHetCor}},
-  \code{\link{umx_cor}}, \code{\link{umx_fun_mean_sd}},
-  \code{\link{umx_means}}, \code{\link{umx_r_test}},
-  \code{\link{umx_round}}, \code{\link{umx}}
+  \code{\link{umx_apply}}, \code{\link{umx_cor}},
+  \code{\link{umx_fun_mean_sd}}, \code{\link{umx_means}},
+  \code{\link{umx_r_test}}, \code{\link{umx_round}},
+  \code{\link{umx}}
 }

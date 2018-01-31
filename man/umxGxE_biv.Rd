@@ -47,7 +47,7 @@ The following figure shows the GxE model as a path diagram: \emph{note}: Only Tw
 Twin 1 and twin 2 A, C, and E latent traits are connected in the standard fashion, with the
 covariance of the T1 and T2 latent genetic traits set to .5 for DZ and 1.0 for MZ pairs.
 For the sake of clarity, C, and E paths are omitted here. These mirror those for A.
-\figure{GxE_biv.png}{}
+\figure{GxEbiv.png}{}
 }
 \examples{
 require(umx)
@@ -58,6 +58,7 @@ df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = ""
 mzData  = subset(df, zygosity \%in\%  c("MZFF", "MZMM"))
 dzData  = subset(df, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))
 
+\dontrun{
 m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 
@@ -66,7 +67,7 @@ umxSummaryGxE_biv(m1)
 umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = FALSE)
 m2 = umxModify(m1, update = c("cBeta2_r1c1", "eBeta1_r1c1", "eBeta2_r1c1"), comparison = TRUE)
-\dontrun{
+#
 # TODO: The umxReduce function knows how to test all relevant hypotheses
 # about model reduction for GxE models, reporting these in a nice table.
 umxReduce(m1)

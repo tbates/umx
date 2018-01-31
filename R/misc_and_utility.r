@@ -1212,7 +1212,7 @@ umx_pad <- function(x, n) {
 #' @return - object
 #' @export
 #' @seealso - \code{\link{umx_aggregate}} 
-#' @family Miscellaneous Stats Helpers✓
+#' @family Miscellaneous Stats Helpers
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' umx_apply(mean, mtcars, by = "columns")
@@ -2582,7 +2582,9 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @family Reporting Functions
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
+#' \dontrun{
 #' umx_print(mtcars[1:10,], file = "tmp.html")
+#' }
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
 	# depends on R2HTML::HTML and knitr::kable
 	if(class(x)=="character"){
@@ -4277,9 +4279,9 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 #' # umx_stack, with additional variables passed along 
 #' df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 #' str(df) # ind is a factor, with levels select
-#' qplot(x = mpg, y= values, color=ind, data = df)
+#' ggplot2::qplot(x = mpg, y= values, color=ind, data = df)
 #' df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
-#' qplot(x = mpg, y= values, group="ind", data = df)
+#' ggplot2::qplot(x = mpg, y= values, group="ind", data = df)
 umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "ind") {
 	# TODO: rewrite to create the full size in one go, and slot in blocks
 	# initialize new dataframe
@@ -5622,7 +5624,7 @@ umx_standardize.MxModel.ACE <- umx_standardize_ACE
 #' mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
 #' dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
-#' 	 suffix = "", autoRun = TRUE)
+#' 	 sep = "", autoRun = TRUE)
 #' fit = umx_standardize_ACEcov(m1)
 umx_standardize_ACEcov <- function(model, ...) {
 	if(typeof(model) == "list"){ # call self recursively

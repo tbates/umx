@@ -57,12 +57,13 @@ dzData  = subset(twinData, zygosity == "DZMM", selVars)
 # Exclude cases with missing Def
 mzData <- mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
 dzData <- dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
+\dontrun{
 m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
-m1 = umxRun(m1)
 # Plot Moderation
 umxSummaryGxE(m1)
 umxSummaryGxE(m1, location = "topright")
 umxSummaryGxE(m1, separateGraphs = FALSE)
+}
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}

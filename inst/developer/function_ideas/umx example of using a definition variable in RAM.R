@@ -1,6 +1,6 @@
 # 1. Add this new style of path: umxAlgPath("x", with = "y", free = F, alg = XY)?
 # 2. umxLabel: extend to locate any matrices in a RAM model and auto label them?
-# 3. ✓ Add umxPath(defn = "grp_def", labels = "data.grp")
+# 3. Added umxPath(defn = "grp_def", labels = "data.grp")
 	# umxPath(var   = "grp_def", fixedAt = 0),
 	# umxPath(means = "grp_def", fixedAt = 0, labels = "data.grp"),
 

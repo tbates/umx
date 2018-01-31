@@ -38,7 +38,9 @@ By default, Zeros have the decimals suppressed, and NAs are suppressed altogethe
 }
 \examples{
 umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
+\dontrun{
 umx_print(mtcars[1:10,], file = "tmp.html")
+}
 }
 \seealso{
 \code{\link{umx_set_table_format}}

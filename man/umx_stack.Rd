@@ -32,9 +32,9 @@ df = stack(mtcars, select = c("disp", "hp"), drop=FALSE)
 # umx_stack, with additional variables passed along 
 df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 str(df) # ind is a factor, with levels select
-qplot(x = mpg, y= values, color=ind, data = df)
+ggplot2::qplot(x = mpg, y= values, color=ind, data = df)
 df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
-qplot(x = mpg, y= values, group="ind", data = df)
+ggplot2::qplot(x = mpg, y= values, group="ind", data = df)
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

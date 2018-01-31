@@ -27,7 +27,7 @@ selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes= 1:2)
 mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
 dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
-	 suffix = "", autoRun = TRUE)
+	 sep = "", autoRun = TRUE)
 fit = umx_standardize_ACEcov(m1)
 }
 \references{

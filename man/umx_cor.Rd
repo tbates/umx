@@ -34,7 +34,8 @@ umx_cor(myFADataRaw[1:8,])
 \seealso{
 Other Miscellaneous Stats Helpers: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umxHetCor}},
-  \code{\link{umx_fun_mean_sd}}, \code{\link{umx_means}},
-  \code{\link{umx_r_test}}, \code{\link{umx_round}},
-  \code{\link{umx_var}}, \code{\link{umx}}
+  \code{\link{umx_apply}}, \code{\link{umx_fun_mean_sd}},
+  \code{\link{umx_means}}, \code{\link{umx_r_test}},
+  \code{\link{umx_round}}, \code{\link{umx_var}},
+  \code{\link{umx}}
 }

@@ -9,7 +9,7 @@
 #' Twin 1 and twin 2 A, C, and E latent traits are connected in the standard fashion, with the
 #' covariance of the T1 and T2 latent genetic traits set to .5 for DZ and 1.0 for MZ pairs.
 #' For the sake of clarity, C, and E paths are omitted here. These mirror those for A.
-#' ![](GxE_biv.png)
+#' ![](GxEbiv.png)
 #' @param name The name of the model (defaults to "GxE_biv")
 #' @param selDVs The dependent variable (e.g. IQ)
 #' @param selDefs The definition variable (e.g. socio economic status)
@@ -43,6 +43,7 @@
 #' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
 #' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
 #'
+#' \dontrun{
 #' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
 #' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 #'
@@ -51,7 +52,7 @@
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' m2 = umxModify(m1, update = c("cBeta2_r1c1", "eBeta1_r1c1", "eBeta2_r1c1"), comparison = TRUE)
-#' \dontrun{
+#' #
 #' # TODO: The umxReduce function knows how to test all relevant hypotheses
 #' # about model reduction for GxE models, reporting these in a nice table.
 #' umxReduce(m1)
@@ -324,12 +325,14 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 #' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
 #' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
 #'
+#' \dontrun{
 #' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
 #' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 #' # Plot Moderation
 #' umxSummary(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
+#' }
 umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, comparison = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), ...) {
 	report = match.arg(report)
 	umx_has_been_run(model, stop = TRUE)
@@ -419,7 +422,8 @@ umxSummary.MxModel.GxE_biv <- umxSummaryGxE_biv
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' require(umx)
-#' data(twinData) 
+#' data(twinData)
+#' \dontrun{
 #' selDVs  = "wt"; selDefs = "ht"
 #' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
 #' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
@@ -430,6 +434,7 @@ umxSummary.MxModel.GxE_biv <- umxSummaryGxE_biv
 #' # Plot Moderation
 #' plot(m1)
 #' umxPlotGxE_biv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
+#' }
 umxPlotGxE_biv <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
 	if(class(x) != "MxModel.GxE_biv"){
 		stop("The first parameter of umxPlotGxE must be a GxE_biv model, you gave me a ", class(x))

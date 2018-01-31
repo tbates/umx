@@ -52,12 +52,14 @@ df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = ""
 mzData  = subset(df, zygosity \%in\%  c("MZFF", "MZMM"))
 dzData  = subset(df, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))
 
+\dontrun{
 m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 # Plot Moderation
 umxSummary(m1)
 umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = FALSE)
+}
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}

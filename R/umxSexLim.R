@@ -23,7 +23,6 @@
 #' Multivariate genetic analysis of sex-lim and GxE interaction.
 #' \emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489. 
 #' @examples
-#' # see examples page for now
 #  # =============================================
 #  # = Run Qualitative Sex Differences ACE model =
 #  # =============================================
@@ -52,8 +51,8 @@
 #'		  mzmData = mzmData, dzmData = dzmData, 
 #'        mzfData = mzfData, dzfData = dzfData, 
 #'        dzoData = dzoData)
-#' umxSummary(m1)
-#' summary(m1)$Mi
+#' # umxSummary(m1)
+#' # summary(m1)$Mi
 #' 
 umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), autoRun = getOption("umx_auto_run"), optimizer = NULL){
 	# ================================
@@ -124,7 +123,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	model = mxModel(name,
 		mxModel("top",
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),		
-			# ✓ Path Coefficient matrices a, c, and e for males and females 
+			# Path Coefficient matrices a, c, and e for males and females 
 			umxMatrix("am", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 			umxMatrix("cm", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 			umxMatrix("em", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
@@ -281,13 +280,37 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @seealso - \code{\link{umxACE}} 
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
+#  # =============================================
+#  # = Run Qualitative Sex Differences ACE model =
+#  # =============================================
+#' # =========================
+#' # = Load and Process Data =
+#' # =========================
 #' require(umx)
-#' data(twinData)
-#' selDVs = c("bmi1", "bmi2")
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
-#' m1 = umxSexLim(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummary(m1)
+#' data("us_skinfold_data")
+#' # rescale vars
+#' us_skinfold_data[, c('bic_T1', 'bic_T2')] <- us_skinfold_data[, c('bic_T1', 'bic_T2')]/3.4
+#' us_skinfold_data[, c('tri_T1', 'tri_T2')] <- us_skinfold_data[, c('tri_T1', 'tri_T2')]/3
+#' us_skinfold_data[, c('caf_T1', 'caf_T2')] <- us_skinfold_data[, c('caf_T1', 'caf_T2')]/3
+#' us_skinfold_data[, c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[, c('ssc_T1', 'ssc_T2')]/5
+#' us_skinfold_data[, c('sil_T1', 'sil_T2')] <- us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
+#'
+#' # Variables for Analysis
+#' selDVs = c('ssc','sil','caf','tri','bic') # (was Vars)
+#' # Data objects for Multiple Groups
+#' mzmData = subset(us_skinfold_data, zyg == 1)
+#' mzfData = subset(us_skinfold_data, zyg == 2)
+#' dzmData = subset(us_skinfold_data, zyg == 3)
+#' dzfData = subset(us_skinfold_data, zyg == 4)
+#' dzoData = subset(us_skinfold_data, zyg == 5)
+#'
+#' # ============================================================
+#' # = NOT WORKING YET! Should be good to use for Boulder/March =
+#' # ============================================================
+#' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun=FALSE,
+#'		  mzmData = mzmData, dzmData = dzmData, 
+#'        mzfData = mzfData, dzfData = dzfData, 
+#'        dzoData = dzoData)
 #' \dontrun{
 #' umxSummary(m1, file = NA);
 #' umxSummarySexLim(m1, file = "name", std = TRUE)

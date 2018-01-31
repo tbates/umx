@@ -30,7 +30,8 @@ You can also set the label for the x axis (xlab), and choose the location of the
 }
 \examples{
 require(umx)
-data(twinData) 
+data(twinData)
+\dontrun{
 selDVs  = "wt"; selDefs = "ht"
 df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
 mzData  = subset(df, zygosity \%in\%  c("MZFF", "MZMM"))
@@ -41,6 +42,7 @@ m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs,
 # Plot Moderation
 plot(m1)
 umxPlotGxE_biv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
+}
 }
 \references{
 - \url{http://tbates.github.io}
