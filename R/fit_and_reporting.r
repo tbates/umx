@@ -3679,52 +3679,66 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param addComparison for a p-value, whether to add "</=" default (NA) adds "<" if necessary
 #' @param report what to return (default = markdown table). Use "html" to open a web table.
 #' @param lower whether to report on the lower triangle of correlations for a data.frame (Default = TRUE)
+#' @param test for glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
 #' @return - string
 #' @export
 #' @family Reporting Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://my.ilstu.edu/~jhkahn/apastats.html}
 #' @examples
-#' # =============================
-#' # = Report regression results =
-#' # =============================
+#' 
+#' # ========================================
+#' # = Report lm (regression/anova) results =
+#' # ========================================
 #' umxAPA(lm(mpg ~ wt + disp, mtcars))
 #' umxAPA(lm(mpg ~ wt + disp, mtcars), "disp")
-#' # ===============================================================
-#' # = Generate summary of dataframe: Correlations + Means and SDs =
-#' # ===============================================================
+#' 
+#' # try an lme, glm, or htest
+#' 
+#' # ========================================================
+#' # = Summarize a DATA FRAME: Correlations + Means and SDs =
+#' # ========================================================
 #' umxAPA(mtcars[,1:3])
 #' umxAPA(mtcars[,1:3], digits = 3)
 #' umxAPA(mtcars[,1:3], lower = FALSE)
 #' \dontrun{
 #' umxAPA(mtcars[,1:3], report = "html")
 #' }
+#' 
 #' # ===============================================
-#' # = Generate a CI string based on effect and se =
+#' # = CONFIDENCE INTERVAL text from effect and se =
 #' # ===============================================
-#' umxAPA(.4, .3)
+#' umxAPA(.4, .3) # parameter 2 interpreted as SE
 #' # Input beta and CI, and back out the SE
-#' umxAPA(-0.030, c(-0.073, 0.013), dig=3)
+#' umxAPA(-0.030, c(-0.073, 0.013), digits = 3)
+#' 
 #' # ====================
 #' # = Format a p-value =
 #' # ====================
 #' umxAPA(.0182613)
 #' umxAPA(.000182613)
-#' # ====================
-#' # = Format a p-value =
-#' # ====================
+#' 
+#' # ========================
+#' # = report a correlation =
+#' # ========================
 #' data(twinData)
 #' selDVs = c("wt1", "wt2")
 #' mzData <- subset(twinData, zygosity %in% c("MZFF", "MZMM"))
 #' dzData <- subset(twinData, zygosity %in% c("DZFF", "DZMM", "DZOS"))
 #' x = cor.test(~ wt1 + wt2, data = mzData)
 #' umxAPA(x)
-umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE) {
+#' 
+#' # ========================
+#' # = report a correlation =
+#' # ========================
+#' data(twinData)
+
+umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp")) {
 	report = match.arg(report)
-	if(class(obj) == "htest"){
+	if("htest" == class(obj)[[1]]){
 		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), ", ", round(obj$conf.int[2], digits), "]")
 		o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
 		return(o)
-	}else if(class(obj) == "data.frame"){
+	}else if("data.frame" == class(obj)[[1]]){
 		# Generate a summary of correlation and means
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE)
 		cor_table = umx_apply(round, cor_table, digits = digits) # round correlations
@@ -3742,7 +3756,7 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 		if(anyNA(obj)){
 			message("Some rows in dataframe had missing values.")
 		}
-	} else if( "matrix" == class(obj)) {
+	} else if("matrix" == class(obj)[[1]]) {
 		# Assume these are correlations or similar numbers
 		cor_table = umx_apply(round, obj, digits = digits) # round correlations
 		output = data.frame(cor_table)
@@ -3751,7 +3765,7 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 		} else {
 			umx_print(output, digits = digits)
 		}
-	} else if( "lm" == class(obj)) {
+	} else if("lm" == class(obj)[[1]]) {
 		# report lm summary table
 		if(std){
 			obj = update(obj, data = umx_scale(obj$model))
@@ -3773,7 +3787,38 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 			   "t = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))		
 		}
-	} else if( "lme" == class(obj)) {
+	} else if("glm" == class(obj)[[1]]) {
+		# report glm summary table
+		if(std){
+			message("TODO: not sure how to not scale the DV in this gml")
+			obj = update(obj, data = umx_scale(obj$model))
+		}
+		# TODO pick test based on family
+		# Chisq = "binomial" "Poisson" (Chisq same as "LRT")
+		# F = gaussian, quasibinomial, quasipoisson
+		# Cp similar to AIC
+		# see ?anova.glm 
+
+		model_coefficients = summary(obj)$coefficients
+		conf = confint(obj)
+
+		if(is.null(se)){
+			se = dimnames(model_coefficients)[[1]]
+		}
+		for (i in se) {
+			lower   = conf[i, 1]
+			upper   = conf[i, 2]
+			b_and_p = model_coefficients[i, ]
+			b       = b_and_p["Estimate"]
+			testStat    = b_and_p["z value"]
+			pval    = b_and_p["Pr(>|z|)"]
+			print(paste0(i, " \u03B2 = ", round(b, digits), 
+			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
+			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
+			))
+		}
+		print(paste0("AIC = ", round(AIC(obj), 3) ))
+	} else if( "lme" == class(obj)[[1]]) {
 		# report lm summary table
 		if(std){
 			obj = update(obj, data = umx_scale(obj$data))

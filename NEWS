@@ -1,14 +1,13 @@
 # umx 2.0.0 (January 29 2018, R 3.4.3 Birthday edition)
-* NEW: `umxSexLim` multi-variate twin sex-limitation!
-* NEW: `umxGxE_biv` bivariate Gene-environment interaction model.
-* NEW: `umxGxE_biv` bivariate Gene-environment interaction model.
+* NEW: `umxSexLim` multi-variate twin sex-limitation (beta)
+* NEW: `umxGxE_biv` bivariate Gene-environment interaction model (beta)
 * NEW: `umx_make_TwinData` Can now make bivariate moderated twin data.
 * NEW: `umx_stack` Slightly more powerful version of base stack.
 * NEW: `umx_array_shift` Shifts an item off the beginning of a list.
 * IMPROVED: `umxRAM` can take lists of paths as input (contributed by @bwiernik).
 * IMPROVED: `umxModify` can write newlabels.
-* IMPROVED: Help pages and examples improved and reorganized.
 * IMPROVED: `umxAPA` can back-out an SE if given b and CI.
+* IMPROVED: Help pages and examples improved and reorganized.
 * Beta: Beginning a `umxGroup` function as part of measurement invariance support.
 * DEPRECATED LONG ENOUGH: Dropped support for umxReRun (use umxModify) 
 * DEPRECATED LONG ENOUGH: Dropped support for suffix in some places (use sep) 
@@ -19,13 +18,13 @@
 
 # umx 1.9.1 (November 2017, R 3.4.2)
 * *TIP*: `?umxRAM` has a sketch mode. just set `data` to a list of manifest variable names.
-* NEW `?umxACEv` Beta1: Variance component version of ACE. Hammer on it for Boulder workshop!
+* NEW: `umxSuperModel` function to automate multiple-group model creation.
+* NEW `?umxACEv` Variance component version of ACE. (beta)
 * NEW: CIs in output tables!
 * NEW `?umxACEcov_fixed` Beta1: Handles main effects of covariates in the means of continuous variables.
 * NEW `umxModify` can now equate parameters (set master = ), update is slave set of labels.
 	* As a result, umxEquate now doesn't autoRun by default. Let me know if this is a pain.
 * NEW: Dataset on general family functioning in twins. ?GFF
-* NEW: `umxSuperModel` function to automate multiple-group model creation.
 * NEW: `optimiser` parameter for umxACE and other twin models: Set the optimizer in your model code!
 * NEW: `umx_is_numeric` boolean check if variables in a dataframe are numeric.
 * NEW: `umx_is_class` boolean check if variables in a dataframe match a desired class.

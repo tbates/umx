@@ -1,6 +1,8 @@
 ## Changes
-As requested, don't run examples which open the browser (these had been present for several years)
-There are multiple new features as well,  Hopefully allows package to be re-instated (was removed 2018-01-25).
+As requested, I now don't run examples which open the browser (these had been present for several years).
+There are multiple new features as well.
+
+Hopefully allows package to be re-instated (was removed 2018-01-25).
 
 The package likely can't be tested on El Capitan, as the mac CRAN pipeline currently fails building 
 OpenMx binaries for El Cap (we can build them fine locally)
@@ -11,7 +13,7 @@ OpenMx binaries for El Cap (we can build them fine locally)
 * 64-bit Linux (Scientific Linux 6), R 3.4.3
 
 ## R CMD check results
-* No ERRORs, No WARNINGs, No NOTES
+* One example time WARNING, No ERRORs, No NOTES
 
 ## Downstream dependencies
 * No downstream dependencies.
