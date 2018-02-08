@@ -3186,14 +3186,14 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' 	     master = "G_to_x1", slave = "G_to_x2"
 #' )
 umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = FALSE, name = NULL, autoRun = FALSE, comparison = TRUE) {	
-	free = umx_default_option(free, c(TRUE, FALSE, NA))
+	free = match.arg(free)
 	if(!umx_is_MxModel(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])
 		message("A usage example is umxEquate(model, master=\"a_to_b\", slave=\"a_to_c\", name=\"model2\") # equate paths a->b and a->c, in a new model called \"model2\"")
 		stop()
 	}
 
-	if(length(master ==1)){
+	if(length(master) == 1){
 		if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", master) ) < 1){ # no grep found: add some anchors
 			master = paste0("^", master, "$"); # anchor to the start of the string
 			slave  = paste0("^", slave,  "$");

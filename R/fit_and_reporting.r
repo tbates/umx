@@ -3016,7 +3016,7 @@ parameters <- umx_parameters
 #' umxGetParameters(m1, free = FALSE) # only parameters which are fixed
 #' # Complex regex patterns
 #' umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
-#' }
+#' 
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("values", "free", "lbound", "ubound", "all"), verbose = FALSE) {
 	# TODO
 	# 1. Be nice to offer a method to handle sub-models

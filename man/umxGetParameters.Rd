@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxGetParameters}
 \alias{umxGetParameters}
-\title{umxGetParameters: Get parameters from a model}
+\title{Get parameters from a model, with suport for pattern matching!}
 \usage{
 umxGetParameters(inputTarget, regex = NA, free = NA, fetch = c("values",
   "free", "lbound", "ubound", "all"), verbose = FALSE)
@@ -10,7 +10,7 @@ umxGetParameters(inputTarget, regex = NA, free = NA, fetch = c("values",
 \arguments{
 \item{inputTarget}{An object to get parameters from: could be a RAM \code{\link{mxModel}}}
 
-\item{regex}{A regular expression to filter the labels defaults to NA - just returns all labels)}
+\item{regex}{A regular expression to filter the labels. Default (NA) returns all labels. Vector treated as raw labels to find.}
 
 \item{free}{A Boolean determining whether to return only free parameters.}
 
@@ -19,36 +19,39 @@ umxGetParameters(inputTarget, regex = NA, free = NA, fetch = c("values",
 \item{verbose}{How much feedback to give}
 }
 \description{
-Get the parameter labels from a model. Like \code{\link{omxGetParameters}},
-but supercharged with regular expressions for more power and ease!
+umxGetParameters retrieves parameter labels from a model, like \code{\link{omxGetParameters}}.
+However, it is supercharged with regular expressions, so you can get labels that match a pattern.
+}
+\details{
+In addition, if regex contains a vector, this is treated as a list of raw labels to search for, 
+and return if all are found.
+\emph{note}: To return all labels, just leave regex as is.
 }
 \examples{
 require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1)
 )
-m1 = umxRun(m1)
-umxGetParameters(m1)
-m1 = umxRun(m1, setLabels = TRUE)
+
+# Show all parameters
 umxGetParameters(m1)
 umxGetParameters(m1, free = TRUE) # only parameters which are free 
 umxGetParameters(m1, free = FALSE) # only parameters which are fixed
-\dontrun{
 # Complex regex patterns
-umxGetParameters(m2, regex = "as_r_[0-9]c_6", free = TRUE) # Column 6 of matrix "as"
-}
+umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
+
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
+\code{\link{omxGetParameters}}, \code{\link{umx_parameters}}
+
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
   \code{\link{umxEval}}, \code{\link{umxFactorScores}},
