@@ -7,7 +7,8 @@
 \method{umxSummary}{MxModel}(model, refModels = NULL,
   showEstimates = c("raw", "std", "none", "both"), digits = 2,
   report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"),
-  SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = NULL, ...)
+  SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE,
+  std = "deprecated", ...)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} whose fit will be reported}

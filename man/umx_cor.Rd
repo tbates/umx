@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_cor}
 \alias{umx_cor}
-\title{umx_cor}
+\title{Report correlations and their p-values}
 \usage{
 umx_cor(X, df = nrow(X) - 2, use = c("pairwise.complete.obs",
   "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2,
@@ -23,7 +23,11 @@ umx_cor(X, df = nrow(X) - 2, use = c("pairwise.complete.obs",
 - Matrix of correlations and p-values
 }
 \description{
-Report correlations and their p-values
+For teporting correlations and their p-values in a compact table. Handles rounding, and kipping non-numeric columns.
+For computing heterochoric correlations, see \code{\link{ umxHetCor}}.
+}
+\details{
+The Hmisc package has a more robust function called rcorr
 }
 \examples{
 umx_cor(myFADataRaw[1:8,])
@@ -32,6 +36,8 @@ umx_cor(myFADataRaw[1:8,])
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
+umxHetCor
+
 Other Miscellaneous Stats Helpers: \code{\link{reliability}},
   \code{\link{umxCov2cor}}, \code{\link{umxHetCor}},
   \code{\link{umx_apply}}, \code{\link{umx_fun_mean_sd}},

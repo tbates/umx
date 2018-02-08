@@ -664,9 +664,9 @@ umxSummary.default <- function(model, ...){
 #' )
 #' m1 <- mxRun(m1)
 #' umxSummary(m1, showEstimates = "std", filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = NULL, ...){
+umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = "deprecated", ...){
 	# TODO make table take lists of models...
-	if(!is.null(std)){
+	if(std != "deprecated"){
 		stop("use show = 'std', not std = T")
 	}
 	report = match.arg(report)
@@ -679,7 +679,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 	if( filter != "ALL" & showEstimates == "none") {
 		showEstimates = "raw"
 	}else if(showEstimates == "std" && SE == FALSE){
-		message("SE must be TRUE to show std, overriding to set SE = TRUE")
+		# message("SE must be TRUE to show std, overriding to set SE = TRUE")
 		SE = TRUE
 	}
 	umx_has_been_run(model, stop = TRUE)
@@ -703,14 +703,19 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 
 	# DisplayColumns
 	if(showEstimates != "none"){
-		if(length(model@submodels) > 0){
-			message("TODO: Just showing group 1: email tim if you see this, and we can extend to all groups")
-			parameterTable = mxStandardizeRAMpaths(model@submodels[[1]], SE = SE) # compute standard errors
-		} else {
-			parameterTable = mxStandardizeRAMpaths(model, SE = SE) # compute standard errors
+		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # compute standard errors
+		nSubModels = length(model$submodels)
+		if(nSubModels > 0){
+			tmp = parameterTable
+			parameterTable = tmp[[1]]
+			if(nSubModels > 1){
+				for (i in 2:nSubModels) {
+					parameterTable = rbind(parameterTable, tmp[[i]])
+				}			
+			}
 		}
-		#                 name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
-		# 1  no_HRV_Dep.A[6,1]    age    A        mean_sdrr   age   -0.37       0.0284   -0.372350    .028
+		#          name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
+		# 1  Dep.A[6,1]    age    A        mean_sdrr   age   -0.37       0.0284   -0.372350    .028
 		# Raw.SE is new
 		names(parameterTable) <- c("label", "name", "matrix", "row", "col", "Estimate", "SE", "Std.Estimate", "Std.SE")
 

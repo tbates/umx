@@ -16,8 +16,8 @@ umxModify(lastFit, update = NULL, master = NULL, regex = FALSE,
 
 \item{master}{If you set master, then the labels in update will be equated (slaved) to those provided in master.}
 
-\item{regex}{Whether or not update is a regular expression (defaults to FALSE). If you provide a string, it
-over-rides the contents of update, and sets regex to TRUE.}
+\item{regex}{Whether or not update is a regular expression (default FALSE). If you provide a string, it
+overrides the contents of update, and sets regex to TRUE.}
 
 \item{free}{The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)}
 
@@ -33,11 +33,11 @@ over-rides the contents of update, and sets regex to TRUE.}
 
 \item{intervals}{Whether to run confidence intervals (see \code{\link{mxRun}})}
 
-\item{comparison}{Whether to run umxCompare() after umxRun}
+\item{comparison}{Whether to run umxCompare() on the new and old models.}
 
 \item{autoRun}{Whether to run the modified model before returning it (default), or just to modify and return without running.}
 
-\item{dropList}{(deprecated: use 'update' instead.}
+\item{dropList}{DEPRECATED: use 'update' instead.}
 }
 \value{
 - \code{\link{mxModel}}
@@ -55,14 +55,15 @@ As an example, this one-liner drops a path labelled "Cs", and returns the update
 Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
 fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_and_Cr", comparison = TRUE)
 
-If you are just starting out, you might find it easier to be more explicit. Like this:
+You may find it easier to be more explicit. Like this:
 
 fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
 fit2 = mxRun(fit2)
 summary(fit2)
 
 
-Note: A (minor) limitation is that you cannot simultaneously set value to 0 AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
+\emph{Note}: A (minor) limitation is that you cannot simultaneously set value to 0 
+AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
 }
 \examples{
 require(umx)

@@ -668,31 +668,32 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
 #' fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_and_Cr", comparison = TRUE)
 #' 
-#' If you are just starting out, you might find it easier to be more explicit. Like this: 
+#' You may find it easier to be more explicit. Like this: 
 #' 
 #' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
 #' fit2 = mxRun(fit2)
 #' summary(fit2)
 #' 
 #' @details
-#' Note: A (minor) limitation is that you cannot simultaneously set value to 0 AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
+#' \emph{Note}: A (minor) limitation is that you cannot simultaneously set value to 0 
+#' AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
 #' 
 #' @aliases umxModify
 #' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
 #' @param master If you set master, then the labels in update will be equated (slaved) to those provided in master.
-#' @param regex    Whether or not update is a regular expression (defaults to FALSE). If you provide a string, it
-#' over-rides the contents of update, and sets regex to TRUE.
-#' @param free     The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
-#' @param value    The value to set the parameters whose labels you specify too (defaults to 0)
-#' @param newlabels   If not NULL, used as a replacement set of labels (can be regular expression). value and free are ignored!
+#' @param regex    Whether or not update is a regular expression (default FALSE). If you provide a string, it
+#' overrides the contents of update, and sets regex to TRUE.
+#' @param free The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
+#' @param value The value to set the parameters whose labels you specify too (defaults to 0)
+#' @param newlabels If not NULL, used as a replacement set of labels (can be regular expression). value and free are ignored!
 #' @param freeToStart Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)
-#' @param name      The name for the new model
-#' @param verbose   How much feedback to give
+#' @param name The name for the new model
+#' @param verbose How much feedback to give
 #' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
-#' @param comparison Whether to run umxCompare() after umxRun
+#' @param comparison Whether to run umxCompare() on the new and old models.
 #' @param autoRun Whether to run the modified model before returning it (default), or just to modify and return without running.
-#' @param dropList (deprecated: use 'update' instead.
+#' @param dropList DEPRECATED: use 'update' instead.
 #' @return - \code{\link{mxModel}}
 #' @family Core Modeling Functions
 #' @family Modify or Compare Models
@@ -3150,8 +3151,10 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' also equate one parameter to another by setting its label to the 
 #' "square bracket" address of the master, e.g. "a[r,c]".
 #' 
-#' Tip: To find labels of free parameters use \code{\link{umxGetParameters}} with free = T
-#' Tip: To find labels by name, use the regex parameter of \code{\link{umxGetParameters}}
+#' \emph{Tip}: To find labels of free parameters use \code{\link{umxGetParameters}} 
+#' with free = TRUE
+#' 
+#' \emph{Tip}: To find labels by name, use the regex parameter of \code{\link{umxGetParameters}}
 #' 
 #' @param model   An \code{\link{mxModel}} within which to equate parameters
 #' @param master  A list of "master" labels to which slave labels will be equated

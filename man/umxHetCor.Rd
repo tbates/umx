@@ -8,13 +8,13 @@ umxHetCor(data, ML = FALSE, use = c("pairwise.complete.obs",
   "complete.obs"), treatAllAsFactor = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{data}{A \code{\link{data.frame}} of columns for which to compute heterochoric correlations}
+\item{data}{A \code{\link{data.frame}} of columns for which to compute heterochoric correlations. OR an existing covariance matrix.}
 
 \item{ML}{Whether to use Maximum likelihood computation of correlations (default = FALSE)}
 
-\item{use}{How to handle missing data: "complete.obs" (Default), "pairwise.complete.obs"}
+\item{use}{How to handle missing data: Default= "pairwise.complete.obs". Alternative ="complete.obs".}
 
-\item{treatAllAsFactor}{Whether to treat all columns as factors, whether they are or not.}
+\item{treatAllAsFactor}{Whether to treat all columns as factors, whether they are or not (Default = FALSE)}
 
 \item{verbose}{How much to tell the user about what was done.}
 }
@@ -22,11 +22,13 @@ umxHetCor(data, ML = FALSE, use = c("pairwise.complete.obs",
 - A matrix of correlations
 }
 \description{
-umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
+umxHetCor is a helper to 
+1. return just the correlations from John Fox's polycor::hetcor function
+2. If you give it a covariance matrix, return the nearest positive-definite correlation matrix.
 }
 \examples{
 umxHetCor(mtcars[,c("mpg", "am")])
-umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = FALSE, verbose = TRUE)
+umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
 }
 \references{
 -

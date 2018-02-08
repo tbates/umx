@@ -1870,9 +1870,12 @@ umx_write_to_clipboard <- function(x) {
 # = Various Stats helpers =
 # =========================
 
-#' umx_cor
-#'
 #' Report correlations and their p-values
+#'
+#' For teporting correlations and their p-values in a compact table. Handles rounding, and kipping non-numeric columns.
+#' For computing heterochoric correlations, see \code{\link{ umxHetCor}}.
+#'
+#'The Hmisc package has a more robust function called rcorr 
 #'
 #' @param X a matrix or dataframe
 #' @param df the degrees of freedom for the test
@@ -1880,6 +1883,7 @@ umx_write_to_clipboard <- function(x) {
 #' @param digits rounding of answers
 #' @param type Unused argument for future directions
 #' @return - Matrix of correlations and p-values
+#' @seealso umxHetCor
 #' @family Miscellaneous Stats Helpers
 #' @export
 #' @references - \url{http://www.github.com/tbates/umx}
@@ -5128,12 +5132,14 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 
 #' Create a matrix of correlations for variables of diverse types (binary, ordinal, continuous)
 #'
-#' umxHetCor Helper to return just the correlations from John Fox's polycor::hetcor function
+#' umxHetCor is a helper to 
+#' 1. return just the correlations from John Fox's polycor::hetcor function
+#' 2. If you give it a covariance matrix, return the nearest positive-definite correlation matrix.
 #'
-#' @param data A \code{\link{data.frame}} of columns for which to compute heterochoric correlations
+#' @param data A \code{\link{data.frame}} of columns for which to compute heterochoric correlations. OR an existing covariance matrix.
 #' @param ML Whether to use Maximum likelihood computation of correlations (default = FALSE)
-#' @param use How to handle missing data: "complete.obs" (Default), "pairwise.complete.obs" 
-#' @param treatAllAsFactor Whether to treat all columns as factors, whether they are or not.
+#' @param use How to handle missing data: Default= "pairwise.complete.obs". Alternative ="complete.obs".
+#' @param treatAllAsFactor Whether to treat all columns as factors, whether they are or not (Default = FALSE)
 #' @param verbose How much to tell the user about what was done.
 #' @return - A matrix of correlations
 #' @family Data Functions
@@ -5142,7 +5148,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @references - 
 #' @examples
 #' umxHetCor(mtcars[,c("mpg", "am")])
-#' umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = FALSE, verbose = TRUE)
+#' umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
 umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "complete.obs"), treatAllAsFactor = FALSE, verbose = FALSE){
 	# depends on polycor::hetcor
 	use = match.arg(use)
