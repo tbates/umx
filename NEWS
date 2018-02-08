@@ -1,3 +1,6 @@
+# umx 2.0.1 (Feb 12 2018, R 3.4.3 Birthday edition)
+* NEW: `umxSummary` works with multi-group models (make these with `umxSuperModel`)
+
 # umx 2.0.0 (January 29 2018, R 3.4.3 Birthday edition)
 * NEW: `umxSexLim` multi-variate twin sex-limitation (beta)
 * NEW: `umxGxE_biv` bivariate Gene-environment interaction model (beta)
