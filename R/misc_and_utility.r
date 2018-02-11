@@ -1872,10 +1872,11 @@ umx_write_to_clipboard <- function(x) {
 
 #' Report correlations and their p-values
 #'
-#' For teporting correlations and their p-values in a compact table. Handles rounding, and kipping non-numeric columns.
-#' For computing heterochoric correlations, see \code{\link{umxHetCor}}.
+#' For reporting correlations and their p-values in a compact table. Handles rounding, and skipping non-numeric columns.
+#' 
+#' To compute heterochoric correlations, see \code{\link{umxHetCor}}.
 #'
-#'The Hmisc package has a more robust function called rcorr 
+#' note: The Hmisc package has a more robust function called rcorr 
 #'
 #' @param X a matrix or dataframe
 #' @param df the degrees of freedom for the test

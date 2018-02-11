@@ -24,7 +24,7 @@ umx_cor(X, df = nrow(X) - 2, use = c("pairwise.complete.obs",
 }
 \description{
 For teporting correlations and their p-values in a compact table. Handles rounding, and kipping non-numeric columns.
-For computing heterochoric correlations, see \code{\link{ umxHetCor}}.
+For computing heterochoric correlations, see \code{\link{umxHetCor}}.
 }
 \details{
 The Hmisc package has a more robust function called rcorr
