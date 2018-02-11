@@ -1,19 +1,26 @@
-# umx 2.0.1 (Feb 12 2018, R 3.4.3 Birthday edition)
-* NEW: `umxSummary` works with multi-group models (make these with `umxSuperModel`)
+# umx 2.0.1 (Feb 12 2018, R 3.4.3 Higher goals edition)
+* NEW: `umxSummary` works with multi-group models!
+	* (make these with `umxSuperModel`)
+* IMPROVED: `umxAPA` supports glm, more robust input checking.
+* FIXED: `umxEquate` allows vectors of labels.
+* DOCS: `umxGetParameters` has better help.
+* DOCS: `umxHetCor` docs now note is will return a pos-def version if given a cov matrix. 
+* DOCS: `umxAPA` now has t-test and glm examples
+* DROPPED: `umx_install_OpenMx` (use `install.OpenMx`)
 
 # umx 2.0.0 (January 29 2018, R 3.4.3 Birthday edition)
-* NEW: `umxSexLim` multi-variate twin sex-limitation (beta)
-* NEW: `umxGxE_biv` bivariate Gene-environment interaction model (beta)
-* NEW: `umx_make_TwinData` Can now make bivariate moderated twin data.
+* BETA: `umxSexLim` multivariate twin sex-limitation.
+* BETA: `umxGxE_biv` bivariate Gene-environment interaction model.
+* BETA: `umx_make_TwinData` Can now make bivariate moderated twin data.
+* BETA: Beginning a `umxGroup` function as part of measurement invariance support.
 * NEW: `umx_stack` Slightly more powerful version of base stack.
 * NEW: `umx_array_shift` Shifts an item off the beginning of a list.
 * IMPROVED: `umxRAM` can take lists of paths as input (contributed by @bwiernik).
 * IMPROVED: `umxModify` can write newlabels.
 * IMPROVED: `umxAPA` can back-out an SE if given b and CI.
 * IMPROVED: Help pages and examples improved and reorganized.
-* Beta: Beginning a `umxGroup` function as part of measurement invariance support.
-* DEPRECATED LONG ENOUGH: Dropped support for umxReRun (use umxModify) 
-* DEPRECATED LONG ENOUGH: Dropped support for suffix in some places (use sep) 
+* DROPPED: umxReRun (use umxModify)
+* DROPPED: support for suffix parameter (use sep instead)
 
 # umx 1.9.2 (December 2017, R 3.4.2)
 * *TIP*: Filter paths by estimated size with `umx_parameters(model, "below", .1)`
