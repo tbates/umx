@@ -6,6 +6,6 @@ See the umx and OpenMx home pages for more.
   - (\url{http://openmx.ssri.psu.edu})
 
 Note: In addition to the version of OpenMx on CRAN, a version with
-NPSOL-enabled is available. To install it use:
+NPSOL-enabled is available. To install it, once you have umx installed run
 
-source('http://openmx.psyc.virginia.edu/getOpenMx.R')
+install.OpenMx("UVa")
