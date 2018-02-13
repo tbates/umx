@@ -28,7 +28,7 @@
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
 #' @references
 #' - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, 
-#' \strong{6}, 554-571. [url](https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187).
+#' \strong{6}, 554-571. doi:[10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554).
 #' 
 #' - van der Sluis, S., Posthuma, D., & Dolan, C. V. (2012). A note on false positives and
 #' power in G x E modelling of twin data. \emph{Behavior Genetics}, 

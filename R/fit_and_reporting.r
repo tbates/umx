@@ -667,7 +667,7 @@ umxSummary.default <- function(model, ...){
 umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = "deprecated", ...){
 	# TODO make table take lists of models...
 	if(std != "deprecated"){
-		stop("use show = 'std', not std = T")
+		stop("use show = 'std', not std = TRUE")
 	}
 	report = match.arg(report)
 	filter = match.arg(filter)

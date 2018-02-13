@@ -23,11 +23,12 @@ umx_cor(X, df = nrow(X) - 2, use = c("pairwise.complete.obs",
 - Matrix of correlations and p-values
 }
 \description{
-For teporting correlations and their p-values in a compact table. Handles rounding, and kipping non-numeric columns.
-For computing heterochoric correlations, see \code{\link{umxHetCor}}.
+For reporting correlations and their p-values in a compact table. Handles rounding, and skipping non-numeric columns.
 }
 \details{
-The Hmisc package has a more robust function called rcorr
+To compute heterochoric correlations, see \code{\link{umxHetCor}}.
+
+note: The Hmisc package has a more robust function called rcorr
 }
 \examples{
 umx_cor(myFADataRaw[1:8,])

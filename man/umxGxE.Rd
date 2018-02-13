@@ -69,7 +69,8 @@ umxReduce(m1)
 }
 }
 \references{
-- Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, \strong{6}, 554-571. Retrieved from https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187
+- Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
+ \strong{6}, 554-571. DOI: https://doi.org/10.1375/twin.5.6.554
 }
 \seealso{
 - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}

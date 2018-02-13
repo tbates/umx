@@ -679,10 +679,10 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
 #' 
 #' @aliases umxModify
-#' @param lastFit  The \code{\link{mxModel}} you wish to update and run.
+#' @param lastFit The \code{\link{mxModel}} you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
 #' @param master If you set master, then the labels in update will be equated (slaved) to those provided in master.
-#' @param regex    Whether or not update is a regular expression (default FALSE). If you provide a string, it
+#' @param regex  Whether or not update is a regular expression (default FALSE). If you provide a string, it
 #' overrides the contents of update, and sets regex to TRUE.
 #' @param free The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
 #' @param value The value to set the parameters whose labels you specify too (defaults to 0)
@@ -766,53 +766,68 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 		update = regex
 		regex = TRUE
 	}
-
-	if (typeof(free) != "logical"){
-		# Use the free as input, and switch to free = TRUE
-		update = free
-		free = TRUE
-	}
 	
 	if(is.null(update)){
 		message("You haven't asked to do anything: the parameters that are free to be dropped are:")
+		# TODO use parameters here?
 		print(umxGetParameters(lastFit))
 		stop()
-	}else{
-		if(regex | typeof(update) == "character") {
-			# handle labels as input
-			if (regex) {
-				theLabels = umxGetParameters(lastFit, regex = update, free = freeToStart, verbose = verbose)
-				if(!is.null(newlabels)){
-					newlabels = sub(update, newlabels, theLabels, ignore.case = FALSE)
-				}
-			} else {
-				theLabels = update
+	}
+
+	if(!is.null(newlabels)){
+		# check length(update) == length(newlabels) or length(newlabels) == 1
+		if(length(update) != length(newlabels)){
+			if(length(newlabels) != 1){
+				stop(paste0("Length of newlabels must be 1, or same as update. You gave me ", 
+				length(update), " labels to update, and ", length(newlabels), " newlabels"))
+			}else{
+				# copy out newlabels to match length of update
+				newlabels = rep(newlabels, length(update))
 			}
-			if(!is.null(newlabels)){
-				x = omxSetParameters(lastFit, labels = theLabels, newlabels = newlabels, name = name)
-			} else {
-				x = omxSetParameters(lastFit, labels = theLabels, free = free, values = value, name = name)
+		}
+	}
+	# Finally, something to do...
+	if(regex | typeof(update) == "character") {
+		newModel = lastFit
+		# handle labels as input
+		if (!regex) {
+			theLabels = update
+			if(is.null(newlabels)){
+				newModel = omxSetParameters(newModel, labels = theLabels, free = free, values = value, name = name)
+			}else{
+				newModel = omxSetParameters(newModel, labels = theLabels, newlabels = newlabels, name = name)				
 			}
 		} else {
-			# Add objects passed in under "update"
-			# TODO umxModify: if object is RAM, add re-label and re-start new object?
-			if(is.null(name)){ name = NA } # i.e. do nothing
-			x = mxModel(lastFit, update, name = name)
-		}
-		x = omxAssignFirstParameters(x)
-		if(autoRun){
-			x = mxRun(x, intervals = intervals)
-			if(comparison){
-				umxSummary(x)
-				if(free){ # new model has fewer df
-					umxCompare(x, lastFit)
-				} else {
-					umxCompare(lastFit, x)
+			# Handle 1 or more regular expressions.
+			for (i in 1:length(update)) {
+				match = umxGetParameters(newModel, regex = update[i], free = freeToStart, verbose = verbose)				
+				if(is.null(newlabels)){
+					newModel = omxSetParameters(newModel, labels = match, free = free, values = value, name = name)
+				}else{
+					# there are new labels to match up
+					newModel = omxSetParameters(newModel, labels = match, newlabels = newlabels[i], name = name)
 				}
 			}
 		}
-		return(x)
+	} else {
+		# Add objects passed in under "update"
+		# TODO umxModify: if object is RAM, add re-label and re-start new object?
+		if(is.null(name)){ name = NA } # i.e. do nothing
+		newModel = mxModel(lastFit, update, name = name)
 	}
+	newModel = omxAssignFirstParameters(newModel)
+	if(autoRun){
+		newModel = mxRun(newModel, intervals = intervals)
+		if(comparison){
+			umxSummary(newModel)
+			if(free){ # new model has fewer df
+				umxCompare(newModel, lastFit)
+			} else {
+				umxCompare(lastFit, newModel)
+			}
+		}
+	}
+	return(newModel)
 }
 
 # ==================
@@ -844,7 +859,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
-#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, \strong{6}, 554-571. Retrieved from https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=12573187
+#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
+#'  \strong{6}, 554-571. DOI: https://doi.org/10.1375/twin.5.6.554
 #' @examples
 #' require(umx)
 #' data(twinData) 

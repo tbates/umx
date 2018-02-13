@@ -1,19 +1,22 @@
 ## Changes
+Wanting to get this package back on CRAN: Please let me know how, as students, and researchers depend on it.
+
 As requested, I now don't run examples which open the browser (these had been present for several years).
+
 Multiple new features as well.
 
 Hopefully allows package to be re-instated (was removed 2018-01-25).
 
-The package won't be able to be tested on El Capitan, as CRAN currently fails building  OpenMx. 
-Please ignore this.
+Please ignore the failure on El Capitan - it is true for all packages that depend on OpenMx
+as CRAN currently fails building  OpenMx. 
 
 ## Test environments
 * OS X 10.13.0, R version 3.4.3
-* Win R Under development (unstable) (2018-01-30 r74185)
+* Win R Under development (unstable) (2018-02-09 r74240)
 * 64-bit Linux (Scientific Linux 6), R 3.4.3
 
 ## R CMD check results
-* One example time WARNING, No ERRORs, No NOTES
+* No WARNINGs, No ERRORs, No NOTEs
 
 ## Downstream dependencies
 * No downstream dependencies.
