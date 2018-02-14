@@ -3,16 +3,19 @@
 \docType{data}
 \name{GFF}
 \alias{GFF}
-\title{Twin data: General Family Functioning, divorce, and wellbeing.}
+\title{# How I coded this data from the Boulder example}
 \format{A data frame with 1000 rows and 8 variables:}
 \usage{
 data(GFF)
 }
 \description{
-Measures of family functioning, happiness and related variables in twins, and
-their brothers and sisters. (see details)
+Twin data: General Family Functioning, divorce, and wellbeing.
 }
 \details{
+Measures of family functioning, happiness and related variables in twins, and
+their brothers and sisters. (see details)
+
+
 Several scales in the data are described in  van der Aa et al (2010).
 General Family Functioning (GFF) refers to adolescents' evaluations general family health
 vs. pathology. It assesses problem solving, communication, roles within the household,
@@ -79,15 +82,13 @@ Ladder from best- to worst-possible life (Cantril, 1965).
 \examples{
 # Twin 1 variables (end in '_T1')
 data(GFF)
-umx_names(GFF, "1$") # Just twin 1 variables
+umx_names(GFF, "1$") # Just variables ending in 1 (twin 1)
 str(GFF) # first few rows
 
 m1 = umxACE(selDVs= "gff", sep = "_T",
 	mzData = subset(GFF, zyg_2grp == "MZ"), 
 	dzData = subset(GFF, zyg_2grp == "DZ")
 )
-
-# How I coded this data from the Boulder example
 
 }
 \references{
