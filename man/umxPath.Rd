@@ -5,38 +5,24 @@
 \title{Easier (and powerful) specification of paths in SEM.}
 \usage{
 umxPath(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
+  means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL,
+  fixedAt = NULL, freeAt = NULL, firstAt = NULL,
   unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL,
-  forms = NULL, Cholesky = NULL, defn = NULL, means = NULL,
-  v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL,
-  freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs",
-  "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1,
-  free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA,
-  hasMeans = NULL)
+  forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single",
+  "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"),
+  arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA,
+  ubound = NA, hasMeans = NULL)
 }
 \arguments{
-\item{from}{either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"}
+\item{from}{One or more source variables e.g "A" or c("A","B")}
 
-\item{to}{one or more target variables for one-headed paths, e.g "A" or c("A","B").}
+\item{to}{One or more target variables for one-headed paths, e.g "A" or c("A","B").}
 
-\item{with}{2-headed path from<--> with. to= and var=  must be left empty.}
+\item{with}{2-headed path <--> from 'from' to 'with'.}
 
-\item{var}{equivalent to setting from and arrows = 2". nb: from, to, and with must be left empty.}
+\item{var}{Equivalent to setting 'from' and 'arrows' = 2. nb: from, to, and with must be left empty.}
 
-\item{cov}{convenience equivalent to with for 2 variabales. nb: from, to, and with must be left empty.}
-
-\item{unique.bivariate}{equivalent to setting "connect = "unique.bivariate", arrows = 2".
-nb: from, to, and with must be left empty (their default)}
-
-\item{unique.pairs}{equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)}
-
-\item{fromEach}{Like all.bivariate, but with one head arrows. 'to' can be set.}
-
-\item{forms}{Build a formative variable. 'from' variables form the latent.
-Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' variables.}
-
-\item{Cholesky}{Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.}
-
-\item{defn}{latent variable, var@0 mean fixed, with label-based as data source}
+\item{cov}{Convenience to allow 2 variables to covary (equivalent to 'from' and 'with'). nb: leave from, to, etc. empty}
 
 \item{means}{equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).}
 
@@ -53,6 +39,20 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 \item{freeAt}{Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)}
 
 \item{firstAt}{first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)}
+
+\item{unique.bivariate}{equivalent to setting from, and "connect = "unique.bivariate", arrows = 2".
+nb: from, to, and with must be left empty (their default)}
+
+\item{unique.pairs}{equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)}
+
+\item{fromEach}{Like all.bivariate, but with one head arrows. 'to' can be set.}
+
+\item{forms}{Build a formative variable. 'from' variables form the latent.
+Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' variables.}
+
+\item{Cholesky}{Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.}
+
+\item{defn}{Makes a latent variable, var@0 mean fixed, set label to 'data.<defn>'}
 
 \item{connect}{as in mxPath - nb: Only used when using from and to}
 

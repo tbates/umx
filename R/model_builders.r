@@ -99,7 +99,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, covmat = NULL, n.obs =
 				umx_check_names(x, data)
 				data = data[,x]
 			} else if (inherits(x,"formula")){
-				stop("Nice formula! Sadly I can't handle formulae yet: email tim and abuse him about this failing")
+				stop("Nice formula! Sadly I can't handle those yet: email tim and abuse him about this failing")
 				# TODO: umxEFA: Handle is.formula()
 			}else{
 				name = x

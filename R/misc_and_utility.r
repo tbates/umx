@@ -2095,9 +2095,9 @@ umx_update_OpenMx <- install.OpenMx
 #' "make" the umx package using devtools: release to CRAN etc.
 #'
 #' @description
-#' Easily  run devtools "install", "release", "win", or "examples".
+#' Easily  run devtools "install", "release", "win", "examples" etc.
 #'
-#' @param what whether to "install", "release" to CRAN, check on "win", "check", or "examples"))
+#' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE)
 #' @return - 
@@ -2112,7 +2112,7 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "win"))      # check on win-builder
 #' umx_make(what = "release"))  # release to CRAN
 #' }
-umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release" ), pkg = "~/bin/umx", check = TRUE) {
+umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE) {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
@@ -2131,6 +2131,8 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 		# devtools::check_rhub(pkg = pkg)
 	} else if (what == "release"){
 		devtools::release(pkg = pkg, check = check)
+	} else if (what == "spell"){
+		devtools::spell_check(pkg = pkg)
 	}
 }
 
@@ -5478,7 +5480,7 @@ umx_standardize.default <- function(model, ...){
 #'
 #' umx_standardize_RAM takes a RAM-style model, and returns standardized version.
 #'
-#' @param model The \code{\link{mxModel}} you wish to standardise
+#' @param model The \code{\link{mxModel}} you wish to standardize
 #' @param ... Other options
 #' @return - standarized RAM model.
 #' @family Reporting functions
@@ -5588,7 +5590,7 @@ umx_standardize_ACE <- function(model, ...) {
 		}
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar <- length(selDVs)/2;
-		# Calculate standardised variance components
+		# Calculate standardized variance components
 		a  <- mxEval(top.a, model); # Path coefficients
 		c  <- mxEval(top.c, model);
 		e  <- mxEval(top.e, model);
@@ -5662,7 +5664,7 @@ umx_standardize.MxModel.ACEcov <- umx_standardize_ACEcov
 
 #' umx_standardize_IP
 #'
-#' This function simply copys the standardized IP components into the ai ci ei and as cs es matrices
+#' This function simply copies the standardized IP components into the ai ci ei and as cs es matrices
 #'
 #' @param model an \code{\link{umxIP}} model to standardize
 #' @param ... Other options
@@ -5719,7 +5721,7 @@ umx_standardize_CP <- function(model, ...){
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2;
 		nFac   = dim(model$top$matrices$a_cp)[[1]]	
-		# Calculate standardised variance components
+		# Calculate standardized variance components
 		a_cp  = mxEval(top.a_cp , model); # nFac * nFac matrix of path coefficients flowing into the cp_loadings array
 		c_cp  = mxEval(top.c_cp , model);
 		e_cp  = mxEval(top.e_cp , model);

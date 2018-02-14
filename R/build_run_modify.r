@@ -4160,19 +4160,11 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' i.e., "A -> B; X <-> B; "
 #' 
 #' 
-#' @param from either a source variable e.g "A" or c("A","B"), OR a sem-style path description, e.g. "A-> B" or "C <> B"
-#' @param to one or more target variables for one-headed paths, e.g "A" or c("A","B").
-#' @param with 2-headed path from<--> with. to= and var=  must be left empty.
-#' @param var equivalent to setting from and arrows = 2". nb: from, to, and with must be left empty.
-#' @param cov convenience equivalent to with for 2 variabales. nb: from, to, and with must be left empty.
-#' @param unique.bivariate equivalent to setting "connect = "unique.bivariate", arrows = 2".
-#' nb: from, to, and with must be left empty (their default)
-#' @param fromEach Like all.bivariate, but with one head arrows. 'to' can be set.
-#' @param unique.pairs equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)
-#' @param forms Build a formative variable. 'from' variables form the latent.
-#' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' variables.
-#' @param Cholesky Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.
-#' @param defn latent variable, var@0 mean fixed, with label-based as data source
+#' @param from One or more source variables e.g "A" or c("A","B")
+#' @param to One or more target variables for one-headed paths, e.g "A" or c("A","B").
+#' @param with 2-headed path <--> from 'from' to 'with'.
+#' @param var Equivalent to setting 'from' and 'arrows' = 2. nb: from, to, and with must be left empty.
+#' @param cov Convenience to allow 2 variables to covary (equivalent to 'from' and 'with'). nb: leave from, to, etc. empty
 #' @param means equivalent to "from = 'one', to = x. nb: from, to, with and var must be left empty (their default).
 #' @param v1m0 variance of 1 and mean of zero in one call.
 #' @param v.m. variance and mean, both free.
@@ -4181,6 +4173,14 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
 #' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
 #' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
+#' @param unique.bivariate equivalent to setting from, and "connect = "unique.bivariate", arrows = 2".
+#' nb: from, to, and with must be left empty (their default)
+#' @param unique.pairs equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)
+#' @param fromEach Like all.bivariate, but with one head arrows. 'to' can be set.
+#' @param forms Build a formative variable. 'from' variables form the latent.
+#' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' variables.
+#' @param Cholesky Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.
+#' @param defn Makes a latent variable, var@0 mean fixed, set label to 'data.<defn>'
 #' @param connect as in mxPath - nb: Only used when using from and to
 #' @param arrows as in mxPath - nb: Only used when using from and to
 #' @param free whether the value is free to be optimised
@@ -4250,7 +4250,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # # manifests is a reserved word, as is latents.
 #' # # It allows the string syntax to use the manifestVars variable
 #' # umxPath("A -> manifests") 
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
 	xmu_string2path(from)
 	n = 0

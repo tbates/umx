@@ -16,7 +16,7 @@ Measures of family functioning, happiness and related variables in twins, and
 their brothers and sisters. (see details)
 
 
-Several scales in the data are described in  van der Aa et al (2010).
+Several scales in the data are described in  van der Aa et al. (2010).
 General Family Functioning (GFF) refers to adolescents' evaluations general family health
 vs. pathology. It assesses problem solving, communication, roles within the household,
 affection, and control. GFF was assessed with a Dutch translation of the General Functioning

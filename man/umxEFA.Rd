@@ -67,12 +67,12 @@ Bear in mind that factor scores are indeterminate and can be rotated.
 This is very much early days.
 }
 \examples{
+\dontrun{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")
 m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
 loadings(m1)
 m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m2)
-\dontrun{
 plot(m2)
 m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])

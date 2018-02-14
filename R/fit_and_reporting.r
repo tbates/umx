@@ -899,7 +899,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		nVar <- length(selDVs)/2;
 		# TODO umxSummaryACE these already exist if a_std exists..
 		# TODO replace all this with umx_standardizeACE
-		# Calculate standardised variance components
+		# Calculate standardized variance components
 		a  <- mxEval(top.a, model); # Path coefficients
 		c  <- mxEval(top.c, model);
 		e  <- mxEval(top.e, model);
@@ -1132,7 +1132,7 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	selDVs = dimnames(model$top$a)[[1]]
 	# selDVs = dimnames(model$top.expCovMZ)[[1]]
 	nDV <- length(selDVs);
-	# Calculate standardised variance components
+	# Calculate standardized variance components
 	a  <- mxEval(top.a, model); # Path coefficients
 	c  <- mxEval(top.c, model);
 	e  <- mxEval(top.e, model);
@@ -1351,7 +1351,7 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 		# MZc = mxEval(MZ.expCov,  model); # Same effect as expCovMZ$matrices$twinACEFit
 		# DZc = mxEval(DZ.expCov,  model);
 		# M   = mxEval(MZ.expMean, model);
-		# Calculate standardised variance components
+		# Calculate standardized variance components
 		a_cp  = mxEval(top.a_cp, model); # nFac * nFac matrix of path coefficients flowing into the cp_loadings array
 		c_cp  = mxEval(top.c_cp, model);
 		e_cp  = mxEval(top.e_cp, model);
@@ -1493,10 +1493,10 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 		print(mxCompare(comparison, model))
 	}
 
-	stdFit = model; # If we want to output a model with the standardised values (perhaps for drawing a path diagram)
+	stdFit = model; # If we want to output a model with the standardized values (perhaps for drawing a path diagram)
 	nVar   = length(selDVs)/2;
 	nFac   = 1;
-	# Calculate standardised variance components
+	# Calculate standardized variance components
 	ai = mxEval(top.ai, model); # Column of independent path coefficients (nVar* nFac = 1) 
 	ci = mxEval(top.ci, model);
 	ei = mxEval(top.ei, model);
@@ -2981,7 +2981,7 @@ umxParameters <- umx_parameters
 #' @export
 parameters <- umx_parameters
 
-#' Get parameters from a model, with suport for pattern matching!
+#' Get parameters from a model, with support for pattern matching!
 #'
 #' umxGetParameters retrieves parameter labels from a model, like \code{\link{omxGetParameters}}.
 #' However, it is supercharged with regular expressions, so you can get labels that match a pattern.

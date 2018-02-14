@@ -15,7 +15,7 @@ umx_standardize_IP(model, ...)
 - standardized IP \code{\link{umxIP}} model
 }
 \description{
-This function simply copys the standardized IP components into the ai ci ei and as cs es matrices
+This function simply copies the standardized IP components into the ai ci ei and as cs es matrices
 }
 \examples{
 \dontrun{

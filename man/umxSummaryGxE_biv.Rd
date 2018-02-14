@@ -26,7 +26,7 @@ umxSummaryGxE_biv(model = NULL, digits = 2, xlab = NA,
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
-\item{comparison}{mxCompare model with comparison (defaut = NULL).}
+\item{comparison}{mxCompare model with comparison (default = NULL).}
 
 \item{std}{Whether to show the standardized model (not implemented! TRUE)}
 
@@ -34,7 +34,7 @@ umxSummaryGxE_biv(model = NULL, digits = 2, xlab = NA,
 
 \item{CIs}{Confidence intervals (FALSE)}
 
-\item{report}{markdown or html (html opens in browswer)}
+\item{report}{markdown or html (html opens in browser)}
 
 \item{...}{Optional additional parameters}
 }

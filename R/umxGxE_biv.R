@@ -307,10 +307,10 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 #' @param CIs Confidence intervals (FALSE)
 #' @param xlab label for the x-axis of plot
 #' @param location default = "topleft"
-#' @param comparison mxCompare model with comparison (defaut = NULL).
+#' @param comparison mxCompare model with comparison (default = NULL).
 #' @param reduce  Whether to run and tabulate a complete model reduction...(Defaults to FALSE)
 #' @param separateGraphs Std and raw plots in separate graphs? (default = FALSE)
-#' @param report markdown or html (html opens in browswer)
+#' @param report markdown or html (html opens in browser)
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @family Twin Modeling Functions
@@ -355,7 +355,7 @@ umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "t
 	nVar <- length(selDVs)/2;
 	# TODO umxSummaryACE these already exist if a_std exists..
 	# TODO replace all this with umx_standardizeACE
-	# Calculate standardised variance components
+	# Calculate standardized variance components
 	# chA  <- model$MZ.chA$values # Path coefficients
 	# message("chA")
 	# umx_print(chA)

@@ -955,7 +955,7 @@ umx_standardize_ACEv <- function(model, ...) {
 		}
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar <- length(selDVs)/2;
-		# Calculate standardised variance components
+		# Calculate standardized variance components
 
 		A  <- mxEval(top.A, model);   # Variances
 		C  <- mxEval(top.C, model);

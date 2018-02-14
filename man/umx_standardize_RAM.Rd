@@ -7,7 +7,7 @@
 umx_standardize_RAM(model, ...)
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} you wish to standardise}
+\item{model}{The \code{\link{mxModel}} you wish to standardize}
 
 \item{...}{Other options}
 }

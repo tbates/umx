@@ -4,11 +4,11 @@
 \alias{umx_make}
 \title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
-umx_make(what = c("install", "examples", "check", "win", "rhub", "release"),
-  pkg = "~/bin/umx", check = TRUE)
+umx_make(what = c("install", "examples", "check", "win", "rhub", "release",
+  "spell"), pkg = "~/bin/umx", check = TRUE)
 }
 \arguments{
-\item{what}{whether to "install", "release" to CRAN, check on "win", "check", or "examples"))}
+\item{what}{whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))}
 
 \item{pkg}{the local path to your package. Defaults to my path to umx.}
 
@@ -18,7 +18,7 @@ umx_make(what = c("install", "examples", "check", "win", "rhub", "release"),
 -
 }
 \description{
-Easily  run devtools "install", "release", "win", or "examples".
+Easily  run devtools "install", "release", "win", "examples" etc.
 }
 \examples{
 \dontrun{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxGetParameters}
 \alias{umxGetParameters}
-\title{Get parameters from a model, with suport for pattern matching!}
+\title{Get parameters from a model, with support for pattern matching!}
 \usage{
 umxGetParameters(inputTarget, regex = NA, free = NA, fetch = c("values",
   "free", "lbound", "ubound", "all"), verbose = FALSE)
