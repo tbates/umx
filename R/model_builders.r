@@ -66,12 +66,12 @@
 #' @seealso - \code{\link{factanal}}, \code{\link{mxFactorScores}}
 #' @references - \url{http://github.com/tbates/umx}
 #' @examples
+#' \dontrun{
 #' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
 #' m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
 #' loadings(m1)
 #' m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 #' loadings(m2)
-#' \dontrun{
 #' plot(m2)
 #' m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 #' m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
@@ -193,8 +193,11 @@ umxFactanal <- umxEFA
 #' @examples
 #' m1 = umxEFA(mtcars, factors = 2)
 #' x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+#' \dontrun{
 #' m1 = umxEFA(mtcars, factors = 1)
 #' x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+#' x
+#' }
 umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), minManifests = NA) {
 	suppressMessages({
 		scores = mxFactorScores(model, type = type, minManifests = minManifests)

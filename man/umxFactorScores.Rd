@@ -26,8 +26,11 @@ variables allowed for a score (subjects with fewer than minManifests will return
 \examples{
 m1 = umxEFA(mtcars, factors = 2)
 x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+\dontrun{
 m1 = umxEFA(mtcars, factors = 1)
 x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+x
+}
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
