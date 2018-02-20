@@ -4362,12 +4362,13 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @description
 #' Makes MZ and DZ twin data, optionally with moderated A. By default, the three variance components must sum to 1.
 #' 
-#' See examples for how to use this: it is pretty flexible.
+#' See examples for how to use this: it is pretty flexible).
 #' 
-#' If you provide 2 varNames, they will be used. If you provide one, it will be expanded to var_T1 and var_T2
+#' If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provide one, it will be expanded to var_T1 and var_T2
 #' 
-#' Note, if you want a power calculator, see \href{http://www.people.vcu.edu/~bverhulst/power/power.html}{here}.
 #' You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
+#' 
+#' *Note*, if you want a power calculator, see Brad Verhulst's work [here](http://www.people.vcu.edu/~bverhulst/power/power.html).
 #' 
 #' **Shortcuts**
 #' 
@@ -4490,7 +4491,6 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' # m1 = lm(var_T1~ M_T1, data = x); 
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
- 
 #' @md
 umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, nThresh = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE, MZr= NULL, DZr= NULL, Amod = NULL, Cmod = NULL, Emod = NULL) {
 	if(!is.null(seed)){

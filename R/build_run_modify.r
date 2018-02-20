@@ -1511,7 +1511,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		# If given covariates, call umxACEcov
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
-				stop("Implementing this for version 2.0")
+				stop("Fixed covaraites are on the roadmap for umx in 2018. Til then, use umx_residualize on the data first.")
 				# umxACEdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			} else if(covMethod == "random") {
 				umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
