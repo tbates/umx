@@ -48,12 +48,13 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
 \description{
 Makes MZ and DZ twin data, optionally with moderated A. By default, the three variance components must sum to 1.
 
-See examples for how to use this: it is pretty flexible.
+See examples for how to use this: it is pretty flexible).
 
-If you provide 2 varNames, they will be used. If you provide one, it will be expanded to var_T1 and var_T2
+If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provide one, it will be expanded to var_T1 and var_T2
 
-Note, if you want a power calculator, see \href{http://www.people.vcu.edu/~bverhulst/power/power.html}{here}.
 You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
+
+\emph{Note}, if you want a power calculator, see Brad Verhulst's work \href{http://www.people.vcu.edu/~bverhulst/power/power.html}{here}.
 
 \strong{Shortcuts}
 

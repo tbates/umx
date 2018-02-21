@@ -1479,18 +1479,16 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' umx_rename_file(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = TRUE)
+#' # "Season 01" --> "S01" in current folder in MacOS Finder
 #' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = TRUE)
 #' }
 umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", listPattern = NA, test = TRUE, overwrite = FALSE) {
 	# TODO: umx_rename_file: Add recursive support
-	# cd "/Users/tim/Desktop/"
-	# find "The Strain" -name "*.mp4"  -exec mv {} "The Strain" \;
 	if(is.na(replaceStr)){
 		stop("Please set a replacement string")
 	}
-	replaceStr = Hmisc::escapeRegex(replaceStr)
-	# uppercase = u$1
+	# vain hope to work around R consuming \ characters
+	# replaceStr = Hmisc::escapeRegex(replaceStr)
 	if(baseFolder == "Finder"){
 		baseFolder = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
 		message("Using front-most Finder window:", baseFolder)

@@ -29,7 +29,7 @@ The file renaming is fast and, because you can use regular expressions, powerful
 }
 \examples{
 \dontrun{
-umx_rename_file(baseFolder = "~/Downloads/", findStr = "", replaceStr = "", test = TRUE)
+# "Season 01" --> "S01" in current folder in MacOS Finder
 umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", baseFolder = "Finder", test = TRUE)
 }
 }

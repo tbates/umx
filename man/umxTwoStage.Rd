@@ -76,7 +76,7 @@ In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass.,
 Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
 }
 \seealso{
-- \code{\link{umxRAM}}, \code{\link[sem]{tsls}}
+- \code{\link{umx_make_MR_data}}, \code{\link[sem]{tsls}}, \code{\link{umxRAM}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umx}}
