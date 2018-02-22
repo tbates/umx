@@ -236,7 +236,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @return - 
 #' @export
 #' @family Super-easy helpers
-#' @seealso - \code{\link{umxRAM}}, \code{\link[sem]{tsls}}
+#' @seealso - \code{\link{umx_make_MR_data}}, \code{\link[sem]{tsls}}, \code{\link{umxRAM}}
 #' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
 #' In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass., 
 #' Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
