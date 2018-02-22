@@ -10,27 +10,27 @@ umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
   lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"))
 }
 \arguments{
-\item{obj}{Either a model (\link{lm}), a beta-value, or a data.frame}
+\item{obj}{A model (e.g. \link{lm}, lme, glm, t-test), beta-value, or data.frame}
 
-\item{se}{If b is a model, then se can be the name of the parameter of interest. Otherwise, SE will b
-used as a standard-error (returning a CI) OR if a CI is offered (vector of lower and upper)
-the SE will be returned.}
+\item{se}{If obj is a beta, se treated as standard-error (returning a CI). 
+If obj is a model, used to select effect of interest (blank for all effects). 
+Finally, set se to the CI c(lower, upper), to back out the SE.}
 
-\item{std}{If obj is an lm, whether to re-run the model on standardized data and report std betas}
+\item{std}{Whether to report std betas (re-runs model on standardized data).}
 
-\item{digits}{Round numbers to how many values}
+\item{digits}{How many digits to round output.}
 
-\item{use}{If obj is a data.frame, how to handle NA (default = "complete")}
+\item{use}{If obj is a data.frame, how to handle NAs (default = "complete")}
 
-\item{min}{= .001 for a p-value, the smallest value to report numerically}
+\item{min}{For a p-value, the smallest value to report numerically (default .001)}
 
 \item{addComparison}{for a p-value, whether to add "</=" default (NA) adds "<" if necessary}
 
 \item{report}{what to return (default = markdown table). Use "html" to open a web table.}
 
-\item{lower}{whether to report on the lower triangle of correlations for a data.frame (Default = TRUE)}
+\item{lower}{whether to not show the lower triangle of correlations for a data.frame (Default TRUE)}
 
-\item{test}{for glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"}
+\item{test}{If obj is a glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"}
 }
 \value{
 - string
@@ -66,10 +66,11 @@ mean_sd \tab 6.19 (1.79) \tab  3.22 (0.98) \tab 20.09 (6.03)
 # ========================================
 # = Report lm (regression/anova) results =
 # ========================================
-umxAPA(lm(mpg ~ wt + disp, mtcars))
-umxAPA(lm(mpg ~ wt + disp, mtcars), "disp")
+umxAPA(lm(mpg ~ wt + disp, mtcars)) # All parameters
+umxAPA(lm(mpg ~ wt + disp, mtcars), "disp") # Just disp effect
+umxAPA(lm(mpg ~ wt + disp, mtcars), std = TRUE) # Standardize effects
 
-# try an lme, glm, or htest
+# glm example
 df = mtcars
 df$mpg_thresh = 0
 df$mpg_thresh[df$mpg>16] = 1
@@ -94,6 +95,7 @@ umxAPA(mtcars[,1:3], report = "html")
 # = CONFIDENCE INTERVAL text from effect and se =
 # ===============================================
 umxAPA(.4, .3) # parameter 2 interpreted as SE
+
 # Input beta and CI, and back out the SE
 umxAPA(-0.030, c(-0.073, 0.013), digits = 3)
 
@@ -102,6 +104,7 @@ umxAPA(-0.030, c(-0.073, 0.013), digits = 3)
 # ====================
 umxAPA(.0182613)
 umxAPA(.000182613)
+umxAPA(.000182613,  addComparison=FALSE)
 
 # ========================
 # = report a correlation =
@@ -109,14 +112,9 @@ umxAPA(.000182613)
 data(twinData)
 selDVs = c("wt1", "wt2")
 mzData <- subset(twinData, zygosity \%in\% c("MZFF", "MZMM"))
-dzData <- subset(twinData, zygosity \%in\% c("DZFF", "DZMM", "DZOS"))
 x = cor.test(~ wt1 + wt2, data = mzData)
 umxAPA(x)
 
-# ========================
-# = report a correlation =
-# ========================
-data(twinData)
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://my.ilstu.edu/~jhkahn/apastats.html}

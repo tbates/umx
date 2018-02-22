@@ -3674,18 +3674,18 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' 4. Given only a number as obj will be treated as a p-value as returned in APA format.
 #' 
 #' @aliases summaryAPA
-#' @param obj Either a model (\link{lm}), a beta-value, or a data.frame
-#' @param se If b is a model, then se can be the name of the parameter of interest. Otherwise, SE will b
-#' used as a standard-error (returning a CI) OR if a CI is offered (vector of lower and upper)
-#' the SE will be returned.
-#' @param std If obj is an lm, whether to re-run the model on standardized data and report std betas
-#' @param digits Round numbers to how many values
-#' @param use If obj is a data.frame, how to handle NA (default = "complete")
-#' @param min = .001 for a p-value, the smallest value to report numerically
+#' @param obj A model (e.g. \link{lm}, lme, glm, t-test), beta-value, or data.frame
+#' @param se If obj is a beta, se treated as standard-error (returning a CI). 
+#' If obj is a model, used to select effect of interest (blank for all effects). 
+#' Finally, set se to the CI c(lower, upper), to back out the SE.
+#' @param std Whether to report std betas (re-runs model on standardized data).
+#' @param digits How many digits to round output.
+#' @param use If obj is a data.frame, how to handle NAs (default = "complete")
+#' @param min For a p-value, the smallest value to report numerically (default .001)
 #' @param addComparison for a p-value, whether to add "</=" default (NA) adds "<" if necessary
 #' @param report what to return (default = markdown table). Use "html" to open a web table.
-#' @param lower whether to report on the lower triangle of correlations for a data.frame (Default = TRUE)
-#' @param test for glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
+#' @param lower whether to not show the lower triangle of correlations for a data.frame (Default TRUE)
+#' @param test If obj is a glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
 #' @return - string
 #' @export
 #' @family Reporting Functions
@@ -3695,10 +3695,11 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' # ========================================
 #' # = Report lm (regression/anova) results =
 #' # ========================================
-#' umxAPA(lm(mpg ~ wt + disp, mtcars))
-#' umxAPA(lm(mpg ~ wt + disp, mtcars), "disp")
+#' umxAPA(lm(mpg ~ wt + disp, mtcars)) # All parameters
+#' umxAPA(lm(mpg ~ wt + disp, mtcars), "disp") # Just disp effect
+#' umxAPA(lm(mpg ~ wt + disp, mtcars), std = TRUE) # Standardize effects
 #' 
-#' # try an lme, glm, or htest
+#' # glm example
 #' df = mtcars
 #' df$mpg_thresh = 0
 #' df$mpg_thresh[df$mpg>16] = 1
@@ -3723,6 +3724,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' # = CONFIDENCE INTERVAL text from effect and se =
 #' # ===============================================
 #' umxAPA(.4, .3) # parameter 2 interpreted as SE
+#' 
 #' # Input beta and CI, and back out the SE
 #' umxAPA(-0.030, c(-0.073, 0.013), digits = 3)
 #' 
@@ -3731,6 +3733,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' # ====================
 #' umxAPA(.0182613)
 #' umxAPA(.000182613)
+#' umxAPA(.000182613,  addComparison=FALSE)
 #' 
 #' # ========================
 #' # = report a correlation =
@@ -3738,15 +3741,9 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' data(twinData)
 #' selDVs = c("wt1", "wt2")
 #' mzData <- subset(twinData, zygosity %in% c("MZFF", "MZMM"))
-#' dzData <- subset(twinData, zygosity %in% c("DZFF", "DZMM", "DZOS"))
 #' x = cor.test(~ wt1 + wt2, data = mzData)
 #' umxAPA(x)
-#' 
-#' # ========================
-#' # = report a correlation =
-#' # ========================
-#' data(twinData)
-
+#'
 umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp")) {
 	report = match.arg(report)
 	if("htest" == class(obj)[[1]]){
