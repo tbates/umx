@@ -1,3 +1,4 @@
+aa
 Aa
 ACEcov
 ACEv
@@ -7,6 +8,7 @@ AGFI
 ai
 AICchi
 AICdev
+al
 allFree
 Amod
 analyse
@@ -36,6 +38,7 @@ BICdev
 biv
 blog
 BMI
+bmi
 bml
 Booleans
 Boomsma
@@ -127,6 +130,7 @@ es
 EvalQuote
 ExE
 expCov
+ExpCov
 expMean
 Extraversion
 factanal
@@ -211,6 +215,7 @@ lim
 linesearch
 LISREL
 lm
+lme
 logLik
 LOSEM
 lowerOnes
@@ -243,13 +248,16 @@ mxCI
 mxCompare
 mxCondenseMatrixSlots
 mxData
+MxData
 mxFactor
 mxFactorScores
 mxLatent
+MxMatrix
 mxMatrices
 mxMatrix
 mxMI
 mxModel
+MxModel
 MxModels
 mxPath
 mxPaths
@@ -299,6 +307,7 @@ OmniGraffle
 omxGetParameters
 omxSetParameters
 OpenMP
+OpenMx
 openmx
 optimised
 ordVar

@@ -20,7 +20,7 @@ citEntry(entry="article",
 		"Michael C. Neale,", 
 		"Hermine H. Maes,",
 		"(under review). umx: Twin and path-based Structural Equation Modeling in OpenMx. Journal of Statistical Software,",
-		"DOI:XXXX")
+		"DOI:TBA")
 )
 
 year <- "2016"

@@ -54,7 +54,7 @@ If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provi
 
 You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
 
-\emph{Note}, if you want a power calculator, see Brad Verhulst's work \href{http://www.people.vcu.edu/~bverhulst/power/power.html}{here}.
+\emph{Note}, if you want a power calculator, see \href{http://www.people.vcu.edu/~bverhulst/power/power.html}{here}.
 
 \strong{Shortcuts}
 

@@ -4366,7 +4366,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' 
 #' You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
 #' 
-#' *Note*, if you want a power calculator, see Brad Verhulst's work [here](http://www.people.vcu.edu/~bverhulst/power/power.html).
+#' *Note*, if you want a power calculator, see [here](http://www.people.vcu.edu/~bverhulst/power/power.html).
 #' 
 #' **Shortcuts**
 #' 
