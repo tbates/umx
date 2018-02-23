@@ -2072,7 +2072,8 @@ install.OpenMx <- function(loc = c("UVa", "travis", "CRAN", "open travis build p
 	if(!is.null(url)){
 		install.packages(loc)
 	} else if(loc == "UVa"){
-		source("http://openmx.psyc.virginia.edu/getOpenMx.R")
+		# was http://openmx.psyc.virginia.edu/getOpenMx.R
+		source("https://openmx.ssri.psu.edu/software/getOpenMx.R")
 	}else if(loc == "travis"){
 		if(umx_check_OS("OSX")){
 			install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
