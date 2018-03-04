@@ -7,8 +7,8 @@
 umxACEv(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
   "random"), dzData, mzData, suffix = NULL, dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
-  boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
-  thresholds = c("deviationBased", "WLS"),
+  boundDiag = NULL, weightVar = NULL, equateMeans = TRUE,
+  bVector = FALSE, thresholds = c("deviationBased", "WLS"),
   autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL)
 }
 \arguments{
@@ -38,7 +38,7 @@ umxACEv(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data.}
 
-\item{boundDiag}{= Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8}
+\item{boundDiag}{= Numeric lbound for diagonal of the a, c, and e matrices. Default = NULL (no bound)}
 
 \item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL).}
 
@@ -124,7 +124,7 @@ plot(m1)
 # ========================================================
 m2 = umxACEv("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # ADE is better
-umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled ACE
+umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
 
 # ==============================
 # = Univariate model of weight =
@@ -134,9 +134,6 @@ umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled AC
 # 1. This variable has a large variance, but umx picks good starts.
 # 2. umxACEv can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
 # 3. umxACEv picks the variables it needs from the data.
-
-# You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
-m1 = umxACEv(selDVs = "wt", sep = '', dzData = dzData, mzData = mzData, boundDiag = 0)
 
 # We can modify this model, dropping shared environment, and see a comparison:
 m2 = umxModify(m1, update = "C_r1c1", comparison = TRUE)

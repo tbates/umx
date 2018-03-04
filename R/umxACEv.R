@@ -70,7 +70,7 @@
 #' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
 #' @param numObsDZ = Number of DZ twins: Set this if you input covariance data.
 #' @param numObsMZ = Number of MZ twins: Set this if you input covariance data.
-#' @param boundDiag = Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8
+#' @param boundDiag = Numeric lbound for diagonal of the a, c, and e matrices. Default = NULL (no bound)
 #' @param weightVar = If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
@@ -103,7 +103,7 @@
 #' # ========================================================
 #' m2 = umxACEv("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
-#' umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled ACE
+#' umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
 #'
 #' # ==============================
 #' # = Univariate model of weight =
@@ -114,9 +114,6 @@
 #' # 2. umxACEv can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
 #' # 3. umxACEv picks the variables it needs from the data.
 #' 
-#' # You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
-#' m1 = umxACEv(selDVs = "wt", sep = '', dzData = dzData, mzData = mzData, boundDiag = 0)
-#'
 #' # We can modify this model, dropping shared environment, and see a comparison:
 #' m2 = umxModify(m1, update = "C_r1c1", comparison = TRUE)
 
@@ -215,10 +212,10 @@
 #' umxSummary(m1)
 #' plot(m1)
 
-umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
+umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, suffix = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL) {
 
-		message("This is STRICTLY experimental, and not complete (prep for Boulder 2018 use of variance components modeling)")
+		# message("This is STRICTLY experimental, and not complete (prep for Boulder 2018 use of variance components modeling)")
 		covMethod = match.arg(covMethod)
 		# =================
 		# = Set optimizer =
