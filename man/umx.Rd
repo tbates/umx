@@ -190,6 +190,9 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_open_CRAN_page}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}}
 
+Other datasets: \code{\link{GFF}},
+  \code{\link{us_skinfold_data}}
+
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
   \code{\link{umxRAM2Ordinal}},

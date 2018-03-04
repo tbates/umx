@@ -66,7 +66,9 @@ m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun=FALSE,
 	  mzmData = mzmData, dzmData = dzmData, 
        mzfData = mzfData, dzfData = dzfData, 
        dzoData = dzoData)
+# m1 = mxRun(m1)
 # umxSummary(m1)
+# summary(m1)
 # summary(m1)$Mi
 
 }

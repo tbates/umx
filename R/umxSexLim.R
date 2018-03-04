@@ -51,7 +51,9 @@
 #'		  mzmData = mzmData, dzmData = dzmData, 
 #'        mzfData = mzfData, dzfData = dzfData, 
 #'        dzoData = dzoData)
+#' # m1 = mxRun(m1)
 #' # umxSummary(m1)
+#' # summary(m1)
 #' # summary(m1)$Mi
 #' 
 umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), autoRun = getOption("umx_auto_run"), optimizer = NULL){
@@ -162,7 +164,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 				min(eigenval(Ram)), min(eigenval(Rcm)), min(eigenval(Rem)),
 			  	min(eigenval(Raf)), min(eigenval(Rcf)), min(eigenval(Ref)))
 			),
-			mxConstraint(name = "Keep_it_Positive_Baby", minCor > pos1by6),
+			mxConstraint(name = "Keep_it_Positive", minCor > pos1by6),
 
 			# Algebra for Total variances and standard deviations (of diagonals) 
 			umxMatrix("I", "Iden", nrow = nVar),
@@ -233,10 +235,10 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			umxSummary(model)
 			# umxSummary(model, refModels = refModels, showEstimates = showEstimates)
 		}, warning = function(w) {
-			message("Warning incurred trying to run summary")
+			message("Warning incurred trying to run umxSummary: try summary()")
 			message(w)
 		}, error = function(e) {
-			message("Error incurred trying to run model")
+			message("Error incurred trying to run umxSummary: try summary()")
 			message(e)
 		})
 	}

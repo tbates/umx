@@ -3,19 +3,16 @@
 \docType{data}
 \name{GFF}
 \alias{GFF}
-\title{# How I coded this data from the Boulder example}
+\title{Twin data: General Family Functioning, divorce, and wellbeing.}
 \format{A data frame with 1000 rows and 8 variables:}
 \usage{
 data(GFF)
 }
 \description{
-Twin data: General Family Functioning, divorce, and wellbeing.
-}
-\details{
 Measures of family functioning, happiness and related variables in twins, and
 their brothers and sisters. (see details)
-
-
+}
+\details{
 Several scales in the data are described in  van der Aa et al. (2010).
 General Family Functioning (GFF) refers to adolescents' evaluations general family health
 vs. pathology. It assesses problem solving, communication, roles within the household,
@@ -96,5 +93,9 @@ van der Aa, N., Boomsma, D. I., Rebollo-Mesa, I., Hudziak, J. J., & Bartels,
 M. (2010). Moderation of genetic factors by parental divorce in adolescents' 
 evaluations of family functioning and subjective wellbeing. Twin Research 
 and Human Genetics, 13(2), 143-162. doi:10.1375/twin.13.2.143
+}
+\seealso{
+Other datasets: \code{\link{umx}},
+  \code{\link{us_skinfold_data}}
 }
 \keyword{datasets}

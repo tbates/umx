@@ -4612,6 +4612,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family String Functions
 #' @family Miscellaneous Stats Helpers
 #' @family Miscellaneous Utility Functions
+#' @family datasets
 #' @family Advanced Model Building Functions
 #' @family zAdvanced Helpers
 #' @family xmu internal not for end user

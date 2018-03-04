@@ -13,8 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#' # How I coded this data from the Boulder example
-#' 
+# How I coded this data from the Boulder example
+#
 # GFF = read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T), na.strings = -999)
 # x   = umx_rename(GFF, old = "zyg2"     , replace = "zyg_2grp"); names(x)
 # x   = umx_rename(x  , old = "zyg"      , replace = "zyg_6grp"); names(x)
@@ -126,6 +126,7 @@
 #' }
 #' @docType data
 #' @keywords datasets
+#' @family datasets
 #' @name GFF
 #' @usage data(GFF)
 #' @format A data frame with 1000 rows and 8 variables:
@@ -177,6 +178,7 @@ NULL
 #' 
 #' @docType data
 #' @keywords datasets
+#' @family datasets
 #' @name us_skinfold_data
 #' @references Moskowitz, W. B., Schwartz, P. F., & Schieken, R. M. (1999).
 #' Childhood passive smoking, race, and coronary artery disease risk:
