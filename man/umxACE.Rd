@@ -141,7 +141,7 @@ plot(m1)
 # ========================================================
 m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # ADE is better
-umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled ACE
+umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A, C & E
 
 # ==============================
 # = Univariate model of weight =
@@ -154,7 +154,7 @@ umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled AC
 # 2. umxACE can figure out variable names: provide sep= "_T" and selVar = "wt" -> "wt_T1" "wt_T2"
 
 # 3. umxACE picks the variables it needs from the data.
-# 4. You can use boundDiag to lbound a, c, and e at 0 (prevents mirror-solutions).
+# 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0 (prevents mirror-solutions).
 
 m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
 # MODEL MODIFICATION
