@@ -1124,7 +1124,7 @@ umxVersion <- function (model = NULL, verbose = TRUE, return = "umx") {
         message(msg)
     }
 	OpenMx_vers = mxVersion(model = model, verbose = verbose)
-	message('You can update OpenMx thusly:\ninstall.OpenMx(loc = c("UVa", "travis", "CRAN", "open travis build page")')
+	message('You can update OpenMx thusly:\ninstall.OpenMx(loc = c("NPSOL", "travis", "CRAN", "open travis build page")')
 	
 	if(return == "umx"){
 		invisible(umx_vers)
