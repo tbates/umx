@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#' Build and run a 2-group Cholesky twin model (uni-variate or multi-variate) with variance estimates.
+#' Build and run 2-group uni- or multi-variate ACE models based on VARIANCE (not paths).
 #'
 #' A common task in twin modeling involves using the genetic and environmental differences 
 #' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
@@ -21,15 +21,15 @@
 #' in behavior genetics (Cardon and Neale, 1996).
 #' 
 #' This model decomposes phenotypic variance into Additive genetic,
-#' unique environmental (E) and, optionally, either common or shared-environment (C) or 
+#' unique environmental (E) and, optionally, either common environment (shared-environment, C) or 
 #' non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
 #' and multiple examples.
 #' 
-#' The Cholesky or lower-triangle decomposition allows a model which is both sure to be 
-#' solvable, and also to account for all the variance (with some restrictions) in the data. 
-#' This model creates as many latent A C and E variables as there are phenotypes, and, moving 
-#' from left to right, decomposes the variance in each component into successively restricted 
-#' factors. The following figure shows how the ACE model appears as a path diagram:
+#' This function does not use the Cholesky decomposition. Instead it directly models variance.
+#' This ensures unbiased type-I error rates. It means that occasionally
+#' estimates of variance may be negative. This should be used as an occasion to inspect you model
+#' choices and data.
+#' The following figure shows how the ACEv model appears as a path diagram (TODO: NOT YET UPDATED):
 #' 
 #' \figure{ACE.png}
 #' 
@@ -84,9 +84,46 @@
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' 
+#' # ==============================
+#' # = Univariate model of weight =
+#' # ==============================
+#' require(umx)
+#' data(twinData) # ?twinData from Australian twins.
+#'
+#' # Things to note: ACE model of weight will return a NEGATIVE variance in C.
+#' #  This is exactly why we have ACEv! It suggests we need a different model
+#' #  In this case: ADE.
+#' # Other things to note:
+#' # 1. umxACEv can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
+#' # 2. umxACEv picks the variables it needs from the data.
+#' 
+#' selDVs = "wt"
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACEv(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+#' 
+#' # ========================================================
+#' # = Evidence for dominance ? (DZ correlation set to .25) =
+#' # ========================================================
+#' m2 = umxACEv("ADE", selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
+#' # note: the underlying matrices are still called A, C, and E.
+#' # I catch this in the summary table, so columns are labeled A, D, and E.
+#' # However, currently, the plot will say A, C, E.
+#' 
+#' # We can modify this model, dropping dominance component (still called C), 
+#' # and see a comparison:
+#' m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE)
+#' # =========================================================
+#' # = Well done! Now you can make modify twin models in umx =
+#' # =========================================================
+#' 
 #' # ============================
 #' # = How heritable is height? =
 #' # ============================
+#' # 
+#' # Note: Height has a large variance. umx can typically picks good starts,
+#' #    but scaling is advisable.
+#' # 
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.
 #' # Pick the variables
@@ -102,21 +139,12 @@
 #' # = Evidence for dominance ? (DZ correlation set to .25) =
 #' # ========================================================
 #' m2 = umxACEv("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
-#' umxCompare(m2, m1) # ADE is better
+#' umxCompare(m2, m1) # Is ADE better?
 #' umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
 #'
-#' # ==============================
-#' # = Univariate model of weight =
-#' # ==============================
-#'
-#' # Things to note:
-#' # 1. This variable has a large variance, but umx picks good starts.
-#' # 2. umxACEv can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
-#' # 3. umxACEv picks the variables it needs from the data.
-#' 
 #' # We can modify this model, dropping shared environment, and see a comparison:
-#' m2 = umxModify(m1, update = "C_r1c1", comparison = TRUE)
-
+#' m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE)
+#'
 #' # =====================================
 #' # = Bivariate height and weight model =
 #' # =====================================
@@ -130,11 +158,6 @@
 #' dzData = dzData[1:80,]
 #' m1 = umxACEv(selDVs = c("ht", "wt"), suffix = '', dzData = dzData, mzData = mzData)
 #' 
-#' # =========================================================
-#' # = Well done! Now you can make modify twin models in umx =
-#' # =========================================================
-#' 
-#'
 #' # ===================
 #' # = Ordinal example =
 #' # ===================

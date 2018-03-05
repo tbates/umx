@@ -1,6 +1,7 @@
-# umx 2.1.0 (Expected March 12 2018, R 3.4.3 Boulder Workshop edition)
+# umx 2.2.0 (Expected March 12 2018, R 3.4.3 Boulder Workshop edition)
 * IMPROVED: support spell_check in umx_make
-* 
+* IMPROVED: Default boundDiag in umxACEv
+* IMPROVED: help for umxACEv
 
 # umx 2.0.2 (Feb 12 2018, R 3.4.3 Higher goals edition)
 * NEW: `umxSummary` works with multi-group models!
