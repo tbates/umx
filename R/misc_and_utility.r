@@ -1,11 +1,11 @@
 # Poems you should know by heart
-# https://en.wikipedia.org/wiki/O_Captain!_My_Captain!
-# https://en.wikipedia.org/wiki/The_Second_Coming_(poem)
 # https://en.wikipedia.org/wiki/Invictus
+# https://en.wikipedia.org/wiki/The_Second_Coming_(poem)
 # http://www.poetryfoundation.org/poem/173698get
+# https://en.wikipedia.org/wiki/O_Captain!_My_Captain!
 
 #
-#   Copyright 2007-2017 Copyright 2007-2017 Timothy C. Bates
+#   Copyright 2007-2018 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -2043,14 +2043,18 @@ print.reliability <- function (x, digits = 4, ...){
 # ==================
 # = Code functions =
 # ==================
-#' Easily install the latest parallel/NPSOL enabled build of OpenMx.
+#' Install OpenMx, with choice of builds
 #'
 #' @description
-#' You can:
-#' 1. Install from UVa (default: This is where we maintain binaries supporting parallel processing and NPSOL).
-#' 2. Install the latest travis built (currently MacOS only).
-#' 3. Install from CRAN.
-#' 4. Open the list of travis builds in a browser window.
+#' You can install OpenMx, including the latest parallel/NPSOL enabled build of OpenMx. Options are:
+#' 
+#' 1. "NPSOL": Install from our repository (default: This is where we maintain binaries supporting parallel processing and NPSOL).
+#' 
+#' 2. "travis": Install the latest travis built (currently MacOS only).
+#' 
+#' 3. "CRAN": Install from CRAN.
+#' 
+#' 4. "open travis build page": Open the list of travis builds in a browser window.
 #'
 #' @aliases umx_update_OpenMx
 #' @param loc Which install to get: "UVa" (the default), "travis" (latest build),
@@ -2065,13 +2069,21 @@ print.reliability <- function (x, digits = 4, ...){
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' install.OpenMx()
+#' install.OpenMx() # gets the NPSOL version
+#' install.OpenMx("NPSOL") # gets the NPSOL version explicitly
+#' install.OpenMx("CRAN") # Get the latest CRAN version
+#' install.OpenMx("open travis build page") # Open web page of travis builds
 #' }
-install.OpenMx <- function(loc = c("UVa", "travis", "CRAN", "open travis build page"), url= NULL, lib, repos = getOption("repos")) {	
+install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build page", "UVa"), url= NULL, lib, repos = getOption("repos")) {	
 	loc = match.arg(loc)
+	if(loc == "UVa"){
+		loc = "NPSOL"
+		message("next time, use 'NPSOL' instead of 'UVa'")
+	}
+	
 	if(!is.null(url)){
 		install.packages(loc)
-	} else if(loc == "UVa"){
+	} else if(loc == "NPSOL"){
 		# was http://openmx.psyc.virginia.edu/getOpenMx.R
 		source("https://openmx.ssri.psu.edu/software/getOpenMx.R")
 	}else if(loc == "travis"){

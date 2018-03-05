@@ -3,10 +3,10 @@
 \name{install.OpenMx}
 \alias{install.OpenMx}
 \alias{umx_update_OpenMx}
-\title{Easily install the latest parallel/NPSOL enabled build of OpenMx.}
+\title{Install OpenMx, with choice of builds}
 \usage{
-install.OpenMx(loc = c("UVa", "travis", "CRAN", "open travis build page"),
-  url = NULL, lib, repos = getOption("repos"))
+install.OpenMx(loc = c("NPSOL", "travis", "CRAN", "open travis build page",
+  "UVa"), url = NULL, lib, repos = getOption("repos"))
 }
 \arguments{
 \item{loc}{Which install to get: "UVa" (the default), "travis" (latest build),
@@ -22,15 +22,22 @@ or open the travis list of builds on the web to view/pick a url.}
 -
 }
 \description{
-You can:
-1. Install from UVa (default: This is where we maintain binaries supporting parallel processing and NPSOL).
-2. Install the latest travis built (currently MacOS only).
-3. Install from CRAN.
-4. Open the list of travis builds in a browser window.
+You can install OpenMx, including the latest parallel/NPSOL enabled build of OpenMx. Options are:
+
+1. "NPSOL": Install from our repository (default: This is where we maintain binaries supporting parallel processing and NPSOL).
+
+2. "travis": Install the latest travis built (currently MacOS only).
+
+3. "CRAN": Install from CRAN.
+
+4. "open travis build page": Open the list of travis builds in a browser window.
 }
 \examples{
 \dontrun{
-install.OpenMx()
+install.OpenMx() # gets the NPSOL version
+install.OpenMx("NPSOL") # gets the NPSOL version explicitly
+install.OpenMx("CRAN") # Get the latest CRAN version
+install.OpenMx("open travis build page") # Open web page of travis builds
 }
 }
 \references{
