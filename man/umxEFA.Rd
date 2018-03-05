@@ -3,12 +3,13 @@
 \name{umxEFA}
 \alias{umxEFA}
 \alias{umxFactanal}
-\title{umxEFA}
+\title{FIML-based Exploratory Factor Analysis (EFA)}
 \usage{
-umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
-  n.obs = NULL, scores = c("none", "ML", "WeightedML", "Regression"),
-  minManifests = NA, rotation = c("varimax", "promax", "none"),
-  name = "efa", digits = 2, report = c("markdown", "html"))
+umxEFA(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
+  scores = c("none", "ML", "WeightedML", "Regression"), minManifests = NA,
+  rotation = c("varimax", "promax", "none"), name = "efa", digits = 2,
+  return = c("model", "loadings"), report = c("markdown", "html"),
+  covmat = NULL)
 }
 \arguments{
 \item{x}{Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.}
@@ -16,8 +17,6 @@ umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
 \item{factors}{Either number of factors to request or a vector of factor names.}
 
 \item{data}{A dataframe of manifest columns you are modeling}
-
-\item{covmat}{Covariance matrix of data you are modeling (not implemented)}
 
 \item{n.obs}{Number of observations in covmat (if provided, default = NA)}
 
@@ -31,19 +30,24 @@ umxEFA(x = NULL, factors = NULL, data = NULL, covmat = NULL,
 
 \item{digits}{rounding (default = 2)}
 
+\item{return}{by default, the resulting MxModel is returned. Say "loadings" to get a fact.anal object.}
+
 \item{report}{Report as markdown to the console, or open a table in browser ("html")}
+
+\item{covmat}{Covariance matrix of data you are modeling (not implemented)}
 }
 \value{
 - EFA \code{\link{mxModel}}
 }
 \description{
 Perform full-information maximum-likelihood factor analysis on a data matrix.
-as in \code{\link{factanal}}, you need only specify the number of factors and offer up
+}
+\details{
+As in \code{\link{factanal}}, you need only specify the number of factors and offer up
 some manifest data, e.g:
                                                              
 \code{umxEFA(factors = 2, data = mtcars)}
-}
-\details{
+
 Equivalently, you can also give a list of factor names:
 
 \code{umxEFA(factors = c("g", "v"), data = mtcars)}
@@ -54,26 +58,36 @@ The factor model is implemented as a structural equation model, e.g.
 
 You can request \code{scores} from the model. Unlike factanal, these can cope with missing data.
 
+You can also rotate the factors using any rotation function.
+
 
 In an EFA, all items may load on all factors.
+
 For identification we need m^2 degrees of freedom. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
 We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of the factor loadings
 component of the A matrix. The manifest variances are also lbounded at 0.
 
 EFA reports standardized loadings: to do this, we scale the data.
 
-Bear in mind that factor scores are indeterminate and can be rotated.
+\emph{note}: Bear in mind that factor scores are indeterminate.
 
-This is very much early days.
+Thanks to @ConorDolan for code implementing the rotation matrix and other suggestions!
 }
 \examples{
 \dontrun{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")
 m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
 loadings(m1)
+
+# Formula interface in base-R factanal()
 m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m2)
 plot(m2)
+
+# Return a loadings object
+x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
+names(x)
+
 m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
 m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
