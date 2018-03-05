@@ -1,7 +1,9 @@
 # umx 2.2.0 (Expected March 12 2018, R 3.4.3 Boulder Workshop edition)
-* IMPROVED: support spell_check in umx_make
-* IMPROVED: Default boundDiag in umxACEv
-* IMPROVED: help for umxACEv
+* IMPROVED: `umxEFA` reports factor correlation matrix (thanks @ConorDolan)!
+* IMPROVED: `umxEFA` can return a loadings object.
+* IMPROVED: `umx_make`not supports spelling check.
+* IMPROVED: `umxACEv` diagonal now unbounded by default (which is it's whole purpose)
+* IMPROVED: `umxACEv` got major improvements to help file.
 
 # umx 2.0.2 (Feb 12 2018, R 3.4.3 Higher goals edition)
 * NEW: `umxSummary` works with multi-group models!

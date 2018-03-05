@@ -1,5 +1,5 @@
 Package: umx
-Version: 2.2.0
+Version: 2.2.5
 Date: 2018-03-05
 Title: Structural Equation and Twin Modeling in R
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
