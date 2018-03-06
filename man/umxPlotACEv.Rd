@@ -17,7 +17,7 @@ umxPlotACEv(x = NA, file = "name", digits = 2, means = FALSE,
 
 \item{means}{Whether to show means paths (default = FALSE)}
 
-\item{std}{Whether to standardize the model (default = TRUE)}
+\item{std}{Whether to standardize the model (default = FALSE)}
 
 \item{...}{Additional (optional) parameters}
 }

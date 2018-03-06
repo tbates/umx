@@ -1,4 +1,6 @@
-# umx 2.2.0 (Expected March 12 2018, R 3.4.3 Boulder Workshop edition)
+# umx 2.3.0 (Expected March 12 2018, R 3.4.3 post Boulder Workshop edition)
+* NEW: `umxACEv` plot works
+* NEW: `umxACEv` standardize mostly functional
 * IMPROVED: `umxEFA` reports factor correlation matrix (thanks @ConorDolan)!
 * IMPROVED: `umxEFA` can return a loadings object.
 * IMPROVED: `umx_make`not supports spelling check.

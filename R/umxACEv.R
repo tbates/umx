@@ -867,7 +867,7 @@ umxSummary.MxModel.ACEv <- umxSummaryACEv
 #' @param file The name of the dot file to write: Default ("name") = use the name of the model. NA = don't plot.
 #' @param digits How many decimals to include in path loadings (default = 2)
 #' @param means Whether to show means paths (default = FALSE)
-#' @param std Whether to standardize the model (default = TRUE)
+#' @param std Whether to standardize the model (default = FALSE)
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -899,46 +899,55 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	}
 	varCount = length(selDVs)/2;
 	parameterKeyList = omxGetParameters(model);
+	# e.g. expMean_r1c1       A_r1c1       C_r1c1       E_r1c1
+
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
 		if(class(value) == "numeric") {
 			value = round(value, digits)
 		}
-		if (grepl("^[ACE]_r[0-9]+c[0-9]+", thisParam)) { # a c e
-			from    = sub('([ACE])_r([0-9]+)c([0-9]+)', '\\1\\3', thisParam, perl = TRUE);  # a c or e
-			target  = as.numeric(sub('([ACE])_r([0-9]+)c([0-9]+)', '\\2', thisParam, perl = TRUE));
-			target  = selDVs[as.numeric(target)]
-			latents = append(latents, from)
-			showThis = TRUE
+		if (grepl("^[ACE]_r[0-9]+c[0-9]+", thisParam)) { # fires on things like "A_r1c1"
+			from    = sub('([ACE])_r([0-9]+)c([0-9]+)', '\\1\\3', thisParam, perl = TRUE); # "A_r1c1" --> "A1" where 1 is column
+			target  = sub('([ACE])_r([0-9]+)c([0-9]+)', '\\1\\2', thisParam, perl = TRUE); # target is [ACE] + row
+			latents = append(latents, c(from, target))
+			out = paste0(out, "\t", from, " -> ", target, " [dir=both, label = \"", value, "\"]", ";\n")
 		} else { # means probably
-			if(means){
-				showThis = TRUE
-			} else {
-				showThis = FALSE
-			}
 			from   = thisParam;
 			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl=TRUE) 
-		}
-		if(showThis){
-			out = paste0(out, from, " -> ", target, " [label = \"", value, "\"]", ";\n")
+			if(means){
+				out = paste0(out, "\t", from, " -> ", target, " [label = \"", value, "\"]", ";\n")
+			}
 		}
 	}
+	# =========================================
+	# = list latents and draw them as circles =
+	# =========================================
 	preOut = "\t# Latents\n"
 	latents = unique(latents)
 	for(var in latents) {
 	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
 	}
 
+	# ===========================================
+	# = list manifests and draw them as squares =
+	# ===========================================
 	preOut = paste0(preOut, "\n\t# Manifests\n")
 	for(var in selDVs[1:varCount]) {
 	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
 	}
 
-	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
+	selDVs[1:varCount]
+	l_to_v_at_1 = ""
+	for(l in latents) {
+		var  = as.numeric(sub('([ACE])([0-9]+)', '\\2', l, perl = TRUE)); # target is [ACE]n		
+	   l_to_v_at_1 = paste0(l_to_v_at_1, "\t ", l, "-> ", selDVs[var], " [label = \"@1\"];\n")
+	}
+	
+	rankVars = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
 	# grep('a', latents, value=T)
-	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; a1; a2}
-	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
-	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
+	rankA   = paste("\t{rank = min; ", paste(grep('A'   , latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; a1; a2}
+	rankCE  = paste("\t{rank = max; ", paste(grep('[CE]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
+	digraph = paste0("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, l_to_v_at_1, rankVars, rankA, rankCE, "\n}");
 	xmu_dot_maker(model, file, digraph)
 } # end umxPlotACE
 
@@ -965,6 +974,7 @@ plot.MxModel.ACEv <- umxPlotACEv
 #' m1  = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' std = umx_standardize(m1)
 umx_standardize_ACEv <- function(model, ...) {
+	message("Standardizing ACE variance-based models not yet perfected: issues with negative variances...")
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
@@ -978,10 +988,13 @@ umx_standardize_ACEv <- function(model, ...) {
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar <- length(selDVs)/2;
 		# Calculate standardized variance components
-
 		A  <- mxEval(top.A, model);   # Variances
 		C  <- mxEval(top.C, model);
 		E  <- mxEval(top.E, model);
+		
+		A = cov2cor(abs(A)) * sign(A)
+		C = cov2cor(abs(C)) * sign(C)
+		E = cov2cor(abs(E)) * sign(E)
 		Vtot = A + C + E;  # Total variance
 		I  <- diag(nVar);  # nVar Identity matrix
 		# Inverse of diagonal matrix of standard deviations. In old money, this was (\sqrt(I.Vtot))~
