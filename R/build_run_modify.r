@@ -1271,7 +1271,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @description
 #' Implementing a core task in twin modeling, umxACE models the genetic and environmental
 #' structure of one or more phenotypes (measured variables) using the Cholesky ACE model
-#' (Cardon and Neale, 1996).
+#' (Neale and Cardon, 1996).
 #' 
 #' Classical twin modeling uses the genetic and environmental differences 
 #' among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
@@ -1326,7 +1326,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
 #'
 #' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
-#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Cardon and Neale, 1996).
+#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").
 #' @param selCovs (optional) covariates to include from the data (do not include suffix in names)
@@ -1352,7 +1352,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
+#' to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 #' @examples
 #' 
 #' # ============================
