@@ -155,8 +155,9 @@ umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still cal
 
 # 3. umxACE picks the variables it needs from the data.
 # 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0 (prevents mirror-solutions).
+        # can remove this by setting boundDiag = NULL
+m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
 
-m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
 # MODEL MODIFICATION
 # We can modify this model, say testing shared environment, and see a comparison:
 

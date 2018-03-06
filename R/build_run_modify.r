@@ -1388,9 +1388,9 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' 
 #' # 3. umxACE picks the variables it needs from the data.
 #' # 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0 (prevents mirror-solutions).
-#' 
-#' m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = 0)
-
+#'         # can remove this by setting boundDiag = NULL
+#' m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
+#'
 #' # MODEL MODIFICATION
 #' # We can modify this model, say testing shared environment, and see a comparison:
 #' 

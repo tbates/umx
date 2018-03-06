@@ -29,9 +29,9 @@
 #' This ensures unbiased type-I error rates. It means that occasionally
 #' estimates of variance may be negative. This should be used as an occasion to inspect you model
 #' choices and data.
-#' The following figure shows how the ACEv model appears as a path diagram (TODO: NOT YET UPDATED):
+#' The following figure shows the A components of a trivate ACEv model:
 #' 
-#' \figure{ACE.png}
+#' \figure{ACEv.png}
 #' 
 #' @details
 #' \strong{Data Input}
@@ -56,7 +56,8 @@
 #' to .25 to model dominance effects.
 #'
 #' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
-#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}.
+#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
+#' 
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").
 #' @param selCovs (optional) covariates to include from the data (do not include suffix in names)
@@ -81,7 +82,8 @@
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
+#' to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 #' @examples
 #' 
 #' # ==============================

@@ -74,9 +74,9 @@ This function does not use the Cholesky decomposition. Instead it directly model
 This ensures unbiased type-I error rates. It means that occasionally
 estimates of variance may be negative. This should be used as an occasion to inspect you model
 choices and data.
-The following figure shows how the ACEv model appears as a path diagram (TODO: NOT YET UPDATED):
+The following figure shows the A components of a trivate ACEv model:
 
-\figure{ACE.png}
+\figure{ACEv.png}
 
 
 \strong{Data Input}
@@ -101,7 +101,7 @@ from 1 (the default for modeling family-level effects shared 100% by twins in a 
 to .25 to model dominance effects.
 
 \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
-of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs {ref?}.
+of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
 }
 \examples{
 
@@ -257,7 +257,8 @@ umxSummary(m1)
 plot(m1)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
+to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
