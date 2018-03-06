@@ -62,7 +62,7 @@ A common task in twin modeling involves using the genetic and environmental diff
 between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 to model the genetic and environmental structure of one, or, typically, several phenotypes
 (measured behaviors). umxACEv supports modeling with the ACE Cholesky model, a core model 
-in behavior genetics (Cardon and Neale, 1996).
+in behavior genetics (Neale and Cardon, 1996).
 }
 \details{
 This model decomposes phenotypic variance into Additive genetic,

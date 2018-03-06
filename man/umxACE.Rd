@@ -63,7 +63,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 \description{
 Implementing a core task in twin modeling, umxACE models the genetic and environmental
 structure of one or more phenotypes (measured variables) using the Cholesky ACE model
-(Cardon and Neale, 1996).
+(Neale and Cardon, 1996).
 
 Classical twin modeling uses the genetic and environmental differences 
 among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
@@ -118,7 +118,7 @@ So, in a model where the means for twin 1 and twin 2 had been equated (set = to 
 m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
 
 \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
-of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Cardon and Neale, 1996).
+of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
 }
 \examples{
 
@@ -258,7 +258,8 @@ umxSummary(m1)
 plot(m1)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
+to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
