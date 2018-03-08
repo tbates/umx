@@ -2131,6 +2131,8 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	}
 	varCount = length(selDVs)/2;
 	parameterKeyList = omxGetParameters(model);
+	# TODO: could replace this with code that walks across the known matrices...
+	# would obviate problems with arbitrary names.
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
 		if(class(value) == "numeric") {
