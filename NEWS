@@ -1,6 +1,12 @@
 # umx 2.3.0 (Expected March 12 2018, R 3.4.3 post Boulder Workshop edition)
-* NEW: `umxACEv` plot works
-* NEW: `umxACEv` standardize mostly functional
+* NEW: `umxIP` and `umxCP` nFac now allows specifying different numbers of a, c, and e factors!
+* BUGFIX: `umxSummaryIP` was assuming nFac = 1
+* NEW: `umxACEv` plot works.
+* NEW: `umxACEv` standardize mostly functional.
+* NEW: `umxEFA` can now take a formula to select variables.
+* IMPROVED: `umxIP` and CP examples improved (3-variables, GFF data)
+* IMPROVED: `umxIP` *reporting* of `as`, `cs`, `es` simplified into compact stack.
+* IMPROVED: `umxCP` *reporting* of `as`, `cs`, `es` simplified into compact stack.
 * IMPROVED: `umxEFA` reports factor correlation matrix (thanks @ConorDolan)!
 * IMPROVED: `umxEFA` can return a loadings object.
 * IMPROVED: `umx_make`not supports spelling check.
@@ -8,6 +14,8 @@
 * IMPROVED: `umxACEv` got major improvements to help file.
 * IMPROVED: `umxSummaryCP` got ability to print to html.
 * IMPROVED: `plot` made more robust to unexpected labels (now that umxModify can make newLabels)!
+* MINOR: `umx_names` Added GFF examples.
+* DROPPED: deleted deprecated showStd and showMeans parameters from plot ACE.
 
 # umx 2.0.2 (Feb 12 2018, R 3.4.3 Higher goals edition)
 * NEW: `umxSummary` works with multi-group models!

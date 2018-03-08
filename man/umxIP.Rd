@@ -4,11 +4,12 @@
 \alias{umxIP}
 \title{umxIP: Build and run an Independent pathway twin model}
 \usage{
-umxIP(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
-  freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
-  equateMeans = TRUE, dzAr = 0.5, dzCr = 1, correlatedA = FALSE,
-  addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"), optimizer = NULL, sep = NULL)
+umxIP(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = c(a = 1,
+  c = 1, e = 1), freeLowerA = FALSE, freeLowerC = FALSE,
+  freeLowerE = FALSE, equateMeans = TRUE, dzAr = 0.5, dzCr = 1,
+  correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
+  numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL,
+  sep = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "IP")}
@@ -22,7 +23,7 @@ umxIP(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1,
 \item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, you can
 omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
-\item{nFac}{How many common factors (default = 1)}
+\item{nFac}{How many common factors for a, c, and e. If 1 number number is given, applies to all three.}
 
 \item{freeLowerA}{Whether to leave the lower triangle of A free (default = F)}
 
@@ -61,13 +62,18 @@ The following figure shows the IP model diagrammatically:
 \figure{IP.png}
 }
 \examples{
+\dontrun{
 require(umx)
-data(twinData)
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
-selDVs = c("ht", "wt") # These will be expanded into "ht1" "ht2"
-m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
-# umxSummary(m1)
+data(GFF)
+mzData <- subset(GFF, zyg_2grp == "MZ")
+dzData <- subset(GFF, zyg_2grp == "DZ")
+selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
+m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+m1 = umxIP(selDVs = selDVs, sep = "_T", nFac = c(a=3, c = 1, e = 1), dzData = dzData, mzData = mzData)
+umxSummary(m1)
+plot(m1)
+
+}
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

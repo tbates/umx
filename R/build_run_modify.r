@@ -1313,8 +1313,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' to .25 to model dominance effects.
 #'
 #' \strong{Matrices and Labels in ACE model}
-#' a, c, and e contain the path loadings of the Cholesky ACE factor model.
-#' So labels relevant to modifying the model are of the form "a_r1c1", "c_r1c1" etc.
+#' 
+#' Matrices 'a'', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
+#' 
+#' So, labels relevant to modifying the model are of the form "a_r1c1", "c_r1c1" etc.
 #'
 #' Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say
 #'
@@ -1405,14 +1407,14 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' dzData <- twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
 #' mzData <- mzData[1:80,] # quicker run to keep CRAN happy
 #' dzData <- dzData[1:80,]
-#' selDVs = c("ht", "wt") # umx will add suffix (in this case "") + "1" or '2'
-#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+#' selDVs = c("ht", "wt") # umx will add sep (in this case "") + "1" or '2'
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
-#' 
+#'
 #' # =========================================================
 #' # = Well done! Now you can make modify twin models in umx =
 #' # =========================================================
-#' 
+#'
 #'
 #' # ===================
 #' # = Ordinal example =
@@ -2478,7 +2480,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 #' @param mzData The MZ dataframe
 #' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
 #' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
-#' @param nFac How many common factors (default = 1)
+#' @param nFac How many common factors for a, c, and e. If 1 number number is given, applies to all three.
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
 #' @param freeLowerE Whether to leave the lower triangle of E free (default = F)
@@ -2499,16 +2501,25 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
+#' \dontrun{
 #' require(umx)
-#' data(twinData)
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
-#' selDVs = c("ht", "wt") # These will be expanded into "ht1" "ht2"
-#' m1 = umxIP(selDVs = selDVs, suffix = "", dzData = dzData, mzData = mzData)
-#' # umxSummary(m1)
-umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, sep=NULL) {
+#' data(GFF)
+#' mzData <- subset(GFF, zyg_2grp == "MZ")
+#' dzData <- subset(GFF, zyg_2grp == "DZ")
+#' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
+#' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+#' m1 = umxIP(selDVs = selDVs, sep = "_T", nFac = c(a=3, c = 1, e = 1), dzData = dzData, mzData = mzData)
+#' umxSummary(m1)
+#' plot(m1)
+#' 
+#' }
+umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = c(a=1, c=1, e=1), freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, sep=NULL) {
 	# TODO implement correlatedA
-
+	if(length(nFac)==1){
+		nFac = c(a = nFac, c = nFac, e = nFac)
+	} else if (length(nFac)!=3){
+		stop("nFac must be either 1 number or 3. You gave me ", length(nFac))
+	}
 	# =================
 	# = Set optimizer =
 	# =================
@@ -2567,9 +2578,9 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = 1, 
 			umxLabel(mxMatrix("Full", 1, nVar*nSib, free=T, values=obsMZmeans, dimnames=list("means", selDVs), name="expMean")), # Means 
 			# (not yet equated for the two twins)
 			# Matrices ac, cc, and ec to store a, c, and e path coefficients for independent general factors
-			umxMatrix("ai", "Full", nVar, nFac, free=TRUE, values=.6, jiggle=.05), # latent common factor Additive genetic path 
-			umxMatrix("ci", "Full", nVar, nFac, free=TRUE, values=.0, jiggle=.05), # latent common factor Common #environmental path coefficient
-			umxMatrix("ei", "Full", nVar, nFac, free=TRUE, values=.6, jiggle=.05), # latent common factor Unique environmental path #coefficient
+			umxMatrix("ai", "Full", nVar, nFac['a'], free=TRUE, values=.6, jiggle=.05), # latent common factor Additive genetic path 
+			umxMatrix("ci", "Full", nVar, nFac['c'], free=TRUE, values=.0, jiggle=.05), # latent common factor Common #environmental path coefficient
+			umxMatrix("ei", "Full", nVar, nFac['e'], free=TRUE, values=.6, jiggle=.05), # latent common factor Unique environmental path #coefficient
 			# Matrices as, cs, and es to store a, c, and e path coefficients for specific factors
 			umxMatrix("as", "Lower", nVar, nVar, free=TRUE, values=.6, jiggle=.05), # Additive genetic path 
 			umxMatrix("cs", "Lower", nVar, nVar, free=TRUE, values=.0, jiggle=.05), # Common environmental path 

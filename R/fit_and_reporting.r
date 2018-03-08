@@ -889,8 +889,10 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 	} else {
 		umx_has_been_run(model, stop = TRUE)
 		if(is.null(comparison)){
-			message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
-			print(-2 * logLik(model));			
+			 # \u00d7 = times sign
+			 message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
+				round(-2 * logLik(model), digits=digits))
+			)
 		} else {
 			message("Comparison of model with parent model:")
 			umxCompare(comparison, model, digits = 3)
@@ -931,7 +933,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		aClean[upper.tri(aClean)] = NA
 		cClean[upper.tri(cClean)] = NA
 		eClean[upper.tri(eClean)] = NA
-		rowNames = sub("_.1$", "", selDVs[1:nVar])
+		rowNames = sub("(_T)?1$", "", selDVs[1:nVar])
 		Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames, stringsAsFactors = FALSE);
 
 		if(model$top$dzCr$values == .25){
@@ -1123,8 +1125,10 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	} else {
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(comparison)){
-		message(model$name, "-2 \u00d7 log(Likelihood)") # \u00d7 = times sign
-		print(-2 * logLik(model));			
+		 # \u00d7 = times sign
+		 message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
+			round(-2 * logLik(model), digits=digits))
+		)
 	} else {
 		message("Comparison of model with parent model:")
 		umxCompare(comparison, model, digits = 3)
@@ -1165,7 +1169,7 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	aClean[upper.tri(aClean)] = NA
 	cClean[upper.tri(cClean)] = NA
 	eClean[upper.tri(eClean)] = NA
-	rowNames = sub("_.1$", "", selDVs[1:nDV])
+	rowNames = sub("(_T)?1$", "", selDVs[1:nDV])
 	Estimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
 
 	names(Estimates) = paste0(rep(c("a", "c", "e"), each = nDV), rep(1:nDV));
@@ -1342,8 +1346,10 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 		}
 		umx_has_been_run(model, stop = TRUE)
 		if(is.null(comparison)){
-			message(model$name, " -2 \u00d7 log(Likelihood)") # x
-			print(-2 * logLik(model))
+			 # \u00d7 = times sign
+			 message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
+				round(-2 * logLik(model), digits=digits))
+			)
 		}else{
 			message("Comparison of model with parent model:")
 			print(mxCompare(comparison, model))
@@ -1376,14 +1382,14 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 		names(commonACE) = c ("A", "C", "E")
 		message("Common Factor paths")
 		umx_print(commonACE, digits = digits, zero.print = ".")
-		if(class(model$top$matrices$a_cp)[1] =="LowerMatrix"){
+		if(class(model$top$matrices$a_cp)[1] == "LowerMatrix"){
 			message("You used correlated genetic inputs to the common factor. This is the a_cp matrix")
 			print(a_cp)
 		}
 		stdFit = umx_standardize_CP(model) # Make a standardized copy of model
 		# Get standardized loadings on Common factors
 		std_cp_loadings = mxEval(top.cp_loadings, stdFit); # Standardized path coefficients (general factor(s))		
-		rowNames = sub("_.1$", "", selDVs[1:nVar])
+		rowNames = sub("(_T)?1$", "", selDVs[1:nVar])
 		std_CommonEstimate = data.frame(std_cp_loadings, row.names = rowNames);
 		names(std_CommonEstimate) = paste0("CP", 1:length(names(std_CommonEstimate)))
 		message("Loading of each trait on the Common Factors")
@@ -1479,12 +1485,11 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' @references - \url{http://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' require(umx)
-#' data(twinData)
-#' selDVs = c("ht1", "wt1", "ht2", "wt2")
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
-#' m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' m1 = umxRun(m1)
+#' data(GFF) # family function and wellbeing data
+#' mzData <- subset(GFF, zyg_2grp == "MZ")
+#' dzData <- subset(GFF, zyg_2grp == "DZ")
+#' selDVs = c("hap","sat","AD") # These will be expanded into "hap_T1" "hap_T2" etc.
+#' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 #' umxSummaryIP(m1)
 #' plot(m1)
 #' \dontrun{
@@ -1500,8 +1505,9 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
 
 	if(is.null(comparison)){
-		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
-		print(-2 * logLik(model));			
+		# message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
+		# print(-2 * logLik(model));
+		message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", round(-2 * logLik(model), digits=digits))) # \u00d7 = times sign
 	}else{
 		message("Comparison of model with parent model:")
 		print(mxCompare(comparison, model))
@@ -1509,9 +1515,9 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 
 	stdFit = model; # If we want to output a model with the standardized values (perhaps for drawing a path diagram)
 	nVar   = length(selDVs)/2;
-	nFac   = 1;
+	# how to detect how many factors are present?
 	# Calculate standardized variance components
-	ai = mxEval(top.ai, model); # Column of independent path coefficients (nVar* nFac = 1) 
+	ai = mxEval(top.ai, model); # Column of independent path coefficients (nVar * nFac) 
 	ci = mxEval(top.ci, model);
 	ei = mxEval(top.ei, model);
 
@@ -1523,8 +1529,10 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	C  = mxEval(top.C , model);
 	E  = mxEval(top.E , model);
 
+	nFac     = c(a = dim(ai)[2], c = dim(ci)[2], e = dim(ei)[2]);
+
 	Vtot     = A+C+E; # total variance
-	nVarIden = diag(nVar); # Make up a little nvar Identity matrix using the clever behavior of diag to make an nVar*nVar Identity matrix
+	nVarIden = diag(nVar); # Make up a little nVar Identity matrix using the clever behavior of diag to make an nVar*nVar Identity matrix
 	SD       = solve(sqrt(nVarIden*Vtot))   # inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
 	ai_std   = SD %*% ai ; # Standardized path coefficients (independent general factors )
 	ci_std   = SD %*% ci ; # Standardized path coefficients (independent general factors )
@@ -1534,12 +1542,11 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	stdFit@submodels$top$ci@values = ci_std
 	stdFit@submodels$top$ei@values = ei_std
 
-
-	rowNames = sub("_.1$", "", selDVs[1:nVar])
-
-	std_Estimates = data.frame(cbind(ai_std,ci_std,ei_std), row.names=rowNames, stringsAsFactors = FALSE);
-	message("General IP path loadings")
-	names(std_Estimates) = paste0(rep(c("Ai", "Ci", "Ei"), each = nFac));
+	rowNames = sub("(_T)?1$", "", selDVs[1:nVar])
+	std_Estimates = data.frame(cbind(ai_std, ci_std, ei_std), row.names = rowNames, stringsAsFactors = FALSE);
+	message("## General IP path loadings")
+	x = sapply(FUN=seq_len, nFac)
+	names(std_Estimates) = c(paste0("ai", 1:nFac["a"]), paste0("ci", 1:nFac["c"]), paste0("ei", 1:nFac["e"]))
 	umx_print(std_Estimates, digits = digits, zero.print = ".")
 
 	# Standard specific path coefficients ready to be stacked together
@@ -1553,13 +1560,24 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	asClean = as_std
 	csClean = cs_std
 	esClean = es_std
-	# need to add a check here that the cells are fixed and 0
-	asClean[upper.tri(asClean)]=NA
-	csClean[upper.tri(csClean)]=NA
-	esClean[upper.tri(esClean)]=NA
-	std_Specifics = data.frame(cbind(asClean,csClean,esClean), row.names = rowNames);
-	names(std_Specifics) = paste0(rep(c("As", "Cs", "Es"), each = nVar), rep(1:nVar));
-	message("Specific factor loadings")
+	# Need to add a check here that the cells are fixed and 0
+	# asClean[upper.tri(asClean)] = NA
+	# csClean[upper.tri(csClean)] = NA
+	# esClean[upper.tri(esClean)] = NA
+	# std_Specifics = data.frame(cbind(asClean, csClean, esClean), row.names = rowNames);
+	# names(std_Specifics) = paste0(rep(c("As", "Cs", "Es"), each = nVar), rep(1:nVar));
+	# message("Specific factor loadings")
+	# umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".")
+
+	message("## Specific factor loadings")
+	std_Specifics = data.frame(row.names = paste0('Specific ', c('a', 'c', 'e')),
+		rbind(
+			diag(asClean), 
+			diag(csClean),
+			diag(esClean)
+		)
+	)
+	names(std_Specifics) = rowNames;
 	umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".")
 
 	if(showRg) {
@@ -1574,10 +1592,10 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 		umx_print(genetic_correlations, digits = digits, zero.print = ".")
 	}
 	if(CIs){
-		message("showing CIs in output not implemented yet: use summary(model) to view them in the mean time")
+		message("Showing CIs in output not implemented yet. In the mean time, use summary(model) to view them.")
 	}
 	if(!is.na(file)){
-		umxPlotIP(x = stdFit, file = file, digits = 2, std = FALSE)
+		umxPlotIP(x = stdFit, file = file, digits = digits, std = FALSE)
 	}
 	if(returnStd) {
 		return(stdFit)
@@ -2089,8 +2107,6 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' @param digits How many decimals to include in path loadings (default is 2)
 #' @param means Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
-#' @param showMeans DEPRECATED: just use 'means = ' for simplicity of typing.
-#' @param showStd DEPRECATED: just use 'std = '
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -2106,15 +2122,7 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showMeans = "deprecated", showStd = "deprecated", ...) {
-	if(showMeans != "deprecated"){
-		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), " (", omxQuotes("showMeans"), " will stop working before 2018)")
-		means = showMeans
-	}	
-	if(showStd != "deprecated"){
-		message("Change ", omxQuotes("showStd"), " to ", omxQuotes("std"), " (", omxQuotes("showStd"), " will stop working before 2018)")
-		fixed = showStd
-	}	
+umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, ...) {
 	if(!class(x) == "MxModel.ACE"){
 		stop("The first parameter of umxPlotACE must be an ACE model, you gave me a ", class(x))
 	}
@@ -2123,7 +2131,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 		model = umx_standardize_ACE(model)
 	}
 	out = "";
-	latents  = c();
+	latents = c();
 	if(model$MZ$data$type == "raw"){
 		selDVs = names(model$MZ$data$observed)
 	}else{
@@ -2133,17 +2141,19 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	parameterKeyList = omxGetParameters(model);
 	# TODO: could replace this with code that walks across the known matrices...
 	# would obviate problems with arbitrary names.
+	# 1. could add dimnames() to A, C, E?
+	
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
 		if(class(value) == "numeric") {
 			value = round(value, digits)
 		}
 		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
-			from    = sub('([ace])_r([0-9]+)c([0-9]+)', '\\1\\3', thisParam, perl = T);  # a c or e
-			target  = as.numeric(sub('([ace])_r([0-9]+)c([0-9]+)', '\\2', thisParam, perl = T));
+			from    = sub('([ace])_r([0-9]+)c([0-9]+)', '\\1\\3', thisParam, perl = TRUE);  # a c or e
+			target  = as.numeric(sub('([ace])_r([0-9]+)c([0-9]+)', '\\2', thisParam, perl = TRUE));
 			target  = selDVs[as.numeric(target)]
 			latents = append(latents, from)
-			show = T
+			show = TRUE
 		} else { # means probably
 			if(means){
 				show = TRUE
@@ -2172,7 +2182,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	# grep('a', latents, value=T)
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value=T), collapse="; "), "};\n") # {rank=min; c1; e1}
-	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
+	digraph = paste0("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}");
 	xmu_dot_maker(model, file, digraph)
 } # end umxPlotACE
 

@@ -669,10 +669,12 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 			umxSummaryACE(thisFit, digits = digits, file = file, showRg = showRg, std = std, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
 		}
 	} else {
-	umx_has_been_run(model, stop = TRUE)
-	if(is.null(comparison)){
-		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
-		print(-2 * logLik(model));			
+		umx_has_been_run(model, stop = TRUE)
+		if(is.null(comparison)){
+			# \u00d7 = times sign
+		 	message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
+				round(-2 * logLik(model), digits=digits))
+			)
 	} else {
 		message("Comparison of model with parent model:")
 		umxCompare(comparison, model, digits = 3)
@@ -715,7 +717,7 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	AClean[upper.tri(AClean)] = NA
 	CClean[upper.tri(CClean)] = NA
 	EClean[upper.tri(EClean)] = NA
-	rowNames = sub("_.1$", "", selDVs[1:nVar])
+	rowNames  = sub("(_T)?1$", "", selDVs[1:nVar])
 	Estimates = data.frame(cbind(AClean, CClean, EClean), row.names = rowNames, stringsAsFactors = FALSE);
 
 	colNames = c("A", "C", "E")
@@ -770,11 +772,11 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 			# CIs exist, get lower and upper CIs as a dataframe
 			CIlist = data.frame(model$output$confidenceIntervals)
 			# Drop rows fixed to zero
-			CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
-			# discard rows named NA
+			CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0), ]
+			# Discard rows named NA
 			CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
 			# TODO fix for singleton CIs
-			# These can be names ("top.a_std[1,1]") or labels ("a11")
+			# These can be names ("top.A_std[1,1]") or labels ("A11")
 			# imxEvalByName finds them both
 			# outList = c();
 			# for(aName in row.names(CIlist)) {
@@ -806,21 +808,21 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 				thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
 				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
 				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
-				CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
-				thisString = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
+				CIparts        = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
+				thisString     = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
 
-				if(grepl("^a", thisMatrixName)) {
+				if(grepl("^A", thisMatrixName)) {
 					a_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else if(grepl("^c", thisMatrixName)){
+				} else if(grepl("^C", thisMatrixName)){
 					c_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else if(grepl("^e", thisMatrixName)){
+				} else if(grepl("^E", thisMatrixName)){
 					e_CI[thisMatrixRow, thisMatrixCol] = thisString
 				} else{
 					stop(paste("Illegal matrix name: must begin with A, C, or E. You sent: ", thisMatrixName))
 				}
 			}
-			# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
-			# TODO umxSummaryACE: Add option to use mxSE
+			# TODO umxSummaryACEv: Check the merge of A_, C_ and E_CI INTO the output table works with more than one variable
+			# TODO umxSummaryACEv: Add option to use mxSE
 			# print(A_CI)
 			# print(C_CI)
 			# print(E_CI)
@@ -828,14 +830,14 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 			names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
 			Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
 			if(report == "html"){
-				# depends on R2HTML::HTML
+				# Depends on R2HTML::HTML
 				R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
 				umx_open("tmpCI.html")
 			}
 			CI_Fit = model
-			CI_Fit$top$a$values = A_CI
-			CI_Fit$top$c$values = C_CI
-			CI_Fit$top$e$values = E_CI
+			CI_Fit$top$A$values = A_CI
+			CI_Fit$top$C$values = C_CI
+			CI_Fit$top$E$values = E_CI
 		} # end Use CIs
 	} # end list catcher?
 	

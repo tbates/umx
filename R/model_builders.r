@@ -94,9 +94,10 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 	scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
 	rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, return = c("model", "loadings"), report = c("markdown", "html"), covmat = NULL){
 	# TODO: umxEFA: Detect ordinal items and switch to UWLS
-	message("umxEFA is beta, send requests to tim.bates@ed.ac.uk")
-	scores = match.arg(scores)
-	return = match.arg(return)
+	rotation = umx_default_option(rotation, c("varimax", "promax", "none"), check = FALSE)
+	scores   = match.arg(scores)
+	return   = match.arg(return)
+
 	# "Bartlett" given Bartlett's weighted least-squares scores. 
 	# name     = "efa"
 	# factors  = 1
@@ -108,12 +109,18 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 			stop("covmat and n.obs must be empty when using 'data =' ...")
 		}
 		if(!is.null(x)){
-			if(length(x) > 1) {
+			if (inherits(x,"formula")){
+				if(is.null(data)){
+					stop(paste("If you provide a formula in x to select variable, data must contain a dataframe"))
+				} else {
+					x = all.vars(x)
+					data = data[, x]
+					name = "EFA"
+				}
+			} else if(length(x) > 1) {
 				umx_check_names(x, data)
 				data = data[,x]
-			} else if (inherits(x,"formula")){
-				stop("Nice formula! Sadly I can't handle those yet: email tim and abuse him about this failing")
-				# TODO: umxEFA: Handle is.formula()
+				name = "EFA"
 			}else{
 				name = x
 			}
@@ -142,7 +149,6 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 
 	# What about for scores? Do we want std loadings in that case?...
 	data = umx_scale(data)
-	rotation = umx_default_option(rotation, c("varimax", "promax", "none"), check = FALSE)
 	if(is.null(factors)){
 		stop("You need to request at least 1 latent factor, e.g.: factors = 4")
 	} else if( length(factors) == 1 && class(factors) == "numeric"){

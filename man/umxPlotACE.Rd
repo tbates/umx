@@ -6,7 +6,7 @@
 \title{umxPlotACE}
 \usage{
 umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, showMeans = "deprecated", showStd = "deprecated", ...)
+  std = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
@@ -18,10 +18,6 @@ umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
 \item{means}{Whether to show means paths (default is FALSE)}
 
 \item{std}{Whether to standardize the model (default is TRUE)}
-
-\item{showMeans}{DEPRECATED: just use 'means = ' for simplicity of typing.}
-
-\item{showStd}{DEPRECATED: just use 'std = '}
 
 \item{...}{Additional (optional) parameters}
 }

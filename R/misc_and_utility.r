@@ -31,15 +31,21 @@
 #'
 #' @description
 #' How to cook steak.
-#' @details TODO: add info on skillet choice, meat-cuts. Keji book as reference.
+#' @details Equipment matters. You should buy a heavy cast-iron skillet, and a digital internal thermometer.
+#' Preferably cook over a gas flame.
+#' 
+#' *note*: Cheaper cuts like blade steak can come out fine.
+#' 
+#' A great reference is Kenji Alt Lopez's book [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087).
 #'
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{omxBrownie}}
-#' @references - \url{https://github.com/tbates/umx}
+#' @references - [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087)
 #' @examples
 #' umxBrownie()
+#' @md
 umxBrownie <- function() {
 	message("Rub steak in a table spoon of salt, put it back in the fridge for 1-4 hours.\n",
 	"Place steak on a hot cast-iron skillet, with a little peanut oil.\n",
@@ -954,7 +960,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' -> list(baseNames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
 #'
 #' @param df vector of names or data.frame containing the data
-#' @param sep text constant separating name from numeric 1:2 twin index
+#' @param sep text constant separating name from numeric 1:2 twin index.
 #' @return - list(baseNames, sep, twinIndexes)
 #' @export
 #' @family String Functions
@@ -962,6 +968,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' require(umx)
 #' data("twinData")
 #' umx_explode_twin_names(twinData, sep = "")
+#' umx_explode_twin_names(twinData, sep = NULL)
 #' # Single-character single variable test case
 #' x = round(10 * rnorm(1000, mean = -.2))
 #' y = round(5 * rnorm(1000))
@@ -4026,18 +4033,17 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(mtcars, "^d") # "disp", drat
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
 #' umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
-#' \dontrun{
-#' # TODO umx_names: Add GFF examples to umx_names
-#' 
-#' umx_names(nl, "1$")
-#' # "zyg" "sex1"  "age1"  "gff1"  "fc1"   "qol1"  "hap1"  "sat1"  "AD1" "SOMA1" "SOC1"  "THOU1"
-#' umx_names(nl, "2$")
-#' 
-#' umx_names(nl, "b$")
-#' umx_names(nl, "s$")
-#' umx_names(nl, "[^12bs]$")
-#' # "divorce"
-#' }
+#'
+#' # Examples using built-in GFF dataset
+#'
+#' umx_names(GFF, "T_1$")
+#' # "zyg" "sex1"  "age_T1"  "gff_T1"  "fc_T1"   "qol_T1"  "hap_T1"  "sat_T1"  "AD_T1" "SOMA_T1" "SOC_T1"  "THOU_T1"
+#' umx_names(GFF, "2$")
+#'
+#' umx_names(GFF, "b$")
+#' umx_names(GFF, "s$")
+#' umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
+#' # "zyg_6grp" "zyg_2grp" "divorce"
 umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
 	if(class(df) == "data.frame"){
 		nameVector = names(df)

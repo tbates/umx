@@ -7,22 +7,33 @@
 umxBrownie()
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 How to cook steak.
 }
 \details{
-TODO: add info on skillet choice, meat-cuts. Keji book as reference.
+Equipment matters. You should buy a heavy cast-iron skillet, and a digital internal thermometer.
+Preferably cook over a gas flame.
+
+\emph{note}: Cheaper cuts like blade steak can come out fine.
+
+A great reference is Kenji Alt Lopez's book \href{https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087}{The Food Lab}.
 }
 \examples{
 umxBrownie()
 }
 \references{
-- \url{https://github.com/tbates/umx}
+\itemize{
+\item \href{https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087}{The Food Lab}
+}
 }
 \seealso{
-- \code{\link{omxBrownie}}
+\itemize{
+\item \code{\link{omxBrownie}}
+}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxVersion}},

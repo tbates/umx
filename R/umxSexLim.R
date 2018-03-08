@@ -330,7 +330,10 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	} else {
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(comparison)){
-		message(model$name, " -2 \u00d7 log(Likelihood) = ", -2 * logLik(model)) # \u00d7 = times sign
+		 # \u00d7 = times sign
+		 message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
+			round(-2 * logLik(model), digits=digits))
+		)
 	} else {
 		message("Comparison of model with parent model:")
 		umxCompare(comparison, model, digits = 3)

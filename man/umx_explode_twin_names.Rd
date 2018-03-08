@@ -9,7 +9,7 @@ umx_explode_twin_names(df, sep = "_T")
 \arguments{
 \item{df}{vector of names or data.frame containing the data}
 
-\item{sep}{text constant separating name from numeric 1:2 twin index}
+\item{sep}{text constant separating name from numeric 1:2 twin index.}
 }
 \value{
 - list(baseNames, sep, twinIndexes)
@@ -23,6 +23,7 @@ vector of twin indexes. e.g. c("Dep_T1", "Dep_T2")
 require(umx)
 data("twinData")
 umx_explode_twin_names(twinData, sep = "")
+umx_explode_twin_names(twinData, sep = NULL)
 # Single-character single variable test case
 x = round(10 * rnorm(1000, mean = -.2))
 y = round(5 * rnorm(1000))

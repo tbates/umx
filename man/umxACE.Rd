@@ -105,8 +105,10 @@ from 1 (the default for modeling family-level effects shared 100% by twins in a 
 to .25 to model dominance effects.
 
 \strong{Matrices and Labels in ACE model}
-a, c, and e contain the path loadings of the Cholesky ACE factor model.
-So labels relevant to modifying the model are of the form "a_r1c1", "c_r1c1" etc.
+
+Matrices 'a'', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
+
+So, labels relevant to modifying the model are of the form "a_r1c1", "c_r1c1" etc.
 
 Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say
 
@@ -170,8 +172,8 @@ mzData <- twinData[twinData$zygosity \%in\% c("MZFF", "MZMM"),]
 dzData <- twinData[twinData$zygosity \%in\% c("DZFF", "DZMM", "DZOS"), ]
 mzData <- mzData[1:80,] # quicker run to keep CRAN happy
 dzData <- dzData[1:80,]
-selDVs = c("ht", "wt") # umx will add suffix (in this case "") + "1" or '2'
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+selDVs = c("ht", "wt") # umx will add sep (in this case "") + "1" or '2'
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
 
 # =========================================================
