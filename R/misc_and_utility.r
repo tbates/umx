@@ -3805,7 +3805,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 
 #' umx_scale_wide_twin_data
 #'
-#' Scale wide data across all cases: currently twins
+#' Scale wide data across all cases: currently 2 twins.
 #'
 #' @param varsToScale The base names of the variables ("weight" etc.)
 #' @param suffix The suffix that distinguishes each case, e.g. "_T")
@@ -3823,6 +3823,7 @@ umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
 	if(length(suffix) != 1){
 		stop("I need one suffix, you gave me ", length(suffix), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
+	# TODO discover suffixes as unique digits following suffix (could be 1:6)
 	namesNeeded = umx_paste_names(varsToScale, sep = suffix, suffixes = 1:2)
 	umx_check_names(namesNeeded, data)
 	t1Traits = paste0(varsToScale, suffix, 1)

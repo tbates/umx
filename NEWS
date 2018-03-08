@@ -6,6 +6,8 @@
 * IMPROVED: `umx_make`not supports spelling check.
 * IMPROVED: `umxACEv` diagonal now unbounded by default (which is it's whole purpose)
 * IMPROVED: `umxACEv` got major improvements to help file.
+* IMPROVED: `umxSummaryCP` got ability to print to html.
+* IMPROVED: `plot` made more robust to unexpected labels (now that umxModify can make newLabels)!
 
 # umx 2.0.2 (Feb 12 2018, R 3.4.3 Higher goals edition)
 * NEW: `umxSummary` works with multi-group models!

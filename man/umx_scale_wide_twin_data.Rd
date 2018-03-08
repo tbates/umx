@@ -17,7 +17,7 @@ umx_scale_wide_twin_data(varsToScale, suffix, data)
 - new dataframe with variables scaled in place
 }
 \description{
-Scale wide data across all cases: currently twins
+Scale wide data across all cases: currently 2 twins.
 }
 \examples{
 data(twinData) 

@@ -7,7 +7,8 @@
 \usage{
 umxSummaryCP(model, digits = 2, file = getOption("umx_auto_plot"),
   returnStd = FALSE, extended = FALSE, showRg = FALSE,
-  comparison = NULL, std = TRUE, CIs = FALSE, ...)
+  comparison = NULL, std = TRUE, CIs = FALSE, report = c("markdown",
+  "html"), ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxCP}} model to summarize}
@@ -27,6 +28,8 @@ umxSummaryCP(model, digits = 2, file = getOption("umx_auto_plot"),
 \item{std}{Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)}
 
 \item{CIs}{Confidence intervals (F)}
+
+\item{report}{c("markdown", "html")}
 
 \item{...}{Optional additional parameters}
 }
@@ -51,6 +54,7 @@ stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = TRUE,
 		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
 umxSummaryCP(m1, ext = TRUE, file = "name")
 umxSummaryCP(m1, file = "Figure 3", std = TRUE)
+
 }
 \references{
 - \url{http://www.github.com/tbates/umx}, \url{http://tbates.github.io}

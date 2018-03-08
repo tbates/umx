@@ -1299,6 +1299,7 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' @param std Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)
 #' @param comparison Whether to run mxCompare on a comparison model (NULL)
 #' @param CIs Confidence intervals (F)
+#' @param report c("markdown", "html")
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @export
@@ -1320,8 +1321,10 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' 		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
 #' umxSummaryCP(m1, ext = TRUE, file = "name")
 #' umxSummaryCP(m1, file = "Figure 3", std = TRUE)
+#'
 umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, 
-    extended = FALSE, showRg = FALSE, comparison = NULL, std = TRUE, CIs = FALSE, ...) {
+    extended = FALSE, showRg = FALSE, comparison = NULL, std = TRUE, CIs = FALSE, report = c("markdown", "html"), ...) {
+	report = match.arg(report)
 	# TODO: example does not need to spec var names in data select
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D"
 	if(!std){
@@ -1384,7 +1387,12 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 		std_CommonEstimate = data.frame(std_cp_loadings, row.names = rowNames);
 		names(std_CommonEstimate) = paste0("CP", 1:length(names(std_CommonEstimate)))
 		message("Loading of each trait on the Common Factors")
-		umx_print(std_CommonEstimate, digits = digits, zero.print = ".")
+		if(report == "html"){
+			umx_print(std_CommonEstimate, digits = digits, zero.print = ".", file = "std_common.html");
+		} else {
+			umx_print(std_CommonEstimate, digits = digits, zero.print = ".")
+		}
+
 
 		# Standard specific path coefficients ready to be stacked together
 		asClean <- mxEval(top.as, stdFit);
@@ -1397,7 +1405,12 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 		standardized_specifics = data.frame(cbind(asClean, csClean, esClean), row.names=rowNames);
 		names(standardized_specifics) = paste0(rep(c("As", "Cs", "Es"), each = nVar), rep(1:nVar));
 		message("Standardized Specific Loadings")
-		umx_print(standardized_specifics, digits = digits, zero.print = ".")
+		if(report == "html"){
+			umx_print(standardized_specifics, digits = digits, zero.print = ".", file = "std_spec.html")
+		} else {
+			umx_print(standardized_specifics, digits = digits, zero.print = ".")
+		}
+		
 		if(extended == TRUE) {
 			cat("\nUnstandardized path coefficients\n") # factor loadings
 			print(round(commonACE, digits)); # Loadings on Common factor
@@ -1423,7 +1436,12 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 			genetic_correlations = data.frame(cbind(rA, rC, rE), row.names = rowNames);
 			# Make a table
 			names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
-			umx_print(genetic_correlations, digits = digits, zero.print = ".")
+			if(report == "html"){
+				umx_print(genetic_correlations, digits = digits, zero.print = ".", file = "geneticCorrs.html")
+			} else {
+				umx_print(genetic_correlations, digits = digits, zero.print = ".")
+			}
+			
 		}
 		if(CIs){
 			message("Showing CIs in output not implemented yet: use summary(model) to view them in the mean time")
@@ -1480,10 +1498,6 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 
 	umx_has_been_run(model, stop = TRUE)
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
-	notImplemented = c(std)
-	if(any(notImplemented)){
-		message("Some parameters not implemented yet. Don't use std")
-	}
 
 	if(is.null(comparison)){
 		message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
@@ -1519,6 +1533,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	stdFit@submodels$top$ai@values = ai_std
 	stdFit@submodels$top$ci@values = ci_std
 	stdFit@submodels$top$ei@values = ei_std
+
 
 	rowNames = sub("_.1$", "", selDVs[1:nVar])
 
@@ -2419,7 +2434,8 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl=T));
 			target  = selDVs[as.numeric(targetindex)];
 		} else {
-			stop("I don't know what a ", thisParam, " is")
+			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
+			"If you are using umxModify to make newLabels, re-use one of the existing labels to help plot()")
 		}
 		if(from == "one" & !means ){
 			# not adding means...
@@ -2525,7 +2541,8 @@ umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl=T));
 			target  = selDVs[as.numeric(targetindex)];
 		} else {
-			stop("I don't know what a ", thisParam, " is")
+			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
+			"If you are using umxModify to make newLabels, re-use one of the existing labels to help plot()")
 		}
 
 		if(!means & from == "one"){
