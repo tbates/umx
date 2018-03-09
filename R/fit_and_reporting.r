@@ -1380,8 +1380,13 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 		commonACE = cbind(diag(a_cp), diag(c_cp), diag(e_cp)) # bind columns of a, c and e into nFac-rows * 3 matrix
 		commonACE = data.frame(commonACE, row.names = paste("Common.factor", 1:nFac, sep = "."));
 		names(commonACE) = c ("A", "C", "E")
-		message("Common Factor paths")
-		umx_print(commonACE, digits = digits, zero.print = ".")
+		message("## Common Factor paths")
+		if(report == "html"){
+			umx_print(commonACE, digits = digits, zero.print = ".", file = "std_spec.html")
+		} else {
+			umx_print(commonACE, digits = digits, zero.print = ".")
+		}
+		
 		if(class(model$top$matrices$a_cp)[1] == "LowerMatrix"){
 			message("You used correlated genetic inputs to the common factor. This is the a_cp matrix")
 			print(a_cp)
@@ -1389,10 +1394,10 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 		stdFit = umx_standardize_CP(model) # Make a standardized copy of model
 		# Get standardized loadings on Common factors
 		std_cp_loadings = mxEval(top.cp_loadings, stdFit); # Standardized path coefficients (general factor(s))		
-		rowNames = sub("(_T)?1$", "", selDVs[1:nVar])
+		rowNames = sub("(_T)?1$", "", selDVs[1:nVar])		
 		std_CommonEstimate = data.frame(std_cp_loadings, row.names = rowNames);
 		names(std_CommonEstimate) = paste0("CP", 1:length(names(std_CommonEstimate)))
-		message("Loading of each trait on the Common Factors")
+		message("## Loading of each trait on the Common Factors")
 		if(report == "html"){
 			umx_print(std_CommonEstimate, digits = digits, zero.print = ".", file = "std_common.html");
 		} else {
@@ -1401,20 +1406,24 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 
 
 		# Standard specific path coefficients ready to be stacked together
-		asClean <- mxEval(top.as, stdFit);
-		csClean <- mxEval(top.cs, stdFit);
-		esClean <- mxEval(top.es, stdFit);
-		# TODO not needed now?
-		asClean[upper.tri(asClean)] = NA
-		csClean[upper.tri(csClean)] = NA
-		esClean[upper.tri(esClean)] = NA
-		standardized_specifics = data.frame(cbind(asClean, csClean, esClean), row.names=rowNames);
-		names(standardized_specifics) = paste0(rep(c("As", "Cs", "Es"), each = nVar), rep(1:nVar));
-		message("Standardized Specific Loadings")
+		as_std <- mxEval(top.as, stdFit);
+		cs_std <- mxEval(top.cs, stdFit);
+		es_std <- mxEval(top.es, stdFit);
+
+		message("## Specific-factor loadings (std)")
+		std_Specifics = data.frame(row.names = paste0('Specific ', c('a', 'c', 'e')),
+			rbind(
+				diag(as_std), 
+				diag(cs_std),
+				diag(es_std)
+			)
+		)
+		names(std_Specifics) = rowNames;
+
 		if(report == "html"){
-			umx_print(standardized_specifics, digits = digits, zero.print = ".", file = "std_spec.html")
+			umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".", file = "std_spec.html")
 		} else {
-			umx_print(standardized_specifics, digits = digits, zero.print = ".")
+			umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".")
 		}
 		
 		if(extended == TRUE) {
@@ -1557,24 +1566,12 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	stdFit@submodels$top$cs@values = cs_std
 	stdFit@submodels$top$es@values = es_std
 
-	asClean = as_std
-	csClean = cs_std
-	esClean = es_std
-	# Need to add a check here that the cells are fixed and 0
-	# asClean[upper.tri(asClean)] = NA
-	# csClean[upper.tri(csClean)] = NA
-	# esClean[upper.tri(esClean)] = NA
-	# std_Specifics = data.frame(cbind(asClean, csClean, esClean), row.names = rowNames);
-	# names(std_Specifics) = paste0(rep(c("As", "Cs", "Es"), each = nVar), rep(1:nVar));
-	# message("Specific factor loadings")
-	# umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".")
-
 	message("## Specific factor loadings")
 	std_Specifics = data.frame(row.names = paste0('Specific ', c('a', 'c', 'e')),
 		rbind(
-			diag(asClean), 
-			diag(csClean),
-			diag(esClean)
+			diag(as_std), 
+			diag(cs_std),
+			diag(es_std)
 		)
 	)
 	names(std_Specifics) = rowNames;
@@ -2395,11 +2392,7 @@ plot.MxModel.GxE <- umxPlotGxE
 #' \dontrun{
 #' plot(yourCP_Model) # no need to remember a special name: plot works fine!
 #' }
-umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), showMeans = "deprecated", ...) {
-	if(showMeans != "deprecated"){
-		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
-		means = showMeans
-	}	
+umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), ...) {
 	if(!class(x) == "MxModel.CP"){
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
@@ -2413,6 +2406,8 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	varCount = dim(model$top$as$values)[[1]]
 	selDVs   = dimnames(model$MZ$data$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
+	selDVs = sub("(_T)?[0-9]$", "", selDVs)
+
 	parameterKeyList = omxGetParameters(model)
 	out = "";
 	cSpecifics = c();
@@ -2436,14 +2431,14 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			# specific
 			grepStr = '([ace]s)_r([0-9]+)c([0-9]+)'
 			from    = sub(grepStr, '\\1\\3', thisParam, perl=T);
-			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl=T));
+			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl=TRUE));
 			target  = selDVs[as.numeric(targetindex)]			
 			latents = append(latents,from);
 			cSpecifics = append(cSpecifics,from);
 		} else if (grepl("^expMean", thisParam)) { # means probably expMean_r1c1
 			grepStr = '(^.*)_r([0-9]+)c([0-9]+)'
 			from    = "one";
-			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl=T));
+			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl=TRUE));
 			target  = selDVs[as.numeric(targetindex)];
 		} else {
 			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
@@ -2461,14 +2456,14 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			out = paste0(out, ";\n", from, " -> ", target, " [label=\"", val, "\"]")
 		}
 	}
-	preOut = "\t# Latents\n"
+	preOut = "# Latents\n"
 	latents = unique(latents)
 	for(var in latents) {
 	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
 	}
-	preOut = paste0(preOut, "\n\t# Manifests\n")
+	preOut = paste0(preOut, "\n# Manifests\n")
 	for(n in c(1:varCount)) {
-	   preOut = paste0(preOut, "\n", selDVs[n], " [shape=square];\n")
+	   preOut = paste0(preOut, "\n\t", selDVs[n], " [shape = square];\n")
 	}
 	
 	ranks = paste(cSpecifics, collapse = "; ");
@@ -2507,12 +2502,8 @@ plot.MxModel.CP <- umxPlotCP
 #' plot(model)
 #' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), showMeans = "deprecated", ...) {
+umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), ...) {
 	format = match.arg(format)
-	if(showMeans != "deprecated"){
-		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
-		means = showMeans
-	}	
 	if(!class(x) == "MxModel.IP"){
 		stop("The first parameter of umxPlotIP must be an IP model, you gave me a ", class(x))
 	}
@@ -2522,7 +2513,6 @@ umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 		model = umx_standardize_IP(model)
 	}
 	# TODO Check I am handling nFac > 1 properly!!
-	facCount = dim(model$top$a_cp$labels)[[1]]
 	varCount = dim(model$top$ai$values)[[1]]
 	selDVs   = dimnames(model$MZ$data$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
@@ -2554,7 +2544,7 @@ umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 			target  = selDVs[as.numeric(targetindex)];
 		} else {
 			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
-			"If you are using umxModify to make newLabels, re-use one of the existing labels to help plot()")
+			"If you are using umxModify to make newLabels, instead of making up a new label, use, say, the first label in update as the newLabel to help plot()")
 		}
 
 		if(!means & from == "one"){

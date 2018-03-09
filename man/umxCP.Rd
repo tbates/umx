@@ -115,14 +115,11 @@ m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6"
 }
 \examples{
 require(umx)
-data(twinData) 
-twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
-twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
-selDVs = c("ht", "wt")
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
-umx_set_optimizer("SLSQP") # preferably NPSOL: CSOLNP needs setup to run this model.
-m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
+data(GFF)
+mzData <- subset(GFF, zyg_2grp == "MZ")
+dzData <- subset(GFF, zyg_2grp == "DZ")
+selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
+m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 umxSummary(m1)
 umxParameters(m1, patt = "^c")
 m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")

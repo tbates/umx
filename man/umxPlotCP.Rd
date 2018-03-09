@@ -6,8 +6,7 @@
 \title{Draw a graphical figure for a Common Pathway model}
 \usage{
 umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
-  showMeans = "deprecated", ...)
+  std = TRUE, format = c("current", "graphviz", "DiagrammeR"), ...)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link{mxModel}} to display graphically}
@@ -22,9 +21,9 @@ umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{showMeans}{deprecated: replace with just 'means'}
-
 \item{...}{Optional additional parameters}
+
+\item{showMeans}{deprecated: replace with just 'means'}
 }
 \value{
 - Optionally return the dot code
