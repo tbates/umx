@@ -1,10 +1,14 @@
-# Figure released under CCBy at
+# TODO Create a tmx path tracing rules
+# TODO Fix up umxUnexplainedCausalNexus()
+
+
+# Thresholded normal Figure released under CCBy at
 #    https://figshare.com/s/b6552245d88dd8892726
 # This file living at
 #    https://github.com/tbates/BGBook/blob/master/figs/c03_genotypic_effect_by_gene_dose.R
 # TODO: What does this show
-# Used in chapter 03 of BG Methods, 2ed, Derivation of expected twin covariances
-# Based on dataf1.ps p44 in previous edition
+# Used Derivation of expected twin covariances. In chapter 03, BG Methods, 2ed.
+# See also dataf1.ps p44 in previous edition.
 
 #' Graphical display of genotypic effects.
 #'

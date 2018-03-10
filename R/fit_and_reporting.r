@@ -2654,16 +2654,15 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 # ======================
 # = Path tracing rules =
 # ======================
-
 #' umxUnexplainedCausalNexus
 #'
 #' umxUnexplainedCausalNexus report the effect of a change (delta) in a variable (from) on an output (to)
 #'
 #' @param from A variable in the model for which you want to compute the effect of a change.
-#' @param delta A the amount to simulate changing \"from\" by. 
+#' @param delta A the amount to simulate changing \sQuote{from} by. 
 #' @param to The dependent variable that you want to watch changing.
-#' @param model The model containing from and to.
-#' @seealso - \code{\link{umxRun}}, \code{\link{mxCompare}}
+#' @param model The model containing variables from and to.
+#' @seealso - \code{\link{mxCheckIdentification}}, \code{\link{mxCompare}}
 #' @family Modify or Compare Models
 #' @references - http://www.github.com/tbates/umx/
 #' @export
@@ -2671,7 +2670,9 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' \dontrun{
 #' umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 #' }
-umxUnexplainedCausalNexus <- function(from, delta, to, model) {
+umxUnexplainedCausalNexus <- function(from, delta, to, model= NULL) {
+	umx_check_model(m1, type = "RAM")
+	
 	manifests = model@manifestVars
 	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to allow access by name
 	dimnames(partialDataRow) = list("val", manifests)
@@ -2891,7 +2892,6 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 	return(list(sigma=totalCondCov, mu=totalMean))
 	
 }
-
 
 # =========================
 # = Pull model components =

@@ -3272,9 +3272,11 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 	}
 }
 
-#' umx_check_model
+#' Check for required features in an OpenMx.
 #'
-#' Check an OpenMx model
+#' Allows the user to straight-forwardly require a specific model type (i.e., 
+#' "RAM", "LISREL", etc.), whether or not the model has data, if it has been run or not. 
+#' You can also test whether is has a means model or not and (in future) test if it has submodels.
 #'
 #' @param obj an object to check
 #' @param type what type the model must be, i.e., "RAM", "LISREL", etc. (defaults to not checking NULL)
