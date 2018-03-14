@@ -22,8 +22,6 @@ umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
 \item{...}{Optional additional parameters}
-
-\item{showMeans}{deprecated: replace with just 'means'}
 }
 \value{
 - Optionally return the dot code

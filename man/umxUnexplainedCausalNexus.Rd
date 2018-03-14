@@ -4,16 +4,16 @@
 \alias{umxUnexplainedCausalNexus}
 \title{umxUnexplainedCausalNexus}
 \usage{
-umxUnexplainedCausalNexus(from, delta, to, model)
+umxUnexplainedCausalNexus(from, delta, to, model = NULL)
 }
 \arguments{
 \item{from}{A variable in the model for which you want to compute the effect of a change.}
 
-\item{delta}{A the amount to simulate changing \"from\" by.}
+\item{delta}{A the amount to simulate changing \sQuote{from} by.}
 
 \item{to}{The dependent variable that you want to watch changing.}
 
-\item{model}{The model containing from and to.}
+\item{model}{The model containing variables from and to.}
 }
 \description{
 umxUnexplainedCausalNexus report the effect of a change (delta) in a variable (from) on an output (to)
@@ -27,7 +27,7 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 - http://www.github.com/tbates/umx/
 }
 \seealso{
-- \code{\link{umxRun}}, \code{\link{mxCompare}}
+- \code{\link{mxCheckIdentification}}, \code{\link{mxCompare}}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},

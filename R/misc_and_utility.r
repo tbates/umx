@@ -4039,7 +4039,8 @@ umx_explode <- function(delimiter = character(), string) {
 #' # Examples using built-in GFF dataset
 #'
 #' umx_names(GFF, "T_1$")
-#' # "zyg" "sex1"  "age_T1"  "gff_T1"  "fc_T1"   "qol_T1"  "hap_T1"  "sat_T1"  "AD_T1" "SOMA_T1" "SOC_T1"  "THOU_T1"
+#' # "zyg" "sex1"  "age_T1"  "gff_T1"  "fc_T1"   "qol_T1"  "hap_T1"  
+#' # "sat_T1"  "AD_T1" "SOMA_T1" "SOC_T1"  "THOU_T1"
 #' umx_names(GFF, "2$")
 #'
 #' umx_names(GFF, "b$")

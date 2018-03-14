@@ -2283,6 +2283,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(GFF)
 #' mzData <- subset(GFF, zyg_2grp == "MZ")
@@ -2294,6 +2295,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
+#' }
 umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = NULL) {
 	nSib = 2
 	# =================
@@ -2505,7 +2507,9 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 #' dzData <- subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
 #' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-#' m1 = umxIP(selDVs = selDVs, sep = "_T", nFac = c(a=3, c = 1, e = 1), dzData = dzData, mzData = mzData)
+#' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
+#' 	nFac = c(a=3, c = 1, e = 1)
+#' )
 #' umxSummary(m1)
 #' plot(m1)
 #' 

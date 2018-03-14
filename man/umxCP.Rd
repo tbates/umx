@@ -114,6 +114,7 @@ So, in a model where the means for twin 1 and twin 2 had been equated (set = to 
 m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
 }
 \examples{
+\dontrun{
 require(umx)
 data(GFF)
 mzData <- subset(GFF, zyg_2grp == "MZ")
@@ -125,6 +126,7 @@ umxParameters(m1, patt = "^c")
 m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 umxSummaryCP(m2, comparison = m1, file = NA)
 umxCompare(m1, m2)
+}
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

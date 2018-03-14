@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_check_model}
 \alias{umx_check_model}
-\title{umx_check_model}
+\title{Check for required features in an OpenMx.}
 \usage{
 umx_check_model(obj, type = NULL, hasData = NULL, beenRun = NULL,
   hasMeans = NULL, checkSubmodels = FALSE)
@@ -24,7 +24,9 @@ umx_check_model(obj, type = NULL, hasData = NULL, beenRun = NULL,
 - boolean
 }
 \description{
-Check an OpenMx model
+Allows the user to straight-forwardly require a specific model type (i.e., 
+"RAM", "LISREL", etc.), whether or not the model has data, if it has been run or not. 
+You can also test whether is has a means model or not and (in future) test if it has submodels.
 }
 \examples{
 require(umx)

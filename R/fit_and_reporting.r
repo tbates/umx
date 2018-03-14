@@ -2379,7 +2379,6 @@ plot.MxModel.GxE <- umxPlotGxE
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
-#' @param showMeans deprecated: replace with just 'means'
 #' @param format = c("current", "graphviz", "DiagrammeR") 
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
@@ -2489,7 +2488,6 @@ plot.MxModel.CP <- umxPlotCP
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std whether to standardize the model (defaults to TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR")
-#' @param showMeans Deprecated: replace with just 'means' for simplicity.
 #' @param ... Optional additional parameters
 #' @return - optionally return the dot code
 #' @export
@@ -2671,7 +2669,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 #' }
 umxUnexplainedCausalNexus <- function(from, delta, to, model= NULL) {
-	umx_check_model(m1, type = "RAM")
+	umx_check_model(model, type = "RAM")
 	
 	manifests = model@manifestVars
 	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to allow access by name
