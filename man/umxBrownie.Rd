@@ -6,11 +6,6 @@
 \usage{
 umxBrownie()
 }
-\value{
-\itemize{
-\item 
-}
-}
 \description{
 How to cook steak.
 }

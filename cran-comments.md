@@ -13,7 +13,7 @@ as CRAN currently fails to build OpenMx for El Cap.
 Builds with the same toolchain on our hardware build and run fine.
 
 ## Test environments
-* OS X 10.13.0, R version 3.4.3
+* OS X 10.13.0, R version 3.4.4
 * Win R Under development (unstable) (2018-02-09 r74240)
 * 64-bit Linux (Scientific Linux 6), R 3.4.3
 
