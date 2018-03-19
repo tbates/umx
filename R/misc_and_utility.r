@@ -58,7 +58,6 @@
 #' 
 #' A great reference is Kenji Alt Lopez's book [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087).
 #'
-#' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{omxBrownie}}
