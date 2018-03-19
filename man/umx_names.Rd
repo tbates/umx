@@ -40,15 +40,13 @@ umx_names(mtcars, "^d") # "disp", drat
 umx_names(mtcars, "r[ab]") # "drat", "carb"
 umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 
-# Examples using built-in GFF dataset
+# =======================================
+# = Examples using built-in GFF dataset =
+# =======================================
 
-umx_names(GFF, "T_1$")
-# "zyg" "sex1"  "age_T1"  "gff_T1"  "fc_T1"   "qol_T1"  "hap_T1"  
-# "sat_T1"  "AD_T1" "SOMA_T1" "SOC_T1"  "THOU_T1"
-umx_names(GFF, "2$")
-
-umx_names(GFF, "b$")
-umx_names(GFF, "s$")
+umx_names(GFF, "T_1$") # twin 1
+# "zyg" "sex1" "age_T1" "gff_T1" "fc_T1" "qol_T1" "hap_T1"...
+umx_names(GFF, "2$") # names ending in 2
 umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 # "zyg_6grp" "zyg_2grp" "divorce"
 }

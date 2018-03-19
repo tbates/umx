@@ -1,4 +1,4 @@
-# umx 2.4.0 (Expected March 12 2018, R 3.4.3 post Boulder Workshop edition)
+# umx 2.4.0 March 21 2018, R 3.4.3 post Boulder Workshop edition)
 * NEW: `umxIP` nFac now allows specifying different numbers of a, c, and e factors!
 * NEW: `umxACEv` plot works (shows correlated factors)
 * NEW: `umxACEv` standardize mostly functional.

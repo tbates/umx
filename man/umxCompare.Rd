@@ -42,17 +42,13 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
-mxCompare(m1, m2) # what OpenMx gives by default
 umxCompare(m1, m2, report = "report") # Add English-sentence descriptions
 \dontrun{
 umxCompare(m1, m2, report = "html") # Open table in browser

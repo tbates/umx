@@ -1,10 +1,30 @@
-# Poems you should know by heart
-# https://en.wikipedia.org/wiki/Invictus
-# https://en.wikipedia.org/wiki/The_Second_Coming_(poem)
-# http://www.poetryfoundation.org/poem/173698get
-# https://en.wikipedia.org/wiki/O_Captain!_My_Captain!
+# Poems one should know by heart:
 
-#
+# ― William Shakespeare
+# [Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
+# [To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
+# [The Merchant of Venice](https://www.goodreads.com/work/quotes/2682703-the-merchant-of-venice)
+#  * "How far that little candle throws his beams! So shines a good deed in a weary world."
+#  * The quality of mercy is not strained.
+#  * "One half of me is yours, the other half is yours,
+#    Mine own, I would say; but if mine, then yours,
+#    And so all yours."
+#  * If to do were as easy as to know what were good to do, chapels 
+#    had been churches, and poor men's cottages princes’ palaces.
+# * “This above all: to thine own self be true,
+
+# # PERCY BYSSHE SHELLEY
+# [Ozymandias](https://www.poetryfoundation.org/poems/46565/ozymandias)
+
+# Brevia
+#  * [Invictus](https://en.wikipedia.org/wiki/Invictus)
+#  * [Abou ben Adhem](https://www.poetryfoundation.org/poems/44433/abou-ben-adhem)
+#  * [Odi et amo](https://en.wikipedia.org/wiki/Catullus_85)
+
+# # [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
+#  * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
+
+
 #   Copyright 2007-2018 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -4036,15 +4056,13 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
 #' umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 #'
-#' # Examples using built-in GFF dataset
+#' # =======================================
+#' # = Examples using built-in GFF dataset =
+#' # =======================================
 #'
-#' umx_names(GFF, "T_1$")
-#' # "zyg" "sex1"  "age_T1"  "gff_T1"  "fc_T1"   "qol_T1"  "hap_T1"  
-#' # "sat_T1"  "AD_T1" "SOMA_T1" "SOC_T1"  "THOU_T1"
-#' umx_names(GFF, "2$")
-#'
-#' umx_names(GFF, "b$")
-#' umx_names(GFF, "s$")
+#' umx_names(GFF, "T_1$") # twin 1
+#' # "zyg" "sex1" "age_T1" "gff_T1" "fc_T1" "qol_T1" "hap_T1"...
+#' umx_names(GFF, "2$") # names ending in 2
 #' umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 #' # "zyg_6grp" "zyg_2grp" "divorce"
 umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
