@@ -863,7 +863,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 #' @export
 #' @family Twin Modeling Functions
 #' @family Reporting functions
-#' @seealso - \code{\link{umxACE}} 
+#' @seealso - \code{\link{umxACE}}, \code{\link{plot.MxModel.ACE}}, \code{\link{umxModify}}
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(umx)

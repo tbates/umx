@@ -36,9 +36,8 @@
 #' 
 #' *note*: Cheaper cuts like blade steak can come out fine.
 #' 
-#' A great reference is Kenji Alt Lopez's book [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087).
+#' A great reference is [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087) by Kenji Alt Lopez.
 #'
-#' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{omxBrownie}}
@@ -47,12 +46,13 @@
 #' umxBrownie()
 #' @md
 umxBrownie <- function() {
-	message("Rub steak in a table spoon of salt, put it back in the fridge for 1-4 hours.\n",
+	message("Rub steak in a table spoon of salt, put it back in the fridge for an hour (longer is fine).\n",
 	"Place steak on a hot cast-iron skillet, with a little peanut oil.\n",
 	"Turn steaks as often as you wish. Control heat to below smoke point.\n",
 	"Remove and eat when internal temp reaches 130 \u0080 F.\n"
 	)
 }
+
 # ==============================
 # = Get and set OpenMx options =
 # ==============================

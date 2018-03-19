@@ -1354,6 +1354,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
+#' @seealso - \code{\link{plot.MxModel.ACE}}, \code{\link{plot.MxModel.ACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 #' @examples

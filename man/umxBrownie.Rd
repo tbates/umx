@@ -6,11 +6,6 @@
 \usage{
 umxBrownie()
 }
-\value{
-\itemize{
-\item 
-}
-}
 \description{
 How to cook steak.
 }
@@ -20,7 +15,7 @@ Preferably cook over a gas flame.
 
 \emph{note}: Cheaper cuts like blade steak can come out fine.
 
-A great reference is Kenji Alt Lopez's book \href{https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087}{The Food Lab}.
+A great reference is \href{https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087}{The Food Lab} by Kenji Alt Lopez.
 }
 \examples{
 umxBrownie()

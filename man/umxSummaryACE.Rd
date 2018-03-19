@@ -73,7 +73,7 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE);
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxACE}}
+- \code{\link{umxACE}}, \code{\link{plot.MxModel.ACE}}, \code{\link{umxModify}}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},
