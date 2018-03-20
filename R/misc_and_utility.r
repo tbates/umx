@@ -1,6 +1,6 @@
 # Poems one should know by heart:
 
-# ― William Shakespeare
+# William Shakespeare
 # [Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
 # [To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
 # [The Merchant of Venice](https://www.goodreads.com/work/quotes/2682703-the-merchant-of-venice)
@@ -4036,6 +4036,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' Convenient equivalent of grep("fa[rl].*", names(df), value = TRUE, ignore.case = TRUE)
 #' Can handle dataframe (uses names), model (uses parameter names), or a vector of strings.
 #'
+#' @aliases namez
 #' @param df dataframe from which to get names.
 #' @param pattern used to filter-out only some names (supports wild card/regular expressions)
 #' @param replacement if not NULL, replaces the found string.
@@ -4047,12 +4048,15 @@ umx_explode <- function(delimiter = character(), string) {
 #' @param invert = FALSE
 #' @return - vector of matches
 #' @export
-#' @seealso - \code{\link{grep}}, \code{\link{sub}}
+#' @seealso - Base-R pattern matching functions: \code{\link{grep}}.
+#' And \code{\link{umx_check_names}} to check for existence of names in a dataframe. 
 #' @family Reporting Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' umx_names(mtcars, "mpg") # just "mpg" matches
-#' umx_names(mtcars, "^d") # "disp", drat
+#' umx_names(mtcars, "mpg") # only "mpg" matches this
+#' #
+#' # easy alias namez
+#' namez(mtcars, "^d") # vars beginning with 'd' = "disp", drat
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
 #' umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 #'
@@ -4084,6 +4088,9 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 		    fixed = fixed, useBytes = useBytes)
 	}
 }
+
+#' @export
+namez <- umx_names
 
 #' Trim whitespace surrounding a string.
 #'

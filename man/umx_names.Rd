@@ -2,6 +2,7 @@
 % Please edit documentation in R/misc_and_utility.r
 \name{umx_names}
 \alias{umx_names}
+\alias{namez}
 \title{umx_names}
 \usage{
 umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
@@ -35,8 +36,10 @@ Convenient equivalent of grep("fa[rl].*", names(df), value = TRUE, ignore.case =
 Can handle dataframe (uses names), model (uses parameter names), or a vector of strings.
 }
 \examples{
-umx_names(mtcars, "mpg") # just "mpg" matches
-umx_names(mtcars, "^d") # "disp", drat
+umx_names(mtcars, "mpg") # only "mpg" matches this
+#
+# easy alias namez
+namez(mtcars, "^d") # vars beginning with 'd' = "disp", drat
 umx_names(mtcars, "r[ab]") # "drat", "carb"
 umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 
@@ -54,7 +57,8 @@ umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{grep}}, \code{\link{sub}}
+- Base-R pattern matching functions: \code{\link{grep}}.
+And \code{\link{umx_check_names}} to check for existence of names in a dataframe.
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},

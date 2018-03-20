@@ -1,6 +1,6 @@
 Package: umx
-Version: 2.4.0
-Date: 2018-03-06
+Version: 2.4.1
+Date: 2018-03-20
 Title: Structural Equation and Twin Modeling in R
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")))
@@ -10,6 +10,7 @@ Encoding: UTF-8
 URL: http://github.com/tbates/umx
 Description: Quickly create, run, and report structural equation and twin models.
     See '?umx' to learn more.
+	file.show(system.file("NEWS", package="umx"))
 Depends:
     R (>= 3.2.0),
     OpenMx (>= 2.7.9)

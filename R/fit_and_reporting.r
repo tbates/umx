@@ -2928,21 +2928,21 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' # Parameters with values below .1 and containing "_to_" in their label
 #' umx_parameters(m1, "below", .1, "_to_")
 umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {
-	# TODO rationalize umxParameters and umxGetParameters
+	# TODO rationalize (deprecate?) umx_parameters and umxGetParameters
 	# TODO  add filtering by significance (based on SEs)
 	# TODO offer a method to handle sub-models
 	# 	model$aSubmodel$matrices$aMatrix$labels
 	# 	model$MZ$matrices
 	
 	if(std){
-		stop("Sorry, std not implemented yet: Standardize the model and provide as input or summary")
+		stop("Sorry, std not implemented yet: Standardize the model and provide this or the summary as input.")
 	}
 	# x = cp4
 	if(class(thresh) == "numeric"){
-		stop("you might not have specified the parameter value (b) by name.
-		say: umx_parameters(cp4, '_cp_', b = .1)
-		or specify all arguments:
-		say: umx_parameters(cp4, '_cp_', 'below', .1)
+		stop("You might not have specified the parameter value (b) by name. e.g.:\n
+	parameters(cp4, pattern = '_cp_', thresh = 'below', b = .1)\n
+or specify all arguments:\n
+	parameters(cp4, 'below', .1, '_cp_')
 		")
 	}
 	thresh <- match.arg(thresh)
@@ -2981,6 +2981,10 @@ umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), 
 
 	if(sum(filter) == 0){
 		message(paste0("Nothing found matching pattern ", omxQuotes(pattern), " and minimum absolute value ", thresh, " ", b, "."))
+		
+		paste0("Might try flipping the from and to elements of the name, or look in these closest matches for what you intended: ",
+			omxQuotes(agrep(pattern = pattern, x = x$name, max = 4, value = TRUE))
+		)
 	} else {
 		umx_round(x[filter, c("name", "Estimate")], digits = digits)
 	}
