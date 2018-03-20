@@ -1,4 +1,9 @@
-# umx 2.4.0 March 21 2018, R 3.4.3 post Boulder Workshop edition)
+# umx 2.4.1 April? 21 2018, R 3.4.4?
+* NEW: `namez` alias for the ever-useful `umx_names` function.
+* IMPROVED: `parameters` now returns helpful near-match names as suggestions on not finding actual matches.
+* HELP: More related-function links in help files.
+
+# umx 2.4.0 March 21 2018, R 3.4.5 post Boulder Workshop edition)
 * NEW: `umxIP` nFac now allows specifying different numbers of a, c, and e factors!
 * NEW: `umxACEv` plot works (shows correlated factors)
 * NEW: `umxACEv` standardize mostly functional.
