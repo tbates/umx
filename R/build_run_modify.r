@@ -365,7 +365,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		if(is.na(name)){
 			name = model
 		} else {
-			stop("Don't set model to a string && pass in name as a string as well...")
+			stop("If model is set to a string, don't pass in name as well...")
 		}
 	} else {
 		if(umx_is_RAM(model)){
@@ -440,12 +440,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	} else if(class(data)[1] == "data.frame") {
 		data = mxData(observed = data, type = "raw")
 	}
-
+	if (class(data) == "matrix"){
+		message("You gave me a matrix. SEM needs to know the N for cov data. Rather than me assemble it,
+			the easiest and least error-prone method is for you to pass in\n
+			data = mxData(yourCov, type='cov', nobs=100) (or whatever your N is)")
+	}
 	if(class(data)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
 		if(data$type == "raw"){
 			# check "one" is not a column
 			if("one" %in% names(data$observed) ){
-				warning("You have a data column called 'one' which is illegal (means). I dropped it!")
+				warning("You have a data column called 'one' which is illegal (it's the code used for setting means). I dropped it!")
 				data$observed = data$observed[ , !(names(data$observed) %in% c("one")), drop = FALSE]
 			}
 			manifestVars = names(data$observed)
@@ -461,7 +465,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		# user is just running a trial model, with no data, but provided names
 		manifestVars = data
 	} else {
-		stop("There's something wrong with the data - I expected a dataframe, mxData, or a vector of names, but you gave me a ", class(data)[1])		
+		stop("I'm assuming this is a  - I expected a dataframe, mxData, or a vector of names, but you gave me a ", class(data)[1])		
 	}
 	foundNames = unique(na.omit(foundNames))
 	# Anything not in data -> latent
@@ -2951,7 +2955,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 # 	umxMatrix(name, "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", colName))
 # }
 
-#' umxMatrix: labeled mxMatrix, with name in the first place
+#' Make a mxMatrix with automatic labels. Also takes name as the first parameter for more readable code.
 #'
 #' @description
 #' umxMatrix is a wrapper for mxMatrix which labels cells buy default, and has the name parameter first in order. 
@@ -2994,6 +2998,33 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 	if(setLabels){
 		x = umxLabel(x, jiggle = jiggle)
 	}
+	return(x)
+}
+
+#' A simple wrapper for mxAlgebra with name as the first parameter for more readable compact code.
+#'
+#' @description
+#' umxAlgebra is a wrapper for mxAlgebra which has the name parameter first in order. 
+#'
+#' @param name The name of the matrix (Default = NA). Note the different order compared to mxMatrix!
+#' @param expression The algebra.
+#' @param dimnames = Dimnames
+#' @param ... Other parameters
+#' @param fixed = See mxAlgebra documentation
+#' @param joinKey See mxAlgebra documentation
+#' @param joinModel See mxAlgebra documentation
+#' @param verbose Quiet of informative
+#' @return - \code{\link{mxAlgebra}}
+#' @export
+#' @family Core Modelling Functions
+#' @seealso - \code{\link{umxMatrix}}
+#' @examples
+#' umxAlgebra("circ", 2 * pi * r)
+umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE, joinKey=as.character(NA), joinModel=as.character(NA), verbose=0L) {
+	if(class(name) != "character"){
+		stop("In umxAlgebra, name comes first, not expression.")
+	}
+	x = mxAlgebra(expression = expression, name = name, dimnames = dimnames, ..., fixed = fixed, joinKey=joinKey, joinModel=joinModel, verbose=verbose)
 	return(x)
 }
 

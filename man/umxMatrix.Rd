@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxMatrix}
 \alias{umxMatrix}
-\title{umxMatrix: labeled mxMatrix, with name in the first place}
+\title{Make a mxMatrix with automatic labels. Also takes name as the first parameter for more readable code.}
 \usage{
 umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
   free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA,
@@ -59,7 +59,7 @@ umxMatrix("test", "Full", 1, 1)
 - \code{\link{umxLabel}}
 
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+  \code{\link{umxAlgebra}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
+  \code{\link{umxSuperModel}}, \code{\link{umx}}
 }

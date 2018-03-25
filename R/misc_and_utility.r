@@ -975,9 +975,11 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 
 #' Break twin variable names (BMI_T1, BMI_T2) into base variable names (BMI, "_T", 1:2)
 #'
+#' @description
 #' Break names like Dep_T1 into a list of base names, a separator, and a 
-#' vector of twin indexes. e.g. c("Dep_T1", "Dep_T2") 
-#' -> list(baseNames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+#' vector of twin indexes. e.g.: c("Dep_T1", "Dep_T2", "Anx_T1", "Anx_T2") will become:
+#' 
+#' list(baseNames = c("Dep", "Anx"), sep = "_T", twinIndexes = c(1,2))
 #'
 #' @param df vector of names or data.frame containing the data
 #' @param sep text constant separating name from numeric 1:2 twin index.
@@ -989,7 +991,8 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' data("twinData")
 #' umx_explode_twin_names(twinData, sep = "")
 #' umx_explode_twin_names(twinData, sep = NULL)
-#' # Single-character single variable test case
+#' 
+#' # Ignore this: just a single-character/single variable test case
 #' x = round(10 * rnorm(1000, mean = -.2))
 #' y = round(5 * rnorm(1000))
 #' x[x < 0] = 0; y[y < 0] = 0
@@ -2219,6 +2222,8 @@ umx_msg <- function(x) {
 #' `umx_paste_names` adds suffixes to names so you can work with that nice short list.
 #' So, you provide `bmi`, and you get back fully specified family-wise names: `c("bmi_T1", "bmi_T2")`
 #' 
+#' *note*: `tvars` is a shortcut for `umx_paste_names`
+#' 
 #' @details
 #' **Method 1**: *Use complete suffixes*
 #' 
@@ -2255,6 +2260,7 @@ umx_msg <- function(x) {
 #' @return - vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
 #' @export
 #' @family String Functions
+#' @seealso \code{\link{namez}}
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' # two styles doing the same thing: first is more general
@@ -2627,6 +2633,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @family Reporting Functions
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
+#' umx_print(mtcars[1,1:2], digits = 2, zero.print = "")
 #' \dontrun{
 #' umx_print(mtcars[1:10,], file = "tmp.html")
 #' }
@@ -2635,10 +2642,11 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 	if(class(x)=="character"){
 		print(x)
 	}else if(class(x)!="data.frame"){
-		if(class(x)=="matrix"){
+		if(class(x)=="matrix" |class(x)=="numeric"){
 			x = data.frame(x)
 		} else {
-			message("Sorry, umx_print currently only prints data.frames. File a request to print '", class(x), "' objects\n or perhaps you want umx_msg?")
+			message("Sorry, umx_print currently only prints data.frames, matrices, and vectors.\n
+			File a request to print '", class(x), "' objects\n or perhaps you want umx_msg?")
 			return()
 		}
 	}
@@ -4033,33 +4041,51 @@ umx_explode <- function(delimiter = character(), string) {
 
 #' umx_names
 #'
-#' Convenient equivalent of grep("fa[rl].*", names(df), value = TRUE, ignore.case = TRUE)
-#' Can handle dataframe (uses names), model (uses parameter names), or a vector of strings.
+#' @description 
+#' Convenient equivalent of running [grep](grep) on [names](names), with value = TRUE and ignore.case = TRUE.
+#' `umx_names` can also handle dataframes, a model, or a vector of strings as input. 
+#' These will search variable names, parameter names, and the stinrg values themsevles respectiely.
+#' 
+#' *Note*: `namez` (with a z) is a shortcut for `umx_names`, which makes it easy to subsitute it in for [names](names).
+#' 
+#' You can learn more about the matching options in the helpf for base-R \code{\link{grep}}.
 #'
 #' @aliases namez
 #' @param df dataframe from which to get names.
-#' @param pattern used to filter-out only some names (supports wild card/regular expressions)
-#' @param replacement if not NULL, replaces the found string.
+#' @param pattern Used to find only matching names (supports grep/regular expressions)
+#' @param replacement If not NULL, replaces the found string. Use backreferences ("\1" to "\9") to refer to (subexpressions).
 #' @param ignore.case default = TRUE (opposite default to grep)
-#' @param perl = FALSE
-#' @param value = default = TRUE (opposite default to grep)
-#' @param fixed = FALSE
-#' @param useBytes = FALSE
-#' @param invert = FALSE
+#' @param perl Should Perl-compatible regexps be used? Default = FALSE
+#' @param value Return matching elements themselves (TRUE) or their indices (FALSE) default = TRUE (opposite default to grep)
+#' @param fixed = FALSE (grep option If TRUE, pattern is a string to be matched as is. Overrides all conflicting arguments.)
+#' @param useBytes = FALSE logical. grep option. If TRUE, matching is by byte rather than by character.
+#' @param invert Return indices or values for elements that do not match (default = FALSE)
+#' @param collapse If not null, format as pastable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL)
 #' @return - vector of matches
 #' @export
 #' @seealso - Base-R pattern matching functions: \code{\link{grep}}.
 #' And \code{\link{umx_check_names}} to check for existence of names in a dataframe. 
 #' @family Reporting Functions
+#' @family String Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @md
 #' @examples
 #' umx_names(mtcars, "mpg") # only "mpg" matches this
 #' #
 #' # easy alias namez
-#' namez(mtcars, "^d") # vars beginning with 'd' = "disp", drat
+#' namez(mtcars, "mpg") # vars beginning with 'd' = "disp", drat
+#' 
+#' # regular expressions
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
+#' namez(mtcars, "^d") # vars beginning with 'd' = "disp", drat
 #' umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
-#'
+#' 
+#' # Other options
+#' umx_names(mtcars, "mpg", invert = TRUE) # non-matches (instead of matches)
+#' umx_names(mtcars, "mpg", value = FALSE) # Return indices of matches 
+#' umx_names(mtcars, "^d", fixed = TRUE)   # 
+#' namez(mtcars, ) # vars beginning with 'd' = "disp", drat
+#' 
 #' # =======================================
 #' # = Examples using built-in GFF dataset =
 #' # =======================================
@@ -4069,7 +4095,10 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(GFF, "2$") # names ending in 2
 #' umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 #' # "zyg_6grp" "zyg_2grp" "divorce"
-umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE) {
+umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, collapse = NULL) {
+	if(fixed){
+		ignore.case = FALSE
+	}
 	if(class(df) == "data.frame"){
 		nameVector = names(df)
 	} else if(class(df) == "character"){
@@ -4081,11 +4110,16 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 		stop(paste0("umx_names requires a dataframe or something else with names() or parameters(), ", umx_object_as_str(df), " is a ", typeof(df)))
 	}
 	if(is.null(replacement)){
-		grep(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, value = value,
+		tmp =  grep(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, value = value,
 	     fixed = fixed, useBytes = useBytes, invert = invert)
 	} else {
-		sub(pattern = pattern, replacement = replacement, x = nameVector, ignore.case = FALSE, perl = perl,
+		tmp = sub(pattern = pattern, replacement = replacement, x = nameVector, ignore.case = FALSE, perl = perl,
 		    fixed = fixed, useBytes = useBytes)
+	}
+	if(!is.null(collapse)){
+		paste(tmp, collapse  = collapse)
+	} else {
+		tmp
 	}
 }
 

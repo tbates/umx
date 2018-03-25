@@ -28,6 +28,8 @@ umx_paste_names(varNames, sep = "", suffixes = 1:2, covNames = NULL,
 It's easier to work with base names, rather than the twice-as-long hard-to-typo list of column names.
 \code{umx_paste_names} adds suffixes to names so you can work with that nice short list.
 So, you provide \code{bmi}, and you get back fully specified family-wise names: \code{c("bmi_T1", "bmi_T2")}
+
+\emph{note}: \code{tvars} is a shortcut for \code{umx_paste_names}
 }
 \details{
 \strong{Method 1}: \emph{Use complete suffixes}
@@ -70,9 +72,11 @@ tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 }
 }
 \seealso{
+\code{\link{namez}}
+
 Other String Functions: \code{\link{umx_explode_twin_names}},
   \code{\link{umx_explode}}, \code{\link{umx_grep}},
-  \code{\link{umx_object_as_str}}, \code{\link{umx_rot}},
-  \code{\link{umx_trim}},
+  \code{\link{umx_names}}, \code{\link{umx_object_as_str}},
+  \code{\link{umx_rot}}, \code{\link{umx_trim}},
   \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
 }

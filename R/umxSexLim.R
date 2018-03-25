@@ -319,7 +319,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' stdFit = umxSummarySexLim(m1, returnStd = TRUE);
 #' }
 umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
-	message("umxSummarySexLim is a work-in-progress.\nUse summary() for any relevant stats currently not being tabulated or plotted")
+	message("umxSummarySexLim is a new feature. If any desired stats are not presented, let me know what's missing")
 	report = match.arg(report)
 	# Depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
@@ -351,24 +351,24 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		tmpm = model$top$VarsZm$result
 		tmpf = model$top$VarsZf$result
 		Am = diag(tmpm[1:5, 1:nVar])
-		Cm = diag(tmpm[1:5, (nVar+1):(nVar*2)])
-		Em = diag(tmpm[1:5, (nVar*2+1):(nVar*3)])
+		Cm = diag(tmpm[1:5, (nVar + 1):(nVar * 2)])
+		Em = diag(tmpm[1:5, (nVar * 2 + 1):(nVar * 3)])
 		Af = diag(tmpf[1:5, 1:nVar])
-		Cf = diag(tmpf[1:5, (nVar+1):(nVar*2)])
-		Ef = diag(tmpf[1:5, (nVar*2+1):(nVar*3)])
+		Cf = diag(tmpf[1:5, (nVar + 1):(nVar * 2)])
+		Ef = diag(tmpf[1:5, (nVar * 2 + 1):(nVar * 3)])
 		Estimates = data.frame(rbind(Am, Cm, Em, Af, Cf, Ef))
 		names(Estimates) = selDVs
 		umx_print(Estimates, digits = 2)
 
 		tmpm = model$top$CorsZm$result
 		RAm = tmpm[1:5, 1:nVar]
-		RCm = tmpm[1:5, (nVar+1):(nVar*2)]
-		REm = tmpm[1:5, (nVar*2+1):(nVar*3)]
+		RCm = tmpm[1:5, (nVar + 1):(nVar * 2)]
+		REm = tmpm[1:5, (nVar * 2 + 1):(nVar * 3)]
 
 		tmpf = model$top$CorsZf$result
 		RAf = tmpf[1:5, 1:nVar]
-		RCf = tmpf[1:5, (nVar+1):(nVar*2)]
-		REf = tmpf[1:5, (nVar*2+1):(nVar*3)]
+		RCf = tmpf[1:5, (nVar + 1):(nVar * 2)]
+		REf = tmpf[1:5, (nVar * 2 + 1):(nVar * 3)]
 
 		message("Genetic Factor Correlations")
 		RAboth = RAm
@@ -416,7 +416,6 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		# names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
 		# umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
 	}
-
 
 	hasCIs = umx_has_CIs(model)
 		if(hasCIs & CIs) {
@@ -496,8 +495,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 			# CI_Fit$top$e$values = e_CI
 		} # end Use CIs
 	} # end list catcher?
-	
-	
+
 	if(!is.na(file)) {
 		# message("making dot file")
 		if(hasCIs & CIs){

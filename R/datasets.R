@@ -32,9 +32,8 @@
 # system(paste("open ",shQuote(getwd(), type = "csh")))
 # update_wordlist get_wordlist(pkg = "~/bin/umx")
 
-# ===============================
-# = Figure out what things are. =
-# ===============================
+# 1. Figure out what things are.
+
 # table(x$sex_Tb) # all 0 so male = 0
 # table(x$sex_Ts) # all 1 so female = 1
 # umx_aggregate(sex_T2 ~ zyg_6grp, data = x)
@@ -55,6 +54,10 @@
 # |4 (n = 478) |male 0; female 478 |
 # |5 (n = 426) |male 426; female 0 |
 # |6 (n = 460) |male 0; female 460 |
+
+# ===================================
+# = General Family Functioning data =
+# ===================================
 
 #' Twin data: General Family Functioning, divorce, and wellbeing.
 #'
@@ -147,7 +150,9 @@
 #'
 NULL
 
-
+# ================================
+# = Anthropometric data on twins =
+# ================================
 #' Anthropometric data on twins
 #'
 #' A dataset containing height, weight, BMI, and skin-fold fat measures in several
@@ -193,5 +198,55 @@ NULL
 #' par(mfrow = c(1, 2))  # 1 rows and 3 columns
 #' plot(ht_T1 ~ht_T2, ylim = c(130, 165), data = subset(us_skinfold_data, zyg == 1))
 #' plot(ht_T1 ~ht_T2, ylim = c(130, 165), data = subset(us_skinfold_data, zyg == 3))
+#' par(mfrow = c(1, 1))  # back to as it was
+NULL
+
+# Load Data
+# iqdat = read.table(file = "~/Desktop/IQ.txt", header = TRUE)
+# iqdat$zygosity = NA
+# iqdat$zygosity[iqdat$zyg %in% 1] = "MZ"
+# iqdat$zygosity[iqdat$zyg %in% 2] = "DZ"
+# iqdat = iqdat[, c('zygosity','IQ1_T1','IQ2_T1','IQ3_T1','IQ4_T1','IQ1_T2','IQ2_T2','IQ3_T2','IQ4_T2')]
+# head(iqdat); dim(iqdat); str(iqdat)
+# names(iqdat) = c('zygosity', 'IQ_age1_T1','IQ_age2_T1','IQ_age3_T1','IQ_age4_T1','IQ_age1_T2','IQ_age2_T2','IQ_age3_T2','IQ_age4_T2')
+# save("iqdat", file = "iqdat.rda")
+# system(paste("open ",shQuote(getwd(), type = "csh")))
+
+# ==============================
+# = IQ measured longitudinally =
+# ==============================
+#' Twin data: IQ measured longitudinally
+#'
+#' Measures of IQ across four ages in pairs of identical and fraternal twins. (see details)
+#'
+#' @details
+#' #TODO complete detais
+#' \itemize{
+#'   \item zygosity Zygosity (MZ or DZ)
+#'   \item IQ_age1_T1 T1 IQ measured at age 1
+#'   \item IQ_age2_T1 T1 IQ measured at age 2
+#'   \item IQ_age3_T1 T1 IQ measured at age 3
+#'   \item IQ_age4_T1 T1 IQ measured at age 4
+#'   \item IQ_age1_T2 T2 IQ measured at age 1
+#'   \item IQ_age2_T2 T2 IQ measured at age 2
+#'   \item IQ_age3_T2 T2 IQ measured at age 3
+#'   \item IQ_age4_T2 T2 IQ measured at age 4
+#' }
+#' 
+#' @docType data
+#' @keywords datasets
+#' @family datasets
+#' @name iqdat
+#' @references TODO
+#' @usage data(iqdat)
+#' @format A data frame with 562 rows and 9 variables
+#' @examples
+#' data(iqdat)
+#' str(iqdat)
+# # TODO make a cowplot example
+#' par(mfrow = c(1, 2))  # 1 rows and 3 columns
+#' plot(IQ_age4_T1 ~IQ_age4_T2, data = subset(iqdat, zyg == "MZ"))
+#' plot(IQ_age4_T1 ~IQ_age4_T2, ylim = c(50, 150), data = subset(iqdat, zygosity == "MZ"))
+#' plot(IQ_age4_T1 ~IQ_age4_T2, ylim = c(50, 150), data = subset(iqdat, zygosity == "DZ"))
 #' par(mfrow = c(1, 1))  # back to as it was
 NULL

@@ -857,7 +857,6 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 }
 
 #' @export
-
 umxSummary.MxModel.ACEv <- umxSummaryACEv
 
 #' Produce a graphical display of an ACE variance-components twin model

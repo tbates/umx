@@ -7,41 +7,59 @@
 \usage{
 umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
   perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE,
-  invert = FALSE)
+  invert = FALSE, collapse = NULL)
 }
 \arguments{
 \item{df}{dataframe from which to get names.}
 
-\item{pattern}{used to filter-out only some names (supports wild card/regular expressions)}
+\item{pattern}{Used to find only matching names (supports grep/regular expressions)}
 
-\item{replacement}{if not NULL, replaces the found string.}
+\item{replacement}{If not NULL, replaces the found string. Use backreferences ("\1" to "\9") to refer to (subexpressions).}
 
 \item{ignore.case}{default = TRUE (opposite default to grep)}
 
-\item{perl}{= FALSE}
+\item{perl}{Should Perl-compatible regexps be used? Default = FALSE}
 
-\item{value}{= default = TRUE (opposite default to grep)}
+\item{value}{Return matching elements themselves (TRUE) or their indices (FALSE) default = TRUE (opposite default to grep)}
 
-\item{fixed}{= FALSE}
+\item{fixed}{= FALSE (grep option If TRUE, pattern is a string to be matched as is. Overrides all conflicting arguments.)}
 
-\item{useBytes}{= FALSE}
+\item{useBytes}{= FALSE logical. grep option. If TRUE, matching is by byte rather than by character.}
 
-\item{invert}{= FALSE}
+\item{invert}{Return indices or values for elements that do not match (default = FALSE)}
+
+\item{collapse}{If not null, format as pastable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL)}
 }
 \value{
-- vector of matches
+\itemize{
+\item vector of matches
+}
 }
 \description{
-Convenient equivalent of grep("fa[rl].*", names(df), value = TRUE, ignore.case = TRUE)
-Can handle dataframe (uses names), model (uses parameter names), or a vector of strings.
+Convenient equivalent of running \url{grep} on \url{names}, with value = TRUE and ignore.case = TRUE.
+\code{umx_names} can also handle dataframes, a model, or a vector of strings as input.
+These will search variable names, parameter names, and the stinrg values themsevles respectiely.
+
+\emph{Note}: \code{namez} (with a z) is a shortcut for \code{umx_names}, which makes it easy to subsitute it in for \url{names}.
+
+You can learn more about the matching options in the helpf for base-R \code{\link{grep}}.
 }
 \examples{
 umx_names(mtcars, "mpg") # only "mpg" matches this
 #
 # easy alias namez
-namez(mtcars, "^d") # vars beginning with 'd' = "disp", drat
+namez(mtcars, "mpg") # vars beginning with 'd' = "disp", drat
+
+# regular expressions
 umx_names(mtcars, "r[ab]") # "drat", "carb"
+namez(mtcars, "^d") # vars beginning with 'd' = "disp", drat
 umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
+
+# Other options
+umx_names(mtcars, "mpg", invert = TRUE) # non-matches (instead of matches)
+umx_names(mtcars, "mpg", value = FALSE) # Return indices of matches 
+umx_names(mtcars, "^d", fixed = TRUE)   # 
+namez(mtcars, ) # vars beginning with 'd' = "disp", drat
 
 # =======================================
 # = Examples using built-in GFF dataset =
@@ -54,11 +72,15 @@ umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 # "zyg_6grp" "zyg_2grp" "divorce"
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-- Base-R pattern matching functions: \code{\link{grep}}.
+\itemize{
+\item Base-R pattern matching functions: \code{\link{grep}}.
 And \code{\link{umx_check_names}} to check for existence of names in a dataframe.
+}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
@@ -69,4 +91,11 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_parameters}}, \code{\link{umx_print}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
+
+Other String Functions: \code{\link{umx_explode_twin_names}},
+  \code{\link{umx_explode}}, \code{\link{umx_grep}},
+  \code{\link{umx_object_as_str}},
+  \code{\link{umx_paste_names}}, \code{\link{umx_rot}},
+  \code{\link{umx_trim}},
+  \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
 }
