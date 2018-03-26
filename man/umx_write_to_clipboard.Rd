@@ -26,7 +26,7 @@ umx_write_to_clipboard("hello")
 \seealso{
 Other String Functions: \code{\link{umx_explode_twin_names}},
   \code{\link{umx_explode}}, \code{\link{umx_grep}},
-  \code{\link{umx_object_as_str}},
+  \code{\link{umx_names}}, \code{\link{umx_object_as_str}},
   \code{\link{umx_paste_names}}, \code{\link{umx_rot}},
   \code{\link{umx_trim}}, \code{\link{umx}}
 

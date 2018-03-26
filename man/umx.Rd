@@ -81,9 +81,9 @@ Other Teaching and testing Functions: \code{\link{tmx_genotypic_effect}},
   \code{\link{tmx_is.identified}}
 
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSuperModel}}
+  \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxRun}}, \code{\link{umxSuperModel}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
@@ -115,12 +115,14 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACE}}, \code{\link{umxCP}},
   \code{\link{umxGxE_biv}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
+  \code{\link{umxSummarySimplex}},
   \code{\link{xmu_twin_check}}
 
 Other Twin Reporting Functions: \code{\link{umxReduceACE}},
@@ -171,7 +173,7 @@ Other File Functions: \code{\link{dl_from_dropbox}},
 
 Other String Functions: \code{\link{umx_explode_twin_names}},
   \code{\link{umx_explode}}, \code{\link{umx_grep}},
-  \code{\link{umx_object_as_str}},
+  \code{\link{umx_names}}, \code{\link{umx_object_as_str}},
   \code{\link{umx_paste_names}}, \code{\link{umx_rot}},
   \code{\link{umx_trim}},
   \code{\link{umx_write_to_clipboard}}
@@ -190,7 +192,7 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_open_CRAN_page}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}}
 
-Other datasets: \code{\link{GFF}},
+Other datasets: \code{\link{GFF}}, \code{\link{iqdat}},
   \code{\link{us_skinfold_data}}
 
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
@@ -223,5 +225,6 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_check_levels_identical}},
   \code{\link{xmu_dot_make_paths}},
   \code{\link{xmu_dot_make_residuals}},
+  \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}}
 }

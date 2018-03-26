@@ -167,7 +167,7 @@ m1$S$labels
 \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, \code{\link{parameters}}, \code{\link{umxSuperModel}}
 
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRun}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+  \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
+  \code{\link{umxPath}}, \code{\link{umxRun}},
+  \code{\link{umxSuperModel}}, \code{\link{umx}}
 }

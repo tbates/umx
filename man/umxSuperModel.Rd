@@ -60,7 +60,7 @@ summary(m3)
 - \code{\link{mxFitFunctionMultigroup}}, \code{\link{umxRAM}}
 
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umx}}
+  \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxRun}}, \code{\link{umx}}
 }

@@ -209,7 +209,7 @@ m1 <- umxRAM("Chol", data = myData,
 - \code{\link{mxPath}}
 
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxMatrix}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+  \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
+  \code{\link{umxSuperModel}}, \code{\link{umx}}
 }

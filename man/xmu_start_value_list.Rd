@@ -37,5 +37,6 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuPropagateLabels}},
   \code{\link{xmu_check_levels_identical}},
   \code{\link{xmu_dot_make_paths}},
-  \code{\link{xmu_dot_make_residuals}}
+  \code{\link{xmu_dot_make_residuals}},
+  \code{\link{xmu_simplex_corner}}
 }

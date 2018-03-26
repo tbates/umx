@@ -273,6 +273,40 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	return(model)
 }
 
+#' Internal function to help building simplex models
+#'
+#' @description
+#' internal function to help building simplex models is a function which 
+# Sets the bottom corner free in a matrix, e.g. labels:
+# FALSE, FALSE, FALSE, FALSE,
+# TRUE , FALSE, FALSE, FALSE,
+# FALSE, TRUE , FALSE, FALSE,
+# FALSE, FALSE, TRUE , FALSE
+# Values
+# 0 , 0, 0, 0,
+# .9, 0, 0, 0,
+# 0 ,.9, 0, 0,
+# 0 , 0,.9, 0
+#'
+#' @param x an \code{\link{umxMatrix}} of which to free the bottom triangle.
+#' @param start a default start value for the freed items.
+#' @return - \code{\link{umxMatrix}}
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - \code{\link{umxMatrix}}
+#' @examples
+#' x = umxMatrix('BeA', 'Full', nrow = nVar, ncol = nVar)
+#' xmu_simplex_corner(x, start = .9)
+xmu_simplex_corner <- function(x, start = .9) {
+	nVar = dim(x)[1]
+	nVar_minus1 = nVar-1
+	for (thisRow in 2:nVar) {
+		x$free[thisRow, (thisRow-1)] = TRUE
+		x$values[thisRow, (thisRow-1)] = start		
+	}
+	return(x)
+}
+
 #' xmuLabel_Matrix (not a user function)
 #'
 #' This function will label all the free parameters in an \code{\link{mxMatrix}}

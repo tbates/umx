@@ -111,6 +111,7 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}},
   \code{\link{umxSummarySexLim}},
+  \code{\link{umxSummarySimplex}},
   \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
 }

@@ -16,15 +16,17 @@ umx_explode_twin_names(df, sep = "_T")
 }
 \description{
 Break names like Dep_T1 into a list of base names, a separator, and a 
-vector of twin indexes. e.g. c("Dep_T1", "Dep_T2") 
--> list(baseNames = c("Dep"), sep = "_T", twinIndexes = c(1,2))
+vector of twin indexes. e.g.: c("Dep_T1", "Dep_T2", "Anx_T1", "Anx_T2") will become:
+
+list(baseNames = c("Dep", "Anx"), sep = "_T", twinIndexes = c(1,2))
 }
 \examples{
 require(umx)
 data("twinData")
 umx_explode_twin_names(twinData, sep = "")
 umx_explode_twin_names(twinData, sep = NULL)
-# Single-character single variable test case
+
+# Ignore this: just a single-character/single variable test case
 x = round(10 * rnorm(1000, mean = -.2))
 y = round(5 * rnorm(1000))
 x[x < 0] = 0; y[y < 0] = 0
@@ -33,7 +35,8 @@ umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
 }
 \seealso{
 Other String Functions: \code{\link{umx_explode}},
-  \code{\link{umx_grep}}, \code{\link{umx_object_as_str}},
+  \code{\link{umx_grep}}, \code{\link{umx_names}},
+  \code{\link{umx_object_as_str}},
   \code{\link{umx_paste_names}}, \code{\link{umx_rot}},
   \code{\link{umx_trim}},
   \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
