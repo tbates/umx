@@ -1175,7 +1175,16 @@ umxVersion <- function (model = NULL, verbose = TRUE, return = "umx") {
 #' }
 umx_open_CRAN_page <- function(package = "umx") {
 	for (p in package) {
-	system(paste0("open 'https://cran.r-project.org/package=", p, "'"))		
+		result = tryCatch({
+		    print(packageVersion(p))
+		}, warning = function(x) {
+		    print("not installed locally")
+		}, error = function(x) {
+		    print("not installed locally")
+		}, finally={
+		    # print("cleanup-code")
+		})		
+		system(paste0("open 'https://cran.r-project.org/package=", p, "'"))		
 	}
 }
 
