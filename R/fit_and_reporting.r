@@ -1377,7 +1377,7 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 		# print(SD)  # nVar*nVar diagonal matrix
 
 		# Common factor ACE inputs are already std to 1: Just print out
-		commonACE = cbind(diag(a_cp), diag(c_cp), diag(e_cp)) # bind columns of a, c and e into nFac-rows * 3 matrix
+		commonACE = cbind(diag(a_cp), diag(c_cp), diag(e_cp)) # Bind columns of a, c and e into nFac-rows * 3 matrix
 		commonACE = data.frame(commonACE, row.names = paste("Common.factor", 1:nFac, sep = "."));
 		names(commonACE) = c ("A", "C", "E")
 		message("## Common Factor paths")
