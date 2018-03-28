@@ -35,24 +35,27 @@
 #' data in any combination.
 #' 
 #' \strong{Additional features}
-#' The umxCP function supports varying the DZ genetic association (defaulting to .5)
+#' The umxSummary function supports varying the DZ genetic association (defaulting to .5)
 #' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 #' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
 #'
-#' \strong{Matrices and Labels in CP model}
-#' A good way to see which matrices are used in umxCP is to run an example model and plot it.
+#' \strong{Matrices and Labels in the simplex model}
+#' A good way to see which matrices are used in umxSummary is to run an example model and plot it.
 #'
-#' The diagonals of matrices as, cs, and es contain the path loadings specific to each variable. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
+#' The loadings specific to each time point are contained on the diagonals of matrices 
+#' `as`, `cs`, and `es`. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
+#' 
 #' All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
 #' 
-#' m1$top#as$values
+#' m1$top$as$values
 #' 
-#' The common-pathway loadings on the factors are in matrices a_cp, c_cp, e_cp.
+#' The transmitted loadings are in matrices at, ct, et.
 #'
-#' The common factors themselves are in the matrix cp_loadings (an nVar * 1 matrix)
+#' The innovations are in the matrix `ai`, `ci`, and `ei`.
 #'	
 #' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+#' 
 #' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 #'
 #' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
@@ -78,8 +81,8 @@
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(iqdat)
-#' mzData <- subset(iqdat, zygotic == "MZ")
-#' dzData <- subset(iqdat, zygotic == "DZ")
+#' mzData <- subset(iqdat, zygosity == "MZ")
+#' dzData <- subset(iqdat, zygosity == "DZ")
 #' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
 #' m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
@@ -91,13 +94,13 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	model = mxModel(name,
 		mxModel("top",
 			# Components for "SA", "SC" and "SE"
-			umxMatrix('PsA', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , value = c(100, 5, 5, 5)),
-			umxMatrix('PsC', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , value = c(70, 10, 10, 10)),
-			umxMatrix('PsE', 'Diag', nrow = nVar, ncol = nVar, free = FALSE, value = 0),
+			umxMatrix('PsA', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(100, 5, 5, 5)),
+			umxMatrix('PsC', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(70, 10, 10, 10)),
+			umxMatrix('PsE', 'Diag', nrow = nVar, ncol = nVar, free = FALSE, values = 0),
 			# Te (residuals) all values equated by label, except E
-			umxMatrix('TeA', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "TeA_r1c1", value = 2),
-			umxMatrix('TeC', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "TeC_r1c1", value = 5),
-			umxMatrix('TeE', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = c("TeE_r1c1", "TeE_r2c2", "TeE_r3c3", "TeE_r3c4"), value= 50),
+			umxMatrix('TeA', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "TeA_r1c1", values = 2),
+			umxMatrix('TeC', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "TeC_r1c1", values = 5),
+			umxMatrix('TeE', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = c("TeE_r1c1", "TeE_r2c2", "TeE_r3c3", "TeE_r3c4"), values = 50),
 			# Innovations (diag, but start 1-row down)
 			xmu_simplex_corner(umxMatrix('BeA', 'Full', nrow = nVar, ncol = nVar), start = .9),
 			xmu_simplex_corner(umxMatrix('BeC', 'Full', nrow = nVar, ncol = nVar), start = .8),
@@ -111,7 +114,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 			mxAlgebra(name= 'SigmaC', iBeC %*% PsC %*% t(iBeC) + TeC),
 			mxAlgebra(name= 'SigmaE', iBeE %*% PsE %*% t(iBeE) + TeE),
 			# MZ covariance matrix and mean matrix "sumstatMZ"
-			umxMatrix('means', 'Full', nrow = 1, ncol = nVar2, free = TRUE, labels = meanLabs, value = stmean),
+			umxMatrix('means', 'Full', nrow = 1, ncol = nVar2, free = TRUE, labels = meanLabs, values = stmean),
 			mxAlgebra(name = 'SigmaPh11'  , SigmaA + SigmaC + SigmaE),
 			mxAlgebra(name = 'SigmaPh21mz', SigmaA + SigmaC),
 			mxAlgebra(name = 'SigmaMZ'  , cbind(rbind(SigmaPh11, SigmaPh21mz), rbind(SigmaPh21mz, SigmaPh11))),
@@ -120,12 +123,12 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 			mxAlgebra(name= 'SigmaDZ', cbind(rbind(SigmaPh11, SigmaPh21dz), rbind(SigmaPh21dz, SigmaPh11)))
 		),
 		mxModel("MZ",
-			mxData(iqdatMZ, type = "raw"), 
+			mxData(mzData, type = "raw"), 
 			mxExpectationNormal("top.SigmaMZ", means = "top.means", dimnames = selVars),  
 			mxFitFunctionML()
 		),
 		mxModel("DZ",
-			mxData(iqdatDZ, type = "raw"),
+			mxData(dzData, type = "raw"),
 			mxExpectationNormal("top.SigmaDZ", means = "top.means", dimnames =selVars),
 			mxFitFunctionML()
 		),
