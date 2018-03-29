@@ -1,3 +1,11 @@
+# TODO 
+# 3. Rename BeA-> ai; BeC -> ci; BeE -> ei
+# 1. Rename PsA->  a; PsC ->  c; PsE ->  e
+# 2. Rename TeA-> as; TeC -> cs; TeE -> es
+
+# ✓ Automate'BeA', 'BeC', 'BeE' matrix (currently hand-built)
+# https://ibg.colorado.edu/dokuwiki/doku.php?id=workshop:2018:cdrom
+
 #' Build and run a simplex twin model
 #'
 #' THIS IS BOILER PLATE AWAITING UPDATING FOR THIS BRAND_NEW FUNCTION IN BETA
@@ -83,7 +91,10 @@
 #' data(iqdat)
 #' mzData <- subset(iqdat, zygosity == "MZ")
 #' dzData <- subset(iqdat, zygosity == "DZ")
-#' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
+#' nTimePoints = 4 # Number of time points
+#' baseVarNames = paste0("IQ_age", 1:nTimePoints)
+#' selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
+#' # IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2,
 #' m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
 #' parameters(m1, patt = "^c")
@@ -144,9 +155,9 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	return(model)
 } # end umxSimplex
 
-#' Shows a compact, publication-style, summary of a variance-based Cholesky ACE model.
+#' Shows a compact, publication-style, summary of a Simplex model.
 #'
-#' Summarize a fitted Cholesky model returned by \code{\link{umxACEv}}. Can control digits, report comparison model fits,
+#' Summarize a fitted Simplex model returned by \code{\link{umxSimplex}}. Can control digits, report comparison model fits,
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
@@ -178,17 +189,21 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' @export
 #' @family Twin Modeling Functions
 #' @family Reporting functions
-#' @seealso - \code{\link{umxACEv}} 
+#' @seealso - \code{\link{umxACE}} 
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' data(iqdat)
-#' selDVs = c("bmi1", "bmi2")
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
+#' nTimePoints = 4 # Number of time points
+#' baseVarNames = paste0("IQ_age", 1:nTimePoints)
+#' selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
+#' # IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2,
+#' 
+#' # Select Data
+#' mzData <- subset(iqdat, zygosity == "MZFF")
+#' dzData <- subset(iqdat, zygosity == "DZFF")
 #' m1 = umxSimplex(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' m1 = umxSimplex(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummary(m1)
 #' \dontrun{
+#' umxSummary(m1)
 #' umxSummary(m1, file = NA);
 #' umxSummary(m1, file = "name", std = TRUE)
 #' stdFit = umxSummary(m1, returnStd = TRUE)
@@ -212,15 +227,39 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 		message("Comparison of model with parent model:")
 		umxCompare(comparison, model, digits = 3)
 	}
+	# Starting Values 
+	# MZcov  = cov(iqdatMZ, use = "pairwise.complete.obs") # MZ covariance matrix
+	# # Average T1 and T2, divide by 3 (A=C=E)
+	# stACE = (MZcov[1:nVar,1:nVar]/3 + MZcov[(nVar+1):(2*nVar),(nVar+1):(2*nVar)]/3)/2
+	# # stSA   = SMZ1, stSC = SMZ1, stSE = SMZ1 # starting values for SE
+	# meanMZ = apply(iqdatMZ, 2, mean, na.rm = TRUE) # means
+	# meanDZ = apply(iqdatDZ, 2, mean, na.rm = TRUE) # means
+	# stmean = (meanMZ[1:nTimePoints] + meanDZ[1:nTimePoints])/2 # starting values for the means
+	
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
 	nVar   = length(selDVs)/2;
 	# TODO umxSummarySimplex these already exist if a_std exists..
 	# TODO Replace all this with umxSummarySimplex
 	# Calculate standardized variance components
 
+	# shit-sticks (tm) ACE
 	PsA = diag(model$top$PsA$values)
 	PsC = diag(model$top$PsC$values)
 	PsE = diag(model$top$PsE$values)
+	stickyACE = cbind(PsA, PsA, PsA) # Bind columns of a, c and e
+	stickyACE = data.frame(stickyACE, row.names = paste("time", 1:nFac, sep = "."));
+	names(stickyACE) = c ("A", "C", "E")
+	message("## Common Factor paths")
+	if(report == "html"){
+		umx_print(stickyACE, digits = digits, zero.print = ".", file = "std_spec.html")
+	} else {
+		umx_print(stickyACE, digits = digits, zero.print = ".")
+	}
+
+	# 3. Rename BeA-> ai; BeC -> ci; BeE -> ei
+	# 1. Rename PsA->  a; PsC ->  c; PsE ->  e
+	# 2. Rename TeA-> as; TeC -> cs; TeE -> es
+
 
 	TeA = diag(model$top$TeA$values) # Do these ever not all equal each other?
 	TeC = diag(model$top$TeC$values)
