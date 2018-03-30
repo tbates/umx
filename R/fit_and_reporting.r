@@ -2983,7 +2983,7 @@ or specify all arguments:\n
 		message(paste0("Nothing found matching pattern ", omxQuotes(pattern), " and minimum absolute value ", thresh, " ", b, "."))
 		
 		paste0("Might try flipping the from and to elements of the name, or look in these closest matches for what you intended: ",
-			omxQuotes(agrep(pattern = pattern, x = x$name, max = 4, value = TRUE))
+			omxQuotes(agrep(pattern = pattern, x = x$name, max.distance = 4, value = TRUE))
 		)
 	} else {
 		umx_round(x[filter, c("name", "Estimate")], digits = digits)

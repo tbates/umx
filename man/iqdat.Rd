@@ -29,9 +29,9 @@ Measures of IQ across four ages in pairs of identical and fraternal twins. (see 
 data(iqdat)
 str(iqdat)
 par(mfrow = c(1, 2))  # 1 rows and 3 columns
-plot(IQ_age4_T1 ~IQ_age4_T2, data = subset(iqdat, zyg == "MZ"))
-plot(IQ_age4_T1 ~IQ_age4_T2, ylim = c(50, 150), data = subset(iqdat, zygosity == "MZ"))
-plot(IQ_age4_T1 ~IQ_age4_T2, ylim = c(50, 150), data = subset(iqdat, zygosity == "DZ"))
+plot(IQ_age4_T1 ~ IQ_age4_T2, ylim = c(50, 150), data = subset(iqdat, zygosity == "MZ"))
+plot(IQ_age4_T1 ~ IQ_age4_T2, ylim = c(50, 150), data = subset(iqdat, zygosity == "DZ"))
+plot(IQ_age1_T1 ~ IQ_age4_T2, data = subset(iqdat, zygosity == "MZ"))
 par(mfrow = c(1, 1))  # back to as it was
 }
 \references{

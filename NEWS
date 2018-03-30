@@ -1,14 +1,23 @@
-# umx 2.4.1 April? 21 2018, R 3.4.4?
+# umx 2.4.5 April? 21 2018, R 3.4.5?
+* NEW: `umxSimplex`twin model!
+	* `umxSummary` for simplex!
+	* `plot` for simplex!
+	* `iqdat`longitudinal IQ twin data for simplex modelling
 * NEW: `namez` alias for the ever-useful `umx_names` function.
+* NEW: `umxAlgebra` (just allows name first).
 * IMPROVED: `parameters` now returns helpful near-match names as suggestions on not finding actual matches.
+* IMPROVED: `umx_print` now handles vectors.
 * HELP: More related-function links in help files.
+* HELP: Better error messages.
+* HELP: Help titles, parameter documentation.
+* INTERNAL: `xmu_simplex_corner` helper function for simplex modelling.
 
-# umx 2.4.0 March 21 2018, R 3.4.5 post Boulder Workshop edition)
+# umx 2.4.0 March 21 2018, R 3.4.4 post Boulder Workshop edition)
 * NEW: `umxIP` nFac now allows specifying different numbers of a, c, and e factors!
-* NEW: `umxACEv` plot works (shows correlated factors)
+* NEW: `umxACEv` plot works (shows correlated factors).
 * NEW: `umxACEv` standardize mostly functional.
 * NEW: `umxEFA` can now take a formula to select variables.
-* IMPROVED: `umxIP` and CP examples improved (3-variables, GFF data)
+* IMPROVED: `umxIP` and CP examples improved (3-variables, GFF data).
 * IMPROVED: `umxIP` *reporting* of `as`, `cs`, `es` simplified into compact stack.
 * IMPROVED: `umxCP` *reporting* of `as`, `cs`, `es` simplified into compact stack.
 * IMPROVED: `umxPlotCP` labelling of variables improved (catching more _Tn).
