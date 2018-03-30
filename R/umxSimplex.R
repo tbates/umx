@@ -1,9 +1,3 @@
-# TODO 
-# 3. Rename BeA-> ai; BeC -> ci; BeE -> ei
-# 1. Rename PsA->  a; PsC ->  c; PsE ->  e
-# 2. Rename TeA-> as; TeC -> cs; TeE -> es
-
-# ✓ Automate'BeA', 'BeC', 'BeE' matrix (currently hand-built)
 # https://ibg.colorado.edu/dokuwiki/doku.php?id=workshop:2018:cdrom
 
 #' Build and run a simplex twin model
@@ -25,17 +19,19 @@
 #' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
 #' 
 #' @details
-#' Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
+#' The simplex model decomposes phenotypic variance
 #' into Additive genetic, unique environmental (E) and, optionally, either
-#' common or shared-environment (C) or 
-#' non-additive genetic effects (D).
+#' common or shared-environment (C) or non-additive genetic effects (D).
 #' 
-#' Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
-#' C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
+#' These influences are further decomposed into innovations at a given time (in the `ai`, 
+#' `ci` and `ei` matrices), effects transmitted from previous time point (in the `at`, 
+#' `ct`, and `et` matrices), and influences specific to a single time (`as`, `cs`, `es`).
+#' 
+#' These in turn account for variance in the phenotypes (see Figure above).
 #' 
 #' 
 #' \strong{Data Input}
-#' Currently, the umxCP function accepts only raw data. This may change in future versions.
+#' Currently, the umxSimplex function accepts only raw data. This may change in future versions.
 #' 
 #' \strong{Ordinal Data}
 #' In an important capability, the model transparently handles ordinal (binary or multi-level
@@ -43,7 +39,7 @@
 #' data in any combination.
 #' 
 #' \strong{Additional features}
-#' The umxSummary function supports varying the DZ genetic association (defaulting to .5)
+#' The umxSimplex function supports varying the DZ genetic association (defaulting to .5)
 #' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 #' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
@@ -68,7 +64,7 @@
 #'
 #' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
 #'
-#' @param name The name of the model (defaults to "CP")
+#' @param name The name of the model (defaults to "simplex")
 #' @param selDVs The variables to include
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
@@ -81,7 +77,6 @@
 #' @param addCI Whether to add the interval requests for CIs (defaults to TRUE)
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
-#' @param suffix Allowed as a synonym for sep (will be deprecated).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -94,41 +89,47 @@
 #' nTimePoints = 4 # Number of time points
 #' baseVarNames = paste0("IQ_age", 1:nTimePoints)
 #' selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
-#' # IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2,
+#' # IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2
 #' m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
 #' parameters(m1, patt = "^c")
 #' m2 = umxModify(m1, regex = "TeA_r1c1", name = "dropA", comp = TRUE)
 #' umxCompare(m1, m2)
-umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = NULL) {
+umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2
 	model = mxModel(name,
 		mxModel("top",
-			# Components for "SA", "SC" and "SE"
-			umxMatrix('PsA', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(100, 5, 5, 5)),
-			umxMatrix('PsC', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(70, 10, 10, 10)),
-			umxMatrix('PsE', 'Diag', nrow = nVar, ncol = nVar, free = FALSE, values = 0),
+		# TODO 
+		# 1. ✓ Rename PsA-> at; PsC -> ct; PsE -> et
+		# 2. ✓ Rename TeA-> as; TeC -> cs; TeE -> es
+		# 3. ✓ Rename BeA-> ai; BeC -> ci; BeE -> ei
+
+		# better starts for t, s, an i matrices... currently hard coded for IQ!
+			# Transmitted Components for "SA", "SC" and "SE"
+			umxMatrix('at', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(100, 5, 5, 5)),
+			umxMatrix('ct', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(70, 10, 10, 10)),
+			umxMatrix('et', 'Diag', nrow = nVar, ncol = nVar, free = FALSE, values = 0),
 			# Te (residuals) all values equated by label, except E
-			umxMatrix('TeA', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "TeA_r1c1", values = 2),
-			umxMatrix('TeC', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "TeC_r1c1", values = 5),
-			umxMatrix('TeE', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = c("TeE_r1c1", "TeE_r2c2", "TeE_r3c3", "TeE_r3c4"), values = 50),
+			umxMatrix('as', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "TeA_r1c1", values = 2),
+			umxMatrix('cs', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "TeC_r1c1", values = 5),
+			umxMatrix('es', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = c("TeE_r1c1", "TeE_r2c2", "TeE_r3c3", "TeE_r3c4"), values = 50),
 			# Innovations (diag, but start 1-row down)
-			xmu_simplex_corner(umxMatrix('BeA', 'Full', nrow = nVar, ncol = nVar), start = .9),
-			xmu_simplex_corner(umxMatrix('BeC', 'Full', nrow = nVar, ncol = nVar), start = .8),
-			umxMatrix('BeE', 'Full', nrow = nVar, ncol = nVar, free = FALSE, values = 0),
-			# xmu_simplex_corner(umxMatrix('BeE', 'Full', nrow = nVar, ncol = nVar, free = FALSE, values = 0), start = 0),
+			xmu_simplex_corner(umxMatrix('ai', 'Full', nrow = nVar, ncol = nVar), start = .9),
+			xmu_simplex_corner(umxMatrix('ci', 'Full', nrow = nVar, ncol = nVar), start = .8),
+							   # umxMatrix('ei', 'Full', nrow = nVar, ncol = nVar, free = FALSE, values = 0),
+			xmu_simplex_corner(umxMatrix('ei', 'Full', nrow = nVar, ncol = nVar, free = FALSE, values = 0), start = 0),
 			umxMatrix('I', 'Iden', nrow = nVar, ncol = nVar),
-			mxAlgebra(name= 'iBeA', solve(I - BeA)),
-			mxAlgebra(name= 'iBeC', solve(I - BeC)),
-			mxAlgebra(name= 'iBeE', solve(I - BeE)),
-			mxAlgebra(name= 'SigmaA', iBeA %*% PsA %*% t(iBeA) + TeA),
-			mxAlgebra(name= 'SigmaC', iBeC %*% PsC %*% t(iBeC) + TeC),
-			mxAlgebra(name= 'SigmaE', iBeE %*% PsE %*% t(iBeE) + TeE),
+			mxAlgebra(name= 'Iai', solve(I - ai)),
+			mxAlgebra(name= 'Ici', solve(I - ci)),
+			mxAlgebra(name= 'Iei', solve(I - ei)),
+			mxAlgebra(name= 'SigmaA', Iai %*% at %*% t(Iai) + as),
+			mxAlgebra(name= 'SigmaC', Ici %*% ct %*% t(Ici) + cs),
+			mxAlgebra(name= 'SigmaE', Iei %*% et %*% t(Iei) + es),
 			# MZ covariance matrix and mean matrix "sumstatMZ"
 			umxMatrix('means', 'Full', nrow = 1, ncol = nVar2, free = TRUE, labels = meanLabs, values = stmean),
 			mxAlgebra(name = 'SigmaPh11'  , SigmaA + SigmaC + SigmaE),
 			mxAlgebra(name = 'SigmaPh21mz', SigmaA + SigmaC),
-			mxAlgebra(name = 'SigmaMZ'  , cbind(rbind(SigmaPh11, SigmaPh21mz), rbind(SigmaPh21mz, SigmaPh11))),
+			mxAlgebra(name = 'SigmaMZ'    , cbind(rbind(SigmaPh11, SigmaPh21mz), rbind(SigmaPh21mz, SigmaPh11))),
 			# DZ covariance matrix and mean matrix "sumstatDZ"
 			mxAlgebra(name= 'SigmaPh21dz', .5 %x% SigmaA + SigmaC),
 			mxAlgebra(name= 'SigmaDZ', cbind(rbind(SigmaPh11, SigmaPh21dz), rbind(SigmaPh21dz, SigmaPh11)))
@@ -146,7 +147,8 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
 	# Run the model
-	model = omxAssignFirstParameters(model) # Just trundle through and make sure values with the same label have the same start value... means for instance.
+	# Just trundle through and make sure values with the same label have the same start value... means for instance.
+	model = omxAssignFirstParameters(model) 
 	model = as(model, "MxModel.Simplex")
 	if(autoRun){
 		model = mxRun(model)
@@ -225,7 +227,7 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 			)
 	} else {
 		message("Comparison of model with parent model:")
-		umxCompare(comparison, model, digits = 3)
+		umxCompare(comparison, model, digits = digits)
 	}
 	# Starting Values 
 	# MZcov  = cov(iqdatMZ, use = "pairwise.complete.obs") # MZ covariance matrix
@@ -235,48 +237,52 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 	# meanMZ = apply(iqdatMZ, 2, mean, na.rm = TRUE) # means
 	# meanDZ = apply(iqdatDZ, 2, mean, na.rm = TRUE) # means
 	# stmean = (meanMZ[1:nTimePoints] + meanDZ[1:nTimePoints])/2 # starting values for the means
-	
-	selDVs = dimnames(model$top.expCovMZ)[[1]]
+
+	selDVs = model$MZ$expectation$dims
 	nVar   = length(selDVs)/2;
 	# TODO umxSummarySimplex these already exist if a_std exists..
 	# TODO Replace all this with umxSummarySimplex
 	# Calculate standardized variance components
 
+	# 1. Rename PsA-> at; PsC -> ct; PsE -> et
+	# 2. Rename TeA-> as; TeC -> cs; TeE -> es
+	# 3. Rename BeA-> ai; BeC -> ci; BeE -> ei
+
 	# shit-sticks (tm) ACE
-	PsA = diag(model$top$PsA$values)
-	PsC = diag(model$top$PsC$values)
-	PsE = diag(model$top$PsE$values)
-	stickyACE = cbind(PsA, PsA, PsA) # Bind columns of a, c and e
-	stickyACE = data.frame(stickyACE, row.names = paste("time", 1:nFac, sep = "."));
-	names(stickyACE) = c ("A", "C", "E")
-	message("## Common Factor paths")
+	at = diag(model$top$at$values)
+	ct = diag(model$top$ct$values)
+	et = diag(model$top$et$values)
+
+	as = diag(model$top$as$values) # Do these ever not all equal each other?
+	cs = diag(model$top$cs$values)
+	es = diag(model$top$es$values)
+
+	ai = diag(model$top$ai$values[-1, ])
+	ci = diag(model$top$ci$values[-1, ])
+	ei = diag(model$top$ei$values[-1, ])
+
+	All_t = data.frame(rbind(at,  ct, et), row.names = c("A", "C", "E")); names(All_t) <- selDVs[1:nVar]
+	All_s = data.frame(rbind(as,  cs, es), row.names = c("A", "C", "E"));
+	All_i = data.frame(rbind(ai,  ci, ei), row.names = c("A", "C", "E"));
+	message("## Transmitted Influences")
 	if(report == "html"){
-		umx_print(stickyACE, digits = digits, zero.print = ".", file = "std_spec.html")
+		message("## Transmitted Influences")
+		umx_print(All_t, digits = digits, zero.print = ".", file = "trans.html")
+		message("## Innovations")
+		umx_print(All_i, digits = digits, zero.print = ".", file = "innov.html")
+		message("## Specific Effects")
+		umx_print(All_s, digits = digits, zero.print = ".", file = "spec.html")
 	} else {
-		umx_print(stickyACE, digits = digits, zero.print = ".")
+		message("## Transmitted Influences")
+		umx_print(All_t, digits = digits, zero.print = ".")
+		message("## Innovations")
+		umx_print(All_i, digits = digits, zero.print = ".")
+		message("## Specific Effects")
+		umx_print(All_s, digits = digits, zero.print = ".")
 	}
 
-	# 3. Rename BeA-> ai; BeC -> ci; BeE -> ei
-	# 1. Rename PsA->  a; PsC ->  c; PsE ->  e
-	# 2. Rename TeA-> as; TeC -> cs; TeE -> es
-
-
-	TeA = diag(model$top$TeA$values) # Do these ever not all equal each other?
-	TeC = diag(model$top$TeC$values)
-	TeE = diag(model$top$TeE$values)
-
-	BeA = diag(model$top$BeA$values[-1, ])
-	BeC = diag(model$top$BeC$values[-1, ])
-	BeE = diag(model$top$BeE$values[-1, ])
-
-	Ps = data.frame(rbind(PsA, PsC, PsE), row.names = c("A", "C", "E"));
-	Te = data.frame(rbind(TeA, TeC, TeE), row.names = c("A", "C", "E"));
-	Be = data.frame(rbind(BeA, BeC, BeE), row.names = c("A", "C", "E"));
-
- 	# Make a nice table.
-	names(Ps) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
-	umx_print(Ps, digits = digits, zero.print = zero.print)
-
+	message("summary for simplex not yet complete: so that's all I can print so far")
+	return()
 
 	if(std){
 		message("Standardized solution")

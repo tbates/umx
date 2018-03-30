@@ -6,11 +6,10 @@
 \usage{
 umxSimplex(name = "simplex", selDVs, dzData, mzData, sep = NULL,
   equateMeans = TRUE, dzAr = 0.5, dzCr = 1, addStd = TRUE,
-  addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL,
-  suffix = NULL)
+  addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
-\item{name}{The name of the model (defaults to "CP")}
+\item{name}{The name of the model (defaults to "simplex")}
 
 \item{selDVs}{The variables to include}
 
@@ -34,8 +33,6 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing)}
-
-\item{suffix}{Allowed as a synonym for sep (will be deprecated).}
 }
 \value{
 - \code{\link{mxModel}}
@@ -59,17 +56,19 @@ Simplex path diagram:
 As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
 
 
-Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
+The simplex model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
-common or shared-environment (C) or 
-non-additive genetic effects (D).
+common or shared-environment (C) or non-additive genetic effects (D).
 
-Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
-C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
+These influences are further decomposed into innovations at a given time (in the `ai`, 
+`ci` and `ei` matrices), effects transmitted from previous time point (in the `at`, 
+`ct`, and `et` matrices), and influences specific to a single time (`as`, `cs`, `es`).
+
+These in turn account for variance in the phenotypes (see Figure above).
 
 
 \strong{Data Input}
-Currently, the umxCP function accepts only raw data. This may change in future versions.
+Currently, the umxSimplex function accepts only raw data. This may change in future versions.
 
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
@@ -77,7 +76,7 @@ ordered factor data) inputs, and can handle mixtures of continuous, binary, and 
 data in any combination.
 
 \strong{Additional features}
-The umxSummary function supports varying the DZ genetic association (defaulting to .5)
+The umxSimplex function supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
@@ -109,7 +108,7 @@ dzData <- subset(iqdat, zygosity == "DZ")
 nTimePoints = 4 # Number of time points
 baseVarNames = paste0("IQ_age", 1:nTimePoints)
 selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
-# IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2,
+# IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2
 m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 umxSummary(m1)
 parameters(m1, patt = "^c")

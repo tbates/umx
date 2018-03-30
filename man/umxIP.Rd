@@ -4,54 +4,54 @@
 \alias{umxIP}
 \title{umxIP: Build and run an Independent pathway twin model}
 \usage{
-umxIP(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = c(a = 1,
-  c = 1, e = 1), freeLowerA = FALSE, freeLowerC = FALSE,
-  freeLowerE = FALSE, equateMeans = TRUE, dzAr = 0.5, dzCr = 1,
-  correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
-  numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL,
-  sep = NULL)
+umxIP(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a = 1, c =
+  1, e = 1), freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
+  equateMeans = TRUE, dzAr = 0.5, dzCr = 1, correlatedA = FALSE,
+  addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
+  autoRun = getOption("umx_auto_run"), optimizer = NULL,
+  suffix = "deprecated")
 }
 \arguments{
-\item{name}{The name of the model (defaults to "IP")}
+\item{name}{The name of the model (defaults to "IP").}
 
-\item{selDVs}{The variables to include}
+\item{selDVs}{The variables to include.}
 
-\item{dzData}{The DZ dataframe}
+\item{dzData}{The DZ dataframe.}
 
-\item{mzData}{The MZ dataframe}
+\item{mzData}{The MZ dataframe.}
 
-\item{suffix}{The suffix for twin 1 and twin 2, often "_T". If set, you can
-omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
+\item{sep}{The suffix for twin 1 and twin 2, often "_T". If set, you can
+omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{nFac}{How many common factors for a, c, and e. If 1 number number is given, applies to all three.}
 
-\item{freeLowerA}{Whether to leave the lower triangle of A free (default = F)}
+\item{freeLowerA}{Whether to leave the lower triangle of A free (default = FALSE).}
 
-\item{freeLowerC}{Whether to leave the lower triangle of C free (default = F)}
+\item{freeLowerC}{Whether to leave the lower triangle of C free (default = FALSE).}
 
-\item{freeLowerE}{Whether to leave the lower triangle of E free (default = F)}
+\item{freeLowerE}{Whether to leave the lower triangle of E free (default = FALSE).}
 
-\item{equateMeans}{Whether to equate the means across twins (defaults to T)}
+\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
-\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
+\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
-\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)}
+\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
-\item{correlatedA}{Whether factors are allowed to correlate (not implemented yet: FALSE)}
+\item{correlatedA}{Whether factors are allowed to correlate (not implemented yet: FALSE).}
 
-\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE)}
+\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
 
-\item{addCI}{Whether to add the interval requests for CIs (defaults to TRUE)}
+\item{addCI}{Whether to add the interval requests for CIs (defaults to TRUE).}
 
-\item{numObsDZ}{= TODO: implement ordinal Number of DZ twins: Set this if you input covariance data}
+\item{numObsDZ}{= TODO: implement ordinal Number of DZ twins: Set this if you input covariance data,}
 
-\item{numObsMZ}{= TODO: implement ordinal Number of MZ twins: Set this if you input covariance data}
+\item{numObsMZ}{= TODO: implement ordinal Number of MZ twins: Set this if you input covariance data.}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{optimizer}{optionally set the optimizer (default NULL does nothing)}
+\item{optimizer}{optionally set the optimizer (default NULL does nothing).}
 
-\item{sep}{allowed as a synonym for "suffix"}
+\item{suffix}{Deprecated: use "sep".}
 }
 \value{
 - \code{\link{mxModel}}

@@ -6,7 +6,7 @@
 \usage{
 umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
   lboundACE = NA, lboundM = NA, dropMissingDef = FALSE,
-  autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = NULL)
+  autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "G_by_E")}
@@ -30,8 +30,6 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
-
-\item{suffix}{Use sep instead (deprecated)}
 }
 \value{
 - GxE \code{\link{mxModel}}
