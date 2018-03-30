@@ -2123,12 +2123,15 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 	if(!is.null(url)){
 		install.packages(loc)
 	} else if(loc == "NPSOL"){
+		source("https://openmx.ssri.psu.edu/getOpenMx.R")
 		# was http://openmx.psyc.virginia.edu/getOpenMx.R
-		source("https://openmx.ssri.psu.edu/software/getOpenMx.R")
+		# was source("https://openmx.ssri.psu.edu/software/getOpenMx.R")		
 	}else if(loc == "travis"){
 		if(umx_check_OS("OSX")){
-			install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
+			install.packages("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis/OpenMx_latest.tgz")
+			# was
 			# install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz", lib = lib, repos=repos)
+			
 		} else {
 			stop(paste("Sorry, travis builds are only available for MacOS :-("))
 		}

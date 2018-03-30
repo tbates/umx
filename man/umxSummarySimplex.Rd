@@ -3,7 +3,7 @@
 \name{umxSummarySimplex}
 \alias{umxSummarySimplex}
 \alias{umxSummary.MxModel.Simplex}
-\title{Shows a compact, publication-style, summary of a variance-based Cholesky ACE model.}
+\title{Shows a compact, publication-style, summary of a Simplex model.}
 \usage{
 umxSummarySimplex(model, digits = 2, file = getOption("umx_auto_plot"),
   comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE,
@@ -40,7 +40,7 @@ Defaults to NA = no plot.}
 - optional \code{\link{mxModel}}
 }
 \description{
-Summarize a fitted Cholesky model returned by \code{\link{umxACEv}}. Can control digits, report comparison model fits,
+Summarize a fitted Simplex model returned by \code{\link{umxSimplex}}. Can control digits, report comparison model fits,
 optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 }
@@ -57,13 +57,17 @@ View documentation on the GxE model subclass here: \code{\link{umxSummary.MxMode
 }
 \examples{
 data(iqdat)
-selDVs = c("bmi1", "bmi2")
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
+nTimePoints = 4 # Number of time points
+baseVarNames = paste0("IQ_age", 1:nTimePoints)
+selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
+# IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2,
+
+# Select Data
+mzData <- subset(iqdat, zygosity == "MZFF")
+dzData <- subset(iqdat, zygosity == "DZFF")
 m1 = umxSimplex(selDVs = selDVs, dzData = dzData, mzData = mzData)
-m1 = umxSimplex(selDVs = selDVs, dzData = dzData, mzData = mzData)
-umxSummary(m1)
 \dontrun{
+umxSummary(m1)
 umxSummary(m1, file = NA);
 umxSummary(m1, file = "name", std = TRUE)
 stdFit = umxSummary(m1, returnStd = TRUE)
@@ -73,7 +77,7 @@ stdFit = umxSummary(m1, returnStd = TRUE)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxACEv}}
+- \code{\link{umxACE}}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},

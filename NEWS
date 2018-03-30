@@ -1,10 +1,11 @@
 # umx 2.4.5 April? 21 2018, R 3.4.5?
 * NEW: `umxSimplex`twin model!
-	* `umxSummary` for simplex!
-	* `plot` for simplex!
+	* `umxSummary` for simplex
+	* `plot support for simplex
 	* `iqdat`longitudinal IQ twin data for simplex modelling
 * NEW: `namez` alias for the ever-useful `umx_names` function.
 * NEW: `umxAlgebra` (just allows name first).
+* FIX: `install.OpenMx` URLs for NPSOl and travis builds of OpenMx
 * IMPROVED: `parameters` now returns helpful near-match names as suggestions on not finding actual matches.
 * IMPROVED: `umx_print` now handles vectors.
 * HELP: More related-function links in help files.

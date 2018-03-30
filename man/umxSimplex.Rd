@@ -77,33 +77,39 @@ ordered factor data) inputs, and can handle mixtures of continuous, binary, and 
 data in any combination.
 
 \strong{Additional features}
-The umxCP function supports varying the DZ genetic association (defaulting to .5)
+The umxSummary function supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
 
-\strong{Matrices and Labels in CP model}
-A good way to see which matrices are used in umxCP is to run an example model and plot it.
+\strong{Matrices and Labels in the simplex model}
+A good way to see which matrices are used in umxSummary is to run an example model and plot it.
 
-The diagonals of matrices as, cs, and es contain the path loadings specific to each variable. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
+The loadings specific to each time point are contained on the diagonals of matrices 
+`as`, `cs`, and `es`. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
+
 All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
 
-m1$top#as$values
+m1$top$as$values
 
-The common-pathway loadings on the factors are in matrices a_cp, c_cp, e_cp.
+The transmitted loadings are in matrices at, ct, et.
 
-The common factors themselves are in the matrix cp_loadings (an nVar * 1 matrix)
+The innovations are in the matrix `ai`, `ci`, and `ei`.
 
 Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 
 m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
 }
 \examples{
 data(iqdat)
-mzData <- subset(iqdat, zygotic == "MZ")
-dzData <- subset(iqdat, zygotic == "DZ")
-selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
+mzData <- subset(iqdat, zygosity == "MZ")
+dzData <- subset(iqdat, zygosity == "DZ")
+nTimePoints = 4 # Number of time points
+baseVarNames = paste0("IQ_age", 1:nTimePoints)
+selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
+# IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2,
 m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 umxSummary(m1)
 parameters(m1, patt = "^c")
