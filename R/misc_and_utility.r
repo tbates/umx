@@ -2127,7 +2127,7 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 		   # was http://openmx.psyc.virginia.edu/getOpenMx.R
 	}else if(loc == "travis"){
 		if(umx_check_OS("OSX")){
-			install.packages("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis/OpenMx_latest.tgz"
+			install.packages("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis/OpenMx_latest.tgz")
 			           # was ("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
 			# , lib = lib, repos=repos
 		} else {
