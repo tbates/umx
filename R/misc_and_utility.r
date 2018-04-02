@@ -2124,21 +2124,21 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 		install.packages(loc)
 	} else if(loc == "NPSOL"){
 		source("https://openmx.ssri.psu.edu/getOpenMx.R")
+		# was source("https://openmx.ssri.psu.edu/software/getOpenMx.R")
 		# was http://openmx.psyc.virginia.edu/getOpenMx.R
 		# was source("https://openmx.ssri.psu.edu/software/getOpenMx.R")		
 	}else if(loc == "travis"){
 		if(umx_check_OS("OSX")){
 			install.packages("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis/OpenMx_latest.tgz")
-			# was
-			# install.packages("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz", lib = lib, repos=repos)
-			
+			# was ("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
+			# , lib = lib, repos=repos
 		} else {
 			stop(paste("Sorry, travis builds are only available for MacOS :-("))
 		}
 	} else if(loc == "CRAN"){
 		install.packages("OpenMx", lib= lib, repos = repos)
 	} else if(loc == "open travis build page"){
-		browseURL("http://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis")
+		browseURL("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis")
 	}
 }
 
@@ -2152,7 +2152,8 @@ umx_update_OpenMx <- install.OpenMx
 #'
 #' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
-#' @param check Whether to run check on the package before release (default = TRUE)
+#' @param check Whether to run check on the package before release (default = TRUE).
+#' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -2165,7 +2166,7 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "win"))      # check on win-builder
 #' umx_make(what = "release"))  # release to CRAN
 #' }
-umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE) {
+umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, spelling = "en_US") {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
@@ -2183,7 +2184,7 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 	} else if (what =="rhub"){
 		# devtools::check_rhub(pkg = pkg)
 	} else if (what == "release"){
-		devtools::release(pkg = pkg, check = check)
+		devtools::release(pkg = pkg, check = check, spelling = spelling)
 	} else if (what == "spell"){
 		devtools::spell_check(pkg = pkg)
 	}

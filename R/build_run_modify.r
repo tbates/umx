@@ -172,8 +172,13 @@ utils::globalVariables(c(
 	"top.a11", "top.a21", "top.a22", 
 	"top.c11", "top.c21", "top.c22", 
 	"top.e11", "top.e21", "top.e22", 
-	"top.aBeta1", "top.aBeta2", "top.eBeta1", "top.eBeta2", "top.cBeta1", "top.cBeta2"
+	"top.aBeta1", "top.aBeta2", "top.eBeta1", "top.eBeta2", "top.cBeta1", "top.cBeta2",
 	
+	# Used in umxSimplex
+	"at" , "ct" , "et", 
+    "Iai", "Ici", "Iei", 
+	"SigmaA"   , "SigmaC"     , "SigmaE", 
+	"SigmaPh11", "SigmaPh21dz", "SigmaPh21mz"
 	)
 )
 
@@ -863,7 +868,6 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
-#' @param suffix Use sep instead (deprecated)
 #' @return - GxE \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -891,11 +895,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # about model reduction for GxE models, reporting these in a nice table.
 #' umxReduce(m1)
 #' }
-umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = NULL) {
+umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2;
-	if(is.null(suffix)){
-		suffix = sep
-	}
 	# =================
 	# = Set optimizer =
 	# =================
@@ -903,10 +904,10 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 		umx_set_optimizer(optimizer)
 	}
 
-	if(!is.null(suffix)){
-		if(length(suffix) > 1){
-			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
+	if(!is.null(sep)){
+		if(length(sep) > 1){
+			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+			"i.e., name your variables 'obese_T1', 'obese_T2' etc, then offer up 'obese' and '_T' and I'll generate the full variable names.")
 		}
 		selDVs  = umx_paste_names(selDVs , suffix, 1:2)
 		selDefs = umx_paste_names(selDefs, suffix, 1:2)
@@ -2286,7 +2287,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
-#' @param suffix allowed as a synonym for sep (will be deprecated).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -2306,7 +2306,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
 #' }
-umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = NULL) {
+umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2
 	# =================
 	# = Set optimizer =
@@ -2316,14 +2316,13 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 	}
 	
     # Allow sep as synonym for suffix
-   if(!is.null(sep)){
    	suffix = sep
-   }
+
 	# expand var names
 	if(!is.null(suffix)){
 		if(length(suffix) != 1){
-			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-			"i.e., set selDVs to 'obese', suffix to '_T' and I look for 'obese_T1' and 'obese_T2' in the data...\n",
+			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+			"i.e., set selDVs to 'obese', sep to '_T' and I look for 'obese_T1' and 'obese_T2' in the data...\n",
 			"PS: variables have to end in 1 or 2, i.e  'example_T1' and 'example_T2'")
 		}
 		selDVs = umx_paste_names(selDVs, suffix, 1:2)
@@ -2483,27 +2482,27 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 #' The following figure shows the IP model diagrammatically:
 #' \figure{IP.png}
 #'
-#' @param name The name of the model (defaults to "IP")
-#' @param selDVs The variables to include
-#' @param dzData The DZ dataframe
-#' @param mzData The MZ dataframe
-#' @param suffix The suffix for twin 1 and twin 2, often "_T". If set, you can
-#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' @param name The name of the model (defaults to "IP").
+#' @param selDVs The variables to include.
+#' @param dzData The DZ dataframe.
+#' @param mzData The MZ dataframe.
+#' @param sep The suffix for twin 1 and twin 2, often "_T". If set, you can
+#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
 #' @param nFac How many common factors for a, c, and e. If 1 number number is given, applies to all three.
-#' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
-#' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
-#' @param freeLowerE Whether to leave the lower triangle of E free (default = F)
-#' @param equateMeans Whether to equate the means across twins (defaults to T)
-#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
-#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
-#' @param correlatedA Whether factors are allowed to correlate (not implemented yet: FALSE)
-#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
-#' @param addCI Whether to add the interval requests for CIs (defaults to TRUE)
-#' @param numObsDZ = TODO: implement ordinal Number of DZ twins: Set this if you input covariance data
-#' @param numObsMZ = TODO: implement ordinal Number of MZ twins: Set this if you input covariance data
-#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
-#' @param optimizer optionally set the optimizer (default NULL does nothing)
-#' @param sep allowed as a synonym for "suffix"
+#' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
+#' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
+#' @param freeLowerE Whether to leave the lower triangle of E free (default = FALSE).
+#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
+#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
+#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
+#' @param correlatedA Whether factors are allowed to correlate (not implemented yet: FALSE).
+#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
+#' @param addCI Whether to add the interval requests for CIs (defaults to TRUE).
+#' @param numObsDZ = TODO: implement ordinal Number of DZ twins: Set this if you input covariance data,
+#' @param numObsMZ = TODO: implement ordinal Number of MZ twins: Set this if you input covariance data.
+#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
+#' @param optimizer optionally set the optimizer (default NULL does nothing).
+#' @param suffix Deprecated: use "sep".
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -2524,8 +2523,13 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 #' plot(m1)
 #' 
 #' }
-umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = c(a=1, c=1, e=1), freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, sep=NULL) {
+umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
 	# TODO implement correlatedA
+	if(!suffix == "deprecated"){
+		message("All's well, but please use sep = in place of suffix = in future)")
+	} else {
+		suffix = sep
+	}
 	if(length(nFac)==1){
 		nFac = c(a = nFac, c = nFac, e = nFac)
 	} else if (length(nFac)!=3){
@@ -2549,7 +2553,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, suffix = NULL, nFac = c(a
 	# expand var names
 	if(!is.null(suffix)){
 		if(length(suffix) != 1){
-			stop("suffix should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
+			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
 			"i.e., set selDVs to 'obese', suffix to '_T' and I look for 'obese_T1' and 'obese_T2' in the data...\n",
 			"nb: variables MUST be sequentially numbered, i.e  'example_T1' and 'example_T2'")
 		}

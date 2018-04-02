@@ -18,21 +18,21 @@ umxSummarySimplex(model, digits = 2, file = getOption("umx_auto_plot"),
 \item{file}{The name of the dot file to write: "name" = use the name of the model.
 Defaults to NA = no plot.}
 
-\item{comparison}{you can run mxCompare on a comparison model (NULL)}
+\item{comparison}{you can run mxCompare on a comparison model (default = NULL)}
 
 \item{std}{Whether to standardize the output (default = TRUE)}
 
-\item{showRg}{= whether to show the genetic correlations (FALSE)}
+\item{showRg}{(T/F) Whether to show the genetic correlations (default = FALSE)}
 
-\item{CIs}{Whether to show Confidence intervals if they exist (T)}
+\item{CIs}{Whether to show Confidence intervals if they exist (default = TRUE)}
 
-\item{report}{If "html", then open an html table of the results}
+\item{report}{If "html", then open an html table of the results (default = 'markdown')}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
-\item{extended}{how much to report (FALSE)}
+\item{extended}{how much to report (default = FALSE)}
 
-\item{zero.print}{How to show zeros (".")}
+\item{zero.print}{How to show zeros (default = ".")}
 
 \item{...}{Other parameters to control model summary}
 }
@@ -66,8 +66,8 @@ selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
 mzData <- subset(iqdat, zygosity == "MZFF")
 dzData <- subset(iqdat, zygosity == "DZFF")
 m1 = umxSimplex(selDVs = selDVs, dzData = dzData, mzData = mzData)
-\dontrun{
 umxSummary(m1)
+\dontrun{
 umxSummary(m1, file = NA);
 umxSummary(m1, file = "name", std = TRUE)
 stdFit = umxSummary(m1, returnStd = TRUE)
@@ -77,7 +77,7 @@ stdFit = umxSummary(m1, returnStd = TRUE)
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxACE}}
+- \code{\link{umxSimplex}}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},

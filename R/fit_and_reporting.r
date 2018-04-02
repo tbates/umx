@@ -2365,7 +2365,7 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 #' @export
 plot.MxModel.GxE <- umxPlotGxE
 
-#' Draw a graphical figure for a Common Pathway model
+#' Draw and display a graphical figure of Common Pathway model
 #'
 #' Options include digits (rounding), showing means or not, and which output format is desired.
 #'

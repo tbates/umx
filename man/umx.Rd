@@ -105,7 +105,7 @@ Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
   \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
   \code{\link{umxPlotGxE_biv}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}
+  \code{\link{umxPlotIP}}, \code{\link{umxPlotSimplex}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxTwoStage}}
@@ -210,7 +210,8 @@ Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},
   \code{\link{umx_standardize_ACEv}},
   \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_CP}},
-  \code{\link{umx_standardize_IP}}
+  \code{\link{umx_standardize_IP}},
+  \code{\link{umx_standardize_Simplex}}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuHasSquareBrackets}},

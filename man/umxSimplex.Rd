@@ -6,36 +6,33 @@
 \usage{
 umxSimplex(name = "simplex", selDVs, dzData, mzData, sep = NULL,
   equateMeans = TRUE, dzAr = 0.5, dzCr = 1, addStd = TRUE,
-  addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL,
-  suffix = NULL)
+  addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
-\item{name}{The name of the model (defaults to "CP")}
+\item{name}{The name of the model (defaults to "simplex")}
 
-\item{selDVs}{The variables to include}
+\item{selDVs}{The BASENAMES of the variables to include, i.e., c(`obese`), not c(`obese_T1`, `obese_T2`)}
 
 \item{dzData}{The DZ dataframe}
 
 \item{mzData}{The MZ dataframe}
 
-\item{sep}{The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
+\item{sep}{The string preceeding the final numeric twin identifiier (often "_T")
 omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to T)}
 
-\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
+\item{dzAr}{The DZ genetic correlation (default = .5. Vary to examine assortative mating)}
 
-\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)}
+\item{dzCr}{The DZ "C" correlation (defaults = 1. To make an ADE model, set = .25)}
 
-\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE)}
+\item{addStd}{Whether to add the algebras to compute a std model (default = TRUE)}
 
-\item{addCI}{Whether to add the interval requests for CIs (defaults to TRUE)}
+\item{addCI}{Whether to add the interval requests for CIs (default = TRUE)}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing)}
-
-\item{suffix}{Allowed as a synonym for sep (will be deprecated).}
 }
 \value{
 - \code{\link{mxModel}}
@@ -59,17 +56,19 @@ Simplex path diagram:
 As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
 
 
-Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
+The simplex model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
-common or shared-environment (C) or 
-non-additive genetic effects (D).
+common or shared-environment (C) or non-additive genetic effects (D).
 
-Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
-C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
+These influences are further decomposed into innovations at a given time (in the `ai`, 
+`ci` and `ei` matrices), effects transmitted from previous time point (in the `at`, 
+`ct`, and `et` matrices), and influences specific to a single time (`as`, `cs`, `es`).
+
+These in turn account for variance in the phenotypes (see Figure above).
 
 
 \strong{Data Input}
-Currently, the umxCP function accepts only raw data. This may change in future versions.
+Currently, the umxSimplex function accepts only raw data. This may change in future versions.
 
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
@@ -77,7 +76,7 @@ ordered factor data) inputs, and can handle mixtures of continuous, binary, and 
 data in any combination.
 
 \strong{Additional features}
-The umxSummary function supports varying the DZ genetic association (defaulting to .5)
+The umxSimplex function supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
@@ -108,12 +107,11 @@ mzData <- subset(iqdat, zygosity == "MZ")
 dzData <- subset(iqdat, zygosity == "DZ")
 nTimePoints = 4 # Number of time points
 baseVarNames = paste0("IQ_age", 1:nTimePoints)
-selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
-# IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2,
-m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+# IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.
+m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
 umxSummary(m1)
-parameters(m1, patt = "^c")
-m2 = umxModify(m1, regex = "TeA_r1c1", name = "dropA", comp = TRUE)
+parameters(m1, patt = "^s")
+m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 umxCompare(m1, m2)
 }
 \references{

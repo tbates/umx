@@ -18,7 +18,7 @@ xmu_simplex_corner(x, start = 0.9)
 internal function to help building simplex models is a function which
 }
 \examples{
-x = umxMatrix('BeA', 'Full', nrow = nVar, ncol = nVar)
+x = umxMatrix('test', 'Full', nrow = nVar, ncol = nVar)
 xmu_simplex_corner(x, start = .9)
 }
 \seealso{
