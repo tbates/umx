@@ -96,7 +96,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		thresholds = match.arg(thresholds)
 		if(!is.null(sep)){ suffix = sep }
 		if(dzCr == .25 && name == "ACEcov"){ name = "ADEcov"}
-		xmu_twin_check(selDVs= c(selDVs, selCovs), dzData = dzData, mzData = mzData, optimizer = optimizer, suffix = suffix)
+		xmu_twin_check(selDVs= c(selDVs, selCovs), dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep)
 
 		if(is.null(selCovs)){
 			stop("You need to give me some covariates (if there are none, just use umxACE)")

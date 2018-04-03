@@ -98,7 +98,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	nSib   = 2
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
 	# Expand var names
-	selDVs = umx_paste_names(selDVs, sep = sep, suffix = 1:2)
+	selDVs = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
 	nVar   = length(selDVs)/nSib
 
 	dataType = umx_is_cov(dzData)

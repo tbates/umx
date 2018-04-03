@@ -878,12 +878,11 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' require(umx)
 #' data(twinData) 
 #' twinData$age1 = twinData$age2 = twinData$age
-#' selDVs  = c("bmi1", "bmi2")
-#' selDefs = c("age1", "age2")
-#' selVars = c(selDVs, selDefs)
-#' mzData  = subset(twinData, zygosity == "MZFF", selVars)[1:80,]
-#' dzData  = subset(twinData, zygosity == "DZFF", selVars)[1:80,]
-#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+#' selDVs  = "bmi"
+#' selDefs = "age"
+#' mzData  = subset(twinData, zygosity == "MZFF")[1:80,]
+#' dzData  = subset(twinData, zygosity == "DZFF")[1:80,]
+#' m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep = "", 
 #' 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
 #' # Plot Moderation
 #' umxSummaryGxE(m1)
@@ -897,21 +896,9 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' }
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2;
-	# =================
-	# = Set optimizer =
-	# =================
-	if(!is.null(optimizer)){
-		umx_set_optimizer(optimizer)
-	}
-
-	if(!is.null(sep)){
-		if(length(sep) > 1){
-			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-			"i.e., name your variables 'obese_T1', 'obese_T2' etc, then offer up 'obese' and '_T' and I'll generate the full variable names.")
-		}
-		selDVs  = umx_paste_names(selDVs , suffix, 1:2)
-		selDefs = umx_paste_names(selDefs, suffix, 1:2)
-	}
+	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
+	selDVs  = umx_paste_names(selDVs , sep = sep, suffixes = 1:2)
+	selDefs = umx_paste_names(selDefs, sep = sep, suffixes = 1:2)
 	if(any(selDefs %in% selDVs)) {
 		warning("selDefs was found in selDVs: You probably gave me all the variables in selDVs instead of just the DEPENDENT variable");
 	}
@@ -2308,29 +2295,11 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' }
 umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=T, dzAr=.5, dzCr=1, addStd = T, addCI = T, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2
-	# =================
-	# = Set optimizer =
-	# =================
-	if(!is.null(optimizer)){
-		umx_set_optimizer(optimizer)
-	}
+	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
 	
-    # Allow sep as synonym for suffix
-   	suffix = sep
-
 	# expand var names
-	if(!is.null(suffix)){
-		if(length(suffix) != 1){
-			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-			"i.e., set selDVs to 'obese', sep to '_T' and I look for 'obese_T1' and 'obese_T2' in the data...\n",
-			"PS: variables have to end in 1 or 2, i.e  'example_T1' and 'example_T2'")
-		}
-		selDVs = umx_paste_names(selDVs, suffix, 1:2)
-	}
-	umx_check_names(selDVs, mzData)
-	umx_check_names(selDVs, dzData)
-	# message("selDVs: ", omxQuotes(selDVs))
-	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+	selDVs   = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
+	nVar     = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	dataType = umx_is_cov(dzData)
 	if(dataType == "raw") {
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){

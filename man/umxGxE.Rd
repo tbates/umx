@@ -48,12 +48,11 @@ The following figure the GxE model as a path diagram:
 require(umx)
 data(twinData) 
 twinData$age1 = twinData$age2 = twinData$age
-selDVs  = c("bmi1", "bmi2")
-selDefs = c("age1", "age2")
-selVars = c(selDVs, selDefs)
-mzData  = subset(twinData, zygosity == "MZFF", selVars)[1:80,]
-dzData  = subset(twinData, zygosity == "DZFF", selVars)[1:80,]
-m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
+selDVs  = "bmi"
+selDefs = "age"
+mzData  = subset(twinData, zygosity == "MZFF")[1:80,]
+dzData  = subset(twinData, zygosity == "DZFF")[1:80,]
+m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep = "", 
 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
 # Plot Moderation
 umxSummaryGxE(m1)
