@@ -7,7 +7,7 @@
 \usage{
 umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
   perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE,
-  invert = FALSE, collapse = NULL)
+  invert = FALSE, collapse = c("as.is", "as.vector"))
 }
 \arguments{
 \item{df}{dataframe from which to get names.}
@@ -60,9 +60,9 @@ umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 
 # Other options
 umx_names(mtcars, "mpg", invert = TRUE) # non-matches (instead of matches)
-umx_names(mtcars, "mpg", value = FALSE) # Return indices of matches 
-umx_names(mtcars, "^d", fixed = TRUE)   # 
-namez(mtcars, ) # vars beginning with 'd' = "disp", drat
+umx_names(mtcars, "disp", value = FALSE) # Return indices of matches 
+umx_names(mtcars, "^d" , fixed = TRUE)  # vars containing literal '^d' (none...)
+namez(mtcars, "m", collapse = "as.vector") 
 
 # =======================================
 # = Examples using built-in GFF dataset =

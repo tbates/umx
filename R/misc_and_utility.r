@@ -4100,9 +4100,9 @@ umx_explode <- function(delimiter = character(), string) {
 #' 
 #' # Other options
 #' umx_names(mtcars, "mpg", invert = TRUE) # non-matches (instead of matches)
-#' umx_names(mtcars, "mpg", value = FALSE) # Return indices of matches 
-#' umx_names(mtcars, "^d", fixed = TRUE)   # 
-#' namez(mtcars, ) # vars beginning with 'd' = "disp", drat
+#' umx_names(mtcars, "disp", value = FALSE) # Return indices of matches 
+#' umx_names(mtcars, "^d" , fixed = TRUE)  # vars containing literal '^d' (none...)
+#' namez(mtcars, "m", collapse = "as.vector") # paste-able R-code for a vector
 #' 
 #' # =======================================
 #' # = Examples using built-in GFF dataset =
@@ -4113,7 +4113,8 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(GFF, "2$") # names ending in 2
 #' umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 #' # "zyg_6grp" "zyg_2grp" "divorce"
-umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, collapse = NULL) {
+umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, collapse = c("as.is", "as.vector")) {
+	collapse = match.arg(collapse)
 	if(fixed){
 		ignore.case = FALSE
 	}
@@ -4134,10 +4135,13 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 		tmp = sub(pattern = pattern, replacement = replacement, x = nameVector, ignore.case = FALSE, perl = perl,
 		    fixed = fixed, useBytes = useBytes)
 	}
-	if(!is.null(collapse)){
-		paste(tmp, collapse  = collapse)
-	} else {
+	if(collapse == "as.is"){
 		tmp
+	}else if(collapse == "as.vector"){
+		tmp = paste(tmp, collapse  = "', '")
+		paste0("c('", tmp, "')")
+	} else {
+		paste(tmp, collapse  = collapse)
 	}
 }
 
