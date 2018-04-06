@@ -2401,35 +2401,37 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	varCount = dim(model$top$as$values)[[1]]
 	selDVs   = dimnames(model$MZ$data$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
-	selDVs = sub("(_T)?[0-9]$", "", selDVs)
+	selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 
 	parameterKeyList = omxGetParameters(model)
 	out = "";
 	cSpecifics = c();
 	latents = c();
 	for(thisParam in names(parameterKeyList) ) {
-		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { # top level a c e
+		# top level a c e
+		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { 
 			# top level a c e
+			# e.g. thisParam = "cp_loadings_r10c3"
 			# a_cp_r1c1 note: r1 = factor1
-			from = sub("^([ace]_cp)_r([0-9])", '\\1\\2', thisParam, perl=T);
+			from = sub("^([ace]_cp)_r([0-9])", '\\1\\2', thisParam, perl=TRUE);
 			# "a_cp_r1c1" # row = common factor number
-			target = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl=T);
+			target = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl=TRUE);
 			latents = append(latents,from);
-		} else if (grepl("^cp_loadings_r[0-9]", thisParam)) {
+		} else if (grepl("^cp_loadings_r[0-9]+", thisParam)) {
 			# common loading cp_loadings_r1c1
-			from    = sub("^cp_loadings_r([0-9])c([0-9])", "common\\2", thisParam, perl=TRUE);
+			from    = sub("^cp_loadings_r([0-9]+)c([0-9]+)", "common\\2", thisParam, perl=TRUE);
 			# from    = "common";
-			thisVar = as.numeric(sub('cp_loadings_r([0-9])c([0-9])', '\\1', thisParam, perl = TRUE));
+			thisVar = as.numeric(sub('cp_loadings_r([0-9]+)c([0-9]+)', '\\1', thisParam, perl = TRUE));
 			target  = selDVs[as.numeric(thisVar)]
 			latents = append(latents,from);
 		} else if (grepl("^[ace]s_r[0-9]", thisParam)) {
-			# specific
+			# specifics, e.g. thisParam = "es_r10c10"
 			grepStr = '([ace]s)_r([0-9]+)c([0-9]+)'
-			from    = sub(grepStr, '\\1\\3', thisParam, perl=T);
+			from    = sub(grepStr, '\\1\\3', thisParam, perl=TRUE);
 			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl=TRUE));
 			target  = selDVs[as.numeric(targetindex)]			
-			latents = append(latents,from);
-			cSpecifics = append(cSpecifics,from);
+			latents = append(latents, from);
+			cSpecifics = append(cSpecifics, from);
 		} else if (grepl("^expMean", thisParam)) { # means probably expMean_r1c1
 			grepStr = '(^.*)_r([0-9]+)c([0-9]+)'
 			from    = "one";

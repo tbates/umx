@@ -4073,7 +4073,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' @param fixed = FALSE (grep option If TRUE, pattern is a string to be matched as is. Overrides all conflicting arguments.)
 #' @param useBytes = FALSE logical. grep option. If TRUE, matching is by byte rather than by character.
 #' @param invert Return indices or values for elements that do not match (default = FALSE)
-#' @param collapse If not null, format as pastable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL)
+#' @param collapse "as.is" leaves alone. as.vector formats as pastable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL), etc.
 #' @return - vector of matches
 #' @export
 #' @seealso - Base-R pattern matching functions: \code{\link{grep}}.
@@ -4108,7 +4108,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(GFF, "2$") # names ending in 2
 #' umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 #' # "zyg_6grp" "zyg_2grp" "divorce"
-umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, collapse = c("as.is", "as.vector")) {
+umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, collapse = c("as.is", "as.vector", "as.formula")) {
 	collapse = match.arg(collapse)
 	if(fixed){
 		ignore.case = FALSE
@@ -4135,6 +4135,9 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	}else if(collapse == "as.vector"){
 		tmp = paste(tmp, collapse  = "', '")
 		paste0("c('", tmp, "')")
+	}else if(collapse == "as.formula"){
+		tmp = paste(tmp, collapse  = " + ")
+		paste0("~ ", tmp)
 	} else {
 		paste(tmp, collapse  = collapse)
 	}

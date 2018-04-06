@@ -7,7 +7,7 @@
 \usage{
 umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
   perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE,
-  invert = FALSE, collapse = c("as.is", "as.vector"))
+  invert = FALSE, collapse = c("as.is", "as.vector", "as.formula"))
 }
 \arguments{
 \item{df}{dataframe from which to get names.}
@@ -28,7 +28,7 @@ umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
 
 \item{invert}{Return indices or values for elements that do not match (default = FALSE)}
 
-\item{collapse}{If not null, format as pastable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL)}
+\item{collapse}{"as.is" leaves alone. as.vector formats as pastable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL), etc.}
 }
 \value{
 \itemize{
@@ -59,7 +59,7 @@ umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 umx_names(mtcars, "mpg", invert = TRUE) # non-matches (instead of matches)
 umx_names(mtcars, "disp", value = FALSE) # Return indices of matches 
 umx_names(mtcars, "^d" , fixed = TRUE)  # vars containing literal '^d' (none...)
-namez(mtcars, "m", collapse = "as.vector") 
+namez(mtcars, "m", collapse = "as.vector") # paste-able R-code for a vector
 
 # =======================================
 # = Examples using built-in GFF dataset =
