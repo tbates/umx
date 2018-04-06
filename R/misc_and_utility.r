@@ -1867,7 +1867,9 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 				itemText = paste0(itemText, "<itemBreak>", paste(items[!is.na(items)], collapse = "<itemBreak>"))
 			}
 		}
-		o[itemNumber, ] = paste(pre, testName, itemNumber, itemText, direction, scale, type, testName, end, sep = "', '")
+		thisRow = paste(pre, testName, itemNumber, itemText, direction, scale, type, testName, end, sep = "', '")
+		thisRow = umx_names(thisRow, pattern = ", '');", replacement = ");")
+		o[itemNumber, ] = thisRow
 		itemNumber = itemNumber + 1
 	}
 	umx_write_to_clipboard(x = o)
@@ -4056,12 +4058,15 @@ umx_explode <- function(delimiter = character(), string) {
 #'
 #' @description 
 #' Convenient equivalent of running [grep](grep) on [names](names), with value = TRUE and ignore.case = TRUE.
-#' `umx_names` can also handle dataframes, a model, or a vector of strings as input. 
-#' These will search variable names, parameter names, and the stinrg values themsevles respectiely.
+#' 
+#' Plus:`umx_names` can handle dataframes, a model, or a vector of strings as input. 
+#' In these cases, it will search variable names, parameter names, and the stinrg values themselves respectively.
+#' 
+#' Plus:`umx_names` can do [replacement](grep) of a found string (see exmples). It can also collapse the result (using [paste0](paste0))
 #' 
 #' *Note*: `namez` (with a z) is a shortcut for `umx_names`, which makes it easy to subsitute it in for [names](names).
 #' 
-#' You can learn more about the matching options in the helpf for base-R \code{\link{grep}}.
+#' You can learn more about the matching options (like inverting the selection etc.) in the helpf for base-R \code{\link{grep}}.
 #'
 #' @aliases namez
 #' @param df dataframe from which to get names.

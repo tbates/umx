@@ -37,12 +37,15 @@ umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
 }
 \description{
 Convenient equivalent of running \url{grep} on \url{names}, with value = TRUE and ignore.case = TRUE.
-\code{umx_names} can also handle dataframes, a model, or a vector of strings as input.
-These will search variable names, parameter names, and the stinrg values themsevles respectiely.
+
+Plus:\code{umx_names} can handle dataframes, a model, or a vector of strings as input.
+In these cases, it will search variable names, parameter names, and the stinrg values themselves respectively.
+
+Plus:\code{umx_names} can do \href{grep}{replacement} of a found string (see exmples). It can also collapse the result (using \url{paste0})
 
 \emph{Note}: \code{namez} (with a z) is a shortcut for \code{umx_names}, which makes it easy to subsitute it in for \url{names}.
 
-You can learn more about the matching options in the helpf for base-R \code{\link{grep}}.
+You can learn more about the matching options (like inverting the selection etc.) in the helpf for base-R \code{\link{grep}}.
 }
 \examples{
 umx_names(mtcars, "mpg") # only "mpg" matches this

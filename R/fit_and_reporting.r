@@ -2410,11 +2410,10 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	for(thisParam in names(parameterKeyList) ) {
 		# top level a c e
 		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { 
-			# top level a c e
-			# e.g. thisParam = "cp_loadings_r10c3"
-			# a_cp_r1c1 note: r1 = factor1
+			# top level a c e, e.g. thisParam = "c_cp_r1c3"
+			# row = common factor number
 			from = sub("^([ace]_cp)_r([0-9])", '\\1\\2', thisParam, perl=TRUE);
-			# "a_cp_r1c1" # row = common factor number
+			from = sub("^([ace]_cp)_r([0-9])", '\\1\\2', thisParam, perl=T);
 			target = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl=TRUE);
 			latents = append(latents,from);
 		} else if (grepl("^cp_loadings_r[0-9]+", thisParam)) {
