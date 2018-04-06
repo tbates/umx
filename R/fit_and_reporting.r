@@ -2410,7 +2410,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	for(thisParam in names(parameterKeyList) ) {
 		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { # top level a c e
 			# top level a c e
-			# a_cp_r1c1 note: r1 = factor1
+			# a_cp_r1c1 note: row 1 = factor 1
 			from = sub("^([ace]_cp)_r([0-9])", '\\1\\2', thisParam, perl=T);
 			# "a_cp_r1c1" # row = common factor number
 			target = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl=T);
