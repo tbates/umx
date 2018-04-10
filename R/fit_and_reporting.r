@@ -2898,6 +2898,8 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' Often you want to see the estimates from a model, and often you don't want all of them.
 #' \code{\link{umx_parameters}} helps in this case, allowing you to select parameters matching a name filter,
 #' and also to only show parameters above or below a certain value.
+#' 
+#' If pattern is a vector, each regular expression is matched, and all unique matches to the whole vector are returned.
 #'
 #' @details
 #' It is on my TODO list to implement filtering by significance, and to add standardizing.
@@ -2966,8 +2968,13 @@ or specify all arguments:\n
 		x = x$parameters
 	}
 
-	parList = umx_names(x$name, pattern)
-
+	# Handle 1 or more regular expressions.
+	parList = c()
+	for (i in 1:length(pattern)) {
+		parList = c(parList, umx_names(x$name, pattern = pattern[i]))
+	}
+	parList = unique(parList)
+	
 	if(thresh == "above"){
 		filter = x$name %in% parList & abs(x$Estimate) > b
 	} else if(thresh == "below"){
