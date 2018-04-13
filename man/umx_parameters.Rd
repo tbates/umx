@@ -36,7 +36,7 @@ Often you want to see the estimates from a model, and often you don't want all o
 \code{\link{umx_parameters}} helps in this case, allowing you to select parameters matching a name filter,
 and also to only show parameters above or below a certain value.
 
-If pattern is a vecotr, each regular expression is matched, and all unique matches to the whole vector are returned.
+If pattern is a vector, each regular expression is matched, and all unique matches to the whole vector are returned.
 }
 \details{
 It is on my TODO list to implement filtering by significance, and to add standardizing.
