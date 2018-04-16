@@ -61,22 +61,23 @@ umxACEv(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 A common task in twin modeling involves using the genetic and environmental differences 
 between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 to model the genetic and environmental structure of one, or, typically, several phenotypes
-(measured behaviors). umxACEv supports modeling with the ACE Cholesky model, a core model 
-in behavior genetics (Neale and Cardon, 1996).
+(measured behaviors).
 }
 \details{
-This model decomposes phenotypic variance into Additive genetic,
+The ACE variance-based model decomposes phenotypic variance into additive genetic (A),
 unique environmental (E) and, optionally, either common environment (shared-environment, C) or 
 non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
 and multiple examples.
 
-This function does not use the Cholesky decomposition. Instead it directly models variance.
-This ensures unbiased type-I error rates. It means that occasionally
-estimates of variance may be negative. This should be used as an occasion to inspect you model
-choices and data.
 The following figure shows the A components of a trivate ACEv model:
 
 \figure{ACEv.png}
+
+*NOTE*: This function does not use the Cholesky decomposition. Instead it directly models variance.
+This ensures unbiased type-I error rates. It means that occasionally
+estimates of variance may be negative. This should be used as an occasion to inspect you model
+choices and data. `umxACEv` can be used as a base model to validate the ACE Cholesky model, 
+a core model in behavior genetics (Neale and Cardon, 1992).
 
 
 \strong{Data Input}
