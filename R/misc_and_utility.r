@@ -1036,7 +1036,7 @@ umx_explode_twin_names <- function(df, sep = "_T") {
 #' # will try and ensure factor levels same across all twins.
 #' @return - \code{\link{mxFactor}}
 #' @export
-#' @family Data Functions
+#' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{umxFactanal}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -1200,7 +1200,7 @@ umx_open_CRAN_page <- function(package = "umx") {
 #' @param n The final length of each object.
 #' @return - padded object
 #' @export
-#' @family Data Functions
+#' @family Miscellaneous Utility Functions
 #' @references - \url{https://github.com/kevinushey/Kmisc/tree/master/man}
 #' @examples
 #' umx_pad(1:3, 4)
@@ -3440,7 +3440,7 @@ umx_reorder <- function(old, newOrder) {
 #' @param returnCutpoints just return the cutpoints, for use directly
 #' @return - recoded variable as an \code{\link{mxFactor}}
 #' @export
-#' @family Data Functions
+#' @family Miscellaneous Utility Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
@@ -3614,7 +3614,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @return - new dataframe with scaled variables
 #' @export
 #' @seealso umx_scale_wide_twin_data
-#' @family Data Functions
+#' @family Miscellaneous Utility Functions
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
@@ -4418,7 +4418,7 @@ umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "
 #' @param x the vector to shift
 #' @return - first item of x
 #' @export
-#' @family Data Functions
+#' @family Miscellaneous Utility Functions
 #' @examples
 #' x = c("Alice", "Bob", "Carol")
 #' umx_array_shift(x) # returns "Alice"
@@ -4513,7 +4513,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
 #' @family Twin Data functions
-#' @seealso - \code{\link{umxGxE_biv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
+#' @seealso - \code{\link{umx_make_TwinData}}, \code{\link{umxGxE_biv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' # =====================================================================
@@ -4865,6 +4865,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 #' @return - data.frame
 #' @export
 #' @family Data Functions
+#' @seealso umx_make_TwinData
 #' @examples
 #' df = umx_make_MR_data(10000)
 #' str(df)
@@ -5418,16 +5419,18 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 #' @param df the dataframe to process
 #' @param varNames list of names of the variables being analysed
 #' @param defNames list of covariates
-#' @param suffixes suffixes that map names on columns in df (i.e., c("T1", "T2"))
+#' @param suffixes that map names on columns in df (i.e., c("T1", "T2"))
 #' @param highDefValue What to replace missing definition variables (covariates) with. Default = 99
 #' @param rm = how to handle missing values in the varNames. Default is "drop_missing_def", "pad_with_mean")
-#' @return - dataframes
+#' @return - dataframe
 #' @export
 #' @family Data Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' df = umxPadAndPruneForDefVars(df, "E", "age", c("_T1", "_T2"))
+#' data(twinData)
+#' sum(is.na(twinData$ht1))
+#' df = umxPadAndPruneForDefVars(twinData, varNames = "ht", defNames = "wt", c("1", "2"))
 #' }
 umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefValue = 99, rm = c("drop_missing_def", "pad_with_mean")) {
 	# df = twinData

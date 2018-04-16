@@ -48,10 +48,13 @@ umx_print(mtcars[1:10,], file = "tmp.html")
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxVersion}}, \code{\link{umx_find_object}},
-  \code{\link{umx_make}}, \code{\link{umx_msg}},
-  \code{\link{umx_open_CRAN_page}},
-  \code{\link{umx_pb_note}}, \code{\link{umx}}
+  \code{\link{umxFactor}}, \code{\link{umxVersion}},
+  \code{\link{umx_array_shift}},
+  \code{\link{umx_cont_2_quantiles}},
+  \code{\link{umx_find_object}}, \code{\link{umx_make}},
+  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
+  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_scale}}, \code{\link{umx}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},

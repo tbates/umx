@@ -47,9 +47,12 @@ install.OpenMx("open travis build page") # Open web page of travis builds
 \code{\link{umxVersion}}
 
 Other Miscellaneous Utility Functions: \code{\link{qm}},
-  \code{\link{umxBrownie}}, \code{\link{umxVersion}},
+  \code{\link{umxBrownie}}, \code{\link{umxFactor}},
+  \code{\link{umxVersion}}, \code{\link{umx_array_shift}},
+  \code{\link{umx_cont_2_quantiles}},
   \code{\link{umx_find_object}}, \code{\link{umx_make}},
   \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
+  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_print}}, \code{\link{umx_scale}},
   \code{\link{umx}}
 }

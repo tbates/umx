@@ -165,7 +165,7 @@ tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod,
 }
 \seealso{
 \itemize{
-\item \code{\link{umxGxE_biv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
+\item \code{\link{umx_make_TwinData}}, \code{\link{umxGxE_biv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
 }
 
 Other Twin Data functions: \code{\link{umx_long2wide}},

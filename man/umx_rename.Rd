@@ -45,16 +45,14 @@ umx_names(x, "^d") # all names begining with a d
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},
-  \code{\link{umxFactor}}, \code{\link{umxHetCor}},
+  \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},
-  \code{\link{umx_array_shift}},
-  \code{\link{umx_as_numeric}},
-  \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_cov2raw}}, \code{\link{umx_lower2full}},
+  \code{\link{umx_as_numeric}}, \code{\link{umx_cov2raw}},
+  \code{\link{umx_lower2full}},
   \code{\link{umx_make_MR_data}},
   \code{\link{umx_make_bin_cont_pair_data}},
-  \code{\link{umx_make_fake_data}}, \code{\link{umx_pad}},
+  \code{\link{umx_make_fake_data}},
   \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
-  \code{\link{umx_scale}}, \code{\link{umx_stack}},
-  \code{\link{umx_swap_a_block}}, \code{\link{umx}}
+  \code{\link{umx_stack}}, \code{\link{umx_swap_a_block}},
+  \code{\link{umx}}
 }
