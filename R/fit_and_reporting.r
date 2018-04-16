@@ -2295,6 +2295,7 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 #' @param location Where to plot the legend (default = "topleft")
 #' see ?legend for alternatives like bottomright
 #' @param separateGraphs (default = FALSE)
+#' @param acergb Colors to use for plot c(a = "red", c = "green", e = "blue", tot = "black")
 #' @param ... Optional additional parameters
 #' @return - 
 #' @family Plotting functions
@@ -2306,16 +2307,15 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 #' require(umx)
 #' data(twinData) 
 #' twinData$age1 = twinData$age2 = twinData$age
-#' selDVs  = c("bmi1", "bmi2")
-#' selDefs = c("age1", "age2")
-#' selVars = c(selDVs, selDefs)
-#' mzData  = subset(twinData, zyg == 1, selVars)
-#' dzData  = subset(twinData, zyg == 3, selVars)
+#' selDVs  = "bmi"
+#' selDefs = "age"
+#' mzData  = subset(twinData, zygosity == "MZFF")
+#' dzData  = subset(twinData, zygosity == "DZFF")
 #' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
-#'  	dzData = dzData, mzData = mzData, dropMissing = TRUE)
+#'  	dzData = dzData, mzData = mzData, sep= "", dropMissing = TRUE)
 #' plot(m1)
 #' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
-umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
+umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), ...) {
 	if(!class(x) == "MxModel.GxE"){
 		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x))
 	}
@@ -2346,13 +2346,17 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	out    = as.matrix(cbind(Va, Vc, Ve, Vt))
 	outStd = as.matrix(cbind(Va/Vt, Vc/Vt, Ve/Vt))
 	
+	if(is.na(xlab)){
+		xlab = sub("(_T)?[0-9]$", "", selDefs[1])
+	}
+	
 	if(separateGraphs){
 		print("Outputting two graphs")
 	}else{
 		graphics::par(mfrow = c(1, 2)) # one row, two columns for raw and std variance
 		# par(mfrow = c(2, 1)) # two rows, one column for raw and std variance
 	}
-	acergb = c("red", "green", "blue", "black")
+	# acergb = c("red", "green", "blue", "black")
 	graphics::matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = acergb, xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects")
 	graphics::legend(location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb)
 	# legend(location, legend= c("Va", "Vc", "Ve", "Vt"), lty = 1:4, col = acergb)
@@ -2898,6 +2902,8 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' Often you want to see the estimates from a model, and often you don't want all of them.
 #' \code{\link{umx_parameters}} helps in this case, allowing you to select parameters matching a name filter,
 #' and also to only show parameters above or below a certain value.
+#' 
+#' If pattern is a vector, each regular expression is matched, and all unique matches to the whole vector are returned.
 #'
 #' @details
 #' It is on my TODO list to implement filtering by significance, and to add standardizing.
@@ -2966,8 +2972,13 @@ or specify all arguments:\n
 		x = x$parameters
 	}
 
-	parList = umx_names(x$name, pattern)
-
+	# Handle 1 or more regular expressions.
+	parList = c()
+	for (i in 1:length(pattern)) {
+		parList = c(parList, umx_names(x$name, pattern = pattern[i]))
+	}
+	parList = unique(parList)
+	
 	if(thresh == "above"){
 		filter = x$name %in% parList & abs(x$Estimate) > b
 	} else if(thresh == "below"){

@@ -6,7 +6,7 @@
 \title{Plot the results of a GxE univariate test for moderation of ACE components.}
 \usage{
 umxPlotGxE(x, xlab = NA, location = "topleft", separateGraphs = FALSE,
-  ...)
+  acergb = c("red", "green", "blue", "black"), ...)
 }
 \arguments{
 \item{x}{A fitted \code{\link{umxGxE}} model to plot}
@@ -17,6 +17,8 @@ umxPlotGxE(x, xlab = NA, location = "topleft", separateGraphs = FALSE,
 see ?legend for alternatives like bottomright}
 
 \item{separateGraphs}{(default = FALSE)}
+
+\item{acergb}{Colors to use for plot c(a = "red", c = "green", e = "blue", tot = "black")}
 
 \item{...}{Optional additional parameters}
 }
@@ -32,13 +34,12 @@ You can also set the label for the x axis (xlab), and choose the location of the
 require(umx)
 data(twinData) 
 twinData$age1 = twinData$age2 = twinData$age
-selDVs  = c("bmi1", "bmi2")
-selDefs = c("age1", "age2")
-selVars = c(selDVs, selDefs)
-mzData  = subset(twinData, zyg == 1, selVars)
-dzData  = subset(twinData, zyg == 3, selVars)
+selDVs  = "bmi"
+selDefs = "age"
+mzData  = subset(twinData, zygosity == "MZFF")
+dzData  = subset(twinData, zygosity == "DZFF")
 m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
- 	dzData = dzData, mzData = mzData, dropMissing = TRUE)
+ 	dzData = dzData, mzData = mzData, sep= "", dropMissing = TRUE)
 plot(m1)
 umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 }

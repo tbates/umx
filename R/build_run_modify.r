@@ -766,10 +766,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 		stop("hi. Sorry for the change, but please replace ", omxQuotes("dropList"), " with ", omxQuotes("update"),". e.g.:\n",
 			"umxModify(m1, dropList = ", omxQuotes("E_to_heartRate"), ")\n",
 			"becomes\n",
-			"umxModify(m1, update = ", omxQuotes("E_to_heartRate"), ")\n",
-			 "\nThis regular expression will do it for you:\n",
-			 "find    = regex *= *(\\\"[^\\\"]+\\\"),\n",
-			 "replace = update = $1, regex = TRUE,"
+			"umxModify(m1, update = ", omxQuotes("E_to_heartRate"), ")\n"
 		)
 	}
 	if (typeof(regex) != "logical"){
