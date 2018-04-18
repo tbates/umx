@@ -336,24 +336,23 @@ loadings.MxModel <- function(x, ...) {
 }
 
 
-#' Get confidence intervals from an MxModel
+#' Get confidence intervals from a umx model
 #'
 #' Implements confidence interval function for OpenMx models.
-#' Note: Currently requested CIs are added to existing CIs, and all are run, 
-#' even if they already exist in the output. This should change in the future.
-#'
-#' @details Unlike \code{\link{confint}}, if parm is missing, all CIs requested will be added to the model, 
-#' but (because these can take time to run) by default only CIs already computed will be reported.
 #' 
-#' CIs will be run only if run is TRUE, allowing this function to be used to add
-#' CIs without automatically having to run them.
+#' Note: By default, requesting new CIs wipes the existing ones.
+#' To keep these, set wipeExistingRequests = FALSE.
+#'
+#' @details Unlike \code{\link{confint}}, if parm is not set, only existing requests will be used. 
+#' 
+#' Because these can take time to run, by default only CIs already computed will be reported. Set run = TRUE to run new CIs.
 #' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. 
-#' Even a few CIs can take too long to make running the default.
 #'
 #' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))
-#' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "all", or a vector of names.
+#' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "smart", "all", or a vector of names.
 #' @param level	The confidence level required (default = .95)
 #' @param run Whether to run the model (defaults to FALSE)
+#' @param wipeExistingRequests Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').
 #' @param showErrorCodes (default = FALSE)
 #' @param ... Additional argument(s) for umxConfint.
 #' @export
@@ -371,24 +370,62 @@ loadings.MxModel <- function(x, ...) {
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' m2 = umxConfint(m1, "all") # default: CIs added, but user prompted to set run = TRUE
-#' m2 = umxConfint(m2, run = TRUE) # CIs run and reported
-#' # Add CIs for asymmetric paths in RAM model, report them, save m1 with this CI added
-#' m1 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
-#' # Add CIs for asymmetric paths in RAM model, report them, save m1 with mxCIs added
-#' m1 = umxConfint(m1, parm = "A", run = TRUE)
-#' umxConfint(m1, parm = "existing") # request existing CIs (none added yet...)
-umxConfint <- function(object, parm = c("existing", "all", "vector of names"), level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
-	option_list = c("existing", "all", "vector of names")
+#' m1 = umxConfint(m2, run = TRUE) # Existing CI requests run and reported.
+#' # Add CI request for "G_to_x1". Report. Save m1 with this CI added.
+#' m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
+#' m3 = umxConfint(m1, "free") # CI requests added for free matrix parameters. User prompted to set run = TRUE
+#' 
+#' # Add CIs for free one-headed (asymmetric) paths in RAM model. Run and save.
+#' tmp = umxConfint(m1, parm = "A", run = TRUE)
+#' tmp = umxConfint(m1, parm = "existing") # request existing CIs (none added yet...)
+#' tmp = umxConfint(m1, parm = "G_to_x1", wipeExistingRequests = TRUE) # Wipe existing CIs, add G_to_x1
+ 
+umxConfint <- function(object, parm = c("existing", "smart", "all", "vector of names"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
+	option_list = c("existing", "smart", "all", "vector of names")
 	parm = umx_default_option(parm, option_list, check = FALSE)
-	# 1. Add CIs if needed
-	if (parm == "all") {
-		if(umx_has_CIs(object, "intervals")) {
-			message(length(object$intervals), " existing CIs found - I am removing these, and adding CIs for all free parameters")
-			object <- mxModel(object, remove=TRUE, object$intervals)
+	# 1. remove existing CIs if requested to
+	if(wipeExistingRequests && (parm != "existing")){
+		if(length(object$intervals)){
+			object = mxModel(object, remove = TRUE, object$intervals)
+			message("Removed existing CIs")
+			# TODO rationalise umxConfint and umxCI (priority!)
+			# object = umxCI(object, which = "ALL", remove=TRUE)
 		}
+	}
+	# 1. Add CIs if requested
+	if (parm == "all") {
 		CIs_to_set = names(omxGetParameters(object, free = TRUE))
 		object = mxModel(object, mxCI(CIs_to_set, interval = level))
+	} else if (parm == "smart"){
+		if(class(object) == "MxModel.CP"){
+			# Add individual smart (only free cell) mxCI requests
+			# For CP model, these are the free cells in
+			# 	top.as_std, top.cs_std, top.es_std
+			this = object$top$as$free;
+			template = umxMatrix("A", "Full", dim(this)[1], dim(this)[2])$labels
+			patt = "^.*_r([0-9]+)c([0-9]+)$"
+			as_free = gsub(pattern = patt, replacement= "top.as_std[\\1,\\2]", template)[which(object$top$as$free)]
+			cs_free = gsub(pattern = patt, replacement= "top.cs_std[\\1,\\2]", template)[which(object$top$cs$free)]
+			es_free = gsub(pattern = patt, replacement= "top.es_std[\\1,\\2]", template)[which(object$top$es$free)]
+
+			# Get labels for free cells in top.cp_loadings_std
+			this = object$top$cp_loadings$free
+			template = umxMatrix("A", "Full", dim(this)[1], dim(this)[2])$labels
+			cp_loadings_free = gsub(pattern = patt, replacement= "top.cp_loadings_std[\\1,\\2]", template)[which(this)]
+
+			# top.a_cp, top.c_cp, top.e_cp
+			this = object$top$a_cp$free
+			template  = umxMatrix("A", "Full", dim(this)[1], dim(this)[2])$labels
+			a_cp_free = gsub(pattern = patt, replacement= "top.a_cp[\\1,\\2]", template)[which(object$top$a_cp$free)]
+			c_cp_free = gsub(pattern = patt, replacement= "top.c_cp[\\1,\\2]", template)[which(object$top$c_cp$free)]
+			e_cp_free = gsub(pattern = patt, replacement= "top.e_cp[\\1,\\2]", template)[which(object$top$e_cp$free)]
+
+			CIs2Add = c(a_cp_free, c_cp_free, e_cp_free, cp_loadings_free, as_free, cs_free, es_free)
+
+			object = mxModel(object, mxCI(CIs2Add, interval = level))
+		} else {
+			stop("I only know how to add smart CIs for CP models so far. Sorry")
+		}
 	} else if (parm != "existing"){
 		# add requested CIs to model
 		# TODO umxConfint: Check that these CIs exist
@@ -402,6 +439,7 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 			message("This model has no CIs yet. Perhaps you wanted to use parm = 'all' to add and run CIs on all free parameters? Or set parm to a list of labels you'd like CIs? Also see help(mxCI)")
 		}
 		object = mxRun(object, intervals = TRUE)
+		# TODO replace mxRun with omxRunCI()
 	}
 	# 3. Report CIs if found in output
 	if(!umx_has_CIs(object, "both")) {
@@ -411,12 +449,13 @@ umxConfint <- function(object, parm = c("existing", "all", "vector of names"), l
 			"m1 = confint(m1, run = TRUE)")
 		} else {
 			message("hmmm... you wanted it run, but I don't see any computed CIs despite there being ", length(object$intervals), " requested...",
-			"\nThat's a bug. Please report it to timothy.c.bates at gmail.com")
+			"\nThat's a bug. Please report it to timothy.c.bates@gmail.com")
 		}
 	} else {
 		# model has CIs and they have been run
 		model_summary = summary(object)
 		CIs = model_summary$CI
+		# TODO use $CIdetails?
 		model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
 		model_CI_OK = object$output$confidenceIntervalCodes
 		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")

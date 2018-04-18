@@ -36,7 +36,7 @@ umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
 }
 }
 \description{
-Convenient equivalent of running \url{grep} on \url{names}, with value = TRUE and ignore.case = TRUE.
+Convenient equivalent of running \link{grep} on \link{names}, with value = TRUE and ignore.case = TRUE.
 
 Plus:\code{umx_names} can handle dataframes, a model, model summary, or a vector of strings as input.
 
