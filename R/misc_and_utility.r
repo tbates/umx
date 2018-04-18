@@ -4057,16 +4057,18 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names
 #'
 #' @description 
-#' Convenient equivalent of running [grep](grep) on [names](names), with value = TRUE and ignore.case = TRUE.
+#' Convenient equivalent of running [grep] on [names], with value = TRUE and ignore.case = TRUE.
 #' 
-#' Plus:`umx_names` can handle dataframes, a model, or a vector of strings as input. 
-#' In these cases, it will search variable names, parameter names, and the stinrg values themselves respectively.
+#' Plus:`umx_names` can handle dataframes, a model, model summary, or a vector of strings as input. 
 #' 
-#' Plus:`umx_names` can do [replacement](grep) of a found string (see exmples). It can also collapse the result (using [paste0](paste0))
+#' In these cases, it will search column names, parameter or summary output names, or 
+#' the literal string values themselves respectively.
 #' 
-#' *Note*: `namez` (with a z) is a shortcut for `umx_names`, which makes it easy to subsitute it in for [names](names).
+#' In addition, `umx_names` can do [replacement][grep] of a found string (see exmples). It can also collapse the result (using [paste0])
 #' 
-#' You can learn more about the matching options (like inverting the selection etc.) in the helpf for base-R \code{\link{grep}}.
+#' *Note*: `namez` (with a z) is a shortcut for `umx_names`, which makes it easy to replace where you'd otherwise use [names].
+#' 
+#' You can learn more about the matching options (like inverting the selection etc.) in the help for base-R [grep].
 #'
 #' @aliases namez
 #' @param df dataframe from which to get names.
@@ -4118,7 +4120,7 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	if(fixed){
 		ignore.case = FALSE
 	}
-	if(class(df) == "data.frame"){
+	if(class(df) %in%  c("summary.mxmodel", "data.frame")){
 		nameVector = names(df)
 	} else if(class(df) == "character"){
 		nameVector = df
