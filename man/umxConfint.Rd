@@ -4,9 +4,10 @@
 \alias{umxConfint}
 \title{Get confidence intervals from a umx model}
 \usage{
-umxConfint(object, parm = c("existing", "smart", "all", "vector of names"),
-  wipeExistingRequests = TRUE, level = 0.95, run = FALSE,
-  showErrorCodes = FALSE, ...)
+umxConfint(object, parm = c("existing", "smart", "all",
+  "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95,
+  run = FALSE, showErrorCodes = FALSE, optimizer = c("SLSQP",
+  "NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4"))
 }
 \arguments{
 \item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))}
@@ -20,6 +21,8 @@ umxConfint(object, parm = c("existing", "smart", "all", "vector of names"),
 \item{run}{Whether to run the model (defaults to FALSE)}
 
 \item{showErrorCodes}{(default = FALSE)}
+
+\item{optimizer}{defaults to "SLSQP". Might try "NelderMead"}
 
 \item{...}{Additional argument(s) for umxConfint.}
 }

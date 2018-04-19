@@ -353,6 +353,7 @@ loadings.MxModel <- function(x, ...) {
 #' @param level	The confidence level required (default = .95)
 #' @param run Whether to run the model (defaults to FALSE)
 #' @param wipeExistingRequests Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').
+#' @param optimizer defaults to "SLSQP". Might try "NelderMead"
 #' @param showErrorCodes (default = FALSE)
 #' @param ... Additional argument(s) for umxConfint.
 #' @export
@@ -383,9 +384,9 @@ loadings.MxModel <- function(x, ...) {
 #' tmp = umxConfint(m1, parm = "A", run = TRUE)
 #' tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = FALSE) # Wipe existing CIs, add G_to_x1
 #' m2 =  umxConfint(m1, "smart")
-umxConfint <- function(object, parm = c("existing", "smart", "all", "vector of names"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, ...) {
-	option_list = c("existing", "smart", "all", "vector of names")
-	parm = umx_default_option(parm, option_list, check = FALSE)
+umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("SLSQP", "NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4")) {
+	optimizer = match.arg(optimizer)
+	parm = umx_default_option(parm, c("existing", "smart", "all", "or one or more labels"), check = FALSE)
 	# 1. remove existing CIs if requested to
 	if(wipeExistingRequests && (parm != "existing")){
 		if(length(object$intervals)){
@@ -396,7 +397,11 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "vector of n
 		}
 	}
 	# 1. Add CIs if requested
-	if (parm == "all") {
+	if (length(parm) >1){
+		# Add requested CIs to model
+		# TODO umxConfint: Check that these are valid and not duplicates
+		object = mxModel(object, mxCI(parm, interval = level))
+	} else if (parm == "all") {
 		CIs_to_set = names(omxGetParameters(object, free = TRUE))
 		object = mxModel(object, mxCI(CIs_to_set, interval = level))
 	} else if (parm == "smart"){
@@ -429,9 +434,9 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "vector of n
 		} else {
 			stop("I only know how to add smart CIs for CP models so far. Sorry")
 		}
-	} else if (parm != "existing"){
-		# add requested CIs to model
-		# TODO umxConfint: Check that these CIs exist
+	} else {
+		# user requesting 1 new CI
+		# TODO umxConfint: Check that these are valid and not duplicates
 		object = mxModel(object, mxCI(parm, interval = level))
 	}
 
@@ -442,16 +447,27 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "vector of n
 			message("This model has no CIs yet. Perhaps you wanted to use parm = 'all' to add and run CIs on all free parameters? Or set parm to a list of labels you'd like CIs? Also see help(mxCI)")
 		}
 		# object = mxRun(object, intervals = TRUE)
-		object = omxRunCI(object)
-		# TODO add Nelder-Mead?
-		# plan3 <- omxDefaultComputePlan(intervals = TRUE)
-		# plan3 <- mxComputeSequence(steps = list(CI = plan3$steps$CI))
-		# plan3$steps$CI$constraintType <- "ineq"
-		# plan3$steps$CI$plan <- mxComputeNelderMead(ineqConstraintMthd="eqMthd",eqConstraintMthd="backtrack",centerIniSimplex=F)
-		# cp3_3 <- mxModel(cp3, plan3)
-		# cp3_3fit <- mxRun(cp3_3)
+		if(length(namez(optimizer, "Nelder"))){
+			plan1 = omxDefaultComputePlan(intervals=TRUE)
+			plan1 = mxComputeSequence(steps=list(CI=plan1$steps$CI))
+			plan4 = plan1
+			plan4$steps$CI$constraintType <- "none"			
+
+			plan1$steps$CI$constraintType <- "ineq"
+			plan2 = plan3 = plan1
+
+			plan1$steps$CI$plan = mxComputeNelderMead(ineqConstraintMthd="eqMthd",centerIniSimplex= TRUE)
+			plan2$steps$CI$plan = mxComputeNelderMead(ineqConstraintMthd="eqMthd",centerIniSimplex= FALSE, eqConstraintMthd= "l1p")
+			plan3$steps$CI$plan = mxComputeNelderMead(ineqConstraintMthd="eqMthd",centerIniSimplex= FALSE, eqConstraintMthd= "backtrack")
+			plan4$steps$CI$plan = mxComputeNelderMead()
+			
+			pick = which(optimizer == c("NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4"))
+			thePlan = c(plan1, plan2, plan3, plan4)[pick]
+			object <- mxRun(mxModel(object, thePlan))
+		} else {
+			object = omxRunCI(object, optimizer = optimizer)
+		}
 	}
-	
 	# 3. Report CIs
 	if(!umx_has_CIs(object, "both")) {
 		if(run == FALSE){
@@ -466,12 +482,33 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "vector of n
 		}
 	} else {
 		# model has CIs and they have been run
+		
+		# 1. Summarize model
 		model_summary = summary(object, verbose = TRUE)
+		# 2. Extract CIs and details, and arrange for merging
+		CIdetail = model_summary$CIdetail
+		CIdetail = CIdetail[, c("parameter", "value", "side", "diagnostic", "statusCode")]
+		CIdetail$diagnostic = as.character(CIdetail$diagnostic)
+		CIdetail$statusCode = as.character(CIdetail$statusCode)
+		CIdetail$diagnostic = namez(CIdetail$diagnostic, pattern = "alpha level not reached"         , rep = "alpha hi")
+		CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "infeasible non-linear constraint", rep = "constrained")
+		CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "iteration limit/blue"            , rep = "blue")
+
 		CIs = model_summary$CI
-		# TODO use $CIdetail?
-		# justNeededCols = model_summary$CIdetail[, c(1:3, (dim(CIs)[2]-1):dim(CIs)[2])]
-		# just the bad lines
-		justNeededCols[justNeededCols$diagnostic != "success", ]
+		CIs$parameter = row.names(CIs)
+		row.names(CIs) <- NULL
+		CIs = CIs[, c("parameter", "estimate", "lbound", "ubound", "note")]
+		intersect(names(CIdetail), names(CIs))
+		tmp = merge(CIs, CIdetail[CIdetail$side == "lower", ], by = "parameter", all.x = TRUE)
+		tmp = merge(tmp, CIdetail[CIdetail$side == "upper", ], by = "parameter", all.x = TRUE, suffixes = c(".lower",".upper"))
+		tmp$side.lower = NULL
+		tmp$side.upper = NULL
+		# for (x in 1:dim(tmp)[1]) {
+		# 	is.na(CIs$lbound)
+		#
+		# }
+
+		# Format CIs
 		model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
 		model_CI_OK = object$output$confidenceIntervalCodes
 		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
