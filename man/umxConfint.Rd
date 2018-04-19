@@ -48,15 +48,19 @@ m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numOb
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
 )
-m1 = umxConfint(m2, run = TRUE) # Existing CI requests run and reported.
-# Add CI request for "G_to_x1". Report. Save m1 with this CI added.
-m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
-m3 = umxConfint(m1, "free") # CI requests added for free matrix parameters. User prompted to set run = TRUE
+m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
 
-# Add CIs for free one-headed (asymmetric) paths in RAM model. Run and save.
+# Add CI request for "G_to_x1". Report. Save m1 with this CI computed
+m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
+m3 = umxConfint(m1, "all") # CI requests added for free matrix parameters. User prompted to set run = TRUE
+m3 = umxConfint(m3, run = TRUE) # run the requested CIs
+m3 = umxConfint(m3, run = FALSE) # just print out existing CIs
+
+# Run CIs for free one-headed (asymmetric) paths in RAM model. 
+#   note: Deletes other existing requests,
 tmp = umxConfint(m1, parm = "A", run = TRUE)
-tmp = umxConfint(m1, parm = "existing") # request existing CIs (none added yet...)
-tmp = umxConfint(m1, parm = "G_to_x1", wipeExistingRequests = TRUE) # Wipe existing CIs, add G_to_x1
+tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = FALSE) # Wipe existing CIs, add G_to_x1
+m2 =  umxConfint(m1, "smart")
 }
 \references{
 - \url{http://www.github.com/tbates/umx}
