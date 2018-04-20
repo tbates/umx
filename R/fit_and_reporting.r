@@ -384,8 +384,11 @@ loadings.MxModel <- function(x, ...) {
 #' tmp = umxConfint(m1, parm = "A", run = TRUE)
 #' tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = FALSE) # Wipe existing CIs, add G_to_x1
 #' m2 =  umxConfint(m1, "smart")
-umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("SLSQP", "NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4")) {
+umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("current", "SLSQP", "NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4")) {
 	optimizer = match.arg(optimizer)
+	if(optimizer=="current"){
+		optimizer = umx_set_optimizer(silent=TRUE)
+	}
 	parm = umx_default_option(parm, c("existing", "smart", "all", "or one or more labels"), check = FALSE)
 	# 1. remove existing CIs if requested to
 	if(wipeExistingRequests && (parm != "existing")){
@@ -448,6 +451,7 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 		}
 		# object = mxRun(object, intervals = TRUE)
 		if(length(namez(optimizer, "Nelder"))){
+			# one of the Nelder's - delete all this???
 			plan1 = omxDefaultComputePlan(intervals=TRUE)
 			plan1 = mxComputeSequence(steps=list(CI=plan1$steps$CI))
 			plan4 = plan1
@@ -463,7 +467,10 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 			
 			pick = which(optimizer == c("NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4"))
 			thePlan = c(plan1, plan2, plan3, plan4)[pick]
+			old = umx_set_optimizer(silent=TRUE)
+			umx_set_optimizer(optimizer, silent=TRUE)			
 			object <- mxRun(mxModel(object, thePlan))
+			umx_set_optimizer(old, silent=TRUE)
 		} else {
 			object = omxRunCI(object, optimizer = optimizer)
 		}
@@ -1076,80 +1083,81 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		umx_print(genetic_correlations, digits = digits, zero.print = zero.print)
 	}
 	hasCIs = umx_has_CIs(model)
-		if(hasCIs & CIs) {
-			# TODO umxACE CI code: Need to refactor into some function calls...
-			# TODO and then add to umxSummaryIP and CP
-			message("Creating CI-based report!")
-			# CIs exist, get lower and upper CIs as a dataframe
-			CIlist = data.frame(model$output$confidenceIntervals)
-			# Drop rows fixed to zero
-			CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
-			# discard rows named NA
-			CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
-			# TODO fix for singleton CIs
-			# These can be names ("top.a_std[1,1]") or labels ("a11")
-			# imxEvalByName finds them both
-			# outList = c();
-			# for(aName in row.names(CIlist)) {
-			# 	outList <- append(outList, imxEvalByName(aName, model))
-			# }
-			# # Add estimates into the CIlist
-			# CIlist$estimate = outList
-			# reorder to match summary
-			CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
-			CIlist$fullName = row.names(CIlist)
-			# Initialise empty matrices for the CI results
-			rows = dim(model$top$matrices$a$labels)[1]
-			cols = dim(model$top$matrices$a$labels)[2]
-			a_CI = c_CI = e_CI = matrix(NA, rows, cols)
+	if(hasCIs & CIs) {
+		# TODO umxACE CI code: Need to refactor into some function calls...
+		# TODO and then add to umxSummaryIP and CP
+		message("Creating CI-based report!")
+		# CIs exist, get lower and upper CIs as a dataframe
+		CIlist = data.frame(model$output$confidenceIntervals)
+		# Drop rows fixed to zero
+		CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
+		# Discard rows named NA
+		CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
+		# TODO fix for singleton CIs
+		# THIS IS NOT NEEDED: confidenceIntervals come with estimate in the middle now...
+		# These can be names ("top.a_std[1,1]") or labels ("a_r1c1")
+		# imxEvalByName finds them both
+		# outList = c();
+		# for(aName in row.names(CIlist)) {
+		# 	outList <- append(outList, imxEvalByName(aName, model))
+		# }
+		# # Add estimates into the CIlist
+		# CIlist$estimate = outList
+		# reorder to match summary
+		# CIlist <- CIlist[, c("lbound", "estimate", "ubound")]
+		CIlist$fullName = row.names(CIlist)
+		# Initialise empty matrices for the CI results
+		rows = dim(model$top$matrices$a$labels)[1]
+		cols = dim(model$top$matrices$a$labels)[2]
+		a_CI = c_CI = e_CI = matrix(NA, rows, cols)
 
-			# iterate over each CI
-			labelList = imxGenerateLabels(model)			
-			rowCount = dim(CIlist)[1]
-			# return(CIlist)
-			for(n in 1:rowCount) { # n = 1
-				thisName = row.names(CIlist)[n] # thisName = "a11"
-					# convert labels to [bracket] style
-					if(!umx_has_square_brackets(thisName)) {
-					nameParts = labelList[which(row.names(labelList) == thisName),]
-					CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
-				}
-				fullName = CIlist$fullName[n]
-
-				thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
-				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
-				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
-				CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
-				thisString = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
-
-				if(grepl("^a", thisMatrixName)) {
-					a_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else if(grepl("^c", thisMatrixName)){
-					c_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else if(grepl("^e", thisMatrixName)){
-					e_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else{
-					stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
-				}
+		# iterate over each CI
+		labelList = imxGenerateLabels(model)	
+		rowCount = dim(CIlist)[1]
+		# return(CIlist)
+		for(n in 1:rowCount) { # n = 1
+			thisName = row.names(CIlist)[n] # thisName = "a11"
+				# convert labels to [bracket] style
+				if(!umx_has_square_brackets(thisName)) {
+				nameParts = labelList[which(row.names(labelList) == thisName),]
+				CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
 			}
-			# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
-			# TODO umxSummaryACE: Add option to use mxSE
-			# print(a_CI)
-			# print(c_CI)
-			# print(e_CI)
-			Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = rowNames, stringsAsFactors = FALSE)
-			names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-			Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-			if(report == "html"){
-				# depends on R2HTML::HTML
-				R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
-				umx_open("tmpCI.html")
+			fullName = CIlist$fullName[n]
+
+			thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
+			thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
+			thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
+			CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
+			thisString = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
+
+			if(grepl("^a", thisMatrixName)) {
+				a_CI[thisMatrixRow, thisMatrixCol] = thisString
+			} else if(grepl("^c", thisMatrixName)){
+				c_CI[thisMatrixRow, thisMatrixCol] = thisString
+			} else if(grepl("^e", thisMatrixName)){
+				e_CI[thisMatrixRow, thisMatrixCol] = thisString
+			} else{
+				stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
 			}
-			CI_Fit = model
-			CI_Fit$top$a$values = a_CI
-			CI_Fit$top$c$values = c_CI
-			CI_Fit$top$e$values = e_CI
-		} # end Use CIs
+		}
+		# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
+		# TODO umxSummaryACE: Add option to use mxSE
+		# print(a_CI)
+		# print(c_CI)
+		# print(e_CI)
+		Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = rowNames, stringsAsFactors = FALSE)
+		names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+		Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
+		if(report == "html"){
+			# depends on R2HTML::HTML
+			R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
+			umx_open("tmpCI.html")
+		}
+		CI_Fit = model
+		CI_Fit$top$a$values = a_CI
+		CI_Fit$top$c$values = c_CI
+		CI_Fit$top$e$values = e_CI
+	} # end Use CIs
 	} # end list catcher?
 	
 	
