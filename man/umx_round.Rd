@@ -23,6 +23,7 @@ Helpful for dealing with table output that mixes numeric and string types.
 \examples{
 head(umx_round(mtcars, coerce = FALSE))
 head(umx_round(mtcars, coerce = TRUE))
+
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

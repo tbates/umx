@@ -92,8 +92,9 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umxSummary}}, \code{\link{umx_APA_model_CI}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_names}}, \code{\link{umx_parameters}},
-  \code{\link{umx_print}}, \code{\link{umx_show}},
-  \code{\link{umx_time}}
+  \code{\link{umx_print}},
+  \code{\link{umx_show_fit_or_comparison}},
+  \code{\link{umx_show}}, \code{\link{umx_time}}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
@@ -212,7 +213,8 @@ Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},
   \code{\link{umx_standardize_ACE}},
   \code{\link{umx_standardize_CP}},
   \code{\link{umx_standardize_IP}},
-  \code{\link{umx_standardize_Simplex}}
+  \code{\link{umx_standardize_Simplex}},
+  \code{\link{umx_stash_CIs}}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuHasSquareBrackets}},

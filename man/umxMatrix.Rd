@@ -56,7 +56,7 @@ umxMatrix("test", "Full", 1, 1)
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-- \code{\link{umxLabel}}
+- \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
 
 Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxAlgebra}}, \code{\link{umxPath}},

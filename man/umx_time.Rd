@@ -63,6 +63,7 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umxSummary}}, \code{\link{umx_APA_model_CI}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_names}}, \code{\link{umx_parameters}},
-  \code{\link{umx_print}}, \code{\link{umx_show}},
-  \code{\link{umx}}
+  \code{\link{umx_print}},
+  \code{\link{umx_show_fit_or_comparison}},
+  \code{\link{umx_show}}, \code{\link{umx}}
 }

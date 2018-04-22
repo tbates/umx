@@ -5,31 +5,28 @@
 \alias{umxSummary.MxModel.CP}
 \title{Present the results of a Common-pathway twin model in table and graphical form}
 \usage{
-umxSummaryCP(model, digits = 2, file = getOption("umx_auto_plot"),
-  returnStd = FALSE, extended = FALSE, showRg = FALSE,
-  comparison = NULL, std = TRUE, CIs = FALSE, report = c("markdown",
-  "html"), ...)
+umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FALSE,
+  comparison = NULL, report = c("markdown", "html"),
+  file = getOption("umx_auto_plot"), returnStd = FALSE, ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxCP}} model to summarize}
 
-\item{digits}{round to how many digits (default = 2)}
+\item{digits}{Round to how many digits (default = 2)}
+
+\item{std}{Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)}
+
+\item{CIs}{Confidence intervals (default FALSE)}
+
+\item{showRg}{Whether to show the genetic correlations (default FALSE)}
+
+\item{comparison}{Run mxCompare on a comparison model (default NULL)}
+
+\item{report}{Print tables to the console (as 'markdown'), or open in browser ('html')}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
-
-\item{extended}{how much to report (FALSE)}
-
-\item{showRg}{Whether to show the genetic correlations (FALSE)}
-
-\item{comparison}{Whether to run mxCompare on a comparison model (NULL)}
-
-\item{std}{Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)}
-
-\item{CIs}{Confidence intervals (F)}
-
-\item{report}{c("markdown", "html")}
 
 \item{...}{Optional additional parameters}
 }
@@ -45,15 +42,16 @@ data(twinData)
 twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
 twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
 selDVs = c("ht", "wt")
-mzData <- subset(twinData, zygosity == "MZFF", umx_paste_names(selDVs, "", 1:2))
-dzData <- subset(twinData, zygosity == "DZFF", umx_paste_names(selDVs, "", 1:2))
+mzData <- subset(twinData, zygosity == "MZFF")
+dzData <- subset(twinData, zygosity == "DZFF")
 m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 umxSummaryCP(m1, file = NA) # suppress plot creation with file
 umxSummary(m1, file = NA) # generic summary is the same
-stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = TRUE, 
-		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
-umxSummaryCP(m1, ext = TRUE, file = "name")
-umxSummaryCP(m1, file = "Figure 3", std = TRUE)
+stdFit = umxSummaryCP(m1, digits = 2, std = TRUE, file = NA, returnStd = TRUE);
+umxSummary(m1, std = FALSE, showRg = TRUE, file = NA);
+umxSummary(m1, CIs = TRUE, file = NA);
+umxSummary(m1, std = FALSE, file = NA)
+umxSummary(m1, file = "Figure 3", std = TRUE)
 
 }
 \references{

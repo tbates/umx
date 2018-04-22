@@ -1509,7 +1509,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		# If given covariates, call umxACEcov
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
-				stop("Fixed covaraites are on the roadmap for umx in 2018. Til then, use umx_residualize on the data first.")
+				stop("Fixed covariates are on the roadmap for umx in 2018. 'til then, use umx_residualize on the data first.")
 				# umxACEdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			} else if(covMethod == "random") {
 				umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
@@ -2251,26 +2251,27 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #'
 #' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
 #'
-#' @param name The name of the model (defaults to "CP")
-#' @param selDVs The variables to include
-#' @param dzData The DZ dataframe
-#' @param mzData The MZ dataframe
+#' @param name The name of the model (defaults to "CP").
+#' @param selDVs The variables to include.
+#' @param dzData The DZ dataframe.
+#' @param mzData The MZ dataframe.
 #' @param sep The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
-#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
+#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
 #' @param nFac How many common factors (default = 1)
-#' @param freeLowerA Whether to leave the lower triangle of A free (default = F)
-#' @param freeLowerC Whether to leave the lower triangle of C free (default = F)
-#' @param freeLowerE Whether to leave the lower triangle of E free (default = F)
-#' @param correlatedA ?? (default = FALSE)
-#' @param equateMeans Whether to equate the means across twins (defaults to T)
-#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating)
-#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)
-#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE)
-#' @param addCI Whether to add the interval requests for CIs (defaults to TRUE)
-#' @param numObsDZ = not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data
-#' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data
-#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
-#' @param optimizer optionally set the optimizer (default NULL does nothing)
+#' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
+#' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
+#' @param freeLowerE Whether to leave the lower triangle of E free (default = FALSE).
+#' @param correlatedA ?? (default = FALSE).
+#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
+#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
+#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
+#' @param boundDiag = Numeric lbound for diagonal of the a_cp, c_cp, & e_cp matrices. Set = NULL to ignore.
+#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
+#' @param addCI Whether to add the interval requests for CIs (defaults to TRUE).
+#' @param numObsDZ = not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data.
+#' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.
+#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
+#' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -2290,19 +2291,20 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
 #' }
-umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans=TRUE, dzAr=.5, dzCr=1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+#'
+umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
 	
 	# expand var names
 	selDVs   = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
-	nVar     = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+	nVar     = length(selDVs)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
 	dataType = umx_is_cov(dzData)
 	if(dataType == "raw") {
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
 			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 		}
-		# Drop any unused columns from mz and dzData
+		# Drop any unused columns from MZ and DZ Data
 		mzData = mzData[, selDVs]
 		dzData = dzData[, selDVs]
 		if(any(umx_is_ordered(mzData))){
@@ -2320,7 +2322,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 	if(dataType == "raw"){
 		obsMZmeans = colMeans(mzData, na.rm = TRUE);
 		top = mxModel("top", 
-			# means (not yet equated across twins)
+			# Means (not yet equated across twins)
 			umxMatrix("expMean", type = "Full" , nrow = 1, ncol = (nVar * nSib), 
 				free = TRUE, values = obsMZmeans, dimnames = list("means", selDVs)
 			)
@@ -2374,38 +2376,36 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 			mxAlgebra(diag2vec(L)             , name = "diagL"),
 			mxConstraint(diagL == nFac_Unit   , name = "fix_CP_variances_to_1"),
 
-			umxMatrix("as",          "Lower", nVar, nVar, free = TRUE, values = .5, jiggle = .05), # Additive genetic path 
-			umxMatrix("cs",          "Lower", nVar, nVar, free = TRUE, values = .1, jiggle = .05), # Common environmental path 
-			umxMatrix("es",          "Lower", nVar, nVar, free = TRUE, values = .6, jiggle = .05), # Unique environmental path
-			umxMatrix("cp_loadings", "Full" , nVar, nFac, free = TRUE, values = .6, jiggle = .05), # loadings on latent phenotype
+			umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .5, jiggle = .05), # Additive gen path 
+			umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1, jiggle = .05), # Common env path 
+			umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .6, jiggle = .05), # Unique env path
+			umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .6, jiggle = .05), # loadings on latent phenotype
 			# Quadratic multiplication to add cp_loading effects
 			mxAlgebra(cp_loadings %&% A_cp + as %*% t(as), name = "A"), # Additive genetic variance
 			mxAlgebra(cp_loadings %&% C_cp + cs %*% t(cs), name = "C"), # Common environmental variance
 			mxAlgebra(cp_loadings %&% E_cp + es %*% t(es), name = "E"), # Unique environmental variance
 			mxAlgebra(name = "ACE", A + C + E),
-			mxAlgebra(name = "AC" , A+ C),
+			mxAlgebra(name = "AC" , A + C),
 			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 			mxAlgebra(rbind (cbind(ACE, AC), 
-			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name="expCovMZ"),
+			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name= "expCovMZ"),
 			mxAlgebra(rbind (cbind(ACE, hAC),
-			                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name="expCovDZ")
+			                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name= "expCovDZ")
 		),
 		MZ, DZ,
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
-		# mxCI(c('top.a_cp'))
 	)
-	# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
+	# Equate means for twin1 and twin 2 (match labels in first & second halves of means labels matrix)
 	if(equateMeans & dataType == "raw"){
 		model = omxSetParameters(model,
 		  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMeanr1c4", "expMeanr1c5", "expMeanr1c6"),
-		  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
+		  newlabels = paste0("expMean_r1c", 1:nVar) # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
 		)
 	}
 	if(!freeLowerA){
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
 	}
-
 	if(!freeLowerC){
 		toset  = model$top$matrices$cs$labels[lower.tri(model$top$matrices$cs$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
@@ -2433,8 +2433,26 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 			model = mxModel(model, mxCI(c('top.a_cp', 'top.c_cp', 'top.e_cp', 'top.as_std', 'top.cs_std', 'top.es_std', 'top.cp_loadings_std')))
 		}
 	}
-	model = omxAssignFirstParameters(model) # Just trundle through and make sure values with the same label have the same start value... means for instance.
+	if(!is.null(boundDiag)){
+		if(!is.numeric(boundDiag)){
+			stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))
+		} else {				
+			newLbound = model$top$matrices$a_cp@lbound
+			if(length(boundDiag) > 1 ){
+				if(length(boundDiag) != length(diag(newLbound)) ){
+					stop("Typically boundDiag is 1 digit: if more, must be size of diag(a_cp)")
+				}
+			}
+			diag(newLbound) = boundDiag; 
+			model$top$a_cp$lbound = newLbound
+			model$top$c_cp$lbound = newLbound
+			model$top$e_cp$lbound = newLbound
+		}
+	}
+	# Set values with the same label to the same start value... means for instance.
+	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModel.CP")
+	
 	if(autoRun){
 		model = mxRun(model)
 		umxSummary(model)
@@ -2954,11 +2972,11 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @return - \code{\link{mxMatrix}}
 #' @export
 #' @family Core Modelling Functions
-#' @seealso - \code{\link{umxLabel}}
+#' @seealso - \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umxMatrix("test", "Full", 1, 1)
-umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA, byrow = getOption('mxByrow'), dimnames = NA, condenseSlots=getOption('mxCondenseMatrixSlots'), ..., joinKey=as.character(NA), joinModel=as.character(NA), jiggle = NA) {
+umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA, byrow = getOption('mxByrow'), dimnames = NA, condenseSlots = getOption('mxCondenseMatrixSlots'), ..., joinKey = as.character(NA), joinModel = as.character(NA), jiggle = NA) {
 	legalMatrixTypes = c("Diag", "Full", "Iden", "Lower", "Sdiag", "Stand", "Symm", "Unit",  "Zero")
 	if(name %in% legalMatrixTypes){
 		stop("You used ", name, "as the name of your matrix. You might be used to mxMatrix, where type comes first? But it is not a legal matrix name.")

@@ -7,48 +7,50 @@
 umxCP(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
   correlatedA = FALSE, equateMeans = TRUE, dzAr = 0.5, dzCr = 1,
-  addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
+  numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
-\item{name}{The name of the model (defaults to "CP")}
+\item{name}{The name of the model (defaults to "CP").}
 
-\item{selDVs}{The variables to include}
+\item{selDVs}{The variables to include.}
 
-\item{dzData}{The DZ dataframe}
+\item{dzData}{The DZ dataframe.}
 
-\item{mzData}{The MZ dataframe}
+\item{mzData}{The MZ dataframe.}
 
 \item{sep}{The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
-omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
+omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{nFac}{How many common factors (default = 1)}
 
-\item{freeLowerA}{Whether to leave the lower triangle of A free (default = F)}
+\item{freeLowerA}{Whether to leave the lower triangle of A free (default = FALSE).}
 
-\item{freeLowerC}{Whether to leave the lower triangle of C free (default = F)}
+\item{freeLowerC}{Whether to leave the lower triangle of C free (default = FALSE).}
 
-\item{freeLowerE}{Whether to leave the lower triangle of E free (default = F)}
+\item{freeLowerE}{Whether to leave the lower triangle of E free (default = FALSE).}
 
-\item{correlatedA}{?? (default = FALSE)}
+\item{correlatedA}{?? (default = FALSE).}
 
-\item{equateMeans}{Whether to equate the means across twins (defaults to T)}
+\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
-\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating)}
+\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
-\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model)}
+\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
-\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE)}
+\item{boundDiag}{= Numeric lbound for diagonal of the a_cp, c_cp, & e_cp matrices. Set = NULL to ignore.}
 
-\item{addCI}{Whether to add the interval requests for CIs (defaults to TRUE)}
+\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
 
-\item{numObsDZ}{= not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data}
+\item{addCI}{Whether to add the interval requests for CIs (defaults to TRUE).}
 
-\item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data}
+\item{numObsDZ}{= not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data.}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+\item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.}
 
-\item{optimizer}{optionally set the optimizer (default NULL does nothing)}
+\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
+
+\item{optimizer}{optionally set the optimizer (default NULL does nothing).}
 }
 \value{
 - \code{\link{mxModel}}
@@ -125,6 +127,7 @@ m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 umxSummaryCP(m2, comparison = m1, file = NA)
 umxCompare(m1, m2)
 }
+
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

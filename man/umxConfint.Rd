@@ -6,7 +6,7 @@
 \usage{
 umxConfint(object, parm = c("existing", "smart", "all",
   "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95,
-  run = FALSE, showErrorCodes = FALSE, optimizer = c("SLSQP",
+  run = FALSE, showErrorCodes = FALSE, optimizer = c("current", "SLSQP",
   "NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4"))
 }
 \arguments{

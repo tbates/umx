@@ -1,3 +1,4 @@
+# system("mdimport ~/bin/umx/R")
 #
 #   Copyright 2007-2018 Timothy C. Bates
 #
@@ -989,15 +990,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		}
 	} else {
 		umx_has_been_run(model, stop = TRUE)
-		if(is.null(comparison)){
-			 # \u00d7 = times sign
-			 message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
-				round(-2 * logLik(model), digits=digits))
-			)
-		} else {
-			message("Comparison of model with parent model:")
-			umxCompare(comparison, model, digits = 3)
-		}
+		umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar <- length(selDVs)/2;
 		# TODO umxSummaryACE these already exist if a_std exists..
@@ -1226,15 +1219,7 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
-	if(is.null(comparison)){
-		 # \u00d7 = times sign
-		 message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
-			round(-2 * logLik(model), digits=digits))
-		)
-	} else {
-		message("Comparison of model with parent model:")
-		umxCompare(comparison, model, digits = 3)
-	}
+	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 	selDVs = dimnames(model$top$a)[[1]]
 	# selDVs = dimnames(model$top.expCovMZ)[[1]]
 	nDV <- length(selDVs);
@@ -1397,15 +1382,14 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #'
 #' @aliases umxSummary.MxModel.CP
 #' @param model A fitted \code{\link{umxCP}} model to summarize
-#' @param digits round to how many digits (default = 2)
+#' @param digits Round to how many digits (default = 2)
+#' @param std Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)
+#' @param CIs Confidence intervals (default FALSE)
+#' @param showRg Whether to show the genetic correlations (default FALSE)
+#' @param comparison Run mxCompare on a comparison model (default NULL)
+#' @param report Print tables to the console (as 'markdown'), or open in browser ('html')
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
-#' @param extended how much to report (FALSE)
-#' @param showRg Whether to show the genetic correlations (FALSE)
-#' @param std Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)
-#' @param comparison Whether to run mxCompare on a comparison model (NULL)
-#' @param CIs Confidence intervals (F)
-#' @param report c("markdown", "html")
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @export
@@ -1418,24 +1402,20 @@ umxSummary.MxModel.ACEcov <- umxSummaryACEcov
 #' twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
 #' twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
 #' selDVs = c("ht", "wt")
-#' mzData <- subset(twinData, zygosity == "MZFF", umx_paste_names(selDVs, "", 1:2))
-#' dzData <- subset(twinData, zygosity == "DZFF", umx_paste_names(selDVs, "", 1:2))
+#' mzData <- subset(twinData, zygosity == "MZFF")
+#' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
 #' umxSummaryCP(m1, file = NA) # suppress plot creation with file
 #' umxSummary(m1, file = NA) # generic summary is the same
-#' stdFit = umxSummaryCP(m1, digits = 2, file = NA, returnStd = TRUE, 
-#' 		extended = FALSE, showRg = TRUE, std = TRUE, CIs = TRUE);
-#' umxSummaryCP(m1, ext = TRUE, file = "name")
-#' umxSummaryCP(m1, file = "Figure 3", std = TRUE)
+#' stdFit = umxSummaryCP(m1, digits = 2, std = TRUE, file = NA, returnStd = TRUE);
+#' umxSummary(m1, std = FALSE, showRg = TRUE, file = NA);
+#' umxSummary(m1, CIs = TRUE, file = NA);
+#' umxSummary(m1, std = FALSE, file = NA)
+#' umxSummary(m1, file = "Figure 3", std = TRUE)
 #'
-umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, 
-    extended = FALSE, showRg = FALSE, comparison = NULL, std = TRUE, CIs = FALSE, report = c("markdown", "html"), ...) {
+umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FALSE, comparison = NULL, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE,...) {
 	report = match.arg(report)
-	# TODO: example does not need to spec var names in data select
-	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D"
-	if(!std){
-		stop("TODO: I currently always standardize CP model output. e-mail tim to get this turned off")
-	}
+	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
 
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
@@ -1443,46 +1423,29 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 			umxSummaryCP(thisFit, digits = digits, file = file, returnStd = returnStd, extended = extended, showRg = showRg, comparison = comparison, std = std, CIs = CIs)
 		}
 	} else {
-		if(class(model)[1] != "MxModel.CP"){
-			stop("You used umxSummaryCP on model of class ", class(model)[1], "not 'MxModel.CP'")
-		}
-		umx_has_been_run(model, stop = TRUE)
-		if(is.null(comparison)){
-			 # \u00d7 = times sign
-			 message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
-				round(-2 * logLik(model), digits=digits))
-			)
-		}else{
-			message("Comparison of model with parent model:")
-			print(mxCompare(comparison, model))
-		}
+		umx_check_model(model, "MxModel.CP", beenRun = TRUE, callingFn = "umxSummaryCP")
+		umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
-		nVar   = length(selDVs)/2;
+		nVar   = length(selDVs)/2
 		nFac   = dim(model$top$matrices$a_cp)[[1]]	
-		# MZc = mxEval(MZ.expCov,  model); # Same effect as expCovMZ$matrices$twinACEFit
-		# DZc = mxEval(DZ.expCov,  model);
-		# M   = mxEval(MZ.expMean, model);
-		# Calculate standardized variance components
-		a_cp  = mxEval(top.a_cp, model); # nFac * nFac matrix of path coefficients flowing into the cp_loadings array
-		c_cp  = mxEval(top.c_cp, model);
-		e_cp  = mxEval(top.e_cp, model);
-		as = mxEval(top.as, model); # Specific factor path coefficients
-		cs = mxEval(top.cs, model);
-		es = mxEval(top.es, model);
-		cp_loadings = mxEval(top.cp_loadings, model); # nVar * nFac matrix
-		A  = mxEval(top.A, model);  # Variances
-		C  = mxEval(top.C, model);
-		E  = mxEval(top.E, model);
-		Vtot = A + C + E; # Total variance
-		nVarIden = diag(nVar)
-		SD       = solve(sqrt(nVarIden * Vtot)); # inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
-		# print(SD)  # nVar*nVar diagonal matrix
 
-		# Common factor ACE inputs are already std to 1: Just print out
-		commonACE = cbind(diag(a_cp), diag(c_cp), diag(e_cp)) # Bind columns of a, c and e into nFac-rows * 3 matrix
-		commonACE = data.frame(commonACE, row.names = paste("Common.factor", 1:nFac, sep = "."));
-		names(commonACE) = c ("A", "C", "E")
+		if(CIs){
+			oldModel = model # Cache this in case we need it (CI stash model has string where values should be).
+			model = umx_stash_CIs(model, digits = digits, dropZeros = TRUE, stdAlg2mat = TRUE)
+		} else if(any(c(std, returnStd))) {
+			model = umx_standardize_CP(model) # Make a standardized copy of model
+		}
+
 		message("## Common Factor paths")
+		a_cp = model$top$a_cp$values # nFac * nFac matrix of path coefficients flowing into cp_loadings
+		c_cp = model$top$c_cp$values
+		e_cp = model$top$e_cp$values
+
+		# Common factor ACE inputs are std to 1
+		# Bind diags of a_cp, c and e columns into nFac-row matrix
+		commonACE = cbind(diag(a_cp), diag(c_cp), diag(e_cp)) 
+		commonACE = data.frame(commonACE, row.names = paste("Common.factor", 1:nFac, sep = "."), stringsAsFactors = FALSE);
+		names(commonACE) = c ("A", "C", "E")
 		if(report == "html"){
 			umx_print(commonACE, digits = digits, zero.print = ".", file = "std_spec.html")
 		} else {
@@ -1493,60 +1456,42 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 			message("You used correlated genetic inputs to the common factor. This is the a_cp matrix")
 			print(a_cp)
 		}
-		stdFit = umx_standardize_CP(model) # Make a standardized copy of model
-		# Get standardized loadings on Common factors
-		std_cp_loadings = mxEval(top.cp_loadings, stdFit); # Standardized path coefficients (general factor(s))		
-		rowNames = sub("(_T)?1$", "", selDVs[1:nVar])		
-		std_CommonEstimate = data.frame(std_cp_loadings, row.names = rowNames);
-		names(std_CommonEstimate) = paste0("CP", 1:length(names(std_CommonEstimate)))
+		
 		message("## Loading of each trait on the Common Factors")
+		# Get standardized loadings on Common factors
+		rowNames = sub("(_T)?1$", "", selDVs[1:nVar]) # Clean up names
+		cp_loadings = model$top$cp_loadings$values # nVar * nFac matrix
+		cp_loadings = data.frame(cp_loadings, row.names = rowNames, stringsAsFactors = FALSE);
+		names(cp_loadings) = paste0("CP", 1:length(names(cp_loadings)))
 		if(report == "html"){
-			umx_print(std_CommonEstimate, digits = digits, zero.print = ".", file = "std_common.html");
+			umx_print(cp_loadings, digits = digits, zero.print = ".", file = "std_common.html");
 		} else {
-			umx_print(std_CommonEstimate, digits = digits, zero.print = ".")
+			umx_print(cp_loadings, digits = digits, zero.print = ".")
 		}
 
+		message("## Specific-factor loadings")
+		# Specific path coefficients ready to be stacked together
+		as   = model$top$as$values # Specific factor path coefficients
+		cs   = model$top$cs$values
+		es   = model$top$es$values
 
-		# Standard specific path coefficients ready to be stacked together
-		as_std <- mxEval(top.as, stdFit);
-		cs_std <- mxEval(top.cs, stdFit);
-		es_std <- mxEval(top.es, stdFit);
-
-		message("## Specific-factor loadings (std)")
-		std_Specifics = data.frame(row.names = paste0('Specific ', c('a', 'c', 'e')),
-			rbind(
-				diag(as_std), 
-				diag(cs_std),
-				diag(es_std)
-			)
+		specifics = data.frame(row.names = paste0('Specific ', c('a', 'c', 'e')), stringsAsFactors = FALSE,
+			rbind(diag(as), 
+				  diag(cs),
+				  diag(es))
 		)
-		names(std_Specifics) = rowNames;
+		names(specifics) = rowNames;
 
 		if(report == "html"){
-			umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".", file = "std_spec.html")
+			umx_print(specifics, digits = digits, zero.print = ".", file = "std_spec.html")
 		} else {
-			umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".")
+			umx_print(specifics, digits = digits, zero.print = ".")
 		}
 		
-		if(extended == TRUE) {
-			cat("\nUnstandardized path coefficients\n") # factor loadings
-			print(round(commonACE, digits)); # Loadings on Common factor
-			print(round(data.frame(cp_loadings, row.names = rowNames), digits));
-			# specifics
-			asClean = as
-			csClean = cs
-			esClean = es
-			asClean[upper.tri(asClean)] = NA
-			csClean[upper.tri(csClean)] = NA
-			esClean[upper.tri(esClean)] = NA
-			unStandardized_specifics = data.frame(cbind(asClean, csClean, esClean), row.names = rowNames);
-			names(unStandardized_specifics) = paste(rep(c("as", "cs", "es"), each = nVar), rep(1:nVar), sep = "");
-			umx_print(unStandardized_specifics, digits = digits, zero.print = ".")
-		}
 		if(showRg) {
 			message("Genetic Correlations")
 			# Pre & post multiply covariance matrix by inverse of standard deviations
-			NAmatrix <- matrix(NA,nVar,nVar);
+			NAmatrix <- matrix(NA, nVar, nVar);
 			rA = tryCatch(solve(sqrt(nVarIden * A)) %*% A %*% solve(sqrt(nVarIden * A)), error = function(err) return(NAmatrix)); # genetic correlations
 			rC = tryCatch(solve(sqrt(nVarIden * C)) %*% C %*% solve(sqrt(nVarIden * C)), error = function(err) return(NAmatrix)); # shared environmental correlations
 			rE = tryCatch(solve(sqrt(nVarIden * E)) %*% E %*% solve(sqrt(nVarIden * E)), error = function(err) return(NAmatrix)); # Unique environmental correlations
@@ -1560,14 +1505,11 @@ umxSummaryCP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 			}
 			
 		}
-		if(CIs){
-			message("Showing CIs in output not implemented yet: use summary(model) to view them in the mean time")
-		}
 		if(!is.na(file)){
-			umxPlotCP(stdFit, file = file, digits = digits, std = FALSE, means = FALSE)
+			umxPlotCP(model, file = file, digits = digits, std = FALSE, means = FALSE)
 		}
 		if(returnStd) {
-			return(stdFit)
+			invisible(model)
 		}
 	}
 }
@@ -1599,31 +1541,18 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' data(GFF) # family function and wellbeing data
 #' mzData <- subset(GFF, zyg_2grp == "MZ")
 #' dzData <- subset(GFF, zyg_2grp == "DZ")
-#' selDVs = c("hap","sat","AD") # These will be expanded into "hap_T1" "hap_T2" etc.
+#' selDVs = c("hap", "sat", "AD") # These will be expanded into "hap_T1" "hap_T2" etc.
 #' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 #' umxSummaryIP(m1)
 #' plot(m1)
 #' \dontrun{
 #' umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 #' }
-umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
-    returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL, CIs = FALSE, ...) {
-	if(class(model)[1] != "MxModel.IP"){
-		stop("You used umxSummaryIP on model of class ", class(model)[1], "not 'MxModel.IP'")
-	}
+umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL, CIs = FALSE, ...) {
+	umx_check_model(model, "MxModel.IP", beenRun = TRUE, callingFn = "umxSummaryIP")
+	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 
-	umx_has_been_run(model, stop = TRUE)
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
-
-	if(is.null(comparison)){
-		# message(model$name, " -2 \u00d7 log(Likelihood)") # \u00d7 = times sign
-		# print(-2 * logLik(model));
-		message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", round(-2 * logLik(model), digits=digits))) # \u00d7 = times sign
-	}else{
-		message("Comparison of model with parent model:")
-		print(mxCompare(comparison, model))
-	}
-
 	stdFit = model; # If we want to output a model with the standardized values (perhaps for drawing a path diagram)
 	nVar   = length(selDVs)/2;
 	# how to detect how many factors are present?
@@ -2498,7 +2427,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
 	format = match.arg(format)
-	model = x # just to emphasize that x has to be a model 
+	model = x # just to emphasise that x has to be a model 
 	if(std){
 		model = umx_standardize_CP(model)
 	}
@@ -2507,25 +2436,23 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	varCount = dim(model$top$as$values)[[1]]
 	selDVs   = dimnames(model$MZ$data$observed)[[2]]
 	selDVs   = selDVs[1:(varCount)]
-	selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
+	selDVs   = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 
 	parameterKeyList = omxGetParameters(model)
 	out = "";
-	cSpecifics = c();
 	latents = c();
+	cSpecifics = c();
 	for(thisParam in names(parameterKeyList) ) {
-		# top level a c e
+		# Top level a c e
 		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { 
 			# top level a c e, e.g. thisParam = "c_cp_r1c3"
 			# row = common factor number
-			from = sub("^([ace]_cp)_r([0-9])", '\\1\\2', thisParam, perl=TRUE);
-			from = sub("^([ace]_cp)_r([0-9])", '\\1\\2', thisParam, perl=T);
-			target = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl=TRUE);
+			from   = sub("^([ace]_cp)_r([0-9])"  , '\\1\\2'   , thisParam, perl= TRUE);
+			target = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl= TRUE);
 			latents = append(latents,from);
 		} else if (grepl("^cp_loadings_r[0-9]+", thisParam)) {
 			# common loading cp_loadings_r1c1
-			from    = sub("^cp_loadings_r([0-9]+)c([0-9]+)", "common\\2", thisParam, perl=TRUE);
-			# from    = "common";
+			from    = sub("^cp_loadings_r([0-9]+)c([0-9]+)", "common\\2", thisParam, perl= TRUE);
 			thisVar = as.numeric(sub('cp_loadings_r([0-9]+)c([0-9]+)', '\\1', thisParam, perl = TRUE));
 			target  = selDVs[as.numeric(thisVar)]
 			latents = append(latents,from);

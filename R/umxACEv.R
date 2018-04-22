@@ -670,18 +670,10 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 			umxSummaryACE(thisFit, digits = digits, file = file, showRg = showRg, std = std, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
 		}
 	} else {
-		umx_has_been_run(model, stop = TRUE)
-		if(is.null(comparison)){
-			# \u00d7 = times sign
-		 	message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
-				round(-2 * logLik(model), digits=digits))
-			)
-	} else {
-		message("Comparison of model with parent model:")
-		umxCompare(comparison, model, digits = 3)
-	}
+	umx_has_been_run(model, stop = TRUE)
+	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
-	nVar <- length(selDVs)/2;
+	nVar   = length(selDVs)/2;
 	# TODO umxSummaryACEv these already exist if a_std exists..
 	# TODO replace all this with umx_standardizeACE
 	# Calculate standardized variance components

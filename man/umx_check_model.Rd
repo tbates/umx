@@ -5,7 +5,7 @@
 \title{Check for required features in an OpenMx.}
 \usage{
 umx_check_model(obj, type = NULL, hasData = NULL, beenRun = NULL,
-  hasMeans = NULL, checkSubmodels = FALSE)
+  hasMeans = NULL, checkSubmodels = FALSE, callingFn = "a function")
 }
 \arguments{
 \item{obj}{an object to check}
@@ -19,6 +19,8 @@ umx_check_model(obj, type = NULL, hasData = NULL, beenRun = NULL,
 \item{hasMeans}{whether the model should have a means model or not (defaults to not checking NULL)}
 
 \item{checkSubmodels}{whether to check submodels (not implemented yet) (default = FALSE)}
+
+\item{callingFn}{= To help user interprete error, add the name of the calling function.}
 }
 \value{
 - boolean

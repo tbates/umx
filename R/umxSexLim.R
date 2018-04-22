@@ -329,16 +329,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
-	if(is.null(comparison)){
-		 # \u00d7 = times sign
-		 message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
-			round(-2 * logLik(model), digits=digits))
-		)
-	} else {
-		message("Comparison of model with parent model:")
-		umxCompare(comparison, model, digits = 3)
-	}
-
+	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 	selVars = model$MZm$expectation$dims
 	selDVs  = dimnames(model$top$VarsZm$result)[[1]]
 	nVar    = length(selDVs)

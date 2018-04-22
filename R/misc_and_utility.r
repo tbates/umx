@@ -1989,7 +1989,7 @@ rowMin <- function(df, na.rm= TRUE) {
 #' @examples
 #' head(umx_round(mtcars, coerce = FALSE))
 #' head(umx_round(mtcars, coerce = TRUE))
-
+#'
 umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 	if(is.matrix(df)){
 		df = data.frame(df)
@@ -2013,6 +2013,37 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 		}
 	}
 	return(df)
+}
+
+#' Show model logLik of model or print comparison table
+#'
+#' @description
+#' Just a helper to show the logLik of a model or print a comparison table is a function which 
+#'
+#' @details
+#'
+#' @param model an \code{\link{mxModel}} to report on
+#' @param comparison If not NULL, used as comparison model
+#' @param digits (default = 2)
+#' @return - 
+#' @export
+#' @family Reporting Functions
+#' @seealso - \code{\link{umxSummary}}
+#' @examples
+#' \dontrun{
+#' umx_show_fit_or_comparison(model, comparison, digits=3)
+#' }
+#'
+umx_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
+	if(is.null(comparison)){
+		# \u00d7 = times sign
+		message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
+			round(-2 * logLik(model), digits = digits))
+		)
+	} else {
+		message("Comparison of model with parent model:")
+		umxCompare(comparison, model, digits = digits)
+	}		
 }
 
 specify_decimal <- function(x, k){
@@ -3327,6 +3358,7 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @param beenRun whether the model has been run or not (defaults to not checking NULL)
 #' @param hasMeans whether the model should have a means model or not (defaults to not checking NULL)
 #' @param checkSubmodels whether to check submodels (not implemented yet) (default = FALSE)
+#' @param callingFn = To help user interprete error, add the name of the calling function.
 #' @return - boolean
 #' @export
 #' @family Test
@@ -3350,20 +3382,23 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' umx_check_model(m1, hasMeans = TRUE)
 #' umx_check_model(m1, beenRun = FALSE)
 #' }
-umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, hasMeans = NULL, checkSubmodels = FALSE) {
+umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, hasMeans = NULL, checkSubmodels = FALSE, callingFn = "a function") {
 	# TODO umx_check_model check hasSubmodels = FALSE
-	# TODO umx_check_model fix so it respects true and false...
+	# TODO umx_check_model fix so it respects TRUE and FALSE...
 	if (!umx_is_MxModel(obj)) {
 		stop("'model' must be an mxModel")
 	}
 	if(is.null(type)){
-		#no check
+		# No check
 	}else if(type == "RAM"){
 		if (!umx_is_RAM(obj)) {
-			stop("'model' must be an RAMModel")
+			stop(paste0("'model' must be an RAMModel for use with ", callingFn))
 		}
 	} else {
-		message(paste("type", sQuote(type), "not handled yet"))
+		# Assume type is a class string
+		if(class(obj)[1] != type){
+			stop("You used ", callingFn, " on a model of class ", class(model)[1], "not ", omxQuotes(type))
+		}
 	}
 	if(checkSubmodels){
 		if (length(obj$submodels) > 0) {

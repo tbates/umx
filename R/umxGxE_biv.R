@@ -345,15 +345,7 @@ umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "t
 		message("umxSummaryGxE_biv calls plot.MxModel.GxE_biv for a twin moderation plot. A use example is:\n umxSummaryGxE_biv(model, location = \"topright\")")
 		stop();
 	}
-	if(is.null(comparison)){
-		 # \u00d7 = times sign
-		 message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
-			round(-2 * logLik(model), digits=digits))
-		)
-	} else {
-		message("Comparison of model with parent model:")
-		umxCompare(comparison, model, digits = 3)
-	}
+	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 	selDVs = model$MZm$expectation$dims
 	nVar <- length(selDVs)/2;
 	# TODO umxSummaryACE these already exist if a_std exists..
@@ -450,11 +442,11 @@ umxPlotGxE_biv <- function(x, xlab = NA, location = "topleft", separateGraphs = 
 	if(is.na(xlab)){
 		xlab = selDefs[1]
 	}
-	mzdef1 = as.vector(mzData[,selDefs[1]])
-	mzdef2 = as.vector(mzData[,selDefs[2]])
-	dzdef1 = as.vector(dzData[,selDefs[1]])
-	dzdef2 = as.vector(dzData[,selDefs[2]])
-	allValuesOfDefVar= c(mzdef1,mzdef2, dzdef1, dzdef2)
+	mzdef1 = as.vector(mzData[, selDefs[1]])
+	mzdef2 = as.vector(mzData[, selDefs[2]])
+	dzdef1 = as.vector(dzData[, selDefs[1]])
+	dzdef2 = as.vector(dzData[, selDefs[2]])
+	allValuesOfDefVar= c(mzdef1, mzdef2, dzdef1, dzdef2)
 	defVarValues = sort(unique(allValuesOfDefVar))
 	
 	a11 = model$top.a11$values
