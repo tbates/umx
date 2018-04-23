@@ -1994,9 +1994,16 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 	if(is.matrix(df)){
 		df = data.frame(df)
 	}
-
 	if(!is.data.frame(df)){
-		stop("df input for umx_round must be a dataframe")
+		if(is.null(dim(df))){
+			if(coerce){
+				return(round(as.numeric(df), digits))
+			}else{
+				return(round(df, digits))
+			}
+		} else {
+			stop("df input for umx_round must be a dataframe")
+		}
 	}
 	# for each column, if numeric, round
 	rows = dim(df)[1]

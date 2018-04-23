@@ -2445,30 +2445,29 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	for(thisParam in names(parameterKeyList) ) {
 		# Top level a c e
 		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { 
-			# top level a c e, e.g. thisParam = "c_cp_r1c3"
-			# row = common factor number
+			# Match cp latents, e.g. thisParam = "c_cp_r1c3" (note, row = factor #)
 			from   = sub("^([ace]_cp)_r([0-9])"  , '\\1\\2'   , thisParam, perl= TRUE);
 			target = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl= TRUE);
-			latents = append(latents,from);
+			latents = append(latents,from)
 		} else if (grepl("^cp_loadings_r[0-9]+", thisParam)) {
-			# common loading cp_loadings_r1c1
-			from    = sub("^cp_loadings_r([0-9]+)c([0-9]+)", "common\\2", thisParam, perl= TRUE);
-			thisVar = as.numeric(sub('cp_loadings_r([0-9]+)c([0-9]+)', '\\1', thisParam, perl = TRUE));
+			# Match common loading string e.g. "cp_loadings_r1c1"
+			from    = sub("^cp_loadings_r([0-9]+)c([0-9]+)"    , "common\\2", thisParam, perl= TRUE);
+			thisVar = as.numeric(sub('cp_loadings_r([0-9]+)c([0-9]+)', '\\1', thisParam, perl= TRUE));
 			target  = selDVs[as.numeric(thisVar)]
-			latents = append(latents,from);
+			latents = append(latents,from)
 		} else if (grepl("^[ace]s_r[0-9]", thisParam)) {
-			# specifics, e.g. thisParam = "es_r10c10"
+			# Match specifics, e.g. thisParam = "es_r10c10"
 			grepStr = '([ace]s)_r([0-9]+)c([0-9]+)'
-			from    = sub(grepStr, '\\1\\3', thisParam, perl=TRUE);
-			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl=TRUE));
+			from    = sub(grepStr, '\\1\\3', thisParam, perl= TRUE);
+			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl= TRUE));
 			target  = selDVs[as.numeric(targetindex)]			
-			latents = append(latents, from);
+			latents = append(latents, from)
 			cSpecifics = append(cSpecifics, from);
 		} else if (grepl("^expMean", thisParam)) { # means probably expMean_r1c1
 			grepStr = '(^.*)_r([0-9]+)c([0-9]+)'
-			from    = "one";
-			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl=TRUE));
-			target  = selDVs[as.numeric(targetindex)];
+			from    = "one"
+			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl= TRUE))
+			target  = selDVs[as.numeric(targetindex)]
 		} else {
 			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
 			"If you are using umxModify to make newLabels, re-use one of the existing labels to help plot()")
@@ -2476,9 +2475,13 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 		if(from == "one" & !means ){
 			# not adding means...
 		} else {
+			# Get parameter value and make the plot string
+			# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
+			# If the model already has CIs stashed umx_stash_CIs() then pointless and harmful.
+			# Also fails to understand not using _std?
 			CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits)
 			if(is.na(CIstr)){
-				val = round(parameterKeyList[thisParam], digits)
+				val = umx_round(parameterKeyList[thisParam], digits)
 			}else{
 				val = CIstr
 			}
@@ -3666,6 +3669,7 @@ umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd
 #' umx_APA_pval(c(1.23E-3, .5))
 #' umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
+	# TODO delete in favor of umxAPA?
 	# leave addComparison as NA to add only when needed
 	if(length(p) > 1){
 		o = rep(NA, length(p))
@@ -3936,11 +3940,11 @@ summaryAPA <- umxAPA
 #'
 #' @param model an \code{\link{mxModel}} to get CIs from
 #' @param cellLabel the label of the cell to interrogate for a CI, e.g. "ai_r1c1"
-#' @param prefix This submodel to look in (i.e. "top.")
+#' @param prefix The submodel to look in (i.e. "top.")
 #' @param suffix The suffix for algebras ("_std")
 #' @param digits = 2
 #' @param verbose = FALSE
-#' @return - the CI string, e.g. ".73 [-.2, .98]"
+#' @return - the CI string, e.g. ".73[-.20,.98]"
 #' @export
 #' @family Reporting Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
@@ -3949,32 +3953,35 @@ summaryAPA <- umxAPA
 #' umx_APA_model_CI(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")
 #' }
 umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std", digits = 2, verbose= FALSE){
+	# TODO umx_APA_model_CI add choice of separator for CI
+	# TODO alias umx_APA_model_CI to umx_get_CI
 	if(!umx_has_CIs(model)){
 		if(verbose){
 			message("no CIs")
 		}
 		return(NA)
 	} else {
-		# we want "top.ai_std[1,1]" from "ai_r1c1"
+		# We want "top.ai_std[1,1]" from "ai_r1c1"
 		result = tryCatch({
 			grepStr = '^(.*)_r([0-9]+)c([0-9]+)$' # 1 = matrix names, 2 = row, 3 = column
 			mat = sub(grepStr, '\\1', cellLabel, perl = TRUE);
 			row = sub(grepStr, '\\2', cellLabel, perl = TRUE);
 			col = sub(grepStr, '\\3', cellLabel, perl = TRUE);
-		
-			z = model$output$confidenceIntervals
-			dimIndex = paste0(prefix, mat, suffix, "[", row, ",", col, "]")
+			# prefix = "top."
+			CIlist      = model$output$confidenceIntervals
+			dimIndex    = paste0(prefix, mat, suffix, "[", row, ",", col, "]")
+			dimNoSuffix = paste0(prefix, mat, "[", row, ",", col, "]")
 
-			intervalNames = dimnames(z)[[1]]
-			
-			
+			intervalNames = dimnames(CIlist)[[1]]
+			if(dimIndex %in% intervalNames){
+				check = dimIndex
+			} else {
+				check = dimNoSuffix
+			}
 			APAstr = paste0(
-				umx_APA_pval(z[dimIndex, "estimate"], min = -1, digits = digits),
-				" [",
-				umx_APA_pval(z[dimIndex, "lbound"], min = -1, digits = digits),
-				", ",
-				umx_APA_pval(z[dimIndex, "ubound"], min = -1, digits = digits),
-				"]"
+				umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "[",
+				umx_APA_pval(CIlist[check, "lbound"], min = -1, digits = digits)  , ",",
+				umx_APA_pval(CIlist[check, "ubound"], min = -1, digits = digits)  , "]"
 			)
 		    return(APAstr) 
 		}, warning = function(cond) {

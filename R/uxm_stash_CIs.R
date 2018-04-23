@@ -20,6 +20,7 @@
 #' }
 umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {
 	# model = cp3h
+	# TODO rationalize with umx_APA_model_CI
 	if(!umx_has_CIs(model, "output")) {
 		if(umx_has_CIs(model, "intervals")){
 			stop("Please run the intervals first: mxConfint(... run= TRUE)")
@@ -47,12 +48,12 @@ umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRU
 
 		# Make a CI report string "x[a,b]"
 		CIparts  = umx_round(thisCI, digits)
-		CIString = paste0(CIparts["estimate"], "[",CIparts["lbound"], ",",CIparts["ubound"], "]")
+		CIString = paste0(CIparts["estimate"], "[",CIparts["lbound"], ",", CIparts["ubound"], "]")
 		if(umx_has_square_brackets(CIname)) {
 			# Break out bracket address
 			# TODO make robust to missing elements, like submodel
 			# (was hard coded as top, but might not exist...)
-			thisSub = sub("(.*)\\.([^\\.]*)\\[.*", replacement = "\\1", x = CIname) #(model).
+			thisSub = sub("(.*)\\.([^\\.]*)\\[.*", replacement = "\\1", x = CIname) # (model).
 			thisMat = sub(".*\\.([^\\.]*)\\[.*"  , replacement = "\\1", x = CIname) # .matrix[
 			thisRow = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = CIname))
 			thisCol = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = CIname))
@@ -71,7 +72,7 @@ umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRU
 		# umx_msg(CIname); # umx_msg(thisSub); umx_msg(thisMat); umx_msg(thisRow); umx_msg(thisCol)
 		# thisMat = "cp_loadings_std"
 		if(stdAlg2mat && sub(".*_(std)$", replacement = "\\1", x = thisMat)=="std"){
-			# assume _std is an algebra
+			# Assume _std is an algebra
 			baseMat = sub("(.*)_std$", replacement = "\\1", x = thisMat)
 			model@submodels[thisSub][[1]]@matrices[baseMat][[1]]$values[thisRow, thisCol] = CIString
 		} else {
