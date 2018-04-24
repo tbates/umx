@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxPlotGxE}
 \alias{umxPlotGxE}
-\alias{plot.MxModel.GxE}
+\alias{plot.MxModelGxE}
 \title{Plot the results of a GxE univariate test for moderation of ACE components.}
 \usage{
 umxPlotGxE(x, xlab = NA, location = "topleft", separateGraphs = FALSE,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxACEv.R
 \name{umxPlotACEv}
 \alias{umxPlotACEv}
-\alias{plot.MxModel.ACEv}
+\alias{plot.MxModelACEv}
 \title{Produce a graphical display of an ACE variance-components twin model}
 \usage{
 umxPlotACEv(x = NA, file = "name", digits = 2, means = FALSE,

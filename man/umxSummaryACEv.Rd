@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxACEv.R
 \name{umxSummaryACEv}
 \alias{umxSummaryACEv}
-\alias{umxSummary.MxModel.ACEv}
+\alias{umxSummary.MxModelACEv}
 \title{Shows a compact, publication-style, summary of a variance-based Cholesky ACE model.}
 \usage{
 umxSummaryACEv(model, digits = 2, file = getOption("umx_auto_plot"),
@@ -47,13 +47,13 @@ drawing the tables to a web browser where they may readily be copied into non-ma
 \details{
 See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 
-View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
 
-View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
 
-View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
 
-View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
 }
 \examples{
 require(umx)

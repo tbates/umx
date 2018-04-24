@@ -276,7 +276,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 	if(!is.na(lboundM)){
 		model = omxSetParameters(model, labels = c('am_r1c1', 'cm_r1c1', 'em_r1c1'), lbound = lboundM)
 	}
-	model = as(model, "MxModel.GxE_biv")
+	model = as(model, "MxModelGxE_biv")
 	if(autoRun){
 		tryCatch({
 			model = mxRun(model)
@@ -298,7 +298,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 #'
 #' umxSummaryGxE_biv summarize a Moderation model, as returned by \code{\link{umxGxE_biv}}.
 #'
-#' @aliases umxSummary.MxModel.GxE_biv
+#' @aliases umxSummary.MxModelGxE_biv
 #' @param model A fitted \code{\link{umxGxE_biv}} model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
@@ -342,7 +342,7 @@ umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "t
 	}
 
 	if(is.null(model)){
-		message("umxSummaryGxE_biv calls plot.MxModel.GxE_biv for a twin moderation plot. A use example is:\n umxSummaryGxE_biv(model, location = \"topright\")")
+		message("umxSummaryGxE_biv calls plot.MxModelGxE_biv for a twin moderation plot. A use example is:\n umxSummaryGxE_biv(model, location = \"topright\")")
 		stop();
 	}
 	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
@@ -393,7 +393,7 @@ umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "t
 }
 
 #' @export
-umxSummary.MxModel.GxE_biv <- umxSummaryGxE_biv
+umxSummary.MxModelGxE_biv <- umxSummaryGxE_biv
 
 
 #' Plot the results of a GxE univariate test for moderation of ACE components.
@@ -402,7 +402,7 @@ umxSummary.MxModel.GxE_biv <- umxSummaryGxE_biv
 #' Options include plotting the raw and standardized graphs separately, or in a combined panel.
 #' You can also set the label for the x axis (xlab), and choose the location of the legend.
 #'
-#' @aliases plot.MxModel.GxE_biv
+#' @aliases plot.MxModelGxE_biv
 #' @param x A fitted \code{\link{umxGxE_biv}} model to plot
 #' @param xlab String to use for the x label (default = NA, which will use the variable name)
 #' @param location Where to plot the legend (default = "topleft")
@@ -431,7 +431,7 @@ umxSummary.MxModel.GxE_biv <- umxSummaryGxE_biv
 #' umxPlotGxE_biv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
 #' }
 umxPlotGxE_biv <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
-	if(class(x) != "MxModel.GxE_biv"){
+	if(class(x) != "MxModelGxE_biv"){
 		stop("The first parameter of umxPlotGxE must be a GxE_biv model, you gave me a ", class(x))
 	}
 	model = x # to remind us that x has to be a umxGxE_biv model
@@ -503,4 +503,4 @@ umxPlotGxE_biv <- function(x, xlab = NA, location = "topleft", separateGraphs = 
 }
 
 #' @export
-plot.MxModel.GxE_biv <- umxPlotGxE_biv
+plot.MxModelGxE_biv <- umxPlotGxE_biv

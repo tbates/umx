@@ -228,7 +228,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	}
 
 	# Tests: equate means would be expMeanGm, expMeanGf, expMeanGo
-	model = as(model, "MxModel.SexLim") # set class so umxSummary, plot, etc. work.
+	model = as(model, "MxModelSexLim") # set class so umxSummary, plot, etc. work.
 	if(autoRun){
 		model = mxRun(model)
 		tryCatch({
@@ -253,15 +253,15 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #'
 #' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 #' 
-#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
 #' 
-#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
 #' 
-#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
 #' 
-#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
 
-#' @aliases umxSummary.MxModel.SexLim
+#' @aliases umxSummary.MxModelSexLim
 #' @param model a \code{\link{umxSexLim}} model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: "name" = use the name of the model.
@@ -505,4 +505,4 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 }
 
 #' @export
-umxSummary.MxModel.SexLim <- umxSummarySexLim
+umxSummary.MxModelSexLim <- umxSummarySexLim

@@ -186,15 +186,15 @@ utils::globalVariables(c(
 # = Define some class containers to allow specialised model objects =
 # = plot, etc. can then operate on these                             =
 # ===================================================================
-methods::setClass("MxModel.ACE"    , contains = "MxModel")
-methods::setClass("MxModel.ACEv"   , contains = "MxModel")
-methods::setClass("MxModel.CP"     , contains = "MxModel")
-methods::setClass("MxModel.GxE"    , contains = "MxModel")
-methods::setClass("MxModel.IP"     , contains = "MxModel")
-methods::setClass("MxModel.SexLim" , contains = "MxModel")
-methods::setClass("MxModel.Simplex", contains = "MxModel")
-methods::setClass("MxModel.ACEcov" , contains = "MxModel.ACE")
-methods::setClass("MxModel.GxE_biv", contains = "MxModel.GxE")
+methods::setClass("MxModelACE"    , contains = "MxModel")
+methods::setClass("MxModelACEv"   , contains = "MxModel")
+methods::setClass("MxModelCP"     , contains = "MxModel")
+methods::setClass("MxModelGxE"    , contains = "MxModel")
+methods::setClass("MxModelIP"     , contains = "MxModel")
+methods::setClass("MxModelSexLim" , contains = "MxModel")
+methods::setClass("MxModelSimplex", contains = "MxModel")
+methods::setClass("MxModelACEcov" , contains = "MxModelACE")
+methods::setClass("MxModelGxE_biv", contains = "MxModelGxE")
 
 # ============================
 # = Core Modelling Functions =
@@ -1072,7 +1072,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	if(!is.na(lboundM)){
 		model = omxSetParameters(model, labels = c('am_r1c1', 'cm_r1c1', 'em_r1c1'), lbound = lboundM)
 	}
-	model = as(model, "MxModel.GxE")
+	model = as(model, "MxModelGxE")
 	if(autoRun){
 		model = mxRun(model)
 		umxSummary(model)
@@ -1348,7 +1348,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{plot.MxModel.ACE}}, \code{\link{plot.MxModel.ACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
+#' @seealso - \code{\link{plot.MxModelACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 #' @examples
@@ -1862,7 +1862,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		}
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
-		model = as(model, "MxModel.ACE") # set class so that S3 plot() dispatches.
+		model = as(model, "MxModelACE") # set class so that S3 plot() dispatches.
 		
 		if(autoRun){
 			model = mxRun(model, intervals = intervals)
@@ -2183,7 +2183,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	}
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
-	model = as(model, "MxModel.ACEcov") # set class so umxSummary, plot, etc. work.
+	model = as(model, "MxModelACEcov") # set class so umxSummary, plot, etc. work.
 	if(autoRun){
 		model = mxRun(model)
 		umxSummary(model)
@@ -2451,7 +2451,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 	}
 	# Set values with the same label to the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
-	model = as(model, "MxModel.CP")
+	model = as(model, "MxModelCP")
 	
 	if(autoRun){
 		model = mxRun(model)
@@ -2672,7 +2672,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 		}
 	}
 	model  = omxAssignFirstParameters(model) # ensure parameters with the same label have the same start value... means, for instance.
-	model = as(model, "MxModel.IP")
+	model = as(model, "MxModelIP")
 
 	if(autoRun){
 		model = mxRun(model)

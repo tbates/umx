@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxSummaryIP}
 \alias{umxSummaryIP}
-\alias{umxSummary.MxModel.IP}
+\alias{umxSummary.MxModelIP}
 \title{Present the results of an independent-pathway twin model in table and graphical form}
 \usage{
 umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),

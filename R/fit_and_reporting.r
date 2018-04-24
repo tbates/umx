@@ -129,7 +129,7 @@ umxReduce.default <- function(model, ...){
 umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", ...) {
 	umx_is_MxModel(model)
 	report = match.arg(report)
-	if(class(model) == "MxModel.GxE"){		
+	if(class(model) == "MxModelGxE"){		
 		# Reduce GxE Model
 		# Good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
 		no_lin_mean = umxModify(model, update = "lin11" , name = "No_lin_mean" )
@@ -171,7 +171,7 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 	}
 }
 #' @export
-umxReduce.MxModel.GxE <- umxReduceGxE
+umxReduce.MxModelGxE <- umxReduceGxE
 
 #' Reduce an ACE model.
 #'
@@ -245,7 +245,7 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	invisible(bestModel)
 }
 #' @export
-umxReduce.MxModel.ACE <- umxReduceACE
+umxReduce.MxModelACE <- umxReduceACE
 
 #' Get residuals from an MxModel
 #'
@@ -409,7 +409,7 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 		CIs_to_set = names(omxGetParameters(object, free = TRUE))
 		object = mxModel(object, mxCI(CIs_to_set, interval = level))
 	} else if (parm == "smart"){
-		if(class(object) == "MxModel.CP"){
+		if(class(object) == "MxModelCP"){
 			# Add individual smart (only free cell) mxCI requests
 			# For CP model, these are the free cells in
 			# 	top.as_std, top.cs_std, top.es_std
@@ -667,13 +667,13 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #'
 #' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 #' 
-#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
 #' 
-#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
 #' 
-#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
 #' 
-#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param ... Other parameters to control model summary
@@ -939,15 +939,15 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 #'
 #' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 #' 
-#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
 #' 
-#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
 #' 
-#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
 #' 
-#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
 
-#' @aliases umxSummary.MxModel.ACE
+#' @aliases umxSummary.MxModelACE
 #' @param model an \code{\link{mxModel}} to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: "name" = use the name of the model.
@@ -965,7 +965,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 #' @export
 #' @family Twin Modeling Functions
 #' @family Reporting functions
-#' @seealso - \code{\link{umxACE}}, \code{\link{plot.MxModel.ACE}}, \code{\link{umxModify}}
+#' @seealso - \code{\link{umxACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxModify}}
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -1171,13 +1171,13 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 }
 
 #' @export
-umxSummary.MxModel.ACE <- umxSummaryACE
+umxSummary.MxModelACE <- umxSummaryACE
 
 #' Present results of a twin ACE-model with covariates in table and graphical forms.
 #'
 #' Summarize a Cholesky model with covariates, as returned by \code{\link{umxACEcov}}
 #'
-#' @aliases umxSummary.MxModel.ACEcov
+#' @aliases umxSummary.MxModelACEcov
 #' @param model a \code{\link{umxACEcov}} model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
@@ -1373,14 +1373,14 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	}
 }
 #' @export
-umxSummary.MxModel.ACEcov <- umxSummaryACEcov
+umxSummary.MxModelACEcov <- umxSummaryACEcov
 
 
 #' Present the results of a Common-pathway twin model in table and graphical form
 #'
 #' Summarizes a Common-Pathway model, as returned by \code{\link{umxCP}}
 #'
-#' @aliases umxSummary.MxModel.CP
+#' @aliases umxSummary.MxModelCP
 #' @param model A fitted \code{\link{umxCP}} model to summarize
 #' @param digits Round to how many digits (default = 2)
 #' @param std Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)
@@ -1423,7 +1423,7 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 			umxSummaryCP(thisFit, digits = digits, file = file, returnStd = returnStd, extended = extended, showRg = showRg, comparison = comparison, std = std, CIs = CIs)
 		}
 	} else {
-		umx_check_model(model, "MxModel.CP", beenRun = TRUE, callingFn = "umxSummaryCP")
+		umx_check_model(model, "MxModelCP", beenRun = TRUE, callingFn = "umxSummaryCP")
 		umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2
@@ -1515,13 +1515,13 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 }
 
 #' @export
-umxSummary.MxModel.CP <- umxSummaryCP
+umxSummary.MxModelCP <- umxSummaryCP
 
 #' Present the results of an independent-pathway twin model in table and graphical form
 #'
 #' Summarize a Independent Pathway model, as returned by \code{\link{umxIP}}
 #'
-#' @aliases umxSummary.MxModel.IP
+#' @aliases umxSummary.MxModelIP
 #' @param model A fitted \code{\link{umxIP}} model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
@@ -1549,7 +1549,7 @@ umxSummary.MxModel.CP <- umxSummaryCP
 #' umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 #' }
 umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL, CIs = FALSE, ...) {
-	umx_check_model(model, "MxModel.IP", beenRun = TRUE, callingFn = "umxSummaryIP")
+	umx_check_model(model, "MxModelIP", beenRun = TRUE, callingFn = "umxSummaryIP")
 	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
@@ -1631,13 +1631,13 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 }
 
 #' @export
-umxSummary.MxModel.IP <- umxSummaryIP
+umxSummary.MxModelIP <- umxSummaryIP
 
 #' umxSummaryGxE
 #'
 #' Summarize a Moderation model, as returned by \code{\link{umxGxE}}
 #'
-#' @aliases umxSummary.MxModel.GxE
+#' @aliases umxSummary.MxModelGxE
 #' @param model A fitted \code{\link{umxGxE}} model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
@@ -1688,7 +1688,7 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 	}
 
 	if(is.null(model)){
-		message("umxSummaryGxE calls plot.MxModel.GxE for a twin moderation plot. A use example is:\n umxSummaryGxE(model, location = \"topright\")")
+		message("umxSummaryGxE calls plot.MxModelGxE for a twin moderation plot. A use example is:\n umxSummaryGxE(model, location = \"topright\")")
 		stop();
 	}
 	umxPlotGxE(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
@@ -1699,7 +1699,7 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 }
 
 #' @export
-umxSummary.MxModel.GxE <- umxSummaryGxE
+umxSummary.MxModelGxE <- umxSummaryGxE
 
 
 #' Print a comparison table of one or more \code{\link{mxModel}}s, formatted nicely.
@@ -2125,8 +2125,8 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #'
 #' Make a graphical display of an ACE model
 #'
-#' @aliases plot.MxModel.ACE
-#' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
+#' @aliases plot.MxModelACE
+#' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModelACE class)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (default is 2)
 #' @param means Whether to show means paths (default is FALSE)
@@ -2147,7 +2147,7 @@ plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLab
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, ...) {
-	if(!class(x) == "MxModel.ACE"){
+	if(!class(x) == "MxModelACE"){
 		stop("The first parameter of umxPlotACE must be an ACE model, you gave me a ", class(x))
 	}
 	model = x # just to be clear that x is a model
@@ -2211,14 +2211,14 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 } # end umxPlotACE
 
 #' @export
-plot.MxModel.ACE <- umxPlotACE
+plot.MxModelACE <- umxPlotACE
 
 #' Make a graphical display of an ACE model with covariates.
 #'
 #' Make a graphical display of an ACE model with covariates.
 #'
-#' @aliases plot.MxModel.ACEcov
-#' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)
+#' @aliases plot.MxModelACEcov
+#' @param x \code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModelACE class)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (default is 2)
 #' @param means Whether to show means paths (default is FALSE)
@@ -2247,7 +2247,7 @@ plot.MxModel.ACE <- umxPlotACE
 #' plot(m1)
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, ...) {
-	if(!class(x) == "MxModel.ACEcov"){
+	if(!class(x) == "MxModelACEcov"){
 		stop("The first parameter of umxPlotACEcov must be an ACEcov model, you gave me a ", class(x))
 	}
 	model = x # just to be clear that x is a model
@@ -2312,7 +2312,7 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 } # end umxPlotACEcov
 
 #' @export
-plot.MxModel.ACEcov <- umxPlotACEcov
+plot.MxModelACEcov <- umxPlotACEcov
 
 #' Plot the results of a GxE univariate test for moderation of ACE components.
 #'
@@ -2320,7 +2320,7 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 #' Options include plotting the raw and standardized graphs separately, or in a combined panel.
 #' You can also set the label for the x axis (xlab), and choose the location of the legend.
 #'
-#' @aliases plot.MxModel.GxE
+#' @aliases plot.MxModelGxE
 #' @param x A fitted \code{\link{umxGxE}} model to plot
 #' @param xlab String to use for the x label (default = NA, which will use the variable name)
 #' @param location Where to plot the legend (default = "topleft")
@@ -2347,7 +2347,7 @@ plot.MxModel.ACEcov <- umxPlotACEcov
 #' plot(m1)
 #' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), ...) {
-	if(!class(x) == "MxModel.GxE"){
+	if(!class(x) == "MxModelGxE"){
 		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x))
 	}
 	model = x # to remind us that x has to be a umxGxE model
@@ -2398,13 +2398,13 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 }
 
 #' @export
-plot.MxModel.GxE <- umxPlotGxE
+plot.MxModelGxE <- umxPlotGxE
 
 #' Draw and display a graphical figure of Common Pathway model
 #'
 #' Options include digits (rounding), showing means or not, and which output format is desired.
 #'
-#' @aliases plot.MxModel.CP
+#' @aliases plot.MxModelCP
 #' @param x The Common Pathway \code{\link{mxModel}} to display graphically
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
@@ -2423,7 +2423,7 @@ plot.MxModel.GxE <- umxPlotGxE
 #' plot(yourCP_Model) # no need to remember a special name: plot works fine!
 #' }
 umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), ...) {
-	if(!class(x) == "MxModel.CP"){
+	if(!class(x) == "MxModelCP"){
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
 	format = match.arg(format)
@@ -2508,13 +2508,13 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 }
 
 #' @export
-plot.MxModel.CP <- umxPlotCP
+plot.MxModelCP <- umxPlotCP
 
 #' Draw a graphical figure for a Independent Pathway model
 #'
 #' Options include digits (rounding), showing means or not, standardization, and which output format is desired.
 #'
-#' @aliases plot.MxModel.IP
+#' @aliases plot.MxModelIP
 #' @param x The \code{\link{umxIP}} model to plot
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
@@ -2535,7 +2535,7 @@ plot.MxModel.CP <- umxPlotCP
 #' }
 umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), ...) {
 	format = match.arg(format)
-	if(!class(x) == "MxModel.IP"){
+	if(!class(x) == "MxModelIP"){
 		stop("The first parameter of umxPlotIP must be an IP model, you gave me a ", class(x))
 	}
 	
@@ -2611,7 +2611,7 @@ umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	xmu_dot_maker(model, file, digraph)
 }
 #' @export
-plot.MxModel.IP <- umxPlotIP
+plot.MxModelIP <- umxPlotIP
 
 #' Report modifications which would improve fit.
 #'

@@ -183,7 +183,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	# Run the model
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model) 
-	model = as(model, "MxModel.Simplex")
+	model = as(model, "MxModelSimplex")
 
 	if(autoRun){
 		model = mxRun(model)
@@ -200,15 +200,15 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #'
 #' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 #' 
-#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
 #' 
-#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
 #' 
-#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
 #' 
-#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
 #' 
-#' @aliases umxSummary.MxModel.Simplex
+#' @aliases umxSummary.MxModelSimplex
 #' @param model an \code{\link{mxModel}} to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: "name" = use the name of the model.
@@ -432,14 +432,14 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 }
 
 #' @export
-umxSummary.MxModel.Simplex <- umxSummarySimplex
+umxSummary.MxModelSimplex <- umxSummarySimplex
 
 
 #' Draw and display a graphical figure of a simplex model
 #'
 #' Options include digits (rounding), showing means or not, and which output format is desired.
 #'
-#' @aliases plot.MxModel.Simplex
+#' @aliases plot.MxModelSimplex
 #' @param x The \code{\link{umxSimplex}} model to display graphically
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
@@ -465,7 +465,7 @@ umxSummary.MxModel.Simplex <- umxSummarySimplex
 #' plot(m1)
 #' }
 umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), ...) {
-	if(!class(x) == "MxModel.Simplex"){
+	if(!class(x) == "MxModelSimplex"){
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
 	format = match.arg(format)
@@ -543,7 +543,7 @@ umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std
 }
 
 #' @export
-plot.MxModel.Simplex <- umxPlotSimplex
+plot.MxModelSimplex <- umxPlotSimplex
 
 #' Standardize a Simplex twin model
 #'
@@ -609,7 +609,7 @@ umx_standardize_Simplex <- function(model, ...) {
 	}
 }
 #' @export
-umx_standardize.MxModel.Simplex <- umx_standardize_Simplex
+umx_standardize.MxModelSimplex <- umx_standardize_Simplex
 
 # umx_standardize_Simplex <- function(model, ...) {
 # 	if(typeof(model) == "list"){ # Call self recursively
@@ -664,4 +664,4 @@ umx_standardize.MxModel.Simplex <- umx_standardize_Simplex
 # 	}
 # }
 # #' @export
-# umx_standardize.MxModel.Simplex <- umx_standardize_Simplex
+# umx_standardize.MxModelSimplex <- umx_standardize_Simplex

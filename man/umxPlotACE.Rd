@@ -2,14 +2,14 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxPlotACE}
 \alias{umxPlotACE}
-\alias{plot.MxModel.ACE}
+\alias{plot.MxModelACE}
 \title{umxPlotACE}
 \usage{
 umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, ...)
 }
 \arguments{
-\item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
+\item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModelACE class)}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 

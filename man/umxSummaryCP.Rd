@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxSummaryCP}
 \alias{umxSummaryCP}
-\alias{umxSummary.MxModel.CP}
+\alias{umxSummary.MxModelCP}
 \title{Present the results of a Common-pathway twin model in table and graphical form}
 \usage{
 umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FALSE,

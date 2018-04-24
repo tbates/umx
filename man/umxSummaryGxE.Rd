@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxSummaryGxE}
 \alias{umxSummaryGxE}
-\alias{umxSummary.MxModel.GxE}
+\alias{umxSummary.MxModelGxE}
 \title{umxSummaryGxE}
 \usage{
 umxSummaryGxE(model = NULL, digits = 2, xlab = NA, location = "topleft",
