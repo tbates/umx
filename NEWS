@@ -1,4 +1,9 @@
-# umx 2.5.0 May 2018, R 3.4.5?
+# umx 2.6.1 April 2018, R 3.4.5?
+* CHANGED: Following reports of problems in RStudio, changed umx class names to remove the period character from MxModel derivative classes
+ * This will break hard-cded calls, for instance  to `umxSummary.MxModel.ACE` instead of `umxSummary`. 
+  * "Just" replace with `umxSummary.MxModelACE` # i.e. delete the last period in the name...
+
+# umx 2.5.0 May 2018, R 3.4.4
 * NEW: `umxSimplex`twin model!
   * `umxSummary` for simplex
   * `plot support for simplex
