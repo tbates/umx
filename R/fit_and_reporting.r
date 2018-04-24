@@ -438,6 +438,8 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 		} else {
 			stop("I only know how to add smart CIs for CP models so far. Sorry")
 		}
+	} else if (parm == "existing"){
+		# nothing to do
 	} else {
 		# user requesting 1 new CI
 		# TODO umxConfint: Check that these are valid and not duplicates
@@ -2163,18 +2165,20 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	}
 	varCount = length(selDVs)/2;
 	parameterKeyList = omxGetParameters(model);
-	# TODO: could replace this with code that walks across the known matrices...
+	# TODO: Replace label-parsing with code that walks across the known matrices...
 	# would obviate problems with arbitrary names.
-	# 1. could add dimnames() to A, C, E?
+	# 1. Could add dimnames() to A, C, E?
 	
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
 		if(class(value) == "numeric") {
 			value = round(value, digits)
 		}
+		# omxLocateParameters(model=model, labels=thisParam)
+
 		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
-			from    = sub('([ace])_r([0-9]+)c([0-9]+)', '\\1\\3', thisParam, perl = TRUE);  # a c or e
-			target  = as.numeric(sub('([ace])_r([0-9]+)c([0-9]+)', '\\2', thisParam, perl = TRUE));
+			from    = sub('([ace])_r([0-9]+)c([0-9]+)'           , '\\1\\3', thisParam, perl = TRUE);  # a c or e
+			target  = as.numeric(sub('([ace])_r([0-9]+)c([0-9]+)', '\\2'   , thisParam, perl = TRUE));
 			target  = selDVs[as.numeric(target)]
 			latents = append(latents, from)
 			show = TRUE
@@ -2185,7 +2189,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 				show = FALSE
 			}
 			from   = thisParam;
-			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl=T) 
+			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl = TRUE) 
 		}
 		if(show){
 			out = paste0(out, from, " -> ", target, " [label = \"", value, "\"]", ";\n")
