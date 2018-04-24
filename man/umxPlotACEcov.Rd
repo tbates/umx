@@ -2,14 +2,14 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxPlotACEcov}
 \alias{umxPlotACEcov}
-\alias{plot.MxModel.ACEcov}
+\alias{plot.MxModelACEcov}
 \title{Make a graphical display of an ACE model with covariates.}
 \usage{
 umxPlotACEcov(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, ...)
 }
 \arguments{
-\item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModel.ACE class)}
+\item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModelACE class)}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 

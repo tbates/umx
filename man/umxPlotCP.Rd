@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxPlotCP}
 \alias{umxPlotCP}
-\alias{plot.MxModel.CP}
+\alias{plot.MxModelCP}
 \title{Draw and display a graphical figure of Common Pathway model}
 \usage{
 umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,

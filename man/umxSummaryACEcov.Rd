@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.r
 \name{umxSummaryACEcov}
 \alias{umxSummaryACEcov}
-\alias{umxSummary.MxModel.ACEcov}
+\alias{umxSummary.MxModelACEcov}
 \title{Present results of a twin ACE-model with covariates in table and graphical forms.}
 \usage{
 umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),

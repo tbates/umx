@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxGxE_biv.R
 \name{umxSummaryGxE_biv}
 \alias{umxSummaryGxE_biv}
-\alias{umxSummary.MxModel.GxE_biv}
+\alias{umxSummary.MxModelGxE_biv}
 \title{Summarize a bivariate GxE twin model}
 \usage{
 umxSummaryGxE_biv(model = NULL, digits = 2, xlab = NA,

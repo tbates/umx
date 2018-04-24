@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxSimplex.R
 \name{umxPlotSimplex}
 \alias{umxPlotSimplex}
-\alias{plot.MxModel.Simplex}
+\alias{plot.MxModelSimplex}
 \title{Draw and display a graphical figure of a simplex model}
 \usage{
 umxPlotSimplex(x = NA, file = "name", digits = 2, means = FALSE,

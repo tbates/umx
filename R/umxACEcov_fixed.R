@@ -437,7 +437,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 	}
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
-	model = as(model, "MxModel.ACE") # set class so that S3 plot() dispatches.
+	model = as(model, "MxModelACE") # set class so that S3 plot() dispatches.
 	
 	if(autoRun){
 		model = mxRun(model)

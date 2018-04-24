@@ -5762,7 +5762,7 @@ umx_standardize_ACE <- function(model, ...) {
 	}
 }
 #' @export
-umx_standardize.MxModel.ACE <- umx_standardize_ACE
+umx_standardize.MxModelACE <- umx_standardize_ACE
 
 
 #' umx_standardize_ACEcov
@@ -5811,7 +5811,7 @@ umx_standardize_ACEcov <- function(model, ...) {
 }
 
 #' @export
-umx_standardize.MxModel.ACEcov <- umx_standardize_ACEcov
+umx_standardize.MxModelACEcov <- umx_standardize_ACEcov
 
 
 #' umx_standardize_IP
@@ -5844,7 +5844,7 @@ umx_standardize_IP <- function(model, ...){
 	return(model)
 }
 #' @export
-umx_standardize.MxModel.IP <- umx_standardize_IP
+umx_standardize.MxModelIP <- umx_standardize_IP
 
 #' umx_standardize_CP
 #'
@@ -5901,5 +5901,5 @@ umx_standardize_CP <- function(model, ...){
 	}
 }
 #' @export
-umx_standardize.MxModel.CP <- umx_standardize_CP
+umx_standardize.MxModelCP <- umx_standardize_CP
 

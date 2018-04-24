@@ -600,7 +600,7 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 		}
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
-		model = as(model, "MxModel.ACEv") # set class so that S3 plot() dispatches.
+		model = as(model, "MxModelACEv") # set class so that S3 plot() dispatches.
 		
 		if(autoRun){
 			model = mxRun(model)
@@ -619,15 +619,15 @@ umxACEv <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 #'
 #' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 #' 
-#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModel.ACE}}.
+#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
 #' 
-#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModel.IP}}.
+#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
 #' 
-#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel.CP}}.
+#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
 #' 
-#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModel.GxE}}.
+#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
 #' 
-#' @aliases umxSummary.MxModel.ACEv
+#' @aliases umxSummary.MxModelACEv
 #' @param model an \code{\link{mxModel}} to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: "name" = use the name of the model.
@@ -850,13 +850,13 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 }
 
 #' @export
-umxSummary.MxModel.ACEv <- umxSummaryACEv
+umxSummary.MxModelACEv <- umxSummaryACEv
 
 #' Produce a graphical display of an ACE variance-components twin model
 #'
 #' Plots an ACE model graphically, opening the result in the browser (or a graphviz application).
 #'
-#' @aliases plot.MxModel.ACEv
+#' @aliases plot.MxModelACEv
 #' @param x \code{\link{umxACEv}} model to plot.
 #' @param file The name of the dot file to write: Default ("name") = use the name of the model. NA = don't plot.
 #' @param digits How many decimals to include in path loadings (default = 2)
@@ -877,7 +877,7 @@ umxSummary.MxModel.ACEv <- umxSummaryACEv
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, ...) {
-	if(!class(x) == "MxModel.ACEv"){
+	if(!class(x) == "MxModelACEv"){
 		stop("The first parameter of umxPlotACE must be an ACEv model, you gave me a ", class(x))
 	}
 	model = x # Just to be clear that x is a model
@@ -946,7 +946,7 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 } # end umxPlotACE
 
 #' @export
-plot.MxModel.ACEv <- umxPlotACEv
+plot.MxModelACEv <- umxPlotACEv
 
 
 #' Standardize an ACE variance components model (ACEv)
@@ -1002,4 +1002,4 @@ umx_standardize_ACEv <- function(model, ...) {
 	}
 }
 #' @export
-umx_standardize.MxModel.ACEv <- umx_standardize_ACEv
+umx_standardize.MxModelACEv <- umx_standardize_ACEv
