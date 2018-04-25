@@ -4,8 +4,7 @@
 \alias{umxACEv}
 \title{Build and run 2-group uni- or multi-variate ACE models based on VARIANCE (not paths).}
 \usage{
-umxACEv(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
-  "random"), dzData, mzData, sep = NULL, dzAr = 0.5, dzCr = 1,
+umxACEv(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, suffix = NULL, dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = NULL, weightVar = NULL, equateMeans = TRUE,
   bVector = FALSE, thresholds = c("deviationBased", "WLS"),
