@@ -14,6 +14,10 @@
 
 # usethis::use_vignette("guide_for_OpenMx_users", base_path ="~/bin/umx")
 
+# https://thecoatlessprofessor.com/programming/r-compiler-tools-for-rcpp-on-macos/
+# mate ~/.R/Makevars
+# https://gist.github.com/tbates/9cec0a93e04c06c41b550454eaa892a3
+
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
