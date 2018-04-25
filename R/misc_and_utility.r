@@ -2027,8 +2027,6 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 #' @description
 #' Just a helper to show the logLik of a model or print a comparison table is a function which 
 #'
-#' @details
-#'
 #' @param model an \code{\link{mxModel}} to report on
 #' @param comparison If not NULL, used as comparison model
 #' @param digits (default = 2)
@@ -3391,20 +3389,19 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' }
 umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, hasMeans = NULL, checkSubmodels = FALSE, callingFn = "a function") {
 	# TODO umx_check_model check hasSubmodels = FALSE
-	# TODO umx_check_model fix so it respects TRUE and FALSE...
 	if (!umx_is_MxModel(obj)) {
-		stop("'model' must be an mxModel")
+		stop("'obj' must be an mxModel")
 	}
 	if(is.null(type)){
 		# No check
 	}else if(type == "RAM"){
 		if (!umx_is_RAM(obj)) {
-			stop(paste0("'model' must be an RAMModel for use with ", callingFn))
+			stop(paste0("'obj' must be an RAMModel for use with ", callingFn))
 		}
 	} else {
 		# Assume type is a class string
 		if(class(obj)[1] != type){
-			stop("You used ", callingFn, " on a model of class ", class(model)[1], "not ", omxQuotes(type))
+			stop("You used ", callingFn, " on a model of class ", class(obj)[1], "not ", omxQuotes(type))
 		}
 	}
 	if(checkSubmodels){
@@ -3902,8 +3899,9 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' Scale wide data across all cases: currently 2 twins.
 #'
 #' @param varsToScale The base names of the variables ("weight" etc.)
-#' @param suffix The suffix that distinguishes each case, e.g. "_T")
+#' @param sep The suffix that distinguishes each case, e.g. "_T")
 #' @param data a wide dataframe
+#' @param suffix  (deprecated: use sep instead)
 #' @return - new dataframe with variables scaled in place
 #' @export
 #' @seealso umx_scale
@@ -3911,17 +3909,21 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
-#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "" )
+#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), sep = "" )
 #' plot(wt1 ~ wt2, data = df)
-umx_scale_wide_twin_data <- function(varsToScale, suffix, data) {
-	if(length(suffix) != 1){
-		stop("I need one suffix, you gave me ", length(suffix), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
+umx_scale_wide_twin_data <- function(varsToScale, sep, data, suffix = "deprecated") {
+	if(suffix!="deprecated"){
+		message("Hi! Next time, use sep instead of suffix, when calling umx_scale_wide_twin_data")
+		sep = suffix
+	}
+	if(length(sep) != 1){
+		stop("I need one sep, you gave me ", length(sep), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
 	# TODO discover suffixes as unique digits following suffix (could be 1:6)
-	namesNeeded = umx_paste_names(varsToScale, sep = suffix, suffixes = 1:2)
+	namesNeeded = umx_paste_names(varsToScale, sep = sep, suffixes = 1:2)
 	umx_check_names(namesNeeded, data)
-	t1Traits = paste0(varsToScale, suffix, 1)
-	t2Traits = paste0(varsToScale, suffix, 2)
+	t1Traits = paste0(varsToScale, sep, 1)
+	t2Traits = paste0(varsToScale, sep, 2)
 	for (i in 1:length(varsToScale)) {
 		T1 = data[,t1Traits[i]]
 		T2 = data[,t2Traits[i]]

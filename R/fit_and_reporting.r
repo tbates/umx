@@ -350,7 +350,7 @@ loadings.MxModel <- function(x, ...) {
 #' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. 
 #'
 #' @param object An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))
-#' @param parm	A specification of which parameters are to be given confidence intervals. Can be "existing", "smart", "all", or a vector of names.
+#' @param parm	Which parameters to get confidence intervals. Can be "existing", "smart", "all", or a vector of names.
 #' @param level	The confidence level required (default = .95)
 #' @param run Whether to run the model (defaults to FALSE)
 #' @param wipeExistingRequests Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').
@@ -372,20 +372,35 @@ loadings.MxModel <- function(x, ...) {
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
+#' 
 #' m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
 #' 
-#' # Add CI request for "G_to_x1". Report. Save m1 with this CI computed
+#' # Add a CI request for "G_to_x1", run, and report. Save with this CI computed
 #' m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
-#' m3 = umxConfint(m1, "all") # CI requests added for free matrix parameters. User prompted to set run = TRUE
-#' m3 = umxConfint(m3, run = TRUE) # run the requested CIs
-#' m3 = umxConfint(m3, run = FALSE) # just print out existing CIs
+#' 
+#' # Just print out any existing CIs
+#' umxConfint(m2) 
+#' 
+#' # CI requests added for free matrix parameters. User prompted to set run = TRUE
+#' m3 = umxConfint(m1, "all")
+#' 
+#' # Run the requested CIs
+#' m3 = umxConfint(m3, run = TRUE) 
 #' 
 #' # Run CIs for free one-headed (asymmetric) paths in RAM model. 
 #' #   note: Deletes other existing requests,
 #' tmp = umxConfint(m1, parm = "A", run = TRUE)
-#' tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = FALSE) # Wipe existing CIs, add G_to_x1
+#' 
+#' # Wipe existing CIs, add G_to_x1
+#' tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
+#' 
+#' \dontrun{
+#' # For complex twin models, where algebras have parameters in some cells, smart might help
+#' # note: only implemented for umxCP so far
 #' m2 =  umxConfint(m1, "smart")
-umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("current", "SLSQP", "NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4")) {
+#' }
+#'
+umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("current", "SLSQP")) {
 	optimizer = match.arg(optimizer)
 	if(optimizer=="current"){
 		optimizer = umx_set_optimizer(silent=TRUE)
@@ -413,7 +428,8 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 			# Add individual smart (only free cell) mxCI requests
 			# For CP model, these are the free cells in
 			# 	top.as_std, top.cs_std, top.es_std
-			this = object$top$as$free;
+			# object = m1
+			this = object$top$as$free
 			template = umxMatrix("A", "Full", dim(this)[1], dim(this)[2])$labels
 			patt = "^.*_r([0-9]+)c([0-9]+)$"
 			as_free = gsub(pattern = patt, replacement= "top.as_std[\\1,\\2]", template)[which(object$top$as$free)]
@@ -450,40 +466,18 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 	if(run) {
 		# Check there are some in existence
 		if(!umx_has_CIs(object, "intervals")) {
-			message("This model has no CIs yet. Perhaps you wanted to use parm = 'all' to add and run CIs on all free parameters? Or set parm to a list of labels you'd like CIs? Also see help(mxCI)")
-		}
-		# object = mxRun(object, intervals = TRUE)
-		if(length(namez(optimizer, "Nelder"))){
-			# one of the Nelder's - delete all this???
-			plan1 = omxDefaultComputePlan(intervals=TRUE)
-			plan1 = mxComputeSequence(steps=list(CI=plan1$steps$CI))
-			plan4 = plan1
-			plan4$steps$CI$constraintType <- "none"			
-
-			plan1$steps$CI$constraintType <- "ineq"
-			plan2 = plan3 = plan1
-
-			plan1$steps$CI$plan = mxComputeNelderMead(ineqConstraintMthd="eqMthd",centerIniSimplex= TRUE)
-			plan2$steps$CI$plan = mxComputeNelderMead(ineqConstraintMthd="eqMthd",centerIniSimplex= FALSE, eqConstraintMthd= "l1p")
-			plan3$steps$CI$plan = mxComputeNelderMead(ineqConstraintMthd="eqMthd",centerIniSimplex= FALSE, eqConstraintMthd= "backtrack")
-			plan4$steps$CI$plan = mxComputeNelderMead()
-			
-			pick = which(optimizer == c("NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4"))
-			thePlan = c(plan1, plan2, plan3, plan4)[pick]
-			old = umx_set_optimizer(silent=TRUE)
-			umx_set_optimizer(optimizer, silent=TRUE)			
-			object <- mxRun(mxModel(object, thePlan))
-			umx_set_optimizer(old, silent=TRUE)
-		} else {
+			message("This model has no CIs yet. Perhaps you wanted to use parm = 'all' for CIs on all free parameters? Or to a list of labels?")
+		}else{
+			# object = mxRun(object, intervals = TRUE)
 			object = omxRunCI(object, optimizer = optimizer)
 		}
 	}
 	# 3. Report CIs
 	if(!umx_has_CIs(object, "both")) {
 		if(run == FALSE){
-			message("Some CIs have been requested, but have not yet been run. Add ", omxQuotes("run = TRUE"), " to your confint() call to run them.\n",
-			"To store the model run capture it from confint like this:\n",
-			"m1 = confint(m1, run = TRUE)")
+			message("Some CIs have been requested, but have not yet been run. Add ", omxQuotes("run = TRUE"), " to your umxConfint() call to run them.\n",
+			"To store the model run capture it from umxConfint like this:\n",
+			"m1 = umxConfint(m1, run = TRUE)")
 		} else if(length(object$intervals)==0){
 			message("No CIs requested...")
 		} else{
@@ -492,7 +486,6 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 		}
 	} else {
 		# model has CIs and they have been run
-		
 		# 1. Summarize model
 		model_summary = summary(object, verbose = TRUE)
 		# 2. Extract CIs and details, and arrange for merging
@@ -500,9 +493,9 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 		CIdetail = CIdetail[, c("parameter", "value", "side", "diagnostic", "statusCode")]
 		CIdetail$diagnostic = as.character(CIdetail$diagnostic)
 		CIdetail$statusCode = as.character(CIdetail$statusCode)
-		CIdetail$diagnostic = namez(CIdetail$diagnostic, pattern = "alpha level not reached"         , rep = "alpha hi")
-		CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "infeasible non-linear constraint", rep = "constrained")
-		CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "iteration limit/blue"            , rep = "blue")
+		CIdetail$diagnostic = namez(CIdetail$diagnostic, pattern = "alpha level not reached"         , replacement = "alpha hi")
+		CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "infeasible non-linear constraint", replacement = "constrained")
+		CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "iteration limit/blue"            , replacement = "blue")
 
 		CIs = model_summary$CI
 		CIs$parameter = row.names(CIs)
@@ -513,12 +506,8 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 		tmp = merge(tmp, CIdetail[CIdetail$side == "upper", ], by = "parameter", all.x = TRUE, suffixes = c(".lower",".upper"))
 		tmp$side.lower = NULL
 		tmp$side.upper = NULL
-		# for (x in 1:dim(tmp)[1]) {
-		# 	is.na(CIs$lbound)
-		#
-		# }
 
-		# Format CIs
+		# 3. Format CIs
 		model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
 		model_CI_OK = object$output$confidenceIntervalCodes
 		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
@@ -1406,14 +1395,19 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' selDVs = c("ht", "wt")
 #' mzData <- subset(twinData, zygosity == "MZFF")
 #' dzData <- subset(twinData, zygosity == "DZFF")
-#' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = "")
+#' umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
+#' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' umxSummaryCP(m1, file = NA) # suppress plot creation with file
 #' umxSummary(m1, file = NA) # generic summary is the same
 #' stdFit = umxSummaryCP(m1, digits = 2, std = TRUE, file = NA, returnStd = TRUE);
 #' umxSummary(m1, std = FALSE, showRg = TRUE, file = NA);
-#' umxSummary(m1, CIs = TRUE, file = NA);
 #' umxSummary(m1, std = FALSE, file = NA)
+#' \dontrun{
 #' umxSummary(m1, file = "Figure 3", std = TRUE)
+#' m1 = umxConfint(m1, "smart", run = FALSE);
+#' m1 = umxConfint(m1, "smart", run = TRUE);
+#' umxSummary(m1, CIs = TRUE, file = NA);
+#' }
 #'
 umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FALSE, comparison = NULL, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE,...) {
 	report = match.arg(report)
@@ -1422,7 +1416,7 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message(paste("Output for Model: ", thisFit$name))
-			umxSummaryCP(thisFit, digits = digits, file = file, returnStd = returnStd, extended = extended, showRg = showRg, comparison = comparison, std = std, CIs = CIs)
+			umxSummaryCP(thisFit, digits = digits, file = file, returnStd = returnStd, showRg = showRg, comparison = comparison, std = std, CIs = CIs)
 		}
 	} else {
 		umx_check_model(model, "MxModelCP", beenRun = TRUE, callingFn = "umxSummaryCP")
@@ -1473,9 +1467,9 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 
 		message("## Specific-factor loadings")
 		# Specific path coefficients ready to be stacked together
-		as   = model$top$as$values # Specific factor path coefficients
-		cs   = model$top$cs$values
-		es   = model$top$es$values
+		as = model$top$as$values # Specific factor path coefficients
+		cs = model$top$cs$values
+		es = model$top$es$values
 
 		specifics = data.frame(row.names = paste0('Specific ', c('a', 'c', 'e')), stringsAsFactors = FALSE,
 			rbind(diag(as), 
@@ -1493,10 +1487,16 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 		if(showRg) {
 			message("Genetic Correlations")
 			# Pre & post multiply covariance matrix by inverse of standard deviations
+			A  = model$top$A$values # Variances
+			C  = model$top$C$values
+			E  = model$top$E$values
+			Vtot = A + C + E; # Total variance
+			nVarIden = diag(nVar)
 			NAmatrix <- matrix(NA, nVar, nVar);
+
 			rA = tryCatch(solve(sqrt(nVarIden * A)) %*% A %*% solve(sqrt(nVarIden * A)), error = function(err) return(NAmatrix)); # genetic correlations
-			rC = tryCatch(solve(sqrt(nVarIden * C)) %*% C %*% solve(sqrt(nVarIden * C)), error = function(err) return(NAmatrix)); # shared environmental correlations
-			rE = tryCatch(solve(sqrt(nVarIden * E)) %*% E %*% solve(sqrt(nVarIden * E)), error = function(err) return(NAmatrix)); # Unique environmental correlations
+			rC = tryCatch(solve(sqrt(nVarIden * C)) %*% C %*% solve(sqrt(nVarIden * C)), error = function(err) return(NAmatrix)); # C correlations
+			rE = tryCatch(solve(sqrt(nVarIden * E)) %*% E %*% solve(sqrt(nVarIden * E)), error = function(err) return(NAmatrix)); # E correlations
 			genetic_correlations = data.frame(cbind(rA, rC, rE), row.names = rowNames);
 			# Make a table
 			names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
@@ -1686,7 +1686,7 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 	umx_has_been_run(model, stop = TRUE)
 	
 	if(any(!is.null(c(returnStd, std, CIs) ))){
-		message("For GxE, returnStd, extended, std, comparison or CIs are not yet implemented...")
+		message("For GxE, returnStd, std, comparison or CIs are not yet implemented...")
 	}
 
 	if(is.null(model)){

@@ -9,8 +9,7 @@ License: GPL-3
 Encoding: UTF-8
 URL: http://github.com/tbates/umx
 Description: Quickly create, run, and report structural equation and twin models.
-    See '?umx' to learn more.
-	file.show(system.file("NEWS", package="umx"))
+    See '?umx'  for help, and file.show(system.file("NEWS", package="umx")) for NEWS.
 Depends:
     R (>= 3.2.0),
     OpenMx (>= 2.7.9)

@@ -6,13 +6,12 @@
 \usage{
 umxConfint(object, parm = c("existing", "smart", "all",
   "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95,
-  run = FALSE, showErrorCodes = FALSE, optimizer = c("current", "SLSQP",
-  "NelderMead1", "NelderMead2", "NelderMead3", "NelderMead4"))
+  run = FALSE, showErrorCodes = FALSE, optimizer = c("current", "SLSQP"))
 }
 \arguments{
 \item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))}
 
-\item{parm}{A specification of which parameters are to be given confidence intervals. Can be "existing", "smart", "all", or a vector of names.}
+\item{parm}{Which parameters to get confidence intervals. Can be "existing", "smart", "all", or a vector of names.}
 
 \item{wipeExistingRequests}{Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').}
 
@@ -51,19 +50,34 @@ m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numOb
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
 )
+
 m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
 
-# Add CI request for "G_to_x1". Report. Save m1 with this CI computed
+# Add a CI request for "G_to_x1", run, and report. Save with this CI computed
 m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
-m3 = umxConfint(m1, "all") # CI requests added for free matrix parameters. User prompted to set run = TRUE
-m3 = umxConfint(m3, run = TRUE) # run the requested CIs
-m3 = umxConfint(m3, run = FALSE) # just print out existing CIs
+
+# Just print out any existing CIs
+umxConfint(m2) 
+
+# CI requests added for free matrix parameters. User prompted to set run = TRUE
+m3 = umxConfint(m1, "all")
+
+# Run the requested CIs
+m3 = umxConfint(m3, run = TRUE) 
 
 # Run CIs for free one-headed (asymmetric) paths in RAM model. 
 #   note: Deletes other existing requests,
 tmp = umxConfint(m1, parm = "A", run = TRUE)
-tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = FALSE) # Wipe existing CIs, add G_to_x1
+
+# Wipe existing CIs, add G_to_x1
+tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
+
+\dontrun{
+# For complex twin models, where algebras have parameters in some cells, smart might help
+# note: only implemented for umxCP so far
 m2 =  umxConfint(m1, "smart")
+}
+
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

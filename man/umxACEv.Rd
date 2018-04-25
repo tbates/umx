@@ -5,18 +5,18 @@
 \title{Build and run 2-group uni- or multi-variate ACE models based on VARIANCE (not paths).}
 \usage{
 umxACEv(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
-  "random"), dzData, mzData, suffix = NULL, dzAr = 0.5, dzCr = 1,
+  "random"), dzData, mzData, sep = NULL, dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = NULL, weightVar = NULL, equateMeans = TRUE,
   bVector = FALSE, thresholds = c("deviationBased", "WLS"),
-  autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL)
+  autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
 
 \item{selDVs}{The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").}
 
-\item{selCovs}{(optional) covariates to include from the data (do not include suffix in names)}
+\item{selCovs}{(optional) covariates to include from the data (do not include sep in names)}
 
 \item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
 
@@ -24,7 +24,7 @@ umxACEv(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{mzData}{The MZ dataframe.}
 
-\item{suffix}{Allowed as a synonym for "suffix".}
+\item{sep}{The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -49,8 +49,6 @@ umxACEv(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 \item{thresholds}{How to implement ordinal thresholds c("deviationBased", "WLS").}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
-
-\item{sep}{The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 }
@@ -178,7 +176,7 @@ mzData = twinData[twinData$zygosity \%in\% c("MZFF", "MZMM"),]
 dzData = twinData[twinData$zygosity \%in\% c("DZFF", "DZMM", "DZOS"), ]
 mzData = mzData[1:80,] # quicker run to keep CRAN happy
 dzData = dzData[1:80,]
-m1 = umxACEv(selDVs = c("ht", "wt"), suffix = '', dzData = dzData, mzData = mzData)
+m1 = umxACEv(selDVs = c("ht", "wt"), sep = '', dzData = dzData, mzData = mzData)
 
 # ===================
 # = Ordinal example =
@@ -199,7 +197,7 @@ dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
 mzData <- mzData[1:80,] # just top 80 pairs to run fast
 dzData <- dzData[1:80,]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
-m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
 
 # ============================================
@@ -219,7 +217,7 @@ mzData <- twinData[twinData$zyg == 1,] # umxACEv can trim out unused variables o
 dzData <- twinData[twinData$zyg == 3,]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
-m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 plot(m1)
 
 # =======================================
@@ -237,10 +235,10 @@ ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
 
 selDVs = c("wt", "obese")
-mzData <- twinData[twinData$zygosity \%in\% "MZFF", umx_paste_names(selDVs, "", 1:2)]
-dzData <- twinData[twinData$zygosity \%in\% "DZFF", umx_paste_names(selDVs, "", 1:2)]
+mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 \dontrun{
-m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
 }
 
@@ -256,6 +254,7 @@ dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
 m1 = umxACEv(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 umxSummary(m1)
 plot(m1)
+
 }
 \references{
 - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 

@@ -200,7 +200,7 @@ dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 mzData <- mzData[1:80, ] # Just top 80 pairs to run fast
 dzData <- dzData[1:80, ]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
 
 # ============================================
@@ -221,7 +221,7 @@ mzData <- twinData[twinData$zygosity \%in\%  "MZFF",]
 dzData <- twinData[twinData$zygosity \%in\%  "DZFF",]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 plot(m1)
 
 # =======================================
@@ -242,7 +242,7 @@ selDVs = c("wt", "obese")
 mzData <- twinData[twinData$zygosity \%in\% "MZFF",]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF",]
 \dontrun{
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, suffix = '')
+m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
 }
 
