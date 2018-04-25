@@ -19,20 +19,15 @@ umx_stash_CIs(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE)
 - \code{\link{mxModel}}
 }
 \description{
-Stash the CI values of a model as strings in the values of the model is a function which
+Stash formatted CIs (e.g. ".1 [-.1, .3]") as strings overwriting the parameter values of the model.
 }
 \details{
-I might change this to a lookup-function that gets a CI string if one exists
-}
-\examples{
-\dontrun{
-stash = umx_stash_CIs(model)
-}
-CIname = top.cp_loadings_std[1,1]
-thisSub = top; thisMat = cp_loadings_std;thisRow = 1; thisCol = 1
+I might change this to a lookup-function that gets a CI string if one exists.
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+CIname = top.cp_loadings_std[1,1]
+thisSub = top; thisMat = cp_loadings_std;thisRow = 1; thisCol = 1
 }
 \seealso{
 - \code{\link{umxConfint}}

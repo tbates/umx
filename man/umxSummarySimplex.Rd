@@ -59,13 +59,12 @@ View documentation on the GxE model subclass here: \code{\link{umxSummary.MxMode
 data(iqdat)
 nTimePoints = 4 # Number of time points
 baseVarNames = paste0("IQ_age", 1:nTimePoints)
-selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
-# IQ_age1_T1, IQ_age2_T1, IQ_age3_T1, IQ_age4_T1, IQ_age1_T2, IQ_age2_T2, IQ_age3_T2, IQ_age4_T2,
+# IQ_age + 1:4 + "_T" 1:2
 
 # Select Data
-mzData <- subset(iqdat, zygosity == "MZFF")
-dzData <- subset(iqdat, zygosity == "DZFF")
-m1 = umxSimplex(selDVs = selDVs, dzData = dzData, mzData = mzData)
+mzData <- subset(iqdat, zygosity == "MZ")
+dzData <- subset(iqdat, zygosity == "DZ")
+m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
 umxSummary(m1)
 \dontrun{
 umxSummary(m1, file = NA);

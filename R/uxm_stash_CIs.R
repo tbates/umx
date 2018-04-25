@@ -1,9 +1,9 @@
 #' Stash the CI values of a model as strings in the values of the model
 #'
 #' @description
-#' Stash the CI values of a model as strings in the values of the model is a function which 
+#' Stash formatted CIs (e.g. ".1 [-.1, .3]") as strings overwriting the parameter values of the model.
 #'
-#' @details I might change this to a lookup-function that gets a CI string if one exists
+#' @details I might change this to a lookup-function that gets a CI string if one exists.
 #'
 #' @param model An \code{\link{mxModel}} to get CIs from.
 #' @param digits rounding.
@@ -14,10 +14,6 @@
 #' @family zAdvanced Helpers
 #' @seealso - \code{\link{umxConfint}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-#' @examples
-#' \dontrun{
-#' stash = umx_stash_CIs(model)
-#' }
 umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {
 	# model = cp3h
 	# TODO rationalize with umx_APA_model_CI

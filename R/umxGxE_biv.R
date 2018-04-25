@@ -321,7 +321,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 #' data(twinData) 
 #' selDVs  = "wt"
 #' selDefs = "ht"
-#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
+#' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), sep = "")
 #' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
 #' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
 #'

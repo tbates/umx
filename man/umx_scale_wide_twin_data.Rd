@@ -23,7 +23,7 @@ Scale wide data across all cases: currently 2 twins.
 }
 \examples{
 data(twinData) 
-df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), sep = "" )
+df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "" )
 plot(wt1 ~ wt2, data = df)
 }
 \references{
