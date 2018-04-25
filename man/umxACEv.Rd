@@ -5,11 +5,11 @@
 \title{Build and run 2-group uni- or multi-variate ACE models based on VARIANCE (not paths).}
 \usage{
 umxACEv(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed",
-  "random"), dzData, mzData, suffix = NULL, dzAr = 0.5, dzCr = 1,
+  "random"), dzData, mzData, sep = NULL, dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = NULL, weightVar = NULL, equateMeans = TRUE,
   bVector = FALSE, thresholds = c("deviationBased", "WLS"),
-  autoRun = getOption("umx_auto_run"), sep = NULL, optimizer = NULL)
+  autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -23,6 +23,8 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed",
 \item{dzData}{The DZ dataframe.}
 
 \item{mzData}{The MZ dataframe.}
+
+\item{sep}{The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -47,8 +49,6 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed",
 \item{thresholds}{How to implement ordinal thresholds c("deviationBased", "WLS").}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
-
-\item{sep}{The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 }

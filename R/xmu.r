@@ -297,8 +297,10 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 #' @family xmu internal not for end user
 #' @seealso - \code{\link{umxMatrix}}
 #' @examples
-#' x = umxMatrix('test', 'Full', nrow = nVar, ncol = nVar)
+#' x = umxMatrix('test', 'Full', nrow = 4, ncol = 4)
 #' xmu_simplex_corner(x, start = .9)
+#' # See how we have a diag free, but offset 1-down?
+#' umx_print( xmu_simplex_corner(x, start = .9)$values, zero=".")
 xmu_simplex_corner <- function(x, start = .9) {
 	nVar = dim(x)[1]
 	nVar_minus1 = nVar-1

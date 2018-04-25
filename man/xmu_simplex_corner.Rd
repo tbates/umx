@@ -18,8 +18,10 @@ xmu_simplex_corner(x, start = 0.9)
 internal function to help building simplex models is a function which
 }
 \examples{
-x = umxMatrix('test', 'Full', nrow = nVar, ncol = nVar)
+x = umxMatrix('test', 'Full', nrow = 4, ncol = 4)
 xmu_simplex_corner(x, start = .9)
+# See how we have a diag free, but offset 1-down?
+umx_print( xmu_simplex_corner(x, start = .9)$values, zero=".")
 }
 \seealso{
 - \code{\link{umxMatrix}}
