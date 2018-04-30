@@ -1,4 +1,4 @@
-# umx 2.6.1 May 2018, R 3.5.0
+# umx 2.6.5 May 2018, R 3.5.0
 * NEW: Beta versions of `umx_polychoric`, `umx_polypairwise`, and `umx_polytriowise`
 * NEW: `umxSimplex`twin model!
   * `umxSummary` for simplex
