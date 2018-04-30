@@ -182,8 +182,10 @@ utils::globalVariables(c(
 	"at" , "ct" , "et", 
     "Iai", "Ici", "Iei", 
 	"SigmaA"   , "SigmaC"     , "SigmaE", 
-	"SigmaPh11", "SigmaPh21dz", "SigmaPh21mz"
-	)
+	"SigmaPh11", "SigmaPh21dz", "SigmaPh21mz",
+	# Used in poly funs
+	"minus2SatLogLik", "nCells", "diffchi"
+	 )
 )
 
 # ===================================================================
