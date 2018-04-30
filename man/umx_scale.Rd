@@ -12,7 +12,7 @@ umx_scale(df, varsToScale = NULL, coerce = FALSE, attr = FALSE,
 
 \item{varsToScale}{(leave blank to scale all)}
 
-\item{coerce}{Whether to coerce non-numerics to numeric (Defaults to FALSE)}
+\item{coerce}{Whether to coerce non-numerics to numeric (Defaults to FALSE.}
 
 \item{attr}{to strip off the attributes scale creates (FALSE by default)}
 

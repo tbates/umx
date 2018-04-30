@@ -38,7 +38,7 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")}
 - \code{\link{mxModel}}
 }
 \description{
-THIS IS BOILER PLATE AWAITING UPDATING FOR THIS BRAND_NEW FUNCTION IN BETA
+THIS IS BOILER PLATE AWAITING UPDATING FOR THIS NEW FUNCTION, WHICH IS IN BETA.
 }
 \details{
 Make a 2-group simplex twin model

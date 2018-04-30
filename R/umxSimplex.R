@@ -2,7 +2,7 @@
 
 #' Build and run a simplex twin model
 #'
-#' THIS IS BOILER PLATE AWAITING UPDATING FOR THIS BRAND_NEW FUNCTION IN BETA
+#' THIS IS BOILER PLATE AWAITING UPDATING FOR THIS NEW FUNCTION, WHICH IS IN BETA.
 #' 
 #' Make a 2-group simplex twin model
 #' The common-pathway model provides a powerful tool for theory-based decomposition of genetic
@@ -134,11 +134,6 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 		# TODO 
 		# 1. replace hard-coded start values in "[ace][tsi]"
 		# 2. should 'ei' all be fixed at zero?
-		# done
-		# ✓ Rename PsA-> at; PsC -> ct; PsE -> et
-		# ✓ Rename TeA-> as; TeC -> cs; TeE -> es
-		# ✓ Rename BeA-> ai; BeC -> ci; BeE -> ei
-
 		# better starts for t, s, an i matrices... currently hard coded for IQ!
 			# Transmitted Components for "SA", "SC" and "SE"
 			umxMatrix('at', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(100,  5,  5,  5)),

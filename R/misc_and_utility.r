@@ -1111,7 +1111,6 @@ umxFactor <- function(x = character(), levels= NULL, labels = levels, exclude = 
 			if(is.null(levels)) {
 				levels = levels(x)
 			} else {
-				# TODO umxFactor: Check provided levels match the data!
 				if(!levels(x) == levels){
 					message("the levels you provided are not those I see in the data")
 				}
@@ -1280,9 +1279,14 @@ umx_apply <- function(FUN, of, by = "columns", ...) {
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' df = mtcars
-#' # make one variable non-numeric
+#' # make mpg into string
+#' df$mpg = as.character(df$mpg)
+#' df$cyl = factor(df$cyl)
+#' df = umx_as_numeric(df); str(df)
+#' df = umx_as_numeric(df, force=TRUE); str(df)
+#' # Make one variable alpha
 #' df$mpg = c(letters,letters[1:6]); str(df)
-#' df = umx_as_numeric(df)
+#' df = umx_as_numeric(df, force=TRUE); str(df)
 umx_as_numeric <- function(df, force = FALSE) {
 	# TODO umx_as_numeric: Handle matrices, vectors...
 	colsToConvert = names(df)
@@ -2596,7 +2600,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 		stop("You must set the first parameter to 'start', 'stop', a model, or a list of models.\nYou offered up a", class(x))
 	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
-	# TODO umx_time: Output a nicely formatted table
+	# TODO umx_time: Improve table formating
 	for(i in 1:length(x)) {			
 		if(length(x) > 1) {
 			m = x[[i]]
@@ -3291,9 +3295,8 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 #' umx_has_means(m1)
 umx_has_means <- function(model) {
-	# TODO umx_has_means check run?
 	if(!umx_is_RAM(model)){
-		stop("TODO umx_has_means Can only run on RAM models so far")
+		stop("TODO umx_has_means can only test RAM models so far")
 	}
 	return(!is.null(model$matrices$M))
 }
@@ -3647,7 +3650,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #'
 #' @param df A dataframe to scale (or a numeric vector)
 #' @param varsToScale (leave blank to scale all)
-#' @param coerce Whether to coerce non-numerics to numeric (Defaults to FALSE)
+#' @param coerce Whether to coerce non-numerics to numeric (Defaults to FALSE.
 #' @param verbose Whether to report which columns were scaled (default FALSE)
 #' @param attr to strip off the attributes scale creates (FALSE by default)
 #' @return - new dataframe with scaled variables
@@ -3674,8 +3677,7 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verb
 			varsToScale = names(df)
 		}
 		if(coerce){
-			# TODO umx_scale: implement coerce
-			stop("coerce not implemented yet")
+			df[, varsToScale] = umx_as_numeric(df[, varsToScale])
 		}
 		varsToScale = varsToScale[umx_is_numeric(df[,varsToScale], all = FALSE)]
 		if(verbose){
@@ -4370,10 +4372,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' str(long)
 #' str(twinData)
 umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
-	# TODO umx_wide2long Assumes 2 twins: Good to generalize to unlimited family size.
-	# TODO umx_wide2long Detect data overwriting? like if age exists, but data have age1 and age2?
-	# TODO umx_wide2long Report non-twin columns
-	# TODO umx_wide2long Report twin columns
+	# TODO umx_wide2long Assumes 2 twins: Generalize to unlimited family size.
 
 	# 1. get the suffixed names
 	T1 = umx_names(data, paste0(".", sep, "1"))

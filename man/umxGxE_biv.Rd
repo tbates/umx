@@ -68,8 +68,7 @@ umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = FALSE)
 m2 = umxModify(m1, update = c("cBeta2_r1c1", "eBeta1_r1c1", "eBeta2_r1c1"), comparison = TRUE)
 #
-# TODO: The umxReduce function knows how to test all relevant hypotheses
-# about model reduction for GxE models, reporting these in a nice table.
+# TODO: teach umxReduce to test all relevant hypotheses for umxGxE_biv
 umxReduce(m1)
 }
 }

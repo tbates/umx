@@ -19,9 +19,14 @@ Convert each column of a dataframe to numeric
 }
 \examples{
 df = mtcars
-# make one variable non-numeric
+# make mpg into string
+df$mpg = as.character(df$mpg)
+df$cyl = factor(df$cyl)
+df = umx_as_numeric(df); str(df)
+df = umx_as_numeric(df, force=TRUE); str(df)
+# Make one variable alpha
 df$mpg = c(letters,letters[1:6]); str(df)
-df = umx_as_numeric(df)
+df = umx_as_numeric(df, force=TRUE); str(df)
 }
 \references{
 - \url{http://www.github.com/tbates/umx}

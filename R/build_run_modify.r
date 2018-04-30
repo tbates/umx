@@ -2770,7 +2770,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# Use obj as the mean, return a list of length n, with sd = sd
 		return(xmu_start_value_list(mean = obj, sd = sd, n = n))
 	} else if (umx_is_MxMatrix(obj) ) {
-		message("TODO put values into a matrix.")
+		message("I don't know how to create values for a matrix: too many options.")
 	} else if (umx_is_RAM(obj) ) {
 		# This is a RAM Model: Set sane starting values
 		# Means at manifest means

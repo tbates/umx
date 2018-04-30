@@ -575,7 +575,6 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed"
 				# mxAlgebra(vec2diag(1/diag2vec(Vtot)), name = "Vtot"), # total variance --> SD
 				mxAlgebra(name = "Vtot", A + C+ E),        # Total variance
 				mxAlgebra(name = "InvSD", sqrt(solve(I * Vtot))), # total variance --> 1/SD
-				# TODO test that these are identical in all cases
 
 				# Standardised _variance_ coefficients ready to be stacked together
 				# A_std = InvSD %&% A 
@@ -758,6 +757,14 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 		if(hasCIs & CIs) {
 			# TODO umxACE CI code: Need to refactor into some function calls...
 			# TODO and then add to umxSummaryIP and CP
+			# 1. Get labels that are free: doesn't matter if they're my format or not
+			# 2. Turn each into a bracket[la,ble] (or labels for equates)
+			# 3. get the value of the parameter
+			# 4. for tables, that’s it: just print them out
+			# 5. for plots, tag labels with type+name of from- and to- vars
+			# 	* This requires some custom code for each model type.
+			# 6. Hence the umx_stash_CIs idea... if it would generalize.
+
 			message("Creating CI-based report!")
 			# CIs exist, get lower and upper CIs as a dataframe
 			CIlist = data.frame(model$output$confidenceIntervals)
