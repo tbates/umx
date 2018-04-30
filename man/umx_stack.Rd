@@ -46,6 +46,8 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_make_fake_data}},
   \code{\link{umx_polychoric}},
+  \code{\link{umx_polypairwise}},
+  \code{\link{umx_polytriowise}},
   \code{\link{umx_read_lower}}, \code{\link{umx_rename}},
   \code{\link{umx_reorder}},
   \code{\link{umx_swap_a_block}}, \code{\link{umx}}
