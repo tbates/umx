@@ -289,7 +289,6 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			mxFitFunctionML(), 
 			mxData(het_mz, type = "cov", numObs = numObsMZ)
 		)
-
 		DZ = mxModel("DZ",
 			mxExpectationNormal("top.expCovDZ"),
 			mxFitFunctionML(),

@@ -1,4 +1,4 @@
-# umx 2.6.5 May 2018, R 3.5.0
+# umx 2.6.5 May 2018, R 3.5.0: Simplex and improvements
 * NEW: Beta versions of `umx_polychoric`, `umx_polypairwise`, and `umx_polytriowise`
 * NEW: `umxSimplex`twin model!
   * `umxSummary` for simplex
@@ -8,7 +8,7 @@
 * NEW: `umxAlgebra` (just allows name first).
 * FIX: `install.OpenMx` URLs for NPSOl and travis builds of OpenMx
 * BREAK: Following reports of problems in RStudio, changed umx class names to remove the period character from MxModel derivative classes
- * This will **break** hard-cded calls, for instance  to `umxSummary.MxModel.ACE` instead of `umxSummary`. 
+ * This will **break** hard-coded calls, for instance  to `umxSummary.MxModel.ACE` instead of `umxSummary`. 
   * "Just" replace with `umxSummary.MxModelACE` # i.e. delete the last period in the name... Sorry :-(
 * IMPROVED: `parameters` now returns helpful near-match names as suggestions on not finding actual matches.
 * IMPROVED: `parameters` now handles vectors of regular selections

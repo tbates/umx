@@ -69,7 +69,6 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	# 1. Check data has rows
 	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
-	thresholds = match.arg(thresholds)
 	
 	# 2. handle sep
 	if(is.null(sep)){
