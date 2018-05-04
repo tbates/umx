@@ -2,52 +2,21 @@
 % Please edit documentation in R/xmu.r
 \name{xmu_twin_check}
 \alias{xmu_twin_check}
-\title{Check basic aspects of input for twin models}
+\title{xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = TRUE, nSib = 2, optimizer = NULL)
+# TODO xmu_twin_check: move to a test file:
+# 1. stop on no rows
+# 1. stop on a sep  = NULL and enforceSep = TRUE
+# 2. stop on a no  = NULL and enforceSep = TRUE
+# 3. stop on a factor with sep = NULL}
 \usage{
-xmu_twin_check(selDVs, dzData = dzData, mzData = mzData, optimizer = NULL,
-  sep = NULL, nSib = 2)
-}
-\arguments{
-\item{selDVs}{the variables expected to be in the data}
-
-\item{dzData}{the dat for DZ twins}
-
-\item{mzData}{the MZ twin data}
-
-\item{optimizer}{if you want to change it}
-
-\item{sep}{seperator between base-name and numeric suffix when creating variable names.}
-
-\item{nSib}{Likely 2 (the default)}
-}
-\value{
--
+xmu_twin_check(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
+  enforceSep = TRUE, nSib = 2, optimizer = NULL)
 }
 \description{
-Check that DVs are in the data, that the data have rows, set the optimizer if requested
-}
-\references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-# TODO examples
-}
-\seealso{
-- \code{\link{umxLabel}}
-
-Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
-  \code{\link{umxACE}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_biv}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
-  \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxE_biv}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
-
-Other Check or test: \code{\link{umx_check_names}},
-  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
-  \code{\link{umx}}
+xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = TRUE, nSib = 2, optimizer = NULL)
+# TODO xmu_twin_check: move to a test file:
+# 1. stop on no rows
+# 1. stop on a sep  = NULL and enforceSep = TRUE
+# 2. stop on a no  = NULL and enforceSep = TRUE
+# 3. stop on a factor with sep = NULL
 }

@@ -35,13 +35,13 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE).}
 
-\item{numObsDZ}{= Number of DZ twins: Set this if you input covariance data.}
+\item{numObsDZ}{Number of DZ twins: Set this if you input covariance data.}
 
-\item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data.}
+\item{numObsMZ}{Number of MZ twins: Set this if you input covariance data.}
 
-\item{boundDiag}{= Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8}
+\item{boundDiag}{Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8}
 
-\item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL).}
+\item{weightVar}{If provided, a vector objective will be used to weight the data. (default = NULL).}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
@@ -51,7 +51,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{suffix}{Allowed as a synonym for "suffix".}
+\item{suffix}{Deprecated: use "sep".}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
@@ -164,14 +164,15 @@ m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag
 # We can modify this model, say testing shared environment, and see a comparison:
 
 m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
+
 # =====================================
 # = Bivariate height and weight model =
 # =====================================
 data(twinData)
-mzData <- twinData[twinData$zygosity \%in\% c("MZFF", "MZMM"),]
-dzData <- twinData[twinData$zygosity \%in\% c("DZFF", "DZMM", "DZOS"), ]
-mzData <- mzData[1:80,] # quicker run to keep CRAN happy
-dzData <- dzData[1:80,]
+mzData = twinData[twinData$zygosity \%in\% c("MZFF", "MZMM"),]
+dzData = twinData[twinData$zygosity \%in\% c("DZFF", "DZMM", "DZOS"), ]
+mzData = mzData[1:80,] # quicker run to keep CRAN happy
+dzData = dzData[1:80,]
 selDVs = c("ht", "wt") # umx will add sep (in this case "") + "1" or '2'
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
@@ -209,16 +210,15 @@ umxSummary(m1)
 data(twinData)
 selDVs = c("wt", "obese")
 # Cut BMI column to form ordinal obesity variables
-ordDVs = c("obese1", "obese2")
-obesityLevels = c('normal', 'overweight', 'obese')
-cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+ordDVs          = c("obese1", "obese2")
+obesityLevels   = c('normal', 'overweight', 'obese')
+cutPoints       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
-twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-# umxACE can trim out unused variables on its own: just select the rows you want.
-mzData <- twinData[twinData$zygosity \%in\%  "MZFF",] 
-dzData <- twinData[twinData$zygosity \%in\%  "DZFF",]
+twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
+dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
@@ -231,16 +231,16 @@ require(umx)
 data(twinData)
 # Cut to form category of 20\% obese subjects
 # and make into mxFactors (ensure ordered is TRUE, and require levels)
-cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
-obesityLevels = c('normal', 'obese')
-twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+cutPoints       = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+obesityLevels   = c('normal', 'obese')
+twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 ordDVs = c("obese1", "obese2")
-twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 
 selDVs = c("wt", "obese")
-mzData <- twinData[twinData$zygosity \%in\% "MZFF",]
-dzData <- twinData[twinData$zygosity \%in\% "DZFF",]
+mzData = twinData[twinData$zygosity \%in\% "MZFF",]
+dzData = twinData[twinData$zygosity \%in\% "DZFF",]
 \dontrun{
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
@@ -266,8 +266,9 @@ to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.n
 \seealso{
 - \code{\link{plot.MxModelACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
 
-Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
+Other Twin Modeling Functions: \code{\link{mzData}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
+  \code{\link{umxACEv}}, \code{\link{umxCPplay}},
   \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
   \code{\link{umxIP}}, \code{\link{umxSexLim}},
@@ -277,6 +278,5 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}},
-  \code{\link{xmu_twin_check}}
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 }

@@ -38,7 +38,7 @@ umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
 \seealso{
 - \code{\link{umx_is_numeric}}
 
-Other Check or test: \code{\link{umx_check_names}},
-  \code{\link{umx_is_numeric}}, \code{\link{umx}},
-  \code{\link{xmu_twin_check}}
+Other Check or test: \code{\link{mzData}},
+  \code{\link{umx_check_names}},
+  \code{\link{umx_is_numeric}}, \code{\link{umx}}
 }

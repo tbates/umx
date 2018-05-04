@@ -29,8 +29,8 @@ require(umx)
 data(demoOneFactor)
 m2 <- mxModel("One Factor",
 	mxMatrix("Full", 5, 1, values = 0.2, free = TRUE, name = "A"), 
-	mxMatrix("Symm", 1, 1, values = 1, free = FALSE, name = "L"), 
-	mxMatrix("Diag", 5, 5, values = 1, free = TRUE, name = "U"), 
+	mxMatrix("Symm", 1, 1, values = 1.0, free = FALSE, name = "L"), 
+	mxMatrix("Diag", 5, 5, values = 1.0, free = TRUE, name = "U"), 
 	mxAlgebra(A \%*\% L \%*\% t(A) + U, name = "R"), 
 	mxExpectationNormal("R", dimnames = names(demoOneFactor)),
 	mxFitFunctionML(),
@@ -53,6 +53,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_check_levels_identical}},
   \code{\link{xmu_dot_make_paths}},
   \code{\link{xmu_dot_make_residuals}},
+  \code{\link{xmu_make_top}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}}
 }

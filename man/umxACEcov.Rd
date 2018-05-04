@@ -124,8 +124,9 @@ to Handle Missing Covariate Data in Twin Research : With an Application to
 Educational Achievement Data. Behavior Genetics. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
+Other Twin Modeling Functions: \code{\link{mzData}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEv}},
+  \code{\link{umxACE}}, \code{\link{umxCPplay}},
   \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
   \code{\link{umxIP}}, \code{\link{umxSexLim}},
@@ -135,6 +136,5 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}},
-  \code{\link{xmu_twin_check}}
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 }
