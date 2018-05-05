@@ -115,17 +115,44 @@ m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6"
 }
 \examples{
 \dontrun{
+# ========================================================
+# = Run a 3-factor Common pathway twin model of 6 traits =
+# ========================================================
 require(umx)
 data(GFF)
-mzData <- subset(GFF, zyg_2grp == "MZ")
-dzData <- subset(GFF, zyg_2grp == "DZ")
+mzData = subset(GFF, zyg_2grp == "MZ")
+dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
 m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 umxSummary(m1)
+
+# =================================================
+# = Find and test dropping of shared environment  =
+# =================================================
+# Find the 
 umxParameters(m1, patt = "^c")
 m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 umxSummaryCP(m2, comparison = m1, file = NA)
 umxCompare(m1, m2)
+
+# =======================================
+# = Mixed continuous and binary example =
+# =======================================
+require(umx)
+data(GFF)
+# Cut to form category of 20\% obese subjects
+# and make into mxFactors (ensure ordered is TRUE, and require levels)
+cutPoints = quantile(GFF[, "AD_T1"], probs = .2, na.rm = TRUE)
+ADLevels  = c('normal', 'depressed')
+GFF$DEP_T1 = cut(GFF$AD_T1, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 
+GFF$DEP_T2 = cut(GFF$AD_T2, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 
+ordDVs = c("DEP_T1", "DEP_T2")
+GFF[, ordDVs] = umxFactor(GFF[, ordDVs])
+
+selDVs = c("gff","fc","qol","hap","sat","DEP") # These will be expanded into "gff_T1" "gff_T2" etc.
+mzData = subset(GFF, zyg_2grp == "MZ")
+dzData = subset(GFF, zyg_2grp == "DZ")
+m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 }
 
 }
@@ -135,17 +162,18 @@ umxCompare(m1, m2)
 \seealso{
 - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
-Other Twin Modeling Functions: \code{\link{mzData}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umxSummaryACEcov}},
+Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
+  \code{\link{umxACE}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_biv}}, \code{\link{umxGxE_window}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }

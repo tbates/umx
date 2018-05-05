@@ -5,8 +5,9 @@
 \title{Helper to make a basic top, MZ, and DZ model}
 \usage{
 xmu_make_top(mzData, dzData, selDVs, sep = NULL, nSib = 2,
-  numObsMZ = NULL, numObsDZ = NULL, thresholds = c("deviationBased",
-  "WLS"), weightVar = NULL, bVector = FALSE)
+  numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE,
+  threshType = c("deviationBased", "WLS"), weightVar = NULL,
+  bVector = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{mzData}{Dataframe containing the MZ data}
@@ -23,11 +24,15 @@ xmu_make_top(mzData, dzData, selDVs, sep = NULL, nSib = 2,
 
 \item{numObsDZ}{Number of DZ observations contributing (for summary data only)}
 
-\item{thresholds}{what type of thresholds to implement if needed.}
+\item{equateMeans}{Whether to equate T1 and T2 means (default = TRUE)}
+
+\item{threshType}{what type of thresholds to implement if needed.}
 
 \item{weightVar}{If provided, a vector objective will be used to weight the data. (default = NULL).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
+
+\item{verbose}{(default = FALSE)}
 }
 \value{
 - \code{\link{mxModel}}s for top, MZ and DZ.
@@ -48,10 +53,19 @@ xmu_make_top makes top, MZ, and DZ models. It also handles thresholds matrix if 
    2. Make Mz and DZ models with type = "cov".
 }
 \examples{
+# ==============
+# = Continuous =
+# ==============
+data(twinData)
+selDVs = c("wt", "ht")
+mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
+dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
+bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+names(bits) # "top" "MZ"  "DZ" 
+
 # ============================================
 # = Bivariate continuous and ordinal example =
 # ============================================
-data(twinData)
 selDVs = c("wt", "obese")
 # Cut BMI column to form ordinal obesity variables
 ordDVs          = c("obese1", "obese2")
@@ -63,18 +77,9 @@ twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = 
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
-
-# ==============
-# = Continuous =
-# ==============
-selDVs = c("wt", "ht")
 bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
 names(bits) # "top" "MZ"  "DZ" 
-# ===============
-# = One ordinal =
-# ===============
-selDVs = c("wt", "obese")
-bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+
 # ==============
 # = One binary =
 # ==============
@@ -88,6 +93,7 @@ selDVs = c("wt", "obese")
 mzData = twinData[twinData$zygosity \%in\% "MZFF",]
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
 bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+
 # ============
 # = Cov data =
 # ============

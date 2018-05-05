@@ -4,7 +4,7 @@
 \alias{umx_is_class}
 \title{Check if variables in a dataframe are in a list of classes.}
 \usage{
-umx_is_class(df, classes, all = TRUE)
+umx_is_class(df, classes = NULL, all = TRUE)
 }
 \arguments{
 \item{df}{A dataframe to check}
@@ -21,6 +21,7 @@ Checks the class of each column in a dataframe, seeing if they are %in% a list o
 Returns a vector of TRUE and FALSE, or, if all ==TRUE, a single binary (the default).
 }
 \examples{
+umx_is_class(mtcars) # report class list
 # Are the variables in mtcars type character?
 umx_is_class(mtcars, "character") # FALSE
 # They're all numeric data
@@ -38,7 +39,7 @@ umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
 \seealso{
 - \code{\link{umx_is_numeric}}
 
-Other Check or test: \code{\link{mzData}},
-  \code{\link{umx_check_names}},
-  \code{\link{umx_is_numeric}}, \code{\link{umx}}
+Other Check or test: \code{\link{umx_check_names}},
+  \code{\link{umx_is_numeric}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }

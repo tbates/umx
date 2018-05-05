@@ -55,7 +55,7 @@ Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_is_exogenous}},
   \code{\link{umx_is_ordered}}
 
-Other Check or test: \code{\link{mzData}},
-  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
-  \code{\link{umx}}
+Other Check or test: \code{\link{umx_is_class}},
+  \code{\link{umx_is_numeric}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }

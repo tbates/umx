@@ -31,7 +31,11 @@ umxAlgebra(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
 umxAlgebra is a wrapper for mxAlgebra which has the name parameter first in order.
 }
 \examples{
-umxAlgebra("circ", 2 * pi * r)
+x = umxAlgebra("circ", 2 * pi)
+class(x$formula)
+x = mxAlgebra(name = "circ", 2 * pi)
+class(x$formula) # "call"
+
 }
 \seealso{
 - \code{\link{umxMatrix}}

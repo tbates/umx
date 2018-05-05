@@ -111,20 +111,20 @@ Other Plotting functions: \code{\link{plot.MxModel}},
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxTwoStage}}
 
-Other Twin Modeling Functions: \code{\link{mzData}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCPplay}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_biv}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
-  \code{\link{umxSummaryACEcov}},
+Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
+  \code{\link{umxACE}}, \code{\link{umxCPplay}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxSexLim}},
+  \code{\link{umxSimplex}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}
+  \code{\link{umxSummarySimplex}},
+  \code{\link{xmu_twin_check}}
 
 Other Twin Reporting Functions: \code{\link{umxReduceACE}},
   \code{\link{umxReduceGxE}}
@@ -148,9 +148,9 @@ Other Get and set: \code{\link{umx_default_option}},
   \code{\link{umx_set_plot_format}},
   \code{\link{umx_set_table_format}}
 
-Other Check or test: \code{\link{mzData}},
-  \code{\link{umx_check_names}},
-  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}}
+Other Check or test: \code{\link{umx_check_names}},
+  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
+  \code{\link{xmu_twin_check}}
 
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxHetCor}},

@@ -43,29 +43,35 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 #' @description
 #' Check that DVs are in the data, that the data have rows, set the optimizer if requested.
 #'
-#' @param selDVs Variables used in the data
-#' @param dzData The DZ twin data
-#' @param mzData The MZ twin data
+#' @param selDVs Variables used in the data.
+#' @param dzData The DZ twin data.
+#' @param mzData The MZ twin data.
 #' @param sep Seperator between base-name and numeric suffix when creating variable names, e.g. "_T"
-#' @param enforceSep Whether to require sep to be set, or just warn if it is not (Default = TRUE: enforce)
-#' @param nSib How many people per family? (Default = 2)
-#' @param optimizer Set by name (if you want to change it)
+#' @param nSib How many people per family? (Default = 2).
+#' @param numObsMZ set if data are not raw.
+#' @param numObsDZ set if data are not raw.
+#' @param enforceSep Whether to require sep to be set, or just warn if it is not (Default = TRUE: enforce).
+#' @param optimizer Set by name (if you want to change it).
 #' @return -
 #' @export
 #' @family Twin Modeling Functions
 #' @family Check or test
-#' @seealso - \code{\link{umxLabel}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
 #' load(twinData)
-mzData = subset(twinData, zygosity=="MZFF")
-dzData = subset(twinData, zygosity=="MZFF")
-#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = TRUE, nSib = 2, optimizer = NULL)
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "MZFF")
+#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = TRUE)
+#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = FALSE)
+#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = TRUE, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, optimizer = NULL)
+#' \dontrun{
 #' # TODO xmu_twin_check: move to a test file:
 #' # 1. stop on no rows
 #' # 1. stop on a sep  = NULL and enforceSep = TRUE
-#' # 2. stop on a no  = NULL and enforceSep = TRUE
+#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, enforceSep = TRUE)
 #' # 3. stop on a factor with sep = NULL
-xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL, enforceSep = TRUE, nSib = 2, optimizer = NULL) {
+#' }
+xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL, enforceSep = TRUE, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, optimizer = NULL) {
 	# 1. Check data has rows
 	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
@@ -90,10 +96,10 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	umx_check_names(selDVs, mzData)
 	umx_check_names(selDVs, dzData)
 
-	# 5. Check data are numeric
-	if(!umx_is_class(mzData[, selDVs], classes = c("integer", "double", "numeric","factor"), all = TRUE)) {
-		bad = selDVs[!umx_is_class(mzData[, selDVs], classes = c("integer", "double", "numeric","factor"), all = FALSE)]
-		stop("variables must be integer, numeric or factor. The following are not: ", omxQuotes(bad))
+	# 5. Check data are legal
+	if(!umx_is_class(mzData[, selDVs], classes = c("integer", "double", "numeric", "factor", "ordered"), all = TRUE)) {
+		bad = selDVs[!umx_is_class(mzData[, selDVs], classes = c("integer", "double", "numeric","factor", "ordered"), all = FALSE)]
+		stop("variables must be integer, numeric or (possibly ordered) factor. The following are not: ", omxQuotes(bad))
 	}
 
 	# 6. Look for name conflicts

@@ -78,19 +78,19 @@ stdFit = umxSummary(m1, returnStd = TRUE)
 \seealso{
 - \code{\link{umxSimplex}}
 
-Other Twin Modeling Functions: \code{\link{mzData}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCPplay}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_biv}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
-  \code{\link{umxSummaryACEcov}},
+Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
+  \code{\link{umxACE}}, \code{\link{umxCPplay}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
+  \code{\link{umxIP}}, \code{\link{umxSexLim}},
+  \code{\link{umxSimplex}}, \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umxSummarySexLim}}, \code{\link{umx}}
+  \code{\link{umxSummarySexLim}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

@@ -163,7 +163,7 @@ m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag
 # MODEL MODIFICATION
 # We can modify this model, say testing shared environment, and see a comparison:
 
-m2 = umxModify(m1, update = "c_r1c1", comparison = TRUE)
+m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
 
 # =====================================
 # = Bivariate height and weight model =
@@ -266,17 +266,18 @@ to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.n
 \seealso{
 - \code{\link{plot.MxModelACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
 
-Other Twin Modeling Functions: \code{\link{mzData}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxCPplay}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umxSummaryACEcov}},
+Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
+  \code{\link{umxCPplay}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_biv}}, \code{\link{umxGxE_window}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxE_biv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }

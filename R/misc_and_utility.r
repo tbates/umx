@@ -3711,6 +3711,7 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verb
 #' @seealso - \code{\link{umx_is_numeric}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
+#' umx_is_class(mtcars) # report class list
 #' # Are the variables in mtcars type character?
 #' umx_is_class(mtcars, "character") # FALSE
 #' # They're all numeric data
@@ -3721,22 +3722,34 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verb
 #' umx_is_class(mtcars, c("character", "numeric"))
 #' # Is zygosity a factor (note we don't drop = F to keep as dataframe)
 #' umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
-umx_is_class <- function(df, classes, all = TRUE){
+umx_is_class <- function(df, classes=NULL, all = TRUE){
 	if(!is.data.frame(df)){
-		return(class(df %in% classes))
-		# stop(paste0("First argument should be a dataframe as its first argument. ", quote(df), " isn't a dataframe"))
+		if(is.null(classes)){
+			return(class(df))		
+		}else{
+			return(class(df %in% classes))
+		}
 	}
 	colNames = names(df)
 	bIsOK = rep(FALSE, length(colNames))
 	i = 1
-	for (n in colNames) {
-		bIsOK[i] = (class(df[, n]) %in% classes)
-		i = i + 1
-	}
-	if(all){
-		return(all(bIsOK))
-	} else {
+	if(is.null(classes)){
+		for (n in colNames) {
+			bIsOK[i] = class(df[, n])[1]
+			i = i + 1
+		}
 		return(bIsOK)
+	}else{
+		bIsOK = rep(FALSE, length(colNames))
+		for (n in colNames) {
+			bIsOK[i] = (class(df[, n]) %in% classes)[1]
+			i = i + 1
+		}
+		if(all){
+			return(all(bIsOK))
+		} else {
+			return(bIsOK)
+		}
 	}
 }
 

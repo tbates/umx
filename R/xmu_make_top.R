@@ -21,19 +21,30 @@
 #' @param sep How to build full variable names (if NULL, selDVs must be full names)
 #' @param nSib Number of members per family (default = 2)
 #' @param numObsMZ Number of MZ observations contributing (for summary data only) 
-#' @param numObsDZ Number of DZ observations contributing (for summary data only) 
-#' @param thresholds what type of thresholds to implement if needed.
+#' @param numObsDZ Number of DZ observations contributing (for summary data only)
+#' @param equateMeans Whether to equate T1 and T2 means (default = TRUE)
+#' @param threshType what type of thresholds to implement if needed.
 #' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
+#' @param verbose (default = FALSE)
 # #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @return - \code{\link{mxModel}}s for top, MZ and DZ.
 #' @export
 #' @family xmu internal not for end user
 #' @examples
+#' # ==============
+#' # = Continuous =
+#' # ==============
+#' data(twinData)
+#' selDVs = c("wt", "ht")
+#' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
+#' dzData = twinData[twinData$zygosity %in%  "DZFF",]
+#' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+#' names(bits) # "top" "MZ"  "DZ" 
+#' 
 #' # ============================================
 #' # = Bivariate continuous and ordinal example =
 #' # ============================================
-#' data(twinData)
 #' selDVs = c("wt", "obese")
 #' # Cut BMI column to form ordinal obesity variables
 #' ordDVs          = c("obese1", "obese2")
@@ -45,18 +56,9 @@
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF",]
-#'
-#' # ==============
-#' # = Continuous =
-#' # ==============
-#' selDVs = c("wt", "ht")
 #' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
 #' names(bits) # "top" "MZ"  "DZ" 
-#' # ===============
-#' # = One ordinal =
-#' # ===============
-#' selDVs = c("wt", "obese")
-#' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+#'
 #' # ==============
 #' # = One binary =
 #' # ==============
@@ -70,6 +72,7 @@
 #' mzData = twinData[twinData$zygosity %in% "MZFF",]
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
 #' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+#' 
 #' # ============
 #' # = Cov data =
 #' # ============
@@ -78,8 +81,8 @@
 #' dz = cov(twinData[twinData$zygosity %in%  "DZFF", selDVs], use = "complete")
 #' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, nSib = 2)
 #' # TODO Add selCovs??
-xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ= NULL, numObsDZ= NULL, thresholds = c("deviationBased", "WLS"), weightVar = NULL, bVector = FALSE) {
-	thresholds = match.arg(thresholds)
+xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ= NULL, numObsDZ= NULL, equateMeans = TRUE, threshType = c("deviationBased", "WLS"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
+	threshType = match.arg(threshType)
 	if(!is.null(sep)){
 		selDVs = tvars(selDVs, sep = sep, suffixes= 1:nSib)
 	}
@@ -96,8 +99,9 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 		}
 		# Drop any unused columns from MZ and DZ Data
-		umx_msg(selDVs)
-		if(any(umx_is_ordered(mzData))){
+		# umx_msg(selDVs)
+		mzData = mzData[, selDVs]
+		if(any(umx_is_ordered(mzData[,selDVs]))){
 			isFactor = umx_is_ordered(mzData[, selDVs])                      # T/F list of factor columns
 			isOrd    = umx_is_ordered(mzData[, selDVs], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
 			isBin    = umx_is_ordered(mzData[, selDVs], binary.only  = TRUE) # T/F list of binary columns
@@ -105,10 +109,10 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			nOrdVars = sum(isOrd) # total number of ordinal columns
 			nBinVars = sum(isBin) # total number of binary columns
 
-			factorVarNames = names(mzData)[isFactor]
-			ordVarNames    = names(mzData)[isOrd]
-			binVarNames    = names(mzData)[isBin]
-			contVarNames   = names(mzData)[!isFactor]
+			factorVarNames = names(mzData[, selDVs])[isFactor]
+			ordVarNames    = names(mzData[, selDVs])[isOrd]
+			binVarNames    = names(mzData[, selDVs])[isBin]
+			contVarNames   = names(mzData[, selDVs])[!isFactor]
 		}else{
 			# Summary data
 			isFactor = isOrd    = isBin    = c()
@@ -127,15 +131,14 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			}
 			mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = FALSE, values = mzData[, weightVar])
 			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = FALSE, values = dzData[, weightVar])
-			mzData = mzData[, selDVs]
-			dzData = dzData[, selDVs]
 			bVector = TRUE
 		} else {
 			# no weights
-			mzData = mzData[, selDVs]
-			dzData = dzData[, selDVs]
 			bVector = FALSE
 		}
+		mzData  = mzData[, selDVs]
+		dzData  = dzData[, selDVs]
+		allData = rbind(mzData, dzData)
 
 		# =====================================
 		# = Add means and var matrices to top =
@@ -143,7 +146,6 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		# Figure out start values while we are here
 		# varStarts will be used to fill a, c, and e
 
-		allData = rbind(mzData, dzData)
 		varStarts = umx_var(allData[, selDVs[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 
 		# sqrt to switch from var to path coefficient scale
@@ -195,13 +197,13 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			# ==================================================
 			message("Found ", (nOrdVars/nSib), " pair(s) of ordinal variables:", omxQuotes(ordVarNames), " (No binary)")			
 			if(length(contVarNames) > 0){
-				message(length(contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(contVarNames))	
+				message(length(contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(contVarNames[1:(length(contVarNames)/nSib)]))	
 			}
 			# Means: all free, start cont at the measured value, ord @0
 
 			top = mxModel("top", 
 				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selDVs)),
-				umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
+				umxThresholdMatrix(allData, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose)
 			)
 			MZ  = mxModel("MZ", 
 				mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat"), 
@@ -224,7 +226,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 				message("There were also ", nOrdVars/nSib, " pairs of ordinal variables:", omxQuotes(ordVarNames))			
 			}
 			if(length(contVarNames) > 0){
-				message("\nand ", length(contVarNames)/nSib, " pairs of continuous variables:", omxQuotes(contVarNames))	
+				message("\nand ", length(contVarNames)/nSib, " pairs of continuous variables:", omxQuotes(contVarNames[1:(length(contVarNames)/nSib)]))
 			}else{
 				message("No continuous variables")
 			}
@@ -243,8 +245,8 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			binBracketLabels = paste0("Vtot[", the_bin_cols, ",", the_bin_cols, "]")
 			top = mxModel("top", 
 				umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = obsMeans, dimnames = list("means", selDVs)),
-				umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = TRUE),
-				umxAlgebra("Vtot", A + C + E), # Total variance (redundant but is OK)
+				umxThresholdMatrix(allData, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose),
+				mxAlgebra(name = "Vtot", A + C + E), # Total variance (redundant but is OK)
 				umxMatrix("binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
 				umxMatrix("Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
 				mxConstraint(name = "constrain_Bin_var_to_1", binLabels == Unit_nBinx1)
@@ -297,6 +299,14 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 	} else {
 		stop("Datatype \"", dataType, "\" not understood")
 	}
+	# Equate means for twin1 and twin 2 (match labels in first & second halves of means labels matrix)
+	if(equateMeans & dataType == "raw"){
+		top = omxSetParameters(top,
+		  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMeanr1c4", "expMeanr1c5", "expMeanr1c6"),
+		  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
+		)
+	}
+	
 	return(list(top = top, MZ = MZ, DZ = DZ))
 }
 
@@ -389,36 +399,62 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
+#' # ========================================================
+#' # = Run a 3-factor Common pathway twin model of 6 traits =
+#' # ========================================================
 #' require(umx)
 #' data(GFF)
-#' mzData <- subset(GFF, zyg_2grp == "MZ")
-#' dzData <- subset(GFF, zyg_2grp == "DZ")
+#' mzData = subset(GFF, zyg_2grp == "MZ")
+#' dzData = subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
 #' m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
+#'
+#' # =================================================
+#' # = Find and test dropping of shared environment  =
+#' # =================================================
+#' # Find the 
 #' umxParameters(m1, patt = "^c")
 #' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
+#' 
+#' # =======================================
+#' # = Mixed continuous and binary example =
+#' # =======================================
+#' require(umx)
+#' data(GFF)
+#' # Cut to form category of 20% obese subjects
+#' # and make into mxFactors (ensure ordered is TRUE, and require levels)
+#' cutPoints = quantile(GFF[, "AD_T1"], probs = .2, na.rm = TRUE)
+#' ADLevels  = c('normal', 'depressed')
+#' GFF$DEP_T1 = cut(GFF$AD_T1, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 
+#' GFF$DEP_T2 = cut(GFF$AD_T2, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 
+#' ordDVs = c("DEP_T1", "DEP_T2")
+#' GFF[, ordDVs] = umxFactor(GFF[, ordDVs])
+#' 
+#' selDVs = c("gff","fc","qol","hap","sat","DEP") # These will be expanded into "gff_T1" "gff_T2" etc.
+#' mzData = subset(GFF, zyg_2grp == "MZ")
+#' dzData = subset(GFF, zyg_2grp == "DZ")
+#' m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' }
 #'
 umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2
-	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
-	
-	# expand var names
-	selDVs   = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
-	nVar     = length(selDVs)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	bits     = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, nSib = nSib)
-	top = bits$top
-	MZ  = bits$MZ
-	DZ  = bits$DZ
+	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
+	# Expand var names
+	selDVs = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
+	nVar   = length(selDVs)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	bits   = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
+	top    = bits$top
+	MZ     = bits$MZ
+	DZ     = bits$DZ
 
 	# TODO umxCP: Improve start values (Mike?) 
 	if(correlatedA){
 		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = .7, jiggle = .05) # Latent common factor
 	} else {
-		a_cp_matrix = umxMatrix("a_cp", "Diag", nFac, nFac, free = TRUE, values = .7, jiggle = .05)
+		a_cp_matrix = umxMatrix("a_cp", "Diag" , nFac, nFac, free = TRUE, values = .7, jiggle = .05)
 	}
 
 	model = mxModel(name,
@@ -458,13 +494,6 @@ umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
 		MZ, DZ,
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
-	# Equate means for twin1 and twin 2 (match labels in first & second halves of means labels matrix)
-	if(equateMeans & dataType == "raw"){
-		model = omxSetParameters(model,
-		  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMeanr1c4", "expMeanr1c5", "expMeanr1c6"),
-		  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
-		)
-	}
 	if(!freeLowerA){
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)

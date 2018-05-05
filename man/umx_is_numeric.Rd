@@ -28,7 +28,7 @@ umx_is_numeric(mtcars, all=FALSE) # vector of TRUE
 \seealso{
 - \code{\link{umx_is_class}}
 
-Other Check or test: \code{\link{mzData}},
-  \code{\link{umx_check_names}},
-  \code{\link{umx_is_class}}, \code{\link{umx}}
+Other Check or test: \code{\link{umx_check_names}},
+  \code{\link{umx_is_class}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }

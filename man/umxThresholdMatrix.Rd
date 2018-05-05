@@ -7,12 +7,12 @@
 umxThresholdMatrix(df, sep = NA, method = c("auto", "Mehta", "allFree"),
   thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
   threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE,
-  suffixes = "deprecated", verbose = FALSE)
+  verbose = FALSE)
 }
 \arguments{
-\item{df}{the data being modeled (to allow access to the factor levels and quantiles within these for each variable)}
+\item{df}{The data being modeled (to allow access to the factor levels and quantiles within these for each variable)}
 
-\item{sep}{(optional) string for wide (twin) data, separating the base name from a numeric suffix (e.g. "_T")}
+\item{sep}{(e.g. "_T") Required for wide (twin) data. It is used to break the base names our from their numeric suffixes.}
 
 \item{method}{How to set the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)}
 
@@ -23,8 +23,6 @@ umxThresholdMatrix(df, sep = NA, method = c("auto", "Mehta", "allFree"),
 \item{l_u_bound}{c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.}
 
 \item{droplevels}{Whether to drop levels with no observed data (defaults to FALSE)}
-
-\item{suffixes}{deprecated. Instead of c("T1", "T2"), set sep (see above)}
 
 \item{verbose}{(defaults to FALSE))}
 }
