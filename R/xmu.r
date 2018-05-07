@@ -61,9 +61,12 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 #' load(twinData)
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "MZFF")
-#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = TRUE)
-#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = FALSE)
-#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = TRUE, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, optimizer = NULL)
+#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, 
+#' 	sep = "", enforceSep = TRUE)
+#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, 
+#' 	sep = "", enforceSep = FALSE)
+#' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, 
+#' 	sep = "", enforceSep = TRUE, nSib = 2, optimizer = NULL)
 #' \dontrun{
 #' # TODO xmu_twin_check: move to a test file:
 #' # 1. stop on no rows
@@ -81,6 +84,7 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 		if(enforceSep){
 			stop("Please use sep. e.g. sep = '_T'. Set `selDVs` to the base variable names, and and I will create the full variable names from that.")
 		} else {
+			selVars = selDVs
 			# Assume names are already expanded
 		}
 	} else if(length(sep) != 1){
@@ -89,21 +93,16 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 		"PS: variables have to end in 1 or 2, i.e  'example_T1' and 'example_T2'")
 	}else{
 		# 3. expand variable names
-		selDVs = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
+		selVars = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
 	}
 
 	# 4. Check all names in the data
-	umx_check_names(selDVs, mzData)
-	umx_check_names(selDVs, dzData)
+	umx_check_names(selVars, mzData)
+	umx_check_names(selVars, dzData)
 
-	# 5. Check data are legal
-	if(!umx_is_class(mzData[, selDVs], classes = c("integer", "double", "numeric", "factor", "ordered"), all = TRUE)) {
-		bad = selDVs[!umx_is_class(mzData[, selDVs], classes = c("integer", "double", "numeric","factor", "ordered"), all = FALSE)]
-		stop("variables must be integer, numeric or (possibly ordered) factor. The following are not: ", omxQuotes(bad))
-	}
 
 	# 6. Look for name conflicts
-	badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
+	badNames = umx_grep(selVars, grepString = "^[ACDEacde][0-9]*$")
 	if(!identical(character(0), badNames)){
 		stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
 		"BadNames included: ", omxQuotes(badNames) )
@@ -113,12 +112,17 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
 			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 		}
+	# 5. Check data are legal
+		if(!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric", "factor", "ordered"), all = TRUE)) {
+			bad = selVars[!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric","factor", "ordered"), all = FALSE)]
+			stop("variables must be integer, numeric or (possibly ordered) factor. The following are not: ", omxQuotes(bad))
+		}
 		# Drop unused columns from mzData and dzData
-		mzData = mzData[, selDVs]
-		dzData = dzData[, selDVs]
-		isFactor = umx_is_ordered(mzData[, selDVs])                      # T/F list of factor columns
-		isOrd    = umx_is_ordered(mzData[, selDVs], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
-		isBin    = umx_is_ordered(mzData[, selDVs], binary.only  = TRUE) # T/F list of binary columns
+		mzData = mzData[, selVars]
+		dzData = dzData[, selVars]
+		isFactor = umx_is_ordered(mzData[, selVars])                      # T/F list of factor columns
+		isOrd    = umx_is_ordered(mzData[, selVars], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
+		isBin    = umx_is_ordered(mzData[, selVars], binary.only  = TRUE) # T/F list of binary columns
 		nFactors = sum(isFactor)
 		nOrdVars = sum(isOrd) # total number of ordinal columns
 		nBinVars = sum(isBin) # total number of binary columns

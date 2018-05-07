@@ -31,8 +31,8 @@
 #' On the TODO-list is to have WLS as an option. Also censored data.
 #' @param mzData Dataframe containing the MZ data 
 #' @param dzData Dataframe containing the DZ data 
-#' @param selDVs List of base (e.g. BMI) or full (i.e., BMI_T1) variable names
-#' @param sep How to build full variable names (if NULL, selDVs must be full names)
+#' @param selDVs List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names
+#' @param sep Used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2
 #' @param nSib Number of members per family (default = 2)
 #' @param numObsMZ Number of MZ observations contributing (for summary data only) 
 #' @param numObsDZ Number of DZ observations contributing (for summary data only)
@@ -86,8 +86,8 @@
 #' selDVs = c("wt", "obese")
 #' mzData = twinData[twinData$zygosity %in% "MZFF",]
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
-#' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
-#' 
+#' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs = selDVs, sep = "", nSib = 2)
+#'
 #' # ============
 #' # = Cov data =
 #' # ============
@@ -98,14 +98,15 @@
 #' # TODO Add selCovs??
 xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ= NULL, numObsDZ= NULL, equateMeans = TRUE, threshType = c("deviationBased", "WLS"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
 	threshType = match.arg(threshType)
-	if(!is.null(sep)){
-		selDVs = tvars(selDVs, sep = sep, suffixes= 1:nSib)
+	if(is.null(sep)){
+		stop("You MUST set 'sep'. Otherwise xmu_make_top can't reliably expand selDVs into full variable names")
 	}
-	nVar = length(selDVs)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+	selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
+	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	if(!is.null(weightVar)){
-		used = c(selDVs, weightVar)
+		used = c(selVars, weightVar)
 	}else{
-		used = selDVs
+		used = selVars
 	}
 	dataType = umx_is_cov(dzData, boolean = FALSE)
 
@@ -113,21 +114,19 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
 			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 		}
-		# Drop any unused columns from MZ and DZ Data
-		# umx_msg(selDVs)
-		mzData = mzData[, selDVs]
-		if(any(umx_is_ordered(mzData[,selDVs]))){
-			isFactor = umx_is_ordered(mzData[, selDVs])                      # T/F list of factor columns
-			isOrd    = umx_is_ordered(mzData[, selDVs], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
-			isBin    = umx_is_ordered(mzData[, selDVs], binary.only  = TRUE) # T/F list of binary columns
+		# find ordinal variables
+		if(any(umx_is_ordered(mzData[,selVars]))){
+			isFactor = umx_is_ordered(mzData[, selVars])                      # T/F list of factor columns
+			isOrd    = umx_is_ordered(mzData[, selVars], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
+			isBin    = umx_is_ordered(mzData[, selVars], binary.only  = TRUE) # T/F list of binary columns
 			nFactors = sum(isFactor)
 			nOrdVars = sum(isOrd) # total number of ordinal columns
 			nBinVars = sum(isBin) # total number of binary columns
 
-			factorVarNames = names(mzData[, selDVs])[isFactor]
-			ordVarNames    = names(mzData[, selDVs])[isOrd]
-			binVarNames    = names(mzData[, selDVs])[isBin]
-			contVarNames   = names(mzData[, selDVs])[!isFactor]
+			factorVarNames = names(mzData[, selVars])[isFactor]
+			ordVarNames    = names(mzData[, selVars])[isOrd]
+			binVarNames    = names(mzData[, selVars])[isBin]
+			contVarNames   = names(mzData[, selVars])[!isFactor]
 		}else{
 			# Summary data
 			isFactor = isOrd    = isBin    = c()
@@ -151,8 +150,9 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			# no weights
 			bVector = FALSE
 		}
-		mzData  = mzData[, selDVs]
-		dzData  = dzData[, selDVs]
+		# Drop any unused columns from MZ and DZ Data
+		mzData  = mzData[, selVars]
+		dzData  = dzData[, selVars]
 		allData = rbind(mzData, dzData)
 
 		# =====================================
@@ -161,7 +161,8 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		# Figure out start values while we are here
 		# varStarts will be used to fill a, c, and e
 
-		varStarts = umx_var(allData[, selDVs[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+		# TODO could use both twins for variance estimation
+		varStarts = umx_var(allData[, selVars[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 
 		# sqrt to switch from var to path coefficient scale
 		if(nVar == 1){
@@ -172,7 +173,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		varStarts = matrix(varStarts, nVar, nVar)
 
 		# Mean starts (used across all raw solutions
-		obsMeans = umx_means(allData[, selDVs], ordVar = 0, na.rm = TRUE)
+		obsMeans = umx_means(allData, ordVar = 0, na.rm = TRUE)
 
 		# ===============================
 		# = Notes: Ordinal requires:    =
@@ -194,7 +195,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			# ==================================================
 			message("All variables continuous")
 			top = mxModel("top", 
-				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selDVs))
+				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selVars))
 			)
 			MZ  = mxModel("MZ",
 				mxData(mzData, type = "raw"),
@@ -217,8 +218,8 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			# Means: all free, start cont at the measured value, ord @0
 
 			top = mxModel("top", 
-				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selDVs)),
-				umxThresholdMatrix(allData, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose)
+				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selVars)),
+				umxThresholdMatrix(allData, selDVs = selDVs, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose)
 			)
 			MZ  = mxModel("MZ", 
 				mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat"), 
@@ -234,7 +235,6 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			# =============================================
 			# = Handle case of at least 1 binary variable =
 			# =============================================
-
 			message("Found ", sum(isBin)/nSib, " pairs of binary variables:", omxQuotes(binVarNames))
 			message("\nI am fixing the latent means and variances of these variables to 0 and 1")
 			if(nOrdVars > 0){
@@ -259,8 +259,8 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			the_bin_cols = which(isBin)[1:nVar] # columns in which the bin vars appear for T1, i.e., c(1,3,5)
 			binBracketLabels = paste0("Vtot[", the_bin_cols, ",", the_bin_cols, "]")
 			top = mxModel("top", 
-				umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = obsMeans, dimnames = list("means", selDVs)),
-				umxThresholdMatrix(allData, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose),
+				umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = obsMeans, dimnames = list("means", selVars)),
+				umxThresholdMatrix(allData, selDVs = selDVs, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose),
 				mxAlgebra(name = "Vtot", A + C + E), # Total variance (redundant but is OK)
 				umxMatrix("binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
 				umxMatrix("Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
@@ -289,8 +289,8 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		umx_check(!is.null(numObsMZ), "stop", paste0("You must set numObsMZ with ", dataType, " data"))
 		umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with ", dataType, " data"))
 		# Drop unused variables from matrix
-		het_mz = umx_reorder(mzData, selDVs)		
-		het_dz = umx_reorder(dzData, selDVs)
+		het_mz = umx_reorder(mzData, selVars)		
+		het_dz = umx_reorder(dzData, selVars)
 		varStarts = diag(het_mz)[1:nVar]
 
 		if(nVar == 1){
@@ -388,10 +388,10 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #'
 #' @param name The name of the model (defaults to "CP").
 #' @param selDVs The variables to include.
+#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
-#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
+#' @param sep (required) The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
 #' @param nFac How many common factors (default = 1)
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
@@ -441,7 +441,6 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' # =======================================
 #' # = Mixed continuous and binary example =
 #' # =======================================
-#' require(umx)
 #' data(GFF)
 #' # Cut to form umxFactor  20% depressed  DEP
 #' cutPoints = quantile(GFF[, "AD_T1"], probs = .2, na.rm = TRUE)
@@ -454,6 +453,8 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' selDVs = c("gff","fc","qol","hap","sat","DEP") # These will be expanded into "gff_T1" "gff_T2" etc.
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
+#' allData = rbind(mzData, dzData) 
+#' tmp = umxThresholdMatrix(allData[,tvars(selDVs, sep = "_T")], sep = "_T", verbose = TRUE)
 #' m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 #' }
@@ -466,12 +467,12 @@ umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
 	nSib = 2
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
 	# Expand var names
-	selDVs = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
-	nVar   = length(selDVs)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	bits   = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
-	top    = bits$top
-	MZ     = bits$MZ
-	DZ     = bits$DZ
+	selVars = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
+	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	bits    = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
+	top     = bits$top
+	MZ      = bits$MZ
+	DZ      = bits$DZ
 
 	# TODO umxCP: Improve start values (Mike?) 
 	if(correlatedA){
@@ -510,9 +511,9 @@ umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
 			mxAlgebra(name = "AC" , A + C),
 			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 			mxAlgebra(rbind (cbind(ACE, AC), 
-			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name= "expCovMZ"),
+			                 cbind(AC , ACE)), dimnames = list(selVars, selVars), name= "expCovMZ"),
 			mxAlgebra(rbind (cbind(ACE, hAC),
-			                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name= "expCovDZ")
+			                 cbind(hAC, ACE)), dimnames = list(selVars, selVars), name= "expCovDZ")
 		),
 		MZ, DZ,
 		mxFitFunctionMultigroup(c("MZ", "DZ"))

@@ -34,7 +34,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 
 \item{refModels}{pass in reference models if available. Use FALSE to suppress computing these if not provided.}
 
-\item{thresholds}{Whether to use deviation-based threshold modeling for ordinal data (if any is detected), direct, or do nothing.}
+\item{thresholds}{Whether to use deviation-based threshold modeling for ordinal data (if any is detected).}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
 

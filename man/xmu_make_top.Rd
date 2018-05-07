@@ -14,9 +14,9 @@ xmu_make_top(mzData, dzData, selDVs, sep = NULL, nSib = 2,
 
 \item{dzData}{Dataframe containing the DZ data}
 
-\item{selDVs}{List of base (e.g. BMI) or full (i.e., BMI_T1) variable names}
+\item{selDVs}{List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names}
 
-\item{sep}{How to build full variable names (if NULL, selDVs must be full names)}
+\item{sep}{Used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2}
 
 \item{nSib}{Number of members per family (default = 2)}
 
@@ -109,7 +109,7 @@ twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 selDVs = c("wt", "obese")
 mzData = twinData[twinData$zygosity \%in\% "MZFF",]
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
-bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs = selDVs, sep = "", nSib = 2)
 
 # ============
 # = Cov data =

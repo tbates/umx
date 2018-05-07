@@ -4,19 +4,21 @@
 \alias{umxThresholdMatrix}
 \title{Create the threshold matrix needed for modeling ordinal data.}
 \usage{
-umxThresholdMatrix(df, sep = NULL, method = c("auto", "Mehta", "allFree"),
-  thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
+umxThresholdMatrix(df, selDVs = NULL, sep = NULL, method = c("auto",
+  "Mehta", "allFree"), thresholds = c("deviationBased"),
   threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE,
   verbose = FALSE)
 }
 \arguments{
 \item{df}{The data being modeled (to allow access to the factor levels and quantiles within these for each variable)}
 
+\item{selDVs}{The variable names. Note for twin data, just the base names, which sep will be used to fill out.}
+
 \item{sep}{(e.g. "_T") Required for wide (twin) data. It is used to break the base names our from their numeric suffixes.}
 
 \item{method}{How to set the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)}
 
-\item{thresholds}{How to implement thresholds: "deviationBased" (default), "direct", "ignore", "left_censored"}
+\item{thresholds}{How to implement thresholds: "deviationBased"}
 
 \item{threshMatName}{name of the matrix which is returned. Defaults to "threshMat" - best not to change it.}
 
@@ -24,88 +26,116 @@ umxThresholdMatrix(df, sep = NULL, method = c("auto", "Mehta", "allFree"),
 
 \item{droplevels}{Whether to drop levels with no observed data (defaults to FALSE)}
 
-\item{verbose}{(defaults to FALSE))}
+\item{verbose}{How much to say about what was done. (defaults to FALSE)}
 }
 \value{
-- thresholds matrix
+\itemize{
+\item list of thresholds matrix, deviations, lowerOnes
+}
 }
 \description{
 High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. Big time saver!
 }
 \details{
-When modeling ordinal data (sex, low-med-hi, 
-depressed/normal, not at all, rarely, often, always), a useful conceptual strategy to handle expectations
-is to build a standard-normal model (i.e., a latent model with zero-means, and unit (1.0) variances),
+We often need to model ordinal data: sex, low-med-hi, depressed/normal, etc.,
+A useful conceptual strategy to handle these data is to build a standard model for normally-varying data
 and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
 is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
 this threshold (1-minus the number of categories).
+Making this work can require fixing the first 2 threhsolds of ordinal data, or fixing both the mean and variance of
+a latent variable driving bniary data, in order to estimate its one-free parameter: where to place the single thrshold
+separating low from high cases.
 
-For \strong{deviation methods}, it returns a list of lowerOnes_for_thresh, deviations_for_thresh & thresholdsAlgebra (named threshMatName)
+\emph{Twin Data}
+For twins (the function currently handles only pairs), the threshodls are equated for both twins using labels:
+$labels\preformatted{  obese1       obese2      
+}
 
-For \strong{direct}, it returns a thresholdsMatrix (named threshMatName)
+dev_1 "obese_dev1" "obese_dev1"
+
+For \strong{deviation methods}, the function returns a 3-item list consisting of
+\enumerate{
+\item A thresholdsAlgebra (named threshMatName)
+\item A matrix of deviations for the thresholds (deviations_for_thresh)
+\item A low matrix of 1s (lowerOnes_for_thresh)
+}
 }
 \examples{
+# ============================
+# = Simple non-twin examples =
+# ============================
+# One ordered factor with 2-levels
 x = data.frame(ordered(rbinom(100,1,.5))); names(x) <- c("x")
-umxThresholdMatrix(x)
+tmp = umxThresholdMatrix(x)
+
+# One ordered factor with 5-levels
 x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
 x = data.frame(ordered(x)); names(x) <- c("x")
 tmp = umxThresholdMatrix(x)
 
-# ==================
-# = Binary example =
-# ==================
-require(umx)
-if(!packageVersion("OpenMx") > 2.5){message("Update OpenMx to get a new version of twinData")}
+# =================================
+# = Binary example with twin data =
+# =================================
 data(twinData)
+
 # ===============================================================
 # = Create a series of binary and ordinal columns to work with =
 # ===============================================================
-# Cut to form category of 80 \% obese subjects
-selDVs = c("obese1", "obese2")
+
+# Example 1
+# Cut to form category of 20 \% obese subjects
 obesityLevels = c('normal', 'obese')
 cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-# Step 2: Make the ordinal variables into mxFactors
-# this ensures ordered= TRUE + requires user to confirm levels
-twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
+# Step 2: Make the ordinal variables into umxFactors (ordered, with the levels found in the data)
+selVars = c("obese1", "obese2")
+twinData[, selVars] <- umxFactor(twinData[, selVars])
 
-# Repeat for three-level weight variable
-selDVs = c("obeseTri1", "obeseTri2")
-obesityLevels = c('normal', 'overweight', 'obese')
-cutPoints <- quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
-twinData$obeseTri1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obeseTri2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
+# use verbose = TRUE to see informative messages
+tmp = umxThresholdMatrix(twinData, selDVs = "obese", sep = "", verbose = TRUE) 
 
-selDVs = c("obeseQuad1", "obeseQuad2")
-obesityLevels = c('underWeight', 'normal', 'overweight', 'obese')
-cutPoints <- quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
-twinData$obeseQuad1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obeseQuad2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData[, selDVs] <- mxFactor(twinData[, selDVs], levels = obesityLevels)
-
-# Example 1
-selDVs = c("obese1", "obese2")
-tmp = umxThresholdMatrix(twinData[,selDVs], sep = "", verbose = TRUE) # informative messages
 
 # ======================================
 # = Ordinal (n categories > 2) example =
 # ======================================
-selDVs = c("obeseTri1", "obeseTri2")
-tmp = umxThresholdMatrix(twinData[,selDVs], sep = "", verbose = TRUE)
+# Repeat for three-level weight variable
+obesityLevels = c('normal', 'overweight', 'obese')
+cutPoints <- quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
+twinData$obeseTri1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obeseTri2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+selDVs = "obeseTri"; selVars = tvars(selDVs, sep = "", suffixes = 1:2)
+twinData[, selVars] <- umxFactor(twinData[, selVars])
+tmp = umxThresholdMatrix(twinData, selDVs = selDVs, sep = "", verbose = TRUE)
 
 # ========================================================
 # = Mix of all three kinds example (and a 4-level trait) =
 # ========================================================
+obesityLevels = c('underWeight', 'normal', 'overweight', 'obese')
+cutPoints <- quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
+twinData$obeseQuad1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obeseQuad2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+selVars = c("obeseQuad1", "obeseQuad2")
+twinData[, selVars] <- mxFactor(twinData[, selVars], levels = obesityLevels)
 
-selDVs = umx_paste_names(c("bmi", "obese", "obeseTri", "obeseQuad"), "", 1:2)
-tmp = umxThresholdMatrix(twinData[,selDVs], sep = "", verbose = TRUE)
-str(tmp)
+selDVs =c("bmi", "obese", "obeseTri", "obeseQuad")
+tmp = umxThresholdMatrix(twinData, selDVs = selDVs, sep = "", verbose = TRUE)
+# The lower ones matrix (all fixed)
+tmp[[1]]$values
+# The deviations matrix
+tmp[[2]]$values
+tmp[[2]]$labels # note labels are equated across twins
+# Check to be sure twin-1 column labels same as twin-2
+tmp[[2]]$labels[,2]==tmp[[2]]$labels[,4]
 
+
+# The algebra that assembles these into thresholds:
+tmp[[3]]$formula
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},

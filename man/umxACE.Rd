@@ -130,10 +130,10 @@ of degrees of freedom to simultaneously model C and D with only MZ and DZ twin p
 require(umx)
 data(twinData) # ?twinData from Australian twins.
 # Pick the variables
-selDVs = c("ht1", "ht2")
+selDVs = c("ht")
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData) # -2ll= 9659
+m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData) # -2ll= 9659, a1 = .92
 umxSummary(m1, std = FALSE) # unstandardized
 # tip: with report = "html", umxSummary can print the table to your browser!
 plot(m1)
@@ -141,9 +141,10 @@ plot(m1)
 # ========================================================
 # = Evidence for dominance ? (DZ correlation set to .25) =
 # ========================================================
-m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
+m2 = umxACE("ADE", selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # ADE is better
-umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A, C & E
+umxSummary(m2, comparison = m1) 
+# nb: Although summary is smart enough to print d, the underlying matrices are still called a, c & e.
 
 # ==============================
 # = Univariate model of weight =
@@ -164,6 +165,7 @@ m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag
 # We can modify this model, say testing shared environment, and see a comparison:
 
 m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
+# nb: You can see names of free parameters with parameters(m1)
 
 # =====================================
 # = Bivariate height and weight model =
@@ -188,19 +190,19 @@ umxSummary(m1)
 require(umx)
 data(twinData)
 # Cut BMI column to form ordinal obesity variables
-ordDVs = c("obese1", "obese2")
-selDVs = c("obese")
 obesityLevels = c('normal', 'overweight', 'obese')
 cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
 twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-# Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
+# Make the ordinal variables into umxFactors (ensure ordered is TRUE, and require levels)
+ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 mzData <- mzData[1:80, ] # Just top 80 pairs to run fast
 dzData <- dzData[1:80, ]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
+selDVs = c("obese")
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
 
@@ -208,21 +210,19 @@ umxSummary(m1)
 # = Bivariate continuous and ordinal example =
 # ============================================
 data(twinData)
-selDVs = c("wt", "obese")
 # Cut BMI column to form ordinal obesity variables
-ordDVs          = c("obese1", "obese2")
 obesityLevels   = c('normal', 'overweight', 'obese')
 cutPoints       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
 twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
+ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
-plot(m1)
+m1 = umxACE(selDVs = c("wt", "obese"), dzData = dzData, mzData = mzData, sep = '')
 
 # =======================================
 # = Mixed continuous and binary example =
@@ -231,8 +231,8 @@ require(umx)
 data(twinData)
 # Cut to form category of 20\% obese subjects
 # and make into mxFactors (ensure ordered is TRUE, and require levels)
-cutPoints       = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 obesityLevels   = c('normal', 'obese')
+cutPoints       = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 ordDVs = c("obese1", "obese2")

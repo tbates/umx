@@ -37,9 +37,12 @@ Check that DVs are in the data, that the data have rows, set the optimizer if re
 load(twinData)
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "MZFF")
-xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = TRUE)
-xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = FALSE)
-xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, sep = "", enforceSep = TRUE, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, optimizer = NULL)
+xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, 
+	sep = "", enforceSep = TRUE)
+xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, 
+	sep = "", enforceSep = FALSE)
+xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, 
+	sep = "", enforceSep = TRUE, nSib = 2, optimizer = NULL)
 \dontrun{
 # TODO xmu_twin_check: move to a test file:
 # 1. stop on no rows

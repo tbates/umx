@@ -14,14 +14,14 @@ umxCPplay(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
 \arguments{
 \item{name}{The name of the model (defaults to "CP").}
 
-\item{selDVs}{The variables to include.}
+\item{selDVs}{The variables to include.
+omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{dzData}{The DZ dataframe.}
 
 \item{mzData}{The MZ dataframe.}
 
-\item{sep}{The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
-omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
+\item{sep}{(required) The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.}
 
 \item{nFac}{How many common factors (default = 1)}
 
@@ -118,7 +118,6 @@ m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6"
 }
 \examples{
 \dontrun{
-
 # ========================================================
 # = Run a 3-factor Common pathway twin model of 6 traits =
 # ========================================================
@@ -145,7 +144,6 @@ umxCompare(m1, m2)
 # =======================================
 # = Mixed continuous and binary example =
 # =======================================
-require(umx)
 data(GFF)
 # Cut to form umxFactor  20\% depressed  DEP
 cutPoints = quantile(GFF[, "AD_T1"], probs = .2, na.rm = TRUE)
@@ -158,6 +156,8 @@ GFF[, ordDVs] = umxFactor(GFF[, ordDVs])
 selDVs = c("gff","fc","qol","hap","sat","DEP") # These will be expanded into "gff_T1" "gff_T2" etc.
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
+allData = rbind(mzData, dzData) 
+tmp = umxThresholdMatrix(allData[,tvars(selDVs, sep = "_T")], sep = "_T", verbose = TRUE)
 m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 }
