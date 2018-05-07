@@ -8,7 +8,8 @@ umxCP(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
   correlatedA = FALSE, equateMeans = TRUE, dzAr = 0.5, dzCr = 1,
   boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
-  numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL,
+  suffix = "deprecated")
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP").}
@@ -51,6 +52,8 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
+
+\item{suffix}{DEPRECATED: Use sep instead (see above).}
 }
 \value{
 - \code{\link{mxModel}}
@@ -79,7 +82,7 @@ common or shared-environment (C) or
 non-additive genetic effects (D).
 
 Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
-C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
+C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure).
 
 
 \strong{Data Input}

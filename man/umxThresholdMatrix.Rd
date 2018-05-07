@@ -4,7 +4,7 @@
 \alias{umxThresholdMatrix}
 \title{Create the threshold matrix needed for modeling ordinal data.}
 \usage{
-umxThresholdMatrix(df, sep = NA, method = c("auto", "Mehta", "allFree"),
+umxThresholdMatrix(df, sep = NULL, method = c("auto", "Mehta", "allFree"),
   thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
   threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE,
   verbose = FALSE)

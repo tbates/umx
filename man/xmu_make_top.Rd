@@ -35,22 +35,39 @@ xmu_make_top(mzData, dzData, selDVs, sep = NULL, nSib = 2,
 \item{verbose}{(default = FALSE)}
 }
 \value{
-- \code{\link{mxModel}}s for top, MZ and DZ.
+\itemize{
+\item \code{\link{mxModel}}s for top, MZ and DZ.
+}
 }
 \description{
-xmu_make_top makes top, MZ, and DZ models. It also handles thresholds matrix if needed.
- ==================
- = This function: =
- ==================
- 1. Tests the dataType (raw, cov/cor).
- 2. Drops unused data columns
- 3. For raw
-   1. Are any binary or ordered factors?
-     1. make top model, containing expMean matrix
-     2. Make Mz and DZ models with type = "raw data".
- 3. For cov/cor
-   1. make empty top model (no means)
-   2. Make Mz and DZ models with type = "cov".
+xmu_make_top makes basic \code{top}, \code{MZ}, and \code{DZ} models. It handles the thresholds matrix if needed.
+
+This function takes the mzData and dzData, a list of the selDVs to analyse, along with other relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased", but hopefully "WLS" and. It can also handle a weightVar.
+
+\code{varStarts} is computed as \code{sqrt(variance)/3} of the DVs and \code{obsMeans} as the variable means.
+For raw data, a check is made for ordered variables.
+
+For Binary variables, means are fixed at 0 and total variance (A+C+E) is fixed at 1.
+
+For ordinal variables, the first 2 thresholds are fixed.
+
+For continuous variables, \code{top} just contains an \code{expMean} matrix.
+
+\code{MZ} and \code{DZ} is the data, and an expectation of for \code{top.expCovMZ} and \code{top.expMean}, possibly referencing vector = bVector in the fit function.
+
+For continuous variables, \code{top} just contains an \code{expMean} matrix.
+
+For ordinal, \code{top} gains \code{top.threshMat} (from a call to \code{umxThresholdMatrix}). \code{MZ} and \code{DZ} are as with continuous, but adding thresholds.
+
+For binary, \code{Vtot} (A+C+E) is set to 1.
+
+For summary data, top is just  name, and MZ and DZ have cov data in them.
+
+If a weightVar is detected, this column is added to  mzWeightMatrix/mzWeightMatrix
+
+If \code{equateMeans} is \code{TRUE}, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
+
+On the TODO-list is to have WLS as an option. Also censored data.
 }
 \examples{
 # ==============

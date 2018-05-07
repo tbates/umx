@@ -1798,7 +1798,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			tablePub[i, "Compare with Model"] = NA
 		}
 	}
-	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^digits), digits = digits, addComparison = NA)
+	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^3), digits = digits, addComparison = NA)
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
 	if(report == "inline"){
 		n_rows = dim(tablePub)[1]
@@ -2472,8 +2472,10 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			from    = "one"
 			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl= TRUE))
 			target  = selDVs[as.numeric(targetindex)]
+		} else if (grepl("_dev[0-9]", thisParam)) { # is a threshold
+			# doesn't need plotting? # TODO umxPlotCP could tabulate thresholds?
 		} else {
-			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
+			message("While making the plot, I found a path labeled ", thisParam, "\nI don't know where that goes.\n",
 			"If you are using umxModify to make newLabels, re-use one of the existing labels to help plot()")
 		}
 		if(from == "one" & !means ){

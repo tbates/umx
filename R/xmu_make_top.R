@@ -1,20 +1,34 @@
 #' Helper to make a basic top, MZ, and DZ model
 #'
 #' @description
-#' xmu_make_top makes top, MZ, and DZ models. It also handles thresholds matrix if needed.
-#'  ==================
-#'  = This function: =
-#'  ==================
-#'  1. Tests the dataType (raw, cov/cor).
-#'  2. Drops unused data columns
-#'  3. For raw
-#'    1. Are any binary or ordered factors?
-#'      1. make top model, containing expMean matrix
-#'      2. Make Mz and DZ models with type = "raw data".
-#'  3. For cov/cor
-#'    1. make empty top model (no means)
-#'    2. Make Mz and DZ models with type = "cov".
+#' xmu_make_top makes basic `top`, `MZ`, and `DZ` models. It handles the thresholds matrix if needed.
+#' 
+#' This function takes the mzData and dzData, a list of the selDVs to analyse, along with other relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased", but hopefully "WLS" and. It can also handle a weightVar.
+#' 
+#' `varStarts` is computed as `sqrt(variance)/3` of the DVs and `obsMeans` as the variable means.
+#' For raw data, a check is made for ordered variables.
+#' 
+#' For Binary variables, means are fixed at 0 and total variance (A+C+E) is fixed at 1.
+#' 
+#' For ordinal variables, the first 2 thresholds are fixed.
+#' 
+#' For continuous variables, `top` just contains an `expMean` matrix.
+#' 
+#' `MZ` and `DZ` is the data, and an expectation of for `top.expCovMZ` and `top.expMean`, possibly referencing vector = bVector in the fit function.
+#' 
+#' For continuous variables, `top` just contains an `expMean` matrix.
+#' 
+#' For ordinal, `top` gains `top.threshMat` (from a call to `umxThresholdMatrix`). `MZ` and `DZ` are as with continuous, but adding thresholds.
+#' 
+#' For binary, `Vtot` (A+C+E) is set to 1.
+#' 
+#' For summary data, top is just  name, and MZ and DZ have cov data in them.
+#' 
+#' If a weightVar is detected, this column is added to  mzWeightMatrix/mzWeightMatrix
+#' 
+#' If `equateMeans` is `TRUE`, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 #'
+#' On the TODO-list is to have WLS as an option. Also censored data.
 #' @param mzData Dataframe containing the MZ data 
 #' @param dzData Dataframe containing the DZ data 
 #' @param selDVs List of base (e.g. BMI) or full (i.e., BMI_T1) variable names
@@ -31,6 +45,7 @@
 #' @return - \code{\link{mxModel}}s for top, MZ and DZ.
 #' @export
 #' @family xmu internal not for end user
+#' @md
 #' @examples
 #' # ==============
 #' # = Continuous =
@@ -337,7 +352,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' non-additive genetic effects (D).
 #' 
 #' Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
-#' C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
+#' C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure).
 #' 
 #' 
 #' \strong{Data Input}
@@ -392,30 +407,35 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
+#' @param suffix DEPRECATED. Use sep instead!
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}()} for more examples of twin modeling. \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{'link{xmu_make_top}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
+#' 
 #' # ========================================================
 #' # = Run a 3-factor Common pathway twin model of 6 traits =
 #' # ========================================================
 #' require(umx)
+#' # umx_set_optimizer("NPSOL")
 #' data(GFF)
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
-#' m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
-#' umxSummary(m1)
+#' m1 = umxCP("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' m2 = umxCPplay("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' umxCompare(m1, m2)
 #'
 #' # =================================================
 #' # = Find and test dropping of shared environment  =
 #' # =================================================
-#' # Find the 
+#' # Show all labels for C parameters  
 #' umxParameters(m1, patt = "^c")
-#' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
+#' # Test dropping the 9 specific and common-factor C paths
+#' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC",comp = TRUE)
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
 #' 
@@ -424,8 +444,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' # =======================================
 #' require(umx)
 #' data(GFF)
-#' # Cut to form category of 20% obese subjects
-#' # and make into mxFactors (ensure ordered is TRUE, and require levels)
+#' # Cut to form umxFactor  20% depressed  DEP
 #' cutPoints = quantile(GFF[, "AD_T1"], probs = .2, na.rm = TRUE)
 #' ADLevels  = c('normal', 'depressed')
 #' GFF$DEP_T1 = cut(GFF$AD_T1, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 
@@ -437,13 +456,18 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 #' }
 #'
-umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
+	if(suffix != "deprecated"){
+		message("Just a message: but please use 'sep' instead of suffix - suffix is deprecated, and will stop working in 2019")
+		sep = suffix
+	}
 	nSib = 2
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
 	# Expand var names
-	selDVs = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
+	selDVs = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
 	nVar   = length(selDVs)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
 	bits   = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
 	top    = bits$top

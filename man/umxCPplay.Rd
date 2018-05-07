@@ -8,7 +8,8 @@ umxCPplay(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
   correlatedA = FALSE, equateMeans = TRUE, dzAr = 0.5, dzCr = 1,
   boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
-  numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL,
+  suffix = "deprecated")
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP").}
@@ -51,6 +52,8 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
+
+\item{suffix}{DEPRECATED. Use sep instead!}
 }
 \value{
 - \code{\link{mxModel}}
@@ -79,7 +82,7 @@ common or shared-environment (C) or
 non-additive genetic effects (D).
 
 Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
-C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
+C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure).
 
 
 \strong{Data Input}
@@ -115,23 +118,27 @@ m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6"
 }
 \examples{
 \dontrun{
+
 # ========================================================
 # = Run a 3-factor Common pathway twin model of 6 traits =
 # ========================================================
 require(umx)
+# umx_set_optimizer("NPSOL")
 data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
-m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
-umxSummary(m1)
+m1 = umxCP("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+m2 = umxCPplay("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+umxCompare(m1, m2)
 
 # =================================================
 # = Find and test dropping of shared environment  =
 # =================================================
-# Find the 
+# Show all labels for C parameters  
 umxParameters(m1, patt = "^c")
-m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
+# Test dropping the 9 specific and common-factor C paths
+m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC",comp = TRUE)
 umxSummaryCP(m2, comparison = m1, file = NA)
 umxCompare(m1, m2)
 
@@ -140,8 +147,7 @@ umxCompare(m1, m2)
 # =======================================
 require(umx)
 data(GFF)
-# Cut to form category of 20\% obese subjects
-# and make into mxFactors (ensure ordered is TRUE, and require levels)
+# Cut to form umxFactor  20\% depressed  DEP
 cutPoints = quantile(GFF[, "AD_T1"], probs = .2, na.rm = TRUE)
 ADLevels  = c('normal', 'depressed')
 GFF$DEP_T1 = cut(GFF$AD_T1, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 
@@ -153,6 +159,7 @@ selDVs = c("gff","fc","qol","hap","sat","DEP") # These will be expanded into "gf
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 }
 
 }
@@ -160,7 +167,7 @@ m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = 
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+- \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}()} for more examples of twin modeling. \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{'link{xmu_make_top}}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},

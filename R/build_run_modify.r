@@ -2205,7 +2205,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' non-additive genetic effects (D).
 #' 
 #' Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
-#' C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure below).
+#' C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure).
 #' 
 #' 
 #' \strong{Data Input}
@@ -2260,6 +2260,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
+#' @param suffix DEPRECATED: Use sep instead (see above).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -2280,12 +2281,16 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' umxCompare(m1, m2)
 #' }
 #'
-umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
+	if(suffix != "deprecated"){
+		message("Just a message: but please use 'sep' instead of suffix - suffix is deprecated, and will stop working in 2019")
+		sep = suffix
+	}
 	nSib = 2
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
 	
 	# expand var names
-	selDVs   = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
+	selDVs   = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
 	nVar     = length(selDVs)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
 	dataType = umx_is_cov(dzData)
 	if(dataType == "raw") {
@@ -2295,27 +2300,16 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 		# Drop any unused columns from MZ and DZ Data
 		mzData = mzData[, selDVs]
 		dzData = dzData[, selDVs]
+		# bind the MZ nd DZ data into one frame for precision
+		allData = rbind(mzData, dzData)
+		
 		if(any(umx_is_ordered(mzData))){
 			stop("some selected variables are factors or ordinal... I can only handle continuous variables so far... sorry")
-			isFactor = umx_is_ordered(mzData[, selDVs])                      # T/F list of factor columns
-			isOrd    = umx_is_ordered(mzData[, selDVs], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
-			isBin    = umx_is_ordered(mzData[, selDVs], binary.only  = TRUE) # T/F list of binary columns
-			nFactors = sum(isFactor)
-			nOrdVars = sum(isOrd) # total number of ordinal columns
-			nBinVars = sum(isBin) # total number of binary columns
-
-			factorVarNames = names(mzData)[isFactor]
-			ordVarNames    = names(mzData)[isOrd]
-			binVarNames    = names(mzData)[isBin]
-			contVarNames   = names(mzData)[!isFactor]
-
 		}
-		obsMZmeans = colMeans(mzData, na.rm = TRUE);
+		obsMeans = colMeans(allData, na.rm = TRUE);
 		top = mxModel("top", 
 			# Means (not yet equated across twins)
-			umxMatrix("expMean", type = "Full" , nrow = 1, ncol = (nVar * nSib), 
-				free = TRUE, values = obsMZmeans, dimnames = list("means", selDVs)
-			)
+			umxMatrix("expMean", type = "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selDVs) )
 		) 
 		MZ = mxModel("MZ", 
 			mxData(mzData, type = "raw"),
@@ -2426,7 +2420,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 		)
 		model = mxModel(model, newTop)
 		if(addCI){
-			# TODO umxCP: break these CIs out into single labels?
+			# TODO umxCP: add these by listing free parameters in model to get single labels?
 			model = mxModel(model, mxCI(c('top.a_cp', 'top.c_cp', 'top.e_cp', 'top.as_std', 'top.cs_std', 'top.es_std', 'top.cp_loadings_std')))
 		}
 	}
@@ -3792,10 +3786,10 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 # #' tmp = umxThresholdMatrix(df, sep="_T", thresholds = "left_censored"); class(tmp)
 # #' any(tmp$free) # all fixed.
 # #' tmp$labels
-umxThresholdMatrix <- function(df, sep = NA, method = c("auto", "Mehta", "allFree"), thresholds = c("deviationBased", "direct", "ignore", "left_censored"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE){
+umxThresholdMatrix <- function(df, sep = NULL, method = c("auto", "Mehta", "allFree"), thresholds = c("deviationBased", "direct", "ignore", "left_censored"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE){
 	# TODO: Replace all of this with a conditional algebra(if(x<t){0,x})
 	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
-	# df = x; sep = NA; threshMatName = "threshMat"; method = "auto"; thresholds = "deviationBased"; l_u_bound = c(NA,NA); verbose = T
+	# df = x; sep = NULL; threshMatName = "threshMat"; method = "auto"; thresholds = "deviationBased"; l_u_bound = c(NA,NA); verbose = T
 
 	# Check input
 	if(dim(df)[1] < 1){ stop("Data input to umxThresholdMatrix had no rows. I use the data to set thresholds, so the data must have rows.") }
@@ -3804,7 +3798,7 @@ umxThresholdMatrix <- function(df, sep = NA, method = c("auto", "Mehta", "allFre
 	thresholds  = match.arg(thresholds)
 
 	# Expand names if necessary
-	if(!is.na(sep)) {
+	if(!is.null(sep)) {
 		tmp         = umx_explode_twin_names(names(df), sep = sep)
 		baseNames   = tmp$baseNames
 		twinIndexes = tmp$twinIndexes
