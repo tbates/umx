@@ -415,7 +415,6 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' 
 #' # ========================================================
 #' # = Run a 3-factor Common pathway twin model of 6 traits =
 #' # ========================================================

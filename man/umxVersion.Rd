@@ -4,21 +4,23 @@
 \alias{umxVersion}
 \title{Get or print the version of umx, along with detail from OpenMx and general system info.}
 \usage{
-umxVersion(model = NULL, verbose = TRUE, return = "umx")
+umxVersion(model = NULL, min = NULL, verbose = TRUE, return = "umx")
 }
 \arguments{
 \item{model}{Optional to show optimizer in this model}
 
+\item{min}{Optional minimum version string to test for, e.g. '2.7.0' (Default = NULL).}
+
 \item{verbose}{= TRUE}
 
-\item{return}{Which package (umx or OpenMx to return version on}
+\item{return}{Which package (umx or OpenMx) to 'return' version info for (Default = umx).}
 }
 \value{
 - \code{\link{mxModel}}
 }
 \description{
 umxVersion returns the version information for umx, and for OpenMx and R.
-essential for bug-reports.
+Essential for bug-reports! This function can also test for a minimum version.
 }
 \examples{
 x = umxVersion(); x

@@ -1134,11 +1134,12 @@ umx_factor <- umxFactor
 #'
 #' @description
 #' umxVersion returns the version information for umx, and for OpenMx and R.
-#' essential for bug-reports.
+#' Essential for bug-reports! This function can also test for a minimum version.
 #'
 #' @param model Optional to show optimizer in this model
+#' @param min Optional minimum version string to test for, e.g. '2.7.0' (Default = NULL).
 #' @param verbose = TRUE
-#' @param return Which package (umx or OpenMx to return version on
+#' @param return Which package (umx or OpenMx) to 'return' version info for (Default = umx).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -1146,15 +1147,23 @@ umx_factor <- umxFactor
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' x = umxVersion(); x
-umxVersion <- function (model = NULL, verbose = TRUE, return = "umx") {
+umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx") {
 	umx_vers <- try(packageVersion("umx"))
     if (verbose) {
         msg = paste0("umx version: ", umx_vers)
         message(msg)
+		message('You can update OpenMx with:\ninstall.OpenMx(c("NPSOL", "travis", "CRAN", "open travis build page")')
     }
-	OpenMx_vers = mxVersion(model = model, verbose = verbose)
-	message('You can update OpenMx thusly:\ninstall.OpenMx(loc = c("NPSOL", "travis", "CRAN", "open travis build page")')
-	
+	OpenMx_vers = mxVersion(model = model, verbose = verbose)	
+	if(!is.null(min)){
+		if(umx_vers >= min){
+			message("umx version is recent enough")
+		} else {
+			stop("umx version is not recent enough to run this script! (min is ", min, "). You have ", umx_vers,
+			"\n You can run umx_open_CRAN_page() to see the most recent version of umx on CRAN")
+			
+		}
+	}
 	if(return == "umx"){
 		invisible(umx_vers)
 	} else {
