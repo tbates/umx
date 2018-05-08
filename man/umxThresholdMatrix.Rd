@@ -131,6 +131,7 @@ tmp[[2]]$labels[,2]==tmp[[2]]$labels[,4]
 
 # The algebra that assembles these into thresholds:
 tmp[[3]]$formula
+
 }
 \references{
 \itemize{

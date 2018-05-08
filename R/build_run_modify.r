@@ -1379,7 +1379,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m2 = umxACE("ADE", selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
 #' umxSummary(m2, comparison = m1) 
-#' # nb: Although summary is smart enough to print d, the underlying matrices are still called a, c & e.
+#' # nb: Although summary is smart enough to print d, the underlying 
+#' #     matrices are still called a, c & e.
 #'
 #' # ==============================
 #' # = Univariate model of weight =
@@ -3895,8 +3896,8 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 
 		if(nSib == 2){
 			# Make same label (just baseVarname_thresh) for each twin for each variable
-			findStr = paste0(sep, "(", paste(twinIndexes, collapse = "|"), ")$") # "_T(1|2)$"
-			thisLab = sub(findStr, "", thisVarName)
+			findStr = paste0(sep, "(", paste(twinIndexes, collapse = "|"), ")$") # e.g. "_T(1|2)$"
+			thisLab = sub(findStr, "", thisVarName) # strip "_T1" from end of name
 		} else {
 			thisLab = thisVarName
 		}

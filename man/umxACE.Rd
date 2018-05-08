@@ -144,7 +144,8 @@ plot(m1)
 m2 = umxACE("ADE", selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # ADE is better
 umxSummary(m2, comparison = m1) 
-# nb: Although summary is smart enough to print d, the underlying matrices are still called a, c & e.
+# nb: Although summary is smart enough to print d, the underlying 
+#     matrices are still called a, c & e.
 
 # ==============================
 # = Univariate model of weight =

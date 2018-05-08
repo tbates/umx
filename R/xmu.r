@@ -58,7 +58,8 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 #' @family Check or test
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' load(twinData)
+#' library(umx)
+#' data(twinData)
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "MZFF")
 #' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, 

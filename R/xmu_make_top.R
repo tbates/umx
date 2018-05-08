@@ -50,6 +50,7 @@
 #' # ==============
 #' # = Continuous =
 #' # ==============
+#' library(umx)
 #' data(twinData)
 #' selDVs = c("wt", "ht")
 #' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
@@ -60,6 +61,7 @@
 #' # ============================================
 #' # = Bivariate continuous and ordinal example =
 #' # ============================================
+#' data(twinData)
 #' selDVs = c("wt", "obese")
 #' # Cut BMI column to form ordinal obesity variables
 #' ordDVs          = c("obese1", "obese2")
@@ -77,6 +79,7 @@
 #' # ==============
 #' # = One binary =
 #' # ==============
+#' data(twinData)
 #' cutPoints       = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 #' obesityLevels   = c('normal', 'obese')
 #' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
@@ -91,9 +94,10 @@
 #' # ============
 #' # = Cov data =
 #' # ============
+#' data(twinData)
 #' selDVs = c("wt")
-#' mz = cov(twinData[twinData$zygosity %in%  "MZFF", selDVs], use = "complete")
-#' dz = cov(twinData[twinData$zygosity %in%  "DZFF", selDVs], use = "complete")
+#' mz = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(selDVs, sep="")], use = "complete")
+#' dz = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(selDVs, sep="")], use = "complete")
 #' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep= "", nSib = 2)
 #' # TODO Add selCovs??
 xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ= NULL, numObsDZ= NULL, equateMeans = TRUE, threshType = c("deviationBased", "WLS"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
