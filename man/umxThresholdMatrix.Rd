@@ -101,22 +101,22 @@ tmp = umxThresholdMatrix(twinData, selDVs = "obese", sep = "", verbose = TRUE)
 # ======================================
 # Repeat for three-level weight variable
 obesityLevels = c('normal', 'overweight', 'obese')
-cutPoints <- quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
-twinData$obeseTri1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obeseTri2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+cutPoints = quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
+twinData$obeseTri1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obeseTri2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 selDVs = "obeseTri"; selVars = tvars(selDVs, sep = "", suffixes = 1:2)
-twinData[, selVars] <- umxFactor(twinData[, selVars])
+twinData[, selVars] = umxFactor(twinData[, selVars])
 tmp = umxThresholdMatrix(twinData, selDVs = selDVs, sep = "", verbose = TRUE)
 
 # ========================================================
 # = Mix of all three kinds example (and a 4-level trait) =
 # ========================================================
 obesityLevels = c('underWeight', 'normal', 'overweight', 'obese')
-cutPoints <- quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
-twinData$obeseQuad1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obeseQuad2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+cutPoints = quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
+twinData$obeseQuad1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obeseQuad2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 selVars = c("obeseQuad1", "obeseQuad2")
-twinData[, selVars] <- mxFactor(twinData[, selVars], levels = obesityLevels)
+twinData[, selVars] = mxFactor(twinData[, selVars], levels = obesityLevels)
 
 selDVs =c("bmi", "obese", "obeseTri", "obeseQuad")
 tmp = umxThresholdMatrix(twinData, selDVs = selDVs, sep = "", verbose = TRUE)

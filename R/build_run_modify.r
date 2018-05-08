@@ -3766,22 +3766,22 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' # ======================================
 #' # Repeat for three-level weight variable
 #' obesityLevels = c('normal', 'overweight', 'obese')
-#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
-#' twinData$obeseTri1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' twinData$obeseTri2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' cutPoints = quantile(twinData[, "bmi1"], probs = c(.4, .7), na.rm = TRUE)
+#' twinData$obeseTri1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obeseTri2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' selDVs = "obeseTri"; selVars = tvars(selDVs, sep = "", suffixes = 1:2)
-#' twinData[, selVars] <- umxFactor(twinData[, selVars])
+#' twinData[, selVars] = umxFactor(twinData[, selVars])
 #' tmp = umxThresholdMatrix(twinData, selDVs = selDVs, sep = "", verbose = TRUE)
 #' 
 #' # ========================================================
 #' # = Mix of all three kinds example (and a 4-level trait) =
 #' # ========================================================
 #' obesityLevels = c('underWeight', 'normal', 'overweight', 'obese')
-#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
-#' twinData$obeseQuad1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' twinData$obeseQuad2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' cutPoints = quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
+#' twinData$obeseQuad1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obeseQuad2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' selVars = c("obeseQuad1", "obeseQuad2")
-#' twinData[, selVars] <- mxFactor(twinData[, selVars], levels = obesityLevels)
+#' twinData[, selVars] = mxFactor(twinData[, selVars], levels = obesityLevels)
 #'
 #' selDVs =c("bmi", "obese", "obeseTri", "obeseQuad")
 #' tmp = umxThresholdMatrix(twinData, selDVs = selDVs, sep = "", verbose = TRUE)
@@ -3796,7 +3796,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' 
 #' # The algebra that assembles these into thresholds:
 #' tmp[[3]]$formula
-
+#' 
 umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto", "Mehta", "allFree"), thresholds = c("deviationBased"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE){
 	# TODO: Replace all of this with a conditional algebra(if(x<t){0,x})
 	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
@@ -3844,7 +3844,7 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 		# For precision (placing cuts) and to ensure twins have same levels, copy both halves of the dataframe into each
 		T1 = df[, grep(paste0(twinIndexes[1], "$"), factorVarNames, value = TRUE), drop = FALSE]
 		T2 = df[, grep(paste0(twinIndexes[2], "$"), factorVarNames, value = TRUE), drop = FALSE]
-		names(T2) <- names(T1)
+		names(T2) = names(T1)
 		df = cbind(rbind(T1, T2), rbind(T1, T2))
 		names(df) = factorVarNames
 	} else if(nSib == 1){
@@ -3909,7 +3909,7 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 		free = append(free, theseFree)
 	}
 	# Size the threshMat to order maxThresh rows * nFactors cols
-	threshMat <- mxMatrix(name = threshMatName, type = "Full",
+	threshMat = mxMatrix(name = threshMatName, type = "Full",
 		nrow     = maxThresh,
 		ncol     = nFactors,
 		free     = free, 
@@ -4024,7 +4024,7 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 			}
 	    	# TODO start from 1, right, not 2?
 			values = c(zValues[1:(nThreshThisVar)], rep(.001, (maxThresh - nThreshThisVar)))
-			sortValues <- sort(zValues[1:(nThreshThisVar)], na.last = TRUE)
+			sortValues = sort(zValues[1:(nThreshThisVar)], na.last = TRUE)
 			if (!identical(sortValues, zValues[1:(nThreshThisVar)])) {
 				umx_msg(values)
 				stop("The thresholds for ", thisVarName, " are not in order... oops: that's my fault :-(")

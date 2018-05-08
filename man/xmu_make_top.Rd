@@ -114,10 +114,10 @@ bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs = selDVs, sep = "",
 # ============
 # = Cov data =
 # ============
-selDVs = c("wt1", "wt2")
+selDVs = c("wt")
 mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", selDVs], use = "complete")
 dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", selDVs], use = "complete")
-bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, nSib = 2)
+bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep= "", nSib = 2)
 # TODO Add selCovs??
 }
 \seealso{
