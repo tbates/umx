@@ -83,7 +83,7 @@ m2 =  umxConfint(m1, "smart")
 - \url{http://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link[stats]{confint}}
+- \code{\link[stats]{confint}}, \code{\link[stats]{umxCI}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

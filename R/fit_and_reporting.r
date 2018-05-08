@@ -360,7 +360,7 @@ loadings.MxModel <- function(x, ...) {
 #' @export
 #' @return - \code{\link{mxModel}}
 #' @family Reporting functions
-#' @seealso - \code{\link[stats]{confint}}
+#' @seealso - \code{\link[stats]{confint}}, \code{\link[stats]{umxCI}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)

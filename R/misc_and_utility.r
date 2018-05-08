@@ -326,6 +326,56 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 }
 
 
+
+#' umx_set_optimization_options
+#'
+#' Set options that affect optimization in OpenMx. For mvnRelEps,  values between .0001 to .01 are conventional.
+#' Smaller values slow optimization.
+#'
+#' @param opt default returns current values of the options listed. Currently
+#' "mvnRelEps" and "mvnMaxPointsA".
+#' @param value If not NULL, the value to set the opt to (can be a list of length(opt))
+#' @param silent If TRUE, no message will be printed.
+#' @param model A model for which to set the optimizer. Default (NULL) sets the optimizer globally.
+#' @return - 
+#' @export
+#' @family Get and set
+#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' umx_set_optimization_options() # print the existing state(s)
+#' umx_set_optimization_options("mvnRelEps") # show this one
+#' \dontrun{
+#' umx_set_optimization_options("mvnRelEps", .01) # update globally
+#' }
+umx_set_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA"), value = NULL, model = NULL, silent = FALSE) {
+	if(is.null(value)){
+		# print current values for each item in opt
+		for (this in opt) {			
+			if(is.null(model)){
+				o = mxOption(NULL, this)
+			} else {
+				o = mxOption(model, this)
+			}
+			message(paste0("Current ", this , " is: ", omxQuotes(o)))
+		}
+		invisible(o)
+	} else {
+		# Set options
+		if(length(opt)!=length(value)){
+			stop("For safe coding, please match opt and value lengths")
+		} else {
+			i = 1
+			for (this in opt) {
+				if(is.null(model)){
+					o = mxOption(NULL, this, value[i])
+				} else {
+					o = mxOption(model, this, value[i])
+				}
+			}
+		}
+	}
+}
+
 #' umx_set_optimizer
 #'
 #' Set the optimizer in OpenMx
