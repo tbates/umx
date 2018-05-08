@@ -3893,7 +3893,7 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 	for (thisVarName in factorVarNames) {
 		thisCol = df[,thisVarName]
 		nThreshThisVar = length(levels(thisCol)) -1
-
+		# TODO maybe make this demand/find basenames?
 		if(nSib == 2){
 			# Make same label (just baseVarname_thresh) for each twin for each variable
 			findStr = paste0(sep, "(", paste(twinIndexes, collapse = "|"), ")$") # e.g. "_T(1|2)$"
