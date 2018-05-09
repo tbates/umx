@@ -2473,13 +2473,14 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl= TRUE))
 			target  = selDVs[as.numeric(targetindex)]
 		} else if (grepl("_dev[0-9]", thisParam)) { # is a threshold
-			# doesn't need plotting? # TODO umxPlotCP could tabulate thresholds?
+			# Doesn't need plotting? # TODO umxPlotCP could tabulate thresholds?
+			from = "do not plot"
 		} else {
 			message("While making the plot, I found a path labeled ", thisParam, "\nI don't know where that goes.\n",
 			"If you are using umxModify to make newLabels, re-use one of the existing labels to help plot()")
 		}
-		if(from == "one" & !means ){
-			# not adding means...
+		if(from == "do not plot" || (from == "one" & !means) ){
+			# either this is a threshold, or we're not adding means...
 		} else {
 			# Get parameter value and make the plot string
 			# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
