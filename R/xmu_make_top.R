@@ -330,7 +330,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 }
 
 # =============
-# = umxCPplay =
+# = umxCP =
 # =============
 #' umxCP: Build and run a Common pathway twin model
 #'
@@ -348,6 +348,11 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' \figure{CP.png}
 #' 
 #' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
+#' 
+#' Features include the ability to incude more than one common pathway, to use ordinal data.
+#' 
+#' **note**: The function `umx_set_optimization_options`() allow users to see and set `mvnRelEps` and `mvnMaxPointsA`
+#' It defaults to .001. You might find that '0.01' works better for ordinal models.
 #' 
 #' @details
 #' Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
@@ -417,19 +422,19 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}} for more examples of twin modeling. \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link{xmu_make_top}}
 #' @references - \url{http://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' \dontrun{
 #' # ========================================================
 #' # = Run a 3-factor Common pathway twin model of 6 traits =
 #' # ========================================================
 #' require(umx)
-#' # umx_set_optimizer("NPSOL")
 #' data(GFF)
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
-#' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
-#' m1 = umxCP("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
-#' m2 = umxCPplay("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") # These will be expanded into "gff_T1" "gff_T2" etc.
+#' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' m2 = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' umxCompare(m1, m2)
 #'
 #' # =================================================
@@ -458,12 +463,16 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' allData = rbind(mzData, dzData) 
+#' # See how the thresholdMatrix works.
+#' # See how the thresholdMatrix works
 #' tmp = umxThresholdMatrix(allData[,tvars(selDVs, sep = "_T")], sep = "_T", verbose = TRUE)
-#' m1 = umxCPplay(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' # umx_set_optimizer("NPSOL")
+#' # umx_set_optimization_options("mvnRelEps", .01)
+#' m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 #' }
 #'
-umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
+umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
 	if(suffix != "deprecated"){
 		message("Just a message: but please use 'sep' instead of suffix - suffix is deprecated, and will stop working in 2019")
 		sep = suffix
@@ -480,9 +489,9 @@ umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
 
 	# TODO umxCP: Improve start values (Mike?) 
 	if(correlatedA){
-		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = .7, jiggle = .05) # Latent common factor
+		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = .7) # Latent common factor
 	} else {
-		a_cp_matrix = umxMatrix("a_cp", "Diag" , nFac, nFac, free = TRUE, values = .7, jiggle = .05)
+		a_cp_matrix = umxMatrix("a_cp", "Diag" , nFac, nFac, free = TRUE, values = .7)
 	}
 
 	model = mxModel(name,
@@ -491,8 +500,8 @@ umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 			# Latent common factor genetic paths
 			a_cp_matrix,
-			umxMatrix("c_cp", "Diag", nFac, nFac, free = TRUE, values =  0, jiggle = .05), # latent common factor Common environmental path coefficients
-			umxMatrix("e_cp", "Diag", nFac, nFac, free = TRUE, values = .7, jiggle = .05), # latent common factor Unique environmental path coefficients
+			umxMatrix("c_cp", "Diag", nFac, nFac, free = TRUE, values =  0), # latent common factor Common environmental path coefficients
+			umxMatrix("e_cp", "Diag", nFac, nFac, free = TRUE, values = .7), # latent common factor Unique environmental path coefficients
 			# Constrain variance of latent phenotype factor to 1.0
 			# Multiply by each path coefficient by its inverse to get variance component
 			mxAlgebra(name = "A_cp", a_cp %*% t(a_cp)), # A_cp variance
@@ -503,10 +512,10 @@ umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
 			mxAlgebra(diag2vec(L)             , name = "diagL"),
 			mxConstraint(diagL == nFac_Unit   , name = "fix_CP_variances_to_1"),
 
-			umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .5, jiggle = .05), # Additive gen path 
-			umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1, jiggle = .05), # Common env path 
-			umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .6, jiggle = .05), # Unique env path
-			umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .6, jiggle = .05), # loadings on latent phenotype
+			umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .5), # Additive gen path 
+			umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1), # Common env path 
+			umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .5), # Unique env path
+			umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .5), # loadings on latent phenotype
 			# Quadratic multiplication to add cp_loading effects
 			mxAlgebra(cp_loadings %&% A_cp + as %*% t(as), name = "A"), # Additive genetic variance
 			mxAlgebra(cp_loadings %&% C_cp + cs %*% t(cs), name = "C"), # Common environmental variance
@@ -557,16 +566,21 @@ umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
 		if(!is.numeric(boundDiag)){
 			stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))
 		} else {				
-			newLbound = model$top$matrices$a_cp@lbound
 			if(length(boundDiag) > 1 ){
 				if(length(boundDiag) != length(diag(newLbound)) ){
 					stop("Typically boundDiag is 1 digit: if more, must be size of diag(a_cp)")
 				}
 			}
-			diag(newLbound) = boundDiag; 
-			model$top$a_cp$lbound = newLbound
-			model$top$c_cp$lbound = newLbound
-			model$top$e_cp$lbound = newLbound
+			newCPLbound = model$top$matrices$a_cp@lbound
+			diag(newCPLbound) = boundDiag; 
+			model$top$a_cp$lbound = newCPLbound
+			model$top$c_cp$lbound = newCPLbound
+			model$top$e_cp$lbound = newCPLbound
+			newSpecLbound = model$top$matrices$as@lbound
+			diag(newSpecLbound) = boundDiag; 
+			model$top$as$lbound = newSpecLbound
+			model$top$cs$lbound = newSpecLbound
+			model$top$es$lbound = newSpecLbound
 		}
 	}
 	# Set values with the same label to the same start value... means for instance.
@@ -578,4 +592,4 @@ umxCPplay <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
 		umxSummary(model)
 	}
 	return(model)
-} # end umxCPplay
+} # end umxCP

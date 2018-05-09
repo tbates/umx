@@ -78,7 +78,7 @@ stdFit = umxSummary(m1, returnStd = TRUE)
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},
-  \code{\link{umxACE}}, \code{\link{umxCPplay}},
+  \code{\link{umxACE}}, \code{\link{umxCPold}},
   \code{\link{umxCP}}, \code{\link{umxGxE_biv}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxE}},
   \code{\link{umxIP}}, \code{\link{umxSexLim}},

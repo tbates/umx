@@ -1,3 +1,9 @@
+# umx 2.8.0 May 2018, R 3.5.0: Simplex and improvements
+* NEW: `umxCP` handles ordinal, continuous and binary data
+  * Note: old version still available as `umxCPold`
+  * Note: new version also lowerbounads specifics at 0 by default.
+* NEW: `umx_set_optimization_options` function to set "mvnRelEps" tolerances which impact, especially, ordinal model.
+
 # umx 2.6.5 May 2018, R 3.5.0: Simplex and improvements
 * NEW: Beta versions of `umx_polychoric`, `umx_polypairwise`, and `umx_polytriowise`
 * NEW: `umxSimplex`twin model!
