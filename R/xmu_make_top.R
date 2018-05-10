@@ -588,8 +588,16 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 	model = as(model, "MxModelCP")
 	
 	if(autoRun){
-		model = mxRun(model)
-		umxSummary(model)
+		tryCatch({
+			model = mxRun(model)
+			umxSummary(model)
+		}, warning = function(w) {
+			message("Warning incurred trying to run model")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run model")
+			message(e)
+		})
 	}
 	return(model)
 } # end umxCP

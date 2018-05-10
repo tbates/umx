@@ -167,7 +167,7 @@ utils::globalVariables(c(
 	# Used in tmx_genotypic_effect
 	"x1", "y1", "y2", "dose", "value", "freq",
 	
-	# Used in umxGxE_biv
+	# Used in umxGxEbiv
 	"mod1", "mod2", 
 	"Adz", "Amz",
 	"PsAdz"    , "PsAmz"    , "PsC", 
@@ -200,7 +200,7 @@ methods::setClass("MxModelIP"     , contains = "MxModel")
 methods::setClass("MxModelSexLim" , contains = "MxModel")
 methods::setClass("MxModelSimplex", contains = "MxModel")
 methods::setClass("MxModelACEcov" , contains = "MxModelACE")
-methods::setClass("MxModelGxE_biv", contains = "MxModelGxE")
+methods::setClass("MxModelGxEbiv", contains = "MxModelGxE")
 
 # ============================
 # = Core Modelling Functions =
@@ -905,14 +905,11 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	if(any(selDefs %in% selDVs)) {
 		warning("selDefs was found in selDVs: You probably gave me all the variables in selDVs instead of just the DEPENDENT variable");
 	}
-	if(length(selDVs)/nSib != 1){
-		stop("DV list must be 1 variable (2 twins)... You tried ", length(selDVs)/nSib)
-	}
 	if(length(selDefs) != 2){
 		warning("selDefs must be length = 2");
 	}
 	if(length(selDVs) != 2){
-		warning("selDVs must be length = 2");
+		stop("DV list must be length = 2: 1 variable for each of 2 twins... You tried ", length(selDVs)/nSib)
 	}
 
 	umx_check_names(selDVs, mzData)
@@ -950,8 +947,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			stop("Some rows of dzData have NA definition variables. Remove these yourself, or set dropMissing = TRUE")
 		}
 	}
-	
-	
+
 	model = mxModel(name,
 		mxModel("top",
 			# Matrices a, c, and e to store a, c, and e path coefficients
@@ -2448,8 +2444,16 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 	model = as(model, "MxModelCP")
 	
 	if(autoRun){
-		model = mxRun(model)
-		umxSummary(model)
+		tryCatch({
+			model = mxRun(model)
+			umxSummary(model)
+		}, warning = function(w) {
+			message("Warning incurred trying to run model")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run model")
+			message(e)
+		})
 	}
 	return(model)
 } # end umxCP
@@ -2669,9 +2673,18 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 	model = as(model, "MxModelIP")
 
 	if(autoRun){
-		model = mxRun(model)
-		umxSummary(model)
+		tryCatch({
+			model = mxRun(model)
+			umxSummary(model)
+		}, warning = function(w) {
+			message("Warning incurred trying to run model")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run model")
+			message(e)
+		})
 	}
+
 	return(model)
 } # end umxIP
 

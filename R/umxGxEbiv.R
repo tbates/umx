@@ -1,8 +1,12 @@
-#' Bivariate ACE models with moderation of variable paths by a moderator.
+#' Bivariate GxE models where twins differ on the moderator.
 #'
-#' Creates and runs a 2-group bivariate GxE model (Purcell, 2002; van der Sluis et al., 2012). GxE interaction studies test the hypothesis that the strength
-#' of genetic (or environmental) influence varies parametrically (usually linear effects on path estimates)
-#' across levels of environment. umxGxE_biv allows use of this model in cases where twins are not identical on the moderator (or, rarely, are not completely independent).
+#' GxE interaction models test the hypothesis that the strength
+#' of genetic (or environmental) influence varies parametrically 
+#' across levels of environment. 
+#' univariate (see \code{\link{umxGxE}}) models assume the twins share the moderator.
+#' umxGxE umxGxEbiv allows testing moderation in cases where twins differ on the moderator,
+#' (Purcell, 2002; van der Sluis et al., 2012).
+#' 
 #' It supports testing, and visualizing GxE bivariate (or C or E x E) interactions.
 #' 
 #' The following figure shows the GxE model as a path diagram: *note*: Only Twin 1 is shown.
@@ -10,7 +14,7 @@
 #' covariance of the T1 and T2 latent genetic traits set to .5 for DZ and 1.0 for MZ pairs.
 #' For the sake of clarity, C, and E paths are omitted here. These mirror those for A.
 #' ![](GxEbiv.png)
-#' @param name The name of the model (defaults to "GxE_biv")
+#' @param name The name of the model (defaults to "GxEbiv")
 #' @param selDVs The dependent variable (e.g. IQ)
 #' @param selDefs The definition variable (e.g. socio economic status)
 #' @param sep Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
@@ -21,7 +25,7 @@
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
-#' @return - GxE_biv \code{\link{mxModel}}
+#' @return - GxEbiv \code{\link{mxModel}}
 #' @export
 #' @md
 #' @family Twin Modeling Functions
@@ -44,19 +48,19 @@
 #' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
 #'
 #' \dontrun{
-#' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
+#' m1 = umxGxEbiv(selDVs = selDVs, selDefs = selDefs, 
 #' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 #'
 #' # Plot Moderation
-#' umxSummaryGxE_biv(m1)
+#' umxSummaryGxEbiv(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' m2 = umxModify(m1, update = c("cBeta2_r1c1", "eBeta1_r1c1", "eBeta2_r1c1"), comparison = TRUE)
 #' #
-#' # TODO: teach umxReduce to test all relevant hypotheses for umxGxE_biv
+#' # TODO: teach umxReduce to test all relevant hypotheses for umxGxEbiv
 #' umxReduce(m1)
 #' }
-umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib = 2;
 	# =================
 	# = Set optimizer =
@@ -89,7 +93,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 	message("selDVs: ", omxQuotes(selDVs))
 
 	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for gxe")
-	# TODO umxGxE_biv Check Defs are not correlated 1 or 0
+	# TODO umxGxEbiv Check Defs are not correlated 1 or 0
 	obsMean   = mean(colMeans(mzData[,selDVs], na.rm = TRUE)); # Just one average mean for all twins
 	nVar      = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	rawVar    = diag(var(mzData[,selDVs], na.rm = TRUE))[1]
@@ -275,7 +279,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 	if(!is.na(lboundM)){
 		model = omxSetParameters(model, labels = c('am_r1c1', 'cm_r1c1', 'em_r1c1'), lbound = lboundM)
 	}
-	model = as(model, "MxModelGxE_biv")
+	model = as(model, "MxModelGxEbiv")
 	if(autoRun){
 		tryCatch({
 			model = mxRun(model)
@@ -295,10 +299,10 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 
 #' Summarize a bivariate GxE twin model
 #'
-#' umxSummaryGxE_biv summarize a Moderation model, as returned by \code{\link{umxGxE_biv}}.
+#' umxSummaryGxEbiv summarize a Moderation model, as returned by \code{\link{umxGxEbiv}}.
 #'
-#' @aliases umxSummary.MxModelGxE_biv
-#' @param model A fitted \code{\link{umxGxE_biv}} model to summarize
+#' @aliases umxSummary.MxModelGxEbiv
+#' @param model A fitted \code{\link{umxGxEbiv}} model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
@@ -314,7 +318,7 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 #' @return - optional \code{\link{mxModel}}
 #' @family Twin Modeling Functions
 #' @export
-#' @seealso - \code{\link{umxGxE_biv}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+#' @seealso - \code{\link{umxGxEbiv}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
 #' @references - \url{https://github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' data(twinData) 
@@ -325,14 +329,14 @@ umxGxE_biv <- function(name = "GxE_biv", selDVs, selDefs, dzData, mzData, sep = 
 #' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
 #'
 #' \dontrun{
-#' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
+#' m1 = umxGxEbiv(selDVs = selDVs, selDefs = selDefs, 
 #' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 #' # Plot Moderation
 #' umxSummary(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' }
-umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, comparison = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), ...) {
+umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, comparison = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), ...) {
 	report = match.arg(report)
 	umx_has_been_run(model, stop = TRUE)
 	
@@ -341,7 +345,7 @@ umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "t
 	}
 
 	if(is.null(model)){
-		message("umxSummaryGxE_biv calls plot.MxModelGxE_biv for a twin moderation plot. A use example is:\n umxSummaryGxE_biv(model, location = \"topright\")")
+		message("umxSummaryGxEbiv calls plot.MxModelGxEbiv for a twin moderation plot. A use example is:\n umxSummaryGxEbiv(model, location = \"topright\")")
 		stop();
 	}
 	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
@@ -383,7 +387,7 @@ umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "t
 	names(tmp) <-c("a1", "a2", "c1", "c2","e1", "e2")
 	umx_print(tmp, digits = 3)
 
-	# umxPlotGxE_biv(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
+	# umxPlotGxEbiv(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
 
 	if(reduce){
 		# TODO not implemented!
@@ -392,7 +396,7 @@ umxSummaryGxE_biv <- function(model = NULL, digits = 2, xlab = NA, location = "t
 }
 
 #' @export
-umxSummary.MxModelGxE_biv <- umxSummaryGxE_biv
+umxSummary.MxModelGxEbiv <- umxSummaryGxEbiv
 
 
 #' Plot the results of a GxE univariate test for moderation of ACE components.
@@ -401,8 +405,8 @@ umxSummary.MxModelGxE_biv <- umxSummaryGxE_biv
 #' Options include plotting the raw and standardized graphs separately, or in a combined panel.
 #' You can also set the label for the x axis (xlab), and choose the location of the legend.
 #'
-#' @aliases plot.MxModelGxE_biv
-#' @param x A fitted \code{\link{umxGxE_biv}} model to plot
+#' @aliases plot.MxModelGxEbiv
+#' @param x A fitted \code{\link{umxGxEbiv}} model to plot
 #' @param xlab String to use for the x label (default = NA, which will use the variable name)
 #' @param location Where to plot the legend (default = "topleft")
 #' see ?legend for alternatives like bottomright
@@ -412,7 +416,7 @@ umxSummary.MxModelGxE_biv <- umxSummaryGxE_biv
 #' @family Plotting functions
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @seealso - \code{\link{umxGxE_biv}}
+#' @seealso - \code{\link{umxGxEbiv}}
 #' @references - \url{http://tbates.github.io}
 #' @examples
 #' require(umx)
@@ -423,17 +427,17 @@ umxSummary.MxModelGxE_biv <- umxSummaryGxE_biv
 #' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
 #' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
 #'
-#' m1 = umxGxE_biv(selDVs = selDVs, selDefs = selDefs, 
+#' m1 = umxGxEbiv(selDVs = selDVs, selDefs = selDefs, 
 #' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 #' # Plot Moderation
 #' plot(m1)
-#' umxPlotGxE_biv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
+#' umxPlotGxEbiv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
 #' }
-umxPlotGxE_biv <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
-	if(class(x) != "MxModelGxE_biv"){
-		stop("The first parameter of umxPlotGxE must be a GxE_biv model, you gave me a ", class(x))
+umxPlotGxEbiv <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
+	if(class(x) != "MxModelGxEbiv"){
+		stop("The first parameter of umxPlotGxE must be a GxEbiv model, you gave me a ", class(x))
 	}
-	model = x # to remind us that x has to be a umxGxE_biv model
+	model = x # to remind us that x has to be a umxGxEbiv model
 	# get unique values of moderator
 	mzData = model$MZ$data$observed
 	dzData = model$DZ$data$observed
@@ -502,4 +506,4 @@ umxPlotGxE_biv <- function(x, xlab = NA, location = "topleft", separateGraphs = 
 }
 
 #' @export
-plot.MxModelGxE_biv <- umxPlotGxE_biv
+plot.MxModelGxEbiv <- umxPlotGxEbiv
