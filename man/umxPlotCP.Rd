@@ -44,7 +44,7 @@ plot(yourCP_Model) # no need to remember a special name: plot works fine!
 
 Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
-  \code{\link{umxPlotACE}}, \code{\link{umxPlotGxE_biv}},
+  \code{\link{umxPlotACE}}, \code{\link{umxPlotGxEbiv}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 }

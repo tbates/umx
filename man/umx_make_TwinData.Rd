@@ -127,7 +127,7 @@ umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 tmp = umx_make_TwinData(100, MZr = .86, DZr= .60, varNames = "IQ")
 umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 
-# Bivariate GxSES example (see umxGxE_biv)
+# Bivariate GxSES example (see umxGxEbiv)
 
 AA   = list(a11 = .4, a12 = .1, a22 = .15)
 CC   = list(c11 = .2, c12 = .1, c22 = .10)
@@ -165,7 +165,7 @@ tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod,
 }
 \seealso{
 \itemize{
-\item \code{\link{umx_make_TwinData}}, \code{\link{umxGxE_biv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
+\item \code{\link{umx_make_TwinData}}, \code{\link{umxGxEbiv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
 }
 
 Other Twin Data functions: \code{\link{umx_long2wide}},

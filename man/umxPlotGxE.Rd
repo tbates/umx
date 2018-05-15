@@ -54,6 +54,6 @@ umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
   \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
-  \code{\link{umxPlotGxE_biv}}, \code{\link{umxPlotIP}},
+  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotIP}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 }
