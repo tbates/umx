@@ -8,7 +8,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   setValues = TRUE, suffix = "", independent = NA,
   remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std",
   "both", "list of column names"), refModels = NULL,
-  thresholds = c("deviationBased", "direct", "ignore", "left_censored"),
+  thresholds = c("deviationBased", "ignore", "left_censored"),
   autoRun = getOption("umx_auto_run"), optimizer = NULL, verbose = FALSE)
 }
 \arguments{
@@ -43,13 +43,15 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 \item{verbose}{Whether to tell the user what latents and manifests were created etc. (Default = FALSE)}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link{mxModel}}
+}
 }
 \description{
 umxRAM expedites creation of RAM models, still without doing invisible things to the model.
 }
 \details{
-Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
+As with \code{\link{mxModel}}, umxRAM build a model. Unlike mxModel:
 \enumerate{
 \item{You don't need to set type = "RAM"}
 \item{You don't need to list manifestVars (they are detected from path usage)}
@@ -61,24 +63,28 @@ Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxMode
 \item{You don't need to mxRun the model: it will run automatically, and print a summary}
 }
 
-umxRAM is like lm, ggplot2 etc.: you give the data in a data = parameter
+As is conventional in base-R functions like \code{\link{lm}}, \code{\link{umxRAM}} expects data in a data = parameter
 A common error is to include data in the main list, a bit like
 saying lm(y ~ x + df) instead of lm(y ~ x, data = dd).
 
-\strong{nb}: unlike mxModel, umxRAM needs data at build time.
+\strong{nb}: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
 
-If you are at the "sketching" stage of theory consideration, umxRAM supports
+\emph{note}: If you are at the "sketching" stage of theory consideration, umxRAM supports
 a simple vector of manifest names to work with.
-
 
 \strong{Comparison with other software}
 
-Some software has massive behind-the-scenes defaulting and path addition. I've played with 
+\strong{Start values}. Currently, manifest variable means are set to the observed means, residual variances are set to 80%
+of the observed variance of each variable,
+and single-headed paths are set to a positive starting value (currently .9).
+\emph{note}: The start-value strategy is subject to improvement, and will be documented in the help for umxRAM.
+
+Some other SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored
 similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
-and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
+and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"}
 and \code{fix = "firstLoadings"}.
 
-To be honest, these are not only more trouble than they are worth, they encourage errors and 
+To be honest, these are not only more trouble than they are worth, they encourage errors and
 poor modeling. I suggest user learn the handful of \code{\link{umxPath}}
 short cuts and stay clean and explicit!
 }
@@ -161,7 +167,9 @@ m1$S$labels
 # disp "disp_with_mpg" "b1"          "disp_with_disp"
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, \code{\link{parameters}}, \code{\link{umxSuperModel}}

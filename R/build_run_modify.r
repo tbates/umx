@@ -229,7 +229,7 @@ umxModel <- function(...) {
 #'
 #' umxRAM expedites creation of RAM models, still without doing invisible things to the model.
 #' 
-#' Like \code{\link{mxModel}}, you list the theoretical causal paths. Unlike mxModel:
+#' As with \code{\link{mxModel}}, umxRAM build a model. Unlike mxModel:
 #' \enumerate{
 #' \item{You don't need to set type = "RAM"}
 #' \item{You don't need to list manifestVars (they are detected from path usage)}
@@ -241,19 +241,24 @@ umxModel <- function(...) {
 #' \item{You don't need to mxRun the model: it will run automatically, and print a summary}
 #' }
 #' 
-#' umxRAM is like lm, ggplot2 etc.: you give the data in a data = parameter
+#' As is conventional in base-R functions like \code{\link{lm}}, \code{\link{umxRAM}} expects data in a data = parameter
 #' A common error is to include data in the main list, a bit like
 #' saying lm(y ~ x + df) instead of lm(y ~ x, data = dd).
 #' 
-#' \strong{nb}: unlike mxModel, umxRAM needs data at build time.
+#' **nb**: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
 #' 
-#' If you are at the "sketching" stage of theory consideration, umxRAM supports
+#' *note*: If you are at the "sketching" stage of theory consideration, umxRAM supports
 #' a simple vector of manifest names to work with.
 #' 
 #' @details
 #' \strong{Comparison with other software}
 #' 
-#' Some software has massive behind-the-scenes defaulting and path addition. I've played with 
+#' **Start values**. Currently, manifest variable means are set to the observed means, residual variances are set to 80% 
+#' of the observed variance of each variable, 
+#' and single-headed paths are set to a positive starting value (currently .9).
+#' *note*: The start-value strategy is subject to improvement, and will be documented in the help for umxRAM.
+#' 
+#' Some other SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored 
 #' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 #' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
 #' and \code{fix = "firstLoadings"}.
@@ -282,6 +287,7 @@ umxModel <- function(...) {
 #' @seealso \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, \code{\link{parameters}}, \code{\link{umxSuperModel}}
 #' @family Core Modelling Functions
 #' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @md
 #' @examples
 #' 
 #' # ===========================
@@ -359,7 +365,7 @@ umxModel <- function(...) {
 #'# mpg  "mpg_with_mpg"  "mpg_with_wt" "disp_with_mpg"
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), autoRun = getOption("umx_auto_run"), optimizer = NULL, verbose = FALSE) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "ignore", "left_censored"), autoRun = getOption("umx_auto_run"), optimizer = NULL, verbose = FALSE) {
 	
 	# =================
 	# = Set optimizer =
@@ -2781,7 +2787,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# TODO: Start latent means?...
 		# TODO: Handle sub models...
 		if (length(obj$submodels) > 0) {
-			stop("umxValues cannot yet handle submodels")
+			stop("umxValues cannot yet handle submodels. Build each with umxRAM, then use umxSuperModel to assemble")
 		}
 		if (is.null(obj$data)) {
 			stop("'model' does not contain any data")
@@ -2855,9 +2861,9 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# newOffDiags = obj$matrices$S$values[1:nVar, 1:nVar][offDiag & freePaths]/3
 		# obj$matrices$S$values[1:nVar, 1:nVar][offDiag & freePaths] = newOffDiags
 
-		# ==========================================
-		# = Put modest starts into the asymmetrics =
-		# ==========================================
+		# ======================================================
+		# = Put modest starts into the asymmetric (one headed) =
+		# ======================================================
 		Arows = nrow(obj$matrices$A$free)
 		Acols = ncol(obj$matrices$A$free)
 		if(onlyTouchZeros) {
@@ -2865,6 +2871,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		} else {
 			freePaths = (obj$matrices$A$free[1:Arows, 1:Acols] == TRUE)			
 		}
+		# # TODO umxRAM A starts change from .9 to sqrt(.2*Variance)/nFactors
 		obj$A@values[1:Arows, 1:Acols][freePaths] = .9
 		return(obj)
 	} else {
