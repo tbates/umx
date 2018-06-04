@@ -2186,6 +2186,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	}
 }
 
+# =============
+# = umxCP =
+# =============
 #' umxCP: Build and run a Common pathway twin model
 #'
 #' Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
@@ -2202,6 +2205,11 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' \figure{CP.png}
 #' 
 #' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
+#' 
+#' Features include the ability to incude more than one common pathway, to use ordinal data.
+#' 
+#' **note**: The function `umx_set_optimization_options`() allow users to see and set `mvnRelEps` and `mvnMaxPointsA`
+#' It defaults to .001. You might find that '0.01' works better for ordinal models.
 #' 
 #' @details
 #' Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
@@ -2246,10 +2254,10 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #'
 #' @param name The name of the model (defaults to "CP").
 #' @param selDVs The variables to include.
+#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
-#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
+#' @param sep (required) The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
 #' @param nFac How many common factors (default = 1)
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
@@ -2265,103 +2273,95 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
-#' @param suffix DEPRECATED: Use sep instead (see above).
+#' @param suffix DEPRECATED. Use sep instead!
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}} for more examples of twin modeling. \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link{xmu_make_top}}
 #' @references - \url{http://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' \dontrun{
+#' # ========================================================
+#' # = Run a 3-factor Common pathway twin model of 6 traits =
+#' # ========================================================
 #' require(umx)
 #' data(GFF)
-#' mzData <- subset(GFF, zyg_2grp == "MZ")
-#' dzData <- subset(GFF, zyg_2grp == "DZ")
-#' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
-#' m1 = umxCPold(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
-#' umxSummary(m1)
+#' mzData = subset(GFF, zyg_2grp == "MZ")
+#' dzData = subset(GFF, zyg_2grp == "DZ")
+#' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") # These will be expanded into "gff_T1" "gff_T2" etc.
+#' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' m2 = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' umxCompare(m1, m2)
+#'
+#' # =================================================
+#' # = Find and test dropping of shared environment  =
+#' # =================================================
+#' # Show all labels for C parameters  
 #' umxParameters(m1, patt = "^c")
-#' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
+#' # Test dropping the 9 specific and common-factor C paths
+#' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC",comp = TRUE)
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
+#' 
+#' # =======================================
+#' # = Mixed continuous and binary example =
+#' # =======================================
+#' data(GFF)
+#' # Cut to form umxFactor  20% depressed  DEP
+#' cutPoints = quantile(GFF[, "AD_T1"], probs = .2, na.rm = TRUE)
+#' ADLevels  = c('normal', 'depressed')
+#' GFF$DEP_T1 = cut(GFF$AD_T1, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 
+#' GFF$DEP_T2 = cut(GFF$AD_T2, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 
+#' ordDVs = c("DEP_T1", "DEP_T2")
+#' GFF[, ordDVs] = umxFactor(GFF[, ordDVs])
+#' 
+#' selDVs = c("gff","fc","qol","hap","sat","DEP") # These will be expanded into "gff_T1" "gff_T2" etc.
+#' mzData = subset(GFF, zyg_2grp == "MZ")
+#' dzData = subset(GFF, zyg_2grp == "DZ")
+#' allData = rbind(mzData, dzData) 
+#' # See how the thresholdMatrix works.
+#' # See how the thresholdMatrix works
+#' tmp = umxThresholdMatrix(allData[,tvars(selDVs, sep = "_T")], sep = "_T", verbose = TRUE)
+#' # umx_set_optimizer("NPSOL")
+#' # umx_set_optimization_options("mvnRelEps", .01)
+#' m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 #' }
 #'
-umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
+umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
 	if(suffix != "deprecated"){
 		message("Just a message: but please use 'sep' instead of suffix - suffix is deprecated, and will stop working in 2019")
 		sep = suffix
 	}
 	nSib = 2
-	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
-	
-	# expand var names
-	selDVs   = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
-	nVar     = length(selDVs)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	dataType = umx_is_cov(dzData)
-	if(dataType == "raw") {
-		if(!all(is.null(c(numObsMZ, numObsDZ)))){
-			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
-		}
-		# Drop any unused columns from MZ and DZ Data
-		mzData = mzData[, selDVs]
-		dzData = dzData[, selDVs]
-		# bind the MZ nd DZ data into one frame for precision
-		allData = rbind(mzData, dzData)
-		
-		if(any(umx_is_ordered(mzData))){
-			stop("some selected variables are factors or ordinal... I can only handle continuous variables so far... sorry")
-		}
-		obsMeans = colMeans(allData, na.rm = TRUE);
-		top = mxModel("top", 
-			# Means (not yet equated across twins)
-			umxMatrix("expMean", type = "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selDVs) )
-		) 
-		MZ = mxModel("MZ", 
-			mxData(mzData, type = "raw"),
-			mxExpectationNormal("top.expCovMZ", "top.expMean"),
-			mxFitFunctionML()
-		)
-		DZ = mxModel("DZ", 
-			mxData(dzData, type = "raw"), 
-			mxExpectationNormal("top.expCovDZ", "top.expMean"),
-			mxFitFunctionML()
-		)
-	} else if(dataType %in% c("cov", "cor")){
-		if(is.null(numObsMZ)){ stop(paste0("You must set numObsMZ with ", dataType, " data"))}
-		if(is.null(numObsDZ)){ stop(paste0("You must set numObsDZ with ", dataType, " data"))}
-		het_mz = umx_reorder(mzData, selDVs)		
-		het_dz = umx_reorder(dzData, selDVs)
-		top = mxModel("top") # no means
-		# TODO umxCP: Add alternative fit types? (WLS?)
-		MZ = mxModel("MZ", 
-			mxData(het_mz, type = "cov", numObs = numObsMZ),
-			mxExpectationNormal("top.expCovMZ"),
-			mxFitFunctionML()
-		)
-		DZ = mxModel("DZ", 
-			mxData(het_dz, type = "cov", numObs = numObsDZ),
-			mxExpectationNormal("top.expCovDZ"),
-			mxFitFunctionML()
-		)
-	} else {
-		stop("Datatype \"", dataType, "\" not understood")
-	}
+	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
+	# Expand var names
+	selVars = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
+	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	bits    = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
+	top     = bits$top
+	MZ      = bits$MZ
+	DZ      = bits$DZ
 
 	# TODO umxCP: Improve start values (Mike?) 
 	if(correlatedA){
-		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = .7, jiggle = .05) # Latent common factor
+		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = .7) # Latent common factor
 	} else {
-		a_cp_matrix = umxMatrix("a_cp", "Diag", nFac, nFac, free = TRUE, values = .7, jiggle = .05)
+		a_cp_matrix = umxMatrix("a_cp", "Diag" , nFac, nFac, free = TRUE, values = .7)
 	}
-
+	if(name=="CP"){
+		# add nFac to base name if no user-set name provided
+		name = paste0(name, nFac, "fac")
+	}
 	model = mxModel(name,
 		mxModel(top,
 			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 			# Latent common factor genetic paths
 			a_cp_matrix,
-			umxMatrix("c_cp", "Diag", nFac, nFac, free = TRUE, values =  0, jiggle = .05), # latent common factor Common environmental path coefficients
-			umxMatrix("e_cp", "Diag", nFac, nFac, free = TRUE, values = .7, jiggle = .05), # latent common factor Unique environmental path coefficients
+			umxMatrix("c_cp", "Diag", nFac, nFac, free = TRUE, values =  0), # latent common factor Common environmental path coefficients
+			umxMatrix("e_cp", "Diag", nFac, nFac, free = TRUE, values = .7), # latent common factor Unique environmental path coefficients
 			# Constrain variance of latent phenotype factor to 1.0
 			# Multiply by each path coefficient by its inverse to get variance component
 			mxAlgebra(name = "A_cp", a_cp %*% t(a_cp)), # A_cp variance
@@ -2372,10 +2372,10 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 			mxAlgebra(diag2vec(L)             , name = "diagL"),
 			mxConstraint(diagL == nFac_Unit   , name = "fix_CP_variances_to_1"),
 
-			umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .5, jiggle = .05), # Additive gen path 
-			umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1, jiggle = .05), # Common env path 
-			umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .6, jiggle = .05), # Unique env path
-			umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .6, jiggle = .05), # loadings on latent phenotype
+			umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .5), # Additive gen path 
+			umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1), # Common env path 
+			umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .5), # Unique env path
+			umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .5), # loadings on latent phenotype
 			# Quadratic multiplication to add cp_loading effects
 			mxAlgebra(cp_loadings %&% A_cp + as %*% t(as), name = "A"), # Additive genetic variance
 			mxAlgebra(cp_loadings %&% C_cp + cs %*% t(cs), name = "C"), # Common environmental variance
@@ -2384,20 +2384,13 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 			mxAlgebra(name = "AC" , A + C),
 			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 			mxAlgebra(rbind (cbind(ACE, AC), 
-			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name= "expCovMZ"),
+			                 cbind(AC , ACE)), dimnames = list(selVars, selVars), name= "expCovMZ"),
 			mxAlgebra(rbind (cbind(ACE, hAC),
-			                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name= "expCovDZ")
+			                 cbind(hAC, ACE)), dimnames = list(selVars, selVars), name= "expCovDZ")
 		),
 		MZ, DZ,
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
-	# Equate means for twin1 and twin 2 (match labels in first & second halves of means labels matrix)
-	if(equateMeans & dataType == "raw"){
-		model = omxSetParameters(model,
-		  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMeanr1c4", "expMeanr1c5", "expMeanr1c6"),
-		  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
-		)
-	}
 	if(!freeLowerA){
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
@@ -2425,7 +2418,7 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 		)
 		model = mxModel(model, newTop)
 		if(addCI){
-			# TODO umxCP: add these by listing free parameters in model to get single labels?
+			# TODO umxCP: break these CIs out into single labels?
 			model = mxModel(model, mxCI(c('top.a_cp', 'top.c_cp', 'top.e_cp', 'top.as_std', 'top.cs_std', 'top.es_std', 'top.cp_loadings_std')))
 		}
 	}
@@ -2433,16 +2426,21 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 		if(!is.numeric(boundDiag)){
 			stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))
 		} else {				
-			newLbound = model$top$matrices$a_cp@lbound
 			if(length(boundDiag) > 1 ){
 				if(length(boundDiag) != length(diag(newLbound)) ){
 					stop("Typically boundDiag is 1 digit: if more, must be size of diag(a_cp)")
 				}
 			}
-			diag(newLbound) = boundDiag; 
-			model$top$a_cp$lbound = newLbound
-			model$top$c_cp$lbound = newLbound
-			model$top$e_cp$lbound = newLbound
+			newCPLbound = model$top$matrices$a_cp@lbound
+			diag(newCPLbound) = boundDiag; 
+			model$top$a_cp$lbound = newCPLbound
+			model$top$c_cp$lbound = newCPLbound
+			model$top$e_cp$lbound = newCPLbound
+			newSpecLbound = model$top$matrices$as@lbound
+			diag(newSpecLbound) = boundDiag; 
+			model$top$as$lbound = newSpecLbound
+			model$top$cs$lbound = newSpecLbound
+			model$top$es$lbound = newSpecLbound
 		}
 	}
 	# Set values with the same label to the same start value... means for instance.
@@ -2463,6 +2461,8 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 	}
 	return(model)
 } # end umxCP
+
+
 
 #' umxIP: Build and run an Independent pathway twin model
 #'
@@ -2537,6 +2537,11 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 	if(!is.null(sep)){
 		suffix = sep
 	}
+	if(name=="IP"){
+		# add nFac to base name if no user-set name provided
+		name = paste0(name, nFac, "fac")
+	}
+	
 	nSib = 2;
 	# expand var names
 	if(!is.null(suffix)){
