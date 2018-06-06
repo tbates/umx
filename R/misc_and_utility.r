@@ -4613,7 +4613,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' Emod = list(Beta_e1 = .025, Beta_e2 = .025)
 #'
 #' @param nMZpairs Number of MZ pairs to simulate
-#' @param nDZpairs Number of DZ pairs to simulate (if omitted defaults to nMZpairs)
+#' @param nDZpairs Number of DZ pairs to simulate (defaults to nMZpairs)
 #' @param AA value for A variance. NOTE: See options for use in GxE and Bivariate GxE
 #' @param CC value for C variance.
 #' @param EE value for E variance.
@@ -4622,10 +4622,12 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @param Amod Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)
 #' @param Cmod Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)
 #' @param Emod Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)
-#' @param varNames name for var (defaults to 'var')
+#' @param varNames name for variables (defaults to 'var')
+#' @param mean mean for traits (default = 0) (not applied to moderated cases)
+#' @param sd sd of traits (default = 1) (not applied to moderated cases)
 #' @param seed Allows user to set.seed() if wanting reproducible dataset
 #' @param empirical Passed to mvrnorm
-#' @param nThresh  If supplied, use as thresholds and return mxFactor output? (default is not too)
+#' @param nThresh  If supplied, use as thresholds and return mxFactor output? (default is not to)
 #' @param sum2one  Whether to enforce AA + CC + EE summing the one (default = TRUE)
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
@@ -4636,13 +4638,14 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' # =====================================================================
 #' # = Basic Example, with all elements of std univariate data specified =
 #' # =====================================================================
-#' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 100, AA = .36, CC = .04, EE = .60)
+#' tmp = umx_make_TwinData(nMZpairs = 10000, AA = .30, CC = .00, EE = .70)
 #' # Show list of 2 data sets
 #' str(tmp)
 #' # = How to consume the built datasets =
 #' mzData = tmp[[1]];
 #' dzData = tmp[[2]];
 #' cov(mzData); cov(dzData)
+#' umxAPA(mzData)
 #' str(mzData); str(dzData); 
 #' 
 #' # Prefer to work in path coefficient values? (little a?)
@@ -4714,7 +4717,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
 #' @md
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL, nThresh = NULL, sum2one = TRUE,  varNames = "var", seed = NULL, empirical = FALSE, MZr= NULL, DZr= NULL, Amod = NULL, Cmod = NULL, Emod = NULL) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var",  mean=0, sd=1, nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE, MZr= NULL, DZr= NULL, Amod = NULL, Cmod = NULL, Emod = NULL) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
@@ -4731,8 +4734,11 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			1, DZr,
 			DZr, 1)
 		);
-		mzData = mvrnorm(n = nMZpairs, mu = c(0, 0), Sigma = mzCov, empirical = empirical);
-		dzData = mvrnorm(n = nDZpairs, mu = c(0, 0), Sigma = dzCov, empirical = empirical);
+		sdMat = diag(rep(sd, 2))
+		mzCov = sdMat %*% mzCov %*% sdMat
+		dzCov = sdMat %*% dzCov %*% sdMat
+		mzData = mvrnorm(n = nMZpairs, mu = c(mean, mean), Sigma = mzCov, empirical = empirical);
+		dzData = mvrnorm(n = nDZpairs, mu = c(mean, mean), Sigma = dzCov, empirical = empirical);
 		mzData = data.frame(mzData)
 		dzData = data.frame(dzData)
 		if(length(varNames) > 1){
@@ -4776,8 +4782,12 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			ACE, hAC,
 			hAC, ACE)
 		);
-		mzData = mvrnorm(n = nMZpairs, mu = c(0, 0), Sigma = mzCov, empirical = empirical);
-		dzData = mvrnorm(n = nDZpairs, mu = c(0, 0), Sigma = dzCov, empirical = empirical);
+		sdMat = diag(rep(sd, 2))
+		mzCov = sdMat %*% mzCov %*% sdMat
+		dzCov = sdMat %*% dzCov %*% sdMat
+		
+		mzData = mvrnorm(n = nMZpairs, mu = c(mean, mean), Sigma = mzCov, empirical = empirical);
+		dzData = mvrnorm(n = nDZpairs, mu = c(mean, mean), Sigma = dzCov, empirical = empirical);
 		mzData = data.frame(mzData)
 		dzData = data.frame(dzData)
 		if(length(varNames) > 1){
@@ -4809,10 +4819,9 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		Beta_c2 = Cmod$Beta_c2	# C
 		Beta_e2 = Emod$Beta_e2	# E
 
-		# We simulate data by generating scores on the latent variables A, C, E of
+		# Simulate data by generating scores on the latent variables A, C, E of
 		# the moderator and A2, C2, and E2 of the trait, conditional on the moderator. 
 		# These are uncorrelated as the latter is trait | moderator.
-		# This is consistent with the Cholesky decomposition as depicted in model A
 
 		# Define the expected correlation matrices for MZ and DZ
 		sMZtmp = zero = matrix(data = 0, nrow = 6, ncol = 6)
@@ -4889,7 +4898,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		colnames(mzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
 		colnames(dzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
 	} else {
-		# Moderator example
+		# Univariate Moderator
 		if(any(c(is.null(AA), is.null(CC), is.null(EE)))){
 			stop("For moderation, you must set all three of AA, CC, and EE", call. = FALSE)
 		}

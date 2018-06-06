@@ -5,14 +5,14 @@
 \title{Simulate twin data with control over A, C, and E parameters, as well as moderation of A.}
 \usage{
 umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
-  EE = NULL, nThresh = NULL, sum2one = TRUE, varNames = "var",
-  seed = NULL, empirical = FALSE, MZr = NULL, DZr = NULL, Amod = NULL,
-  Cmod = NULL, Emod = NULL)
+  EE = NULL, varNames = "var", mean = 0, sd = 1, nThresh = NULL,
+  sum2one = TRUE, seed = NULL, empirical = FALSE, MZr = NULL,
+  DZr = NULL, Amod = NULL, Cmod = NULL, Emod = NULL)
 }
 \arguments{
 \item{nMZpairs}{Number of MZ pairs to simulate}
 
-\item{nDZpairs}{Number of DZ pairs to simulate (if omitted defaults to nMZpairs)}
+\item{nDZpairs}{Number of DZ pairs to simulate (defaults to nMZpairs)}
 
 \item{AA}{value for A variance. NOTE: See options for use in GxE and Bivariate GxE}
 
@@ -20,11 +20,15 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
 
 \item{EE}{value for E variance.}
 
-\item{nThresh}{If supplied, use as thresholds and return mxFactor output? (default is not too)}
+\item{varNames}{name for variables (defaults to 'var')}
+
+\item{mean}{mean for traits (default = 0) (not applied to moderated cases)}
+
+\item{sd}{sd of traits (default = 1) (not applied to moderated cases)}
+
+\item{nThresh}{If supplied, use as thresholds and return mxFactor output? (default is not to)}
 
 \item{sum2one}{Whether to enforce AA + CC + EE summing the one (default = TRUE)}
-
-\item{varNames}{name for var (defaults to 'var')}
 
 \item{seed}{Allows user to set.seed() if wanting reproducible dataset}
 
@@ -80,13 +84,14 @@ Emod = list(Beta_e1 = .025, Beta_e2 = .025)
 # =====================================================================
 # = Basic Example, with all elements of std univariate data specified =
 # =====================================================================
-tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 100, AA = .36, CC = .04, EE = .60)
+tmp = umx_make_TwinData(nMZpairs = 10000, AA = .30, CC = .00, EE = .70)
 # Show list of 2 data sets
 str(tmp)
 # = How to consume the built datasets =
 mzData = tmp[[1]];
 dzData = tmp[[2]];
 cov(mzData); cov(dzData)
+umxAPA(mzData)
 str(mzData); str(dzData); 
 
 # Prefer to work in path coefficient values? (little a?)

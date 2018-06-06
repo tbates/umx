@@ -364,29 +364,42 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure).
 #' 
 #' 
-#' \strong{Data Input}
+#' **Data Input**
+#' 
 #' Currently, the umxCP function accepts only raw data. This may change in future versions.
 #' 
-#' \strong{Ordinal Data}
+#' **Ordinal Data**
+#' 
 #' In an important capability, the model transparently handles ordinal (binary or multi-level
 #' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
 #' data in any combination.
 #' 
-#' \strong{Additional features}
+#' **Additional features**
+#' 
 #' The umxCP function supports varying the DZ genetic association (defaulting to .5)
 #' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 #' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
 #'
-#' \strong{Matrices and Labels in CP model}
+#' **Matrices and Labels in CP model**
+#' 
 #' A good way to see which matrices are used in umxCP is to run an example model and plot it.
 #'
-#' The diagonals of matrices as, cs, and es contain the path loadings specific to each variable. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
-#' All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
+#' All the shared matrices are in the model "top".
+#' 
+#' Matrices `as`, `cs`, and `es` contain the path loadings specific to each variable on their diagonals.
+#' 
+#' To see the 'as' values, you can simply execute:
 #' 
 #' m1$top#as$values
 #' 
-#' The common-pathway loadings on the factors are in matrices a_cp, c_cp, e_cp.
+#' m1$top#as$labels
+#' 
+#' m1$top#as$free
+#' 
+#' Labels relevant to modifying the specific loadings take the form "as_r1c1", "as_r2c2" etc.
+#' 
+#' The common-pathway loadings on the factors are in matrices `a_cp`, `c_cp`, `e_cp`.
 #'
 #' The common factors themselves are in the matrix cp_loadings (an nVar * 1 matrix)
 #'	
@@ -441,7 +454,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' # = Find and test dropping of shared environment  =
 #' # =================================================
 #' # Show all labels for C parameters  
-#' umxParameters(m1, patt = "^c")
+#' parameters(m1, patt = "^c")
 #' # Test dropping the 9 specific and common-factor C paths
 #' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC",comp = TRUE)
 #' umxSummaryCP(m2, comparison = m1, file = NA)
@@ -463,8 +476,8 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' allData = rbind(mzData, dzData) 
+#' 
 #' # See how the thresholdMatrix works.
-#' # See how the thresholdMatrix works
 #' tmp = umxThresholdMatrix(allData[,tvars(selDVs, sep = "_T")], sep = "_T", verbose = TRUE)
 #' # umx_set_optimizer("NPSOL")
 #' # umx_set_optimization_options("mvnRelEps", .01)
