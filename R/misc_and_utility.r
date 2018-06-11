@@ -1,3 +1,202 @@
+#' Helper to make a graphviz rank string
+#'
+#' @description
+#' Helper to make a graphviz rank string is a function which 
+#'
+#' @param vars a list of strings
+#' @param pattern regular expression to filter vars
+#' @param rank "same", max, min
+#' @return string
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{umxLabel}}
+#' @examples
+#' umx_graphviz_rank(c("as1"), "^[ace]s[0-9]+$", "same")
+umx_graphviz_rank <- function(vars, pattern, rank) {
+	formatted = paste(namez(vars, pattern), collapse = "; ")
+	ranks = paste0("{rank=", rank, "; ", formatted, "};\n")
+	return(ranks)
+}
+
+#' Return whether a cell is in a set location of a matrix
+#'
+#' @description
+#' Helper to determine is a cell is in a set location of a matrix or not.
+#' Left is useful for, e.g. twin means matrices.
+#' @param r which row the cell is on.
+#' @param c which column the cell is in.
+#' @param where the location (any, diag, lower or upper or left).
+#' @param mat (optionally) provide matrix to check dimensions against r and c.
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{umxLabel}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' umx_cell_is_on(r = 3, c = 3, "lower")
+#' umx_cell_is_on(r = 3, c = 3, "upper")
+#' umx_cell_is_on(r = 3, c = 3, "diag")
+#' umx_cell_is_on(r = 2, c = 3, "diag")
+#' umx_cell_is_on(r = 3, c = 3, "any")
+#' umx_cell_is_on(r = 3, c = 3, "left")
+#' \dontrun{
+#' # test stopping
+#' a_cp_matrix = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
+#' umx_cell_is_on(r=4,c = 3, "any", mat = a_cp_matrix)
+#' }
+umx_cell_is_on <- function(r, c, where=c("diag", "lower", "upper", "any", "left"), mat= NULL) {
+	where = match.arg(where)
+	if(!is.null(mat)){
+		# check r and c in bounds.
+		if(r > dim(mat)[1]){
+			stop("r is greater than size of matrix: ", dim(mat)[1])
+		}
+		if(c > dim(mat)[2]){
+			stop("c is greater than size of matrix: ", dim(mat)[2])
+		}
+	}
+	if(where =="any"){
+		valid = TRUE
+	} else if(where =="left"){
+		if(is.null(mat)){
+			stop("matrix must be offered up to check for begin on the left")
+		}
+		if(c <= dim(mat)[2]/2){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	} else if(where =="diag"){
+		if(r == c){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	} else if(where =="lower"){
+		if(r > c){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	} else if(where =="upper"){
+		if(c > r){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	}else{
+		stop("Where must be one of all, diag, lower, or upper. You gave me:", omxQuotes(where))
+	}
+	return(valid)
+}
+
+#' Return dot code for paths in a matrix
+#'
+#' @description
+#' Return dot code for paths in a matrix is a function which 
+#' Walk rows and cols of matrix. At each free cell, 
+#' Create a string like:
+#' 	ai1 -> var1 [label=".35"]
+#' A latent (and correlations among latents)
+#' 	* these go from a_cp n=row TO common n= row
+#' 	* or for off diag, from a_cp n=col TO a_cp n= row
+#'
+#' @param x a \code{\link{umxMatrix}} to make paths from.
+#' @param from one of "rows", "columns" or a name
+#' @param to one of "rows", "cols" or a name
+#' @param cells which cells to proceess: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
+#' @param arrows "->" "<->" or "<-"
+#' @param fromLabel = NULL
+#' @param toLabel = NULL
+#' @param selDVs if not null, row is used to index into this to set target name
+#' @param showFixed = FALSE
+#' @param digits rounding values (default = 2).
+#' @param type one of "latent" or "manifest" (default NULL, don't accumulate new names using "from" list)
+#' @param p input to build on. list(str = "", latents = c(), manifests = c())
+#' @return - list(str = "", latents = c(), manifests = c())
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{plot}}
+#' @examples
+#' # Make a lower 3*3 value= 1:6 (1,4,6 on the diag)
+#' a_cp_matrix = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
+#' out = umx_mat2dot(a_cp_matrix, cells = "lower", from = "rows", arrows = "<->")
+#' cat(out$str)
+#' out = umx_mat2dot(a_cp_matrix, cells = "lower", from = "cols", arrows = "<->")
+#' cat(out$str)
+#' # call will init the plot struct
+#' out = umx_mat2dot(a_cp_matrix, from = "rows", cells = "lower", arrows = "<->", type = "latent")
+#' out = umx_mat2dot(a_cp_matrix, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
+#' 
+umx_mat2dot <- function(x, cells = c("any", "diag", "lower", "upper", "left"), from = "rows", fromLabel = NULL, toLabel = NULL, selDVs = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), type = NULL, digits = 2, p = list(str = "", latents = c(), manifests = c())) {
+	cells  = match.arg(cells)
+	arrows = match.arg(arrows)
+	nRows = nrow(x)
+	nCols = ncol(x)
+	# Allow from and to labels other than the matrix name (default)
+	if(is.null(fromLabel)){
+		fromLabel = x$name
+	}
+	if(is.null(toLabel)){
+		toLabel = x$name
+	}
+	 
+	for (r in 1:nRows) {
+		for (c in 1:nCols) {
+			if(umx_cell_is_on(r= r, c = c, where = cells, mat = x)){
+				# TODO get the CI (or should we rely on stashed CIs?)
+				# TODO add this code to umx_mat2dot (need to pass in the model)
+				# CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits)
+				# if(is.na(CIstr)){
+				# 	val = umx_round(parameterKeyList[thisParam], digits)
+				# }else{
+				# 	val = CIstr
+				# }
+				value = round(x$values[r,c], digits)
+				if(from == "rows"){
+					if(fromLabel=="one"){
+						fr = fromLabel
+					} else {
+						fr = paste0(fromLabel, r)
+					}
+					if(!is.null(selDVs)){
+						tu = selDVs[c]
+					}else{
+						tu = paste0(toLabel, c)
+					}
+				} else { 
+					if(fromLabel=="one"){
+						fr = fromLabel
+					} else {
+						fr = paste0(fromLabel, c)
+					}
+					if(!is.null(selDVs)){
+						tu = selDVs[r]
+					}else{
+						tu = paste0(toLabel, r)
+					}
+				}
+				# Show fixed cells if non-0
+				if(x$free[r,c] || (showFixed && x$values[r,c] != 0)){
+					p$str = paste0(p$str, "\n", fr, " -> ", tu, " [dir = ", arrows, " label=\"", value, "\"];")
+					if(!is.null(type)){
+						if(type == "latent"){
+							p$latents   = c(p$latents, fr)
+						} else if(type == "manifest"){
+							p$manifests = c(p$manifests, fr)
+						}
+					}
+				}
+			} else {
+				# fixed cell
+			}
+		}
+	}
+	p$latents = unique(p$latents)
+	p$manifests = unique(p$manifests)	
+	p
+}
+
 # Poems one should know by heart:
 
 # William Shakespeare
@@ -5943,22 +6142,23 @@ umx_standardize.MxModelIP <- umx_standardize_IP
 #' model = umx_standardize_CP(model)
 #' }
 umx_standardize_CP <- function(model, ...){
-	if(!is.null(model$top$ai_std)){
+	if(!is.null(model$top$as_std)){
 		# Standardized general path components
-		model$top$matrices$cp_loadings$values = model$top$algebras$cp_loadings_std$result # standardized cp loadings
-		# Standardized specific path coefficienmodelts
-		model$top$as$values = model$top$as_std$result # standardized as
-		model$top$cs$values = model$top$cs_std$result # standardized cs
-		model$top$es$values = model$top$es_std$result # standardized es
+		# Standardized cp loadings
+		model@submodels$top$cp_loadings@values = model$top$algebras$cp_loadings_std$result 
+		# Standardized specific path coefficients
+		model@submodels$top$as@values = model$top$as_std$result # standardized as
+		model@submodels$top$cs@values = model$top$cs_std$result # standardized cs
+		model@submodels$top$es@values = model$top$es_std$result # standardized es
 		return(model)
 	} else {
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2;
 		nFac   = dim(model$top$matrices$a_cp)[[1]]	
 		# Calculate standardized variance components
-		a_cp  = mxEval(top.a_cp , model); # nFac * nFac matrix of path coefficients flowing into the cp_loadings array
-		c_cp  = mxEval(top.c_cp , model);
-		e_cp  = mxEval(top.e_cp , model);
+		a_cp = mxEval(top.a_cp , model); # nFac * nFac path matrix flowing into cp_loadings array
+		c_cp = mxEval(top.c_cp , model);
+		e_cp = mxEval(top.e_cp , model);
 		as = mxEval(top.as, model); # Specific factor path coefficients
 		cs = mxEval(top.cs, model);
 		es = mxEval(top.es, model);

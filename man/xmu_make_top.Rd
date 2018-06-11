@@ -16,7 +16,7 @@ xmu_make_top(mzData, dzData, selDVs, sep = NULL, nSib = 2,
 
 \item{selDVs}{List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names}
 
-\item{sep}{Used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2}
+\item{sep}{Used to expand selDVs into selDVs, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2}
 
 \item{nSib}{Number of members per family (default = 2)}
 

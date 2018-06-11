@@ -2447,16 +2447,25 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	latents = c();
 	cSpecifics = c();
 	for(thisParam in names(parameterKeyList) ) {
-		# Top level a c e
+		# if I was smart, I'd look at the matrices, not the labels.
+		# would need to examine:
+		# 1. a_cp_matrix = A latent (and correlations among latents)
+		# 	* these go from a_cp n=row TO common n= row
+		# 	* or for off diag, from a_cp n=col TO a_cp n= row
+		# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "diag", type = "latent")
+		# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "lower", arrows = "<->", type = "latent", strIn = out)
+		# 2 same again for c_cp_matrix, e_cp_matrix
+		# 3. cp_loadings common factor loadings
+		# Top level a c e inputs to common factors
 		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { 
 			# Match cp latents, e.g. thisParam = "c_cp_r1c3" (note, row = factor #)
-			from   = sub("^([ace]_cp)_r([0-9])"  , '\\1\\2'   , thisParam, perl= TRUE);
-			target = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl= TRUE);
-			latents = append(latents,from)
+			from    = sub("^([ace]_cp)_r([0-9])"  , '\\1\\2'   , thisParam, perl= TRUE); # "a_cp<r>"
+			target  = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl= TRUE); # "common<r>"
+			latents = append(latents, from)
 		} else if (grepl("^cp_loadings_r[0-9]+", thisParam)) {
 			# Match common loading string e.g. "cp_loadings_r1c1"
-			from    = sub("^cp_loadings_r([0-9]+)c([0-9]+)"    , "common\\2", thisParam, perl= TRUE);
-			thisVar = as.numeric(sub('cp_loadings_r([0-9]+)c([0-9]+)', '\\1', thisParam, perl= TRUE));
+			from    = sub("^cp_loadings_r([0-9]+)c([0-9]+)", "common\\2", thisParam, perl= TRUE); # "common<c>"
+			thisVar = as.numeric(sub('cp_loadings_r([0-9]+)c([0-9]+)', '\\1', thisParam, perl= TRUE)); # var[r]
 			target  = selDVs[as.numeric(thisVar)]
 			latents = append(latents,from)
 		} else if (grepl("^[ace]s_r[0-9]", thisParam)) {

@@ -104,9 +104,10 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
 
 Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
-  \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
-  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxPlotSimplex}}
+  \code{\link{umxPlotACE}}, \code{\link{umxPlotCPnew}},
+  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
+  \code{\link{umxPlotSimplex}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxTwoStage}}
@@ -116,8 +117,9 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACE}}, \code{\link{umxCPold}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umxSummaryACEcov}},
+  \code{\link{umxIPnew}}, \code{\link{umxIP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxEbiv}},
@@ -192,11 +194,14 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
   \code{\link{umxFactor}}, \code{\link{umxVersion}},
   \code{\link{umx_array_shift}},
+  \code{\link{umx_cell_is_on}},
   \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_find_object}}, \code{\link{umx_make}},
-  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
-  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_scale}}
+  \code{\link{umx_find_object}},
+  \code{\link{umx_graphviz_rank}}, \code{\link{umx_make}},
+  \code{\link{umx_mat2dot}}, \code{\link{umx_msg}},
+  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
+  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
+  \code{\link{umx_scale}}
 
 Other datasets: \code{\link{GFF}}, \code{\link{iqdat}},
   \code{\link{us_skinfold_data}}

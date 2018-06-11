@@ -42,9 +42,10 @@ plot(m1, std = FALSE) # don't standardize
 \seealso{
 Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
-  \code{\link{umxPlotSimplex}}, \code{\link{umx}}
+  \code{\link{umxPlotCPnew}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
+  \code{\link{umxPlotIP}}, \code{\link{umxPlotSimplex}},
+  \code{\link{umx}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
