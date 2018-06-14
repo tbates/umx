@@ -2,11 +2,16 @@
 * NEW: `umxCP` handles ordinal, continuous and binary data
   * Note: old version still available as `umxCPold`
   * Note: new version also lowerbounds specifics at 0 by default.
+* NEW: `umxCPplot` re-written to allow arbitrary labels and correlated factors.
+* NEW helper functions: umx_graphviz_rank, umx_mat2dot
 * NEW: `umx_set_optimization_options` function to set "mvnRelEps" tolerances which impact, especially, ordinal model.
-* DELETED: `umxAlgebra` This  appears broken in some circumstances?
 * REFACTOR: new twin model creation helper will help ensure consistency and improve multiple twin functions
+* IMPROVED: `umx_is_class` reports classes if not given a set of classes to check
+* IMPROVED: `umx_scale(verbose=TRUE)` now lists the vars it didn't touch as well as those it didn't (also formatted better)
+* IMPROVED: `umx_make_TwinData`  can set mean and SD of data
+* FIX: `umx_standardize_CP` was ignoring existing CIs
+* DELETED: `umxAlgebra` This  appears broken in some circumstances?
 * HELP:  verbose option for twin helper; better feedback;
-* IMPROVED: umx_is_class reports classes if not given a set of classes to check
 
 # umx 2.6.5 May 2018, R 3.5.0: Simplex and improvements
 * NEW: Beta versions of `umx_polychoric`, `umx_polypairwise`, and `umx_polytriowise`
