@@ -3939,7 +3939,9 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verb
 		}
 		varsToScale = varsToScale[umx_is_numeric(df[,varsToScale], all = FALSE)]
 		if(verbose){
-			message("Vars I will scale are:", paste(varsToScale, ", "))
+			message("Vars I will scale are:", omxQuotes(varsToScale))
+			
+			message("Vars I will leave alone are:", omxQuotes(setdiff(names(df), varsToScale)))
 		}
 		if(length(varsToScale)==1){
 			df[ ,varsToScale] = scale(df[ ,varsToScale])[,1, drop=T]
