@@ -38,8 +38,10 @@ umx_set_optimizer("SLSQP")
 data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
-selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") # These will be expanded into "gff_T1" "gff_T2" etc.
-m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData, correlatedA = TRUE)
+selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
+m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
+	nFac = 3, correlatedA = TRUE
+)
 m1 = mxTryHardOrdinal(m1)
 umxPlotCPnew(m1)
 plot(m1) # no need to remember a special name: plot works fine!

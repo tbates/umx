@@ -131,7 +131,7 @@ The common factors themselves are in the matrix cp_loadings (an nVar * 1 matrix)
 Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 
-m1$top$expMean$labels\link{1,4:6} =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
+\code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 }
 \examples{
 \dontrun{
@@ -142,7 +142,7 @@ require(umx)
 data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
-selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") # These will be expanded into "gff_T1" "gff_T2" etc.
+selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
 m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 m2 = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 umxCompare(m1, m2)
@@ -169,7 +169,7 @@ GFF$DEP_T2 = cut(GFF$AD_T2, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels)
 ordDVs = c("DEP_T1", "DEP_T2")
 GFF[, ordDVs] = umxFactor(GFF[, ordDVs])
 
-selDVs = c("gff","fc","qol","hap","sat","DEP") # These will be expanded into "gff_T1" "gff_T2" etc.
+selDVs = c("gff","fc","qol","hap","sat","DEP") 
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 allData = rbind(mzData, dzData) 
@@ -186,7 +186,9 @@ data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
-m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData, correlatedA = TRUE)
+m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
+	nFac = 3, correlatedA = TRUE
+)
 # will likely need to be mxTryHard ed
 }
 

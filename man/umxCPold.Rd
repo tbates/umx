@@ -56,7 +56,9 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 \item{suffix}{DEPRECATED: Use sep instead (see above).}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link{mxModel}}
+}
 }
 \description{
 Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
@@ -75,15 +77,13 @@ Common-pathway path diagram:
 
 As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
 
-
 Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
-common or shared-environment (C) or 
+common or shared-environment (C) or
 non-additive genetic effects (D).
 
-Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A, 
+Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A,
 C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure).
-
 
 \strong{Data Input}
 Currently, the umxCP function accepts only raw data. This may change in future versions.
@@ -103,18 +103,18 @@ to .25 to model dominance effects.
 A good way to see which matrices are used in umxCP is to run an example model and plot it.
 
 The diagonals of matrices as, cs, and es contain the path loadings specific to each variable. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
-All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
+All the shared matrices are in the model "top". So to see the \code{as} values, you can say:
 
-m1$top#as$values
+\code{m1$top#as$values}
 
 The common-pathway loadings on the factors are in matrices a_cp, c_cp, e_cp.
 
 The common factors themselves are in the matrix cp_loadings (an nVar * 1 matrix)
 
-Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 
-m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
+\code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 }
 \examples{
 \dontrun{
@@ -130,13 +130,16 @@ m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 umxSummaryCP(m2, comparison = m1, file = NA)
 umxCompare(m1, m2)
 }
-
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+\itemize{
+\item \url{http://www.github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\itemize{
+\item \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},

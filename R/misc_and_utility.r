@@ -38,11 +38,11 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' umx_cell_is_on(r = 3, c = 3, "diag")
 #' umx_cell_is_on(r = 2, c = 3, "diag")
 #' umx_cell_is_on(r = 3, c = 3, "any")
-#' umx_cell_is_on(r = 3, c = 3, "left")
+#' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
+#' umx_cell_is_on(r = 3, c = 3, "left", mat = a_cp)
 #' \dontrun{
 #' # test stopping
-#' a_cp_matrix = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
-#' umx_cell_is_on(r=4,c = 3, "any", mat = a_cp_matrix)
+#' umx_cell_is_on(r=4,c = 3, "any", mat = a_cp)
 #' }
 umx_cell_is_on <- function(r, c, where=c("diag", "lower", "upper", "any", "left"), mat= NULL) {
 	where = match.arg(where)
@@ -103,9 +103,8 @@ umx_cell_is_on <- function(r, c, where=c("diag", "lower", "upper", "any", "left"
 #'
 #' @param x a \code{\link{umxMatrix}} to make paths from.
 #' @param from one of "rows", "columns" or a name
-#' @param to one of "rows", "cols" or a name
 #' @param cells which cells to proceess: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
-#' @param arrows "->" "<->" or "<-"
+#' @param arrows "forward" "both" or "back"
 #' @param fromLabel = NULL
 #' @param toLabel = NULL
 #' @param selDVs if not null, row is used to index into this to set target name
@@ -119,14 +118,15 @@ umx_cell_is_on <- function(r, c, where=c("diag", "lower", "upper", "any", "left"
 #' @seealso - \code{\link{plot}}
 #' @examples
 #' # Make a lower 3*3 value= 1:6 (1,4,6 on the diag)
-#' a_cp_matrix = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
-#' out = umx_mat2dot(a_cp_matrix, cells = "lower", from = "rows", arrows = "<->")
+#' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
+#' out = umx_mat2dot(a_cp, cells = "lower", from = "rows", arrows = "both")
 #' cat(out$str)
-#' out = umx_mat2dot(a_cp_matrix, cells = "lower", from = "cols", arrows = "<->")
+#' out = umx_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
 #' cat(out$str)
-#' # call will init the plot struct
-#' out = umx_mat2dot(a_cp_matrix, from = "rows", cells = "lower", arrows = "<->", type = "latent")
-#' out = umx_mat2dot(a_cp_matrix, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
+#' # First call also inits the plot struct
+#' out = umx_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", type = "latent")
+#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
+#' cat(out$str)
 #' 
 umx_mat2dot <- function(x, cells = c("any", "diag", "lower", "upper", "left"), from = "rows", fromLabel = NULL, toLabel = NULL, selDVs = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), type = NULL, digits = 2, p = list(str = "", latents = c(), manifests = c())) {
 	cells  = match.arg(cells)

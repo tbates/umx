@@ -38,9 +38,10 @@ Summarizes a Common-Pathway model, as returned by \code{\link{umxCP}}
 }
 \examples{
 require(umx)
+umx_set_optimizer("SLSQP")
 data(twinData) 
-twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
-twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
+twinData$wt1 = twinData$wt1/10
+twinData$wt2 = twinData$wt2/10
 selDVs = c("ht", "wt")
 mzData <- subset(twinData, zygosity == "MZFF")
 dzData <- subset(twinData, zygosity == "DZFF")

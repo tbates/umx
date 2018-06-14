@@ -360,7 +360,7 @@ loadings.MxModel <- function(x, ...) {
 #' @export
 #' @return - \code{\link{mxModel}}
 #' @family Reporting functions
-#' @seealso - \code{\link[stats]{confint}}, \code{\link[stats]{umxCI}}
+#' @seealso - \code{\link[stats]{confint}}, \code{\link{umxCI}}
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -1389,9 +1389,11 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @references - \url{http://www.github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
 #' require(umx)
+#' umx_set_optimizer("SLSQP")
 #' data(twinData) 
-#' twinData$wt1 = twinData$wt1/10 # help CSOLNP by putting wt on a similar scale to ht
-#' twinData$wt2 = twinData$wt2/10 # help CSOLNP by putting wt on a similar scale to ht
+# # Help optimizer by putting wt on a similar scale to ht
+#' twinData$wt1 = twinData$wt1/10
+#' twinData$wt2 = twinData$wt2/10
 #' selDVs = c("ht", "wt")
 #' mzData <- subset(twinData, zygosity == "MZFF")
 #' dzData <- subset(twinData, zygosity == "DZFF")
@@ -2453,7 +2455,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 		# 	* these go from a_cp n=row TO common n= row
 		# 	* or for off diag, from a_cp n=col TO a_cp n= row
 		# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "diag", type = "latent")
-		# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "lower", arrows = "<->", type = "latent", strIn = out)
+		# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "lower", arrows = "both", type = "latent", strIn = out)
 		# 2 same again for c_cp_matrix, e_cp_matrix
 		# 3. cp_loadings common factor loadings
 		# Top level a c e inputs to common factors

@@ -24,15 +24,13 @@ umx_mat2dot(x, cells = c("any", "diag", "lower", "upper", "left"),
 
 \item{showFixed}{= FALSE}
 
-\item{arrows}{"->" "<->" or "<-"}
+\item{arrows}{"forward" "both" or "back"}
 
 \item{type}{one of "latent" or "manifest" (default NULL, don't accumulate new names using "from" list)}
 
 \item{digits}{rounding values (default = 2).}
 
 \item{p}{input to build on. list(str = "", latents = c(), manifests = c())}
-
-\item{to}{one of "rows", "cols" or a name}
 }
 \value{
 - list(str = "", latents = c(), manifests = c())
@@ -48,14 +46,15 @@ A latent (and correlations among latents)
 }
 \examples{
 # Make a lower 3*3 value= 1:6 (1,4,6 on the diag)
-a_cp_matrix = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
-out = umx_mat2dot(a_cp_matrix, cells = "lower", from = "rows", arrows = "<->")
+a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
+out = umx_mat2dot(a_cp, cells = "lower", from = "rows", arrows = "both")
 cat(out$str)
-out = umx_mat2dot(a_cp_matrix, cells = "lower", from = "cols", arrows = "<->")
+out = umx_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
 cat(out$str)
-# call will init the plot struct
-out = umx_mat2dot(a_cp_matrix, from = "rows", cells = "lower", arrows = "<->", type = "latent")
-out = umx_mat2dot(a_cp_matrix, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
+# First call also inits the plot struct
+out = umx_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", type = "latent")
+out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
+cat(out$str)
 
 }
 \seealso{

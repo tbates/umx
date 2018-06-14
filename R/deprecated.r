@@ -59,9 +59,9 @@
 #' A good way to see which matrices are used in umxCP is to run an example model and plot it.
 #'
 #' The diagonals of matrices as, cs, and es contain the path loadings specific to each variable. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
-#' All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
+#' All the shared matrices are in the model "top". So to see the `as` values, you can say:
 #' 
-#' m1$top#as$values
+#' `m1$top#as$values`
 #' 
 #' The common-pathway loadings on the factors are in matrices a_cp, c_cp, e_cp.
 #'
@@ -70,7 +70,7 @@
 #' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
 #' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 #'
-#' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
+#' `m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' @param name The name of the model (defaults to "CP").
 #' @param selDVs The variables to include.
@@ -113,7 +113,7 @@
 #' umxSummaryCP(m2, comparison = m1, file = NA)
 #' umxCompare(m1, m2)
 #' }
-#'
+#' @md
 umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
 	if(suffix != "deprecated"){
 		message("Just a message: but please use 'sep' instead of suffix - suffix is deprecated, and will stop working in 2019")

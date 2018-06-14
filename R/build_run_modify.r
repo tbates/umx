@@ -120,7 +120,7 @@ utils::globalVariables(c(
 	'Mf', 'Mm',
 	'MZW', 'DZW',
 	'fmCOV','mfCOV',
-
+	'newLbound',
 	# from umxACEv
 	'InvSD',
 	# from umxACEcov
@@ -1318,16 +1318,16 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' 
 #' Matrices 'a'', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
 #' 
-#' So, labels relevant to modifying the model are of the form "a_r1c1", "c_r1c1" etc.
+#' So, labels relevant to modifying the model are of the form \code{"a_r1c1", "c_r1c1"} etc.
 #'
 #' Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say
 #'
-#'    m2 = umxModify(m1, update = "c_r3c2")
+#'     \code{m2 = umxModify(m1, update = "c_r3c2")}
 #'	
 #' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
 #' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 #'
-#' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
+#' \code{m1$top$expMean$labels[1, 4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 #'
 #' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
 #' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
@@ -2262,7 +2262,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
 #' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 #'
-#' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
+#' `m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' @param name The name of the model (defaults to "CP").
 #' @param selDVs The variables to include.
@@ -2301,7 +2301,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' data(GFF)
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
-#' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") # These will be expanded into "gff_T1" "gff_T2" etc.
+#  # These will be expanded into "gff_T1" "gff_T2" etc.
+#' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
 #' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' m2 = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' umxCompare(m1, m2)
@@ -2328,7 +2329,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' ordDVs = c("DEP_T1", "DEP_T2")
 #' GFF[, ordDVs] = umxFactor(GFF[, ordDVs])
 #' 
-#' selDVs = c("gff","fc","qol","hap","sat","DEP") # These will be expanded into "gff_T1" "gff_T2" etc.
+# # These will be expanded into "gff_T1" "gff_T2" etc.
+#' selDVs = c("gff","fc","qol","hap","sat","DEP") 
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' allData = rbind(mzData, dzData) 
@@ -2345,7 +2347,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
-#' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData, correlatedA = TRUE)
+#' m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
+#' 	nFac = 3, correlatedA = TRUE
+#' )
 #' # will likely need to be mxTryHard ed
 #' }
 #'
