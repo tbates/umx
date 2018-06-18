@@ -189,7 +189,7 @@ selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
 m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
 	nFac = 3, correlatedA = TRUE
 )
-# will likely need to be mxTryHard ed
+# Will likely need to be re-run: m1 = mxTryHard(m1)
 }
 
 }

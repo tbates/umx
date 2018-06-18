@@ -1,50 +1,42 @@
 # https://ibg.colorado.edu/dokuwiki/doku.php?id=workshop:2018:cdrom
 
 #' Build and run a simplex twin model
-#'
-#' THIS IS BOILER PLATE AWAITING UPDATING FOR THIS NEW FUNCTION, WHICH IS IN BETA.
 #' 
 #' Make a 2-group simplex twin model
-#' The common-pathway model provides a powerful tool for theory-based decomposition of genetic
+#' The simplex model provides a powerful tool for theory-based decomposition of genetic
 #' and environmental differences.
 #' 
-#' umxCP supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
-#' to model the genetic and environmental structure of multiple phenotypes
-#' (measured behaviors).
-#' 
-#' Simplex path diagram:
+#' @details
+#' **Simplex path diagram**:
 #' 
 #' \figure{simplex.png}
 #' 
-#' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
-#' 
-#' @details
 #' The simplex model decomposes phenotypic variance
 #' into Additive genetic, unique environmental (E) and, optionally, either
 #' common or shared-environment (C) or non-additive genetic effects (D).
 #' 
-#' These influences are further decomposed into innovations at a given time (in the `ai`, 
-#' `ci` and `ei` matrices), effects transmitted from previous time point (in the `at`, 
-#' `ct`, and `et` matrices), and influences specific to a single time (`as`, `cs`, `es`).
+#' In the simplex model, these influences are modeled as a combination of:
+#' * Innovations at a given time (`ai` `ci` and `ei` matrices).
+#' * Influences transmitted from previous time (`at`, `ct`, and `et` matrices).
+#' * Influences specific to a single time (`as`, `cs`, `es`).
 #' 
-#' These in turn account for variance in the phenotypes (see Figure above).
+#' These combine to explain the causes of variance in the phenotype (see Figure above).
 #' 
+#' **Data Input**
+#' Currently, the umxSimplex function accepts only raw data.
 #' 
-#' \strong{Data Input}
-#' Currently, the umxSimplex function accepts only raw data. This may change in future versions.
-#' 
-#' \strong{Ordinal Data}
+#' **Ordinal Data**
 #' In an important capability, the model transparently handles ordinal (binary or multi-level
 #' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
 #' data in any combination.
 #' 
-#' \strong{Additional features}
-#' The umxSimplex function supports varying the DZ genetic association (defaulting to .5)
+#' **Additional features**
+#' The `umxSimplex` function supports varying the DZ genetic association (defaulting to .5)
 #' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 #' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
 #'
-#' \strong{Matrices and Labels in the simplex model}
+#' **Matrices and Labels in the simplex model**
 #' A good way to see which matrices are used in umxSummary is to run an example model and plot it.
 #'
 #' The loadings specific to each time point are contained on the diagonals of matrices 
@@ -52,31 +44,34 @@
 #' 
 #' All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
 #' 
-#' m1$top$as$values
+#' `m1$top$as$values`
 #' 
-#' The transmitted loadings are in matrices at, ct, et.
+#' The transmitted loadings are in matrices `at`, `ct`, `et`.
 #'
 #' The innovations are in the matrix `ai`, `ci`, and `ei`.
 #'	
-#' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+#' Less commonly-modified matrices are the mean matrix `expMean`.
+#' This has 1 row, and the columns are laid out for each variable for
+#' twin 1, followed by each variable for twin 2.
 #' 
-#' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+#' Thus, in a model where the means for twin 1 and twin 2 had been equated 
+#' (set = to T1), you could make them independent again with this script:
 #'
-#' m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")
+#' `m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' @param name The name of the model (defaults to "simplex")
-#' @param selDVs The BASENAMES of the variables to include, i.e., c(`obese`), not c(`obese_T1`, `obese_T2`)
+#' @param selDVs The BASENAMES of the variables i.e., c(`obese`), not c(`obese_T1`, `obese_T2`)
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
 #' @param sep The string preceeding the final numeric twin identifiier (often "_T")
-#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2")
-#' @param equateMeans Whether to equate the means across twins (defaults to T)
-#' @param dzAr The DZ genetic correlation (default = .5. Vary to examine assortative mating)
-#' @param dzCr The DZ "C" correlation (defaults = 1. To make an ADE model, set = .25)
-#' @param addStd Whether to add the algebras to compute a std model (default = TRUE)
-#' @param addCI Whether to add the interval requests for CIs (default = TRUE)
-#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
-#' @param optimizer Optionally set the optimizer (default NULL does nothing)
+#' Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1", "dep_T2")
+#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
+#' @param dzAr The DZ genetic correlation (default = .5. Vary to examine assortative mating).
+#' @param dzCr The DZ "C" correlation (defaults = 1. To make an ADE model, set = .25).
+#' @param addStd Whether to add the algebras to compute a std model (default = TRUE).
+#' @param addCI Whether to add the interval requests for CIs (default = TRUE).
+#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
+#' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -94,6 +89,7 @@
 #' parameters(m1, patt = "^s")
 #' m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 #' umxCompare(m1, m2)
+#' @md
 umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib   = 2
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)

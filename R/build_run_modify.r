@@ -2350,7 +2350,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
 #' 	nFac = 3, correlatedA = TRUE
 #' )
-#' # will likely need to be mxTryHard ed
+#' # Will likely need to be re-run: m1 = mxTryHard(m1)
 #' }
 #'
 umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
@@ -2368,7 +2368,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 	MZ      = bits$MZ
 	DZ      = bits$DZ
 
-	# TODO umxCP: Improve start values (Mike?) 
+	# TODO umxCP: [Improve start values](https://github.com/tbates/umx/issues/51)
 	if(correlatedA){
 		# nFac = 3
 		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # Latent common factor

@@ -37,6 +37,7 @@ umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FALSE,
 Summarizes a Common-Pathway model, as returned by \code{\link{umxCP}}
 }
 \examples{
+\dontrun{
 require(umx)
 umx_set_optimizer("SLSQP")
 data(twinData) 
@@ -52,8 +53,13 @@ umxSummary(m1, file = NA) # generic summary is the same
 stdFit = umxSummaryCP(m1, digits = 2, std = TRUE, file = NA, returnStd = TRUE);
 umxSummary(m1, std = FALSE, showRg = TRUE, file = NA);
 umxSummary(m1, std = FALSE, file = NA)
-\dontrun{
+# =================
+# = Print example =
+# =================
 umxSummary(m1, file = "Figure 3", std = TRUE)
+# =================
+# = Confint example =
+# =================
 m1 = umxConfint(m1, "smart", run = FALSE);
 m1 = umxConfint(m1, "smart", run = TRUE);
 umxSummary(m1, CIs = TRUE, file = NA);
