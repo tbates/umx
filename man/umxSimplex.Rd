@@ -60,10 +60,10 @@ In the simplex model, these influences are modeled as a combination of:
 \item Influences specific to a single time (\code{as}, \code{cs}, \code{es}).
 }
 
-The combine to explain the variance in the phenotypes at each time (see Figure above).
+These combine to explain the causes of variance in the phenotype (see Figure above).
 
 \strong{Data Input}
-Currently, the umxSimplex function accepts only raw data. This may change in future versions.
+Currently, the umxSimplex function accepts only raw data.
 
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
