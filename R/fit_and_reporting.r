@@ -892,7 +892,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 					RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
 				}
 				x = paste0(
-					"\u03C7\u00B2(", degreesOfFreedom, ") = ", round(Chi, 2), # was A7
+					"\u03C7\u00B2(", ChiDoF, ") = ", round(Chi, 2), # was A7
 					", p "      , umx_APA_pval(p, .001, 3, addComparison = TRUE),
 					"; CFI = "  , round(CFI, 3),
 					"; TLI = "  , round(TLI, 3),
@@ -1390,7 +1390,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @examples
 #' require(umx)
 #' umx_set_optimizer("SLSQP")
-#' data(twinData) 
+#' data(twinData)
 # # Help optimizer by putting wt on a similar scale to ht
 #' twinData$wt1 = twinData$wt1/10
 #' twinData$wt2 = twinData$wt2/10
@@ -1398,9 +1398,9 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' mzData <- subset(twinData, zygosity == "MZFF")
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
-#' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
-#' umxSummaryCP(m1, file = NA) # suppress plot creation with file
-#' umxSummary(m1, file = NA) # generic summary is the same
+#' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "", optimizer = "SLSQP")
+#' umxSummaryCP(m1, file = NA) # Suppress plot creation with file
+#' umxSummary(m1, file = NA)   # Generic summary is the same
 #' stdFit = umxSummaryCP(m1, digits = 2, std = TRUE, file = NA, returnStd = TRUE);
 #' umxSummary(m1, std = FALSE, showRg = TRUE, file = NA);
 #' umxSummary(m1, std = FALSE, file = NA)

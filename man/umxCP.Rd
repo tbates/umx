@@ -143,17 +143,19 @@ data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
-m2 = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
-umxCompare(m1, m2)
+m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
+		dzData = dzData, mzData = mzData)
+m1 = mxTryHardOrdinal(m1)
+mold = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+umxCompare(m1, mold)
 
 # =================================================
 # = Find and test dropping of shared environment  =
 # =================================================
-# Show all labels for C parameters  
+# Show all labels for C parameters 
 umxParameters(m1, patt = "^c")
 # Test dropping the 9 specific and common-factor C paths
-m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC",comp = TRUE)
+m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC", comp = TRUE)
 umxSummaryCP(m2, comparison = m1, file = NA)
 umxCompare(m1, m2)
 
