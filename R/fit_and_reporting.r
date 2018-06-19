@@ -1388,6 +1388,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @seealso - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{http://www.github.com/tbates/umx}, \url{http://tbates.github.io}
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' umx_set_optimizer("SLSQP")
 #' data(twinData)
@@ -1404,8 +1405,13 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' stdFit = umxSummaryCP(m1, digits = 2, std = TRUE, file = NA, returnStd = TRUE);
 #' umxSummary(m1, std = FALSE, showRg = TRUE, file = NA);
 #' umxSummary(m1, std = FALSE, file = NA)
-#' \dontrun{
+#' # =================
+#' # = Print example =
+#' # =================
 #' umxSummary(m1, file = "Figure 3", std = TRUE)
+#' # =================
+#' # = Confint example =
+#' # =================
 #' m1 = umxConfint(m1, "smart", run = FALSE);
 #' m1 = umxConfint(m1, "smart", run = TRUE);
 #' umxSummary(m1, CIs = TRUE, file = NA);
