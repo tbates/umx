@@ -1,7 +1,9 @@
-#' Helper to make a basic top, MZ, and DZ model
+#' Helper to make a basic top, MZ, and DZ model.
 #'
 #' @description
-#' xmu_make_top makes basic `top`, `MZ`, and `DZ` models. It handles the thresholds matrix if needed.
+#' `xmu_make_top` makes basic `top`, `MZ`, and `DZ` models. It handles the thresholds matrix if needed.
+#'
+#' This is used in umxCP, will be used in umxIP and umxACE.
 #' 
 #' This function takes the mzData and dzData, a list of the selDVs to analyse, along with other relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased", but hopefully "WLS" and. It can also handle a weightVar.
 #' 
@@ -41,7 +43,6 @@
 #' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param verbose (default = FALSE)
-# #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @return - \code{\link{mxModel}}s for top, MZ and DZ.
 #' @export
 #' @family xmu internal not for end user
@@ -99,7 +100,9 @@
 #' mz = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(selDVs, sep="")], use = "complete")
 #' dz = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(selDVs, sep="")], use = "complete")
 #' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep= "", nSib = 2)
-#' # TODO Add selCovs??
+#' # TODO Add selCovs
+#' # TODO add covMethod == "fixed"
+#' # TODO add beta matrix for fixed covariates in means.
 xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ= NULL, numObsDZ= NULL, equateMeans = TRUE, threshType = c("deviationBased", "WLS"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
 	threshType = match.arg(threshType)
 	if(is.null(sep)){
@@ -118,7 +121,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
 			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 		}
-		# find ordinal variables
+		# Find ordinal variables
 		if(any(umx_is_ordered(mzData[,selVars]))){
 			isFactor = umx_is_ordered(mzData[, selVars])                      # T/F list of factor columns
 			isOrd    = umx_is_ordered(mzData[, selVars], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
@@ -325,10 +328,8 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
 		)
 	}
-	
 	return(list(top = top, MZ = MZ, DZ = DZ))
 }
-
 
 #' umxIP: Build and run an Independent pathway twin model
 #'

@@ -5,7 +5,8 @@
 \title{Create a matrix of correlations for variables of diverse types (binary, ordinal, continuous)}
 \usage{
 umxHetCor(data, ML = FALSE, use = c("pairwise.complete.obs",
-  "complete.obs"), treatAllAsFactor = FALSE, verbose = FALSE)
+  "complete.obs"), treatAllAsFactor = FALSE, verbose = FALSE,
+  return = c("correlations", "hetcor object"), std.err = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of columns for which to compute heterochoric correlations. OR an existing covariance matrix.}
@@ -17,6 +18,10 @@ umxHetCor(data, ML = FALSE, use = c("pairwise.complete.obs",
 \item{treatAllAsFactor}{Whether to treat all columns as factors, whether they are or not (Default = FALSE)}
 
 \item{verbose}{How much to tell the user about what was done.}
+
+\item{return}{Return just the correlations (default) or the hetcor object (contains, method, SEs etc.)}
+
+\item{std.err}{Compute the SEs? (default = FALSE)}
 }
 \value{
 - A matrix of correlations

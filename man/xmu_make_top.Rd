@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu_make_top.R
 \name{xmu_make_top}
 \alias{xmu_make_top}
-\title{Helper to make a basic top, MZ, and DZ model}
+\title{Helper to make a basic top, MZ, and DZ model.}
 \usage{
 xmu_make_top(mzData, dzData, selDVs, sep = NULL, nSib = 2,
   numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE,
@@ -40,7 +40,9 @@ xmu_make_top(mzData, dzData, selDVs, sep = NULL, nSib = 2,
 }
 }
 \description{
-xmu_make_top makes basic \code{top}, \code{MZ}, and \code{DZ} models. It handles the thresholds matrix if needed.
+\code{xmu_make_top} makes basic \code{top}, \code{MZ}, and \code{DZ} models. It handles the thresholds matrix if needed.
+
+This is used in umxCP, will be used in umxIP and umxACE.
 
 This function takes the mzData and dzData, a list of the selDVs to analyse, along with other relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased", but hopefully "WLS" and. It can also handle a weightVar.
 
@@ -122,7 +124,9 @@ selDVs = c("wt")
 mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(selDVs, sep="")], use = "complete")
 dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(selDVs, sep="")], use = "complete")
 bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep= "", nSib = 2)
-# TODO Add selCovs??
+# TODO Add selCovs
+# TODO add covMethod == "fixed"
+# TODO add beta matrix for fixed covariates in means.
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

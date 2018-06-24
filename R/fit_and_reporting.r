@@ -3769,8 +3769,9 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param use If obj is a data.frame, how to handle NAs (default = "complete")
 #' @param min For a p-value, the smallest value to report numerically (default .001)
 #' @param addComparison for a p-value, whether to add "</=" default (NA) adds "<" if necessary
-#' @param report what to return (default = markdown table). Use "html" to open a web table.
+#' @param report what to return (default = 'markdown'). Use 'html' to open a web table.
 #' @param lower whether to not show the lower triangle of correlations for a data.frame (Default TRUE)
+#' @param SEs whether to not show correlations with their SE (Default TRUE)
 #' @param test If obj is a glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
 #' @return - string
 #' @export
@@ -3830,21 +3831,31 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' x = cor.test(~ wt1 + wt2, data = mzData)
 #' umxAPA(x)
 #'
-umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp")) {
+umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE) {
 	report = match.arg(report)
+	test = match.arg(report)
 	if("htest" == class(obj)[[1]]){
 		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), ", ", round(obj$conf.int[2], digits), "]")
 		o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
 		return(o)
 	}else if("data.frame" == class(obj)[[1]]){
 		# Generate a summary of correlation and means
-		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE)
-		cor_table = umx_apply(round, cor_table, digits = digits) # round correlations
+		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE, std.err = SEs, return = "hetcor object")
+		# cor_table = x; digits = 2
+		# cor_table = umx_apply(FUN= round, of = cor_table, digits = digits) # round correlations
+		correlations = round(cor_table$correlations, digits)
+		if(SEs){
+			std.errors = round(cor_table$std.errors, digits)
+			correlations[] = paste0(as.character(correlations), " (", as.character(std.errors), ")")
+		}
+		cor_table = correlations
+
 		if(lower){
 			cor_table[upper.tri(cor_table)] = ""
 		}
-		mean_sd = umx_apply(umx_fun_mean_sd, obj)
-		output = data.frame(rbind(cor_table, mean_sd), stringsAsFactors = FALSE)
+
+		mean_sd = umx_apply(umx_fun_mean_sd, of = obj)
+		output  = data.frame(rbind(cor_table, mean_sd), stringsAsFactors = FALSE)
 		rownames(output)[length(rownames(output))] = "Mean (SD)"
 		if(report == "html"){
 			umx_print(output, digits = digits, file = "tmp.html")

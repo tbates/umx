@@ -1401,9 +1401,7 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
     if (verbose) {
         msg = paste0("umx version: ", umx_vers)
         message(msg)
-		message('You can update OpenMx with:\ninstall.OpenMx(c("NPSOL", "travis", "CRAN", "open travis build page")')
     }
-	OpenMx_vers = mxVersion(model = model, verbose = verbose)	
 	if(!is.null(min)){
 		if(umx_vers >= min){
 			message("umx version is recent enough")
@@ -1413,6 +1411,11 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
 			
 		}
 	}
+	OpenMx_vers = mxVersion(model = model, verbose = verbose)	
+    if (verbose) {
+		message('You can update OpenMx with:\ninstall.OpenMx(c("NPSOL", "travis", "CRAN", "open travis build page")')
+    }
+
 	if(return == "umx"){
 		invisible(umx_vers)
 	} else {
@@ -5577,6 +5580,8 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @param use How to handle missing data: Default= "pairwise.complete.obs". Alternative ="complete.obs".
 #' @param treatAllAsFactor Whether to treat all columns as factors, whether they are or not (Default = FALSE)
 #' @param verbose How much to tell the user about what was done.
+#' @param return Return just the correlations (default) or the hetcor object (contains, method, SEs etc.)
+#' @param std.err Compute the SEs? (default = FALSE)
 #' @return - A matrix of correlations
 #' @family Data Functions
 #' @family Miscellaneous Stats Helpers
@@ -5585,8 +5590,9 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @examples
 #' umxHetCor(mtcars[,c("mpg", "am")])
 #' umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
-umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "complete.obs"), treatAllAsFactor = FALSE, verbose = FALSE){
-	# depends on polycor::hetcor
+umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "complete.obs"), treatAllAsFactor = FALSE, verbose = FALSE, return= c("correlations", "hetcor object"), std.err = FALSE){
+	# Depends on polycor::hetcor
+	return = match.arg(return)
 	use = match.arg(use)
 	if(treatAllAsFactor){
 		n = ncol(data)
@@ -5594,11 +5600,15 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 			data[,i] = factor(data[,i])
 		}
 	}
-	hetc = hetcor(data, ML = ML, use = use, std.err = FALSE)
+	hetc = hetcor(data, ML = ML, use = use, std.err = std.err)
 	if(verbose){
 		print(hetc)
 	}
-	return(hetc$correlations)
+	if(return == "correlations"){
+		return(hetc$correlations)
+	} else {
+		return(hetc)
+	}
 }
 
 #' Convert lower-only matrix data to full (or enforce symmetry on a full matrix)
