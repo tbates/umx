@@ -29,7 +29,7 @@ umxConfint(object, parm = c("existing", "smart", "all",
 - \code{\link{mxModel}}
 }
 \description{
-Implements confidence interval function for OpenMx models.
+Implements confidence interval function for umx models.
 }
 \details{
 Note: By default, requesting new CIs wipes the existing ones.

@@ -339,7 +339,7 @@ loadings.MxModel <- function(x, ...) {
 
 #' Get confidence intervals from a umx model
 #'
-#' Implements confidence interval function for OpenMx models.
+#' Implements confidence interval function for umx models.
 #' 
 #' Note: By default, requesting new CIs wipes the existing ones.
 #' To keep these, set wipeExistingRequests = FALSE.
@@ -360,7 +360,7 @@ loadings.MxModel <- function(x, ...) {
 #' @export
 #' @return - \code{\link{mxModel}}
 #' @family Reporting functions
-#' @seealso - \code{\link[stats]{confint}}, \code{\link{umxCI}}
+#' @seealso - \code{\link[stats]{confint}}, \code{\link{umxCI}} 
 #' @references - \url{http://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
@@ -564,7 +564,7 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 #' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 #' @return - \code{\link{mxModel}}
 #' @family Reporting functions
-#' @seealso - \code{\link{mxCI}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
+#' @seealso - \code{\link[stats]{confint}}, \code{\link{umxConfint}}, \code{\link{umxCI}}, \code{\link{umxModify}}
 #' @references - http://www.github.com/tbates/umx/
 #' @export
 #' @examples
