@@ -47,15 +47,21 @@
 #' dzfData = subset(us_skinfold_data, zyg == 4)
 #' dzoData = subset(us_skinfold_data, zyg == 5)
 #'
-#' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun=FALSE,
+#'# ============================
+#'# = run multivariate example =
+#'# ============================
+#' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun = FALSE,
 #'		  mzmData = mzmData, dzmData = dzmData, 
 #'        mzfData = mzfData, dzfData = dzfData, 
-#'        dzoData = dzoData)
+#'        dzoData = dzoData
+#')
+#' 
+#' \dontrun{
 #' # m1 = mxRun(m1)
 #' # umxSummary(m1)
 #' # summary(m1)
 #' # summary(m1)$Mi
-#' 
+#' }
 umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), autoRun = getOption("umx_auto_run"), optimizer = NULL){
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
@@ -220,12 +226,12 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	# Non-scalar (full) sex-lim label tweaks
 	if(A_or_C == "A"){
 		# convert (Rcf|Rcm|Rco) => "rc"		
-		if("^Rc[fmo](_.*)$" %in% umxGetParameters(m1)){
+		if("^Rc[fmo](_.*)$" %in% umxGetParameters(model)){
 			model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
 		}
 	}else if (A_or_C == "C"){
 		# (Raf|Ram|Rao) => "ra"
-		if("^Ra[fmo](_.*)$" %in% umxGetParameters(m1)){
+		if("^Ra[fmo](_.*)$" %in% umxGetParameters(model)){
 			model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
 		}
 	}
