@@ -823,8 +823,6 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 		} else {
 			# Handle 1 or more regular expressions.
 			for (i in 1:length(update)) {
-				# umx_msg(update[i])
-				# umxGetParameters(m1, regex = "^Rc[fmo](_.*)$", free = freeToStart, verbose = verbose)
 				match = umxGetParameters(newModel, regex = update[i], free = freeToStart, verbose = verbose)				
 				if(is.null(newlabels)){
 					newModel = omxSetParameters(newModel, labels = match, free = free, values = value, name = name)
