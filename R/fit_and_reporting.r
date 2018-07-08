@@ -3145,7 +3145,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 			theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # return more detail
 		}
 		if(length(theLabels) == 0){
-			msg = "Found no matching labels!\n"
+			msg = paste0("Found no labels matching", omxQuotes(regex), "!\n")
 			if(anchored == TRUE){
 				msg = paste0(msg, "note: anchored regex to beginning of string and allowed only numeric follow:\"", regex, "\"")
 			}
@@ -3768,10 +3768,11 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param digits How many digits to round output.
 #' @param use If obj is a data.frame, how to handle NAs (default = "complete")
 #' @param min For a p-value, the smallest value to report numerically (default .001)
-#' @param addComparison for a p-value, whether to add "</=" default (NA) adds "<" if necessary
-#' @param report what to return (default = 'markdown'). Use 'html' to open a web table.
-#' @param lower whether to not show the lower triangle of correlations for a data.frame (Default TRUE)
-#' @param SEs whether to not show correlations with their SE (Default TRUE)
+#' @param addComparison For a p-value, whether to add "</=" default (NA) adds "<" if necessary
+#' @param report What to return (default = 'markdown'). Use 'html' to open a web table.
+#' @param lower Whether to not show the lower triangle of correlations for a data.frame (Default TRUE)
+#' @param SEs Whether or not to show correlations with their SE (Default TRUE)
+#' @param means Whether or not to show means in a correlation table (Default TRUE)
 #' @param test If obj is a glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
 #' @return - string
 #' @export
@@ -3831,7 +3832,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' x = cor.test(~ wt1 + wt2, data = mzData)
 #' umxAPA(x)
 #'
-umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE) {
+umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
 	report = match.arg(report)
 	test = match.arg(report)
 	if("htest" == class(obj)[[1]]){
@@ -3854,9 +3855,13 @@ umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", mi
 			cor_table[upper.tri(cor_table)] = ""
 		}
 
-		mean_sd = umx_apply(umx_fun_mean_sd, of = obj)
-		output  = data.frame(rbind(cor_table, mean_sd), stringsAsFactors = FALSE)
-		rownames(output)[length(rownames(output))] = "Mean (SD)"
+		if(means){
+			mean_sd = umx_apply(umx_fun_mean_sd, of = obj)
+			output  = data.frame(rbind(cor_table, mean_sd), stringsAsFactors = FALSE)
+			rownames(output)[length(rownames(output))] = "Mean (SD)"
+		} else {
+			output  = data.frame(cor_table, stringsAsFactors = FALSE)
+		}
 		if(report == "html"){
 			umx_print(output, digits = digits, file = "tmp.html")
 		} else {

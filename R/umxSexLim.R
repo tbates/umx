@@ -218,13 +218,16 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	) # end model
 
 	# Non-scalar (full) sex-lim label tweaks
-	
 	if(A_or_C == "A"){
-		# (Rcf|Rcm|Rco) => "rc"
-		model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
+		# convert (Rcf|Rcm|Rco) => "rc"		
+		if("^Rc[fmo](_.*)$" %in% umxGetParameters(m1)){
+			model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
+		}
 	}else if (A_or_C == "C"){
 		# (Raf|Ram|Rao) => "ra"
-		model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
+		if("^Ra[fmo](_.*)$" %in% umxGetParameters(m1)){
+			model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
+		}
 	}
 
 	# Tests: equate means would be expMeanGm, expMeanGf, expMeanGo

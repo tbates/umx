@@ -1,4 +1,5 @@
-# umx 2.8.0 June 2018, R 3.5.0: Simplex and improvements
+# umx 2.8.1 June 2018, R 3.5.0: Simplex and improvements
+* FIXED: `umxSexLim` now works for univariate tests (thanks to Michael Zakharin for reporting!)
 * FIXED: `umxSummary` Corrected Chi^2 df for RAM models.
 * NEW: `umxCP` handles ordinal, continuous and binary data
   * Note: old version still available as `umxCPold`
