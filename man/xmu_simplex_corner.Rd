@@ -7,7 +7,7 @@
 xmu_simplex_corner(x, start = 0.9)
 }
 \arguments{
-\item{x}{an \code{\link{umxMatrix}} of which to free the bottom triangle.}
+\item{x}{size of matrix, or an \code{\link{umxMatrix}} of which to free the bottom triangle.}
 
 \item{start}{a default start value for the freed items.}
 }

@@ -3036,7 +3036,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @return - \code{\link{mxMatrix}}
 #' @export
 #' @family Core Modelling Functions
-#' @seealso - \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
+#' @seealso - \code{\link{xmu_simplex_corner}}, \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umxMatrix("test", "Full", 1, 1)

@@ -351,7 +351,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 # 0 ,.9, 0, 0,
 # 0 , 0,.9, 0
 #'
-#' @param x an \code{\link{umxMatrix}} of which to free the bottom triangle.
+#' @param x size of matrix, or an \code{\link{umxMatrix}} of which to free the bottom triangle.
 #' @param start a default start value for the freed items.
 #' @return - \code{\link{umxMatrix}}
 #' @export
@@ -363,6 +363,9 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 #' # See how we have a diag free, but offset 1-down?
 #' umx_print( xmu_simplex_corner(x, start = .9)$values, zero=".")
 xmu_simplex_corner <- function(x, start = .9) {
+	if(!umx_is_MxMatrix(x)){
+		x = umxMatrix('test', 'Full', nrow = x, ncol = x)
+	}
 	nVar = dim(x)[1]
 	nVar_minus1 = nVar-1
 	for (thisRow in 2:nVar) {
