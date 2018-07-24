@@ -1,4 +1,7 @@
-# umx 2.8.2 June 2018, R 3.5.0: Simplex and improvements
+# umx 2.8.5 August 2018, R 3.5.0: More love
+* IMPROVED: `umx_simplex_corner` can take a numeric to set matrix size
+
+# umx 2.8.2 June 2018, R 3.5.0: Simplex or s__t sticks
 * FIXED: `umxSexLim` now works for univariate tests (thanks to Michael Zakharin for reporting!)
 * FIXED: `umxSummary` Corrected Chi^2 df for RAM models.
 * NEW: `umxCP` handles ordinal, continuous and binary data
@@ -11,11 +14,12 @@
 * IMPROVED: `umx_is_class` reports classes if not given a set of classes to check
 * IMPROVED: `umx_scale(verbose=TRUE)` now lists the vars it didn't touch as well as those it didn't (also formatted better)
 * IMPROVED: `umx_make_TwinData`  can set mean and SD of data
-* FIX: `umx_standardize_CP` was ignoring existing CIs
-* DELETED: `umxAlgebra` This  appears broken in some circumstances?
+* IMPROVED: `umx_simplex_corner` can take a numeric to set matrix size
+* FIXED: `umx_standardize_CP` was ignoring existing CIs
+* DELETED: `umxAlgebra` This appears broken in some circumstances?
 * HELP:  verbose option for twin helper; better feedback;
 
-# umx 2.6.5 May 2018, R 3.5.0: Simplex and improvements
+# umx 2.6.5 May 2018, R 3.5.0: Poly gets a cracker
 * NEW: Beta versions of `umx_polychoric`, `umx_polypairwise`, and `umx_polytriowise`
 * NEW: `umxSimplex`twin model!
   * `umxSummary` for simplex
@@ -34,7 +38,7 @@
 * IMPROVED: `namez` can handle a model summary (accesses names() of the summary)
 * IMPROVED: `umxGxE` added option to control plot colors
 * IMPROVED: `umxPlotCP` can handle >9 manifests [issue](https://github.com/tbates/umx/issues/47)
-* HELP: umxGxE example improved
+* HELP: `umxGxE` example improved
 * HELP: More related-function links in help files.
 * HELP: Better error messages.
 * HELP: Help titles, parameter documentation.
@@ -82,9 +86,9 @@
 * IMPROVED: `umxRAM` can take lists of paths as input (contributed by @bwiernik).
 * IMPROVED: `umxModify` can write newlabels.
 * IMPROVED: `umxAPA` can back-out an SE if given b and CI.
-* IMPROVED: Help pages and examples improved and reorganized.
-* DROPPED: umxReRun (use umxModify)
-* DROPPED: support for suffix parameter (use sep instead)
+* IMPROVED: Help pages and examples improved and reorganised.
+* DROPPED: `umxReRun` (use `umxModify`)
+* DROPPED: support for `suffix` parameter (use `sep` instead)
 
 # umx 1.9.2 (December 2017, R 3.4.2)
 * *TIP*: Filter paths by estimated size with `umx_parameters(model, "below", .1)`
@@ -116,7 +120,7 @@
 * IMPROVED: `umxParameters` now supports `digits`.
 * IMPROVED: `umxSummary` "inline" reporting now includes AIC.
 * IMPROVED: `umx_aggregate` works  with factor input/
-	* umx_aggregate(sex_T1 ~ zyg_2grp, data = x)
+	* `umx_aggregate(sex_T1 ~ zyg_2grp, data = x)`
 * IMPROVED: `umx_long2wide` can `passalong` variables.
 * IMPROVED: `umx_wide2long` much more powerful
 * IMPROVED: `umx_msg` supports dataframes
@@ -160,9 +164,9 @@
 
 # umx 1.7.5 (April 04 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables (umx removes them for you!)
-* NEW: umxVersion (returns mxVersion() + umx version).
-* IMPROVED: umxACE start values much better for univariate models.
-* NEWFEATURES: umx_make_TwinData
+* NEW: `umxVersion` (returns mxVersion() + umx version).
+* IMPROVED: `umxACE` start values much better for univariate models.
+* NEWFEATURES: `umx_make_TwinData`
 	* Use variance input
 	* Option to set seed
 	* Add varName to datasets
@@ -172,11 +176,11 @@
 	* omit nDZPairs to get equal numbers
 	* Option to allow A+C+E ≠ 1
 	* Full set of examples
-	* NOTE: umx_make_TwinData uses **variance** input. This was ambiguous previously.
+	* NOTE: `umx_make_TwinData` uses **variance** input. This was ambiguous previously.
 	* Docs much improved.
-* NEWFEATURES: install.OpenMx can install UVA parallel, travis latest (on mac) or opening the travis list.
-	* BUGFIX: install.OpenMx had a broken URL, now corrected.
-* NEWFEATURES: umxRAM can now be used in "sketch" mode, to plot demos without data: just add the list of manifests as a character string to `data`.
+* NEWFEATURES: `install.OpenMx` can install UVA parallel, travis latest (on mac) or opening the travis list.
+	* BUGFIX: `install.OpenMx` had a broken URL, now corrected.
+* NEWFEATURES: `umxRAM` can now be used in "sketch" mode, to plot demos without data: just add the list of manifests as a character string to `data`.
 	```splus
 	m1 <- umxRAM("test", data = paste0("itemC", 1:4),
 		umxPath(unique.bivariate = paste0("itemC", 1:4)),
@@ -184,180 +188,180 @@
 	)
 	plot(m1)
 	```
-* NEWFEATURES: umx_cont_2_quantiles now allows returning cut points, better examples, level_names
-	* BUGFIX: umx_cont_2_quantiles lowest threshold was empty
+* NEWFEATURES: `umx_cont_2_quantiles` now allows returning cut points, better examples, level_names
+	* BUGFIX: `umx_cont_2_quantiles` lowest threshold was empty
 * NEWFEATURES: `umxAPA` now reports mode for factor data
 * NEWFEATURES: Allow `umxLabel` to rename the returned model
-* IMPROVED: sep is now the preferred seperator (synonym for suffix in uxmACE, umxCP, umxIP)
+* IMPROVED: `sep` is now the preferred separator (synonym for suffix in umxACE, umxCP, umxIP)
 * DOCUMENT: Examples use zygosity string from twinData instead of numeric code
-* DOCUMENT: Fix typo in umxPath docs
-* INCOMPATIBLE: renamed umx_cov_diag to umx_var
+* DOCUMENT: Fix typo in `umxPath` docs
+* INCOMPATIBLE: renamed `umx_cov_diag` to umx_var
 
 # umx 1.5.5 (March 20 2017, R 3.3.3 "Another Canoe")
-* NEW: umx_write_to_clipboard
-* NEW: umx_r_test
+* NEW: `umx_write_to_clipboard`
+* NEW: `umx_r_test`
 * IMPROVED: Add autoRun option to umxModify.
 * FIXED: Switch away from CSOLNP in umxCP example.
 * ROLLBACK: No longer generically alter CSOLNP tolerance.
 
 # umx 1.5.1 (March 05 2017 R 3.3.2)
-* IMPROVED: umxCP example for improved compatibility with OpenMx 2.7
+* IMPROVED: `umxCP` example for improved compatibility with OpenMx 2.7
 * IMPROVED: umx twin models now set a better (less likely to fail) precision for CSOLNP
-* IMPROVED: improved help files; document forms parameter for umxPath
+* IMPROVED: improved help files; document forms parameter for `umxPath`
 * IMPROVED: handling list inputs
-* IMPROVED: behavior of confint()
-* IMPROVED: formatting of umxAPA table output
-* ADD: "check" option to umx_make()
+* IMPROVED: behavior of `confint`()
+* IMPROVED: formatting of `umxAPA` table output
+* ADD: "check" option to `umx_make`
 * FIXED: umxpath(a, forms= ) arrows = 2 bug
 
 # umx 1.5.0 (December 2016)
 * Features + OpenMx 1.7.3 compatibility release
-* IMPROVED: umxRAM returns invisibly
-* IMPROVED: umx_aggregate can summarise multiple DVs in a table
-* IMPROVED: umx_aggregate can return a formatted table (kable = TRUE)
-* IMPROVED: umxAPA returns lower-triangle of data.frame correlations (by default)
-* REMOVED: umxSE now included in OpenMx 2.7.0!
-* FIXED: umx_set_plot_format uses silent = TRUE internally where needed
+* IMPROVED: `umxRAM` returns invisibly
+* IMPROVED: `umx_aggregate` can summarise multiple DVs in a table
+* IMPROVED: `umx_aggregate` can return a formatted table (kable = TRUE)
+* IMPROVED: `umxAPA` returns lower-triangle of data.frame correlations (by default)
+* REMOVED: `umxSE` now included in OpenMx 2.7.0!
+* FIXED: `umx_set_plot_format` uses silent = TRUE internally where needed
 
 # umx 1.4.9 (December 2016)
 * Bug fix
-* FIXED: umx_make_TwinData fix bug in DZ moderator code and A+C computation
+* FIXED: `umx_make_TwinData` fix bug in DZ moderator code and A+C computation
 * IMPROVED: more functionality hints in man page titles
 
 # umx 1.4.5
 * November 2016 "Usability is queen/Sincere Pumpkin Patch"
 * IMPROVED: Reorganize function families to increase clarity
-* IMPROVED: umx_set functions now show legal options by default
-* NEW: umx_set functions have silent option
+* IMPROVED: `umx_set` functions now show legal options by default
+* NEW: `umx_set` functions have silent option
 * FIX secure http URLs
 
 # umx 1.4.0
 * Mid October 2016 "New features and improvements"
-* BUG FIX: umxFitIndices RMR and SRMR (h/t Brenton Wiernik!)
-* NEW: umxMatrix with default labels and name as 1st parameter 
+* BUG FIX: `umxFitIndices` RMR and SRMR (h/t Brenton Wiernik!)
+* NEW: `umxMatrix` with default labels and name as 1st parameter 
 * NEW: Definition variable umxPath type, e.g.
-	* umxPath(defn = "def", labels = "data.age")
+	* `umxPath(defn = "def", labels = "data.age")`
 * IMPROVED: More concise feedback
-* IMPROVED: umxEquate supports autoRun and compare
-* IMPROVED: umx_names can, as a convenience, take string vectors
-* RENAME: umxGetOpenMx aliased to install.OpenMx or umx_install_OpenMx
-* IMPROVED: umxFitIndices additional fit-indices and now automatically computes refModels if needed.
-* IMPROVED: umxRAM remove_unused_manifests no longer updates manifestVars + leaves variable in data by default.
-* RENAME: plot() "showFixed" deprecated in favour of easier to type "fixed"
+* IMPROVED: `umxEquate` supports autoRun and compare
+* IMPROVED: `umx_names` can, as a convenience, take string vectors
+* RENAME: `umxGetOpenMx` aliased to `install.OpenMx` or `umx_install_OpenMx`
+* IMPROVED: `umxFitIndices` additional fit-indices and now automatically computes refModels if needed.
+* IMPROVED: `umxRAM` remove_unused_manifests no longer updates manifestVars + leaves variable in data by default.
+* RENAME: `plot` "showFixed" deprecated in favour of easier to type "fixed"
 
 # umx 1.3.0
 * R 3.3.1 companion: "Bug in your Hair" August 2016
-* NEW: umxPath allows unique.pairs connection
+* NEW: `umxPath` allows `unique.pairs` connection
  * Useful for growth curve models
-* IMPROVED: umxRAM handles suffix labels
+* IMPROVED: `umxRAM` handles suffix labels
 	* Useful for models embedded in multi-group 
-* IMPROVED: umxSummary to show parameters from first model in multi-group
+* IMPROVED: `umxSummary` to show parameters from first model in multi-group
 	* Begin to support multi-group in umxSummary
 * IMPROVED: twin model figures tweaked
 * CHANGE showStd= to std= in most remaining cases
 	* Might need to update your code!
-* CHANGE: umx_show_options to umx_get_options
+* CHANGE: `umx_show_options` to `umx_get_options`
 	* Might need to update your code!
-* FIX: umx_check_parallel typo
-* FIX: plot calls from summary
+* FIX: `umx_check_parallel` typo
+* FIX: `plot` calls from summary
 * REMOVE: dependency on non-condensed slots
 
 # umx 1.2.8
 * R 3.3.0 companion: "Very compatible" May 2016
-* NEW: umxRAM can now build and run Joint Continuous Ordinal models. Tada!!
-* NEW: umx_show_options function to help users learn the options available
-* BETA: umxACE can now implement a form of left-censoring.
-* BETA: umxThresholdMatrix can now implement a form of left-censoring.
-* IMPROVE: umxRAM & umxRAM2Ordinal can turn off refModel computation with refModels = F;
-* IMPROVE: umx_show can show thresholds
-* IMPROVED: listOK option for umx_is_MxModel
-* IMPROVED: rowwiseParallel and numberSubjects options for umx_check_parallel
+* NEW: `umxRAM` can now build and run Joint Continuous Ordinal models. Tada!!
+* NEW: `umx_show_options` function to help users learn the options available
+* BETA: `umxACE` can now implement a form of left-censoring.
+* BETA: `umxThresholdMatrix` can now implement a form of left-censoring.
+* IMPROVE: `umxRAM` & `umxRAM2Ordinal` can turn off refModel computation with `refModels = FALSE`;
+* IMPROVE: `umx_show` can show thresholds
+* IMPROVED: `umx_is_MxModel` can take a list: `listOK` option
+* IMPROVED: `umx_check_parallel` options for rowwiseParallel and numberSubjects
 * CHANGE: I changed "suffix" to "sep" in several places for consistency: this will break
   some low level code: nearly all of it mine, and fixed. But might affect some users!!
-* UPDATE: umx_time and umx_check_parallel to work with new S4 list deprecation
+* UPDATE: `umx_time` and `umx_check_parallel` to work with new S4 list deprecation
 * UPDATE: shorter run-time on 2sls code
 
 # umx 1.2.7
 * May 2016 stable release
-* ADDED: umxTwoStage FIML-based Instrumental variable and Mendelian Randomization (beta)
-* ADDED: umx_make_MR_data to simulate SNP-based Mendelian randomization data (beta)
-* ADDED: umx_set_condensed_slots(TRUE|FALSE): Get and set matrix compression
-* ADDED: umx_get_OpenMx() (download OpenMP/parallel version of OpenMx with NPSOL)
-* ADDED: umx_cont_2_quantiles(x, nlevels = )
-* ADDED: umx_factor alias to umxFactor
-* FIXED: plot(resid = "none") was not suppressing plotting residuals
-* IMPROVED: umxFactor now handles dataframes and allows non-ordered output
-* IMPROVED: umx_CI() more flexible, now allows removing CIs
+* ADDED: `umxTwoStage` FIML-based Instrumental variable and Mendelian Randomization (beta)
+* ADDED: `umx_make_MR_data` to simulate SNP-based Mendelian randomization data (beta)
+* ADDED: `umx_set_condensed_slots(TRUE|FALSE)`: Get and set matrix compression
+* ADDED: `umx_get_OpenMx` (download OpenMP/parallel version of OpenMx with NPSOL)
+* ADDED: `umx_cont_2_quantiles(x, nlevels = )`
+* ADDED: `umx_factor` alias to umxFactor
+* FIXED: `plot(resid = "none")` was not suppressing plotting residuals
+* IMPROVED: `umxFactor` now handles dataframes and allows non-ordered output
+* IMPROVED: `umx_CI` more flexible, now allows removing CIs
 	* Old code will break: replace "add" with "which"
-* IMPROVED: umx_time handling of no input arguments
-* IMPROVED: umx_pb_note() better feedback and setup
+* IMPROVED: `umx_time` handling of no input arguments
+* IMPROVED: `umx_pb_note` better feedback and setup
 * IMPROVED: loadings() generic
-* CHANGE: umxModify - if free is a string, it will be used as input and the found paths will be freed.
-* CHANGE: umxModify - show summary as well when comparison = TRUE
-* CHANGE: Plot defaults for std and showFixed changed h/t @MikeNeale
-* CHANGE: umx_scale_wide_twin_data argument names for consistency: "suffix" "data"
-* CHANGE: umx_residualize() ditto
+* CHANGE: `umxModify` - if free is a string, it will be used as input and the found paths will be freed.
+* CHANGE: `umxModify` - show summary as well when comparison = `TRUE`
+* CHANGE: `plot` defaults for `std` and `showFixed` changed h/t @MikeNeale
+* CHANGE: `umx_scale_wide_twin_data` argument names for consistency: "suffix" "data"
+* CHANGE: `umx_residualize` ditto
 * UPDATE: Readme.md
 
 # umx 1.2.5 (April 2016 R 3.2.5 Very, Very Secure Dishes)
 * Bug fix release
-* FIX: $models bug in umxStandardizeACE
+* FIX: $models bug in `umxStandardizeACE`
 * EXPAND: test suite
 
 # umx 1.2.0 (April 2016 R 3.2.4 Very Secure Dishes)
-* NEW: Plot using DiagrammeR!
+* NEW: `plot` using DiagrammeR!
 * NEW: Choose plot format!
-	* umx_set_plot_format("DiagrammeR")
-	* umx_set_plot_format("graphviz")
+	* `umx_set_plot_format("DiagrammeR")`
+	* `umx_set_plot_format("graphviz")`
 * NEW: Choose table format!
-	* umx_set_table_format("markdown")
-	* umx_set_table_format("latex")
-* NEW: set plotting by default: umx_set_auto_plot(TRUE) 
-* NEW: Exploratory factor analysis! with umxEFA() (beta!)
-* NEW loadings() support for umxEFA
+	* `umx_set_table_format("markdown")`
+	* `umx_set_table_format("latex")`
+* NEW: set plotting by default: `umx_set_auto_plot(TRUE)` 
+* NEW: Exploratory factor analysis! with `umxEFA` (beta!)
+* NEW `loadings`() support for `umxEFA`
 * CHANGE:  .dot --> .gv suffix for plotting (more compatible)
 * CHANGE: To $ from @ accessors for OpenMx compression compatibility
 * BETTER: Help! ACECov figure, ... many other improvements
-* ENHANCED: umx_print, umx_show, umxCompare
+* ENHANCED: `umx_print`, `umx_show`, `umxCompare`
 * REQUIRE knitr, DiagrammeR
 * INCREASE minimum R / OpenMx to  >= 3.2.0 / >= 2.5.0
 
 # umx 1.1.5
 * March 2016 Boulder Workshop feedback updates
-* NEW: plot() now works on Windows and Unix as well as OS X! (h/t @mhunter)
-* CHANGE: umxReRun to umxModify (h/t @hmaes)
+* NEW: `plot` now works on Windows and Unix as well as OS X! (h/t @mhunter)
+* CHANGE: `umxReRun` to `umxModify` (h/t @hmaes)
 * BETTER: compatibility with OpenMx 2.5.2
 
 # umx 1.1.1
 * Feb 2016 R 3.2.3 Wooden Christmas Tree edition
 * NEW: auto-run now the default for all models!
 	* Added option to switch this: options("umx_auto_run" = TRUE)
-* NEW: plot should generate pdfs for Windows and Unix users now
-* NEW: umxACEcov support for ACE with covariates
-* NEW: umx_make_TwinData added to support simulation studies
-* BETTER: umx_check_parallel now returns timing information
-* BETTER: umx_time now supports "start" and "stop")
-* BETTER: umxAPA can format more objects in APA style, inc just a p-value)
-* BETTER: summaryAPA can now summarise a data.frame with mean, sd, and correlations
-* BETTER: umxLabel now preserves existing labels in umxRAM models: labels = is now saved
+* NEW: `plot` should generate pdfs for Windows and Unix users now
+* NEW: `umxACEcov` support for ACE with covariates
+* NEW: `umx_make_TwinData` added to support simulation studies
+* BETTER: `umx_check_parallel` now returns timing information
+* BETTER: `umx_time` now supports "start" and "stop")
+* BETTER: `umxAPA` can format more objects in APA style, inc just a p-value)
+* BETTER: `summaryAPA` can now summarise a data.frame with mean, sd, and correlations
+* BETTER: `umxLabel` now preserves existing labels in umxRAM models: labels = is now saved
 * BETTER: Help improvements (wording, seealso etc)
 * DEEP: Removed dependency on formula.tools
 
 # umx 1.1.0 (December 2015, R 3.2.3/Wooden Christmas-Tree update
-* NEW: vcov() added
+* NEW: `vcov`() added
 * NEW: Begin support for sex-lim twin models
 * NEW: New data file for sex-limitation
-* IMPROVED: umxRAM can take existing model as input (very useful)
-* IMPROVED: umxRAM reports model fit and comparison (if old model exists)
-* IMPROVED: umxPath now lbounds var@0 for v.m.
-* IMPROVED: umx_residualize  can now take multiple DVs
-* IMPROVED: umxMI enhanced to cope with more situations
-* IMPROVED: summary more resilient with missing CIs (#ht Nathan Gillespie!)
-* IMPROVED: summaryAPA now handles data as well as lm
+* IMPROVED: `umxRAM` can take existing model as input (very useful)
+* IMPROVED: `umxRAM` reports model fit and comparison (if old model exists)
+* IMPROVED: `umxPath` now lbounds var@0 for v.m.
+* IMPROVED: `umx_residualize`  can now take multiple DVs
+* IMPROVED: `umxMI` enhanced to cope with more situations
+* IMPROVED: `umxSummary` more resilient with missing CIs (#ht Nathan Gillespie!)
+* IMPROVED: `summaryAPA` now handles data as well as lm
 * IMPROVED: Help for twin functions
 * IMPROVED: Various new function features
-* IMPROVED: umx_print resilient to 0-row input
-* IMPROVED: summary helpers (e.g. umx_fun_mean_sd)
+* IMPROVED: `umx_print` resilient to 0-row input
+* IMPROVED: summary helpers (e.g. `umx_fun_mean_sd`)
 * IMPROVED: consistency in parameter names (minor backward incompatibility)
 * DEEP: Replacing @ with $ accessor begun
 
@@ -365,11 +369,11 @@
 * NEW `umxCP` twin models!  + plot(), umxSummary()
 * NEW `umxIP` twin models!  + plot(), umxSummary() 
 * NEW `umxGxE` twin models! + plot(), umxSummary() 
-* FIXED limitation in umxPath where "to" was not being set.
+* FIXED `umxPath` limitation where "to" was not being set.
 * SUPPORT Circles as well as lines for residual variance.
 * IMPROVE Help text. Thanks Mike Neale esp.!
 * IMPROVE Organization of functions into @families in the help.
-* IMPROVE Example for `umx_lower2full()`
+* IMPROVE Example for `umx_lower2full`
 * DROPPED umxRAM functionality to set endogenous, exogenous, and latent traits
 * DROPPED Deprecated a dozen functions.
 
@@ -388,13 +392,13 @@
 
 # umx 0.40-beta
 * Beta level!
-* Standard confint(); plot() etc functions implemented
+* Standard `confint`(); `plot`() etc functions implemented
 * Adding umxRAM() and umxPath shortcuts
 
 # umx 0.30-alpha
 * Alpha release
 * 90% feature complete
-* lots of name rationalisation
+* Lots of name rationalisation
 
 # umx 0.25-alpha
 * Alpha release
