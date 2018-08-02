@@ -54,6 +54,7 @@
 #' @importFrom ggplot2 qplot scale_x_continuous theme element_text scale_x_continuous
 #' @importFrom ggplot2 expand_limits aes geom_point geom_segment
 
+# TODO document where some of the more obscure of these are used.
 #' @importFrom DiagrammeR DiagrammeR
 #' @importFrom MASS mvrnorm
 #' @importFrom nlme intervals
@@ -62,6 +63,7 @@
 #' @importFrom parallel detectCores
 #' @importFrom sfsmisc nearcor
 #' @importFrom xtable xtable
+#' @importFrom MuMIn Weights
 
 # #' @importFrom Hmisc escapeRegex
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
@@ -614,18 +616,21 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' library(umx)
-#' # Simulate two sets of data in which X and Y correlate ~ .4
+#' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
 #' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
 #' 		AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
+#' 
 #' # Group 1
 #' ds1 = tmp[[1]];
 #' m1Data = mxData(cov(ds1), type = "cov", numObs = nrow(ds1), means=umx_means(ds1))
+#' 
 #' # Group 2
 #' ds2 = tmp[[2]];
 #' m2Data = mxData(cov(ds2), type = "cov", numObs = nrow(ds2), means=umx_means(ds2))
 #' cor(ds1); cor(ds2)
 #' 
 #' manifests = names(ds1)
+#' 
 #' # Model 1
 #' m1 <- umxRAM("m1", data = m1Data,
 #' 	umxPath("x", to = "y", labels = "beta"),
@@ -639,10 +644,23 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))
 #' )
 #' # Place m1 and m2 into a supermodel, and autoRun it
-#' # NOTE: umxSummary is not yet smart/certain enough to compute saturated models etc
+#' # NOTE: umxSummary is only semi-smart/certain enough to compute saturated models etc
 #' # and report multiple groups correctly.
 #' m3 = umxSuperModel('top', m1, m2)
+#' 
+#' umxSummary(m3, show = "std")
+#' 
+#' |name         | Std.Estimate| Std.SE|CI                |
+#' |:------------|------------:|------:|:-----------------|
+#' |beta         |         0.51|   0.05|0.51 [0.41, 0.61] |
+#' |Var_x        |         1.00|   0.00|1 [1, 1]          |
+#' |Resid_y_grp1 |         0.74|   0.05|0.74 [0.64, 0.84] |
+#' |beta         |         0.50|   0.05|0.5 [0.41, 0.6]   |
+#' |Var_x        |         1.00|   0.00|1 [1, 1]          |
+#' |Resid_y_grp2 |         0.75|   0.05|0.75 [0.65, 0.84] |
+#' 
 #' summary(m3)
+#' 
 umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 	dot.items = list(...) # grab all the dot items: models...	
 	nModels = length(dot.items)

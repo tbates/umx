@@ -166,6 +166,14 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		
 		umxCompare(model, comparisons, all = TRUE, report = report, file = paste0(baseFileName, "1.html"))
 		# umxCompare(no_c_no_cem, no_c_no_moderation, all = TRUE, report = report, file = paste0(baseFileName, "2.html"))
+		modelList = c(model, comparisons)
+		whichBest = which.min(AIC(modelList)[,"AIC"])[1]
+		bestModel = list(modelList)[[whichBest]]
+		message("The ", omxQuotes(bestModel$name), " model is the best fitting model.")
+		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+		aic.weights = round(MuMIn::Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
+		message("ACI weight-based probabilities of being the best model for ACE, ADE, CE, and AE respectively are: ", omxQuotes(aic.weights), " (Using MuMIn::Weights(AIC())")
+		
 	} else {
 		stop("This function is for GxE. Feel free to let me know what you want...")
 	}
@@ -238,6 +246,9 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	whichBest = which.min(AIC(ACE, ADE, CE, AE)[,"AIC"])[1]
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
 	message("The ", omxQuotes(bestModel$name), " model is the best fitting model.")
+	# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+	aic.weights = round(MuMIn::Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
+	message("Probabilities of being the best model for ACE, ADE, CE, and AE respectively are: ", omxQuotes(aic.weights), " (Using MuMIn::Weights(AIC())")
 	if(intervals){
 		bestModel = mxRun(bestModel, intervals = intervals)
 	}

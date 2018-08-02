@@ -4381,7 +4381,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' @description 
 #' Convenient equivalent of running [grep] on [names], with value = TRUE and ignore.case = TRUE.
 #' 
-#' Plus:`umx_names` can handle dataframes, a model, model summary, or a vector of strings as input. 
+#' **Plus**:`umx_names` can handle dataframes, a model, list of models, model summary, or a vector of strings as input. 
 #' 
 #' In these cases, it will search column names, parameter or summary output names, or 
 #' the literal string values themselves respectively.
@@ -4393,7 +4393,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' You can learn more about the matching options (like inverting the selection etc.) in the help for base-R [grep].
 #'
 #' @aliases namez
-#' @param df dataframe from which to get names.
+#' @param df dataframe (or other objects, or a list of models) from which to get names.
 #' @param pattern Used to find only matching names (supports grep/regular expressions)
 #' @param replacement If not NULL, replaces the found string. Use backreferences ("\1" to "\9") to refer to (subexpressions).
 #' @param ignore.case default = TRUE (opposite default to grep)
@@ -4444,9 +4444,16 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	}
 	if(class(df) %in%  c("summary.mxmodel", "data.frame")){
 		nameVector = names(df)
+	} else if(class(df) == "list"){
+		# Assume it's a list of mxModels and we want the MODEL names (not parameters... see below)
+		nameVector = c()
+		for (i in df) {
+				nameVector = c(nameVector, i$name)
+		}
 	} else if(class(df) == "character"){
 		nameVector = df
 	} else {
+		# Assume it's one model, and we want the parameter names
 		nameVector = parameters(df)
 	}
 	if(is.null(nameVector)){

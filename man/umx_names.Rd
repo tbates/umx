@@ -10,7 +10,7 @@ umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
   invert = FALSE, collapse = c("as.is", "as.vector", "as.formula"))
 }
 \arguments{
-\item{df}{dataframe from which to get names.}
+\item{df}{dataframe (or other objects, or a list of models) from which to get names.}
 
 \item{pattern}{Used to find only matching names (supports grep/regular expressions)}
 
@@ -38,7 +38,7 @@ umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
 \description{
 Convenient equivalent of running \link{grep} on \link{names}, with value = TRUE and ignore.case = TRUE.
 
-Plus:\code{umx_names} can handle dataframes, a model, model summary, or a vector of strings as input.
+\strong{Plus}:\code{umx_names} can handle dataframes, a model, list of models, model summary, or a vector of strings as input.
 
 In these cases, it will search column names, parameter or summary output names, or
 the literal string values themselves respectively.

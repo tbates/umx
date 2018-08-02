@@ -1,5 +1,8 @@
-# umx 2.8.5 August 2018, R 3.5.0: More love
-* IMPROVED: `umx_simplex_corner` can take a numeric to set matrix size
+# umx 2.8.5 August 2018, R 3.5.1: More love
+* IMPROVED: `umx_simplex_corner` can take a numeric to set matrix size.
+* IMPROVED: `umxReduce` returns AIC weight-based probability of being best model.
+* IMPROVED: `namez` given a list of models will return the names of each.
+
 
 # umx 2.8.2 June 2018, R 3.5.0: Simplex or s__t sticks
 * FIXED: `umxSexLim` now works for univariate tests (thanks to Michael Zakharin for reporting!)
