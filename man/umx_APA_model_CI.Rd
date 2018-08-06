@@ -5,7 +5,7 @@
 \title{umx_APA_model_CI}
 \usage{
 umx_APA_model_CI(model, cellLabel, prefix = "top.", suffix = "_std",
-  digits = 2, verbose = FALSE)
+  digits = 2, SEstyle = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get CIs from}
@@ -18,10 +18,12 @@ umx_APA_model_CI(model, cellLabel, prefix = "top.", suffix = "_std",
 
 \item{digits}{= 2}
 
+\item{SEstyle}{report "b (se)" instead of b CI95[l,u] (default = FALSE)}
+
 \item{verbose}{= FALSE}
 }
 \value{
-- the CI string, e.g. ".73[-.20,.98]"
+- the CI string, e.g. ".73[-.20, .98]" or .73(.10)
 }
 \description{
 Look up CIs for free parameters in a model, and return as APA-formatted text string
