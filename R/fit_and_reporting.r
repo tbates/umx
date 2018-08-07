@@ -4036,12 +4036,13 @@ umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std",
 			if(SEstyle){
 				est = CIlist[check, "estimate"]
 				if(is.na(CIlist[check, "lbound"])){
-					# no lbound found: use ubound to form SE
-					DIFF = (est - CIlist[check, "ubound"])
+					# no lbound found: use ubound to form SE (SE not defined if ubound also NA :-(
+					DIFF = (CIlist[check, "ubound"] - est)
 				} else if (is.na(CIlist[check, "ubound"])){
-					# no bounds found: SE not defined :-(
-					DIFF = NA		
+					# lbound, but no ubound: use lbound to form SE
+					DIFF = (est - CIlist[check, "lbound"])
 				}else{
+					# Both bounds present: average to get an SE
 					DIFF = mean(c( (CIlist[check, "ubound"] - est), (est - CIlist[check, "lbound"]) ))
 				}
 			   APAstr = paste0(round(est, digits), " (", round(DIFF/(1.96 * 2), digits), ")")
