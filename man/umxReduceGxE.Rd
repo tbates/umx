@@ -17,15 +17,17 @@ umxReduceGxE(model, report = c("markdown", "inline", "html", "report"),
 \item{...}{Other parameters to control model summary}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
-This function can perform model reduction for \code{\link{umxGxE}}, 
-testing dropping means-moderation, a`,c` & e`, as well as c & c`, a & a` etc.
+This function can perform model reduction for \code{\link{umxGxE}},
+testing dropping means-moderation, a\code{,c} & e\code{, as well as c & c}, a & a` etc.
 }
 \details{
 It reports the results in a table. Set the format of the table with
-\code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
+\code{\link{umx_set_table_format}}()., or set \code{report} to "html" to open a
 table for pasting into a word processor.
 }
 \examples{
@@ -34,9 +36,13 @@ model = umxReduce(model)
 }
 }
 \references{
-- \url{http://tbates.github.io}
+\itemize{
+\item Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}, \strong{11}, 192-196. \href{https://doi.org/10.3758/BF03206482}{doi:}
+}
 }
 \seealso{
+\code{\link{umxReduceACE}}, \code{\link{umxReduce}}
+
 Other Twin Reporting Functions: \code{\link{umxReduceACE}},
-  \code{\link{umx}}
+  \code{\link{umxReduce}}, \code{\link{umx}}
 }

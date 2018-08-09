@@ -17,8 +17,8 @@ umxReduce(model, report = c("markdown", "inline", "html", "report"),
 \item{...}{Other parameters to control model summary}
 }
 \description{
-Given an OpenMx model (currently ACE and GxE are supported - ask for more!)
-umxReduce will conduct a formalised reduction process
+Given a \code{umx} model (currently \code{umxACE} and \code{umxGxE} are supported - ask for more!)
+\code{umxReduce} will conduct a formalised reduction process.
 
 \strong{GxE model reduction}
 For \code{\link{umxGxE}} models, each form of moderation is tested
@@ -26,17 +26,23 @@ on its own, and jointly.
 Also, C is removed, and moderation tested in this model.
 
 \strong{ACE model reduction}
-For \code{\link{umxACE}} models, each form of moderation is tested on its own, and jointly.
-Also, C is removed, and moderation tested in this model.
+For \code{\link{umxACE}} models, A and then C are removed and tested.
 
 It reports the results in a table. Set the format of the table with
-\code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
+\code{\link{umx_set_table_format}}()., or set \code{report} to "html" to open a
 table for pasting into a word processor.
 
-umxReduce is a work in progress, with more automations coming as demand emerges.
+\code{umxReduce} is a work in progress, with more automations coming as demand emerges.
 I am thinking for RAM models to drop NS paths, and report that test.
 }
+\references{
+\itemize{
+\item Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}, \strong{11}, 192-196. \href{https://doi.org/10.3758/BF03206482}{doi:}
+}
+}
 \seealso{
+\code{\link{umxReduceGxE}}, \code{\link{umxReduceACE}}
+
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
   \code{\link{umxEval}}, \code{\link{umxFactorScores}},
@@ -48,4 +54,7 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_show_fit_or_comparison}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
+
+Other Twin Reporting Functions: \code{\link{umxReduceACE}},
+  \code{\link{umxReduceGxE}}, \code{\link{umx}}
 }

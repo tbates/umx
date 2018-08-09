@@ -70,23 +70,22 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' Reduce models, and report the results.
 #'
 #' @description
-#' Given an OpenMx model (currently ACE and GxE are supported - ask for more!)
-#' umxReduce will conduct a formalised reduction process
+#' Given a `umx` model (currently `umxACE` and `umxGxE` are supported - ask for more!)
+#' `umxReduce` will conduct a formalised reduction process.
 #'
-#' \strong{GxE model reduction}
+#' **GxE model reduction**
 #' For \code{\link{umxGxE}} models, each form of moderation is tested
 #' on its own, and jointly.
 #' Also, C is removed, and moderation tested in this model.
 #' 
-#' \strong{ACE model reduction}
-#' For \code{\link{umxACE}} models, each form of moderation is tested on its own, and jointly.
-#' Also, C is removed, and moderation tested in this model.
+#' **ACE model reduction**
+#' For \code{\link{umxACE}} models, A and then C are removed and tested.
 #' 
 #' It reports the results in a table. Set the format of the table with
 #' \code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
 #' table for pasting into a word processor.
 #' 
-#' umxReduce is a work in progress, with more automations coming as demand emerges.
+#' `umxReduce` is a work in progress, with more automations coming as demand emerges.
 #' I am thinking for RAM models to drop NS paths, and report that test.
 #'
 #' @param model The \code{\link{mxModel}} which will be reduced.
@@ -95,8 +94,10 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @param ... Other parameters to control model summary
 #' @family Reporting Functions
 #' @family Twin Reporting Functions
-#' \url{http://www.github.com/tbates/umx}
+#' @seealso \code{\link{umxReduceGxE}}, \code{\link{umxReduceACE}}
+#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
 #' @export
+#' @md
 umxReduce <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", ...){
 	UseMethod("umxReduce", model)
 }
@@ -121,7 +122,9 @@ umxReduce.default <- function(model, ...){
 #' @return - 
 #' @export
 #' @family Twin Reporting Functions
-#' @references - \url{http://tbates.github.io}
+#' @seealso \code{\link{umxReduceACE}}, \code{\link{umxReduce}}
+#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
+#' @md
 #' @examples
 #' \dontrun{
 #' model = umxReduce(model)
@@ -169,10 +172,12 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		modelList = c(model, comparisons)
 		whichBest = which.min(AIC(modelList)[,"AIC"])[1]
 		bestModel = list(modelList)[[whichBest]]
-		message("The ", omxQuotes(bestModel$name), " model is the best fitting model.")
+		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
-		aic.weights = round(MuMIn::Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
-		message("ACI weight-based probabilities of being the best model for ACE, ADE, CE, and AE respectively are: ", omxQuotes(aic.weights), " (Using MuMIn::Weights(AIC())")
+		aic.weights = round(MuMIn::Weights(AIC(modelList)[,"AIC"]), 2)
+		message("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
+			omxQuotes(namez(modelList)), " respectively are: ", 
+			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")
 		
 	} else {
 		stop("This function is for GxE. Feel free to let me know what you want...")
@@ -199,7 +204,9 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @return Best fitting model
 #' @export
 #' @family Twin Reporting Functions
-#' @references - \url{http://tbates.github.io}
+#' @seealso \code{\link{umxReduceGxE}}, \code{\link{umxReduce}}
+#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
+#' @md
 #' @examples
 #' data(twinData)
 #' mzData <- subset(twinData, zygosity == "MZFF")
@@ -245,10 +252,13 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	umxCompare(ACE, c(ADE, CE, AE), all = TRUE, report = report)
 	whichBest = which.min(AIC(ACE, ADE, CE, AE)[,"AIC"])[1]
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
-	message("The ", omxQuotes(bestModel$name), " model is the best fitting model.")
+	message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 	# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
 	aic.weights = round(MuMIn::Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
-	message("Probabilities of being the best model for ACE, ADE, CE, and AE respectively are: ", omxQuotes(aic.weights), " (Using MuMIn::Weights(AIC())")
+	message("AIC weight-based {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
+		omxQuotes(namez(c(ACE, ADE, CE, AE))), " respectively are: ", 
+		omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")
+
 	if(intervals){
 		bestModel = mxRun(bestModel, intervals = intervals)
 	}
@@ -1748,6 +1758,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' create a web table and open your default browser.
 #' (handy for getting tables into Word, and other text systems!)
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
+#' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
 #' @family Reporting functions
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRAM}},
 #' @references - \url{http://www.github.com/tbates/umx/}
@@ -1770,9 +1781,10 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' }
 #' m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 #' umxCompare(m1, c(m2, m3))
+#' umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "inline", "html", "report"), file = "tmp.html") {
-	report = match.arg(report)		
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "inline", "html", "report"), compareWeightedAIC = FALSE, file = "tmp.html") {
+	report = match.arg(report)
 	if(	report == "report"){
 		message("inline-style report is being renamed to 'inline' instead of 'report'. Please change this for the future")
 		report = "inline"
@@ -1852,18 +1864,23 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	} else {
 		umx_print(tablePub)
 	}
+	if(compareWeightedAIC){
+		modelList = c(base, comparison)
+		# get list of AICs
+		AIClist = c()
+		for (i in modelList) {
+			AIClist = c(AIClist, AIC(i))
+		}
+		whichBest = which.min(AIClist)
+		bestModel = list(modelList)[[whichBest]]
+		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
+		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+		aic.weights = round(MuMIn::Weights(AIClist), 2)
+		message("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
+			omxQuotes(namez(modelList)), " respectively are: ", 
+			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")	
+	}
 	invisible(tablePub)
-	
-	# " em \u2013 dash"
-    # Delta (U+0394)
-    # &chi;
- 	# "Chi \u03A7"
-	# "chi \u03C7"
-	# if(export){
-	# 	fName= "Model.Fitting.xls"
-	# 	write.table(tableOut,fName, row.names = FALSE,sep = "\t", fileEncoding="UTF-8") # macroman UTF-8 UTF-16LE
-	# 	system(paste("open", fName));
-	# }
 }
 
 #' umxCI_boot

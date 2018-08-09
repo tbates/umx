@@ -129,7 +129,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{xmu_twin_check}}
 
 Other Twin Reporting Functions: \code{\link{umxReduceACE}},
-  \code{\link{umxReduceGxE}}
+  \code{\link{umxReduceGxE}}, \code{\link{umxReduce}}
 
 Other Twin Data functions: \code{\link{umx_long2wide}},
   \code{\link{umx_make_TwinData}},

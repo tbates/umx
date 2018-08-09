@@ -42,9 +42,13 @@ m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .
 m2 = umxReduce(m1)
 }
 \references{
-- \url{http://tbates.github.io}
+\itemize{
+\item Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}, \strong{11}, 192-196. \href{https://doi.org/10.3758/BF03206482}{doi:}
+}
 }
 \seealso{
+\code{\link{umxReduceGxE}}, \code{\link{umxReduce}}
+
 Other Twin Reporting Functions: \code{\link{umxReduceGxE}},
-  \code{\link{umx}}
+  \code{\link{umxReduce}}, \code{\link{umx}}
 }

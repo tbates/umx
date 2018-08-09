@@ -5,7 +5,8 @@
 \title{Print a comparison table of one or more \code{\link{mxModel}}s, formatted nicely.}
 \usage{
 umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
-  report = c("markdown", "inline", "html", "report"), file = "tmp.html")
+  report = c("markdown", "inline", "html", "report"),
+  compareWeightedAIC = FALSE, file = "tmp.html")
 }
 \arguments{
 \item{base}{The base \code{\link{mxModel}} for comparison}
@@ -19,6 +20,8 @@ umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
 \item{report}{"markdown" (default), "inline" (a sentence suitable for inclusion in a paper), or "html".
 create a web table and open your default browser.
 (handy for getting tables into Word, and other text systems!)}
+
+\item{compareWeightedAIC}{Show the Wagenmakers AIC weighted comparison (default = FALSE)}
 
 \item{file}{file to write html too if report = "html" (defaults to "tmp.html")}
 }
@@ -55,6 +58,7 @@ umxCompare(m1, m2, report = "html") # Open table in browser
 }
 m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
 umxCompare(m1, c(m2, m3))
+umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
 umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 }
 \references{
