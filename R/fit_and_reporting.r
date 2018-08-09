@@ -1872,7 +1872,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			AIClist = c(AIClist, AIC(i))
 		}
 		whichBest = which.min(AIClist)
-		bestModel = list(modelList)[[whichBest]]
+		bestModel = modelList[[whichBest]]
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
 		aic.weights = round(MuMIn::Weights(AIClist), 2)
