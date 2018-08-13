@@ -5,9 +5,10 @@
 \title{Run a Cholesky with covariates, either fixed (def var in the means) or random (in the expected covariance matrix)}
 \usage{
 umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
-  dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0,
-  equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased",
-  "left_censored"), autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
+  boundDiag = 0, equateMeans = TRUE, bVector = FALSE,
+  thresholds = c("deviationBased", "left_censored"),
+  autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -139,3 +140,4 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
+\concept{Twin Modeling Functions}

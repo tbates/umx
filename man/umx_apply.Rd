@@ -40,3 +40,4 @@ Other Miscellaneous Stats Helpers: \code{\link{reliability}},
   \code{\link{umx_round}}, \code{\link{umx_var}},
   \code{\link{umx}}
 }
+\concept{Miscellaneous Stats Helpers}

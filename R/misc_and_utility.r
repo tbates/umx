@@ -4600,10 +4600,10 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	}
 	# levelsOfTwinID = c(1,2,50,51)
 
-	if(!is.na(passalong)){
-		allVars = c(IDVars, passalong, vars2keep)
-	}else{
+	if(anyNA(passalong)){
 		allVars = c(IDVars, vars2keep)		
+	}else{
+		allVars = c(IDVars, passalong, vars2keep)
 	}
 	famIDPlus_vars2keep = c(famID, vars2keep)
 

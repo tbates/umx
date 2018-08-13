@@ -39,3 +39,4 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_get_bracket_addresses}},
   \code{\link{umx}}
 }
+\concept{Advanced Model Building Functions}

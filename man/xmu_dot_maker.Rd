@@ -19,3 +19,4 @@ xmu_dot_maker(model, file, digraph)
 \description{
 Helper to print a digraph to file and open it
 }
+\concept{xmu}

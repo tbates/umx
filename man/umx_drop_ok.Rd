@@ -53,3 +53,4 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxSummarySimplex}},
   \code{\link{umx_standardize_RAM}}
 }
+\concept{Reporting functions}

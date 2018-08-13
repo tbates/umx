@@ -4,10 +4,10 @@
 \alias{umx_make_TwinData}
 \title{Simulate twin data with control over A, C, and E parameters, as well as moderation of A.}
 \usage{
-umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL,
-  EE = NULL, varNames = "var", mean = 0, sd = 1, nThresh = NULL,
-  sum2one = TRUE, seed = NULL, empirical = FALSE, MZr = NULL,
-  DZr = NULL, Amod = NULL, Cmod = NULL, Emod = NULL)
+umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL,
+  CC = NULL, EE = NULL, varNames = "var", mean = 0, sd = 1,
+  nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE,
+  MZr = NULL, DZr = NULL, Amod = NULL, Cmod = NULL, Emod = NULL)
 }
 \arguments{
 \item{nMZpairs}{Number of MZ pairs to simulate}
@@ -178,3 +178,4 @@ Other Twin Data functions: \code{\link{umx_long2wide}},
   \code{\link{umx_scale_wide_twin_data}},
   \code{\link{umx_wide2long}}, \code{\link{umx}}
 }
+\concept{Twin Data functions}

@@ -7,8 +7,8 @@
 umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
   "random"), dzData, mzData, sep = NULL, dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
-  boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
-  thresholds = c("deviationBased", "WLS"),
+  boundDiag = 0, weightVar = NULL, equateMeans = TRUE,
+  bVector = FALSE, thresholds = c("deviationBased", "WLS"),
   autoRun = getOption("umx_auto_run"), suffix = "deprecated",
   optimizer = NULL, intervals = FALSE)
 }
@@ -282,3 +282,4 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
+\concept{Twin Modeling Functions}

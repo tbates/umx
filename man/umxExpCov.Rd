@@ -5,7 +5,8 @@
 \alias{vcov.MxModel}
 \title{Get the expected vcov matrix}
 \usage{
-umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL, ...)
+umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL,
+  ...)
 }
 \arguments{
 \item{object}{an \code{\link{mxModel}} to get the covariance matrix from}
@@ -63,3 +64,4 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
 }
+\concept{Reporting functions}

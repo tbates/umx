@@ -5,8 +5,8 @@
 \alias{umxSummary.MxModelCP}
 \title{Present the results of a Common-pathway twin model in table and graphical form}
 \usage{
-umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FALSE,
-  comparison = NULL, report = c("markdown", "html"),
+umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE,
+  showRg = FALSE, comparison = NULL, report = c("markdown", "html"),
   file = getOption("umx_auto_plot"), returnStd = FALSE, ...)
 }
 \arguments{
@@ -88,3 +88,4 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
+\concept{Twin Modeling Functions}

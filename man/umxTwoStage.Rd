@@ -4,8 +4,8 @@
 \alias{umxTwoStage}
 \title{umxTwoStage}
 \usage{
-umxTwoStage(formula, instruments, data, subset, weights, contrasts = NULL,
-  name = "tsls", ...)
+umxTwoStage(formula, instruments, data, subset, weights,
+  contrasts = NULL, name = "tsls", ...)
 }
 \arguments{
 \item{formula}{The structural equation to be estimated; a regression constant is implied if not explicitly omitted.}
@@ -81,3 +81,4 @@ Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umx}}
 }
+\concept{Super-easy helpers}

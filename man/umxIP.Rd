@@ -4,10 +4,11 @@
 \alias{umxIP}
 \title{umxIP: Build and run an Independent pathway twin model}
 \usage{
-umxIP(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a = 1, c =
-  1, e = 1), freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
-  equateMeans = TRUE, dzAr = 0.5, dzCr = 1, correlatedA = FALSE,
-  addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
+umxIP(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a =
+  1, c = 1, e = 1), freeLowerA = FALSE, freeLowerC = FALSE,
+  freeLowerE = FALSE, equateMeans = TRUE, dzAr = 0.5, dzCr = 1,
+  correlatedA = FALSE, addStd = TRUE, addCI = TRUE,
+  numObsDZ = NULL, numObsMZ = NULL,
   autoRun = getOption("umx_auto_run"), optimizer = NULL,
   suffix = "deprecated")
 }
@@ -97,3 +98,4 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
+\concept{Twin Modeling Functions}

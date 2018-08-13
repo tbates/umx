@@ -19,3 +19,5 @@ Versions exist for RAM, ACE, ACEv, ACEcov, IP, CP and GxE models.
 \details{
 umx_standardize takes umx models, including RAM and twin models, and returns a standardized version.
 }
+\concept{Advanced Model Building Functions
+\url{http://www.github.com/tbates/umx}}

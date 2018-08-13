@@ -7,9 +7,9 @@
 \usage{
 umxSummaryGxEbiv(model = NULL, digits = 2, xlab = NA,
   location = "topleft", separateGraphs = FALSE,
-  file = getOption("umx_auto_plot"), returnStd = NULL, comparison = NULL,
-  std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown",
-  "html"), ...)
+  file = getOption("umx_auto_plot"), returnStd = NULL,
+  comparison = NULL, std = NULL, reduce = FALSE, CIs = NULL,
+  report = c("markdown", "html"), ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxGxEbiv}} model to summarize}
@@ -82,3 +82,4 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
+\concept{Twin Modeling Functions}

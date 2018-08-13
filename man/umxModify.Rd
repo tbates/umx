@@ -6,8 +6,8 @@
 \usage{
 umxModify(lastFit, update = NULL, master = NULL, regex = FALSE,
   free = FALSE, value = 0, newlabels = NULL, freeToStart = NA,
-  name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE,
-  autoRun = TRUE, dropList = "deprecated")
+  name = NULL, verbose = FALSE, intervals = FALSE,
+  comparison = FALSE, autoRun = TRUE, dropList = "deprecated")
 }
 \arguments{
 \item{lastFit}{The \code{\link{mxModel}} you wish to update and run.}
@@ -124,3 +124,5 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }
+\concept{Core Modeling Functions}
+\concept{Modify or Compare Models}
