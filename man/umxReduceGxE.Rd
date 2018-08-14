@@ -5,7 +5,7 @@
 \title{Reduce a GxE model.}
 \usage{
 umxReduceGxE(model, report = c("markdown", "inline", "html", "report"),
-  baseFileName = "tmp", ...)
+  baseFileName = "tmp_gxe", ...)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to reduce}

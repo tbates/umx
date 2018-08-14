@@ -38,19 +38,23 @@ tmp$twinID1 = 1
 tmp$twinID2 = 2
 long = umx_wide2long(data = tmp, sep = "")
 #
+
 # OK. Now to demo long2wide...
+
 # Keeping all columns
 wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity")
-names(wide) # might want to rename vars like "part_T1" to "part" and delete T2 copy 
+names(wide) # some vars, like part, should have been passed along instead of made into "part_T1"
+
 # Just keep bmi and wt
-k = c("bmi", "wt")
 wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", 
-    zygosity= "zygosity", vars2keep = k)
+    zygosity= "zygosity", vars2keep = c("bmi", "wt"))
 names(wide)
+
 # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
+
 # Keep bmi and wt, and pass through 'cohort'
 wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
-	vars2keep = k, passalong = "cohort")
+  vars2keep = c("bmi", "wt"), passalong = "cohort")
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
