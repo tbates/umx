@@ -1504,10 +1504,10 @@ umx_pad <- function(x, n) {
 #' Tries to make apply more readable. Other functions to think of include
 #' \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
 #'
-#' @param FUN The function to apply
-#' @param of The dataframe to work with
-#' @param by What to apply the function to: columns or rows (default = "columns")
-#' @param ... optional arguments to FUN, i.e., na.rm = T
+#' @param FUN The function to apply.
+#' @param of The dataframe to work with.
+#' @param by Apply the function to columns or to rows (default = "columns")
+#' @param ... optional arguments to FUN, e.g., na.rm = TRUE.
 #' @return - object
 #' @export
 #' @seealso - \code{\link{umx_aggregate}} 
@@ -1517,9 +1517,9 @@ umx_pad <- function(x, n) {
 #' umx_apply(mean, mtcars, by = "columns")
 #' umx_apply(mean, of = mtcars, by = "columns")
 #' umx_apply(mean, by = "rows", of = mtcars[1:3,], na.rm = TRUE)
-umx_apply <- function(FUN, of, by = "columns", ...) {
+umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 	if(! (by %in% c("columns", "rows"))){
-		stop(paste("by must be either 'columns' or 'rows', you gave me", by))
+		stop(paste("'by' must be either 'rows' or 'columns': You gave me ", omxQuotes(by)))
 	} else if (by == "rows") {
 		by = 1
 	} else {
@@ -1592,21 +1592,28 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' umx_rename
 #'
 #' Returns a dataframe with variables renamed as desired.
-#' Unlike some functions, it checks that the variables exist, and that the new names are not already used.
 #' 
-#' As a courtesy function, it handles grep replace in strings of characters.
+#' Unlike similar functions in other packages, it checks that the variables exist, and that the new names do not.
+#' 
+#' Importantly, it also supports [regular expressions][regex]. This allows you to find and replace
+#' text based on patterns and replacements. so to change "replacement" to "inplace", 
+#' `grep=re(place)ment`, `replace= in\\1`. 
+#' 
 #'
-#' note: to use replace list, you must say c(old = "new"), not c(old -> "new")
+#' *note*: to use replace list, you must say c(old = "new"), not c(old -> "new")
+#' 
 #' @param x the dataframe in which to rename variables
 #' @param replace If used alone, a named collection of c(oldName = "newName") pairs
-#' OR, if "old" is a list of existing names, the list of new names)
-#' OR, if "grep" is a regular expression, the replace string)
-#' @param old Optional list of old names that will be found and replaced by the contents of replace. Defaults to NULL
-#' @param grep Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL
-#' @param test whether to report a "dry run" - and not actually change anything (defaults to false)
+#'   OR, if "old" is a list of existing names, the list of new names)
+#'   OR, if "grep" is a regular expression, the replace string)
+#' @param old Optional list of old names that will be found and replaced by the contents of replace. Defaults to NULL.
+#' @param grep Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL.
+#' @param test whether to report a "dry run" - and not actually change anything. Defaults to FALSE.
 #' @return - dataframe with columns renamed.
 #' @export
+#' @seealso [namez] to filter (and replace) names, Also [umx_check_names] to check for existence of names in a dataframe.
 #' @family Data Functions
+#' @md
 #' @examples
 #' # Re-name "cyl" to "cylinder"
 #' x = mtcars
