@@ -4541,8 +4541,13 @@ umx_rot <- function(vec){
 #' Take a long twin-data file and make it wide (one family per row)
 #'
 #' @description
-#' umx_long2wide merges on famID, for an unlimited number of twinIDs.
-#' Note: this assumes if zygosity or any passalong variables are NA in the first
+#' `umx_long2wide` merges on `famID`. Family members are ordered by `twinID`.
+#' 
+#' twinID is equivalent to birthorder. Up to 10 twinIDs are allowed (family order).
+#' 
+#' *Note*: Not all data sets have an order column, but it is essential to rank subjects correctly.
+#' 
+#' *Note*: The functions assumes that if zygosity or any passalong variables are NA in the first
 #' family member, they are NA everywhere. i.e., it does not hunt for values that
 #' are present elsewhere to try and self-heal missing data.
 #'
@@ -4557,30 +4562,35 @@ umx_rot <- function(vec){
 #' @family Twin Data functions
 #' @seealso - \code{\link{merge}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @md
 #' @examples
 #' # ================================================================
 #' # = First we have to make a long format file to base the demo on =
 #' # ================================================================
 # # 1. Drop the 'age' column (we have age1 and age2, and age won't make sense in a long format
 #' tmp = twinData[, -2]
-# # 2. Add fake twinID identifiers for each twin, else this data set won't have twinID
+# # 2. Add fake twinID identifiers for each twin, else this data set won't have a twinID!
 #' tmp$twinID1 = 1
 #' tmp$twinID2 = 2
 #' long = umx_wide2long(data = tmp, sep = "")
 #' #
+#' 
 #' # OK. Now to demo long2wide...
+#' 
 #' # Keeping all columns
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity")
-#' names(wide) # might want to rename vars like "part_T1" to "part" and delete T2 copy 
+#' names(wide) # some vars, like part, should have been passed along instead of made into "part_T1"
+#' 
 #' # Just keep bmi and wt
-#' k = c("bmi", "wt")
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", 
-#'     zygosity= "zygosity", vars2keep = k)
+#'     zygosity= "zygosity", vars2keep = c("bmi", "wt"))
 #' names(wide)
+#' 
 #' # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
+#' 
 #' # Keep bmi and wt, and pass through 'cohort'
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
-#' 	vars2keep = k, passalong = "cohort")
+#'   vars2keep = c("bmi", "wt"), passalong = "cohort")
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA, passalong = NA) {
 	IDVars = c(famID, twinID, zygosity)
 	umx_check_names(IDVars, data = data, die = TRUE)
@@ -4599,7 +4609,11 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	}
 	
 	levelsOfTwinID = unique(data[,twinID])
-  	message("Found ", length(levelsOfTwinID), " levels of twinID: ", omxQuotes(levelsOfTwinID))
+	if(length(levelsOfTwinID)>10){
+		stop("Found ", length(levelsOfTwinID), " levels of twinID. That seems too many??? should be c(1,2,50,51) or similar?")
+	} else {
+		message("Found ", length(levelsOfTwinID), " levels of twinID: ", omxQuotes(levelsOfTwinID))
+	}
 
 	if(NA %in% levelsOfTwinID){
 	  message("Some subjects have NA as twinID!")
@@ -4616,7 +4630,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	# ==================================
 	# = Merge each twinID to the right =
 	# ==================================
-	# Extract all the twins of type i, merge by famid with existing blocks 
+	# Extract all the twins of twinID i, merge by famid with existing blocks 
 	for(i in seq_along(levelsOfTwinID)) {
 		newNames = paste0(vars2keep, "_T", levelsOfTwinID[i])
 		if(i == 1){
@@ -4643,7 +4657,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 }
 
 
-#' Change data 2-twin family data from wide to long format.
+#' Change data family data from wide (2 twins per row) to long format.
 #'
 #' @description
 #' Just detects the data columns for twin 1, and twin 2, then returns them stacked

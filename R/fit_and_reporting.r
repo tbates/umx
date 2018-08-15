@@ -129,18 +129,15 @@ umxReduce.default <- function(model, ...){
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", ...) {
+umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp_gxe", ...) {
 	umx_is_MxModel(model)
 	report = match.arg(report)
 	if(class(model) == "MxModelGxE"){		
 		# Reduce GxE Model
-		# Good to drop the means if possible? I think not. Better to model their most likely value, not lock it too zerp
+		# Good to drop the means if possible? I think not. Better to model their most likely value, not lock it to zerp
 		no_lin_mean = umxModify(model, update = "lin11" , name = "No_lin_mean" )
 		no_sq_mean  = umxModify(model, update = "quad11" , name = "No_quad_mean")
 		nomeans     = umxModify(model, regex = "lin|quad", name = "No_means_moderation")
-
-		noA          = umxModify(model, update = "a_r1c1" , name = "DropA")
-		noC          = umxModify(model, update = "c_r1c1" , name = "DropC")
 
 		noAmod       = umxModify(model, update = "am_r1c1", name = "No_mod_on_A")
 		noCmod       = umxModify(model, update = "cm_r1c1", name = "No_mod_on_C")
@@ -148,19 +145,17 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 
 		noACEmod     = umxModify(model, regex  = "[ace]m" , name = "No_moderation")
 
-		no_a_am     = umxModify(noA , update = "am_r1c1", name = "No_A_no_mod_on_A")
-		no_c_no_cm  = umxModify(noC , update = "cm_r1c1", name = "No_C_no_mod_on_C")
+		no_a_no_am  = umxModify(noAmod , update = "a_r1c1", name = "No_A_no_mod_on_A")
+		no_c_no_cm  = umxModify(noCmod , update = "c_r1c1", name = "No_C_no_mod_on_C")
 		no_c_no_cem = umxModify(no_c_no_cm, update = "em_r1c1", name = "No_c_no_ce_mod")
 
-		no_c_no_moderation    = umxModify(no_c_no_cem, update = "am_r1c1", name = "No_c_no_moderation")
+		no_c_no_mod = umxModify(no_c_no_cem, update = "am_r1c1", name = "No_c_no_moderation")
 
 		comparisons = c(
 			no_lin_mean, no_sq_mean, nomeans, 
-			noA, noC,
-			noAmod, noCmod, noEmod,
-			noACEmod,
-			no_a_am, no_c_no_cm, no_c_no_cem,
-			no_c_no_moderation
+			noAmod, noCmod, noEmod, noACEmod,
+			no_a_no_am, no_c_no_cm, no_c_no_cem,
+			no_c_no_mod
 		)
 
 		# ====================
@@ -170,15 +165,20 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		umxCompare(model, comparisons, all = TRUE, report = report, file = paste0(baseFileName, "1.html"))
 		# umxCompare(no_c_no_cem, no_c_no_moderation, all = TRUE, report = report, file = paste0(baseFileName, "2.html"))
 		modelList = c(model, comparisons)
-		whichBest = which.min(AIC(modelList)[,"AIC"])[1]
-		bestModel = list(modelList)[[whichBest]]
+		
+		# get list of AICs
+		AIClist = c()
+		for (i in modelList) {
+			AIClist = c(AIClist, AIC(i))
+		}
+		whichBest = which.min(AIClist)
+		bestModel = modelList[[whichBest]]
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
-		aic.weights = round(MuMIn::Weights(AIC(modelList)[,"AIC"]), 2)
-		message("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
-			omxQuotes(namez(modelList)), " respectively are: ", 
-			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")
-		
+		aic.weights = round(MuMIn::Weights(AIClist), 2)
+		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
+			omxQuotes(namez(modelList)), " respectively are: ",
+			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")		
 	} else {
 		stop("This function is for GxE. Feel free to let me know what you want...")
 	}
@@ -222,7 +222,7 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	if(model$top$dzCr$values == 1){
 		message("You gave me an ACE model")		
 		ACE = model
-		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE_model")
+		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE")
 		if(-2*logLik(ACE) > -2*logLik(ADE)){
 			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE")
 			AE = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
@@ -234,7 +234,7 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	}else if(model$top$dzCr$values == .25){
 		message("You gave me an ADE model")
 		ADE = model
-		ACE = umxModify(ADE, 'dzCr_r1c1', value = 1, name = "ACE_model")
+		ACE = umxModify(ADE, 'dzCr_r1c1', value = 1, name = "ACE")
 		AE  = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
 		if(-2*logLik(ADE) > -2*logLik(ACE)){
 			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE")
@@ -244,7 +244,7 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 		}
 	}else{
 		stop(model$top$dzCr$values, " is an odd number for dzCr, isn't it? I was expecting 1 (C) or .25 (D)",
-		"\nPerhaps you're smart, and are doing an assortative mating test? e-mail tim to get this added here.")
+		"\nPerhaps you're John Loehlin, and are doing an assortative mating test? e-mail me to get this added here.")
 		# TODO umxReduceACE handle odd values of dzCr as assortative mating etc.?
 		bestModel = model
 	}
