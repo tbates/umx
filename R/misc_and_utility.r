@@ -1597,8 +1597,7 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' 
 #' Importantly, it also supports [regular expressions][regex]. This allows you to find and replace
 #' text based on patterns and replacements. so to change "replacement" to "inplace", 
-#' `grep=re(place)ment`, `replace= in\\1`. 
-#' 
+#' `grep=re(place)ment`, `replace= in\\1`.
 #'
 #' *note*: to use replace list, you must say c(old = "new"), not c(old -> "new")
 #' 
