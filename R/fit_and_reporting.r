@@ -109,21 +109,23 @@ umxReduce.default <- function(model, ...){
 
 #' Reduce a GxE model.
 #'
-#' This function can perform model reduction for \code{\link{umxGxE}}, 
+#' @description
+#' This function can perform model reduction for [umxGxE][umxGxE], 
 #' testing dropping means-moderation, a`,c` & e`, as well as c & c`, a & a` etc.
 #'
 #' It reports the results in a table. Set the format of the table with
-#' \code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
+#' [umx_set_table_format]. Or set `report` to "html" to open a
 #' table for pasting into a word processor.
-#' @param model An \code{\link{mxModel}} to reduce
-#' @param report How to report the results. "html" = open in browser
-#' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
-#' @param ... Other parameters to control model summary
+#' @param model An \code{\link{mxModel}} to reduce.
+#' @param report How to report the results. "html" = open in browser.
+#' @param baseFileName (optional) custom filename for html output (defaults to "tmp").
+#' @param ... Other parameters to control model summary.
 #' @return - 
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso \code{\link{umxReduceACE}}, \code{\link{umxReduce}}
-#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
+#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
+#' *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482).
 #' @md
 #' @examples
 #' \dontrun{

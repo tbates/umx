@@ -2493,7 +2493,7 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 	} else if (what =="rhub"){
 		# devtools::check_rhub(pkg = pkg)
 	} else if (what == "release"){
-		devtools::release(pkg = pkg, check = check, spelling = spelling)
+		devtools::release(pkg = pkg, check = check) # spelling = spelling
 	} else if (what == "spell"){
 		devtools::spell_check(pkg = pkg)
 	}
