@@ -15,11 +15,13 @@ Depends:
     OpenMx (>= 2.7.9)
 Imports:
     cowplot,
-    ggplot2,
     DiagrammeR,
+    ggplot2,
     knitr,
     MASS,
     Matrix,
+    methods,
+	MuMIn,
     mvtnorm,
     nlme,
     numDeriv,
@@ -27,9 +29,8 @@ Imports:
     R2HTML,
     RCurl,
     sfsmisc,
-    xtable,
-    methods,
-    utils
+    utils,
+    xtable
 Suggests: 
     cocor,
     devtools,
