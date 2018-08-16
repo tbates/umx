@@ -8,7 +8,7 @@ umxReduceGxE(model, report = c("markdown", "inline", "html", "report"),
   baseFileName = "tmp_gxe", ...)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to reduce}
+\item{model}{An \code{\link{mxModel}} to reduce}
 
 \item{report}{How to report the results. "html" = open in browser}
 

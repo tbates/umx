@@ -115,7 +115,7 @@ umxReduce.default <- function(model, ...){
 #' It reports the results in a table. Set the format of the table with
 #' \code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
 #' table for pasting into a word processor.
-#' @param model an \code{\link{mxModel}} to reduce
+#' @param model An \code{\link{mxModel}} to reduce
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param ... Other parameters to control model summary
