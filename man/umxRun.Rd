@@ -4,8 +4,9 @@
 \alias{umxRun}
 \title{umxRun: Run an mxModel}
 \usage{
-umxRun(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE,
-  setLabels = FALSE, intervals = FALSE, comparison = NULL)
+umxRun(model, n = 1, calc_SE = TRUE, calc_sat = TRUE,
+  setValues = FALSE, setLabels = FALSE, intervals = FALSE,
+  comparison = NULL)
 }
 \arguments{
 \item{model}{The \code{\link{mxModel}} you wish to run.}
@@ -63,3 +64,4 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
   \code{\link{umxSuperModel}}, \code{\link{umx}}
 }
+\concept{Core Modelling Functions}

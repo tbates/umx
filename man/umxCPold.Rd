@@ -4,11 +4,12 @@
 \alias{umxCPold}
 \title{umxCP: Build and run a Common pathway twin model}
 \usage{
-umxCPold(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 1,
-  freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
-  correlatedA = FALSE, equateMeans = TRUE, dzAr = 0.5, dzCr = 1,
-  boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
-  numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL,
+umxCPold(name = "CPold", selDVs, dzData, mzData, sep = NULL,
+  nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE,
+  freeLowerE = FALSE, correlatedA = FALSE, equateMeans = TRUE,
+  dzAr = 0.5, dzCr = 1, boundDiag = 0, addStd = TRUE,
+  addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
+  autoRun = getOption("umx_auto_run"), optimizer = NULL,
   suffix = "deprecated")
 }
 \arguments{
@@ -156,3 +157,4 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
+\concept{Twin Modeling Functions}

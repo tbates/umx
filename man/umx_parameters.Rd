@@ -9,11 +9,11 @@
 umx_parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
   b = NULL, pattern = ".*", std = FALSE, digits = 2)
 
-umxParameters(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL,
-  pattern = ".*", std = FALSE, digits = 2)
+umxParameters(x, thresh = c("all", "above", "below", "NS", "sig"),
+  b = NULL, pattern = ".*", std = FALSE, digits = 2)
 
-parameters(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL,
-  pattern = ".*", std = FALSE, digits = 2)
+parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
+  b = NULL, pattern = ".*", std = FALSE, digits = 2)
 }
 \arguments{
 \item{x}{an \code{\link{mxModel}} or model summary from which to report parameter estimates.}
@@ -74,3 +74,4 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
+\concept{Reporting Functions}

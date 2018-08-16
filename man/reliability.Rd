@@ -30,3 +30,4 @@ Other Miscellaneous Stats Helpers: \code{\link{umxCov2cor}},
   \code{\link{umx_round}}, \code{\link{umx_var}},
   \code{\link{umx}}
 }
+\concept{Miscellaneous Stats Helpers}

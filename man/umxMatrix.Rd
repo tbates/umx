@@ -5,10 +5,11 @@
 \title{Make a mxMatrix with automatic labels. Also takes name as the first parameter for more readable code.}
 \usage{
 umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
-  free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA,
-  byrow = getOption("mxByrow"), dimnames = NA,
+  free = FALSE, values = NA, labels = TRUE, lbound = NA,
+  ubound = NA, byrow = getOption("mxByrow"), dimnames = NA,
   condenseSlots = getOption("mxCondenseMatrixSlots"), ...,
-  joinKey = as.character(NA), joinModel = as.character(NA), jiggle = NA)
+  joinKey = as.character(NA), joinModel = as.character(NA),
+  jiggle = NA)
 }
 \arguments{
 \item{name}{The name of the matrix (Default = NA). Note the different order compared to mxMatrix!}
@@ -63,3 +64,4 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxRAM}}, \code{\link{umxRun}},
   \code{\link{umxSuperModel}}, \code{\link{umx}}
 }
+\concept{Core Modelling Functions}

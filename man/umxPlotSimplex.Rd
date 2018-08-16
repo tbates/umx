@@ -54,3 +54,4 @@ Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
   \code{\link{umx}}
 }
+\concept{Plotting functions}

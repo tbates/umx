@@ -4,8 +4,8 @@
 \alias{tmx_genotypic_effect}
 \title{Graphical display of genotypic effects.}
 \usage{
-tmx_genotypic_effect(p = 0.75, q = (1 - p), a = 0.5, d = 0.25, m = 0,
-  show = TRUE)
+tmx_genotypic_effect(p = 0.75, q = (1 - p), a = 0.5, d = 0.25,
+  m = 0, show = TRUE)
 }
 \arguments{
 \item{p}{The frequency of the A allele (Default .5)}
@@ -78,3 +78,4 @@ p
 Other Teaching and testing Functions: \code{\link{tmx_is.identified}},
   \code{\link{umx}}
 }
+\concept{Teaching and testing Functions}

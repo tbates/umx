@@ -4,7 +4,8 @@
 \alias{umxVersion}
 \title{Get or print the version of umx, along with detail from OpenMx and general system info.}
 \usage{
-umxVersion(model = NULL, min = NULL, verbose = TRUE, return = "umx")
+umxVersion(model = NULL, min = NULL, verbose = TRUE,
+  return = "umx")
 }
 \arguments{
 \item{model}{Optional to show optimizer in this model}
@@ -43,3 +44,4 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}},
   \code{\link{umx_scale}}, \code{\link{umx}}
 }
+\concept{Miscellaneous Utility Functions}

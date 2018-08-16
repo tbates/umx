@@ -70,3 +70,4 @@ Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
 }
+\concept{umx deprecated}

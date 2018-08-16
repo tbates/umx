@@ -54,3 +54,4 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}},
   \code{\link{umx}}
 }
+\concept{Miscellaneous Utility Functions}

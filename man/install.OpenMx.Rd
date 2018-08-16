@@ -5,8 +5,9 @@
 \alias{umx_update_OpenMx}
 \title{Install OpenMx, with choice of builds}
 \usage{
-install.OpenMx(loc = c("NPSOL", "travis", "CRAN", "open travis build page",
-  "UVa"), url = NULL, lib, repos = getOption("repos"))
+install.OpenMx(loc = c("NPSOL", "travis", "CRAN",
+  "open travis build page", "UVa"), url = NULL, lib,
+  repos = getOption("repos"))
 }
 \arguments{
 \item{loc}{Which install to get: "UVa" (the default), "travis" (latest build),
@@ -58,3 +59,4 @@ Other Miscellaneous Utility Functions: \code{\link{qm}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}},
   \code{\link{umx_scale}}, \code{\link{umx}}
 }
+\concept{Miscellaneous Utility Functions}
