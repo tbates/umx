@@ -4,8 +4,8 @@
 \alias{xmu_dot_make_residuals}
 \title{xmu_dot_make_residuals (not for end users)}
 \usage{
-xmu_dot_make_residuals(mxMat, latents = NULL, fixed = TRUE,
-  digits = 2, resid = c("circle", "line"))
+xmu_dot_make_residuals(mxMat, latents = NULL, fixed = TRUE, digits = 2,
+  resid = c("circle", "line"))
 }
 \arguments{
 \item{mxMat}{An A or S mxMatrix}
@@ -41,4 +41,3 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}}
 }
-\concept{xmu internal not for end user}

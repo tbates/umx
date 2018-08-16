@@ -4,9 +4,8 @@
 \alias{umxGetParameters}
 \title{Get parameters from a model, with support for pattern matching!}
 \usage{
-umxGetParameters(inputTarget, regex = NA, free = NA,
-  fetch = c("values", "free", "lbound", "ubound", "all"),
-  verbose = FALSE)
+umxGetParameters(inputTarget, regex = NA, free = NA, fetch = c("values",
+  "free", "lbound", "ubound", "all"), verbose = FALSE)
 }
 \arguments{
 \item{inputTarget}{An object to get parameters from: could be a RAM \code{\link{mxModel}}}
@@ -65,4 +64,3 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
-\concept{Reporting Functions}

@@ -5,9 +5,9 @@
 \title{Print tables in a range of formats (markdown default, see \code{\link{umx_set_table_format}} for other formats)
 or as a web browser table.}
 \usage{
-umx_print(x, digits = getOption("digits"), quote = FALSE,
-  na.print = "", zero.print = "0", justify = "none", file = c(NA,
-  "tmp.html"), suppress = NULL, ...)
+umx_print(x, digits = getOption("digits"), quote = FALSE, na.print = "",
+  zero.print = "0", justify = "none", file = c(NA, "tmp.html"),
+  suppress = NULL, ...)
 }
 \arguments{
 \item{x}{A data.frame to print (matrices will be coerced to data.frame)}
@@ -70,5 +70,3 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
-\concept{Miscellaneous Utility Functions}
-\concept{Reporting Functions}

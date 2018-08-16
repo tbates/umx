@@ -58,4 +58,3 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
 }
-\concept{Reporting functions}

@@ -4,8 +4,7 @@
 \alias{umx_stash_CIs}
 \title{Stash the CI values of a model as strings in the values of the model}
 \usage{
-umx_stash_CIs(model, digits = 3, dropZeros = FALSE,
-  stdAlg2mat = TRUE)
+umx_stash_CIs(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE)
 }
 \arguments{
 \item{model}{An \code{\link{mxModel}} to get CIs from.}
@@ -41,4 +40,3 @@ Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},
   \code{\link{umx_standardize_IP}},
   \code{\link{umx_standardize_Simplex}}, \code{\link{umx}}
 }
-\concept{zAdvanced Helpers}

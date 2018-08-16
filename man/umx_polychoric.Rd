@@ -38,4 +38,3 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_reorder}}, \code{\link{umx_stack}},
   \code{\link{umx_swap_a_block}}, \code{\link{umx}}
 }
-\concept{Data Functions}

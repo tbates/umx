@@ -46,4 +46,3 @@ model = umxReduce(model)
 Other Twin Reporting Functions: \code{\link{umxReduceACE}},
   \code{\link{umxReduce}}, \code{\link{umx}}
 }
-\concept{Twin Reporting Functions}

@@ -38,4 +38,3 @@ umxDiagnose(m1)
 \references{
 - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
-\concept{Teaching and Testing functions}

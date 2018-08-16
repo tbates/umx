@@ -4,8 +4,8 @@
 \alias{umx_aggregate}
 \title{Convenient formula-based cross-tabs & built-in summary functions}
 \usage{
-umx_aggregate(formula = DV ~ condition, data = NA,
-  what = c("mean_sd", "n"), digits = 2, kable = TRUE)
+umx_aggregate(formula = DV ~ condition, data = NA, what = c("mean_sd",
+  "n"), digits = 2, kable = TRUE)
 }
 \arguments{
 \item{formula}{The aggregation formula. e.g., DV ~ condition}
@@ -82,4 +82,3 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
-\concept{Reporting Functions}

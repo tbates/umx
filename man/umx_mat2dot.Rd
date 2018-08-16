@@ -6,9 +6,8 @@
 \usage{
 umx_mat2dot(x, cells = c("any", "diag", "lower", "upper", "left"),
   from = "rows", fromLabel = NULL, toLabel = NULL, selDVs = NULL,
-  showFixed = FALSE, arrows = c("forward", "both", "back"),
-  type = NULL, digits = 2, p = list(str = "", latents = c(),
-  manifests = c()))
+  showFixed = FALSE, arrows = c("forward", "both", "back"), type = NULL,
+  digits = 2, p = list(str = "", latents = c(), manifests = c()))
 }
 \arguments{
 \item{x}{a \code{\link{umxMatrix}} to make paths from.}
@@ -74,4 +73,3 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_print}}, \code{\link{umx_scale}},
   \code{\link{umx}}
 }
-\concept{Miscellaneous Utility Functions}

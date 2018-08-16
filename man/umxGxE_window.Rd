@@ -6,8 +6,7 @@
 \usage{
 umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
   dzData = dzData, suffix = NA, weightCov = FALSE, target = NULL,
-  width = 1, plotWindow = FALSE, return = c("estimates",
-  "last_model"))
+  width = 1, plotWindow = FALSE, return = c("estimates", "last_model"))
 }
 \arguments{
 \item{selDVs}{The dependent variables for T1 and T2, e.g. c("bmi_T1", "bmi_T2")}
@@ -105,4 +104,3 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
-\concept{Twin Modeling Functions}

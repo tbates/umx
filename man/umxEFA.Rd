@@ -6,10 +6,10 @@
 \title{FIML-based Exploratory Factor Analysis (EFA)}
 \usage{
 umxEFA(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
-  scores = c("none", "ML", "WeightedML", "Regression"),
-  minManifests = NA, rotation = c("varimax", "promax", "none"),
-  name = "efa", digits = 2, return = c("model", "loadings"),
-  report = c("markdown", "html"), covmat = NULL)
+  scores = c("none", "ML", "WeightedML", "Regression"), minManifests = NA,
+  rotation = c("varimax", "promax", "none"), name = "efa", digits = 2,
+  return = c("model", "loadings"), report = c("markdown", "html"),
+  covmat = NULL)
 }
 \arguments{
 \item{x}{Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.}
@@ -103,4 +103,3 @@ x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regr
 Other Super-easy helpers: \code{\link{umxTwoStage}},
   \code{\link{umx}}
 }
-\concept{Super-easy helpers}

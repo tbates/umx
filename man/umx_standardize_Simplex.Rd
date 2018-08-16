@@ -36,4 +36,3 @@ Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},
   \code{\link{umx_standardize_IP}},
   \code{\link{umx_stash_CIs}}, \code{\link{umx}}
 }
-\concept{zAdvanced Helpers}

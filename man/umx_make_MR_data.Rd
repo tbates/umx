@@ -4,8 +4,8 @@
 \alias{umx_make_MR_data}
 \title{Simulate Mendelian Randomization data}
 \usage{
-umx_make_MR_data(nSubjects = 1000, Vqtl = 0.02, bXY = 0.1,
-  bUX = 0.5, bUY = 0.5, pQTL = 0.5, seed = 123)
+umx_make_MR_data(nSubjects = 1000, Vqtl = 0.02, bXY = 0.1, bUX = 0.5,
+  bUY = 0.5, pQTL = 0.5, seed = 123)
 }
 \arguments{
 \item{nSubjects}{Number of subjects in sample}
@@ -57,4 +57,3 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_reorder}}, \code{\link{umx_stack}},
   \code{\link{umx_swap_a_block}}, \code{\link{umx}}
 }
-\concept{Data Functions}

@@ -5,8 +5,8 @@
 \alias{plot.MxModelGxEbiv}
 \title{Plot the results of a GxE univariate test for moderation of ACE components.}
 \usage{
-umxPlotGxEbiv(x, xlab = NA, location = "topleft",
-  separateGraphs = FALSE, ...)
+umxPlotGxEbiv(x, xlab = NA, location = "topleft", separateGraphs = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{A fitted \code{\link{umxGxEbiv}} model to plot}
@@ -59,4 +59,3 @@ Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotIP}}, \code{\link{umxPlotSimplex}},
   \code{\link{umx}}
 }
-\concept{Plotting functions}

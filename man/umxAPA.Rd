@@ -7,8 +7,8 @@
 \usage{
 umxAPA(obj, se = NULL, std = FALSE, digits = 2, use = "complete",
   min = 0.001, addComparison = NA, report = c("markdown", "html"),
-  lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"),
-  SEs = TRUE, means = TRUE)
+  lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE,
+  means = TRUE)
 }
 \arguments{
 \item{obj}{A model (e.g. \link{lm}, lme, glm, t-test), beta-value, or data.frame}
@@ -137,4 +137,3 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
-\concept{Reporting Functions}

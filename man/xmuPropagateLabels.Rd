@@ -51,4 +51,3 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}}
 }
-\concept{xmu internal not for end user}

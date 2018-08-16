@@ -4,8 +4,7 @@
 \alias{umx_rename}
 \title{umx_rename}
 \usage{
-umx_rename(x, replace = NULL, old = NULL, grep = NULL,
-  test = FALSE)
+umx_rename(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 }
 \arguments{
 \item{x}{the dataframe in which to rename variables}
@@ -67,4 +66,3 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_stack}}, \code{\link{umx_swap_a_block}},
   \code{\link{umx}}
 }
-\concept{Data Functions}

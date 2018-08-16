@@ -5,9 +5,8 @@
 \title{umxRAM2Ordinal}
 \usage{
 umxRAM2Ordinal(model, verbose = T, thresholds = c("deviationBased",
-  "direct", "ignore", "left_censored"), name = NULL,
-  showEstimates = TRUE, refModels = NULL,
-  autoRun = getOption("umx_auto_run"))
+  "direct", "ignore", "left_censored"), name = NULL, showEstimates = TRUE,
+  refModels = NULL, autoRun = getOption("umx_auto_run"))
 }
 \arguments{
 \item{model}{An RAM model to add thresholds too.}
@@ -47,4 +46,3 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_get_bracket_addresses}},
   \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
 }
-\concept{Advanced Model Building Functions}

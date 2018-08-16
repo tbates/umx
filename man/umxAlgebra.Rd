@@ -5,8 +5,7 @@
 \title{A simple wrapper for mxAlgebra with name as the first parameter for more readable compact code.}
 \usage{
 umxAlgebra(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
-  joinKey = as.character(NA), joinModel = as.character(NA),
-  verbose = 0L)
+  joinKey = as.character(NA), joinModel = as.character(NA), verbose = 0L)
 }
 \arguments{
 \item{name}{The name of the matrix (Default = NA). Note the different order compared to mxMatrix!}
@@ -46,4 +45,3 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxRAM}}, \code{\link{umxRun}},
   \code{\link{umxSuperModel}}, \code{\link{umx}}
 }
-\concept{Core Modelling Functions}

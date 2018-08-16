@@ -5,8 +5,8 @@
 \title{Get variances from a df that might contain some non-numeric columns}
 \usage{
 umx_var(df, ordVar = 1, format = c("full", "diag", "lower"),
-  use = c("complete.obs", "pairwise.complete.obs", "everything",
-  "all.obs", "na.or.complete"), digits = NULL, strict = TRUE)
+  use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs",
+  "na.or.complete"), digits = NULL, strict = TRUE)
 }
 \arguments{
 \item{df}{A dataframe of raw data from which to get variances.}
@@ -48,4 +48,3 @@ Other Miscellaneous Stats Helpers: \code{\link{reliability}},
   \code{\link{umx_r_test}}, \code{\link{umx_round}},
   \code{\link{umx}}
 }
-\concept{Miscellaneous Stats Helpers}

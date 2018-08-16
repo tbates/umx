@@ -38,6 +38,3 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
-\concept{Core Modelling Functions
-\url{http://www.github.com/tbates/umx}}
-\concept{Reporting Functions}

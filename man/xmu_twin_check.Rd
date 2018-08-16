@@ -75,5 +75,3 @@ Other Check or test: \code{\link{umx_check_names}},
   \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
   \code{\link{umx}}
 }
-\concept{Check or test}
-\concept{Twin Modeling Functions}

@@ -80,4 +80,3 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
   \code{\link{umxRun}}, \code{\link{umx}}
 }
-\concept{Core Modelling Functions}

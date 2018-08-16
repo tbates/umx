@@ -6,8 +6,7 @@
 \usage{
 umxSimplex(name = "simplex", selDVs, dzData, mzData, sep = NULL,
   equateMeans = TRUE, dzAr = 0.5, dzCr = 1, addStd = TRUE,
-  addCI = TRUE, autoRun = getOption("umx_auto_run"),
-  optimizer = NULL)
+  addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "simplex")}
@@ -138,4 +137,3 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
-\concept{Twin Modeling Functions}

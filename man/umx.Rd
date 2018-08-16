@@ -242,23 +242,3 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}}
 }
-\concept{Advanced Model Building Functions}
-\concept{Check or test}
-\concept{Core Modelling Functions}
-\concept{Data Functions}
-\concept{File Functions}
-\concept{Get and set}
-\concept{Miscellaneous Stats Helpers}
-\concept{Miscellaneous Utility Functions}
-\concept{Modify or Compare Models}
-\concept{Plotting functions}
-\concept{Reporting Functions}
-\concept{String Functions}
-\concept{Super-easy helpers}
-\concept{Teaching and testing Functions}
-\concept{Twin Data functions}
-\concept{Twin Modeling Functions}
-\concept{Twin Reporting Functions}
-\concept{datasets}
-\concept{xmu internal not for end user}
-\concept{zAdvanced Helpers}

@@ -37,4 +37,3 @@ Other Twin Data functions: \code{\link{umx_long2wide}},
   \code{\link{umx_residualize}},
   \code{\link{umx_wide2long}}, \code{\link{umx}}
 }
-\concept{Twin Data functions}

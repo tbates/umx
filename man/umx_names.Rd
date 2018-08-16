@@ -117,5 +117,3 @@ Other String Functions: \code{\link{umx_explode_twin_names}},
   \code{\link{umx_trim}},
   \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
 }
-\concept{Reporting Functions}
-\concept{String Functions}

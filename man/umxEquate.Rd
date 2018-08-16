@@ -4,8 +4,8 @@
 \alias{umxEquate}
 \title{umxEquate: Equate two or more paths}
 \usage{
-umxEquate(model, master, slave, free = c(TRUE, FALSE, NA),
-  verbose = FALSE, name = NULL, autoRun = FALSE, comparison = TRUE)
+umxEquate(model, master, slave, free = c(TRUE, FALSE, NA), verbose = FALSE,
+  name = NULL, autoRun = FALSE, comparison = TRUE)
 }
 \arguments{
 \item{model}{An \code{\link{mxModel}} within which to equate parameters}
@@ -76,4 +76,3 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }
-\concept{Modify or Compare Models}

@@ -42,4 +42,3 @@ Other Reporting Functions: \code{\link{tmx_is.identified}},
   \code{\link{umx_show}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
-\concept{Reporting Functions}

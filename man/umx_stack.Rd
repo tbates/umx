@@ -4,8 +4,7 @@
 \alias{umx_stack}
 \title{Stack data like stack() does, with more control.}
 \usage{
-umx_stack(x, select, passalong, valuesName = "values",
-  groupName = "ind")
+umx_stack(x, select, passalong, valuesName = "values", groupName = "ind")
 }
 \arguments{
 \item{x}{a dataframe containing twin data.}
@@ -53,4 +52,3 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_reorder}},
   \code{\link{umx_swap_a_block}}, \code{\link{umx}}
 }
-\concept{Data Functions}

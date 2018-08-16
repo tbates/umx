@@ -53,4 +53,3 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxSummarySimplex}},
   \code{\link{umx_drop_ok}}
 }
-\concept{Reporting functions}
