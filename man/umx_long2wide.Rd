@@ -21,11 +21,18 @@ umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
 \item{passalong}{= Variables you wish to pass-through (keep, even though not twin vars)}
 }
 \value{
-- dataframe in wide format
+\itemize{
+\item dataframe in wide format
+}
 }
 \description{
-umx_long2wide merges on famID, for an unlimited number of twinIDs.
-Note: this assumes if zygosity or any passalong variables are NA in the first
+\code{umx_long2wide} merges on \code{famID}. Family members are ordered by \code{twinID}.
+
+twinID is equivalent to birthorder. Up to 10 twinIDs are allowed (family order).
+
+\emph{Note}: Not all data sets have an order column, but it is essential to rank subjects correctly.
+
+\emph{Note}: The functions assumes that if zygosity or any passalong variables are NA in the first
 family member, they are NA everywhere. i.e., it does not hunt for values that
 are present elsewhere to try and self-heal missing data.
 }
@@ -57,10 +64,14 @@ wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygo
   vars2keep = c("bmi", "wt"), passalong = "cohort")
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{merge}}
+\itemize{
+\item \code{\link{merge}}
+}
 
 Other Twin Data functions: \code{\link{umx_make_TwinData}},
   \code{\link{umx_residualize}},
