@@ -4401,7 +4401,8 @@ umx_explode <- function(delimiter = character(), string) {
 #' @param value Return matching elements themselves (TRUE) or their indices (FALSE) default = TRUE (opposite default to grep)
 #' @param fixed = FALSE (grep option If TRUE, pattern is a string to be matched as is. Overrides all conflicting arguments.)
 #' @param useBytes = FALSE logical. grep option. If TRUE, matching is by byte rather than by character.
-#' @param invert Return indices or values for elements that do not match (default = FALSE)
+#' @param invert Return indices or values for elements that do not match (default = FALSE).
+#' @param global replace all instances in each strong, or just the first (Default).
 #' @param collapse "as.is" leaves alone. as.vector formats as pastable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL), etc.
 #' @return - vector of matches
 #' @export
@@ -4413,31 +4414,40 @@ umx_explode <- function(delimiter = character(), string) {
 #' @md
 #' @examples
 #' umx_names(mtcars, "mpg") # only "mpg" matches this
-#' #
-#' # easy alias namez
+#' 
+#' # Use the easy-to-type alias "namez"
 #' namez(mtcars, "mpg") # vars beginning with 'd' = "disp", drat
 #' 
-#' # regular expressions
+#' # Use a regular expression to match a pattern
 #' umx_names(mtcars, "r[ab]") # "drat", "carb"
 #' namez(mtcars, "^d") # vars beginning with 'd' = "disp", drat
+#' 
+#' # Use this function to replace text in names!
 #' umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 #' 
-#' # Other options
-#' umx_names(mtcars, "mpg", invert = TRUE) # non-matches (instead of matches)
-#' umx_names(mtcars, "disp", value = FALSE) # Return indices of matches 
-#' umx_names(mtcars, "^d" , fixed = TRUE)  # vars containing literal '^d' (none...)
+#' 
+#' # ========================================================================
+#' # = Using the custom collapse option to quote each item, and wrap in c() =
+#' # ========================================================================
 #' namez(mtcars, "m", collapse = "as.vector") # paste-able R-code for a vector
+#' 
+#' # Other options passed to R's grep command
+#' umx_names(mtcars, "mpg" , invert = TRUE) # non-matches (instead of matches)
+#' umx_names(mtcars, "disp", value = FALSE) # Return indices of matches 
+#' umx_names(mtcars, "^d"  , fixed = TRUE)  # vars containing literal '^d' (none...)
 #' 
 #' # =======================================
 #' # = Examples using built-in GFF dataset =
 #' # =======================================
 #'
+#' # Just show phenotypes for Twin 1
 #' umx_names(GFF, "T_1$") # twin 1
 #' # "zyg" "sex1" "age_T1" "gff_T1" "fc_T1" "qol_T1" "hap_T1"...
+#' 
 #' umx_names(GFF, "2$") # names ending in 2
 #' umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 #' # "zyg_6grp" "zyg_2grp" "divorce"
-umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, collapse = c("as.is", "as.vector", "as.formula")) {
+umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, global = FALSE, collapse = c("as.is", "as.vector", "as.formula")) {
 	collapse = match.arg(collapse)
 	if(fixed){
 		ignore.case = FALSE
@@ -4463,8 +4473,11 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 		tmp =  grep(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, value = value,
 	     fixed = fixed, useBytes = useBytes, invert = invert)
 	} else {
-		tmp = sub(pattern = pattern, replacement = replacement, x = nameVector, ignore.case = FALSE, perl = perl,
-		    fixed = fixed, useBytes = useBytes)
+		if(global){
+			tmp = gsub(pattern = pattern, replacement = replacement, x = nameVector, ignore.case = ignore.case, perl = perl, fixed = fixed, useBytes = useBytes)
+		} else {
+			tmp = sub(pattern = pattern, replacement = replacement, x = nameVector, ignore.case = ignore.case, perl = perl, fixed = fixed, useBytes = useBytes)
+		}
 	}
 	if(collapse == "as.is"){
 		tmp
