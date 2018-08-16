@@ -174,8 +174,8 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
-		aic.weights = round(MuMIn::Weights(AIClist), 2)
+		# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+		aic.weights = round(Weights(AIClist), 2)
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
 			omxQuotes(namez(modelList)), " respectively are: ",
 			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")		
@@ -253,8 +253,8 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	whichBest = which.min(AIC(ACE, ADE, CE, AE)[,"AIC"])[1]
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
 	message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-	# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
-	aic.weights = round(MuMIn::Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
+	# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+	aic.weights = round(Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
 	message("AIC weight-based {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
 		omxQuotes(namez(c(ACE, ADE, CE, AE))), " respectively are: ", 
 		omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")
@@ -1874,8 +1874,8 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
-		aic.weights = round(MuMIn::Weights(AIClist), 2)
+		# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+		aic.weights = round(Weights(AIClist), 2)
 		message("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
 			omxQuotes(namez(modelList)), " respectively are: ", 
 			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")	
