@@ -4,8 +4,8 @@
 \alias{umx_check_names}
 \title{umx_check_names}
 \usage{
-umx_check_names(namesNeeded, data = NA, die = TRUE, no_others = FALSE,
-  intersection = FALSE, message = "")
+umx_check_names(namesNeeded, data = NA, die = TRUE,
+  no_others = FALSE, intersection = FALSE, message = "")
 }
 \arguments{
 \item{namesNeeded}{list of variable names to find (a dataframe is also allowed)}
@@ -59,3 +59,5 @@ Other Check or test: \code{\link{umx_is_class}},
   \code{\link{umx_is_numeric}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
+\concept{Check or test}
+\concept{Test}

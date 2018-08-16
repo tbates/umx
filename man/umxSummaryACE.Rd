@@ -7,8 +7,8 @@
 \usage{
 umxSummaryACE(model, digits = 2, file = getOption("umx_auto_plot"),
   comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE,
-  report = c("markdown", "html"), returnStd = FALSE, extended = FALSE,
-  zero.print = ".", ...)
+  report = c("markdown", "html"), returnStd = FALSE,
+  extended = FALSE, zero.print = ".", ...)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to summarize}
@@ -105,3 +105,5 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
 }
+\concept{Reporting functions}
+\concept{Twin Modeling Functions}

@@ -41,4 +41,5 @@ TODO
 Other datasets: \code{\link{GFF}}, \code{\link{umx}},
   \code{\link{us_skinfold_data}}
 }
+\concept{datasets}
 \keyword{datasets}

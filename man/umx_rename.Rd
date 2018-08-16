@@ -4,7 +4,8 @@
 \alias{umx_rename}
 \title{umx_rename}
 \usage{
-umx_rename(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
+umx_rename(x, replace = NULL, old = NULL, grep = NULL,
+  test = FALSE)
 }
 \arguments{
 \item{x}{the dataframe in which to rename variables}
@@ -13,23 +14,28 @@ umx_rename(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 OR, if "old" is a list of existing names, the list of new names)
 OR, if "grep" is a regular expression, the replace string)}
 
-\item{old}{Optional list of old names that will be found and replaced by the contents of replace. Defaults to NULL}
+\item{old}{Optional list of old names that will be found and replaced by the contents of replace. Defaults to NULL.}
 
-\item{grep}{Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL}
+\item{grep}{Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL.}
 
-\item{test}{whether to report a "dry run" - and not actually change anything (defaults to false)}
+\item{test}{whether to report a "dry run" - and not actually change anything. Defaults to FALSE.}
 }
 \value{
-- dataframe with columns renamed.
+\itemize{
+\item dataframe with columns renamed.
+}
 }
 \description{
 Returns a dataframe with variables renamed as desired.
-Unlike some functions, it checks that the variables exist, and that the new names are not already used.
 }
 \details{
-As a courtesy function, it handles grep replace in strings of characters.
+Unlike similar functions in other packages, it checks that the variables exist, and that the new names do not.
 
-note: to use replace list, you must say c(old = "new"), not c(old -> "new")
+Importantly, it also supports \link[=regex]{regular expressions}. This allows you to find and replace
+text based on patterns and replacements. so to change "replacement" to "inplace",
+\code{grep=re(place)ment}, \code{replace= in\\1}.
+
+\emph{note}: to use replace list, you must say c(old = "new"), not c(old -> "new")
 }
 \examples{
 # Re-name "cyl" to "cylinder"
@@ -44,6 +50,8 @@ x = umx_rename(x, grep = "lacement", replace = "") # using grep to revert to dis
 umx_names(x, "^d") # all names begining with a d
 }
 \seealso{
+\link{namez} to filter (and replace) names, Also \link{umx_check_names} to check for existence of names in a dataframe.
+
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxHetCor}},
   \code{\link{umxPadAndPruneForDefVars}},
@@ -59,3 +67,4 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_stack}}, \code{\link{umx_swap_a_block}},
   \code{\link{umx}}
 }
+\concept{Data Functions}

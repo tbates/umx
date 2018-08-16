@@ -35,3 +35,4 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxModify}}, \code{\link{umxSetParameters}},
   \code{\link{umx}}
 }
+\concept{Modify or Compare Models}

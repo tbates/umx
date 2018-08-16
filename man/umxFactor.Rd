@@ -5,8 +5,9 @@
 \alias{umx_factor}
 \title{umxFactor}
 \usage{
-umxFactor(x = character(), levels = NULL, labels = levels, exclude = NA,
-  ordered = TRUE, collapse = FALSE, verbose = FALSE, sep = NA)
+umxFactor(x = character(), levels = NULL, labels = levels,
+  exclude = NA, ordered = TRUE, collapse = FALSE, verbose = FALSE,
+  sep = NA)
 }
 \arguments{
 \item{x}{A variable to recode as an mxFactor (see \code{\link{mxFactor}})}
@@ -77,3 +78,4 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}},
   \code{\link{umx_scale}}, \code{\link{umx}}
 }
+\concept{Miscellaneous Utility Functions}

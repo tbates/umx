@@ -42,3 +42,4 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_make_top}},
   \code{\link{xmu_start_value_list}}
 }
+\concept{xmu internal not for end user}

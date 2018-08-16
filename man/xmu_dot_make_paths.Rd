@@ -5,8 +5,8 @@
 \title{xmu_dot_make_paths (not for end users)}
 \usage{
 xmu_dot_make_paths(mxMat, stringIn, heads = NULL, fixed = TRUE,
-  comment = "More paths", showResiduals = TRUE, pathLabels = "labels",
-  digits = 2)
+  comment = "More paths", showResiduals = TRUE,
+  pathLabels = "labels", digits = 2)
 }
 \arguments{
 \item{mxMat}{An mxMatrix}
@@ -48,3 +48,4 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}}
 }
+\concept{xmu internal not for end user}

@@ -6,7 +6,8 @@
 \usage{
 umxConfint(object, parm = c("existing", "smart", "all",
   "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95,
-  run = FALSE, showErrorCodes = FALSE, optimizer = c("current", "SLSQP"))
+  run = FALSE, showErrorCodes = FALSE, optimizer = c("current",
+  "SLSQP"))
 }
 \arguments{
 \item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))}
@@ -101,3 +102,4 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umx_drop_ok}},
   \code{\link{umx_standardize_RAM}}
 }
+\concept{Reporting functions}

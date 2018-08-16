@@ -4,16 +4,16 @@
 \alias{umx_apply}
 \title{umx_apply}
 \usage{
-umx_apply(FUN, of, by = "columns", ...)
+umx_apply(FUN, of, by = c("columns", "rows"), ...)
 }
 \arguments{
-\item{FUN}{The function to apply}
+\item{FUN}{The function to apply.}
 
-\item{of}{The dataframe to work with}
+\item{of}{The dataframe to work with.}
 
-\item{by}{What to apply the function to: columns or rows (default = "columns")}
+\item{by}{Apply the function to columns or to rows (default = "columns")}
 
-\item{...}{optional arguments to FUN, i.e., na.rm = T}
+\item{...}{optional arguments to FUN, e.g., na.rm = TRUE.}
 }
 \value{
 - object
@@ -40,3 +40,4 @@ Other Miscellaneous Stats Helpers: \code{\link{reliability}},
   \code{\link{umx_round}}, \code{\link{umx_var}},
   \code{\link{umx}}
 }
+\concept{Miscellaneous Stats Helpers}

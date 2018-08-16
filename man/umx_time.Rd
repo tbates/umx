@@ -4,8 +4,8 @@
 \alias{umx_time}
 \title{umx_time}
 \usage{
-umx_time(x = NA, formatStr = c("simple", "std", "custom \%H \%M \%OS3"),
-  tz = "GMT", autoRun = TRUE)
+umx_time(x = NA, formatStr = c("simple", "std",
+  "custom \%H \%M \%OS3"), tz = "GMT", autoRun = TRUE)
 }
 \arguments{
 \item{x}{A \code{\link{mxModel}} or list of models for which to display elapsed time, or 'start' or 'stop'}
@@ -67,3 +67,4 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_show_fit_or_comparison}},
   \code{\link{umx_show}}, \code{\link{umx}}
 }
+\concept{Reporting Functions}

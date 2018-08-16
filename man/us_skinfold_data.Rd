@@ -55,4 +55,5 @@ Archives of Pediatrics and Adolescent Medicine, \strong{153}, 446-453.
 Other datasets: \code{\link{GFF}}, \code{\link{iqdat}},
   \code{\link{umx}}
 }
+\concept{datasets}
 \keyword{datasets}

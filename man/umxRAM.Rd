@@ -6,10 +6,11 @@
 \usage{
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   setValues = TRUE, suffix = "", independent = NA,
-  remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std",
-  "both", "list of column names"), refModels = NULL,
+  remove_unused_manifests = TRUE, showEstimates = c("none", "raw",
+  "std", "both", "list of column names"), refModels = NULL,
   thresholds = c("deviationBased", "ignore", "left_censored"),
-  autoRun = getOption("umx_auto_run"), optimizer = NULL, verbose = FALSE)
+  autoRun = getOption("umx_auto_run"), optimizer = NULL,
+  verbose = FALSE)
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
@@ -179,3 +180,4 @@ Other Core Modelling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxPath}}, \code{\link{umxRun}},
   \code{\link{umxSuperModel}}, \code{\link{umx}}
 }
+\concept{Core Modelling Functions}

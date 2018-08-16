@@ -4,8 +4,9 @@
 \alias{umx_make}
 \title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
-umx_make(what = c("install", "examples", "check", "win", "rhub", "release",
-  "spell"), pkg = "~/bin/umx", check = TRUE, spelling = "en_US")
+umx_make(what = c("install", "examples", "check", "win", "rhub",
+  "release", "spell"), pkg = "~/bin/umx", check = TRUE,
+  spelling = "en_US")
 }
 \arguments{
 \item{what}{whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))}
@@ -48,3 +49,4 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}},
   \code{\link{umx_scale}}, \code{\link{umx}}
 }
+\concept{Miscellaneous Utility Functions}

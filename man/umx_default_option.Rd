@@ -58,3 +58,4 @@ Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_set_plot_format}},
   \code{\link{umx_set_table_format}}, \code{\link{umx}}
 }
+\concept{Get and set}

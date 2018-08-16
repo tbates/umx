@@ -5,8 +5,8 @@
 \title{xmuLabel_Matrix (not a user function)}
 \usage{
 xmuLabel_Matrix(mx_matrix = NA, baseName = NA, setfree = FALSE,
-  drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = TRUE,
-  labelFixedCells = FALSE, overRideExisting = FALSE)
+  drop = 0, jiggle = NA, boundDiag = NA, suffix = "",
+  verbose = TRUE, labelFixedCells = FALSE, overRideExisting = FALSE)
 }
 \arguments{
 \item{mx_matrix}{an mxMatrix}
@@ -66,3 +66,4 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}}
 }
+\concept{xmu internal not for end user}

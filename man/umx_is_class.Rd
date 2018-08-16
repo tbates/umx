@@ -43,3 +43,4 @@ Other Check or test: \code{\link{umx_check_names}},
   \code{\link{umx_is_numeric}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
+\concept{Check or test}

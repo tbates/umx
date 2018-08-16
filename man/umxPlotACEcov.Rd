@@ -59,3 +59,4 @@ Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotIP}}, \code{\link{umxPlotSimplex}},
   \code{\link{umx}}
 }
+\concept{Plotting functions}

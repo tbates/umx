@@ -6,8 +6,8 @@
 \usage{
 umxThresholdMatrix(df, selDVs = NULL, sep = NULL, method = c("auto",
   "Mehta", "allFree"), thresholds = c("deviationBased"),
-  threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE,
-  verbose = FALSE)
+  threshMatName = "threshMat", l_u_bound = c(NA, NA),
+  droplevels = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{df}{The data being modeled (to allow access to the factor levels and quantiles within these for each variable)}
@@ -148,3 +148,4 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_get_bracket_addresses}},
   \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
 }
+\concept{Advanced Model Building Functions}

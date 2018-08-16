@@ -4,8 +4,8 @@
 \alias{umx_read_lower}
 \title{Read lower-triangle of data matrix from console or file}
 \usage{
-umx_read_lower(file = "", diag = TRUE, names = as.character(paste("X",
-  1:n, sep = "")), ensurePD = FALSE)
+umx_read_lower(file = "", diag = TRUE,
+  names = as.character(paste("X", 1:n, sep = "")), ensurePD = FALSE)
 }
 \arguments{
 \item{file}{Path to a file to read (Default "" will read from user input)}
@@ -70,3 +70,4 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_reorder}}, \code{\link{umx_stack}},
   \code{\link{umx_swap_a_block}}, \code{\link{umx}}
 }
+\concept{Data Functions}
