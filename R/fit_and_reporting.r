@@ -67,6 +67,55 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 # = Fit and Reporting Helpers =
 # =============================
 
+#' AIC weight-based conditional probabilities.
+#'
+#' @description
+#' Returns the best model by AIC, and computes the probabilities 
+#' according to AIC weight-based conditional probabilities (Wagenmakers & Farrell, 2004). 
+#'
+#' @details
+#'
+#' @param models a list of models to compare.
+#' @param digits (default 2)
+#' @return - Best model
+#' @export
+#' @family Reporting Functions
+#' @seealso - \code{\link{AIC}}
+#' @references - Wagenmakers EJ, Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychon Bull Rev*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
+#' @examples
+#' l1 = lm(mpg~ wt + disp, data=mtcars)
+#' l2 = lm(mpg~ wt, data=mtcars)
+#' umxWeightedAIC(c(l1, l2))
+umxWeightedAIC <- function(models, digits= 2) {
+	AIClist = c()
+	for (i in models) {
+		AIClist = c(AIClist, AIC(i))
+	}
+	whichBest = which.min(AIClist)
+	bestModel = models[[whichBest]]
+	aic.weights = round(MuMIn::Weights(AIClist), 2)
+	if(isS4(models[[1]]) & is(models[[1]], "MxModel")){
+		# TODO: this should work with  umx_is_MxModel(models[[1]])
+		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
+		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
+			omxQuotes(namez(models)), " respectively are: ",
+			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")		
+	}else{
+		if("call" %in% names(bestModel)){
+			# ID = paste0("Model ", omxQuotes(bestModel$call))
+			ID = paste0("Model ", whichBest)
+		} else {
+			ID = paste0("Model ", whichBest)
+		}
+		message(ID, " is the best fitting model according to AIC.")
+		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model are (for each model you gave me): ",
+			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")		
+		
+	}
+	invisible(bestModel)
+}
+
 #' Reduce models, and report the results.
 #'
 #' @description
