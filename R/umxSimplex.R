@@ -76,7 +76,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' data(iqdat)
 #' mzData <- subset(iqdat, zygosity == "MZ")
@@ -218,7 +218,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' @family Twin Modeling Functions
 #' @family Reporting functions
 #' @seealso - \code{\link{umxSimplex}}
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' data(iqdat)
 #' nTimePoints = 4 # Number of time points
@@ -544,7 +544,7 @@ plot.MxModelSimplex <- umxPlotSimplex
 #' @return - Standardized Simplex \code{\link{umxSimplex}} model
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' data(iqdat)
 #' mzData = subset(iqdat, zygosity == "MZ")

@@ -5,7 +5,7 @@
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
 # 
-#        http://www.apache.org/licenses/LICENSE-2.0
+#        https://www.apache.org/licenses/LICENSE-2.0
 # 
 #   Unless required by applicable law or agreed to in writing, software
 #   distributed under the License is distributed on an "AS IS" BASIS,
@@ -502,7 +502,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 #' @param verbose how much feedback to give (defaults to FALSE)
 #' @return - a list containing an \code{\link{mxMatrix}} called "thresh", 
 #' an \code{\link{mxRAMObjective}} object, and an \code{\link{mxData}} object
-#' @references - \url{http://tbates.github.io}
+#' @references - \url{https://tbates.github.io}
 #' @examples
 #' # x = mtcars
 #' # x$cyl = mxFactor(x$cyl, levels = c(4,6,8))
@@ -684,9 +684,9 @@ xmuMI <- function(model, vector = TRUE) {
 	# modification indices
 	# v0.9: written Michael Culbertson
 	# v0.91: up on github; added progress bar, Bates
-	# http://openmx.ssri.psu.edu/thread/831
-	# http://openmx.ssri.psu.edu/thread/1019
-	# http://openmx.ssri.psu.edu/sites/default/files/mi-new.r
+	# https://openmx.ssri.psu.edu/thread/831
+	# https://openmx.ssri.psu.edu/thread/1019
+	# https://openmx.ssri.psu.edu/sites/default/files/mi-new.r
 	steps <- 5
 	bar <- txtProgressBar (min=0, max=steps, style=3)
     utils::setTxtProgressBar(bar, 1)

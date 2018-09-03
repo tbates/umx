@@ -47,7 +47,7 @@
 #' @export
 #' @family Teaching and testing Functions
 #' @seealso - 
-#' @references - \url{http://www.vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf},
+#' @references - \url{https://www.vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf},
 #'  \url{https://github.com/tbates/umx}
 #' @examples
 #' library(umx);

@@ -4,7 +4,7 @@
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
 # 
-#        http://www.apache.org/licenses/LICENSE-2.0
+#        https://www.apache.org/licenses/LICENSE-2.0
 # 
 #   Unless required by applicable law or agreed to in writing, software
 #   distributed under the License is distributed on an "AS IS" BASIS,
@@ -288,7 +288,7 @@ umxModel <- function(...) {
 #' @export
 #' @seealso \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, \code{\link{parameters}}, \code{\link{umxSuperModel}}
 #' @family Core Modelling Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @md
 #' @examples
 #' 
@@ -737,7 +737,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 #' @return - \code{\link{mxModel}}
 #' @family Core Modeling Functions
 #' @family Modify or Compare Models
-#' @references - \url{http://github.com/tbates/umx}
+#' @references - \url{https://github.com/tbates/umx}
 #' @export
 #' @examples
 #' require(umx)
@@ -2308,7 +2308,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}} for more examples of twin modeling. \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link{xmu_make_top}}
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' @md
 #' @examples
 #' \dontrun{
@@ -2559,7 +2559,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2824,7 +2824,7 @@ umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", 
 #' @export
 #' @seealso - Core functions:
 #' @family Advanced Model Building Functions
-#' @references - \url{http://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -2966,7 +2966,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' @export
 #' @examples
 #' # ==============================================================
@@ -3128,7 +3128,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @return - \code{\link{mxModel}}
 #' @family Core Modelling Functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' @export
 #' @examples
 #' require(umx)
@@ -3308,7 +3308,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @export
 #' @seealso \code{\link{umxModify}}, \code{\link{umxCompare}}
 #' @family Modify or Compare Models
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3397,7 +3397,7 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' @return - the fixed \code{\link{mxModel}}
 #' @export
 #' @family Modify or Compare Models
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3445,7 +3445,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @return a table of model comparisons
 #' @export
 #' @family Modify or Compare Models
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' umxDrop1(fit3) # try dropping each free parameters (default)  
@@ -3501,7 +3501,7 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' @return a table of fit changes
 #' @export
 #' @family Modify or Compare Models
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' model = umxAdd1(model)
@@ -3619,7 +3619,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @return - path list
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' library(umx)
 #' data(demoOneFactor)
@@ -3812,7 +3812,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' @return - list of thresholds matrix, deviations, lowerOnes
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @md
 #' @examples
 #' # ============================
@@ -4335,7 +4335,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @export
 #' @family Core Modelling Functions
 #' @seealso - \code{\link{mxPath}}
-#' @references - \url{http://tbates.github.io}
+#' @references - \url{https://tbates.github.io}
 #' @examples
 #' # A worked example
 #' data(demoOneFactor)
@@ -4733,7 +4733,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' Introductory working examples are below. You can run all demos with demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
-#' There is a helpful blog at \url{http://tbates.github.io}
+#' There is a helpful blog at \url{https://tbates.github.io}
 #' 
 #' If you want the bleeding-edge version:
 #' 
@@ -4759,7 +4759,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family Advanced Model Building Functions
 #' @family zAdvanced Helpers
 #' @family xmu internal not for end user
-#' @references - \url{http://www.github.com/tbates/umx}
+#' @references - \url{https://www.github.com/tbates/umx}
 #' 
 #' @examples
 #' require("umx")
