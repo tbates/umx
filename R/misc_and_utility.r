@@ -1815,7 +1815,7 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 	for (fn in a) {
 		findB = grepl(pattern = findStr, fn) # returns 1 if found
 		if(findB){
-			fnew = gsub(findStr, replacement = replaceStr, fn) # replace all instances
+			fnew = gsub(findStr, replacement = replaceStr, x = fn) # replace all instances
 			if(test){
 				message("would change ", fn, " to ", fnew)
 			} else {
