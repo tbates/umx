@@ -3516,7 +3516,7 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
      RNI         <-  ((indep.chi - indep.df) - NCP) / (indep.chi - indep.df)
      Mc <- NCI   <-
        MFI       <-  exp(-0.5 * NCP / N)
-     
+
      # LISREL Indices
      GFI <-
        1 - (
@@ -3535,7 +3535,7 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
        )
      AGFI        <-  1 - (q / df) * (1 - GFI)
      PGFI        <-  GFI * df / q
-     
+
      # Information-based indices
      AICchi      <-  Chi + 2 * N.parms
      AICdev      <-  deviance + 2 * N.parms
@@ -3549,48 +3549,66 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
      ECVIdev     <-  1 / N * AICdev
      MECVIchi    <-  1 / BCCchi
      MECVIdev    <-  1 / BCCdev
-     
+
      # Residual based indices
      # TODO: Add unbiased stdandardized estimators
      # TODO: Add confidence intervals
      residual.cov <-  observed.cov - estimate.cov
      residual.cor <-  observed.cor - estimate.cor
      residual.means <- observed.means - estimate.means
+     residual.meansZ <- observed.means / sqrt(diag(observed.cov)) - estimate.means / sqrt(diag(estimate.cov))
      invS <- diag( 1 / sqrt(diag(observed.cov)))
      if(!is.na(residual.means)) {
        q_m = q + N.manifest
-       # TODO: Add means model indices
-       warning("Mean structure not currently incorporated into residuals-based indices.")
        if(!is.na(residual.cov)) {
-         RMR        <-  sqrt( sum( vech(residual.cov)^2 ) / q )
-         SRMR       <-  sqrt( sum( vech(invS %*% residual.cov %*% invS)^2 ) / q )  # EQS/Bentler approach
-         SRMR_mplus <-  sqrt( sum( vechs(residual.cor)^2 ) + sum( ( diag(residual.cov) * diag(invS) )^2 ) )
-         MAR        <-  sum(  abs( vech(residual.cov) ) ) / q
-         SMAR       <-  sum(  abs( vech(invS %*% residual.cov %*% invS) ) ) / q    # Bentler approach
+         RMR        <-  sqrt( ( sum( vech(residual.cov)^2 ) + sum(residual.means^2) ) / q )
+         SRMR       <-  sqrt( ( sum( vech(invS %*% residual.cov %*% invS)^2 ) + sum( (residual.means * diag(invS))^2 ) ) / q )  # EQS/Bentler approach
+         SRMR_mplus <-  sqrt( ( sum( vechs(residual.cor)^2 ) + sum( ( diag(residual.cov) * diag(invS^2) )^2 ) + sum(residual.meansZ^2) ) / q )
+         MAR        <-        ( sum( abs( vech(residual.cov) ) ) + sum( abs( residual.means ) ) ) / q
+         SMAR       <-        ( sum( abs( vech(invS %*% residual.cov %*% invS) ) ) + sum( abs(residual.means * diag(invS)) ) ) / q    # Bentler approach
+
+         RMR_nomean        <-  sqrt(   sum( vech(residual.cov)^2 ) / q )
+         SRMR_nomean       <-  sqrt(   sum( vech(invS %*% residual.cov %*% invS)^2 ) / q )  # EQS/Bentler approach
+         SRMR_mplus_nomean <-  sqrt( ( sum( vechs(residual.cor)^2 ) + sum( ( diag(residual.cov) * diag(invS^2) )^2 ) ) / q )
+         MAR_nomean        <-  sum(    abs( vech(residual.cov) ) ) / q
+         SMAR_nomean       <-  sum(    abs( vech(invS %*% residual.cov %*% invS) ) ) / q    # Bentler approach
+
        } else {
-         RMR <- SRMR <- SRMR_mplus <- MAR <- SMAR <-
+         RMR <- SRMR <- SRMR_mplus <-
            "Observed values are correlations, use CRMR instead."
+         MAR <- SMAR <-
+           "Observed values are correlations, use CMAR instead."
+         RMR_nomean <- SRMR_nomean <- SRMR_mplus_nomean <-
+           "Observed values are correlations, use CRMR_nomean instead."
+         MAR_nomean <- SMAR_nomean <-
+           "Observed values are correlations, use CMAR_nomean instead."
        }
-       CRMR         <-  sqrt( sum( vechs(residual.cor^2) ) )    # Bollen approach
-       CMAR         <-  sum(  abs( vechs(residual.cor) ) ) / q  # Bollen approach
-       
+       CRMR         <-  sqrt( ( sum( vechs(residual.cor^2) ) + sum(residual.meansZ^2) ) / q )    # Bollen approach
+       CMAR         <-        ( sum( abs( vechs(residual.cor) ) ) + sum( abs(residual.meansZ) ) ) / q  # Bollen approach
+
+       CRMR_nomean  <-  sqrt( sum( vechs(residual.cor^2) ) / q )    # Bollen approach
+       CMAR_nomean  <-        sum( abs( vechs(residual.cor) ) ) / q  # Bollen approach
+
      } else {
+       RMR_nomean <- SRMR_nomean <- SRMR_mplus_nomean <- MAR_nomean <- SMAR_nomean <- CRMR_nomean <- CMAR_nomean <- NA
        if(!is.na(residual.cov)) {
-         RMR        <-  sqrt( sum( vech(residual.cov)^2 ) / q )
-         SRMR       <-  sqrt( sum( vech(invS %*% residual.cov %*% invS)^2 ) / q )  # EQS/Bentler approach
-         SRMR_mplus <-  sqrt( sum( vechs(residual.cor)^2 ) + sum( ( diag(residual.cov) * diag(invS) )^2 ) )
-         MAR        <-  sum(  abs( vech(residual.cov) ) ) / q
-         SMAR       <-  sum(  abs( vech(invS %*% residual.cov %*% invS) ) ) / q    # Bentler approach
+         RMR        <-  sqrt(   sum( vech(residual.cov)^2 ) / q )
+         SRMR       <-  sqrt(   sum( vech(invS %*% residual.cov %*% invS)^2 ) / q )  # EQS/Bentler approach
+         SRMR_mplus <-  sqrt( ( sum( vechs(residual.cor)^2 ) + sum( ( diag(residual.cov) * diag(invS^2) )^2 ) ) / q )
+         MAR        <-  sum(    abs( vech(residual.cov) ) ) / q
+         SMAR       <-  sum(    abs( vech(invS %*% residual.cov %*% invS) ) ) / q    # Bentler approach
        } else {
-         RMR <- SRMR <- SRMR_mplus <- MAR <- SMAR <-
+         RMR <- SRMR <- SRMR_mplus <-
            "Observed values are correlations, use CRMR instead."
+         MAR <- SMAR <-
+           "Observed values are correlations, use CMAR instead."
        }
-       CRMR         <-  sqrt( sum( vechs(residual.cor^2) ) )    # Bollen approach
-       CMAR         <-  sum(  abs( vechs(residual.cor) ) ) / q  # Bollen approach
+       CRMR         <-  sqrt( sum( vechs(residual.cor^2) ) / q )    # Bollen approach
+       CMAR         <-        sum( abs( vechs(residual.cor) ) ) / q  # Bollen approach
      }
-     
+
      indep.RMSEA  <- sqrt(max(indep.chi - indep.df, 0) / (N - 1) / indep.df)
-     
+
      indices <-
        data.frame(
          N, deviance, N.parms, N.manifest,
@@ -3599,6 +3617,8 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
          RMSEA, indep.RMSEA,
          RMR, SRMR, SRMR_mplus, CRMR,
          MAR, SMAR, CMAR,
+         RMR_nomean, SRMR_nomean, SRMR_mplus_nomean, CRMR_nomean,
+         MAR_nomean, SMAR_nomean, CMAR_nomean,
          GFI, AGFI, PGFI, GH,
          NFI, RFI, IFI, BL89, RNI,
          NNFI, TLI, CFI,
@@ -3625,14 +3645,14 @@ print.umxFitIndices <- function(x, digits = max(1L, getOption("digits") - 3L), .
   cat('Number of observed statistics:       ', round(x$N.manifest, digits), '\n')
   cat('Deviance (-2 * LogLikelihood):       ', round(x$deviance,   digits), '\n')
   cat('\n')
-  
+
   cat('Chi squared test\n')
   cat('================\n')
   cat('Chi squared: ' format(round(x$Chi, max(0, digits - log10(x$Chi)))),
       ", df = ", x$df, ", p-value = ", format.pval(x$p.Chi, digits, eps = 0), "\n", sep = "")
   cat('Chisq / df:', round(x$Chi.df, digits), '\n')
   cat('\n')
-  
+
   cat('Noncentrality-based indices\n')
   cat('===========================\n')
   cat('Noncentrality parameter (NCP or d):', round(x$NCP, digits), '\n')
@@ -3643,7 +3663,7 @@ print.umxFitIndices <- function(x, digits = max(1L, getOption("digits") - 3L), .
   cat('Mc (McDonald centrality index): ', round(x$MFI, digits), '\n')
   cat('   [Also called MFI (McDonald fit index) or NCI (Noncentrality index)]\n')
   cat('\n')
-  
+
   cat('Incremental fit indices\n')
   cat('=======================\n')
   cat('CFI (Comparative fit index):', round(x$CFI, digits), '\n')
@@ -3656,22 +3676,22 @@ print.umxFitIndices <- function(x, digits = max(1L, getOption("digits") - 3L), .
   cat('IFI (Incremental fit index):       ', round(x$IFI,       digits), '\n')
   cat('   [Also called BL89 (Bollen, 1989, fit index)]\n')
   cat('\n')
-  
+
   cat('Residuals-based indices\n')
   cat('=======================\n')
-  cat('RMR (Root mean squared residual):', round(x$RMR, digits), '\n')
+  cat('RMR (Root mean squared residual):', round(x$RMR, digits), if(!is.na(x$RMR_nomean)) {'(with mean structure)   ', round(x$RMR_nomean, digits), '(without mean structure)'}, '\n')
   cat('SRMR (Standardized root mean squared residual):\n')
-  cat('  Bentler method (EQS, lavaan, sem, AMOS):    ', round(x$SRMR, digits), '\n')
-  cat('  MPlus method:                               ', round(x$SRMR_mplus, digits), '\n')
-  cat('CRMR (Correlation root mean squared residual):', round(x$CRMR, digits), '\n')
+  cat('  Bentler method (EQS, lavaan, sem, AMOS):    ', round(x$SRMR, digits),       if(!is.na(x$SRMR_nomean)) {'(with mean structure)   ',       round(x$SRMR_nomean, digits), '(without mean structure)'}, '\n')
+  cat('  MPlus method:                               ', round(x$SRMR_mplus, digits), if(!is.na(x$SRMR_mplus_nomean)) {'(with mean structure)   ', round(x$SRMR_mplus_nomean, digits), '(without mean structure)'}, '\n')
+  cat('CRMR (Correlation root mean squared residual):', round(x$CRMR, digits),       if(!is.na(x$CRMR_nomean)) {'(with mean structure)   ',       round(x$CRMR_nomean, digits), '(without mean structure)'}, '\n')
   cat('   [The Bollen method SRMR]\n')
   cat('\n')
-  
-  cat('MAR (Mean absolute residual):              ', round(x$MAR,  digits), '\n')
-  cat('SMAR (Standardized mean absolute residual):', round(x$SMAR, digits), '\n')
-  cat('CMAR (Correlation mean absolute residual): ', round(x$CMAR, digits), '\n')
+
+  cat('MAR (Mean absolute residual):              ', round(x$MAR,  digits), if(!is.na(x$MAR_nomean)) {'(with mean structure)   ',  round(x$MAR_nomean, digits), '(without mean structure)'}, '\n')
+  cat('SMAR (Standardized mean absolute residual):', round(x$SMAR, digits), if(!is.na(x$SMAR_nomean)) {'(with mean structure)   ', round(x$SMAR_nomean, digits), '(without mean structure)'}, '\n')
+  cat('CMAR (Correlation mean absolute residual): ', round(x$CMAR, digits), if(!is.na(x$CMAR_nomean)) {'(with mean structure)   ', round(x$CMAR_nomean, digits), '(without mean structure)'}, '\n')
   cat('\n')
-  
+
   cat('Information-based fit indices\n')
   cat('=============================\n')
   cat('AIC (Akaike information criterion):    ', round(x$AICchi,   digits), '(Chisq)   ', round(x$AICdev,   digits), '(deviance)\n')
@@ -3681,7 +3701,7 @@ print.umxFitIndices <- function(x, digits = max(1L, getOption("digits") - 3L), .
   cat('MECVI (Modified ECVI):                 ', round(x$MECVIchi, digits), '(Chisq)   ', round(x$MECVIdev, digits), '(deviance)\n')
   cat('BIC (Bayesian information criterion):'  , round(x$BICchi,   digits), '(Chisq)   ', round(x$BICdev,   digits), '(deviance)\n')
   cat('\n')
-  
+
   cat('LISREL and other early fit indices\n')
   cat('==================================\n')
   cat('(These indices are strongly discouraged due to numerous problems. It is recommended that you do not report them.)\n')
@@ -3693,10 +3713,10 @@ print.umxFitIndices <- function(x, digits = max(1L, getOption("digits") - 3L), .
   cat('RFI (Relative fit index):    ', round(x$RFI,  digits), '\n')
   cat('GH (Gamma hat):              ', round(x$GH,  digits), '\n')
   cat('   [Estimated population GFI]')
-  
-  if(x$indep.RMSEA <= .158) message(paste0("Note: Independence (Null) model has RMSEA = ", round(indep.RMSEA, 3), ".\nIf the model shows good fit (RMSEA <= .05), TLI has a maximum value <= .90.\nInterpret incremental fit indices (TLI, CFI, etc.) with caution."))
+
+  if(x$indep.RMSEA <= .158) message(paste0("Note: Independence (Null) model has RMSEA = ", round(indep.RMSEA, digits), ".\nIf the model shows good fit (RMSEA <= .05), TLI has a maximum value <= .90.\nInterpret incremental fit indices (TLI, CFI, etc.) with caution."))
   invisible(x)
-  
+
 }
 
 # define generic RMSEA...
