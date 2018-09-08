@@ -35,7 +35,7 @@ m2 = umxModify(m1, update = "g_to_x1", name = "no effect on x1")
 umx_drop_ok(m1, m2, text = "the path to x1")
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

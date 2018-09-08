@@ -37,7 +37,7 @@ m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 plot(m1, std = FALSE) # don't standardize
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Plotting functions: \code{\link{plot.MxModel}},

@@ -67,7 +67,7 @@ umxSummary(m1, CIs = TRUE, file = NA);
 
 }
 \references{
-- \url{http://www.github.com/tbates/umx}, \url{http://tbates.github.io}
+- \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.

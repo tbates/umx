@@ -26,7 +26,7 @@ alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " \%*\% "), name =
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},

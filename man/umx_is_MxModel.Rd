@@ -27,7 +27,7 @@ if(umx_is_MxModel(list(m1,m1), listOK = TRUE)){
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

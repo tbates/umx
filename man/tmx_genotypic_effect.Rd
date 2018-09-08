@@ -69,7 +69,7 @@ p
 # ggsave(paste0(base, "c03_genotypic_effect_by_gene_dose.pdf"), width = 4.6, height = 4.6)
 }
 \references{
-- \url{http://www.vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf},
+- \url{https://www.vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf},
  \url{https://github.com/tbates/umx}
 }
 \seealso{

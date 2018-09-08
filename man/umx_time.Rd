@@ -53,7 +53,7 @@ umx_time('stop')
 # elapsed time: .3 seconds
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Reporting Functions: \code{\link{loadings.MxModel}},

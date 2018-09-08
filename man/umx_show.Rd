@@ -46,7 +46,7 @@ umx_show(m1, what = "labels")
 umx_show(m1, what = "free", matrices = "A")
 }
 \references{
-- \url{http://tbates.github.io}
+- \url{https://tbates.github.io}
 }
 \seealso{
 Other Reporting Functions: \code{\link{loadings.MxModel}},

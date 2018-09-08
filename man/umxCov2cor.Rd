@@ -19,7 +19,7 @@ umxCov2cor like \code{\link{cov2cor}} that forces upper and lower triangles to b
 umxCov2cor(cov(mtcars))
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Miscellaneous Stats Helpers: \code{\link{reliability}},

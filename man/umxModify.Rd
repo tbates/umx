@@ -114,7 +114,7 @@ m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", com
 
 }
 \references{
-- \url{http://github.com/tbates/umx}
+- \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Modify or Compare Models: \code{\link{umxAdd1}},

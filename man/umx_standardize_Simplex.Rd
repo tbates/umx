@@ -25,7 +25,7 @@ m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", dzData = dzData, mz
 std = umx_standardize_Simplex(m1)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

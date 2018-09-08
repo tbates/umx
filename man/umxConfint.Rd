@@ -81,7 +81,7 @@ m2 =  umxConfint(m1, "smart")
 
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link[stats]{confint}}, \code{\link{umxCI}}

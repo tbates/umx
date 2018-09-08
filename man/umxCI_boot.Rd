@@ -53,8 +53,8 @@ with replacement from your data and then computing the statistic for each redraw
 }
 }
 \references{
-- \url{http://openmx.ssri.psu.edu/thread/2598}
-Original written by \url{http://openmx.ssri.psu.edu/users/bwiernik}
+- \url{https://openmx.ssri.psu.edu/thread/2598}
+Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 }
 \seealso{
 - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}

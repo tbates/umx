@@ -22,7 +22,7 @@ if(umx_is_MxMatrix(x)){
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

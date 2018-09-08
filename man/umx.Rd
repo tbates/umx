@@ -18,7 +18,7 @@ Have a look, for example at \code{\link{umxRAM}}
 Introductory working examples are below. You can run all demos with demo(umx)
 When I have a vignette, it will be: vignette("umx", package = "umx")
 
-There is a helpful blog at \url{http://tbates.github.io}
+There is a helpful blog at \url{https://tbates.github.io}
 
 If you want the bleeding-edge version:
 
@@ -74,7 +74,7 @@ plot(m1, std = TRUE)
 plot(m1, std = TRUE, file = NA)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Teaching and testing Functions: \code{\link{tmx_genotypic_effect}},

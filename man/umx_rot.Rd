@@ -21,7 +21,7 @@ umx_rot(c(3,4,5,6,7))
 # [1] 4 5 6 7 3
 }
 \references{
-- \url{http://tbates.github.io}
+- \url{https://tbates.github.io}
 }
 \seealso{
 Other String Functions: \code{\link{umx_explode_twin_names}},

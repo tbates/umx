@@ -35,7 +35,7 @@ m1 = umx_standardize(m1, return = "model")
 summary(m1)
 }
 \references{
-- \url{http://github.com/tbates/umx}
+- \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

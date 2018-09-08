@@ -46,7 +46,7 @@ m1 <- umxRAM("One Factor", data = df,
 umxMI(m1, full=FALSE)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{mxMI}}

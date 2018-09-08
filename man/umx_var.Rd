@@ -38,7 +38,7 @@ umx_var(tmp2, format = "diag")
 umx_var(tmp2, format = "full")
 }
 \references{
-- \url{http://tbates.github.io}
+- \url{https://tbates.github.io}
 }
 \seealso{
 Other Miscellaneous Stats Helpers: \code{\link{reliability}},

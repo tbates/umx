@@ -28,7 +28,7 @@ umx_is_cov(df, boolean = TRUE)
 umx_is_cov(mtcars, boolean = TRUE)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

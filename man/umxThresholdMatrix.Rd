@@ -135,7 +135,7 @@ tmp[[3]]$formula
 }
 \references{
 \itemize{
-\item \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

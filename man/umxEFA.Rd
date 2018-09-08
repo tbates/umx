@@ -95,7 +95,7 @@ x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regr
 }
 }
 \references{
-- \url{http://github.com/tbates/umx}
+- \url{https://github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{factanal}}, \code{\link{mxFactorScores}}

@@ -65,7 +65,7 @@ m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numOb
 plot(m1)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
+- \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 }
 \seealso{
 - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},

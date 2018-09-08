@@ -34,7 +34,7 @@ m1 = mxRun(m1)
 mxEval(list(ab = ab), m1)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Reporting Functions: \code{\link{loadings.MxModel}},

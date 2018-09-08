@@ -45,7 +45,7 @@ umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
 }
 \references{
-- \url{http://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+- \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 - Core functions:

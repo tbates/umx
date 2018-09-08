@@ -29,7 +29,7 @@ df$mpg = c(letters,letters[1:6]); str(df)
 df = umx_as_numeric(df, force=TRUE); str(df)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

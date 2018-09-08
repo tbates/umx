@@ -34,7 +34,7 @@ umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", baseFolder = "Finder",
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other File Functions: \code{\link{dl_from_dropbox}},

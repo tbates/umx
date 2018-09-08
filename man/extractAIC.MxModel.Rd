@@ -37,7 +37,7 @@ extractAIC(m1)
 AIC(m1)
 }
 \references{
-- \url{http://openmx.ssri.psu.edu/thread/931#comment-4858}
+- \url{https://openmx.ssri.psu.edu/thread/931#comment-4858}
 }
 \seealso{
 - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik}}

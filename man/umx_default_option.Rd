@@ -40,7 +40,7 @@ option_list = c(TRUE, FALSE, NA)
 umx_default_option(option_list, option_list) # works with non character
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{match.arg}}

@@ -93,9 +93,9 @@ umxSummary(m1, showEstimates = "std", filter = "NS")
 
  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
- Retrieved from \url{http://www.statmodel.com/download/Yudissertation.pdf}
+ Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
 
-\url{http://tbates.github.io}
+\url{https://tbates.github.io}
 }
 \seealso{
 - \code{\link{umxRun}}

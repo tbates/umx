@@ -57,7 +57,7 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE);
 }
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxACEcov}}

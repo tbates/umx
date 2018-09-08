@@ -30,7 +30,7 @@ umxDrop1(model, regex="a_r1c1|a_r1c2")
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Modify or Compare Models: \code{\link{umxAdd1}},

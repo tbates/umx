@@ -90,7 +90,7 @@ umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 }
 \references{
 \itemize{
-\item \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

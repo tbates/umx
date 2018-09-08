@@ -24,7 +24,7 @@ Check that a test evaluates to TRUE. If not, stop, warn, or message the user
 umx_check(length(1:3)==3, "stop", "item must have length == 3")
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

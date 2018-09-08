@@ -15,7 +15,7 @@ umxFitIndices(model, refModels = mxRefModels(model, run = TRUE))
 Table of fit statistics
 }
 \description{
-A list of fit indices. Originated in this thread: http://openmx.ssri.psu.edu/thread/765
+A list of fit indices. Originated in this thread: https://openmx.ssri.psu.edu/thread/765
 note: This is not a full-fat fit reporter. It is not robust across multi-group designs,
 definition variables. It is primarily designed to add less-often reported fit indices for 
 RAM models where reviewer 2 wants something other than CFA/TLI/RMSEA :-).

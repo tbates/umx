@@ -95,7 +95,7 @@ umx_lower2full(tmp, diag = FALSE)
 umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

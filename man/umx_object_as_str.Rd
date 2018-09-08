@@ -19,7 +19,7 @@ Utility to return an object's name as a string
 umx_object_as_str(mtcars) # "mtcars"
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other String Functions: \code{\link{umx_explode_twin_names}},

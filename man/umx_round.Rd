@@ -26,7 +26,7 @@ head(umx_round(mtcars, coerce = TRUE))
 
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Miscellaneous Stats Helpers: \code{\link{reliability}},

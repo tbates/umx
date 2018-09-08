@@ -33,7 +33,7 @@ m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
 umx_has_been_run(m1)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

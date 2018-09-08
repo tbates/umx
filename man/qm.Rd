@@ -28,7 +28,7 @@ qm(M1,c(4,5) | c(1,2),M2 | t(1:3))
 }
 }
 \references{
-\url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
+\url{https://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},

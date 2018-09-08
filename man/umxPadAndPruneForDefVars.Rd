@@ -34,7 +34,7 @@ df = umxPadAndPruneForDefVars(twinData, varNames = "ht", defNames = "wt", c("1",
 }
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

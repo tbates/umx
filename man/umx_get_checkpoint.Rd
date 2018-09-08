@@ -30,7 +30,7 @@ m1 = umx_set_checkpoint(interval = 2, model = m1)
 umx_get_checkpoint(model = m1)
 }
 \references{
-- \url{http://tbates.github.io}
+- \url{https://tbates.github.io}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

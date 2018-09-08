@@ -66,7 +66,7 @@ df2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
 all(df1$hp == df2)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Twin Data functions: \code{\link{umx_long2wide}},

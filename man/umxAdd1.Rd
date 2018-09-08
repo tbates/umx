@@ -30,7 +30,7 @@ model = umxAdd1(model)
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Modify or Compare Models: \code{\link{umxDrop1}},

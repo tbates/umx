@@ -27,7 +27,7 @@ df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep 
 plot(wt1 ~ wt2, data = df)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 umx_scale

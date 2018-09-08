@@ -31,7 +31,7 @@ m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzD
 fit = umx_standardize_ACEcov(m1)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

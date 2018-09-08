@@ -40,5 +40,5 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx}}
 }
 \concept{Core Modelling Functions
-\url{http://www.github.com/tbates/umx}}
+\url{https://www.github.com/tbates/umx}}
 \concept{Reporting Functions}

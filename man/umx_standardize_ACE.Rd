@@ -27,7 +27,7 @@ m1  = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 std = umx_standardize_ACE(m1)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

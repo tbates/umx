@@ -62,7 +62,7 @@ umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
 umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 }
 \references{
-- \url{http://www.github.com/tbates/umx/}
+- \url{https://www.github.com/tbates/umx/}
 }
 \seealso{
 - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRAM}},

@@ -21,7 +21,7 @@ umx_is_MxData(mxData(mtcars, type= "raw"))
 umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

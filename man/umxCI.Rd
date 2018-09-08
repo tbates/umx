@@ -82,7 +82,7 @@ m1 = umxCI(m1, "a_r1c1", run = "yes")
 }
 }
 \references{
-- http://www.github.com/tbates/umx/
+- https://www.github.com/tbates/umx/
 }
 \seealso{
 - \code{\link[stats]{confint}}, \code{\link{umxConfint}}, \code{\link{umxCI}}, \code{\link{umxModify}}

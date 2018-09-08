@@ -74,7 +74,7 @@ umxLabel(a, verbose = TRUE, overRideExisting = FALSE)
 umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},

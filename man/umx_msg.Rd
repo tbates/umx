@@ -25,7 +25,7 @@ umx_msg(b)
 umx_msg(mtcars)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},

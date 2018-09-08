@@ -39,7 +39,7 @@ umxPlotIP(model, file = NA)
 }
 }
 \references{
-- \url{http://tbates.github.io}
+- \url{https://tbates.github.io}
 }
 \seealso{
 - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.

@@ -27,5 +27,5 @@ This is not as reliable a strategy and likely to be superseded...
 # umx:::xmuMakeThresholdsMatrices(df = x, droplevels=FALSE, verbose= TRUE)
 }
 \references{
-- \url{http://tbates.github.io}
+- \url{https://tbates.github.io}
 }

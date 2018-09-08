@@ -49,7 +49,7 @@ umx_make_sql_from_excel("~/Desktop/test.xlsx") # provide a path
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other File Functions: \code{\link{dl_from_dropbox}},

@@ -50,7 +50,7 @@ umx_check_parallel()
 }
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

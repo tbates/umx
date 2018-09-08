@@ -40,7 +40,7 @@ m1 = mxRun(m1, intervals = TRUE)
 umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 }
 \references{
-- http://www.github.com/tbates/umx/
+- https://www.github.com/tbates/umx/
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

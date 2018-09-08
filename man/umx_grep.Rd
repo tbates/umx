@@ -39,7 +39,7 @@ umx_grep(spss_df, "labeltext", output = "name")
 }
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{grep}} \code{\link{umx_names}} \code{\link{umx_aggregate}}

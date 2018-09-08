@@ -197,7 +197,7 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 }
 \references{
 \itemize{
-\item \url{http://www.github.com/tbates/umx}
+\item \url{https://www.github.com/tbates/umx}
 }
 }
 \seealso{

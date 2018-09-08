@@ -203,7 +203,7 @@ m1 <- umxRAM("Chol", data = myData,
 # umxPath("A -> manifests") 
 }
 \references{
-- \url{http://tbates.github.io}
+- \url{https://tbates.github.io}
 }
 \seealso{
 - \code{\link{mxPath}}

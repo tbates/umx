@@ -27,7 +27,7 @@ dl_from_dropbox("tinytwinData.rda", key = "7kauod48r9cfhwc")
 }
 }
 \references{
-- \url{http://thebiobucket.blogspot.kr/2013/04/download-files-from-dropbox.html}
+- \url{https://thebiobucket.blogspot.kr/2013/04/download-files-from-dropbox.html}
 }
 \seealso{
 Other File Functions: \code{\link{umx_make_sql_from_excel}},

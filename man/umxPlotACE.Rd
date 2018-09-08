@@ -37,7 +37,7 @@ m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 plot(m1, std = FALSE) # don't standardize
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.

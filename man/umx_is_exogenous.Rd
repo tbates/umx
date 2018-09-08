@@ -29,7 +29,7 @@ umx_is_exogenous(m1, manifests_only = TRUE)
 umx_is_exogenous(m1, manifests_only = FALSE)
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://openmx.ssri.psu.edu}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

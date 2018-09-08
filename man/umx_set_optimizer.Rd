@@ -28,7 +28,7 @@ umx_set_optimizer("SLSQP") # update globally
 umx_set_optimizer(old) # set back
 }
 \references{
-- \url{http://tbates.github.io}, \url{https://github.com/tbates/umx}
+- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

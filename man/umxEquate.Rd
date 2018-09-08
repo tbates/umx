@@ -64,7 +64,7 @@ m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq x1 x2",
 )
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 \code{\link{umxModify}}, \code{\link{umxCompare}}

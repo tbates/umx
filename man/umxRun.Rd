@@ -56,7 +56,7 @@ umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
 m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 \references{
-- \url{http://www.github.com/tbates/umx}
+- \url{https://www.github.com/tbates/umx}
 }
 \seealso{
 Other Core Modelling Functions: \code{\link{plot.MxModel}},

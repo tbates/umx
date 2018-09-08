@@ -134,7 +134,7 @@ umxCompare(m1, m2)
 }
 \references{
 \itemize{
-\item \url{http://www.github.com/tbates/umx}
+\item \url{https://www.github.com/tbates/umx}
 }
 }
 \seealso{
