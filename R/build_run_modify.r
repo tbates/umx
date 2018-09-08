@@ -282,6 +282,7 @@ umxModel <- function(...) {
 #' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
 #' @param thresholds Whether to use deviation-based threshold modeling for ordinal data (if any is detected).
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param type One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto reacts to the incoming mxData type (raw/cov, WLS). FIML requires that the data are continuous. Remaining options are weighted, diagonally weighted, or unweighted least squares, respectively)
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @param verbose Whether to tell the user what latents and manifests were created etc. (Default = FALSE)
 #' @return - \code{\link{mxModel}}
@@ -326,6 +327,13 @@ umxModel <- function(...) {
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line")
 #' 
+#' # 5. Run a WLS model
+#' mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS", autoRun= FALSE,
+#' 	umxPath(c("wt", "disp"), to = "mpg"),
+#' 	umxPath("wt", with = "disp"),
+#' 	umxPath(var = selVars)
+#' )
+#' 
 #' # ===============================
 #' # = Using umxRAM in Sketch mode =
 #' # ===============================
@@ -367,8 +375,15 @@ umxModel <- function(...) {
 #'# mpg  "mpg_with_mpg"  "mpg_with_wt" "disp_with_mpg"
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "ignore", "left_censored"), autoRun = getOption("umx_auto_run"), optimizer = NULL, verbose = FALSE) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, thresholds = c("deviationBased", "ignore", "left_censored"), autoRun = getOption("umx_auto_run"), 
+	type = c('Auto', 'FIML', 'cov', 'cor', 'WLS', 'DWLS', 'ULS'), optimizer = NULL, verbose = FALSE) {
 	
+	dot.items = list(...) # grab all the dot items: mxPaths, etc...
+	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
+	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
+	thresholds = match.arg(thresholds)
+	type = match.arg(type)
+
 	# =================
 	# = Set optimizer =
 	# =================
@@ -376,10 +391,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		umx_set_optimizer(optimizer)
 	}
 	
-	dot.items = list(...) # grab all the dot items: mxPaths, etc...
-	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
-	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
-	thresholds = match.arg(thresholds)
 
 	if(typeof(model) == "character"){
 		if(is.na(name)){
@@ -457,14 +468,26 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(is.null(data)){
 		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at last a list of variable names to use umxRAM in sketch mode)")
 		stop("Did you perhaps just add the data along with the paths instead of via data = ?")
-	} else if(class(data)[1] == "data.frame") {
-		data = mxData(observed = data, type = "raw")
-	}
-	if (class(data) == "matrix"){
+	} else if (class(data)[1] == "data.frame") {
+		# Upgrade data to mxData
+		if(type %in% c("Auto", "FIML")){
+			data = mxData(observed = data, type = "raw")
+		}else	if(type == "cov"){
+				data = mxData(observed = cov(data), type = type, numObs = nrow(data))
+		}else	if(type == "cor"){
+				data = mxData(observed = cor(data), type = type, numObs = nrow(data))
+		} else {
+			# one of 'WLS', 'DWLS', 'ULS'
+			data = mxDataWLS(data, type = type)
+		}
+	}else if (class(data) == "matrix"){
 		message("You gave me a matrix. SEM needs to know the N for cov data. Rather than me assemble it,
-			the easiest and least error-prone method is for you to pass in\n
-			data = mxData(yourCov, type='cov', nobs=100) (or whatever your N is)")
+			the easiest and least error-prone method is for you to pass in raw data, or else\n
+			data = mxData(yourCov, type= 'cov', numObs= 100) # (or whatever your N is)")
+	}else{
+		# probably an mxData object: OK as is.
 	}
+
 	if(class(data)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
 		if(data$type == "raw"){
 			# check "one" is not a column
@@ -485,7 +508,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		# user is just running a trial model, with no data, but provided names
 		manifestVars = data
 	} else {
-		stop("I'm assuming this is a  - I expected a dataframe, mxData, or a vector of names, but you gave me a ", class(data)[1])		
+		stop("I expected a dataframe, mxData, or a vector of names, but you gave me a ", class(data)[1])		
 	}
 	foundNames = unique(na.omit(foundNames))
 	# Anything not in data -> latent
