@@ -3414,39 +3414,23 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 
 #' Get additional fit-indices for a model with umxFitIndices
 #'
-#' Computes a variety of fit indices. Originated in this thread: http://openmx.ssri.psu.edu/thread/765
+#' A list of fit indices. Originated in this thread: https://openmx.ssri.psu.edu/thread/765
+#' note: This is not a full-fat fit reporter. It is not robust across multi-group designs,
+#' definition variables. It is primarily designed to add less-often reported fit indices for 
+#' RAM models where reviewer 2 wants something other than CFA/TLI/RMSEA :-).
+#' 
+#' Fit information reported includes: N, deviance, N.parms, Chi, df, p.Chi, Chi.df, AICchi, AICdev, BCCchi, BCCdev, BICchi, BICdev, 
+#' CAICchi, CAICdev, RMSEA, SRMR, RMR, SMAR, MAR, SMAR.nodiag, MAR.nodiag, GFI, AGFI, PGFI, 
+#' NFI, RFI, IFI, NNFI.TLI, CFI, PRATIO, PNFI, PCFI, NCP, ECVIchi, ECVIdev, MECVIchi, MECVIdev, MFI, GH 
 #'
-#' Note: This is not a full-fat fit reporter. It is not robust across multi-group designs or
-#' definition variables. It is primarily designed to add less-often reported fit indices for
-#' RAM models where Reviewer 2 wants something other than CFA/TLI/RMSEA :-).
-#'
-#' Fit information reported includes:
-#' N, deviance, N.parms, N.manifest,
-#' Chisq, df, p.Chisq, Chisq/df,
-#' NCP, F0, Mc, NCI, MFI,
-#' RMSEA, indep.RMSEA,
-#' RMR, SRMR, SRMR_mplus, CRMR,
-#' MAR, SMAR, CMAR,
-#' GFI, AGFI, PGFI, GH,
-#' NFI, RFI, IFI, BL89, RNI,
-#' NNFI, TLI, CFI,
-#' PRATIO, PNFI, PCFI,
-#' AICchi, AICdev,
-#' BCCchi, BCCdev,
-#' BICchi, BICdev,
-#' CAICchi, CAICdev,
-#' ECVIchi, ECVIdev,
-#' MECVIchi, MECVIdev
-#'
-#' Want more? File a report at GitHub
-#'
+#' Want more? File a report at github
+#' 
 #' @param model The \code{\link{mxModel}} for which you want fit indices.
 #' @param refModels Independence and saturated models. default mxRefModels(model, run = TRUE)
 #' @return Table of fit statistics
 #' @export
 #' @family Reporting functions
-#' @author Brenton M. Wiernik, Athanassios Protopapas, Paolo Ghisletta, Markus Brauer
-#' @references -
+#' @references - 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3466,252 +3450,90 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' 	umxPath(v1m0 = latents)
 #' )
 #' umxFitIndices(m1)
+# Round to 3 places, and report as a markdown table
+#' umxAPA(umxFitIndices(m1), digits = 3)
 umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
-  if(!umx_is_RAM(model)){
-    message("Not fully tested against non-RAM models...")
-  }
-  modelSummary = summary(model, refModels = refModels)
-  indepSummary = summary(refModels$Independence)
-  N            = modelSummary$numObs
-  N.parms      = modelSummary$estimatedParameters
-  N.manifest   = length(model@manifestVars) # assumes RAM
-  deviance     = modelSummary$Minus2LogLikelihood
-  Chi          = modelSummary$Chi
-  df           = modelSummary$degreesOfFreedom
-  p.Chi        = 1 - pchisq(Chi, df)
-  Chi.df       = Chi/df
-  indep.chi    = indepSummary$Chi
-  indep.df     = indepSummary$degreesOfFreedom
-  q            = (N.manifest * (N.manifest + 1)) / 2
-  N.latent     = length(model@latentVars)
-  if(model$data$type == "raw"){
-    observed.cov = cov(model$data$observed)
-    observed.cor = cov2cor(observed.cov)
-    observed.means <- apply(model$data$observed, 2, mean)
-  } else if(model$data$type == "cor"){
-    observed.cov <- NA
-    observed.cor <- model$data$observed
-    observed.means <- model$data$means
-  } else {
-    observed.cov <- model$data$observed
-    observed.cor <- cov2cor(observed.cov)
-    observed.means <- model$data$means
-  }
-  estimate.cov <-	mxGetExpected(model, "covariance")
-  estimate.cor <- cov2cor(estimate.cov)
-  if(!is.na(observed.means)) {
-	  estimate.means <- mxGetExpected(model, "means")
-  }
-     Id.manifest <-  diag(N.manifest)
-     NCP         <-  max(Chi - df, 0) # TODO: need confidence interval
-     F0          <-  NCP / (N - 1)
-     NFI         <-  (indep.chi - Chi) / indep.chi
-     TLI <- NNFI <-  (indep.chi - indep.df / df * Chi) / (indep.chi - indep.df)
-     RFI         <-  1 - (Chi / df) / (indep.chi / indep.df)
-     IFI <- BL89 <-  (indep.chi - Chi) / (indep.chi - df)
-     CFI         <-  min(1.0 - NCP / (indep.chi - indep.df), 1)
-     PRATIO      <-  df / indep.df
-     PCFI        <-  PRATIO * CFI
-     PNFI        <-  PRATIO * NFI
-     RMSEA       <-  sqrt(F0 / df) # TODO: need confidence intervals, p close
-     GH          <-  N.manifest / (N.manifest + 2 * F0)
-     RNI         <-  ((indep.chi - indep.df) - NCP) / (indep.chi - indep.df)
-     Mc <- NCI   <-  MFI <-  exp(-0.5 * NCP / N)
+	if(!umx_is_RAM(model)){
+		message("Not fully tested against non-RAM models...")
+	}
+	# refModels = mxRefModels(model, run = TRUE)
+	modelSummary = summary(model, refModels = refModels)
+	indepSummary = summary(refModels$Independence) #, refModels = refModels$Independence
+	N            = modelSummary$numObs
+	N.parms      = modelSummary$estimatedParameters
+	N.manifest   = length(model@manifestVars) # assumes RAM
+	deviance     = modelSummary$Minus2LogLikelihood
+	Chi          = modelSummary$Chi
+	df           = modelSummary$degreesOfFreedom
+	p.Chi        = 1 - pchisq(Chi, df)
+	Chi.df       = Chi/df
+	indep.chi    = indepSummary$Chi
+	indep.df     = indepSummary$degreesOfFreedom
+	q            = (N.manifest * (N.manifest + 1)) / 2
+	N.latent     = length(model@latentVars)
+	observed.cov = model$data$observed
+	if(model$data$type == "raw"){
+		observed.cov = cov(observed.cov)
+	}
+	observed.cor = cov2cor(observed.cov)
 
-     # LISREL Indices
-     GFI <-
-       1 - (
-         sum(
-           diag(
-             ((solve(estimate.cor) %*% observed.cor) - Id.manifest) %*%
-             ((solve(estimate.cor) %*% observed.cor) - Id.manifest)
-           )
-         ) /
-         sum(
-           diag(
-             (solve(estimate.cor) %*% observed.cor) %*%
-             (solve(estimate.cor) %*% observed.cor)
-           )
-         )
-       )
-     AGFI        <-  1 - (q / df) * (1 - GFI)
-     PGFI        <-  GFI * df / q
-
-     # Information-based indices
-     AICchi      <-  Chi + 2 * N.parms
-     AICdev      <-  deviance + 2 * N.parms
-     BCCchi      <-  Chi + 2 * N.parms / (N - N.manifest - 2)
-     BCCdev      <-  deviance + 2 * N.parms / (N - N.manifest - 2)
-     BICchi      <-  Chi + N.parms * log(N)
-     BICdev      <-  deviance + N.parms * log(N)
-     CAICchi     <-  Chi + N.parms * (log(N) + 1)
-     CAICdev     <-  deviance + N.parms * (log(N) + 1)
-     ECVIchi     <-  1 / N * AICchi
-     ECVIdev     <-  1 / N * AICdev
-     MECVIchi    <-  1 / BCCchi
-     MECVIdev    <-  1 / BCCdev
-
-     # Residual based indices
-     # TODO: Add unbiased stdandardized estimators
-     # TODO: Add confidence intervals
-     residual.cov <-  observed.cov - estimate.cov
-     residual.cor <-  observed.cor - estimate.cor
-     residual.means <- observed.means - estimate.means
-     residual.meansZ <- observed.means / sqrt(diag(observed.cov)) - estimate.means / sqrt(diag(estimate.cov))
-     invS <- diag( 1 / sqrt(diag(observed.cov)))
-     if(!is.na(residual.means)) {
-       q_m = q + N.manifest
-       if(!is.na(residual.cov)) {
-         RMR        <-  sqrt( ( sum( vech(residual.cov)^2 ) + sum(residual.means^2) ) / q )
-         SRMR       <-  sqrt( ( sum( vech(invS %*% residual.cov %*% invS)^2 ) + sum( (residual.means * diag(invS))^2 ) ) / q )  # EQS/Bentler approach
-         SRMR_mplus <-  sqrt( ( sum( vechs(residual.cor)^2 ) + sum( ( diag(residual.cov) * diag(invS^2) )^2 ) + sum(residual.meansZ^2) ) / q )
-         MAR        <-        ( sum( abs( vech(residual.cov) ) ) + sum( abs( residual.means ) ) ) / q
-         SMAR       <-        ( sum( abs( vech(invS %*% residual.cov %*% invS) ) ) + sum( abs(residual.means * diag(invS)) ) ) / q    # Bentler approach
-
-         RMR_nomean        <-  sqrt(   sum( vech(residual.cov)^2 ) / q )
-         SRMR_nomean       <-  sqrt(   sum( vech(invS %*% residual.cov %*% invS)^2 ) / q )  # EQS/Bentler approach
-         SRMR_mplus_nomean <-  sqrt( ( sum( vechs(residual.cor)^2 ) + sum( ( diag(residual.cov) * diag(invS^2) )^2 ) ) / q )
-         MAR_nomean        <-  sum(    abs( vech(residual.cov) ) ) / q
-         SMAR_nomean       <-  sum(    abs( vech(invS %*% residual.cov %*% invS) ) ) / q    # Bentler approach
-
-       } else {
-         RMR = SRMR = SRMR_mplus = "Observed values are correlations, use CRMR instead."
-         MAR = SMAR = "Observed values are correlations, use CMAR instead."
-         RMR_nomean = SRMR_nomean = SRMR_mplus_nomean = "Observed values are correlations, use CRMR_nomean instead."
-         MAR_nomean = SMAR_nomean = "Observed values are correlations, use CMAR_nomean instead."
-       }
-       CRMR         <-  sqrt( ( sum( vechs(residual.cor^2) ) + sum(residual.meansZ^2) ) / q )    # Bollen approach
-       CMAR         <-        ( sum( abs( vechs(residual.cor) ) ) + sum( abs(residual.meansZ) ) ) / q  # Bollen approach
-
-       CRMR_nomean  <-  sqrt( sum( vechs(residual.cor^2) ) / q )    # Bollen approach
-       CMAR_nomean  <-        sum( abs( vechs(residual.cor) ) ) / q  # Bollen approach
-
-     } else {
-       RMR_nomean <- SRMR_nomean <- SRMR_mplus_nomean <- MAR_nomean <- SMAR_nomean <- CRMR_nomean <- CMAR_nomean <- NA
-       if(!is.na(residual.cov)) {
-         RMR        <-  sqrt(   sum( vech(residual.cov)^2 ) / q )
-         SRMR       <-  sqrt(   sum( vech(invS %*% residual.cov %*% invS)^2 ) / q )  # EQS/Bentler approach
-         SRMR_mplus <-  sqrt( ( sum( vechs(residual.cor)^2 ) + sum( ( diag(residual.cov) * diag(invS^2) )^2 ) ) / q )
-         MAR        <-  sum(    abs( vech(residual.cov) ) ) / q
-         SMAR       <-  sum(    abs( vech(invS %*% residual.cov %*% invS) ) ) / q    # Bentler approach
-       } else {
-         RMR <- SRMR <- SRMR_mplus <- "Observed values are correlations, use CRMR instead."
-         MAR <- SMAR <- "Observed values are correlations, use CMAR instead."
-       }
-       CRMR         <-  sqrt( sum( vechs(residual.cor^2) ) / q )    # Bollen approach
-       CMAR         <-        sum( abs( vechs(residual.cor) ) ) / q  # Bollen approach
-     }
-
-     indep.RMSEA  <- sqrt(max(indep.chi - indep.df, 0) / (N - 1) / indep.df)
-
-     indices <-
-       data.frame(
-         N, deviance, N.parms, N.manifest,
-         Chi, df, p.Chi, Chi.df,
-         NCP, F0, Mc, NCI, MFI,
-         RMSEA, indep.RMSEA,
-         RMR, SRMR, SRMR_mplus, CRMR,
-         MAR, SMAR, CMAR,
-         RMR_nomean, SRMR_nomean, SRMR_mplus_nomean, CRMR_nomean,
-         MAR_nomean, SMAR_nomean, CMAR_nomean,
-         GFI, AGFI, PGFI, GH,
-         NFI, RFI, IFI, BL89, RNI,
-         NNFI, TLI, CFI,
-         PRATIO, PNFI, PCFI,
-         AICchi, AICdev,
-         BCCchi, BCCdev,
-         BICchi, BICdev,
-         CAICchi, CAICdev,
-         ECVIchi, ECVIdev,
-         MECVIchi, MECVIdev
-       )
-     class(indices) <- c("umxFitIndices", class(indices))
-     return(indices)
-}
-
-print.umxFitIndices <- function(x, digits = max(1L, getOption("digits") - 3L), ...) {
-  if (!inherits(x, "umxFitIndices")){
-		stop(gettextf("'x' must inherit from class %s", dQuote("umxFitIndices")), domain = NA)
-  }
-  cat('Model characteristics\n')
-  cat('=====================\n')
-  cat('Number of observations (sample size):'  round(x$N,          digits), '\n')
-  cat('Number of estimated parameters:      '  round(x$N.parms,    digits), '\n')
-  cat('Number of observed statistics:       ', round(x$N.manifest, digits), '\n')
-  cat('Deviance (-2 * LogLikelihood):       ', round(x$deviance,   digits), '\n')
-  cat('\n')
-
-  cat('Chi squared test\n')
-  cat('================\n')
-  cat('Chi squared: ' format(round(x$Chi, max(0, digits - log10(x$Chi)))),
-      ", df = ", x$df, ", p-value = ", format.pval(x$p.Chi, digits, eps = 0), "\n", sep = "")
-  cat('Chisq / df:', round(x$Chi.df, digits), '\n')
-  cat('\n')
-
-  cat('Noncentrality-based indices\n')
-  cat('===========================\n')
-  cat('Noncentrality parameter (NCP or d):', round(x$NCP, digits), '\n')
-  cat('Rescaled NCP (F0 or t):            ', round(x$F0,  digits), '\n')
-  cat('RMSEA (root mean squared error of approximation):', round(x$RMSEA, digits), '\n')
-  cat('RMSEA of independence (null or baseline) model:  ', round(x$indep.RMSEA, digits), '\n')
-  cat('\n')
-  cat('Mc (McDonald centrality index): ', round(x$MFI, digits), '\n')
-  cat('   [Also called MFI (McDonald fit index) or NCI (Noncentrality index)]\n')
-  cat('\n')
-
-  cat('Incremental fit indices\n')
-  cat('=======================\n')
-  cat('CFI (Comparative fit index):', round(x$CFI, digits), '\n')
-  cat('TLI (Tucker-Lewis index):   ', round(x$TLI, digits), '\n')
-  cat('   [Also called NNFI (Non-normed fit index)]\n')
-  cat('\n')
-  cat('Parsimony ratio (df / df_indepedence):', round(x$PRATIO, digits), '\n')
-  cat('PCFI (Parsimonious CFI):           ', round(x$PCFI,      digits), '\n')
-  cat('RNI (Relative noncentrality index):', round(x$RNI,       digits), '\n')
-  cat('IFI (Incremental fit index):       ', round(x$IFI,       digits), '\n')
-  cat('   [Also called BL89 (Bollen, 1989, fit index)]\n')
-  cat('\n')
-
-  cat('Residuals-based indices\n')
-  cat('=======================\n')
-  cat('RMR (Root mean squared residual):', round(x$RMR, digits), if(!is.na(x$RMR_nomean)) {'(with mean structure)   ', round(x$RMR_nomean, digits), '(without mean structure)'}, '\n')
-  cat('SRMR (Standardized root mean squared residual):\n')
-  cat('  Bentler method (EQS, lavaan, sem, AMOS):    ', round(x$SRMR, digits),       if(!is.na(x$SRMR_nomean)) {'(with mean structure)   ',       round(x$SRMR_nomean, digits), '(without mean structure)'}, '\n')
-  cat('  MPlus method:                               ', round(x$SRMR_mplus, digits), if(!is.na(x$SRMR_mplus_nomean)) {'(with mean structure)   ', round(x$SRMR_mplus_nomean, digits), '(without mean structure)'}, '\n')
-  cat('CRMR (Correlation root mean squared residual):', round(x$CRMR, digits),       if(!is.na(x$CRMR_nomean)) {'(with mean structure)   ',       round(x$CRMR_nomean, digits), '(without mean structure)'}, '\n')
-  cat('   [The Bollen method SRMR]\n')
-  cat('\n')
-
-  cat('MAR (Mean absolute residual):              ', round(x$MAR,  digits), if(!is.na(x$MAR_nomean)) {'(with mean structure)   ',  round(x$MAR_nomean, digits), '(without mean structure)'}, '\n')
-  cat('SMAR (Standardized mean absolute residual):', round(x$SMAR, digits), if(!is.na(x$SMAR_nomean)) {'(with mean structure)   ', round(x$SMAR_nomean, digits), '(without mean structure)'}, '\n')
-  cat('CMAR (Correlation mean absolute residual): ', round(x$CMAR, digits), if(!is.na(x$CMAR_nomean)) {'(with mean structure)   ', round(x$CMAR_nomean, digits), '(without mean structure)'}, '\n')
-  cat('\n')
-
-  cat('Information-based fit indices\n')
-  cat('=============================\n')
-  cat('AIC (Akaike information criterion):    ', round(x$AICchi,   digits), '(Chisq)   ', round(x$AICdev,   digits), '(deviance)\n')
-  cat('CAIC (Consistent AIC):                 ', round(x$AICchi,   digits), '(Chisq)   ', round(x$AICdev,   digits), '(deviance)\n')
-  cat('BCC (Browne-Cudeck criterion):         ', round(x$BCCchi,   digits), '(Chisq)   ', round(x$BCCdev,   digits), '(deviance)\n')
-  cat('ECVI (Expected cross-validation index):', round(x$ECVIchi,  digits), '(Chisq)   ', round(x$ECVIdev,  digits), '(deviance)\n')
-  cat('MECVI (Modified ECVI):                 ', round(x$MECVIchi, digits), '(Chisq)   ', round(x$MECVIdev, digits), '(deviance)\n')
-  cat('BIC (Bayesian information criterion):'  , round(x$BICchi,   digits), '(Chisq)   ', round(x$BICdev,   digits), '(deviance)\n')
-  cat('\n')
-
-  cat('LISREL and other early fit indices\n')
-  cat('==================================\n')
-  cat('(These indices are strongly discouraged due to numerous problems. It is recommended that you do not report them.)\n')
-  cat('GFI (Goodness of fit index): ', round(x$GFI,  digits), '\n')
-  cat('AGFI (Adjusted GFI):         ', round(x$AGFI, digits), '\n')
-  cat('PGFI (Parsimonious GFI):     ', round(x$PGFI, digits), '\n')
-  cat('NFI (Normed fit index):      ', round(x$NFI,  digits), '\n')
-  cat('PNFI (Parsimonious NFI):     ', round(x$PNFI, digits), '\n')
-  cat('RFI (Relative fit index):    ', round(x$RFI,  digits), '\n')
-  cat('GH (Gamma hat):              ', round(x$GH,  digits), '\n')
-  cat('   [Estimated population GFI]')
-
-  if(x$indep.RMSEA <= .158) message(paste0("Note: Independence (Null) model has RMSEA = ", round(indep.RMSEA, digits), ".\nIf the model shows good fit (RMSEA <= .05), TLI has a maximum value <= .90.\nInterpret incremental fit indices (TLI, CFI, etc.) with caution."))
-  invisible(x)
-
+	estimate.cov =	mxGetExpected(model, "covariance")
+	estimate.cor =  cov2cor(estimate.cov)
+	Id.manifest  =  diag(N.manifest)
+	residual.cov =  observed.cov - estimate.cov
+	residual.cor =  observed.cor - estimate.cor
+	F0       =  max((Chi-df)/(N-1),0)
+	NFI      =  (indep.chi - Chi)/indep.chi
+	NNFI.TLI =  (indep.chi - indep.df/df * Chi)/(indep.chi - indep.df)
+	PNFI     =  (df/indep.df) * NFI
+	RFI      =  1 - (Chi/df) / (indep.chi/indep.df)
+	IFI      =  (indep.chi - Chi)/(indep.chi - df)
+	CFI      =  min(1.0-(Chi - df)/(indep.chi - indep.df),1)
+	PRATIO   =  df/indep.df
+	PCFI     =  PRATIO*CFI
+	NCP      =  max((Chi - df), 0)
+	RMSEA    =  sqrt(F0/df) # need confidence intervals
+	MFI      =  exp(-0.5 * (Chi - df)/N)
+	GH       =  N.manifest / (N.manifest + 2 * ((Chi - df)/(N - 1)))
+	GFI      =  1 - (
+		 sum(diag(((solve(estimate.cor) %*% observed.cor)-Id.manifest) %*% ((solve(estimate.cor) %*% observed.cor) - Id.manifest))) /
+	    sum(diag((solve(estimate.cor) %*% observed.cor) %*% (solve(estimate.cor) %*% observed.cor)))
+	)
+	AGFI        =  1 - (q/df) * (1 - GFI)
+	PGFI        =  GFI * df/q
+	AICchi      =  Chi + 2 * N.parms
+	AICdev      =  deviance + 2 * N.parms
+	BCCchi      =  Chi + 2 * N.parms/(N - N.manifest - 2)
+	BCCdev      =  deviance + 2 * N.parms/(N - N.manifest - 2)
+	BICchi      =  Chi + N.parms * log(N)
+	BICdev      =  deviance + N.parms * log(N)
+	CAICchi     =  Chi + N.parms * (log(N) + 1)
+	CAICdev     =  deviance + N.parms * (log(N) + 1)
+	ECVIchi     =  1/N * AICchi
+	ECVIdev     =  1/N * AICdev
+	MECVIchi    =  1/BCCchi
+	MECVIdev    =  1/BCCdev
+	RMR         =  sqrt(mean((residual.cov^2)[lower.tri(residual.cov,diag=TRUE)]))
+	SRMR        =  sqrt(mean((residual.cor^2)[lower.tri(residual.cor,diag=TRUE)]))
+	MAR         =  mean(abs(residual.cov[lower.tri(residual.cor,diag=TRUE)]))
+	SMAR        =  mean(abs(residual.cor[lower.tri(residual.cor,diag=TRUE)]))
+	MAR.nodiag  =  mean(abs(residual.cov[lower.tri(residual.cov,diag=FALSE)]))
+	SMAR.nodiag =  mean(abs(residual.cor[lower.tri(residual.cor,diag=FALSE)]))
+	indices     =  rbind(N, deviance, N.parms, Chi, df, p.Chi, Chi.df,
+		AICchi, AICdev,
+		BCCchi, BCCdev,
+		BICchi, BICdev,
+		CAICchi, CAICdev,
+		RMSEA, SRMR, RMR,
+		SMAR, MAR,
+		SMAR.nodiag, MAR.nodiag,
+		GFI, AGFI, PGFI,
+		NFI, RFI, IFI,
+		NNFI.TLI, CFI,
+		PRATIO, PNFI, PCFI, NCP,
+		ECVIchi, ECVIdev, MECVIchi, MECVIdev, MFI, GH
+	)
+	return(indices)
 }
 
 # define generic RMSEA...
