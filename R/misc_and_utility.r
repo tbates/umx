@@ -4864,7 +4864,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @param AA value for A variance. NOTE: See options for use in GxE and Bivariate GxE
 #' @param CC value for C variance.
 #' @param EE value for E variance.
-#' @param MZr If MZr and DZr are set (default = NULL), the function simply returns dataframes of the request size and correlation
+#' @param MZr If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.
 #' @param DZr NULL
 #' @param Amod Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)
 #' @param Cmod Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)
@@ -4964,7 +4964,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
 #' @md
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var",  mean=0, sd=1, nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE, MZr= NULL, DZr= NULL, Amod = NULL, Cmod = NULL, Emod = NULL) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var",  mean=0, sd=1, nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE, MZr= NULL, DZr= MZr, Amod = NULL, Cmod = NULL, Emod = NULL) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
