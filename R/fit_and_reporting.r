@@ -3499,7 +3499,9 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
   }
   estimate.cov <-	mxGetExpected(model, "covariance")
   estimate.cor <- cov2cor(estimate.cov)
-  if(!is.na(observed.means) estimate.means <- mxGetExpected(model, "means")
+  if(!is.na(observed.means)) {
+	  estimate.means <- mxGetExpected(model, "means")
+  }
      Id.manifest <-  diag(N.manifest)
      NCP         <-  max(Chi - df, 0) # TODO: need confidence interval
      F0          <-  NCP / (N - 1)
@@ -3514,8 +3516,7 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
      RMSEA       <-  sqrt(F0 / df) # TODO: need confidence intervals, p close
      GH          <-  N.manifest / (N.manifest + 2 * F0)
      RNI         <-  ((indep.chi - indep.df) - NCP) / (indep.chi - indep.df)
-     Mc <- NCI   <-
-       MFI       <-  exp(-0.5 * NCP / N)
+     Mc <- NCI   <-  MFI <-  exp(-0.5 * NCP / N)
 
      # LISREL Indices
      GFI <-
@@ -3574,14 +3575,10 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
          SMAR_nomean       <-  sum(    abs( vech(invS %*% residual.cov %*% invS) ) ) / q    # Bentler approach
 
        } else {
-         RMR <- SRMR <- SRMR_mplus <-
-           "Observed values are correlations, use CRMR instead."
-         MAR <- SMAR <-
-           "Observed values are correlations, use CMAR instead."
-         RMR_nomean <- SRMR_nomean <- SRMR_mplus_nomean <-
-           "Observed values are correlations, use CRMR_nomean instead."
-         MAR_nomean <- SMAR_nomean <-
-           "Observed values are correlations, use CMAR_nomean instead."
+         RMR = SRMR = SRMR_mplus = "Observed values are correlations, use CRMR instead."
+         MAR = SMAR = "Observed values are correlations, use CMAR instead."
+         RMR_nomean = SRMR_nomean = SRMR_mplus_nomean = "Observed values are correlations, use CRMR_nomean instead."
+         MAR_nomean = SMAR_nomean = "Observed values are correlations, use CMAR_nomean instead."
        }
        CRMR         <-  sqrt( ( sum( vechs(residual.cor^2) ) + sum(residual.meansZ^2) ) / q )    # Bollen approach
        CMAR         <-        ( sum( abs( vechs(residual.cor) ) ) + sum( abs(residual.meansZ) ) ) / q  # Bollen approach
@@ -3598,10 +3595,8 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
          MAR        <-  sum(    abs( vech(residual.cov) ) ) / q
          SMAR       <-  sum(    abs( vech(invS %*% residual.cov %*% invS) ) ) / q    # Bentler approach
        } else {
-         RMR <- SRMR <- SRMR_mplus <-
-           "Observed values are correlations, use CRMR instead."
-         MAR <- SMAR <-
-           "Observed values are correlations, use CMAR instead."
+         RMR <- SRMR <- SRMR_mplus <- "Observed values are correlations, use CRMR instead."
+         MAR <- SMAR <- "Observed values are correlations, use CMAR instead."
        }
        CRMR         <-  sqrt( sum( vechs(residual.cor^2) ) / q )    # Bollen approach
        CMAR         <-        sum( abs( vechs(residual.cor) ) ) / q  # Bollen approach
@@ -3635,9 +3630,9 @@ umxFitIndices <- function(model, refModels = mxRefModels(model, run = TRUE)) {
 }
 
 print.umxFitIndices <- function(x, digits = max(1L, getOption("digits") - 3L), ...) {
-  if (!inherits(x, "umxFitIndices"))
-    stop(gettextf("'x' must inherit from class %s", dQuote("umxFitIndices")),
-         domain = NA)
+  if (!inherits(x, "umxFitIndices")){
+		stop(gettextf("'x' must inherit from class %s", dQuote("umxFitIndices")), domain = NA)
+  }
   cat('Model characteristics\n')
   cat('=====================\n')
   cat('Number of observations (sample size):'  round(x$N,          digits), '\n')
