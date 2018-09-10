@@ -7,7 +7,7 @@
 umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL,
   CC = NULL, EE = NULL, varNames = "var", mean = 0, sd = 1,
   nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE,
-  MZr = NULL, DZr = NULL, Amod = NULL, Cmod = NULL, Emod = NULL)
+  MZr = NULL, DZr = MZr, Amod = NULL, Cmod = NULL, Emod = NULL)
 }
 \arguments{
 \item{nMZpairs}{Number of MZ pairs to simulate}
@@ -34,7 +34,7 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL,
 
 \item{empirical}{Passed to mvrnorm}
 
-\item{MZr}{If MZr and DZr are set (default = NULL), the function simply returns dataframes of the request size and correlation}
+\item{MZr}{If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.}
 
 \item{DZr}{NULL}
 

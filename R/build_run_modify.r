@@ -1379,6 +1379,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
 #' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.
+# #' @param type c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
@@ -1392,8 +1393,8 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param thresholds How to implement ordinal thresholds c("deviationBased", "WLS").
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
-#' @param suffix Deprecated: use "sep".
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
+#' @param suffix Deprecated: use "sep".
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
@@ -1538,11 +1539,13 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' umxSummary(m1)
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), suffix = "deprecated", optimizer = NULL, intervals = FALSE) {
+	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), optimizer = NULL, intervals = FALSE, suffix = "deprecated") {
 
 		nSib = 2 # Number of siblings in a twin pair.
 		covMethod  = match.arg(covMethod)
 		thresholds = match.arg(thresholds)
+		# type = match.arg(type)
+
 		# Allow suffix as a synonym for sep
 		if (suffix != "deprecated"){
 			warning("Just a message, but please use 'sep = ' instead of 'suffix = '. suffix will stop working in 2019")
