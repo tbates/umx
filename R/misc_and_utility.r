@@ -4422,13 +4422,14 @@ umx_explode <- function(delimiter = character(), string) {
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @md
 #' @examples
+#' # Names from a dataframe, with character matching
 #' umx_names(mtcars, "mpg") # only "mpg" matches this
 #' 
-#' # Use the easy-to-type alias "namez"
-#' namez(mtcars, "mpg") # vars beginning with 'd' = "disp", drat
+#' # Easy-to-type alias "namez"
+#' namez(mtcars, "mpg")
 #' 
 #' # Use a regular expression to match a pattern
-#' umx_names(mtcars, "r[ab]") # "drat", "carb"
+#' namez(mtcars, "r[ab]") # "drat", "carb"
 #' namez(mtcars, "^d") # vars beginning with 'd' = "disp", drat
 #' 
 #' # Use this function to replace text in names!
@@ -4438,12 +4439,12 @@ umx_explode <- function(delimiter = character(), string) {
 #' # ========================================================================
 #' # = Using the custom collapse option to quote each item, and wrap in c() =
 #' # ========================================================================
-#' namez(mtcars, "m", collapse = "as.vector") # paste-able R-code for a vector
+#' namez(mtcars, "m", collapse = "as.vector") # Paste-able R-code for a vector
 #' 
 #' # Other options passed to R's grep command
-#' umx_names(mtcars, "mpg" , invert = TRUE) # non-matches (instead of matches)
-#' umx_names(mtcars, "disp", value = FALSE) # Return indices of matches 
-#' umx_names(mtcars, "^d"  , fixed = TRUE)  # vars containing literal '^d' (none...)
+#' umx_names(mtcars, "mpg" , invert = TRUE)  # Non-matches (instead of matches)
+#' umx_names(mtcars, "disp", value  = FALSE) # Return indices of matches 
+#' umx_names(mtcars, "^d"  , fixed  = TRUE)  # Vars containing literal '^d' (none...)
 #' 
 #' # =======================================
 #' # = Examples using built-in GFF dataset =
@@ -4456,6 +4457,9 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(GFF, "2$") # names ending in 2
 #' umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 #' # "zyg_6grp" "zyg_2grp" "divorce"
+#' umx_names(mxData(twinData[, c("wt1", "wt2")], type= "raw"))
+#' umx_names(mxData(cov(twinData[, c("wt1", "wt2")], use="comp"), type= "cov", numObs= 1000))
+#' umx_names(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
 umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, global = FALSE, collapse = c("as.is", "as.vector", "as.formula")) {
 	collapse = match.arg(collapse)
 	if(fixed){
@@ -4463,6 +4467,17 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	}
 	if(class(df) %in%  c("summary.mxmodel", "data.frame")){
 		nameVector = names(df)
+	}else if(class(df)[1] %in% c("MxNonNullData", "MxDataStatic") ) {
+			if(df$type == "raw"){
+				nameVector = names(df$observed)
+				isRaw = TRUE
+			} else {
+				nameVector = colnames(df$observed)
+				isRaw = FALSE
+			}
+			if(is.null(nameVector)){
+				stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
+			}
 	} else if(class(df) == "list"){
 		# Assume it's a list of mxModels and we want the MODEL names (not parameters... see below)
 		nameVector = c()

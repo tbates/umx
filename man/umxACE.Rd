@@ -5,12 +5,13 @@
 \title{Build and run a 2-group Cholesky twin model (uni-variate or multi-variate)}
 \usage{
 umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
-  "random"), dzData, mzData, sep = NULL, dzAr = 0.5, dzCr = 1,
+  "random"), dzData, mzData, sep = NULL, type = c("Auto", "FIML",
+  "cov", "cor", "WLS", "DWLS", "ULS"), dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = 0, weightVar = NULL, equateMeans = TRUE,
   bVector = FALSE, thresholds = c("deviationBased", "WLS"),
-  autoRun = getOption("umx_auto_run"), suffix = "deprecated",
-  optimizer = NULL, intervals = FALSE)
+  autoRun = getOption("umx_auto_run"), optimizer = NULL,
+  intervals = FALSE, suffix = "deprecated")
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -26,6 +27,8 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 \item{mzData}{The MZ dataframe.}
 
 \item{sep}{The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.}
+
+\item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -51,11 +54,11 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{suffix}{Deprecated: use "sep".}
-
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
+
+\item{suffix}{Deprecated: use "sep".}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACE
@@ -80,12 +83,15 @@ from left to right, decomposes the variance in each component into successively 
 factors. The following figure shows how the ACE model appears as a path diagram: See the details section below
 for additional information on using umxACE.
 
+
 \figure{ACE.png}
 }
 \details{
 \strong{Data Input}
 The function flexibly accepts raw data, and also summary covariance data 
 (in which case the user must also supple numbers of observations for the two input data sets).
+
+TODO: Document type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
 
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
