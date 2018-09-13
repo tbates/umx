@@ -1613,9 +1613,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 				#   2. A + C + E for binary variables is constrained to 1 
 				# 4. For Ordinal variables, first 2 thresholds fixed
 				# TODO
-				#  1. Simple test if results are similar for an ACE model of 1 variable
 				#  2. WLS as an option.
-				#  3. Option to fix all (or all but the first 2??) thresholds for left-censored data.
+				#  3. TOBIT
 				# [] select mxFitFunctionML() of bVector as param
 				if(nFactors == 0) {			
 					# =======================================================
