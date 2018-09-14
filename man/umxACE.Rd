@@ -9,8 +9,8 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = 0, weightVar = NULL, equateMeans = TRUE,
   bVector = FALSE, thresholds = c("deviationBased", "WLS"),
-  autoRun = getOption("umx_auto_run"), suffix = "deprecated",
-  optimizer = NULL, intervals = FALSE)
+  autoRun = getOption("umx_auto_run"), optimizer = NULL,
+  intervals = FALSE, suffix = "deprecated")
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -51,11 +51,11 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{suffix}{Deprecated: use "sep".}
-
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
+
+\item{suffix}{Deprecated: use "sep".}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACE
