@@ -390,7 +390,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(!is.null(optimizer)){
 		umx_set_optimizer(optimizer)
 	}
-	
 
 	if(typeof(model) == "character"){
 		if(is.na(name)){
@@ -433,11 +432,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		# do we care?
 	}
 
-
 	foundNames = c()
 	for (thisItem in dot.items) {
 		if(!is.list(thisItem)){
-			# sometimes we get a list, so expand everything to a list
+			# Sometimes we get a list, so expand everything to a list.
 			thisItem = list(thisItem)
 		}
 		for (i in length(thisItem)) {
@@ -465,52 +463,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# = Handle data =
 	# ===============
 	
-	if(is.null(data)){
-		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at last a list of variable names to use umxRAM in sketch mode)")
-		stop("Did you perhaps just add the data along with the paths instead of via data = ?")
-	} else if (class(data)[1] == "data.frame") {
-		# Upgrade data to mxData
-		if(type %in% c("Auto", "FIML")){
-			data = mxData(observed = data, type = "raw")
-		}else	if(type == "cov"){
-				data = mxData(observed = cov(data), type = type, numObs = nrow(data))
-		}else	if(type == "cor"){
-				data = mxData(observed = cor(data), type = type, numObs = nrow(data))
-		} else {
-			# one of 'WLS', 'DWLS', 'ULS'
-			data = mxDataWLS(data, type = type)
-		}
-	}else if (class(data) == "matrix"){
-		message("You gave me a matrix. SEM needs to know the N for cov data. Rather than me assemble it,
-			the easiest and least error-prone method is for you to pass in raw data, or else\n
-			data = mxData(yourCov, type= 'cov', numObs= 100) # (or whatever your N is)")
-	}else{
-		# probably an mxData object: OK as is.
-	}
-
-	if(class(data)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
-		if(data$type == "raw"){
-			# check "one" is not a column
-			if("one" %in% names(data$observed) ){
-				warning("You have a data column called 'one' which is illegal (it's the code used for setting means). I dropped it!")
-				data$observed = data$observed[ , !(names(data$observed) %in% c("one")), drop = FALSE]
-			}
-			manifestVars = names(data$observed)
-			isRaw = TRUE
-		} else {
-			manifestVars = colnames(data$observed)
-			isRaw = FALSE
-		}
-		if(is.null(manifestVars)){
-			stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
-		}
-	} else if (class(data) == "character"){
-		# user is just running a trial model, with no data, but provided names
-		manifestVars = data
-	} else {
-		stop("I expected a dataframe, mxData, or a vector of names, but you gave me a ", class(data)[1])		
-	}
-	foundNames = unique(na.omit(foundNames))
+	# Get names from data (and check none are called reserved names)
+	manifestVars = umx_names(data)
+	manifestVars = unique(na.omit(manifestVars))
 	# Anything not in data -> latent
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
 	nLatent = length(latentVars)
@@ -523,6 +478,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	} else {
 		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ". ")
 	}
+
 	# ===========================================================
 	# = TODO handle user adding an mxThreshold object to umxRAM =
 	# ===========================================================
@@ -532,37 +488,33 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# = Handle Manifests =
 	# ====================
 	if (class(data) == "character"){
-		# user is just running a trial model, with no data, but provided names
+		# User is just running in sketch mode, with no data, but provided names.
 		unusedManifests = c()
 	}else{
 		unusedManifests = setdiff(manifestVars, foundNames)
-	}	
-	msg_str = ""
-	if(length(unusedManifests) > 0){
-		if(length(unusedManifests) > 10){
-			varList = paste0("First 10 were: ", paste(unusedManifests[1:10], collapse = ", "))
-			msg_str = paste0(length(unusedManifests), " unused variables (", varList)
-		} else if(length(unusedManifests) > 1){
-			varList = paste(unusedManifests, collapse = ", ")
-			msg_str = paste0(length(unusedManifests), " unused variables (", varList)
-		} else {
-			varList = unusedManifests
-			msg_str = paste0(length(unusedManifests), " unused variable (", varList)
-		}
-		manifestVars = setdiff(manifestVars, unusedManifests)
-		if(remove_unused_manifests){
-			# trim down the data to include only the used manifests
-			if(data$type == "raw"){
-				data$observed = data$observed[, manifestVars, drop = FALSE]
-			} else {
-				data$observed = umx_reorder(data$observed, manifestVars)
-			}
-			msg_str = paste0(msg_str, ") removed. (see remove_unused_manifests)")
-		} else {
-			msg_str = paste0(msg_str, ") left in data.")
-		}		
 	}
+
+	if(remove_unused_manifests & length(unusedManifests) > 0){
+		data = xmu_make_mxData(data= data, type = type, manifests = manifestVars)
+	} else {
+		data = xmu_make_mxData(data= data, type = type)
+	}
+
 	if(verbose){
+		msg_str = ""
+		if(length(unusedManifests) > 0){
+			manifestVars = setdiff(manifestVars, unusedManifests)
+			if(length(unusedManifests) > 10){
+				varList = paste0("First 10 were: ", paste(unusedManifests[1:10], collapse = ", "))
+				msg_str = paste0(length(unusedManifests), " unused variables (", varList)
+			} else if(length(unusedManifests) > 1){
+				varList = paste(unusedManifests, collapse = ", ")
+				msg_str = paste0(length(unusedManifests), " unused variables (", varList)
+			} else {
+				varList = unusedManifests
+				msg_str = paste0(length(unusedManifests), " unused variable (", varList)
+			}
+		}
 		message("ManifestVars set to: ", paste(manifestVars, collapse = ", "), ". ", msg_str)
 	}
 
@@ -581,7 +533,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		m1 = mxModel(m1, data)
 	}
 
-	if(isRaw){
+	if(type %in% c('Auto', 'FIML')){
 		if(is.null(m1$matrices$M) ){
 			message("You have raw data, but no means model. I added\n",
 			"mxPath('one', to = manifestVars)")
@@ -1331,12 +1283,15 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' factors. The following figure shows how the ACE model appears as a path diagram: See the details section below
 #' for additional information on using umxACE.
 #' 
+#'
 #' \figure{ACE.png}
 #' 
 #' @details
 #' \strong{Data Input}
 #' The function flexibly accepts raw data, and also summary covariance data 
 #' (in which case the user must also supple numbers of observations for the two input data sets).
+#' 
+#' TODO: Document type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
 #' 
 #' \strong{Ordinal Data}
 #' In an important capability, the model transparently handles ordinal (binary or multi-level
@@ -1379,7 +1334,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
 #' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.
-# #' @param type c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
+#' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
@@ -1538,13 +1493,13 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
-umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
+umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), optimizer = NULL, intervals = FALSE, suffix = "deprecated") {
 
 		nSib = 2 # Number of siblings in a twin pair.
 		covMethod  = match.arg(covMethod)
 		thresholds = match.arg(thresholds)
-		# type = match.arg(type)
+		type = match.arg(type)
 
 		# Allow suffix as a synonym for sep
 		if (suffix != "deprecated"){
@@ -1556,6 +1511,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		if(dzCr == .25 & (name == "ACE")){
 			name = "ADE"
 		}
+
 		# If given covariates, call umxACEcov
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
@@ -1657,9 +1613,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 				#   2. A + C + E for binary variables is constrained to 1 
 				# 4. For Ordinal variables, first 2 thresholds fixed
 				# TODO
-				#  1. Simple test if results are similar for an ACE model of 1 variable
 				#  2. WLS as an option.
-				#  3. Option to fix all (or all but the first 2??) thresholds for left-censored data.
+				#  3. TOBIT
 				# [] select mxFitFunctionML() of bVector as param
 				if(nFactors == 0) {			
 					# =======================================================
