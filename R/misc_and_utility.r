@@ -2407,7 +2407,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @aliases umx_update_OpenMx
 #' @param loc Which install to get: "UVa" (the default), "travis" (latest build),
 #' or open the travis list of builds on the web to view/pick a url.
-#' @param url A custom URL if you have/need one (probably not).
+#' @param url A custom URL if you have/need one (probably not). If you're on a Mac, you can set this to "Finder" and the package selected in the Finder will be installed. Overrides other settings.
 #' @param repos Which repository to use (ignored currently).
 #' @param lib Where to install the package.
 #' @return - 
@@ -2430,7 +2430,15 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 	}
 	
 	if(!is.null(url)){
-		install.packages(loc)
+		if(url == "Finder"){
+			umx_check_OS("OSX")
+			url = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (selection as alias)'")
+			message("Using file selected in front-most Finder window:", url)
+		} else if(url == "") {
+			url = file.choose(new = FALSE) ## choose a file
+			message("Using selected file:", url)
+		}
+		install.packages(url)
 	} else if(loc == "NPSOL"){
 		if(umx_check_OS("Windows")){
 			detach('package:OpenMx', unload = TRUE)
