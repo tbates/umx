@@ -784,19 +784,19 @@ umx_get_checkpoint <- function(model = NULL) {
 #' umx: 1.9.0; OpenMx: 2.7.16.26 [GIT v2.7.16-26-gd46131ce-dirty] / 2.7.16.31
 #' 
 #' \tabular{rllll}{
-#'	date       \tab type            \tab x core  \tab 01 min, XX.XX sec \tab                              \cr                  
-#'	date       \tab type            \tab y core  \tab XX min, XX.XX sec \tab \eqn{\Delta}{\u0394}: -xx.xxx)    \cr
-#'	202-12-31 \tab v3.0.0.future            \tab x core  \tab 0 min, 0.30 sec \tab                              \cr
-#'	2018-09-17 \tab v2.11.3            \tab 1 core  \tab 01 min, 31 sec \tab                              \cr
-#'	2018-09-17 \tab v2.11.3            \tab 4 core  \tab 00 min, 30.6 sec \tab      \eqn{\Delta}{\u0394}: -61.488) \cr
-#'	2017-10-16 \tab v2.7.18-9-g159b7337-dirty            \tab y core  \tab 00 min, 22.63 sec \tab \eqn{\Delta}{\u0394}: -44.676)    \cr
-#'	2017-10-16 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 08.38 sec \tab                              \cr                  
-#'	2017-10-16 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 24.89 sec \tab \eqn{\Delta}{\u0394}: -43.488)    \cr
-#'	2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.90 sec \tab                              \cr
-#'	2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.20 sec \tab \eqn{\Delta}{\u0394}: -40.70 sec  \cr
-#'	2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 09.90 sec \tab                              \cr
-#'	2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 06.20 sec \tab                              \cr
-#'	2017-09-07 \tab TRAVIS          \tab 4 core  \tab 00 min, 21.10 sec \tab \eqn{\Delta}{\u0394}: -45.00 sec  \cr
+#'	date       \tab type            \tab x core  \tab 01 min, XX.XX sec \tab                                 \cr                  
+#'	2022-12-31 \tab v3.0.0.future   \tab x core  \tab 00 min, 0.30 sec  \tab                                 \cr
+#'	2018-09-17 \tab v2.11.3         \tab 1 core  \tab 01 min, 31 sec    \tab                                 \cr
+#'	2018-09-17 \tab v2.11.3         \tab 4 core  \tab 00 min, 30.6 sec  \tab \eqn{\Delta}{&Delta;}: -61.49) \cr
+#'	2017-10-16 \tab v2.7.18-9       \tab x core  \tab 01 min, 07.30 sec \tab                                 \cr                  
+#'	2017-10-16 \tab v2.7.18-9       \tab y core  \tab 00 min, 22.63 sec \tab \eqn{\Delta}{&Delta;}: -44.68) \cr
+#'	2017-10-16 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 08.38 sec \tab                                 \cr                  
+#'	2017-10-16 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 24.89 sec \tab \eqn{\Delta}{&Delta;}: -43.49) \cr
+#'	2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.90 sec \tab                                 \cr
+#'	2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.20 sec \tab \eqn{\Delta}{&Delta;}: -40.70   \cr
+#'	2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 09.90 sec \tab                                 \cr
+#'	2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 06.20 sec \tab                                 \cr
+#'	2017-09-07 \tab TRAVIS          \tab 4 core  \tab 00 min, 21.10 sec \tab \eqn{\Delta}{&Delta;}: -45.00   \cr
 #' }
 #' 
 #' @param nCores How many cores to run (defaults to c(1, max/2). -1 = all available.
@@ -2409,7 +2409,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @aliases umx_update_OpenMx
 #' @param loc Which install to get: "UVa" (the default), "travis" (latest build),
 #' or open the travis list of builds on the web to view/pick a url.
-#' @param url A custom URL if you have/need one (probably not).
+#' @param url A custom URL if you have/need one (probably not). If you're on a Mac, you can set this to "Finder" and the package selected in the Finder will be installed. Overrides other settings.
 #' @param repos Which repository to use (ignored currently).
 #' @param lib Where to install the package.
 #' @return - 
@@ -2432,7 +2432,15 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 	}
 	
 	if(!is.null(url)){
-		install.packages(loc)
+		if(url == "Finder"){
+			umx_check_OS("OSX")
+			url = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (selection as alias)'")
+			message("Using file selected in front-most Finder window:", url)
+		} else if(url == "") {
+			url = file.choose(new = FALSE) ## choose a file
+			message("Using selected file:", url)
+		}
+		install.packages(url)
 	} else if(loc == "NPSOL"){
 		if(umx_check_OS("Windows")){
 			detach('package:OpenMx', unload = TRUE)

@@ -3708,15 +3708,18 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' \dontrun{
 #' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 #' }
-umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd", "n"), digits = 2, kable = TRUE) {
+umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt")) {
+	report = match.arg(report)
+	what = umx_match.arg(what, c("mean_sd", "n"), check = FALSE)
 	# TODO Add more aggregating functions?
+	# 	output odds or odds ratios for binary?
 	# TODO: add summaryBy ability to handle more than var on the left hand side
 	# doBy::summaryBy(Sex_T1 + Sex_T2 ~ zyg, data = twinData, FUN = function(x) { round(c(
 	# 	n    = length(x),
 	# 	mean = mean(x, na.rm = T),
 	# 	sd   = sd(x, na.rm = T)), 2)
 	# })
-	# TODO: add "suffix" to umx_aggregate to make wide data long for summary as in genEpi_TwinDescriptives
+	# TODO: add "sep" to umx_aggregate to make wide data long for summary as in genEpi_TwinDescriptives
 	# genEpi_TwinDescriptives(mzData = twinData, dzData = NULL, selDVs = selDVs, groupBy = c("Sex_T1", "Sex_T2"), graph = F)
 	# genEpi_twinDescribe(twinData, varsToSummarize="Age", groupBy="Sex", suffix="_T")
 
@@ -3731,7 +3734,6 @@ umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd
 	}
 	x_n = function(x){sum(!is.na(x))}
 
-	what = umx_match.arg(what, c("mean_sd", "n"), check = FALSE)
 	if(class(what)=="function"){
 		FUN = what
 	} else if(class(what) != "character"){
@@ -3745,9 +3747,12 @@ umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd
 	n_s = aggregate(formula, FUN = x_n, data = data)
 	tmp = data.frame(tmp)
 	tmp[, 1] = paste0(as.character(tmp[, 1]), " (n = ", n_s[, 2], ")")
-	if(kable){
+	if(report == "html"){
+		umx_print(tmp, digits = digits, file = "tmp.html")
+	} else if(report == "markdown"){
 		return(knitr::kable(tmp))
-	} else {
+	}else{
+		# umx_print(tmp, digits = digits)
 		return(tmp)
 	}
 }
@@ -3915,7 +3920,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #'
 umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
 	report = match.arg(report)
-	test = match.arg(report)
+	test = match.arg(test)
 	if("htest" == class(obj)[[1]]){
 		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), ", ", round(obj$conf.int[2], digits), "]")
 		o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))

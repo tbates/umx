@@ -13,7 +13,7 @@ install.OpenMx(loc = c("NPSOL", "travis", "CRAN",
 \item{loc}{Which install to get: "UVa" (the default), "travis" (latest build),
 or open the travis list of builds on the web to view/pick a url.}
 
-\item{url}{A custom URL if you have/need one (probably not).}
+\item{url}{A custom URL if you have/need one (probably not). If you're on a Mac, you can set this to "Finder" and the package selected in the Finder will be installed. Overrides other settings.}
 
 \item{lib}{Where to install the package.}
 
