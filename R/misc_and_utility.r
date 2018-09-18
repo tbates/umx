@@ -786,7 +786,9 @@ umx_get_checkpoint <- function(model = NULL) {
 #' \tabular{rllll}{
 #'	date       \tab type            \tab x core  \tab 01 min, XX.XX sec \tab                              \cr                  
 #'	date       \tab type            \tab y core  \tab XX min, XX.XX sec \tab \eqn{\Delta}{\u0394}: -xx.xxx)    \cr
-#'	2017-10-16 \tab v2.7.18-9-g159b7337-dirty            \tab x core  \tab 01 min, 07.30 sec \tab                              \cr                  
+#'	202-12-31 \tab v3.0.0.future            \tab x core  \tab 0 min, 0.30 sec \tab                              \cr
+#'	2018-09-17 \tab v2.11.3            \tab 1 core  \tab 01 min, 31 sec \tab                              \cr
+#'	2018-09-17 \tab v2.11.3            \tab 4 core  \tab 00 min, 30.6 sec \tab      \eqn{\Delta}{\u0394}: -61.488) \cr
 #'	2017-10-16 \tab v2.7.18-9-g159b7337-dirty            \tab y core  \tab 00 min, 22.63 sec \tab \eqn{\Delta}{\u0394}: -44.676)    \cr
 #'	2017-10-16 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 08.38 sec \tab                              \cr                  
 #'	2017-10-16 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 24.89 sec \tab \eqn{\Delta}{\u0394}: -43.488)    \cr
