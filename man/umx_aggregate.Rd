@@ -9,15 +9,15 @@ umx_aggregate(formula = DV ~ condition, data = NA,
   "html", "txt"))
 }
 \arguments{
-\item{formula}{The aggregation formula. e.g., DV ~ condition}
+\item{formula}{The aggregation formula. e.g., DV ~ condition.}
 
-\item{data}{frame to aggregate}
+\item{data}{frame to aggregate.}
 
-\item{what}{function to use. Defaults to reporting "mean (sd)"}
+\item{what}{function to use. Default reports "mean (sd)".}
 
-\item{digits}{for rounding of results}
+\item{digits}{to round results to.}
 
-\item{kable}{Report as a formatted table? (Default is TRUE)}
+\item{report}{Format for the table: Default is markdown.}
 }
 \value{
 - table
@@ -52,8 +52,8 @@ umx_aggregate(mpg ~ cyl, data = mtcars)
 umx_aggregate(mpg ~ cyl, data = mtcars, what = "n")
 umx_aggregate(mpg ~ cyl, data = mtcars, what = function(x){sum(!is.na(x))})
 
-# turn off table markdown table
-umx_aggregate(mpg ~ cyl, data = mtcars, kable = FALSE)
+# turn off markdown
+umx_aggregate(mpg ~ cyl, data = mtcars, report = "txt")
 
 # ============================================
 # = More than one item on the left hand side =

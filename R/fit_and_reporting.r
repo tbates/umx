@@ -2514,7 +2514,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' \dontrun{
 #' plot(yourCP_Model) # no need to remember a special name: plot works fine!
 #' }
-umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE...) {
+umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, ...) {
 	if(!class(x) == "MxModelCP"){
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
@@ -2638,7 +2638,7 @@ plot.MxModelCP <- umxPlotCP
 #' plot(model)
 #' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE...) {
+umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, ...) {
 	format = match.arg(format)
 	if(!class(x) == "MxModelIP"){
 		stop("The first parameter of umxPlotIP must be an IP model, you gave me a ", class(x))
@@ -3672,11 +3672,11 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' 8 (n = 14) \tab 15.1 (2.56)\cr
 #' }
 #'
-#' @param formula The aggregation formula. e.g., DV ~ condition
-#' @param data frame to aggregate
-#' @param what function to use. Defaults to reporting "mean (sd)"
-#' @param digits for rounding of results
-#' @param kable Report as a formatted table? (Default is TRUE)
+#' @param formula The aggregation formula. e.g., DV ~ condition.
+#' @param data frame to aggregate.
+#' @param what function to use. Default reports "mean (sd)".
+#' @param digits to round results to.
+#' @param report Format for the table: Default is markdown.
 #' @return - table
 #' @export
 #' @family Reporting Functions
@@ -3695,8 +3695,8 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' umx_aggregate(mpg ~ cyl, data = mtcars, what = "n")
 #' umx_aggregate(mpg ~ cyl, data = mtcars, what = function(x){sum(!is.na(x))})
 #' 
-#' # turn off table markdown table
-#' umx_aggregate(mpg ~ cyl, data = mtcars, kable = FALSE)
+#' # turn off markdown
+#' umx_aggregate(mpg ~ cyl, data = mtcars, report = "txt")
 #' 
 #' # ============================================
 #' # = More than one item on the left hand side =

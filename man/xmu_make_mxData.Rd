@@ -33,6 +33,8 @@ tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = c("mpg", "cyl", "
 tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = c("mpg", "cyl", "disp"))
 tmp = xmu_make_mxData(data= mtcars, type = "cov")
 tmp = xmu_make_mxData(data= mtcars, type = "cor")
+# pass string through
+xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 
 }
 \seealso{

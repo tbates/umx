@@ -40,12 +40,17 @@
 #' tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = c("mpg", "cyl", "disp"))
 #' tmp = xmu_make_mxData(data= mtcars, type = "cov")
 #' tmp = xmu_make_mxData(data= mtcars, type = "cor")
+#' # pass string through
+#' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
 xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL) {
 	type = match.arg(type)
 	if(is.null(data)){
 		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
 		stop("Did you perhaps just include the data among other functions instead of via data = ?")
+	}else if(class(data)=="character"){
+		# pass through strings
+		return(data)
 	}
 	if(is.null(manifests)){
 		manifests = umx_names(data)

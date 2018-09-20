@@ -7,7 +7,7 @@
 \usage{
 umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
-  SEstyle = FALSE...)
+  SEstyle = FALSE, ...)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link{mxModel}} to display graphically}

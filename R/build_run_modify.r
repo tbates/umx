@@ -463,13 +463,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# = Handle data =
 	# ===============
 	
-	# Get names from data (and check none are called reserved names)
-	manifestVars = umx_names(data)
-	manifestVars = unique(na.omit(manifestVars))
-	# Anything not in data -> latent
+	# Get names from data (forms pool of potential usedManifests)
+	manifestVars = unique(na.omit(umx_names(data)))
+
+	# Omit NAs from found names as empty to = can generate these spuriously
+	foundNames   = unique(na.omit(foundNames))
+
+	# Anything used as a path, but not found in the data (and not a key word like "one") must be a latent
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
 	nLatent = length(latentVars)
-	# Report on which latents were created
+	# Report which latents were created
 	if(nLatent == 0 && verbose){
 		# message("No latent variables were created.\n")
 		latentVars = NA
@@ -478,6 +481,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	} else {
 		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ". ")
 	}
+
 
 	# ===========================================================
 	# = TODO handle user adding an mxThreshold object to umxRAM =
@@ -493,17 +497,20 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}else{
 		unusedManifests = setdiff(manifestVars, foundNames)
 	}
+	# used = all data columns present in found and not reserved, e.g. "one"
+	usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
+
 
 	if(remove_unused_manifests & length(unusedManifests) > 0){
-		data = xmu_make_mxData(data= data, type = type, manifests = manifestVars)
+		data = xmu_make_mxData(data = data, type = type, manifests = usedManifests)
 	} else {
 		data = xmu_make_mxData(data= data, type = type)
+		usedManifests = manifestVars
 	}
 
 	if(verbose){
 		msg_str = ""
 		if(length(unusedManifests) > 0){
-			manifestVars = setdiff(manifestVars, unusedManifests)
 			if(length(unusedManifests) > 10){
 				varList = paste0("First 10 were: ", paste(unusedManifests[1:10], collapse = ", "))
 				msg_str = paste0(length(unusedManifests), " unused variables (", varList)
@@ -515,11 +522,11 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 				msg_str = paste0(length(unusedManifests), " unused variable (", varList)
 			}
 		}
-		message("ManifestVars set to: ", paste(manifestVars, collapse = ", "), ". ", msg_str)
+		message("ManifestVars set to: ", paste(usedManifests, collapse = ", "), ". ", msg_str)
 	}
 
 	m1 = do.call("mxModel", list(name = name, type = "RAM", 
-		manifestVars = manifestVars,
+		manifestVars = usedManifests,
 		latentVars  = latentVars,
 		independent = independent, dot.items)
 	)
@@ -533,11 +540,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		m1 = mxModel(m1, data)
 	}
 
-	if(type %in% c('Auto', 'FIML')){
+	# Add means if data are raw and means not requested by user
+	if(type %in% c('Auto', 'FIML') && (data$type == "raw")){
 		if(is.null(m1$matrices$M) ){
 			message("You have raw data, but no means model. I added\n",
 			"mxPath('one', to = manifestVars)")
-			m1 = mxModel(m1, mxPath("one", manifestVars))
+			m1 = mxModel(m1, mxPath("one", usedManifests))
 		} else {
 			# leave the user's means as the model
 			# print("using your means model")

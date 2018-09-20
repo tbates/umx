@@ -147,14 +147,17 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 		name = "EFA"
 	}
 
-	# What about for scores? Do we want std loadings in that case?...
+	# TODO: umxEFA scale data - What about for scores? Do we want std loadings in that case?...
 	data = umx_scale(data)
 	if(is.null(factors)){
 		stop("You need to request at least 1 latent factor, e.g.: factors = 4")
 	} else if( length(factors) == 1 && class(factors) == "numeric"){
 		factors = paste0("F", c(1:factors))
+	}else{
+		# factors is a list of factor names (we hope)
 	}
 	# TODO umxEFA: Adapt to input datatype, i.e., add cov handler
+	# umx_print(factors)
 	manifests <- names(data)
 	m1 <- umxRAM(model = name, data = data, autoRun = FALSE,
 		umxPath(factors, to = manifests, connect = "unique.bivariate"),

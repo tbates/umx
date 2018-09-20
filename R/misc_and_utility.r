@@ -2963,7 +2963,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @param ... Optional parameters for print
 #' @return - A dataframe of text
 #' @export
-#' @seealso \code{\link{umx_set_table_format}} 
+#' @seealso \code{\link{umx_msg}}, \code{\link{umx_set_table_format}} 
 #' @family Miscellaneous Utility Functions
 #' @family Reporting Functions
 #' @examples
@@ -2974,9 +2974,10 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' }
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
 	# depends on R2HTML::HTML and knitr::kable
+	file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
 	if(class(x)=="character"){
 		print(x)
-	}else if(class(x)!="data.frame"){
+	}else if(class(x)!= "data.frame"){
 		if(class(x)=="matrix" |class(x)=="numeric"){
 			x = data.frame(x)
 		} else {
@@ -2986,10 +2987,9 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 		}
 	}
 
-	if(dim(x)[1] == 0){
+	if(is.null(dim(x)[1]) || dim(x)[1] == 0){
 		return()
 	} else {
-		file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
 		if(!is.null(suppress)){
 			x[abs(x) < suppress] = 0
 			zero.print = "."
@@ -4297,7 +4297,7 @@ umx_match.arg <- umx_default_option
 #' @param rowMarker mark the end of each row
 #' @return - matrix
 #' @family Miscellaneous Utility Functions
-#' @references \url{https://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
+#' @references \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
 #' @export
 #' @examples
 #' # simple example

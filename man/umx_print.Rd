@@ -44,7 +44,7 @@ umx_print(mtcars[1:10,], file = "tmp.html")
 }
 }
 \seealso{
-\code{\link{umx_set_table_format}}
+\code{\link{umx_msg}}, \code{\link{umx_set_table_format}}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
