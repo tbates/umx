@@ -475,7 +475,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# Report which latents were created
 	if(nLatent == 0 && verbose){
 		# message("No latent variables were created.\n")
-		latentVars = NA
+		# latentVars = NA
 	} else if (nLatent == 1){
 		message("A latent variable '", latentVars[1], "' was created. ")
 	} else {
