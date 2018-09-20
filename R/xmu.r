@@ -25,12 +25,9 @@
 #'
 #' The most common use will be to give it a dataframe, and get back a nice mxData object of WLS, cov, cor, or raw type.
 #'
-#' @details
-#'
 #' @param data A \code{\link{data.frame}} or \code{\link{mxData}}
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
-#' @param drop Variables to check for and try to drop if found (default "one")
 #' @return - \code{\link{mxData}}
 #' @export
 #' @family xmu internal not for end user
@@ -88,6 +85,8 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			if(data$type %in% c("cov", "cor")){
 				# Trim down the data to include only the requested columns
 				data$observed = umx_reorder(data$observed, manifests)
+			} else if (data$type == "raw"){
+				data$observed = data$observed[, manifests]
 			} else {
 				stop("You offered up an existing mxData and requested dropping unused variables: I can only do this for cov, cor, and raw data")
 			}

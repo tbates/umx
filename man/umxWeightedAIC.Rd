@@ -18,9 +18,6 @@ umxWeightedAIC(models, digits = 2)
 Returns the best model by AIC, and computes the probabilities 
 according to AIC weight-based conditional probabilities (Wagenmakers & Farrell, 2004).
 }
-\details{
-
-}
 \examples{
 l1 = lm(mpg~ wt + disp, data=mtcars)
 l2 = lm(mpg~ wt, data=mtcars)

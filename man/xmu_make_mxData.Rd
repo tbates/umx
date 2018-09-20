@@ -13,8 +13,6 @@ xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
 \item{type}{What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')}
 
 \item{manifests}{If set, only these variables will be retained.}
-
-\item{drop}{Variables to check for and try to drop if found (default "one")}
 }
 \value{
 - \code{\link{mxData}}
@@ -23,9 +21,6 @@ xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
 Non-user function to upgrade a dataframe to an mxData type. It can also trim variables.
 
 The most common use will be to give it a dataframe, and get back a nice mxData object of WLS, cov, cor, or raw type.
-}
-\details{
-
 }
 \examples{
 tmp = xmu_make_mxData(data= mtcars, type = "Auto")

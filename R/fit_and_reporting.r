@@ -73,8 +73,6 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' Returns the best model by AIC, and computes the probabilities 
 #' according to AIC weight-based conditional probabilities (Wagenmakers & Farrell, 2004). 
 #'
-#' @details
-#'
 #' @param models a list of models to compare.
 #' @param digits (default 2)
 #' @return - Best model

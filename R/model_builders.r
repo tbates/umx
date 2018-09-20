@@ -328,7 +328,7 @@ umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= 
 	latentErr <- paste0("e", allForm) # latentErr   <- c("eX", "eY")
 	umx_check_names(manifests, data = data, die = TRUE)
 
-	IVModel <- umxRAM("IV Model", data = mxData(data, type = "raw"),
+	IVModel <- umxRAM("IV Model", data = data,
 		# Causal and confounding paths
 		umxPath(inst , to = Xvars), # beta of SNP effect          :  X ~ b1 x inst
 		umxPath(Xvars, to = DV),    # Causal effect of Xvars on DV: DV ~ b2 x X
