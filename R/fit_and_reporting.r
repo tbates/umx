@@ -83,8 +83,11 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @examples
 #' l1 = lm(mpg~ wt + disp, data=mtcars)
 #' l2 = lm(mpg~ wt, data=mtcars)
-#' umxWeightedAIC(c(l1, l2))
+#' umxWeightedAIC(models = list(l1, l2))
 umxWeightedAIC <- function(models, digits= 2) {
+	if(class(models[[1]])== "numeric"){
+		stop("Please input the list of models to compare as a list, i.e. models = list(model1, model2)")
+	}
 	AIClist = c()
 	for (i in models) {
 		AIClist = c(AIClist, AIC(i))

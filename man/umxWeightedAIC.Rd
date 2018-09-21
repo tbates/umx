@@ -21,7 +21,7 @@ according to AIC weight-based conditional probabilities (Wagenmakers & Farrell, 
 \examples{
 l1 = lm(mpg~ wt + disp, data=mtcars)
 l2 = lm(mpg~ wt, data=mtcars)
-umxWeightedAIC(c(l1, l2))
+umxWeightedAIC(models = list(l1, l2))
 }
 \references{
 - Wagenmakers EJ, Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychon Bull Rev*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
