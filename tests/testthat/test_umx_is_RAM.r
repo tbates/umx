@@ -7,7 +7,7 @@ require(umx)
 data(demoOneFactor) # from OpenMx
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data =	mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1.0)
