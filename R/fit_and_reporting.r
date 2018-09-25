@@ -166,11 +166,12 @@ umxReduce.default <- function(model, ...){
 #' It reports the results in a table. Set the format of the table with
 #' [umx_set_table_format]. Or set `report` to "html" to open a
 #' table for pasting into a word processor.
+#' 
 #' @param model An \code{\link{mxModel}} to reduce.
 #' @param report How to report the results. "html" = open in browser.
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp").
 #' @param ... Other parameters to control model summary.
-#' @return - 
+#' @return best model
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso \code{\link{umxReduceACE}}, \code{\link{umxReduce}}
@@ -230,7 +231,9 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		aic.weights = round(Weights(AIClist), 2)
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
 			omxQuotes(namez(modelList)), " respectively are: ",
-			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")		
+			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC())."
+		)
+		invisible(bestModel)
 	} else {
 		stop("This function is for GxE. Feel free to let me know what you want...")
 	}
