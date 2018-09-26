@@ -1,8 +1,23 @@
 # umx 2.8.5 August 2018, R 3.5.1: More love
-* IMPROVED: `umx_simplex_corner` can take a numeric to set matrix size.
+* NEW: umxRAM supports WLS, UWLS, DWLS models!
+* NEW: xmu_make_mxData function to make mxData functions out of dataframes (and also drop variables from cov/cor dataframes.
+* NEW: SEstyle confidence information for CP and IP plots.
+* IMPROVED: `umxCompare` gains ability to output Weight AIC conditional model probabillities! h/t @mNivard
 * IMPROVED: `umxReduce` returns AIC weight-based probability of being best model.
+* IMPROVED `umxReduce.MxModelGxE` returns best model (invisibly).
+* IMPROVED: `umxReduce` for GxE, don't run no A and noC models with moderation in place
 * IMPROVED: `namez` given a list of models will return the names of each.
-
+* IMPROVED: `namez` allow global replace.
+* IMPROVED: `umx_aggregate` can now open tables in a web browser.
+* IMPROVED: `install.OpenMx` can now install a package file if selected in the Finder (MacOS only)
+* IMPROVED: `install.OpenMx` now works with windows.
+* IMPROVED: `umx_print` more robust to non table input.
+* IMPROVED: `xmu_make_mxdata` more robust to non dataframe input.
+* IMPROVED `umx_apply` robustness.
+* IMPROVED: `umx_simplex_corner` can take a numeric to set matrix size.
+* IMPROVED: `umx_long2wide` warn if twinID (order) has too many levels; improved help; @md
+* BUG: `umxAPA` test parameter had no effect.
+* HELP: Better links, text, layout, etc., umxCP/IP HELP figures.
 
 # umx 2.8.2 June 2018, R 3.5.0: Simplex or s__t sticks
 * FIXED: `umxSexLim` now works for univariate tests (thanks to Michael Zakharin for reporting!)
