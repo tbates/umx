@@ -1503,7 +1503,8 @@ umx_pad <- function(x, n) {
 
 #' umx_apply
 #'
-#' Tries to make apply more readable. Other functions to think of include
+#' Tries to make apply more readable. so "mean of x by columns", instead of "of x, by 2, mean"
+#' Other functions to think of include:
 #' \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
 #'
 #' @param FUN The function to apply.
@@ -1520,9 +1521,8 @@ umx_pad <- function(x, n) {
 #' umx_apply(mean, of = mtcars, by = "columns")
 #' umx_apply(mean, by = "rows", of = mtcars[1:3,], na.rm = TRUE)
 umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
-	if(! (by %in% c("columns", "rows"))){
-		stop(paste("'by' must be either 'rows' or 'columns': You gave me ", omxQuotes(by)))
-	} else if (by == "rows") {
+	by = match.arg(by)
+	if (by == "rows") {
 		by = 1
 	} else {
 		by = 2		
