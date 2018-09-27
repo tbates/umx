@@ -5685,8 +5685,9 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 #' from a journal article), OR a matrix (for instance from a "lower" \code{\link{mxMatrix}}, 
 #' and returns a full matrix, copying the lower triangle into the upper.
 #' 
-#' Can also take a full matrix, which can be useful for enforcing symmetry on a
-#' nearly-symmetrical matrix.
+#' *note*: Can also take lower data presented in the form of a data.frame. Note also, if 
+#' presented with a full matrix, the function will return a matrix with  symmetry enforced. Can be
+#' handy when you have a "nearly-symmetrical" matrix (with differences in the 10th decimal place).
 #' 
 #' @param lower.data An \code{\link{mxMatrix}}
 #' @param diag A boolean specifying whether the lower.data includes the diagonal
@@ -5769,7 +5770,7 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 		stop("diag must be one of TRUE or FALSE.")
 	}
 
-	if(is.matrix(lower.data)){
+	if(is.matrix(lower.data)||is.data.frame(lower.data)){
 		# Copy the transpose of the lower triangle to the
 		# upper triangle
 		mat = lower.data
