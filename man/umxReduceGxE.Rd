@@ -17,9 +17,7 @@ umxReduceGxE(model, report = c("markdown", "inline", "html", "report"),
 \item{...}{Other parameters to control model summary.}
 }
 \value{
-\itemize{
-\item 
-}
+best model
 }
 \description{
 This function can perform model reduction for \link{umxGxE},

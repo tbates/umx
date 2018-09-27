@@ -1503,7 +1503,8 @@ umx_pad <- function(x, n) {
 
 #' umx_apply
 #'
-#' Tries to make apply more readable. Other functions to think of include
+#' Tries to make apply more readable. so "mean of x by columns", instead of "of x, by 2, mean"
+#' Other functions to think of include:
 #' \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
 #'
 #' @param FUN The function to apply.
@@ -1520,9 +1521,8 @@ umx_pad <- function(x, n) {
 #' umx_apply(mean, of = mtcars, by = "columns")
 #' umx_apply(mean, by = "rows", of = mtcars[1:3,], na.rm = TRUE)
 umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
-	if(! (by %in% c("columns", "rows"))){
-		stop(paste("'by' must be either 'rows' or 'columns': You gave me ", omxQuotes(by)))
-	} else if (by == "rows") {
+	by = match.arg(by)
+	if (by == "rows") {
 		by = 1
 	} else {
 		by = 2		
@@ -5685,8 +5685,9 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 #' from a journal article), OR a matrix (for instance from a "lower" \code{\link{mxMatrix}}, 
 #' and returns a full matrix, copying the lower triangle into the upper.
 #' 
-#' Can also take a full matrix, which can be useful for enforcing symmetry on a
-#' nearly-symmetrical matrix.
+#' *note*: Can also take lower data presented in the form of a data.frame. Note also, if 
+#' presented with a full matrix, the function will return a matrix with  symmetry enforced. Can be
+#' handy when you have a "nearly-symmetrical" matrix (with differences in the 10th decimal place).
 #' 
 #' @param lower.data An \code{\link{mxMatrix}}
 #' @param diag A boolean specifying whether the lower.data includes the diagonal
@@ -5769,7 +5770,7 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 		stop("diag must be one of TRUE or FALSE.")
 	}
 
-	if(is.matrix(lower.data)){
+	if(is.matrix(lower.data)||is.data.frame(lower.data)){
 		# Copy the transpose of the lower triangle to the
 		# upper triangle
 		mat = lower.data

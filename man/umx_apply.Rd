@@ -19,7 +19,8 @@ umx_apply(FUN, of, by = c("columns", "rows"), ...)
 - object
 }
 \description{
-Tries to make apply more readable. Other functions to think of include
+Tries to make apply more readable. so "mean of x by columns", instead of "of x, by 2, mean"
+Other functions to think of include:
 \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
 }
 \examples{
