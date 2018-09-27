@@ -281,7 +281,12 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 			AE = umxModify(ACE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
 		}
 	}else if(model$top$dzCr$values == .25){
-		message("You gave me an ADE model")
+		if(model$name=="ACE"){
+			message("You gave me an ADE model, but it was called 'ACE'. I have renamed it ADE for the purposes of clarity in model reduction.")
+			model = mxRename(model, newname = "ADE", oldname = "ACE")
+		} else {
+			message("You gave me an ADE model.")
+		}
 		ADE = model
 		ACE = umxModify(ADE, 'dzCr_r1c1', value = 1, name = "ACE")
 		AE  = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
