@@ -3778,9 +3778,9 @@ umx_reorder <- function(old, newOrder) {
 #'# = Use with twin variables =
 #'# ===========================
 #' 
+#' data(twinData)
 #' x = twinData
-#' y = rbind(x$wt1, x$wt2) 
-#' cuts  = umx_cont_2_quantiles(y, nlevels = 10, returnCutpoints = TRUE)
+#' cuts  = umx_cont_2_quantiles(rbind(x$wt1, x$wt2) , nlevels = 10, returnCutpoints = TRUE)
 #' x$wt1 = umx_cont_2_quantiles(x$wt1, nlevels = cuts) # use same for both...
 #' x$wt2 = umx_cont_2_quantiles(x$wt2, nlevels = cuts) # use same for both...
 #' str(x[, c("wt1", "wt2")])
@@ -3789,7 +3789,7 @@ umx_reorder <- function(old, newOrder) {
 #' 
 #' x = umx_cont_2_quantiles(mtcars[, "mpg"], nlevels = 5) # quintiles
 #' x = umx2ord(mtcars[, "mpg"], nlevels = 5) # using shorter alias
-#' x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10) # more than integers exist
+#' x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10) # more levels than integers exist
 #' x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordered", "unordered"), verbose = FALSE, returnCutpoints = FALSE){
 	# TODO: umx_cont_2_quantiles: Check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed column-wise
