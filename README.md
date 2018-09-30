@@ -3,7 +3,7 @@
 
 [![CRAN status](http://www.r-pkg.org/badges/version/umx)](https://cran.r-project.org/package=umx)
 
-umx is a structural equation modeling package designed to make SEM easier to build, modify, and report.
+umx is a structural equation modeling package designed to make SEM easier, from building, to modifying and reporting.
 
 It includes high-level functions for complex models such as multi-group twin models, as well as for graphical model output.
 
