@@ -61,34 +61,47 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 \item{suffix}{Deprecated: use "sep".}
 }
 \value{
-- \code{\link{mxModel}} of subclass mxModel.ACE
+\itemize{
+\item \code{\link{mxModel}} of subclass mxModel.ACE
+}
 }
 \description{
 Implementing a core task in twin modeling, umxACE models the genetic and environmental
 structure of one or more phenotypes (measured variables) using the Cholesky ACE model
 (Neale and Cardon, 1996).
 
-Classical twin modeling uses the genetic and environmental differences 
+Classical twin modeling uses the genetic and environmental differences
 among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
 
-The Cholesky decomposes this phenotypic variance into Additive genetic,
-unique environmental (E) and, optionally, either common or shared-environment (C) or 
-non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
-and multiple examples.
+\code{umxACE} implements a 2-group model to capture these data and represent the phenotypic variance as a sum of Additive genetic,
+unique environmental (E) and, optionally, either common or shared-environment (C) or
+non-additive genetic effects (D).
 
-The Cholesky or lower-triangle decomposition allows a model which is both sure to be 
-solvable, and also to account for all the variance (with some restrictions) in the data. 
-This model creates as many latent A C and E variables as there are phenotypes, and, moving 
-from left to right, decomposes the variance in each component into successively restricted 
+The following figure shows how the ACE model appears as a path diagram (for one variable): See the details section below
+for additional information on using \code{umxACE}.
+
+\figure{ACE_full_univariate.png}
+
+\code{umxACE} allows multivariate analyses, and this brings us to the Cholesky part of the model.
+A Cholesky decomposition breaks
+
+The Cholesky or lower-triangle decomposition allows a model which is both sure to be
+solvable, and also to account for all the variance (with some restrictions) in the data. The variance-covariance
+matrix of the raw data is recovered as the product of the lower Cholesky and its transform.
+
+This model creates as many latent A C and E variables as there are phenotypes, and, moving
+from left to right, decomposes the variance in each component into successively restricted
 factors. The following figure shows how the ACE model appears as a path diagram: See the details section below
 for additional information on using umxACE.
 
-
 \figure{ACE.png}
+
+\strong{NOTE}: Scroll down to details for how to use the function, a figure
+and multiple examples.
 }
 \details{
 \strong{Data Input}
-The function flexibly accepts raw data, and also summary covariance data 
+The function flexibly accepts raw data, and also summary covariance data
 (in which case the user must also supple numbers of observations for the two input data sets).
 
 TODO: Document type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
@@ -96,7 +109,7 @@ TODO: Document type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS"
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
 ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
-data in any combination. An experimental feature is under development to allow Tobit modeling. 
+data in any combination. An experimental feature is under development to allow Tobit modeling.
 
 The function also supports weighting of individual data rows. In this case,
 the model is estimated for each row individually, then each row likelihood
@@ -112,15 +125,14 @@ to .25 to model dominance effects.
 
 \strong{Matrices and Labels in ACE model}
 
-Matrices 'a'', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
+Matrices 'a', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
 
 So, labels relevant to modifying the model are of the form \code{"a_r1c1", "c_r1c1"} etc.
 
-Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say
+Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say\preformatted{\code{m2 = umxModify(m1, update = "c_r3c2")}
+}
 
-    \code{m2 = umxModify(m1, update = "c_r3c2")}
-
-Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 
 \code{m1$top$expMean$labels[1, 4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
@@ -267,11 +279,15 @@ umxSummary(m1)
 plot(m1)
 }
 \references{
-- Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
+\itemize{
+\item Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
 to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 }
+}
 \seealso{
-- \code{\link{plot.MxModelACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
+\itemize{
+\item \code{\link{plot.MxModelACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
+}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},

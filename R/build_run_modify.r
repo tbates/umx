@@ -1279,20 +1279,34 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' Classical twin modeling uses the genetic and environmental differences 
 #' among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
 #' 
-#' The Cholesky decomposes this phenotypic variance into Additive genetic,
+#' `umxACE` implements a 2-group model to capture these data and represent the phenotypic variance as a sum of Additive genetic,
 #' unique environmental (E) and, optionally, either common or shared-environment (C) or 
-#' non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
-#' and multiple examples.
+#' non-additive genetic effects (D).
+#' 
+#' The following figure shows how the ACE model appears as a path diagram (for one variable):
+#' 
+#' \figure{ACE_full_univariate.png}
+#'
+#' `umxACE` allows multivariate analyses, and this brings us to the Cholesky part of the model.
+#' A Cholesky decomposition breaks
 #' 
 #' The Cholesky or lower-triangle decomposition allows a model which is both sure to be 
-#' solvable, and also to account for all the variance (with some restrictions) in the data. 
+#' solvable, and also to account for all the variance (with some restrictions) in the data. The variance-covariance
+#' matrix of the raw data is recovered as the product of the lower Cholesky and its transform.
+#' 
 #' This model creates as many latent A C and E variables as there are phenotypes, and, moving 
 #' from left to right, decomposes the variance in each component into successively restricted 
 #' factors. The following figure shows how the ACE model appears as a path diagram: See the details section below
 #' for additional information on using umxACE.
 #' 
-#'
+#' 
 #' \figure{ACE.png}
+#' 
+#' This figure also contains the key to unerstanding how to modidy models that `umxACE` produces.
+#' read the "Matrices and Labels in ACE model" section in details below...
+#' 
+#' **NOTE**: Scroll down to details for how to use the function, a figure
+#' and multiple examples.
 #' 
 #' @details
 #' \strong{Data Input}
@@ -1320,7 +1334,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #'
 #' \strong{Matrices and Labels in ACE model}
 #' 
-#' Matrices 'a'', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
+#' Matrices 'a', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
 #' 
 #' So, labels relevant to modifying the model are of the form \code{"a_r1c1", "c_r1c1"} etc.
 #'
@@ -1364,6 +1378,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @seealso - \code{\link{plot.MxModelACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+#' @md
 #' @examples
 #' 
 #' # ============================
