@@ -77,8 +77,7 @@ among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
 unique environmental (E) and, optionally, either common or shared-environment (C) or
 non-additive genetic effects (D).
 
-The following figure shows how the ACE model appears as a path diagram (for one variable): See the details section below
-for additional information on using \code{umxACE}.
+The following figure shows how the ACE model appears as a path diagram (for one variable):
 
 \figure{ACE_full_univariate.png}
 
@@ -95,6 +94,9 @@ factors. The following figure shows how the ACE model appears as a path diagram:
 for additional information on using umxACE.
 
 \figure{ACE.png}
+
+This figure also contains the key to unerstanding how to modidy models that \code{umxACE} produces.
+read the "Matrices and Labels in ACE model" section in details below...
 
 \strong{NOTE}: Scroll down to details for how to use the function, a figure
 and multiple examples.
