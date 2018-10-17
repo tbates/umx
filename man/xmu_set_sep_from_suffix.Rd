@@ -7,7 +7,7 @@
 xmu_set_sep_from_suffix(sep, suffix)
 }
 \arguments{
-\item{sep}{The seperator (if suffix != 'deprecated', then this is returned)}
+\item{sep}{The seperator (if suffix != 'deprecated', then this is returned).}
 
 \item{suffix}{The suffix, defaults to 'deprecated'.}
 }
@@ -15,7 +15,7 @@ xmu_set_sep_from_suffix(sep, suffix)
 - sep
 }
 \description{
-Returns either suffix or sep, with a deprecation warning if suffix is set
+Returns either suffix or sep, with a deprecation warning if suffix is set.
 }
 \examples{
 xmu_set_sep_from_suffix(sep = "_T", suffix = "deprecated")

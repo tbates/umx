@@ -163,7 +163,7 @@ umxCompare(m1, m2)
 # = Mixed continuous and binary example =
 # =======================================
 data(GFF)
-# Cut to form umxFactor  20\% depressed  DEP
+# Cut to form umxFactor 20\% depressed  DEP
 cutPoints = quantile(GFF[, "AD_T1"], probs = .2, na.rm = TRUE)
 ADLevels  = c('normal', 'depressed')
 GFF$DEP_T1 = cut(GFF$AD_T1, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 

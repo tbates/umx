@@ -156,7 +156,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	}
 	dataType = umx_is_cov(dzData, boolean = FALSE)
 	
-	if(type %in% ("cov", "cor") && !dataType %in% c("cov", "cor")){
+	if(type %in% c("cov", "cor") && !dataType %in% c("cov", "cor")){
 		stop("You've requested type= cov or cor, but the provided dataType is ", omxQuotes(dataTypeYou), " I don't support that yet. Please pass in cov data.")
 	}
 
