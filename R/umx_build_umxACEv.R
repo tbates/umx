@@ -24,7 +24,7 @@
 #' non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
 #' and multiple examples.
 #' 
-#' The following figure shows the A components of a trivate ACEv model:
+#' The following figure shows the A components of a trivariate ACEv model:
 #' 
 #' \figure{ACEv.png}
 #' 
@@ -96,7 +96,7 @@
 #' #  This is exactly why we have ACEv! It suggests we need a different model
 #' #  In this case: ADE.
 #' # Other things to note:
-#' # 1. umxACEv can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
+#' # 1. umxACEv can figure out variable names: provide "sep", and selVars. Function generates: "wt" -> "wt1" "wt2"
 #' # 2. umxACEv picks the variables it needs from the data.
 #' 
 #' selDVs = "wt"
@@ -242,14 +242,15 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed"
 	boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, 
 	thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 
-		# message("This is STRICTLY experimental, and not complete (prep for Boulder 2018 use of variance components modeling)")
 		covMethod = match.arg(covMethod)
-		# =================
-		# = Set optimizer =
-		# =================
-		if(!is.null(optimizer)){
-			umx_set_optimizer(optimizer)
+		thresholds = match.arg(thresholds)
+		nSib = 2 # number of siblings in a twin pair
+		if(dzCr == .25 & name == "ACE"){
+			name = "ADE"
 		}
+
+		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
+		
 		# If given covariates, call umxACEvcov
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
@@ -261,30 +262,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed"
 				# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			}
 		} else {
-			if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
-			if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
-			thresholds = match.arg(thresholds)
-			nSib = 2 # number of siblings in a twin pair
-			if(dzCr == .25 & name == "ACE"){
-				name = "ADE"
-			}
-			# look for name conflicts
-			badNames = umx_grep(selDVs, grepString = "^[ACDEacde][0-9]*$")
-			if(!identical(character(0), badNames)){
-				stop("The data contain variables that look like parts of the a, c, e model, i.e., a1 is illegal.\n",
-				"BadNames included: ", omxQuotes(badNames) )
-			}
-
-			if(!is.null(sep)){
-				if(length(sep) > 1){
-					stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-					"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
-				}
-				selDVs = umx_paste_names(selDVs, sep, 1:2)
-			}
-			umx_check_names(selDVs, mzData)
-			umx_check_names(selDVs, dzData)
-			# message("selDVs: ", omxQuotes(selDVs))
+			selDVs = umx_paste_names(selDVs, sep, 1:2)
 			nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 			used = selDVs
 			if(!is.null(weightVar)){
@@ -315,16 +293,6 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed"
 				isFactor = isOrd    = isBin    = c()
 				nFactors = nOrdVars = nBinVars = 0
 				factorVarNames = ordVarNames = binVarNames = contVarNames = c()
-			}
-
-			if(nFactors > 0 & is.null(sep)){
-				stop("Please set sep.\n",
-				"Why: You have included ordinal or binary variables. I need to know which variables are for twin 1 and which for twin2.\n",
-				"The way I do this is enforcing some naming rules. For example, if you have 2 variables:\n",
-				" obesity and depression called: 'obesity_T1', 'dep_T1', 'obesity_T2' and 'dep_T2', you should call umxACEv with:\n",
-				"selDVs = c('obesity','dep'), sep = '_T' \n",
-				"sep is just one word, appearing in all variables (e.g. '_T').\n",
-				"This is assumed to be followed by '1' '2' etc...")
 			}
 
 			if(dataType == "raw") {
@@ -379,7 +347,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed"
 				# 4. For Ordinal vars, first 2 thresholds fixed
 				# 5. WLS as an option.
 				# 6. Option to fix all (or all but the first 2??) thresholds for left-censored data.
-		        #   # TODO
+		      #    # TODO
 				# 	1. Simple test if results are similar for an ACE model of 1 variable
 				if(nFactors == 0) {			
 					# =======================================================
@@ -446,8 +414,8 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed"
 					# threshMat may be a three item list of matrices and algebra
 					threshMat = umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = TRUE)
 
-					mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
-					dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")
+					mzExpect = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
+					dzExpect = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")
 
 					top = mxModel("top", umxLabel(meansMatrix), threshMat)
 					MZ  = mxModel("MZ", mzExpect, mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
@@ -464,8 +432,8 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed"
 					top = mxModel(top,
 						# Algebra to compute total variances and standard deviations
 						# mxAlgebra(name = "Vtot", A + C+ E), # Total variance (redundant but is OK)
-						mxMatrix(name  = "binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
-						mxMatrix(name  = "Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
+						mxMatrix(name = "binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
+						mxMatrix(name = "Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
 						mxConstraint(name = "constrain_Bin_var_to_1", binLabels == Unit_nBinx1)
 					)
 				} else {
@@ -480,8 +448,8 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed"
 				umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with ", dataType, " data"))
 
 				# Drop unused variables from matrix
-				het_mz    = umx_reorder(mzData, selDVs)
-				het_dz    = umx_reorder(dzData, selDVs)
+				het_mz = umx_reorder(mzData, selDVs)
+				het_dz = umx_reorder(dzData, selDVs)
 
 				# start variances
 				varStarts = diag(het_mz)[1:nVar]

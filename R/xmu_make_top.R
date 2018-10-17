@@ -1,11 +1,13 @@
 #' Helper to make a basic top, MZ, and DZ model.
 #'
 #' @description
-#' `xmu_make_top` makes basic `top`, `MZ`, and `DZ` models. It handles the thresholds matrix if needed.
+#' `xmu_make_top_twin_models` makes basic `top`, `MZ`, and `DZ` models. It includes a thresholds matrix if needed.
 #'
-#' This is used in umxCP, will be used in umxIP and umxACE.
+#' This is used in umxCP, and will be added to umxACE and umxIP, simplifying code maintainance.
 #' 
-#' This function takes the mzData and dzData, a list of the selDVs to analyse, along with other relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased", but hopefully "WLS" and. It can also handle a weightVar.
+#' This function takes the `mzData` and `dzData`, a list of the `selDVs` (as well as sep and nSib) to analyse, along with other 
+#' relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased").
+#' It can also handle a weightVar.
 #' 
 #' `varStarts` is computed as `sqrt(variance)/3` of the DVs and `obsMeans` as the variable means.
 #' For raw data, a check is made for ordered variables.
@@ -14,23 +16,57 @@
 #' 
 #' For ordinal variables, the first 2 thresholds are fixed.
 #' 
-#' For continuous variables, `top` just contains an `expMean` matrix.
+#' ## Modeling
 #' 
-#' `MZ` and `DZ` is the data, and an expectation of for `top.expCovMZ` and `top.expMean`, possibly referencing vector = bVector in the fit function.
-#' 
-#' For continuous variables, `top` just contains an `expMean` matrix.
-#' 
+#' ### top
+#' For raw data, it contains a means matrix. For WLS and summary data, the top model contains only a name.
+
 #' For ordinal, `top` gains `top.threshMat` (from a call to `umxThresholdMatrix`). `MZ` and `DZ` are as with continuous, but adding thresholds.
 #' 
-#' For binary, `Vtot` (A+C+E) is set to 1.
+#' ### MZ and DZ
+#' MZ and DZ contain data, and an expectation and fit function. For WLS this is mxExpectationNormal  and mxFitFunctionWLS.
 #' 
-#' For summary data, top is just  name, and MZ and DZ have cov data in them.
+#' ## Matrices created
+#' 
+#' If needed means matrices are added. Decent starts are guessed from the data.
+#' For continuous raw data, top contains a means matrix "expMean". 
+#' For Models with ordinal but no binary variables, top adds an `umxThresholdMatrix`. 
+#' If binary variables are present, matrices and a constraint to hold A+C+E ==1 are added to top.
+#' For continuous raw data, MZ and DZ contain mxExpectationNormal and mxFitFunctionML.
+#'
+#'
+#' `MZ` and `DZ` is the data, and an expectation of for `top.expCovMZ` and `top.expMean`, possibly referencing vector = bVector in the fit function.
+#'
+#' For binary, `Vtot` (A+C+E) is constrained to 1.
 #' 
 #' If a weightVar is detected, this column is added to  mzWeightMatrix/mzWeightMatrix
 #' 
 #' If `equateMeans` is `TRUE`, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 #'
-#' On the TODO-list is to have WLS as an option. Also censored data.
+#' ## Data handling
+#' 
+#' In terms of data handling, it was primarily designed to take data.frames and process these into mxData. It can, however, handle cov and mxData input.
+#' 
+#' It can process data into all the types supported by `mxData`.
+#' 
+#' Raw data input with a target of `cov` or `cor` type requires the `numObsMZ` and `numObsDZ` to be set.
+#' 
+#' If ordinal or binary variables are found in raw data, an `mxThreshold` matrix is added to handle these.
+#' 
+#' If a weight variable is, an `mzWeightMatrix` will be added.
+#' 
+#' Type "WLS", "DWLS", or "ULS" will process raw data into a WLS data using `xmu_make_mxData`.
+#' 
+#' Unused columns are dropped.
+#' If you pass in raw data, you can't request type cov/cor yet. Will work on this if desired.
+#' 
+#' ## TODO list for xmu_make_top_twin_models
+#' 
+#' 1. Add selCovs
+#' 2. Add covMethod == "fixed"
+#' 3. Add beta matrix for fixed covariates in means.
+#' 4. improve the start guesses based on input model type (ACE, CP, IP etc.)
+#'
 #' @param mzData Dataframe containing the MZ data 
 #' @param dzData Dataframe containing the DZ data 
 #' @param selDVs List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names
@@ -38,7 +74,9 @@
 #' @param nSib Number of members per family (default = 2)
 #' @param numObsMZ Number of MZ observations contributing (for summary data only) 
 #' @param numObsDZ Number of DZ observations contributing (for summary data only)
-#' @param equateMeans Whether to equate T1 and T2 means (default = TRUE)
+#' @param equateMeans Whether to equate T1 and T2 means (default = TRUE).
+#' @param type	One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto reacts to the incoming mxData type (raw/cov, WLS).
+#'  FIML requires that the data are continuous. Remaining options are weighted, diagonally weighted, or unweighted least squares, respectively)
 #' @param threshType what type of thresholds to implement if needed.
 #' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
@@ -56,7 +94,7 @@
 #' selDVs = c("wt", "ht")
 #' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF",]
-#' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
 #' names(bits) # "top" "MZ"  "DZ" 
 #' 
 #' # ============================================
@@ -74,7 +112,7 @@
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF",]
-#' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
 #' names(bits) # "top" "MZ"  "DZ" 
 #'
 #' # ==============
@@ -90,7 +128,7 @@
 #' selDVs = c("wt", "obese")
 #' mzData = twinData[twinData$zygosity %in% "MZFF",]
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
-#' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs = selDVs, sep = "", nSib = 2)
+#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs = selDVs, sep = "", nSib = 2)
 #'
 #' # ============
 #' # = Cov data =
@@ -99,11 +137,12 @@
 #' selDVs = c("wt")
 #' mz = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(selDVs, sep="")], use = "complete")
 #' dz = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(selDVs, sep="")], use = "complete")
-#' bits = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep= "", nSib = 2)
-#' # TODO Add selCovs
-#' # TODO add covMethod == "fixed"
-#' # TODO add beta matrix for fixed covariates in means.
-xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ= NULL, numObsDZ= NULL, equateMeans = TRUE, threshType = c("deviationBased", "WLS"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
+#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep= "", nSib = 2)
+xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ= NULL, numObsDZ= NULL, equateMeans = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), threshType = c("deviationBased"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
+	# TODO: xmu_make_top_twin_models Add selCovs
+	# TODO: xmu_make_top_twin_models add covMethod == "fixed"
+	# TODO: xmu_make_top_twin_models add beta matrix for fixed covariates in means.
+	type = match.arg(type)
 	threshType = match.arg(threshType)
 	if(is.null(sep)){
 		stop("You MUST set 'sep'. Otherwise xmu_make_top can't reliably expand selDVs into full variable names")
@@ -116,6 +155,10 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		used = selVars
 	}
 	dataType = umx_is_cov(dzData, boolean = FALSE)
+	
+	if(type %in% ("cov", "cor") && !dataType %in% c("cov", "cor")){
+		stop("You've requested type= cov or cor, but the provided dataType is ", omxQuotes(dataTypeYou), " I don't support that yet. Please pass in cov data.")
+	}
 
 	if(dataType == "raw") {
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
@@ -144,7 +187,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			# weight variable provided: check it exists in each frame
 			if(!umx_check_names(weightVar, data = mzData, die = FALSE) | !umx_check_names(weightVar, data = dzData, die = FALSE)){
 				stop("The weight variable must be included in the mzData and dzData",
-					 "\n frames passed into umxACE when \"weightVar\" is specified",
+					 "\n frames passed into this twin model when \"weightVar\" is specified",
 					 "\n mzData contained:", paste(names(mzData), collapse = ", "),
 					 "\n and dzData contain:", paste(names(dzData), collapse = ", "),
 					 "\n but I was looking for ", weightVar, " as the moderator."
@@ -157,10 +200,10 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 			# no weights
 			bVector = FALSE
 		}
-		# Drop any unused columns from MZ and DZ Data
-		mzData  = mzData[, selVars]
-		dzData  = dzData[, selVars]
+		# Make mxData, dropping any unused columns
 		allData = rbind(mzData, dzData)
+		mzData  = xmu_make_mxData(mzData, type = type, manifests = selVars)
+		dzData  = xmu_make_mxData(dzData, type = type, manifests = selVars)
 
 		# =====================================
 		# = Add means and var matrices to top =
@@ -168,7 +211,7 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		# Figure out start values while we are here
 		# varStarts will be used to fill a, c, and e
 
-		# TODO could use both twins for variance estimation
+		# TODO could use both twins for variance estimation.
 		varStarts = umx_var(allData[, selVars[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 
 		# sqrt to switch from var to path coefficient scale
@@ -192,25 +235,31 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		# 4. For Ordinal variables, first 2 thresholds fixed
 		# TODO
 		#  1. Simple test if results are similar for an ACE model of 1 variable
-		#  2. WLS as an option.
-		#  3. Option to fix all (or all but the first 2??) thresholds for left-censored data.
 		# [] select mxFitFunctionML() of bVector as param
 		
-		if(nFactors == 0) {			
-			# ==================================================
-			# = Handle all continuous case                     =
-			# ==================================================
-			message("All variables continuous")
+		if(type %in%  c('WLS', 'DWLS', 'ULS')) {
+			message("data treated as ", type)
+			top = mxModel("top") # no means for WLS
+			MZ  = mxModel("MZ", mzData,
+				mxExpectationNormal("top.expCovMZ", "top.expMean"),
+				mxFitFunctionWLS()
+			)
+			DZ  = mxModel("DZ", dzData,
+				mxExpectationNormal("top.expCovDZ", "top.expMean"), 
+				mxFitFunctionWLS()
+			)			
+		} else if(nFactors == 0) {
+			# ===============================
+			# = Handle all continuous case  =
+			# ===============================
 			top = mxModel("top", 
 				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selVars))
 			)
-			MZ  = mxModel("MZ",
-				mxData(mzData, type = "raw"),
+			MZ  = mxModel("MZ", mzData,
 				mxExpectationNormal("top.expCovMZ", "top.expMean"), 
 				mxFitFunctionML(vector = bVector)
 			)
-			DZ  = mxModel("DZ" , 
-				mxData(dzData, type = "raw"),
+			DZ  = mxModel("DZ", dzData,
 				mxExpectationNormal("top.expCovDZ", "top.expMean"), 
 				mxFitFunctionML(vector = bVector)
 			)			
@@ -228,15 +277,13 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selVars)),
 				umxThresholdMatrix(allData, selDVs = selDVs, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose)
 			)
-			MZ  = mxModel("MZ",
+			MZ  = mxModel("MZ", mzData,
 				mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat"), 
-				mxFitFunctionML(vector = bVector),
-				mxData(mzData, type = "raw")
+				mxFitFunctionML(vector = bVector)
 			)
-			DZ  = mxModel("DZ",
+			DZ  = mxModel("DZ", dzData,
 				mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat"),
-				mxFitFunctionML(vector = bVector),
-				mxData(dzData, type = "raw")
+				mxFitFunctionML(vector = bVector)
 			)
 		} else if(sum(isBin) > 0){
 			# =============================================
@@ -273,20 +320,18 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 				umxMatrix("Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
 				mxConstraint(name = "constrain_Bin_var_to_1", binLabels == Unit_nBinx1)
 			)
-			MZ  = mxModel("MZ",
+			MZ  = mxModel("MZ", mzData,
 				mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat"),
-				mxFitFunctionML(),
+				mxFitFunctionML()
 				# mxFitFunctionML(vector = bVector),
-				mxData(mzData, type = "raw")
 			)
-			DZ  = mxModel("DZ",
+			DZ  = mxModel("DZ", dzData,
 				mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat"),
-				mxFitFunctionML(),
+				mxFitFunctionML()
 				# mxFitFunctionML(vector = bVector),
-				mxData(dzData, type = "raw")
 			)
 		} else {
-			stop("You appear to have something other than I expected in terms of binary, ordinal and continuous variable mix")
+			stop("You appear to have something other than I expected in terms of WLS, or binary, ordinal and continuous variable mix")
 		}
 		# nb: means not yet equated across twins	
 	} else if(dataType %in% c("cov", "cor")){
@@ -303,12 +348,12 @@ xmu_make_top <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ=
 		if(nVar == 1){
 			varStarts = sqrt(varStarts)/3
 		} else {
-			varStarts = t(chol(diag(varStarts/3))) # divide variance up equally, and set to Cholesky form.
+			varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
 		}
 		varStarts = matrix(varStarts, nVar, nVar)
 
 		top = mxModel("top")
-		MZ = mxModel("MZ", 
+		MZ  = mxModel("MZ", 
 			mxExpectationNormal("top.expCovMZ"), 
 			mxFitFunctionML(), 
 			mxData(het_mz, type = "cov", numObs = numObsMZ)
@@ -389,7 +434,7 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	selVars = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
 	selDVs  = umx_paste_names(selDVs, sep, 1:2)
 	nVar    = length(selDVs)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	bits    = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
+	bits    = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
 	top     = bits$top
 	MZ      = bits$MZ
 	DZ      = bits$DZ

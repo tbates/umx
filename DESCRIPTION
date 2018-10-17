@@ -6,6 +6,7 @@ Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")))
 Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
 License: GPL-3
+Language: en-US
 Encoding: UTF-8
 URL: http://github.com/tbates/umx
 Description: Quickly create, run, and report structural equation and twin models.

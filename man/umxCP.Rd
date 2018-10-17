@@ -77,7 +77,7 @@ Common-pathway path diagram:
 
 As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
 
-Features include the ability to incude more than one common pathway, to use ordinal data.
+Features include the ability to include more than one common pathway, to use ordinal data.
 
 \strong{note}: The function \code{umx_set_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
 It defaults to .001. You might find that '0.01' works better for ordinal models.
@@ -202,7 +202,8 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 }
 \seealso{
 \itemize{
-\item \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}} for more examples of twin modeling. \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link{xmu_make_top}}
+\item \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}} for more examples of twin modeling.
+\code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link{xmu_make_top_twin_models}}
 }
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},

@@ -7,13 +7,13 @@
 umx_swap_a_block(theData, rowSelector, T1Names, T2Names)
 }
 \arguments{
-\item{theData}{a data frame to swap within}
+\item{theData}{A data frame to swap within.}
 
-\item{rowSelector}{rows to swap amongst columns}
+\item{rowSelector}{Rows to swap between first and second set of columns.}
 
-\item{T1Names}{the first set of columns}
+\item{T1Names}{The first set of columns.}
 
-\item{T2Names}{the second set of columns}
+\item{T2Names}{The second set of columns.}
 }
 \value{
 - dataframe
@@ -40,6 +40,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_as_numeric}}, \code{\link{umx_cov2raw}},
   \code{\link{umx_lower2full}},
   \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_make_fake_data}},
   \code{\link{umx_polychoric}},

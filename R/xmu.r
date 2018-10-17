@@ -23,7 +23,7 @@
 #' @description
 #' Non-user function to upgrade a dataframe to an mxData type. It can also trim variables.
 #'
-#' The most common use will be to give it a dataframe, and get back a nice mxData object of WLS, cov, cor, or raw type.
+#' The most common use will be to give it a dataframe, and get back an mxData object of type WLS, cov, cor, or raw.
 #'
 #' @param data A \code{\link{data.frame}} or \code{\link{mxData}}
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
@@ -45,7 +45,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 	if(is.null(data)){
 		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
 		stop("Did you perhaps just include the data among other functions instead of via data = ?")
-	}else if(class(data)=="character"){
+	}else if(class(data) == "character"){
 		# pass through strings
 		return(data)
 	}
@@ -83,9 +83,10 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		# Already an mxData
 		if(dropColumns){
 			if(data$type %in% c("cov", "cor")){
-				# Trim down the data to include only the requested columns
+				# Trim down the data to include only the requested columns				
 				data$observed = umx_reorder(data$observed, manifests)
 			} else if (data$type == "raw"){
+				# TODO data = mxData(data = data$observed[, manifests], type=‘raw’)
 				data$observed = data$observed[, manifests]
 			} else {
 				stop("You offered up an existing mxData and requested dropping unused variables: I can only do this for cov, cor, and raw data")
@@ -98,6 +99,23 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 	}else{
 		stop("I was expecting a data frame or mxData  you gave me a ", omxQuotes(class(data)))	
 	}
+	if(verbose){
+		msg_str = ""
+		if(length(unusedManifests) > 0){
+			if(length(unusedManifests) > 10){
+				varList = paste0("First 10 were: ", paste(unusedManifests[1:10], collapse = ", "))
+				msg_str = paste0(length(unusedManifests), " unused variables (", varList)
+			} else if(length(unusedManifests) > 1){
+				varList = paste(unusedManifests, collapse = ", ")
+				msg_str = paste0(length(unusedManifests), " unused variables (", varList)
+			} else {
+				varList = unusedManifests
+				msg_str = paste0(length(unusedManifests), " unused variable (", varList)
+			}
+		}
+		message("ManifestVars set to: ", paste(usedManifests, collapse = ", "), ". ", msg_str)
+	}
+	
 	return(data)
 }
 
@@ -122,6 +140,28 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 # = Data and model checking helpers =
 # ===================================
 
+#' Just a helper to cope with deprecated suffix lying around.
+#'
+#' @description
+#' Returns either suffix or sep, with a deprecation warning if suffix is set.
+#'
+#' @param sep The seperator (if suffix != 'deprecated', then this is returned).
+#' @param suffix The suffix, defaults to 'deprecated'.
+#' @return - sep
+#' @export
+#' @family xmu internal not for end user
+#' @examples
+#' xmu_set_sep_from_suffix(sep = "_T", suffix = "deprecated")
+#' xmu_set_sep_from_suffix(sep = NULL, suffix = "_T")
+xmu_set_sep_from_suffix <- function(sep, suffix) {
+	if (suffix != "deprecated"){
+		warning("Just a message, but please use 'sep = ' instead of 'suffix = '. suffix will stop working in 2019")
+		return(suffix)
+	}else{
+		return(sep)		
+	}
+}
+
 #' Check basic aspects of input for twin models.
 #'
 #' @description
@@ -130,7 +170,7 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 #' @param selDVs Variables used in the data.
 #' @param dzData The DZ twin data.
 #' @param mzData The MZ twin data.
-#' @param sep Seperator between base-name and numeric suffix when creating variable names, e.g. "_T"
+#' @param sep Separator between base-name and numeric suffix when creating variable names, e.g. "_T"
 #' @param nSib How many people per family? (Default = 2).
 #' @param numObsMZ set if data are not raw.
 #' @param numObsDZ set if data are not raw.
@@ -155,7 +195,11 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 #' \dontrun{
 #' # TODO xmu_twin_check: move to a test file:
 #' # 1. stop on no rows
-#' # 1. stop on a sep  = NULL and enforceSep = TRUE
+#' xmu_twin_check("Generativity", twinData[NULL,], twinData[NULL,], sep="_T")
+#' # Error in xmu_twin_check("Generativity", twinData[NULL, ], twinData[NULL,  : 
+#' #   Your DZ dataset has no rows!
+#' 
+#' # 2. Stop on a NULL sep  = NULL IFF enforceSep = TRUE
 #' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, enforceSep = TRUE)
 #' # 3. stop on a factor with sep = NULL
 #' }
@@ -225,7 +269,7 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	
 	if(nFactors > 0 & is.null(sep)){
 		stop("Please set 'sep'. e.g.: sep = '_T' \n",
-		"Why: We're moving to require this for all twin functions. BUT, your data include ordinal or binary variables.\n
+		"Why: Your data include ordinal or binary variables.\n
 		So I need to know which variables are for twin 1 and which for twin2.\n",
 		"The way I do this is enforcing some naming rules. For example, if you have 2 variables:\n",
 		" obesity and depression called: 'obesity_T1', 'dep_T1', 'obesity_T2' and 'dep_T2', you should call umxACE with:\n",

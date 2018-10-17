@@ -42,12 +42,12 @@ A useful conceptual strategy to handle these data is to build a standard model f
 and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
 is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
 this threshold (1-minus the number of categories).
-Making this work can require fixing the first 2 threhsolds of ordinal data, or fixing both the mean and variance of
-a latent variable driving bniary data, in order to estimate its one-free parameter: where to place the single thrshold
+Making this work can require fixing the first 2 thresholds of ordinal data, or fixing both the mean and variance of
+a latent variable driving binary data, in order to estimate its one-free parameter: where to place the single threshold
 separating low from high cases.
 
 \emph{Twin Data}
-For twins (the function currently handles only pairs), the threshodls are equated for both twins using labels:
+For twins (the function currently handles only pairs), the thresholds are equated for both twins using labels:
 $labels\preformatted{  obese1       obese2      
 }
 

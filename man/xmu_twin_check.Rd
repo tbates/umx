@@ -15,7 +15,7 @@ xmu_twin_check(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 
 \item{mzData}{The MZ twin data.}
 
-\item{sep}{Seperator between base-name and numeric suffix when creating variable names, e.g. "_T"}
+\item{sep}{Separator between base-name and numeric suffix when creating variable names, e.g. "_T"}
 
 \item{enforceSep}{Whether to require sep to be set, or just warn if it is not (Default = TRUE: enforce).}
 
@@ -47,7 +47,11 @@ xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData,
 \dontrun{
 # TODO xmu_twin_check: move to a test file:
 # 1. stop on no rows
-# 1. stop on a sep  = NULL and enforceSep = TRUE
+xmu_twin_check("Generativity", twinData[NULL,], twinData[NULL,], sep="_T")
+# Error in xmu_twin_check("Generativity", twinData[NULL, ], twinData[NULL,  : 
+#   Your DZ dataset has no rows!
+
+# 2. Stop on a NULL sep  = NULL IFF enforceSep = TRUE
 xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, enforceSep = TRUE)
 # 3. stop on a factor with sep = NULL
 }

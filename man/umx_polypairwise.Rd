@@ -2,7 +2,7 @@
 % Please edit documentation in R/umx_build_polychoricMatrix3.R
 \name{umx_polypairwise}
 \alias{umx_polypairwise}
-\title{FIML-based Pairwise polychoric, polyserial, and pearson correlations}
+\title{FIML-based Pairwise polychoric, polyserial, and Pearson correlations}
 \usage{
 umx_polypairwise(data, useDeviations = TRUE, printFit = FALSE,
   use = "any")
@@ -12,7 +12,7 @@ umx_polypairwise(data, useDeviations = TRUE, printFit = FALSE,
 
 \item{useDeviations}{Whether to code the mode using deviation thresholds (default = TRUE)}
 
-\item{printFit}{Whether to print information about the fit achievedd (default = FALSE)}
+\item{printFit}{Whether to print information about the fit achieved (default = FALSE)}
 
 \item{use}{parameter (default = "any")}
 }
@@ -20,7 +20,7 @@ umx_polypairwise(data, useDeviations = TRUE, printFit = FALSE,
 - matrix of correlations
 }
 \description{
-Compute polychoric/polyserial/pearson correlations with FIML in OpenMx
+Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx
 }
 \examples{
 # TODO: Needs examples
@@ -35,6 +35,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_as_numeric}}, \code{\link{umx_cov2raw}},
   \code{\link{umx_lower2full}},
   \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_make_fake_data}},
   \code{\link{umx_polychoric}},

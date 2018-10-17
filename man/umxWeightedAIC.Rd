@@ -24,7 +24,7 @@ l2 = lm(mpg~ wt, data=mtcars)
 umxWeightedAIC(models = list(l1, l2))
 }
 \references{
-- Wagenmakers EJ, Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychon Bull Rev*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
+- Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
 }
 \seealso{
 - \code{\link{AIC}}

@@ -557,9 +557,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(setValues){
 		m1 = umxValues(m1, onlyTouchZeros = TRUE)
 	}
-	if(any(umx_is_ordered(data$observed))){
+
+	if(any(umx_is_ordered(data$observed)) && !(type %in%  c('WLS', 'DWLS', 'ULS'))){
 		if(thresholds == "ignore"){
-			# Can't run, as ignored leaves model incomplete
+			# Can't run, as ignored leaves model incomplete.
 			autoRun = FALSE
 		} else {
 			m1 = umxRAM2Ordinal(m1, verbose = T, thresholds = thresholds, autoRun = FALSE)
@@ -869,7 +870,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #'
 #' @param name The name of the model (defaults to "G_by_E")
 #' @param selDVs The dependent variable (e.g. IQ)
-#' @param selDefs The definition variable (e.g. socio economic status)
+#' @param selDefs The definition variable (e.g. socioeconomic status)
 #' @param sep Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
 #' @param dzData The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
 #' @param mzData The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
@@ -1302,7 +1303,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' 
 #' \figure{ACE.png}
 #' 
-#' This figure also contains the key to unerstanding how to modidy models that `umxACE` produces.
+#' This figure also contains the key to understanding how to modify models that `umxACE` produces.
 #' read the "Matrices and Labels in ACE model" section in details below...
 #' 
 #' **NOTE**: Scroll down to details for how to use the function, a figure
@@ -1517,7 +1518,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' umxSummary(m1)
 #' plot(m1)
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), optimizer = NULL, intervals = FALSE, suffix = "deprecated") {
+	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased"), autoRun = getOption("umx_auto_run"), optimizer = NULL, intervals = FALSE, suffix = "deprecated") {
 
 		nSib = 2 # Number of siblings in a twin pair.
 		covMethod  = match.arg(covMethod)
@@ -1525,10 +1526,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		type = match.arg(type)
 
 		# Allow suffix as a synonym for sep
-		if (suffix != "deprecated"){
-			warning("Just a message, but please use 'sep = ' instead of 'suffix = '. suffix will stop working in 2019")
-			sep = suffix
-		}
+		sep = xmu_set_sep_from_suffix(sep= sep, suffix= suffix)
 		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
 		
 		if(dzCr == .25 & (name == "ACE")){
@@ -1538,10 +1536,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		# If given covariates, call umxACEcov
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
-				stop("Fixed covariates are on the roadmap for umx in 2018. Until then, use umx_residualize on the data first.")
-				# umxACEdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
+				stop("Fixed covariates are on the roadmap for umx in 2019. Until then, use umx_residualize on the data first.")
+				# umxACEdefcov(name = name, selDVs= selDVs, selCovs= selCovs, dzData= dzData, mzData= mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			} else if(covMethod == "random"){
-				umxACEcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
+				umxACEcov(name = name, selDVs= selDVs, selCovs= selCovs, dzData= dzData, mzData= mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			}
 		}else{
 			if(is.null(sep)){
@@ -1583,6 +1581,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 			}
 
 			if(dataType == "raw") {
+				# detect weight var if used
 				if(!is.null(weightVar)){
 					# weight variable provided: check it exists in each frame
 					if(!umx_check_names(weightVar, data = mzData, die = FALSE) | !umx_check_names(weightVar, data = dzData, die = FALSE)){
@@ -1590,7 +1589,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 							 " frames passed into umxACE when \"weightVar\" is specified",
 							 "\n mzData contained:", paste(names(mzData), collapse = ", "),
 							 "\n and dzData contain:", paste(names(dzData), collapse = ", "),
-							 "\nbut I was looking for ", weightVar, " as the moderator."
+							 "\n but I was looking for ", weightVar, " as the moderator."
 						)
 					}
 					mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = FALSE, values = mzData[, weightVar])
@@ -1639,7 +1638,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 				#  2. WLS as an option.
 				#  3. TOBIT
 				# [] select mxFitFunctionML() of bVector as param
-				if(nFactors == 0) {			
+				if(nFactors == 0){
 					# =======================================================
 					# = Handle all continuous case                          =
 					# =======================================================
@@ -1776,7 +1775,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 					mxData(het_dz, type = "cov", numObs = numObsDZ)
 				)
 			} else {
-				stop("Datatype \"", dataType, "\" not understood. Must be one of raw, cov, or cor")
+				stop("Datatype \"", dataType, "\" not understood. Must be one of ", omxQuotes(type))
 			}
 		message("treating data as ", dataType)
 
@@ -2228,7 +2227,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 
 #' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
 #' 
-#' Features include the ability to incude more than one common pathway, to use ordinal data.
+#' Features include the ability to include more than one common pathway, to use ordinal data.
 #' 
 #' **note**: The function `umx_set_optimization_options`() allow users to see and set `mvnRelEps` and `mvnMaxPointsA`
 #' It defaults to .001. You might find that '0.01' works better for ordinal models.
@@ -2311,7 +2310,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}} for more examples of twin modeling. \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link{xmu_make_top}}
+#' @seealso - \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}} for more examples of twin modeling. 
+#' \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link{xmu_make_top_twin_models}}
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @md
 #' @examples
@@ -2345,7 +2345,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' # = Mixed continuous and binary example =
 #' # =======================================
 #' data(GFF)
-#' # Cut to form umxFactor  20% depressed  DEP
+#' # Cut to form umxFactor 20% depressed  DEP
 #' cutPoints = quantile(GFF[, "AD_T1"], probs = .2, na.rm = TRUE)
 #' ADLevels  = c('normal', 'depressed')
 #' GFF$DEP_T1 = cut(GFF$AD_T1, breaks = c(-Inf, cutPoints, Inf), labels = ADLevels) 
@@ -2386,12 +2386,11 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 	}
 	nSib = 2 # Number of siblings in a twin pair.
 
-
 	xmu_twin_check(selDVs= selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
 	# Expand var names
 	selVars = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
 	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	bits    = xmu_make_top(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
+	bits    = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
 	top     = bits$top
 	MZ      = bits$MZ
 	DZ      = bits$DZ
@@ -3195,7 +3194,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 	}
 	if(umx_is_RAM(model)){
 		if(model$data$type == "raw"){
-			# If we have a RAM model with raw data, compute the satuated and indpendence models
+			# If we have a RAM model with raw data, compute the satuated and independence models
 			# message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
 			ref_models = mxRefModels(model, run = TRUE)
 			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
@@ -3786,12 +3785,12 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
 #' is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
 #' this threshold (1-minus the number of categories).
-#' Making this work can require fixing the first 2 threhsolds of ordinal data, or fixing both the mean and variance of
-#' a latent variable driving bniary data, in order to estimate its one-free parameter: where to place the single thrshold
+#' Making this work can require fixing the first 2 thresholds of ordinal data, or fixing both the mean and variance of
+#' a latent variable driving binary data, in order to estimate its one-free parameter: where to place the single threshold
 #' separating low from high cases.
 #' 
 #' *Twin Data*
-#' For twins (the function currently handles only pairs), the threshodls are equated for both twins using labels:
+#' For twins (the function currently handles only pairs), the thresholds are equated for both twins using labels:
 #' $labels
 #' 
 #'       obese1       obese2      
@@ -4097,14 +4096,14 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 					runLen = i
 					if(runLen != 1){
 						repeatedValue   = runValues[indexIntoRLE]
-						preceedingValue = runValues[(indexIntoRLE - 1)]
+						precedingValue = runValues[(indexIntoRLE - 1)]
 						minimumStep = .01
 						if(indexIntoRLE == distinctCount){
-							newValues = seq(from = (preceedingValue + minimumStep), by = (minimumStep), length.out = runLen)
+							newValues = seq(from = (precedingValue + minimumStep), by = (minimumStep), length.out = runLen)
 							zValues[c(indexIntoZ:(indexIntoZ + runLen - 1))] = rev(newValues)
 						} else {
 							followedBy = runValues[(indexIntoRLE + 1)]
-							minimumStep = min((followedBy - preceedingValue)/(runLen + 1), minimumStep)
+							minimumStep = min((followedBy - precedingValue)/(runLen + 1), minimumStep)
 							newValues = seq(from = (followedBy - minimumStep), by = (-minimumStep), length.out = runLen)
 							zValues[c(indexIntoZ:(indexIntoZ + runLen - 1))] = rev(newValues)
 						}

@@ -27,7 +27,7 @@ and returns a full matrix, copying the lower triangle into the upper.
 \details{
 *note*: Can also take lower data presented in the form of a data.frame. Note also, if 
 presented with a full matrix, the function will return a matrix with  symmetry enforced. Can be
-handy when you have a "nearly-symmetrical" matrix (with differences in the 10th decimal place).
+handy when you have a "nearly-symmetrical" matrix (with differences in the tenth decimal place).
 }
 \examples{
 
@@ -94,6 +94,7 @@ umx_lower2full(tmp, diag = FALSE)
 	1, .55, 
 	1)
 umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
+
 }
 \references{
 - \url{https://www.github.com/tbates/umx}
@@ -104,6 +105,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxPadAndPruneForDefVars}},
   \code{\link{umx_as_numeric}}, \code{\link{umx_cov2raw}},
   \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_make_fake_data}},
   \code{\link{umx_polychoric}},

@@ -16,7 +16,7 @@
 #' ![](GxEbiv.png)
 #' @param name The name of the model (defaults to "GxEbiv")
 #' @param selDVs The dependent variable (e.g. IQ)
-#' @param selDefs The definition variable (e.g. socio economic status)
+#' @param selDefs The definition variable (e.g. socioeconomic status)
 #' @param sep Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
 #' @param dzData The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
 #' @param mzData The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
@@ -299,7 +299,7 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 
 #' Summarize a bivariate GxE twin model
 #'
-#' umxSummaryGxEbiv summarize a Moderation model, as returned by \code{\link{umxGxEbiv}}.
+#' umxSummaryGxEbiv summarizes a bivariate moderation model, as returned by \code{\link{umxGxEbiv}}.
 #'
 #' @aliases umxSummary.MxModelGxEbiv
 #' @param model A fitted \code{\link{umxGxEbiv}} model to summarize
