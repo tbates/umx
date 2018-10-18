@@ -14,7 +14,6 @@ Amod
 analyse
 analysed
 Anthropometric
-Anthropometric
 Anx
 ao
 APA
@@ -274,8 +273,11 @@ mxCompare
 mxCondenseMatrixSlots
 MxData
 mxData
+mxExpectationNormal
 mxFactor
 mxFactorScores
+mxFitFunctionML
+mxFitFunctionWLS
 mxLatent
 mxMatrices
 MxMatrix

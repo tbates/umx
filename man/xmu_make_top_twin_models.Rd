@@ -46,7 +46,7 @@ FIML requires that the data are continuous. Remaining options are weighted, diag
 \description{
 \code{xmu_make_top_twin_models} makes basic \code{top}, \code{MZ}, and \code{DZ} models. It includes a thresholds matrix if needed.
 
-This is used in umxCP, and will be added to umxACE and umxIP, simplifying code maintainance.
+This is used in umxCP, and will be added to umxACE and umxIP, simplifying code maintenance.
 
 This function takes the \code{mzData} and \code{dzData}, a list of the \code{selDVs} (as well as sep and nSib) to analyse, along with other
 relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased").

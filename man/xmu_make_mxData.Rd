@@ -5,7 +5,7 @@
 \title{Upgrade a dataframe to an mxData type.}
 \usage{
 xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
-  "WLS", "DWLS", "ULS"), manifests = NULL)
+  "WLS", "DWLS", "ULS"), manifests = NULL, verbose = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{mxData}}}
@@ -13,6 +13,8 @@ xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
 \item{type}{What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')}
 
 \item{manifests}{If set, only these variables will be retained.}
+
+\item{verbose}{If verbose, report on columns kept and dropped (default FALSE)}
 }
 \value{
 - \code{\link{mxData}}

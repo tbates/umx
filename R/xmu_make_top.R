@@ -3,7 +3,7 @@
 #' @description
 #' `xmu_make_top_twin_models` makes basic `top`, `MZ`, and `DZ` models. It includes a thresholds matrix if needed.
 #'
-#' This is used in umxCP, and will be added to umxACE and umxIP, simplifying code maintainance.
+#' This is used in umxCP, and will be added to umxACE and umxIP, simplifying code maintenance.
 #' 
 #' This function takes the `mzData` and `dzData`, a list of the `selDVs` (as well as sep and nSib) to analyse, along with other 
 #' relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased").

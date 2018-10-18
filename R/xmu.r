@@ -28,6 +28,7 @@
 #' @param data A \code{\link{data.frame}} or \code{\link{mxData}}
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
+#' @param verbose If verbose, report on columns kept and dropped (default FALSE)
 #' @return - \code{\link{mxData}}
 #' @export
 #' @family xmu internal not for end user
@@ -40,7 +41,7 @@
 #' # pass string through
 #' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
-xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL) {
+xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, verbose = FALSE) {
 	type = match.arg(type)
 	if(is.null(data)){
 		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
@@ -145,7 +146,7 @@ xmu_safe_summary <- function(model1, model2, summary = TRUE) {
 #' @description
 #' Returns either suffix or sep, with a deprecation warning if suffix is set.
 #'
-#' @param sep The seperator (if suffix != 'deprecated', then this is returned).
+#' @param sep The separator (if suffix != 'deprecated', then this is returned).
 #' @param suffix The suffix, defaults to 'deprecated'.
 #' @return - sep
 #' @export
