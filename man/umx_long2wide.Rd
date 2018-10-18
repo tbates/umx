@@ -28,7 +28,7 @@ umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
 \description{
 \code{umx_long2wide} merges on \code{famID}. Family members are ordered by \code{twinID}.
 
-twinID is equivalent to birthorder. Up to 10 twinIDs are allowed (family order).
+twinID is equivalent to birth order. Up to 10 twinIDs are allowed (family order).
 
 \emph{Note}: Not all data sets have an order column, but it is essential to rank subjects correctly.
 

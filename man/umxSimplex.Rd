@@ -18,7 +18,7 @@ umxSimplex(name = "simplex", selDVs, dzData, mzData, sep = NULL,
 
 \item{mzData}{The MZ dataframe}
 
-\item{sep}{The string preceeding the final numeric twin identifiier (often "_T")
+\item{sep}{The string preceding the final numeric twin identifier (often "_T")
 Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1", "dep_T2")}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}

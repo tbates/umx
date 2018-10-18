@@ -1,6 +1,6 @@
-#' FIML-based polychoric, polyserial, and pearson correlations
+#' FIML-based polychoric, polyserial, and Pearson correlations
 #'
-#' Compute polychoric/polyserial/pearson correlations with FIML in OpenMx
+#' Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx
 #'
 #' @param data Dataframe
 #' @param useDeviations Whether to code the mode using deviation thresholds (default = TRUE)
@@ -175,13 +175,13 @@ umx_polychoric <- function(data, useDeviations = TRUE) {
 }
 
 
-#' FIML-based Pairwise polychoric, polyserial, and pearson correlations
+#' FIML-based Pairwise polychoric, polyserial, and Pearson correlations
 #'
-#' Compute polychoric/polyserial/pearson correlations with FIML in OpenMx
+#' Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx
 #'
 #' @param data Dataframe
 #' @param useDeviations Whether to code the mode using deviation thresholds (default = TRUE)
-#' @param printFit Whether to print information about the fit achievedd (default = FALSE)
+#' @param printFit Whether to print information about the fit achieved (default = FALSE)
 #' @param use parameter (default = "any")
 #' @return - matrix of correlations
 #' @export
@@ -241,13 +241,13 @@ umx_polypairwise <- function (data, useDeviations=TRUE, printFit=FALSE, use="any
     return(list(R=pairCorrelationMatrix,SE=pairErrors,SEMatrix=pairErrorMatrix))
 }
 
-#' FIML-based trio-based polychoric, polyserial, and pearson correlations
+#' FIML-based trio-based polychoric, polyserial, and Pearson correlations
 #'
-#' Compute polychoric/polyserial/pearson correlations with FIML in OpenMx.
+#' Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx.
 #'
 #' @param data Dataframe
 #' @param useDeviations Whether to code the mode using deviation thresholds (default = TRUE)
-#' @param printFit Whether to print information about the fit achievedd (default = FALSE)
+#' @param printFit Whether to print information about the fit achieved (default = FALSE)
 #' @param use parameter (default = "any")
 #' @return - matrix of correlations
 #' @export

@@ -9,7 +9,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
   "cov", "cor", "WLS", "DWLS", "ULS"), dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = 0, weightVar = NULL, equateMeans = TRUE,
-  bVector = FALSE, thresholds = c("deviationBased", "WLS"),
+  bVector = FALSE, thresholds = c("deviationBased"),
   autoRun = getOption("umx_auto_run"), optimizer = NULL,
   intervals = FALSE, suffix = "deprecated")
 }
@@ -95,7 +95,7 @@ for additional information on using umxACE.
 
 \figure{ACE.png}
 
-This figure also contains the key to unerstanding how to modidy models that \code{umxACE} produces.
+This figure also contains the key to understanding how to modify models that \code{umxACE} produces.
 read the "Matrices and Labels in ACE model" section in details below...
 
 \strong{NOTE}: Scroll down to details for how to use the function, a figure

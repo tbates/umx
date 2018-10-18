@@ -13,7 +13,7 @@ umx_mat2dot(x, cells = c("any", "diag", "lower", "upper", "left"),
 \arguments{
 \item{x}{a \code{\link{umxMatrix}} to make paths from.}
 
-\item{cells}{which cells to proceess: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)}
+\item{cells}{which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)}
 
 \item{from}{one of "rows", "columns" or a name}
 

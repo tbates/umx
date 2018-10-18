@@ -32,7 +32,7 @@ It reports the results in a table. Set the format of the table with
 \code{\link{umx_set_table_format}}()., or set \code{report} to "html" to open a
 table for pasting into a word processor.
 
-\code{umxReduce} is a work in progress, with more automations coming as demand emerges.
+\code{umxReduce} is a work in progress, with more automatic reductions coming as demand emerges.
 I am thinking for RAM models to drop NS paths, and report that test.
 }
 \references{

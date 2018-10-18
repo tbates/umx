@@ -20,7 +20,7 @@ umx_check_model(obj, type = NULL, hasData = NULL, beenRun = NULL,
 
 \item{checkSubmodels}{whether to check submodels (not implemented yet) (default = FALSE)}
 
-\item{callingFn}{= To help user interprete error, add the name of the calling function.}
+\item{callingFn}{= Name of the calling function to help the user locate the error.}
 }
 \value{
 - boolean

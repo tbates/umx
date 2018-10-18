@@ -2,7 +2,7 @@
 % Please edit documentation in R/umx_build_polychoricMatrix3.R
 \name{umx_polychoric}
 \alias{umx_polychoric}
-\title{FIML-based polychoric, polyserial, and pearson correlations}
+\title{FIML-based polychoric, polyserial, and Pearson correlations}
 \usage{
 umx_polychoric(data, useDeviations = TRUE)
 }
@@ -15,7 +15,7 @@ umx_polychoric(data, useDeviations = TRUE)
 - matrix of correlations
 }
 \description{
-Compute polychoric/polyserial/pearson correlations with FIML in OpenMx
+Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx
 }
 \examples{
 # TODO: Needs examples
@@ -30,6 +30,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_as_numeric}}, \code{\link{umx_cov2raw}},
   \code{\link{umx_lower2full}},
   \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_make_fake_data}},
   \code{\link{umx_polypairwise}},

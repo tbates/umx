@@ -67,7 +67,7 @@ unique environmental (E) and, optionally, either common environment (shared-envi
 non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
 and multiple examples.
 
-The following figure shows the A components of a trivate ACEv model:
+The following figure shows the A components of a trivariate ACEv model:
 
 \figure{ACEv.png}
 
@@ -114,7 +114,7 @@ data(twinData) # ?twinData from Australian twins.
 #  This is exactly why we have ACEv! It suggests we need a different model
 #  In this case: ADE.
 # Other things to note:
-# 1. umxACEv can figure out variable names: provide "sep" and "wt" -> "wt1" "wt2"
+# 1. umxACEv can figure out variable names: provide "sep", and selVars. Function generates: "wt" -> "wt1" "wt2"
 # 2. umxACEv picks the variables it needs from the data.
 
 selDVs = "wt"
