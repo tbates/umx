@@ -5,7 +5,7 @@
 \title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
 umx_make(what = c("install", "examples", "check", "win", "rhub",
-  "release", "spell"), pkg = "~/bin/umx", check = TRUE,
+  "release", "spell"), pkg = "~/bin/umx", check = TRUE, run = FALSE,
   spelling = "en_US")
 }
 \arguments{
@@ -14,6 +14,8 @@ umx_make(what = c("install", "examples", "check", "win", "rhub",
 \item{pkg}{the local path to your package. Defaults to my path to umx.}
 
 \item{check}{Whether to run check on the package before release (default = TRUE).}
+
+\item{run}{= for examples, whether to run dontrun{} code (default FALSE)}
 
 \item{spelling}{Whether to check spelling before release (default = "en_US": set NULL to not check).}
 }
