@@ -16,17 +16,19 @@
 #' 
 #' For ordinal variables, the first 2 thresholds are fixed.
 #' 
-#' ## Modeling
+#' **Modeling**
 #' 
-#' ### top
+#' *top model*
+#' 
 #' For raw data, it contains a means matrix. For WLS and summary data, the top model contains only a name.
-
+#' 
 #' For ordinal, `top` gains `top.threshMat` (from a call to `umxThresholdMatrix`). `MZ` and `DZ` are as with continuous, but adding thresholds.
 #' 
-#' ### MZ and DZ
+#' *MZ and DZ models*
+#' 
 #' MZ and DZ contain data, and an expectation and fit function. For WLS this is mxExpectationNormal  and mxFitFunctionWLS.
 #' 
-#' ## Matrices created
+#' **Matrices created**
 #' 
 #' If needed means matrices are added. Decent starts are guessed from the data.
 #' For continuous raw data, top contains a means matrix "expMean". 
@@ -35,15 +37,15 @@
 #' For continuous raw data, MZ and DZ contain mxExpectationNormal and mxFitFunctionML.
 #'
 #'
-#' `MZ` and `DZ` is the data, and an expectation of for `top.expCovMZ` and `top.expMean`, possibly referencing vector = bVector in the fit function.
+#' `MZ` and `DZ` contain the data, and an expectation of for `top.expCovMZ` and `top.expMean`, possibly referencing vector = bVector in the fit function.
 #'
-#' For binary, `Vtot` (A+C+E) is constrained to 1.
+#' For binary, a constraint and algebras are included to constrain `Vtot` (A+C+E) to 1.
 #' 
-#' If a weightVar is detected, this column is added to  mzWeightMatrix/mzWeightMatrix
+#' If a weightVar is detected, this column is added to  mzWeightMatrix/mzWeightMatrix.
 #' 
 #' If `equateMeans` is `TRUE`, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 #'
-#' ## Data handling
+#' **Data handling**
 #' 
 #' In terms of data handling, it was primarily designed to take data.frames and process these into mxData. It can, however, handle cov and mxData input.
 #' 
@@ -60,7 +62,7 @@
 #' Unused columns are dropped.
 #' If you pass in raw data, you can't request type cov/cor yet. Will work on this if desired.
 #' 
-#' ## TODO list for xmu_make_top_twin_models
+#' **TODO list for xmu_make_top_twin_models**
 #' 
 #' 1. Add selCovs
 #' 2. Add covMethod == "fixed"

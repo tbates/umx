@@ -57,12 +57,21 @@ For raw data, a check is made for ordered variables.
 
 For Binary variables, means are fixed at 0 and total variance (A+C+E) is fixed at 1.
 
-For ordinal variables, the first 2 thresholds are fixed.Modelingtop
+For ordinal variables, the first 2 thresholds are fixed.
+
+\strong{Modeling}
+
+\emph{top model}
 
 For raw data, it contains a means matrix. For WLS and summary data, the top model contains only a name.
-For ordinal, \code{top} gains \code{top.threshMat} (from a call to \code{umxThresholdMatrix}). \code{MZ} and \code{DZ} are as with continuous, but adding thresholds.MZ and DZ
 
-MZ and DZ contain data, and an expectation and fit function. For WLS this is mxExpectationNormal  and mxFitFunctionWLS.Matrices created
+For ordinal, \code{top} gains \code{top.threshMat} (from a call to \code{umxThresholdMatrix}). \code{MZ} and \code{DZ} are as with continuous, but adding thresholds.
+
+\emph{MZ and DZ models}
+
+MZ and DZ contain data, and an expectation and fit function. For WLS this is mxExpectationNormal  and mxFitFunctionWLS.
+
+\strong{Matrices created}
 
 If needed means matrices are added. Decent starts are guessed from the data.
 For continuous raw data, top contains a means matrix "expMean".
@@ -70,13 +79,15 @@ For Models with ordinal but no binary variables, top adds an \code{umxThresholdM
 If binary variables are present, matrices and a constraint to hold A+C+E ==1 are added to top.
 For continuous raw data, MZ and DZ contain mxExpectationNormal and mxFitFunctionML.
 
-\code{MZ} and \code{DZ} is the data, and an expectation of for \code{top.expCovMZ} and \code{top.expMean}, possibly referencing vector = bVector in the fit function.
+\code{MZ} and \code{DZ} contain the data, and an expectation of for \code{top.expCovMZ} and \code{top.expMean}, possibly referencing vector = bVector in the fit function.
 
-For binary, \code{Vtot} (A+C+E) is constrained to 1.
+For binary, a constraint and algebras are included to constrain \code{Vtot} (A+C+E) to 1.
 
-If a weightVar is detected, this column is added to  mzWeightMatrix/mzWeightMatrix
+If a weightVar is detected, this column is added to  mzWeightMatrix/mzWeightMatrix.
 
-If \code{equateMeans} is \code{TRUE}, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.Data handling
+If \code{equateMeans} is \code{TRUE}, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
+
+\strong{Data handling}
 
 In terms of data handling, it was primarily designed to take data.frames and process these into mxData. It can, however, handle cov and mxData input.
 
@@ -91,7 +102,9 @@ If a weight variable is, an \code{mzWeightMatrix} will be added.
 Type "WLS", "DWLS", or "ULS" will process raw data into a WLS data using \code{xmu_make_mxData}.
 
 Unused columns are dropped.
-If you pass in raw data, you can't request type cov/cor yet. Will work on this if desired.TODO list for xmu_make_top_twin_models
+If you pass in raw data, you can't request type cov/cor yet. Will work on this if desired.
+
+\strong{TODO list for xmu_make_top_twin_models}
 \enumerate{
 \item Add selCovs
 \item Add covMethod == "fixed"
