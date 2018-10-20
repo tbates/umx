@@ -1,3 +1,6 @@
+# umx 2.9.0 November 2018, R 3.5.1: More love
+* NEW: `umxACE` will support WLS, UWLS, DWLS models!
+
 # umx 2.8.5 October 2018, R 3.5.1: More love
 * NEW: `umxRAM` supports WLS, UWLS, DWLS models!
 * NEW: `xmu_make_mxData` function to make mxData functions out of dataframes (and also drop variables from cov/cor dataframes.

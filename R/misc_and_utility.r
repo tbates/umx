@@ -2472,6 +2472,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
+#' @param run = for examples, whether to run dontrun{} code (default FALSE)
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
 #' @return - 
 #' @export
@@ -2485,12 +2486,12 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "win"))      # check on win-builder
 #' umx_make(what = "release"))  # release to CRAN
 #' }
-umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, spelling = "en_US") {
+umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, run=FALSE, spelling = "en_US") {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
 	} else if(what == "examples"){
-		devtools::run_examples(pkg = pkg)
+		devtools::run_examples(pkg = pkg, run = run)
 	} else if(what == "check"){
 		# http://r-pkgs.had.co.nz/check.html
 		devtools::check(pkg = pkg)		
