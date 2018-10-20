@@ -203,7 +203,7 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_mat2dot}}, \code{\link{umx_msg}},
   \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_scale}}
+  \code{\link{umx_scale}}, \code{\link{umx_score_scale}}
 
 Other datasets: \code{\link{GFF}}, \code{\link{iqdat}},
   \code{\link{us_skinfold_data}}
