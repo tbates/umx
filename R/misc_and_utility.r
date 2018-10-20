@@ -1,3 +1,26 @@
+#' Score a scale by summing normal and reversed items
+#'
+#' @description
+#' Score a scale by summing normal and reversed items is a function which 
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{umxLabel}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' library(psych)
+#' tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, itemMax = 6, data= bfi, name = "Extraversion")
+#' }
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, itemMax = NULL, data= NULL, name = NULL) {
+	INDCOL_pos = rowSums(data[,paste0(base, pos)])
+	INDCOL_rev = ((itemMax+1)*length(rev))- rowSums(data[,paste0(base, rev)])
+	data[,name] = (INDCOL_pos + INDCOL_rev)
+	return(data)
+}
+
 #' Helper to make a graphviz rank string
 #'
 #' @description
