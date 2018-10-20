@@ -112,6 +112,12 @@ umxSummary(m1)
 parameters(m1, patt = "^s")
 m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 umxCompare(m1, m2)
+
+# test a 3 time-point model
+nTimePoints = 3 # Number of time points
+baseVarNames = paste0("IQ_age", 1:nTimePoints)
+# IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.
+m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
 }
 \references{
 \itemize{

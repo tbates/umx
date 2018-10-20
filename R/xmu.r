@@ -496,10 +496,14 @@ xmu_simplex_corner <- function(x, start = .9) {
 		x = umxMatrix('test', 'Full', nrow = x, ncol = x)
 	}
 	nVar = dim(x)[1]
+	if(length(start)==1){
+		start = rep(start, nVar - 1)
+	}
+	start = c(NA, start)
 	nVar_minus1 = nVar-1
-	for (thisRow in 2:nVar) {
+	for(thisRow in 2:nVar) {
 		x$free[thisRow, (thisRow-1)] = TRUE
-		x$values[thisRow, (thisRow-1)] = start		
+		x$values[thisRow, (thisRow-1)] = start[thisRow]
 	}
 	return(x)
 }
