@@ -27,4 +27,18 @@ tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, itemMax = 6, data= bfi, name = 
 }
 \seealso{
 - \code{\link{umxLabel}}
+
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
+  \code{\link{qm}}, \code{\link{umxBrownie}},
+  \code{\link{umxFactor}}, \code{\link{umxVersion}},
+  \code{\link{umx_array_shift}},
+  \code{\link{umx_cell_is_on}},
+  \code{\link{umx_cont_2_quantiles}},
+  \code{\link{umx_find_object}},
+  \code{\link{umx_graphviz_rank}}, \code{\link{umx_make}},
+  \code{\link{umx_mat2dot}}, \code{\link{umx_msg}},
+  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
+  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
+  \code{\link{umx_scale}}, \code{\link{umx}}
 }
+\concept{Miscellaneous Utility Functions}

@@ -1555,6 +1555,7 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' Convert each column of a dataframe to numeric
 #'
 #' @param df A \code{\link{data.frame}} to convert
+#' @param which which columns to convert (default (null) selects all)
 #' @param force Whether to force conversion to numeric for non-numeric columns (defaults to FALSE)
 #' @return - data.frame
 #' @family Data Functions
@@ -1570,9 +1571,14 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' # Make one variable alpha
 #' df$mpg = c(letters,letters[1:6]); str(df)
 #' df = umx_as_numeric(df, force=TRUE); str(df)
-umx_as_numeric <- function(df, force = FALSE) {
+umx_as_numeric <- function(df, which = NULL, force = FALSE) {
 	# TODO umx_as_numeric: Handle matrices, vectors...
-	colsToConvert = names(df)
+	if(is.null(which)){
+		colsToConvert = names(df)
+	} else {
+		colsToConvert = which
+	}
+	umx_check_names(colsToConvert, data = df, die = TRUE)
 	if(!force){
 		# just the numeric names
 		colsToConvert = colsToConvert[umx_is_numeric(df)]
