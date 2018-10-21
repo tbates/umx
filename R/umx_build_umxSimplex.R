@@ -1,5 +1,3 @@
-# https://ibg.colorado.edu/dokuwiki/doku.php?id=workshop:2018:cdrom
-
 #' Build and run a simplex twin model
 #' 
 #' Make a 2-group simplex twin model
@@ -118,7 +116,6 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	# ==================================
 	# = Create start values and labels =
 	# ==================================
-	# play repliocated
 	# mzData <- subset(iqdat, zygosity == "MZ")[,-1]
 	# dzData <- subset(iqdat, zygosity == "DZ")[,-1]
 	# nVar = 4

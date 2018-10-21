@@ -62,10 +62,9 @@
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").
 #' @param selCovs (optional) covariates to include from the data (do not include sep in names)
-#' @param covMethod How to treat covariates: "fixed" (default) or "random".
+#' @param sep The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
@@ -76,7 +75,8 @@
 #' @param weightVar = If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
-#' @param thresholds How to implement ordinal thresholds c("deviationBased", "WLS").
+#' @param thresholds How to implement ordinal thresholds c("deviationBased").
+#' @param covMethod How to treat covariates: "fixed" (default) or "random".
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
@@ -237,10 +237,10 @@
 #' umxSummary(m1)
 #' plot(m1)
 #' 
-umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), 
-	dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, 
+umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, 
+	dzData, mzData, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, 
 	boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, 
-	thresholds = c("deviationBased", "WLS"), autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+	thresholds = c("deviationBased", "WLS"), covMethod = c("fixed", "random"), autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 
 		covMethod = match.arg(covMethod)
 		thresholds = match.arg(thresholds)
@@ -249,7 +249,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, covMethod = c("fixed"
 			name = "ADE"
 		}
 
-		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
+		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
 		
 		# If given covariates, call umxACEvcov
 		if(!is.null(selCovs)){
