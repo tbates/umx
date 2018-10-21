@@ -13,7 +13,7 @@ umx_mat2dot(x, cells = c("any", "diag", "lower", "upper", "left"),
 \arguments{
 \item{x}{a \code{\link{umxMatrix}} to make paths from.}
 
-\item{cells}{which cells to proceess: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)}
+\item{cells}{which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)}
 
 \item{from}{one of "rows", "columns" or a name}
 
@@ -72,6 +72,6 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
   \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
   \code{\link{umx_print}}, \code{\link{umx_scale}},
-  \code{\link{umx}}
+  \code{\link{umx_score_scale}}, \code{\link{umx}}
 }
 \concept{Miscellaneous Utility Functions}

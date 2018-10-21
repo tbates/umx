@@ -79,7 +79,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @export
 #' @family Reporting Functions
 #' @seealso - \code{\link{AIC}}
-#' @references - Wagenmakers EJ, Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychon Bull Rev*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
+#' @references - Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
 #' @examples
 #' l1 = lm(mpg~ wt + disp, data=mtcars)
 #' l2 = lm(mpg~ wt, data=mtcars)
@@ -135,7 +135,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' \code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
 #' table for pasting into a word processor.
 #' 
-#' `umxReduce` is a work in progress, with more automations coming as demand emerges.
+#' `umxReduce` is a work in progress, with more automatic reductions coming as demand emerges.
 #' I am thinking for RAM models to drop NS paths, and report that test.
 #'
 #' @param model The \code{\link{mxModel}} which will be reduced.

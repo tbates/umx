@@ -13,7 +13,7 @@ umxGxEbiv(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 \item{selDVs}{The dependent variable (e.g. IQ)}
 
-\item{selDefs}{The definition variable (e.g. socio economic status)}
+\item{selDefs}{The definition variable (e.g. socioeconomic status)}
 
 \item{dzData}{The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)}
 

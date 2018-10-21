@@ -62,7 +62,7 @@
 #' @param selDVs The BASENAMES of the variables i.e., c(`obese`), not c(`obese_T1`, `obese_T2`)
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param sep The string preceeding the final numeric twin identifiier (often "_T")
+#' @param sep The string preceding the final numeric twin identifier (often "_T")
 #' Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1", "dep_T2")
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param dzAr The DZ genetic correlation (default = .5. Vary to examine assortative mating).
@@ -88,6 +88,12 @@
 #' parameters(m1, patt = "^s")
 #' m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 #' umxCompare(m1, m2)
+#' 
+#' # test a 3 time-point model
+#' nTimePoints = 3 # Number of time points
+#' baseVarNames = paste0("IQ_age", 1:nTimePoints)
+#' # IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.
+#' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
 #' @md
 umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	nSib   = 2
@@ -109,40 +115,53 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 
 
 	# ==================================
-	# = create start values and labels =
+	# = Create start values and labels =
 	# ==================================
-	DZMeans = umx_apply(mean, of = dzData[,selDVs], by = "columns", na.rm = TRUE)
-	MZMeans = umx_apply(mean, of = mzData[,selDVs], by = "columns", na.rm = TRUE)
-	grandMeans <- colMeans(rbind(MZMeans, DZMeans), na.rm = TRUE) # Starting values for the means
+	# mzData <- subset(iqdat, zygosity == "MZ")[,-1]
+	# dzData <- subset(iqdat, zygosity == "DZ")[,-1]
+	# nVar = 4
+	allData = rbind(mzData, dzData)
+	T1 = allData[, 1:nVar]
+	T2 = allData[, (nVar+1):(nVar*2)]; names(T2)= names(T1)
+	longData  = rbind(T1, T2)
+
+	# Starting values for the means
+	meanStarts = umx_apply(mean, of = longData, by = "columns", na.rm = TRUE)
+	# Make wide again
+	meanStarts = c(meanStarts, meanStarts)
 	if(equateMeans){
-		meanLabels = paste0("mean", selDVs[1:nVar])
+		meanLabels = paste0("mean", selDVs[1:nVar]) # Names recycled for twin 2
 		meanLabels = c(meanLabels, meanLabels)
-		meanStarts = colMeans(rbind(grandMeans[1:nVar], grandMeans[(nVar+1):(nVar*2)]), na.rm = TRUE)
-		meanStarts = c(meanStarts, meanStarts)
 	} else {
 		meanLabels = paste0("mean", selDVs)
-		meanStarts = grandMeans
 	}
 
+	# Covariance matrix, 1/3 allocated to each of A=C=E.
+	varStarts = cov(longData, use = "pairwise.complete.obs")/3
+	varStarts = diag(varStarts)
+	
 	model = mxModel(name,
-		mxModel("top",
-		# TODO 
 		# 1. replace hard-coded start values in "[ace][tsi]"
-		# 2. should 'ei' all be fixed at zero?
-		# better starts for t, s, an i matrices... currently hard coded for IQ!
-			# Transmitted Components for "SA", "SC" and "SE"
-			umxMatrix('at', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(100,  5,  5,  5)),
-			umxMatrix('ct', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c( 70, 10, 10, 10)),
-			umxMatrix('et', 'Diag', nrow = nVar, ncol = nVar, free = FALSE, values = 0),
-			# Te (residuals) all values equated by label, except E
-			umxMatrix('as', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "as_r1c1", values = 2),
-			umxMatrix('cs', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "cs_r1c1", values = 5),
-			umxMatrix('es', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, values = 50),
+		# 		t -> 0 (except first 1) DONE
+		# 		s -> 0 for A and C, es = var*1/3
+		#     i -> 0 var*1/3 in each of A,C. ei@0
+		mxModel("top",
+			# Start transmitted components at zero (except first 1)(strong positive definite solution @mikeneale)
+			umxMatrix('at', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(varStarts[1], rep(0, nVar-1))),
+			umxMatrix('ct', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(varStarts[1], rep(0, nVar-1))),
+			umxMatrix('et', 'Diag', nrow = nVar, ncol = nVar, free = FALSE, values = 0.0),
+
 			# Innovations (diag, but start 1-row down)
-			xmu_simplex_corner(umxMatrix('ai', 'Full', nrow = nVar, ncol = nVar), start = .9),
-			xmu_simplex_corner(umxMatrix('ci', 'Full', nrow = nVar, ncol = nVar), start = .8),
+			xmu_simplex_corner(umxMatrix('ai', 'Full', nrow = nVar, ncol = nVar), start = varStarts[-1]),
+			xmu_simplex_corner(umxMatrix('ci', 'Full', nrow = nVar, ncol = nVar), start = varStarts[-1]),
 			umxMatrix('ei', 'Full', nrow = nVar, ncol = nVar, free = FALSE, values = 0.0),
-			# TODO ei fixed@zero?
+			# TODO check ei fixed@zero?
+
+			# Residuals: all values equated by label, except E
+			umxMatrix('as', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "as_r1c1", values = 0),
+			umxMatrix('cs', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, labels = "cs_r1c1", values = 0),
+			umxMatrix('es', 'Diag', nrow = nVar, ncol = nVar, free = TRUE, values = varStarts),
+
 			umxMatrix('I', 'Iden', nrow = nVar, ncol = nVar),
 			mxAlgebra(name= 'Iai', solve(I - ai)),
 			mxAlgebra(name= 'Ici', solve(I - ci)),

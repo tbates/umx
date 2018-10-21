@@ -18,7 +18,7 @@ umxSimplex(name = "simplex", selDVs, dzData, mzData, sep = NULL,
 
 \item{mzData}{The MZ dataframe}
 
-\item{sep}{The string preceeding the final numeric twin identifiier (often "_T")
+\item{sep}{The string preceding the final numeric twin identifier (often "_T")
 Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1", "dep_T2")}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
@@ -112,6 +112,12 @@ umxSummary(m1)
 parameters(m1, patt = "^s")
 m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 umxCompare(m1, m2)
+
+# test a 3 time-point model
+nTimePoints = 3 # Number of time points
+baseVarNames = paste0("IQ_age", 1:nTimePoints)
+# IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.
+m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
 }
 \references{
 \itemize{

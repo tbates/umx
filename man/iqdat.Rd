@@ -12,7 +12,7 @@ data(iqdat)
 Measures of IQ across four ages in pairs of identical and fraternal twins. (see details)
 }
 \details{
-#TODO complete detais
+#TODO complete details
 \itemize{
   \item zygosity Zygosity (MZ or DZ)
   \item IQ_age1_T1 T1 IQ measured at age 1

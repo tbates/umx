@@ -162,6 +162,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_as_numeric}}, \code{\link{umx_cov2raw}},
   \code{\link{umx_lower2full}},
   \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_make_fake_data}},
   \code{\link{umx_polychoric}},
@@ -202,7 +203,7 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_mat2dot}}, \code{\link{umx_msg}},
   \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_scale}}
+  \code{\link{umx_scale}}, \code{\link{umx_score_scale}}
 
 Other datasets: \code{\link{GFF}}, \code{\link{iqdat}},
   \code{\link{us_skinfold_data}}
@@ -240,7 +241,8 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_dot_make_paths}},
   \code{\link{xmu_dot_make_residuals}},
   \code{\link{xmu_make_mxData}},
-  \code{\link{xmu_make_top}},
+  \code{\link{xmu_make_top_twin_models}},
+  \code{\link{xmu_set_sep_from_suffix}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}}
 }

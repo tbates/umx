@@ -4,10 +4,12 @@
 \alias{umx_as_numeric}
 \title{umx_as_numeric}
 \usage{
-umx_as_numeric(df, force = FALSE)
+umx_as_numeric(df, which = NULL, force = FALSE)
 }
 \arguments{
 \item{df}{A \code{\link{data.frame}} to convert}
+
+\item{which}{which columns to convert (default (null) selects all)}
 
 \item{force}{Whether to force conversion to numeric for non-numeric columns (defaults to FALSE)}
 }
@@ -37,6 +39,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxPadAndPruneForDefVars}},
   \code{\link{umx_cov2raw}}, \code{\link{umx_lower2full}},
   \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
   \code{\link{umx_make_bin_cont_pair_data}},
   \code{\link{umx_make_fake_data}},
   \code{\link{umx_polychoric}},

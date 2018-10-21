@@ -1,5 +1,5 @@
-# TODO Add SEstyle code from plotCP
-# TODO Add new label trimming code if necessary
+# TODO: umxPlotCPnew Add SEstyle code from plotCP
+# TODO: umxPlotCPnew Add new label trimming code if necessary
 #' Draw and display a graphical figure of Common Pathway model
 #'
 #' Options include digits (rounding), showing means or not, and which output format is desired.

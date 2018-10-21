@@ -1,3 +1,26 @@
+#' Score a scale by summing normal and reversed items
+#'
+#' @description
+#' Score a scale by summing normal and reversed items is a function which 
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{umxLabel}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' library(psych)
+#' tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, itemMax = 6, data= bfi, name = "Extraversion")
+#' }
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, itemMax = NULL, data= NULL, name = NULL) {
+	INDCOL_pos = rowSums(data[,paste0(base, pos)])
+	INDCOL_rev = ((itemMax+1)*length(rev))- rowSums(data[,paste0(base, rev)])
+	data[,name] = (INDCOL_pos + INDCOL_rev)
+	return(data)
+}
+
 #' Helper to make a graphviz rank string
 #'
 #' @description
@@ -103,7 +126,7 @@ umx_cell_is_on <- function(r, c, where=c("diag", "lower", "upper", "any", "left"
 #'
 #' @param x a \code{\link{umxMatrix}} to make paths from.
 #' @param from one of "rows", "columns" or a name
-#' @param cells which cells to proceess: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
+#' @param cells which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
 #' @param arrows "forward" "both" or "back"
 #' @param fromLabel = NULL
 #' @param toLabel = NULL
@@ -779,24 +802,21 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @details
 #' Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz Quad-core i7 desktop.
 #' 
-#' R: 3.4.1 (2017-06-30); MacOS: 10.13
-#' 
-#' umx: 1.9.0; OpenMx: 2.7.16.26 [GIT v2.7.16-26-gd46131ce-dirty] / 2.7.16.31
-#' 
 #' \tabular{rllll}{
-#'	date       \tab type            \tab x core  \tab 01 min, XX.XX sec \tab                                 \cr                  
-#'	2022-12-31 \tab v3.0.0.future   \tab x core  \tab 00 min, 0.30 sec  \tab                                 \cr
-#'	2018-09-17 \tab v2.11.3         \tab 1 core  \tab 01 min, 31 sec    \tab                                 \cr
-#'	2018-09-17 \tab v2.11.3         \tab 4 core  \tab 00 min, 30.6 sec  \tab \eqn{\Delta}{&Delta;}: -61.49) \cr
-#'	2017-10-16 \tab v2.7.18-9       \tab x core  \tab 01 min, 07.30 sec \tab                                 \cr                  
-#'	2017-10-16 \tab v2.7.18-9       \tab y core  \tab 00 min, 22.63 sec \tab \eqn{\Delta}{&Delta;}: -44.68) \cr
-#'	2017-10-16 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 08.38 sec \tab                                 \cr                  
-#'	2017-10-16 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 24.89 sec \tab \eqn{\Delta}{&Delta;}: -43.49) \cr
-#'	2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.90 sec \tab                                 \cr
-#'	2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.20 sec \tab \eqn{\Delta}{&Delta;}: -40.70   \cr
-#'	2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 09.90 sec \tab                                 \cr
-#'	2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 06.20 sec \tab                                 \cr
-#'	2017-09-07 \tab TRAVIS          \tab 4 core  \tab 00 min, 21.10 sec \tab \eqn{\Delta}{&Delta;}: -45.00   \cr
+#'	date       \tab type            \tab Cores   \tab Time              \tab                                 \cr                  
+#'	2018-10-14 \tab v2.11.5 (OpenMP on CRAN)  \tab 1 core  \tab 01 min, 16 sec    \tab     (NPSOL)                   \cr
+#'	2018-10-14 \tab v2.11.5 (OpenMP on CRAN)  \tab 4 cores  \tab 00 min, 36 sec    \tab \eqn{\Delta}:-39.598) \cr
+#'	2018-09-17 \tab v2.11.3         \tab 1    \tab 01 min, 31 sec    \tab                                 \cr
+#'	2018-09-17 \tab v2.11.3         \tab 4    \tab 00 min, 30.6 sec  \tab \eqn{\Delta}: -61.49) \cr
+#'	2017-10-16 \tab v2.7.18-9       \tab 1    \tab 01 min, 07.30 sec \tab                                 \cr                  
+#'	2017-10-16 \tab v2.7.18-9       \tab 4    \tab 00 min, 22.63 sec \tab \eqn{\Delta}: -44.68) \cr
+#'	2017-10-16 \tab Clang OpenMP    \tab 1    \tab 01 min, 08.38 sec \tab                                 \cr                  
+#'	2017-10-16 \tab Clang OpenMP    \tab 4    \tab 00 min, 24.89 sec \tab \eqn{\Delta}: -43.49) \cr
+#'	2017-09-07 \tab Clang OpenMP    \tab 1    \tab 01 min, 12.90 sec \tab                                 \cr
+#'	2017-09-07 \tab Clang OpenMP    \tab 4    \tab 00 min, 32.20 sec \tab \eqn{\Delta}: -40.70   \cr
+#'	2017-09-07 \tab Clang notOpenMP \tab 1    \tab 01 min, 09.90 sec \tab                                 \cr
+#'	2017-09-07 \tab TRAVIS          \tab 1    \tab 01 min, 06.20 sec \tab                                 \cr
+#'	2017-09-07 \tab TRAVIS          \tab 4    \tab 00 min, 21.10 sec \tab \eqn{\Delta}: -45.00   \cr
 #' }
 #' 
 #' @param nCores How many cores to run (defaults to c(1, max/2). -1 = all available.
@@ -1535,6 +1555,7 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' Convert each column of a dataframe to numeric
 #'
 #' @param df A \code{\link{data.frame}} to convert
+#' @param which which columns to convert (default (null) selects all)
 #' @param force Whether to force conversion to numeric for non-numeric columns (defaults to FALSE)
 #' @return - data.frame
 #' @family Data Functions
@@ -1550,9 +1571,14 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' # Make one variable alpha
 #' df$mpg = c(letters,letters[1:6]); str(df)
 #' df = umx_as_numeric(df, force=TRUE); str(df)
-umx_as_numeric <- function(df, force = FALSE) {
+umx_as_numeric <- function(df, which = NULL, force = FALSE) {
 	# TODO umx_as_numeric: Handle matrices, vectors...
-	colsToConvert = names(df)
+	if(is.null(which)){
+		colsToConvert = names(df)
+	} else {
+		colsToConvert = which
+	}
+	umx_check_names(colsToConvert, data = df, die = TRUE)
 	if(!force){
 		# just the numeric names
 		colsToConvert = colsToConvert[umx_is_numeric(df)]
@@ -1598,8 +1624,8 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' Unlike similar functions in other packages, it checks that the variables exist, and that the new names do not.
 #' 
 #' Importantly, it also supports [regular expressions][regex]. This allows you to find and replace
-#' text based on patterns and replacements. so to change "replacement" to "inplace", 
-#' `grep=re(place)ment`, `replace= in\\1`.
+#' text based on patterns and replacements. so to change "replacement" to "in place", 
+#' `grep=re(place)ment`, `replace= in \\1`.
 #'
 #' *note*: to use replace list, you must say c(old = "new"), not c(old -> "new")
 #' 
@@ -2475,6 +2501,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
+#' @param run = for examples, whether to run dontrun{} code (default FALSE)
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
 #' @return - 
 #' @export
@@ -2488,12 +2515,12 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "win"))      # check on win-builder
 #' umx_make(what = "release"))  # release to CRAN
 #' }
-umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, spelling = "en_US") {
+umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, run=FALSE, spelling = "en_US") {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
 	} else if(what == "examples"){
-		devtools::run_examples(pkg = pkg)
+		devtools::run_examples(pkg = pkg, run = run)
 	} else if(what == "check"){
 		# http://r-pkgs.had.co.nz/check.html
 		devtools::check(pkg = pkg)		
@@ -2506,9 +2533,10 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 	} else if (what =="rhub"){
 		# devtools::check_rhub(pkg = pkg)
 	} else if (what == "release"){
-		devtools::release(pkg = pkg, check = check) # spelling = spelling
+		devtools::release(pkg = pkg, check = check) # spelling = NULL		 
 	} else if (what == "spell"){
-		devtools::spell_check(pkg = pkg)
+		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
+		# devtools::spell_check(pkg = pkg)
 	}
 }
 
@@ -3646,7 +3674,7 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @param beenRun whether the model has been run or not (defaults to not checking NULL)
 #' @param hasMeans whether the model should have a means model or not (defaults to not checking NULL)
 #' @param checkSubmodels whether to check submodels (not implemented yet) (default = FALSE)
-#' @param callingFn = To help user interprete error, add the name of the calling function.
+#' @param callingFn = Name of the calling function to help the user locate the error.
 #' @return - boolean
 #' @export
 #' @family Test
@@ -4405,7 +4433,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' In these cases, it will search column names, parameter or summary output names, or 
 #' the literal string values themselves respectively.
 #' 
-#' In addition, `umx_names` can do [replacement][grep] of a found string (see exmples). It can also collapse the result (using [paste0])
+#' In addition, `umx_names` can do [replacement][grep] of a found string (see examples). It can also collapse the result (using [paste0])
 #' 
 #' *Note*: `namez` (with a z) is a shortcut for `umx_names`, which makes it easy to replace where you'd otherwise use [names].
 #' 
@@ -4422,7 +4450,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' @param useBytes = FALSE logical. grep option. If TRUE, matching is by byte rather than by character.
 #' @param invert Return indices or values for elements that do not match (default = FALSE).
 #' @param global replace all instances in each strong, or just the first (Default).
-#' @param collapse "as.is" leaves alone. as.vector formats as pastable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL), etc.
+#' @param collapse "as.is" leaves alone. as.vector formats as pasteable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL), etc.
 #' @return - vector of matches
 #' @export
 #' @seealso - Base-R pattern matching functions: \code{\link{grep}}.
@@ -4584,7 +4612,7 @@ umx_rot <- function(vec){
 #' @description
 #' `umx_long2wide` merges on `famID`. Family members are ordered by `twinID`.
 #' 
-#' twinID is equivalent to birthorder. Up to 10 twinIDs are allowed (family order).
+#' twinID is equivalent to birth order. Up to 10 twinIDs are allowed (family order).
 #' 
 #' *Note*: Not all data sets have an order column, but it is essential to rank subjects correctly.
 #' 
@@ -4822,10 +4850,10 @@ umx_array_shift <- function(x){
 #'
 #' Swap a block of rows of a dataset between two sets of variables (typically twin 1 and twin 2)
 #'
-#' @param theData a data frame to swap within
-#' @param rowSelector rows to swap amongst columns
-#' @param T1Names the first set of columns
-#' @param T2Names the second set of columns
+#' @param theData A data frame to swap within.
+#' @param rowSelector Rows to swap between first and second set of columns.
+#' @param T1Names The first set of columns.
+#' @param T2Names The second set of columns.
 #' @return - dataframe
 #' @family Data Functions
 #' @export
@@ -4904,6 +4932,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
 #' @export
 #' @family Twin Data functions
+#' @family Data Functions
 #' @seealso - \code{\link{umx_make_TwinData}}, \code{\link{umxGxEbiv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -5687,7 +5716,7 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 #' 
 #' *note*: Can also take lower data presented in the form of a data.frame. Note also, if 
 #' presented with a full matrix, the function will return a matrix with  symmetry enforced. Can be
-#' handy when you have a "nearly-symmetrical" matrix (with differences in the 10th decimal place).
+#' handy when you have a "nearly-symmetrical" matrix (with differences in the tenth decimal place).
 #' 
 #' @param lower.data An \code{\link{mxMatrix}}
 #' @param diag A boolean specifying whether the lower.data includes the diagonal
@@ -5762,7 +5791,7 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 #' 	1, .55, 
 #' 	1)
 #' umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
-
+#'
 umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL) {
 	if(is.null(diag)){
 		stop("Please set diag explicitly to TRUE or FALSE")

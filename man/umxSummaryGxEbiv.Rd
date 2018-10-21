@@ -42,7 +42,7 @@ umxSummaryGxEbiv(model = NULL, digits = 2, xlab = NA,
 - optional \code{\link{mxModel}}
 }
 \description{
-umxSummaryGxEbiv summarize a Moderation model, as returned by \code{\link{umxGxEbiv}}.
+umxSummaryGxEbiv summarizes a bivariate moderation model, as returned by \code{\link{umxGxEbiv}}.
 }
 \examples{
 data(twinData) 

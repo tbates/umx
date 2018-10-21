@@ -25,24 +25,21 @@ Shows how many cores you are using, and runs a test script so user can check CPU
 \details{
 Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz Quad-core i7 desktop.
 
-R: 3.4.1 (2017-06-30); MacOS: 10.13
-
-umx: 1.9.0; OpenMx: 2.7.16.26 [GIT v2.7.16-26-gd46131ce-dirty] / 2.7.16.31
-
 \tabular{rllll}{
-date       \tab type            \tab x core  \tab 01 min, XX.XX sec \tab                                 \cr                  
-2022-12-31 \tab v3.0.0.future   \tab x core  \tab 00 min, 0.30 sec  \tab                                 \cr
-2018-09-17 \tab v2.11.3         \tab 1 core  \tab 01 min, 31 sec    \tab                                 \cr
-2018-09-17 \tab v2.11.3         \tab 4 core  \tab 00 min, 30.6 sec  \tab \eqn{\Delta}{&Delta;}: -61.49) \cr
-2017-10-16 \tab v2.7.18-9       \tab x core  \tab 01 min, 07.30 sec \tab                                 \cr                  
-2017-10-16 \tab v2.7.18-9       \tab y core  \tab 00 min, 22.63 sec \tab \eqn{\Delta}{&Delta;}: -44.68) \cr
-2017-10-16 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 08.38 sec \tab                                 \cr                  
-2017-10-16 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 24.89 sec \tab \eqn{\Delta}{&Delta;}: -43.49) \cr
-2017-09-07 \tab Clang OpenMP    \tab 1 core  \tab 01 min, 12.90 sec \tab                                 \cr
-2017-09-07 \tab Clang OpenMP    \tab 4 core  \tab 00 min, 32.20 sec \tab \eqn{\Delta}{&Delta;}: -40.70   \cr
-2017-09-07 \tab Clang notOpenMP \tab 1 core  \tab 01 min, 09.90 sec \tab                                 \cr
-2017-09-07 \tab TRAVIS          \tab 1 core  \tab 01 min, 06.20 sec \tab                                 \cr
-2017-09-07 \tab TRAVIS          \tab 4 core  \tab 00 min, 21.10 sec \tab \eqn{\Delta}{&Delta;}: -45.00   \cr
+date       \tab type            \tab Cores   \tab Time              \tab                                 \cr                  
+2018-10-14 \tab v2.11.5 (OpenMP on CRAN)  \tab 1 core  \tab 01 min, 16 sec    \tab     (NPSOL)                   \cr
+2018-10-14 \tab v2.11.5 (OpenMP on CRAN)  \tab 4 cores  \tab 00 min, 36 sec    \tab \eqn{\Delta}:-39.598) \cr
+2018-09-17 \tab v2.11.3         \tab 1    \tab 01 min, 31 sec    \tab                                 \cr
+2018-09-17 \tab v2.11.3         \tab 4    \tab 00 min, 30.6 sec  \tab \eqn{\Delta}: -61.49) \cr
+2017-10-16 \tab v2.7.18-9       \tab 1    \tab 01 min, 07.30 sec \tab                                 \cr                  
+2017-10-16 \tab v2.7.18-9       \tab 4    \tab 00 min, 22.63 sec \tab \eqn{\Delta}: -44.68) \cr
+2017-10-16 \tab Clang OpenMP    \tab 1    \tab 01 min, 08.38 sec \tab                                 \cr                  
+2017-10-16 \tab Clang OpenMP    \tab 4    \tab 00 min, 24.89 sec \tab \eqn{\Delta}: -43.49) \cr
+2017-09-07 \tab Clang OpenMP    \tab 1    \tab 01 min, 12.90 sec \tab                                 \cr
+2017-09-07 \tab Clang OpenMP    \tab 4    \tab 00 min, 32.20 sec \tab \eqn{\Delta}: -40.70   \cr
+2017-09-07 \tab Clang notOpenMP \tab 1    \tab 01 min, 09.90 sec \tab                                 \cr
+2017-09-07 \tab TRAVIS          \tab 1    \tab 01 min, 06.20 sec \tab                                 \cr
+2017-09-07 \tab TRAVIS          \tab 4    \tab 00 min, 21.10 sec \tab \eqn{\Delta}: -45.00   \cr
 }
 }
 \examples{

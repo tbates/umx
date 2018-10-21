@@ -31,7 +31,7 @@ umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
 
 \item{global}{replace all instances in each strong, or just the first (Default).}
 
-\item{collapse}{"as.is" leaves alone. as.vector formats as pastable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL), etc.}
+\item{collapse}{"as.is" leaves alone. as.vector formats as pasteable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL), etc.}
 }
 \value{
 \itemize{
@@ -46,7 +46,7 @@ Convenient equivalent of running \link{grep} on \link{names}, with value = TRUE 
 In these cases, it will search column names, parameter or summary output names, or
 the literal string values themselves respectively.
 
-In addition, \code{umx_names} can do \link[=grep]{replacement} of a found string (see exmples). It can also collapse the result (using \link{paste0})
+In addition, \code{umx_names} can do \link[=grep]{replacement} of a found string (see examples). It can also collapse the result (using \link{paste0})
 
 \emph{Note}: \code{namez} (with a z) is a shortcut for \code{umx_names}, which makes it easy to replace where you'd otherwise use \link{names}.
 
