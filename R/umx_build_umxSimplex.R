@@ -1,5 +1,3 @@
-# https://ibg.colorado.edu/dokuwiki/doku.php?id=workshop:2018:cdrom
-
 #' Build and run a simplex twin model
 #' 
 #' Make a 2-group simplex twin model
@@ -7,9 +5,6 @@
 #' and environmental differences.
 #' 
 #' @details
-#' **Simplex path diagram**:
-#' 
-#' \figure{simplex.png}
 #' 
 #' The simplex model decomposes phenotypic variance
 #' into Additive genetic, unique environmental (E) and, optionally, either
@@ -20,8 +15,12 @@
 #' * Influences transmitted from previous time (`at`, `ct`, and `et` matrices).
 #' * Influences specific to a single time (`as`, `cs`, `es`).
 #' 
-#' These combine to explain the causes of variance in the phenotype (see Figure above).
+#' These combine to explain the causes of variance in the phenotype (see Figure).
 #' 
+#' **Simplex path diagram**:
+#' 
+#' \figure{simplex.png}
+#'
 #' **Data Input**
 #' Currently, the umxSimplex function accepts only raw data.
 #' 
