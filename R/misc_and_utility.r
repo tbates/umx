@@ -2501,7 +2501,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
-#' @param run = for examples, whether to run dontrun{} code (default FALSE)
+#' @param run = If what is "examples", whether to also run examples marked don't run. (default FALSE)
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
 #' @return - 
 #' @export
@@ -2509,11 +2509,11 @@ umx_update_OpenMx <- install.OpenMx
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
-#' umx_make(what = "install"))  # just installs the package
-#' umx_make(what = "examples")) # run the examples
-#' umx_make(what = "check"))    # run R CMD check
-#' umx_make(what = "win"))      # check on win-builder
-#' umx_make(what = "release"))  # release to CRAN
+#' umx_make(what = "install"))  # Just installs the package
+#' umx_make(what = "examples")) # Run the examples
+#' umx_make(what = "check"))    # Run R CMD check
+#' umx_make(what = "win"))      # Check on win-builder
+#' umx_make(what = "release"))  # Release to CRAN
 #' }
 umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, run=FALSE, spelling = "en_US") {
 	what = match.arg(what)

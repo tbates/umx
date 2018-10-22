@@ -1,8 +1,9 @@
-#' Build and run a simplex twin model
+#' Build and run a simplex twin model (not ready for use!)
 #' 
-#' Make a 2-group simplex twin model
 #' The simplex model provides a powerful tool for theory-based decomposition of genetic
-#' and environmental differences.
+#' and environmental differences. `umxSimplex` makes a 2-group simplex twin model. 
+#' 
+#' **This code is beta** quality: **not** for publication use. It will be completed by Boulder 2020.
 #' 
 #' @details
 #' 
@@ -96,6 +97,7 @@
 #' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
 #' @md
 umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+	message("This is beta code - will be ready for Boulder 2020")
 	nSib   = 2
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
 	# Expand var names
@@ -137,8 +139,8 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	}
 
 	# Covariance matrix, 1/3 allocated to each of A=C=E.
-	varStarts = cov(longData, use = "pairwise.complete.obs")/3
-	varStarts = diag(varStarts)
+	varStarts = cov(longData, use = "pairwise.complete.obs")
+	varStarts = diag(varStarts)/3
 	
 	model = mxModel(name,
 		# 1. replace hard-coded start values in "[ace][tsi]"

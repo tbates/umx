@@ -2292,11 +2292,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param mzData The MZ dataframe.
 #' @param sep (required) The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.
 #' @param nFac How many common factors (default = 1)
-#' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
-#' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
-#' @param freeLowerE Whether to leave the lower triangle of E free (default = FALSE).
+#' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
 #' @param correlatedA ?? (default = FALSE).
-#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param boundDiag = Numeric lbound for diagonal of the a_cp, c_cp, & e_cp matrices. Set = NULL to ignore.
@@ -2304,6 +2301,10 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param addCI Whether to add the interval requests for CIs (defaults to TRUE).
 #' @param numObsDZ = not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data.
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.
+#' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
+#' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
+#' @param freeLowerE Whether to leave the lower triangle of E free (default = FALSE).
+#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @param suffix DEPRECATED. Use sep instead!
@@ -2377,13 +2378,14 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' # Will likely need to be re-run: m1 = mxTryHard(m1)
 #' }
 #'
-umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
-	# Allow suffix as a synonym for sep
+umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), correlatedA = FALSE, dzAr= .5, dzCr= 1, equateMeans= TRUE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
 	# TODO Add covariates to umxCP
+	# Allow suffix as a synonym for sep
 	if(suffix != "deprecated"){
 		message("Just a message: but please use 'sep' instead of suffix - suffix is deprecated, and will stop working in 2019")
 		sep = suffix
 	}
+	type = match.arg(type)
 	nSib = 2 # Number of siblings in a twin pair.
 
 	xmu_twin_check(selDVs= selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
@@ -2424,6 +2426,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, fre
 		name = paste0(name, nFac, "fac")
 	}
 	model = mxModel(name,
+		# update top
 		mxModel(top,
 			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
