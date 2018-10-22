@@ -3809,8 +3809,8 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' @param df The data being modeled (to allow access to the factor levels and quantiles within these for each variable)
 #' @param selDVs The variable names. Note for twin data, just the base names, which sep will be used to fill out.
 #' @param sep (e.g. "_T") Required for wide (twin) data. It is used to break the base names our from their numeric suffixes.
-#' @param method How to set the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)
-#' @param thresholds How to implement thresholds: "deviationBased"
+#' @param method How to implement the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)
+#' @param thresholds How to keep thresholds in order: "deviationBased"
 #' @param l_u_bound c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.
 #' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
 #' @param threshMatName name of the matrix which is returned. Defaults to "threshMat" - best not to change it.
@@ -3893,37 +3893,34 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' tmp[[3]]$formula
 #' 
 umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto", "Mehta", "allFree"), thresholds = c("deviationBased"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE){
+	# TODO: umxThresholdMatrix: priority A: Move to a more robust way to detect twin than just the sep isn't NULL??
 	# TODO: Replace all of this with a conditional algebra(if(x<t){0,x})
 	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
 	# df = x; sep = NULL; threshMatName = "threshMat"; method = "auto"; thresholds = "deviationBased"; l_u_bound = c(NA,NA); verbose = T
 	method = match.arg(method)
 	thresholds = match.arg(thresholds)
 	if(is.null(selDVs)){
-		# warning("Just a polite message, but for coding safety, I recommend calling umxThresholdMatrix with the base names of the variables in the model. Next time, please include selDVs (AND sep if this is a twin model!!)")
+		warning("Just a polite message, but for coding safety, I recommend calling umxThresholdMatrix with the names of the variables in the model. Next time, please include selDVs (AND sep if this is a twin model!!)")
+		selVars = names(df)
+	} else if(is.null(sep)){
+		# no sep: Assume this is not family data
+		selVars = selDVs 
+		nSib = 1
 	} else {
-		if(is.null(sep)){
-			selVars = selDVs 
-		} else {
-			selVars = tvars(selDVs, sep = sep, suffixes=1:2)
-		}
-		# just the requested variables
-		df = df[, selVars]
+		# sep provided: Assume this is twin data (already expanded... no way currently to tell if sep was intended to build or decompose vars - see TODO above!!)
+		# Set nSib, and break down names into base and suffix if necessary
+		selVars = selDVs 
+		tmp = umx_explode_twin_names(selVars, sep = sep)
+		baseNames = tmp$baseNames
+		twinIndexes = tmp$twinIndexes
+		nSib = length(twinIndexes)
 	}
+	# Create df with just the requested variables
+	df = df[, selVars, drop = FALSE]
 
 	# Check input
 	if(dim(df)[1] < 1){ stop("Data input to umxThresholdMatrix had no rows. I use the data to set thresholds, so the data must have rows.") }
 	if(droplevels){ stop("Not sure it's wise to drop levels... let me know what you think") }
-
-	# Set nSib, and break down names into base and suffix if necessary
-	if(is.null(sep)) {
-		# not wide data
-		nSib = 1
-	} else {
-		tmp         = umx_explode_twin_names(names(df), sep = sep)
-		baseNames   = tmp$baseNames
-		twinIndexes = tmp$twinIndexes
-		nSib = length(twinIndexes)
-	}
 
 	isFactor = umx_is_ordered(df) # all ordered factors including binary
 	isOrd    = umx_is_ordered(df, ordinal.only = TRUE) # only ordinals
@@ -3947,7 +3944,6 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 	} else {
 		stop("I can only handle 1 and 2 sib models. Your data looked like they have", nSib, " family members (using separator ", omxQuotes(sep), "). email tim to get this expanded.")
 	}
-
 	minLevels = xmuMinLevels(df)
 	maxLevels = xmuMaxLevels(df)
 	maxThresh = maxLevels - 1
@@ -4015,206 +4011,192 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 		dimnames = list(paste0("th_", 1:maxThresh), factorVarNames)
 	)
 
-	if (thresholds == "left_censored"){
-		# TODO: make this apply only to variables with more than, say, 5 levels...
-		stop("left_censored does not return valid SES. Use thresholds = 'deviationBased' ")
-		# message("\nUsing ", thresholds, " for a fixed-threshold Tobit-style analysis")
-		# if(method != "auto"){
-		# 	message("With ", thresholds, " thresholds are fixed: Your choice of method ", omxQuotes(method), " will be ignored.")
-		# }
-		# threshMat$free = FALSE
-		# for (varName in factorVarNames) {
-		# 	theseLevels = as.numeric(levels(df[,varName]))
-		# 	nLevels     = length(theseLevels)
-		# 	threshMat$values[,varName] = umx_pad(theseLevels[1:(nLevels - 1)], maxThresh)
-		# }
-		# return(threshMat)
+	# =======================
+	# = Estimate thresholds =
+	# =======================
+	if(nBinVars > 0){
+		if(verbose){
+			message(sum(isBin), " trait(s) are binary: ", omxQuotes(binVarNames),
+			"\nFor these, you you MUST fix the mean and variance of the latent traits driving each variable (usually 0 & 1 respectively) .\n",
+			"See ?mxThresholdMatrix")
+		}
+	}
+	if(nOrdVars > 0){
+		if(verbose){
+			message(nOrdVars, " variables are ordinal (>2 levels). For these I will use Paras Mehta's 'fix first 2 thresholds' method.\n",
+			"It's ESSENTIAL that you leave the means and variances of the latent ordinal traits FREE!\n",
+			"See ?mxThresholdMatrix")
+		}
+	}
+	if(minLevels == 1){
+		warning("You seem to have a trait with only one category: ", omxQuotes(xmuMinLevels(df, what = "name")), "... makes it a bit futile to model it?")
+		stop("Stopping, as I can't handle trait with no variance.")
+	}
+
+	# For each factor variable
+	for (thisVarName in factorVarNames) {
+		thisCol = df[,thisVarName]
+		nThreshThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
+		
+		# ===============================================================
+		# = Work out z-values for thresholds based on simple bin counts =
+		# ===============================================================
+		# Pros: Doesn't assume equal intervals.
+		# Problems = empty bins and noise (equal thresholds (illegal) and higher than realistic z-values)
+		tab = table(thisCol)/sum(table(thisCol)) # Simple histogram of proportion at each threshold
+		cumTab = cumsum(tab)                     # Convert to a cumulative sum (sigmoid from 0 to 1)
+		# Use quantiles to get z-equivalent for each level: ditch one to get thresholds...
+		zValues = qnorm(p = cumTab, lower.tail = TRUE)
+		# take this table as make a simple vector
+		zValues = as.numeric(zValues)
+
+		# =======================================================================================
+		# = TODO handle where flows over, say, 3.3... squash the top down or let the user know? =
+		# =======================================================================================
+		if(any(is.infinite(zValues))){
+			nPlusInf  = sum(zValues == (Inf))
+			nMinusInf = sum(zValues == (-Inf))
+			if(nPlusInf){
+				maxOK = max(zValues[!is.infinite(zValues)])
+				padding = seq(from = (maxOK + .1), by = .1, length.out = nPlusInf)
+				zValues[zValues == (Inf)] = padding
+			}
+			if(nMinusInf){
+				minOK = min(zValues[!is.infinite(zValues)])
+				padding = seq(from = (minOK - .1), by = (- .1), length.out = nMinusInf)
+				zValues[zValues == (-Inf)] = padding
+			}
+		}
+		# =================================
+		# = Move duplicates (empty cells) =
+		# =================================
+		if(any(duplicated(zValues))){
+			# message("You have some empty cells")
+			# Find where the values change:
+			runs         = rle(zValues)
+			runLengths   = runs$lengths
+			runValues    = runs$values
+			distinctCount = length(runValues)
+			indexIntoRLE = indexIntoZ = 1
+			for (i in runLengths) {
+				runLen = i
+				if(runLen != 1){
+					repeatedValue   = runValues[indexIntoRLE]
+					precedingValue = runValues[(indexIntoRLE - 1)]
+					minimumStep = .01
+					if(indexIntoRLE == distinctCount){
+						newValues = seq(from = (precedingValue + minimumStep), by = (minimumStep), length.out = runLen)
+						zValues[c(indexIntoZ:(indexIntoZ + runLen - 1))] = rev(newValues)
+					} else {
+						followedBy = runValues[(indexIntoRLE + 1)]
+						minimumStep = min((followedBy - precedingValue)/(runLen + 1), minimumStep)
+						newValues = seq(from = (followedBy - minimumStep), by = (-minimumStep), length.out = runLen)
+						zValues[c(indexIntoZ:(indexIntoZ + runLen - 1))] = rev(newValues)
+					}
+				}
+				indexIntoZ   = indexIntoZ + runLen
+				indexIntoRLE = indexIntoRLE + 1
+				# Play "The chemistry between them", Dorothy Hodgkin
+				# Copenhagen, Michael Frein
+			}
+		}
+    	# TODO start from 1, right, not 2?
+		values = c(zValues[1:(nThreshThisVar)], rep(.001, (maxThresh - nThreshThisVar)))
+		sortValues = sort(zValues[1:(nThreshThisVar)], na.last = TRUE)
+		if (!identical(sortValues, zValues[1:(nThreshThisVar)])) {
+			umx_msg(values)
+			stop("The thresholds for ", thisVarName, " are not in order... oops: that's my fault :-(")
+		}
+	
+		# Already labeled, and all free initialized to TRUE (out of range = FALSE)
+		if(nThreshThisVar > 1){ # fix the first 2
+			threshMat$free[1:2,   thisVarName] = FALSE
+		}	
+		threshMat$values[, thisVarName] = values
+	} # end for each factor variable
+
+	if(thresholds == "deviationBased") {
+		if(verbose) {
+			message("Using deviation-based model: Thresholds will be in", omxQuotes(threshMatName), " based on deviations in ", omxQuotes("deviations_for_thresh"))
+		}
+		# ==========================
+		# = Adding deviation model =
+		# ==========================
+		# Tasks:
+		# 1. Convert thresholds into deviations
+		#       value 1 for each var = the base, everything else is a deviation
+		# 2. Make matrix deviations_for_thresh (similar to existing threshMat), fill values with results from 1
+		# 3. Make lower matrix of 1s called "lowerOnes_for_thresh"
+		# 4. Create thresholdsAlgebra named threshMatName
+		# 5. Return a package of lowerOnes_for_thresh, deviations_for_thresh & thresholdsAlgebra (named threshMatName)
+
+		# =====
+		# = 1 =
+		# =====
+		# startDeviations
+		deviationValues = threshMat$values
+		nrows = dim(threshMat$values)[1]
+		ncols = dim(threshMat$values)[2]
+		if (nrows > 1){
+			for (col in 1:ncols) {
+				# Skip row 1 which is the base
+				for (row in 2:nrows) {
+					# Convert remaining rows to offsets
+					thisValue = threshMat$values[row, col]
+					previousValue = threshMat$values[(row-1), col]
+					if(!is.na(thisValue)){
+						thisOffset = thisValue - previousValue
+						if(thisOffset <= 0){
+							# tweak to be slightly positive
+							thisOffset = .001
+						}
+						deviationValues[row, col] = thisOffset
+					} else {
+						# out of range: TODO: simplify by just run to max thresh row
+					}
+				}
+			}
+		}
+	
+		# threshMat$values
+		#          obese1 obeseTri1 obeseQuad1     obese2 obeseTri2 obeseQuad2
+		# th_1 -0.4727891 0.2557009 -0.2345662 -0.4727891 0.2557009 -0.2345662
+		# th_2         NA 1.0601180  0.2557009         NA 1.0601180  0.2557009
+		# th_3         NA        NA  1.0601180         NA        NA  1.0601180
+		#
+		# threshMat$free
+		#      obese1 obeseTri1 obeseQuad1 obese2 obeseTri2 obeseQuad2
+		# th_1   TRUE     FALSE      FALSE   TRUE     FALSE      FALSE
+		# th_2  FALSE     FALSE      FALSE  FALSE     FALSE      FALSE
+		# th_3  FALSE     FALSE       TRUE  FALSE     FALSE       TRUE
+
+		# =====
+		# = 2 =
+		# =====
+		# make a copy of "_thresh" labels, changing to "_dev"
+		devLabels = sub("_thresh", "_dev", threshMat$labels, ignore.case = FALSE)
+		
+		# Create the deviations matrix
+		deviations_for_thresh = mxMatrix(name = "deviations_for_thresh", type = "Full",
+			nrow     = maxThresh, ncol = nFactors,
+			free     = threshMat$free,
+			labels   = devLabels,
+			values   = deviationValues,
+			lbound   = .001,
+			# TODO ubound might want to be l_u_bound[2]
+			ubound   = NA,
+			dimnames = list(paste0("dev_", 1:maxThresh), factorVarNames)
+		)
+		deviations_for_thresh$lbound[1,] = NA # don't lbound the first deviation, because it it's the base, not a deviation.
+		# 3: Create the lowerOnes matrix
+		lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThresh, free = FALSE, values = 1)
+		# 4: Create thresholdsAlgebra named threshMatName
+		threshDimNames = list(paste0("th_", 1:maxThresh), factorVarNames)
+		thresholdsAlgebra = mxAlgebra(name = threshMatName, lowerOnes_for_thresh %*% deviations_for_thresh, dimnames = threshDimNames)
+
+		return(list(lowerOnes_for_thresh, deviations_for_thresh, thresholdsAlgebra))
 	} else {
-		# Estimate thresholds
-		if(nBinVars > 0){
-			if(verbose){
-				message(sum(isBin), " trait(s) are binary: ", omxQuotes(binVarNames),
-				"\nFor these, you you MUST fix the mean and variance of the latent traits driving each variable (usually 0 & 1 respectively) .\n",
-				"See ?mxThresholdMatrix")
-			}
-		}
-		if(nOrdVars > 0){
-			if(verbose){
-				message(nOrdVars, " variables are ordinal (>2 levels). For these I will use Paras Mehta's 'fix first 2 thresholds' method.\n",
-				"It's ESSENTIAL that you leave the means and variances of the latent ordinal traits FREE!\n",
-				"See ?mxThresholdMatrix")
-			}
-		}
-		if(minLevels == 1){
-			warning("You seem to have a trait with only one category: ", omxQuotes(xmuMinLevels(df, what = "name")), "... makes it a bit futile to model it?")
-			stop("Stopping, as I can't handle trait with no variance.")
-		}
-
-		# For each factor variable
-		for (thisVarName in factorVarNames) {
-			thisCol = df[,thisVarName]
-			nThreshThisVar = length(levels(thisCol)) -1 # "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
-			
-			# ===============================================================
-			# = Work out z-values for thresholds based on simple bin counts =
-			# ===============================================================
-			# Pros: Doesn't assume equal intervals.
-			# Problems = empty bins and noise (equal thresholds (illegal) and higher than realistic z-values)
-			tab = table(thisCol)/sum(table(thisCol)) # Simple histogram of proportion at each threshold
-			cumTab = cumsum(tab)                     # Convert to a cumulative sum (sigmoid from 0 to 1)
-			# Use quantiles to get z-equivalent for each level: ditch one to get thresholds...
-			zValues = qnorm(p = cumTab, lower.tail = TRUE)
-			# take this table as make a simple vector
-			zValues = as.numeric(zValues)
-
-			# =======================================================================================
-			# = TODO handle where flows over, say, 3.3... squash the top down or let the user know? =
-			# =======================================================================================
-			if(any(is.infinite(zValues))){
-				nPlusInf  = sum(zValues == (Inf))
-				nMinusInf = sum(zValues == (-Inf))
-				if(nPlusInf){
-					maxOK = max(zValues[!is.infinite(zValues)])
-					padding = seq(from = (maxOK + .1), by = .1, length.out = nPlusInf)
-					zValues[zValues == (Inf)] = padding
-				}
-				if(nMinusInf){
-					minOK = min(zValues[!is.infinite(zValues)])
-					padding = seq(from = (minOK - .1), by = (- .1), length.out = nMinusInf)
-					zValues[zValues == (-Inf)] = padding
-				}
-			}
-			# =================================
-			# = Move duplicates (empty cells) =
-			# =================================
-			if(any(duplicated(zValues))){
-				# message("You have some empty cells")
-				# Find where the values change:
-				runs         = rle(zValues)
-				runLengths   = runs$lengths
-				runValues    = runs$values
-				distinctCount = length(runValues)
-				indexIntoRLE = indexIntoZ = 1
-				for (i in runLengths) {
-					runLen = i
-					if(runLen != 1){
-						repeatedValue   = runValues[indexIntoRLE]
-						precedingValue = runValues[(indexIntoRLE - 1)]
-						minimumStep = .01
-						if(indexIntoRLE == distinctCount){
-							newValues = seq(from = (precedingValue + minimumStep), by = (minimumStep), length.out = runLen)
-							zValues[c(indexIntoZ:(indexIntoZ + runLen - 1))] = rev(newValues)
-						} else {
-							followedBy = runValues[(indexIntoRLE + 1)]
-							minimumStep = min((followedBy - precedingValue)/(runLen + 1), minimumStep)
-							newValues = seq(from = (followedBy - minimumStep), by = (-minimumStep), length.out = runLen)
-							zValues[c(indexIntoZ:(indexIntoZ + runLen - 1))] = rev(newValues)
-						}
-					}
-					indexIntoZ   = indexIntoZ + runLen
-					indexIntoRLE = indexIntoRLE + 1
-					# Play "The chemistry between them", Dorothy Hodgkin
-					# Copenhagen, Michael Frein
-				}
-			}
-	    	# TODO start from 1, right, not 2?
-			values = c(zValues[1:(nThreshThisVar)], rep(.001, (maxThresh - nThreshThisVar)))
-			sortValues = sort(zValues[1:(nThreshThisVar)], na.last = TRUE)
-			if (!identical(sortValues, zValues[1:(nThreshThisVar)])) {
-				umx_msg(values)
-				stop("The thresholds for ", thisVarName, " are not in order... oops: that's my fault :-(")
-			}
-		
-			# Already labeled, and all free initialized to TRUE (out of range = FALSE)
-			if(nThreshThisVar > 1){ # fix the first 2
-				threshMat$free[1:2,   thisVarName] = FALSE
-			}	
-			threshMat$values[, thisVarName] = values
-		} # end for each factor variable
-	
-		if(thresholds == "deviationBased") {
-			if(verbose) {
-				message("Using deviation-based model: Thresholds will be in", omxQuotes(threshMatName), " based on deviations in ", omxQuotes("deviations_for_thresh"))
-			}
-			# ==========================
-			# = Adding deviation model =
-			# ==========================
-			# Tasks:
-			# 1. Convert thresholds into deviations
-			#       value 1 for each var = the base, everything else is a deviation
-			# 2. Make matrix deviations_for_thresh (similar to existing threshMat), fill values with results from 1
-			# 3. Make lower matrix of 1s called "lowerOnes_for_thresh"
-			# 4. Create thresholdsAlgebra named threshMatName
-			# 5. Return a package of lowerOnes_for_thresh, deviations_for_thresh & thresholdsAlgebra (named threshMatName)
-
-			# =====
-			# = 1 =
-			# =====
-			# startDeviations
-			deviationValues = threshMat$values
-			nrows = dim(threshMat$values)[1]
-			ncols = dim(threshMat$values)[2]
-			if (nrows > 1){
-				for (col in 1:ncols) {
-					# Skip row 1 which is the base
-					for (row in 2:nrows) {
-						# Convert remaining rows to offsets
-						thisValue = threshMat$values[row, col]
-						previousValue = threshMat$values[(row-1), col]
-						if(!is.na(thisValue)){
-							thisOffset = thisValue - previousValue
-							if(thisOffset <= 0){
-								# tweak to be slightly positive
-								thisOffset = .001
-							}
-							deviationValues[row, col] = thisOffset
-						} else {
-							# out of range: TODO: simplify by just run to max thresh row
-						}
-					}
-				}
-			}
-		
-			# threshMat$values
-			#          obese1 obeseTri1 obeseQuad1     obese2 obeseTri2 obeseQuad2
-			# th_1 -0.4727891 0.2557009 -0.2345662 -0.4727891 0.2557009 -0.2345662
-			# th_2         NA 1.0601180  0.2557009         NA 1.0601180  0.2557009
-			# th_3         NA        NA  1.0601180         NA        NA  1.0601180
-			#
-			# threshMat$free
-			#      obese1 obeseTri1 obeseQuad1 obese2 obeseTri2 obeseQuad2
-			# th_1   TRUE     FALSE      FALSE   TRUE     FALSE      FALSE
-			# th_2  FALSE     FALSE      FALSE  FALSE     FALSE      FALSE
-			# th_3  FALSE     FALSE       TRUE  FALSE     FALSE       TRUE
-	
-			# =====
-			# = 2 =
-			# =====
-			# make a copy of "_thresh" labels, changing to "_dev"
-			devLabels = sub("_thresh", "_dev", threshMat$labels, ignore.case = FALSE)
-			
-			# Create the deviations matrix
-			deviations_for_thresh = mxMatrix(name = "deviations_for_thresh", type = "Full",
-				nrow     = maxThresh, ncol = nFactors,
-				free     = threshMat$free,
-				labels   = devLabels,
-				values   = deviationValues,
-				lbound   = .001,
-				# TODO ubound might want to be l_u_bound[2]
-				ubound   = NA,
-				dimnames = list(paste0("dev_", 1:maxThresh), factorVarNames)
-			)
-			deviations_for_thresh$lbound[1,] = NA # don't lbound the first deviation, because it it's the base, not a deviation.
-			# 3: Create the lowerOnes matrix
-			lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThresh, free = FALSE, values = 1)
-			# 4: Create thresholdsAlgebra named threshMatName
-			threshDimNames = list(paste0("th_", 1:maxThresh), factorVarNames)
-			thresholdsAlgebra = mxAlgebra(name = threshMatName, lowerOnes_for_thresh %*% deviations_for_thresh, dimnames = threshDimNames)
-
-			return(list(lowerOnes_for_thresh, deviations_for_thresh, thresholdsAlgebra))
-		} else {
-			return(threshMat)
-		}
+		return(threshMat)
 	}
 }
 # ===========

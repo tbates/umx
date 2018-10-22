@@ -144,7 +144,6 @@ So, in a model where the means for twin 1 and twin 2 had been equated (set = to 
 of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
 }
 \examples{
-
 # ============================
 # = How heritable is height? =
 # ============================
@@ -154,7 +153,7 @@ data(twinData) # ?twinData from Australian twins.
 selDVs = c("ht")
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
-m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData) # -2ll= 9659, a1 = .92
+m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 umxSummary(m1, std = FALSE) # unstandardized
 # tip: with report = "html", umxSummary can print the table to your browser!
 plot(m1)
@@ -187,7 +186,7 @@ m1 = umxACEnew(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundD
 # We can modify this model, say testing shared environment, and see a comparison:
 
 m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
-# nb: You can see names of free parameters with parameters(m1)
+# nb: You can see names of free parameters with parameters(m2)
 
 # =====================================
 # = Bivariate height and weight model =
@@ -224,6 +223,8 @@ dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 mzData <- mzData[1:80, ] # Just top 80 pairs to run fast
 dzData <- dzData[1:80, ]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
+
+# Data-prep done - here's where the model starts:
 selDVs = c("obese")
 m1 = umxACEnew(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
@@ -284,7 +285,7 @@ plot(m1)
 \references{
 \itemize{
 \item Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
-to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 }
 }
 \seealso{

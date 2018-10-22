@@ -122,31 +122,16 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	# mzData <- subset(iqdat, zygosity == "MZ")[,-1]
 	# dzData <- subset(iqdat, zygosity == "DZ")[,-1]
 	# nVar = 4
-	allData = rbind(mzData, dzData)
-	T1 = allData[, 1:nVar]
-	T2 = allData[, (nVar+1):(nVar*2)]; names(T2)= names(T1)
-	longData  = rbind(T1, T2)
-
-	# Starting values for the means
-	meanStarts = umx_apply(mean, of = longData, by = "columns", na.rm = TRUE)
-	# Make wide again
-	meanStarts = c(meanStarts, meanStarts)
-	if(equateMeans){
-		meanLabels = paste0("mean", selDVs[1:nVar]) # Names recycled for twin 2
-		meanLabels = c(meanLabels, meanLabels)
-	} else {
-		meanLabels = paste0("mean", selDVs)
-	}
-
-	# Covariance matrix, 1/3 allocated to each of A=C=E.
-	varStarts = cov(longData, use = "pairwise.complete.obs")
-	varStarts = diag(varStarts)/3
+	tmp = umx_mean_var_starts(mzData= mzData, dzData= dzData, selVars= selVars, nSib= nSib, varFormat= c("Cholesky"), divideBy = 3)
+	varStarts  = tmp$varStarts
+	meanStarts = tmp$meanStarts
+	meanLabels = tmp$meanLabels
 	
 	model = mxModel(name,
 		# 1. replace hard-coded start values in "[ace][tsi]"
-		# 		t -> 0 (except first 1) DONE
-		# 		s -> 0 for A and C, es = var*1/3
-		#     i -> 0 var*1/3 in each of A,C. ei@0
+		# 	t -> 0 (except first 1) DONE
+		# 	s -> 0 for A and C, es = var*1/3
+		#   i -> 0 var*1/3 in each of A,C. ei@0
 		mxModel("top",
 			# Start transmitted components at zero (except first 1)(strong positive definite solution @mikeneale)
 			umxMatrix('at', 'Diag', nrow = nVar, ncol = nVar, free = TRUE , values = c(varStarts[1], rep(0, nVar-1))),

@@ -6116,8 +6116,8 @@ umx_standardize.MxModel <- umx_standardize_RAM
 #' require(umx)
 #' data(twinData)
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
-#' dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", selDVs][1:80,] # 80 pairs for speed
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", selDVs][1:80,]
 #' m1  = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' std = umx_standardize_ACE(m1)
 umx_standardize_ACE <- function(model, ...) {

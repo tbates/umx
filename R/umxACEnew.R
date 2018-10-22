@@ -106,10 +106,9 @@
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot.MxModelACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
-#' to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 #' @md
 #' @examples
-#' 
 #' # ============================
 #' # = How heritable is height? =
 #' # ============================
@@ -152,7 +151,7 @@
 #' # We can modify this model, say testing shared environment, and see a comparison:
 #' 
 #' m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
-#' # nb: You can see names of free parameters with parameters(m1)
+#' # nb: You can see names of free parameters with parameters(m2)
 #'
 #' # =====================================
 #' # = Bivariate height and weight model =
@@ -189,10 +188,12 @@
 #' mzData <- mzData[1:80, ] # Just top 80 pairs to run fast
 #' dzData <- dzData[1:80, ]
 #' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
+#' 
+#' # Data-prep done - here's where the model starts:
 #' selDVs = c("obese")
 #' m1 = umxACEnew(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
-#' 
+#'
 #' # ============================================
 #' # = Bivariate continuous and ordinal example =
 #' # ============================================
@@ -255,6 +256,7 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 
 		# Allow suffix as a synonym for sep
 		sep = xmu_set_sep_from_suffix(sep= sep, suffix= suffix)
+		# TODO check covs
 		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
 		
 		if(dzCr == .25 & (name == "ACE")){
@@ -271,39 +273,27 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			}
 		}else{
 			# nSib = 2, equateMeans = TRUE, threshType = c("deviationBased"), verbose = verbose
-			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, 
+			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans,
 							type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
 			top = bits$top
 			MZ  = bits$MZ
 			DZ  = bits$DZ
 
 			# Define varStarts ...
-			# TODO could use both twins for variance estimation.
-			dataType = umx_is_cov(dzData, boolean = FALSE)
-	
-			if(dataType == "raw") {
-				allData = rbind(mzData, dzData)
-				varStarts = umx_var(allData[, selVars[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
-				# Mean starts (used across all raw solutions
-				obsMeans = umx_means(allData, ordVar = 0, na.rm = TRUE)
-			}else{
-				het_mz = umx_reorder(mzData, selVars)		
-				varStarts = diag(het_mz)[1:nVar]
-			}
+			tmp = xmu_mean_var_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+			varStarts = tmp$varStarts
 
-			# sqrt to switch from var to path coefficient scale
-			if(nVar == 1){
-				varStarts = sqrt(varStarts)/3
-			} else {
-				varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
+			if(!is.null(sep)){
+				selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
 			}
-			varStarts = matrix(varStarts, nVar, nVar)
-			
+			nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
+
 			# Finish building top
 			top = mxModel(top,
 				# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 				# NB: top already has the means model and thresholds matrix added if necessary  - see above
 				# Additive, Common, and Unique environmental paths
+				
 				umxMatrix("a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
 				umxMatrix("c", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
 				umxMatrix("e", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE), 
@@ -386,13 +376,6 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 					model = mxModel(model, mxCI(c('top.a', 'top.c', 'top.e')))
 				}
 			}
-		}
-		# Equate means for twin1 and twin 2 by matching labels in the first and second halves of the means labels matrix
-		if(equateMeans & (dataType == "raw")){
-			model = omxSetParameters(model,
-			  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMean14", "expMean15", "expMean16"),
-			  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMean11", "expMean12", "expMean13")
-			)
 		}
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)

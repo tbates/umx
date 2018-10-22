@@ -150,14 +150,16 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	type = match.arg(type)
 	threshType = match.arg(threshType)
 	if(is.null(sep)){
-		stop("You MUST set 'sep'. Otherwise xmu_make_top can't reliably expand selDVs into full variable names")
+		selVars = selDVs
+		# stop("You MUST set 'sep'. Otherwise xmu_make_top can't reliably expand selDVs into full variable names")
+	}else{
+		selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
 	}
-	selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
 	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	if(!is.null(weightVar)){
-		used = c(selVars, weightVar)
+		usedVars = c(selVars, weightVar)
 	}else{
-		used = selVars
+		usedVars = selVars
 	}
 	dataType = umx_is_cov(dzData, boolean = FALSE)
 	
@@ -171,6 +173,9 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		}
 		# Find ordinal variables
 		if(any(umx_is_ordered(mzData[,selVars]))){
+			if(is.null(sep)){
+				stop("With ordinal data in twins, I have to have a separator to figure out which twin is which. Please set selDVs to the base names, and sep='_T' or whatever you used (see ?umxACE)")
+			}
 			isFactor = umx_is_ordered(mzData[, selVars])                      # T/F list of factor columns
 			isOrd    = umx_is_ordered(mzData[, selVars], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
 			isBin    = umx_is_ordered(mzData[, selVars], binary.only  = TRUE) # T/F list of binary columns
@@ -189,7 +194,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 			factorVarNames = ordVarNames = binVarNames = contVarNames = c()
 		}
 		if(!is.null(weightVar)){
-			# weight variable provided: check it exists in each frame
+			# Weight variable provided: check it exists in each frame.
 			if(!umx_check_names(weightVar, data = mzData, die = FALSE) | !umx_check_names(weightVar, data = dzData, die = FALSE)){
 				stop("The weight variable must be included in the mzData and dzData",
 					 "\n frames passed into this twin model when \"weightVar\" is specified",
@@ -209,15 +214,19 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		# = Figure out start values while we are here =
 		# =============================================
 		# varStarts will be used to fill a, c, and e
-		tmp = umx_mean_var_starts(mzData, dzData, nVar, varFormat=c("Choleksy")) 
-		varStarts = tmp$varStarts
+		# TODO varStarts not needed here any more...
+		# selVars is expanded by the time we get to here... no sep.
+		tmp = xmu_mean_var_starts(mzData= mzData, dzData= dzData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
+		varStarts  = tmp$varStarts
 		meanStarts = tmp$meanStarts
+		meanLabels = tmp$meanLabels
 
 		# ============================================
 		# = Make mxData, dropping any unused columns =
 		# ============================================
-		mzData  = xmu_make_mxData(mzData, type = type, manifests = selVars)
-		dzData  = xmu_make_mxData(dzData, type = type, manifests = selVars)
+		allData = rbind(mzData, dzData)
+		mzData = xmu_make_mxData(mzData, type = type, manifests = selVars)
+		dzData = xmu_make_mxData(dzData, type = type, manifests = selVars)
 
 		# =====================================
 		# = Add means and var matrices to top =
@@ -250,8 +259,8 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 			# ===============================
 			# = Handle all continuous case  =
 			# ===============================
-			top = mxModel("top", 
-				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, dimnames = list("means", selVars))
+			top = mxModel("top",
+				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars))
 			)
 			MZ  = mxModel("MZ", mzData,
 				mxExpectationNormal("top.expCovMZ", "top.expMean"), 
@@ -269,11 +278,11 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 			if(length(contVarNames) > 0){
 				message(length(contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(contVarNames[1:(length(contVarNames)/nSib)]))	
 			}
-			# Means: all free, start cont at the measured value, ord @0
+			# Means: all free, start cont at the measured value, ordinals @0
 
-			top = mxModel("top", 
-				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, dimnames = list("means", selVars)),
-				umxThresholdMatrix(allData, selDVs = selDVs, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose)
+			top = mxModel("top",
+				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars)),
+				umxThresholdMatrix(allData, selDVs = selVars, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose)
 			)
 			MZ  = mxModel("MZ", mzData,
 				mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat"), 
@@ -311,8 +320,8 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 			the_bin_cols = which(isBin)[1:nVar] # columns in which the bin vars appear for T1, i.e., c(1,3,5)
 			binBracketLabels = paste0("Vtot[", the_bin_cols, ",", the_bin_cols, "]")
 			top = mxModel("top", 
-				umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = meanStarts, dimnames = list("means", selVars)),
-				umxThresholdMatrix(allData, selDVs = selDVs, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose),
+				umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars)),
+				umxThresholdMatrix(allData, selDVs = selVars, thresholds = threshType, threshMatName = "threshMat", verbose = verbose),
 				mxAlgebra(name = "Vtot", A + C + E), # Total variance (redundant but is OK)
 				umxMatrix("binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
 				umxMatrix("Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
@@ -341,18 +350,10 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		# Drop unused variables from matrix
 		het_mz = umx_reorder(mzData, selVars)		
 		het_dz = umx_reorder(dzData, selVars)
-		varStarts = diag(het_mz)[1:nVar]
 
-		if(nVar == 1){
-			varStarts = sqrt(varStarts)/3
-		} else {
-			varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
-		}
-		varStarts = matrix(varStarts, nVar, nVar)
-		meanStarts = NA # Not used for summary data
 		top = mxModel("top")
-		MZ  = mxModel("MZ", 
-			mxExpectationNormal("top.expCovMZ"), 
+		MZ  = mxModel("MZ",
+			mxExpectationNormal("top.expCovMZ"),
 			mxFitFunctionML(), 
 			mxData(het_mz, type = "cov", numObs = numObsMZ)
 		)
@@ -364,14 +365,6 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	} else {
 		stop("Datatype \"", dataType, "\" not understood")
 	}
-	# Equate means for twin1 and twin 2 (match labels in first & second halves of means labels matrix)
-	if(equateMeans & dataType == "raw"){
-		top = omxSetParameters(top,
-		  labels    = paste0("expMean_r1c", (nVar + 1):(nVar * 2)), # c("expMeanr1c4", "expMeanr1c5", "expMeanr1c6"),
-		  newlabels = paste0("expMean_r1c", 1:nVar)                 # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
-		)
-	}
-	# , varStarts = varStarts, meanStarts = meanStarts
 	return(list(top = top, MZ = MZ, DZ = DZ))
 }                                           
 

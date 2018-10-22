@@ -35,6 +35,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_dot_make_residuals}},
   \code{\link{xmu_make_mxData}},
   \code{\link{xmu_make_top_twin_models}},
+  \code{\link{xmu_mean_var_starts}},
   \code{\link{xmu_set_sep_from_suffix}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}}

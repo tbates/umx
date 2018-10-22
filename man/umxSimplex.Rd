@@ -2,7 +2,7 @@
 % Please edit documentation in R/umx_build_umxSimplex.R
 \name{umxSimplex}
 \alias{umxSimplex}
-\title{Build and run a simplex twin model}
+\title{Build and run a simplex twin model (not ready for use!)}
 \usage{
 umxSimplex(name = "simplex", selDVs, dzData, mzData, sep = NULL,
   equateMeans = TRUE, dzAr = 0.5, dzCr = 1, addStd = TRUE,
@@ -41,11 +41,12 @@ Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1"
 }
 }
 \description{
-Make a 2-group simplex twin model
 The simplex model provides a powerful tool for theory-based decomposition of genetic
-and environmental differences.
+and environmental differences. \code{umxSimplex} makes a 2-group simplex twin model.
 }
 \details{
+\strong{This code is beta} quality: \strong{not} for publication use. It will be completed by Boulder 2020.
+
 The simplex model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or non-additive genetic effects (D).
