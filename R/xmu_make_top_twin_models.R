@@ -246,13 +246,13 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		
 		if(type %in%  c('WLS', 'DWLS', 'ULS')) {
 			message("data treated as ", type)
-			top = mxModel("top") # No means for WLS
+			top = mxModel("top")
 			MZ  = mxModel("MZ", mzData,
 				mxExpectationNormal("top.expCovMZ", "top.expMean"),
 				mxFitFunctionWLS()
 			)
 			DZ  = mxModel("DZ", dzData,
-				mxExpectationNormal("top.expCovDZ", "top.expMean"), 
+				mxExpectationNormal("top.expCovDZ", "top.expMean"),
 				mxFitFunctionWLS()
 			)			
 		} else if(nFactors == 0) {
