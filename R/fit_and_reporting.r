@@ -425,7 +425,7 @@ loadings.MxModel <- function(x, ...) {
 #' Note: By default, requesting new CIs wipes the existing ones.
 #' To keep these, set wipeExistingRequests = FALSE.
 #'
-#' @details Unlike \code{\link{confint}}, if parm is not set, only existing requests will be used. 
+#' @details *Note*: \code{\link{confint}} is an OpenMx function which will return SE-based CIs.
 #' 
 #' Because these can take time to run, by default only CIs already computed will be reported. Set run = TRUE to run new CIs.
 #' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. 
@@ -443,6 +443,7 @@ loadings.MxModel <- function(x, ...) {
 #' @family Reporting functions
 #' @seealso - \code{\link[stats]{confint}}, \code{\link{umxCI}} 
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -604,7 +605,7 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 		'7' = 'The function derivatives returned by funcon or funobj appear to be incorrect.',
 		'8' = 'not used',
 		'9' = 'An input parameter was invalid')
-		if(any(model_CI_OK !=0) && showErrorCodes){
+		if(!is.null(model_CI_OK) && any(model_CI_OK !=0) && showErrorCodes){
 			codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
 			relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
 			for(i in relevantCodes) {

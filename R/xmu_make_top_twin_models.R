@@ -213,9 +213,10 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		# =============================================
 		# = Figure out start values while we are here =
 		# =============================================
-		# varStarts will be used to fill a, c, and e
-		# TODO varStarts not needed here any more...
-		# selVars is expanded by the time we get to here... no sep.
+
+		# ===================================================================
+		# = NOTE: selVars is expanded by the time we get to here... no sep. =
+		# ===================================================================
 		tmp = xmu_mean_var_starts(mzData= mzData, dzData= dzData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
 		varStarts  = tmp$varStarts
 		meanStarts = tmp$meanStarts
@@ -244,18 +245,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		#  1. Simple test if results are similar for an ACE model of 1 variable
 		# [] select mxFitFunctionML() of bVector as param
 		
-		if(type %in%  c('WLS', 'DWLS', 'ULS')) {
-			message("data treated as ", type)
-			top = mxModel("top")
-			MZ  = mxModel("MZ", mzData,
-				mxExpectationNormal("top.expCovMZ", "top.expMean"),
-				mxFitFunctionWLS()
-			)
-			DZ  = mxModel("DZ", dzData,
-				mxExpectationNormal("top.expCovDZ", "top.expMean"),
-				mxFitFunctionWLS()
-			)			
-		} else if(nFactors == 0) {
+		if(nFactors == 0) {
 			# ===============================
 			# = Handle all continuous case  =
 			# ===============================
@@ -282,7 +272,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 
 			top = mxModel("top",
 				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars)),
-				umxThresholdMatrix(allData, selDVs = selVars, sep = sep, thresholds = threshType, threshMatName = "threshMat", verbose = verbose)
+				umxThresholdMatrix(allData, selDVs = selVars, sep = sep, thresholds = threshType, verbose = verbose)
 			)
 			MZ  = mxModel("MZ", mzData,
 				mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat"), 
@@ -321,7 +311,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 			binBracketLabels = paste0("Vtot[", the_bin_cols, ",", the_bin_cols, "]")
 			top = mxModel("top", 
 				umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars)),
-				umxThresholdMatrix(allData, selDVs = selVars, thresholds = threshType, threshMatName = "threshMat", verbose = verbose),
+				umxThresholdMatrix(allData, selDVs = selVars, thresholds = threshType, verbose = verbose),
 				mxAlgebra(name = "Vtot", A + C + E), # Total variance (redundant but is OK)
 				umxMatrix("binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
 				umxMatrix("Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
@@ -364,6 +354,14 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		)
 	} else {
 		stop("Datatype \"", dataType, "\" not understood")
+	}
+	# Switch model to WLS if that's specified
+	if(type %in%  c('WLS', 'DWLS', 'ULS')) {
+		message("data treated as ", type)
+		# `top` is not affected, mxExpectationNormal("top.expCovMZ", "top.expMean"),
+		# Replace the data and fit function. nb: The data doesn't need replacing but might not "stick" from above.
+		MZ = mxModel(MZ, mzData, mxFitFunctionWLS() )
+		DZ = mxModel(DZ, dzData, mxFitFunctionWLS() )
 	}
 	return(list(top = top, MZ = MZ, DZ = DZ))
 }                                           
@@ -423,9 +421,8 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	nSib = 2
 	xmu_twin_check(selDVs = selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
 	# Expand var names
-	selVars = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
-	selDVs  = umx_paste_names(selDVs, sep, 1:2)
-	nVar    = length(selDVs)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
 	bits    = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
 	top     = bits$top
 	MZ      = bits$MZ
@@ -517,14 +514,6 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 		),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
-	# Equate means for twin1 and twin 2
-	if(equateMeans){
-		model = omxSetParameters(model,
-		  labels    = paste0("expMean_r1c", (nVar+1):(nVar*2)), # c("expMeanr1c4", "expMeanr1c5", "expMeanr1c6"),
-		  newlabels = paste0("expMean_r1c", 1:nVar)             # c("expMeanr1c1", "expMeanr1c2", "expMeanr1c3")
-		)
-	}
-	
 	if(!freeLowerA){
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
