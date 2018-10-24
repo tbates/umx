@@ -79,6 +79,7 @@ cor
 cov
 covary
 covmat
+covMethod
 covs
 cp
 cs
@@ -111,6 +112,7 @@ dieing
 dl
 doi
 Dolan
+dontrun
 dopt
 dp
 Drob
@@ -326,6 +328,7 @@ notOpenMP
 NPSOL
 nrow
 NS
+nSib
 NULLing
 numObs
 nVar
@@ -414,6 +417,7 @@ Schwabe
 sd
 SDs
 se
+selCovs
 selDVs
 selVars
 sem

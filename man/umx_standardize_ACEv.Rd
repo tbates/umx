@@ -20,10 +20,10 @@ umx_standardize_ACE allows umx_standardize to standardize an ACE variance compon
 \examples{
 require(umx)
 data(twinData)
-selDVs = c("bmi1", "bmi2")
-mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
-dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
-m1  = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
+selDVs = c("bmi")
+mzData <- twinData[twinData$zygosity \%in\% "MZFF",][1:80,] # 80 pairs for speed
+dzData <- twinData[twinData$zygosity \%in\% "DZFF",][1:80,]
+m1  = umxACEv(selDVs = selDVs, sep="", dzData = dzData, mzData = mzData)
 std = umx_standardize(m1)
 }
 \references{

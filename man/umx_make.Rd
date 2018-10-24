@@ -15,7 +15,7 @@ umx_make(what = c("install", "examples", "check", "win", "rhub",
 
 \item{check}{Whether to run check on the package before release (default = TRUE).}
 
-\item{run}{= for examples, whether to run dontrun{} code (default FALSE)}
+\item{run}{= If what is "examples", whether to also run examples marked don't run. (default FALSE)}
 
 \item{spelling}{Whether to check spelling before release (default = "en_US": set NULL to not check).}
 }
@@ -27,11 +27,11 @@ Easily  run devtools "install", "release", "win", "examples" etc.
 }
 \examples{
 \dontrun{
-umx_make(what = "install"))  # just installs the package
-umx_make(what = "examples")) # run the examples
-umx_make(what = "check"))    # run R CMD check
-umx_make(what = "win"))      # check on win-builder
-umx_make(what = "release"))  # release to CRAN
+umx_make(what = "install"))  # Just installs the package
+umx_make(what = "examples")) # Run the examples
+umx_make(what = "check"))    # Run R CMD check
+umx_make(what = "win"))      # Check on win-builder
+umx_make(what = "release"))  # Release to CRAN
 }
 }
 \references{

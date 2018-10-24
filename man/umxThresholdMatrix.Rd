@@ -16,9 +16,9 @@ umxThresholdMatrix(df, selDVs = NULL, sep = NULL, method = c("auto",
 
 \item{sep}{(e.g. "_T") Required for wide (twin) data. It is used to break the base names our from their numeric suffixes.}
 
-\item{method}{How to set the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)}
+\item{method}{How to implement the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)}
 
-\item{thresholds}{How to implement thresholds: "deviationBased"}
+\item{thresholds}{How to keep thresholds in order: "deviationBased"}
 
 \item{threshMatName}{name of the matrix which is returned. Defaults to "threshMat" - best not to change it.}
 

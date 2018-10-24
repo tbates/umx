@@ -2,7 +2,7 @@
 % Please edit documentation in R/umx_build_umxSimplex.R
 \name{umxSimplex}
 \alias{umxSimplex}
-\title{Build and run a simplex twin model}
+\title{Build and run a simplex twin model (not ready for use!)}
 \usage{
 umxSimplex(name = "simplex", selDVs, dzData, mzData, sep = NULL,
   equateMeans = TRUE, dzAr = 0.5, dzCr = 1, addStd = TRUE,
@@ -41,11 +41,15 @@ Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1"
 }
 }
 \description{
-Make a 2-group simplex twin model
 The simplex model provides a powerful tool for theory-based decomposition of genetic
-and environmental differences.
+and environmental differences. \code{umxSimplex} makes a 2-group simplex twin model.
 }
 \details{
+<<<<<<< HEAD
+=======
+\strong{This code is beta} quality: \strong{not} for publication use. It will be completed by Boulder 2020.
+
+>>>>>>> 97dadfdebbdd1b81df5e08be0254a96c4a910ad0
 The simplex model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or non-additive genetic effects (D).
@@ -130,12 +134,13 @@ m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzD
 }
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
-  \code{\link{umxACE}}, \code{\link{umxCPold}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIPnew}}, \code{\link{umxIP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSummaryACEcov}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEnew}},
+  \code{\link{umxACEv}}, \code{\link{umxACE}},
+  \code{\link{umxCPold}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
+  \code{\link{umxGxE}}, \code{\link{umxIPnew}},
+  \code{\link{umxIP}}, \code{\link{umxSexLim}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxEbiv}},

@@ -174,10 +174,8 @@
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 #' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-#' mzData <- twinData[twinData$zyg == 1, umx_paste_names(selDVs, "", 1:2)]
-#' dzData <- twinData[twinData$zyg == 3, umx_paste_names(selDVs, "", 1:2)]
-#' mzData <- mzData[1:80,] # just top 80 pairs to run fast
-#' dzData <- dzData[1:80,]
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ][1:80,] # 80 pairs for speed
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ][1:80,]
 #' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
@@ -195,10 +193,8 @@
 #' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 #' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-#' mzData <- twinData[twinData$zyg == 1,] # umxACEv can trim out unused variables on its own
-#' dzData <- twinData[twinData$zyg == 3,]
-#' mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
-#' dzData <- dzData[1:80,]
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]# umxACEv can trim out unused variables on its own
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' plot(m1)
 #' 
@@ -231,8 +227,8 @@
 #' require(umx)
 #' data(twinData)
 #' selDVs = c("wt1", "wt2")
-#' mz = cov(twinData[twinData$zyg == 1, selDVs], use = "complete")
-#' dz = cov(twinData[twinData$zyg == 3, selDVs], use = "complete")
+#' mz = cov(twinData[twinData$zygosity %in% "MZFF", selDVs], use = "complete")
+#' dz = cov(twinData[twinData$zygosity %in% "DZFF", selDVs], use = "complete")
 #' m1 = umxACEv(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
@@ -934,10 +930,10 @@ plot.MxModelACEv <- umxPlotACEv
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' selDVs = c("bmi1", "bmi2")
-#' mzData <- twinData[twinData$zyg == 1, selDVs][1:80,] # 80 pairs for speed
-#' dzData <- twinData[twinData$zyg == 3, selDVs][1:80,]
-#' m1  = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' selDVs = c("bmi")
+#' mzData <- twinData[twinData$zygosity %in% "MZFF",][1:80,] # 80 pairs for speed
+#' dzData <- twinData[twinData$zygosity %in% "DZFF",][1:80,]
+#' m1  = umxACEv(selDVs = selDVs, sep="", dzData = dzData, mzData = mzData)
 #' std = umx_standardize(m1)
 umx_standardize_ACEv <- function(model, ...) {
 	message("Standardizing ACE variance-based models not yet perfected: issues with negative variances...")

@@ -5,10 +5,11 @@
 \title{umxCP: Build and run a Common pathway twin model}
 \usage{
 umxCP(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
-  freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
-  correlatedA = FALSE, equateMeans = TRUE, dzAr = 0.5, dzCr = 1,
+  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  correlatedA = FALSE, dzAr = 0.5, dzCr = 1, equateMeans = TRUE,
   boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
-  numObsMZ = NULL, autoRun = getOption("umx_auto_run"),
+  numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE,
+  freeLowerE = FALSE, autoRun = getOption("umx_auto_run"),
   optimizer = NULL, suffix = "deprecated")
 }
 \arguments{
@@ -25,19 +26,15 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{nFac}{How many common factors (default = 1)}
 
-\item{freeLowerA}{Whether to leave the lower triangle of A free (default = FALSE).}
-
-\item{freeLowerC}{Whether to leave the lower triangle of C free (default = FALSE).}
-
-\item{freeLowerE}{Whether to leave the lower triangle of E free (default = FALSE).}
+\item{type}{One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"}
 
 \item{correlatedA}{?? (default = FALSE).}
-
-\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
 \item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
+
+\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
 \item{boundDiag}{= Numeric lbound for diagonal of the a_cp, c_cp, & e_cp matrices. Set = NULL to ignore.}
 
@@ -48,6 +45,12 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 \item{numObsDZ}{= not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data.}
 
 \item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.}
+
+\item{freeLowerA}{Whether to leave the lower triangle of A free (default = FALSE).}
+
+\item{freeLowerC}{Whether to leave the lower triangle of C free (default = FALSE).}
+
+\item{freeLowerE}{Whether to leave the lower triangle of E free (default = FALSE).}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
@@ -207,12 +210,13 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 }
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
-  \code{\link{umxACE}}, \code{\link{umxCPold}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
-  \code{\link{umxGxE}}, \code{\link{umxIPnew}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umxSummaryACEcov}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEnew}},
+  \code{\link{umxACEv}}, \code{\link{umxACE}},
+  \code{\link{umxCPold}}, \code{\link{umxGxE_window}},
+  \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
+  \code{\link{umxIPnew}}, \code{\link{umxIP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxEbiv}},
