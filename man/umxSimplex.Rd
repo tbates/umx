@@ -46,10 +46,6 @@ The simplex model provides a powerful tool for theory-based decomposition of gen
 and environmental differences.
 }
 \details{
-\strong{Simplex path diagram}:
-
-\figure{simplex.png}
-
 The simplex model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or non-additive genetic effects (D).
@@ -61,7 +57,11 @@ In the simplex model, these influences are modeled as a combination of:
 \item Influences specific to a single time (\code{as}, \code{cs}, \code{es}).
 }
 
-These combine to explain the causes of variance in the phenotype (see Figure above).
+These combine to explain the causes of variance in the phenotype (see Figure).
+
+\strong{Simplex path diagram}:
+
+\figure{simplex.png}
 
 \strong{Data Input}
 Currently, the umxSimplex function accepts only raw data.

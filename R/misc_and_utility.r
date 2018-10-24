@@ -15,9 +15,15 @@
 #' tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, itemMax = 6, data= bfi, name = "Extraversion")
 #' }
 umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, itemMax = NULL, data= NULL, name = NULL) {
-	INDCOL_pos = rowSums(data[,paste0(base, pos)])
-	INDCOL_rev = ((itemMax+1)*length(rev))- rowSums(data[,paste0(base, rev)])
-	data[,name] = (INDCOL_pos + INDCOL_rev)
+	pos_sum = rowSums(data[,paste0(base, pos)])
+	if(is.null(rev)){
+		data[,name] = pos_sum
+	} else if (length(rev)==1){
+		data[,name] = pos_sum + (itemMax+1-rev)
+	}else{
+		neg_sum = ((itemMax+1)*length(rev))- rowSums(data[,paste0(base, rev)])		
+		data[,name] = (pos_sum + neg_sum)
+	}
 	return(data)
 }
 
