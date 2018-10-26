@@ -275,9 +275,17 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			# nSib = 2, equateMeans = TRUE, threshType = c("deviationBased"), verbose = verbose
 			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans,
 							type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
-			top = bits$top
-			MZ  = bits$MZ
-			DZ  = bits$DZ
+			top     = bits$top
+			MZ      = bits$MZ
+			DZ      = bits$DZ
+			bVector = bits$bVector
+
+			if(bVector){
+				mzWeightMatrix = bits$mzWeightMatrix
+				dzWeightMatrix = bits$dzWeightMatrix
+			}else{
+				mzWeightMatrix = dzWeightMatrix = NULL
+			}
 
 			# Define varStarts ...
 			tmp = xmu_mean_var_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
@@ -317,30 +325,8 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 		# =====================================
 		# =  Assemble models into supermodel  =
 		# =====================================
+		model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix)
 
-		if(!bVector){
-			model = mxModel(name, MZ, DZ, top,
-				mxFitFunctionMultigroup(c("MZ", "DZ"))
-			)
-		} else {
-			# bVector is TRUE
-			# To weight objective functions in OpenMx, you specify a container model that applies the weights
-			# m1 is the model with no weights, but with "vector = TRUE" option added to the FIML objective.
-			# This option makes FIML return individual likelihoods for each row of the data (rather than a single -2LL value for the model)
-			# You then optimize weighted versions of these likelihoods by building additional models containing 
-			# weight data and an algebra that multiplies the likelihoods from the first model by the weight vector
-			model = mxModel(name, MZ, DZ, top,
-				mxModel("MZw", mzWeightMatrix,
-					mxAlgebra(-2 * sum(mzWeightMatrix * log(MZ.objective) ), name = "mzWeightedCov"),
-					mxFitFunctionAlgebra("mzWeightedCov")
-				),
-				mxModel("DZw", dzWeightMatrix,
-					mxAlgebra(-2 * sum(dzWeightMatrix * log(DZ.objective) ), name = "dzWeightedCov"),
-					mxFitFunctionAlgebra("dzWeightedCov")
-				),
-				mxFitFunctionMultigroup(c("MZw", "DZw"))
-			)
-		}
 		if(!is.null(boundDiag)){
 			if(!is.numeric(boundDiag)){
 				stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))

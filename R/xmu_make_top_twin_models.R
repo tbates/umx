@@ -140,7 +140,7 @@
 #' mz = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(selDVs, sep="")], use = "complete")
 #' dz = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(selDVs, sep="")], use = "complete")
 #' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep= "", nSib = 2)
-xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ= NULL, numObsDZ= NULL, equateMeans = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), threshType = c("deviationBased"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
+xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), threshType = c("deviationBased"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
 	# TODO: xmu_make_top_twin_models Add selCovs
 	# TODO: xmu_make_top_twin_models add covMethod == "fixed"
 	# TODO: xmu_make_top_twin_models add beta matrix for fixed covariates in means.
@@ -207,8 +207,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = FALSE, values = dzData[, weightVar])
 			bVector = TRUE
 		} else {
-			# no weights
-			bVector = FALSE
+			# no weights bVector stays whatever it was
 		}
 		# =============================================
 		# = Figure out start values while we are here =
@@ -363,9 +362,13 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		MZ = mxModel(MZ, mzData, mxFitFunctionWLS() )
 		DZ = mxModel(DZ, dzData, mxFitFunctionWLS() )
 	}
-	return(list(top = top, MZ = MZ, DZ = DZ))
-}                                           
 
+	if(bVector)){
+		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector))
+	} else {
+		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix))
+	}	
+}                                           
 
 #' Assemble top, MZ and DZ into a supermodel
 #'
@@ -384,7 +387,9 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 #' @family
 #' @examples
 #' model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix)
-xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix) {	
+xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix) {
+	# TODO: xmu_assemble_twin_supermodel: Add working example.
+	# TODO: xmu_assemble_twin_supermodel: Add a check for MZ DZ having vector on
 	if(!bVector){
 		model = mxModel(name, MZ, DZ, top,
 			mxFitFunctionMultigroup(c("MZ", "DZ"))
