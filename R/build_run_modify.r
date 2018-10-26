@@ -64,6 +64,7 @@
 #' @importFrom sfsmisc nearcor
 #' @importFrom xtable xtable
 #' @importFrom MuMIn Weights
+#' @importFrom spelling spell_check_package
 
 # #' @importFrom Hmisc escapeRegex
 # #' @importFrom cocor cocor.dep.groups.nonoverlap

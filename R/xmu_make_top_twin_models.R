@@ -365,8 +365,57 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	} else {
 		stop("Datatype \"", dataType, "\" not understood")
 	}
-	return(list(top = top, MZ = MZ, DZ = DZ))
+	if(bVector)){
+		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector))
+	} else {
+		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix))
+	}
 }                                           
+
+#' Assemble top, MZ and DZ into a supermodel
+#'
+#' @description
+#' Assemble top, MZ and DZ into a supermodel: Also copes with weighted analyses.
+#'
+#' @param name the name of the supermodel
+#' @param MZ the MZ model
+#' @param DZ the DZ model
+#' @param top the top model
+#' @param bVector whether this is a weighted analysis
+#' @param mzWeightMatrix if bVector, then use this as the MZ weights matrix
+#' @param dzWeightMatrix if bVector, then use this as the DZ weights matrix
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family
+#' @examples
+#' model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix)
+xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix) {	
+	if(!bVector){
+		model = mxModel(name, MZ, DZ, top,
+			mxFitFunctionMultigroup(c("MZ", "DZ"))
+		)
+	} else {
+		# bVector is TRUE
+		# To weight objective functions in OpenMx, you specify a container model that applies the weights
+		# m1 is the model with no weights, but with "vector = TRUE" option added to the FIML objective.
+		# This option makes FIML return individual likelihoods for each row of the data (rather than a single -2LL value for the model)
+		# You then optimize weighted versions of these likelihoods by building additional models containing 
+		# weight data and an algebra that multiplies the likelihoods from the first model by the weight vector
+		model = mxModel(name, MZ, DZ, top,
+			mxModel("MZw", mzWeightMatrix,
+				mxAlgebra(-2 * sum(mzWeightMatrix * log(MZ.objective) ), name = "mzWeightedCov"),
+				mxFitFunctionAlgebra("mzWeightedCov")
+			),
+			mxModel("DZw", dzWeightMatrix,
+				mxAlgebra(-2 * sum(dzWeightMatrix * log(DZ.objective) ), name = "dzWeightedCov"),
+				mxFitFunctionAlgebra("dzWeightedCov")
+			),
+			mxFitFunctionMultigroup(c("MZw", "DZw"))
+		)
+	}
+	return(model)
+}
+
 
 #' umxIP: Build and run an Independent pathway twin model
 #'
