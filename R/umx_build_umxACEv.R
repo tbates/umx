@@ -350,10 +350,20 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
 					# = Handle all continuous case                          =
 					# =======================================================
 					message("All variables continuous")
-					meansMatrix = umxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
-					top = mxModel("top", meansMatrix)
-					MZ  = mxModel("MZ" , mxExpectationNormal("top.expCovMZ", "top.expMean"), mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
-					DZ  = mxModel("DZ" , mxExpectationNormal("top.expCovDZ", "top.expMean"), mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
+					
+					top = mxModel("top",
+						umxMatrix(name = "expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMZmeans, dimnames = meanDimNames)
+					)
+					MZ  = mxModel("MZ" ,
+						mxExpectationNormal("top.expCovMZ", "top.expMean"),
+						mxFitFunctionML(vector = bVector),
+						mxData(mzData, type = "raw")
+					)
+					DZ  = mxModel("DZ",
+						mxExpectationNormal("top.expCovDZ", "top.expMean"),
+						mxFitFunctionML(vector = bVector),
+						mxData(dzData, type = "raw")
+					)
 				} else if(sum(isBin) == 0){
 					# ==================================================
 					# = Handle 1 or more ordinal variables (no binary) =
@@ -370,13 +380,19 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
 					# Thresholds
 					# for better guessing with low-frequency cells
 					allData = rbind(mzData, dzData)
+					top = mxModel("top",
+						umxLabel(meansMatrix),
 					# threshMat is is a matrix, or a list of 2 matrices and an algebra
-					threshMat = umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
-					mzExpect = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
-					dzExpect = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
-					top = mxModel("top", umxLabel(meansMatrix), threshMat)
-					MZ  = mxModel("MZ", mzExpect, mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
-					DZ  = mxModel("DZ", dzExpect, mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
+						umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
+					)
+					MZ  = mxModel("MZ",
+						mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat"),
+						mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw")
+					)
+					DZ  = mxModel("DZ",
+						mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat"),
+						mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw")
+					)
 				} else if(sum(isBin) > 0){
 					if(thresholds == "left_censored"){
 						# TODO this is easy, no? binary is fixed threshold anyhow...
