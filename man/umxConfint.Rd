@@ -27,7 +27,9 @@ umxConfint(object, parm = c("existing", "smart", "all",
 \item{...}{Additional argument(s) for umxConfint.}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link{mxModel}}
+}
 }
 \description{
 Implements confidence interval function for umx models.
@@ -36,7 +38,7 @@ Implements confidence interval function for umx models.
 Note: By default, requesting new CIs wipes the existing ones.
 To keep these, set wipeExistingRequests = FALSE.
 
-Unlike \code{\link{confint}}, if parm is not set, only existing requests will be used. 
+\emph{Note}: \code{\link{confint}} is an OpenMx function which will return SE-based CIs.
 
 Because these can take time to run, by default only CIs already computed will be reported. Set run = TRUE to run new CIs.
 If parm is empty, and run = FALSE, a message will alert you to add run = TRUE.
@@ -81,10 +83,14 @@ m2 =  umxConfint(m1, "smart")
 
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link[stats]{confint}}, \code{\link{umxCI}}
+\itemize{
+\item \code{\link[stats]{confint}}, \code{\link{umxCI}}
+}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

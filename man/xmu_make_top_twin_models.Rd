@@ -121,7 +121,7 @@ data(twinData)
 selDVs = c("wt", "ht")
 mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
-bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = "", nSib = 2)
 names(bits) # "top" "MZ"  "DZ" 
 
 # ============================================
@@ -177,6 +177,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuMakeTwoHeadedPathsFromPathList}},
   \code{\link{xmuMaxLevels}}, \code{\link{xmuMinLevels}},
   \code{\link{xmuPropagateLabels}},
+  \code{\link{xmu_assemble_twin_supermodel}},
   \code{\link{xmu_check_levels_identical}},
   \code{\link{xmu_dot_make_paths}},
   \code{\link{xmu_dot_make_residuals}},

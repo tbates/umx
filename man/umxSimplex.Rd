@@ -45,11 +45,8 @@ The simplex model provides a powerful tool for theory-based decomposition of gen
 and environmental differences. \code{umxSimplex} makes a 2-group simplex twin model.
 }
 \details{
-<<<<<<< HEAD
-=======
 \strong{This code is beta} quality: \strong{not} for publication use. It will be completed by Boulder 2020.
 
->>>>>>> 97dadfdebbdd1b81df5e08be0254a96c4a910ad0
 The simplex model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or non-additive genetic effects (D).

@@ -96,7 +96,7 @@
 #' selDVs = c("wt", "ht")
 #' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF",]
-#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = "", nSib = 2)
 #' names(bits) # "top" "MZ"  "DZ" 
 #' 
 #' # ============================================
@@ -363,10 +363,10 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		DZ = mxModel(DZ, dzData, mxFitFunctionWLS() )
 	}
 
-	if(bVector)){
-		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector))
-	} else {
+	if(bVector){
 		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix))
+	} else {
+		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector))
 	}	
 }                                           
 
@@ -384,12 +384,10 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 #' @param dzWeightMatrix if bVector, then use this as the DZ weights matrix
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family
-#' @examples
-#' model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix)
+#' @family xmu internal not for end user
 xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix) {
 	# TODO: xmu_assemble_twin_supermodel: Add working example.
-	# TODO: xmu_assemble_twin_supermodel: Add a check for MZ DZ having vector on
+	# TODO: xmu_assemble_twin_supermodel: Add a check that MZ & DZ models have vector=TRUE selected if the parameter is on.
 	if(!bVector){
 		model = mxModel(name, MZ, DZ, top,
 			mxFitFunctionMultigroup(c("MZ", "DZ"))
