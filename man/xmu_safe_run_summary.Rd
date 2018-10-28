@@ -4,17 +4,19 @@
 \alias{xmu_safe_run_summary}
 \title{Safely try to run and summarize a model}
 \usage{
-xmu_safe_run_summary(model1, autoRun = TRUE, summary = TRUE,
-  model2 = NULL)
+xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
+  summary = TRUE, comparison = TRUE)
 }
 \arguments{
 \item{model1}{The model to attempt to run and summarize.}
 
-\item{autoRun}{Whether to run of not (default = TRUE).}
-
-\item{summary}{Whether to summarize of not (default = TRUE).}
-
 \item{model2}{Optional second model to compare with model1.}
+
+\item{autoRun}{Whether to run or not (default = TRUE).}
+
+\item{summary}{Whether to summarize or not (default = TRUE).}
+
+\item{comparison}{Toggle to allow not making compariosn, even if second model is provided (more flexible in programming).}
 }
 \value{
 \itemize{
@@ -28,7 +30,9 @@ Returns the model even if it can't be run.
 \emph{note}: if autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
 }
 \examples{
-xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE)
+# xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
+# xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
+# xmu_safe_run_summary(model, model2, autoRun = TRUE)
 }
 \seealso{
 \itemize{

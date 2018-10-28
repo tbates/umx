@@ -133,17 +133,21 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 #' *note*: if autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
 #'
 #' @param model1 The model to attempt to run and summarize.
-#' @param autoRun Whether to run of not (default = TRUE).
-#' @param summary Whether to summarize of not (default = TRUE).
 #' @param model2 Optional second model to compare with model1.
+#' @param autoRun Whether to run or not (default = TRUE).
+#' @param summary Whether to summarize or not (default = TRUE).
+#' @param comparison Toggle to allow not making compariosn, even if second model is provided (more flexible in programming).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - \code{\link{mxTryhard}}
 #' @md
 #' @examples
-#' xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE)
-xmu_safe_run_summary <- function(model1, autoRun = TRUE, summary = TRUE, model2 = NULL) {
+#' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
+#' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
+#' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary = TRUE, comparison= TRUE) {
+	# TODO xmu_safe_run_summary: Activate test examples
 	if(!is.logical(autoRun)){
 		if(autoRun == "if needed" && !umx_has_been_run(model1)){
 			autoRun = FALSE
@@ -157,18 +161,23 @@ xmu_safe_run_summary <- function(model1, autoRun = TRUE, summary = TRUE, model2 
 		tryCatch({
 			model1 = mxRun(model1)
 		}, warning = function(w){
-			message("Warning incurred trying to run model1")
+			message("Warning incurred trying to run model: try mxTryHard on it.")
 			message(w)
 		}, error = function(e){
-			message("Error incurred trying to run model1")
+			message("Error incurred trying to run model: try mxTryHard on it.")
 			message(e)
 		})
 	}
+	
 	if(summary){
 		tryCatch({
 			umxSummary(model1)
-			if(!is.null(model2)){
-				umxCompare(model1, model2)
+			if(!is.null(model2) && comparison){
+				if(length(coef(model2)) > length(coef(model1))){
+					umxCompare(model2, model1)
+				} else {
+					umxCompare(model1, model2)
+				}
 			}
 		}, warning = function(w) {
 			message("Warning incurred trying to run summary ")

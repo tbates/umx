@@ -52,7 +52,6 @@ umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 
 
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
-  \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
   \code{\link{umx_add_variances}},
   \code{\link{umx_fix_first_loadings}},

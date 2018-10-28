@@ -568,19 +568,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		}
 	}
 	m1 = omxAssignFirstParameters(m1)
-
-	if(autoRun){
-		tryCatch({
-			m1 = mxRun(m1)
-			umxSummary(m1, refModels = refModels, showEstimates = showEstimates)
-		}, warning = function(w) {
-			message("Warning incurred trying to run model")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run model")
-			message(e)
-		})
-	}
+	m1 = xmu_safe_run_summary(m1, autoRun = autoRun)
 	invisible(m1)
 }
 
@@ -660,24 +648,11 @@ umxSuperModel <- function(name = 'top', ..., autoRun = TRUE) {
 		}
 	}
 	# multiple group fit function sums the likelihoods of its component models
-	newModel <- mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
+	newModel = mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	newModel = omxAssignFirstParameters(newModel)
-	
-	if(autoRun){
-		tryCatch({
-			newModel = mxRun(newModel)
-			umxSummary(newModel)
-		}, warning = function(w) {
-			message("Warning incurred trying to run model. try mxTryHard on it.")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run model. try mxTryHard on it.")
-			message(e)
-		})
-	}			
+	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun)
 	return(newModel)
-	
 }
 
 #' umxModify: Add, set, or drop model paths by label.
@@ -1084,10 +1059,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 		model = omxSetParameters(model, labels = c('am_r1c1', 'cm_r1c1', 'em_r1c1'), lbound = lboundM)
 	}
 	model = as(model, "MxModelGxE")
-	if(autoRun){
-		model = mxRun(model)
-		umxSummary(model)
-	}
+	model = xmu_safe_run_summary(model, autoRun = autoRun)
 	return(model)
 }
 
@@ -1878,11 +1850,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
 		model = as(model, "MxModelACE") # set class so that S3 plot() dispatches.
-		
-		if(autoRun){
-			model = mxRun(model, intervals = intervals)
-			umxSummary(model)
-		}
+		model = xmu_safe_run_summary(model, autoRun = autoRun)
 		return(model)
 	}
 } # end umxACE
@@ -2199,13 +2167,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModelACEcov") # set class so umxSummary, plot, etc. work.
-	if(autoRun){
-		model = mxRun(model)
-		umxSummary(model)
-		return(model)
-	} else {
-		return(model)
-	}
+	model = xmu_safe_run_summary(model, autoRun = autoRun)
+	invisible(model)
 }
 
 # =============
@@ -2517,19 +2480,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 	# Set values with the same label to the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModelCP")
-	
-	if(autoRun){
-		tryCatch({
-			model = mxRun(model)
-			umxSummary(model)
-		}, warning = function(w) {
-			message("Warning incurred trying to run model")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run model")
-			message(e)
-		})
-	}
+	model = xmu_safe_run_summary(model, autoRun = autoRun)	
 	return(model)
 } # end umxCP
 
@@ -2752,20 +2703,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 	}
 	model  = omxAssignFirstParameters(model) # ensure parameters with the same label have the same start value... means, for instance.
 	model = as(model, "MxModelIP")
-
-	if(autoRun){
-		tryCatch({
-			model = mxRun(model)
-			umxSummary(model)
-		}, warning = function(w) {
-			message("Warning incurred trying to run model")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run model")
-			message(e)
-		})
-	}
-
+	model = xmu_safe_run_summary(model, autoRun = autoRun)
 	return(model)
 } # end umxIP
 
@@ -2775,45 +2713,6 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 # = Advanced Build and Modify helpers =
 # =====================================
 
-#' umxRAM2Ordinal 
-#'
-#' umxRAM2Ordinal: Convert a RAM model whose data contain ordinal variables to a threshold-based model
-#'
-#' @param model An RAM model to add thresholds too.
-#' @param verbose Tell the user what was added and why (Default = TRUE)
-#' @param thresholds How to implement thresholds: c("deviationBased", "direct", "ignore", "left_censored")
-#' @param name = A new name for the modified model (NULL means leave it as it)
-#' @param showEstimates = Whether to show estimates in the summary (if autoRun) TRUE
-#' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
-#' @param autoRun = whether to run the model before returning it: defaults to getOption("umx_auto_run"))
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @family Advanced Model Building Functions
-#' @seealso - \code{\link{umxRAM}}
-#' @examples
-#' \dontrun{
-#' m1 = umxRAM2Ordinal(model)
-#' }
-umxRAM2Ordinal <- function(model, verbose = T, thresholds = c("deviationBased", "direct", "ignore", "left_censored"), name = NULL, showEstimates= TRUE, refModels = NULL, autoRun = getOption("umx_auto_run")) {
-	# model = m3
-	legalThresholdsOptions = c("deviationBased", "direct", "ignore", "left_censored")
-	thresholds = match.arg(thresholds)
-	if(!umx_is_RAM(model)){
-		stop("Only works with RAM models, sorry.")
-	}
-	if(!is.null(name)){
-		model = mxRename(model, name)
-	}
-	model$expectation$thresholds = "threshMat"
-	model = mxModel(model, umxThresholdMatrix(model$data$observed, thresholds = thresholds, verbose = verbose))
-	if (autoRun) {
-		model = mxRun(model)
-		umxSummary(model, showEstimates = showEstimates, refModels = refModels)
-		return(model)
-	} else {
-		return(model)
-	}
-}
 
 #' umxValues: Set values in RAM model, matrix, or path
 #'
@@ -3365,31 +3264,7 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 	# print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
 	newModel = omxSetParameters(model = model, labels = slaveLabels, newlabels = masterLabels, name = name)
 	newModel = omxAssignFirstParameters(newModel, indep = FALSE)
-	if(autoRun){
-		newModel = mxRun(newModel)
-		tryCatch({
-			umxSummary(newModel)
-		}, warning = function(w) {
-			message("Warning incurred trying to run summary ")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run summary ")
-			message(e)
-		})
-		
-		if(comparison){
-			if(length(coef(model)) > length(coef(newModel))){
-				newMore = FALSE
-			} else {
-				newMore = TRUE
-			}
-			if(newMore){
-				umxCompare(newModel, model)
-			} else {
-				umxCompare(model, newModel)
-			}
-		}
-	}			
+	newModel = xmu_safe_run_summary(newModel, model, autoRun = autoRun, comparison = comparison)
 	return(newModel)
 }
 
