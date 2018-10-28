@@ -241,8 +241,8 @@ twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
-mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
-dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
+mzData = twinData[twinData$zygosity \%in\% "MZFF",] 
+dzData = twinData[twinData$zygosity \%in\% "DZFF",]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
 m1 = umxACEnew(selDVs = c("wt", "obese"), dzData = dzData, mzData = mzData, sep = '')

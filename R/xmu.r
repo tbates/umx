@@ -123,18 +123,62 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 # =====================
 # = Reporting helpers =
 # =====================
-xmu_safe_summary <- function(model1, model2, summary = TRUE) {
-	# model = mxRun(model)
-	tryCatch({
-		umxSummary(model1)
-		umxCompare(model1, model2)
-	}, warning = function(w) {
-		message("Warning incurred trying to run summary ")
-		message(w)
-	}, error = function(e) {
-		message("Error incurred trying to run summary ")
-		message(e)
-	})
+
+#' Safely try to run and summarize a model
+#'
+#' @description
+#' Just call run (if requested or model not run) and umxSummary is requested but wrapped in try to avoid throwing an error.
+#' Returns the model even if it can't be run.
+#' 
+#' *note*: if autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
+#'
+#' @param model1 The model to attempt to run and summarize.
+#' @param autoRun Whether to run of not (default = TRUE).
+#' @param summary Whether to summarize of not (default = TRUE).
+#' @param model2 Optional second model to compare with model1.
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - \code{\link{mxTryhard}}
+#' @md
+#' @examples
+#' xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE)
+xmu_safe_run_summary <- function(model1, autoRun = TRUE, summary = TRUE, model2 = NULL) {
+	if(!is.logical(autoRun)){
+		if(autoRun == "if needed" && !umx_has_been_run(model1)){
+			autoRun = FALSE
+		}else{
+			autoRun = TRUE
+		}
+	}else{
+		summary = autoRun
+	}
+	if(autoRun){
+		tryCatch({
+			model1 = mxRun(model1)
+		}, warning = function(w){
+			message("Warning incurred trying to run model1")
+			message(w)
+		}, error = function(e){
+			message("Error incurred trying to run model1")
+			message(e)
+		})
+	}
+	if(summary){
+		tryCatch({
+			umxSummary(model1)
+			if(!is.null(model2)){
+				umxCompare(model1, model2)
+			}
+		}, warning = function(w) {
+			message("Warning incurred trying to run summary ")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run summary ")
+			message(e)
+		})
+	}
+	invisible(model1)
 }
 
 # ===================================

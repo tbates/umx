@@ -367,18 +367,7 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 		model = omxAssignFirstParameters(model)
 		model = as(model, "MxModelACE") # set class so that S3 plot() dispatches.
 		
-		if(autoRun){
-			tryCatch({
-				model = mxRun(model)
-				umxSummary(model)
-			}, warning = function(w) {
-				message("Warning incurred trying to run model")
-				message(w)
-			}, error = function(e) {
-				message("Error incurred trying to run model")
-				message(e)
-			})
-		}
+		model = xmu_safe_run_summary(model, autoRun = autoRun)
 		
 		return(model)
 	}

@@ -5,11 +5,13 @@
 \title{umxIP: Build and run an Independent pathway twin model}
 \usage{
 umxIPnew(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
-  = 1, c = 1, e = 1), freeLowerA = FALSE, freeLowerC = FALSE,
-  freeLowerE = FALSE, equateMeans = TRUE, dzAr = 0.5, dzCr = 1,
-  correlatedA = FALSE, addStd = TRUE, addCI = TRUE,
+  = 1, c = 1, e = 1), type = c("Auto", "FIML", "cov", "cor", "WLS",
+  "DWLS", "ULS"), weightVar = NULL, equateMeans = TRUE,
+  bVector = FALSE, thresholds = c("deviationBased"), dzAr = 0.5,
+  dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE,
   numObsDZ = NULL, numObsMZ = NULL,
   autoRun = getOption("umx_auto_run"), optimizer = NULL,
+  freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
   suffix = "deprecated")
 }
 \arguments{
@@ -25,12 +27,6 @@ umxIPnew(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{nFac}{How many common factors for a, c, and e. If 1 number number is given, applies to all three.}
-
-\item{freeLowerA}{Whether to leave the lower triangle of A free (default = FALSE).}
-
-\item{freeLowerC}{Whether to leave the lower triangle of C free (default = FALSE).}
-
-\item{freeLowerE}{Whether to leave the lower triangle of E free (default = FALSE).}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
@@ -51,6 +47,12 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
+
+\item{freeLowerA}{Whether to leave the lower triangle of A free (default = FALSE).}
+
+\item{freeLowerC}{Whether to leave the lower triangle of C free (default = FALSE).}
+
+\item{freeLowerE}{Whether to leave the lower triangle of E free (default = FALSE).}
 
 \item{suffix}{Deprecated: use "sep".}
 }
