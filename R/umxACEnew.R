@@ -206,8 +206,8 @@
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 #' ordDVs = c("obese1", "obese2")
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
-#' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
-#' dzData = twinData[twinData$zygosity %in%  "DZFF",]
+#' mzData = twinData[twinData$zygosity %in% "MZFF",] 
+#' dzData = twinData[twinData$zygosity %in% "DZFF",]
 #' mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 #' dzData <- dzData[1:80,]
 #' m1 = umxACEnew(selDVs = c("wt", "obese"), dzData = dzData, mzData = mzData, sep = '')
@@ -368,9 +368,18 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 		model = as(model, "MxModelACE") # set class so that S3 plot() dispatches.
 		
 		if(autoRun){
-			model = mxRun(model, intervals = intervals)
-			umxSummary(model)
+			tryCatch({
+				model = mxRun(model)
+				umxSummary(model)
+			}, warning = function(w) {
+				message("Warning incurred trying to run model")
+				message(w)
+			}, error = function(e) {
+				message("Error incurred trying to run model")
+				message(e)
+			})
 		}
+		
 		return(model)
 	}
 } # end umxACE

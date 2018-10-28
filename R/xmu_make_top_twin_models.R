@@ -460,21 +460,42 @@ xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMat
 #' umxSummary(m1)
 #' plot(m1)
 #' }
-umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
+umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased"), dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, suffix = "deprecated") {
+
 	# TODO implement correlatedA
-	if(suffix != "deprecated"){
-		message("Just a message: but please use 'sep' instead of suffix - suffix is deprecated, and will stop working in 2019")
-		sep = suffix
-	}
-	nSib = 2
+
+	# Allow suffix as a synonym for sep
+	sep = xmu_set_sep_from_suffix(sep= sep, suffix= suffix)
+	nSib = 2 # Number of siblings in a twin pair.
+	# covMethod  = match.arg(covMethod)
+	thresholds = match.arg(thresholds)
+	type = match.arg(type)
 	xmu_twin_check(selDVs = selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
 	# Expand var names
 	selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
 	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	bits    = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
+
+
+	# TODO check covs
+	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
+	
+	if(dzCr == .25 & (name == "IP")){
+		name = "IP_ADE"
+	}
+
+	bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans,
+					type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
 	top     = bits$top
 	MZ      = bits$MZ
 	DZ      = bits$DZ
+	bVector = bits$bVector
+
+	if(bVector){
+		mzWeightMatrix = bits$mzWeightMatrix
+		dzWeightMatrix = bits$dzWeightMatrix
+	}else{
+		mzWeightMatrix = dzWeightMatrix = NULL
+	}
 
 	if(length(nFac) == 1){
 		nFac = c(a = nFac, c = nFac, e = nFac)
@@ -606,7 +627,7 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 		)
 		model = mxModel(model, newTop)
 		if(addCI){
-			model = mxModel(model, mxCI(c('top.ai_std','top.ci_std','top.ei_std', 'top.as_std','top.cs_std','top.es_std')))
+			model = mxModel(model, mxCI(c('top.ai_std', 'top.ci_std', 'top.ei_std', 'top.as_std', 'top.cs_std', 'top.es_std')))
 		}
 	}
 	model  = omxAssignFirstParameters(model) # ensure parameters with the same label have the same start value... means, for instance.
