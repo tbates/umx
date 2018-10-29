@@ -256,6 +256,7 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 
 		# Allow suffix as a synonym for sep
 		sep = xmu_set_sep_from_suffix(sep= sep, suffix= suffix)
+
 		# TODO check covs
 		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
 		
@@ -316,10 +317,10 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 				mxAlgebra(name = "ACE", A+C+E),
 				mxAlgebra(name = "AC" , A+C  ),
 				mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
-				mxAlgebra(rbind (cbind(ACE, AC),
-				                 cbind(AC , ACE)), dimnames = list(selVars, selVars), name = "expCovMZ"),
-				mxAlgebra(rbind (cbind(ACE, hAC),
-				                 cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
+				mxAlgebra(rbind(cbind(ACE, AC),
+				                cbind(AC , ACE)), dimnames = list(selVars, selVars), name = "expCovMZ"),
+				mxAlgebra(rbind(cbind(ACE, hAC),
+				                cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
 			)
 
 		# =====================================
@@ -365,10 +366,8 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 		}
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
-		model = as(model, "MxModelACE") # set class so that S3 plot() dispatches.
-		
+		model = as(model, "MxModelACE") # set class so that S3 plot() dispatches
 		model = xmu_safe_run_summary(model, autoRun = autoRun)
-		
 		return(model)
 	}
 } # end umxACE

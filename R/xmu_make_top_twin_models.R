@@ -311,7 +311,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 			top = mxModel("top", 
 				umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars)),
 				umxThresholdMatrix(allData, selDVs = selVars, thresholds = threshType, verbose = verbose),
-				mxAlgebra(name = "Vtot", A + C + E), # Total variance (redundant but is OK)
+				# mxAlgebra(name = "Vtot", A + C + E), # Total variance (redundant but is OK)
 				umxMatrix("binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
 				umxMatrix("Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
 				mxConstraint(name = "constrain_Bin_var_to_1", binLabels == Unit_nBinx1)
@@ -461,27 +461,41 @@ xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMat
 #' plot(m1)
 #' }
 umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased"), dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, suffix = "deprecated") {
-
 	# TODO implement correlatedA
-
 	# Allow suffix as a synonym for sep
-	sep = xmu_set_sep_from_suffix(sep= sep, suffix= suffix)
+	if(correlatedA){
+		message("I have not implemented correlatedA yet...")
+	}
+
+	sep = xmu_set_sep_from_suffix(sep = sep, suffix = suffix)
+
 	nSib = 2 # Number of siblings in a twin pair.
-	# covMethod  = match.arg(covMethod)
 	thresholds = match.arg(thresholds)
 	type = match.arg(type)
-	xmu_twin_check(selDVs = selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
-	# Expand var names
-	selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
-	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-
+	# covMethod  = match.arg(covMethod)
 
 	# TODO check covs
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
-	
+
+	if(length(nFac) == 1){
+		nFac = c(a = nFac, c = nFac, e = nFac)
+	} else if (length(nFac) != 3){
+		stop("nFac must be either 1 number or 3. You gave me ", length(nFac))
+	}
 	if(dzCr == .25 & (name == "IP")){
 		name = "IP_ADE"
+	}else if(name == "IP"){
+		# Add nFac to base name if no user-set name provided.
+		if (length(nFac) == 1){
+			name = paste0(name, nFac, "fac")
+		}else{
+			name = paste0(name, paste0(c("a", "c", "e"), nFac, collapse = ""))
+		}
 	}
+
+	# Expand var names
+	selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
 
 	bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans,
 					type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
@@ -497,92 +511,55 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 		mzWeightMatrix = dzWeightMatrix = NULL
 	}
 
-	if(length(nFac) == 1){
-		nFac = c(a = nFac, c = nFac, e = nFac)
-	} else if (length(nFac) != 3){
-		stop("nFac must be either 1 number or 3. You gave me ", length(nFac))
+	# Define varStarts ...
+	tmp = xmu_mean_var_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+	varStarts = tmp$varStarts
+
+	if(!is.null(sep)){
+		selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
 	}
-	if(name == "IP"){
-		# Add nFac to base name if no user-set name provided.
-		if (length(nFac) == 1){
-			name = paste0(name, nFac, "fac")
-		}else{
-			name = paste0(name, paste0(c("a", "c", "e"), nFac, collapse = ""))
-		}
-	}
+	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
+	# TODO: umxIP improve start values (hard coded at std type values)
+	top = mxModel(top,
+		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
+		# NB: top already has the means model and thresholds matrix added if necessary  - see above
+		# Additive, Common, and Unique environmental paths
+		# Matrices ac, cc, and ec to store a, c, and e path coefficients for independent general factors
+		umxMatrix("ai", "Full", nVar, nFac['a'], free = TRUE, values = .6, jiggle = .05), # latent common factor Additive genetic path 
+		umxMatrix("ci", "Full", nVar, nFac['c'], free = TRUE, values = .0, jiggle = .05), # latent common factor Common #environmental path coefficient
+		umxMatrix("ei", "Full", nVar, nFac['e'], free = TRUE, values = .6, jiggle = .05), # latent common factor Unique environmental path #coefficient
+		# Matrices as, cs, and es to store a, c, and e path coefficients for specific factors
+		umxMatrix("as", "Lower", nVar, nVar, free=TRUE, values=.6, jiggle=.05), # Additive genetic path 
+		umxMatrix("cs", "Lower", nVar, nVar, free=TRUE, values=.0, jiggle=.05), # Common environmental path 
+		umxMatrix("es", "Lower", nVar, nVar, free=TRUE, values=.6, jiggle=.05), # Unique environmental path.
 
-	if(correlatedA){
-		message("I have not implemented correlatedA yet...")
-	}
-	
-	dataType = umx_is_cov(dzData)
+		umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+		umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 
-	if(dataType == "raw") {
-		if(!all(is.null(c(numObsMZ, numObsDZ)))){
-			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
-		}
-		# Drop any unused columns from mz and dzData
-		mzData = mzData[, selDVs, drop = FALSE]
-		dzData = dzData[, selDVs, drop = FALSE]
-		if(any(umx_is_ordered(mzData))){
-			stop("some selected variables are factors or ordinal... I can only handle continuous variables so far... sorry")
-		}
-	} else if(dataType %in% c("cov", "cor")){
-		if(is.null(numObsMZ)){ stop(paste0("You must set numObsMZ with ", dataType, " data"))}
-		if(is.null(numObsDZ)){ stop(paste0("You must set numObsDZ with ", dataType, " data"))}
-		het_mz = umx_reorder(mzData, selDVs)
-		het_dz = umx_reorder(dzData, selDVs)
-		stop("COV not fully implemented yet for IP... Not sure if there's any demand, so email me if you see this")
-	} else {
-		stop("Datatype ", omxQuotes(dataType), " not understood")
-	}
+		# Multiply by each path coefficient by its inverse to get variance component
+		# Sum the squared independent and specific paths to get total variance in each component
+		mxAlgebra(name = "A", ai%*%t(ai) + as%*%t(as) ), # Additive genetic variance
+		mxAlgebra(name = "C", ci%*%t(ci) + cs%*%t(cs) ), # Common environmental variance
+		mxAlgebra(name = "E", ei%*%t(ei) + es%*%t(es) ), # Unique environmental variance
 
-	nVar = length(selDVs)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
-	obsMZmeans = colMeans(mzData, na.rm = TRUE);
-	model = mxModel(name,
-		mxModel("top",
-			umxLabel(mxMatrix("Full", 1, nVar*nSib, free=T, values=obsMZmeans, dimnames=list("means", selDVs), name="expMean")), # Means 
-			# (not yet equated for the two twins)
-			# Matrices ac, cc, and ec to store a, c, and e path coefficients for independent general factors
-			umxMatrix("ai", "Full", nVar, nFac['a'], free=TRUE, values=.6, jiggle=.05), # latent common factor Additive genetic path 
-			umxMatrix("ci", "Full", nVar, nFac['c'], free=TRUE, values=.0, jiggle=.05), # latent common factor Common #environmental path coefficient
-			umxMatrix("ei", "Full", nVar, nFac['e'], free=TRUE, values=.6, jiggle=.05), # latent common factor Unique environmental path #coefficient
-			# Matrices as, cs, and es to store a, c, and e path coefficients for specific factors
-			umxMatrix("as", "Lower", nVar, nVar, free=TRUE, values=.6, jiggle=.05), # Additive genetic path 
-			umxMatrix("cs", "Lower", nVar, nVar, free=TRUE, values=.0, jiggle=.05), # Common environmental path 
-			umxMatrix("es", "Lower", nVar, nVar, free=TRUE, values=.6, jiggle=.05), # Unique environmental path.
+		mxAlgebra(name = "ACE", A+C+E),
+		mxAlgebra(name = "AC" , A+C  ),
+		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
+		mxAlgebra(rbind (cbind(ACE, AC), 
+		                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name = "expCovMZ"),
+		mxAlgebra(rbind (cbind(ACE, hAC),
+		                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name = "expCovDZ"),
 
-			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
-			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
-
-			# Multiply by each path coefficient by its inverse to get variance component
-			# Sum the squared independent and specific paths to get total variance in each component
-			mxAlgebra(name = "A", ai%*%t(ai) + as%*%t(as) ), # Additive genetic variance
-			mxAlgebra(name = "C", ci%*%t(ci) + cs%*%t(cs) ), # Common environmental variance
-			mxAlgebra(name = "E", ei%*%t(ei) + es%*%t(es) ), # Unique environmental variance
-
-			mxAlgebra(name = "ACE", A+C+E),
-			mxAlgebra(name = "AC" , A+C  ),
-			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
-			mxAlgebra(rbind (cbind(ACE, AC), 
-			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name = "expCovMZ"),
-			mxAlgebra(rbind (cbind(ACE, hAC),
-			                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name = "expCovDZ"),
-
-			# Algebra to compute total variances and standard deviations (diagonal only)
-			mxMatrix("Iden", nrow = nVar, name = "I"),
-			mxAlgebra(solve(sqrt(I * ACE)), name = "iSD")
-		),
-		mxModel("MZ", mxData(mzData, type = "raw"),
-			mxExpectationNormal("top.expCovMZ", "top.expMean"), 
-			mxFitFunctionML()
-		),
-		mxModel("DZ", mxData(dzData, type = "raw"), 
-			mxExpectationNormal("top.expCovDZ", "top.expMean"), 
-			mxFitFunctionML()
-		),
-		mxFitFunctionMultigroup(c("MZ", "DZ"))
+		# Algebra to compute total variances and standard deviations (diagonal only)
+		mxMatrix("Iden", nrow = nVar, name = "I"),
+		mxAlgebra(solve(sqrt(I * ACE)), name = "iSD")
 	)
+
+	# =====================================
+	# =  Assemble models into supermodel  =
+	# =====================================
+	model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix)
+
 	if(!freeLowerA){
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
@@ -632,20 +609,7 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	}
 	model  = omxAssignFirstParameters(model) # ensure parameters with the same label have the same start value... means, for instance.
 	model = as(model, "MxModelIP")
-
-	if(autoRun){
-		tryCatch({
-			model = mxRun(model)
-			umxSummary(model)
-		}, warning = function(w) {
-			message("Warning incurred trying to run model")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run model")
-			message(e)
-		})
-	}
-
+	model = xmu_safe_run_summary(model, autoRun = autoRun)
 	return(model)
 } # end umxIP
 
