@@ -5,7 +5,7 @@
 \title{Take a long twin-data file and make it wide (one family per row)}
 \usage{
 umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
-  vars2keep = NA, passalong = NA)
+  vars2keep = NA, passalong = NA, twinIDs2keep = NA)
 }
 \arguments{
 \item{data}{The original (long-format) data file}
@@ -19,6 +19,8 @@ umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
 \item{vars2keep}{= The variables you wish to analyse (these will be renamed with paste0("_T", twinID)}
 
 \item{passalong}{= Variables you wish to pass-through (keep, even though not twin vars)}
+
+\item{twinIDs2keep}{= If NA (the default) all twinIDs are kept, else only those listed here. Useful to drop sibs.}
 }
 \value{
 \itemize{

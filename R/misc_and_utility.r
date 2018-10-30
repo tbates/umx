@@ -4632,6 +4632,7 @@ umx_rot <- function(vec){
 #' @param zygosity Typically MZFF, DZFF MZMM, DZMM DZOS
 #' @param vars2keep = The variables you wish to analyse (these will be renamed with paste0("_T", twinID)
 #' @param passalong = Variables you wish to pass-through (keep, even though not twin vars)
+#' @param twinIDs2keep = If NA (the default) all twinIDs are kept, else only those listed here. Useful to drop sibs.
 #' @return - dataframe in wide format
 #' @export
 #' @family Twin Data functions
@@ -4666,7 +4667,7 @@ umx_rot <- function(vec){
 #' # Keep bmi and wt, and pass through 'cohort'
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
 #'   vars2keep = c("bmi", "wt"), passalong = "cohort")
-umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA, passalong = NA) {
+umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA, passalong = NA, twinIDs2keep=NA) {
 	IDVars = c(famID, twinID, zygosity)
 	umx_check_names(IDVars, data = data, die = TRUE)
 
@@ -4684,7 +4685,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	}
 	
 	levelsOfTwinID = unique(data[,twinID])
-	if(length(levelsOfTwinID)>10){
+	if(length(levelsOfTwinID) > 10){
 		stop("Found ", length(levelsOfTwinID), " levels of twinID. That seems too many??? should be c(1,2,50,51) or similar?")
 	} else {
 		message("Found ", length(levelsOfTwinID), " levels of twinID: ", omxQuotes(levelsOfTwinID))
@@ -4693,6 +4694,19 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	if(NA %in% levelsOfTwinID){
 	  message("Some subjects have NA as twinID!")
 	}
+	if(!all(is.na(twinIDs2keep))){
+		if(any(!twinIDs2keep %in% levelsOfTwinID)){
+			stop("One or more twinIDs you reuqested to keep do not occur in the data:", 
+				omxQuotes(twinIDs2keep[which(!(twinIDs2keep %in% levelsOfTwinID))])
+			)
+		} else {
+			dropped = levelsOfTwinID[!(levelsOfTwinID %in% twinIDs2keep)]
+			message("Dropped twinIDs: ", omxQuotes(dropped))
+			message("Keeping twinIDs: ", omxQuotes(twinIDs2keep), ", Dropping ", sum(data[,twinID] %in% dropped), " rows out of ", nrow(data))
+			levelsOfTwinID = twinIDs2keep
+		}
+	}
+
 	# levelsOfTwinID = c(1,2,50,51)
 
 	if(anyNA(passalong)){
