@@ -2537,12 +2537,12 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 		# new =
 		# devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
-		# devtools::check_rhub(pkg = pkg)
+		devtools::check_rhub(pkg = pkg)
 	} else if (what == "release"){
 		devtools::release(pkg = pkg, check = check) # spelling = NULL		 
 	} else if (what == "spell"){
-		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
-		# devtools::spell_check(pkg = pkg)
+		# spelling::spell_check_package
+		spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
 	}
 }
 
@@ -3956,11 +3956,15 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 
 #' Scale data columns, skipping non-scalable columns
 #'
-#' umx_scale applies scale to a data.frame. It scale numeric columns, and is smart enough
-#' to skip non-scalable columns (string, factor, etc.).
-#'
-#' Also strips-off the attributes which scale adds ("scaled:center" and 
-#' "scaled:scale" (set attr= TRUE) to keep these.
+#' @description 
+#' `umx_scale` applies scale to the columns of a data.frame. By default it scales all numeric columns,
+#' and is smart enough to skip non-scalable columns (strings, factors, etc.).
+#' 
+#' You can also select which columns to convert.
+#' This is useful when you want to avoid numeric clumns which are actually factors.
+#' 
+#' *note*: By default, the attributes which scale adds ("scaled:center" and 
+#' "scaled:scale" removed to leave nice numeric columns. Set `attr= TRUE` to preserve these.
 #'
 #' @param df A dataframe to scale (or a numeric vector)
 #' @param varsToScale (leave blank to scale all)
@@ -3969,9 +3973,10 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @param attr to strip off the attributes scale creates (FALSE by default)
 #' @return - new dataframe with scaled variables
 #' @export
-#' @seealso umx_scale_wide_twin_data
+#' @seealso umx_scale_wide_twin_data scale
 #' @family Miscellaneous Utility Functions
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' data(twinData) 
 #' df = umx_scale(twinData, varsToScale = c("wt1", "wt2"))

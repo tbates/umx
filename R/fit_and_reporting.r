@@ -3804,7 +3804,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' x = cor.test(~ wt1 + wt2, data = mzData)
 #' umxAPA(x)
 #'
-umxAPA <- function(obj, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
+umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
 	report = match.arg(report)
 	test = match.arg(test)
 	if("htest" == class(obj)[[1]]){

@@ -15,7 +15,9 @@ library(umx)
 ?umx
 ```
 
-The best way to learn what is on offer is to use the help ('?umx' works) and the online tutorial: [tbates.github.io](http://tbates.github.io)
+Most functions have extensive and practical examples (even figures for the twin models): so USE THE HELP :-).
+
+See what is on offer with '?umx'. There are online tutorials at  [tbates.github.io](http://tbates.github.io).
 
 `umx` stands for "user" OpenMx functions. It provides over 100 functions from high-level umxRAM and umxPath functions that make [Structural Equation Modeling](http://en.wikipedia.org/wiki/Structural_equation_modeling) in R straightforward, to low-level functions to automate activities such as labelling, setting start values etc.,
 
@@ -29,7 +31,7 @@ Some highlights include:
 	* `plot(model, std=T, digits = 3, file = "name")` # *Graphical, editable output of model in your browser!*
 3. Modify models
 	* `umxModify()` *# Modify and run a model. You can add objects, drop or add paths, including by regular-expression label matching), re-name the model, re-run, and even return the comparison. All in 1 line *
-	* `umxParameters(m1, "below", .1, pattern="_to_"))` *# A powerful assistant to get labels from a model (e.g. all 'to' params, below .1 in value)*
+	* `parameters(m1, "below", .1, pattern="_to_"))` *# A powerful assistant to get labels from a model (e.g. all 'to' params, below .1 in value)*
 4. Twin modeling!
 	* `umxACE()` *# Twin ACE modeling with aplomb* paths are labeled! Works with `plot()` and `umxSummary`!
 	* `umxCP()`, `umxIP()`, `umxGxE()`, `umxCP()` …

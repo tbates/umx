@@ -19,15 +19,19 @@ umx_scale(df, varsToScale = NULL, coerce = FALSE, attr = FALSE,
 \item{verbose}{Whether to report which columns were scaled (default FALSE)}
 }
 \value{
-- new dataframe with scaled variables
+\itemize{
+\item new dataframe with scaled variables
+}
 }
 \description{
-umx_scale applies scale to a data.frame. It scale numeric columns, and is smart enough
-to skip non-scalable columns (string, factor, etc.).
-}
-\details{
-Also strips-off the attributes which scale adds ("scaled:center" and 
-"scaled:scale" (set attr= TRUE) to keep these.
+\code{umx_scale} applies scale to the columns of a data.frame. By default it scales all numeric columns,
+and is smart enough to skip non-scalable columns (strings, factors, etc.).
+
+You can also select which columns to convert.
+This is useful when you want to avoid numeric clumns which are actually factors.
+
+\emph{note}: By default, the attributes which scale adds ("scaled:center" and
+"scaled:scale" removed to leave nice numeric columns. Set \code{attr= TRUE} to preserve these.
 }
 \examples{
 data(twinData) 
@@ -36,10 +40,12 @@ df = umx_scale(twinData,  attr= TRUE)
 plot(wt1 ~ wt2, data = df)
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
-umx_scale_wide_twin_data
+umx_scale_wide_twin_data scale
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
