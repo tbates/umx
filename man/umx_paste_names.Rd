@@ -13,11 +13,11 @@ umx_paste_names(varNames, sep = "", suffixes = 1:2, covNames = NULL,
 
 \item{sep}{A string separating the name and the twin suffix, e.g. "_T" (default is "")}
 
-\item{suffixes}{a list of terminal suffixes differentiating the twins default = c("1", "2"))}
+\item{suffixes}{a list of terminal suffixes differentiating the twins default = 1:2)}
 
-\item{covNames}{a list of \emph{base} names for covariates (sorted last in list), e.g c("age", "sex")}
+\item{covNames}{a list of \emph{base} names for covariates (to be sorted last in list), e.g c("age", "sex")}
 
-\item{prefix}{a string to pre=pend to each label, e.g c("mean_age", "mean_sex")}
+\item{prefix}{a string to prepend to each label, e.g "mean" -> "mean_age" "mean_sex"}
 }
 \value{
 \itemize{

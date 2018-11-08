@@ -2623,9 +2623,9 @@ umx_msg <- function(x) {
 #' @aliases tvars
 #' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
 #' @param sep A string separating the name and the twin suffix, e.g. "_T" (default is "")
-#' @param suffixes a list of terminal suffixes differentiating the twins default = c("1", "2"))
-#' @param covNames a list of _base_ names for covariates (sorted last in list), e.g c("age", "sex")
-#' @param prefix a string to pre=pend to each label, e.g c("mean_age", "mean_sex")
+#' @param suffixes a list of terminal suffixes differentiating the twins default = 1:2)
+#' @param covNames a list of _base_ names for covariates (to be sorted last in list), e.g c("age", "sex")
+#' @param prefix a string to prepend to each label, e.g "mean" -> "mean_age" "mean_sex"
 #' @return - vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
 #' @export
 #' @family String Functions

@@ -577,11 +577,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
 		model = as(model, "MxModelACEv") # set class so that S3 plot() dispatches.
-		
-		if(autoRun){
-			model = mxRun(model)
-			umxSummary(model)
-		}
+		model = xmu_safe_run_summary(model, autoRun = autoRun, summary = TRUE, comparison = FALSE)
 		return(model)
 	}
 } # end umxACEvv
