@@ -68,43 +68,43 @@ umxPlotCPnew <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 	out = list(str = "", latents = c(), manifests = c())
 	# Looks at matrices, not labels	
 	# Process a_cp matrix: latents into common paths
-		# 1. On the diag
-		# from   = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
-		# out = list(str = "", latents = c(), manifests = c())
-		out = umx_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
-		out = umx_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
-		out = umx_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
-		# GOOD
+	# 1. On the diag
+	# from   = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
+	# out = list(str = "", latents = c(), manifests = c())
+	out = umx_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
+	out = umx_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
+	out = umx_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
+	# GOOD
 
-		# 2. On the lower
-		# from   = "<name><rowNum>"
-		# target = "<name><colNum>"
-		out = umx_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-		out = umx_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-		out = umx_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	# 2. On the lower
+	# from   = "<name><rowNum>"
+	# target = "<name><colNum>"
+	out = umx_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = umx_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = umx_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
 	# Process "cp_loadings" nManifests * nFactors matrix: latents into common paths.
-		# out = list(str = "", latents = c(), manifests = c())
-		out = umx_mat2dot(model$top$cp_loadings, cells= "any", selDVs= selDVs, from= "cols", fromLabel= "common", type= "latent", p= out)
-		# from    = "common<c>"
-		# target  = selDVs[row]
-		# latents = append(latents, from)
+	# out = list(str = "", latents = c(), manifests = c())
+	out = umx_mat2dot(model$top$cp_loadings, cells= "any", selDVs= selDVs, from= "cols", fromLabel= "common", type= "latent", p= out)
+	# from    = "common<c>"
+	# target  = selDVs[row]
+	# latents = append(latents, from)
 	# Process "as" matrix
-		# out = list(str = "", latents = c(), manifests = c())
-		out = umx_mat2dot(model$top$as, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
-		out = umx_mat2dot(model$top$cs, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
-		out = umx_mat2dot(model$top$es, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
-		# target  = selDVs[as.numeric(rowNum)]
+	# out = list(str = "", latents = c(), manifests = c())
+	out = umx_mat2dot(model$top$as, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
+	out = umx_mat2dot(model$top$cs, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
+	out = umx_mat2dot(model$top$es, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
+	# target  = selDVs[as.numeric(rowNum)]
 	# Process "expMean" 1 * nVar matrix
-		if(means){
-			# out = list(str = "", latents = c(), manifests = c())
-			out = umx_mat2dot(model$top$expMean, cells = "left", selDVs = selDVs, from = "rows", fromLabel = "one", type = "latent", p = out)
-			# from = "one"
-			# target = selDVs[c]
-		}
+	if(means){
+		# out = list(str = "", latents = c(), manifests = c())
+		out = umx_mat2dot(model$top$expMean, cells = "left", selDVs = selDVs, from = "rows", fromLabel = "one", type = "latent", p = out)
+		# from = "one"
+		# target = selDVs[c]
+	}
 	# Process "_dev" (where are these?)
-		# TODO umxPlotCP could tabulate thresholds?
-		# "_dev[0-9]"
-		# cat(out$str)
+	# TODO umxPlotCP could tabulate thresholds?
+	# "_dev[0-9]"
+	# cat(out$str)
 		
 	preOut = "# Latents\n"
 	latents = unique(out$latents) # TODO unique already done
