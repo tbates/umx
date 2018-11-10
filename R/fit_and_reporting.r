@@ -2545,15 +2545,9 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	latents = c();
 	cSpecifics = c();
 	for(thisParam in names(parameterKeyList) ) {
-		# if I was smart, I'd look at the matrices, not the labels.
-		# would need to examine:
-		# 1. a_cp_matrix = A latent (and correlations among latents)
-		# 	* these go from a_cp n=row TO common n= row
-		# 	* or for off diag, from a_cp n=col TO a_cp n= row
-		# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "diag", type = "latent")
-		# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "lower", arrows = "both", type = "latent", strIn = out)
-		# 2 same again for c_cp_matrix, e_cp_matrix
-		# 3. cp_loadings common factor loadings
+		# TODO: plot functions are in the process of being made more intelligent. see: umxPlotCPnew()
+		# This version looks at labels. The new versions will loos directly at the relevant matrices
+		# this breaks the dependency on label structure, allowing arbitrary and more flexible labelling
 		# Top level a c e inputs to common factors
 		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { 
 			# Match cp latents, e.g. thisParam = "c_cp_r1c3" (note, row = factor #)
@@ -2574,7 +2568,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			target  = selDVs[as.numeric(targetindex)]			
 			latents = append(latents, from)
 			cSpecifics = append(cSpecifics, from);
-		} else if (grepl("^expMean", thisParam)) { # means probably expMean_r1c1
+		} else if (grepl("^(exp)?[Mm]ean", thisParam)) { # means probably expMean_r1c1
 			grepStr = '(^.*)_r([0-9]+)c([0-9]+)'
 			from    = "one"
 			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl= TRUE))

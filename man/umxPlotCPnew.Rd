@@ -5,7 +5,8 @@
 \title{Draw and display a graphical figure of Common Pathway model}
 \usage{
 umxPlotCPnew(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, format = c("current", "graphviz", "DiagrammeR"), ...)
+  std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
+  SEstyle = FALSE, ...)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link{mxModel}} to display graphically}
@@ -19,6 +20,8 @@ umxPlotCPnew(x = NA, file = "name", digits = 2, means = FALSE,
 \item{std}{Whether to standardize the model (defaults to TRUE)}
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
+
+\item{SEstyle}{report "b (se)" instead of b CI95[l, u] (Default = FALSE)}
 
 \item{...}{Optional additional parameters}
 }

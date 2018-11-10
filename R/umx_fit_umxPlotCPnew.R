@@ -11,6 +11,7 @@
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR") 
+#' @param SEstyle report "b (se)" instead of b CI95[l, u] (Default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
@@ -34,11 +35,24 @@
 #' umxPlotCPnew(m1)
 #' plot(m1) # no need to remember a special name: plot works fine!
 #' }
-umxPlotCPnew <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), ...) {
+umxPlotCPnew <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, ...) {
 	if(!class(x) == "MxModelCP"){
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
-	# parameterKeyList = omxGetParameters(model)
+
+	# new plot functions no longer dependend on labels. This means they need to know about the correct
+	# matrices to examine.
+	# In this case, would need to examine:
+	# 1. a_cp_matrix = A latent (and correlations among latents)
+	# 	* these go from a_cp n=row TO common n= row
+	# 	* or for off diag, from a_cp n=col TO a_cp n= row
+	# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "diag", type = "latent")
+	# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "lower", arrows = "both", type = "latent", strIn = out)
+	# 2 same again for c_cp_matrix, e_cp_matrix
+	# 3. cp_loadings common factor loadings
+
+	# no longer used: parameterKeyList = omxGetParameters(model)
+
 	format = match.arg(format)
 	model = x # just to emphasise that x has to be a model 
 	if(std){
