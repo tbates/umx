@@ -63,7 +63,9 @@ of multivariate normality. Covariates like age, which are perfectly correlated i
 Covariates like sex, which are ordinal, violate the normality assumption.
 
 The following figure shows how the ACE model with random covariates appears as a path diagram:
-\figure{ACEcovVarianceModel.png}
+
+\if{html}{\figure{ACEcovVarianceModel.png}{options: width="50\%" alt="Figure: ACEcovVarianceModel.png"}}
+\if{latex}{\figure{ACEcovVarianceModel.pdf}{options: width=7cm}}
 }
 \examples{
 require(umx)

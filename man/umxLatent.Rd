@@ -42,10 +42,14 @@ Note, a reflective latent on its own is not identified as a complete model.
 Fixing manifest variances at their observed values can allow this case.
 
 Reflective (manifests reflect the value of the latent variable)
-\figure{reflective.png}
+
+\if{html}{\figure{reflective.png}{options: width="50\%" alt="Figure: reflective.png"}}
+\if{latex}{\figure{reflective.pdf}{options: width=7cm}}
 
 Formative (manifests provide the value of the latent variable)
-\figure{formative.png}
+
+\if{html}{\figure{formative.png}{options: width="50\%" alt="Figure: formative.png"}}
+\if{latex}{\figure{formative.pdf}{options: width=7cm}}
 }
 \examples{
 library(umx)

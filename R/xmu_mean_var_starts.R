@@ -52,10 +52,10 @@ xmu_mean_var_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, e
 		# Make wide again
 		meanStarts = c(meanStarts, meanStarts)
 		if(equateMeans){
-			meanLabels = paste0("mean", selVars[1:nVar]) # Names recycled for twin 2
+			meanLabels = paste0("expMean_", selVars[1:nVar]) # Names recycled for twin 2
 			meanLabels = c(meanLabels, meanLabels)
 		} else {
-			meanLabels = paste0("mean", selVars)
+			meanLabels = paste0("expMean_", selVars)
 		}
 		varStarts = umx_var(longData, format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 	} else if(dataType %in% c("cov", "cor")){

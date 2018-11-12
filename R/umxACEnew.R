@@ -14,22 +14,23 @@
 #' 
 #' The following figure shows how the ACE model appears as a path diagram (for one variable):
 #' 
-#' \figure{ACE_full_univariate.png}
+#' \if{html}{\figure{ACE_full_univariate.png}{options: width="50\%" alt="Figure: ACE_full_univariate.png"}}
+#' \if{latex}{\figure{ACE_full_univariate.pdf}{options: width=7cm}}
 #'
 #' `umxACE` allows multivariate analyses, and this brings us to the Cholesky part of the model.
-#' A Cholesky decomposition breaks
-#' 
-#' The Cholesky or lower-triangle decomposition allows a model which is both sure to be 
-#' solvable, and also to account for all the variance (with some restrictions) in the data. The variance-covariance
-#' matrix of the raw data is recovered as the product of the lower Cholesky and its transform.
 #' 
 #' This model creates as many latent A C and E variables as there are phenotypes, and, moving 
-#' from left to right, decomposes the variance in each component into successively restricted 
-#' factors. The following figure shows how the ACE model appears as a path diagram: See the details section below
-#' for additional information on using umxACE.
+#' from left to right, decomposes the variance in each manifest into successively restricted 
+#' factors. The following figure shows how the ACE model appears as a path diagram:
 #' 
+#' \if{html}{\figure{ACE_matrix.png}{options: width="50\%" alt="Figure: ACE_matrix.png"}}
+#' \if{latex}{\figure{ACE_matrix.pdf}{options: width=7cm}}
 #' 
-#' \figure{ACE.png}
+#' In this model, the variance-covariance matrix of the raw data
+#' is recovered as the product of the lower Cholesky and its transform.
+#' 
+#' This Cholesky or lower-triangle decomposition allows a model which is both sure to be 
+#' solvable, and also to account for all the variance (with some restrictions) in the data.
 #' 
 #' This figure also contains the key to understanding how to modify models that `umxACE` produces.
 #' read the "Matrices and Labels in ACE model" section in details below...
@@ -42,7 +43,13 @@
 #' The function flexibly accepts raw data, and also summary covariance data 
 #' (in which case the user must also supple numbers of observations for the two input data sets).
 #' 
-#' TODO: Document type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
+#' The `type` parameter can select how you want the model data treated.
+#' "FIML" is the normal treatment. "cov" and "cor" will turn raw data into cor data for analyis, or
+#' check that you've provided cor data as input.
+#' 
+#' Types "WLS", "DWLS", and "ULS" will process raw data into WLS data of these types.
+#' 
+#' The default, "Auto" will treat data as the type they are provided as.
 #' 
 #' \strong{Ordinal Data}
 #' In an important capability, the model transparently handles ordinal (binary or multi-level
@@ -71,7 +78,9 @@
 #'
 #'     \code{m2 = umxModify(m1, update = "c_r3c2")}
 #'	
-#' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+#' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for 
+#' each variable for twin 1, followed by each variable for twin 2.
+#' 
 #' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 #'
 #' \code{m1$top$expMean$labels[1, 4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}

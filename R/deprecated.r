@@ -14,7 +14,7 @@
 #   limitations under the License.
 
 
-#' umxCP: Build and run a Common pathway twin model
+#' umxCPold: Build and run a Common pathway twin model
 #'
 #' Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
 #' 

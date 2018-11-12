@@ -26,7 +26,9 @@
 #' 
 #' The following figure shows the A components of a trivariate ACEv model:
 #' 
-#' \figure{ACEv.png}
+#'
+#' \if{html}{\figure{ACEv.png}{options: width="50\%" alt="Figure: ACEv.png"}}
+#' \if{latex}{\figure{ACEv.pdf}{options: width=7cm}}
 #' 
 #' *NOTE*: This function does not use the Cholesky decomposition. Instead it directly models variance.
 #' This ensures unbiased type-I error rates. It means that occasionally

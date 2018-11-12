@@ -54,7 +54,8 @@ Equivalently, you can also give a list of factor names:
 
 The factor model is implemented as a structural equation model, e.g.
 
-\figure{umxEFA.png}
+\if{html}{\figure{umxEFA.png}{options: width="50\%" alt="Figure: umxEFA.png"}}
+\if{latex}{\figure{umxEFA.pdf}{options: width=7cm}}
 
 You can request \code{scores} from the model. Unlike factanal, these can cope with missing data.
 

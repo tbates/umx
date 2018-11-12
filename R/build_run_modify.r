@@ -228,11 +228,51 @@ umxModel <- function(...) {
 	stop("You probably meant umxRAM?, not umxModel?")
 }
 
-#' Easy-to-use RAM model maker.
+#' Easier path-based SEM modeling.
 #'
-#' umxRAM expedites creation of RAM models, still without doing invisible things to the model.
+#' @description
+#' `umxRAM` expedites creation of path-based models, still without doing invisible things to the model.
 #' 
-#' As with \code{\link{mxModel}}, umxRAM build a model. Unlike mxModel:
+#' Here's an example that makes a model of miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
+#' using `mtcars` data.
+#' 
+#' ```Rsplus
+#' m1 = umxRAM("tim", data = mtcars,
+#' 	umxPath(c("wt", "disp"), to = "mpg"),
+#' 	umxPath("wt", with = "disp"),
+#' 	umxPath(v.m. = c("wt", "disp", "mpg"))
+#' )
+#' ```
+#' As you can see, most of the work is done by [umxPath()]. `umxRAM` just wraps these paths up, takes the `data =` input, and 
+#' then internally sets up all the labels and start values for the model, runs it, displays a summary, and a plot!
+#' 
+#' Try it, or one of the several models in the examples at the bottom of this page.
+#' 
+#' A common error is to include data in the main list, a bit like
+#' saying `lm(y ~ x + df)` instead of `lm(y ~ x, data = dd)`.
+#' 
+#' **nb**: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
+#' 
+#' *note*: If you are at the "sketching" stage of theory consideration, `umxRAM` supports
+#' a simple vector of manifest names to work with.
+#' 
+#' ```Rsplus
+#' m1 = umxRAM("sketch", data = c("A", "B", "C"),
+#' 	umxPath("A", to = "B"),
+#' 	umxPath("B", with = "C"),
+#' 	umxPath(v.m. = c("A", "B", "C"))
+#' )
+#' ```
+#' Will create this figure:
+#' 
+#' \if{html}{\figure{sketch.png}{options: width="50\%" alt="Figure: sketch.png"}}
+#' \if{latex}{\figure{sketch.pdf}{options: width=7cm}}
+#' 
+#' @details
+#' 
+#' \strong{Comparison with mxModel)}
+#' 
+#' umxRAM differs from mxModel in the following ways:
 #' \enumerate{
 #' \item{You don't need to set type = "RAM"}
 #' \item{You don't need to list manifestVars (they are detected from path usage)}
@@ -242,18 +282,10 @@ umxModel <- function(...) {
 #' \item{You don't need to add labels: paths are automatically labelled "a_to_b" etc.}
 #' \item{You don't need to set start values, they will be done for you.}
 #' \item{You don't need to mxRun the model: it will run automatically, and print a summary}
+#' \item{You don't need to run summary: weith autoRun, it will print a summary.}
+#' \item{You get a plot of the model.}
 #' }
 #' 
-#' As is conventional in base-R functions like \code{\link{lm}}, \code{\link{umxRAM}} expects data in a data = parameter
-#' A common error is to include data in the main list, a bit like
-#' saying lm(y ~ x + df) instead of lm(y ~ x, data = dd).
-#' 
-#' **nb**: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
-#' 
-#' *note*: If you are at the "sketching" stage of theory consideration, umxRAM supports
-#' a simple vector of manifest names to work with.
-#' 
-#' @details
 #' \strong{Comparison with other software}
 #' 
 #' **Start values**. Currently, manifest variable means are set to the observed means, residual variances are set to 80% 
@@ -261,6 +293,7 @@ umxModel <- function(...) {
 #' and single-headed paths are set to a positive starting value (currently .9).
 #' *note*: The start-value strategy is subject to improvement, and will be documented in the help for umxRAM.
 #' 
+#' **Blackbox/default or auto-added paths**. 
 #' Some other SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored 
 #' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 #' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
@@ -842,7 +875,9 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' testing, and visualizing  G xE (or C or E x E) interaction forms.
 #' 
 #' The following figure the GxE model as a path diagram:
-#' \figure{GxE.png}
+#' 
+#' \if{html}{\figure{GxE.png}{options: width="50\%" alt="Figure: GxE.png"}}
+#' \if{latex}{\figure{GxE.pdf}{options: width=7cm}}
 #'
 #' @param name The name of the model (defaults to "G_by_E")
 #' @param selDVs The dependent variable (e.g. IQ)
@@ -1259,22 +1294,23 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' 
 #' The following figure shows how the ACE model appears as a path diagram (for one variable):
 #' 
-#' \figure{ACE_full_univariate.png}
+#' \if{html}{\figure{ACE_full_univariate.png}{options: width="50\%" alt="Figure: ACE_full_univariate.png"}}
+#' \if{latex}{\figure{ACE_full_univariate.pdf}{options: width=7cm}}
 #'
 #' `umxACE` allows multivariate analyses, and this brings us to the Cholesky part of the model.
-#' A Cholesky decomposition breaks
-#' 
-#' The Cholesky or lower-triangle decomposition allows a model which is both sure to be 
-#' solvable, and also to account for all the variance (with some restrictions) in the data. The variance-covariance
-#' matrix of the raw data is recovered as the product of the lower Cholesky and its transform.
 #' 
 #' This model creates as many latent A C and E variables as there are phenotypes, and, moving 
-#' from left to right, decomposes the variance in each component into successively restricted 
-#' factors. The following figure shows how the ACE model appears as a path diagram: See the details section below
-#' for additional information on using umxACE.
+#' from left to right, decomposes the variance in each manifest into successively restricted 
+#' factors. The following figure shows how the ACE model appears as a path diagram:
 #' 
+#' \if{html}{\figure{ACE_matrix.png}{options: width="50\%" alt="Figure: ACE_matrix.png"}}
+#' \if{latex}{\figure{ACE_matrix.pdf}{options: width=7cm}}
 #' 
-#' \figure{ACE.png}
+#' In this model, the variance-covariance matrix of the raw data
+#' is recovered as the product of the lower Cholesky and its transform.
+#' 
+#' This Cholesky or lower-triangle decomposition allows a model which is both sure to be 
+#' solvable, and also to account for all the variance (with some restrictions) in the data.
 #' 
 #' This figure also contains the key to understanding how to modify models that `umxACE` produces.
 #' read the "Matrices and Labels in ACE model" section in details below...
@@ -1871,7 +1907,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' Covariates like sex, which are ordinal, violate the normality assumption.
 #'
 #' The following figure shows how the ACE model with random covariates appears as a path diagram:
-#' \figure{ACEcovVarianceModel.png}
+#' 
+#' \if{html}{\figure{ACEcovVarianceModel.png}{options: width="50\%" alt="Figure: ACEcovVarianceModel.png"}}
+#' \if{latex}{\figure{ACEcovVarianceModel.pdf}{options: width=7cm}}
 #'
 #' 
 #' @param name The name of the model (defaults to"ACE").
@@ -2187,7 +2225,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 
 #' Common-pathway path diagram:
 #' 
-#' \figure{CP.png}
+#' \if{html}{\figure{CP.png}{options: width="50\%" alt="Figure: CP.png"}}
+#' \if{latex}{\figure{CP.pdf}{options: width=7cm}}
 #' 
 #' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
 #' 
@@ -2484,13 +2523,13 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 	return(model)
 } # end umxCP
 
-
-
 #' umxIP: Build and run an Independent pathway twin model
 #'
 #' Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model)
 #' The following figure shows the IP model diagrammatically:
-#' \figure{IP.png}
+#' 
+#' \if{html}{\figure{IP.png}{options: width="50\%" alt="Figure: IP.png"}}
+#' \if{latex}{\figure{IP.pdf}{options: width=7cm}}
 #'
 #' @param name The name of the model (defaults to "IP").
 #' @param selDVs The variables to include.
@@ -3484,10 +3523,14 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' Fixing manifest variances at their observed values can allow this case.
 #' 
 #' Reflective (manifests reflect the value of the latent variable)
-#' \figure{reflective.png}
+#' 
+#' \if{html}{\figure{reflective.png}{options: width="50\%" alt="Figure: reflective.png"}}
+#' \if{latex}{\figure{reflective.pdf}{options: width=7cm}}
 #' 
 #' Formative (manifests provide the value of the latent variable)
-#' \figure{formative.png}
+#' 
+#' \if{html}{\figure{formative.png}{options: width="50\%" alt="Figure: formative.png"}}
+#' \if{latex}{\figure{formative.pdf}{options: width=7cm}}
 #'
 #' @param latent the name of the latent variable (string)
 #' @param formedBy the list of manifest variables which latent reflects.

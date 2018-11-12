@@ -65,7 +65,9 @@ cannot be used.
 
 For this reason, we have implemented umxACE_cov_fixed, which allows including covariates as definition variables.
 The following figure shows how the ACE model with fixed covariates appears as a path diagram:
-\figure{ACEcovOnMeans.png}
+
+\if{html}{\figure{ACEcovOnMeans.png}{options: width="50\%" alt="Figure: ACEcovOnMeans.png"}}
+\if{latex}{\figure{ACEcovOnMeans.pdf}{options: width=7cm}}
 
 
 On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 

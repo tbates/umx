@@ -79,21 +79,23 @@ non-additive genetic effects (D).
 
 The following figure shows how the ACE model appears as a path diagram (for one variable):
 
-\figure{ACE_full_univariate.png}
+\if{html}{\figure{ACE_full_univariate.png}{options: width="50\%" alt="Figure: ACE_full_univariate.png"}}
+\if{latex}{\figure{ACE_full_univariate.pdf}{options: width=7cm}}
 
 \code{umxACE} allows multivariate analyses, and this brings us to the Cholesky part of the model.
-A Cholesky decomposition breaks
-
-The Cholesky or lower-triangle decomposition allows a model which is both sure to be
-solvable, and also to account for all the variance (with some restrictions) in the data. The variance-covariance
-matrix of the raw data is recovered as the product of the lower Cholesky and its transform.
 
 This model creates as many latent A C and E variables as there are phenotypes, and, moving
-from left to right, decomposes the variance in each component into successively restricted
-factors. The following figure shows how the ACE model appears as a path diagram: See the details section below
-for additional information on using umxACE.
+from left to right, decomposes the variance in each manifest into successively restricted
+factors. The following figure shows how the ACE model appears as a path diagram:
 
-\figure{ACE.png}
+\if{html}{\figure{ACE_matrix.png}{options: width="50\%" alt="Figure: ACE_matrix.png"}}
+\if{latex}{\figure{ACE_matrix.pdf}{options: width=7cm}}
+
+In this model, the variance-covariance matrix of the raw data
+is recovered as the product of the lower Cholesky and its transform.
+
+This Cholesky or lower-triangle decomposition allows a model which is both sure to be
+solvable, and also to account for all the variance (with some restrictions) in the data.
 
 This figure also contains the key to understanding how to modify models that \code{umxACE} produces.
 read the "Matrices and Labels in ACE model" section in details below...

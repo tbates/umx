@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.r
 \name{umxRAM}
 \alias{umxRAM}
-\title{Easy-to-use RAM model maker.}
+\title{Easier path-based SEM modeling.}
 \usage{
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   setValues = TRUE, suffix = "", independent = NA,
@@ -51,10 +51,43 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 }
 }
 \description{
-umxRAM expedites creation of RAM models, still without doing invisible things to the model.
+\code{umxRAM} expedites creation of path-based models, still without doing invisible things to the model.
+
+Here's an example that makes a model of miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
+using \code{mtcars} data.\preformatted{m1 = umxRAM("tim", data = mtcars,
+	umxPath(c("wt", "disp"), to = "mpg"),
+	umxPath("wt", with = "disp"),
+	umxPath(v.m. = c("wt", "disp", "mpg"))
+)
+}
+
+As you can see, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM} just wraps these paths up, takes the \code{data =} input, and
+then internally sets up all the labels and start values for the model, runs it, displays a summary, and a plot!
+
+Try it, or one of the several models in the examples at the bottom of this page.
+
+A common error is to include data in the main list, a bit like
+saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = dd)}.
+
+\strong{nb}: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
+
+\emph{note}: If you are at the "sketching" stage of theory consideration, \code{umxRAM} supports
+a simple vector of manifest names to work with.\preformatted{m1 = umxRAM("sketch", data = c("A", "B", "C"),
+	umxPath("A", to = "B"),
+	umxPath("B", with = "C"),
+	umxPath(v.m. = c("A", "B", "C"))
+)
+}
+
+Will create this figure:
+
+\if{html}{\figure{sketch.png}{options: width="50\%" alt="Figure: sketch.png"}}
+\if{latex}{\figure{sketch.pdf}{options: width=7cm}}
 }
 \details{
-As with \code{\link{mxModel}}, umxRAM build a model. Unlike mxModel:
+\strong{Comparison with mxModel)}
+
+umxRAM differs from mxModel in the following ways:
 \enumerate{
 \item{You don't need to set type = "RAM"}
 \item{You don't need to list manifestVars (they are detected from path usage)}
@@ -64,16 +97,9 @@ As with \code{\link{mxModel}}, umxRAM build a model. Unlike mxModel:
 \item{You don't need to add labels: paths are automatically labelled "a_to_b" etc.}
 \item{You don't need to set start values, they will be done for you.}
 \item{You don't need to mxRun the model: it will run automatically, and print a summary}
+\item{You don't need to run summary: weith autoRun, it will print a summary.}
+\item{You get a plot of the model.}
 }
-
-As is conventional in base-R functions like \code{\link{lm}}, \code{\link{umxRAM}} expects data in a data = parameter
-A common error is to include data in the main list, a bit like
-saying lm(y ~ x + df) instead of lm(y ~ x, data = dd).
-
-\strong{nb}: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
-
-\emph{note}: If you are at the "sketching" stage of theory consideration, umxRAM supports
-a simple vector of manifest names to work with.
 
 \strong{Comparison with other software}
 
@@ -82,6 +108,7 @@ of the observed variance of each variable,
 and single-headed paths are set to a positive starting value (currently .9).
 \emph{note}: The start-value strategy is subject to improvement, and will be documented in the help for umxRAM.
 
+\strong{Blackbox/default or auto-added paths}.
 Some other SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored
 similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"}

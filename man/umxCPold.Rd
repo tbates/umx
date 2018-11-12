@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecated.r
 \name{umxCPold}
 \alias{umxCPold}
-\title{umxCP: Build and run a Common pathway twin model}
+\title{umxCPold: Build and run a Common pathway twin model}
 \usage{
 umxCPold(name = "CPold", selDVs, dzData, mzData, sep = NULL,
   nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE,

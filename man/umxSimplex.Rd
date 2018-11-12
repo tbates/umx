@@ -62,7 +62,8 @@ These combine to explain the causes of variance in the phenotype (see Figure).
 
 \strong{Simplex path diagram}:
 
-\figure{simplex.png}
+\if{html}{\figure{simplex.png}{options: width="50\%" alt="Figure: simplex.png"}}
+\if{latex}{\figure{simplex.pdf}{options: width=7cm}}
 
 \strong{Data Input}
 Currently, the umxSimplex function accepts only raw data.
