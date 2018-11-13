@@ -160,7 +160,6 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 		het_mz = umx_reorder(mzData, selDVs)		
 		het_dz = umx_reorder(dzData, selDVs)
 		top = mxModel("top") # no means
-		# TODO umxCP: Add alternative fit types? (WLS?)
 		MZ = mxModel("MZ", 
 			mxData(het_mz, type = "cov", numObs = numObsMZ),
 			mxExpectationNormal("top.expCovMZ"),
@@ -175,7 +174,6 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 		stop("Datatype \"", dataType, "\" not understood")
 	}
 
-	# TODO umxCP: Improve start values (Mike?) 
 	if(correlatedA){
 		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = .7, jiggle = .05) # Latent common factor
 	} else {
@@ -253,7 +251,6 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 		)
 		model = mxModel(model, newTop)
 		if(addCI){
-			# TODO umxCP: add these by listing free parameters in model to get single labels?
 			model = mxModel(model, mxCI(c('top.a_cp', 'top.c_cp', 'top.e_cp', 'top.as_std', 'top.cs_std', 'top.es_std', 'top.cp_loadings_std')))
 		}
 	}
@@ -301,6 +298,8 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 #'
 #' @param ... the old function's parameters (now stripped out to avoid telling people how to do it the wrong way :-)
 #' @description 
+#' 
+#' xmuMakeThresholdsMatrices should be replaced with \code{\link{umxThresholdMatrix}}
 #' 
 #' umxSaturated should be replaced with \code{\link{mxRefModels}}
 #' 

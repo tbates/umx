@@ -41,23 +41,24 @@ We often need to model ordinal data: sex, low-med-hi, depressed/normal, etc.,
 A useful conceptual strategy to handle these data is to build a standard model for normally-varying data
 and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
 is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
-this threshold (1-minus the number of categories).
+this threshold (1-minus the number of categories) reach the criteria for the diagnosis.
+
 Making this work can require fixing the first 2 thresholds of ordinal data, or fixing both the mean and variance of
 a latent variable driving binary data, in order to estimate its one-free parameter: where to place the single threshold
 separating low from high cases.
 
 \emph{Twin Data}
 For twins (the function currently handles only pairs), the thresholds are equated for both twins using labels:
-$labels\preformatted{  obese1       obese2      
+$labels\preformatted{  obese1         obese2
 }
 
-dev_1 "obese_dev1" "obese_dev1"
+dev_1 "obese_dev1"   "obese_dev1"
 
-For \strong{deviation methods}, the function returns a 3-item list consisting of
+The function returns a 3-item list consisting of:
 \enumerate{
 \item A thresholdsAlgebra (named threshMatName)
 \item A matrix of deviations for the thresholds (deviations_for_thresh)
-\item A low matrix of 1s (lowerOnes_for_thresh)
+\item A lower matrix of 1s (lowerOnes_for_thresh)
 }
 }
 \examples{
@@ -141,7 +142,8 @@ tmp[[3]]$formula
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
-  \code{\link{umxValues}}, \code{\link{umx_add_variances}},
+  \code{\link{umxRAM2Ordinal}}, \code{\link{umxValues}},
+  \code{\link{umx_add_variances}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},

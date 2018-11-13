@@ -1,7 +1,7 @@
 #' Helper for boilerplate means and variance start values for twin models
 #'
 #' @description
-#' umx_mean_var_starts can handle several common/boilerplate situations in which means and variance start values
+#' `xmu_mean_var_starts` can handle several common/boilerplate situations in which means and variance start values
 #' are used in twin models.
 #'
 #' @param mzData Data for MZ pairs.
@@ -9,13 +9,14 @@
 #' @param selVars Variable names: If sep = NULL, then treated as full names for both sibs.
 #' @param sep All the variables full names.
 #' @param equateMeans (NULL)
-#' @param nSib How many people in a family.
-#' @param varForm: "Cholesky".
+#' @param nSib How many subjects in a family.
+#' @param varForm currently just "Cholesky" style.
 #' @param SD = TRUE (FALSE = variance, not SD).
 #' @param divideBy = 3 (A,C,E) 1/3rd each. Use 1 to do this yourself post-hoc.
 #' @return - varStarts and meanStarts
 #' @export
 #' @family xmu internal not for end user
+#' @md
 #' @examples
 #' data(twinData)
 #' selDVs = c("wt", "ht")

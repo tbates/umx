@@ -50,19 +50,22 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		# pass through strings
 		return(data)
 	}
+
 	if(is.null(manifests)){
 		manifests = umx_names(data)
 		if("one" %in% manifests){
 			warning("You have a data column called 'one' which is illegal (it's the code used for setting means). I'll drop it!")
 			manifests = manifests[!manifests %in% c("one")]
+			unusedManifests = "one"
 			dropColumns = TRUE
 		}else{
+			unusedManifests = c()
 			dropColumns = FALSE
 		}
 	}else{
+		unusedManifests = setdiff(umx_names(data), manifests)
 		dropColumns = TRUE
 	}
-
 	if (class(data)[1] == "data.frame") {
 		if(dropColumns){
 			# Trim down the data to include only the requested columns
@@ -87,7 +90,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				# Trim down the data to include only the requested columns				
 				data$observed = umx_reorder(data$observed, manifests)
 			} else if (data$type == "raw"){
-				# TODO data = mxData(data = data$observed[, manifests], type=‘raw’)
+				# Might be worth doing data = mxData(data = data$observed[, manifests], type=‘raw’)
 				data$observed = data$observed[, manifests]
 			} else {
 				stop("You offered up an existing mxData and requested dropping unused variables: I can only do this for cov, cor, and raw data")
@@ -114,9 +117,8 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				msg_str = paste0(length(unusedManifests), " unused variable (", varList)
 			}
 		}
-		message("ManifestVars set to: ", paste(usedManifests, collapse = ", "), ". ", msg_str)
+		message("ManifestVars set to: ", paste(manifests, collapse = ", "), ". ", msg_str)
 	}
-	
 	return(data)
 }
 
@@ -140,7 +142,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - \code{\link{mxTryhard}}
+#' @seealso - \code{\link{mxTryHard}}
 #' @md
 #' @examples
 #' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
@@ -678,63 +680,6 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 	return(mx_matrix)
 }
 
-#' xmuMakeThresholdsMatrices (not a user function)
-#'
-#' You should not be calling this directly.
-#' This is not as reliable a strategy and likely to be superseded...
-#'
-#' @param df a \code{\link{data.frame}} containing the data for your \code{\link{mxData}} statement
-#' @param droplevels a binary asking if empty levels should be dropped (defaults to FALSE)
-#' @param verbose how much feedback to give (defaults to FALSE)
-#' @return - a list containing an \code{\link{mxMatrix}} called "thresh", 
-#' an \code{\link{mxRAMObjective}} object, and an \code{\link{mxData}} object
-#' @references - \url{https://tbates.github.io}
-#' @examples
-#' # x = mtcars
-#' # x$cyl = mxFactor(x$cyl, levels = c(4,6,8))
-#' # umx:::xmuMakeThresholdsMatrices(df = x, droplevels=FALSE, verbose= TRUE)
-xmuMakeThresholdsMatrices <- function(df, droplevels = FALSE, verbose = FALSE) {
-	# TODO delete this function??
-	isOrdinalVariable = umx_is_ordered(df) 
-	if(sum(isOrdinalVariable) == 0){
-		stop("no ordinal variables found")
-	}
-	ordinalColumns = df[,isOrdinalVariable, drop = FALSE]
-	nOrdinal = ncol(ordinalColumns);
-	ordNameList = names(ordinalColumns);
-	levelList   = 1:nOrdinal
-	for(n in 1:nOrdinal){
-		levelList[n] = nlevels(ordinalColumns[,n])
-	}
-	maxThreshMinus1 = max(levelList)-1
-	threshValues = c() # initialise values 
-	for(n in 1:nOrdinal){
-		thisLen = levelList[n] -1
-		lim = 1.5 # (thisLen/2)
-		newValues = seq(from = (-lim), to = (lim), length = thisLen)
-		if(thisLen < maxThreshMinus1){
-			newValues = c(newValues, rep(NA,times=maxThreshMinus1-thisLen))
-		}
-		threshValues = c(threshValues, newValues)
-		# threshLbounds[j] <- .001
-	}
-
-	threshNames = paste0("Threshold", 1:maxThreshMinus1)
-	thresh = mxMatrix("Full", name = "thresh", nrow = maxThreshMinus1, ncol = nOrdinal, byrow = FALSE, free = TRUE, values = threshValues, dimnames = list(threshNames,ordNameList))
-
-	if(verbose){
-		cat("levels in each variable are:")
-		print(levelList)
-		print(paste("maxThresh - 1 = ", maxThreshMinus1))
-	}
-	return(list(
-		thresh,
-		mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), 
-		mxData(df, type = "raw")
-		)
-	)
-}
-
 #' Make a deviation-based mxRAMObjective for ordinal models.
 #'
 #' Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
@@ -767,11 +712,11 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 	initialLowerLim  = -1
 	initialUpperLim  =  1
 	# Fill first row of deviations_for_thresh with useful lower thresholds, perhaps -1 or .5 SD (nthresh/2)
-	deviations_for_thresh$free[1,]   <- TRUE
-	deviations_for_thresh$values[1,] <- initialLowerLim # Start with an even -2. Might spread this a bit for different levels, or centre on 0 for 1 threshold
-	deviations_for_thresh$labels[1,] <- paste("ThreshBaseline1", 1:nOrdinal, sep ="_")
-	deviations_for_thresh$lbound[1,] <- -7 # baseline limit in SDs
-	deviations_for_thresh$ubound[1,] <-  7 # baseline limit in SDs
+	deviations_for_thresh$free[1,]   = TRUE
+	deviations_for_thresh$values[1,] = initialLowerLim # Start with an even -2. Might spread this a bit for different levels, or centre on 0 for 1 threshold
+	deviations_for_thresh$labels[1,] = paste("ThreshBaseline1", 1:nOrdinal, sep ="_")
+	deviations_for_thresh$lbound[1,] = -7 # baseline limit in SDs
+	deviations_for_thresh$ubound[1,] =  7 # baseline limit in SDs
 
 	for(n in 1:nOrdinal){
 		thisThreshMinus1 = levelList[n] -1
@@ -1183,8 +1128,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 			thisPathVal   = round(mxMat_vals[to, from], digits)
 
 			if(thisPathFree){ prefix = "" } else { prefix = "@" }
-			# TODO currently all variances are labeled "a_with_a"
-			# Could diversify to "a_with_a", "var_a" & "resid_a"
+			# FIXME "a_with_a", "var_a" & "resid_a" in place of all being like "a_with_a"?
 			if(thisPathFree | (thisPathVal !=0 && fixed)) {
 				if((to == from)) {
 					if(resid =="circle"){

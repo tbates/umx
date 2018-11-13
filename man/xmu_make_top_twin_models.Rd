@@ -121,7 +121,7 @@ data(twinData)
 selDVs = c("wt", "ht")
 mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
-bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = "", nSib = 2)
+bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 names(bits) # "top" "MZ"  "DZ" 
 
 # ============================================
@@ -139,7 +139,7 @@ twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = 
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
-bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep="", nSib= 2)
 names(bits) # "top" "MZ"  "DZ" 
 
 # ==============
@@ -155,7 +155,7 @@ twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 selDVs = c("wt", "obese")
 mzData = twinData[twinData$zygosity \%in\% "MZFF",]
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
-bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs = selDVs, sep = "", nSib = 2)
+bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 
 # ============
 # = Cov data =
@@ -164,7 +164,7 @@ data(twinData)
 selDVs = c("wt")
 mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(selDVs, sep="")], use = "complete")
 dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(selDVs, sep="")], use = "complete")
-bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep= "", nSib = 2)
+bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

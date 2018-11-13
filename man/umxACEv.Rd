@@ -115,7 +115,8 @@ data(twinData) # ?twinData from Australian twins.
 #  This is exactly why we have ACEv! It suggests we need a different model
 #  In this case: ADE.
 # Other things to note:
-# 1. umxACEv can figure out variable names: provide "sep", and selVars. Function generates: "wt" -> "wt1" "wt2"
+# 1. umxACEv can figure out variable names: provide "sep", and selVars. 
+#    Function generates: "wt" -> "wt1" "wt2"
 # 2. umxACEv picks the variables it needs from the data.
 
 selDVs = "wt"
@@ -210,9 +211,12 @@ obesityLevels = c('normal', 'overweight', 'obese')
 cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
 twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]# umxACEv can trim out unused variables on its own
+
+# umxACEv can trim out unused variables on its own
+mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 plot(m1)

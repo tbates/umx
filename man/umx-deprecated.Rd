@@ -7,6 +7,8 @@
 \item{...}{the old function's parameters (now stripped out to avoid telling people how to do it the wrong way :-)}
 }
 \description{
+xmuMakeThresholdsMatrices should be replaced with \code{\link{umxThresholdMatrix}}
+
 umxSaturated should be replaced with \code{\link{mxRefModels}}
 
 umx_grep_labels should be replaced with \code{\link{umx_grep}}

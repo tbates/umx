@@ -96,7 +96,7 @@
 #' selDVs = c("wt", "ht")
 #' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF",]
-#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = "", nSib = 2)
+#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 #' names(bits) # "top" "MZ"  "DZ" 
 #' 
 #' # ============================================
@@ -114,7 +114,7 @@
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF",]
-#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep="", nSib = 2)
+#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep="", nSib= 2)
 #' names(bits) # "top" "MZ"  "DZ" 
 #'
 #' # ==============
@@ -130,7 +130,7 @@
 #' selDVs = c("wt", "obese")
 #' mzData = twinData[twinData$zygosity %in% "MZFF",]
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
-#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs = selDVs, sep = "", nSib = 2)
+#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 #'
 #' # ============
 #' # = Cov data =
@@ -139,7 +139,7 @@
 #' selDVs = c("wt")
 #' mz = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(selDVs, sep="")], use = "complete")
 #' dz = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(selDVs, sep="")], use = "complete")
-#' bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep= "", nSib = 2)
+#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), threshType = c("deviationBased"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
 	# TODO: xmu_make_top_twin_models Add selCovs
 	# TODO: xmu_make_top_twin_models add covMethod == "fixed"
@@ -164,7 +164,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	dataType = umx_is_cov(dzData, boolean = FALSE)
 	
 	if(type %in% c("cov", "cor") && !dataType %in% c("cov", "cor")){
-		stop("You've requested type= cov or cor, but the provided dataType is ", omxQuotes(dataTypeYou), " I don't support that yet. Please pass in cov data.")
+		stop("You've requested type= cov or cor, but the provided dataType is ", omxQuotes(dataType), " I don't support that yet. Please pass in cov data.")
 	}
 
 	if(dataType == "raw") {

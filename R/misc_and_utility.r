@@ -1,20 +1,29 @@
 #' Score a scale by summing normal and reversed items
 #'
 #' @description
-#' Score a scale by summing normal and reversed items is a function which 
-#'
-#' @param model an \code{\link{mxModel}} to WITH
-#' @return - \code{\link{mxModel}}
+#' Score a scale by summing normal and reversed items. `base` is the string common to all item names.
+#' pos and rev are the normal and reverse-scored item numbers. itemMax is the high score (to compute how to reverse items).
+#' @param base String common to all item names.
+#' @param pos  The positive-scored item numbers.
+#' @param rev  The reverse-scored item numbers.
+#' @param itemMax High score (to compute how to reverse items).
+#' @param data The data frame
+#' @param name = name of the scale to be returned. Defaults to "<base>_score"
+#' @return - scores
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{umxLabel}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @md
 #' @examples
 #' \dontrun{
 #' library(psych)
 #' tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, itemMax = 6, data= bfi, name = "Extraversion")
 #' }
 umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, itemMax = NULL, data= NULL, name = NULL) {
+	if(is.null(name)){
+		name = paste0(base, "_score")
+	} else {
+		alt.expr
+	}
 	pos_sum = rowSums(data[,paste0(base, pos)])
 	if(is.null(rev)){
 		data[,name] = pos_sum
@@ -2541,8 +2550,7 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 	} else if (what == "release"){
 		devtools::release(pkg = pkg, check = check) # spelling = NULL		 
 	} else if (what == "spell"){
-		# spelling::spell_check_package
-		spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
+		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
 	}
 }
 

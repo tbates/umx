@@ -54,18 +54,35 @@
 #' @importFrom ggplot2 qplot scale_x_continuous theme element_text scale_x_continuous
 #' @importFrom ggplot2 expand_limits aes geom_point geom_segment
 
-# TODO document where some of the more obscure of these are used.
+# used in plot
 #' @importFrom DiagrammeR DiagrammeR
-#' @importFrom MASS mvrnorm
-#' @importFrom nlme intervals
-#' @importFrom numDeriv jacobian
-#' @importFrom polycor hetcor
-#' @importFrom parallel detectCores
-#' @importFrom sfsmisc nearcor
-#' @importFrom xtable xtable
-#' @importFrom MuMIn Weights
-#' @importFrom spelling spell_check_package
 
+# used in umx_make_TwinData
+#' @importFrom MASS mvrnorm
+
+# used in umxAPA
+#' @importFrom nlme intervals
+
+# used in umx_make_fake_data
+#' @importFrom polycor hetcor
+
+# used in umx_set_cores
+#' @importFrom parallel detectCores
+
+# used in umxCompare
+#' @importFrom xtable xtable
+
+# used in umxWeightedAIC
+#' @importFrom MuMIn Weights
+
+# used in umx_make
+# #' @importFrom spelling spell_check_package
+
+# not used?
+#' @importFrom numDeriv jacobian
+#' @importFrom sfsmisc nearcor
+
+# old
 # #' @importFrom Hmisc escapeRegex
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
@@ -565,7 +582,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		independent = independent, dot.items)
 	)
 	if (class(data) == "character"){
-		# user is just running a trial model, with no data, but provided names for sketch mode
+		# User is just running a trial model, with no data, but provided names for sketch mode
 		if(autoRun && umx_set_auto_plot(silent = TRUE)){
 			plot(m1)
 		}
@@ -1459,17 +1476,19 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' data(twinData)
 #' # Cut BMI column to form ordinal obesity variables
 #' obesityLevels = c('normal', 'overweight', 'obese')
-#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-#' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' cutPoints = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+#' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Make the ordinal variables into umxFactors (ensure ordered is TRUE, and require levels)
 #' ordDVs = c("obese1", "obese2")
-#' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' mzData <- mzData[1:80, ] # Just top 80 pairs to run fast
-#' dzData <- dzData[1:80, ]
+#' twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obesityLevels)
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' mzData = mzData[1:80, ] # Just top 80 pairs to run fast
+#' dzData = dzData[1:80, ]
 #' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
+#'
+#' # Data-prep done - here's where the model starts:
 #' selDVs = c("obese")
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
@@ -1666,6 +1685,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 						mxData(dzData, type = "raw")
 					)
 				} else if(sum(isBin) == 0){
+					if(is.null(sep)){ stop("Some data are not continuous: I need you to set a seperator so I can be sure what the data names are for each twin") }
 					# ==================================================
 					# = Handle 1 or more ordinal variables (no binary) =
 					# ==================================================
@@ -1679,9 +1699,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 					# for better guessing with low-frequency cells
 					allData = rbind(mzData, dzData)
 
-					top = mxModel("top", 
+					top = mxModel("top",
 						umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = obsMeans, dimnames = list("means", selVars)),
-						umxThresholdMatrix(allData, selDVs = selDVs, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
+						umxThresholdMatrix(allData, selDVs = selVars, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
 					)
 
 					MZ  = mxModel("MZ", 
@@ -2752,6 +2772,36 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 # = Advanced Build and Modify helpers =
 # =====================================
 
+#' umxRAM2Ordinal 
+#'
+#' umxRAM2Ordinal: Convert a RAM model whose data contain ordinal variables to a threshold-based model
+#'
+#' @param model An RAM model to add thresholds too.
+#' @param verbose Tell the user what was added and why (Default = TRUE).
+#' @param thresholds How to implement thresholds: c("deviationBased", "direct", "ignore", "left_censored").
+#' @param name = A new name for the modified model (NULL means leave it as it).
+#' @param showEstimates = Whether to show estimates in the summary (if autoRun) TRUE.
+#' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family Advanced Model Building Functions
+#' @seealso - \code{\link{umxRAM}}
+#' @examples
+#' \dontrun{
+#' m1 = umxRAM2Ordinal(model)
+#' }
+umxRAM2Ordinal <- function(model, verbose = TRUE, thresholds = c("deviationBased", "ignore"), name = NULL, showEstimates = TRUE, refModels = NULL) {
+	thresholds = match.arg(thresholds)
+	if(!umx_is_RAM(model)){
+		stop("umxRAM2Ordinal only works with RAM models, sorry.")
+	}
+	if(!is.null(name)){
+		model = mxRename(model, name)
+	}
+	model$expectation$thresholds = "threshMat"
+	model = mxModel(model, umxThresholdMatrix(model$data$observed, thresholds = thresholds, verbose = verbose))
+	return(model)
+}
 
 #' umxValues: Set values in RAM model, matrix, or path
 #'
@@ -3706,7 +3756,8 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' A useful conceptual strategy to handle these data is to build a standard model for normally-varying data 
 #' and then to threshold this normal distribution to generate the observed data. Thus an observation of "depressed"
 #' is modeled as a high score on the latent normally distributed trait, with thresholds set so that only scores above
-#' this threshold (1-minus the number of categories).
+#' this threshold (1-minus the number of categories) reach the criteria for the diagnosis.
+#' 
 #' Making this work can require fixing the first 2 thresholds of ordinal data, or fixing both the mean and variance of
 #' a latent variable driving binary data, in order to estimate its one-free parameter: where to place the single threshold
 #' separating low from high cases.
@@ -3715,15 +3766,15 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' For twins (the function currently handles only pairs), the thresholds are equated for both twins using labels:
 #' $labels
 #' 
-#'       obese1       obese2      
+#'       obese1         obese2
 #' 
-#' dev_1 "obese_dev1" "obese_dev1"
+#' dev_1 "obese_dev1"   "obese_dev1"
 #' 
-#' For \strong{deviation methods}, the function returns a 3-item list consisting of 
+#' The function returns a 3-item list consisting of:
 #' 
 #' 1. A thresholdsAlgebra (named threshMatName)
 #' 2. A matrix of deviations for the thresholds (deviations_for_thresh)
-#' 3. A low matrix of 1s (lowerOnes_for_thresh)
+#' 3. A lower matrix of 1s (lowerOnes_for_thresh)
 #'
 #' @param df The data being modeled (to allow access to the factor levels and quantiles within these for each variable)
 #' @param selDVs The variable names. Note for twin data, just the base names, which sep will be used to fill out.

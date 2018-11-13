@@ -214,17 +214,19 @@ require(umx)
 data(twinData)
 # Cut BMI column to form ordinal obesity variables
 obesityLevels = c('normal', 'overweight', 'obese')
-cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+cutPoints = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 # Make the ordinal variables into umxFactors (ensure ordered is TRUE, and require levels)
 ordDVs = c("obese1", "obese2")
-twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
-dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
-mzData <- mzData[1:80, ] # Just top 80 pairs to run fast
-dzData <- dzData[1:80, ]
+twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obesityLevels)
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
+mzData = mzData[1:80, ] # Just top 80 pairs to run fast
+dzData = dzData[1:80, ]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
+
+# Data-prep done - here's where the model starts:
 selDVs = c("obese")
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)

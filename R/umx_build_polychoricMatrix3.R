@@ -9,15 +9,15 @@
 #' @family Data Functions
 #' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
 #' @examples
-#' # TODO: Needs examples
+#' # FIXME: umx_polychoric Needs examples
 umx_polychoric <- function(data, useDeviations = TRUE) {
-	nVar         = dim(data)[[2]]
-	nContinuous  = nOrdinal = 0
+	nVar         = ncol(data)
+	nameList     = names(data)
 	nThresh      = vector(mode = "integer", nVar)
 	isOrd        = vector(mode = "logical", nVar)
-	nameList     = names(data)
 	ordnameList  = vector(mode = "character", nVar)
 	contnameList = vector(mode = "character", nVar)
+	nContinuous  = nOrdinal = 0
 
 	# Figure out which variables are ordinal factors
 	correlationLabels = matrix(NA, nrow = nVar, ncol = nVar)
@@ -36,8 +36,8 @@ umx_polychoric <- function(data, useDeviations = TRUE) {
 		# Label correlation parameters
 	    for (k in 1:nVar) {
 	        if (i > k) {
-				correlationLabels[i, k] = paste("r", i, k)
-				correlationLabels[k, i] = paste("r", i, k)
+				  correlationLabels[i, k] = paste("r", i, k)
+				  correlationLabels[k, i] = paste("r", i, k)
 	        }
 	   }
 	}
@@ -146,11 +146,11 @@ umx_polychoric <- function(data, useDeviations = TRUE) {
 	model = mxModel(model, objective, dataMatrix)
 
 	# Run the job
-	model = mxRun(model, unsafe=T)
+	model = mxRun(model, unsafe = TRUE)
 
 	# Populate seMatrix for return
-	seMatrix = matrix(NA,nVar,nVar)
-	k=0
+	seMatrix = matrix(NA, nVar, nVar)
+	k = 0
 	for (i in 1:nVar){
 	    for (j in i:nVar){
 	        if(i != j) {
@@ -171,7 +171,7 @@ umx_polychoric <- function(data, useDeviations = TRUE) {
 	    thresholds = NULL
 	}
 	# Return results      
-	return(list(polychorics=model$expCov@result, thresholds=thresholds, polychoricStandardErrors=seMatrix, Minus2LogLikelihood=model@output$Minus2LogLikelihood, Hessian=model@output$calculatedHessian, estHessian=model@output$estimatedHessian,estimatedModel=model))
+	return(list(polychorics= model$expCov@result, thresholds= thresholds, polychoricStandardErrors= seMatrix, Minus2LogLikelihood= model@output$Minus2LogLikelihood, Hessian= model@output$calculatedHessian, estHessian= model@output$estimatedHessian, estimatedModel= model))
 }
 
 
@@ -188,57 +188,53 @@ umx_polychoric <- function(data, useDeviations = TRUE) {
 #' @family Data Functions
 #' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
 #' @examples
-#' # TODO: Needs examples
-umx_polypairwise <- function (data, useDeviations=TRUE, printFit=FALSE, use="any") {
+#' # FIXME: umx_polypairwise Needs examples
+umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "any") {
     nVar = dim(data)[[2]]
     ncor = nVar*(nVar-1)/2
-    pairCorrelationMatrix = matrix(diag(,nVar),nVar,nVar,dimnames=list(names(data),names(data)))
-    pairErrorMatrix = matrix(diag(,nVar),nVar,nVar,dimnames=list(names(data),names(data)))
+    pairCorrelationMatrix = matrix(diag(,nVar), nVar, nVar, dimnames= list(names(data), names(data)))
+    pairErrorMatrix = matrix(diag(,nVar), nVar, nVar, dimnames= list(names(data), names(data)))
     pairErrors = matrix(0,ncor,1)
     pairCount = 0
     namelist = NULL
-    for (var1 in 1:(nVar-1)) {
-        for (var2 in (var1+1):(nVar)) {
-            pairCount = pairCount + 1
-            cat(c("\n\n",pairCount,names(data)[var1],names(data)[var2]))
-            if (use=="complete.obs")
-            {
-                tempData = data[stats::complete.cases(data[,c(var1,var2)]),c(var1,var2)]
-            }
-            else
-            {
-                tempData = data[,c(var1,var2)]
-            }
-            tempResult = umx_polychoric(tempData, useDeviations)
-            pairCorrelationMatrix[var1,var2] = tempResult$polychorics[2,1]
-            pairCorrelationMatrix[var2,var1] = pairCorrelationMatrix[var1,var2]
-            pairErrors[pairCount] = tempResult$polychoricStandardErrors[2,1]
-            pairErrorMatrix[var1,var2] = tempResult$polychoricStandardErrors[2,1]
-            pairErrorMatrix[var2,var1] = pairErrorMatrix[var1,var2]
-            namelist = c(namelist,paste(names(data[var1]),names(data[var2]),sep="-"))
-            # If the variables are both ordinal, figure out -2lnL for all proportions
-            if (is.factor(data[,var1]) && is.factor(data[,var2]))
-            {
-                tabmatrix = as.matrix(table(data[,c(var1,var2)],useNA='no'))
-                proportions = tabmatrix/sum(tabmatrix)
-                logliks = (log(proportions)*tabmatrix)
-                if(printFit){
+	 for (var1 in 1:(nVar-1)) {
+		 for (var2 in (var1+1):(nVar)) {
+			pairCount = pairCount + 1
+			cat(c("\n\n",pairCount,names(data)[var1],names(data)[var2]))
+			if (use=="complete.obs"){
+				 tempData = data[stats::complete.cases(data[,c(var1,var2)]),c(var1,var2)]
+			}else{
+			    tempData = data[,c(var1,var2)]
+			}
+			tempResult = umx_polychoric(tempData, useDeviations)
+			pairCorrelationMatrix[var1,var2] = tempResult$polychorics[2,1]
+			pairCorrelationMatrix[var2,var1] = pairCorrelationMatrix[var1,var2]
+			pairErrors[pairCount] = tempResult$polychoricStandardErrors[2,1]
+			pairErrorMatrix[var1,var2] = tempResult$polychoricStandardErrors[2,1]
+			pairErrorMatrix[var2,var1] = pairErrorMatrix[var1,var2]
+			namelist = c(namelist,paste(names(data[var1]),names(data[var2]),sep="-"))
+			# If the variables are both ordinal, figure out -2lnL for all proportions
+         if (is.factor(data[,var1]) && is.factor(data[,var2])) {
+             tabmatrix = as.matrix(table(data[,c(var1, var2)], useNA= 'no'))
+             proportions = tabmatrix/sum(tabmatrix)
+             logliks = (log(proportions)*tabmatrix)
+             if(printFit){
                 cat(paste("\n -2 times saturated log-likelihood", minus2SatLogLik = -2*sum(logliks[!is.na(logliks)])))
                 sumres = summary(tempResult$estimatedModel)
                 cat(paste("\n -2 times fitted log-likelihood", sumres$Minus2LogLikelihood))
                 cat(paste("\n Difference in -2lnL units", diffchi = sumres$Minus2LogLikelihood - minus2SatLogLik))
-                cat(paste("\n Number of parameters of fitted model",sumres$estimatedParameters))
-                cat(paste("\n Number of cells of contingency table =",nCells = length(table(data[,c(var1,var2)]))))
+                cat(paste("\n Number of parameters of fitted model", sumres$estimatedParameters))
+                cat(paste("\n Number of cells of contingency table =", nCells = length(table(data[,c(var1,var2)]))))
                 cat(paste("\n Effective number of degrees of freedom", (df = nCells-sumres$estimatedParameters-1)))
-                cat(paste("\n p-value", stats::pchisq(diffchi, df, lower.tail=F)))
+                cat(paste("\n p-value", stats::pchisq(diffchi, df, lower.tail= FALSE)))
                 cat(paste("\n N = ", sum(tabmatrix)))
                 cat("\n\n")
-            }
-            }
-        }
-    }
-    dimnames(pairErrors) = list(namelist,"est(SE)")
-    return(list(R=pairCorrelationMatrix,SE=pairErrors,SEMatrix=pairErrorMatrix))
+			 	}
+			}
+		}
+	}
+	dimnames(pairErrors) = list(namelist,"est(SE)")
+	return(list(R= pairCorrelationMatrix, SE= pairErrors, SEMatrix= pairErrorMatrix))
 }
 
 #' FIML-based trio-based polychoric, polyserial, and Pearson correlations
@@ -254,57 +250,57 @@ umx_polypairwise <- function (data, useDeviations=TRUE, printFit=FALSE, use="any
 #' @family Data Functions
 #' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
 #' @examples
-#' # TODO: Needs examples
+#' # FIXME: umx_polytriowise	Needs examples
 umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use = "any") {
-    nVar = dim(data)[[2]]
-    if(nVar < 3) {
+	nVar = dim(data)[[2]]
+	if(nVar < 3) {
 		stop("Must have at least three variables for trio-wise polychorics")
 	}
-    ncor = nVar * (nVar - 1) / 2
-    pairCorrelationMatrix = matrix(NA, nVar, nVar, dimnames = list(names(data), names(data)))
-    diag(pairCorrelationMatrix) = 1
-    pairErrorMatrix = matrix(diag(,nVar),nVar,nVar,dimnames=list(names(data),names(data)))
-    pairErrors = matrix(0,ncor,1)
-    pairCount = 0
-    namelist = NULL
-    for (var1 in 1:(nVar2-1)) {
-        for (var2 in (var1+1):(nVar2)) {
-            pairCount = pairCount + 1
-            cat(c("\n\n", pairCount, names(data)[var1], names(data)[var2]))
-            if (use == "complete.obs"){
-				# TODO used to say, but no visible binding for mustHaveData
-				# tempData = cbind(mustHaveData, data[stats::complete.cases(data[,c(var1,var2)]),c(var1,var2)])
-                tempData = data[stats::complete.cases(data[,c(var1, var2)]), c(var1,var2)]
-            } else {
-                tempData = data[,c(var1,var2)]
-            }
-            tempResult = umx_polychoric(tempData, useDeviations)
-            pairCorrelationMatrix[var1,var2] = tempResult$polychorics[2,1]
-            pairCorrelationMatrix[var2,var1] = pairCorrelationMatrix[var1,var2]
-            pairErrors[pairCount] = tempResult$polychoricStandardErrors[2,1]
-            pairErrorMatrix[var1,var2] = tempResult$polychoricStandardErrors[2,1]
-            pairErrorMatrix[var2,var1] = pairErrorMatrix[var1,var2]
-            namelist = c(namelist,paste(names(data[var1]),names(data[var2]),sep="-"))
-            # If the variables are both ordinal, figure out -2lnL for all proportions
-            if (is.factor(data[,var1]) && is.factor(data[,var2])) {
-                tabmatrix = as.matrix(table(data[,c(var1,var2)],useNA='no'))
-                proportions = tabmatrix/sum(tabmatrix)
-                logliks = (log(proportions)*tabmatrix)
-                if(printFit){
-	                cat(paste("\n -2 times saturated log-likelihood", minus2SatLogLik = -2*sum(logliks[!is.na(logliks)])))
-	                sumres = summary(tempResult$estimatedModel)
-	                cat(paste("\n -2 times fitted log-likelihood", sumres$Minus2LogLikelihood))
-	                cat(paste("\n Difference in -2lnL units", diffchi = sumres$Minus2LogLikelihood - minus2SatLogLik))
-	                cat(paste("\n Number of parameters of fitted model",sumres$estimatedParameters))
-	                cat(paste("\n Number of cells of contingency table =",nCells = length(table(data[,c(var1,var2)]))))
-	                cat(paste("\n Effective number of degrees of freedom", (df = nCells-sumres$estimatedParameters-1)))
-	                cat(paste("\n p-value", stats::pchisq(diffchi, df, lower.tail=F)))
-	                cat(paste("\n N = ", sum(tabmatrix)))
-	                cat("\n\n")
-            	}
-            }
-        }
-    }
+	ncor = nVar * (nVar - 1) / 2
+	pairCorrelationMatrix = matrix(NA, nVar, nVar, dimnames = list(names(data), names(data)))
+	diag(pairCorrelationMatrix) = 1
+	pairErrorMatrix = matrix(diag(,nVar),nVar,nVar,dimnames=list(names(data),names(data)))
+	pairErrors = matrix(0,ncor,1)
+	pairCount = 0
+	namelist = NULL
+	for (var1 in 1:(nVar2-1)) {
+		for (var2 in (var1+1):(nVar2)) {
+			pairCount = pairCount + 1
+			cat(c("\n\n", pairCount, names(data)[var1], names(data)[var2]))
+			if (use == "complete.obs"){
+			# TODO used to say, but no visible binding for mustHaveData
+			# tempData = cbind(mustHaveData, data[stats::complete.cases(data[,c(var1,var2)]),c(var1,var2)])
+			    tempData = data[stats::complete.cases(data[,c(var1, var2)]), c(var1,var2)]
+			} else {
+			    tempData = data[,c(var1,var2)]
+			}
+			tempResult = umx_polychoric(tempData, useDeviations)
+			pairCorrelationMatrix[var1,var2] = tempResult$polychorics[2,1]
+			pairCorrelationMatrix[var2,var1] = pairCorrelationMatrix[var1,var2]
+			pairErrors[pairCount] = tempResult$polychoricStandardErrors[2,1]
+			pairErrorMatrix[var1,var2] = tempResult$polychoricStandardErrors[2,1]
+			pairErrorMatrix[var2,var1] = pairErrorMatrix[var1,var2]
+			namelist = c(namelist,paste(names(data[var1]),names(data[var2]),sep="-"))
+			# If the variables are both ordinal, figure out -2lnL for all proportions
+			if (is.factor(data[,var1]) && is.factor(data[,var2])) {
+				tabmatrix = as.matrix(table(data[,c(var1,var2)],useNA='no'))
+				proportions = tabmatrix/sum(tabmatrix)
+				logliks = (log(proportions)*tabmatrix)
+				if(printFit){
+					cat(paste("\n -2 times saturated log-likelihood", minus2SatLogLik = -2*sum(logliks[!is.na(logliks)])))
+					sumres = summary(tempResult$estimatedModel)
+					cat(paste("\n -2 times fitted log-likelihood", sumres$Minus2LogLikelihood))
+					cat(paste("\n Difference in -2lnL units", diffchi = sumres$Minus2LogLikelihood - minus2SatLogLik))
+					cat(paste("\n Number of parameters of fitted model",sumres$estimatedParameters))
+					cat(paste("\n Number of cells of contingency table =",nCells = length(table(data[,c(var1,var2)]))))
+					cat(paste("\n Effective number of degrees of freedom", (df = nCells-sumres$estimatedParameters-1)))
+					cat(paste("\n p-value", stats::pchisq(diffchi, df, lower.tail=F)))
+					cat(paste("\n N = ", sum(tabmatrix)))
+					cat("\n\n")
+				}
+			}
+		}
+	}
 	# dimnames(pairErrors) = list(namelist,"est(SE)")
-    return(list(R = pairCorrelationMatrix, SE = pairErrors, SEMatrix = pairErrorMatrix))
+	return(list(R = pairCorrelationMatrix, SE = pairErrors, SEMatrix = pairErrorMatrix))
 }

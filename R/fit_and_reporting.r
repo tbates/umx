@@ -3659,8 +3659,7 @@ umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd
 #' umx_APA_pval(c(1.23E-3, .5))
 #' umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
-	# TODO delete in favor of umxAPA?
-	# leave addComparison as NA to add only when needed
+	# FIXME delete in favor of umxAPA?
 	if(length(p) > 1){
 		o = rep(NA, length(p))
 		for(i in seq_along(p)) {

@@ -78,7 +78,7 @@ umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
-  \code{\link{umxLatent}},
+  \code{\link{umxLatent}}, \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
   \code{\link{umxValues}}, \code{\link{umx_add_variances}},
   \code{\link{umx_fix_first_loadings}},

@@ -8,13 +8,26 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL,
   itemMax = NULL, data = NULL, name = NULL)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to WITH}
+\item{base}{String common to all item names.}
+
+\item{pos}{The positive-scored item numbers.}
+
+\item{rev}{The reverse-scored item numbers.}
+
+\item{itemMax}{High score (to compute how to reverse items).}
+
+\item{data}{The data frame}
+
+\item{name}{= name of the scale to be returned. Defaults to "<base>_score"}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item scores
+}
 }
 \description{
-Score a scale by summing normal and reversed items is a function which
+Score a scale by summing normal and reversed items. \code{base} is the string common to all item names.
+pos and rev are the normal and reverse-scored item numbers. itemMax is the high score (to compute how to reverse items).
 }
 \examples{
 \dontrun{
@@ -22,12 +35,7 @@ library(psych)
 tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, itemMax = 6, data= bfi, name = "Extraversion")
 }
 }
-\references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
 \seealso{
-- \code{\link{umxLabel}}
-
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
   \code{\link{umxFactor}}, \code{\link{umxVersion}},

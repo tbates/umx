@@ -5,7 +5,7 @@
 \title{Multivariate twin analysis with sex limitation}
 \usage{
 umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
-  dzoData, sep = NA, A_or_C = c("A", "C"),
+  dzoData, sep = NA, A_or_C = c("A", "C"), dzAr = 0.5, dzCr = 1,
   autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
@@ -26,6 +26,10 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 \item{sep}{Suffix used for twin variable naming. Allows using just the base names in selVars}
 
 \item{A_or_C}{Whether to model sex-limitation on A or on C. (Defaults to "A")}
+
+\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
+
+\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
 \item{autoRun}{Whether to run the model and return it, or just return it.}
 

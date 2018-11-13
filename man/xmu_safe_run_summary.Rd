@@ -36,7 +36,7 @@ Returns the model even if it can't be run.
 }
 \seealso{
 \itemize{
-\item \code{\link{mxTryhard}}
+\item \code{\link{mxTryHard}}
 }
 
 Other xmu internal not for end user: \code{\link{umxModel}},

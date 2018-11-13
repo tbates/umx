@@ -23,7 +23,7 @@ umx_polytriowise(data, useDeviations = TRUE, printFit = FALSE,
 Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx.
 }
 \examples{
-# TODO: Needs examples
+# FIXME: umx_polytriowise	Needs examples
 }
 \references{
 - \url{https://doi.org/10.3389/fpsyg.2016.00528}

@@ -109,7 +109,13 @@ and multiple examples.
 The function flexibly accepts raw data, and also summary covariance data
 (in which case the user must also supple numbers of observations for the two input data sets).
 
-TODO: Document type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
+The \code{type} parameter can select how you want the model data treated.
+"FIML" is the normal treatment. "cov" and "cor" will turn raw data into cor data for analyis, or
+check that you've provided cor data as input.
+
+Types "WLS", "DWLS", and "ULS" will process raw data into WLS data of these types.
+
+The default, "Auto" will treat data as the type they are provided as.
 
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level

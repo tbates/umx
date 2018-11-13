@@ -217,10 +217,8 @@ NULL
 # ==============================
 #' Twin data: IQ measured longitudinally
 #'
-#' Measures of IQ across four ages in pairs of identical and fraternal twins. (see details)
-#'
+#' Measures of IQ across four ages in 261 pairs of identical twins and 301 pairs of fraternal (DZ) twins. (see details)
 #' @details
-#' #TODO complete details
 #' \itemize{
 #'   \item zygosity Zygosity (MZ or DZ)
 #'   \item IQ_age1_T1 T1 IQ measured at age 1
@@ -243,8 +241,7 @@ NULL
 #' @examples
 #' data(iqdat)
 #' str(iqdat)
-# # TODO make a cowplot example
-#' par(mfrow = c(1, 2))  # 1 rows and 3 columns
+#' par(mfrow = c(1, 3))  # 1 rows and 3 columns
 #' plot(IQ_age4_T1 ~ IQ_age4_T2, ylim = c(50, 150), data = subset(iqdat, zygosity == "MZ"))
 #' plot(IQ_age4_T1 ~ IQ_age4_T2, ylim = c(50, 150), data = subset(iqdat, zygosity == "DZ"))
 #' plot(IQ_age1_T1 ~ IQ_age4_T2, data = subset(iqdat, zygosity == "MZ"))

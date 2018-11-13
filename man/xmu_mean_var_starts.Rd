@@ -19,19 +19,21 @@ xmu_mean_var_starts(mzData, dzData, selVars = selVars, sep = NULL,
 
 \item{equateMeans}{(NULL)}
 
-\item{nSib}{How many people in a family.}
+\item{nSib}{How many subjects in a family.}
+
+\item{varForm}{currently just "Cholesky" style.}
 
 \item{SD}{= TRUE (FALSE = variance, not SD).}
 
 \item{divideBy}{= 3 (A,C,E) 1/3rd each. Use 1 to do this yourself post-hoc.}
-
-\item{varForm:}{"Cholesky".}
 }
 \value{
-- varStarts and meanStarts
+\itemize{
+\item varStarts and meanStarts
+}
 }
 \description{
-umx_mean_var_starts can handle several common/boilerplate situations in which means and variance start values
+\code{xmu_mean_var_starts} can handle several common/boilerplate situations in which means and variance start values
 are used in twin models.
 }
 \examples{
