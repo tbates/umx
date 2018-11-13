@@ -101,9 +101,9 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	message("This is beta code - will be ready for Boulder 2020")
 	nSib   = 2
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
+	nVar   = length(selDVs)
 	# Expand var names
-	selDVs = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
-	nVar   = length(selDVs)/nSib
+	selVars = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
 
 	dataType = umx_is_cov(dzData)
 	if(dataType != "raw") {
@@ -122,7 +122,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	# mzData <- subset(iqdat, zygosity == "MZ")[,-1]
 	# dzData <- subset(iqdat, zygosity == "DZ")[,-1]
 	# nVar = 4
-	tmp = xmu_mean_var_starts(mzData= mzData, dzData= dzData, selVars= selVars, nSib= nSib, varFormat= c("Cholesky"), divideBy = 3)
+	tmp = xmu_starts(mzData= mzData, dzData= dzData, selVars= selVars, nSib= nSib, varForm= "Cholesky", divideBy = 3)
 	varStarts  = tmp$varStarts
 	meanStarts = tmp$meanStarts
 	meanLabels = tmp$meanLabels

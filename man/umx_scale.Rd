@@ -28,7 +28,7 @@ umx_scale(df, varsToScale = NULL, coerce = FALSE, attr = FALSE,
 and is smart enough to skip non-scalable columns (strings, factors, etc.).
 
 You can also select which columns to convert.
-This is useful when you want to avoid numeric clumns which are actually factors.
+This is useful when you want to avoid numeric columns which are actually factors.
 
 \emph{note}: By default, the attributes which scale adds ("scaled:center" and
 "scaled:scale" removed to leave nice numeric columns. Set \code{attr= TRUE} to preserve these.

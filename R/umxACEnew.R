@@ -44,7 +44,7 @@
 #' (in which case the user must also supple numbers of observations for the two input data sets).
 #' 
 #' The `type` parameter can select how you want the model data treated.
-#' "FIML" is the normal treatment. "cov" and "cor" will turn raw data into cor data for analyis, or
+#' "FIML" is the normal treatment. "cov" and "cor" will turn raw data into cor data for analysis, or
 #' check that you've provided cor data as input.
 #' 
 #' Types "WLS", "DWLS", and "ULS" will process raw data into WLS data of these types.
@@ -242,11 +242,11 @@
 #' m1 = umxACEnew(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
 #' }
-#' 
+#'
 #' # ===================================
 #' # Example with covariance data only =
 #' # ===================================
-#' 
+#'
 #' require(umx)
 #' data(twinData)
 #' selDVs = c("wt1", "wt2")
@@ -283,8 +283,14 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			}
 		}else{
 			# nSib = 2, equateMeans = TRUE, threshType = c("deviationBased"), verbose = verbose
-			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans,
-							type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
+			if(!is.null(sep)){
+				selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
+			}else{
+				selVars = selDVs # full names passed in... gosh I wish I'd not allowed this early on...
+			}
+			nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
+
+			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
 			top     = bits$top
 			MZ      = bits$MZ
 			DZ      = bits$DZ
@@ -298,13 +304,9 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			}
 
 			# Define varStarts ...
-			tmp = xmu_mean_var_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+			tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 			varStarts = tmp$varStarts
 
-			if(!is.null(sep)){
-				selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
-			}
-			nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
 
 			# Finish building top
 			top = mxModel(top,

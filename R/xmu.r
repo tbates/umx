@@ -52,6 +52,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 	}
 
 	if(is.null(manifests)){
+		# manifests not specficied: retain all except illegal variables
 		manifests = umx_names(data)
 		if("one" %in% manifests){
 			warning("You have a data column called 'one' which is illegal (it's the code used for setting means). I'll drop it!")
@@ -63,6 +64,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			dropColumns = FALSE
 		}
 	}else{
+		# manifests specified: mark all others as un-used
 		unusedManifests = setdiff(umx_names(data), manifests)
 		dropColumns = TRUE
 	}
@@ -138,7 +140,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 #' @param model2 Optional second model to compare with model1.
 #' @param autoRun Whether to run or not (default = TRUE).
 #' @param summary Whether to summarize or not (default = TRUE).
-#' @param comparison Toggle to allow not making compariosn, even if second model is provided (more flexible in programming).
+#' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family xmu internal not for end user

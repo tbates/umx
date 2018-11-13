@@ -299,7 +299,7 @@ umxModel <- function(...) {
 #' \item{You don't need to add labels: paths are automatically labelled "a_to_b" etc.}
 #' \item{You don't need to set start values, they will be done for you.}
 #' \item{You don't need to mxRun the model: it will run automatically, and print a summary}
-#' \item{You don't need to run summary: weith autoRun, it will print a summary.}
+#' \item{You don't need to run summary: with autoRun, it will print a summary.}
 #' \item{You get a plot of the model.}
 #' }
 #' 
@@ -310,7 +310,7 @@ umxModel <- function(...) {
 #' and single-headed paths are set to a positive starting value (currently .9).
 #' *note*: The start-value strategy is subject to improvement, and will be documented in the help for umxRAM.
 #' 
-#' **Blackbox/default or auto-added paths**. 
+#' **Black-box software, defaults, and automatic addition of paths**.
 #' Some other SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored 
 #' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 #' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
@@ -614,7 +614,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			# Can't run, as ignored leaves model incomplete.
 			autoRun = FALSE
 		} else {
-			m1 = umxRAM2Ordinal(m1, verbose = T, thresholds = thresholds, autoRun = FALSE)
+			m1 = umxRAM2Ordinal(m1, verbose = TRUE, thresholds = thresholds)
 		}
 	}
 	m1 = omxAssignFirstParameters(m1)
@@ -1394,7 +1394,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
-#' @param thresholds How to implement ordinal thresholds c("deviationBased", "WLS").
+#' @param thresholds How to implement ordinal thresholds c("deviationBased").
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)

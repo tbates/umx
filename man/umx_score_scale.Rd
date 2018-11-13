@@ -4,8 +4,8 @@
 \alias{umx_score_scale}
 \title{Score a scale by summing normal and reversed items}
 \usage{
-umx_score_scale(base = NULL, pos = NULL, rev = NULL,
-  itemMax = NULL, data = NULL, name = NULL)
+umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
+  max = NULL, data = NULL, name = NULL)
 }
 \arguments{
 \item{base}{String common to all item names.}
@@ -14,7 +14,7 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL,
 
 \item{rev}{The reverse-scored item numbers.}
 
-\item{itemMax}{High score (to compute how to reverse items).}
+\item{max}{Max possible score for an item (to compute how to reverse items).}
 
 \item{data}{The data frame}
 
@@ -27,13 +27,20 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL,
 }
 \description{
 Score a scale by summing normal and reversed items. \code{base} is the string common to all item names.
-pos and rev are the normal and reverse-scored item numbers. itemMax is the high score (to compute how to reverse items).
+pos and rev are the normal and reverse-scored item numbers. \code{itemMax} is the high score (to compute how to reverse items).
 }
 \examples{
-\dontrun{
 library(psych)
-tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, itemMax = 6, data= bfi, name = "Extraversion")
-}
+tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, max = 6, data= bfi, name = "agreeableness")
+tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= bfi, name = "extraversion")
+
+# Using @BillRevelle's psych package: Much more full-some, including alpha (not omega...), etc.
+scores = scoreItems(list(extraversion = c("-E1","-E2","E3","E4","E5")), bfi, min = 1, max = 6)
+summary(scores)
+print(scores)
+# Compare output (note, scoreItems replaces NAs with the sample median by default...)
+all(as.numeric(scores$scores)*5 ==tmp[,"extraversion"], na.rm=TRUE)
+
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},

@@ -50,7 +50,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
 
-\item{thresholds}{How to implement ordinal thresholds c("deviationBased", "WLS").}
+\item{thresholds}{How to implement ordinal thresholds c("deviationBased").}
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 

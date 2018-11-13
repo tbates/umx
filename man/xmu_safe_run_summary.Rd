@@ -16,7 +16,7 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
 
 \item{summary}{Whether to summarize or not (default = TRUE).}
 
-\item{comparison}{Toggle to allow not making compariosn, even if second model is provided (more flexible in programming).}
+\item{comparison}{Toggle to allow not making comparison, even if second model is provided (more flexible in programming).}
 }
 \value{
 \itemize{
@@ -55,9 +55,9 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_dot_make_residuals}},
   \code{\link{xmu_make_mxData}},
   \code{\link{xmu_make_top_twin_models}},
-  \code{\link{xmu_mean_var_starts}},
   \code{\link{xmu_set_sep_from_suffix}},
   \code{\link{xmu_simplex_corner}},
-  \code{\link{xmu_start_value_list}}
+  \code{\link{xmu_start_value_list}},
+  \code{\link{xmu_starts}}
 }
 \concept{xmu internal not for end user}

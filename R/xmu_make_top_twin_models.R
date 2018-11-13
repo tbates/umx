@@ -216,7 +216,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		# ===================================================================
 		# = NOTE: selVars is expanded by the time we get to here... no sep. =
 		# ===================================================================
-		tmp = xmu_mean_var_starts(mzData= mzData, dzData= dzData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
+		tmp = xmu_starts(mzData= mzData, dzData= dzData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
 		varStarts  = tmp$varStarts
 		meanStarts = tmp$meanStarts
 		meanLabels = tmp$meanLabels
@@ -426,12 +426,12 @@ xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMat
 #' @param selDVs The variables to include.
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep The suffix for twin 1 and twin 2, often "_T". If set, you can
-#' omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
+#' @param sep The suffix for twin 1 and twin 2, often "_T". If set, you can omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
 #' @param nFac How many common factors for a, c, and e. If 1 number number is given, applies to all three.
-#' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
-#' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
-#' @param freeLowerE Whether to leave the lower triangle of E free (default = FALSE).
+#' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
+#' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
+#' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
+#' @param thresholds How to implement ordinal thresholds c("deviationBased").
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
@@ -442,6 +442,9 @@ xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMat
 #' @param numObsMZ = TODO: implement ordinal Number of MZ twins: Set this if you input covariance data.
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
+#' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
+#' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
+#' @param freeLowerE Whether to leave the lower triangle of E free (default = FALSE).
 #' @param suffix Deprecated: use "sep".
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -514,7 +517,7 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	}
 
 	# Define varStarts ...
-	tmp = xmu_mean_var_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+	tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 	varStarts = tmp$varStarts
 
 	if(!is.null(sep)){

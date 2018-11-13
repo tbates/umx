@@ -2,11 +2,12 @@
 #'
 #' @description
 #' Score a scale by summing normal and reversed items. `base` is the string common to all item names.
-#' pos and rev are the normal and reverse-scored item numbers. itemMax is the high score (to compute how to reverse items).
+#' pos and rev are the normal and reverse-scored item numbers. `itemMax` is the high score (to compute how to reverse items).
 #' @param base String common to all item names.
 #' @param pos  The positive-scored item numbers.
 #' @param rev  The reverse-scored item numbers.
-#' @param itemMax High score (to compute how to reverse items).
+#' @param min Min possible score (default = 1). Not implemented for values other than 1 so far...
+#' @param max Max possible score for an item (to compute how to reverse items).
 #' @param data The data frame
 #' @param name = name of the scale to be returned. Defaults to "<base>_score"
 #' @return - scores
@@ -14,23 +15,35 @@
 #' @family Miscellaneous Utility Functions
 #' @md
 #' @examples
-#' \dontrun{
 #' library(psych)
-#' tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, itemMax = 6, data= bfi, name = "Extraversion")
-#' }
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, itemMax = NULL, data= NULL, name = NULL) {
+#' tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, max = 6, data= bfi, name = "agreeableness")
+#' tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= bfi, name = "extraversion")
+#' 
+#' # Using @BillRevelle's psych package: Much more full-some, including alpha (not omega...), etc.
+#' scores = psych::scoreItems(list(extraversion = c("-E1","-E2","E3","E4","E5")), bfi, min = 1, max = 6)
+#' summary(scores)
+#' print(scores)
+#' # Compare output (note, scoreItems replaces NAs with the sample median by default...)
+#' all(as.numeric(scores$scores)*5 ==tmp[,"extraversion"], na.rm=TRUE)
+#' 
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, name = NULL) {
+	if(is.null(max)){
+		stop("You must set 'max' (the highest possible score for an item) in umx_score_scale")
+	}
+	if(min!=1){
+		stop("umx_score_scale doesn't handle min !=1")
+	}
+
 	if(is.null(name)){
 		name = paste0(base, "_score")
-	} else {
-		alt.expr
 	}
 	pos_sum = rowSums(data[,paste0(base, pos)])
 	if(is.null(rev)){
 		data[,name] = pos_sum
 	} else if (length(rev)==1){
-		data[,name] = pos_sum + (itemMax+1-rev)
+		data[,name] = pos_sum + (max+1-rev)
 	}else{
-		neg_sum = ((itemMax+1)*length(rev))- rowSums(data[,paste0(base, rev)])		
+		neg_sum = ((max+1)*length(rev))- rowSums(data[,paste0(base, rev)])		
 		data[,name] = (pos_sum + neg_sum)
 	}
 	return(data)
@@ -3969,7 +3982,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' and is smart enough to skip non-scalable columns (strings, factors, etc.).
 #' 
 #' You can also select which columns to convert.
-#' This is useful when you want to avoid numeric clumns which are actually factors.
+#' This is useful when you want to avoid numeric columns which are actually factors.
 #' 
 #' *note*: By default, the attributes which scale adds ("scaled:center" and 
 #' "scaled:scale" removed to leave nice numeric columns. Set `attr= TRUE` to preserve these.

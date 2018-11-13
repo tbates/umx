@@ -39,7 +39,8 @@ Suggests:
     Hmisc,
 	spelling,
     testthat,
-    rmarkdown
+    rmarkdown,
+	psych
 BugReports: http://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 LazyData: true

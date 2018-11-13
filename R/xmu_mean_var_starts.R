@@ -1,7 +1,7 @@
 #' Helper for boilerplate means and variance start values for twin models
 #'
 #' @description
-#' `xmu_mean_var_starts` can handle several common/boilerplate situations in which means and variance start values
+#' `xmu_starts` can handle several common/boilerplate situations in which means and variance start values
 #' are used in twin models.
 #'
 #' @param mzData Data for MZ pairs.
@@ -23,14 +23,17 @@
 #' mzData = twinData[twinData$zygosity %in%  "MZFF", ] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF", ]
 #' round(sqrt(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3),3)
-#' tmp = xmu_mean_var_starts(mzData, dzData, selVars = selDVs, sep= "", equateMeans = TRUE, varForm = "Cholesky")
+#' tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
+#'		equateMeans = TRUE, varForm = "Cholesky")
 #' tmp
 #' round(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3,3)
-#' tmp = xmu_mean_var_starts(mzData, dzData, selVars = selDVs, sep= "", equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
+#' tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
+#'		equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
 #' tmp
 #' # one variable
-#' tmp = xmu_mean_var_starts(mzData, dzData, selVars = "wt", sep= "", equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
-xmu_mean_var_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMeans= NULL, nSib = 2, varForm = c("Cholesky"), SD= TRUE, divideBy = 3) {
+#' tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", 
+#'		equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
+xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMeans= NULL, nSib = 2, varForm = c("Cholesky"), SD= TRUE, divideBy = 3) {
 	# Make mxData, dropping any unused columns
 	if(!is.null(sep)){
 		# sep = ""; nSib = 2; selVars = c("wt", "ht")
@@ -41,7 +44,7 @@ xmu_mean_var_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, e
 	dataType = umx_is_cov(dzData, boolean = FALSE)
 	if(dataType == "raw") {
 		if(is.null(equateMeans)){
-			stop("you have to tell xmu_mean_var_starts whether to equate the means or not")
+			stop("you have to tell xmu_starts whether to equate the means or not")
 		}
 		allData = rbind(mzData, dzData)[,selVars]
 		T1 = allData[, 1:nVar, drop = FALSE]

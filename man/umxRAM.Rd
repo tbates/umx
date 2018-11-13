@@ -97,7 +97,7 @@ umxRAM differs from mxModel in the following ways:
 \item{You don't need to add labels: paths are automatically labelled "a_to_b" etc.}
 \item{You don't need to set start values, they will be done for you.}
 \item{You don't need to mxRun the model: it will run automatically, and print a summary}
-\item{You don't need to run summary: weith autoRun, it will print a summary.}
+\item{You don't need to run summary: with autoRun, it will print a summary.}
 \item{You get a plot of the model.}
 }
 
@@ -108,7 +108,7 @@ of the observed variance of each variable,
 and single-headed paths are set to a positive starting value (currently .9).
 \emph{note}: The start-value strategy is subject to improvement, and will be documented in the help for umxRAM.
 
-\strong{Blackbox/default or auto-added paths}.
+\strong{Black-box software, defaults, and automatic addition of paths}.
 Some other SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored
 similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"}
