@@ -976,9 +976,9 @@ umx_standardize_ACEv <- function(model, ...) {
 		C = cov2cor(abs(C)) * sign(C)
 		E = cov2cor(abs(E)) * sign(E)
 		Vtot = A + C + E;  # Total variance
-		I  <- diag(nVar);  # nVar Identity matrix
-		# Inverse of diagonal matrix of standard deviations. In old money, this was (\sqrt(I.Vtot))~
-		InvSD <- solve(sqrt(I * Vtot)) 
+		I  = diag(nVar);  # nVar Identity matrix
+		# Inverse of diagonal matrix of standard deviations.
+		InvSD = solve(sqrt(I * Vtot)) 
 	
 		# Standardized _path_ coefficients ready to be stacked together
 		model$top$A$values = InvSD %&% A; # Standardized variance components
