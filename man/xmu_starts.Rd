@@ -42,13 +42,16 @@ selDVs = c("wt", "ht")
 mzData = twinData[twinData$zygosity \%in\%  "MZFF", ] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF", ]
 round(sqrt(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3),3)
-tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", equateMeans = TRUE, varForm = "Cholesky")
+tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
+	equateMeans = TRUE, varForm = "Cholesky")
 tmp
 round(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3,3)
-tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
+tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
+	equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
 tmp
 # one variable
-tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
+tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", 
+	equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

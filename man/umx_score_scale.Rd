@@ -14,6 +14,8 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
 
 \item{rev}{The reverse-scored item numbers.}
 
+\item{min}{Min possible score (default = 1). Not implemented for values other than 1 so far...}
+
 \item{max}{Max possible score for an item (to compute how to reverse items).}
 
 \item{data}{The data frame}
@@ -35,7 +37,7 @@ tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, max = 6, data= bfi, name = "agr
 tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= bfi, name = "extraversion")
 
 # Using @BillRevelle's psych package: Much more full-some, including alpha (not omega...), etc.
-scores = scoreItems(list(extraversion = c("-E1","-E2","E3","E4","E5")), bfi, min = 1, max = 6)
+scores = psych::scoreItems(list(extraversion = c("-E1","-E2","E3","E4","E5")), bfi, min = 1, max = 6)
 summary(scores)
 print(scores)
 # Compare output (note, scoreItems replaces NAs with the sample median by default...)
