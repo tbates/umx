@@ -4,7 +4,7 @@
 \alias{xmu_dot_maker}
 \title{Internal umx function to help plotting graphviz}
 \usage{
-xmu_dot_maker(model, file, digraph)
+xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 }
 \arguments{
 \item{model}{an \code{\link{mxModel}} to get the name from}
