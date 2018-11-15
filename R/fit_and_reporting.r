@@ -2079,6 +2079,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param fixed Whether to show fixed paths (defaults to TRUE)
 #' @param means Whether to show means or not (default = TRUE)
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param showMeans Deprecated: just use 'means = TRUE'
 #' @param showFixed Deprecated: just use 'fixed = TRUE'
 #' @param ... Optional parameters
@@ -2098,6 +2099,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' plot(m1)
+#' plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
 plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE, resid = c("circle", "line", "none"), strip_zero = TRUE, showMeans = "deprecated", showFixed = "deprecated", ...) {
 	# ==========
 	# = Setup  =
