@@ -2096,7 +2096,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)

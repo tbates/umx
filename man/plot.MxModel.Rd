@@ -9,7 +9,8 @@
 \method{plot}{MxModel}(x = NA, std = FALSE, digits = 2,
   file = "name", pathLabels = c("none", "labels", "both"),
   fixed = TRUE, means = TRUE, resid = c("circle", "line", "none"),
-  showMeans = "deprecated", showFixed = "deprecated", ...)
+  strip_zero = TRUE, showMeans = "deprecated",
+  showFixed = "deprecated", ...)
 }
 \arguments{
 \item{x}{An \code{\link{mxModel}} from which to make a path diagram}
@@ -27,6 +28,8 @@
 \item{means}{Whether to show means or not (default = TRUE)}
 
 \item{resid}{How to show residuals and variances default is "circle". Options are "line" & "none"}
+
+\item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
 \item{showMeans}{Deprecated: just use 'means = TRUE'}
 
@@ -60,9 +63,10 @@ manifests = names(demoOneFactor)
 m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
+	umxPath(var = latents, fixedAt = 1)
 )
 plot(m1)
+plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
 }
 \references{
 - \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}

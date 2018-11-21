@@ -117,7 +117,7 @@
 #' 
 #' # We can modify this model, dropping dominance component (still called C), 
 #' # and see a comparison:
-#' m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE)
+#' m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE, name="AE")
 #' # =========================================================
 #' # = Well done! Now you can make modify twin models in umx =
 #' # =========================================================
@@ -132,10 +132,10 @@
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.
 #' # Pick the variables
-#' selDVs = c("ht1", "ht2")
+#' selDVs = "ht"
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' m1 = umxACEv(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 #' umxSummary(m1, std = FALSE) # unstandardized
 #' # tip: with report = "html", umxSummary can print the table to your browser!
 #' plot(m1)
@@ -148,19 +148,19 @@
 #' umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
 #'
 #' # We can modify this model, dropping shared environment, and see a comparison:
-#' m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE)
+#' m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE, name = "AE")
 #'
 #' # =====================================
 #' # = Bivariate height and weight model =
 #' # =====================================
 #' 
 #' data(twinData)
-#' twinData$ht1 = twinData$ht1 *1000 # convert m to mm
-#' twinData$ht2 = twinData$ht2 *1000
-#' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
+#' twinData$ht1 = twinData$ht1 * 1000 # Convert m to mm
+#' twinData$ht2 = twinData$ht2 * 1000
+#' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"), ]
 #' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
-#' mzData = mzData[1:80,] # quicker run to keep CRAN happy
-#' dzData = dzData[1:80,]
+#' mzData = mzData[1:80, ] # Quicker run to keep CRAN happy
+#' dzData = dzData[1:80, ]
 #' m1 = umxACEv(selDVs = c("ht", "wt"), sep = '', dzData = dzData, mzData = mzData)
 #' 
 #' # ===================
@@ -172,13 +172,13 @@
 #' ordDVs = c("obese1", "obese2")
 #' selDVs = c("obese")
 #' obesityLevels = c('normal', 'overweight', 'obese')
-#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-#' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' cutPoints = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+#' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
-#' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", ][1:80,] # 80 pairs for speed
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", ][1:80,]
+#' twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obesityLevels)
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ][1:80,] # 80 pairs for speed
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ][1:80,]
 #' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
@@ -191,16 +191,16 @@
 #' # Cut bmi column to form ordinal obesity variables
 #' ordDVs = c("obese1", "obese2")
 #' obesityLevels = c('normal', 'overweight', 'obese')
-#' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-#' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' cutPoints = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+#' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #'
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
-#' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+#' twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obesityLevels)
 #'
 #' # umxACEv can trim out unused variables on its own
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' plot(m1)
 #' 
@@ -211,16 +211,16 @@
 #' data(twinData)
 #' # Cut to form category of 20% obese subjects
 #' # and make into mxFactors (ensure ordered is TRUE, and require levels)
-#' cutPoints <- quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+#' cutPoints = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
 #' obesityLevels = c('normal', 'obese')
-#' twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-#' twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' ordDVs = c("obese1", "obese2")
-#' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+#' twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obesityLevels)
 #' 
 #' selDVs = c("wt", "obese")
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' \dontrun{
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
@@ -232,26 +232,24 @@
 #' 
 #' require(umx)
 #' data(twinData)
-#' selDVs = c("wt1", "wt2")
-#' mz = cov(twinData[twinData$zygosity %in% "MZFF", selDVs], use = "complete")
-#' dz = cov(twinData[twinData$zygosity %in% "DZFF", selDVs], use = "complete")
-#' m1 = umxACEv(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
-#' umxSummary(m1)
-#' plot(m1)
+#' selDVs = c("wt")
+#' mz = cov(twinData[twinData$zygosity %in% "MZFF", tvars(selDVs, "")], use = "complete")
+#' dz = cov(twinData[twinData$zygosity %in% "DZFF", tvars(selDVs, "")], use = "complete")
+#' m1 = umxACEv(selDVs = selDVs, sep= "", dzData = dz, mzData= mz, numObsDZ= 569, numObsMZ= 351)
+#' umxSummary(m1, std = FALSE)
 #' 
 umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, 
 	dzData, mzData, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, 
 	boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, 
 	thresholds = c("deviationBased", "WLS"), covMethod = c("fixed", "random"), autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 
-		covMethod = match.arg(covMethod)
+		covMethod  = match.arg(covMethod)
 		thresholds = match.arg(thresholds)
 		nSib = 2 # number of siblings in a twin pair
 		if(dzCr == .25 & name == "ACE"){
 			name = "ADE"
 		}
-
-		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
+		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 		
 		# If given covariates, call umxACEvcov
 		if(!is.null(selCovs)){
@@ -264,7 +262,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
 				# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
 			}
 		} else {
-			selDVs = umx_paste_names(selDVs, sep, 1:2)
+			selDVs = tvars(selDVs, sep, 1:2)
 			nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 			used = selDVs
 			if(!is.null(weightVar)){

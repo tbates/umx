@@ -7,11 +7,13 @@
 xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to get the name from}
+\item{model}{An \code{\link{mxModel}} to get the name from}
 
-\item{file}{either "name" (use model name) or a file name}
+\item{file}{Either "name" (use model name) or a file name}
 
-\item{digraph}{graphviz code for a model}
+\item{digraph}{Graphviz code for a model}
+
+\item{strip_zero}{Whether to remove the leading 0. in digits in the diagram}
 }
 \value{
 -

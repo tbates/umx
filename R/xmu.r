@@ -269,7 +269,18 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	# 2. handle sep
 	if(is.null(sep)){
 		if(enforceSep){
-			stop("Please use sep. e.g. sep = '_T'. Set `selDVs` to the base variable names, and and I will create the full variable names from that.")
+			message("Please use sep. e.g. sep = '_T'. Set `selDVs` to the base variable names, and I will create the full variable names from that.")
+			# strip the numbers off the ends
+			namez(selDVs, "(_.)[0-9]$", replacement = "")
+			nodigits = namez(selDVs, "[0-9]$", replacement = "")
+			nodigits = unique(nodigits)
+			if(length(namez(selDVs, "(_.)[0-9]$")) == 0){
+				# no _ probably empty sep
+				stop("In your case (I'm guessing) say: selDVs = c(", omxQuotes(nodigits), "), sep = '' ")
+			} else {
+				sepGuess = unique(namez(selDVs, ".*(_.*)[0-9]$", replacement="\\1"))
+				stop("In your case (I'm guessing) say: selDVs = c(", omxQuotes(nodigits), "), sep = ", omxQuotes(sepGuess), " ")
+			}
 		} else {
 			selVars = selDVs
 			# Assume names are already expanded
