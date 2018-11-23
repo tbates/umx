@@ -126,13 +126,15 @@
 #' # = How heritable is height? =
 #' # ============================
 #' # 
-#' # Note: Height has a large variance. umx can typically picks good starts,
+#' # Note: Height has a small variance. umx can typically picks good starts,
 #' #    but scaling is advisable.
 #' # 
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.
 #' # Pick the variables
 #' selDVs = "ht"
+#' twinData$ht1 = twinData$ht1*10
+#' twinData$ht2 = twinData$ht2*10
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACEv(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
@@ -143,7 +145,7 @@
 #' # ========================================================
 #' # = Evidence for dominance ? (DZ correlation set to .25) =
 #' # ========================================================
-#' m2 = umxACEv("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
+#' m2 = umxACEv("ADE", selDVs = selDVs, sep="", dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # Is ADE better?
 #' umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
 #'
