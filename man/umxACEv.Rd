@@ -4,12 +4,13 @@
 \alias{umxACEv}
 \title{Build and run 2-group uni- or multi-variate ACE models based on VARIANCE (not paths).}
 \usage{
-umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
+umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
+  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), dzData,
   mzData, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL,
   weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
-  thresholds = c("deviationBased", "WLS"), covMethod = c("fixed",
-  "random"), autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  thresholds = c("deviationBased"), covMethod = c("fixed", "random"),
+  autoRun = getOption("umx_auto_run"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -19,6 +20,8 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
 \item{selCovs}{(optional) covariates to include from the data (do not include sep in names)}
 
 \item{sep}{The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.}
+
+\item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS").}
 
 \item{dzData}{The DZ dataframe.}
 
@@ -143,13 +146,15 @@ m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE, name="AE")
 # = How heritable is height? =
 # ============================
 # 
-# Note: Height has a large variance. umx can typically picks good starts,
+# Note: Height has a small variance. umx can typically picks good starts,
 #    but scaling is advisable.
 # 
 require(umx)
 data(twinData) # ?twinData from Australian twins.
 # Pick the variables
 selDVs = "ht"
+twinData$ht1 = twinData$ht1*10
+twinData$ht2 = twinData$ht2*10
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACEv(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
@@ -160,7 +165,7 @@ plot(m1)
 # ========================================================
 # = Evidence for dominance ? (DZ correlation set to .25) =
 # ========================================================
-m2 = umxACEv("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
+m2 = umxACEv("ADE", selDVs = selDVs, sep="", dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # Is ADE better?
 umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
 

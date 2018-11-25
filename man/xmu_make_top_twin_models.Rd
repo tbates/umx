@@ -44,42 +44,32 @@ FIML requires that the data are continuous. Remaining options are weighted, diag
 }
 }
 \description{
-\code{xmu_make_top_twin_models} makes basic \code{top}, \code{MZ}, and \code{DZ} models. It includes a thresholds matrix if needed.
+\code{xmu_make_top_twin_models} makes basic \code{top}, \code{MZ}, and \code{DZ} models. It includes thresholds matrices in the twin models if needed.
 
-This is used in umxCP, and will be added to umxACE and umxIP, simplifying code maintenance.
+This is used in  \code{\link[=umxCP]{umxCP()}}, and \code{\link[=umxACE]{umxACE()}} and \code{\link[=umxACEv]{umxACEv()}} and will be added to the other models: \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxIP]{umxIP()}},
+simplifying code maintenance.
 
-This function takes the \code{mzData} and \code{dzData}, a list of the \code{selDVs} (as well as sep and nSib) to analyse, along with other
+This function takes the \code{mzData} and \code{dzData}, a list of the \code{selDVs}  to analyse (as well as \code{sep} and \code{nSib}), along with other
 relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased").
 It can also handle a weightVar.
 
 \code{varStarts} is computed as \code{sqrt(variance)/3} of the DVs and \code{meanStarts} as the variable means.
-For raw data, a check is made for ordered variables.
-
-For Binary variables, means are fixed at 0 and total variance (A+C+E) is fixed at 1.
-
-For ordinal variables, the first 2 thresholds are fixed.
+For raw data, a check is made for ordered variables. For Binary variables, means are fixed at 0 and
+total variance (A+C+E) is fixed at 1. For ordinal variables, the first 2 thresholds are fixed.
 
 \strong{Modeling}
 
 \emph{top model}
 
-For raw data, it contains a means matrix. For WLS and summary data, the top model contains only a name.
+For raw and WLS data, \code{top} contains a means matrix. For summary data, the top model contains only a name.
 
-For ordinal, \code{top} gains \code{top.threshMat} (from a call to \code{umxThresholdMatrix}). \code{MZ} and \code{DZ} are as with continuous, but adding thresholds.
+For ordinal data, \code{top} gains \code{top.threshMat} (from a call to \url{umxThresholdMatrix}]). \code{MZ} and \code{DZ} are as with continuous, but adding thresholds.
 
 \emph{MZ and DZ models}
 
-MZ and DZ contain data, and an expectation and fit function. For WLS this is mxExpectationNormal  and mxFitFunctionWLS.
-
-\strong{Matrices created}
-
-If needed means matrices are added. Decent starts are guessed from the data.
-For continuous raw data, top contains a means matrix "expMean".
-For Models with ordinal but no binary variables, top adds an \code{umxThresholdMatrix}.
-If binary variables are present, matrices and a constraint to hold A+C+E ==1 are added to top.
-For continuous raw data, MZ and DZ contain mxExpectationNormal and mxFitFunctionML.
-
-\code{MZ} and \code{DZ} contain the data, and an expectation of for \code{top.expCovMZ} and \code{top.expMean}, possibly referencing vector = bVector in the fit function.
+\code{MZ} and \code{DZ} contain the data, and an expectation referencing \code{top.expCovMZ} and \code{top.expMean}, and, if requested,
+referencing \code{vector = bVector}. For WLS these are \url{mxExpectationNormal}]  and \url{mxFitFunctionWLS}].
+For continuous raw data, MZ and DZ contain \url{mxExpectationNormal}] and \url{mxFitFunctionML}].
 
 For binary, a constraint and algebras are included to constrain \code{Vtot} (A+C+E) to 1.
 
@@ -87,19 +77,27 @@ If a weightVar is detected, this column is added to  mzWeightMatrix/mzWeightMatr
 
 If \code{equateMeans} is \code{TRUE}, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 
+\strong{Matrices created}
+
+If needed means matrices are added. Decent starts are guessed from the data.
+For continuous raw data, top contains a means matrix "expMean".
+For Models with ordinal but no binary variables, top adds an \url{umxThresholdMatrix}].
+If binary variables are present, matrices and a constraint to hold A+C+E ==1 are added to top.
+
+If ordinal or binary variables are found in raw data, an \code{mxThreshold} matrix is added to handle these.
+
+If a weight variable is offered up, an \code{mzWeightMatrix} will be added.
+
 \strong{Data handling}
 
-In terms of data handling, it was primarily designed to take data.frames and process these into mxData. It can, however, handle cov and mxData input.
+In terms of data handling, \code{xmu_make_top_twin_models} was primarily designed to take data.frames and process these into mxData.
+It can also, however, handle cov and mxData input.
 
 It can process data into all the types supported by \code{mxData}.
 
 Raw data input with a target of \code{cov} or \code{cor} type requires the \code{numObsMZ} and \code{numObsDZ} to be set.
 
-If ordinal or binary variables are found in raw data, an \code{mxThreshold} matrix is added to handle these.
-
-If a weight variable is, an \code{mzWeightMatrix} will be added.
-
-Type "WLS", "DWLS", or "ULS" will process raw data into a WLS data using \code{xmu_make_mxData}.
+Type "WLS", "DWLS", or "ULS" will process raw data into a WLS data using \url{xmu_make_mxData}].
 
 Unused columns are dropped.
 If you pass in raw data, you can't request type cov/cor yet. Will work on this if desired.
@@ -109,7 +107,7 @@ If you pass in raw data, you can't request type cov/cor yet. Will work on this i
 \item Add selCovs
 \item Add covMethod == "fixed"
 \item Add beta matrix for fixed covariates in means.
-\item improve the start guesses based on input model type (ACE, CP, IP etc.)
+\item Improve the start guesses based on input model type (ACE, CP, IP etc.)
 }
 }
 \examples{

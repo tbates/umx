@@ -312,8 +312,8 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			top = mxModel(top,
 				# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 				# NB: top already has the means model and thresholds matrix added if necessary  - see above
-				# Additive, Common, and Unique environmental paths
-				
+
+				# Additive, Common, and Unique environmental paths				
 				umxMatrix("a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
 				umxMatrix("c", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
 				umxMatrix("e", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE), 
@@ -359,7 +359,7 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			newTop = mxModel(model$top,
 				umxMatrix("I", "Iden", nVar, nVar), # nVar Identity matrix
 				mxAlgebra(name = "Vtot", A + C+ E), # Total variance
-				mxAlgebra(name = "SD", solve(sqrt(I * Vtot))), # Total variance
+				mxAlgebra(name = "SD", solve(sqrt(I * Vtot))), # total variance --> 1/SD
 				mxAlgebra(name = "a_std", SD %*% a), # standardized a
 				mxAlgebra(name = "c_std", SD %*% c), # standardized c
 				mxAlgebra(name = "e_std", SD %*% e)  # standardized e
