@@ -75,7 +75,7 @@ The following figure shows the A components of a trivariate ACEv model:
 \if{html}{\figure{ACEv.png}{options: width="50\%" alt="Figure: ACEv.png"}}
 \if{latex}{\figure{ACEv.pdf}{options: width=7cm}}
 
-*NOTE*: This function does not use the Cholesky decomposition. Instead it directly models variance.
+\emph{NOTE}: This function does not use the Cholesky decomposition. Instead it directly models variance.
 This ensures unbiased type-I error rates. It means that occasionally
 estimates of variance may be negative. This should be used as an occasion to inspect you model
 choices and data. `umxACEv` can be used as a base model to validate the ACE Cholesky model, 

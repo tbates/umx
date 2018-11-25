@@ -13,7 +13,7 @@ xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 
 \item{digraph}{Graphviz code for a model}
 
-\item{strip_zero}{Whether to remove the leading 0. in digits in the diagram}
+\item{strip_zero}{Whether to remove the leading "0." in digits in the diagram}
 }
 \value{
 -

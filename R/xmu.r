@@ -1084,14 +1084,14 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 #' @param model An \code{\link{mxModel}} to get the name from 
 #' @param file Either "name" (use model name) or a file name
 #' @param digraph Graphviz code for a model
-#' @param strip_zero Whether to remove the leading 0. in digits in the diagram
+#' @param strip_zero Whether to remove the leading "0." in digits in the diagram
 #' @return -
 #' @family xmu
 xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 	if(strip_zero){
 		# strip leading "0." (pad "0.5" to "50")
-		digraph = umx_names(digraph, '(label = \\")(0\\.)([0-9])\\"', replacement = "\\1\\30\"", global = TRUE)
-		digraph = umx_names(digraph, '(label = \\")(0\\.)([0-9]+)\\"', replacement = "\\1\\3\"", global = TRUE)
+		digraph = umx_names(digraph, '(label = \\"-?)(0\\.)([0-9])\\"', replacement = "\\1\\30\"", global = TRUE)
+		digraph = umx_names(digraph, '(label = \\"-?)(0\\.)([0-9]+)\\"', replacement = "\\1\\3\"", global = TRUE)
 		# a1 -> ht1 [label = "0.92"];
 	}
 

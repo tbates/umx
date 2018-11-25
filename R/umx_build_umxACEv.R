@@ -326,12 +326,12 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c(
 			newTop = mxModel(model$top,
 				mxMatrix(name  = "I", "Iden", nVar, nVar),   # nVar Identity matrix
 				mxAlgebra(name = "Vtot", A + C+ E),          # Total variance
-				mxAlgebra(name = "InvVar", solve(I * Vtot)), # 1/variance?
+				mxAlgebra(name = "InvSD", sqrt(solve(I * Vtot))), # 1/variance
 
 				# Standardised _variance_ coefficients ready to be stacked together
-				mxAlgebra(name = "A_std", InvVar %&% A), # standardized A
-				mxAlgebra(name = "C_std", InvVar %&% C), # standardized C
-				mxAlgebra(name = "E_std", InvVar %&% E)  # standardized E
+				mxAlgebra(name = "A_std", InvSD %&% A), # standardized A
+				mxAlgebra(name = "C_std", InvSD %&% C), # standardized C
+				mxAlgebra(name = "E_std", InvSD %&% E)  # standardized E
 			)
 			model = mxModel(model, newTop)
 			if(addCI){
@@ -421,13 +421,14 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 		# Calculate standardized variance components
 		Vtot  = A + C + E; # Total variance
 		I     = diag(nVar); # nVar Identity matrix
-		# InvVar = sqrt(solve(I * Vtot))
-		InvVar = solve(I * Vtot)
+
+		# Inverse of diagonal matrix of standard deviations.
+		InvSD <- sqrt(solve(I * Vtot));
 
 		# Standardized _variance_ coefficients ready to be stacked together
-		A_std = InvVar %&% A 	# Standardized variance coefficients
-		C_std = InvVar %&% C
-		E_std = InvVar %&% E
+		A_std = InvSD %&% A 	# Standardized variance coefficients
+		C_std = InvSD %&% C
+		E_std = InvSD %&% E
 		
 		AClean = A_std
 		CClean = C_std
@@ -602,6 +603,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @param digits How many decimals to include in path loadings (default = 2)
 #' @param means Whether to show means paths (default = FALSE)
 #' @param std Whether to standardize the model (default = FALSE)
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -616,7 +618,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, ...) {
+umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	if(!class(x) == "MxModelACEv"){
 		stop("The first parameter of umxPlotACE must be an ACEv model, you gave me a ", class(x))
 	}
@@ -682,7 +684,7 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	rankA   = paste("\t{rank = min; ", paste(grep('A'   , latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[CE]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
 	digraph = paste0("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, l_to_v_at_1, rankVars, rankA, rankCE, "\n}");
-	xmu_dot_maker(model, file, digraph)
+	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end umxPlotACE
 
 #' @export
@@ -709,7 +711,7 @@ plot.MxModelACEv <- umxPlotACEv
 #' std = umx_standardize(m1)
 umx_standardize_ACEv <- function(model, ...) {
 	# TODO umxSummaryACEv these already exist if a_std exists..
-	message("Standardizing ACE variance-based models not yet perfected: issues with negative variances...")
+	message("Standardized variance-based models may yield negative variances...")
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
@@ -726,20 +728,21 @@ umx_standardize_ACEv <- function(model, ...) {
 		A  <- mxEval(top.A, model);   # Variances
 		C  <- mxEval(top.C, model);
 		E  <- mxEval(top.E, model);
-		
-		A = cov2cor(abs(A)) * sign(A)
-		C = cov2cor(abs(C)) * sign(C)
-		E = cov2cor(abs(E)) * sign(E)
+
+		# this should just be A+C+E?
+		# A = cov2cor(abs(A)) * sign(A)
+		# C = cov2cor(abs(C)) * sign(C)
+		# E = cov2cor(abs(E)) * sign(E)
+
 		Vtot = A + C + E;  # Total variance
 		I  = diag(nVar);  # nVar Identity matrix
 		# Inverse of diagonal matrix of standard deviations.
-		# InvVar = solve(sqrt(I * Vtot))
-		InvVar = solve(I * Vtot)
+		InvSD <- sqrt(solve(I * Vtot));
 	
-		# Standardized _path_ coefficients ready to be stacked together
-		model$top$A$values = InvVar %&% A; # Standardized variance components
-		model$top$C$values = InvVar %&% C;
-		model$top$E$values = InvVar %&% E;
+		# Standardized _variance_ coefficients ready to be stacked together
+		model$top$A$values = InvSD %&% A; # Standardized variance components
+		model$top$C$values = InvSD %&% C;
+		model$top$E$values = InvSD %&% E;
 		return(model)
 	}
 }

@@ -6,7 +6,7 @@
 \title{Produce a graphical display of an ACE variance-components twin model}
 \usage{
 umxPlotACEv(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, ...)
+  std = TRUE, strip_zero = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{umxACEv}} model to plot.}
@@ -18,6 +18,8 @@ umxPlotACEv(x = NA, file = "name", digits = 2, means = FALSE,
 \item{means}{Whether to show means paths (default = FALSE)}
 
 \item{std}{Whether to standardize the model (default = FALSE)}
+
+\item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
 \item{...}{Additional (optional) parameters}
 }

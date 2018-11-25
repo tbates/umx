@@ -6,7 +6,7 @@
 \usage{
 umxPlotCPnew(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
-  SEstyle = FALSE, ...)
+  SEstyle = FALSE, strip_zero = TRUE, ...)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link{mxModel}} to display graphically}
@@ -22,6 +22,8 @@ umxPlotCPnew(x = NA, file = "name", digits = 2, means = FALSE,
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
 \item{SEstyle}{report "b (se)" instead of b CI95[l, u] (Default = FALSE)}
+
+\item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
 \item{...}{Optional additional parameters}
 }

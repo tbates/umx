@@ -6,7 +6,8 @@
 \title{Draw and display a graphical figure of a simplex model}
 \usage{
 umxPlotSimplex(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, format = c("current", "graphviz", "DiagrammeR"), ...)
+  std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
+  strip_zero = TRUE, ...)
 }
 \arguments{
 \item{x}{The \code{\link{umxSimplex}} model to display graphically}
@@ -20,6 +21,8 @@ umxPlotSimplex(x = NA, file = "name", digits = 2, means = FALSE,
 \item{std}{Whether to standardize the model (defaults to TRUE)}
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
+
+\item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
 \item{...}{Optional additional parameters}
 }

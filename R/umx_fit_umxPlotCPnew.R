@@ -12,6 +12,7 @@
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR") 
 #' @param SEstyle report "b (se)" instead of b CI95[l, u] (Default = FALSE)
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
@@ -35,12 +36,12 @@
 #' umxPlotCPnew(m1)
 #' plot(m1) # no need to remember a special name: plot works fine!
 #' }
-umxPlotCPnew <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, ...) {
+umxPlotCPnew <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
 	if(!class(x) == "MxModelCP"){
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
 
-	# new plot functions no longer dependend on labels. This means they need to know about the correct
+	# new plot functions no longer dependent on labels. This means they need to know about the correct
 	# matrices to examine.
 	# In this case, would need to examine:
 	# 1. a_cp_matrix = A latent (and correlations among latents)
@@ -125,5 +126,5 @@ umxPlotCPnew <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 	if(format != "current"){
 		umx_set_plot_format(format)
 	}
-	xmu_dot_maker(model, file, digraph)
+	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
