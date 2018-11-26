@@ -9,6 +9,7 @@
 #' @param min Min possible score (default = 1). Not implemented for values other than 1 so far...
 #' @param max Max possible score for an item (to compute how to reverse items).
 #' @param data The data frame
+#' @param score = Sum or Mean (default = "sum")
 #' @param name = name of the scale to be returned. Defaults to "<base>_score"
 #' @return - scores
 #' @export
@@ -26,7 +27,15 @@
 #' # Compare output (note, scoreItems replaces NAs with the sample median by default...)
 #' all(as.numeric(scores$scores)*5 ==tmp[,"extraversion"], na.rm=TRUE)
 #' 
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, name = NULL) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL,  score = c("sum","mean"), name = NULL) {
+	score = match.arg(score)
+	
+	if(score!="sum"){
+		stop("You idiot! Tim hasn't implemented means as a score yet... sorry :-(")
+	}
+	if(is.null(name)){
+		stop("You must set 'name' (the name for the new column")
+	}
 	if(is.null(max)){
 		stop("You must set 'max' (the highest possible score for an item) in umx_score_scale")
 	}
@@ -37,7 +46,11 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	if(is.null(name)){
 		name = paste0(base, "_score")
 	}
-	pos_sum = rowSums(data[,paste0(base, pos)])
+	if(!is.null(pos)){
+		pos_sum = rowSums(data[,paste0(base, pos)])
+	} else {
+		pos_sum = 0
+	}
 	if(is.null(rev)){
 		data[,name] = pos_sum
 	} else if (length(rev)==1){
