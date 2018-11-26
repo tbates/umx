@@ -5,7 +5,7 @@
 \title{Score a scale by summing normal and reversed items}
 \usage{
 umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
-  max = NULL, data = NULL, name = NULL)
+  max = NULL, data = NULL, score = c("sum", "mean"), name = NULL)
 }
 \arguments{
 \item{base}{String common to all item names.}
@@ -19,6 +19,8 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
 \item{max}{Max possible score for an item (to compute how to reverse items).}
 
 \item{data}{The data frame}
+
+\item{score}{= Sum or Mean (default = "sum")}
 
 \item{name}{= name of the scale to be returned. Defaults to "<base>_score"}
 }
