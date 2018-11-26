@@ -80,18 +80,18 @@
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' data(iqdat)
-#' mzData <- subset(iqdat, zygosity == "MZ")
-#' dzData <- subset(iqdat, zygosity == "DZ")
-#' nTimePoints = 4 # Number of time points
-#' baseVarNames = paste0("IQ_age", 1:nTimePoints)
-#' # IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.
+#' mzData = subset(iqdat, zygosity == "MZ")
+#' dzData = subset(iqdat, zygosity == "DZ")
+#' baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 #' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
 #' parameters(m1, patt = "^s")
 #' m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 #' umxCompare(m1, m2)
 #' 
-#' # test a 3 time-point model
+#' # =============================
+#' # = Test a 3 time-point model =
+#' # =============================
 #' nTimePoints = 3 # Number of time points
 #' baseVarNames = paste0("IQ_age", 1:nTimePoints)
 #' # IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.
@@ -440,7 +440,8 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
-#' @param format = c("current", "graphviz", "DiagrammeR") 
+#' @param format = c("current", "graphviz", "DiagrammeR")
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
@@ -449,17 +450,15 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' @family Plotting functions
 #' @examples
 #' \dontrun{
-#' # TODO Add code (from umxSimplex) to build simplex model help
+#' # TODO Add example from umxSimplex help
 #' data(iqdat)
-#' mzData <- subset(iqdat, zygosity == "MZ")
-#' dzData <- subset(iqdat, zygosity == "DZ")
-#' nTimePoints = 4 # Number of time points
-#' baseVarNames = paste0("IQ_age", 1:nTimePoints)
-#' selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
+#' mzData = subset(iqdat, zygosity == "MZ")
+#' dzData = subset(iqdat, zygosity == "DZ")
+#' selDVs = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 #' m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 #' plot(m1)
 #' }
-umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), ...) {
+umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), strip_zero = TRUE, ...) {
 	if(!class(x) == "MxModelSimplex"){
 		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
 	}
@@ -534,7 +533,7 @@ umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std
 	if(format != "current"){
 		umx_set_plot_format(format)
 	}
-	xmu_dot_maker(model, file, digraph)
+	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
 
 #' @export

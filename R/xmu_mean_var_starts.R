@@ -32,7 +32,7 @@
 #' tmp
 #' # one variable
 #' tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", 
-#'		equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
+#'		equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
 xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMeans= NULL, nSib = 2, varForm = c("Cholesky"), SD= TRUE, divideBy = 3) {
 	# Make mxData, dropping any unused columns
 	if(!is.null(sep)){
@@ -67,7 +67,7 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 		meanLabels = NA
 		het_mz = umx_reorder(mzData, selVars)		
 		het_dz = umx_reorder(dzData, selVars)
-		varStarts = diag(het_mz)[1:nVar]
+		varStarts = (diag(het_mz)[1:nVar]+ diag(het_dz)[1:nVar])/2
 	}
 	# Covariance matrix, 1/3 allocated to each of A=C=E.
 	varStarts = varStarts/divideBy

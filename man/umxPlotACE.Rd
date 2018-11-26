@@ -6,7 +6,7 @@
 \title{umxPlotACE}
 \usage{
 umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, ...)
+  std = TRUE, strip_zero = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModelACE class)}
@@ -18,6 +18,8 @@ umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
 \item{means}{Whether to show means paths (default is FALSE)}
 
 \item{std}{Whether to standardize the model (default is TRUE)}
+
+\item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
 \item{...}{Additional (optional) parameters}
 }

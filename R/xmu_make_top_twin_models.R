@@ -1,43 +1,33 @@
 #' Helper to make a basic top, MZ, and DZ model.
 #'
 #' @description
-#' `xmu_make_top_twin_models` makes basic `top`, `MZ`, and `DZ` models. It includes a thresholds matrix if needed.
+#' `xmu_make_top_twin_models` makes basic `top`, `MZ`, and `DZ` models. It includes thresholds matrices in the twin models if needed.
 #'
-#' This is used in umxCP, and will be added to umxACE and umxIP, simplifying code maintenance.
+#' This is used in  [umxCP()], and [umxACE()] and [umxACEv()] and will be added to the other models: [umxGxE()], [umxIP()], 
+#' simplifying code maintenance.
 #' 
-#' This function takes the `mzData` and `dzData`, a list of the `selDVs` (as well as sep and nSib) to analyse, along with other 
+#' This function takes the `mzData` and `dzData`, a list of the `selDVs`  to analyse (as well as `sep` and `nSib`), along with other 
 #' relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased").
 #' It can also handle a weightVar.
 #' 
 #' `varStarts` is computed as `sqrt(variance)/3` of the DVs and `meanStarts` as the variable means.
-#' For raw data, a check is made for ordered variables.
-#' 
-#' For Binary variables, means are fixed at 0 and total variance (A+C+E) is fixed at 1.
-#' 
-#' For ordinal variables, the first 2 thresholds are fixed.
+#' For raw data, a check is made for ordered variables. For Binary variables, means are fixed at 0 and 
+#' total variance (A+C+E) is fixed at 1. For ordinal variables, the first 2 thresholds are fixed.
 #' 
 #' **Modeling**
 #' 
 #' *top model*
 #' 
-#' For raw data, it contains a means matrix. For WLS and summary data, the top model contains only a name.
+#' For raw and WLS data, `top` contains a means matrix. For summary data, the top model contains only a name.
 #' 
-#' For ordinal, `top` gains `top.threshMat` (from a call to `umxThresholdMatrix`). `MZ` and `DZ` are as with continuous, but adding thresholds.
+#' For ordinal data, `top` gains `top.threshMat` (from a call to [umxThresholdMatrix]()]). `MZ` and `DZ` are as with continuous, but adding thresholds.
 #' 
 #' *MZ and DZ models*
 #' 
-#' MZ and DZ contain data, and an expectation and fit function. For WLS this is mxExpectationNormal  and mxFitFunctionWLS.
+#' `MZ` and `DZ` contain the data, and an expectation referencing `top.expCovMZ` and `top.expMean`, and, if requested, 
+#' referencing `vector = bVector`. For WLS these are [mxExpectationNormal]()]  and [mxFitFunctionWLS]()].
+#' For continuous raw data, MZ and DZ contain [mxExpectationNormal]()] and [mxFitFunctionML]()].
 #' 
-#' **Matrices created**
-#' 
-#' If needed means matrices are added. Decent starts are guessed from the data.
-#' For continuous raw data, top contains a means matrix "expMean". 
-#' For Models with ordinal but no binary variables, top adds an `umxThresholdMatrix`. 
-#' If binary variables are present, matrices and a constraint to hold A+C+E ==1 are added to top.
-#' For continuous raw data, MZ and DZ contain mxExpectationNormal and mxFitFunctionML.
-#'
-#'
-#' `MZ` and `DZ` contain the data, and an expectation of for `top.expCovMZ` and `top.expMean`, possibly referencing vector = bVector in the fit function.
 #'
 #' For binary, a constraint and algebras are included to constrain `Vtot` (A+C+E) to 1.
 #' 
@@ -45,19 +35,27 @@
 #' 
 #' If `equateMeans` is `TRUE`, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 #'
+#' **Matrices created**
+#' 
+#' If needed means matrices are added. Decent starts are guessed from the data.
+#' For continuous raw data, top contains a means matrix "expMean". 
+#' For Models with ordinal but no binary variables, top adds an [umxThresholdMatrix]()]. 
+#' If binary variables are present, matrices and a constraint to hold A+C+E ==1 are added to top.
+#'
+#' If ordinal or binary variables are found in raw data, an `mxThreshold` matrix is added to handle these.
+#'
+#' If a weight variable is offered up, an `mzWeightMatrix` will be added.
+#'
 #' **Data handling**
 #' 
-#' In terms of data handling, it was primarily designed to take data.frames and process these into mxData. It can, however, handle cov and mxData input.
+#' In terms of data handling, `xmu_make_top_twin_models` was primarily designed to take data.frames and process these into mxData. 
+#' It can also, however, handle cov and mxData input.
 #' 
 #' It can process data into all the types supported by `mxData`.
 #' 
 #' Raw data input with a target of `cov` or `cor` type requires the `numObsMZ` and `numObsDZ` to be set.
 #' 
-#' If ordinal or binary variables are found in raw data, an `mxThreshold` matrix is added to handle these.
-#' 
-#' If a weight variable is, an `mzWeightMatrix` will be added.
-#' 
-#' Type "WLS", "DWLS", or "ULS" will process raw data into a WLS data using `xmu_make_mxData`.
+#' Type "WLS", "DWLS", or "ULS" will process raw data into a WLS data using [xmu_make_mxData]()].
 #' 
 #' Unused columns are dropped.
 #' If you pass in raw data, you can't request type cov/cor yet. Will work on this if desired.
@@ -67,7 +65,7 @@
 #' 1. Add selCovs
 #' 2. Add covMethod == "fixed"
 #' 3. Add beta matrix for fixed covariates in means.
-#' 4. improve the start guesses based on input model type (ACE, CP, IP etc.)
+#' 4. Improve the start guesses based on input model type (ACE, CP, IP etc.)
 #'
 #' @param mzData Dataframe containing the MZ data 
 #' @param dzData Dataframe containing the DZ data 
@@ -366,7 +364,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	if(bVector){
 		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix))
 	} else {
-		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector))
+		return(list(top = top, MZ = MZ, DZ = DZ, mzWeightMatrix = NULL, dzWeightMatrix = NULL))
 	}	
 }                                           
 
@@ -507,7 +505,6 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	top     = bits$top
 	MZ      = bits$MZ
 	DZ      = bits$DZ
-	bVector = bits$bVector
 
 	if(bVector){
 		mzWeightMatrix = bits$mzWeightMatrix

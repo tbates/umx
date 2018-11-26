@@ -172,8 +172,9 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary 
 			message(e)
 		})
 	}
-	
-	if(summary){
+	if(!umx_has_been_run(model1)){
+		# didn't get run... don't try and summarize it (will error)
+	} else if(summary){
 		tryCatch({
 			umxSummary(model1)
 			if(!is.null(model2) && comparison){
@@ -184,10 +185,10 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary 
 				}
 			}
 		}, warning = function(w) {
-			message("Warning incurred trying to run summary ")
+			message("Warning incurred trying to run umxSummary")
 			message(w)
 		}, error = function(e) {
-			message("Error incurred trying to run summary ")
+			message("Error incurred trying to run umxSummary")
 			message(e)
 		})
 	}
@@ -269,7 +270,18 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	# 2. handle sep
 	if(is.null(sep)){
 		if(enforceSep){
-			stop("Please use sep. e.g. sep = '_T'. Set `selDVs` to the base variable names, and and I will create the full variable names from that.")
+			message("Please use sep. e.g. sep = '_T'. Set `selDVs` to the base variable names, and I will create the full variable names from that.")
+			# strip the numbers off the ends
+			namez(selDVs, "(_.)[0-9]$", replacement = "")
+			nodigits = namez(selDVs, "[0-9]$", replacement = "")
+			nodigits = unique(nodigits)
+			if(length(namez(selDVs, "(_.)[0-9]$")) == 0){
+				# no _ probably empty sep
+				stop("In your case (I'm guessing) say: selDVs = c(", omxQuotes(nodigits), "), sep = '' ")
+			} else {
+				sepGuess = unique(namez(selDVs, ".*(_.*)[0-9]$", replacement="\\1"))
+				stop("In your case (I'm guessing) say: selDVs = c(", omxQuotes(nodigits), "), sep = ", omxQuotes(sepGuess), " ")
+			}
 		} else {
 			selVars = selDVs
 			# Assume names are already expanded
@@ -1073,14 +1085,14 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 #' @param model An \code{\link{mxModel}} to get the name from 
 #' @param file Either "name" (use model name) or a file name
 #' @param digraph Graphviz code for a model
-#' @param strip_zero Whether to remove the leading 0. in digits in the diagram
+#' @param strip_zero Whether to remove the leading "0." in digits in the diagram
 #' @return -
 #' @family xmu
 xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 	if(strip_zero){
 		# strip leading "0." (pad "0.5" to "50")
-		digraph = umx_names(digraph, '(label = \\")(0\\.)([0-9])\\"', replacement = "\\1\\30\"", global = TRUE)
-		digraph = umx_names(digraph, '(label = \\")(0\\.)([0-9]+)\\"', replacement = "\\1\\3\"", global = TRUE)
+		digraph = umx_names(digraph, '(label = \\"-?)(0\\.)([0-9])\\"', replacement = "\\1\\30\"", global = TRUE)
+		digraph = umx_names(digraph, '(label = \\"-?)(0\\.)([0-9]+)\\"', replacement = "\\1\\3\"", global = TRUE)
 		# a1 -> ht1 [label = "0.92"];
 	}
 

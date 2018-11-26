@@ -51,7 +51,7 @@ tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "",
 tmp
 # one variable
 tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", 
-	equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
+	equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

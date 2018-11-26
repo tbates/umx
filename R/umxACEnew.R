@@ -14,8 +14,8 @@
 #' 
 #' The following figure shows how the ACE model appears as a path diagram (for one variable):
 #' 
-#' \if{html}{\figure{ACE_full_univariate.png}{options: width="50\%" alt="Figure: ACE_full_univariate.png"}}
-#' \if{latex}{\figure{ACE_full_univariate.pdf}{options: width=7cm}}
+#' \if{html}{\figure{ACEunivariate.png}{options: width="50\%" alt="Figure: ACE univariate.png"}}
+#' \if{latex}{\figure{ACEunivariate.pdf}{options: width=7cm}}
 #'
 #' `umxACE` allows multivariate analyses, and this brings us to the Cholesky part of the model.
 #' 
@@ -23,8 +23,8 @@
 #' from left to right, decomposes the variance in each manifest into successively restricted 
 #' factors. The following figure shows how the ACE model appears as a path diagram:
 #' 
-#' \if{html}{\figure{ACE_matrix.png}{options: width="50\%" alt="Figure: ACE_matrix.png"}}
-#' \if{latex}{\figure{ACE_matrix.pdf}{options: width=7cm}}
+#' \if{html}{\figure{ACEmatrix.png}{options: width="50\%" alt="Figure: ACE matrix.png"}}
+#' \if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
 #' 
 #' In this model, the variance-covariance matrix of the raw data
 #' is recovered as the product of the lower Cholesky and its transform.
@@ -294,7 +294,6 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			top     = bits$top
 			MZ      = bits$MZ
 			DZ      = bits$DZ
-			bVector = bits$bVector
 
 			if(bVector){
 				mzWeightMatrix = bits$mzWeightMatrix
@@ -312,8 +311,8 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			top = mxModel(top,
 				# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 				# NB: top already has the means model and thresholds matrix added if necessary  - see above
-				# Additive, Common, and Unique environmental paths
-				
+
+				# Additive, Common, and Unique environmental paths				
 				umxMatrix("a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
 				umxMatrix("c", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
 				umxMatrix("e", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE), 
@@ -337,7 +336,7 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 		# =====================================
 		# =  Assemble models into supermodel  =
 		# =====================================
-		model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix)
+		model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix) # weight matrices only used if bVector
 
 		if(!is.null(boundDiag)){
 			if(!is.numeric(boundDiag)){
@@ -359,7 +358,7 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			newTop = mxModel(model$top,
 				umxMatrix("I", "Iden", nVar, nVar), # nVar Identity matrix
 				mxAlgebra(name = "Vtot", A + C+ E), # Total variance
-				mxAlgebra(name = "SD", solve(sqrt(I * Vtot))), # Total variance
+				mxAlgebra(name = "SD", solve(sqrt(I * Vtot))), # total variance --> 1/SD
 				mxAlgebra(name = "a_std", SD %*% a), # standardized a
 				mxAlgebra(name = "c_std", SD %*% c), # standardized c
 				mxAlgebra(name = "e_std", SD %*% e)  # standardized e
