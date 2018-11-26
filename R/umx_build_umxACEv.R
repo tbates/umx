@@ -271,10 +271,15 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c(
 			nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
 
 			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
-			top     = bits$top
-			MZ      = bits$MZ
-			DZ      = bits$DZ
-			bVector = bits$bVector
+			top  = bits$top
+			MZ   = bits$MZ
+			DZ   = bits$DZ
+			if(bVector){
+				mzWeightMatrix = bits$mzWeightMatrix
+				dzWeightMatrix = bits$dzWeightMatrix
+			}else{
+				mzWeightMatrix = dzWeightMatrix = NULL
+			}
 
 			# Define varStarts ...
 			tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
@@ -340,7 +345,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c(
 		}
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
-		model = as(model, "MxModelACEv") # set class so that S3 plot() dispatches.
+		model = as(model, "MxModelACEv") # Set class so that S3 plot() dispatches.
 		model = xmu_safe_run_summary(model, autoRun = autoRun, summary = TRUE, comparison = FALSE)
 		return(model)
 	}

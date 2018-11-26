@@ -34,13 +34,11 @@ Options include digits (rounding), showing means or not, and which output format
 }
 \examples{
 \dontrun{
-# TODO Add code (from umxSimplex) to build simplex model help
+# TODO Add example from umxSimplex help
 data(iqdat)
-mzData <- subset(iqdat, zygosity == "MZ")
-dzData <- subset(iqdat, zygosity == "DZ")
-nTimePoints = 4 # Number of time points
-baseVarNames = paste0("IQ_age", 1:nTimePoints)
-selDVs = tvars(baseVarNames, sep = "_T", suffixes= 1:2)
+mzData = subset(iqdat, zygosity == "MZ")
+dzData = subset(iqdat, zygosity == "DZ")
+selDVs = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 plot(m1)
 }

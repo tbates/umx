@@ -364,7 +364,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	if(bVector){
 		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix))
 	} else {
-		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector))
+		return(list(top = top, MZ = MZ, DZ = DZ, mzWeightMatrix = NULL, dzWeightMatrix = NULL))
 	}	
 }                                           
 
@@ -505,7 +505,6 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	top     = bits$top
 	MZ      = bits$MZ
 	DZ      = bits$DZ
-	bVector = bits$bVector
 
 	if(bVector){
 		mzWeightMatrix = bits$mzWeightMatrix

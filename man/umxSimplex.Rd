@@ -104,18 +104,18 @@ Thus, in a model where the means for twin 1 and twin 2 had been equated
 }
 \examples{
 data(iqdat)
-mzData <- subset(iqdat, zygosity == "MZ")
-dzData <- subset(iqdat, zygosity == "DZ")
-nTimePoints = 4 # Number of time points
-baseVarNames = paste0("IQ_age", 1:nTimePoints)
-# IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.
+mzData = subset(iqdat, zygosity == "MZ")
+dzData = subset(iqdat, zygosity == "DZ")
+baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
 umxSummary(m1)
 parameters(m1, patt = "^s")
 m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 umxCompare(m1, m2)
 
-# test a 3 time-point model
+# =============================
+# = Test a 3 time-point model =
+# =============================
 nTimePoints = 3 # Number of time points
 baseVarNames = paste0("IQ_age", 1:nTimePoints)
 # IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.

@@ -172,8 +172,9 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary 
 			message(e)
 		})
 	}
-	
-	if(summary){
+	if(!umx_has_been_run(model1)){
+		# didn't get run... don't try and summarize it (will error)
+	} else if(summary){
 		tryCatch({
 			umxSummary(model1)
 			if(!is.null(model2) && comparison){
@@ -184,10 +185,10 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary 
 				}
 			}
 		}, warning = function(w) {
-			message("Warning incurred trying to run summary ")
+			message("Warning incurred trying to run umxSummary")
 			message(w)
 		}, error = function(e) {
-			message("Error incurred trying to run summary ")
+			message("Error incurred trying to run umxSummary")
 			message(e)
 		})
 	}

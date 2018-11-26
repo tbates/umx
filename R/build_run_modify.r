@@ -916,6 +916,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @examples
 #' require(umx)
 #' data(twinData) 
+#' umx_set_optimizer("SLSQP")
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = "bmi"
 #' selDefs = "age"
@@ -1311,17 +1312,17 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' 
 #' The following figure shows how the ACE model appears as a path diagram (for one variable):
 #' 
-#' \if{html}{\figure{ACE_full_univariate.png}{options: width="50\%" alt="Figure: ACE_full_univariate.png"}}
-#' \if{latex}{\figure{ACE_full_univariate.pdf}{options: width=7cm}}
-#'
+#' \if{html}{\figure{ACEunivariate.png}{options: width="50\%" alt="Figure: ACE_full_univariate.png"}}
+#' \if{latex}{\figure{ACEunivariate.pdf}{options: width=7cm}}
+#' 
 #' `umxACE` allows multivariate analyses, and this brings us to the Cholesky part of the model.
 #' 
 #' This model creates as many latent A C and E variables as there are phenotypes, and, moving 
 #' from left to right, decomposes the variance in each manifest into successively restricted 
 #' factors. The following figure shows how the ACE model appears as a path diagram:
 #' 
-#' \if{html}{\figure{ACE_matrix.png}{options: width="50\%" alt="Figure: ACE_matrix.png"}}
-#' \if{latex}{\figure{ACE_matrix.pdf}{options: width=7cm}}
+#' \if{html}{\figure{ACEmatrix.png}{options: width="50\%" alt="Figure: ACE matrix.png"}}
+#' \if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
 #' 
 #' In this model, the variance-covariance matrix of the raw data
 #' is recovered as the product of the lower Cholesky and its transform.
