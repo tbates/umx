@@ -99,9 +99,9 @@
 #' @md
 umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
 	message("This is beta code - will be ready for Boulder 2020")
-	nSib   = 2
-	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
-	nVar   = length(selDVs)
+	nSib = 2
+	xmu_twin_check(selDVs = selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
+	nVar = length(selDVs) # enforce sep means these are known to be base names
 	# Expand var names
 	selVars = umx_paste_names(selDVs, sep = sep, suffixes = 1:2)
 
@@ -110,10 +110,10 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 		stop("Simplex only works with raw data at present. You offered up ", omxQuotes(dataType), " data...")
 	}else{
 		# Drop any unused columns from mzData and dzData
-		umx_check_names(selDVs, mzData)
-		umx_check_names(selDVs, dzData)
-		mzData = mzData[, selDVs]
-		dzData = dzData[, selDVs]
+		umx_check_names(selVars, mzData)
+		umx_check_names(selVars, dzData)
+		mzData = mzData[, selVars]
+		dzData = dzData[, selVars]
 	}
 
 	# ==================================
@@ -122,7 +122,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	# mzData <- subset(iqdat, zygosity == "MZ")[,-1]
 	# dzData <- subset(iqdat, zygosity == "DZ")[,-1]
 	# nVar = 4
-	tmp = xmu_starts(mzData= mzData, dzData= dzData, selVars= selVars, nSib= nSib, varForm= "Cholesky", divideBy = 3)
+	tmp = xmu_starts(mzData= mzData, dzData= dzData, selVars= selVars, nSib= nSib, varForm= "Cholesky", divideBy = 3, equateMeans = equateMeans)
 	varStarts  = tmp$varStarts
 	meanStarts = tmp$meanStarts
 	meanLabels = tmp$meanLabels
@@ -166,12 +166,12 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 		),
 		mxModel("MZ",
 			mxData(mzData, type = "raw"),
-			mxExpectationNormal("top.expCovMZ", means = "top.means", dimnames = selDVs),  
+			mxExpectationNormal("top.expCovMZ", means = "top.means", dimnames = selVars),  
 			mxFitFunctionML()
 		),
 		mxModel("DZ",
 			mxData(dzData, type = "raw"),
-			mxExpectationNormal("top.expCovDZ", means = "top.means", dimnames =selDVs),
+			mxExpectationNormal("top.expCovDZ", means = "top.means", dimnames =selVars),
 			mxFitFunctionML()
 		),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))

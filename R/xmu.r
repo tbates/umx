@@ -128,18 +128,20 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 # = Reporting helpers =
 # =====================
 
-#' Safely try to run and summarize a model
+#' Safely run and summarize a model
 #'
 #' @description
-#' Just call run (if requested or model not run) and umxSummary is requested but wrapped in try to avoid throwing an error.
-#' Returns the model even if it can't be run.
+#' The main benefit is that it returns the model, even if it can't be run.
 #' 
-#' *note*: if autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
+#' The function will run the model if requested, wrapped in [tryCatch()] to avoid throwing an error.
+#' If summary = TRUE then [umxSummary()] is requested (again, wrapped in try).
+#' 
+#' *note*: If autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
 #'
 #' @param model1 The model to attempt to run and summarize.
 #' @param model2 Optional second model to compare with model1.
-#' @param autoRun Whether to run or not (default = TRUE).
-#' @param summary Whether to summarize or not (default = TRUE).
+#' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
+#' @param summary Whether to print model summary (default = autoRun).
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -150,7 +152,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 #' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary = TRUE, comparison= TRUE) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary = TRUE, comparison = TRUE) {
 	# TODO xmu_safe_run_summary: Activate test examples
 	if(!is.logical(autoRun)){
 		if(autoRun == "if needed" && !umx_has_been_run(model1)){

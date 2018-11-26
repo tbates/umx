@@ -242,19 +242,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 	# Tests: equate means would be expMeanGm, expMeanGf, expMeanGo
 	model = as(model, "MxModelSexLim") # set class so umxSummary, plot, etc. work.
-	if(autoRun){
-		model = mxRun(model)
-		tryCatch({
-			umxSummary(model)
-			# umxSummary(model, refModels = refModels, showEstimates = showEstimates)
-		}, warning = function(w) {
-			message("Warning incurred trying to run umxSummary: try summary()")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run umxSummary: try summary()")
-			message(e)
-		})
-	}
+	model = xmu_safe_run_summary(model, autoRun = autoRun, summary = TRUE, comparison = FALSE)
 	invisible(model)
 }
 
