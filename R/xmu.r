@@ -141,6 +141,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 #' @param model1 The model to attempt to run and summarize.
 #' @param model2 Optional second model to compare with model1.
 #' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
+#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @param summary Whether to print model summary (default = autoRun).
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @return - \code{\link{mxModel}}
@@ -152,8 +153,9 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 #' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary = TRUE, comparison = TRUE) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE) {
 	# TODO xmu_safe_run_summary: Activate test examples
+	tryHard = match.arg(tryHard)
 	if(!is.logical(autoRun)){
 		if(autoRun == "if needed" && !umx_has_been_run(model1)){
 			autoRun = FALSE
@@ -165,7 +167,17 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary 
 	}
 	if(autoRun){
 		tryCatch({
-			model1 = mxRun(model1)
+			if(tryHard == "no"){
+				model1 = mxRun(model1)
+			} else if (tryHard == "mxTryHard"){
+				model1 = mxTryHard(model1)
+			} else if (tryHard == "mxTryHardOrdinal"){
+				model1 = mxTryHardOrdinal(model1)
+			} else if (tryHard == "mxTryHardWideSearch"){
+				model1 = mxTryHardWideSearch(model1)
+			}else{
+				stop("Don't know how to do tryHard = ", omxQuotes(tryHard))
+			}
 		}, warning = function(w){
 			message("Warning incurred trying to run model: try mxTryHard on it.")
 			message(w)
@@ -213,7 +225,6 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, summary 
 #' @family xmu internal not for end user
 #' @examples
 #' xmu_set_sep_from_suffix(sep = "_T", suffix = "deprecated")
-#' xmu_set_sep_from_suffix(sep = NULL, suffix = "_T")
 xmu_set_sep_from_suffix <- function(sep, suffix) {
 	if (suffix != "deprecated"){
 		warning("Just a message, but please use 'sep = ' instead of 'suffix = '. suffix will stop working in 2019")
@@ -1093,7 +1104,9 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 	if(strip_zero){
 		# strip leading "0." (pad "0.5" to "50")
+		# optionally negative number, with only 1 digit after the decimal
 		digraph = umx_names(digraph, '(label = \\"-?)(0\\.)([0-9])\\"', replacement = "\\1\\30\"", global = TRUE)
+		# optionally negative number, with only 1 or more digits after the decimal
 		digraph = umx_names(digraph, '(label = \\"-?)(0\\.)([0-9]+)\\"', replacement = "\\1\\3\"", global = TRUE)
 		# a1 -> ht1 [label = "0.92"];
 	}

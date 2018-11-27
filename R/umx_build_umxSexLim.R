@@ -6,7 +6,7 @@
 #' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
 #'
 #' @param name    The name of the model (Default = "sexlim")
-#' @param selDVs  BASE NAMES of the variables in the analysis. You MUST provide suffixes.
+#' @param selDVs  BASE NAMES of the variables in the analysis. You MUST provide sep.
 #' @param A_or_C  Whether to model sex-limitation on A or on C. (Defaults to "A")
 #' @param mzmData Dataframe containing the MZ male data
 #' @param dzmData Dataframe containing the DZ male data
@@ -16,7 +16,8 @@
 #' @param sep Suffix used for twin variable naming. Allows using just the base names in selVars
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
-#' @param autoRun Whether to run the model and return it, or just return it.
+#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.CFSexLim
 #' @export
@@ -64,7 +65,7 @@
 #' # summary(m1)
 #' # summary(m1)$Mi
 #' }
-umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), optimizer = NULL){
+umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
 	# ================================
@@ -87,12 +88,11 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	if(dzCr == .25 && name == "sexlim"){
 		name = "sexlimADE"
 	}
-	suffix = sep
-	if(is.na(suffix)){
+	if(is.na(sep)){
 		stop("Please provide sep (e.g. '_T')")
 	}
 	nVar = length(selDVs)
-	selVars = umx_paste_names(selDVs, suffix, 1:2)
+	selVars = umx_paste_names(selDVs, sep= sep, suffix = 1:2)
 	# Check names, and drop unused columns from data
 	umx_check_names(selVars, data = mzmData, die = TRUE); mzmData = mzmData[, selVars]
 	umx_check_names(selVars, data = dzmData, die = TRUE); dzmData = dzmData[, selVars]
@@ -242,7 +242,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 	# Tests: equate means would be expMeanGm, expMeanGf, expMeanGo
 	model = as(model, "MxModelSexLim") # set class so umxSummary, plot, etc. work.
-	model = xmu_safe_run_summary(model, autoRun = autoRun, summary = TRUE, comparison = FALSE)
+	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
 	invisible(model)
 }
 

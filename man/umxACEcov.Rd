@@ -7,15 +7,16 @@
 umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
   boundDiag = 0, equateMeans = TRUE, bVector = FALSE,
-  thresholds = c("deviationBased", "left_censored"),
-  autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  thresholds = c("deviationBased"),
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
 
-\item{selDVs}{The variables to include from the data (do not include suffixes).}
+\item{selDVs}{The variables to include from the data (do not include sep).}
 
-\item{selCovs}{The covariates to include from the data (do not include suffixes).}
+\item{selCovs}{The covariates to include from the data (do not include sep).}
 
 \item{dzData}{The DZ dataframe.}
 
@@ -40,19 +41,23 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 
 \item{thresholds}{How to implement ordinal thresholds: c("deviationBased", "left_censored").}
 
-\item{autoRun}{Whether to run the model and return it, or just return it.}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
 }
 \value{
-- \code{\link{mxModel}} of subclass mxModel.ACEcov
+\itemize{
+\item \code{\link{mxModel}} of subclass mxModel.ACEcov
+}
 }
 \description{
 Often, researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models.
 A simple method is to regressing covariates from the data (see \code{\link{umx_residualize}}).
 A second method (supported in umxACEcov) is to include the covariates in the means model. This is the
 'fixed' option for covariates models them in the mean as definition variables.
-On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
+On the plus side, there is no distributional assumption for this method. A downside of this approach is that all
 covariates must be non-NA, thus dropping any rows where one or more covariates are missing.
 This is wasteful of data.
 }
@@ -115,16 +120,15 @@ m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
    dzData = dzData, mzData = mzData, sep = "", autoRun = TRUE
 )
 }
-
 }
 \references{
-Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
-and genotype on self-report drunkenness following a challenge dose of alcohol. 
-Behavior Genetics, 19, 63-78. doi:\url{https://doi.org/10.1007/BF01065884}.
+Neale, M. C., & Martin, N. G. (1989). The effects of age, sex,
+and genotype on self-report drunkenness following a challenge dose of alcohol.
+\emph{Behavior Genetics}, \strong{19}, 63-78. doi:\url{https://doi.org/10.1007/BF01065884}.
 
 Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
 to Handle Missing Covariate Data in Twin Research : With an Application to
-Educational Achievement Data. Behavior Genetics. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
+Educational Achievement Data. \emph{Behavior Genetics}, \strong{46}, 583-95. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},

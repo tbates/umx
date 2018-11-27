@@ -11,15 +11,16 @@ umxACEnew(name = "ACE", selDVs, selCovs = NULL,
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0,
   weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
   thresholds = c("deviationBased"),
-  autoRun = getOption("umx_auto_run"), optimizer = NULL,
-  intervals = FALSE, suffix = "deprecated")
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,
+  intervals = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
 
 \item{selDVs}{The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").}
 
-\item{selCovs}{(optional) covariates to include from the data (do not include suffix in names)}
+\item{selCovs}{(optional) covariates to include from the data (do not include sep in names)}
 
 \item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
 
@@ -53,13 +54,13 @@ umxACEnew(name = "ACE", selDVs, selCovs = NULL,
 
 \item{thresholds}{How to implement ordinal thresholds c("deviationBased", "WLS").}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
-
-\item{suffix}{Deprecated: use "sep".}
 }
 \value{
 \itemize{
@@ -228,10 +229,10 @@ twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels =
 # Make the ordinal variables into umxFactors (ensure ordered is TRUE, and require levels)
 ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
-mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
-dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
-mzData <- mzData[1:80, ] # Just top 80 pairs to run fast
-dzData <- dzData[1:80, ]
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
+mzData = mzData[1:80, ] # Just top 80 pairs to run fast
+dzData = dzData[1:80, ]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 
 # Data-prep done - here's where the model starts:

@@ -6,7 +6,8 @@
 \usage{
 umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
   lboundACE = NA, lboundM = NA, dropMissingDef = FALSE,
-  autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "G_by_E")}
@@ -29,6 +30,8 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
 }
 \value{
@@ -47,7 +50,6 @@ The following figure the GxE model as a path diagram:
 \if{latex}{\figure{GxE.pdf}{options: width=7cm}}
 }
 \examples{
-\dontrun{
 require(umx)
 data(twinData) 
 umx_set_optimizer("SLSQP")
@@ -56,16 +58,17 @@ selDVs  = "bmi"
 selDefs = "age"
 mzData  = subset(twinData, zygosity == "MZFF")
 dzData  = subset(twinData, zygosity == "DZFF")
-m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep = "", 
-	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
+m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep = "", dzData = dzData, mzData = mzData, 
+			dropMissingDef = TRUE, tryHard = "mxTryHard")
 
-# controlling umxSummary
+# Controlling umxSummary
 umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")
-umxSummary(m1, separateGraphs = FALSE)
+umxSummary(m1, separateGraphs = TRUE)
 
-m2 = umxModify(m1, regex = "am_.*", comparison = TRUE)
+m2 = umxModify(m1, regex = "am_.*", comparison = TRUE, tryHard = "mxTryHard")
 
+\dontrun{
 # umxReduce knows how to test all relevant hypotheses
 # about model reduction for GxE models, reporting these in a nice table.
 umxReduce(m1)

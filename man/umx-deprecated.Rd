@@ -33,7 +33,7 @@ umxGetLabels is deprecated: use \code{\link{umxGetParameters}} instead
 
 stringToMxAlgebra is deprecated: please use \code{\link{umx_string_to_algebra}} instead
 
-genEpi_EvalQuote is deprecated: please use \code{\link{umxEval}} instead
+genEpi_EvalQuote is deprecated: please use \code{\link{mxEvalByName}} instead
 
 umxReportCIs is deprecated: please use \code{\link{umxCI}} instead
 

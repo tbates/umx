@@ -5,7 +5,9 @@
 \title{umxEquate: Equate two or more paths}
 \usage{
 umxEquate(model, master, slave, free = c(TRUE, FALSE, NA),
-  verbose = FALSE, name = NULL, autoRun = FALSE, comparison = TRUE)
+  verbose = FALSE, name = NULL, autoRun = FALSE, tryHard = c("no",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  comparison = TRUE)
 }
 \arguments{
 \item{model}{An \code{\link{mxModel}} within which to equate parameters}
@@ -20,7 +22,9 @@ umxEquate(model, master, slave, free = c(TRUE, FALSE, NA),
 
 \item{name}{name for the returned model (optional: Leave empty to leave name unchanged)}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 }

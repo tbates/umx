@@ -19,7 +19,6 @@ Returns either suffix or sep, with a deprecation warning if suffix is set.
 }
 \examples{
 xmu_set_sep_from_suffix(sep = "_T", suffix = "deprecated")
-xmu_set_sep_from_suffix(sep = NULL, suffix = "_T")
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

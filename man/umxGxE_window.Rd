@@ -5,7 +5,7 @@
 \title{Implement the moving-window form of GxE analysis.}
 \usage{
 umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
-  dzData = dzData, suffix = NA, weightCov = FALSE, target = NULL,
+  dzData = dzData, sep = NA, weightCov = FALSE, target = NULL,
   width = 1, plotWindow = FALSE, return = c("estimates",
   "last_model"))
 }
@@ -18,7 +18,7 @@ umxGxE_window(selDVs = NULL, moderator = NULL, mzData = mzData,
 
 \item{dzData}{Dataframe containing the DV and moderator for DZ twins}
 
-\item{suffix}{(optional) separator, e.g. "_T" which will be used expand base names into full variable names:
+\item{sep}{(optional) separator, e.g. "_T" which will be used expand base names into full variable names:
 e.g.: 'bmi' --> c("bmi_T1", "bmi_T2")}
 
 \item{weightCov}{Whether to use cov.wt matrices or FIML default = FALSE, i.e., FIML}
@@ -32,7 +32,9 @@ e.g.: 'bmi' --> c("bmi_T1", "bmi_T2")}
 \item{return}{whether to return the last model (useful for specifiedTargets) or the list of estimates (default = "estimates")}
 }
 \value{
-- Table of estimates of ACE along the moderator
+\itemize{
+\item Table of estimates of ACE along the moderator
+}
 }
 \description{
 Make a 2-group GxE (moderated ACE) model using LOSEM. In GxE interaction studies, typically,
@@ -81,13 +83,15 @@ umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData
 
 }
 \references{
-- Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
-Complementary and competing factor analytic approaches for the investigation 
-of measurement invariance. \emph{Review of Psychology}, \bold{16}, 87--107. 
+\itemize{
+\item Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
+Complementary and competing factor analytic approaches for the investigation
+of measurement invariance. \emph{Review of Psychology}, \strong{16}, 87--107.
+}
 
-Briley, D.A., Harden, K.P., Bates, T.C.,  Tucker-Drob, E.M. (2015).
+Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015).
 Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
-\emph{Behavior Genetics}.
+\emph{Behavior Genetics}, \strong{45}, 581-96. doi 10.1007/s10519-015-9732-8
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},

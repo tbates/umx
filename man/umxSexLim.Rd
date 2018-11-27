@@ -6,12 +6,13 @@
 \usage{
 umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
   dzoData, sep = NA, A_or_C = c("A", "C"), dzAr = 0.5, dzCr = 1,
-  autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (Default = "sexlim")}
 
-\item{selDVs}{BASE NAMES of the variables in the analysis. You MUST provide suffixes.}
+\item{selDVs}{BASE NAMES of the variables in the analysis. You MUST provide sep.}
 
 \item{mzmData}{Dataframe containing the MZ male data}
 
@@ -31,7 +32,9 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 
 \item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
-\item{autoRun}{Whether to run the model and return it, or just return it.}
+\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
 }

@@ -71,7 +71,8 @@
 #' @param dzCr The DZ "C" correlation (defaults = 1. To make an ADE model, set = .25).
 #' @param addStd Whether to add the algebras to compute a std model (default = TRUE).
 #' @param addCI Whether to add the interval requests for CIs (default = TRUE).
-#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
+#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -83,21 +84,20 @@
 #' mzData = subset(iqdat, zygosity == "MZ")
 #' dzData = subset(iqdat, zygosity == "DZ")
 #' baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
-#' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
+#' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 #' umxSummary(m1)
 #' parameters(m1, patt = "^s")
 #' m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 #' umxCompare(m1, m2)
 #' 
+#' \dontrun{
 #' # =============================
 #' # = Test a 3 time-point model =
 #' # =============================
-#' nTimePoints = 3 # Number of time points
-#' baseVarNames = paste0("IQ_age", 1:nTimePoints)
-#' # IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.
-#' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
+#' m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3), sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
+#' }
 #' @md
-umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
 	message("This is beta code - will be ready for Boulder 2020")
 	nSib = 2
 	xmu_twin_check(selDVs = selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
@@ -180,11 +180,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 	# Just trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model) 
 	model = as(model, "MxModelSimplex")
-
-	if(autoRun){
-		model = mxRun(model)
-		umxSummary(model)
-	}
+	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
 	return(model)
 } # end umxSimplex
 
@@ -225,15 +221,13 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' @seealso - \code{\link{umxSimplex}}
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
-#' data(iqdat)
-#' nTimePoints = 4 # Number of time points
-#' baseVarNames = paste0("IQ_age", 1:nTimePoints)
-#' # IQ_age + 1:4 + "_T" 1:2
-#' 
+#' # 4 time model
 #' # Select Data
+#' data(iqdat)
 #' mzData <- subset(iqdat, zygosity == "MZ")
 #' dzData <- subset(iqdat, zygosity == "DZ")
-#' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
+#' baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
+#' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 #' umxSummary(m1)
 #' \dontrun{
 #' umxSummary(m1, file = NA);
@@ -456,7 +450,7 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' dzData = subset(iqdat, zygosity == "DZ")
 #' selDVs = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 #' m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-#' plot(m1)
+#' # plot(m1)
 #' }
 umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), strip_zero = TRUE, ...) {
 	if(!class(x) == "MxModelSimplex"){
@@ -553,7 +547,7 @@ plot.MxModelSimplex <- umxPlotSimplex
 #' data(iqdat)
 #' mzData = subset(iqdat, zygosity == "MZ")
 #' dzData = subset(iqdat, zygosity == "DZ")
-#' m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", dzData = dzData, mzData = mzData)
+#' m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 #' std = umx_standardize_Simplex(m1)
 umx_standardize_Simplex <- function(model, ...) {
 	if(typeof(model) == "list"){ # Call self recursively

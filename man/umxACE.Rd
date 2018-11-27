@@ -10,15 +10,16 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = 0, weightVar = NULL, equateMeans = TRUE,
   bVector = FALSE, thresholds = c("deviationBased"),
-  autoRun = getOption("umx_auto_run"), optimizer = NULL,
-  intervals = FALSE, suffix = "deprecated")
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,
+  intervals = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
 
 \item{selDVs}{The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").}
 
-\item{selCovs}{(optional) covariates to include from the data (do not include suffix in names)}
+\item{selCovs}{(optional) covariates to include from the data (do not include sep in names)}
 
 \item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
 
@@ -52,13 +53,13 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 
 \item{thresholds}{How to implement ordinal thresholds c("deviationBased").}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
-
-\item{suffix}{Deprecated: use "sep".}
 }
 \value{
 \itemize{
@@ -200,7 +201,7 @@ mzData = mzData[1:80,] # quicker run to keep CRAN happy
 dzData = dzData[1:80,]
 selDVs = c("ht", "wt") # umx will add sep (in this case "") + "1" or '2'
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
-umxSummary(m1)
+# umxSummary(m1)
 
 # =========================================================
 # = Well done! Now you can make modify twin models in umx =
@@ -229,7 +230,7 @@ str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 # Data-prep done - here's where the model starts:
 selDVs = c("obese")
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
-umxSummary(m1)
+# umxSummary(m1)
 
 # ============================================
 # = Bivariate continuous and ordinal example =
@@ -268,7 +269,7 @@ mzData = twinData[twinData$zygosity \%in\% "MZFF",]
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
 \dontrun{
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
-umxSummary(m1)
+# umxSummary(m1)
 }
 
 # ===================================
@@ -287,7 +288,7 @@ plot(m1)
 \references{
 \itemize{
 \item Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
-to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+to the analysis of human behaviour. Heredity, \strong{41}, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 }
 }
 \seealso{

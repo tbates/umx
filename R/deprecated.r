@@ -91,9 +91,9 @@
 #' @param addCI Whether to add the interval requests for CIs (defaults to TRUE).
 #' @param numObsDZ = not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data.
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.
-#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
+#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
-#' @param suffix DEPRECATED: Use sep instead (see above).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -114,11 +114,7 @@
 #' umxCompare(m1, m2)
 #' }
 #' @md
-umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, suffix = "deprecated") {
-	if(suffix != "deprecated"){
-		message("Just a message: but please use 'sep' instead of suffix - suffix is deprecated, and will stop working in 2019")
-		sep = suffix
-	}
+umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 1, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = FALSE, equateMeans= TRUE, dzAr= .5, dzCr= 1, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
 	nSib = 2
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
 	
@@ -273,19 +269,7 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 	# Set values with the same label to the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModelCP")
-	
-	if(autoRun){
-		tryCatch({
-			model = mxRun(model)
-			umxSummary(model)
-		}, warning = function(w) {
-			message("Warning incurred trying to run model")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run model")
-			message(e)
-		})
-	}
+	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
 	return(model)
 } # end umxCP
 
@@ -325,7 +309,7 @@ umxCPold <- function(name = "CPold", selDVs, dzData, mzData, sep = NULL, nFac = 
 #'
 #' stringToMxAlgebra is deprecated: please use \code{\link{umx_string_to_algebra}} instead
 #'
-#' genEpi_EvalQuote is deprecated: please use \code{\link{umxEval}} instead
+#' genEpi_EvalQuote is deprecated: please use \code{\link{mxEvalByName}} instead
 #'
 #' umxReportCIs is deprecated: please use \code{\link{umxCI}} instead
 #'

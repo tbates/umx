@@ -7,7 +7,9 @@
 umxModify(lastFit, update = NULL, master = NULL, regex = FALSE,
   free = FALSE, value = 0, newlabels = NULL, freeToStart = NA,
   name = NULL, verbose = FALSE, intervals = FALSE,
-  comparison = FALSE, autoRun = TRUE, dropList = "deprecated")
+  comparison = FALSE, autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "mxTryHard", "mxTryHardOrdinal",
+  "mxTryHardWideSearch"))
 }
 \arguments{
 \item{lastFit}{The \code{\link{mxModel}} you wish to update and run.}
@@ -35,9 +37,9 @@ overrides the contents of update, and sets regex to TRUE.}
 
 \item{comparison}{Whether to run umxCompare() on the new and old models.}
 
-\item{autoRun}{Whether to run the modified model before returning it (default), or just to modify and return without running.}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{dropList}{DEPRECATED: use 'update' instead.}
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 }
 \value{
 - \code{\link{mxModel}}
