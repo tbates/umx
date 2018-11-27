@@ -914,23 +914,27 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
 #'  \strong{6}, 554-571. DOI: https://doi.org/10.1375/twin.5.6.554
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(twinData) 
 #' umx_set_optimizer("SLSQP")
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = "bmi"
 #' selDefs = "age"
-#' mzData  = subset(twinData, zygosity == "MZFF")[1:80,]
-#' dzData  = subset(twinData, zygosity == "DZFF")[1:80,]
+#' mzData  = subset(twinData, zygosity == "MZFF")
+#' dzData  = subset(twinData, zygosity == "DZFF")
 #' m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep = "", 
 #' 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
-#' # Plot Moderation
+#' 
+#' # controlling umxSummary
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
-#' m2 = umxModify(m1, "am_.*", regex=TRUE, comparison = TRUE)
-#' \dontrun{
-#' # The umxReduce function knows how to test all relevant hypotheses
+#' 
+# test dropping moderation on a path
+#' m2 = umxModify(m1, regex = "am_.*", comparison = TRUE)
+#' 
+#' # umxReduce knows how to test all relevant hypotheses
 #' # about model reduction for GxE models, reporting these in a nice table.
 #' umxReduce(m1)
 #' }
