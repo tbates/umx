@@ -56,6 +56,7 @@ View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel
 View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
 }
 \examples{
+\dontrun{
 # 4 time model
 # Select Data
 data(iqdat)
@@ -64,7 +65,6 @@ dzData <- subset(iqdat, zygosity == "DZ")
 baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 umxSummary(m1)
-\dontrun{
 umxSummary(m1, file = NA);
 umxSummary(m1, file = "name", std = TRUE)
 stdFit = umxSummary(m1, returnStd = TRUE)

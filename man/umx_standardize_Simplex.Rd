@@ -18,11 +18,15 @@ umx_standardize_Simplex(model, ...)
 umx_standardize_Simplex
 }
 \examples{
+\dontrun{
 data(iqdat)
 mzData = subset(iqdat, zygosity == "MZ")
 dzData = subset(iqdat, zygosity == "DZ")
-m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
+m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", 
+			dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 std = umx_standardize_Simplex(m1)
+}
+
 }
 \references{
 - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}

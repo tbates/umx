@@ -37,8 +37,15 @@ twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = 
 ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\% "MZFF",]
-m1 = umxRAM("tim", data = mzData, umxPath("bmi1", with = "bmi2"), umxPath(v.m.= c("bmi1", "bmi2")))
-m1 = umxRAM("tim", data = mzData, umxPath("obese1", with = "obese2"), umxPath(v.m.= c("obese1", "obese2")))
+m1 = umxRAM("tim", data = mzData,
+umxPath("bmi1", with = "bmi2"),
+umxPath(v.m.= c("bmi1", "bmi2"))
+)
+
+m1 = umxRAM("tim", data = mzData,
+	umxPath("obese1", with = "obese2"),
+	umxPath(v.m.= c("obese1", "obese2"))
+)
 }
 }
 \seealso{

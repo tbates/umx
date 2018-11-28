@@ -2760,8 +2760,15 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 #' ordDVs = c("obese1", "obese2")
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #' mzData = twinData[twinData$zygosity %in% "MZFF",]
-#' m1 = umxRAM("tim", data = mzData, umxPath("bmi1", with = "bmi2"), umxPath(v.m.= c("bmi1", "bmi2")))
-#' m1 = umxRAM("tim", data = mzData, umxPath("obese1", with = "obese2"), umxPath(v.m.= c("obese1", "obese2")))
+#' m1 = umxRAM("tim", data = mzData,
+#'	umxPath("bmi1", with = "bmi2"),
+#'	umxPath(v.m.= c("bmi1", "bmi2"))
+#')
+#'
+#' m1 = umxRAM("tim", data = mzData,
+#' 	umxPath("obese1", with = "obese2"),
+#' 	umxPath(v.m.= c("obese1", "obese2"))
+#' )
 #' }
 umxRAM2Ordinal <- function(model, verbose = TRUE, thresholds = c("deviationBased", "ignore"), name = NULL, showEstimates = TRUE, refModels = NULL) {
 	thresholds = match.arg(thresholds)
@@ -3783,7 +3790,8 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' 
 #' # Example of a warning to not omit the variable names
 #' # tmp = umxThresholdMatrix(x)
-#' # Just a polite message, but for coding safety, I recommend calling umxThresholdMatrix with the names of the variables in the model.
+#' # Just a polite message, but for coding safety, I recommend calling
+#' # umxThresholdMatrix with the names of the variables in the model.
 #' #   Next time, please include selDVs (AND you MUST include sep if this is a twin model!!)
 #' 
 #' # One ordered factor with 5-levels

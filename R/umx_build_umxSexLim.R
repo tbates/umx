@@ -92,7 +92,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 		stop("Please provide sep (e.g. '_T')")
 	}
 	nVar = length(selDVs)
-	selVars = umx_paste_names(selDVs, sep= sep, suffix = 1:2)
+	selVars = umx_paste_names(selDVs, sep= sep, suffixes = 1:2)
 	# Check names, and drop unused columns from data
 	umx_check_names(selVars, data = mzmData, die = TRUE); mzmData = mzmData[, selVars]
 	umx_check_names(selVars, data = dzmData, die = TRUE); dzmData = dzmData[, selVars]

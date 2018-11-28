@@ -80,7 +80,8 @@ tmp[[3]]$formula
 
 # Example of a warning to not omit the variable names
 # tmp = umxThresholdMatrix(x)
-# Just a polite message, but for coding safety, I recommend calling umxThresholdMatrix with the names of the variables in the model.
+# Just a polite message, but for coding safety, I recommend calling
+# umxThresholdMatrix with the names of the variables in the model.
 #   Next time, please include selDVs (AND you MUST include sep if this is a twin model!!)
 
 # One ordered factor with 5-levels

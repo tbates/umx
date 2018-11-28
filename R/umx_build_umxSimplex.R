@@ -83,8 +83,8 @@
 #' data(iqdat)
 #' mzData = subset(iqdat, zygosity == "MZ")
 #' dzData = subset(iqdat, zygosity == "DZ")
-#' baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
-#' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
+#' baseVars = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
+#' m1= umxSimplex(selDVs= baseVars, dzData= dzData, mzData= mzData, sep= "_T", tryHard= "mxTryHard")
 #' umxSummary(m1)
 #' parameters(m1, patt = "^s")
 #' m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
@@ -94,7 +94,8 @@
 #' # =============================
 #' # = Test a 3 time-point model =
 #' # =============================
-#' m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3), sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
+#' m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3), 
+#' 			dzData = dzData, mzData = mzData, sep = "_T", tryHard = "mxTryHard")
 #' }
 #' @md
 umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
@@ -221,6 +222,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' @seealso - \code{\link{umxSimplex}}
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
+#' \dontrun{
 #' # 4 time model
 #' # Select Data
 #' data(iqdat)
@@ -229,7 +231,6 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 #' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 #' umxSummary(m1)
-#' \dontrun{
 #' umxSummary(m1, file = NA);
 #' umxSummary(m1, file = "name", std = TRUE)
 #' stdFit = umxSummary(m1, returnStd = TRUE)
@@ -544,11 +545,15 @@ plot.MxModelSimplex <- umxPlotSimplex
 #' @family zAdvanced Helpers
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
+#' \dontrun{
 #' data(iqdat)
 #' mzData = subset(iqdat, zygosity == "MZ")
 #' dzData = subset(iqdat, zygosity == "DZ")
-#' m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
+#' m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", 
+#' 			dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 #' std = umx_standardize_Simplex(m1)
+#' }
+#' 
 umx_standardize_Simplex <- function(model, ...) {
 	if(typeof(model) == "list"){ # Call self recursively
 		for(thisFit in model) {
