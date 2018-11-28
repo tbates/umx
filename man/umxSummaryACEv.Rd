@@ -58,12 +58,10 @@ View documentation on the GxE model subclass here: \code{\link{umxSummary.MxMode
 \examples{
 require(umx)
 data(twinData)
-selDVs = c("bmi1", "bmi2")
 mzData <- subset(twinData, zygosity == "MZFF")
 dzData <- subset(twinData, zygosity == "DZFF")
-m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData)
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-umxSummary(m1)
+m1 = umxACEv(selDVs = "bmi", sep = "", dzData = dzData, mzData = mzData)
+umxSummary(m1, std = FALSE)
 \dontrun{
 umxSummary(m1, file = NA);
 umxSummary(m1, file = "name", std = TRUE)

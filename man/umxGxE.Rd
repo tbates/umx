@@ -47,23 +47,26 @@ The following figure the GxE model as a path diagram:
 \if{latex}{\figure{GxE.pdf}{options: width=7cm}}
 }
 \examples{
+\dontrun{
 require(umx)
 data(twinData) 
 umx_set_optimizer("SLSQP")
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = "bmi"
 selDefs = "age"
-mzData  = subset(twinData, zygosity == "MZFF")[1:80,]
-dzData  = subset(twinData, zygosity == "DZFF")[1:80,]
+mzData  = subset(twinData, zygosity == "MZFF")
+dzData  = subset(twinData, zygosity == "DZFF")
 m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep = "", 
 	dzData = dzData, mzData = mzData, dropMissingDef = TRUE)
-# Plot Moderation
+
+# controlling umxSummary
 umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = FALSE)
-m2 = umxModify(m1, "am_.*", regex=TRUE, comparison = TRUE)
-\dontrun{
-# The umxReduce function knows how to test all relevant hypotheses
+
+m2 = umxModify(m1, regex = "am_.*", comparison = TRUE)
+
+# umxReduce knows how to test all relevant hypotheses
 # about model reduction for GxE models, reporting these in a nice table.
 umxReduce(m1)
 }
