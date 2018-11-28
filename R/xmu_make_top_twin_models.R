@@ -438,12 +438,12 @@ xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMat
 #' @param addCI Whether to add the interval requests for CIs (defaults to TRUE).
 #' @param numObsDZ = TODO: implement ordinal Number of DZ twins: Set this if you input covariance data,
 #' @param numObsMZ = TODO: implement ordinal Number of MZ twins: Set this if you input covariance data.
-#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
+#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
 #' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
 #' @param freeLowerE Whether to leave the lower triangle of E free (default = FALSE).
-#' @param suffix Deprecated: use "sep".
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -458,20 +458,16 @@ xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMat
 #' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
 #' m1 = umxIPnew(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 #' m1 = umxIPnew(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-#' 	nFac = c(a=3, c = 1, e = 1)
+#' 	nFac = c(a = 3, c = 1, e = 1)
 #' )
 #' umxSummary(m1)
 #' plot(m1)
 #' }
-umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased"), dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), optimizer = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, suffix = "deprecated") {
+umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased"), dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# TODO implement correlatedA
-	# Allow suffix as a synonym for sep
 	if(correlatedA){
 		message("I have not implemented correlatedA yet...")
 	}
-
-	sep = xmu_set_sep_from_suffix(sep = sep, suffix = suffix)
-
 	nSib = 2 # Number of siblings in a twin pair.
 	thresholds = match.arg(thresholds)
 	type = match.arg(type)
@@ -611,7 +607,7 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	}
 	model  = omxAssignFirstParameters(model) # ensure parameters with the same label have the same start value... means, for instance.
 	model = as(model, "MxModelIP")
-	model = xmu_safe_run_summary(model, autoRun = autoRun)
+	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
 	return(model)
 } # end umxIP
 

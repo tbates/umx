@@ -7,7 +7,8 @@
 umxSimplex(name = "simplex", selDVs, dzData, mzData, sep = NULL,
   equateMeans = TRUE, dzAr = 0.5, dzCr = 1, addStd = TRUE,
   addCI = TRUE, autoRun = getOption("umx_auto_run"),
-  optimizer = NULL)
+  tryHard = c("no", "mxTryHard", "mxTryHardOrdinal",
+  "mxTryHardWideSearch"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "simplex")}
@@ -31,7 +32,9 @@ Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1"
 
 \item{addCI}{Whether to add the interval requests for CIs (default = TRUE).}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 }
@@ -107,19 +110,18 @@ data(iqdat)
 mzData = subset(iqdat, zygosity == "MZ")
 dzData = subset(iqdat, zygosity == "DZ")
 baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
-m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
+m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 umxSummary(m1)
 parameters(m1, patt = "^s")
 m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 umxCompare(m1, m2)
 
+\dontrun{
 # =============================
 # = Test a 3 time-point model =
 # =============================
-nTimePoints = 3 # Number of time points
-baseVarNames = paste0("IQ_age", 1:nTimePoints)
-# IQ_age1 -> IQ_age1_T1, IQ_age1_T2,  etc.
-m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
+m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3), sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
+}
 }
 \references{
 \itemize{

@@ -42,8 +42,8 @@
 #' Covariates like sex, which are ordinal, violate the normality assumption.
 #' 
 #' @param name The name of the model (defaults to"ACEcov").
-#' @param selDVs The variables to include from the data (do not include suffixes).
-#' @param selCovs The covariates to include from the data (do not include suffixes).
+#' @param selDVs The variables to include from the data (do not include sep).
+#' @param selCovs The covariates to include from the data (do not include sep).
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
 #' @param sep Separator text between basename for twin variable names. Often "_T".
@@ -57,9 +57,9 @@
 #' @param thresholds How to implement ordinal thresholds: c("deviationBased", "left_censored").
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param weightVar (optional) Variable containing the weights to apply to data.
-#' @param autoRun Whether to run the model and return it, or just return it.
+#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @param optimizer (optionally) set the optimizer. Default (NULL) does nothing.
-#' @param suffix deprecated synonym for 'sep' (see above).
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @seealso umx_residualize umxACE
 #' @family Twin Modeling Functions
@@ -72,16 +72,16 @@
 #' selCovs = "age"
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, 
-#' 	     dzData = dzData, mzData = mzData, sep = "")
-#' m2 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, sep = "",
+#' 	     dzData = dzData, mzData = mzData)
+#' m2 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 #' # =======================
 #' # = lm-based equivalent =
 #' # =======================
 #' df_res = umx_residualize(ht ~ age, suffixes = c("1", "2"), data = twinData)
 #' mzData <- df_res[df_res$zygosity %in% "MZFF", ]
 #' dzData <- df_res[df_res$zygosity %in% "DZFF", ]
-#' m3 = umxACE("lm_based", selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+#' m3 = umxACE("lm_based", selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 #' # ===============================
 #' # = Example with two covariates =
 #' # ===============================
@@ -90,15 +90,14 @@
 #' twinData$cohort1 = twinData$cohort2 = as.numeric(as.factor(twinData$cohort))
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs,
-#' 	     dzData = dzData, mzData = mzData, sep = "")
-#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
-umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), suffix = NULL) {
+#' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, sep = "",
+#' 	     dzData = dzData, mzData = mzData)
+#' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
 		nSib = 2 # number of siblings in a twin pair
 		thresholds = match.arg(thresholds)
-		if(!is.null(sep)){ suffix = sep }
 		if(dzCr == .25 && name == "ACEcov"){ name = "ADEcov"}
-		xmu_twin_check(selDVs= c(selDVs, selCovs), dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep)
+		xmu_twin_check(selDVs= c(selDVs, selCovs), dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, enforceSep=TRUE)
 
 		if(is.null(selCovs)){
 			stop("You need to give me some covariates (if there are none, just use umxACE)")
@@ -106,8 +105,8 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		
 		baseDV_names  = selDVs
 		baseCov_names = selCovs
-		selDVs  = umx_paste_names(selDVs , suffix, 1:nSib)
-		selCovs = umx_paste_names(selCovs, suffix, 1:nSib)
+		selDVs  = umx_paste_names(selDVs , sep = sep, suffixes = 1:nSib)
+		selCovs = umx_paste_names(selCovs, sep = sep, suffixes = 1:nSib)
 		nCov = length(baseCov_names)
 		nDVs = length(baseDV_names); # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 		used = c(selDVs, selCovs)
@@ -144,13 +143,13 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		binVarNames    = names(mzData)[isBin]
 		contVarNames   = names(mzData)[!isFactor]
 
-		if(nFactors > 0 & is.null(suffix)){
-			stop("Please set suffix.\n",
+		if(nFactors > 0 & is.null(sep)){
+			stop("Please set sep.\n",
 			"Why: You have included ordinal or binary variables. I need to know which variables are for twin 1 and which for twin2.\n",
 			"The way I do this is enforcing some naming rules. For example, if you have 2 variables:\n",
 			" obesity and depression called: 'obesity_T1', 'dep_T1', 'obesity_T2' and 'dep_T2', you should call umxACE with:\n",
-			"selDVs = c('obesity','dep'), suffix = '_T' \n",
-			"suffix is just one word, appearing in all variables (e.g. '_T').\n",
+			"selDVs = c('obesity','dep'), sep = '_T' \n",
+			"sep is just one word, appearing in all variables (e.g. '_T').\n",
 			"This is assumed to be followed by '1' '2' etc...")
 		}
 
@@ -257,16 +256,16 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 				umxMatrix("defCovT1", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", T1Covs), dimnames = list("defCovT1", T1Covs)),
 				umxMatrix("defCovT2", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", T2Covs), dimnames = list("defCovT2", T2Covs)),
 				mxAlgebra(name = "expMean", top.Intercepts + cbind(defCovT1 %*% top.betas, defCovT2 %*% top.betas), dimnames = list(NULL, selDVs)),
-				mxExpectationNormal("top.expCovDZ", "expMean"), 
+				mxExpectationNormal("top.expCovDZ", "expMean"),
 				mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw")
 			)
 		} else if(sum(isBin) == 0){
 			# ==================================================
 			# = Handle 1 or more ordinal variables (no binary) =
 			# ==================================================
-			message("umxACE found ", (nOrdVars/nSib), " pair(s) of ordinal variables:", omxQuotes(ordVarNames), " (No binary)")		
+			message("umxACE found ", (nOrdVars/nSib), " pair(s) of ordinal variables:", omxQuotes(ordVarNames), " (No binary)")
 			if(length(contVarNames) > 0){
-				message(length(contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(contVarNames))	
+				message(length(contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(contVarNames))
 			}else{
 				# message("No continuous variables found.")
 			}
@@ -276,7 +275,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# for better guessing with low-frequency cells
 			allData = rbind(mzData, dzData)
 			# threshMat is is a matrix, or a list of 2 matrices and an algebra
-			threshMat = umxThresholdMatrix(allData, sep = suffix, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
+			threshMat = umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
 			mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 			dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
 			top = mxModel("top", umxLabel(meansMatrix), threshMat)
@@ -313,7 +312,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# For better guessing with low-freq cells
 			allData = rbind(mzData, dzData)
 			# threshMat may be a three item list of matrices and algebra
-			threshMat = umxThresholdMatrix(allData, sep = suffix, thresholds = thresholds, threshMatName = "threshMat", verbose = TRUE)
+			threshMat = umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = TRUE)
 
 			mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 			dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")
@@ -440,10 +439,6 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModelACE") # set class so that S3 plot() dispatches.
-	
-	if(autoRun){
-		model = mxRun(model)
-		umxSummary(model)
-	}
+	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
 	return(model)
 } # end umxACE

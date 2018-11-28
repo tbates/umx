@@ -80,7 +80,8 @@
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param thresholds How to implement ordinal thresholds c("deviationBased").
 #' @param covMethod How to treat covariates: "fixed" (default) or "random".
-#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
+#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
@@ -244,7 +245,7 @@
 umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
 	dzData, mzData, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, 
 	boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, 
-	thresholds = c("deviationBased"), covMethod = c("fixed", "random"), autoRun = getOption("umx_auto_run"), optimizer = NULL) {
+	thresholds = c("deviationBased"), covMethod = c("fixed", "random"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
 		nSib = 2 # number of siblings in a twin pair
 		covMethod  = match.arg(covMethod)
 		thresholds = match.arg(thresholds)
@@ -259,11 +260,11 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c(
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
 				stop("Implementing fixed means effects for version 2.0")
-				# umxACEvdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
+				# umxACEvdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun, tryHard = tryHard)
 			} else if(covMethod == "random") {
 				message("umxACEvcov not yet implemented")
 				# TODO implement umxACEvcov or refactor
-				# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun)
+				# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, thresholds = thresholds, autoRun = autoRun, tryHard = tryHard)
 			}
 		} else {
 			# nSib = 2, equateMeans = TRUE, threshType = c("deviationBased"), verbose = verbose
@@ -346,7 +347,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c(
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
 		model = as(model, "MxModelACEv") # Set class so that S3 plot() dispatches.
-		model = xmu_safe_run_summary(model, autoRun = autoRun, summary = TRUE, comparison = FALSE)
+		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, summary = TRUE, comparison = FALSE)
 		return(model)
 	}
 } # end umxACEvv

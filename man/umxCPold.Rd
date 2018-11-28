@@ -9,8 +9,8 @@ umxCPold(name = "CPold", selDVs, dzData, mzData, sep = NULL,
   freeLowerE = FALSE, correlatedA = FALSE, equateMeans = TRUE,
   dzAr = 0.5, dzCr = 1, boundDiag = 0, addStd = TRUE,
   addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"), optimizer = NULL,
-  suffix = "deprecated")
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP").}
@@ -50,11 +50,11 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
-
-\item{suffix}{DEPRECATED: Use sep instead (see above).}
 }
 \value{
 \itemize{

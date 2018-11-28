@@ -21,7 +21,7 @@ umx_standardize_Simplex
 data(iqdat)
 mzData = subset(iqdat, zygosity == "MZ")
 dzData = subset(iqdat, zygosity == "DZ")
-m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", dzData = dzData, mzData = mzData)
+m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 std = umx_standardize_Simplex(m1)
 }
 \references{

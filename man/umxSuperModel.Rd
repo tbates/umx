@@ -4,14 +4,18 @@
 \alias{umxSuperModel}
 \title{Make a multi-group model}
 \usage{
-umxSuperModel(name = "top", ..., autoRun = TRUE)
+umxSuperModel(name = "top", ..., autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "mxTryHard", "mxTryHardOrdinal",
+  "mxTryHardWideSearch"))
 }
 \arguments{
 \item{name}{The name for the container model (default = 'top')}
 
 \item{...}{Models forming the multiple groups contained in the supermodel.}
 
-\item{autoRun}{Whether to run the supermodel before returning it (default = TRUE)}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 }
 \value{
 - \code{\link{mxModel}}

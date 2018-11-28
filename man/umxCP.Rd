@@ -8,15 +8,16 @@ umxCP(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   correlatedA = FALSE, dzAr = 0.5, dzCr = 1, equateMeans = TRUE,
   boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
-  numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE,
-  freeLowerE = FALSE, autoRun = getOption("umx_auto_run"),
-  optimizer = NULL, suffix = "deprecated")
+  numObsMZ = NULL, autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "mxTryHard", "mxTryHardOrdinal",
+  "mxTryHardWideSearch"), optimizer = NULL, freeLowerA = FALSE,
+  freeLowerC = FALSE, freeLowerE = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP").}
 
 \item{selDVs}{The variables to include.
-omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
+omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{dzData}{The DZ dataframe.}
 
@@ -46,17 +47,17 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.}
 
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+
+\item{optimizer}{optionally set the optimizer (default NULL does nothing).}
+
 \item{freeLowerA}{Whether to leave the lower triangle of A free (default = FALSE).}
 
 \item{freeLowerC}{Whether to leave the lower triangle of C free (default = FALSE).}
 
 \item{freeLowerE}{Whether to leave the lower triangle of E free (default = FALSE).}
-
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
-
-\item{optimizer}{optionally set the optimizer (default NULL does nothing).}
-
-\item{suffix}{DEPRECATED. Use sep instead!}
 }
 \value{
 \itemize{
@@ -180,8 +181,6 @@ mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 allData = rbind(mzData, dzData) 
 
-# See how the thresholdMatrix works
-tmp = umxThresholdMatrix(allData[,tvars(selDVs, sep = "_T")], sep = "_T", verbose = TRUE)
 # umx_set_optimizer("NPSOL")
 # umx_set_optimization_options("mvnRelEps", .01)
 m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)

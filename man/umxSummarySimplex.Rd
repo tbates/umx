@@ -56,15 +56,13 @@ View documentation on the CP model subclass here: \code{\link{umxSummary.MxModel
 View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
 }
 \examples{
-data(iqdat)
-nTimePoints = 4 # Number of time points
-baseVarNames = paste0("IQ_age", 1:nTimePoints)
-# IQ_age + 1:4 + "_T" 1:2
-
+# 4 time model
 # Select Data
+data(iqdat)
 mzData <- subset(iqdat, zygosity == "MZ")
 dzData <- subset(iqdat, zygosity == "DZ")
-m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData)
+baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
+m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
 umxSummary(m1)
 \dontrun{
 umxSummary(m1, file = NA);

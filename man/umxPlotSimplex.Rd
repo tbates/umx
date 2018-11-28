@@ -40,7 +40,7 @@ mzData = subset(iqdat, zygosity == "MZ")
 dzData = subset(iqdat, zygosity == "DZ")
 selDVs = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-plot(m1)
+# plot(m1)
 }
 }
 \seealso{

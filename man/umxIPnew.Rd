@@ -10,9 +10,9 @@ umxIPnew(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
   bVector = FALSE, thresholds = c("deviationBased"), dzAr = 0.5,
   dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE,
   numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"), optimizer = NULL,
-  freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE,
-  suffix = "deprecated")
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,
+  freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "IP").}
@@ -51,7 +51,9 @@ umxIPnew(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 
 \item{numObsMZ}{= TODO: implement ordinal Number of MZ twins: Set this if you input covariance data.}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
 
@@ -60,8 +62,6 @@ umxIPnew(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 \item{freeLowerC}{Whether to leave the lower triangle of C free (default = FALSE).}
 
 \item{freeLowerE}{Whether to leave the lower triangle of E free (default = FALSE).}
-
-\item{suffix}{Deprecated: use "sep".}
 }
 \value{
 - \code{\link{mxModel}}
@@ -83,7 +83,7 @@ dzData <- subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
 m1 = umxIPnew(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 m1 = umxIPnew(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-	nFac = c(a=3, c = 1, e = 1)
+	nFac = c(a = 3, c = 1, e = 1)
 )
 umxSummary(m1)
 plot(m1)

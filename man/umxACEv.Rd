@@ -10,7 +10,8 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL,
   weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
   thresholds = c("deviationBased"), covMethod = c("fixed", "random"),
-  autoRun = getOption("umx_auto_run"), optimizer = NULL)
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -51,7 +52,9 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
 
 \item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 }
