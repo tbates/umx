@@ -59,9 +59,10 @@ umxMatrix("test", "Full", 1, 1)
 \seealso{
 - \code{\link{xmu_simplex_corner}}, \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
 
-Other Core Modelling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxAlgebra}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSuperModel}}, \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxAlgebra}}, \code{\link{umxModify}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxRun}}, \code{\link{umxSuperModel}},
+  \code{\link{umx}}
 }
-\concept{Core Modelling Functions}
+\concept{Core Modeling Functions}

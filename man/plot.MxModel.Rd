@@ -74,10 +74,11 @@ plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
 \seealso{
 - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},
 
-Other Core Modelling Functions: \code{\link{umxAlgebra}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSuperModel}}, \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{umxAlgebra}},
+  \code{\link{umxMatrix}}, \code{\link{umxModify}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxRun}}, \code{\link{umxSuperModel}},
+  \code{\link{umx}}
 
 Other Plotting functions: \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
@@ -86,5 +87,5 @@ Other Plotting functions: \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotIP}}, \code{\link{umxPlotSimplex}},
   \code{\link{umx}}
 }
-\concept{Core Modelling Functions}
+\concept{Core Modeling Functions}
 \concept{Plotting functions}

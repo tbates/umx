@@ -119,6 +119,12 @@ m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", com
 - \url{https://github.com/tbates/umx}
 }
 \seealso{
+Other Core Modeling Functions: \code{\link{plot.MxModel}},
+  \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxRun}}, \code{\link{umxSuperModel}},
+  \code{\link{umx}}
+
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
   \code{\link{umxFixAll}}, \code{\link{umxMI}},

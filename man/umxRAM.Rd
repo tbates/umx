@@ -214,9 +214,10 @@ m1$S$labels
 \seealso{
 \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, \code{\link{parameters}}, \code{\link{umxSuperModel}}
 
-Other Core Modelling Functions: \code{\link{plot.MxModel}},
+Other Core Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
-  \code{\link{umxPath}}, \code{\link{umxRun}},
-  \code{\link{umxSuperModel}}, \code{\link{umx}}
+  \code{\link{umxModify}}, \code{\link{umxPath}},
+  \code{\link{umxRun}}, \code{\link{umxSuperModel}},
+  \code{\link{umx}}
 }
-\concept{Core Modelling Functions}
+\concept{Core Modeling Functions}

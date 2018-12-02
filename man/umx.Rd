@@ -4,7 +4,7 @@
 \name{umx}
 \alias{umx}
 \alias{umx-package}
-\title{Helper Functions for Structural Equation Modelling in OpenMx}
+\title{Helper Functions for Structural Equation Modeling in OpenMx}
 \description{
 umx allows you to more easily build, run, modify, and report models using OpenMx
 with code. The core functions are linked below under \strong{See Also}
@@ -80,10 +80,11 @@ plot(m1, std = TRUE, file = NA)
 Other Teaching and testing Functions: \code{\link{tmx_genotypic_effect}},
   \code{\link{tmx_is.identified}}
 
-Other Core Modelling Functions: \code{\link{plot.MxModel}},
+Other Core Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
-  \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxSuperModel}}
+  \code{\link{umxModify}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
+  \code{\link{umxSuperModel}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
@@ -251,7 +252,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
 }
 \concept{Advanced Model Building Functions}
 \concept{Check or test}
-\concept{Core Modelling Functions}
+\concept{Core Modeling Functions}
 \concept{Data Functions}
 \concept{File Functions}
 \concept{Get and set}
