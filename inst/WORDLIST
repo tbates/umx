@@ -1,3 +1,4 @@
+modelling
 pos
 itemMax
 disp
@@ -258,14 +259,10 @@ med
 Mehta
 Mendelian
 MFI
-minimises
 minManifests
 modeled
 modeling
-modelling
-modidy
 Moskowitz
-MPSOL
 msg
 mtcars
 MuMIn
@@ -290,6 +287,9 @@ mxMatrices
 MxMatrix
 mxMatrix
 mxMI
+mxTryHard
+mxTryHardOrdinal
+mxTryHardWideSearch
 MxModel
 mxModel
 MxModelACE
@@ -340,7 +340,6 @@ nVar
 o
 obj
 ObjectName
-objectvalue
 obs
 oldName
 OmniGraffle
@@ -448,13 +447,11 @@ ssc
 SSkinfold
 ssri
 standardizeRAM
-standarized
 startvalues
 std
 str
 stringToMxAlgebra
 Subscapular
-summarising
 summaryAPA
 Suprailiacal
 Symm

@@ -2587,9 +2587,9 @@ umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "re
 
 #' Print the name and compact contents of variable.
 #'
-#' Helper function to make dumping  "ObjectName has the value: <objectvalue>" easy.
-#' This is primarily useful for inline debugging, where seeing "nVar = NULL" can be useful,
-#' and the code \code{umxMsg(nVar)} makes this easy.
+#' Helper function to ease debugging with console notes like:  "ObjectName = <object value>".
+#' This is primarily useful for inline debugging, where seeing "nVar = NULL" can be useful.
+#' The ability to say \code{umxMsg(nVar)} makes this easy.
 #'
 #' @param  x the thing you want to pretty-print
 #' @return - NULL
@@ -6085,7 +6085,7 @@ umx_standardize.default <- function(model, ...){
 #'
 #' @param model The \code{\link{mxModel}} you wish to standardize
 #' @param ... Other options
-#' @return - standarized RAM model.
+#' @return - standardized RAM model.
 #' @family Reporting functions
 #' @references - \url{https://github.com/tbates/umx}
 #' @export

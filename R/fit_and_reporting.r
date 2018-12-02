@@ -751,7 +751,7 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param ... Other parameters to control model summary
 #' @family Reporting Functions
-#' @family Core Modelling Functions
+#' @family Core Modeling Functions
 #' \url{https://www.github.com/tbates/umx}
 #' @export
 umxSummary <- function(model, ...){
@@ -2085,7 +2085,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},
-#' @family Core Modelling Functions
+#' @family Core Modeling Functions
 #' @family Plotting functions
 #' @references - \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 #' @examples
@@ -3548,7 +3548,7 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' xtabs based on a formula.
 #' 
 #' umx_aggregate makes using it a bit easier. In particular, it has some common functions 
-#' for summarising data built-in, like "mean (sd)" (the default).
+#' for summarizing data built-in, like "mean (sd)" (the default).
 #' 
 #' \code{umx_aggregate(mpg ~ cyl, data = mtcars, what = "mean_sd")}
 #' 

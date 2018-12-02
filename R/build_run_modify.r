@@ -223,7 +223,7 @@ methods::setClass("MxModelACEcov" , contains = "MxModelACE")
 methods::setClass("MxModelGxEbiv", contains = "MxModelGxE")
 
 # ============================
-# = Core Modelling Functions =
+# = Core Modeling Functions =
 # ============================
 
 #' Catches users typing umxModel instead of umxRAM.
@@ -340,7 +340,7 @@ umxModel <- function(...) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @seealso \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, \code{\link{parameters}}, \code{\link{umxSuperModel}}
-#' @family Core Modelling Functions
+#' @family Core Modeling Functions
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @md
 #' @examples
@@ -611,7 +611,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #'
 #' @description
 #' umxSuperModel takes 1 or more models and wraps them in a supermodel with a
-#' \code{\link{mxFitFunctionMultigroup}} fit function that minimises the sum of the
+#' \code{\link{mxFitFunctionMultigroup}} fit function that minimizes the sum of the
 #' fits of the sub-models.
 #'
 #' @param name The name for the container model (default = 'top')
@@ -620,7 +620,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @return - \code{\link{mxModel}}
 #' @export
-#' @family Core Modelling Functions
+#' @family Core Modeling Functions
 #' @seealso - \code{\link{mxFitFunctionMultigroup}}, \code{\link{umxRAM}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -3028,7 +3028,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param jiggle = NA passed to umxLabel to jiggle start values (default does nothing)
 #' @return - \code{\link{mxMatrix}}
 #' @export
-#' @family Core Modelling Functions
+#' @family Core Modeling Functions
 #' @seealso - \code{\link{xmu_simplex_corner}}, \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
@@ -3066,7 +3066,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @param verbose Quiet of informative
 #' @return - \code{\link{mxAlgebra}}
 #' @export
-#' @family Core Modelling Functions
+#' @family Core Modeling Functions
 #' @seealso - \code{\link{umxMatrix}}
 #' @examples
 #' x = umxAlgebra("circ", 2 * pi)
@@ -3102,7 +3102,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @return - \code{\link{mxModel}}
-#' @family Core Modelling Functions
+#' @family Core Modeling Functions
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @export
 #' @examples
@@ -4291,7 +4291,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param hasMeans Used in 'forms' case to know whether the data have means or not.
 #' @return - 1 or more \code{\link{mxPath}}s
 #' @export
-#' @family Core Modelling Functions
+#' @family Core Modeling Functions
 #' @seealso - \code{\link{mxPath}}
 #' @references - \url{https://tbates.github.io}
 #' @examples
@@ -4678,7 +4678,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 # = Parallel helpers to be added here =
 # =====================================
 
-#' Helper Functions for Structural Equation Modelling in OpenMx
+#' Helper Functions for Structural Equation Modeling in OpenMx
 #'
 #' umx allows you to more easily build, run, modify, and report models using OpenMx
 #' with code. The core functions are linked below under \strong{See Also}
@@ -4698,7 +4698,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' devtools::install_github("tbates/umx")
 #' 
 #' @family Teaching and testing Functions
-#' @family Core Modelling Functions
+#' @family Core Modeling Functions
 #' @family Reporting Functions
 #' @family Modify or Compare Models
 #' @family Plotting functions

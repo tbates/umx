@@ -12,7 +12,7 @@ umx_standardize_RAM(model, ...)
 \item{...}{Other options}
 }
 \value{
-- standarized RAM model.
+- standardized RAM model.
 }
 \description{
 umx_standardize_RAM takes a RAM-style model, and returns standardized version.

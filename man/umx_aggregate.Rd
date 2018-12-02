@@ -28,7 +28,7 @@ Like mean and sd of age, by sex. R's \code{\link{aggregate}} function is useful 
 xtabs based on a formula.
 
 umx_aggregate makes using it a bit easier. In particular, it has some common functions 
-for summarising data built-in, like "mean (sd)" (the default).
+for summarizing data built-in, like "mean (sd)" (the default).
 
 \code{umx_aggregate(mpg ~ cyl, data = mtcars, what = "mean_sd")}
 

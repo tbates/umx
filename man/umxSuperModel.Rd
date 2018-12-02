@@ -22,7 +22,7 @@ umxSuperModel(name = "top", ..., autoRun = getOption("umx_auto_run"),
 }
 \description{
 umxSuperModel takes 1 or more models and wraps them in a supermodel with a
-\code{\link{mxFitFunctionMultigroup}} fit function that minimises the sum of the
+\code{\link{mxFitFunctionMultigroup}} fit function that minimizes the sum of the
 fits of the sub-models.
 }
 \examples{
