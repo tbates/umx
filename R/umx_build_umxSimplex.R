@@ -80,17 +80,18 @@
 #' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
+#' \dontrun{
 #' data(iqdat)
 #' mzData = subset(iqdat, zygosity == "MZ")
 #' dzData = subset(iqdat, zygosity == "DZ")
 #' baseVars = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 #' m1= umxSimplex(selDVs= baseVars, dzData= dzData, mzData= mzData, sep= "_T", tryHard= "mxTryHard")
+#' 
 #' umxSummary(m1)
 #' parameters(m1, patt = "^s")
 #' m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 #' umxCompare(m1, m2)
 #' 
-#' \dontrun{
 #' # =============================
 #' # = Test a 3 time-point model =
 #' # =============================
@@ -228,12 +229,9 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' data(iqdat)
 #' mzData <- subset(iqdat, zygosity == "MZ")
 #' dzData <- subset(iqdat, zygosity == "DZ")
-#' baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
-#' m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
-#' umxSummary(m1)
+#' vars = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
+#' m1= umxSimplex(selDVs= vars, sep= "_T", dzData= dzData, mzData= mzData, tryHard= "mxTryHard")
 #' umxSummary(m1, file = NA);
-#' umxSummary(m1, file = "name", std = TRUE)
-#' stdFit = umxSummary(m1, returnStd = TRUE)
 #' }
 umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	# Depends on R2HTML::HTML

@@ -106,17 +106,18 @@ Thus, in a model where the means for twin 1 and twin 2 had been equated
 \code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 }
 \examples{
+\dontrun{
 data(iqdat)
 mzData = subset(iqdat, zygosity == "MZ")
 dzData = subset(iqdat, zygosity == "DZ")
 baseVars = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
 m1= umxSimplex(selDVs= baseVars, dzData= dzData, mzData= mzData, sep= "_T", tryHard= "mxTryHard")
+
 umxSummary(m1)
 parameters(m1, patt = "^s")
 m2 = umxModify(m1, regex = "as_r1c1", name = "no_as", comp = TRUE)
 umxCompare(m1, m2)
 
-\dontrun{
 # =============================
 # = Test a 3 time-point model =
 # =============================

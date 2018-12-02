@@ -62,12 +62,9 @@ View documentation on the GxE model subclass here: \code{\link{umxSummary.MxMode
 data(iqdat)
 mzData <- subset(iqdat, zygosity == "MZ")
 dzData <- subset(iqdat, zygosity == "DZ")
-baseVarNames = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
-m1 = umxSimplex(selDVs = baseVarNames, sep = "_T", dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
-umxSummary(m1)
+vars = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
+m1= umxSimplex(selDVs= vars, sep= "_T", dzData= dzData, mzData= mzData, tryHard= "mxTryHard")
 umxSummary(m1, file = NA);
-umxSummary(m1, file = "name", std = TRUE)
-stdFit = umxSummary(m1, returnStd = TRUE)
 }
 }
 \references{

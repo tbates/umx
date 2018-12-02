@@ -890,11 +890,14 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = "bmi"
 #' selDefs = "age"
-#' mzData  = subset(twinData, zygosity == "MZFF")
-#' dzData  = subset(twinData, zygosity == "DZFF")
+#' mzData  = subset(twinData, zygosity == "MZFF")[100,]
+#' dzData  = subset(twinData, zygosity == "DZFF")[100,]
+#' umx_time("start")
 #' m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep = "", dzData = dzData, mzData = mzData, 
 #' 			dropMissingDef = TRUE, tryHard = "mxTryHard")
+#' umx_time("stop")
 #' 
+#' \dontrun{
 #' # Controlling umxSummary
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")
@@ -903,9 +906,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 # # Test dropping moderation on a path
 #' m2 = umxModify(m1, regex = "am_.*", comparison = TRUE, tryHard = "mxTryHard")
 #' 
-#' \dontrun{
-#' # umxReduce knows how to test all relevant hypotheses
-#' # about model reduction for GxE models, reporting these in a nice table.
+#' # umxReduce knows how to test all relevant hypotheses for GxE models,
+#' # reporting these in a nice table.
 #' umxReduce(m1)
 #' }
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
