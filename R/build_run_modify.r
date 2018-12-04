@@ -1938,9 +1938,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 #' Educational Achievement Data. *Behavior Genetics*, **46**, 583-95. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
 #'
 #' @examples
-# ============================================
-# = BMI, can't use Age as a random covariate =
-# ============================================
+#' # ============================================
+#' # = BMI, can't use Age as a random covariate =
+#' # ============================================
 #' require(umx)
 #' data(twinData)
 #' # Replicate age to age1 & age2
@@ -2205,9 +2205,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	invisible(model)
 }
 
-# =============
-# = umxCP =
-# =============
 #' umxCP: Build and run a Common pathway twin model
 #'
 #' Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
@@ -2326,8 +2323,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #  # These will be expanded into "gff_T1" "gff_T2" etc.
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
 #' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
-#' 		dzData = dzData, mzData = mzData)
-#' m1 = mxTryHardOrdinal(m1)
+#' 		dzData = dzData, mzData = mzData, tryHard = "mxTryHardOrdinal")
 #' mold = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' umxCompare(m1, mold)
 #'
@@ -2370,9 +2366,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
 #' m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-#' 	nFac = 3, correlatedA = TRUE
-#' )
-#' # Will likely need to be re-run: m1 = mxTryHard(m1)
+#' 	nFac = 3, correlatedA = TRUE, tryHard = "mxTryHard")
 #' }
 #'
 umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), correlatedA = FALSE, dzAr= .5, dzCr= 1, equateMeans= TRUE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
@@ -2381,10 +2375,11 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 	nSib = 2 # Number of siblings in a twin pair.
 
 	xmu_twin_check(selDVs= selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
+
 	# Expand var names
 	selVars = umx_paste_names(selDVs, sep = sep, suffixes = 1:nSib)
 	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	bits    = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, equateMeans= equateMeans, verbose= FALSE)
+	bits    = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, nSib = nSib, type = type, equateMeans= equateMeans, verbose= FALSE)
 	top     = bits$top
 	MZ      = bits$MZ
 	DZ      = bits$DZ

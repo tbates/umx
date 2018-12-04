@@ -52,7 +52,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 	}
 
 	if(is.null(manifests)){
-		# manifests not specficied: retain all except illegal variables
+		# manifests not specified: retain all except illegal variables
 		manifests = umx_names(data)
 		if("one" %in% manifests){
 			warning("You have a data column called 'one' which is illegal (it's the code used for setting means). I'll drop it!")
@@ -81,6 +81,12 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		}else	if(type == "cor"){
 			data = mxData(observed = cor(data), type = type, numObs = nrow(data))
 		} else if(type %in% c('WLS', 'DWLS', 'ULS')){
+			if(umx_is_ordered(data)){
+				# 
+			} else {
+				message("All continuous with missing data cannot be handled in WLS.\nI used na.omit(data) to remove %n rows with missing values")
+				data = na.omit(data)
+			}
 			data = mxDataWLS(data, type = type)
 		}else{
 			stop("I don't know how to create data of type ", omxQuotes(type))

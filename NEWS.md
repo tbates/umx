@@ -1,5 +1,33 @@
-# umx 2.9.0 November 2018, R 3.5.1: More love
-* NEW: `umxACE` will support WLS, UWLS, DWLS models!
+# umx 2.9.0 December 2018, R 3.5.1: More love
+* NEW: `umxACE` supports WLS, UWLS, DWLS models!
+* NEW: `umxACEv` supports WLS, UWLS, DWLS models
+* NEW: `umxCP` supports WLS, UWLS, DWLS models
+* NEW: `xmu_safe_run_summary` Runs a model safely, optionally summarizing and comparing it to a base model
+* IMPROVED: All models now support tryHard as a parameter!!
+* IMPROVED: new auto run function in more places (all done)
+* IMPROVED: All `plot` functions now have `strip_zero` option (default = strip leading zeroes from parameter estimates)
+* IMPROVED: `umx_standardize_ACEv` now working!
+* IMPROVED: All models now use xmu_safe_run_summary so even bad models are returned for the user to diagnose them
+* IMPROVED: `umx_score_scale` can cope with a single item
+* IMPROVED: `xmu_safe_run_summary` don't error on code red non-run models
+* IMPROVED: `xmu_twin_check` tells user how to rename selVars and sep when sep is not provided, but is enforced.
+* IMPROVED: `umx_as_numeric` takes a parameter to pick out the columns to convert
+* MODIFY: xmu_safe_run_summary don't return bVector (already available)
+* IMPROVED `umxSimplex` Start values flexible and robust (was hard coded for 4-times)
+* IMPROVED `xmu_simplex_corner` Takes a full values list (not just 1)
+* IMPROVED: `umxACE` help model diagrams: clearer ACE_matrix picture
+* IMPROVED: `umxRAM` help: sketch-mode example, and diagram
+* IMPROVED: `umxAPA` can use `.Last.value` as default input if none provided
+* IMPROVED: `umx_make` supports `what = "rhub"`
+* IMPROVED: `umxlong2wide` now allows user to retain only desired twin IDs
+* MINOR: `xmu_mean_var_starts` uses "expMean_" as the name for means cells (was "mean")
+* BACKWARD INCOMPATIBLE: Support for suffix as a synonym for sep was finally removed after a 3 years of deprecation warnings
+* IMPROVED: Help-file model diagrams use pdf for pdf output.
+* HELP: `umxACE` help model diagrams
+* HELP: Examples cleaned up
+* HELP: `umx_scale` help file improved
+* HELP: new pdfs for images in pdf help; remove _ from image names
+
 
 # umx 2.8.5 October 2018, R 3.5.1: More love
 * NEW: `umxRAM` supports WLS, UWLS, DWLS models!

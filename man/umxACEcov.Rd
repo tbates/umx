@@ -73,6 +73,9 @@ The following figure shows how the ACE model with random covariates appears as a
 \if{latex}{\figure{ACEcovVarianceModel.pdf}{options: width=7cm}}
 }
 \examples{
+# ============================================
+# = BMI, can't use Age as a random covariate =
+# ============================================
 require(umx)
 data(twinData)
 # Replicate age to age1 & age2

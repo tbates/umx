@@ -149,8 +149,7 @@ mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
 m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
-		dzData = dzData, mzData = mzData)
-m1 = mxTryHardOrdinal(m1)
+		dzData = dzData, mzData = mzData, tryHard = "mxTryHardOrdinal")
 mold = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 umxCompare(m1, mold)
 
@@ -192,9 +191,7 @@ mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
 m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-	nFac = 3, correlatedA = TRUE
-)
-# Will likely need to be re-run: m1 = mxTryHard(m1)
+	nFac = 3, correlatedA = TRUE, tryHard = "mxTryHard")
 }
 
 }
