@@ -27,7 +27,7 @@ The most common use will be to give it a dataframe, and get back an mxData objec
 \examples{
 tmp = xmu_make_mxData(data= mtcars, type = "Auto")
 tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = c("mpg", "cyl", "disp"))
-tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = c("mpg", "cyl", "disp"))
+tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = c("mpg", "cyl", "disp"), verbose= TRUE)
 tmp = xmu_make_mxData(data= mtcars, type = "cov")
 tmp = xmu_make_mxData(data= mtcars, type = "cor")
 # pass string through

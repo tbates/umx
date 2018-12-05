@@ -132,6 +132,11 @@
 #' # tip: with report = "html", umxSummary can print the table to your browser!
 #' plot(m1)
 #' 
+#' # ================
+#' # = WLS analysis =
+#' # ================
+#' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, type = "DWLS")
+#'
 #' # ========================================================
 #' # = Evidence for dominance ? (DZ correlation set to .25) =
 #' # ========================================================

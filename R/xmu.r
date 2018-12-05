@@ -35,7 +35,7 @@
 #' @examples
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto")
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = c("mpg", "cyl", "disp"))
-#' tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = c("mpg", "cyl", "disp"))
+#' tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = c("mpg", "cyl", "disp"), verbose= TRUE)
 #' tmp = xmu_make_mxData(data= mtcars, type = "cov")
 #' tmp = xmu_make_mxData(data= mtcars, type = "cor")
 #' # pass string through
@@ -81,11 +81,12 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		}else	if(type == "cor"){
 			data = mxData(observed = cor(data), type = type, numObs = nrow(data))
 		} else if(type %in% c('WLS', 'DWLS', 'ULS')){
-			if(umx_is_ordered(data)){
-				# 
-			} else {
-				message("All continuous with missing data cannot be handled in WLS.\nI used na.omit(data) to remove %n rows with missing values")
+			if(any(umx_is_ordered(data))){
+				# at least one ordered column
+			} else if(anyNA(data)){
+				oldRows = nrow(data)
 				data = na.omit(data)
+				message("Missing data cannot be handled in continuous-variable WLS.\n xmu_make_mxData removed ", (nrow(data) - oldRows), " rows with missing values")				
 			}
 			data = mxDataWLS(data, type = type)
 		}else{
@@ -125,7 +126,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				msg_str = paste0(length(unusedManifests), " unused variable (", varList)
 			}
 		}
-		message("ManifestVars set to: ", paste(manifests, collapse = ", "), ". ", msg_str)
+		message("Data type = ", tmp$type, "\nManifestVars set to: ", paste(manifests, collapse = ", "), ". ", msg_str)
 	}
 	return(data)
 }

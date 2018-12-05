@@ -140,8 +140,8 @@
 #' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), threshType = c("deviationBased"), weightVar = NULL, bVector = FALSE, verbose= FALSE) {
 	# TODO: xmu_make_top_twin_models Add selCovs
-	# TODO: xmu_make_top_twin_models add covMethod == "fixed"
-	# TODO: xmu_make_top_twin_models add beta matrix for fixed covariates in means.
+	# TODO: xmu_make_top_twin_models Add covMethod == "fixed"
+	# TODO: xmu_make_top_twin_models Add beta matrix for fixed covariates in means.
 	# If dropping this into an existing model, it replaces code that sets
 	# nVar, selVars, used, 
 	# any code figuring out data-type
