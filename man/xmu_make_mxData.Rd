@@ -5,7 +5,8 @@
 \title{Upgrade a dataframe to an mxData type.}
 \usage{
 xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
-  "WLS", "DWLS", "ULS"), manifests = NULL, verbose = FALSE)
+  "WLS", "DWLS", "ULS"), manifests = NULL,
+  allContinuousMethod = c("cumulants", "marginals"), verbose = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{mxData}}}
@@ -13,6 +14,8 @@ xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
 \item{type}{What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')}
 
 \item{manifests}{If set, only these variables will be retained.}
+
+\item{allContinuousMethod}{passed to mxDataWLS c("cumulants", "marginals")}
 
 \item{verbose}{If verbose, report on columns kept and dropped (default FALSE)}
 }
@@ -28,6 +31,9 @@ The most common use will be to give it a dataframe, and get back an mxData objec
 tmp = xmu_make_mxData(data= mtcars, type = "Auto")
 tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = c("mpg", "cyl", "disp"))
 tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = c("mpg", "cyl", "disp"), verbose= TRUE)
+# missing data WLS example
+tmp = mtcars; tmp[1, "mpg"] = NA # add NA
+tmp = xmu_make_mxData(data= tmp, type = "WLS" , manifests = c("mpg", "cyl", "disp"), verbose= TRUE)
 tmp = xmu_make_mxData(data= mtcars, type = "cov")
 tmp = xmu_make_mxData(data= mtcars, type = "cor")
 # pass string through

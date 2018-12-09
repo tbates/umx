@@ -17,13 +17,15 @@ in a compact form suitable for reporting in a journal.
 
 See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 
-View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
+View documentation on the ACE model subclass here: \code{\link{umxSummaryACE}}.
 
-View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
+View documentation on the ACEv model subclass here: \code{\link{umxSummaryACEv}}.
 
-View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
+View documentation on the IP model subclass here: \code{\link{umxSummaryIP}}.
 
-View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
+View documentation on the CP model subclass here: \code{\link{umxSummaryCP}}.
+
+View documentation on the GxE model subclass here: \code{\link{umxSummaryGxE}}.
 }
 \seealso{
 Other Reporting Functions: \code{\link{loadings.MxModel}},

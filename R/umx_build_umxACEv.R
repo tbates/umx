@@ -359,15 +359,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c(
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
-#' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
-#' 
-#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
-#' 
-#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
-#' 
-#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
-#' 
-#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
+#' See documentation for other umx models here: \code{\link{umxSummary}}.
 #' 
 #' @aliases umxSummary.MxModelACEv
 #' @param model an \code{\link{mxModel}} to summarize
@@ -377,7 +369,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c(
 #' @param comparison you can run mxCompare on a comparison model (NULL)
 #' @param std Whether to standardize the output (default = TRUE)
 #' @param showRg = whether to show the genetic correlations (FALSE)
-#' @param CIs Whether to show Confidence intervals if they exist (T)
+#' @param CIs Whether to show Confidence intervals if they exist (TRUE)
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param report If "html", then open an html table of the results
 #' @param extended how much to report (FALSE)
@@ -526,8 +518,8 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 			CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
 			CIlist$fullName = row.names(CIlist)
 			# Initialise empty matrices for the CI results
-			rows = dim(model$top$matrices$a$labels)[1]
-			cols = dim(model$top$matrices$a$labels)[2]
+			rows = dim(model$top$matrices$A$labels)[1]
+			cols = dim(model$top$matrices$A$labels)[2]
 			A_CI = C_CI = E_CI = matrix(NA, rows, cols)
 
 			# iterate over each CI
@@ -536,8 +528,8 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 			# return(CIlist)
 			for(n in 1:rowCount) { # n = 1
 				thisName = row.names(CIlist)[n] # thisName = "a11"
-					# convert labels to [bracket] style
-					if(!umx_has_square_brackets(thisName)) {
+				# convert labels to [bracket] style
+				if(!umx_has_square_brackets(thisName)) {
 					nameParts = labelList[which(row.names(labelList) == thisName),]
 					CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
 				}
@@ -550,11 +542,11 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 				thisString     = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
 
 				if(grepl("^A", thisMatrixName)) {
-					a_CI[thisMatrixRow, thisMatrixCol] = thisString
+					A_CI[thisMatrixRow, thisMatrixCol] = thisString
 				} else if(grepl("^C", thisMatrixName)){
-					c_CI[thisMatrixRow, thisMatrixCol] = thisString
+					C_CI[thisMatrixRow, thisMatrixCol] = thisString
 				} else if(grepl("^E", thisMatrixName)){
-					e_CI[thisMatrixRow, thisMatrixCol] = thisString
+					E_CI[thisMatrixRow, thisMatrixCol] = thisString
 				} else{
 					stop(paste("Illegal matrix name: must begin with A, C, or E. You sent: ", thisMatrixName))
 				}

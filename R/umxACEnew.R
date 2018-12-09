@@ -113,7 +113,7 @@
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{plot.MxModelACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
+#' @seealso - \code{\link{plotACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 #' @md
@@ -128,7 +128,7 @@
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
-#' umxSummary(m1, std = FALSE) # unstandardized
+#' umxSummary(m1, std = FALSE) # un-standardized
 #' # tip: with report = "html", umxSummary can print the table to your browser!
 #' plot(m1)
 #' 

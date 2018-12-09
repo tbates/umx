@@ -8,7 +8,8 @@ xmu_make_top_twin_models(mzData, dzData, selDVs, sep = NULL, nSib = 2,
   numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   threshType = c("deviationBased"), weightVar = NULL,
-  bVector = FALSE, verbose = FALSE)
+  bVector = FALSE, allContinuousMethod = c("cumulants", "marginals"),
+  verbose = FALSE)
 }
 \arguments{
 \item{mzData}{Dataframe containing the MZ data}
@@ -35,6 +36,8 @@ FIML requires that the data are continuous. Remaining options are weighted, diag
 \item{weightVar}{If provided, a vector objective will be used to weight the data. (default = NULL).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
+
+\item{allContinuousMethod}{passed to xmu_make_mxData (for WLS data) c("cumulants", "marginals")}
 
 \item{verbose}{(default = FALSE)}
 }
@@ -101,14 +104,6 @@ Type "WLS", "DWLS", or "ULS" will process raw data into a WLS data using \url{xm
 
 Unused columns are dropped.
 If you pass in raw data, you can't request type cov/cor yet. Will work on this if desired.
-
-\strong{TODO list for xmu_make_top_twin_models}
-\enumerate{
-\item Add selCovs
-\item Add covMethod == "fixed"
-\item Add beta matrix for fixed covariates in means.
-\item Improve the start guesses based on input model type (ACE, CP, IP etc.)
-}
 }
 \examples{
 # ==============
@@ -163,6 +158,7 @@ selDVs = c("wt")
 mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(selDVs, sep="")], use = "complete")
 dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(selDVs, sep="")], use = "complete")
 bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
+4. Improve the start guesses based on input model type (ACE, CP, IP etc.)
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

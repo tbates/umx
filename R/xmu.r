@@ -28,6 +28,7 @@
 #' @param data A \code{\link{data.frame}} or \code{\link{mxData}}
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
+#' @param allContinuousMethod passed to mxDataWLS c("cumulants", "marginals")
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
 #' @return - \code{\link{mxData}}
 #' @export
@@ -36,13 +37,17 @@
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto")
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = c("mpg", "cyl", "disp"))
 #' tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = c("mpg", "cyl", "disp"), verbose= TRUE)
+#' # missing data WLS example
+#' tmp = mtcars; tmp[1, "mpg"] = NA # add NA
+#' tmp = xmu_make_mxData(data= tmp, type = "WLS" , manifests = c("mpg", "cyl", "disp"), verbose= TRUE)
 #' tmp = xmu_make_mxData(data= mtcars, type = "cov")
 #' tmp = xmu_make_mxData(data= mtcars, type = "cor")
 #' # pass string through
 #' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
-xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, verbose = FALSE) {
+xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, allContinuousMethod = c("cumulants", "marginals"), verbose = FALSE) {
 	type = match.arg(type)
+	allContinuousMethod = match.arg(allContinuousMethod)
 	if(is.null(data)){
 		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
 		stop("Did you perhaps just include the data among other functions instead of via data = ?")
@@ -86,13 +91,13 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			} else if(anyNA(data)){
 				oldRows = nrow(data)
 				data = na.omit(data)
-				message("Missing data cannot be handled in continuous-variable WLS.\n xmu_make_mxData removed ", (nrow(data) - oldRows), " rows with missing values")				
+				message("polite note from xmu_make_mxData: Missing data can't be handled in continuous-variable WLS.\n I removed ", (nrow(data) - oldRows), " rows with missing values")				
 			}
-			data = mxDataWLS(data, type = type)
+			data = mxDataWLS(data, type = type, allContinuousMethod = allContinuousMethod)
 		}else{
 			stop("I don't know how to create data of type ", omxQuotes(type))
 		}
-	}else if (umx_is_MxData(data)){
+	}else if(umx_is_MxData(data)){
 		# Already an mxData
 		if(dropColumns){
 			if(data$type %in% c("cov", "cor")){
@@ -126,7 +131,26 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				msg_str = paste0(length(unusedManifests), " unused variable (", varList)
 			}
 		}
-		message("Data type = ", tmp$type, "\nManifestVars set to: ", paste(manifests, collapse = ", "), ". ", msg_str)
+		# @ preferredFit      : chr "WLS"
+		# @ numObs            : num 32
+		# @ observedStats     : list()
+		# @ .isSorted         : logi FALSE
+		# @ .needSort         : logi TRUE
+		# @ .wlsType          : chr "WLS"
+		# @ .wlsContinuousType: chr "cumulants"
+		# @ .wlsFullWeight    : logi TRUE
+		
+		if("preferredFit" %in% names(data)){
+			message("Preferred fit for data = ", data$preferredFit)
+		} else {
+			message("Data type = ", data$type)
+		}
+		if(is.na(data$means)){
+			message("No means")
+		} else {
+			message("Has means")
+		}
+		message("ManifestVars set to: ", paste(manifests, collapse = ", "), ". ", msg_str)
 	}
 	return(data)
 }

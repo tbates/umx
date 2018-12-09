@@ -24,7 +24,7 @@ Defaults to NA = no plot.}
 
 \item{showRg}{= whether to show the genetic correlations (FALSE)}
 
-\item{CIs}{Whether to show Confidence intervals if they exist (T)}
+\item{CIs}{Whether to show Confidence intervals if they exist (TRUE)}
 
 \item{report}{If "html", then open an html table of the results}
 
@@ -45,15 +45,7 @@ optionally show the Rg (genetic and environmental correlations), and show confid
 drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 }
 \details{
-See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
-
-View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
-
-View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
-
-View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
-
-View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
+See documentation for other umx models here: \code{\link{umxSummary}}.
 }
 \examples{
 require(umx)

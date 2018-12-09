@@ -740,13 +740,15 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #'
 #' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
 #' 
-#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
+#' View documentation on the ACE model subclass here: \code{\link{umxSummaryACE}}.
 #' 
-#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
+#' View documentation on the ACEv model subclass here: \code{\link{umxSummaryACEv}}.
 #' 
-#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
+#' View documentation on the IP model subclass here: \code{\link{umxSummaryIP}}.
 #' 
-#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
+#' View documentation on the CP model subclass here: \code{\link{umxSummaryCP}}.
+#' 
+#' View documentation on the GxE model subclass here: \code{\link{umxSummaryGxE}}.
 #'
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param ... Other parameters to control model summary
@@ -1010,16 +1012,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
-#' See documentation for RAM models summary here: \code{\link{umxSummary.MxModel}}.
+#' See documentation for other umx modelshere: \code{\link{umxSummary}}.
 #' 
-#' View documentation on the ACE model subclass here: \code{\link{umxSummary.MxModelACE}}.
-#' 
-#' View documentation on the IP model subclass here: \code{\link{umxSummary.MxModelIP}}.
-#' 
-#' View documentation on the CP model subclass here: \code{\link{umxSummary.MxModelCP}}.
-#' 
-#' View documentation on the GxE model subclass here: \code{\link{umxSummary.MxModelGxE}}.
-
 #' @aliases umxSummary.MxModelACE
 #' @param model an \code{\link{mxModel}} to summarize
 #' @param digits round to how many digits (default = 2)
