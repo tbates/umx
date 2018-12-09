@@ -240,12 +240,12 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		#  1. Simple test if results are similar for an ACE model of 1 variable
 		# [] select mxFitFunctionML() of bVector as param
 		
-		if(nFactors == 0) {
+		if(nFactors == 0){
 			# ===============================
 			# = Handle all continuous case  =
 			# ===============================
-			if(is.na(mzData$means)){
-				# No means 
+			if(type %in% c('WLS', 'DWLS', 'ULS') & allContinuousMethod == "cumulants"){
+				# No means for WLS with cumulants
 				top = mxModel("top")
 				MZ  = mxModel("MZ", mzData,
 					mxExpectationNormal("top.expCovMZ"),

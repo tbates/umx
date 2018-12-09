@@ -130,21 +130,22 @@
 #' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 #' umxSummary(m1, std = FALSE) # un-standardized
 #' # tip: with report = "html", umxSummary can print the table to your browser!
-#' plot(m1)
+#' # plot(m1)
 #' 
-#' # ================
-#' # = WLS analysis =
-#' # ================
-#' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, type = "DWLS")
 #'
-#' # ========================================================
-#' # = Evidence for dominance ? (DZ correlation set to .25) =
-#' # ========================================================
-#' m2 = umxACEnew("ADE", selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
+#' # =============================================================
+#' # = ADE: Evidence for dominance ? (DZ correlation set to .25) =
+#' # =============================================================
+#' m2 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
 #' umxSummary(m2, comparison = m1) 
 #' # nb: Although summary is smart enough to print d, the underlying 
 #' #     matrices are still called a, c & e.
+#'
+#' # ================
+#' # = WLS analysis =
+#' # ================
+#' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, type = "DWLS")
 #'
 #' # ==============================
 #' # = Univariate model of weight =
