@@ -29,7 +29,7 @@ myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 m1 <- umxRAM("OneFactor", data = myData,
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
+	umxPath(var = latents, fixedAt = 1)
 )
 m1 = mxRun(m1)
 umxSummary(m1, show = "std")

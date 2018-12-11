@@ -558,8 +558,9 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	# = Add means labels if needed =
 	# ==============================
 	# TODO add a test case with raw data but no means...
+
 	if(!is.null(model$data)){
-		if(model$data$type == "raw" & is.null(model$M)) {
+		if(umx_check_WLS_no_means(model$data) & is.null(model$M)) {
 			message("You are using raw data, but have not yet added paths for the means\n")
 			message("Do this with umxPath(means = 'var')")
 		}
@@ -576,6 +577,15 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 		model = mxModel(model, name= name)
 	}
 	return(model)
+}
+
+umx_check_WLS_no_means <- function(data) {
+	# TODO add ability to take a model instead of mxData
+	if(!is.null(data$preferredFit) && (data$preferredFit == "WLS") && (data$.wlsContinuousType ==  "cumulants")){
+		return(TRUE)
+	} else {
+		return(FALSE)
+	}
 }
 
 #' Internal function to help building simplex models

@@ -72,7 +72,7 @@ plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
 - \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 }
 \seealso{
-- \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}},
+- \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}}
 
 Other Core Modeling Functions: \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxModify}},

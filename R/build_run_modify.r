@@ -379,8 +379,8 @@ umxModel <- function(...) {
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line")
 #' 
-#' # 5. Run a WLS model
-#' mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS", autoRun= FALSE,
+#' # 5. Run an all-continuous WLS model
+#' mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS",
 #' 	umxPath(c("wt", "disp"), to = "mpg"),
 #' 	umxPath("wt", with = "disp"),
 #' 	umxPath(var = selVars)
@@ -2857,11 +2857,20 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# =============
 		# = Set means =
 		# =============
-		if(obj$data$type == "raw"){
+		# print(str(obj$data))
+		# umx_msg(obj$data$preferredFit)
+		# umx_msg(obj$data$.wlsContinuousType)
+
+		if(umx_check_should_have_means(obj$data)){
+			# Handle WLS without means
+			# diag diag creates a matrix with all zeros off the diagonal
+			covData = umx_var(theData[, manifests, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
+			covData = diag(covData)
+		}else if(obj$data$type == "raw"){
 			# = Set the means =
 			if(is.null(obj$matrices$M)){
-				warning("You are using raw data, but have not yet added paths for the means\n")
-				stop("You do this with mxPath(from = 'one', to = 'var')")
+				warning("You have raw data, but not paths for the means\n")
+				stop("Add something like umxPath(means = 'var') to your model.")
 			} else {
 				dataMeans = umx_means(theData[, manifests, drop = FALSE], ordVar = 0, na.rm = TRUE)
 				freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
@@ -2871,8 +2880,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 				if(!is.null(dim(covData)) || length(covData) > 1){
 					covData = diag(covData)
 				} else {
-					# If this is one variable, make a matrix with the diag on the diag, and zeros elsewhere
-					# covData = diag(covData)
+					# If this is one variable, leave alone: equivalent to a 1,1, matrix with the diag on the "diag", and zeros elsewhere
 				}
 			}
 		} else {
