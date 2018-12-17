@@ -3077,9 +3077,9 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' # Parameters with values below .1 and containing "_to_" in their label
 #' umx_parameters(m1, "below", .1, "_to_")
 umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {
-	# TODO rationalize (deprecate?) umx_parameters and umxGetParameters
-	# TODO  add filtering by significance (based on SEs)
-	# TODO offer a method to handle sub-models
+	# TODO rationalize (deprecate?) umx_parameters and umxGetParameters -> just parameters()
+	# TODO Add filtering by significance (based on SEs)
+	# TODO Offer a method to handle sub-models
 	# 	model$aSubmodel$matrices$aMatrix$labels
 	# 	model$MZ$matrices
 	
@@ -3103,7 +3103,7 @@ or specify all arguments:\n
 		if(umx_has_been_run(x)){
 			x = summary(x)
 		} else {
-			message("Model has not been run.")
+			# message("Just a note: Model has not been run. That might not matter for you")
 		}
 	}
 	if(class(x) != "summary.mxmodel"){
