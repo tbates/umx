@@ -1,18 +1,24 @@
-# umx 2.9.0 December 2018, R 3.5.1: More love
+# Upcoming in next version... umx 3.0.0 January 2018, R 3.X.X
+* NEW: `umxRAM` supports WLS, UWLS, DWLS models!
 * NEW: `umxACE` supports WLS, UWLS, DWLS models!
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
+
+# umx 2.9.0 December 2018, R 3.5.1: More love
+* BACKWARD INCOMPATIBLE: Support for suffix as a synonym for sep was finally removed after a 3 years of deprecation warnings
+* FIXED: `umxSummary`for `ACEv` models: CI now works - (was 'a' not 'A')
 * NEW: `xmu_safe_run_summary` Runs a model safely, optionally summarizing and comparing it to a base model
 * IMPROVED: All models now support tryHard as a parameter!!
 * IMPROVED: new auto run function in more places (all done)
 * IMPROVED: All `plot` functions now have `strip_zero` option (default = strip leading zeroes from parameter estimates)
 * IMPROVED: `umx_standardize_ACEv` now working!
 * IMPROVED: All models now use xmu_safe_run_summary so even bad models are returned for the user to diagnose them
+* IMPROVED: Omnigraffle stencil
+* IMPROVED: `umxRAM` now labels paths when no data are provided (simulation of sketch modes)
 * IMPROVED: `umx_score_scale` can cope with a single item
 * IMPROVED: `xmu_safe_run_summary` don't error on code red non-run models
 * IMPROVED: `xmu_twin_check` tells user how to rename selVars and sep when sep is not provided, but is enforced.
 * IMPROVED: `umx_as_numeric` takes a parameter to pick out the columns to convert
-* MODIFY: xmu_safe_run_summary don't return bVector (already available)
 * IMPROVED `umxSimplex` Start values flexible and robust (was hard coded for 4-times)
 * IMPROVED `xmu_simplex_corner` Takes a full values list (not just 1)
 * IMPROVED: `umxACE` help model diagrams: clearer ACE_matrix picture
@@ -20,9 +26,9 @@
 * IMPROVED: `umxAPA` can use `.Last.value` as default input if none provided
 * IMPROVED: `umx_make` supports `what = "rhub"`
 * IMPROVED: `umxlong2wide` now allows user to retain only desired twin IDs
-* MINOR: `xmu_mean_var_starts` uses "expMean_" as the name for means cells (was "mean")
-* BACKWARD INCOMPATIBLE: Support for suffix as a synonym for sep was finally removed after a 3 years of deprecation warnings
 * IMPROVED: Help-file model diagrams use pdf for pdf output.
+* MINOR: `xmu_mean_var_starts` uses "expMean_" as the name for means cells (was "mean")
+* MODIFY: xmu_safe_run_summary don't return bVector (already available)
 * HELP: `umxACE` help model diagrams
 * HELP: Examples cleaned up
 * HELP: `umx_scale` help file improved
@@ -30,7 +36,6 @@
 
 
 # umx 2.8.5 October 2018, R 3.5.1: More love
-* NEW: `umxRAM` supports WLS, UWLS, DWLS models!
 * NEW: `xmu_make_mxData` function to make mxData functions out of dataframes (and also drop variables from cov/cor dataframes.
 * NEW: SEstyle confidence information for CP and IP `plot`s.
 * IMPROVED: `umxCompare` gains ability to output Weight AIC conditional model probabilities! h/t @mNivard
