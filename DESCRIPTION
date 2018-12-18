@@ -8,7 +8,7 @@ Maintainer: Timothy C Bates <timothy.c.bates@gmail.com>
 License: GPL-3
 Language: en-US
 Encoding: UTF-8
-URL: http://github.com/tbates/umx
+URL: https://github.com/tbates/umx
 Description: Quickly create, run, and report structural equation and twin models.
     See '?umx'  for help, and file.show(system.file("NEWS", package="umx")) for NEWS.
 Depends:
@@ -41,7 +41,7 @@ Suggests:
     testthat,
     rmarkdown,
 	psych
-BugReports: http://github.com/tbates/umx/issues
+BugReports: https://github.com/tbates/umx/issues
 Roxygen: list(wrap = FALSE)
 LazyData: true
 RoxygenNote: 6.1.0
