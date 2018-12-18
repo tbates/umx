@@ -113,7 +113,7 @@
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{plotACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
+#' @seealso - \code{\link{umxPlotACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 #' @md

@@ -28,18 +28,20 @@
 #' @param data A \code{\link{data.frame}} or \code{\link{mxData}}
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
-#' @param allContinuousMethod passed to mxDataWLS c("cumulants", "marginals")
+#' @param allContinuousMethod passed for all continuous data c("cumulants", "marginals")
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
 #' @return - \code{\link{mxData}}
 #' @export
 #' @family xmu internal not for end user
 #' @examples
+#' manVars = c("mpg", "cyl", "disp")
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto")
-#' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = c("mpg", "cyl", "disp"))
-#' tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = c("mpg", "cyl", "disp"), verbose= TRUE)
+#' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars)
+#' tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = manVars, verbose= TRUE)
+#' 
 #' # missing data WLS example
 #' tmp = mtcars; tmp[1, "mpg"] = NA # add NA
-#' tmp = xmu_make_mxData(data= tmp, type = "WLS" , manifests = c("mpg", "cyl", "disp"), verbose= TRUE)
+#' tmp = xmu_make_mxData(data= tmp, type = "WLS", manifests = manVars, verbose= TRUE)
 #' tmp = xmu_make_mxData(data= mtcars, type = "cov")
 #' tmp = xmu_make_mxData(data= mtcars, type = "cor")
 #' # pass string through
@@ -560,7 +562,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	# TODO add a test case with raw data but no means...
 
 	if(!is.null(model$data)){
-		if(umx_check_WLS_no_means(model$data) & is.null(model$M)) {
+		if(umx_check_should_have_means(model$data) & is.null(model$M)) {
 			message("You are using raw data, but have not yet added paths for the means\n")
 			message("Do this with umxPath(means = 'var')")
 		}
@@ -579,7 +581,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	return(model)
 }
 
-umx_check_WLS_no_means <- function(data) {
+umx_check_should_have_means <- function(data){
 	# TODO add ability to take a model instead of mxData
 	if(!is.null(data$preferredFit) && (data$preferredFit == "WLS") && (data$.wlsContinuousType ==  "cumulants")){
 		return(TRUE)

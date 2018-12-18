@@ -1,10 +1,3 @@
-umxCPold
-modelling
-pos
-itemMax
-disp
-meanStarts
-varStarts
 Aa
 aa
 ACEcov
@@ -91,6 +84,7 @@ covs
 cp
 cs
 CSOLNP
+cumulants
 cutoff
 CxE
 cyl
@@ -116,6 +110,7 @@ diagonalize
 DiagrammeR
 dialog
 dieing
+disp
 dl
 doi
 Dolan
@@ -224,6 +219,7 @@ IP
 issuecomment
 itemBreak
 itemID
+itemMax
 itemText
 ize
 Jinks
@@ -254,6 +250,7 @@ math
 max
 McMaster
 MCV
+meanStarts
 MECVIchi
 MECVIdev
 med
@@ -263,6 +260,7 @@ MFI
 minManifests
 modeled
 modeling
+modelling
 Moskowitz
 msg
 mtcars
@@ -288,9 +286,6 @@ mxMatrices
 MxMatrix
 mxMatrix
 mxMI
-mxTryHard
-mxTryHardOrdinal
-mxTryHardWideSearch
 MxModel
 mxModel
 MxModelACE
@@ -303,6 +298,9 @@ mxRefModels
 mxRun
 mxStart
 mxThreshold
+mxTryHard
+mxTryHardOrdinal
+mxTryHardWideSearch
 mykeystring
 MZ
 mzData
@@ -376,6 +374,7 @@ PNFI
 polychoric
 polycor
 polyserial
+pos
 Posthuma
 PRATIO
 pre
@@ -501,6 +500,7 @@ umxConfint
 umxCov
 umxCovData
 umxCP
+umxCPold
 umxDrop
 umxEFA
 umxEquate
@@ -553,6 +553,7 @@ var
 varimax
 varNames
 vars
+varStarts
 vcov
 ve
 VignetteEncoding

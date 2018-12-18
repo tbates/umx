@@ -1012,7 +1012,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
-#' See documentation for other umx modelshere: \code{\link{umxSummary}}.
+#' See documentation for other umx models here: \code{\link{umxSummary}}.
 #' 
 #' @aliases umxSummary.MxModelACE
 #' @param model an \code{\link{mxModel}} to summarize

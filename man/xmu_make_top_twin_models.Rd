@@ -158,7 +158,6 @@ selDVs = c("wt")
 mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(selDVs, sep="")], use = "complete")
 dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(selDVs, sep="")], use = "complete")
 bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
-4. Improve the start guesses based on input model type (ACE, CP, IP etc.)
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

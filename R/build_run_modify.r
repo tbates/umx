@@ -531,6 +531,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if (class(data) == "character"){
 		# User is just running in sketch mode, with no data, but provided names.
 		unusedManifests = c()
+		# autoRun = FALSE
 	}else{
 		unusedManifests = setdiff(manifestVars, foundNames)
 	}
@@ -569,10 +570,11 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	)
 	if (class(data) == "character"){
 		# User is just running a trial model, with no data, but provided names for sketch mode
+		newModel = umxLabel(newModel, suffix = suffix)
 		if(autoRun && umx_set_auto_plot(silent = TRUE)){
 			plot(newModel)
+			return(newModel)
 		}
-		return(newModel)
 	}else{
 		newModel = mxModel(newModel, data)
 	}

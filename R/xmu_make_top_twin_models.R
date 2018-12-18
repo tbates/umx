@@ -137,7 +137,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	# TODO: xmu_make_top_twin_models Add selCovs
 	# TODO: xmu_make_top_twin_models Add covMethod == "fixed"
 	# TODO: xmu_make_top_twin_models Add beta matrix for fixed covariates in means.
-	#' 4. Improve the start guesses based on input model type (ACE, CP, IP etc.)
+	# 4. Improve the start guesses based on input model type (ACE, CP, IP etc.)
 
 	# *Note*: If dropping this into an existing model, it replaces code that sets: nVar, selVars, used, 
 	# Also any code figuring out data-type
