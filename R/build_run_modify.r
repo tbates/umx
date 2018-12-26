@@ -429,7 +429,6 @@ umxModel <- function(...) {
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), type = c('Auto', 'FIML', 'cov', 'cor', 'WLS', 'DWLS', 'ULS'), optimizer = NULL, thresholds = c("deviationBased"), verbose = FALSE) {
-	
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
@@ -470,6 +469,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}
 
 	foundNames = c()
+	defnNames = c()
 	for (thisItem in dot.items) {
 		if(!is.list(thisItem)){
 			# Sometimes we get a list, so expand everything to a list.
@@ -479,6 +479,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			thisIs = class(thisItem[[i]])[1]
 			if(thisIs == "MxPath"){
 				foundNames = append(foundNames, c(thisItem[[i]]$from, thisItem[[i]]$to))
+				tmp = namez(thisItem[[i]]$labels, "data\\.")
+				if(length(tmp) > 0){
+					defnNames = append(defnNames, namez(tmp, "data\\.(.*)", replacement= "\\1"))
+				}
 			} else {
 				if(thisIs == "MxThreshold"){
 					# MxThreshold detected
@@ -504,8 +508,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	manifestVars = unique(na.omit(umx_names(data)))
 
 	# Omit NAs from found names as empty to = can generate these spuriously
-	foundNames   = unique(na.omit(foundNames))
-
+	foundNames = unique(na.omit(foundNames))
+	defnNames  = unique(na.omit(defnNames))
 	# Anything used as a path, but not found in the data (and not a key word like "one") must be a latent
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
 	nLatent = length(latentVars)
@@ -535,12 +539,11 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}else{
 		unusedManifests = setdiff(manifestVars, foundNames)
 	}
-	# used = all data columns present in found and not reserved, e.g. "one"
+	# Used = all data columns present in found and not reserved, e.g. "one"
 	usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
 
-
 	if(remove_unused_manifests & length(unusedManifests) > 0){
-		data = xmu_make_mxData(data = data, type = type, manifests = usedManifests)
+		data = xmu_make_mxData(data = data, type = type, manifests = c(usedManifests, defnNames))
 	} else {
 		data = xmu_make_mxData(data= data, type = type)
 		usedManifests = manifestVars
@@ -675,6 +678,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' 
 umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
 	dot.items = list(...) # grab all the dot items: models...	
+	umx_check(boolean.test=is.character(name), action="stop", message="You need to set the name for the supermodel with: name = 'modelName' ")
 	nModels = length(dot.items)
 	# get list of model names
 	modelNames = c()

@@ -2067,15 +2067,13 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @rdname plot.MxModel
 #' @param x An \code{\link{mxModel}} from which to make a path diagram
 #' @param std Whether to standardize the model (default = FALSE).
+#' @param fixed Whether to show fixed paths (defaults to TRUE)
+#' @param means Whether to show means or not (default = TRUE)
 #' @param digits The number of decimal places to add to the path coefficients
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
-#' @param fixed Whether to show fixed paths (defaults to TRUE)
-#' @param means Whether to show means or not (default = TRUE)
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
-#' @param showMeans Deprecated: just use 'means = TRUE'
-#' @param showFixed Deprecated: just use 'fixed = TRUE'
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}}
@@ -2094,19 +2092,10 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' )
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
-plot.MxModel <- function(x = NA, std = FALSE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), fixed = TRUE, means = TRUE, resid = c("circle", "line", "none"), strip_zero = TRUE, showMeans = "deprecated", showFixed = "deprecated", ...) {
+plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = TRUE, ...) {
 	# ==========
 	# = Setup  =
 	# ==========
-	if(showMeans != "deprecated"){
-		message("Change ", omxQuotes("showMeans"), " to ", omxQuotes("means"), "(", omxQuotes("showMeans"), " will stop working in future)")
-		means = showMeans
-	}	
-	
-	if(showFixed != "deprecated"){
-		message("Change ", omxQuotes("showFixed"), " to ", omxQuotes("fixed"), "(", omxQuotes("showFixed"), " will stop working in future)")
-		fixed = showFixed
-	}	
 	resid = match.arg(resid)
 	model = x # just to be clear that x is a model
 

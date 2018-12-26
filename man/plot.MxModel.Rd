@@ -6,16 +6,19 @@
 \alias{umxPlot}
 \title{Create and display a graphical path diagram for a model.}
 \usage{
-\method{plot}{MxModel}(x = NA, std = FALSE, digits = 2,
-  file = "name", pathLabels = c("none", "labels", "both"),
-  fixed = TRUE, means = TRUE, resid = c("circle", "line", "none"),
-  strip_zero = TRUE, showMeans = "deprecated",
-  showFixed = "deprecated", ...)
+\method{plot}{MxModel}(x = NA, std = FALSE, fixed = TRUE,
+  means = TRUE, digits = 2, file = "name", pathLabels = c("none",
+  "labels", "both"), resid = c("circle", "line", "none"),
+  strip_zero = TRUE, ...)
 }
 \arguments{
 \item{x}{An \code{\link{mxModel}} from which to make a path diagram}
 
 \item{std}{Whether to standardize the model (default = FALSE).}
+
+\item{fixed}{Whether to show fixed paths (defaults to TRUE)}
+
+\item{means}{Whether to show means or not (default = TRUE)}
 
 \item{digits}{The number of decimal places to add to the path coefficients}
 
@@ -23,17 +26,9 @@
 
 \item{pathLabels}{Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")}
 
-\item{fixed}{Whether to show fixed paths (defaults to TRUE)}
-
-\item{means}{Whether to show means or not (default = TRUE)}
-
 \item{resid}{How to show residuals and variances default is "circle". Options are "line" & "none"}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
-
-\item{showMeans}{Deprecated: just use 'means = TRUE'}
-
-\item{showFixed}{Deprecated: just use 'fixed = TRUE'}
 
 \item{...}{Optional parameters}
 }
