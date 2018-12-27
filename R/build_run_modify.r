@@ -806,8 +806,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 	
 	if(is.null(update)){
 		message("You haven't asked to do anything: the parameters that are free to be dropped are:")
-		# TODO use parameters here?
-		print(umxGetParameters(lastFit))
+		print(parameters(lastFit))
 		stop()
 	}
 

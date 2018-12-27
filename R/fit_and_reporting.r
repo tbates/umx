@@ -873,14 +873,14 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 			modelSummary = summary(model, refModels = refModels)
 		}
 	} else if (refModels == FALSE){
-		modelSummary = summary(model) # don't use or generate refModels		
+		modelSummary = summary(model) # Don't use or generate refModels		
 	}else{
-		modelSummary = summary(model, refModels = refModels) # use user-supplied refModels		
+		modelSummary = summary(model, refModels = refModels) # Use user-supplied refModels		
 	}
 
 	# DisplayColumns
 	if(showEstimates != "none"){
-		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # compute standard errors
+		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
 		nSubModels = length(model$submodels)
 		if(nSubModels > 0){
 			tmp = parameterTable
