@@ -487,6 +487,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 				if(thisIs == "MxThreshold"){
 					# MxThreshold detected
 				} else {
+					tmp = namez(thisItem[[i]]$labels, "data\\.")
+					if(length(tmp) > 0){
+						defnNames = append(defnNames, namez(tmp, "data\\.(.*)", replacement= "\\1"))
+					}
 					# TODO: umxRAM currently not checking for unsupported items.
 					# stop("I can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
 					# "You have given me a", class(i)[1],"\n",

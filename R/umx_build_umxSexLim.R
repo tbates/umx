@@ -1,8 +1,12 @@
 #' Multivariate twin analysis with sex limitation
 #'
-#' Build a multivariate twin analysis with sex limitation based on a correlated factors model.
-#' This allows Quantitative & Qualitative Sex-Limitation. The correlation approach ensures that variable order
-#' does NOT affect ability of model to account for DZOS data.
+#' Build a multivariate twin analysis allowing for sex limitation (factors operate differently in males 
+#' vs. females) based on a correlated factors model.
+#' With 5-groups of twins, this model allows for both Quantitative & Qualitative Sex-Limitation.
+#' 
+#' The correlation approach ensures that variable order does not affect the ability of the model
+#' to account for DZOS data.
+#' 
 #' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
 #'
 #' @param name    The name of the model (Default = "sexlim")
