@@ -3929,6 +3929,94 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 #' @export
 summaryAPA <- umxAPA
 
+#' Summarize twin data
+#'
+#' @description
+#' Produce a summary of wide-format twin data, showing the number of individuals, the mean and SD for each trait, and the correlation for each twin-type.
+#'
+#' Set MZ and DZ to summarize the two-group case.
+#' 
+#' @param data The twin data.
+#' @param selVars Collection of variables to report on, e.g. c("wt", "ht")
+#' @param sep  The separator string that will turn a variable name into a twin variable name, e.g. "_T" for wt_T1 and wt_T2
+#' @param zyg  The zygosity variable in the dataset, e.g. "zygosity"
+#' @param MZ Set level in zyg corresponding to MZ for two group case (defaults to using 5-group case).
+#' @param DZ Set level in zyg corresponding to DZ for two group case (defaults to using 5-group case).
+#' @param MZFF The level in zyg corresponding to MZ FF pairs: e.g., "MZFF".
+#' @param DZFF The level in zyg corresponding to DZ FF pairs: e.g., "DZFF".
+#' @param MZMM The level in zyg corresponding to MZ MM pairs: e.g., "MZMM".
+#' @param DZMM The level in zyg corresponding to DZ MM pairs: e.g., "DZMM".
+#' @param DZOS The level in zyg corresponding to DZ OS pairs: e.g., "DZOS".
+#' @return - formated table, e.g. in markdown.
+#' @export
+#' @family Twin Reporting Functions
+#' @seealso - \code{\link{umxAPA}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
+#' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = c("MZMM", "MZFF"), DZ = c("DZFF","DZMM", "DZOS"))
+umxSummarizeTwinData <- function(data = twinData, selVars = "wt", sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS") {
+	# TODO cope with two group case.
+	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
+	selDVs = tvars(selVars, sep)
+	umx_check_names(selDVs, data = data, die = TRUE)
+	long = umx_wide2long(data= data[,selDVs], sep =sep)
+	blob = rep(NA, length(selVars))	
+	if(is.null(MZ)){
+		df = data.frame(Var = blob, Mean = blob, SD = blob, rMZFF = blob, rMZMM = blob, rDZFF = blob, rDZMM = blob, rDZOS = blob, stringsAsFactors = FALSE)
+		n = 1
+		for (varName in selVars){
+			# varName = "ht"
+			df[n, "Var"]  = varName
+			df[n, "Mean"] = round(mean(long[,varName], na.rm = TRUE), digits)
+			df[n, "SD"]   = round(sd(long[,varName], na.rm = TRUE), digits)
+			rMZFF = cor.test(data = data[data[,zyg] %in% MZFF,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
+			rMZMM = cor.test(data = data[data[,zyg] %in% MZMM,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
+			rDZFF = cor.test(data = data[data[,zyg] %in% DZFF,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
+			rDZMM = cor.test(data = data[data[,zyg] %in% DZMM,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
+			rDZOS = cor.test(data = data[data[,zyg] %in% DZOS,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
+
+			df[n, "rMZFF"] = paste0(round(rMZFF$estimate, digits), " (", round((rMZFF$conf.int[2] - rMZFF$conf.int[1])/(1.96 * 2), digits), ")")
+			df[n, "rMZMM"] = paste0(round(rMZMM$estimate, digits), " (", round((rMZMM$conf.int[2] - rMZMM$conf.int[1])/(1.96 * 2), digits), ")")
+			df[n, "rDZFF"] = paste0(round(rDZFF$estimate, digits), " (", round((rDZFF$conf.int[2] - rDZFF$conf.int[1])/(1.96 * 2), digits), ")")
+			df[n, "rDZMM"] = paste0(round(rDZMM$estimate, digits), " (", round((rDZMM$conf.int[2] - rDZMM$conf.int[1])/(1.96 * 2), digits), ")")
+			df[n, "rDZOS"] = paste0(round(rDZOS$estimate, digits), " (", round((rDZOS$conf.int[2] - rDZOS$conf.int[1])/(1.96 * 2), digits), ")")
+			n = n+1
+		}
+		nPerZyg = table(data[, zyg])
+		names(df) = namez(df, "(rMZFF)", paste0("\\1 (", nPerZyg["MZFF"],")"))
+		names(df) = namez(df, "(rDZFF)", paste0("\\1 (", nPerZyg["DZFF"],")"))
+		names(df) = namez(df, "(rMZMM)", paste0("\\1 (", nPerZyg["MZMM"],")"))
+		names(df) = namez(df, "(rDZMM)", paste0("\\1 (", nPerZyg["DZMM"],")"))
+		names(df) = namez(df, "(rDZOS)", paste0("\\1 (", nPerZyg["DZOS"],")"))
+	}else{
+		df = data.frame(Var = blob, Mean = blob, SD = blob, rMZ = blob, rDZ = blob, stringsAsFactors = FALSE)		
+		n = 1
+		for (varName in selVars){
+			# varName = "ht"
+			df[n, "Var"]  = varName
+			df[n, "Mean"] = round(mean(long[,varName], na.rm = TRUE), digits)
+			df[n, "SD"]   = round(sd(long[,varName], na.rm = TRUE), digits)
+			rMZ = cor.test(data = data[data[,zyg] %in% MZ,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
+			rDZ = cor.test(data = data[data[,zyg] %in% DZ,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
+			df[n, "rMZ"] = paste0(round(rMZ$estimate, digits), " (", round((rMZ$conf.int[2] - rMZ$conf.int[1])/(1.96 * 2), digits), ")")
+			df[n, "rDZ"] = paste0(round(rDZ$estimate, digits), " (", round((rDZ$conf.int[2] - rDZ$conf.int[1])/(1.96 * 2), digits), ")")
+			n = n+1
+		}
+		nPerZyg = data.frame(table(data[, zyg]))
+		names(df) = namez(df, "(rMZ)", paste0("\\1 (", sum(tmp[tmp$Var1 %in% MZ,"Freq"]),")"))
+		names(df) = namez(df, "(rDZ)", paste0("\\1 (", sum(tmp[tmp$Var1 %in% DZ,"Freq"]),")"))
+	}
+	umx_print(df)
+	# return(df)
+	# Calculate Mean Age and SD for men and women
+	# umx_aggregate(value ~ Sex, data = longformat, what = "mean_sd")
+	
+	# Calculate correlations, means and sd Generativity
+	# umxAPA(mzData[, allItemNames], use ="pairwise.complete.obs")
+	# umxAPA(dzData[, allItemNames], use ="pairwise.complete.obs")
+}
+
 #' umx_APA_model_CI
 #'
 #' Look up CIs for free parameters in a model, and return as APA-formatted text string

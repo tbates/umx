@@ -50,6 +50,7 @@ m2 = umxReduce(m1)
 \code{\link{umxReduceGxE}}, \code{\link{umxReduce}}
 
 Other Twin Reporting Functions: \code{\link{umxReduceGxE}},
-  \code{\link{umxReduce}}, \code{\link{umx}}
+  \code{\link{umxReduce}},
+  \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

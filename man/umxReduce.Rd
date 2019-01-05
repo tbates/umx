@@ -57,7 +57,8 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx}}
 
 Other Twin Reporting Functions: \code{\link{umxReduceACE}},
-  \code{\link{umxReduceGxE}}, \code{\link{umx}}
+  \code{\link{umxReduceGxE}},
+  \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
 }
 \concept{Reporting Functions}
 \concept{Twin Reporting Functions}
