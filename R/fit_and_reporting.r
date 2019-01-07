@@ -4004,8 +4004,8 @@ umxSummarizeTwinData <- function(data = twinData, selVars = "wt", sep = "_T", zy
 			n = n+1
 		}
 		nPerZyg = data.frame(table(data[, zyg]))
-		names(df) = namez(df, "(rMZ)", paste0("\\1 (", sum(tmp[tmp$Var1 %in% MZ,"Freq"]),")"))
-		names(df) = namez(df, "(rDZ)", paste0("\\1 (", sum(tmp[tmp$Var1 %in% DZ,"Freq"]),")"))
+		names(df) = namez(df, "(rMZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% MZ,"Freq"]),")"))
+		names(df) = namez(df, "(rDZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% DZ,"Freq"]),")"))
 	}
 	umx_print(df)
 	# return(df)

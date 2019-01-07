@@ -41,7 +41,7 @@ Set MZ and DZ to summarize the two-group case.
 }
 \examples{
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
-umxSummarizeTwinData(twinData, sep = "", MZ= c("MZFF", "MZMM"), DZ= c("DZFF", "DZMM", "DZOS"), selVars = c("wt", "ht"))
+umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = c("MZMM", "MZFF"), DZ = c("DZFF","DZMM", "DZOS"))
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
