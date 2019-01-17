@@ -3958,7 +3958,7 @@ summaryAPA <- umxAPA
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
 #' MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
-umxSummarizeTwinData <- function(data = twinData, selVars = "wt", sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2) {
+umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2) {
 	# TODO cope with two group case.
 	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
 	selDVs = tvars(selVars, sep)

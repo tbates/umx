@@ -4,7 +4,7 @@ Compatibility with OpenMx
 
 ## Test environments
 * OS X 10.13.0, R version 3.5.2
-* Win R Under development (unstable) (2018-12-17 r75857)
+* Win R Under development (unstable) (2019-01-09 r75961)
 * 64-bit Linux (Scientific Linux 6), R 3.5.2
 
 ## R CMD check results
