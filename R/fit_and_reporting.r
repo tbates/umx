@@ -3948,7 +3948,7 @@ summaryAPA <- umxAPA
 #' @param DZMM The level in zyg corresponding to DZ MM pairs: e.g., "DZMM".
 #' @param DZOS The level in zyg corresponding to DZ OS pairs: e.g., "DZOS".
 #' @param digits Rounding precision of the report (default 2).
-#' @return - formated table, e.g. in markdown.
+#' @return - formatted table, e.g. in markdown.
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso - \code{\link{umxAPA}}

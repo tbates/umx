@@ -1,11 +1,11 @@
 ## Changes
 
-New features, bug fix
+Compatibility with OpenMx
 
 ## Test environments
-* OS X 10.13.0, R version 3.5.1 (2018-07-02)
+* OS X 10.13.0, R version 3.5.2
 * Win R Under development (unstable) (2018-12-17 r75857)
-* 64-bit Linux (Scientific Linux 6), R 3.5.1
+* 64-bit Linux (Scientific Linux 6), R 3.5.2
 
 ## R CMD check results
 * No WARNINGs, No ERRORs, One NOTE about a doi link which works fine.

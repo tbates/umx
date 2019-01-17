@@ -3359,8 +3359,9 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 #' umx_is_MxData(mtcars)
 #' umx_is_MxData(mxData(mtcars, type= "raw"))
 #' umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
+#' umx_is_MxData(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
 umx_is_MxData <- function(x) {
-    if(class(x)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
+    if(class(x)[1] %in%  c("MxNonNullData", "MxDataStatic", "MxDataLegacyWLS") ) {
 		TRUE
 	} else {
 		FALSE
@@ -4530,7 +4531,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' # =======================================
 #'
 #' # Just show phenotypes for Twin 1
-#' umx_names(GFF, "T_1$") # twin 1
+#' umx_names(GFF, "_T1$") # twin 1
 #' # "zyg" "sex1" "age_T1" "gff_T1" "fc_T1" "qol_T1" "hap_T1"...
 #' 
 #' umx_names(GFF, "2$") # names ending in 2
@@ -4546,7 +4547,7 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	}
 	if(class(df) %in%  c("summary.mxmodel", "data.frame")){
 		nameVector = names(df)
-	}else if(class(df)[1] %in% c("MxNonNullData", "MxDataStatic") ) {
+	}else if(umx_is_MxData(df)) {
 			if(df$type == "raw"){
 				nameVector = names(df$observed)
 				isRaw = TRUE

@@ -186,8 +186,9 @@ dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 # 2. umxACE can figure out variable names: provide sep= "_T" and selVar = "wt" -> "wt_T1" "wt_T2"
 
 # 3. umxACE picks the variables it needs from the data.
-# 4. expert user note: the default boundDiag = 0 lower-bounds a, c, and e at 0 (prevents mirror-solutions).
-        # can remove this by setting boundDiag = NULL
+# 4. expert user note: by default, umxACE lower-bounds a, c, and e at 0.
+#    This prevents mirror-solutions.
+#    You can remove this by setting boundDiag = NULL
 
 m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "")
 

@@ -35,7 +35,7 @@ umxSummarizeTwinData(data = twinData, selVars = "wt", sep = "_T",
 \item{digits}{Rounding precision of the report (default 2).}
 }
 \value{
-- formated table, e.g. in markdown.
+- formatted table, e.g. in markdown.
 }
 \description{
 Produce a summary of wide-format twin data, showing the number of individuals, the mean and SD for each trait, and the correlation for each twin-type.

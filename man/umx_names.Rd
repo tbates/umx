@@ -82,7 +82,7 @@ umx_names(mtcars, "^d"  , fixed  = TRUE)  # Vars containing literal '^d' (none..
 # =======================================
 
 # Just show phenotypes for Twin 1
-umx_names(GFF, "T_1$") # twin 1
+umx_names(GFF, "_T1$") # twin 1
 # "zyg" "sex1" "age_T1" "gff_T1" "fc_T1" "qol_T1" "hap_T1"...
 
 umx_names(GFF, "2$") # names ending in 2

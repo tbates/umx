@@ -1,8 +1,11 @@
-# Upcoming in next version... umx 3.0.0 January 2018, R 3.X.X
+# Upcoming in next version... umx 3.0.0 January 2018, R 3.5.2
 * NEW: `umxRAM` supports WLS, UWLS, DWLS models!
 * NEW: `umxACE` supports WLS, UWLS, DWLS models!
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
+
+# umx 2.9.9 December 2018, R 3.5.2
+* Compatibility with OpenMx changes.
 
 # umx 2.9.0 December 2018, R 3.5.1: More love
 * BACKWARD INCOMPATIBLE: Support for suffix as a synonym for sep was finally removed after a 3 years of deprecation warnings
