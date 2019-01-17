@@ -4272,7 +4272,6 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' @param varsToScale The base names of the variables ("weight" etc.)
 #' @param sep The suffix that distinguishes each case, e.g. "_T")
 #' @param data a wide dataframe
-#' @param suffix  (deprecated: use sep instead)
 #' @return - new dataframe with variables scaled in place
 #' @export
 #' @seealso umx_scale
@@ -4280,13 +4279,9 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' data(twinData) 
-#' df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "" )
+#' df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 #' plot(wt1 ~ wt2, data = df)
-umx_scale_wide_twin_data <- function(varsToScale, sep, data, suffix = "deprecated") {
-	if(suffix != "deprecated"){
-		message("Hi! Next time, use sep instead of suffix, when calling umx_scale_wide_twin_data")
-		sep = suffix
-	}
+umx_scale_wide_twin_data <- function(varsToScale, sep, data) {
 	if(length(sep) != 1){
 		stop("I need one sep, you gave me ", length(sep), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}

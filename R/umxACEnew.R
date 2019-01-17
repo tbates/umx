@@ -153,7 +153,12 @@
 #'
 #' # Things to note:
 #' 
-#' # 1. This variable has a large variance, but umx picks good starts.
+#' # 1. This variable has a large variance, and this makes solution finding very hard.
+#' # We'll scale weight to make the Optimizer's task easier.
+#'
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' 
 #' # 2. umxACEnew can figure out variable names: provide sep= "_T" and selVar = "wt" -> "wt_T1" "wt_T2"
 #' 
@@ -172,6 +177,7 @@
 #' # = Bivariate height and weight model =
 #' # =====================================
 #' data(twinData)
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
 #' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
 #' mzData = mzData[1:80,] # quicker run to keep CRAN happy
@@ -190,6 +196,7 @@
 #' # ===================
 #' require(umx)
 #' data(twinData)
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' # Cut BMI column to form ordinal obesity variables
 #' obesityLevels = c('normal', 'overweight', 'obese')
 #' cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
@@ -213,6 +220,7 @@
 #' # = Bivariate continuous and ordinal example =
 #' # ============================================
 #' data(twinData)
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' # Cut BMI column to form ordinal obesity variables
 #' obesityLevels   = c('normal', 'overweight', 'obese')
 #' cutPoints       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
@@ -232,6 +240,7 @@
 #' # =======================================
 #' require(umx)
 #' data(twinData)
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' # Cut to form category of 20% obese subjects
 #' # and make into mxFactors (ensure ordered is TRUE, and require levels)
 #' obesityLevels   = c('normal', 'obese')
@@ -255,6 +264,7 @@
 #'
 #' require(umx)
 #' data(twinData)
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' selDVs = c("wt1", "wt2")
 #' mz = cov(twinData[twinData$zygosity %in%  "MZFF", selDVs], use = "complete")
 #' dz = cov(twinData[twinData$zygosity %in%  "DZFF", selDVs], use = "complete")

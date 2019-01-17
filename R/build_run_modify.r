@@ -42,7 +42,7 @@
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases
-#' @importFrom stats confint cor cov cov.wt cov2cor df lm
+#' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
 #' @importFrom stats setNames update var delete.response terms
@@ -1424,14 +1424,20 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #'
 #' # Things to note:
 #' 
-#' # 1. This variable has a large variance, but umx picks good starts.
+#' # 1. This variable has a large variance, and this makes solution finding very hard.
+#' # We'll scale weight to make the Optimizer's task easier.
+#'
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' 
 #' # 2. umxACE can figure out variable names: provide sep= "_T" and selVar = "wt" -> "wt_T1" "wt_T2"
 #' 
 #' # 3. umxACE picks the variables it needs from the data.
-#' # 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0 (prevents mirror-solutions).
+#' # 4. expert user note: the default boundDiag = 0 lower-bounds a, c, and e at 0 (prevents mirror-solutions).
 #'         # can remove this by setting boundDiag = NULL
-#' m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
+#' 
+#' m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "")
 #'
 #' # MODEL MODIFICATION
 #' # We can modify this model, say testing shared environment, and see a comparison:
@@ -1443,6 +1449,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # = Bivariate height and weight model =
 #' # =====================================
 #' data(twinData)
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
 #' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
 #' mzData = mzData[1:80,] # quicker run to keep CRAN happy
@@ -1484,6 +1491,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # = Bivariate continuous and ordinal example =
 #' # ============================================
 #' data(twinData)
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' # Cut BMI column to form ordinal obesity variables
 #' obesityLevels   = c('normal', 'overweight', 'obese')
 #' cutPoints       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
@@ -1503,6 +1511,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # =======================================
 #' require(umx)
 #' data(twinData)
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' # Cut to form category of 20% obese subjects
 #' # and make into mxFactors (ensure ordered is TRUE, and require levels)
 #' obesityLevels   = c('normal', 'obese')
@@ -1526,6 +1535,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' 
 #' require(umx)
 #' data(twinData)
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' selDVs = c("wt1", "wt2")
 #' mz = cov(twinData[twinData$zygosity %in%  "MZFF", selDVs], use = "complete")
 #' dz = cov(twinData[twinData$zygosity %in%  "DZFF", selDVs], use = "complete")

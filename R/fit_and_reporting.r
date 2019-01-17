@@ -3937,9 +3937,9 @@ summaryAPA <- umxAPA
 #' Set MZ and DZ to summarize the two-group case.
 #' 
 #' @param data The twin data.
-#' @param selVars Collection of variables to report on, e.g. c("wt", "ht")
-#' @param sep  The separator string that will turn a variable name into a twin variable name, e.g. "_T" for wt_T1 and wt_T2
-#' @param zyg  The zygosity variable in the dataset, e.g. "zygosity"
+#' @param selVars Collection of variables to report on, e.g. c("wt", "ht").
+#' @param sep  The separator string that will turn a variable name into a twin variable name, e.g. "_T" for wt_T1 and wt_T2.
+#' @param zyg  The zygosity variable in the dataset, e.g. "zygosity".
 #' @param MZ Set level in zyg corresponding to MZ for two group case (defaults to using 5-group case).
 #' @param DZ Set level in zyg corresponding to DZ for two group case (defaults to using 5-group case).
 #' @param MZFF The level in zyg corresponding to MZ FF pairs: e.g., "MZFF".
@@ -3947,15 +3947,18 @@ summaryAPA <- umxAPA
 #' @param MZMM The level in zyg corresponding to MZ MM pairs: e.g., "MZMM".
 #' @param DZMM The level in zyg corresponding to DZ MM pairs: e.g., "DZMM".
 #' @param DZOS The level in zyg corresponding to DZ OS pairs: e.g., "DZOS".
+#' @param digits Rounding precision of the report (default 2).
 #' @return - formated table, e.g. in markdown.
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso - \code{\link{umxAPA}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
+#' data(twinData)
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
-#' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = c("MZMM", "MZFF"), DZ = c("DZFF","DZMM", "DZOS"))
-umxSummarizeTwinData <- function(data = twinData, selVars = "wt", sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS") {
+#' MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
+#' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
+umxSummarizeTwinData <- function(data = twinData, selVars = "wt", sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2) {
 	# TODO cope with two group case.
 	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
 	selDVs = tvars(selVars, sep)

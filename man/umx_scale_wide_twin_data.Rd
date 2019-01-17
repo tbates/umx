@@ -4,7 +4,7 @@
 \alias{umx_scale_wide_twin_data}
 \title{umx_scale_wide_twin_data}
 \usage{
-umx_scale_wide_twin_data(varsToScale, sep, data, suffix = "deprecated")
+umx_scale_wide_twin_data(varsToScale, sep, data)
 }
 \arguments{
 \item{varsToScale}{The base names of the variables ("weight" etc.)}
@@ -12,8 +12,6 @@ umx_scale_wide_twin_data(varsToScale, sep, data, suffix = "deprecated")
 \item{sep}{The suffix that distinguishes each case, e.g. "_T")}
 
 \item{data}{a wide dataframe}
-
-\item{suffix}{(deprecated: use sep instead)}
 }
 \value{
 - new dataframe with variables scaled in place
@@ -23,7 +21,7 @@ Scale wide data across all cases: currently 2 twins.
 }
 \examples{
 data(twinData) 
-df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "" )
+df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 plot(wt1 ~ wt2, data = df)
 }
 \references{
