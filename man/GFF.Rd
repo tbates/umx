@@ -3,7 +3,7 @@
 \docType{data}
 \name{GFF}
 \alias{GFF}
-\title{Twin data: General Family Functioning, divorce, and wellbeing.}
+\title{Twin data: General Family Functioning, divorce, and well-being.}
 \format{A data frame with 1000 rows and 8 variables:}
 \usage{
 data(GFF)

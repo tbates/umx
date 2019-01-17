@@ -59,7 +59,7 @@
 # = General Family Functioning data =
 # ===================================
 
-#' Twin data: General Family Functioning, divorce, and wellbeing.
+#' Twin data: General Family Functioning, divorce, and well-being.
 #'
 #' Measures of family functioning, happiness and related variables in twins, and
 #' their brothers and sisters. (see details)
