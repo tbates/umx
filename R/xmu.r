@@ -18,6 +18,29 @@
 # ==============================================================================
 
 
+#' Check the minimum variance in data frame
+#'
+#' @description
+#' Check theat each variable exceeds a minimum variance. Let the user know what to do if not.
+#' @param data the data frame to check
+#' @param minVar = .1
+#' @return - 
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @examples
+#' umx_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
+umx_check_variance <- function(data, minVar = .1){
+	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1
+	tmp = umx_var(data, format = "diag")
+	if(sum(tmp < minVar) > 0){
+		# At least 1 small
+		which(tmp < minVar)
+		message("The variance of variable(s) ", omxQuotes(names(which(tmp < minVar))), " is < ", minVar, ".\n",
+			"You might want to umx_scale these variables, or multiply to express the variable in smaller units, e.g. cm instead of metres.")
+		
+	}
+}
+
 #' Upgrade a dataframe to an mxData type.
 #'
 #' @description
@@ -75,10 +98,12 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		unusedManifests = setdiff(umx_names(data), manifests)
 		dropColumns = TRUE
 	}
+
 	if (class(data)[1] == "data.frame") {
 		if(dropColumns){
 			# Trim down the data to include only the requested columns
 			data = data[, manifests, drop = FALSE]
+			umx_check_variance(data)
 		}
 		# Upgrade data.frame to mxData of desired type
 		if(type %in% c("Auto", "FIML")){
