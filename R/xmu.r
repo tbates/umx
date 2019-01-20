@@ -28,6 +28,9 @@
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @examples
+#' data(twinData)
+#' umx_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
+#' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
 #' umx_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 umx_check_variance <- function(data, minVar = .1){
 	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1
