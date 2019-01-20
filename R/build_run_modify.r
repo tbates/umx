@@ -380,7 +380,7 @@ umxModel <- function(...) {
 #' plot(m1, std = TRUE, resid = "line")
 #' 
 #' # 5. Run an all-continuous WLS model
-#' # TODO: WLS model example
+#' # TODO: enable WLS RAM example
 #' # mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS",
 #' # 	umxPath(c("wt", "disp"), to = "mpg"),
 #' # 	umxPath("wt", with = "disp"),
