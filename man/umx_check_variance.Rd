@@ -18,6 +18,9 @@ umx_check_variance(data, minVar = 0.1)
 Check theat each variable exceeds a minimum variance. Let the user know what to do if not.
 }
 \examples{
+data(twinData)
+umx_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
+twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
 umx_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 }
 \seealso{
