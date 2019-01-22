@@ -4,7 +4,7 @@
 \alias{umx_check_variance}
 \title{Check the minimum variance in data frame}
 \usage{
-umx_check_variance(data, minVar = 0.1)
+umx_check_variance(data, minVar = 0.1, maxVarRatio = 100)
 }
 \arguments{
 \item{data}{the data frame to check}
