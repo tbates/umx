@@ -380,7 +380,7 @@ umxModel <- function(...) {
 #' plot(m1, std = TRUE, resid = "line")
 #' 
 #' # 5. Run an all-continuous WLS model
-#' # TODO: WLS model example
+#' # TODO: enable WLS RAM example
 #' # mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS",
 #' # 	umxPath(c("wt", "disp"), to = "mpg"),
 #' # 	umxPath("wt", with = "disp"),
@@ -1401,11 +1401,11 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.
 #' # Pick the variables
-#' selDVs = c("ht")
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData) # -2ll= 9659, a1 = .92
-#' umxSummary(m1, std = FALSE) # unstandardized
+#' twinData[,c("ht1", "ht2")] = twinData[,c("ht1", "ht2")]*100
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData) # -2ll= 9659, a1 = .92
+#' umxSummary(m1, std = FALSE) # un-standardized
 #' # tip: with report = "html", umxSummary can print the table to your browser!
 #' plot(m1)
 #' 
@@ -1450,7 +1450,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # = Bivariate height and weight model =
 #' # =====================================
 #' data(twinData)
-#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 #' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
 #' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
 #' mzData = mzData[1:80,] # quicker run to keep CRAN happy

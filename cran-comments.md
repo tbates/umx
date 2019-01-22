@@ -1,6 +1,6 @@
 ## Changes
 
-Compatibility with OpenMx
+New features.
 
 ## Test environments
 * OS X 10.13.0, R version 3.5.2

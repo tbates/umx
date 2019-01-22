@@ -133,10 +133,8 @@
 #' # 
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.
-#' # Pick the variables
-#' selDVs = "ht"
-#' twinData$ht1 = twinData$ht1*10
-#' twinData$ht2 = twinData$ht2*10
+#' # height var is very small: move from m to cm to increase.
+#' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACEv(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
@@ -159,8 +157,7 @@
 #' # =====================================
 #' 
 #' data(twinData)
-#' twinData$ht1 = twinData$ht1 * 1000 # Convert m to mm
-#' twinData$ht2 = twinData$ht2 * 1000
+#' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
 #' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"), ]
 #' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
 #' mzData = mzData[1:80, ] # Quicker run to keep CRAN happy
