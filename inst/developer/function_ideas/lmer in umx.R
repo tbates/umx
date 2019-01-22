@@ -1,3 +1,5 @@
+# pain points: the z matrix (join of models)
+
 library(lme4); library(OpenMx)
 fm1 = lmer(Reaction ~ Days + (Days | Subject), sleepstudy, REML=FALSE)
 
