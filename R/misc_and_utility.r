@@ -1471,9 +1471,13 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
 			message("umx version is recent enough")
 		} else {
 			stop("umx version is not recent enough to run this script! (min is ", min, "). You have ", umx_vers,
-			"\n You can run umx_open_CRAN_page() to see the most recent version of umx on CRAN")
+			"\n You can run umx_open_CRAN_page('umx') to see the most recent version of umx on CRAN")
 			
 		}
+	}
+	if(!umx_is_MxModel(model)){
+		message("Polite message - you should call umxVersion() with no parameters, or the first parameter should be a model")
+		model = NULL
 	}
 	OpenMx_vers = mxVersion(model = model, verbose = verbose)	
     if (verbose) {
