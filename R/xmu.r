@@ -32,16 +32,22 @@
 #' umx_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 #' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
 #' umx_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
-umx_check_variance <- function(data, minVar = .1){
+umx_check_variance <- function(data, minVar = .1, maxVarRatio=100){
 	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1
-	tmp = umx_var(data, format = "diag")
-	if(sum(tmp < minVar) > 0){
+	varList = umx_var(data, format = "diag")
+	if(sum(varList < minVar) > 0){
 		# At least 1 small
-		which(tmp < minVar)
-		message("The variance of variable(s) ", omxQuotes(names(which(tmp < minVar))), " is < ", minVar, ".\n",
+		message("The variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
 			"You might want to umx_scale these variables, or multiply to express the variable in smaller units, e.g. cm instead of metres.")
 		
 	}
+	if(max(varList)/min(varList) > maxVarRatio){
+		# At least 1 small
+		message("The variance of variable(s) ", omxQuotes(names(which.max(varList))), " is more than ", maxVarRatio, " times that of ", omxQuotes(names(which.min(varList))), ".\n",
+			"You might want to umx_scale these variables, or multiply to express one variable in different units to get these on more similar scales.")
+		
+	}
+
 }
 
 #' Upgrade a dataframe to an mxData type.

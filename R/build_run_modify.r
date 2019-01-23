@@ -856,7 +856,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 		newModel = mxModel(lastFit, update, name = name)
 	}
 	newModel = omxAssignFirstParameters(newModel)
-	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, comparison = comparison)
+	newModel = xmu_safe_run_summary(newModel, lastFit, autoRun = autoRun, tryHard = tryHard, comparison = comparison)
 	return(newModel)
 }
 
