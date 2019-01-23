@@ -21,7 +21,7 @@
 #' Check the minimum variance in data frame
 #'
 #' @description
-#' Check theat each variable exceeds a minimum variance. Let the user know what to do if not.
+#' Check that each variable exceeds a minimum variance and all are on compatible scales. Let the user know what to do if not.
 #' @param data the data frame to check
 #' @param minVar = .1
 #' @return - 
