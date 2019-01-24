@@ -4290,7 +4290,7 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data) {
 	if(length(sep) != 1){
 		stop("I need one sep, you gave me ", length(sep), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
-	# TODO discover suffixes as unique digits following suffix (could be 1:6)
+	# TODO umx_scale_wide_twin_data: Discover suffixes as unique digits following suffix (could be 1:6)
 	namesNeeded = umx_paste_names(varsToScale, sep = sep, suffixes = 1:2)
 	umx_check_names(namesNeeded, data)
 	t1Traits = paste0(varsToScale, sep, 1)
@@ -5255,7 +5255,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		dzData = as.data.frame(cbind(mdatdz, mdatdz, tdatdz))
 		mzData = mzData[,c(1, 2, 3, 5, 4, 6)]
 		dzData = dzData[,c(1, 2, 3, 5, 4, 6)]
-		# TODO use var names
+		# TODO umx_make_TwinData: Use var names
 		colnames(mzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
 		colnames(dzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
 	} else {

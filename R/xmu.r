@@ -593,7 +593,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	# ==============================
 	# = Add means labels if needed =
 	# ==============================
-	# TODO add a test case with raw data but no means...
+	# TODO xmuLabel_RAM_Model: Add a test case with raw data but no means...
 
 	if(!is.null(model$data)){
 		if(umx_check_should_have_means(model$data) & is.null(model$M)) {
@@ -616,7 +616,8 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 }
 
 umx_check_should_have_means <- function(data){
-	# TODO add ability to take a model instead of mxData
+	# TODO umx_check_should_have_means: Add ability to take a model instead of mxData
+	# TODO umx_check_should_have_means: Defunct: users should merely set the fit function
 	if(!is.null(data$preferredFit) && (data$preferredFit == "WLS") && (data$.wlsContinuousType ==  "cumulants")){
 		return(TRUE)
 	} else {
@@ -796,7 +797,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 #' @export
 #' @family xmu internal not for end user
 xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
-	# TODO delete this function??
+	# TODO xmuMakeDeviationThresholdsMatrices: Delete this function??
 	isOrdinalVariable = umx_is_ordered(df) 
 	if(sum(isOrdinalVariable) == 0){
 		stop("no ordinal variables found")

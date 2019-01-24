@@ -380,7 +380,7 @@ umxModel <- function(...) {
 #' plot(m1, std = TRUE, resid = "line")
 #' 
 #' # 5. Run an all-continuous WLS model
-#' # TODO: enable WLS RAM example
+#' # TODO: umxRAM: enable WLS RAM example
 #' # mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS",
 #' # 	umxPath(c("wt", "disp"), to = "mpg"),
 #' # 	umxPath("wt", with = "disp"),
@@ -997,7 +997,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			mxMatrix(name = "betaLin" , "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "lin11"), 
 			mxMatrix(name = "betaQuad", "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "quad11")
 
-			# TODO:	Add covariates to G x E model
+			# TODO:	umxGxE: Add covariates
 			# if(0){
 				# TODO: umxGxE If there are covs
 				# mxMatrix(name = "betas" , "Full", nrow = nCov, ncol = nVar, free = T, values = 0.05, labels = paste0("beta_", covariates))
@@ -1175,7 +1175,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		selDVs    = umx_paste_names(selDVs, sep = sep, 1:2)
 		moderator = umx_paste_names(moderator, sep = sep, 1:2)
 	}
-	# TODO want to allow missing moderator?
+	# TODO umxGxE_window: allow missing moderator?
 	# Check moderator is set and exists in mzData and dzData
 	return = match.arg(return)
 	if(is.null(moderator)){
@@ -2391,7 +2391,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' }
 #'
 umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), correlatedA = FALSE, dzAr= .5, dzCr= 1, equateMeans= TRUE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
-	# TODO Add covariates to umxCP
+	# TODO umxCP: Add covariates
 	type = match.arg(type)
 	nSib = 2 # Number of siblings in a twin pair.
 
@@ -3157,9 +3157,9 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
 #' umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
 #' m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, comparison = NULL){
-	# TODO: Return change in -2LL for models being re-run
-	# TODO: Stash saturated model for re-use
-	# TODO: Optimise for speed
+	# TODO: umxRun: Return change in -2LL for models being re-run
+	# TODO: umxRun: Stash saturated model for re-use
+	# TODO: umxRun: Optimise for speed
 	if(setLabels){
 		model = umxLabel(model)
 	}
@@ -3516,7 +3516,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 	}else{
 		stop("You idiot :-) : arrows must be either 1 or 2, you tried", arrows)
 	}
-	# TODO fix count? or drop giving it? in umxAdd1
+	# TODO umxAdd1: fix count? or drop giving it?
 	message("You gave me ", length(pathList1), "source variables. I made ", length(toAdd), " paths from these.")
 
 	# Just keep the ones that are not already free... (if any)
@@ -4183,7 +4183,7 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 			labels   = devLabels,
 			values   = deviationValues,
 			lbound   = .001,
-			# TODO ubound might want to be l_u_bound[2]
+			# TODO umxThresholdMatrix: ubound might want to be l_u_bound[2]
 			ubound   = NA,
 			dimnames = list(paste0("dev_", 1:maxThresh), factorVarNames)
 		)

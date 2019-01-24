@@ -2165,7 +2165,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 				labelStart = ' [label="@'
 			}
 
-			# TODO find a way of showing means fixed at zero?
+			# TODO plot.MxModel: Find way to show means fixed @0
 			if(thisPathFree || fixed ) {
 				# if(thisPathFree | (fixed & thisPathVal != 0) ) {
 				out = paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n')
@@ -4040,9 +4040,8 @@ umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = 
 #' umx_APA_model_CI(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")
 #' }
 umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std", digits = 2, SEstyle = FALSE, verbose= FALSE){
-	# TODO umx_APA_model_CI add choice of separator for CI
-	#      stash this as a preference
-	# TODO alias umx_APA_model_CI to umx_get_CI
+	# TODO umx_APA_model_CI: Add choice of separator for CI (stash as preference)
+	# TODO umx_APA_model_CI: alias to umx_get_CI
 	if(!umx_has_CIs(model)){
 		if(verbose){
 			message("no CIs")

@@ -484,7 +484,7 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	type = match.arg(type)
 	# covMethod  = match.arg(covMethod)
 
-	# TODO check covs
+	# TODO umxIPnew: check covs
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
 
 	if(length(nFac) == 1){
