@@ -53,7 +53,10 @@ df = umx_read_lower(file = "", diag = FALSE, names = allCols, ensurePD= TRUE)
 0.19	0.11	0.19	0.12	-0.06	0.22
 0.27	0.09	0.33	0.05	-0.04	0.28	.73
 0.52	0.17	0.38	0.37	0.39	0.44	0.18	0.13
-round(df,2) 
+
+
+round(df, 2) 
+
 m1 = umxRAM("wooley", data = mxData(df, type="cov", numObs = 90),
 	umxPath("g", to = IQtests),
 	umxPath(var = "g", fixedAt= 1),

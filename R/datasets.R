@@ -266,6 +266,8 @@ NULL
 #' 
 #' @details
 #' Created as follows:
+#' 
+#' ```R
 #' Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1:6), ensurePD= TRUE)
 #' 1.000
 #' 0.985	1.000
@@ -273,13 +275,14 @@ NULL
 #' 0.957	0.970	0.985	1.000
 #' 0.932	0.940	0.964	0.975	1.000
 #' 0.890	0.897	0.927	0.949	0.973	1.000
-#'
+#' ```
+#' 
 #' @docType data
 #' @keywords datasets
 #' @family datasets
 #' @name Fischbein_wt
 #' @references Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty. *Annals of Human Biology*, **4**. 417-430.
-#' \url{https://www.ncbi.nlm.nih.gov/pubmed/10323623}
+#' \url{https://doi.org/10.1080/03014467700002401}
 #' @usage data(Fischbein_wt)
 #' @format A 6*6 correlation matrix based on n = 66 females
 #' @md

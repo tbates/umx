@@ -21,8 +21,7 @@ A dataset containing correlations of weight of 66 females measured at 6 month in
 \item Weight6: Weight at time 6 (t+ 30 mths)
 }
 
-Created as follows:
-Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1:6), ensurePD= TRUE)
+Created as follows:\preformatted{Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1:6), ensurePD= TRUE)
 1.000
 0.985	1.000
 0.968	0.981	1.000
@@ -30,13 +29,14 @@ Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1
 0.932	0.940	0.964	0.975	1.000
 0.890	0.897	0.927	0.949	0.973	1.000
 }
+}
 \examples{
 data(Fischbein_wt)
 str(Fischbein_wt)
 }
 \references{
 Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty. \emph{Annals of Human Biology}, \strong{4}. 417-430.
-\url{https://www.ncbi.nlm.nih.gov/pubmed/10323623}
+\url{https://doi.org/10.1080/03014467700002401}
 }
 \seealso{
 Other datasets: \code{\link{GFF}}, \code{\link{iqdat}},
