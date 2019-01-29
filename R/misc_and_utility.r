@@ -5606,9 +5606,12 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' @family Data Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' require(umx) # for umxRAM
 #' \dontrun{
-#' df = umx_read_lower(file = "", diag = F, ensurePD=TRUE)
+#' require(umx) # for umxRAM
+#' IQtests = c("brainstorm", "matrix", "moral", "shopping", "typing")
+#' allCols = c("C", IQtests, "avgIQ", "maxIQ", "video")
+#' 
+#' df = umx_read_lower(file = "", diag = FALSE)
 #' 0.38
 #' 0.86	0.30
 #' 0.42	0.12	0.27
@@ -5618,34 +5621,47 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' 0.27	0.09	0.33	0.05	-0.04	0.28	.73
 #' 0.52	0.17	0.38	0.37	0.39	0.44	0.18	0.13
 #' 
-#' IQtests = c("brainstorm", "matrix", "moral", "shopping", "typing")
-#' n       = c("C", IQtests, "avgIQ", "maxIQ", "video")
+#' dimnames(df) = list(allCols, allCols) # manually add
 #' 
-#' dimnames(df) = list(n,n)
-#' 
+#' df = umx_read_lower(file = "", diag = FALSE, names = allCols, ensurePD= TRUE)
+#' 0.38
+#' 0.86	0.30
+#' 0.42	0.12	0.27
+#' 0.66	0.21	0.38	0.18
+#' 0.80	0.13	0.50	0.25	0.43
+#' 0.19	0.11	0.19	0.12	-0.06	0.22
+#' 0.27	0.09	0.33	0.05	-0.04	0.28	.73
+#' 0.52	0.17	0.38	0.37	0.39	0.44	0.18	0.13
+#' round(df,2) 
 #' m1 = umxRAM("wooley", data = mxData(df, type="cov", numObs = 90),
 #' 	umxPath("g", to = IQtests),
-#' 	umxPath(var = "g", fixedAt=1),
+#' 	umxPath(var = "g", fixedAt= 1),
 #' 	umxPath(var = IQtests)
 #' )
 #' summary(m1)
 #' }
-umx_read_lower <- function(file="", diag=TRUE, names=as.character(paste("X", 1:n, sep="")), ensurePD=FALSE){
+umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 	# modified from John Fox's sem package, to remove dependency on X11
 	# depends on Matrix::nearPD
-    elements <- scan(file=file)
-    m <- length(elements)
-    d <- if (diag) 1 else -1
-    n <- floor((sqrt(1 + 8*m) - d)/2)
-    if (m != n*(n + d)/2) 
+    elements = scan(file=file)
+    m = length(elements)
+    d = if (diag) 1 else -1
+    n = floor((sqrt(1 + 8*m) - d)/2)
+	if(is.null(names)){
+		names = paste0("X", 1:n))
+	}else if(length(names!=n)){
+		message("names ignored as you provided ", length(names), " but the data are n = ", n, " wide.")
+		names = paste0("X", 1:n))
+	}
+    if (m != n*(n + d)/2){
         stop("wrong number of elements (cannot make square matrix)")
-    if (length(names) != n) stop("wrong number of variable names")
-    X <- diag(n)
-    X[upper.tri(X, diag=diag)] <- elements
-    rownames(X) <- colnames(X) <- names
+	}
+    X = diag(n)
+    X[upper.tri(X, diag=diag)] = elements
+    rownames(X) = colnames(X) = names
 	X = t(X)
-	otherTri <- t(X)
-	X[upper.tri(X, diag=F)] <- otherTri[upper.tri(otherTri, diag=F)]
+	otherTri = t(X)
+	X[upper.tri(X, diag=F)] = otherTri[upper.tri(otherTri, diag=F)]
 	if(ensurePD){
 		# move to positive definite if not already there
 		if(all(eigen(X)$values>0)){
