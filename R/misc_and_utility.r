@@ -5632,7 +5632,10 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' 0.19	0.11	0.19	0.12	-0.06	0.22
 #' 0.27	0.09	0.33	0.05	-0.04	0.28	.73
 #' 0.52	0.17	0.38	0.37	0.39	0.44	0.18	0.13
-#' round(df,2) 
+#' 
+#' 
+#' round(df, 2) 
+#' 
 #' m1 = umxRAM("wooley", data = mxData(df, type="cov", numObs = 90),
 #' 	umxPath("g", to = IQtests),
 #' 	umxPath(var = "g", fixedAt= 1),
@@ -5648,10 +5651,10 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
     d = if (diag) 1 else -1
     n = floor((sqrt(1 + 8*m) - d)/2)
 	if(is.null(names)){
-		names = paste0("X", 1:n))
-	}else if(length(names!=n)){
+		names = paste0("X", 1:n)
+	}else if(length(names!= n)){
 		message("names ignored as you provided ", length(names), " but the data are n = ", n, " wide.")
-		names = paste0("X", 1:n))
+		names = paste0("X", 1:n)
 	}
     if (m != n*(n + d)/2){
         stop("wrong number of elements (cannot make square matrix)")

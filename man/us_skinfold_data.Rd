@@ -52,8 +52,8 @@ Archives of Pediatrics and Adolescent Medicine, \strong{153}, 446-453.
 \url{https://www.ncbi.nlm.nih.gov/pubmed/10323623}
 }
 \seealso{
-Other datasets: \code{\link{GFF}}, \code{\link{iqdat}},
-  \code{\link{umx}}
+Other datasets: \code{\link{Fischbein_wt}},
+  \code{\link{GFF}}, \code{\link{iqdat}}, \code{\link{umx}}
 }
 \concept{datasets}
 \keyword{datasets}

@@ -208,7 +208,8 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_pb_note}}, \code{\link{umx_print}},
   \code{\link{umx_scale}}, \code{\link{umx_score_scale}}
 
-Other datasets: \code{\link{GFF}}, \code{\link{iqdat}},
+Other datasets: \code{\link{Fischbein_wt}},
+  \code{\link{GFF}}, \code{\link{iqdat}},
   \code{\link{us_skinfold_data}}
 
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
