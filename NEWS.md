@@ -3,6 +3,11 @@
 * NEW: `umxACE` supports WLS, UWLS, DWLS models!
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
+* NEW: `umx_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
+	* `umx_set_data_variance_check` getter/setter for variance checking data
+* DATA: Added Fischbein (1977) weight data (weight of 66 females record at 6 6mth intervals. `data(Fischbein_wt)`
+* FIX: `umxValues` to work more reliably with data with no means.
+* IMPROVED: `umx_read_lower` examples and input checking.
 
 # umx 2.9.9 December 2018, R 3.5.2
 * Compatibility with OpenMx changes.
