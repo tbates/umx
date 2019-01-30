@@ -618,6 +618,8 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 umx_check_should_have_means <- function(data){
 	# TODO umx_check_should_have_means: Add ability to take a model instead of mxData
 	# TODO umx_check_should_have_means: Defunct: users should merely set the fit function
+	# obj$data$type
+
 	if(!is.null(data$preferredFit) && (data$preferredFit == "WLS") && (data$.wlsContinuousType ==  "cumulants")){
 		return(TRUE)
 	} else {
