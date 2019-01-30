@@ -29,10 +29,10 @@
 #' @family Miscellaneous Utility Functions
 #' @examples
 #' data(twinData)
-#' umx_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
+#' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 #' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
-#' umx_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
-umx_check_variance <- function(data, minVar = .1, maxVarRatio = 1000){
+#' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
+xmu_check_variance <- function(data, minVar = .1, maxVarRatio = 1000){
 	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1
 	varList = umx_var(data, format = "diag")
 	if(sum(varList < minVar) > 0){
@@ -112,7 +112,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		if(dropColumns){
 			# Trim down the data to include only the requested columns
 			data = data[, manifests, drop = FALSE]
-			umx_check_variance(data)
+			xmu_check_variance(data)
 		}
 		# Upgrade data.frame to mxData of desired type
 		if(type %in% c("Auto", "FIML")){

@@ -533,6 +533,7 @@ umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 #' @param silent If TRUE, no message will be printed.
 #' @return - list of umx_minVar and umx_maxVarRatio settings
 #' @export
+#' @seealso xmu_check_variance which uses these to check sanity in the variances of a data frame.
 #' @family Get and set
 #' @examples
 #' library(umx)
@@ -540,7 +541,7 @@ umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 #' old = umx_set_data_variance_check(silent = TRUE) # store existing value
 #' umx_set_data_variance_check(minVar = .01)
 #' umx_set_data_variance_check(maxVarRatio = 500)
-#' umx_set_data_variance_check(old) # reinstate
+#' umx_set_data_variance_check(minVar = old$minVar, maxVarRatio = old$maxVarRatio) # reinstate
 umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silent = FALSE) {
 	if(is.null(minVar)){
 		minVar = getOption("umx_minVar")
@@ -558,11 +559,10 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 	}else{
 		options("umx_maxVarRatio" = maxVarRatio)		
 	}
-	invisible(list(minVar = minVar, maxVarRatio = maxVarRatio)
+	invisible(list(minVar = minVar, maxVarRatio = maxVarRatio))
 }
 
 
-	
 #' umx_set_auto_run
 #'
 #' Set autoRun default for models like umxACE umxGxE etc.
