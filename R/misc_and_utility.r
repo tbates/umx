@@ -524,6 +524,45 @@ umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
 	invisible(autoPlot)
 }
 
+#' umx_set_data_variance_check
+#'
+#' Set default for data checking in models like umxACE umxGxE etc.
+#'
+#' @param minVar Set the threshold at which to warn user about variables with too-small variance. Else returns the current value of umx_minVar
+#' @param maxVarRatio Set the option for threshold at which to warn user variances differ too much. Else returns the current value of umx_maxVarRatio
+#' @param silent If TRUE, no message will be printed.
+#' @return - list of umx_minVar and umx_maxVarRatio settings
+#' @export
+#' @family Get and set
+#' @examples
+#' library(umx)
+#' umx_set_data_variance_check() # print current state
+#' old = umx_set_data_variance_check(silent = TRUE) # store existing value
+#' umx_set_data_variance_check(minVar = .01)
+#' umx_set_data_variance_check(maxVarRatio = 500)
+#' umx_set_data_variance_check(old) # reinstate
+umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silent = FALSE) {
+	if(is.null(minVar)){
+		minVar = getOption("umx_minVar")
+		if(!silent){
+			message("Current threshold for small variance warning in umx functions is ", omxQuotes(getOption("umx_minVar")))
+		}
+	}else{
+		options("umx_minVar" = minVar)		
+	}
+	if(is.null(maxVarRatio)){
+		maxVarRatio = getOption("umx_maxVarRatio")
+		if(!silent){
+			message("Current threshold for excess ratio among variances warning in umx functions is ", omxQuotes(getOption("umx_maxVarRatio")))
+		}
+	}else{
+		options("umx_maxVarRatio" = maxVarRatio)		
+	}
+	invisible(list(minVar = minVar, maxVarRatio = maxVarRatio)
+}
+
+
+	
 #' umx_set_auto_run
 #'
 #' Set autoRun default for models like umxACE umxGxE etc.
