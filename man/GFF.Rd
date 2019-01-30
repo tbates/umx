@@ -95,7 +95,8 @@ evaluations of family functioning and subjective wellbeing. Twin Research
 and Human Genetics, 13(2), 143-162. doi:10.1375/twin.13.2.143
 }
 \seealso{
-Other datasets: \code{\link{iqdat}}, \code{\link{umx}},
+Other datasets: \code{\link{Fischbein_wt}},
+  \code{\link{iqdat}}, \code{\link{umx}},
   \code{\link{us_skinfold_data}}
 }
 \concept{datasets}

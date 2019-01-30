@@ -2882,32 +2882,29 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# umx_msg(obj$data$preferredFit)
 		# umx_msg(obj$data$.wlsContinuousType)
 
-		if(umx_check_should_have_means(obj$data)){
+		if(is.null(obj$matrices$M)){
+			# no means
 			# Handle WLS without means
 			# diag diag creates a matrix with all zeros off the diagonal
-			covData = umx_var(theData[, manifests, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
-			covData = diag(covData)
-		}else if(obj$data$type == "raw"){
-			# = Set the means =
-			if(is.null(obj$matrices$M)){
-				warning("You have raw data, but not paths for the means\n")
-				stop("Add something like umxPath(means = 'var') to your model.")
-			} else {
-				dataMeans = umx_means(theData[, manifests, drop = FALSE], ordVar = 0, na.rm = TRUE)
-				freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
-				obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
-				# covData = cov(theData, )
-				covData = umx_var(theData[, manifests, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
-				if(!is.null(dim(covData)) || length(covData) > 1){
-					covData = diag(covData)
-				} else {
-					# If this is one variable, leave alone: equivalent to a 1,1, matrix with the diag on the "diag", and zeros elsewhere
-				}
+			if(!umx_is_cov(theData, boolean = TRUE)){
+				theData = umx_var(theData[, manifests, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
+			}else{
+				# message("You idiot!")
 			}
-		} else {
-			# diag diag creates a matrix with all zeros off the diagonal
 			covData = diag(diag(theData))
+		} else {
+			dataMeans = umx_means(theData[, manifests, drop = FALSE], ordVar = 0, na.rm = TRUE)
+			freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
+			obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
+			# covData = cov(theData, )
+			covData = umx_var(theData[, manifests, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
+			if(!is.null(dim(covData)) || length(covData) > 1){
+				covData = diag(covData)
+			} else {
+				# If this is one variable, leave alone: equivalent to a 1,1, matrix with the diag on the "diag", and zeros elsewhere
+			}
 		}
+
 		# ==========================================================
 		# = Fill the S (symmetrical) matrix with good start values =
 		# ==========================================================

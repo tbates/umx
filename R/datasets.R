@@ -247,3 +247,46 @@ NULL
 #' plot(IQ_age1_T1 ~ IQ_age4_T2, data = subset(iqdat, zygosity == "MZ"))
 #' par(mfrow = c(1, 1))  # back to as it was
 NULL
+
+# ==========================
+# = Fischbein weight data  =
+# ==========================
+#' Weight data across time.
+#'
+#' A dataset containing correlations of weight of 66 females measured at 6 month intervals.
+#' 
+#' \itemize{
+#'   \item Weight1: Weight at time 1 (t0)
+#'   \item Weight2: Weight at time 2 (t+ 6 mths)
+#'   \item Weight3: Weight at time 3 (t+ 12 mths)
+#'   \item Weight4: Weight at time 4 (t+ 18 mths)
+#'   \item Weight5: Weight at time 5 (t+ 24 mths)
+#'   \item Weight6: Weight at time 6 (t+ 30 mths)
+#' }
+#' 
+#' @details
+#' Created as follows:
+#' 
+#' ```R
+#' Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1:6), ensurePD= TRUE)
+#' 1.000
+#' 0.985	1.000
+#' 0.968	0.981	1.000
+#' 0.957	0.970	0.985	1.000
+#' 0.932	0.940	0.964	0.975	1.000
+#' 0.890	0.897	0.927	0.949	0.973	1.000
+#' ```
+#' 
+#' @docType data
+#' @keywords datasets
+#' @family datasets
+#' @name Fischbein_wt
+#' @references Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty. *Annals of Human Biology*, **4**. 417-430.
+#' \url{https://doi.org/10.1080/03014467700002401}
+#' @usage data(Fischbein_wt)
+#' @format A 6*6 correlation matrix based on n = 66 females
+#' @md
+#' @examples
+#' data(Fischbein_wt)
+#' str(Fischbein_wt)
+NULL

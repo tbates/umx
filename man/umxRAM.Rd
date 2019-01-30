@@ -158,7 +158,7 @@ plot(m1)
 plot(m1, std = TRUE, resid = "line")
 
 # 5. Run an all-continuous WLS model
-# TODO: enable WLS RAM example
+# TODO: umxRAM: enable WLS RAM example
 # mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS",
 # 	umxPath(c("wt", "disp"), to = "mpg"),
 # 	umxPath("wt", with = "disp"),

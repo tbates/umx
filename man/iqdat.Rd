@@ -37,7 +37,8 @@ par(mfrow = c(1, 1))  # back to as it was
 TODO
 }
 \seealso{
-Other datasets: \code{\link{GFF}}, \code{\link{umx}},
+Other datasets: \code{\link{Fischbein_wt}},
+  \code{\link{GFF}}, \code{\link{umx}},
   \code{\link{us_skinfold_data}}
 }
 \concept{datasets}
