@@ -253,15 +253,15 @@ NULL
 # ==========================
 #' Weight data across time.
 #'
-#' A dataset containing correlations of weight of 66 females measured at 6 month intervals.
+#' A dataframe containing correlations of weight in kilograms for 66 females measured 6 times at 6 month intervals.
 #' 
 #' \itemize{
-#'   \item Weight1: Weight at time 1 (t0)
-#'   \item Weight2: Weight at time 2 (t+ 6 mths)
-#'   \item Weight3: Weight at time 3 (t+ 12 mths)
-#'   \item Weight4: Weight at time 4 (t+ 18 mths)
-#'   \item Weight5: Weight at time 5 (t+ 24 mths)
-#'   \item Weight6: Weight at time 6 (t+ 30 mths)
+#'   \item Weight1: Weight in kg at time 1 (t0)
+#'   \item Weight2: Weight in kg at time 2 (t+ 6 mths)
+#'   \item Weight3: Weight in kg at time 3 (t+ 12 mths)
+#'   \item Weight4: Weight in kg at time 4 (t+ 18 mths)
+#'   \item Weight5: Weight in kg at time 5 (t+ 24 mths)
+#'   \item Weight6: Weight in kg at time 6 (t+ 3vert to 0 mths)
 #' }
 #' 
 #' @details
@@ -287,6 +287,7 @@ NULL
 #' @format A 6*6 correlation matrix based on n = 66 females
 #' @md
 #' @examples
-#' data(Fischbein_wt)
-#' str(Fischbein_wt)
+#' data(Fischbein_wt) # load the data
+#' str(Fischbein_wt) # data.frame
+#' as.matrix(Fischbein_wt) # convert to matrix
 NULL
