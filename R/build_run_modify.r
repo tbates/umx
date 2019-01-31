@@ -2860,6 +2860,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			return(obj)
 		}
 		theData   = obj$data$observed
+		type      = obj$data$type
 		manifests = obj@manifestVars
 		latents   = obj@latentVars
 		nVar      = length(manifests)
@@ -2885,15 +2886,21 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# umx_msg(obj$data$.wlsContinuousType)
 
 		if(is.null(obj$matrices$M)){
-			# no means
-			# Handle WLS without means
-			# diag diag creates a matrix with all zeros off the diagonal
-			if(!umx_is_cov(theData, boolean = TRUE)){
-				theData = umx_var(theData[, manifests, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
+			# no means: must be cov data?
+			# We are in a RAM model, so the data must be mxData: check the type, rather than guessing.
+			# need to handle raw data that will be treated as WLS and not end up with means
+			if(type == "raw"){
+				covmat = umx_var(theData[, manifests, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
+			}else if (type == "acov"){
+				covmat = as.matrix(theData)
+			}else if (type %in% c("cov", "cor")){
+				covmat = as.matrix(theData)
 			}else{
-				# message("You idiot!")
+				message("umxValues can't recognize data of type ", type, ". I only know raw, cov, cor, and acov")
+				covmat = as.matrix(theData)
 			}
-			covData = diag(diag(theData))
+			# diag diag creates a matrix with all zeros off the diagonal
+			covData = diag(diag(covmat))
 		} else {
 			dataMeans = umx_means(theData[, manifests, drop = FALSE], ordVar = 0, na.rm = TRUE)
 			freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
