@@ -1514,7 +1514,7 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
 			
 		}
 	}
-	if(!umx_is_MxModel(model)){
+	if(!is.null(model) && !umx_is_MxModel(model)){
 		message("Polite message - you should call umxVersion() with no parameters, or the first parameter should be a model")
 		model = NULL
 	}
@@ -3623,9 +3623,10 @@ umx_is_MxMatrix <- function(obj) {
 #' umx_is_cov(df, boolean = TRUE)
 #' umx_is_cov(mtcars, boolean = TRUE)
 umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
-	if(is.null(data)) { stop("Error in umx_is_cov: You have to provide the data = that you want to check...\n",
-		"Or as Jack Nicholson says, 'No ticky, no laundry' :-) ") }
-
+	if(is.null(data)) {
+		stop("Error in umx_is_cov: You have to provide the data = that you want to check...\n",
+		"Or as Jack Nicholson says in The Departed: 'No ticky... no laundry' ") 
+	}
 	if( nrow(data) == ncol(data)) {
 		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
 			if(all(diag(data) == 1)){
