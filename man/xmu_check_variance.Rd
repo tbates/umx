@@ -9,7 +9,9 @@ xmu_check_variance(data, minVar = 0.1, maxVarRatio = 1000)
 \arguments{
 \item{data}{the data frame to check}
 
-\item{minVar}{= .1}
+\item{minVar}{Minimum allowed variance in variables before warning user variances differ too much.}
+
+\item{maxVarRatio}{Maximum allowed ratio of variance in data before warning user variances differ too much.}
 }
 \value{
 -
@@ -20,7 +22,7 @@ Check that each variable exceeds a minimum variance and all are on compatible sc
 \examples{
 data(twinData)
 xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
-twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
+twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")] * 100
 xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 }
 \seealso{

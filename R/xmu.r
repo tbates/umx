@@ -23,14 +23,15 @@
 #' @description
 #' Check that each variable exceeds a minimum variance and all are on compatible scales. Let the user know what to do if not.
 #' @param data the data frame to check
-#' @param minVar = .1
+#' @param minVar Minimum allowed variance in variables before warning user variances differ too much.
+#' @param maxVarRatio Maximum allowed ratio of variance in data before warning user variances differ too much.
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @examples
 #' data(twinData)
 #' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
-#' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
+#' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")] * 100
 #' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 xmu_check_variance <- function(data, minVar = .1, maxVarRatio = 1000){
 	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1

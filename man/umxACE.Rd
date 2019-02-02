@@ -299,7 +299,7 @@ plot(m1)
 \references{
 \itemize{
 \item Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
-to the analysis of human behaviour. Heredity, \strong{41}, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{https://keppel.qimr.edu.au/contents/p/staff/CV013.pdf}
 }
 }
 \seealso{
