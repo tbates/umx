@@ -5,6 +5,7 @@
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
 
 # umx 2.10.0 January 2019, R 3.5.2
+* IMPROVED: Make umx more robust to new data types esp in `umxValues` which processes the cov or raw data of a model into start values.
 * NEW: `xmu_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
 	* `umx_set_data_variance_check` getter/setter for variance checking data
 * DATA: Added Fischbein (1977) weight data (weight of 66 females record at 6 6mth intervals. `data(Fischbein_wt)`
@@ -13,15 +14,14 @@
 
 # umx 2.9.9 December 2018, R 3.5.2
 * Compatibility with OpenMx changes.
-* NEW: `umxSummarizeTwinData` to create summary tables for papers using twin Data
-* IMPROVED: `umxRAM`: support definition variables to some extent in umxRAM
-* IMPROVED: `umxMatrix` advice user when they specify `umxMatrix("me", 1,1)`
-* IMPROVED: `umxModify` nicer free-parameter report as default output with no changes requested (calls parameters)
-* IMPROVED: `umxRAM` preserve definition variables in data
-* IMPROVED: `umxRAM` preserve definition variables in data
-* IMPROVED: `plot` strip_zero more reliable
-* INCOMPATIBLE: `plot` dropped deprecated showMeans and showFixed from plot after 3 years (use means= and fixed = )
-* INCOMPATIBLE: removed deprecated suffix parameter from `umx_scale_wide_twin_data`
+* NEW: `umxSummarizeTwinData` to create summary tables for papers using twin Data.
+* IMPROVED: `umxRAM`: support definition variables to some extent in umxRAM.
+* IMPROVED: `umxMatrix` advice user when they specify `umxMatrix("me", 1,1)`.
+* IMPROVED: `umxModify` nicer free-parameter report as default output with no changes requested (calls parameters).
+* IMPROVED: `umxRAM` preserve definition variables in data.
+* IMPROVED: `plot` strip_zero more reliable.
+* INCOMPATIBLE: `plot` dropped deprecated showMeans and showFixed from plot after 3 years (use `means=` and `fixed =` ).
+* INCOMPATIBLE: `umx_scale_wide_twin_data` dropped support for deprecated suffix parameter.
 
 # umx 2.9.0 December 2018, R 3.5.1: More love
 * INCOMPATIBLE: Support for `suffix` as a synonym for `sep` removed after 3-years of deprecation warnings.
