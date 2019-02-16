@@ -10,18 +10,24 @@ umxCov2cor(x)
 \item{x}{something that cov2cor can work on (matrix, df, etc.)}
 }
 \value{
-- a correlation matrix
+\itemize{
+\item a correlation matrix
+}
 }
 \description{
-umxCov2cor like \code{\link{cov2cor}} that forces upper and lower triangles to be identical (rather than nearly identical)
+A version of \code{\link{cov2cor}} that forces upper and lower triangles to be \emph{identical} (rather than nearly identical)
 }
 \examples{
-umxCov2cor(cov(mtcars))
+umxCov2cor(cov(mtcars[,1:5]))
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
+\code{\link{cov2cor}}
+
 Other Miscellaneous Stats Helpers: \code{\link{reliability}},
   \code{\link{umxHetCor}}, \code{\link{umx_apply}},
   \code{\link{umx_cor}}, \code{\link{umx_fun_mean_sd}},

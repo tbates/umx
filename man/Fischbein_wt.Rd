@@ -9,16 +9,16 @@
 data(Fischbein_wt)
 }
 \description{
-A dataframe containing correlations of weight for 66 females measured 6 times at 6 month intervals.
+A dataframe containing correlations of weight for 66 females measured 6 times at 6-month intervals.
 }
 \details{
 \itemize{
 \item Weight1: Weight at time 1 (t0)
-\item Weight2: Weight at time 2 (t+ 6 mths)
-\item Weight3: Weight at time 3 (t+ 12 mths)
-\item Weight4: Weight at time 4 (t+ 18 mths)
-\item Weight5: Weight at time 5 (t+ 24 mths)
-\item Weight6: Weight at time 6 (t+ 3vert to 0 mths)
+\item Weight2: Weight at time 2 (t0 + 6 months)
+\item Weight3: Weight at time 3 (t0 + 12 months)
+\item Weight4: Weight at time 4 (t0 + 18 months)
+\item Weight5: Weight at time 5 (t0 + 24 months)
+\item Weight6: Weight at time 6 (t0 + 32 months)
 }
 
 Created as follows:\preformatted{Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1:6), ensurePD= TRUE)
