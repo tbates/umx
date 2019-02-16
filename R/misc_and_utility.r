@@ -2819,15 +2819,17 @@ umxCovData <- function(df, columns = NA, use = c("complete.obs", "everything", "
 
 #' Convert a covariance matrix into a correlation matrix
 #'
-#' umxCov2cor like \code{\link{cov2cor}} that forces upper and lower triangles to be identical (rather than nearly identical)
+#' A version of \code{\link{cov2cor}} that forces upper and lower triangles to be *identical* (rather than nearly identical)
 #'
 #' @param x something that cov2cor can work on (matrix, df, etc.)
 #' @return - a correlation matrix
 #' @export
 #' @family Miscellaneous Stats Helpers
+#' @seealso \code{\link{cov2cor}}
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
-#' umxCov2cor(cov(mtcars))
+#' umxCov2cor(cov(mtcars[,1:5]))
+#' @md
 umxCov2cor <- function(x) {
 	x = cov2cor(x)
 	x[lower.tri(x)] <- t(x)[lower.tri(t(x))]
