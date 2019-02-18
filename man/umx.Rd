@@ -80,11 +80,11 @@ plot(m1, std = TRUE, file = NA)
 Other Teaching and testing Functions: \code{\link{tmx_genotypic_effect}},
   \code{\link{tmx_is.identified}}
 
-Other Core Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
-  \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSuperModel}}
+Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
+  \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
+  \code{\link{umxMatrix}}, \code{\link{umxModify}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxRun}}, \code{\link{umxSuperModel}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
@@ -104,12 +104,12 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxModify}}, \code{\link{umxSetParameters}},
   \code{\link{umxUnexplainedCausalNexus}}
 
-Other Plotting functions: \code{\link{plot.MxModel}},
-  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
-  \code{\link{umxPlotACE}}, \code{\link{umxPlotCPnew}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
-  \code{\link{umxPlotSimplex}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}},
+  \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
+  \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
+  \code{\link{umxPlotCPnew}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
+  \code{\link{umxPlotIP}}, \code{\link{umxPlotSimplex}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxTwoStage}}

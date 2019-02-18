@@ -79,10 +79,10 @@ summary(m3)
 \seealso{
 - \code{\link{mxFitFunctionMultigroup}}, \code{\link{umxRAM}}
 
-Other Core Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
-  \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
+  \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
+  \code{\link{umxMatrix}}, \code{\link{umxModify}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxRun}}, \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

@@ -59,10 +59,10 @@ m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 - \url{https://www.github.com/tbates/umx}
 }
 \seealso{
-Other Core Modeling Functions: \code{\link{plot.MxModel}},
-  \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
-  \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
+  \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
+  \code{\link{umxMatrix}}, \code{\link{umxModify}},
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxSuperModel}}, \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

@@ -54,11 +54,11 @@ plot(m1, std = FALSE) # don't standardize
 
 - \code{\link{umxACE}}
 
-Other Plotting functions: \code{\link{plot.MxModel}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCPnew}}, \code{\link{umxPlotCP}},
-  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxPlotSimplex}},
-  \code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}},
+  \code{\link{plot.MxModel}}, \code{\link{umxPlotACEv}},
+  \code{\link{umxPlotACE}}, \code{\link{umxPlotCPnew}},
+  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
+  \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 }
 \concept{Plotting functions}

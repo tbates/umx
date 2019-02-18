@@ -2044,6 +2044,50 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 # = Graphics =
 # ============
 
+#' Create and display a graphical path diagram for a LISREL model.
+#'
+#' plot() produces SEM diagrams in graphviz format, and relies on \code{\link{DiagrammeR}} (or a 
+#' graphviz application) to create the image. 
+#' The commercial application \dQuote{OmniGraffle} is great for editing these images.
+#' 
+#'
+#' On unix and windows, \code{\link{plot}}() will create a pdf and open it in your default pdf reader.
+#' 
+#' \emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).
+#' 
+#' If you use umx_set_plot_format("graphviz"), they will open in a graphviz helper app (if installed).
+#' If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
+#' On OS X we try and open an app: you may need to associate the \sQuote{.gv}
+#' extension with the graphviz app.
+#' Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}, 
+#' select graphviz.app (or OmniGraffle professional),
+#' then set \dQuote{change all}.
+#'
+#' @aliases plot umxPlot
+#' @rdname plot.MxLISRELModel
+#' @param x A LISREL \code{\link{mxModel}} from which to make a path diagram
+#' @param std Whether to standardize the model (default = FALSE).
+#' @param fixed Whether to show fixed paths (defaults to TRUE)
+#' @param means Whether to show means or not (default = TRUE)
+#' @param digits The number of decimal places to add to the path coefficients
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
+#' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param ... Optional parameters
+#' @export
+#' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}}
+#' @family Core Modeling Functions
+#' @family Plotting functions
+#' @references - \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
+#' @examples
+#' # plot()
+#' # TODO get LISREL example model
+#' # Figure out how to map its matrices to plot. Don't do without establishing demand.
+plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = TRUE, ...) {
+	stop("Sorry, plot doesn't yet support LISREL models. I'd advise using umxRAM instead.")
+}
+
 #' Create and display a graphical path diagram for a model.
 #'
 #' plot() produces SEM diagrams in graphviz format, and relies on \code{\link{DiagrammeR}} (or a 
