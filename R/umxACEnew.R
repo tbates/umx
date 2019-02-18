@@ -304,9 +304,9 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 			nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
 
 			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
-			top     = bits$top
-			MZ      = bits$MZ
-			DZ      = bits$DZ
+			top  = bits$top
+			MZ   = bits$MZ
+			DZ   = bits$DZ
 
 			if(bVector){
 				mzWeightMatrix = bits$mzWeightMatrix
@@ -322,8 +322,8 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 
 			# Finish building top
 			top = mxModel(top,
-				# "top" defines the algebra of the twin model, which MZ and DZ slave off of
-				# NB: top already has the means model and thresholds matrix added if necessary  - see above
+				# NB: "top" defines the algebra of the twin model, which MZ and DZ slave off of
+				# it already has the means model and thresholds matrix added if necessary  - see "xmu_make_top_twin_models" above
 
 				# Additive, Common, and Unique environmental paths				
 				umxMatrix("a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
@@ -334,9 +334,9 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 				umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 				# Multiply by each path coefficient by its inverse to get variance component
 				# Quadratic multiplication to add common_loadings
-				mxAlgebra(name = "A", a %*% t(a)), # additive genetic variance
-				mxAlgebra(name = "C", c %*% t(c)), # common environmental variance
-				mxAlgebra(name = "E", e %*% t(e)), # unique environmental variance
+				mxAlgebra(name = "A", a %*% t(a)), # Additive genetic variance
+				mxAlgebra(name = "C", c %*% t(c)), # Common environmental variance
+				mxAlgebra(name = "E", e %*% t(e)), # Unique environmental variance
 				mxAlgebra(name = "ACE", A+C+E),
 				mxAlgebra(name = "AC" , A+C  ),
 				mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),

@@ -142,9 +142,16 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	# *Note*: If dropping this into an existing model, it replaces code that sets: nVar, selVars, used, 
 	# Also any code figuring out data-type
 	
-	type = match.arg(type)
-	threshType = match.arg(threshType)
-	allContinuousMethod  = match.arg(allContinuousMethod)
+	# ===================
+	# = match arguments =
+	# ===================
+	type                = match.arg(type)
+	threshType          = match.arg(threshType)
+	allContinuousMethod = match.arg(allContinuousMethod)
+
+	# ====================================================
+	# = Figure out selVars, nVar, usedVars, and dataType =
+	# ====================================================
 	if(is.null(sep)){
 		selVars = selDVs
 		# stop("You MUST set 'sep'. Otherwise xmu_make_top can't reliably expand selDVs into full variable names")
@@ -203,7 +210,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = FALSE, values = dzData[, weightVar])
 			bVector = TRUE
 		} else {
-			# no weights bVector stays whatever it was
+			# No weights bVector stays whatever it was.
 		}
 		# =============================================
 		# = Figure out start values while we are here =
@@ -256,6 +263,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 					mxFitFunctionML(vector = bVector)
 				)			
 			} else {
+				# Plain raw data or intended for WLS and (allContinuousMethod != cumulants) so top needs means and MZ and DZ a means model.
 				top = mxModel("top",
 					umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars))
 				)
@@ -366,8 +374,9 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	# Switch model to WLS if that's specified
 	if(type %in%  c('WLS', 'DWLS', 'ULS')) {
 		message("data treated as ", type)
-		# `top` is not affected, still mxExpectationNormal and either with or lacking means.
-		# Replace the data and fit function. nb: The data doesn't need replacing but might not "stick" from above.
+		# Still mxExpectationNormal (`top` is not affected - either has or lacks means matrix).
+		# Replace the data and fit function. nb: 
+		# TODO: The data doesn't need replacing but might not "stick" from above.
 		MZ = mxModel(MZ, mzData, mxFitFunctionWLS() )
 		DZ = mxModel(DZ, dzData, mxFitFunctionWLS() )
 	}

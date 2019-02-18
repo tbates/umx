@@ -68,8 +68,8 @@ xmu_check_variance <- function(data, minVar = .1, maxVarRatio = 1000){
 #' @family xmu internal not for end user
 #' @examples
 #' manVars = c("mpg", "cyl", "disp")
-#' tmp = xmu_make_mxData(data= mtcars, type = "Auto")
-#' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars)
+#' tmp = xmu_make_mxData(data= mtcars, type = "Auto"); # class(tmp); # "MxDataStatic"
+#' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); # names(tmp$observed) # "mpg"  "cyl"  "disp"
 #' tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = manVars, verbose= TRUE)
 #' 
 #' # missing data WLS example
@@ -126,11 +126,13 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			if(any(umx_is_ordered(data))){
 				# at least one ordered column
 			} else if(anyNA(data)){
-				oldRows = nrow(data)
-				data = na.omit(data)
-				message("polite note from xmu_make_mxData: Missing data can't be handled in continuous-variable WLS.\n I removed ", (nrow(data) - oldRows), " rows with missing values")				
+				message("polite note from xmu_make_mxData: Missing data can't be handled in continuous-variable WLS.\n You might want to remove rows with missing values")
+				# oldRows = nrow(data)
+				# data = na.omit(data)
+				# message("polite note from xmu_make_mxData: Missing data can't be handled in continuous-variable WLS.\n You might want to remove ", (nrow(data) - oldRows), " rows with missing values")
 			}
-			data = mxDataWLS(data, type = type, allContinuousMethod = allContinuousMethod)
+			data = mxData(observed = data, type = "raw")
+			# data = mxDataWLS(data, type = type, allContinuousMethod = allContinuousMethod)
 		}else{
 			stop("I don't know how to create data of type ", omxQuotes(type))
 		}
@@ -168,20 +170,12 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				msg_str = paste0(length(unusedManifests), " unused variable (", varList)
 			}
 		}
-		# @ preferredFit      : chr "WLS"
-		# @ numObs            : num 32
-		# @ observedStats     : list()
-		# @ .isSorted         : logi FALSE
-		# @ .needSort         : logi TRUE
-		# @ .wlsType          : chr "WLS"
-		# @ .wlsContinuousType: chr "cumulants"
-		# @ .wlsFullWeight    : logi TRUE
 		
-		if("preferredFit" %in% names(data)){
-			message("Preferred fit for data = ", data$preferredFit)
-		} else {
-			message("Data type = ", data$type)
-		}
+		# if("preferredFit" %in% names(data)){
+		# 	message("Preferred fit for data = ", data$preferredFit)
+		# } else {
+		# 	message("Data type = ", data$type)
+		# }
 		if(is.na(data$means)){
 			message("No means")
 		} else {

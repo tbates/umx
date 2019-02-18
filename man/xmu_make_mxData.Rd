@@ -29,8 +29,8 @@ The most common use will be to give it a dataframe, and get back an mxData objec
 }
 \examples{
 manVars = c("mpg", "cyl", "disp")
-tmp = xmu_make_mxData(data= mtcars, type = "Auto")
-tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars)
+tmp = xmu_make_mxData(data= mtcars, type = "Auto"); # class(tmp); # "MxDataStatic"
+tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); # names(tmp$observed) # "mpg"  "cyl"  "disp"
 tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = manVars, verbose= TRUE)
 
 # missing data WLS example
