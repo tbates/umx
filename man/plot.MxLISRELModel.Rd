@@ -50,6 +50,11 @@ Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}
 select graphviz.app (or OmniGraffle professional),
 then set \dQuote{change all}.
 }
+\examples{
+# plot()
+# TODO get LISREL example model
+# Figure out how to map its matrices to plot. Don't do without establishing demand.
+}
 \references{
 - \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 }
