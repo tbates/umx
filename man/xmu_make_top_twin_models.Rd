@@ -37,7 +37,7 @@ FIML requires that the data are continuous. Remaining options are weighted, diag
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
 
-\item{allContinuousMethod}{passed to xmu_make_mxData (for WLS data) c("cumulants", "marginals")}
+\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
 \item{verbose}{(default = FALSE)}
 }

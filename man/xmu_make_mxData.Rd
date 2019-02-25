@@ -5,8 +5,7 @@
 \title{Upgrade a dataframe to an mxData type.}
 \usage{
 xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
-  "WLS", "DWLS", "ULS"), manifests = NULL,
-  allContinuousMethod = c("cumulants", "marginals"), verbose = FALSE)
+  "WLS", "DWLS", "ULS"), manifests = NULL, verbose = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{mxData}}}
@@ -14,8 +13,6 @@ xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
 \item{type}{What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')}
 
 \item{manifests}{If set, only these variables will be retained.}
-
-\item{allContinuousMethod}{passed for all continuous data c("cumulants", "marginals")}
 
 \item{verbose}{If verbose, report on columns kept and dropped (default FALSE)}
 }
@@ -28,17 +25,35 @@ Non-user function to upgrade a dataframe to an mxData type. It can also trim var
 The most common use will be to give it a dataframe, and get back an mxData object of type WLS, cov, cor, or raw.
 }
 \examples{
+# =========================
+# = Continuous ML example =
+# =========================
 manVars = c("mpg", "cyl", "disp")
 tmp = xmu_make_mxData(data= mtcars, type = "Auto"); # class(tmp); # "MxDataStatic"
 tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); # names(tmp$observed) # "mpg"  "cyl"  "disp"
-tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = manVars, verbose= TRUE)
+tmp$type == "raw" # TRUE
 
-# missing data WLS example
+# ==============================
+# = All continuous WLS example =
+# ==============================
+tmp = xmu_make_mxData(data= mtcars, type = "WLS" , manifests = manVars, verbose= TRUE)
+tmp$type == "raw" # TRUE (WLS is triggered by the fit function, not the data type)
+
+# ============================
+# = Missing data WLS example =
+# ============================
 tmp = mtcars; tmp[1, "mpg"] = NA # add NA
 tmp = xmu_make_mxData(data= tmp, type = "WLS", manifests = manVars, verbose= TRUE)
+
+# ========================
+# = Cov and cor examples =
+# ========================
 tmp = xmu_make_mxData(data= mtcars, type = "cov")
 tmp = xmu_make_mxData(data= mtcars, type = "cor")
-# pass string through
+
+# =======================
+# = Pass string through =
+# =======================
 xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 
 }

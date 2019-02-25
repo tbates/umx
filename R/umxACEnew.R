@@ -274,6 +274,7 @@
 umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
 	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, intervals = FALSE) {
 
+		# TODO include parameter to select allContinuousMethod
 		nSib = 2 # Number of siblings in a twin pair.
 		covMethod  = match.arg(covMethod)
 		thresholds = match.arg(thresholds)

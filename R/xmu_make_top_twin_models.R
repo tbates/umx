@@ -73,7 +73,7 @@
 #' @param threshType what type of thresholds to implement if needed.
 #' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
-#' @param allContinuousMethod passed to xmu_make_mxData (for WLS data) c("cumulants", "marginals")
+#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param verbose (default = FALSE)
 #' @return - \code{\link{mxModel}}s for top, MZ and DZ.
 #' @export
@@ -228,8 +228,8 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		# = Make mxData, dropping any unused columns =
 		# ============================================
 		allData = rbind(mzData, dzData)
-		mzData = xmu_make_mxData(mzData, type = type, manifests = selVars, allContinuousMethod = allContinuousMethod)
-		dzData = xmu_make_mxData(dzData, type = type, manifests = selVars, allContinuousMethod = allContinuousMethod)
+		mzData = xmu_make_mxData(mzData, type = type, manifests = selVars)
+		dzData = xmu_make_mxData(dzData, type = type, manifests = selVars)
 
 		# =====================================
 		# = Add means and var matrices to top =
