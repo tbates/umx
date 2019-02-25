@@ -12,21 +12,22 @@ umx_trim(string, removeThis = NULL)
 \item{removeThis}{if not NULL then this string is removed wherever found in 'string'}
 }
 \value{
-- string
+\itemize{
+\item string
+}
 }
 \description{
-Returns string w/o leading or trailing whitespace
-}
-\examples{
-umx_trim(" dog") # "dog"
-umx_trim("dog ") # "dog"
-umx_trim("\\t dog \\n") # "dog"
-umx_trim("xlsx dog.xlsx", "\\\\.xlsx$") # "dog"
+Returns string without leading or trailing whitespace, like the php function.
+See also built-in \url{trimws} does the same.
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
+\url{trimws}
+
 Other String Functions: \code{\link{umx_explode_twin_names}},
   \code{\link{umx_explode}}, \code{\link{umx_grep}},
   \code{\link{umx_names}}, \code{\link{umx_object_as_str}},

@@ -1,5 +1,5 @@
 #
-#   Copyright 2007-2018 Timothy C. Bates
+#   Copyright 2007-2019 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -54,9 +54,9 @@ xmu_check_variance <- function(data, minVar = .1, maxVarRatio = 1000){
 #' Upgrade a dataframe to an mxData type.
 #'
 #' @description
-#' Non-user function to upgrade a dataframe to an mxData type. It can also trim variables.
+#' `xmu_make_mxData` is an internal function to upgrade a dataframe to `mxData`. It can also drop variables from the dataframe.
 #'
-#' The most common use will be to give it a dataframe, and get back an mxData object of type WLS, cov, cor, or raw.
+#' The most common use will be to give it a dataframe, and get back an `mxData` object of type raw, cov, cor (WLS is just raw).
 #'
 #' @param data A \code{\link{data.frame}} or \code{\link{mxData}}
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')

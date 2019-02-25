@@ -1,4 +1,4 @@
-#   Copyright 2007-2016 The OpenMx Project
+#   Copyright 2007-2019 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
 
 
 #------------------------------------------------------------------------------
-# Author: Michael D. Hunter
-# Date: 2016-08-12 09:28:02
-# Date: 2016-08-13 add roxygen
+# Original Author: Michael D. Hunter
 # Filename: mxSE.R
 #------------------------------------------------------------------------------
 

@@ -4647,15 +4647,18 @@ namez <- umx_names
 
 #' Trim whitespace surrounding a string.
 #'
-#' Returns string w/o leading or trailing whitespace
+#' Returns string without leading or trailing whitespace, like the php function.
+#' See also built-in [trimws](trimws) does the same.
 #'
 #' @param string to trim
 #' @param removeThis if not NULL then this string is removed wherever found in 'string'
 #' @return - string
 #' @export
+#' @seealso [trimws](trimws)
 #' @family String Functions
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
+#' @md
 #' umx_trim(" dog") # "dog"
 #' umx_trim("dog ") # "dog"
 #' umx_trim("\t dog \n") # "dog"
