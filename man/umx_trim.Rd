@@ -20,6 +20,12 @@ umx_trim(string, removeThis = NULL)
 Returns string without leading or trailing whitespace, like the php function.
 See also built-in \url{trimws} does the same.
 }
+\examples{
+umx_trim(" dog") # "dog"
+umx_trim("dog ") # "dog"
+umx_trim("\\t dog \\n") # "dog"
+umx_trim("xlsx dog.xlsx", "\\\\.xlsx$") # "dog"
+}
 \references{
 \itemize{
 \item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}

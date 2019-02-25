@@ -1,5 +1,5 @@
 #
-#  Copyright 2007-2017 Timothy C. Bates
+#  Copyright 2007-2019 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -291,3 +291,5 @@ NULL
 #' str(Fischbein_wt) # data.frame
 #' as.matrix(Fischbein_wt) # convert to matrix
 NULL
+
+

@@ -289,7 +289,7 @@ umx_mat2dot <- function(x, cells = c("any", "diag", "lower", "upper", "left"), f
 #  * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
 
 
-#   Copyright 2007-2018 Timothy C. Bates
+#   Copyright 2007-2019 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -4657,8 +4657,8 @@ namez <- umx_names
 #' @seealso [trimws](trimws)
 #' @family String Functions
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
 #' @md
+#' @examples
 #' umx_trim(" dog") # "dog"
 #' umx_trim("dog ") # "dog"
 #' umx_trim("\t dog \n") # "dog"
