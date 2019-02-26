@@ -32,7 +32,7 @@
 * IMPROVED: `plot` functions now have `strip_zero` option (default = strip leading zeroes from parameter estimates)
 * IMPROVED: `umx_standardize_ACEv` now working!
 * IMPROVED: Models use `xmu_safe_run_summary` so even bad models are returned for the user to diagnose them.
-* IMPROVED: Omnigraffle stencil improved. Use to draw diagrams.
+* IMPROVED: OmniGraffle stencil improved. Use to draw diagrams.
 * IMPROVED: `umxRAM` now labels paths when no data are provided (simulation of sketch modes).
 * IMPROVED: `umx_score_scale` can cope with a single item.
 * IMPROVED: `xmu_safe_run_summary` don't error on code red non-run models.
@@ -59,7 +59,7 @@
 * IMPROVED: `umxCompare` gains ability to output Weight AIC conditional model probabilities! h/t @mNivard
 * IMPROVED: `umxReduce` returns AIC weight-based probability of being best model.
 * IMPROVED `umxReduce.MxModelGxE` returns best model (invisibly).
-* IMPROVED: `umxReduce` for GxE, don't run no A and noC models with moderation in place
+* IMPROVED: `umxReduce` for GxE, don't run no-A and no-C models with moderation in place.
 * IMPROVED: `namez` given a list of models will return the names of each.
 * IMPROVED: `namez` allow global replace.
 * IMPROVED: `umx_lower2full` can now take a data.frame.
@@ -79,7 +79,7 @@
 * FIXED: `umxSummary` Corrected Chi^2 df for RAM models.
 * NEW: `umxCP` handles ordinal, continuous and binary data
   * Note: old version still available as `umxCPold`
-  * Note: new version also lowerbounds specifics at 0 by default.
+  * Note: new version also lower-bounds specifics at 0 by default.
 * NEW: `umxCPplot` re-written to allow arbitrary labels and correlated factors.
 * NEW helper functions: umx_graphviz_rank, umx_mat2dot
 * NEW: `umx_set_optimization_options` function to set "mvnRelEps" tolerances which impact, especially, ordinal model.
@@ -100,7 +100,7 @@
   * `iqdat`longitudinal IQ twin data for simplex modeling
 * NEW: `namez` alias for the ever-useful `umx_names` function.
 * NEW: `umxAlgebra` (just allows name first).
-* FIX: `install.OpenMx` URLs for NPSOl and travis builds of OpenMx
+* FIX: `install.OpenMx` URLs for NPSOL and travis builds of OpenMx
 * BREAK: Following reports of problems in RStudio, changed umx class names to remove the period character from MxModel derivative classes
  * This will **break** hard-coded calls, for instance  to `umxSummary.MxModel.ACE` instead of `umxSummary`. 
   * "Just" replace with `umxSummary.MxModelACE` # i.e. delete the last period in the name... Sorry :-(
@@ -126,7 +126,7 @@
 * IMPROVED: `umxIP` and CP examples improved (3-variables, GFF data).
 * IMPROVED: `umxIP` *reporting* of `as`, `cs`, `es` simplified into compact stack.
 * IMPROVED: `umxCP` *reporting* of `as`, `cs`, `es` simplified into compact stack.
-* IMPROVED: `umxPlotCP` labelling of variables improved (catching more _Tn).
+* IMPROVED: `umxPlotCP` labeling of variables improved (catching more _Tn).
 * IMPROVED: `umxEFA` reports factor correlation matrix (thanks @ConorDolan)!
 * IMPROVED: `umxEFA` can return a loadings object.
 * IMPROVED: `umx_make`not supports spelling check.
@@ -201,7 +201,7 @@
 * IMPROVED: `umx_set_auto_plot` take TRUE/FALSE as input.
 * IMPROVED: `umx_names`: added a replace option to munge the names
 * IMPROVED: `umxRAM` in "sketch mode" now plots models automatically.
-* IMPROVED: `install.OpenMx` from University of Virgina, travis, or open travis build page.
+* IMPROVED: `install.OpenMx` from University of Virginia, travis, or open travis build page.
 * IMPROVED: `umx_cor` automatically drops non-numeric columns.
 * IMPROVED: `umxCI` now supports setting interval and one- or two-sided type (h/t @Conor Dolan).
 * INTERNAL: Switch from `R2HTML` to `xtable`
@@ -243,7 +243,7 @@
 	* Use variance input
 	* Option to set seed
 	* Add varName to datasets
-	* nThresh to threhold the created variables, and return as mxFactors
+	* nThresh to threshold the created variables, and return as mxFactors
 	* Surface the empirical parameter of mvrnorm
 	* More flexible: Leave out any one of A, C, or E.
 	* omit nDZPairs to get equal numbers
@@ -285,7 +285,7 @@
 * IMPROVED: behavior of `confint`()
 * IMPROVED: formatting of `umxAPA` table output
 * ADD: "check" option to `umx_make`
-* FIXED: umxpath(a, forms= ) arrows = 2 bug
+* FIXED: `umxPath(a, forms= , arrows = 2)` bug
 
 # umx 1.5.0 (December 2016)
 * Features + OpenMx 1.7.3 compatibility release
@@ -345,14 +345,14 @@
 * NEW: `umx_show_options` function to help users learn the options available
 * BETA: `umxACE` can now implement a form of left-censoring.
 * BETA: `umxThresholdMatrix` can now implement a form of left-censoring.
-* IMPROVE: `umxRAM` & `umxRAM2Ordinal` can turn off refModel computation with `refModels = FALSE`;
+* IMPROVE: `umxRAM` & `umxRAM2Ordinal` can turn off refModels computation with `refModels = FALSE`;
 * IMPROVE: `umx_show` can show thresholds
 * IMPROVED: `umx_is_MxModel` can take a list: `listOK` option
 * IMPROVED: `umx_check_parallel` options for rowwiseParallel and numberSubjects
 * CHANGE: I changed "suffix" to "sep" in several places for consistency: this will break
   some low level code: nearly all of it mine, and fixed. But might affect some users!!
 * UPDATE: `umx_time` and `umx_check_parallel` to work with new S4 list deprecation
-* UPDATE: shorter run-time on 2sls code
+* MINOR: `umxTwoStage` shorter run-time on 2-stage least squares 
 
 # umx 1.2.7
 * May 2016 stable release
@@ -373,8 +373,8 @@
 * CHANGE: `umxModify` - show summary as well when comparison = `TRUE`
 * CHANGE: `plot` defaults for `std` and `showFixed` changed h/t @MikeNeale
 * CHANGE: `umx_scale_wide_twin_data` argument names for consistency: "suffix" "data"
-* CHANGE: `umx_residualize` ditto
-* UPDATE: Readme.md
+* CHANGE: `umx_residualize` ditto.
+* UPDATE: "Read me" file.
 
 # umx 1.2.5 (April 2016 R 3.2.5 Very, Very Secure Dishes)
 * Bug fix release
@@ -417,7 +417,7 @@
 * BETTER: `umxAPA` can format more objects in APA style, inc just a p-value)
 * BETTER: `summaryAPA` can now summarize a data.frame with mean, sd, and correlations
 * BETTER: `umxLabel` now preserves existing labels in umxRAM models: labels = is now saved
-* BETTER: Help improvements (wording, seealso etc)
+* BETTER: Help improvements (wording, see-also etc)
 * DEEP: Removed dependency on formula.tools
 
 # umx 1.1.0 (December 2015, R 3.2.3/Wooden Christmas-Tree update
@@ -476,4 +476,4 @@
 # umx 0.25-alpha
 * Alpha release
 * 80% feature complete
-* Function prefix reflects usage:: camel-case for major functions, underscore for utility functions, "xmu" prefix, NotForUser
+* Function prefix reflects usage:: camel-case for major functions, underscore for utility functions, "xmu" prefix, "not for end-user"

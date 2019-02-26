@@ -2577,9 +2577,10 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	latents = c();
 	cSpecifics = c();
 	for(thisParam in names(parameterKeyList) ) {
-		# TODO: plot functions are in the process of being made more intelligent. see: umxPlotCPnew()
-		# This version looks at labels. The new versions will loos directly at the relevant matrices
-		# this breaks the dependency on label structure, allowing arbitrary and more flexible labelling
+		# TODO: umxPlotCP plot functions are in the process of being made more intelligent. see: umxPlotCPnew()
+		# This version uses labels. New versions will access the relevant matrices, thus
+		# breaking the dependency on label structure. This will allow more flexible labeling
+
 		# Top level a c e inputs to common factors
 		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { 
 			# Match cp latents, e.g. thisParam = "c_cp_r1c3" (note, row = factor #)
