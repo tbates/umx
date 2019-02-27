@@ -16,9 +16,9 @@ xmu_make_top_twin_models(mzData, dzData, selDVs, sep = NULL, nSib = 2,
 
 \item{dzData}{Dataframe containing the DZ data}
 
-\item{selDVs}{List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names}
+\item{selDVs}{List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names (OR, you don't set "sep", the full variable names)}
 
-\item{sep}{Used to expand selDVs into selDVs, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2}
+\item{sep}{(optional but desirable) string used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2}
 
 \item{nSib}{Number of members per family (default = 2)}
 

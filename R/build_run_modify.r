@@ -2613,12 +2613,14 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 			"i.e., set selDVs to 'obese', sep to '_T' and I look for 'obese_T1' and 'obese_T2' in the data...\n",
 			"nb: variables MUST be sequentially numbered, i.e  'example_T1' and 'example_T2'")
 		}
-		selDVs = umx_paste_names(selDVs, sep, 1:2)
+		selVars = umx_paste_names(selDVs, sep, 1:nSib)
+	}else{
+		selVars = selDVs
 	}
-	umx_check_names(selDVs, mzData)
-	umx_check_names(selDVs, dzData)
-	# message("selDVs: ", omxQuotes(selDVs))
-	nVar = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+	umx_check_names(selVars, mzData)
+	umx_check_names(selVars, dzData)
+	# message("selVars: ", omxQuotes(selVars))
+	nVar = length(selVars)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
 	dataType = umx_is_cov(dzData)
 
@@ -2627,26 +2629,25 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 		}
 		# Drop any unused columns from mz and dzData
-		mzData = mzData[, selDVs, drop = FALSE]
-		dzData = dzData[, selDVs, drop = FALSE]
+		mzData = mzData[, selVars, drop = FALSE]
+		dzData = dzData[, selVars, drop = FALSE]
 		if(any(umx_is_ordered(mzData))){
 			stop("some selected variables are factors or ordinal... I can only handle continuous variables so far... sorry")
 		}
 	} else if(dataType %in% c("cov", "cor")){
 		if(is.null(numObsMZ)){ stop(paste0("You must set numObsMZ with ", dataType, " data"))}
 		if(is.null(numObsDZ)){ stop(paste0("You must set numObsDZ with ", dataType, " data"))}
-		het_mz = umx_reorder(mzData, selDVs)
-		het_dz = umx_reorder(dzData, selDVs)
+		het_mz = umx_reorder(mzData, selVars)
+		het_dz = umx_reorder(dzData, selVars)
 		stop("COV not fully implemented yet for IP... Not sure if there's any demand, so email me if you see this")
 	} else {
 		stop("Datatype ", omxQuotes(dataType), " not understood")
 	}
 
-	nVar = length(selDVs)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	obsMZmeans = colMeans(mzData, na.rm = TRUE);
 	model = mxModel(name,
 		mxModel("top",
-			umxLabel(mxMatrix("Full", 1, nVar*nSib, free=T, values=obsMZmeans, dimnames=list("means", selDVs), name="expMean")), # Means 
+			umxLabel(mxMatrix("Full", 1, nVar*nSib, free=T, values=obsMZmeans, dimnames=list("means", selVars), name="expMean")), # Means 
 			# (not yet equated for the two twins)
 			# Matrices ac, cc, and ec to store a, c, and e path coefficients for independent general factors
 			umxMatrix("ai", "Full", nVar, nFac['a'], free=TRUE, values=.6, jiggle=.05), # latent common factor Additive genetic path 
@@ -2670,9 +2671,9 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 			mxAlgebra(name = "AC" , A+C  ),
 			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 			mxAlgebra(rbind (cbind(ACE, AC), 
-			                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name = "expCovMZ"),
+			                 cbind(AC , ACE)), dimnames = list(selVars, selVars), name = "expCovMZ"),
 			mxAlgebra(rbind (cbind(ACE, hAC),
-			                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name = "expCovDZ"),
+			                 cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ"),
 
 			# Algebra to compute total variances and standard deviations (diagonal only)
 			mxMatrix("Iden", nrow = nVar, name = "I"),

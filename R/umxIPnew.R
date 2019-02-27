@@ -141,9 +141,13 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 		}
 	}
 
-	# Expand var names
-	selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
-	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	# Expand var names if necessary
+	if(!is.null(sep)){
+		selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+	}else{
+		selVars = selDVs
+	}
+	nVar = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
 
 	bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans,
 					type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
@@ -162,23 +166,19 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 	varStarts = tmp$varStarts
 
-	if(!is.null(sep)){
-		selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
-	}
-	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
 	# TODO: umxIP improve start values (hard coded at std type values)
 	top = mxModel(top,
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 		# NB: top already has the means model and thresholds matrix added if necessary  - see above
 		# Additive, Common, and Unique environmental paths
-		# Matrices ac, cc, and ec to store a, c, and e path coefficients for independent general factors
+		# Matrices ai, ci, and ec, to store a, c, and e path coefficients for independent general factors
 		umxMatrix("ai", "Full", nVar, nFac['a'], free = TRUE, values = .6, jiggle = .05), # latent common factor Additive genetic path 
 		umxMatrix("ci", "Full", nVar, nFac['c'], free = TRUE, values = .0, jiggle = .05), # latent common factor Common #environmental path coefficient
 		umxMatrix("ei", "Full", nVar, nFac['e'], free = TRUE, values = .6, jiggle = .05), # latent common factor Unique environmental path #coefficient
-		# Matrices as, cs, and es to store a, c, and e path coefficients for specific factors
-		umxMatrix("as", "Lower", nVar, nVar, free=TRUE, values=.6, jiggle=.05), # Additive genetic path 
-		umxMatrix("cs", "Lower", nVar, nVar, free=TRUE, values=.0, jiggle=.05), # Common environmental path 
-		umxMatrix("es", "Lower", nVar, nVar, free=TRUE, values=.6, jiggle=.05), # Unique environmental path.
+		# Matrices as, cs, and es, to store a, c, and e path coefficients for specific factors
+		umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .6, jiggle = .05), # Additive genetic path 
+		umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .0, jiggle = .05), # Common environmental path 
+		umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .6, jiggle = .05), # Unique environmental path.
 
 		umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 		umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),

@@ -62,8 +62,8 @@
 #'
 #' @param mzData Dataframe containing the MZ data 
 #' @param dzData Dataframe containing the DZ data 
-#' @param selDVs List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names
-#' @param sep Used to expand selDVs into selDVs, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2
+#' @param selDVs List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names (OR, you don't set "sep", the full variable names)
+#' @param sep (optional but desirable) string used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2
 #' @param nSib Number of members per family (default = 2)
 #' @param numObsMZ Number of MZ observations contributing (for summary data only) 
 #' @param numObsDZ Number of DZ observations contributing (for summary data only)
@@ -154,6 +154,7 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 	# ====================================================
 	if(is.null(sep)){
 		selVars = selDVs
+		message("Polite note: It's better to use 'sep' - in future, this might become compulsory as it helps manage the variable names.")
 		# stop("You MUST set 'sep'. Otherwise xmu_make_top can't reliably expand selDVs into full variable names")
 	}else{
 		selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
@@ -386,6 +387,98 @@ xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 
 		return(list(top = top, MZ = MZ, DZ = DZ, mzWeightMatrix = NULL, dzWeightMatrix = NULL))
 	}	
 }                                           
+
+
+
+#' Helper for boilerplate means and variance start values for twin models
+#'
+#' @description
+#' `xmu_starts` can handle several common/boilerplate situations in which means and variance start values
+#' are used in twin models.
+#'
+#' @param mzData Data for MZ pairs.
+#' @param dzData Data for DZ pairs.
+#' @param selVars Variable names: If sep = NULL, then treated as full names for both sibs.
+#' @param sep All the variables full names.
+#' @param equateMeans (NULL)
+#' @param nSib How many subjects in a family.
+#' @param varForm currently just "Cholesky" style.
+#' @param SD = TRUE (FALSE = variance, not SD).
+#' @param divideBy = 3 (A,C,E) 1/3rd each. Use 1 to do this yourself post-hoc.
+#' @return - varStarts and meanStarts
+#' @export
+#' @family xmu internal not for end user
+#' @md
+#' @examples
+#' data(twinData)
+#' selDVs = c("wt", "ht")
+#' mzData = twinData[twinData$zygosity %in%  "MZFF", ] 
+#' dzData = twinData[twinData$zygosity %in%  "DZFF", ]
+#' round(sqrt(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3),3)
+#' tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
+#'		equateMeans = TRUE, varForm = "Cholesky")
+#' tmp
+#' round(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3,3)
+#' tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
+#'		equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
+#' tmp
+#' # one variable
+#' tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", 
+#'		equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMeans= NULL, nSib = 2, varForm = c("Cholesky"), SD= TRUE, divideBy = 3) {
+	# Make mxData, dropping any unused columns
+	if(!is.null(sep)){
+		# sep = ""; nSib = 2; selVars = c("wt", "ht")
+		selVars = umx_paste_names(selVars, sep = sep, suffixes = 1:nSib)
+	}
+
+	nVar = length(selVars)/nSib
+	dataType = umx_is_cov(dzData, boolean = FALSE)
+	if(dataType == "raw") {
+		if(is.null(equateMeans)){
+			stop("you have to tell xmu_starts whether to equate the means or not")
+		}
+		allData = rbind(mzData, dzData)[,selVars]
+		T1 = allData[, 1:nVar, drop = FALSE]
+		T2 = allData[, (nVar+1):(nVar*2), drop = FALSE];
+		names(T2) = names(T1)
+		longData = rbind(T1, T2)[, selVars[1:nVar], drop = FALSE]
+		# Mean starts (used across all raw solutions
+		meanStarts = umx_means(longData, ordVar = 0, na.rm = TRUE)
+		# Make wide again
+		meanStarts = c(meanStarts, meanStarts)
+		if(equateMeans){
+			meanLabels = paste0("expMean_", selVars[1:nVar]) # Names recycled for twin 2
+			meanLabels = c(meanLabels, meanLabels)
+		} else {
+			meanLabels = paste0("expMean_", selVars)
+		}
+		varStarts = umx_var(longData, format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+	} else if(dataType %in% c("cov", "cor")){
+		meanStarts = NA # Not used for summary data
+		meanLabels = NA
+		het_mz = umx_reorder(mzData, selVars)		
+		het_dz = umx_reorder(dzData, selVars)
+		varStarts = (diag(het_mz)[1:nVar]+ diag(het_dz)[1:nVar])/2
+	}
+	# Covariance matrix, 1/3 allocated to each of A=C=E.
+	varStarts = varStarts/divideBy
+	if(varForm == "Cholesky"){
+		if(SD){
+			# sqrt() to switch from var to path coefficient scale
+			# Sqrt to switch from var to path coefficient scale
+			varStarts = t(chol(diag(varStarts, length(varStarts))))
+			varStarts = matrix(varStarts, nVar, nVar)
+		} else {
+			varStarts = diag(varStarts, nVar, nVar)
+		}
+	} else {
+		stop("Not sure how to handle varForm = ", omxQuotes(varForm))
+	}
+	return(list(varStarts=varStarts, meanStarts= meanStarts, meanLabels= meanLabels))
+}
+
+
 
 #' Assemble top, MZ and DZ into a supermodel
 #'

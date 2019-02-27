@@ -103,7 +103,7 @@ twin 1, followed by each variable for twin 2.
 Thus, in a model where the means for twin 1 and twin 2 had been equated
 (set = to T1), you could make them independent again with this script:
 
-\code{m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+\code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 }
 \examples{
 \dontrun{
