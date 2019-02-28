@@ -2450,6 +2450,7 @@ specify_decimal <- function(x, k){
 #' @references - \url{https://cran.r-project.org/package=Rcmdr}
 #' @examples
 #' # treat vehicle aspects as items of a test
+#' data(mtcars)
 #' reliability(cov(mtcars))
 reliability <-function (S){
      reliab <- function(S, R) {

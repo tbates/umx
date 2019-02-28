@@ -9,7 +9,7 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
   mzData, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL,
   weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
-  thresholds = c("deviationBased"), covMethod = c("fixed", "random"),
+  covMethod = c("fixed", "random"),
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
   "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
 }
@@ -47,8 +47,6 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
-
-\item{thresholds}{How to implement ordinal thresholds c("deviationBased").}
 
 \item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
 

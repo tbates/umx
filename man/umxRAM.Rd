@@ -11,7 +11,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
   "mxTryHardOrdinal", "mxTryHardWideSearch"), type = c("Auto", "FIML",
   "cov", "cor", "WLS", "DWLS", "ULS"), optimizer = NULL,
-  thresholds = c("deviationBased"), verbose = FALSE)
+  verbose = FALSE)
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
@@ -43,8 +43,6 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 \item{type}{One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto reacts to the incoming mxData type (raw/cov, WLS). FIML requires that the data are continuous. Remaining options are weighted, diagonally weighted, or unweighted least squares, respectively)}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
-
-\item{thresholds}{Whether to use deviation-based threshold modeling for ordinal data (if any is detected).}
 
 \item{verbose}{Whether to tell the user what latents and manifests were created etc. (Default = FALSE)}
 }

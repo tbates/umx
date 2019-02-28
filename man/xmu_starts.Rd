@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu_make_top_twin_models.R
 \name{xmu_starts}
 \alias{xmu_starts}
-\title{Helper for boilerplate means and variance start values for twin models}
+\title{Helper providing twin models with boilerplate means and variance start values}
 \usage{
 xmu_starts(mzData, dzData, selVars = selVars, sep = NULL,
   equateMeans = NULL, nSib = 2, varForm = c("Cholesky"), SD = TRUE,

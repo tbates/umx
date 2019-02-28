@@ -260,10 +260,10 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 				stop("Don't know how to do tryHard = ", omxQuotes(tryHard))
 			}
 		}, warning = function(w){
-			message("Warning incurred trying to run model: try mxTryHard on it.")
+			message("Warning incurred trying to run model: perhaps mxTryHard would help?")
 			message(w)
-		}, error = function(e){
-			message("Error incurred trying to run model: try mxTryHard on it.")
+		}, error = function(e){umxThresholdMatrix
+			message("Error incurred trying to run model: perhaps mxTryHard would help?")
 			message(e)
 		})
 	}

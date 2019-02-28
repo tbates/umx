@@ -7,7 +7,6 @@
 umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
   dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
   boundDiag = 0, equateMeans = TRUE, bVector = FALSE,
-  thresholds = c("deviationBased"),
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
   "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
 }
@@ -38,8 +37,6 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
-
-\item{thresholds}{How to implement ordinal thresholds: c("deviationBased", "left_censored").}
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 

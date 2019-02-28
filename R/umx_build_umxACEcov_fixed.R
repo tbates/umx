@@ -54,7 +54,6 @@
 #' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
 #' @param boundDiag = Whether to bound the diagonal of the a, c, and e matrices.
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
-#' @param thresholds How to implement ordinal thresholds: c("deviationBased", "left_censored").
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param weightVar (optional) Variable containing the weights to apply to data.
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
@@ -93,9 +92,8 @@
 #' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, sep = "",
 #' 	     dzData = dzData, mzData = mzData)
 #' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
-umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, thresholds = c("deviationBased", "WLS"), optimizer = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, optimizer = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
 		nSib = 2 # number of siblings in a twin pair
-		thresholds = match.arg(thresholds)
 		if(dzCr == .25 && name == "ACEcov"){ name = "ADEcov"}
 		xmu_twin_check(selDVs= c(selDVs, selCovs), dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, enforceSep=TRUE)
 
@@ -197,11 +195,10 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 		# 2. For Binary vars:
 		#   1. Means of binary vars fixedAt 0
 		#   2. A + C + E for binary vars is constrained to 1 
-		# 4. For Ordinal vars, first 2 thresholds fixed
-		# 5. WLS as an option.
-		# 6. Option to fix all (or all but the first 2??) thresholds for left-censored data.
+		# 3. For Ordinal vars, first 2 thresholds fixed
         #   # TODO
-		# 	1. Simple test if results are similar for an ACE model of 1 variable
+		#   1. WLS as an option.
+		# 	2. Simple test if results are similar for an ACE model of 1 variable
 		if(nFactors == 0) {			
 			# =======================================================
 			# = Handle all continuous case                          =
@@ -275,17 +272,13 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# for better guessing with low-frequency cells
 			allData = rbind(mzData, dzData)
 			# threshMat is is a matrix, or a list of 2 matrices and an algebra
-			threshMat = umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = FALSE)
+			threshMat = umxThresholdMatrix(allData, sep = sep, threshMatName = "threshMat", verbose = FALSE)
 			mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 			dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")			
 			top = mxModel("top", umxLabel(meansMatrix), threshMat)
 			MZ  = mxModel("MZ", mzExpect, mxFitFunctionML(vector = bVector), mxData(mzData, type = "raw") )
 			DZ  = mxModel("DZ", dzExpect, mxFitFunctionML(vector = bVector), mxData(dzData, type = "raw") )
 		} else if(sum(isBin) > 0){
-			if(thresholds == "left_censored"){
-				# TODO this is easy, no? binary is fixed threshold anyhow...
-				stop("left_censored does not make sense for binary variables. I also can't handle mixtures of censored and binary yet, sorry")
-			}
 			# =======================================================
 			# = Handle case of at least 1 binary variable           =
 			# =======================================================
@@ -312,7 +305,7 @@ umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mz
 			# For better guessing with low-freq cells
 			allData = rbind(mzData, dzData)
 			# threshMat may be a three item list of matrices and algebra
-			threshMat = umxThresholdMatrix(allData, sep = sep, thresholds = thresholds, threshMatName = "threshMat", verbose = TRUE)
+			threshMat = umxThresholdMatrix(allData, sep = sep, threshMatName = "threshMat", verbose = TRUE)
 
 			mzExpect  = mxExpectationNormal("top.expCovMZ", "top.expMean", thresholds = "top.threshMat")
 			dzExpect  = mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat")

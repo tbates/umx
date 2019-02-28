@@ -7,9 +7,8 @@
 xmu_make_top_twin_models(mzData, dzData, selDVs, sep = NULL, nSib = 2,
   numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  threshType = c("deviationBased"), weightVar = NULL,
-  bVector = FALSE, allContinuousMethod = c("cumulants", "marginals"),
-  verbose = FALSE)
+  weightVar = NULL, bVector = FALSE,
+  allContinuousMethod = c("cumulants", "marginals"), verbose = FALSE)
 }
 \arguments{
 \item{mzData}{Dataframe containing the MZ data}
@@ -28,10 +27,7 @@ xmu_make_top_twin_models(mzData, dzData, selDVs, sep = NULL, nSib = 2,
 
 \item{equateMeans}{Whether to equate T1 and T2 means (default = TRUE).}
 
-\item{type}{One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto reacts to the incoming mxData type (raw/cov, WLS).
-FIML requires that the data are continuous. Remaining options are weighted, diagonally weighted, or unweighted least squares, respectively)}
-
-\item{threshType}{what type of thresholds to implement if needed.}
+\item{type}{One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto tries to react to the incoming mxData type (raw/cov).}
 
 \item{weightVar}{If provided, a vector objective will be used to weight the data. (default = NULL).}
 
@@ -52,9 +48,9 @@ FIML requires that the data are continuous. Remaining options are weighted, diag
 This is used in  \code{\link[=umxCP]{umxCP()}}, and \code{\link[=umxACE]{umxACE()}} and \code{\link[=umxACEv]{umxACEv()}} and will be added to the other models: \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxIP]{umxIP()}},
 simplifying code maintenance.
 
-This function takes the \code{mzData} and \code{dzData}, a list of the \code{selDVs}  to analyse (as well as \code{sep} and \code{nSib}), along with other
-relevant information such as whether the user wants to equateMeans, and what threshType to use (currently "deviationBased").
-It can also handle a weightVar.
+\code{xmu_make_top_twin_models} takes \code{mzData} and \code{dzData}, a list of the \code{selDVs} to analyse (as well as \code{sep} and \code{nSib}), along with other
+relevant information such as whether the user wants to \code{equateMeans}.
+It can also handle a \code{weightVar}.
 
 \code{varStarts} is computed as \code{sqrt(variance)/3} of the DVs and \code{meanStarts} as the variable means.
 For raw data, a check is made for ordered variables. For Binary variables, means are fixed at 0 and
@@ -64,19 +60,19 @@ total variance (A+C+E) is fixed at 1. For ordinal variables, the first 2 thresho
 
 \emph{top model}
 
-For raw and WLS data, \code{top} contains a means matrix. For summary data, the top model contains only a name.
+For raw and WLS data, \code{top} contains a means matrix (if needed). For summary data, the top model contains only a name.
 
-For ordinal data, \code{top} gains \code{top.threshMat} (from a call to \url{umxThresholdMatrix}]). \code{MZ} and \code{DZ} are as with continuous, but adding thresholds.
+For ordinal data, \code{top} gains \code{top.threshMat} (from a call to \url{umxThresholdMatrix}]).
 
 \emph{MZ and DZ models}
 
-\code{MZ} and \code{DZ} contain the data, and an expectation referencing \code{top.expCovMZ} and \code{top.expMean}, and, if requested,
-referencing \code{vector = bVector}. For WLS these are \url{mxExpectationNormal}]  and \url{mxFitFunctionWLS}].
+\code{MZ} and \code{DZ} contain the data, and an expectation referencing \code{top.expCovMZ} and \code{top.expMean}, and, \code{vector = bVector}.
 For continuous raw data, MZ and DZ contain \url{mxExpectationNormal}] and \url{mxFitFunctionML}].
+For WLS these the fit function is switched to \url{mxFitFunctionWLS}] with appropriate \code{type} and \code{allContinuousMethod}.
 
 For binary, a constraint and algebras are included to constrain \code{Vtot} (A+C+E) to 1.
 
-If a weightVar is detected, this column is added to  mzWeightMatrix/mzWeightMatrix.
+If a \code{weightVar} is detected, this column is added to  mzWeightMatrix/mzWeightMatrix.
 
 If \code{equateMeans} is \code{TRUE}, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 
@@ -84,10 +80,9 @@ If \code{equateMeans} is \code{TRUE}, then the Twin-2 vars in the mean matrix ar
 
 If needed means matrices are added. Decent starts are guessed from the data.
 For continuous raw data, top contains a means matrix "expMean".
-For Models with ordinal but no binary variables, top adds an \url{umxThresholdMatrix}].
-If binary variables are present, matrices and a constraint to hold A+C+E ==1 are added to top.
+For Models with ordinal, top adds an \url{umxThresholdMatrix}].
 
-If ordinal or binary variables are found in raw data, an \code{mxThreshold} matrix is added to handle these.
+If binary variables are present, matrices and a constraint to hold A+C+E ==1 are added to top.
 
 If a weight variable is offered up, an \code{mzWeightMatrix} will be added.
 
@@ -100,9 +95,10 @@ It can process data into all the types supported by \code{mxData}.
 
 Raw data input with a target of \code{cov} or \code{cor} type requires the \code{numObsMZ} and \code{numObsDZ} to be set.
 
-Type "WLS", "DWLS", or "ULS" will process raw data into a WLS data using \url{xmu_make_mxData}].
+Type "WLS", "DWLS", or "ULS", data remain raw, but are handled as WLS in the \url{mxFitFunctionWLS}].
 
 Unused columns are dropped.
+
 If you pass in raw data, you can't request type cov/cor yet. Will work on this if desired.
 }
 \examples{
@@ -115,7 +111,23 @@ selDVs = c("wt", "ht")
 mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
 bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
-names(bits) # "top" "MZ"  "DZ" 
+names(bits) # "top" "MZ"  "DZ" "bVector" "mzWeightMatrix" "dzWeightMatrix"
+class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionML"
+bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", type = "WLS")
+class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
+bits$MZ$fitfunction$type =="WLS"
+bits$MZ$fitfunction$continuousType == "cumulants"
+
+# Choose non-default type (DWLS)
+bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", type = "DWLS")
+bits$MZ$fitfunction$type =="DWLS"
+class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
+
+# Switch continuous method
+bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", type = "WLS", allContinuousMethod = "marginals")
+bits$MZ$fitfunction$continuousType == "marginals"
+class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
+
 
 # ============================================
 # = Bivariate continuous and ordinal example =
@@ -154,10 +166,12 @@ bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, 
 # = Cov data =
 # ============
 data(twinData)
-selDVs = c("wt")
-mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(selDVs, sep="")], use = "complete")
-dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(selDVs, sep="")], use = "complete")
-bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
+mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
+dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
+bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2)
+class(bits$MZ$fitfunction)[[1]] =="MxFitFunctionML"
+names(bits$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
+
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

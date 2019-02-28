@@ -9,10 +9,9 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
   "cov", "cor", "WLS", "DWLS", "ULS"), dzAr = 0.5, dzCr = 1,
   addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   boundDiag = 0, weightVar = NULL, equateMeans = TRUE,
-  bVector = FALSE, thresholds = c("deviationBased"),
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
-  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,
-  intervals = FALSE)
+  bVector = FALSE, autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "mxTryHard", "mxTryHardOrdinal",
+  "mxTryHardWideSearch"), optimizer = NULL, intervals = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -50,8 +49,6 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed",
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
-
-\item{thresholds}{How to implement ordinal thresholds c("deviationBased").}
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 

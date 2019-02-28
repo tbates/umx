@@ -7,9 +7,8 @@
 umxIPnew(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
   = 1, c = 1, e = 1), type = c("Auto", "FIML", "cov", "cor", "WLS",
   "DWLS", "ULS"), weightVar = NULL, equateMeans = TRUE,
-  bVector = FALSE, thresholds = c("deviationBased"), dzAr = 0.5,
-  dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE,
-  numObsDZ = NULL, numObsMZ = NULL,
+  bVector = FALSE, dzAr = 0.5, dzCr = 1, correlatedA = FALSE,
+  addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
   "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,
   freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE)
@@ -34,8 +33,6 @@ umxIPnew(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
-
-\item{thresholds}{How to implement ordinal thresholds c("deviationBased").}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -134,7 +131,7 @@ Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 r
 out for each variable for twin 1, followed by each variable for twin 2.
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 
-\code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+\code{m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 }
 \examples{
 \dontrun{
