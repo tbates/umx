@@ -4,7 +4,7 @@
 \alias{umx_make}
 \title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
-umx_make(what = c("install", "examples", "check", "win", "rhub",
+umx_make(what = c("install", "quick", "examples", "check", "win", "rhub",
   "release", "spell"), pkg = "~/bin/umx", check = TRUE, run = FALSE,
   spelling = "en_US")
 }

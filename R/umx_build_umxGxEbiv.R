@@ -74,8 +74,8 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
 			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
 		}
-		selDVs  = umx_paste_names(selDVs , sep, 1:2)
-		selDefs = umx_paste_names(selDefs, sep, 1:2)
+		selDVs  = umx_paste_names(selDVs , sep, 1:nSib)
+		selDefs = umx_paste_names(selDefs, sep, 1:nSib)
 	}
 	if(any(selDefs %in% selDVs)) {
 		warning("selDefs was found in selDVs: You probably gave me all the variables in selDVs instead of just the DEPENDENT variable");

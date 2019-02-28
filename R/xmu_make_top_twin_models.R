@@ -64,14 +64,14 @@
 #' @param dzData Dataframe containing the DZ data 
 #' @param selDVs List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names (OR, you don't set "sep", the full variable names)
 #' @param sep (optional but desirable) string used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2
+#' @param type	One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto tries to react to the incoming mxData type (raw/cov).
+#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param nSib Number of members per family (default = 2)
+#' @param equateMeans Whether to equate T1 and T2 means (default = TRUE).
+#' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param numObsMZ Number of MZ observations contributing (for summary data only) 
 #' @param numObsDZ Number of DZ observations contributing (for summary data only)
-#' @param equateMeans Whether to equate T1 and T2 means (default = TRUE).
-#' @param type	One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto tries to react to the incoming mxData type (raw/cov).
-#' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
-#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param verbose (default = FALSE)
 #' @return - \code{\link{mxModel}}s for top, MZ and DZ.
 #' @export
@@ -153,7 +153,7 @@
 #' class(bits$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 #' names(bits$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 #'
-xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weightVar = NULL, bVector = FALSE, allContinuousMethod = c("cumulants", "marginals"), verbose= FALSE) {
+xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, verbose= FALSE) {
 	# **TODO list for xmu_make_top_twin_models**
 	# TODO: xmu_make_top_twin_models Add selCovs
 	# TODO: xmu_make_top_twin_models Add covMethod == "fixed"
@@ -480,21 +480,20 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 #' @param MZ the MZ model
 #' @param DZ the DZ model
 #' @param top the top model
-#' @param bVector whether this is a weighted analysis
 #' @param mzWeightMatrix if bVector, then use this as the MZ weights matrix
 #' @param dzWeightMatrix if bVector, then use this as the DZ weights matrix
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family xmu internal not for end user
-xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix) {
+xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, mzWeightMatrix = NULL, dzWeightMatrix = NULL) {
 	# TODO: xmu_assemble_twin_supermodel: Add working example.
-	# TODO: xmu_assemble_twin_supermodel: Add a check that MZ & DZ models have vector=TRUE selected if the parameter is on.
-	if(!bVector){
+	# TODO: xmu_assemble_twin_supermodel: Add a check that MZ & DZ models have vector=TRUE selected if the mzWeightMatrix's is !NULL
+	if(is.null(mzWeightMatrix)){
 		model = mxModel(name, MZ, DZ, top,
 			mxFitFunctionMultigroup(c("MZ", "DZ"))
 		)
 	} else {
-		# bVector is TRUE
+		# Weighted model with vector objective
 		# To weight objective functions in OpenMx, you specify a container model that applies the weights
 		# m1 is the model with no weights, but with "vector = TRUE" option added to the FIML objective.
 		# This option makes FIML return individual likelihoods for each row of the data (rather than a single -2LL value for the model)

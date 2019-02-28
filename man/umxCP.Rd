@@ -6,12 +6,14 @@
 \usage{
 umxCP(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  correlatedA = FALSE, dzAr = 0.5, dzCr = 1, equateMeans = TRUE,
+  allContinuousMethod = c("cumulants", "marginals"),
+  correlatedA = FALSE, dzAr = 0.5, dzCr = 1,
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,
+  equateMeans = TRUE, weightVar = weightVar, bVector = bVector,
   boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
-  numObsMZ = NULL, autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"), optimizer = NULL, freeLowerA = FALSE,
-  freeLowerC = FALSE, freeLowerE = FALSE)
+  numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE,
+  freeLowerE = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP").}
@@ -23,11 +25,13 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{mzData}{The MZ dataframe.}
 
-\item{sep}{(required) The suffix for twin 1 and twin 2, often "_T". If set, selDVs is just the base variable names.}
+\item{sep}{(required) The suffix for twin 1 and twin 2, often "_T".}
 
 \item{nFac}{How many common factors (default = 1)}
 
 \item{type}{One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"}
+
+\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
 \item{correlatedA}{?? (default = FALSE).}
 
@@ -35,7 +39,17 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
+\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+
+\item{optimizer}{optionally set the optimizer (default NULL does nothing).}
+
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
+
+\item{weightVar}{If provided, a vector objective will be used to weight the data. (default = NULL).}
+
+\item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
 
 \item{boundDiag}{= Numeric lbound for diagonal of the a_cp, c_cp, & e_cp matrices. Set = NULL to ignore.}
 
@@ -47,17 +61,11 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.}
 
-\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+\item{freeLowerA}{(ignore): Whether to leave the lower triangle of A free (default = FALSE).}
 
-\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{freeLowerC}{(ignore): Whether to leave the lower triangle of C free (default = FALSE).}
 
-\item{optimizer}{optionally set the optimizer (default NULL does nothing).}
-
-\item{freeLowerA}{Whether to leave the lower triangle of A free (default = FALSE).}
-
-\item{freeLowerC}{Whether to leave the lower triangle of C free (default = FALSE).}
-
-\item{freeLowerE}{Whether to leave the lower triangle of E free (default = FALSE).}
+\item{freeLowerE}{(ignore): Whether to leave the lower triangle of E free (default = FALSE).}
 }
 \value{
 \itemize{
@@ -117,21 +125,21 @@ A good way to see which matrices are used in umxCP is to run an example model an
 
 All the shared matrices are in the model "top".
 
-Matrices \code{as}, \code{cs}, and \code{es} contain the path loadings specific to each variable on their diagonals.
+Matrices \code{top$as}, \code{top$cs}, and \code{top$es} contain the path loadings specific to each variable on their diagonals.
 
-To see the 'as' values, you can simply execute:
+So, to see the 'as' values, labels, or free states, you can say:
 
-m1$top#as$values
+\code{m1$top$as$values}
 
-m1$top#as$labels
+\code{m1$top$as$free}
 
-m1$top#as$free
+\code{m1$top$as$labels}
 
 Labels relevant to modifying the specific loadings take the form "as_r1c1", "as_r2c2" etc.
 
-The common-pathway loadings on the factors are in matrices \code{a_cp}, \code{c_cp}, \code{e_cp}.
+The common-pathway loadings on the factors are in matrices \code{top$a_cp}, \code{top$c_cp}, \code{top$e_cp}.
 
-The common factors themselves are in the matrix cp_loadings (an nVar * 1 matrix)
+The common factors themselves are in the matrix \code{top$cp_loadings} (an nVar * 1 matrix)
 
 Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
@@ -211,7 +219,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCPold}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIPnew}}, \code{\link{umxIP}},
+  \code{\link{umxIPold}}, \code{\link{umxIP}},
   \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},

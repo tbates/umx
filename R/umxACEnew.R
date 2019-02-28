@@ -90,25 +90,25 @@
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").
 #' @param selCovs (optional) covariates to include from the data (do not include sep in names)
-#' @param covMethod How to treat covariates: "fixed" (default) or "random".
+#' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.
 #' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
-#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
-#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
-#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
-#' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
-#' @param numObsDZ Number of DZ twins: Set this if you input covariance data.
-#' @param numObsMZ Number of MZ twins: Set this if you input covariance data.
-#' @param boundDiag Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8
-#' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
-#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
-#' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
+#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
+#' @param covMethod How to treat covariates: "fixed" (default) or "random".
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
 #' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
-#' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
+#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
+#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
+#' @param numObsDZ Number of DZ twins: Set this if you input covariance data.
+#' @param numObsMZ Number of MZ twins: Set this if you input covariance data.
+#' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
+#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
+#' @param boundDiag Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8
+#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
+#' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
@@ -144,7 +144,7 @@
 #' # ================
 #' # = WLS analysis =
 #' # ================
-#' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, type = "DWLS")
+#' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
 #'
 #' # ==============================
 #' # = Univariate model of weight =
@@ -270,14 +270,12 @@
 #' m1 = umxACEnew(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
-umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", "random"), dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, 
-	weightVar = NULL, equateMeans = TRUE, bVector = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, intervals = FALSE) {
+umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, covMethod = c("fixed", "random"), dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 
-		# TODO include parameter to select allContinuousMethod
-		nSib = 2 # Number of siblings in a twin pair.
-		covMethod  = match.arg(covMethod)
-		type = match.arg(type)
-
+		nSib                = 2 # Number of siblings in a twin pair.
+		covMethod           = match.arg(covMethod)
+		type                = match.arg(type)
+		allContinuousMethod = match.arg(allContinuousMethod)
 		# TODO check covs
 		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
 		
@@ -289,35 +287,36 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
 				stop("Fixed covariates are on the roadmap for umx in 2019. Until then, use umx_residualize on the data first.")
-				# umxACEdefcov(name = name, selDVs= selDVs, selCovs= selCovs, dzData= dzData, mzData= mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
+				# umxACEdefcov(name = name, selDVs= selDVs, selCovs = selCovs, dzData= dzData, mzData= mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, autoRun = autoRun, tryHard = tryHard)
 			} else if(covMethod == "random"){
-				umxACEcov(name = name, selDVs= selDVs, selCovs= selCovs, dzData= dzData, mzData= mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
+				umxACEcov(name = name, selDVs= selDVs, selCovs= selCovs, sep = sep, dzData= dzData, mzData= mzData,  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, autoRun = autoRun, tryHard = tryHard)
 			}
 		}else{
 			# nSib = 2, equateMeans = TRUE, verbose = verbose
-			if(!is.null(sep)){
-				selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
-			}else{
+
+			# New-style build-block: Expand var names if necessary and make the basic components of a twin model
+			if(is.null(sep)){
 				selVars = selDVs # full names passed in... gosh I wish I'd not allowed this early on...
+				bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selVars, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
+				tmp = xmu_starts(mzData, dzData, selVars = selVars, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+			}else{
+				selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+				bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
+				tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 			}
-			nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
 
-			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
-			top  = bits$top
-			MZ   = bits$MZ
-			DZ   = bits$DZ
-
-			if(bVector){
+			nVar = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+			varStarts = tmp$varStarts
+			top     = bits$top
+			MZ      = bits$MZ
+			DZ      = bits$DZ
+			
+			if(!is.null(weightVar)){
 				mzWeightMatrix = bits$mzWeightMatrix
 				dzWeightMatrix = bits$dzWeightMatrix
 			}else{
 				mzWeightMatrix = dzWeightMatrix = NULL
 			}
-
-			# Define varStarts ...
-			tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
-			varStarts = tmp$varStarts
-
 
 			# Finish building top
 			top = mxModel(top,
@@ -348,7 +347,7 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 		# =====================================
 		# =  Assemble models into supermodel  =
 		# =====================================
-		model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix) # weight matrices only used if bVector
+		model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, mzWeightMatrix, dzWeightMatrix) # weight matrices only used if !NULL
 
 		if(!is.null(boundDiag)){
 			if(!is.numeric(boundDiag)){

@@ -4,11 +4,11 @@
 \alias{xmu_make_top_twin_models}
 \title{Helper to make a basic top, MZ, and DZ model.}
 \usage{
-xmu_make_top_twin_models(mzData, dzData, selDVs, sep = NULL, nSib = 2,
-  numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE,
+xmu_make_top_twin_models(mzData, dzData, selDVs, sep = NULL,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  weightVar = NULL, bVector = FALSE,
-  allContinuousMethod = c("cumulants", "marginals"), verbose = FALSE)
+  allContinuousMethod = c("cumulants", "marginals"), nSib = 2,
+  numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE,
+  weightVar = NULL, bVector = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{mzData}{Dataframe containing the MZ data}
@@ -19,6 +19,10 @@ xmu_make_top_twin_models(mzData, dzData, selDVs, sep = NULL, nSib = 2,
 
 \item{sep}{(optional but desirable) string used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2}
 
+\item{type}{One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto tries to react to the incoming mxData type (raw/cov).}
+
+\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
+
 \item{nSib}{Number of members per family (default = 2)}
 
 \item{numObsMZ}{Number of MZ observations contributing (for summary data only)}
@@ -27,13 +31,9 @@ xmu_make_top_twin_models(mzData, dzData, selDVs, sep = NULL, nSib = 2,
 
 \item{equateMeans}{Whether to equate T1 and T2 means (default = TRUE).}
 
-\item{type}{One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto tries to react to the incoming mxData type (raw/cov).}
-
 \item{weightVar}{If provided, a vector objective will be used to weight the data. (default = NULL).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
-
-\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
 \item{verbose}{(default = FALSE)}
 }

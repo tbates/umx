@@ -69,28 +69,28 @@
 #' `m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' @param name The name of the model (defaults to "IP").
-#' @param selDVs The variables to include.
+#' @param selDVs The base names of the variables to model. note: Omit suffixes - just "dep" not c("dep_T1", "dep_T2")
+#' @param sep The suffix for twin 1 and twin 2. e.g. selDV="dep", sep="_T" -> c("dep_T1", "dep_T2")
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param sep The suffix for twin 1 and twin 2, often "_T". If set, you can omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
-#' @param nFac How many common factors for a, c, and e. If 1 number number is given, applies to all three.
+#' @param nFac How many common factors for a, c, and e. If one number is given, applies to all three.
 #' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
-#' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
-#' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
-#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
+#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
+#' @param numObsDZ = For cov data, the number of DZ pairs.
+#' @param numObsMZ = For cov data, the number of MZ pairs.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param correlatedA Whether factors are allowed to correlate (not implemented yet: FALSE).
-#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
-#' @param addCI Whether to add the interval requests for CIs (defaults to TRUE).
-#' @param numObsDZ = TODO: implement ordinal Number of DZ twins: Set this if you input covariance data,
-#' @param numObsMZ = TODO: implement ordinal Number of MZ twins: Set this if you input covariance data.
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+#' @param autoRun Whether to run and return the model (default), or just to create and return without running.
+#' @param tryHard Whether to tryHard (default 'no' uses normal mxRun). options: "mxTryHard", "mxTryHardOrdinal", or "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
-#' @param freeLowerA Whether to leave the lower triangle of A free (default = FALSE).
-#' @param freeLowerC Whether to leave the lower triangle of C free (default = FALSE).
-#' @param freeLowerE Whether to leave the lower triangle of E free (default = FALSE).
+#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
+#' @param weightVar If a weighting variable is provided, a vector objective will be used to weight the data. (default = NULL).
+#' @param addStd Whether to add algebras for a standardized model (defaults to TRUE).
+#' @param addCI Whether to add CIs (defaults to TRUE).
+#' @param freeLowerA ignore: Whether to leave the lower triangle of A free (default = FALSE).
+#' @param freeLowerC ignore: Whether to leave the lower triangle of C free (default = FALSE).
+#' @param freeLowerE ignore: Whether to leave the lower triangle of E free (default = FALSE).
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -104,30 +104,37 @@
 #' mzData <- subset(GFF, zyg_2grp == "MZ")
 #' dzData <- subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
-#' m1 = umxIPnew(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-#' m1 = umxIPnew(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-#' 	nFac = c(a = 3, c = 1, e = 1)
-#' )
+#' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+#' m1 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+#' # ====================================================================
+#' # = Try with a non-default number of a, c, and e independent factors =
+#' # ====================================================================
+#' nFac = c(a = 3, c = 1, e = 1)
+#' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = nFac)
 #' umxSummary(m1)
 #' plot(m1)
 #' }
-umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weightVar = NULL, equateMeans = TRUE, bVector = FALSE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
+#' # TODO sep enforcement: move to test case m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#
+umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = .5, dzCr = 1, correlatedA = FALSE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, equateMeans = TRUE, weightVar = NULL, addStd = TRUE, addCI = TRUE, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# TODO implement correlatedA
-	if(correlatedA){
-		message("I have not implemented correlatedA yet...")
-	}
-	nSib = 2 # Number of siblings in a twin pair.
-	type = match.arg(type)
-	# covMethod  = match.arg(covMethod)
+	nSib                = 2 # Number of siblings in a twin pair.
+	type                = match.arg(type)
+	allContinuousMethod = match.arg(allContinuousMethod)
+	tryHard             = match.arg(tryHard)
+	# covMethod         = match.arg(covMethod)
 
-	# TODO umxIPnew: check covs
-	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
+	if(correlatedA){ message("Sorry, I haven't implemented correlated A yet...") }
+
+	# TODO umxIP: check covs
+	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 
 	if(length(nFac) == 1){
 		nFac = c(a = nFac, c = nFac, e = nFac)
 	} else if (length(nFac) != 3){
 		stop("nFac must be either 1 number or 3. You gave me ", length(nFac))
 	}
+
 	if(dzCr == .25 & (name == "IP")){
 		name = "IP_ADE"
 	}else if(name == "IP"){
@@ -139,30 +146,22 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 		}
 	}
 
-	# Expand var names if necessary
-	if(!is.null(sep)){
-		selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
-	}else{
-		selVars = selDVs
-	}
-	nVar = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
+	bits      = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
+	tmp       = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans = equateMeans, SD = TRUE, divideBy = 3)
+	selVars   = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+	nVar      = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	varStarts = tmp$varStarts
+	top       = bits$top
+	MZ        = bits$MZ
+	DZ        = bits$DZ
 
-	bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans,
-					type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
-	top     = bits$top
-	MZ      = bits$MZ
-	DZ      = bits$DZ
-
-	if(bVector){
+	if(!is.null(weightVar)){
 		mzWeightMatrix = bits$mzWeightMatrix
 		dzWeightMatrix = bits$dzWeightMatrix
 	}else{
 		mzWeightMatrix = dzWeightMatrix = NULL
 	}
-
-	# Define varStarts ...
-	tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
-	varStarts = tmp$varStarts
 
 	# TODO: umxIP improve start values (hard coded at std type values)
 	top = mxModel(top,
@@ -191,9 +190,9 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 		mxAlgebra(name = "AC" , A+C  ),
 		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
 		mxAlgebra(rbind (cbind(ACE, AC), 
-		                 cbind(AC , ACE)), dimnames = list(selDVs, selDVs), name = "expCovMZ"),
+		                 cbind(AC , ACE)), dimnames = list(selVars, selVars), name = "expCovMZ"),
 		mxAlgebra(rbind (cbind(ACE, hAC),
-		                 cbind(hAC, ACE)), dimnames = list(selDVs, selDVs), name = "expCovDZ"),
+		                 cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ"),
 
 		# Algebra to compute total variances and standard deviations (diagonal only)
 		mxMatrix("Iden", nrow = nVar, name = "I"),
@@ -203,7 +202,7 @@ umxIPnew <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 	# =====================================
 	# =  Assemble models into supermodel  =
 	# =====================================
-	model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix)
+	model = xmu_assemble_twin_supermodel(name= name, MZ= MZ, DZ= DZ, top = top, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix)
 
 	if(!freeLowerA){
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]

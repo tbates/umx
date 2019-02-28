@@ -4,8 +4,8 @@
 \alias{xmu_assemble_twin_supermodel}
 \title{Assemble top, MZ and DZ into a supermodel}
 \usage{
-xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix,
-  dzWeightMatrix)
+xmu_assemble_twin_supermodel(name, MZ, DZ, top, mzWeightMatrix = NULL,
+  dzWeightMatrix = NULL)
 }
 \arguments{
 \item{name}{the name of the supermodel}
@@ -15,8 +15,6 @@ xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix,
 \item{DZ}{the DZ model}
 
 \item{top}{the top model}
-
-\item{bVector}{whether this is a weighted analysis}
 
 \item{mzWeightMatrix}{if bVector, then use this as the MZ weights matrix}
 

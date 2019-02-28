@@ -2601,10 +2601,12 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "win"))      # Check on win-builder
 #' umx_make(what = "release"))  # Release to CRAN
 #' }
-umx_make <- function(what = c("install", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, run=FALSE, spelling = "en_US") {
+umx_make <- function(what = c("install", "quick", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, run=FALSE, spelling = "en_US") {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
+	} else if(what == "quick"){
+		devtools::document(pkg = pkg); devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);				
 	} else if(what == "examples"){
 		devtools::run_examples(pkg = pkg, run = run)
 	} else if(what == "check"){

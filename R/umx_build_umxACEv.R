@@ -238,13 +238,14 @@
 #' m1 = umxACEv(selDVs = selDVs, sep= "", dzData = dz, mzData= mz, numObsDZ= 569, numObsMZ= 351)
 #' umxSummary(m1, std = FALSE)
 #' 
-umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-	dzData, mzData, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, 
+umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"),
+	dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, 
 	boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE,  covMethod = c("fixed", "random"), 
 	autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
 		nSib = 2 # number of siblings in a twin pair
 		covMethod  = match.arg(covMethod)
 		type = match.arg(type)
+		allContinuousMethod = match.arg(allContinuousMethod)
 
 		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 		
@@ -266,7 +267,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c(
 			selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
 			nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
 
-			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
+			bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
 			top  = bits$top
 			MZ   = bits$MZ
 			DZ   = bits$DZ
@@ -305,7 +306,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, type = c(
 		# =======================================
 		# = 		Assemble models into supermodel =
 		# =======================================
-		model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, bVector, mzWeightMatrix, dzWeightMatrix)
+		model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, mzWeightMatrix, dzWeightMatrix)
 		
 		if(!is.null(boundDiag)){
 			if(!is.numeric(boundDiag)){

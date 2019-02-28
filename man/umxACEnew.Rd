@@ -4,15 +4,15 @@
 \alias{umxACEnew}
 \title{Build and run a 2-group Cholesky twin model (uni-variate or multi-variate)}
 \usage{
-umxACEnew(name = "ACE", selDVs, selCovs = NULL,
-  covMethod = c("fixed", "random"), dzData, mzData, sep = NULL,
-  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
+umxACEnew(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
+  sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS",
+  "ULS"), allContinuousMethod = c("cumulants", "marginals"),
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0,
-  weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
-  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,
-  intervals = FALSE)
+  autoRun = getOption("umx_auto_run"), intervals = FALSE,
+  tryHard = c("no", "mxTryHard", "mxTryHardOrdinal",
+  "mxTryHardWideSearch"), optimizer = NULL, covMethod = c("fixed",
+  "random"), dzAr = 0.5, dzCr = 1, weightVar = NULL,
+  equateMeans = TRUE, addStd = TRUE, addCI = TRUE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -20,8 +20,6 @@ umxACEnew(name = "ACE", selDVs, selCovs = NULL,
 \item{selDVs}{The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").}
 
 \item{selCovs}{(optional) covariates to include from the data (do not include sep in names)}
-
-\item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
 
 \item{dzData}{The DZ dataframe.}
 
@@ -31,13 +29,7 @@ umxACEnew(name = "ACE", selDVs, selCovs = NULL,
 
 \item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")}
 
-\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
-
-\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
-
-\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
-
-\item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE).}
+\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
 \item{numObsDZ}{Number of DZ twins: Set this if you input covariance data.}
 
@@ -45,19 +37,27 @@ umxACEnew(name = "ACE", selDVs, selCovs = NULL,
 
 \item{boundDiag}{Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8}
 
-\item{weightVar}{If provided, a vector objective will be used to weight the data. (default = NULL).}
-
-\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
-
-\item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
-
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+
+\item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
 
 \item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
-\item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
+\item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
+
+\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
+
+\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
+
+\item{weightVar}{If provided, a vector objective will be used to weight the data. (default = NULL).}
+
+\item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
+
+\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
+
+\item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE).}
 }
 \value{
 \itemize{
@@ -179,7 +179,7 @@ umxSummary(m2, comparison = m1)
 # ================
 # = WLS analysis =
 # ================
-m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, type = "DWLS")
+m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
 
 # ==============================
 # = Univariate model of weight =
@@ -322,7 +322,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACE}}, \code{\link{umxCPold}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIPnew}}, \code{\link{umxIP}},
+  \code{\link{umxIPold}}, \code{\link{umxIP}},
   \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},

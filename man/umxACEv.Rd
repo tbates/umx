@@ -4,14 +4,15 @@
 \alias{umxACEv}
 \title{Build and run 2-group uni- or multi-variate ACE models based on VARIANCE (not paths).}
 \usage{
-umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
-  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), dzData,
-  mzData, dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
-  numObsDZ = NULL, numObsMZ = NULL, boundDiag = NULL,
-  weightVar = NULL, equateMeans = TRUE, bVector = FALSE,
-  covMethod = c("fixed", "random"),
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
-  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
+umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
+  mzData, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  allContinuousMethod = c("cumulants", "marginals"), dzAr = 0.5,
+  dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
+  numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
+  equateMeans = TRUE, bVector = FALSE, covMethod = c("fixed",
+  "random"), autoRun = getOption("umx_auto_run"), tryHard = c("no",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -22,11 +23,11 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL,
 
 \item{sep}{The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.}
 
-\item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS").}
-
 \item{dzData}{The DZ dataframe.}
 
 \item{mzData}{The MZ dataframe.}
+
+\item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS").}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -269,7 +270,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACE}}, \code{\link{umxCPold}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIPnew}}, \code{\link{umxIP}},
+  \code{\link{umxIPold}}, \code{\link{umxIP}},
   \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},

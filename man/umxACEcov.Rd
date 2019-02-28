@@ -5,8 +5,10 @@
 \title{Run a Cholesky with covariates, either fixed (def var in the means) or random (in the expected covariance matrix)}
 \usage{
 umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
-  dzAr = 0.5, dzCr = 1, addStd = TRUE, addCI = TRUE,
-  boundDiag = 0, equateMeans = TRUE, bVector = FALSE,
+  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  allContinuousMethod = c("cumulants", "marginals"), dzAr = 0.5,
+  dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0,
+  equateMeans = TRUE, bVector = FALSE,
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
   "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
 }
@@ -23,6 +25,10 @@ umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
 
 \item{sep}{Separator text between basename for twin variable names. Often "_T".
 Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T2").}
+
+\item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")}
+
+\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -136,7 +142,7 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACE}}, \code{\link{umxCPold}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIPnew}}, \code{\link{umxIP}},
+  \code{\link{umxIPold}}, \code{\link{umxIP}},
   \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
