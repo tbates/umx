@@ -142,6 +142,7 @@ mzData <- subset(GFF, zyg_2grp == "MZ")
 dzData <- subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
 m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+m1 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 # ====================================================================
 # = Try with a non-default number of a, c, and e independent factors =
 # ====================================================================

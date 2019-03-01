@@ -83,7 +83,7 @@ plot(m1)
 - \url{https://www.github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+- \code{\link{umxIP}}, \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEnew}},
