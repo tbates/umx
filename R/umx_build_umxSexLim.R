@@ -79,7 +79,8 @@
 #' # summary(m1)$Mi
 #' }
 umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
-	A_or_C = match.arg(A_or_C)
+	A_or_C  = match.arg(A_or_C)
+	tryHard = match.arg(tryHard)
 
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
