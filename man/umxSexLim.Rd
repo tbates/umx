@@ -56,6 +56,7 @@ Restrictions: Assumes means and variances can be equated across birth order with
 # =========================
 # = Load and Process Data =
 # =========================
+\dontrun{
 require(umx)
 data("us_skinfold_data")
 # rescale vars
@@ -82,6 +83,7 @@ m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun = FALSE,
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData
 )
+m1 = mxTryHard(m1)
 # ============================
 # = run multivariate example =
 # ============================
@@ -90,9 +92,8 @@ m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun = FALSE,
      mzfData = mzfData, dzfData = dzfData, 
      dzoData = dzoData
 )
+m1 = mxTryHard(m1)
 
-\dontrun{
-# m1 = mxRun(m1)
 # umxSummary(m1)
 # summary(m1)
 # summary(m1)$Mi
