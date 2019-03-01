@@ -69,8 +69,7 @@ umxIP(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a =
 \description{
 Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model).
 The following figure shows the IP model diagrammatically:
-}
-\details{
+
 \if{html}{\figure{IP.png}{options: width="50\%" alt="Figure: IP.png"}}
 \if{latex}{\figure{IP.pdf}{options: width=7cm}}
 
@@ -81,7 +80,8 @@ of pathways for a, c, and e, as well the ability to use ordinal data, and differ
 
 \strong{note}: The function \code{umx_set_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
 It defaults to .001. You might find that '0.01' works better for ordinal models.
-
+}
+\details{
 Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or
@@ -132,7 +132,7 @@ Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 r
 out for each variable for twin 1, followed by each variable for twin 2.
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 
-\code{m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+\code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 }
 \examples{
 \dontrun{
@@ -141,17 +141,24 @@ data(GFF)
 mzData <- subset(GFF, zyg_2grp == "MZ")
 dzData <- subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
-m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-m1 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+m1 =    umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+m2 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+
+# Use "marginals" method to enable all continuous data with missingness.
+m3 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
+# omit missing to enable default WLS method to work on all continuous data
+dzD = na.omit(dzData[, tvars(selDVs, "_T")])
+mzD = na.omit(dzData[, tvars(selDVs, "_T")])
+m4 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzD, mzData = mzD, type = "DWLS")
+
 # ====================================================================
 # = Try with a non-default number of a, c, and e independent factors =
 # ====================================================================
-nFac = c(a = 3, c = 1, e = 1)
-m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = nFac)
-umxSummary(m1)
-plot(m1)
+nFac = c(a = 2, c = 1, e = 1)
+m2 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = nFac, tryHard = "mxTryHard")
+umxCompare(m1, m2)
 }
-# TODO sep enforcement: move to test case m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
+# TODO: sep enforcement: move to test case m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
 }
 \references{
 \itemize{

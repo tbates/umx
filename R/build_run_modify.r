@@ -2774,10 +2774,8 @@ umxIPold <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 #' umxRAM2Ordinal: Convert a RAM model whose data contain ordinal variables to a threshold-based model
 #'
 #' @param model An RAM model to add thresholds too.
+#' @param name = A new name for the modified model. Default (NULL) = leave it as is).
 #' @param verbose Tell the user what was added and why (Default = TRUE).
-#' @param name = A new name for the modified model (NULL means leave it as it).
-#' @param showEstimates = Whether to show estimates in the summary (if autoRun) TRUE.
-#' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Advanced Model Building Functions
@@ -2794,8 +2792,8 @@ umxIPold <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #' mzData = twinData[twinData$zygosity %in% "MZFF",]
 #' m1 = umxRAM("tim", data = mzData,
-#'	umxPath("bmi1", with = "bmi2"),
-#'	umxPath(v.m.= c("bmi1", "bmi2"))
+#'		umxPath("bmi1", with = "bmi2"),
+#'		umxPath(v.m.= c("bmi1", "bmi2"))
 #')
 #'
 #' m1 = umxRAM("tim", data = mzData,
@@ -2803,7 +2801,7 @@ umxIPold <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 #' 	umxPath(v.m.= c("obese1", "obese2"))
 #' )
 #' }
-umxRAM2Ordinal <- function(model, verbose = TRUE, name = NULL, showEstimates = TRUE, refModels = NULL) {
+umxRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 	if(!umx_is_RAM(model)){
 		stop("umxRAM2Ordinal only works with RAM models, sorry.")
 	}

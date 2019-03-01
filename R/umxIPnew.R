@@ -1,5 +1,6 @@
 #' umxIP: Build and run an Independent pathway twin model
 #'
+#' @description
 #' Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model).
 #' The following figure shows the IP model diagrammatically:
 #'
@@ -104,17 +105,24 @@
 #' mzData <- subset(GFF, zyg_2grp == "MZ")
 #' dzData <- subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
-#' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-#' m1 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+#' m1 =    umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+#' m2 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
+#' 
+#' # Use "marginals" method to enable all continuous data with missingness.
+#' m3 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
+#' # omit missing to enable default WLS method to work on all continuous data
+#' dzD = na.omit(dzData[, tvars(selDVs, "_T")])
+#' mzD = na.omit(dzData[, tvars(selDVs, "_T")])
+#' m4 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzD, mzData = mzD, type = "DWLS")
+#'
 #' # ====================================================================
 #' # = Try with a non-default number of a, c, and e independent factors =
 #' # ====================================================================
-#' nFac = c(a = 3, c = 1, e = 1)
-#' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = nFac)
-#' umxSummary(m1)
-#' plot(m1)
+#' nFac = c(a = 2, c = 1, e = 1)
+#' m2 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = nFac, tryHard = "mxTryHard")
+#' umxCompare(m1, m2)
 #' }
-#' # TODO sep enforcement: move to test case m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' # TODO: sep enforcement: move to test case m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #
 umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = .5, dzCr = 1, correlatedA = FALSE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, equateMeans = TRUE, weightVar = NULL, addStd = TRUE, addCI = TRUE, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# TODO implement correlatedA

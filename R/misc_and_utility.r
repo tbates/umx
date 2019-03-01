@@ -2988,7 +2988,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 			stop("If x is a list of models, each must be a valid mxModel")
 		}
 	}else if(umx_is_MxModel(x)){
-		# great, we've got a model?
+		# great, we've got a model
 	}else if(is.character(x)){
 		umx_check(x %in% c('start', 'stop'), "stop", "Valid time strings are 'start', 'stop' (or a model or list of models)")
 	}else if(is.na(x)){
@@ -3000,36 +3000,38 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 	# TODO umx_time: Improve table formating
 	for(i in 1:length(x)) {			
 		if(length(x) > 1) {
-			m = x[[i]]
+			thisX = x[[i]]
 		} else {
 			if(class(x) == "list"){
-				m = x[[i]]
+				thisX = x[[i]]
 			} else {
-				m = x
+				thisX = x
 			}
 		}
-		if(class(m) == "character"){
-			if(m == "start"){
+		if(class(thisX) == "character"){
+			if(thisX == "start"){
 				options("umx_last_time" = proc.time())
 				return(invisible())
-			} else if (m == "stop") {
+			} else if (thisX == "stop") {
 				thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
 				options("umx_last_time" = proc.time())
 			}else{
-				stop("Value strings for umx_time are start and stop, not: ", omxQuotes(m))
+				stop("Value strings for umx_time are start and stop, not: ", omxQuotes(thisX))
 			}
 		} else {
 			# handle model
-			if(!umx_has_been_run(m) && autoRun){
-				m = mxRun(m)
+			if(!umx_has_been_run(thisX) && autoRun){
+				thisX = mxRun(thisX)
 				# message("You must run the model before asking for the elapsed run time")
 			}
-			thisTime = m$output$wallTime
+			thisTime = thisX$output$wallTime
 			if(i == 1){
 				lastTime = thisTime
 				timeDelta = ""
+				percentDelta = ""
 			} else {
 				timeDelta = paste0("(\u2206: ", round(thisTime - lastTime, 3), ")")
+				percentDelta = paste0(round(as.numeric(thisTime) / as.numeric(lastTime)*100, 3), "%")
 			}
 		}
 		if(formatStr == "std"){
@@ -3050,10 +3052,11 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 			}
 		}
 		
-		if(class(m) == "character"){
+		if(class(thisX) == "character"){
+			# Handle start-stop
 			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", formatStr))
 		} else {
-			timeString = format(.POSIXct(thisTime, tz), paste0(m$name, ": ", formatStr, timeDelta))
+			timeString = format(.POSIXct(thisTime, tz), paste0(thisX$name, ": ", formatStr, timeDelta, ", ", percentDelta))
 		}
 		message(timeString)
 	}

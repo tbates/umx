@@ -7,7 +7,7 @@
 #'
 #' @export
 #' @seealso - \code{\link{umx}}
-#' @references - TODO: TRHG citation to go here when available.
+#' @references - TODO: Twin Research and Human Genetics citation to go here when available.
 #' @aliases umxExampleCode_TRHGpaper
 #' @examples
 #' \dontrun{

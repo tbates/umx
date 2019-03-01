@@ -1,13 +1,15 @@
-# Upcoming in next version... umx 3.0.0 January 2018, R 3.5.2
+# Upcoming in next version... umx 3.0.0 March 2018, R 3.5.2
+* FIX: `umxSimplex`
+* FIX: `umxSexLim`
 * NEW: `umxRAM` supports WLS, UWLS, DWLS models!
 * NEW: `umxACE` supports WLS, UWLS, DWLS models!
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
 
 # umx 2.10.0 January 2019, R 3.5.2
-* IMPROVED: Make umx more robust to new data types especially in `umxValues` which processes the cov or raw data of a model into start values.
+* IMPROVED: `umx` more robust to new data types especially in `umxValues` which processes the cov or raw data of a model into start values.
 * NEW: `xmu_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
-	* `umx_set_data_variance_check` getter/setter for variance checking data
+	* `umx_set_data_variance_check` get/set variance tolerance.
 * DATA: Added Fischbein (1977) weight data (weight of 66 females record over six 6-month intervals. `data(Fischbein_wt)`
 * FIX: `umxValues` to work more reliably with data with no means.
 * IMPROVED: `umx_read_lower` examples and input checking.
@@ -133,10 +135,10 @@
 * IMPROVED: `umxACEv` diagonal now unbounded by default (which is it's whole purpose)
 * IMPROVED: `umxACEv` got major improvements to help file.
 * IMPROVED: `umxSummaryCP` got ability to print to html.
-* IMPROVED: `plot` made more robust to unexpected labels (now that umxModify can make newLabels)!
+* IMPROVED: `plot` made more robust to unexpected labels (now that `umxModify` can write `newlabels`)!
 * MINOR: `umx_names` Added GFF examples.
 * DROPPED: deleted deprecated showStd and showMeans parameters from plot ACE.
-* BUGFIX: `umxSummaryIP` was assuming nFac = 1
+* BUG-FIX: `umxSummaryIP` was assuming nFac = 1
 
 # umx 2.0.2 (Feb 12 2018, R 3.4.3 Higher goals edition)
 * NEW: `umxSummary` works with multi-group models!
@@ -199,7 +201,7 @@
 * IMPROVED: `umx_msg` supports dataframes
 * IMPROVED: `umxACE` gains ability to set plot format: `format = "graphviz" or "DiagrammeR"`
 * IMPROVED: `umx_set_auto_plot` take TRUE/FALSE as input.
-* IMPROVED: `umx_names`: added a replace option to munge the names
+* IMPROVED: `umx_names`: added a find and replace option for names
 * IMPROVED: `umxRAM` in "sketch mode" now plots models automatically.
 * IMPROVED: `install.OpenMx` from University of Virginia, travis, or open travis build page.
 * IMPROVED: `umx_cor` automatically drops non-numeric columns.
@@ -237,22 +239,22 @@
 
 # umx 1.7.5 (April 04 2017, R 3.3.3 Another Canoe)
 * *TIP*: In twin models, mzData and dzData can contain unused variables (umx removes them for you!)
-* NEW: `umxVersion` (returns mxVersion() + umx version).
+* NEW: `umxVersion` (returns `mxVersion` + information on umx).
 * IMPROVED: `umxACE` start values much better for univariate models.
 * NEW: `umx_make_TwinData`
 	* Use variance input
 	* Option to set seed
-	* Add varName to datasets
-	* nThresh to threshold the created variables, and return as mxFactors
-	* Surface the empirical parameter of mvrnorm
+	* Set`varName`
+	* `nThresh` to threshold the created variables, and return as mxFactors
+	* Surface the `empirical` parameter of mvrnorm
 	* More flexible: Leave out any one of A, C, or E.
-	* omit nDZPairs to get equal numbers
+	* omit `nDZPairs` to get equal numbers
 	* Option to allow A+C+E ≠ 1
 	* Full set of examples
 	* NOTE: `umx_make_TwinData` uses **variance** input. This was ambiguous previously.
 	* Docs much improved.
 * NEW: `install.OpenMx` can install UVA parallel, travis latest (on mac) or opening the travis list.
-	* BUGFIX: `install.OpenMx` had a broken URL, now corrected.
+	* BUG-FIX: `install.OpenMx` had a broken URL, now corrected.
 * NEW: `umxRAM` can now be used in "sketch" mode, to plot demos without data: just add the list of manifests as a character string to `data`.
 	```splus
 	m1 <- umxRAM("test", data = paste0("itemC", 1:4),
@@ -262,7 +264,7 @@
 	plot(m1)
 	```
 * NEW: `umx_cont_2_quantiles` now allows returning cut points, better examples, level_names
-	* BUGFIX: `umx_cont_2_quantiles` lowest threshold was empty
+	* BUG-FIX: `umx_cont_2_quantiles` lowest threshold was empty
 * NEW: `umxAPA` now reports mode for factor data
 * NEW: Allow `umxLabel` to rename the returned model
 * IMPROVED: `sep` is now the preferred separator (synonym for suffix in umxACE, umxCP, umxIP)
