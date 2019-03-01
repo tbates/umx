@@ -2774,7 +2774,7 @@ umxIPold <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 #' umxRAM2Ordinal: Convert a RAM model whose data contain ordinal variables to a threshold-based model
 #'
 #' @param model An RAM model to add thresholds too.
-#' @param name = A new name for the modified model. Deafult (NULL) = leave it as is).
+#' @param name = A new name for the modified model. Default (NULL) = leave it as is).
 #' @param verbose Tell the user what was added and why (Default = TRUE).
 #' @return - \code{\link{mxModel}}
 #' @export

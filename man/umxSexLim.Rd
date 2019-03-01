@@ -66,7 +66,7 @@ us_skinfold_data[, c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[, c('ssc_T1', 'ssc
 us_skinfold_data[, c('sil_T1', 'sil_T2')] <- us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
 
 # Variables for Analysis
-selDVs = c('ssc','sil','caf','tri','bic') # (was Vars)
+selDVs = c('ssc','sil','caf','tri','bic')
 # Data objects for Multiple Groups
 mzmData = subset(us_skinfold_data, zyg == 1)
 mzfData = subset(us_skinfold_data, zyg == 2)
@@ -75,12 +75,20 @@ dzfData = subset(us_skinfold_data, zyg == 4)
 dzoData = subset(us_skinfold_data, zyg == 5)
 
 # ============================
+# = Run univariate example =
+# ============================
+m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun = FALSE,
+	mzmData = mzmData, dzmData = dzmData, 
+	mzfData = mzfData, dzfData = dzfData, 
+	dzoData = dzoData
+)
+# ============================
 # = run multivariate example =
 # ============================
 m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun = FALSE,
 	  mzmData = mzmData, dzmData = dzmData, 
-       mzfData = mzfData, dzfData = dzfData, 
-       dzoData = dzoData
+     mzfData = mzfData, dzfData = dzfData, 
+     dzoData = dzoData
 )
 
 \dontrun{

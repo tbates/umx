@@ -11,7 +11,7 @@ umxRAM2Ordinal(model, verbose = TRUE, name = NULL)
 
 \item{verbose}{Tell the user what was added and why (Default = TRUE).}
 
-\item{name}{= A new name for the modified model. Deafult (NULL) = leave it as is).}
+\item{name}{= A new name for the modified model. Default (NULL) = leave it as is).}
 }
 \value{
 - \code{\link{mxModel}}

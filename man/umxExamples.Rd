@@ -282,7 +282,7 @@ umx_set_auto_plot(TRUE)
 }
 }
 \references{
-- TODO: TRHG citation to go here when available.
+- TODO: Twin Research and Human Genetics citation to go here when available.
 }
 \seealso{
 - \code{\link{umx}}

@@ -36,6 +36,7 @@
 #' # =========================
 #' # = Load and Process Data =
 #' # =========================
+#' \dontrun{
 #' require(umx)
 #' data("us_skinfold_data")
 #' # rescale vars
@@ -46,7 +47,7 @@
 #' us_skinfold_data[, c('sil_T1', 'sil_T2')] <- us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
 #'
 #' # Variables for Analysis
-#' selDVs = c('ssc','sil','caf','tri','bic') # (was Vars)
+#' selDVs = c('ssc','sil','caf','tri','bic')
 #' # Data objects for Multiple Groups
 #' mzmData = subset(us_skinfold_data, zyg == 1)
 #' mzfData = subset(us_skinfold_data, zyg == 2)
@@ -55,21 +56,31 @@
 #' dzoData = subset(us_skinfold_data, zyg == 5)
 #'
 #'# ============================
+#'# = Run univariate example =
+#'# ============================
+#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun = FALSE,
+#'		mzmData = mzmData, dzmData = dzmData, 
+#'		mzfData = mzfData, dzfData = dzfData, 
+#'		dzoData = dzoData
+#')
+#' m1 = mxTryHard(m1)
+#'# ============================
 #'# = run multivariate example =
 #'# ============================
 #' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun = FALSE,
 #'		  mzmData = mzmData, dzmData = dzmData, 
-#'        mzfData = mzfData, dzfData = dzfData, 
-#'        dzoData = dzoData
+#'      mzfData = mzfData, dzfData = dzfData, 
+#'      dzoData = dzoData
 #')
+#' m1 = mxTryHard(m1)
 #' 
-#' \dontrun{
-#' # m1 = mxRun(m1)
 #' # umxSummary(m1)
 #' # summary(m1)
 #' # summary(m1)$Mi
 #' }
 umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
+	A_or_C = match.arg(A_or_C)
+
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
 	# ================================
@@ -77,23 +88,15 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	# Male and female paths, plus Ra, Rc and Re between variables for males and females
 	# Male-Female correlations in DZO group between A factors Rao FREE
 	# Rc constrained across male/female and opposite sex
-	if(!is.null(optimizer)){
-		umx_set_optimizer(optimizer)
-	}
 	
-	A_or_C = match.arg(A_or_C)
 	# Correlated factors sex limitations
 
 	nSib = 2 # Number of siblings in a twin pair
-	if(!is.null(optimizer)){
-		umx_set_optimizer(optimizer)
-	}
+	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzmData, mzData = mzmData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
+
 	# Auto-name ADE version
 	if(dzCr == .25 && name == "sexlim"){
 		name = "sexlimADE"
-	}
-	if(is.na(sep)){
-		stop("Please provide sep (e.g. '_T')")
 	}
 	nVar = length(selDVs)
 	selVars = umx_paste_names(selDVs, sep= sep, suffixes = 1:2)
@@ -106,8 +109,8 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 	# Start means at actual means of some group 
 	obsMean = umx_means(mzmData[, selVars[1:nVar], drop = FALSE])
-	
 	varStarts = umx_var(mzmData[, selVars[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+
 	if(nVar == 1){
 		varStarts = sqrt(varStarts)/3
 	} else {
@@ -124,13 +127,13 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	if(A_or_C == "A"){
 			# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is symm)
 			# (labels trimmed to ra at end)
-			# # TODO Check Stand (symmetric with 1's on diagonal) OK (was Symm fixed diag@1)			
-			Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound = -1, ubound = 1)
-			Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1)
+			# # TODO Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag@1)			
+			Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
+			Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 	} else if (A_or_C == "C"){
 			# Quantitative & Qualitative Sex Differences for C (Ra is symm, Rc is Full)
-			Rco = umxMatrix("Rco", "Full" , nrow=nVar, ncol=nVar, free=TRUE, values= 1, lbound=-1, ubound=1)
-			Rao = umxMatrix("Rao", "Stand", nrow=nVar, ncol=nVar, free=TRUE, values=.4, lbound=-1, ubound=1)
+			Rao = umxMatrix("Rao", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
+			Rco = umxMatrix("Rco", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 	}
 	Rao_and_Rco_matrices = list(Rao, Rco)
 

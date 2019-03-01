@@ -144,7 +144,13 @@ selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff
 m1 =    umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 m2 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 
+# Use "marginals" method to enable all continuous data with missingness.
 m3 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
+# omit missing to enable default WLS method to work on all continuous data
+dzD = na.omit(dzData[, tvars(selDVs, "_T")])
+mzD = na.omit(dzData[, tvars(selDVs, "_T")])
+m4 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzD, mzData = mzD, type = "DWLS")
+
 # ====================================================================
 # = Try with a non-default number of a, c, and e independent factors =
 # ====================================================================
