@@ -11,13 +11,13 @@
 #'
 #' @param name    The name of the model (Default = "sexlim")
 #' @param selDVs  BASE NAMES of the variables in the analysis. You MUST provide sep.
-#' @param A_or_C  Whether to model sex-limitation on A or on C. (Defaults to "A")
+#' @param sep Suffix used for twin variable naming. Allows using just the base names in selVars
 #' @param mzmData Dataframe containing the MZ male data
 #' @param dzmData Dataframe containing the DZ male data
 #' @param mzfData Dataframe containing the MZ female data
 #' @param dzfData Dataframe containing the DZ female data
 #' @param dzoData Dataframe containing the DZ opposite-sex data (be sure and get in right order)
-#' @param sep Suffix used for twin variable naming. Allows using just the base names in selVars
+#' @param A_or_C  Whether to model sex-limitation on A or on C. (Defaults to "A")
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
@@ -46,8 +46,6 @@
 #' us_skinfold_data[, c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[, c('ssc_T1', 'ssc_T2')]/5
 #' us_skinfold_data[, c('sil_T1', 'sil_T2')] <- us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
 #'
-#' # Variables for Analysis
-#' selDVs = c('ssc','sil','caf','tri','bic')
 #' # Data objects for Multiple Groups
 #' mzmData = subset(us_skinfold_data, zyg == 1)
 #' mzfData = subset(us_skinfold_data, zyg == 2)
@@ -64,9 +62,30 @@
 #'		dzoData = dzoData
 #')
 #' m1 = mxTryHard(m1)
-#'# ============================
-#'# = run multivariate example =
-#'# ============================
+#'
+#'# =====================
+#'# = Bivariate example =
+#'# =====================
+#' m1 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", A_or_C = "A", autoRun = FALSE,
+#'		mzmData = mzmData, dzmData = dzmData, 
+#'		mzfData = mzfData, dzfData = dzfData, 
+#'		dzoData = dzoData
+#')
+#' m1 = mxTryHard(m1)
+#' 
+#' # ============================
+#' # = 3. Scalar Sex Limitation =
+#' # ============================
+#'
+#'m2 = umxModify(m1, regex = "^R([ace])[f|m]_", newLabels = "r\\1_", name = "Homogeneity", comparison = TRUE)
+#' 
+#' 
+#'# =============================
+#'# = run multi-variate example =
+#'# =============================
+#' # Variables for Analysis
+#' selDVs = c('ssc','sil','caf','tri','bic')
+#' selDVs = c('ssc','tri','bic')
 #' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun = FALSE,
 #'		  mzmData = mzmData, dzmData = dzmData, 
 #'      mzfData = mzfData, dzfData = dzfData, 
@@ -96,11 +115,10 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzmData, mzData = mzmData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 
 	# Auto-name ADE version
-	if(dzCr == .25 && name == "sexlim"){
-		name = "sexlimADE"
-	}
-	nVar = length(selDVs)
+	if(dzCr == .25 && name == "sexlim"){ name = "sexlimADE" }
+	nVar    = length(selDVs)
 	selVars = umx_paste_names(selDVs, sep= sep, suffixes = 1:2)
+
 	# Check names, and drop unused columns from data
 	umx_check_names(selVars, data = mzmData, die = TRUE); mzmData = mzmData[, selVars]
 	umx_check_names(selVars, data = dzmData, die = TRUE); dzmData = dzmData[, selVars]
@@ -128,7 +146,8 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	if(A_or_C == "A"){
 			# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is symm)
 			# (labels trimmed to ra at end)
-			# # TODO Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag@1)			
+			# TODO: Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag@1)
+			# TODO: perhaps this was to create the flexibility to turn ao into co?
 			Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 			Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 	} else if (A_or_C == "C"){
@@ -191,19 +210,19 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			mxAlgebra(name = "iSDm", solve(sqrt(I * Vm))),
 			mxAlgebra(name = "iSDf", solve(sqrt(I * Vf))),
 
-			# Algebras for Parameter Estimates and Derived Variance Components 
+			# Algebras for Parameter Estimates and Derived Variance Components.
 			mxAlgebra(name = "VarsZm", cbind(Am/Vm, Cm/Vm, Em/Vm), dimnames = list(selDVs, colZm)),
 			mxAlgebra(name = "CorsZm", cbind(Ram  , Rcm  , Rem  ), dimnames = list(selDVs, colZm)),
 
 			mxAlgebra(name = "VarsZf", cbind(Af/Vf, Cf/Vf, Ef/Vf), dimnames = list(selDVs, colZf)),
 			mxAlgebra(name = "CorsZf", cbind(Raf  , Rcf  , Ref)  , dimnames = list(selDVs, colZf)),
 
-			# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins (done!!)
-			umxMatrix("expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, "Mm")),
-			umxMatrix("expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, "Mf")),
-			umxMatrix("expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, rep(c("Mm", "Mf"), each = nVar))),
+			# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins (done!!).
+			umxMatrix("expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, "_mean_m")),
+			umxMatrix("expMeanGf", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, "_mean_f")),
+			umxMatrix("expMeanGo", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, rep(c("_mean_m", "_mean_f"), each = nVar))),
 
-			# Matrix & Algebra for expected Variance/Covariance Matrices in MZ & DZ twins 
+			# Matrix & Algebra for expected Variance/Covariance Matrices in MZ & DZ twins.
 			mxAlgebra(name = "expCovMZm", rbind(cbind(Vm,          Am  + Cm)          , cbind(         Am +          Cm, Vm))),
 			mxAlgebra(name = "expCovDZm", rbind(cbind(Vm, dzAr %x% Am  + dzCr %x% Cm) , cbind(dzAr %x% Am + dzCr %x% Cm, Vm))),
 			mxAlgebra(name = "expCovMZf", rbind(cbind(Vf,          Af  + Cf)          , cbind(         Af +          Cf, Vf))),
@@ -237,7 +256,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 	# Non-scalar (full) sex-lim label tweaks
 	if(A_or_C == "A"){
-		# convert (Rcf|Rcm|Rco) => "rc"		
+		# convert (Rcf|Rcm|Rco) => "Rc"		
 		if("^Rc[fmo](_.*)$" %in% umxGetParameters(model)){
 			model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
 		}
@@ -249,7 +268,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	}
 
 	# Tests: equate means would be expMeanGm, expMeanGf, expMeanGo
-	model = as(model, "MxModelSexLim") # set class so umxSummary, plot, etc. work.
+	model = as(model, "MxModelSexLim") # Set class so umxSummary, plot, etc. work.
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
 	invisible(model)
 }
@@ -257,7 +276,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' Shows a compact, publication-style, summary of a umx Sex Limitation model
 #'
 #' Summarize a fitted Cholesky model returned by \code{\link{umxSexLim}}. Can control digits, report comparison model fits,
-#' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
+#' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. The report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
 #' See documentation for other umx models summary here: \code{\link{umxSummary}}.
@@ -283,6 +302,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @seealso - \code{\link{umxACE}} 
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
+#' \dontrun{
 #  # =============================================
 #  # = Run Qualitative Sex Differences ACE model =
 #  # =============================================
@@ -290,6 +310,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' # = Load and Process Data =
 #' # =========================
 #' require(umx)
+#' umx_set_optimizer("SLSQP")
 #' data("us_skinfold_data")
 #' # rescale vars
 #' us_skinfold_data[, c('bic_T1', 'bic_T2')] <- us_skinfold_data[, c('bic_T1', 'bic_T2')]/3.4
@@ -307,20 +328,20 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' dzfData = subset(us_skinfold_data, zyg == 4)
 #' dzoData = subset(us_skinfold_data, zyg == 5)
 #'
-#' # ============================================================
-#' # = NOT WORKING YET! Should be good to use for Boulder/March =
-#' # ============================================================
-#' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun=FALSE,
-#'		  mzmData = mzmData, dzmData = dzmData, 
-#'        mzfData = mzfData, dzfData = dzfData, 
-#'        dzoData = dzoData)
-#' \dontrun{
+#' # =================================================================
+#' # = NOT WORKING YET! Should be good to use for Boulder/March 2020 =
+#' # =================================================================
+#' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
+#' 	mzmData = mzmData, dzmData = dzmData, 
+#' 	mzfData = mzfData, dzfData = dzfData, 
+#' 	dzoData = dzoData
+#' )
 #' umxSummary(m1, file = NA);
 #' umxSummarySexLim(m1, file = "name", std = TRUE)
 #' stdFit = umxSummarySexLim(m1, returnStd = TRUE);
 #' }
 umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
-	message("umxSummarySexLim is a beta feature. Somethings are broken. If any desired stats are not presented, let me know what's missing")
+	message("umxSummarySexLim is a beta feature. Some things are broken. If any desired stats are not presented, let me know what's missing")
 	report = match.arg(report)
 	# Depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
@@ -335,12 +356,44 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	selDVs  = dimnames(model$top$VarsZm$result)[[1]]
 	nVar    = length(selDVs)
 	# umx_msg(selDVs) # [1] "ssc_T1" "sil_T1" "caf_T1" "tri_T1" "bic_T1" "ssc_T2" "sil_T2" "caf_T2" "tri_T2" "bic_T2"
-	# selDVs = dimnames(model$top.expCovMZ)[[1]]
+
+	# 3-wide
+	tmpm = model$top$CorsZm$result
+	tmpf = model$top$CorsZf$result
+	
+	# round(m1$VarsZm$result,4); round(m1$CorsZm$result,4)
+	# round(m1$VarsZf$result,4); round(m1$CorsZf$result,4)
+	
+
+	message("Genetic Factor Correlations (male lower triangle, female upper)")
+	RAm = tmpm[1:nVar, 1:nVar]
+	RAf = tmpf[1:nVar, 1:nVar]
+	RAboth = RAm;
+	RAboth[upper.tri(RAboth)] = RAf[upper.tri(RAf)]
+	dimnames(RAboth)[[2]] = dimnames(RAboth)[[1]]
+	umxAPA(RAboth)
+
+	message("C Factor Correlations (male lower triangle, female upper)")
+	RCm = tmpm[1:nVar, (nVar + 1):(nVar * 2)]
+	RCf = tmpf[1:nVar, (nVar + 1):(nVar * 2)]
+	RCboth = RCm
+	RCboth[upper.tri(RCboth)] = RCf[upper.tri(RCf)]
+	dimnames(RAboth)[[2]] = dimnames(RAboth)[[1]]
+	umxAPA(RAboth)
+
+	message("E Factor Correlations (male lower triangle, female upper)")
+	REm = tmpm[1:nVar, (nVar * 2 + 1):(nVar * 3)]
+	REf = tmpf[1:nVar, (nVar * 2 + 1):(nVar * 3)]
+	REboth = REm
+	REboth[upper.tri(REboth)] = REf[upper.tri(REf)]
+	dimnames(RAboth)[[2]] = dimnames(RAboth)[[1]]
+	umxAPA(REboth)
 
 	if(std){
 		message("Standardized solution")
 		# nb: VarsZm = cbind(Am/Vm, Cm/Vm, Em/Vm), dimnames = list(selDVs, colZm)),
 		# = nVar * nVar*3 = 1r * 3c for nVar = 1
+		# 3-wide
 		tmpm = model$top$VarsZm$result
 		tmpf = model$top$VarsZf$result
 		Am = diag(as.matrix(tmpm[1:nVar, 1:nVar]))
@@ -349,36 +402,19 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		Af = diag(as.matrix(tmpf[1:nVar, 1:nVar]))
 		Cf = diag(as.matrix(tmpf[1:nVar, (nVar + 1):(nVar * 2)]))
 		Ef = diag(as.matrix(tmpf[1:nVar, (nVar * 2 + 1):(nVar * 3)]))
+		# Estimates (will be printed below...)
 		Estimates = data.frame(cbind(Am, Cm, Em, Af, Cf, Ef))
-
-		tmpm = model$top$CorsZm$result
-		RAm = tmpm[1:nVar, 1:nVar]
-		RCm = tmpm[1:nVar, (nVar + 1):(nVar * 2)]
-		REm = tmpm[1:nVar, (nVar * 2 + 1):(nVar * 3)]
-
-		tmpf = model$top$CorsZf$result
-		RAf = tmpf[1:nVar, 1:nVar]
-		RCf = tmpf[1:nVar, (nVar + 1):(nVar * 2)]
-		REf = tmpf[1:nVar, (nVar * 2 + 1):(nVar * 3)]
-
-		message("Genetic Factor Correlations")
-		RAboth = RAm
-		RAboth[upper.tri(RAboth)] = RAf[upper.tri(RAf)]
-		umxAPA(RAboth)
-
-		message("C Factor Correlations")
-		RCboth = RCm
-		RCboth[upper.tri(RCboth)] = RCf[upper.tri(RCf)]
-		umxAPA(RCboth)
-
-		message("E Factor Correlations")
-		REboth = REm
-		REboth[upper.tri(REboth)] = REf[upper.tri(REf)]
-		umxAPA(REboth)
-
 	} else {
-		message("Raw solution not yet implemented")
-		# TODO add raw solution for sexlim
+		# TODO sexlim: Check raw solution
+		# Am, Cm, Em, dimnames = list(selDVs, colZm)),
+		Am = diag(as.matrix(model$top$Am$result))
+		Cm = diag(as.matrix(model$top$Cm$result))
+		Em = diag(as.matrix(model$top$Em$result))
+		Af = diag(as.matrix(model$top$Af$result))
+		Cf = diag(as.matrix(model$top$Cf$result))
+		Ef = diag(as.matrix(model$top$Ef$result))
+		# Estimates (will be printed below...)
+		Estimates = data.frame(cbind(Am, Cm, Em, Af, Cf, Ef))
 	}
 
 	if(model$top$dzCr$values == .25){
@@ -394,16 +430,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	}
 	
 	if(extended == TRUE) {
-		message("TODO: implement Unstandardized path coefficients for SexLim summary")
-		# aClean = a
-		# cClean = c
-		# eClean = e
-		# aClean[upper.tri(aClean)] = NA
-		# cClean[upper.tri(cClean)] = NA
-		# eClean[upper.tri(eClean)] = NA
-		# unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
-		# names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-		# umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
+		message("TODO: Not sure what extra information would be helpful (if any)")
 	}
 
 	hasCIs = umx_has_CIs(model)
@@ -468,7 +495,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 			# print(c_CI)
 			# print(e_CI)
 
-			message("TODO implement CI report for umxSexLim")
+			message("TODO: umxSummary.MxModel.SexLim CI report not yet implemented - use summary")
 			# Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = rowNames, stringsAsFactors = FALSE)
 			# names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
 			# Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
@@ -488,10 +515,10 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		# message("making dot file")
 		if(hasCIs & CIs){
 			# TODO turn plot of CI_Fit back on
-			# umxPlotACE(CI_Fit, file = file, std = FALSE)
+			# umxPlotSexLim(CI_Fit, file = file, std = FALSE)
 		} else {
 			message("plot not implemented yet for sex lim")
-			# umxPlotACE(model, file = file, std = std)
+			# umxPlotSexLim(model, file = file, std = std)
 		}
 	}
 	if(returnStd) {

@@ -126,11 +126,11 @@
 #
 umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = .5, dzCr = 1, correlatedA = FALSE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, equateMeans = TRUE, weightVar = NULL, addStd = TRUE, addCI = TRUE, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# TODO implement correlatedA
-	nSib                = 2 # Number of siblings in a twin pair.
 	type                = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	tryHard             = match.arg(tryHard)
 	# covMethod         = match.arg(covMethod)
+	nSib                = 2 # Number of siblings in a twin pair.
 
 	if(correlatedA){ message("Sorry, I haven't implemented correlated A yet...") }
 

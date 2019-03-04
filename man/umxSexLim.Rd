@@ -66,8 +66,6 @@ us_skinfold_data[, c('caf_T1', 'caf_T2')] <- us_skinfold_data[, c('caf_T1', 'caf
 us_skinfold_data[, c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[, c('ssc_T1', 'ssc_T2')]/5
 us_skinfold_data[, c('sil_T1', 'sil_T2')] <- us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
 
-# Variables for Analysis
-selDVs = c('ssc','sil','caf','tri','bic')
 # Data objects for Multiple Groups
 mzmData = subset(us_skinfold_data, zyg == 1)
 mzfData = subset(us_skinfold_data, zyg == 2)
@@ -84,9 +82,30 @@ m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun = FALSE,
 	dzoData = dzoData
 )
 m1 = mxTryHard(m1)
+
+# =====================
+# = Bivariate example =
+# =====================
+m1 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", A_or_C = "A", autoRun = FALSE,
+	mzmData = mzmData, dzmData = dzmData, 
+	mzfData = mzfData, dzfData = dzfData, 
+	dzoData = dzoData
+)
+m1 = mxTryHard(m1)
+
 # ============================
-# = run multivariate example =
+# = 3. Scalar Sex Limitation =
 # ============================
+
+m2 = umxModify(m1, regex = "^R([ace])[f|m]_", newLabels = "r\\\\1_", name = "Homogeneity", comparison = TRUE)
+
+
+# =============================
+# = run multi-variate example =
+# =============================
+# Variables for Analysis
+selDVs = c('ssc','sil','caf','tri','bic')
+selDVs = c('ssc','tri','bic')
 m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun = FALSE,
 	  mzmData = mzmData, dzmData = dzmData, 
      mzfData = mzfData, dzfData = dzfData, 

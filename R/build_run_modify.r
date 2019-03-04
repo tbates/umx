@@ -432,8 +432,10 @@ umxModel <- function(...) {
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), type = c('Auto', 'FIML', 'cov', 'cor', 'WLS', 'DWLS', 'ULS'), optimizer = NULL, verbose = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
+
+	type          = match.arg(type)
+	tryHard       = match.arg(tryHard)
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
-	type = match.arg(type)
 
 	# =================
 	# = Set optimizer =
@@ -677,7 +679,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' 
 umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
 	dot.items = list(...) # grab all the dot items: models...	
-	umx_check(boolean.test=is.character(name), action="stop", message="You need to set the name for the supermodel with: name = 'modelName' ")
+	tryHard       = match.arg(tryHard)
+	umx_check(boolean.test= is.character(name), action="stop", message="You need to set the name for the supermodel with: name = 'modelName' ")
 	nModels = length(dot.items)
 	# get list of model names
 	modelNames = c()
@@ -789,6 +792,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", comparison = TRUE)
 #' 
 umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+	tryHard = match.arg(tryHard)
 	if(!is.null(master)){
 		x = umxEquate(lastFit, master = master, slave = update, free = freeToStart, verbose = verbose, name = name, autoRun = autoRun, comparison = comparison)
 		return(x)
@@ -836,11 +840,18 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 			# Handle 1 or more regular expressions.
 			for (i in 1:length(update)) {
 				match = umxGetParameters(newModel, regex = update[i], free = freeToStart, verbose = verbose)				
+				if(verbose){
+					message("Matched labels = ", omxQuotes(match))
+				}
 				if(is.null(newlabels)){
 					newModel = omxSetParameters(newModel, labels = match, free = free, values = value, name = name)
 				}else{
-					# there are new labels to match up
-					newModel = omxSetParameters(newModel, labels = match, newlabels = newlabels[i], name = name)
+					# There are new labels to match up
+					newFinds = namez(df= match, pattern= update[i], replacement= newlabels[i] )
+					newModel = omxSetParameters(newModel, labels = match, newlabels = newFinds, name = name)
+					if(verbose){
+						message("newlabels = ", omxQuotes(newFinds))
+					}
 				}
 			}
 		}
@@ -916,6 +927,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' umxReduce(m1)
 #' }
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
+	tryHard = match.arg(tryHard)
 	nSib = 2;
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
 	selDVs  = umx_paste_names(selDVs , sep = sep, suffixes = 1:2)
@@ -2004,7 +2016,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	# TODO sub-class umxACEcov (random covariates) fn to support umxSummary and plot
 	
 	nSib = 2 # Number of siblings in a twin pair
-
+	tryHard             = match.arg(tryHard)
 	type                = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	
@@ -2395,8 +2407,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), correlatedA = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, equateMeans= TRUE, weightVar = weightVar, bVector = bVector, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# New style CP model
 	# TODO umxCP: Add covariates
-	type                = match.arg(type)
 	tryHard             = match.arg(tryHard)
+	type                = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	nSib                = 2 # Number of siblings in a twin pair.
 
@@ -2592,6 +2604,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 #' plot(m1)
 #' }
 umxIPold <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, equateMeans = TRUE, dzAr = .5, dzCr = 1, correlatedA = FALSE, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
+	tryHard = match.arg(tryHard)
 	# TODO implement correlatedA
 	if(length(nFac) == 1){
 		nFac = c(a = nFac, c = nFac, e = nFac)
@@ -3014,8 +3027,11 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' # =============================
 #' a = umxLabel(mxMatrix(name = "a", "Full", 3, 3, values = 1:9))
 #' a$labels
+#' a = umxLabel(mxMatrix(name = "a", "Full", 3, 3, values = 1:9), baseName="bob")
+#' a$labels
 #' # note: labels with "data." in the name are left untouched!
 #' a = mxMatrix(name = "a", "Full", 1,3, labels = c("data.a", "test", NA))
+#' a$labels
 #' umxLabel(a, verbose = TRUE)
 #' umxLabel(a, verbose = TRUE, overRideExisting = FALSE)
 #' umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
@@ -3063,6 +3079,7 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param ubound Upper bounds on cells (Defaults to NA)
 #' @param byrow  Whether to fill the matrix down columns or across rows first (Default = getOption('mxByrow')
 #' @param dimnames NA
+#' @param baseName Set to override the default (which is to use the matrix name as the prefix).
 #' @param condenseSlots Whether to save memory by NULLing out unused matrix elements, like labels, ubound etc. Default = getOption('mxCondenseMatrixSlots')
 #' @param ... Additional parameters (!! not currently supported by umxMatrix)
 #' @param joinKey See mxMatrix documentation: Defaults to as.character(NA)
@@ -3074,8 +3091,16 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @seealso - \code{\link{xmu_simplex_corner}}, \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
-#' umxMatrix("test", "Full", 1, 1)
-umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA, byrow = getOption('mxByrow'), dimnames = NA, condenseSlots = getOption('mxCondenseMatrixSlots'), ..., joinKey = as.character(NA), joinModel = as.character(NA), jiggle = NA) {
+#' umxMatrix("test", "Full", 2, 2)$labels
+#' #      [,1]        [,2]
+#' # [1,] "test_r1c1" "test_r1c2"
+#' # [2,] "test_r2c1" "test_r2c2"
+#'
+#' # over-ride default use of matrix name as prefix for labels
+#' umxMatrix("test", "Full", 2, 2, baseName = "bob")$labels
+#' umxMatrix("Rao", "Stand", nrow=nVar, free=fixDiag, values=st_Dia1, baseName = "ra", lbound=-1, ubound=1)
+#'
+umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA, byrow = getOption('mxByrow'), baseName = NA, dimnames = NA, condenseSlots = getOption('mxCondenseMatrixSlots'), ..., joinKey = as.character(NA), joinModel = as.character(NA), jiggle = NA) {
 	legalMatrixTypes = c("Diag", "Full", "Iden", "Lower", "Sdiag", "Stand", "Symm", "Unit",  "Zero")
 	if(name %in% legalMatrixTypes){
 		stop("You used ", name, "as the name of your matrix. You might be used to mxMatrix, where type comes first? But it is not a legal matrix name.")
@@ -3092,7 +3117,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 	} 
 	x = mxMatrix(type = type, nrow = nrow, ncol = ncol, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound, byrow = byrow, dimnames = dimnames, name = name, condenseSlots = condenseSlots, joinKey = joinKey, joinModel = joinModel, ...)
 	if(setLabels){
-		x = umxLabel(x, jiggle = jiggle)
+		x = umxLabel(x, baseName = baseName, jiggle = jiggle)
 	}
 	return(x)
 }
@@ -3348,6 +3373,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' 	     master = "G_to_x1", slave = "G_to_x2"
 #' )
 umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = FALSE, name = NULL, autoRun = FALSE, tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), comparison = TRUE) {
+	tryHard = match.arg(tryHard)
 	free = umx_default_option(free, c(TRUE, FALSE, NA)) # match.arg can't handle Boolean as options?
 	if(!umx_is_MxModel(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])

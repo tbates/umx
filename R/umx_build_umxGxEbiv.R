@@ -62,6 +62,7 @@
 #' umxReduce(m1)
 #' }
 umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
+	tryHard = match.arg(tryHard)
 	nSib = 2;
 	# =================
 	# = Set optimizer =

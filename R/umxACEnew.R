@@ -272,10 +272,11 @@
 #' plot(m1)
 umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, covMethod = c("fixed", "random"), dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 
-		nSib                = 2 # Number of siblings in a twin pair.
+		tryHard             = match.arg(tryHard)
 		covMethod           = match.arg(covMethod)
 		type                = match.arg(type)
 		allContinuousMethod = match.arg(allContinuousMethod)
+		nSib                = 2 # Number of siblings in a twin pair.
 		# TODO check covs
 		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
 		

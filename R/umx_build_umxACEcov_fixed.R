@@ -93,6 +93,8 @@
 #' 	     dzData = dzData, mzData = mzData)
 #' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, optimizer = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+		tryHard = match.arg(tryHard)
+	
 		nSib = 2 # number of siblings in a twin pair
 		if(dzCr == .25 && name == "ACEcov"){ name = "ADEcov"}
 		xmu_twin_check(selDVs= c(selDVs, selCovs), dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, enforceSep=TRUE)

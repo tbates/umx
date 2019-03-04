@@ -6,9 +6,9 @@
 \usage{
 umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
   free = FALSE, values = NA, labels = TRUE, lbound = NA,
-  ubound = NA, byrow = getOption("mxByrow"), dimnames = NA,
-  condenseSlots = getOption("mxCondenseMatrixSlots"), ...,
-  joinKey = as.character(NA), joinModel = as.character(NA),
+  ubound = NA, byrow = getOption("mxByrow"), baseName = NA,
+  dimnames = NA, condenseSlots = getOption("mxCondenseMatrixSlots"),
+  ..., joinKey = as.character(NA), joinModel = as.character(NA),
   jiggle = NA)
 }
 \arguments{
@@ -32,6 +32,8 @@ umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
 
 \item{byrow}{Whether to fill the matrix down columns or across rows first (Default = getOption('mxByrow')}
 
+\item{baseName}{Set to override the default (which is to use the matrix name as the prefix).}
+
 \item{dimnames}{NA}
 
 \item{condenseSlots}{Whether to save memory by NULLing out unused matrix elements, like labels, ubound etc. Default = getOption('mxCondenseMatrixSlots')}
@@ -51,7 +53,15 @@ umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
 umxMatrix is a wrapper for mxMatrix which labels cells buy default, and has the name parameter first in order.
 }
 \examples{
-umxMatrix("test", "Full", 1, 1)
+umxMatrix("test", "Full", 2, 2)$labels
+#      [,1]        [,2]
+# [1,] "test_r1c1" "test_r1c2"
+# [2,] "test_r2c1" "test_r2c2"
+
+# over-ride default use of matrix name as prefix for labels
+umxMatrix("test", "Full", 2, 2, baseName = "bob")$labels
+umxMatrix("Rao", "Stand", nrow=nVar, free=fixDiag, values=st_Dia1, baseName = "ra", lbound=-1, ubound=1)
+
 }
 \references{
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}

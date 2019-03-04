@@ -67,8 +67,11 @@ umxGetParameters(m2, free = TRUE) # suffixes added
 # =============================
 a = umxLabel(mxMatrix(name = "a", "Full", 3, 3, values = 1:9))
 a$labels
+a = umxLabel(mxMatrix(name = "a", "Full", 3, 3, values = 1:9), baseName="bob")
+a$labels
 # note: labels with "data." in the name are left untouched!
 a = mxMatrix(name = "a", "Full", 1,3, labels = c("data.a", "test", NA))
+a$labels
 umxLabel(a, verbose = TRUE)
 umxLabel(a, verbose = TRUE, overRideExisting = FALSE)
 umxLabel(a, verbose = TRUE, overRideExisting = TRUE)

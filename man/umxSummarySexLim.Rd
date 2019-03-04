@@ -41,17 +41,19 @@ Defaults to NA = do not create plot output}
 }
 \description{
 Summarize a fitted Cholesky model returned by \code{\link{umxSexLim}}. Can control digits, report comparison model fits,
-optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
+optionally show the Rg (genetic and environmental correlations), and show confidence intervals. The report parameter allows
 drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 }
 \details{
 See documentation for other umx models summary here: \code{\link{umxSummary}}.
 }
 \examples{
+\dontrun{
 # =========================
 # = Load and Process Data =
 # =========================
 require(umx)
+umx_set_optimizer("SLSQP")
 data("us_skinfold_data")
 # rescale vars
 us_skinfold_data[, c('bic_T1', 'bic_T2')] <- us_skinfold_data[, c('bic_T1', 'bic_T2')]/3.4
@@ -69,14 +71,14 @@ dzmData = subset(us_skinfold_data, zyg == 3)
 dzfData = subset(us_skinfold_data, zyg == 4)
 dzoData = subset(us_skinfold_data, zyg == 5)
 
-# ============================================================
-# = NOT WORKING YET! Should be good to use for Boulder/March =
-# ============================================================
-m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun=FALSE,
-	  mzmData = mzmData, dzmData = dzmData, 
-       mzfData = mzfData, dzfData = dzfData, 
-       dzoData = dzoData)
-\dontrun{
+# =================================================================
+# = NOT WORKING YET! Should be good to use for Boulder/March 2020 =
+# =================================================================
+m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
+	mzmData = mzmData, dzmData = dzmData, 
+	mzfData = mzfData, dzfData = dzfData, 
+	dzoData = dzoData
+)
 umxSummary(m1, file = NA);
 umxSummarySexLim(m1, file = "name", std = TRUE)
 stdFit = umxSummarySexLim(m1, returnStd = TRUE);
