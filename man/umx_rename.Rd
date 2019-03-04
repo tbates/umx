@@ -42,10 +42,12 @@ text based on patterns and replacements. so to change "replacement" to "in place
 x = mtcars
 x = umx_rename(x, replace = c(cyl = "cylinder"))
 # alternate style
+x = umx_rename(x, old = c("disp"), replace = c("displacement"), test= TRUE)
 x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 umx_check_names("displacement", data = x, die = TRUE)
 # This will warn that "disp" does not exist (anymore)
-x = umx_rename(x, old = c("disp"), replace = c("displacement"))
+x = umx_rename(x, old = c("disp", "am"), replace = c("displacement", "auto"))
+x = umx_rename(x, grep = "lacement", replace = "", test=TRUE) # test using grep to revert to disp
 x = umx_rename(x, grep = "lacement", replace = "") # using grep to revert to disp
 umx_names(x, "^d") # all names begining with a d
 }

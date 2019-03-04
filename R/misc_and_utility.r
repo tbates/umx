@@ -1731,10 +1731,12 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' x = mtcars
 #' x = umx_rename(x, replace = c(cyl = "cylinder"))
 #' # alternate style
+#' x = umx_rename(x, old = c("disp"), replace = c("displacement"), test= TRUE)
 #' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
 #' umx_check_names("displacement", data = x, die = TRUE)
 #' # This will warn that "disp" does not exist (anymore)
-#' x = umx_rename(x, old = c("disp"), replace = c("displacement"))
+#' x = umx_rename(x, old = c("disp", "am"), replace = c("displacement", "auto"))
+#' x = umx_rename(x, grep = "lacement", replace = "", test=TRUE) # test using grep to revert to disp
 #' x = umx_rename(x, grep = "lacement", replace = "") # using grep to revert to disp
 #' umx_names(x, "^d") # all names begining with a d
 umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE) {
@@ -1755,7 +1757,7 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 		if(test){
 			message("The following changes would be made (set test =FALSE to actually make them)")
 			message(length(nameVector), " names found. ",
-			length(nameVector[!(nameVector == new_names)]), " changed. Old Was:")
+			length(nameVector[!(nameVector == new_names)]), " would be changed. Old:")
 			print(nameVector[!(nameVector == new_names)])
 			message("New:")
 			print(new_names[!(nameVector == new_names)])
@@ -1768,14 +1770,16 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 		}
 		invisible(x)		
 	} else {
+		# not grep
 		if(!is.null(old)){
-		# message("replacing old with replace")
-		if(length(old) != length(replace)){
-			stop("You are trying to replace ", length(old), " old names with ", length(replace), "new names: Lengths must match")
-		}
-		names_to_replace <- old
-		new_names_to_try <- replace
+			# message("replacing old with replace")
+			if(length(old) != length(replace)){
+				stop("You are trying to replace ", length(old), " old names with ", length(replace), "new names: Lengths must match")
+			}
+			names_to_replace <- old
+			new_names_to_try <- replace
 		} else {
+			# replace is a key-value list of names and replacements
 			names_to_replace <- names(replace)
 			new_names_to_try <- unname(replace)
 		}
@@ -1798,13 +1802,13 @@ umx_rename <- function(x, replace = NULL, old = NULL, grep = NULL, test = FALSE)
 		)
 		  stop(err)
 		}
-		new_names <- new_names_to_try[match(old_names, names_to_replace)]  
+		new_names <- new_names_to_try[match(old_names, names_to_replace)]
 		if(test){
 			message("The following changes would be made (set test =FALSE to actually make them")
 			message("Names to be replaced")
 			print(names_to_replace)
 			message("replacement names:")
-			print(new_names)
+			print(new_names[!is.na(new_names)])
 			invisible(x)
 		} else {
 			names(x) = new_names

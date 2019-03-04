@@ -104,12 +104,12 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
 	# ================================
-	# Quantitative & Qualitative Sex Differences for A
+	# Quantitative & Qualitative Sex Differences for A (or C)
+	# Rc (or Ra) constrained across male/female and opposite sex
 	# Male and female paths, plus Ra, Rc and Re between variables for males and females
-	# Male-Female correlations in DZO group between A factors Rao FREE
-	# Rc constrained across male/female and opposite sex
+	# Male-Female correlations in DZO group between A factors (Rao) FREE
 	
-	# Correlated factors sex limitations
+	# Correlated factors sex limitation
 
 	nSib = 2 # Number of siblings in a twin pair
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzmData, mzData = mzmData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
@@ -155,7 +155,16 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			Rao = umxMatrix("Rao", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 			Rco = umxMatrix("Rco", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 	}
-	Rao_and_Rco_matrices = list(Rao, Rco)
+
+	# oddsratio <- function(grp1= c(n, N), grp2= c(n, N)) {
+	# 	odds1 = odds(grp1[1], grp1[2])
+	# 	odds2 = odds(grp2[1], grp2[2])
+	# 	OR = odds1/odds2
+	# 	list(odds1=odds1,odds2=odds2, OR=OR)
+	# }
+	# odds <- function(n,N) {
+	# 	n/(N-n)
+	# }
 
 	model = mxModel(name,
 		mxModel("top",
@@ -180,7 +189,8 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			umxMatrix("Rem", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
 			umxMatrix("Ref", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
 
-			Rao_and_Rco_matrices,
+			# Rao_and_Rco_matrices
+			Rao, Rco,
 
 			# Algebra Male and female variance components 
 			mxAlgebra(name = "Am", Ram %&% am),

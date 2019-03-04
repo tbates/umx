@@ -26,6 +26,8 @@ test_that("umx_rename works for different values", {
 
 	# alternate style
 	x = mtcars
+	umx_rename(x, old = c("cyl"), replace = c("cylinder"), test=T)
+	
 	x = umx_rename(x, old = c("cyl"), replace = c("cylinder"))
 	expect_equal(names(x), newNames)
 })
