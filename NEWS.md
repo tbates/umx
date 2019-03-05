@@ -1,16 +1,33 @@
 # Upcoming in next version... umx 3.0.0 March 2018, R 3.5.2
+* Paper is out! Our paper on umx is out in Twin Research and Human Genetics!
+* NEW: ?umxExamples` contains all the example code from Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. Twin Research and Human Genetics.
 * FIX: `umxSimplex`
 * FIX: `umxSexLim`
 * NEW: `umxRAM` supports WLS, UWLS, DWLS models!
 * NEW: `umxACE` supports WLS, UWLS, DWLS models!
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
+* FIXED: `umx_rename` never previously gave correct values when in test = TRUE mode for non-grep searches (drop NAs)
+* FIX `umxSexLim` match.arg `tryHard`
+* IMPROVEMENT: `umxModify` now supports find and replace labels with grep (not just find with grep and set free/value)
+* IMPROVEMENT: `umxModify` now obeys `verbose` option
+* IMPROVED: `umx_time` reports % change between model times
+* IMPROVED: `umIP` help
+* IMPROVED: `umx_make` now supports quick
+* FIX: use of `selVars` vs. selDVs across different functions (search for "# New-style build-block" to see these changes
+* NEW: `umxACEnew` supports new-style WLS 
+* BEGIN: Adding `type` (WLS) added to twin models...
+* BEGIN: Universal weighted rows support for all twin models
+* IMPROVED: `xmu_assemble_twin_supermodel` no longer take bVector (uses existence of weights instead)
+* CLEANUP: Removed `thresholds` option from several functions (always doing deviation-based, WLS isn't thresholds, and left-censored will be implemented differently)
+* NEW: `umx_make_top_twin_models` increases the robustness and improvability of all twin scripts.
+* NEW: umx_set_data_variance_check to set the criteria for warning users about excessively small variance or divergence of variance.
 
 # umx 2.10.0 January 2019, R 3.5.2
 * IMPROVED: `umx` more robust to new data types especially in `umxValues` which processes the cov or raw data of a model into start values.
 * NEW: `xmu_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
 	* `umx_set_data_variance_check` get/set variance tolerance.
-* DATA: Added Fischbein (1977) weight data (weight of 66 females record over six 6-month intervals. `data(Fischbein_wt)`
+* DATA: `data(Fischbein_wt)` weight of 66 females record over six 6-month intervals (from Fischbein (1977) weight data).
 * FIX: `umxValues` to work more reliably with data with no means.
 * IMPROVED: `umx_read_lower` examples and input checking.
 
