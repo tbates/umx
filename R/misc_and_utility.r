@@ -1,15 +1,17 @@
-#' Score a scale by summing normal and reversed items
+#' Score a psychometric scale by summing normal and reversed items
 #'
 #' @description
-#' Score a scale by summing normal and reversed items. `base` is the string common to all item names.
-#' pos and rev are the normal and reverse-scored item numbers. `itemMax` is the high score (to compute how to reverse items).
+#' To generate scale-scores, items must be named on the pattern <base><n>. `base` is the string common to all item names (variable names).
+#' `pos` and `rev` are vectors of the item numbers for the normal and reverse-scored item numbers. The score is the sum of the responses to the 
+#' normal and reversed items.  To reverse items, the function uses `itemMax` is the high score (to compute how to reverse items).
+#' `min` defaults to 1.
 #' @param base String common to all item names.
-#' @param pos  The positive-scored item numbers.
-#' @param rev  The reverse-scored item numbers.
+#' @param pos The positive-scored item numbers.
+#' @param rev The reverse-scored item numbers.
 #' @param min Min possible score (default = 1). Not implemented for values other than 1 so far...
 #' @param max Max possible score for an item (to compute how to reverse items).
 #' @param data The data frame
-#' @param score = Sum or Mean (default = "sum")
+#' @param score = Totals or Mean (default = "totals")
 #' @param name = name of the scale to be returned. Defaults to "<base>_score"
 #' @return - scores
 #' @export
@@ -17,22 +19,26 @@
 #' @md
 #' @examples
 #' library(psych)
-#' tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, max = 6, data= bfi, name = "A")
-#' tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= bfi, name = "E")
+#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
+#' tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp, name = "E")
 #' 
-#' # Using @BillRevelle's psych package: More diagnostics.
-#' scores= psych::scoreItems(list(E= c("-E1","-E2","E3","E4","E5")), bfi, min = 1, max = 6)
+#' # Using @BillRevelle's psych package: More diagnostics, including alpha
+#' scores= psych::scoreItems(items = bfi, min = 1, max = 6, keys = list(
+#'		E = c("-E1","-E2", "E3",  "E4", "E5"),
+#'		A = c( "-A1", "A2", "A3", "A4", "A5"))
+#' )
 #' summary(scores)
 #' print(scores)
 #' 
 #' # Compare output (note, scoreItems replaces NAs with the sample median by default...)
-#' all(as.numeric(scores$scores)*5 ==tmp[,"E"], na.rm = TRUE)
-#' 
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL,  score = c("sum","mean"), name = NULL) {
+#' RevelleE = as.numeric(scores$scores[,"E"]) * 5
+#' all(RevelleE == tmp[,"E"], na.rm = TRUE)
+#'
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL,  score = c("totals", "mean"), name = NULL) {
 	score = match.arg(score)
 	
-	if(score!="sum"){
-		stop("You idiot! Tim hasn't implemented means as a score yet... sorry :-(")
+	if(score!="totals"){
+		stop("Tim hasn't implemented means as a score yet... sorry :-(")
 	}
 	if(is.null(name)){
 		stop("You must set 'name' (the name for the new column")
@@ -40,7 +46,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	if(is.null(max)){
 		stop("You must set 'max' (the highest possible score for an item) in umx_score_scale")
 	}
-	if(min!=1){
+	if(min != 1){
 		stop("umx_score_scale doesn't handle min !=1")
 	}
 

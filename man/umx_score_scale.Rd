@@ -2,10 +2,11 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_score_scale}
 \alias{umx_score_scale}
-\title{Score a scale by summing normal and reversed items}
+\title{Score a psychometric scale by summing normal and reversed items}
 \usage{
 umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
-  max = NULL, data = NULL, score = c("sum", "mean"), name = NULL)
+  max = NULL, data = NULL, score = c("totals", "mean"),
+  name = NULL)
 }
 \arguments{
 \item{base}{String common to all item names.}
@@ -20,7 +21,7 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
 
 \item{data}{The data frame}
 
-\item{score}{= Sum or Mean (default = "sum")}
+\item{score}{= Totals or Mean (default = "totals")}
 
 \item{name}{= name of the scale to be returned. Defaults to "<base>_score"}
 }
@@ -30,21 +31,27 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
 }
 }
 \description{
-Score a scale by summing normal and reversed items. \code{base} is the string common to all item names.
-pos and rev are the normal and reverse-scored item numbers. \code{itemMax} is the high score (to compute how to reverse items).
+To generate scale-scores, items must be named on the pattern <base><n>. \code{base} is the string common to all item names (variable names).
+\code{pos} and \code{rev} are vectors of the item numbers for the normal and reverse-scored item numbers. The score is the sum of the responses to the
+normal and reversed items.  To reverse items, the function uses \code{itemMax} is the high score (to compute how to reverse items).
+\code{min} defaults to 1.
 }
 \examples{
 library(psych)
-tmp = umx_score_scale("A", pos = 1:3, rev = 4:5, max = 6, data= bfi, name = "A")
-tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= bfi, name = "E")
+tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
+tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp, name = "E")
 
-# Using @BillRevelle's psych package: More diagnostics.
-scores= psych::scoreItems(list(E= c("-E1","-E2","E3","E4","E5")), bfi, min = 1, max = 6)
+# Using @BillRevelle's psych package: More diagnostics, including alpha
+scores= psych::scoreItems(items = bfi, min = 1, max = 6, keys = list(
+	E = c("-E1","-E2", "E3",  "E4", "E5"),
+	A = c( "-A1", "A2", "A3", "A4", "A5"))
+)
 summary(scores)
 print(scores)
 
 # Compare output (note, scoreItems replaces NAs with the sample median by default...)
-all(as.numeric(scores$scores)*5 ==tmp[,"E"], na.rm = TRUE)
+RevelleE = as.numeric(scores$scores[,"E"]) * 5
+all(RevelleE == tmp[,"E"], na.rm = TRUE)
 
 }
 \seealso{
