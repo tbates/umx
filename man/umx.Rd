@@ -4,17 +4,17 @@
 \name{umx}
 \alias{umx}
 \alias{umx-package}
-\title{Helper Functions for Structural Equation Modeling in OpenMx}
+\title{Functions for Structural Equation Modeling in OpenMx}
 \description{
-umx allows you to more easily build, run, modify, and report models using OpenMx
-with code. The core functions are linked below under \strong{See Also}
-}
-\details{
-The functions are organized into families: Have a read of these below, click to explore.
+\code{umx} allows you to more easily build, run, modify, and report structural models, building on the OpenMx package.
+All core functions are organized into families, so they are easier to find (see "families" below under \strong{See Also})
 
-All the functions have explanatory examples, so use the help, even if you think it won't help :-)
+All the functions have fullt-featured and well commented examples and even \emph{figures}, so use the help, even if you think it won't help :-)
 Have a look, for example at \code{\link{umxRAM}}
 
+Check out NEWS about new features at \code{news(package = "umx")}
+}
+\details{
 Introductory working examples are below. You can run all demos with demo(umx)
 When I have a vignette, it will be: vignette("umx", package = "umx")
 
@@ -74,7 +74,9 @@ plot(m1, std = TRUE)
 plot(m1, std = TRUE, file = NA)
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Teaching and testing Functions: \code{\link{tmx_genotypic_effect}},

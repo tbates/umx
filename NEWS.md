@@ -1,6 +1,7 @@
 # Upcoming in next version... umx 3.0.0 March 2018, R 3.5.2
-* Paper is out! Our paper on umx is out in Twin Research and Human Genetics!
-* NEW: ?umxExamples` contains all the example code from Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. Twin Research and Human Genetics.
+
+* Paper is out! Our paper on umx is out in *Twin Research and Human Genetics*!
+* NEW: `?umxExamples` contains all the example code from Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. Twin Research and Human Genetics.
 * FIX: `umxSimplex`
 * FIX: `umxSexLim`
 * NEW: `umxRAM` supports WLS, UWLS, DWLS models!
@@ -24,6 +25,7 @@
 * NEW: umx_set_data_variance_check to set the criteria for warning users about excessively small variance or divergence of variance.
 
 # umx 2.10.0 January 2019, R 3.5.2
+
 * IMPROVED: `umx` more robust to new data types especially in `umxValues` which processes the cov or raw data of a model into start values.
 * NEW: `xmu_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
 	* `umx_set_data_variance_check` get/set variance tolerance.
@@ -32,6 +34,7 @@
 * IMPROVED: `umx_read_lower` examples and input checking.
 
 # umx 2.9.9 December 2018, R 3.5.2
+
 * Compatibility with OpenMx changes.
 * NEW: `umxSummarizeTwinData` to create summary tables for papers using twin Data.
 * IMPROVED: `umxRAM`: support definition variables to some extent in umxRAM.
@@ -43,6 +46,7 @@
 * INCOMPATIBLE: `umx_scale_wide_twin_data` dropped support for deprecated suffix parameter.
 
 # umx 2.9.0 December 2018, R 3.5.1: More love
+
 * INCOMPATIBLE: Support for `suffix` as a synonym for `sep` removed after 3-years of deprecation warnings.
 * FIXED: `umxSummary`for `ACEv` models: CI now works - (was 'a' not 'A').
 * NEW: `xmu_safe_run_summary` Runs a model safely, optionally summarizing and comparing it to a base model.
@@ -73,6 +77,7 @@
 
 
 # umx 2.8.5 October 2018, R 3.5.1: More love
+
 * NEW: `xmu_make_mxData` function to make mxData functions out of dataframes (and also drop variables from cov/cor dataframes.
 * NEW: SE style confidence information for CP and IP `plot`s.
 * IMPROVED: `umxCompare` gains ability to output Weight AIC conditional model probabilities! h/t @mNivard
@@ -93,7 +98,8 @@
 * BUG: `umxAPA` test parameter had no effect.
 * HELP: Better links, text, layout, etc., umxCP/IP HELP figures.
 
-# umx 2.8.2 June 2018, R 3.5.0: Simplex or s__t sticks
+# umx 2.8.2 June 2018, R 3.5.0: Simplex or s**t sticks
+
 * FIXED: `umxSexLim` now works for univariate tests (thanks to Michael Zakharin for reporting!)
 * FIXED: `umxSummary` Corrected Chi^2 df for RAM models.
 * NEW: `umxCP` handles ordinal, continuous and binary data
@@ -137,7 +143,8 @@
 * INTERNAL: `xmu_simplex_corner` helper function for simplex modeling.
 * INTERNAL: `umx_make_sql` improved 
 
-# umx 2.4.0 March 21 2018, R 3.4.4 post Boulder Workshop CRAN edition)
+# umx 2.4.0 March 21 2018, R 3.4.4 post Boulder Workshop CRAN edition
+
 * NEW: `umxIP` nFac now allows specifying different numbers of a, c, and e factors!
 * NEW: `umxACEv` plot works (shows correlated factors).
 * NEW: `umxACEv` standardize mostly functional.
@@ -157,7 +164,8 @@
 * DROPPED: deleted deprecated showStd and showMeans parameters from plot ACE.
 * BUG-FIX: `umxSummaryIP` was assuming nFac = 1
 
-# umx 2.0.2 (Feb 12 2018, R 3.4.3 Higher goals edition)
+# umx 2.0.2 Feb 12 2018, R 3.4.3 Higher goals edition
+
 * NEW: `umxSummary` works with multi-group models!
 	* (make these with `umxSuperModel`)
 * NEW: `umxModify` supports multiple find strings and replace strings!

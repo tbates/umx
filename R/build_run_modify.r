@@ -4746,16 +4746,17 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 # = Parallel helpers to be added here =
 # =====================================
 
-#' Helper Functions for Structural Equation Modeling in OpenMx
+#' Functions for Structural Equation Modeling in OpenMx
 #'
-#' umx allows you to more easily build, run, modify, and report models using OpenMx
-#' with code. The core functions are linked below under \strong{See Also}
+#' @description
+#' `umx` allows you to more easily build, run, modify, and report structural models, building on the OpenMx package.
+#' All core functions are organized into families, so they are easier to find (see "families" below under \strong{See Also})
 #'
-#' The functions are organized into families: Have a read of these below, click to explore.
-#' 
-#' All the functions have explanatory examples, so use the help, even if you think it won't help :-)
+#' All the functions have fullt-featured and well commented examples and even *figures*, so use the help, even if you think it won't help :-)
 #' Have a look, for example at \code{\link{umxRAM}}
 #' 
+#' Check out NEWS about new features at `news(package = "umx")`
+#' @details
 #' Introductory working examples are below. You can run all demos with demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
@@ -4786,7 +4787,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family zAdvanced Helpers
 #' @family xmu internal not for end user
 #' @references - \url{https://www.github.com/tbates/umx}
-#' 
+#' @md
 #' @examples
 #' require("umx")
 #' data(demoOneFactor)
