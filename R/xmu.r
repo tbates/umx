@@ -256,19 +256,17 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 				model1 = mxTryHardOrdinal(model1)
 			} else if (tryHard == "mxTryHardWideSearch"){
 				model1 = mxTryHardWideSearch(model1)
-			}else{
-				stop("Don't know how to do tryHard = ", omxQuotes(tryHard))
 			}
 		}, warning = function(w){
-			message("Warning incurred trying to run model: perhaps mxTryHard would help?")
+			message("Warning incurred trying to run model: mxTryHard might help?")
 			message(w)
-		}, error = function(e){umxThresholdMatrix
-			message("Error incurred trying to run model: perhaps mxTryHard would help?")
+		}, error = function(e){
+			message("Error incurred trying to run model: mxTryHard might help?")
 			message(e)
 		})
 	}
 	if(!umx_has_been_run(model1)){
-		# didn't get run... don't try and summarize it (will error)
+		# Didn't get run... don't try and summarize it (will error)
 	} else if(summary){
 		tryCatch({
 			umxSummary(model1)
