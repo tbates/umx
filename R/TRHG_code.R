@@ -3,8 +3,6 @@
 #' @description
 #' This is the example code used in our Twin Research and Human Genetics Paper on `umx`
 #'
-#' @details
-#'
 #' @export
 #' @seealso - \code{\link{umx}}
 #' @references - TODO: Twin Research and Human Genetics citation to go here when available.
@@ -276,6 +274,6 @@
 #' umx_set_auto_plot(TRUE)
 #' 
 #' }
-umxExamples <- function(x) {
-	message("The example code used in our Twin Research and Human Genetics paper on umx is available by pressing ?umxExamples")
+umxExamples <- function() {
+	message("The example code used in our Twin Research and Human Genetics paper on umx is available by typing ?umxExamples")
 }

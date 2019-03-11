@@ -179,7 +179,9 @@ umxSummary(m2, comparison = m1)
 # ================
 # = WLS analysis =
 # ================
-m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
+m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, 
+	type = "DWLS", allContinuousMethod='marginals'
+)
 
 # ==============================
 # = Univariate model of weight =

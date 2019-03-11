@@ -30,7 +30,8 @@ The most common use will be to give it a dataframe, and get back an `mxData` obj
 # =========================
 manVars = c("mpg", "cyl", "disp")
 tmp = xmu_make_mxData(data= mtcars, type = "Auto"); # class(tmp); # "MxDataStatic"
-tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); # names(tmp$observed) # "mpg"  "cyl"  "disp"
+# names(tmp$observed) # "mpg"  "cyl"  "disp"
+tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); 
 tmp$type == "raw" # TRUE
 
 # ==============================
@@ -72,7 +73,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_check_levels_identical}},
   \code{\link{xmu_dot_make_paths}},
   \code{\link{xmu_dot_make_residuals}},
-  \code{\link{xmu_make_top_twin_models}},
+  \code{\link{xmu_make_top_twin}},
   \code{\link{xmu_safe_run_summary}},
   \code{\link{xmu_set_sep_from_suffix}},
   \code{\link{xmu_simplex_corner}},

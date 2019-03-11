@@ -5,13 +5,10 @@
 \alias{umxExampleCode_TRHGpaper}
 \title{Example code from Twin Research and Human Genetics Paper on umx}
 \usage{
-umxExamples(x)
+umxExamples()
 }
 \description{
 This is the example code used in our Twin Research and Human Genetics Paper on `umx`
-}
-\details{
-
 }
 \examples{
 \dontrun{

@@ -77,11 +77,11 @@
 #' # = 3. Scalar Sex Limitation =
 #' # ============================
 #'
-#'m2 = umxModify(m1, regex = "^R([ace])[f|m]_", newLabels = "r\\1_", name = "Homogeneity", comparison = TRUE)
-#' 
+#' m2 = umxModify(m1, regex = "^R([ace])[f|m]_", newLabels = "r\\1_", 
+#'   name = "Homogeneity", comparison = TRUE)
 #' 
 #'# =============================
-#'# = run multi-variate example =
+#'# = Run multi-variate example =
 #'# =============================
 #' # Variables for Analysis
 #' selDVs = c('ssc','sil','caf','tri','bic')

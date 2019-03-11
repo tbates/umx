@@ -35,7 +35,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 
 umx_show(m1, what = "free", matrices = "S") # variance of g is not set
 m1 = umx_fix_latents(m1)
-umx_show(m1, waht = "free", matrices = "S") # variance of g is fixed at 1
+umx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1
 }
 \references{
 - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}

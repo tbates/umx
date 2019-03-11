@@ -2055,24 +2055,26 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 
 #' Create and display a graphical path diagram for a LISREL model.
 #'
-#' plot() produces SEM diagrams in graphviz format, and relies on \code{\link{DiagrammeR}} (or a 
+#' plot() produces SEM diagrams using \code{\link{DiagrammeR}} (or a 
 #' graphviz application) to create the image. 
 #' The commercial application \dQuote{OmniGraffle} is great for editing these images.
 #' 
 #'
-#' On unix and windows, \code{\link{plot}}() will create a pdf and open it in your default pdf reader.
-#' 
-#' \emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).
-#' 
-#' If you use umx_set_plot_format("graphviz"), they will open in a graphviz helper app (if installed).
+#' If you use umx_set_plot_format("graphviz"), figures will open in a graphviz helper app (if installed).
 #' If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
+#' 
 #' On OS X we try and open an app: you may need to associate the \sQuote{.gv}
 #' extension with the graphviz app.
 #' Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}, 
 #' select graphviz.app (or OmniGraffle professional),
 #' then set \dQuote{change all}.
+#' 
+#' On unix \code{\link{plot}}() will create a pdf and open it in your default pdf reader.
+#' 
+#' \emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).
+#' 
+#' The underlying format is graphviz.
 #'
-#' @aliases plot umxPlot
 #' @rdname plot.MxLISRELModel
 #' @param x A LISREL \code{\link{mxModel}} from which to make a path diagram
 #' @param std Whether to standardize the model (default = FALSE).

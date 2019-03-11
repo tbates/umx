@@ -144,7 +144,9 @@
 #' # ================
 #' # = WLS analysis =
 #' # ================
-#' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
+#' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, 
+#' 	type = "DWLS", allContinuousMethod='marginals'
+#' )
 #'
 #' # ==============================
 #' # = Univariate model of weight =
@@ -298,11 +300,11 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep 
 			# New-style build-block: Expand var names if necessary and make the basic components of a twin model
 			if(is.null(sep)){
 				selVars = selDVs # full names passed in... gosh I wish I'd not allowed this early on...
-				bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selVars, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
+				bits = xmu_make_top_twin(mzData = mzData, dzData = dzData, selDVs= selVars, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
 				tmp = xmu_starts(mzData, dzData, selVars = selVars, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 			}else{
 				selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
-				bits = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
+				bits = xmu_make_top_twin(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
 				tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 			}
 
@@ -322,7 +324,7 @@ umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep 
 			# Finish building top
 			top = mxModel(top,
 				# NB: "top" defines the algebra of the twin model, which MZ and DZ slave off of
-				# it already has the means model and thresholds matrix added if necessary  - see "xmu_make_top_twin_models" above
+				# it already has the means model and thresholds matrix added if necessary  - see "xmu_make_top_twin" above
 
 				# Additive, Common, and Unique environmental paths				
 				umxMatrix("a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),

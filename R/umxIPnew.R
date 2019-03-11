@@ -109,7 +109,8 @@
 #' m2 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 #' 
 #' # Use "marginals" method to enable all continuous data with missingness.
-#' m3 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
+#' m3 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
+#'		type = "DWLS", allContinuousMethod='marginals')
 #' # omit missing to enable default WLS method to work on all continuous data
 #' dzD = na.omit(dzData[, tvars(selDVs, "_T")])
 #' mzD = na.omit(dzData[, tvars(selDVs, "_T")])
@@ -119,10 +120,12 @@
 #' # = Try with a non-default number of a, c, and e independent factors =
 #' # ====================================================================
 #' nFac = c(a = 2, c = 1, e = 1)
-#' m2 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = nFac, tryHard = "mxTryHard")
+#' m2 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = nFac, 
+#'		tryHard = "mxTryHard")
 #' umxCompare(m1, m2)
 #' }
-#' # TODO: sep enforcement: move to test case m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' # TODO: sep enforcement: move to test case 
+#' # m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #
 umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = .5, dzCr = 1, correlatedA = FALSE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, equateMeans = TRUE, weightVar = NULL, addStd = TRUE, addCI = TRUE, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# TODO implement correlatedA
@@ -155,7 +158,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 	}
 
 	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
-	bits      = xmu_make_top_twin_models(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
+	bits      = xmu_make_top_twin(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
 	tmp       = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans = equateMeans, SD = TRUE, divideBy = 3)
 	selVars   = tvars(selDVs, sep = sep, suffixes = 1:nSib)
 	nVar      = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)

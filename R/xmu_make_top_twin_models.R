@@ -1,12 +1,12 @@
 #' Helper to make a basic top, MZ, and DZ model.
 #'
 #' @description
-#' `xmu_make_top_twin_models` makes basic `top`, `MZ`, and `DZ` models. It includes thresholds matrices in the twin models if needed.
+#' `xmu_make_top_twin` makes basic `top`, `MZ`, and `DZ` models. It includes thresholds matrices in the twin models if needed.
 #'
 #' This is used in  [umxCP()], and [umxACE()] and [umxACEv()] and will be added to the other models: [umxGxE()], [umxIP()], 
 #' simplifying code maintenance.
 #' 
-#' `xmu_make_top_twin_models` takes `mzData` and `dzData`, a list of the `selDVs` to analyse (as well as `sep` and `nSib`), along with other 
+#' `xmu_make_top_twin` takes `mzData` and `dzData`, a list of the `selDVs` to analyse (as well as `sep` and `nSib`), along with other 
 #' relevant information such as whether the user wants to `equateMeans`.
 #' It can also handle a `weightVar`.
 #' 
@@ -47,7 +47,7 @@
 #'
 #' **Data handling**
 #' 
-#' In terms of data handling, `xmu_make_top_twin_models` was primarily designed to take data.frames and process these into mxData. 
+#' In terms of data handling, `xmu_make_top_twin` was primarily designed to take data.frames and process these into mxData. 
 #' It can also, however, handle cov and mxData input.
 #' 
 #' It can process data into all the types supported by `mxData`.
@@ -88,24 +88,27 @@
 #' selDVs = c("wt", "ht")
 #' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF",]
-#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
+#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 #' names(bits) # "top" "MZ"  "DZ" "bVector" "mzWeightMatrix" "dzWeightMatrix"
 #' class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionML"
 
 # WLS example
-#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", type = "WLS")
+#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, 
+#'		selDVs= selDVs, sep= "", type = "WLS")
 #' class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
 #' bits$MZ$fitfunction$type =="WLS"
 # # Check default all-continuous method
 #' bits$MZ$fitfunction$continuousType == "cumulants"
 #' 
 #' # Choose non-default type (DWLS)
-#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", type = "DWLS")
+#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData,
+#'		selDVs = selDVs, sep= "", type = "DWLS")
 #' bits$MZ$fitfunction$type =="DWLS"
 #' class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
 #' 
 #' # Switch continuous method
-#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", type = "WLS", allContinuousMethod = "marginals")
+#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "",
+#'		type = "WLS", allContinuousMethod = "marginals")
 #' bits$MZ$fitfunction$continuousType == "marginals"
 #' class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
 #' 
@@ -125,7 +128,7 @@
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #' mzData = twinData[twinData$zygosity %in%  "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF",]
-#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep="", nSib= 2)
+#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= selDVs, sep="", nSib= 2)
 #' names(bits) # "top" "MZ"  "DZ" 
 #'
 #' # ==============
@@ -141,7 +144,7 @@
 #' selDVs = c("wt", "obese")
 #' mzData = twinData[twinData$zygosity %in% "MZFF",]
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
-#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
+#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 #'
 #' # ============
 #' # = Cov data =
@@ -149,16 +152,16 @@
 #' data(twinData)
 #' mz = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
 #' dz = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-#' bits = xmu_make_top_twin_models(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2)
+#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2)
 #' class(bits$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 #' names(bits$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 #'
-xmu_make_top_twin_models <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, verbose= FALSE) {
-	# **TODO list for xmu_make_top_twin_models**
-	# TODO: xmu_make_top_twin_models Add selCovs
-	# TODO: xmu_make_top_twin_models Add covMethod == "fixed"
-	# TODO: xmu_make_top_twin_models Add beta matrix for fixed covariates in means.
-	# TODO: xmu_make_top_twin_models more tests in a test page
+xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, verbose= FALSE) {
+	# **TODO list for xmu_make_top_twin**
+	# TODO: xmu_make_top_twin Add selCovs
+	# TODO: xmu_make_top_twin Add covMethod == "fixed"
+	# TODO: xmu_make_top_twin Add beta matrix for fixed covariates in means.
+	# TODO: xmu_make_top_twin more tests in a test page
 	# TODO: Improve the start guesses based on input model type (ACE, CP, IP etc.)
 
 	# *Note*: If dropping this into an existing model, it replaces all code setting: nVar, selVars, used, 

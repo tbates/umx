@@ -20,16 +20,15 @@ A utility function to return a binary answer to the question "does this \code{\l
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("g")
 manifests = names(demoOneFactor)
 m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-	umxPath(latents, to = manifests),
+	umxPath("g", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
+	umxPath(var = "g", fixedAt = 1.0)
 )
 
 umx_has_CIs(m1) # FALSE: no CIs and no output
-m1 = mxModel(m1, mxCI("G_to_x1"))
+m1 = mxModel(m1, mxCI("g_to_x1"))
 umx_has_CIs(m1, check = "intervals") # TRUE intervals set
 umx_has_CIs(m1, check = "output")  # FALSE not yet run
 m1 = mxRun(m1)

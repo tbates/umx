@@ -1160,7 +1160,7 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #'
 #' umx_show(m1, what = "free", matrices = "S") # variance of g is not set
 #' m1 = umx_fix_latents(m1)
-#' umx_show(m1, waht = "free", matrices = "S") # variance of g is fixed at 1
+#' umx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1
 umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1) {
 	if(is.null(latents)){
 		latenVarList = model@latentVars
@@ -3686,16 +3686,15 @@ umx_has_means <- function(model) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("g", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "g", fixedAt = 1.0)
 #' )
 #'
 #' umx_has_CIs(m1) # FALSE: no CIs and no output
-#' m1 = mxModel(m1, mxCI("G_to_x1"))
+#' m1 = mxModel(m1, mxCI("g_to_x1"))
 #' umx_has_CIs(m1, check = "intervals") # TRUE intervals set
 #' umx_has_CIs(m1, check = "output")  # FALSE not yet run
 #' m1 = mxRun(m1)

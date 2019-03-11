@@ -71,7 +71,8 @@ xmu_check_variance <- function(data, minVar = .1, maxVarRatio = 1000){
 #' # =========================
 #' manVars = c("mpg", "cyl", "disp")
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto"); # class(tmp); # "MxDataStatic"
-#' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); # names(tmp$observed) # "mpg"  "cyl"  "disp"
+#' # names(tmp$observed) # "mpg"  "cyl"  "disp"
+#' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); 
 #' tmp$type == "raw" # TRUE
 #'
 #' # ==============================
