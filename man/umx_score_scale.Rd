@@ -31,9 +31,11 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
 }
 }
 \description{
-To generate scale-scores, items must be named on the pattern <base><n>. \code{base} is the string common to all item names (variable names).
-\code{pos} and \code{rev} are vectors of the item numbers for the normal and reverse-scored item numbers. The score is the sum of the responses to the
-normal and reversed items.  To reverse items, the function uses \code{itemMax} is the high score (to compute how to reverse items).
+use this function to generate scores as the sum of the responses to the normal and reversed items in a scale.
+
+Items must be named on the pattern <base><n>. \code{base} is the string common to all item names (variable names).
+\code{pos} and \code{rev} are vectors of the item numbers for the normal and reverse-scored item numbers.
+To reverse items, the function uses \code{itemMax} is the high score (to compute how to reverse items).
 \code{min} defaults to 1.
 }
 \examples{

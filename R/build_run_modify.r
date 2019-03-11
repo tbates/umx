@@ -56,28 +56,28 @@
 #' @importFrom ggplot2 qplot scale_x_continuous theme element_text scale_x_continuous
 #' @importFrom ggplot2 expand_limits aes geom_point geom_segment
 
-# used in plot
+# Used in plot
 #' @importFrom DiagrammeR DiagrammeR
 
-# used in umx_make_TwinData
+# Used in umx_make_TwinData
 #' @importFrom MASS mvrnorm
 
-# used in umxAPA
+# Used in umxAPA
 #' @importFrom nlme intervals
 
-# used in umx_make_fake_data
+# Used in umx_make_fake_data
 #' @importFrom polycor hetcor
 
-# used in umx_set_cores
+# Used in umx_set_cores
 #' @importFrom parallel detectCores
 
-# used in umxCompare
+# Used in umxCompare
 #' @importFrom xtable xtable
 
-# used in umxWeightedAIC
+# Used in umxWeightedAIC
 #' @importFrom MuMIn Weights
 
-# used in umx_make
+# Used in umx_make
 # #' @importFrom spelling spell_check_package
 
 # not used?
@@ -597,7 +597,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		} else {
 			# leave the user's means as the model
 			# print("using your means model")
-			# umx_show(newModel)
+			# tmx_show(newModel)
 			# print(newModel$matrices$M$values)
 		}
 	}

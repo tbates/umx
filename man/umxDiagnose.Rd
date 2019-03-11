@@ -18,7 +18,7 @@ umxDiagnose(model, tryHard = FALSE, diagonalizeExpCov = FALSE)
 }
 \description{
 The goal of this function is to diagnose problems in a model and return suggestions to the user.
-It is a work in progress, and probably is not of any use as yet.
+It is a work in progress, and probably is of no use as yet.
 }
 \examples{
 require(umx)

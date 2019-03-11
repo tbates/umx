@@ -29,8 +29,9 @@ View documentation on the GxE model subclass here: \code{\link{umxSummaryGxE}}.
 }
 \seealso{
 Other Reporting Functions: \code{\link{loadings.MxModel}},
-  \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
-  \code{\link{umxEval}}, \code{\link{umxFactorScores}},
+  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
+  \code{\link{umxAPA}}, \code{\link{umxEval}},
+  \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
   \code{\link{umxWeightedAIC}},
   \code{\link{umx_APA_model_CI}},
@@ -38,8 +39,7 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_names}}, \code{\link{umx_parameters}},
   \code{\link{umx_print}},
   \code{\link{umx_show_fit_or_comparison}},
-  \code{\link{umx_show}}, \code{\link{umx_time}},
-  \code{\link{umx}}
+  \code{\link{umx_time}}, \code{\link{umx}}
 }
 \concept{Core Modeling Functions
 \url{https://www.github.com/tbates/umx}}

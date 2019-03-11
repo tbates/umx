@@ -21,7 +21,7 @@
 #' Diagnose problems in a model - this is a work in progress.
 #'
 #' The goal of this function is to diagnose problems in a model and return suggestions to the user.
-#' It is a work in progress, and probably is not of any use as yet.
+#' It is a work in progress, and probably is of no use as yet.
 #'
 #' @param model an \code{\link{mxModel}} to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
@@ -56,9 +56,9 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
   # 2. expected variances and means
   # 3 Difference of these?
   # try
-  # diagonalizeExpCov diagonal.
-  # umx_any_ordinal()
-  # more tricky - we should really report the variances and the standardized thresholds.
+  # 	diagonalizeExpCov diagonal.
+  # 	umx_any_ordinal()
+  # 	more tricky - we should really report the variances and the standardized thresholds.
   # The guidance would be to try starting with unit variances and thresholds that are within +/- 2SD of the mean.
   # [bivariate outliers %p](https://openmx.ssri.psu.edu/thread/3899)
 }
@@ -183,8 +183,8 @@ umxReduce.default <- function(model, ...){
 #' model = umxReduce(model)
 #' }
 umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp_gxe", ...) {
-	umx_is_MxModel(model)
 	report = match.arg(report)
+	umx_is_MxModel(model)
 	if(class(model) == "MxModelGxE"){		
 		# Reduce GxE Model
 		# Good to drop the means if possible? I think not. Better to model their most likely value, not lock it to zerp
