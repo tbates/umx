@@ -33,16 +33,15 @@ You can also test whether is has a means model or not and (in future) test if it
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
+latents  = c("g")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
 )
-umx_check_model(m1)
+
+umx_check_model(m1) # TRUE, this is a model
 umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
 umx_check_model(m1, hasData = TRUE)
 \dontrun{

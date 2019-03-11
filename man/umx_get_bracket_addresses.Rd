@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_get_bracket_addresses}
 \alias{umx_get_bracket_addresses}
-\title{get mat[r,c] style cell address from an mxMatrix}
+\title{Get mat[r,c] style cell address from an mxMatrix}
 \usage{
 umx_get_bracket_addresses(mat, free = NA, newName = NA)
 }
@@ -22,15 +22,14 @@ Sometimes you want these :-) This also allows you to change the matrix name: use
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
+latents  = c("g")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
 )
+
 umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 }
 \references{
@@ -41,7 +40,7 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
   \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}}, \code{\link{umx_add_variances}},
+  \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}},
   \code{\link{umx_string_to_algebra}}, \code{\link{umx}}

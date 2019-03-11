@@ -9,7 +9,7 @@
 \code{umx} allows you to more easily build, run, modify, and report structural models, building on the OpenMx package.
 All core functions are organized into families, so they are easier to find (see "families" below under \strong{See Also})
 
-All the functions have fullt-featured and well commented examples and even \emph{figures}, so use the help, even if you think it won't help :-)
+All the functions have full-featured and well commented examples, some even have \emph{figures}, so use the help, even if you think it won't help :-)
 Have a look, for example at \code{\link{umxRAM}}
 
 Check out NEWS about new features at \code{news(package = "umx")}
@@ -219,7 +219,7 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
   \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}}, \code{\link{umx_add_variances}},
+  \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},

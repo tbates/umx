@@ -20,20 +20,22 @@ umx_fix_latents(model, latents = NULL, exogenous.only = TRUE, at = 1)
 }
 \description{
 Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.
+# TODO: umx_fix_latents is deprecated - likely of no use.
 }
 \examples{
 require(umx)
 data(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM",
- manifestVars = names(demoOneFactor),
- latentVars = "g",
-	mxPath(from = "g", to = names(demoOneFactor)),
-	mxPath(from = names(demoOneFactor), arrows = 2),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+latents  = c("g")
+manifests = names(demoOneFactor)
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
 )
-umx_show(m1, matrices = "S") # variance of g is not set
+
+umx_show(m1, what = "free", matrices = "S") # variance of g is not set
 m1 = umx_fix_latents(m1)
-umx_show(m1, matrices = "S") # variance of g is fixed at 1
+umx_show(m1, waht = "free", matrices = "S") # variance of g is fixed at 1
 }
 \references{
 - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
@@ -43,7 +45,7 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
   \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}}, \code{\link{umx_add_variances}},
+  \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_get_bracket_addresses}},
   \code{\link{umx_string_to_algebra}}, \code{\link{umx}}

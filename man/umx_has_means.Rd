@@ -18,22 +18,21 @@ A utility function to return a binary answer to the question "does this \code{\l
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
+latents  = c("g")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
 )
+
 umx_has_means(m1)
 m1 <- mxModel(m1,
 	mxPath(from = "one", to = manifests),
 	mxData(demoOneFactor[1:100,], type = "raw")
 )
 umx_has_means(m1)
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+m1 = mxRun(m1)
 umx_has_means(m1)
 }
 \references{

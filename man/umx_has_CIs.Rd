@@ -20,16 +20,14 @@ A utility function to return a binary answer to the question "does this \code{\l
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
+latents  = c("g")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath(latents, to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = latents, fixedAt = 1.0)
 )
-m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+
 umx_has_CIs(m1) # FALSE: no CIs and no output
 m1 = mxModel(m1, mxCI("G_to_x1"))
 umx_has_CIs(m1, check = "intervals") # TRUE intervals set
@@ -38,6 +36,7 @@ m1 = mxRun(m1)
 umx_has_CIs(m1, check = "output")  # Still FALSE: Set and Run
 m1 = mxRun(m1, intervals = TRUE)
 umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
+umxSummary(m1)
 }
 \references{
 - https://www.github.com/tbates/umx/

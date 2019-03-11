@@ -31,7 +31,10 @@ require(umx)
 data(demoOneFactor)
 latents = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
+# =========================================================================
+# = Make an base OpenMx model (which will lack start values and labels..) =
+# =========================================================================
+m1 = mxModel("One Factor", type = "RAM", 
 	manifestVars = manifests, latentVars = latents, 
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
@@ -39,6 +42,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 mxEval(S, m1) # default variances are 0
+# Add start values to the model
 m1 = umxValues(m1)
 mxEval(S, m1) # plausible variances
 umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
@@ -54,7 +58,6 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
   \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
-  \code{\link{umx_add_variances}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},

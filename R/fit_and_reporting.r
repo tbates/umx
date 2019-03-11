@@ -346,15 +346,26 @@ umxReduce.MxModelACE <- umxReduceACE
 #' data(demoOneFactor)
 #' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#'
+#'# ===================================
+#'# = Show the residuals of the model =
+#'# ===================================
 #' residuals(m1)
+#' # |   |x1   |x2    |x3   |x4    |x5 |
+#' # |:--|:----|:-----|:----|:-----|:--|
+#' # |x1 |.    |.     |0.01 |.     |.  |
+#' # |x2 |.    |.     |0.01 |-0.01 |.  |
+#' # |x3 |0.01 |0.01  |.    |.     |.  |
+#' # |x4 |.    |-0.01 |.    |.     |.  |
+#' # |x5 |.    |.     |.    |.     |.  |
+#' # [1] "nb: You can zoom in on bad values with, e.g. suppress = .01, which
+#' #      will hide values smaller than this. Use digits = to round"
+#'
 #' residuals(m1, digits = 3)
 #' residuals(m1, digits = 3, suppress = .005)
 #' # residuals are returned as an invisible object you can capture in a variable
@@ -1957,27 +1968,25 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' @export
 #' @examples
 #' \dontrun{
-#' 	require(umx)
-#' 	data(demoOneFactor)
-#' 	latents  = c("G")
-#' 	manifests = names(demoOneFactor)
-#' 	m1 <- mxModel("One Factor", type = "RAM", 
-#' 		manifestVars = manifests, latentVars = latents, 
-#' 		mxPath(from = latents, to = manifests),
-#' 		mxPath(from = manifests, arrows = 2),
-#' 		mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 		mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' 	)
-#' 	m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' 	umxCI_boot(m1, type = "par.expected")
+#' require(umx)
+#' data(demoOneFactor)
+#' latents  = c("g")
+#' manifests = names(demoOneFactor)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#'
+#' umxCI_boot(m1, type = "par.expected")
 #'}
 #' @references - \url{https://openmx.ssri.psu.edu/thread/2598}
 #' Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 #' @seealso - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
 #' @family Reporting functions
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
-	# depemds on MASS::mvrnorm
-	type = umx_default_option(type, c("par.expected", "par.observed", "empirical"))
+	# depends on MASS::mvrnorm
+	type = match.arg(type, c("par.expected", "par.observed", "empirical"))
 	if(type == "par.expected") {
 		exp = umxExpCov(model, latents = FALSE)
 	} else if(type == "par.observed") {
@@ -2022,8 +2031,8 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 	}
 	low = (1-conf/100)/2
 	upp = ((1-conf/100)/2) + (conf/100)
-	LL  = apply(pard, 2, FUN = quantile, probs = low) #lower limit of confidence interval
-	UL  = apply(pard, 2, FUN = quantile, probs = upp) #upper quantile for confidence interval
+	LL  = apply(pard, 2, FUN = quantile, probs = low) # lower limit of confidence interval
+	UL  = apply(pard, 2, FUN = quantile, probs = upp) # upper quantile for confidence interval
 	LL4 = round(LL, 4)
 	UL4 = round(UL, 4)
 	ci  = cbind(LL4, UL4)
@@ -3334,17 +3343,15 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' vcov(m1)
+#'
+#' vcov(m1) # supplied by OpenMx
 #' umxExpCov(m1, digits = 3)
 umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
@@ -3409,21 +3416,16 @@ vcov.MxModel <- umxExpCov
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = "one", to = manifests),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(demoOneFactor[1:100,], type = "raw")
+#' m1 = umxRAM("One Factor", data = demoOneFactor,
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' umxExpMeans(model = m1)
+#' umxExpMeans(m1)
 #' umxExpMeans(m1, digits = 3)
 umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
-	# TODO # what does umxExpMeans do under 1.4?
 	umx_check_model(model, beenRun = TRUE)
 	if(!umx_has_means(model)){
 		stop("Model has no means expectation to get: Are there any means in the data? (type='raw', or type = 'cov' with means?)")

@@ -2849,7 +2849,10 @@ umxRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' data(demoOneFactor)
 #' latents = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
+#' # =========================================================================
+#' # = Make an base OpenMx model (which will lack start values and labels..) =
+#' # =========================================================================
+#' m1 = mxModel("One Factor", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
@@ -2857,6 +2860,7 @@ umxRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 #' )
 #' mxEval(S, m1) # default variances are 0
+#' # Add start values to the model
 #' m1 = umxValues(m1)
 #' mxEval(S, m1) # plausible variances
 #' umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
@@ -3001,7 +3005,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @export
 #' @examples
 #' # ==============================================================
-#' # = Show how OpenMx models are not labels, and then add labels =
+#' # = Show how OpenMx models are not labeled, and then add labels =
 #' # ==============================================================
 #' require(umx)
 #' data(demoOneFactor)
@@ -3017,10 +3021,11 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' umxGetParameters(m1) # Default "matrix address" labels, i.e "One Factor.S[2,2]"
 #' m1 = umxLabel(m1)
 #' umxGetParameters(m1, free = TRUE) # Informative labels: "G_to_x1", "x4_with_x4", etc.
+#'
 #' # =======================================================================
 #' # = Create a new model, with suffixes added to paths, and model renamed =
 #' # =======================================================================
-#' m2 = umxLabel(m1, suffix= "_male", overRideExisting= TRUE, name = "male_model")
+#' m2 = umxLabel(m1, suffix= "_male", overRideExisting= TRUE, name = "male")
 #' umxGetParameters(m2, free = TRUE) # suffixes added
 #' 
 #' # =============================
@@ -3092,14 +3097,27 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @seealso - \code{\link{xmu_simplex_corner}}, \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
+#' # ==================================================================================
+#' # = 1. Showing how name is first parameter, and how cells are labelled by default. =
+#' # ==================================================================================
 #' umxMatrix("test", "Full", 2, 2)$labels
 #' #      [,1]        [,2]
 #' # [1,] "test_r1c1" "test_r1c2"
 #' # [2,] "test_r2c1" "test_r2c2"
 #'
-#' # over-ride default use of matrix name as prefix for labels
-#' umxMatrix("test", "Full", 2, 2, baseName = "bob")$labels
-#' umxMatrix("Rao", "Stand", nrow=nVar, free=fixDiag, values=st_Dia1, baseName = "ra", lbound=-1, ubound=1)
+#'# ===========================================================
+#'# = 2. Over-ride default (matrix name) as prefix for labels =
+#'# ===========================================================
+#' umxMatrix("test", "Full", 2, 2, baseName = "bob")$labels # bob_r1c1
+#'
+#'
+#'# ==========================================
+#'# = 3. User-provided labels are left as-is =
+#'# ==========================================
+#' umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
+#' #      [,1]    [,2]
+#' # [1,] NA      NA  
+#' # [2,] "beta1" NA  
 #'
 umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA, byrow = getOption('mxByrow'), baseName = NA, dimnames = NA, condenseSlots = getOption('mxCondenseMatrixSlots'), ..., joinKey = as.character(NA), joinModel = as.character(NA), jiggle = NA) {
 	legalMatrixTypes = c("Diag", "Full", "Iden", "Lower", "Sdiag", "Stand", "Symm", "Unit",  "Zero")
@@ -3161,9 +3179,9 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
 
 #' umxRun: Run an mxModel
 #'
-#' umxRun is a version of \code{\link{mxRun}} which can run also set start values, labels, and run multiple times
+#' `umxRun` is a version of \code{\link{mxRun}} which can run also set start values, labels, and run multiple times
 #' It can also calculate the saturated and independence likelihoods necessary for most fit indices.
-#'
+#' **Note** this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 #' @param model The \code{\link{mxModel}} you wish to run.
 #' @param n The maximum number of times you want to run the model trying to get a code green run (defaults to 1)
 #' @param calc_SE Whether to calculate standard errors (ignored when n = 1)
@@ -3177,6 +3195,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
 #' @family Core Modeling Functions
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @export
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3238,7 +3257,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 	}
 	if(umx_is_RAM(model)){
 		if(model$data$type == "raw"){
-			# If we have a RAM model with raw data, compute the satuated and independence models
+			# If we have a RAM model with raw data, compute the satuarted and independence models
 			# message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
 			ref_models = mxRefModels(model, run = TRUE)
 			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
@@ -4752,7 +4771,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' `umx` allows you to more easily build, run, modify, and report structural models, building on the OpenMx package.
 #' All core functions are organized into families, so they are easier to find (see "families" below under \strong{See Also})
 #'
-#' All the functions have fullt-featured and well commented examples and even *figures*, so use the help, even if you think it won't help :-)
+#' All the functions have full-featured and well commented examples, some even have *figures*, so use the help, even if you think it won't help :-)
 #' Have a look, for example at \code{\link{umxRAM}}
 #' 
 #' Check out NEWS about new features at `news(package = "umx")`

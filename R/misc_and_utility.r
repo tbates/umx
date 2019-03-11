@@ -1135,52 +1135,10 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 	return(endog)
 }
 
-#' umx_add_variances
-#'
-#' Convenience function to save the user specifying mxPaths adding variance to each variable
-#'
-#' @param model an \code{\link{mxModel}} to add variances to
-#' @param add.to = List of variables to create variance for
-#' @param free = List of variables to create variance for (default = NULL)
-#' @param values = List of values (default = NULL)
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @family Advanced Model Building Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM",
-#'  manifestVars = names(demoOneFactor),
-#'  latentVars = "g",
-#' 	mxPath(from = "g", to = names(demoOneFactor), values= .1),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' )
-#' umx_show(m1, matrices = "S") # variables lack variance :-(
-#' m1 = umx_add_variances(m1, add.to = names(demoOneFactor))
-#' m1 = umx_add_variances(m1, add.to = "g", FALSE, 1)
-#' umx_show(m1, matrices = "S") 
-#' # Note: latent g has been treated like the manifests...
-#' # umxFixLatents() will take care of this for you...
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' umxSummary(m1)
-umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
-	umx_check_model(model, type = "RAM")
-	theList = c(model@latentVars, model@manifestVars)
-	if(!all(add.to %in% theList)){
-		stop("not all names found in model")
-	}
-	for (i in add.to) {
-		model$S@free[i, i] = TRUE
-		model$S@values[i, i] = .1
-	}
-	return(model)
-}
-
 #' umx_fix_latents
 #'
 #' Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.
-#'
+#' # TODO: umx_fix_latents is deprecated - likely of no use.
 #' @param model an \code{\link{mxModel}} to set
 #' @param latents (If NULL then all latentVars)
 #' @param exogenous.only only touch exogenous latents (default = TRUE)
@@ -1192,16 +1150,17 @@ umx_add_variances <- function(model, add.to, values = NULL, free = NULL) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM",
-#'  manifestVars = names(demoOneFactor),
-#'  latentVars = "g",
-#' 	mxPath(from = "g", to = names(demoOneFactor)),
-#' 	mxPath(from = names(demoOneFactor), arrows = 2),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' latents  = c("g")
+#' manifests = names(demoOneFactor)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' umx_show(m1, matrices = "S") # variance of g is not set
+#'
+#' umx_show(m1, what = "free", matrices = "S") # variance of g is not set
 #' m1 = umx_fix_latents(m1)
-#' umx_show(m1, matrices = "S") # variance of g is fixed at 1
+#' umx_show(m1, waht = "free", matrices = "S") # variance of g is fixed at 1
 umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1) {
 	if(is.null(latents)){
 		latenVarList = model@latentVars
@@ -1220,28 +1179,32 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 
 #' umx_fix_first_loadings
 #'
-#' Fix the loading of the first path from each latent at selected value. 
-#' Note: latents with fixed variance are skipped.
+#' Fix the loading of the first path from each latent at selected value. Seldom used; might be useful to show students
+#' how to scale models with fixed latent or fixed first path...
+#' *Note*: latents with fixed variance are toggled by default (change made in 2019).
 #' @param model An \code{\link{mxModel}} to set.
 #' @param latents Which latents to fix from (NULL = all).
 #' @param at The value to fix the first path at (Default = 1).
+#' @param freeFixedLatent Whether to free a latent if it is fixed (default = TRUE)
 #' @return - \code{\link{mxModel}}
+#' @md
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM",
-#'  manifestVars = names(demoOneFactor),
-#'  latentVars = "g",
-#' 	mxPath(from = "g", to = names(demoOneFactor)),
-#' 	mxPath(from = names(demoOneFactor), arrows = 2),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' manifests = names(demoOneFactor)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("g", to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = "g", fixedAt = 1.0)
 #' )
-#' m1 = umx_fix_first_loadings(m1)
-#' umx_show(m1) # path from g to var1 fixed @ 1.
-umx_fix_first_loadings <- function(model, latents = NULL, at = 1) {
+#'
+#' m1 = umx_fix_first_loadings(m1, latents = "g")
+#' umx_show(m1, "free", matrices="A") # path from g to var1 fixed @ 1.
+#' # note, in practice, you would now need to free the variance of g
+umx_fix_first_loadings <- function(model, latents = NULL, at = 1, freeFixedLatent = TRUE) {
 	umx_check_model(model, type = "RAM")
 	if(is.null(latents)){
 		latentVarList = model@latentVars
@@ -1254,19 +1217,21 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1) {
 
 	for (thisLatent in latentVarList) {
 		# thisLatent = "ind60"
-		if(!model$A$free[thisLatent, thisLatent]){
-			# "this latent is fixed... don't scale first loading"
-		} else {
+		latentIsFree = model$A$free[thisLatent, thisLatent]
+		
+		if(!latentIsFree | freeFixedLatent){
 			firstFreeRow = which(model$A$free[, thisLatent])[1]
 			# check that there is not already a factor fixed prior to this one
 			if(firstFreeRow == 1){
 				# must be ok
+				model$A$free[thisLatent, thisLatent] = TRUE
 				model$A@free[firstFreeRow, thisLatent]   = FALSE
 				model$A@values[firstFreeRow, thisLatent] = at
 			} else {
 				if(any(model$matrices$A$values[1:(firstFreeRow-1), thisLatent] == at)){
 					message("I skipped factor '", thisLatent, "'. It looks like it already has a loading fixed at ", at)
 				} else {
+					model$A$free[thisLatent, thisLatent] = TRUE
 					model$A@free[firstFreeRow, thisLatent]   = FALSE
 					model$A@values[firstFreeRow, thisLatent] = at				
 				}
@@ -2598,6 +2563,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
 #' @param run = If what is "examples", whether to also run examples marked don't run. (default FALSE)
+#' @param start If what is "examples", which function to start from (default (NULL) = beginning).
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
 #' @return - 
 #' @export
@@ -2605,20 +2571,22 @@ umx_update_OpenMx <- install.OpenMx
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
+#' umx_make(what = "q"))        # Quick install
 #' umx_make(what = "install"))  # Just installs the package
 #' umx_make(what = "examples")) # Run the examples
+#' umx_make(what = "spell"))    # Spell check the documents
 #' umx_make(what = "check"))    # Run R CMD check
 #' umx_make(what = "win"))      # Check on win-builder
 #' umx_make(what = "release"))  # Release to CRAN
 #' }
-umx_make <- function(what = c("install", "quick", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, run=FALSE, spelling = "en_US") {
+umx_make <- function(what = c("install", "quick", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
 	what = match.arg(what)
 	if(what == "install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
 	} else if(what == "quick"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);				
 	} else if(what == "examples"){
-		devtools::run_examples(pkg = pkg, run = run)
+		devtools::run_examples(pkg = pkg, run = run, start = start)
 	} else if(what == "check"){
 		# http://r-pkgs.had.co.nz/check.html
 		devtools::check(pkg = pkg)		
@@ -2870,16 +2838,14 @@ umxCov2cor <- function(x) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#'
 #' umx_show(m1)
 #' umx_show(m1, digits = 3)
 #' umx_show(m1, matrices = "S")
@@ -3160,16 +3126,14 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#'
 #' umx_has_been_run(m1)
 umx_has_been_run <- function(model, stop = FALSE) {
 	output <- model$output
@@ -3538,22 +3502,19 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' umxSummary(m1, show = "std")
+#'
 #' if(umx_is_RAM(m1)){
 #' 	message("nice RAM model!")
 #' }
 #' if(!umx_is_RAM(m1)){
-#' 	message("model must be a RAM model")
+#' 	message("model needs to be a RAM model")
 #' }
 umx_is_RAM <- function(obj) {
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
@@ -3689,22 +3650,21 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
+#'
 #' umx_has_means(m1)
 #' m1 <- mxModel(m1,
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxData(demoOneFactor[1:100,], type = "raw")
 #' )
 #' umx_has_means(m1)
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#' m1 = mxRun(m1)
 #' umx_has_means(m1)
 umx_has_means <- function(model) {
 	if(!umx_is_RAM(model)){
@@ -3726,16 +3686,14 @@ umx_has_means <- function(model) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
+#'
 #' umx_has_CIs(m1) # FALSE: no CIs and no output
 #' m1 = mxModel(m1, mxCI("G_to_x1"))
 #' umx_has_CIs(m1, check = "intervals") # TRUE intervals set
@@ -3744,6 +3702,7 @@ umx_has_means <- function(model) {
 #' umx_has_CIs(m1, check = "output")  # Still FALSE: Set and Run
 #' m1 = mxRun(m1, intervals = TRUE)
 #' umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
+#' umxSummary(m1)
 umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 	check = umx_default_option(check, c("both", "intervals", "output"), check=F)
 	if(is.null(model$intervals)){
@@ -3786,16 +3745,15 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' umx_check_model(m1)
+#'
+#' umx_check_model(m1) # TRUE, this is a model
 #' umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
 #' umx_check_model(m1, hasData = TRUE)
 #' \dontrun{
@@ -6056,7 +6014,7 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 	return(df)
 }
 
-#' get mat[r,c] style cell address from an mxMatrix
+#' Get mat[r,c] style cell address from an mxMatrix
 #'
 #' Sometimes you want these :-) This also allows you to change the matrix name: useful for using mxMatrix addresses in an mxAlgebra.
 #'
@@ -6070,15 +6028,14 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
+#'
 #' umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 # "stdA[1,6]" "stdA[2,6]" "stdA[3,6]" "stdA[4,6]" "stdA[5,6]"
 umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
@@ -6165,68 +6122,58 @@ umx_standardize.default <- function(model, ...){
 #'
 #' @param model The \code{\link{mxModel}} you wish to standardize
 #' @param ... Other options
-#' @return - standardized RAM model.
 #' @family Reporting functions
 #' @references - \url{https://github.com/tbates/umx}
 #' @export
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
-#' m1 = umxRun(m1, setLabels = TRUE, setValues = TRUE)
-#' m1 = umx_standardize_RAM(m1, return = "model")
-#' m1 = umx_standardize(m1, return = "model")
-#' summary(m1)
+#'
+#' m1 = umx_standardize_RAM(m1)
+#' m1 = umx_standardize(m1)
+#' umxSummary(m1)
 umx_standardize_RAM <- function(model, ...) {
 	if (!umx_is_RAM(model)){
 		stop("I need a RAM model")
 	}
-	output <- model$output
-	# Stop if there is no objective function.
-	if (is.null(output))stop("Provided model has no objective function, and thus no output. I can only standardize models that have been run!")
-	# Stop if there is no output
-	if (length(output) < 1){
-		message("Model has not been run yet")
-		return(model)
-	}
+	umx_has_been_run(model)
 	# Get the names of the A, S and M matrices
-	nameA <- model$expectation$A
-	nameS <- model$expectation$S
-	nameM <- model$expectation$M
+	nameA = model$expectation$A
+	nameS = model$expectation$S
+	nameM = model$expectation$M
 	# Get the A and S matrices, and make an identity matrix
-	A <- model[[nameA]]
-	S <- model[[nameS]]
-	I <- diag(nrow(S$values))
+	A = model[[nameA]]
+	S = model[[nameS]]
+	I = diag(nrow(S$values))
 	
 	# this can fail (non-invertible etc. so we wrap it in try-catch)
 	tryCatch({	
 		# Calculate the expected covariance matrix
-		IA <- solve(I - A$values)
-		expCov <- IA %*% S$values %*% t(IA)
+		IA = solve(I - A$values)
+		expCov = IA %*% S$values %*% t(IA)
 		# Return 1/SD to a diagonal matrix
-		InvSD <- 1/sqrt(diag(expCov))
+		InvSD = 1/sqrt(diag(expCov))
 		# Give the inverse SDs names, because mxSummary treats column names as characters
-		names(InvSD) <- as.character(1:length(InvSD))
-		if (!is.null(dimnames(A$values))){names(InvSD) <- as.vector(dimnames(S$values)[[2]])}
+		names(InvSD) = as.character(1:length(InvSD))
+		if (!is.null(dimnames(A$values))){names(InvSD) = as.vector(dimnames(S$values)[[2]])}
 		# Put the inverse SDs into a diagonal matrix (might as well recycle I matrix from above)
-		diag(I) <- InvSD
+		diag(I) = InvSD
 		# Standardize the A, S and M matrices
 		#  A paths are value*sd(from)/sd(to) = I %*% A %*% solve(I)
 		#  S paths are value/(sd(from*sd(to))) = I %*% S %*% I
-		stdA <- I %*% A$values %*% solve(I)
-		stdS <- I %*% S$values %*% I
+		stdA = I %*% A$values %*% solve(I)
+		stdS = I %*% S$values %*% I
 		# Populate the model
-		model[[nameA]]$values[,] <- stdA
-		model[[nameS]]$values[,] <- stdS
-		if (!is.na(nameM)){model[[nameM]]$values[,] <- rep(0, length(InvSD))}
+		model[[nameA]]$values[,] = stdA
+		model[[nameS]]$values[,] = stdS
+		if (!is.na(nameM)){model[[nameM]]$values[,] = rep(0, length(InvSD))}
 	}, warning = function(cond) {
 	    # warning-handler-code
         message(cond)
@@ -6236,7 +6183,7 @@ umx_standardize_RAM <- function(model, ...) {
 	}, finally = {
 	    # cleanup-code
 	})
-	# Return the model, if asked
+	# Return the model
 	invisible(model)
 }
 #' @export

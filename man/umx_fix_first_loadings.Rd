@@ -4,7 +4,8 @@
 \alias{umx_fix_first_loadings}
 \title{umx_fix_first_loadings}
 \usage{
-umx_fix_first_loadings(model, latents = NULL, at = 1)
+umx_fix_first_loadings(model, latents = NULL, at = 1,
+  freeFixedLatent = TRUE)
 }
 \arguments{
 \item{model}{An \code{\link{mxModel}} to set.}
@@ -12,37 +13,44 @@ umx_fix_first_loadings(model, latents = NULL, at = 1)
 \item{latents}{Which latents to fix from (NULL = all).}
 
 \item{at}{The value to fix the first path at (Default = 1).}
+
+\item{freeFixedLatent}{Whether to free a latent if it is fixed (default = TRUE)}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link{mxModel}}
+}
 }
 \description{
-Fix the loading of the first path from each latent at selected value. 
-Note: latents with fixed variance are skipped.
+Fix the loading of the first path from each latent at selected value. Seldom used; might be useful to show students
+how to scale models with fixed latent or fixed first path...
+\emph{Note}: latents with fixed variance are toggled by default (change made in 2019).
 }
 \examples{
 require(umx)
 data(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM",
- manifestVars = names(demoOneFactor),
- latentVars = "g",
-	mxPath(from = "g", to = names(demoOneFactor)),
-	mxPath(from = names(demoOneFactor), arrows = 2),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+manifests = names(demoOneFactor)
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath("g", to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = "g", fixedAt = 1.0)
 )
-m1 = umx_fix_first_loadings(m1)
-umx_show(m1) # path from g to var1 fixed @ 1.
+
+m1 = umx_fix_first_loadings(m1, latents = "g")
+umx_show(m1, "free", matrices="A") # path from g to var1 fixed @ 1.
+# note, in practice, you would now need to free the variance of g
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+\itemize{
+\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},
   \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}}, \code{\link{umx_add_variances}},
-  \code{\link{umx_fix_latents}},
+  \code{\link{umxValues}}, \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},
   \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
 }

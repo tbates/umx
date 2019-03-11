@@ -27,11 +27,14 @@ for the summary (if you use \code{\link{mxCI}} or \code{\link{umxCI}}, you can t
 \item{comparison}{Whether to run umxCompare() after umxRun}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link{mxModel}}
+}
 }
 \description{
-umxRun is a version of \code{\link{mxRun}} which can run also set start values, labels, and run multiple times
+\code{umxRun} is a version of \code{\link{mxRun}} which can run also set start values, labels, and run multiple times
 It can also calculate the saturated and independence likelihoods necessary for most fit indices.
+\strong{Note} this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 }
 \examples{
 require(umx)
@@ -56,7 +59,9 @@ umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
 m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},

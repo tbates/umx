@@ -40,7 +40,7 @@ This is a core function in umx: Adding labels to paths opens the door to \code{\
 }
 \examples{
 # ==============================================================
-# = Show how OpenMx models are not labels, and then add labels =
+# = Show how OpenMx models are not labeled, and then add labels =
 # ==============================================================
 require(umx)
 data(demoOneFactor)
@@ -56,10 +56,11 @@ m1 <- mxModel("One Factor", type = "RAM",
 umxGetParameters(m1) # Default "matrix address" labels, i.e "One Factor.S[2,2]"
 m1 = umxLabel(m1)
 umxGetParameters(m1, free = TRUE) # Informative labels: "G_to_x1", "x4_with_x4", etc.
+
 # =======================================================================
 # = Create a new model, with suffixes added to paths, and model renamed =
 # =======================================================================
-m2 = umxLabel(m1, suffix= "_male", overRideExisting= TRUE, name = "male_model")
+m2 = umxLabel(m1, suffix= "_male", overRideExisting= TRUE, name = "male")
 umxGetParameters(m2, free = TRUE) # suffixes added
 
 # =============================
@@ -83,7 +84,7 @@ umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLatent}}, \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}}, \code{\link{umx_add_variances}},
+  \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},

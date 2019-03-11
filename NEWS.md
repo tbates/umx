@@ -21,7 +21,7 @@
 * BEGIN: Universal weighted rows support for all twin models
 * IMPROVED: `xmu_assemble_twin_supermodel` no longer take bVector (uses existence of weights instead)
 * CLEANUP: Removed `thresholds` option from several functions (always doing deviation-based, WLS isn't thresholds, and left-censored will be implemented differently)
-* NEW: `umx_make_top_twin_models` increases the robustness and improvability of all twin scripts.
+* NEW: `umx_make_top_twin_models` increases the robustness and improve-ability of all twin scripts.
 * NEW: umx_set_data_variance_check to set the criteria for warning users about excessively small variance or divergence of variance.
 
 # umx 2.10.0 January 2019, R 3.5.2

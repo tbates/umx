@@ -53,14 +53,27 @@ umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
 umxMatrix is a wrapper for mxMatrix which labels cells buy default, and has the name parameter first in order.
 }
 \examples{
+# ==================================================================================
+# = 1. Showing how name is first parameter, and how cells are labelled by default. =
+# ==================================================================================
 umxMatrix("test", "Full", 2, 2)$labels
 #      [,1]        [,2]
 # [1,] "test_r1c1" "test_r1c2"
 # [2,] "test_r2c1" "test_r2c2"
 
-# over-ride default use of matrix name as prefix for labels
-umxMatrix("test", "Full", 2, 2, baseName = "bob")$labels
-umxMatrix("Rao", "Stand", nrow=nVar, free=fixDiag, values=st_Dia1, baseName = "ra", lbound=-1, ubound=1)
+# ===========================================================
+# = 2. Over-ride default (matrix name) as prefix for labels =
+# ===========================================================
+umxMatrix("test", "Full", 2, 2, baseName = "bob")$labels # bob_r1c1
+
+
+# ==========================================
+# = 3. User-provided labels are left as-is =
+# ==========================================
+umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
+#      [,1]    [,2]
+# [1,] NA      NA  
+# [2,] "beta1" NA  
 
 }
 \references{
