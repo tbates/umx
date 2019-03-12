@@ -1,10 +1,13 @@
 #' Score a psychometric scale by summing normal and reversed items
 #'
 #' @description
-#' To generate scale-scores, items must be named on the pattern <base><n>. `base` is the string common to all item names (variable names).
-#' `pos` and `rev` are vectors of the item numbers for the normal and reverse-scored item numbers. The score is the sum of the responses to the 
-#' normal and reversed items.  To reverse items, the function uses `itemMax` is the high score (to compute how to reverse items).
+#' use this function to generate scores as the sum of the responses to the normal and reversed items in a scale.
+#' 
+#' Items must be named on the pattern <base><n>. `base` is the string common to all item names (variable names).
+#' `pos` and `rev` are vectors of the item numbers for the normal and reverse-scored item numbers.
+#' To reverse items, the function uses `itemMax` is the high score (to compute how to reverse items).
 #' `min` defaults to 1.
+#' 
 #' @param base String common to all item names.
 #' @param pos The positive-scored item numbers.
 #' @param rev The reverse-scored item numbers.
@@ -1158,9 +1161,9 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #'
-#' umx_show(m1, what = "free", matrices = "S") # variance of g is not set
+#' tmx_show(m1, what = "free", matrices = "S") # variance of g is not set
 #' m1 = umx_fix_latents(m1)
-#' umx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1
+#' tmx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1
 umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1) {
 	if(is.null(latents)){
 		latenVarList = model@latentVars
@@ -1202,7 +1205,7 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 #' )
 #'
 #' m1 = umx_fix_first_loadings(m1, latents = "g")
-#' umx_show(m1, "free", matrices="A") # path from g to var1 fixed @ 1.
+#' tmx_show(m1, "free", matrices="A") # path from g to var1 fixed @ 1.
 #' # note, in practice, you would now need to free the variance of g
 umx_fix_first_loadings <- function(model, latents = NULL, at = 1, freeFixedLatent = TRUE) {
 	umx_check_model(model, type = "RAM")
@@ -2822,16 +2825,23 @@ umxCov2cor <- function(x) {
 # = Reporting & Graphing helpers =
 # ================================
 
-#' umx_show
+#' Show matrices of RAM models in a easy-to-learn-from format. 
 #'
-#' Show matrix contents. The user can select  values, free, and/or labels, and which matrices to display
+#' A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
+#' do this in a way that makes it easy to process for users: The matrix contents are formated as tables, and can even 
+#' be displayed as tables in a web broswer.
+#' 
+#' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.
 #'
-#' @param model an \code{\link{mxModel}} to show data from
-#' @param what legal options are "values" (default), "free", or "labels")
-#' @param show filter on what to show c("all", "free", "fixed")
-#' @param matrices to show  (default is c("S", "A")). "Thresholds" in beta
-#' @param digits precision to report, defaults to rounding to 2 decimal places
-#' @return - \code{\link{mxModel}}
+#' @param model an \code{\link{mxModel}} from which to show parameters.
+#' @param what legal options are "values" (default), "free", or "labels").
+#' @param show filter on what to show c("all", "free", "fixed").
+#' @param matrices to show  (default is c("S", "A")). "Thresholds" in beta.
+#' @param digits precision to report. Default = round to 2 decimal places.
+#' @param na.print How to display NAs (default = "")
+#' @param zero.print How to display 0 values (default = ".")
+#' @param report How to report the results. "html" = open in browser.
+#' @return - 
 #' @export
 #' @family Reporting Functions
 #' @references - \url{https://tbates.github.io}
@@ -2846,21 +2856,23 @@ umxCov2cor <- function(x) {
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #'
-#' umx_show(m1)
-#' umx_show(m1, digits = 3)
-#' umx_show(m1, matrices = "S")
-#' umx_show(m1, what = "free")
-#' umx_show(m1, what = "labels")
-#' umx_show(m1, what = "free", matrices = "A")
-umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2) {
+#' tmx_show(m1)
+#' tmx_show(m1, digits = 3)
+#' tmx_show(m1, matrices = "S")
+#' tmx_show(m1, what = "free")
+#' tmx_show(m1, what = "labels")
+#' tmx_show(m1, what = "free", matrices = "A")
+tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2, report = c("markdown", "inline", "html", "report"), na.print = "", zero.print = ".") {
+
 	if(!umx_is_RAM(model)){
 		stop("Only RAM models by default: what would you like me to do with this type of model?")
 	}
+	report = match.arg(report)
 	what = match.arg(what)
 	show = match.arg(show)
 	
 	if("thresholds" %in% matrices){
-		# TODO umx_show: Threshold printing not yet finalized
+		# TODO tmx_show: Threshold printing not yet finalized
 		if(!is.null(model$deviations_for_thresh)){
 			dev = TRUE
 			x = model$deviations_for_thresh
@@ -2879,9 +2891,9 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 			} else if (show == "fixed") {
 				v[x$free == TRUE] = NA
 			}
-			umx_print(v, zero.print = ".", digits = digits)		
+			umx_print(v, zero.print = zero.print, na.print = na.print, digits = digits)
 		}else if(what == "free"){
-			umx_print(data.frame(x$free) , zero.print = ".", digits = digits)
+			umx_print(data.frame(x$free) , zero.print = zero.print, na.print = na.print, digits = digits)
 		}else if(what == "labels"){
 			l = x$labels
 			if(show == "free"){
@@ -2889,15 +2901,16 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 			} else if (show=="fixed") {
 				l[x$free == TRUE] = ""
 			}
-			umx_print(l, zero.print = ".", digits = digits)
+			umx_print(l, zero.print = ".", na.print = na.print, digits = digits)
 		}
 	} else {
 		for (w in matrices) {
-			message("Showing ", what, " for:", w, " matrix:")
+			if(report == "html"){ file = paste0(what, w, ".html") } else { file = NA}
+			message("Showing ", what, " for:", w, " matrix (0 and FALSE shown as '.'):")
 			if(what == "values"){
-				umx_print(data.frame(model$matrices[[w]]$values), zero.print = ".", digits = digits)		
+				tmp = data.frame(model$matrices[[w]]$values)
 			}else if(what == "free"){
-				umx_print(data.frame(model$matrices[[w]]$free) , zero.print = ".", digits = digits)
+				tmp = model$matrices[[w]]$free
 			}else if(what == "labels"){
 				x = model$matrices[[w]]$labels
 				if(show=="free"){
@@ -2905,14 +2918,15 @@ umx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 				} else if (show=="fixed") {
 					x[model$matrices[[w]]$free==TRUE] = ""
 				}
-				umx_print(x, zero.print = ".", digits = digits)
+				tmp = x
 			}else if(what == "nonzero_or_free"){
 				message("99 means the value is fixed, but is non-zero")
 				values = model$matrices[[w]]$values
 				Free   = model$matrices[[w]]$free
 				values[!Free & values !=0] = 99
-				umx_print(data.frame(values) , zero.print = ".", digits = digits)
+				tmp = data.frame(values)
 			}
+			umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= file)
 		}
 	}
 }

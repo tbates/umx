@@ -37,7 +37,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 )
 
 m1 = umx_fix_first_loadings(m1, latents = "g")
-umx_show(m1, "free", matrices="A") # path from g to var1 fixed @ 1.
+tmx_show(m1, "free", matrices="A") # path from g to var1 fixed @ 1.
 # note, in practice, you would now need to free the variance of g
 }
 \references{

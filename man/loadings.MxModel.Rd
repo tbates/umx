@@ -31,8 +31,8 @@ loadings(m1)
 - \code{\link{factanal}}, \code{\link{loadings}}
 
 Other Reporting Functions: \code{\link{tmx_is.identified}},
-  \code{\link{umxAPA}}, \code{\link{umxEval}},
-  \code{\link{umxFactorScores}},
+  \code{\link{tmx_show}}, \code{\link{umxAPA}},
+  \code{\link{umxEval}}, \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
   \code{\link{umx_APA_model_CI}},
@@ -40,7 +40,6 @@ Other Reporting Functions: \code{\link{tmx_is.identified}},
   \code{\link{umx_names}}, \code{\link{umx_parameters}},
   \code{\link{umx_print}},
   \code{\link{umx_show_fit_or_comparison}},
-  \code{\link{umx_show}}, \code{\link{umx_time}},
-  \code{\link{umx}}
+  \code{\link{umx_time}}, \code{\link{umx}}
 }
 \concept{Reporting Functions}
