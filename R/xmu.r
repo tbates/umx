@@ -39,13 +39,13 @@ xmu_check_variance <- function(data, minVar = .1, maxVarRatio = 1000){
 	if(sum(varList < minVar) > 0){
 		# At least 1 small
 		message("The variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
-			"You might want to umx_scale these variables, or multiply to express the variable in smaller units, e.g. cm instead of metres.")
+			"You might want to multiply to express the variable in smaller units, e.g. cm instead of metres (or umx_scale these variables in long-format).")
 		
 	}
 	if(max(varList)/min(varList) > maxVarRatio){
 		# At least 1 small
 		message("The variance of variable(s) ", omxQuotes(names(which.max(varList))), " is more than ", maxVarRatio, " times that of ", omxQuotes(names(which.min(varList))), ".\n",
-			"You might want to umx_scale these variables, or multiply to express one variable in different units to get these on more similar scales.")
+			"You might want multiply to get variables into units on more similar scales (or umx_scale these variables in long-format).")
 		
 	}
 

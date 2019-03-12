@@ -161,6 +161,14 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
 mold = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 umxCompare(m1, mold)
 
+# ===================
+# = Do it using WLS =
+# ===================
+m2 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
+		dzData = dzData, mzData = mzData,
+		tryHard = "mxTryHardOrdinal", type= "DWLS", allContinuousMethod='marginals'
+)
+
 # =================================================
 # = Find and test dropping of shared environment  =
 # =================================================
@@ -186,12 +194,17 @@ GFF[, ordDVs] = umxFactor(GFF[, ordDVs])
 selDVs = c("gff","fc","qol","hap","sat","DEP") 
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
-allData = rbind(mzData, dzData) 
 
 # umx_set_optimizer("NPSOL")
 # umx_set_optimization_options("mvnRelEps", .01)
 m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
+
+# Do it using WLS
+# m3 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData,
+#		tryHard = "mxTryHardOrdinal", type= "DWLS")
+# TODO fix WLS with umxCP 
+# label at row 1 and column 1 of matrix 'top.binLabels'' in model 'CP3fac' : object 'Vtot'
 
 # Correlated factors example
 data(GFF)

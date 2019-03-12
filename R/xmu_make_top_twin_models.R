@@ -335,7 +335,7 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 			top = mxModel("top", 
 				umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars)),
 				umxThresholdMatrix(allData, selDVs = selVars, verbose = verbose),
-				# mxAlgebra(name = "Vtot", A + C + E), # Total variance (redundant but is OK)
+				mxAlgebra(name = "Vtot", A + C + E), # Total variance (also added by models with std = TRUE, but is OK to add twice)
 				umxMatrix("binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
 				umxMatrix("Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
 				mxConstraint(name = "constrain_Bin_var_to_1", binLabels == Unit_nBinx1)

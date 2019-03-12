@@ -159,11 +159,20 @@ require(umx)
 data(twinData) # ?twinData from Australian twins.
 # Pick the variables
 selDVs = c("ht")
+# 1. Height has a tiny variance, and this makes solution finding very hard.
+# We'll scale height up by 10x to make the Optimizer's task easier.
+twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+
+# 2. umxACEnew picks the variables it needs from the data.
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
+
+# 3. umxACEnew can figure out variable names using sep: e.g. selVar = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
 m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
-umxSummary(m1, std = FALSE) # un-standardized
+
 # tip: with report = "html", umxSummary can print the table to your browser!
+umxSummary(m1, std = FALSE) # un-standardized
+# tip: plot gives a figure of the model and parameters
 # plot(m1)
 
 
@@ -179,7 +188,7 @@ umxSummary(m2, comparison = m1)
 # ================
 # = WLS analysis =
 # ================
-m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, 
+m3 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, 
 	type = "DWLS", allContinuousMethod='marginals'
 )
 
@@ -189,16 +198,13 @@ m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData,
 
 # Things to note:
 
-# 1. This variable has a large variance, and this makes solution finding very hard.
-# We'll scale weight to make the Optimizer's task easier.
+# 1. Weight has a large variance, and this makes solution finding very hard.
+# We'll scale wt to make the Optimizer's task easier.
 
 twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 
-# 2. umxACEnew can figure out variable names: provide sep= "_T" and selVar = "wt" -> "wt_T1" "wt_T2"
-
-# 3. umxACEnew picks the variables it needs from the data.
 # 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0 (prevents mirror-solutions).
         # can remove this by setting boundDiag = NULL
 m1 = umxACEnew(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
@@ -213,13 +219,15 @@ m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
 # = Bivariate height and weight model =
 # =====================================
 data(twinData)
-twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
+selDVs = c("ht", "wt") # umx will add sep (in this case "") + "1" or '2'
+twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 mzData = twinData[twinData$zygosity \%in\% c("MZFF", "MZMM"),]
 dzData = twinData[twinData$zygosity \%in\% c("DZFF", "DZMM", "DZOS"), ]
 mzData = mzData[1:80,] # quicker run to keep CRAN happy
 dzData = dzData[1:80,]
-selDVs = c("ht", "wt") # umx will add sep (in this case "") + "1" or '2'
 m1 = umxACEnew(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
+m2 = umxACEnew(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '',
+	type = "DWLS", allContinuousMethod='marginals')
 umxSummary(m1)
 
 # =========================================================

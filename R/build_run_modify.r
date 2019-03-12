@@ -1876,6 +1876,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed", 
 		if(addStd){
 			newTop = mxModel(model$top,
 				umxMatrix("I", "Iden", nVar, nVar), # nVar Identity matrix
+				# redundant with binary version of top - doesn't matter to add it twice
 				mxAlgebra(name = "Vtot", A + C+ E), # Total variance
 				# TODO test that these are identical in all cases.
 				# mxAlgebra(vec2diag(1/sqrt(diag2vec(Vtot))), name = "SD"), # SD
@@ -2362,6 +2363,14 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' mold = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' umxCompare(m1, mold)
 #'
+#' # ===================
+#' # = Do it using WLS =
+#' # ===================
+#' m2 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
+#' 		dzData = dzData, mzData = mzData,
+#'			tryHard = "mxTryHardOrdinal", type= "DWLS", allContinuousMethod='marginals'
+#' )
+#' 
 #' # =================================================
 #' # = Find and test dropping of shared environment  =
 #' # =================================================
@@ -2388,13 +2397,18 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' selDVs = c("gff","fc","qol","hap","sat","DEP") 
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
-#' allData = rbind(mzData, dzData) 
 #' 
 #' # umx_set_optimizer("NPSOL")
 #' # umx_set_optimization_options("mvnRelEps", .01)
 #' m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 #' 
+#' # Do it using WLS
+#' # m3 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData,
+#'	#		tryHard = "mxTryHardOrdinal", type= "DWLS")
+#'	# TODO fix WLS with umxCP 
+#'	# label at row 1 and column 1 of matrix 'top.binLabels'' in model 'CP3fac' : object 'Vtot'
+#'
 #' # Correlated factors example
 #' data(GFF)
 #' mzData = subset(GFF, zyg_2grp == "MZ")
@@ -2467,6 +2481,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 		mxModel(top,
 			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
+			umxMatrix("nFac_Unit", "Unit", nrow = nFac, ncol = 1),
 			# Latent common factor genetic paths
 			a_cp_matrix, c_cp_matrix, e_cp_matrix,
 			# Constrain variance of latent phenotype factor to 1.0
@@ -2475,18 +2490,17 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 			mxAlgebra(name = "C_cp", c_cp %*% t(c_cp)), # C_cp variance
 			mxAlgebra(name = "E_cp", e_cp %*% t(e_cp)), # E_cp variance
 			mxAlgebra(name = "L"   , A_cp + C_cp + E_cp), # total common factor covariance (a+c+e)
-			mxMatrix("Unit", nrow=nFac, ncol=1, name = "nFac_Unit"),
-			mxAlgebra(diag2vec(L)             , name = "diagL"),
-			mxConstraint(diagL == nFac_Unit   , name = "fix_CP_variances_to_1"),
+			mxAlgebra(name = "diagL", diag2vec(L)),
+			mxConstraint(name = "fix_CP_variances_to_1", diagL == nFac_Unit),
 
 			umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .5), # Additive gen path 
 			umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1), # Common env path 
 			umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .5), # Unique env path
 			umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .5), # loadings on latent phenotype
 			# Quadratic multiplication to add cp_loading effects
-			mxAlgebra(cp_loadings %&% A_cp + as %*% t(as), name = "A"), # Additive genetic variance
-			mxAlgebra(cp_loadings %&% C_cp + cs %*% t(cs), name = "C"), # Common environmental variance
-			mxAlgebra(cp_loadings %&% E_cp + es %*% t(es), name = "E"), # Unique environmental variance
+			mxAlgebra(name = "A"  , cp_loadings %&% A_cp + as %*% t(as)), # Additive genetic variance
+			mxAlgebra(name = "C"  , cp_loadings %&% C_cp + cs %*% t(cs)), # Common environmental variance
+			mxAlgebra(name = "E"  , cp_loadings %&% E_cp + es %*% t(es)), # Unique environmental variance
 			mxAlgebra(name = "ACE", A + C + E),
 			mxAlgebra(name = "AC" , A + C),
 			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
