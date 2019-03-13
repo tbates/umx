@@ -2865,7 +2865,7 @@ umxCov2cor <- function(x) {
 tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2, report = c("markdown", "inline", "html", "report"), na.print = "", zero.print = ".") {
 
 	if(!umx_is_RAM(model)){
-		stop("Only RAM models by default: what would you like me to do with this type of model?")
+		stop("I can only show the components of RAM models: You gave me an ", class(m1)[[1]])
 	}
 	report = match.arg(report)
 	what = match.arg(what)

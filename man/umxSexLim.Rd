@@ -2,10 +2,11 @@
 % Please edit documentation in R/umx_build_umxSexLim.R
 \name{umxSexLim}
 \alias{umxSexLim}
-\title{Multivariate twin analysis with sex limitation}
+\title{Multivariate sex limitation twin model}
 \usage{
 umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
-  dzoData, sep = NA, A_or_C = c("A", "C"), dzAr = 0.5, dzCr = 1,
+  dzoData, sep = NA, A_or_C = c("A", "C"), sexlim = c("Nonscalar",
+  "Scalar", "Homogeneity"), dzAr = 0.5, dzCr = 1,
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
   "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
 }
@@ -14,43 +15,61 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 
 \item{selDVs}{BASE NAMES of the variables in the analysis. You MUST provide sep.}
 
-\item{mzmData}{Dataframe containing the MZ male data}
+\item{mzmData}{Dataframe containing the MZ male data.}
 
-\item{dzmData}{Dataframe containing the DZ male data}
+\item{dzmData}{Dataframe containing the DZ male data.}
 
-\item{mzfData}{Dataframe containing the MZ female data}
+\item{mzfData}{Dataframe containing the MZ female data.}
 
-\item{dzfData}{Dataframe containing the DZ female data}
+\item{dzfData}{Dataframe containing the DZ female data.}
 
-\item{dzoData}{Dataframe containing the DZ opposite-sex data (be sure and get in right order)}
+\item{dzoData}{Dataframe containing the DZ opposite-sex data (be sure and get in right order).}
 
-\item{sep}{Suffix used for twin variable naming. Allows using just the base names in selVars}
+\item{sep}{Suffix used for twin variable naming. Allows using just the base names in selVars.}
 
-\item{A_or_C}{Whether to model sex-limitation on A or on C. (Defaults to "A")}
+\item{A_or_C}{Whether to model sex-limitation on A or on C. (Defaults to "A").}
+
+\item{sexlim}{Which model type: "Nonscalar" (default), "Scalar", or "Homogeneity".}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
 \item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
-\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned)}
+\item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
 \item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
 
 \item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
 }
 \value{
-- \code{\link{mxModel}} of subclass mxModel.CFSexLim
+\itemize{
+\item \code{\link{mxModel}} of subclass mxModel.CFSexLim
+}
 }
 \description{
-Build a multivariate twin analysis allowing for sex limitation (factors operate differently in males 
+Build a multivariate twin analysis allowing for sex limitation (factors operate differently in males
 vs. females) based on a correlated factors model.
 With 5-groups of twins, this model allows for both Quantitative & Qualitative Sex-Limitation.
-}
-\details{
+
 The correlation approach ensures that variable order does not affect the ability of the model
 to account for DZOS data.
+}
+\details{
+\strong{A or C}
+Due to limitations on the degrees of freedom allowed by the twin model, we can model
+qualitative sex differences for only one of A or C at a time.
 
-Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
+** 1. Nonscalar Sex Limitation **
+Allow Quantitative Sex Differences and, for one of \code{A or C} only, Qualitative Sex Differences.
+Male and female paths, plus Ra, Rc and Re between variables for males and for females.
+Male-Female correlations in DZO group between \code{A or C} factors and Rao (or Rco) free.
+Ra constrained across male, female, and opposite-sex pairs.
+
+\strong{2. Scalar Sex Limitation}
+
+Quantitative Sex Differences but NO Qualitative Sex Differences
+Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
+Restrictions: Assumes means and variances can be equated across birth order within zygosity groups.
 }
 \examples{
 # =========================
@@ -119,9 +138,11 @@ m1 = mxTryHard(m1)
 }
 }
 \references{
-- Neale et al. (2006). 
+\itemize{
+\item Neale et al. (2006).
 Multivariate genetic analysis of sex-lim and GxE interaction.
 \emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489.
+}
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},

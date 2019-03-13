@@ -1,5 +1,16 @@
-#' Multivariate twin analysis with sex limitation
+# oddsratio <- function(grp1= c(n, N), grp2= c(n, N)) {
+# 	odds1 = odds(grp1[1], grp1[2])
+# 	odds2 = odds(grp2[1], grp2[2])
+# 	OR = odds1/odds2
+# 	list(odds1=odds1,odds2=odds2, OR=OR)
+# }
+# odds <- function(n,N) {
+# 	n/(N-n)
+# }
+
+#' Multivariate sex limitation twin model
 #'
+#' @description
 #' Build a multivariate twin analysis allowing for sex limitation (factors operate differently in males 
 #' vs. females) based on a correlated factors model.
 #' With 5-groups of twins, this model allows for both Quantitative & Qualitative Sex-Limitation.
@@ -7,20 +18,49 @@
 #' The correlation approach ensures that variable order does not affect the ability of the model
 #' to account for DZOS data.
 #' 
-#' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups
+#' @details
+#' 
+#' **A or C**
+#' Due to limitations on the degrees of freedom allowed by the twin model, we can model 
+#' qualitative sex differences for only one of A or C at a time.
+#' 
+#' 
+#' ** 1. Nonscalar Sex Limitation **
+#' Allow Quantitative Sex Differences and, for one of `A or C` only, Qualitative Sex Differences.
+#' Male and female paths, plus Ra, Rc and Re between variables for males and for females.
+#' Male-Female correlations in DZO group between `A or C` factors and Rao (or Rco) free.
+#' Ra constrained across male, female, and opposite-sex pairs.
+#'
+#' **2. Scalar Sex Limitation**
+#'
+#' Quantitative Sex Differences but NO Qualitative Sex Differences
+#' Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
+#' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups.
+#'
+# TODO: This is quite complex - perhaps just make it an operation which umxSexLim can perform/output?
+# Equate the R[ace]f and R[ace]m matrix labels by deleting "f" and "m"
+# m2 = umxModify(m1, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", name = "Homogeneity", autoRun= FALSE)
+#
+# m2 = mxModel(m2, mxModel(m2$top,
+# 	umxMatrix("Rao", "Stand", nrow= nVar, free= fixDiag, values= st_Dia1, baseName= "Ra", lbound= -1, ubound= 1),
+# 	umxMatrix("Rco", "Stand", nrow= nVar, free= fixDiag, values= st_Dia1, baseName= "Rc", lbound= -1, ubound= 1)
+# ))
+#
+# m2 = omxAssignFirstParameters(m2)
 #'
 #' @param name    The name of the model (Default = "sexlim")
 #' @param selDVs  BASE NAMES of the variables in the analysis. You MUST provide sep.
-#' @param sep Suffix used for twin variable naming. Allows using just the base names in selVars
-#' @param mzmData Dataframe containing the MZ male data
-#' @param dzmData Dataframe containing the DZ male data
-#' @param mzfData Dataframe containing the MZ female data
-#' @param dzfData Dataframe containing the DZ female data
-#' @param dzoData Dataframe containing the DZ opposite-sex data (be sure and get in right order)
-#' @param A_or_C  Whether to model sex-limitation on A or on C. (Defaults to "A")
+#' @param sep Suffix used for twin variable naming. Allows using just the base names in selVars.
+#' @param mzmData Dataframe containing the MZ male data.
+#' @param dzmData Dataframe containing the DZ male data.
+#' @param mzfData Dataframe containing the MZ female data.
+#' @param dzfData Dataframe containing the DZ female data.
+#' @param dzoData Dataframe containing the DZ opposite-sex data (be sure and get in right order).
+#' @param A_or_C  Whether to model sex-limitation on A or on C. (Defaults to "A").
+#' @param sexlim  Which model type: "Nonscalar" (default), "Scalar", or "Homogeneity".
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
-#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned)
+#' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.CFSexLim
@@ -28,7 +68,8 @@
 #' @family Twin Modeling Functions
 #' @references - Neale et al. (2006). 
 #' Multivariate genetic analysis of sex-lim and GxE interaction.
-#' \emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489. 
+#' \emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489.
+#' @md
 #' @examples
 #  # =============================================
 #  # = Run Qualitative Sex Differences ACE model =
@@ -97,9 +138,10 @@
 #' # summary(m1)
 #' # summary(m1)$Mi
 #' }
-umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
+umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), sexlim = c("Nonscalar", "Scalar", "Homogeneity"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
 	A_or_C  = match.arg(A_or_C)
 	tryHard = match.arg(tryHard)
+	sexlim  = match.arg(sexlim)
 
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
@@ -155,16 +197,6 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			Rao = umxMatrix("Rao", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 			Rco = umxMatrix("Rco", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 	}
-
-	# oddsratio <- function(grp1= c(n, N), grp2= c(n, N)) {
-	# 	odds1 = odds(grp1[1], grp1[2])
-	# 	odds2 = odds(grp2[1], grp2[2])
-	# 	OR = odds1/odds2
-	# 	list(odds1=odds1,odds2=odds2, OR=OR)
-	# }
-	# odds <- function(n,N) {
-	# 	n/(N-n)
-	# }
 
 	model = mxModel(name,
 		mxModel("top",
@@ -275,6 +307,33 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 		if("^Ra[fmo](_.*)$" %in% umxGetParameters(model)){
 			model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
 		}
+	}
+	if(sexlim == "Nonscalar"){
+		# =================================
+		# = Non-scalar Sex Limitation (A) =
+		# =================================
+		# TODO: Quantitative & Qualitative Sex Differences for A
+		# Male and female paths, plus Ra, Rc and Re between variables for males and females
+		# Male-Female correlations in DZO group between A factors Rao FREE
+		# Rc constrained across male, female and opposite-sex pairs
+	} else if (sexlim == "Scalar"){
+		# =========================
+		# = Scalar Sex Limitation =
+		# =========================
+		# Quantitative Sex Differences but NO Qualitative Sex Differences
+		# Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
+
+		# TODO: This is quite complex - perhaps just make it an operation which umxSexLim can perform/output?
+		# Equate the R[ace]f and R[ace]m matrix labels by deleting "f" and "m"
+		m2 = umxModify(m1, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", name = "Homogeneity", autoRun= FALSE)
+
+		m2 = mxModel(m2, mxModel(m2$top, 
+			umxMatrix("Rao", "Stand", nrow= nVar, free= fixDiag, values= st_Dia1, baseName= "Ra", lbound= -1, ubound= 1),
+			umxMatrix("Rco", "Stand", nrow= nVar, free= fixDiag, values= st_Dia1, baseName= "Rc", lbound= -1, ubound= 1)
+		))
+	}else{
+		# "Homogeneity"
+		# Just advise people to do ACE?
 	}
 
 	# Tests: equate means would be expMeanGm, expMeanGf, expMeanGo
