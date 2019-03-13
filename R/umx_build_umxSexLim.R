@@ -296,18 +296,6 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 		mxFitFunctionMultigroup(c("MZf", "DZf", "MZm", "DZm", "DZo"))
 	) # end model
 
-	# Non-scalar (full) sex-lim label tweaks
-	if(A_or_C == "A"){
-		# convert (Rcf|Rcm|Rco) => "Rc"		
-		if("^Rc[fmo](_.*)$" %in% umxGetParameters(model)){
-			model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
-		}
-	}else if (A_or_C == "C"){
-		# (Raf|Ram|Rao) => "ra"
-		if("^Ra[fmo](_.*)$" %in% umxGetParameters(model)){
-			model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
-		}
-	}
 	if(sexlim == "Nonscalar"){
 		# =================================
 		# = Non-scalar Sex Limitation (A) =
@@ -336,7 +324,19 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 		# Just advise people to do ACE?
 	}
 
-	# Tests: equate means would be expMeanGm, expMeanGf, expMeanGo
+	# Non-scalar (full) sex-lim label tweaks
+	if(A_or_C == "A"){
+		# convert (Rcf|Rcm|Rco) => "Rc"		
+		if("^Rc[fmo](_.*)$" %in% umxGetParameters(model)){
+			model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
+		}
+	}else if (A_or_C == "C"){
+		# (Raf|Ram|Rao) => "ra"
+		if("^Ra[fmo](_.*)$" %in% umxGetParameters(model)){
+			model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
+		}
+	}
+	# TODO: umxSexLim equate means would be expMeanGm, expMeanGf, expMeanGo
 	model = as(model, "MxModelSexLim") # Set class so umxSummary, plot, etc. work.
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
 	invisible(model)
