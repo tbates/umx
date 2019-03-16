@@ -37,13 +37,12 @@
 #' Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
 #' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups.
 #'
-# TODO: This is quite complex - perhaps just make it an operation which umxSexLim can perform/output?
 # Equate the R[ace]f and R[ace]m matrix labels by deleting "f" and "m"
 # m2 = umxModify(m1, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", name = "Homogeneity", autoRun= FALSE)
 #
 # m2 = mxModel(m2, mxModel(m2$top,
-# 	umxMatrix("Rao", "Stand", nrow= nVar, free= fixDiag, values= st_Dia1, baseName= "Ra", lbound= -1, ubound= 1),
-# 	umxMatrix("Rco", "Stand", nrow= nVar, free= fixDiag, values= st_Dia1, baseName= "Rc", lbound= -1, ubound= 1)
+# 	umxMatrix("Rao", "Stand", nrow= nVar, values= .2, baseName= "Ra", lbound= -1, ubound= 1),
+# 	umxMatrix("Rco", "Stand", nrow= nVar, values= .2, baseName= "Rc", lbound= -1, ubound= 1)
 # ))
 #
 # m2 = omxAssignFirstParameters(m2)
@@ -80,33 +79,40 @@
 #' \dontrun{
 #' require(umx)
 #' data("us_skinfold_data")
-#' # rescale vars
-#' us_skinfold_data[, c('bic_T1', 'bic_T2')] <- us_skinfold_data[, c('bic_T1', 'bic_T2')]/3.4
-#' us_skinfold_data[, c('tri_T1', 'tri_T2')] <- us_skinfold_data[, c('tri_T1', 'tri_T2')]/3
-#' us_skinfold_data[, c('caf_T1', 'caf_T2')] <- us_skinfold_data[, c('caf_T1', 'caf_T2')]/3
-#' us_skinfold_data[, c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[, c('ssc_T1', 'ssc_T2')]/5
-#' us_skinfold_data[, c('sil_T1', 'sil_T2')] <- us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
+#' # Rescale vars
+#' us_skinfold_data[, c('bic_T1', 'bic_T2')] = us_skinfold_data[, c('bic_T1', 'bic_T2')]/3.4
+#' us_skinfold_data[, c('tri_T1', 'tri_T2')] = us_skinfold_data[, c('tri_T1', 'tri_T2')]/3
+#' us_skinfold_data[, c('caf_T1', 'caf_T2')] = us_skinfold_data[, c('caf_T1', 'caf_T2')]/3
+#' us_skinfold_data[, c('ssc_T1', 'ssc_T2')] = us_skinfold_data[, c('ssc_T1', 'ssc_T2')]/5
+#' us_skinfold_data[, c('sil_T1', 'sil_T2')] = us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
 #'
-#' # Data objects for Multiple Groups
+#' # Data for each of the 5 twin-type groups
 #' mzmData = subset(us_skinfold_data, zyg == 1)
 #' mzfData = subset(us_skinfold_data, zyg == 2)
 #' dzmData = subset(us_skinfold_data, zyg == 3)
 #' dzfData = subset(us_skinfold_data, zyg == 4)
 #' dzoData = subset(us_skinfold_data, zyg == 5)
 #'
-#'# ============================
-#'# = Run univariate example =
-#'# ============================
-#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun = FALSE,
+#' # ==========================
+#' # = Run univariate example =
+#' # ==========================
+#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun= FALSE,
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
 #')
 #' m1 = mxTryHard(m1)
 #'
-#'# =====================
-#'# = Bivariate example =
-#'# =====================
+#' m2 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "mxTryHard", sexlim = "Scalar",
+#'		mzmData = mzmData, dzmData = dzmData, 
+#'		mzfData = mzfData, dzfData = dzfData, 
+#'		dzoData = dzoData
+#')
+#' m2 = mxTryHard(m2)
+#'
+#' # =====================
+#' # = Bivariate example =
+#' # =====================
 #' m1 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", A_or_C = "A", autoRun = FALSE,
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
@@ -181,15 +187,15 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	
 
 	# Helpful dimnames for Algebra-based Estimates and Derived Variance Component output (see "VarsZm") 
-	colZm <- paste0(selDVs, rep(c('Am', 'Cm', 'Em'), each = nVar))
-	colZf <- paste0(selDVs, rep(c('Af', 'Cf', 'Ef'), each = nVar))
+	colZm = paste0(selDVs, rep(c('Am', 'Cm', 'Em'), each = nVar))
+	colZf = paste0(selDVs, rep(c('Af', 'Cf', 'Ef'), each = nVar))
 
 	# Make Rao and Rco matrices 
 	if(A_or_C == "A"){
 			# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is symm)
-			# (labels trimmed to ra at end)
-			# TODO: Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag@1)
-			# TODO: perhaps this was to create the flexibility to turn ao into co?
+			# (labels trimmed to Ra at end)
+			# TODO: Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag @1)
+			# TODO: Not sure why, as Symm can become Full... so can't turn Ao into Co...
 			Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 			Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 	} else if (A_or_C == "C"){
@@ -294,48 +300,54 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			mxFitFunctionML(), mxData(dzoData, type = "raw")
 		),
 		mxFitFunctionMultigroup(c("MZf", "DZf", "MZm", "DZm", "DZo"))
-	) # end model
+	) # end supermodel
 
 	if(sexlim == "Nonscalar"){
 		# =================================
 		# = Non-scalar Sex Limitation (A) =
 		# =================================
-		# TODO: Quantitative & Qualitative Sex Differences for A
+		# TODO: Quantitative & Qualitative Sex Differences for A || C.
 		# Male and female paths, plus Ra, Rc and Re between variables for males and females
 		# Male-Female correlations in DZO group between A factors Rao FREE
 		# Rc constrained across male, female and opposite-sex pairs
+
+		# Non-scalar (full) sex-lim label tweaks
+		if(A_or_C == "A"){
+			# Convert Rc[fmo] => "Rc"		
+			if("^Rc[fmo](_.*)$" %in% umxGetParameters(model)){
+				model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
+			}
+		}else if (A_or_C == "C"){
+			# Convert Ra[fmo] => "Ra"
+			if("^Ra[fmo](_.*)$" %in% umxGetParameters(model)){
+				model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
+			}
+		}
 	} else if (sexlim == "Scalar"){
 		# =========================
 		# = Scalar Sex Limitation =
 		# =========================
-		# Quantitative Sex Differences but NO Qualitative Sex Differences
-		# Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
+		# Quantitative Sex Differences. NO Qualitative Sex Differences.
+		# Male and female paths, Only one set of Ra, Rc and Re between variables 
+		#  (i.e., same correlations for males and for females)
 
-		# TODO: This is quite complex - perhaps just make it an operation which umxSexLim can perform/output?
-		# Equate the R[ace]f and R[ace]m matrix labels by deleting "f" and "m"
-		m2 = umxModify(m1, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", name = "Homogeneity", autoRun= FALSE)
+		# TODO: This is quite complex, so instead of a "reduction" make it an operation which `umxSexLim` can perform
+		# 1. Equate f and m correlations by trimming the sex suffix off R[ace]f and R[ace]m matrix labels (i.e., deleting "f" and "m")
+		model = umxModify(model, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", name = "Scalar", autoRun= FALSE)
 
-		m2 = mxModel(m2, mxModel(m2$top, 
-			umxMatrix("Rao", "Stand", nrow= nVar, free= fixDiag, values= st_Dia1, baseName= "Ra", lbound= -1, ubound= 1),
-			umxMatrix("Rco", "Stand", nrow= nVar, free= fixDiag, values= st_Dia1, baseName= "Rc", lbound= -1, ubound= 1)
+		# 2. Replace opposite sex matrices (top.Rao and top.Rco) with labels that have no sex suffix(to match R[ace] same-sex)
+		# TODO: Make this a regex also? "Rao_" --> "Ra_" "Rco_" --> "Rc_"
+		# both standardized
+		model = mxModel(model, mxModel(model$top, 
+			umxMatrix("Rao", "Stand", nrow= nVar, values= .2, baseName= "Ra", lbound= -1, ubound= 1),
+			umxMatrix("Rco", "Stand", nrow= nVar, values= .2, baseName= "Rc", lbound= -1, ubound= 1)
 		))
 	}else{
 		# "Homogeneity"
 		# Just advise people to do ACE?
 	}
 
-	# Non-scalar (full) sex-lim label tweaks
-	if(A_or_C == "A"){
-		# convert (Rcf|Rcm|Rco) => "Rc"		
-		if("^Rc[fmo](_.*)$" %in% umxGetParameters(model)){
-			model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
-		}
-	}else if (A_or_C == "C"){
-		# (Raf|Ram|Rao) => "ra"
-		if("^Ra[fmo](_.*)$" %in% umxGetParameters(model)){
-			model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
-		}
-	}
+	model = omxAssignFirstParameters(model)
 	# TODO: umxSexLim equate means would be expMeanGm, expMeanGf, expMeanGo
 	model = as(model, "MxModelSexLim") # Set class so umxSummary, plot, etc. work.
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
@@ -382,15 +394,15 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' umx_set_optimizer("SLSQP")
 #' data("us_skinfold_data")
 #' # rescale vars
-#' us_skinfold_data[, c('bic_T1', 'bic_T2')] <- us_skinfold_data[, c('bic_T1', 'bic_T2')]/3.4
-#' us_skinfold_data[, c('tri_T1', 'tri_T2')] <- us_skinfold_data[, c('tri_T1', 'tri_T2')]/3
-#' us_skinfold_data[, c('caf_T1', 'caf_T2')] <- us_skinfold_data[, c('caf_T1', 'caf_T2')]/3
-#' us_skinfold_data[, c('ssc_T1', 'ssc_T2')] <- us_skinfold_data[, c('ssc_T1', 'ssc_T2')]/5
-#' us_skinfold_data[, c('sil_T1', 'sil_T2')] <- us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
+#' us_skinfold_data[, c('bic_T1', 'bic_T2')] = us_skinfold_data[, c('bic_T1', 'bic_T2')]/3.4
+#' us_skinfold_data[, c('tri_T1', 'tri_T2')] = us_skinfold_data[, c('tri_T1', 'tri_T2')]/3
+#' us_skinfold_data[, c('caf_T1', 'caf_T2')] = us_skinfold_data[, c('caf_T1', 'caf_T2')]/3
+#' us_skinfold_data[, c('ssc_T1', 'ssc_T2')] = us_skinfold_data[, c('ssc_T1', 'ssc_T2')]/5
+#' us_skinfold_data[, c('sil_T1', 'sil_T2')] = us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
 #'
 #' # Variables for Analysis
-#' selDVs = c('ssc','sil','caf','tri','bic') # (was Vars)
-#' # Data objects for Multiple Groups
+#' selDVs = c('ssc','sil','caf','tri','bic')
+#' # Data for each of the 5 twin-type groups
 #' mzmData = subset(us_skinfold_data, zyg == 1)
 #' mzfData = subset(us_skinfold_data, zyg == 2)
 #' dzmData = subset(us_skinfold_data, zyg == 3)
@@ -433,7 +445,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	# round(m1$VarsZm$result,4); round(m1$CorsZm$result,4)
 	# round(m1$VarsZf$result,4); round(m1$CorsZf$result,4)
 	
-
+	# TODO if univariate, there are no correlations...
 	message("Genetic Factor Correlations (male lower triangle, female upper)")
 	RAm = tmpm[1:nVar, 1:nVar]
 	RAf = tmpf[1:nVar, 1:nVar]
