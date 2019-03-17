@@ -1,3 +1,22 @@
+#   Copyright 2007-2019 Timothy C. Bates
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+# 
+#        https://www.apache.org/licenses/LICENSE-2.0
+# 
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
+# utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
+# so umx_swap_a_block()
+
+
 #' Score a psychometric scale by summing normal and reversed items
 #'
 #' @description
@@ -72,25 +91,6 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	return(data)
 }
 
-#' Helper to make a graphviz rank string
-#'
-#' @description
-#' Helper to make a graphviz rank string is a function which 
-#'
-#' @param vars a list of strings
-#' @param pattern regular expression to filter vars
-#' @param rank "same", max, min
-#' @return string
-#' @export
-#' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{umxLabel}}
-#' @examples
-#' umx_graphviz_rank(c("as1"), "^[ace]s[0-9]+$", "same")
-umx_graphviz_rank <- function(vars, pattern, rank) {
-	formatted = paste(namez(vars, pattern), collapse = "; ")
-	ranks = paste0("{rank=", rank, "; ", formatted, "};\n")
-	return(ranks)
-}
 
 #' Return whether a cell is in a set location of a matrix
 #'
@@ -164,187 +164,6 @@ umx_cell_is_on <- function(r, c, where=c("diag", "lower", "upper", "any", "left"
 	return(valid)
 }
 
-#' Return dot code for paths in a matrix
-#'
-#' @description
-#' Return dot code for paths in a matrix is a function which 
-#' Walk rows and cols of matrix. At each free cell, 
-#' Create a string like:
-#' 	ai1 -> var1 [label=".35"]
-#' A latent (and correlations among latents)
-#' 	* these go from a_cp n=row TO common n= row
-#' 	* or for off diag, from a_cp n=col TO a_cp n= row
-#'
-#' @param x a \code{\link{umxMatrix}} to make paths from.
-#' @param from one of "rows", "columns" or a name
-#' @param cells which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
-#' @param arrows "forward" "both" or "back"
-#' @param fromLabel = NULL
-#' @param toLabel = NULL
-#' @param selDVs if not null, row is used to index into this to set target name
-#' @param showFixed = FALSE
-#' @param digits rounding values (default = 2).
-#' @param type one of "latent" or "manifest" (default NULL, don't accumulate new names using "from" list)
-#' @param p input to build on. list(str = "", latents = c(), manifests = c())
-#' @return - list(str = "", latents = c(), manifests = c())
-#' @export
-#' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{plot}}
-#' @examples
-#' # Make a lower 3*3 value= 1:6 (1,4,6 on the diag)
-#' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
-#' out = umx_mat2dot(a_cp, cells = "lower", from = "rows", arrows = "both")
-#' cat(out$str)
-#' out = umx_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
-#' cat(out$str)
-#' # First call also inits the plot struct
-#' out = umx_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", type = "latent")
-#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
-#' cat(out$str)
-#' 
-umx_mat2dot <- function(x, cells = c("any", "diag", "lower", "upper", "left"), from = "rows", fromLabel = NULL, toLabel = NULL, selDVs = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), type = NULL, digits = 2, p = list(str = "", latents = c(), manifests = c())) {
-	cells  = match.arg(cells)
-	arrows = match.arg(arrows)
-	nRows = nrow(x)
-	nCols = ncol(x)
-	# Allow from and to labels other than the matrix name (default)
-	if(is.null(fromLabel)){
-		fromLabel = x$name
-	}
-	if(is.null(toLabel)){
-		toLabel = x$name
-	}
-	 
-	for (r in 1:nRows) {
-		for (c in 1:nCols) {
-			if(umx_cell_is_on(r= r, c = c, where = cells, mat = x)){
-				# TODO get the CI (or should we rely on stashed CIs?)
-				# TODO add this code to umx_mat2dot (need to pass in the model)
-				# CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits)
-				# if(is.na(CIstr)){
-				# 	val = umx_round(parameterKeyList[thisParam], digits)
-				# }else{
-				# 	val = CIstr
-				# }
-				value = round(x$values[r,c], digits)
-				if(from == "rows"){
-					if(fromLabel=="one"){
-						fr = fromLabel
-					} else {
-						fr = paste0(fromLabel, r)
-					}
-					if(!is.null(selDVs)){
-						tu = selDVs[c]
-					}else{
-						tu = paste0(toLabel, c)
-					}
-				} else { 
-					if(fromLabel=="one"){
-						fr = fromLabel
-					} else {
-						fr = paste0(fromLabel, c)
-					}
-					if(!is.null(selDVs)){
-						tu = selDVs[r]
-					}else{
-						tu = paste0(toLabel, r)
-					}
-				}
-				# Show fixed cells if non-0
-				if(x$free[r,c] || (showFixed && x$values[r,c] != 0)){
-					p$str = paste0(p$str, "\n", fr, " -> ", tu, " [dir = ", arrows, " label=\"", value, "\"];")
-					if(!is.null(type)){
-						if(type == "latent"){
-							p$latents   = c(p$latents, fr)
-						} else if(type == "manifest"){
-							p$manifests = c(p$manifests, fr)
-						}
-					}
-				}
-			} else {
-				# fixed cell
-			}
-		}
-	}
-	p$latents = unique(p$latents)
-	p$manifests = unique(p$manifests)	
-	p
-}
-
-# Poems one should know by heart:
-
-# William Shakespeare
-# [Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
-# [To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
-# [The Merchant of Venice](https://www.goodreads.com/work/quotes/2682703-the-merchant-of-venice)
-#  * "How far that little candle throws his beams! So shines a good deed in a weary world."
-#  * The quality of mercy is not strained.
-#  * "One half of me is yours, the other half is yours,
-#    Mine own, I would say; but if mine, then yours,
-#    And so all yours."
-#  * If to do were as easy as to know what were good to do, chapels 
-#    had been churches, and poor men's cottages princes’ palaces.
-# * “This above all: to thine own self be true,
-
-# # PERCY BYSSHE SHELLEY
-# [Ozymandias](https://www.poetryfoundation.org/poems/46565/ozymandias)
-
-# Brevia
-#  * [Invictus](https://en.wikipedia.org/wiki/Invictus)
-#  * [Abou ben Adhem](https://www.poetryfoundation.org/poems/44433/abou-ben-adhem)
-#  * [Odi et amo](https://en.wikipedia.org/wiki/Catullus_85)
-
-# # [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
-#  * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
-
-
-#   Copyright 2007-2019 Timothy C. Bates
-#
-#   Licensed under the Apache License, Version 2.0 (the "License");
-#   you may not use this file except in compliance with the License.
-#   You may obtain a copy of the License at
-# 
-#        https://www.apache.org/licenses/LICENSE-2.0
-# 
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS,
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#   See the License for the specific language governing permissions and
-#   limitations under the License.
-
-# devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
-# so umx_swap_a_block()
-
-# ===================
-# = OpenMx wrappers =
-# ===================
-
-#' A recipe Easter-egg for umx
-#'
-#' @description
-#' How to cook steak.
-#' @details Equipment matters. You should buy a heavy cast-iron skillet, and a digital internal thermometer.
-#' Preferably cook over a gas flame.
-#' 
-#' *note*: Cheaper cuts like blade steak can come out fine.
-#' 
-#' A great reference is The Food Lab by Kenji Alt Lopez. https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087.
-#'
-#' @export
-#' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{omxBrownie}}
-#' @references - [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087)
-#' @examples
-#' umxBrownie()
-#' @md
-umxBrownie <- function() {
-	message("Rub steak in a table spoon of salt, put it back in the fridge for an hour (longer is fine).\n",
-	"Place steak on a hot cast-iron skillet, with a little peanut oil.\n",
-	"Turn steaks as often as you wish. Control heat to below smoke point.\n",
-	"Remove and eat when internal temp reaches 130 \u0080 F.\n"
-	)
-}
 
 # ==============================
 # = Get and set OpenMx options =
@@ -1456,6 +1275,32 @@ umx_factor <- umxFactor
 # = Utility =
 # ===========
 
+#' A recipe Easter-egg for umx
+#'
+#' @description
+#' How to cook steak.
+#' @details Equipment matters. You should buy a heavy cast-iron skillet, and a digital internal thermometer.
+#' Preferably cook over a gas flame.
+#' 
+#' *note*: Cheaper cuts like blade steak can come out fine.
+#' 
+#' A great reference is The Food Lab by Kenji Alt Lopez. https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087.
+#'
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{omxBrownie}}
+#' @references - [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087)
+#' @examples
+#' umxBrownie()
+#' @md
+umxBrownie <- function() {
+	message("Rub steak in a table spoon of salt, put it back in the fridge for an hour (longer is fine).\n",
+	"Place steak on a hot cast-iron skillet, with a little peanut oil.\n",
+	"Turn steaks as often as you wish. Control heat to below smoke point.\n",
+	"Remove and eat when internal temp reaches 130 \u0080 F.\n"
+	)
+}
+
 #' Get or print the version of umx, along with detail from OpenMx and general system info.
 #'
 #' @description
@@ -2483,6 +2328,7 @@ print.reliability <- function (x, digits = 4, ...){
 # ==================
 # = Code functions =
 # ==================
+
 #' Install OpenMx, with choice of builds
 #'
 #' @description
@@ -2824,6 +2670,184 @@ umxCov2cor <- function(x) {
 # ================================
 # = Reporting & Graphing helpers =
 # ================================
+
+#' Helper to make the list of vars and their shapes for a graphviz string
+#'
+#' @description
+#' Helper to make a graphviz rank string is a function which.
+#'
+#' @param latents list of latent variables
+#' @param manifests list of manifest variables
+#' @param preOut "" by default.
+#' @return string
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{umx_graphviz_rank}}
+#' @examples
+#' umx_graphviz_define_shapes(c("as1"), c("E", "N"))
+umx_graphviz_define_shapes <- function(latents, manifests, preOut= "") {
+	latents   = unique(latents)
+	manifests = unique(manifests)
+	preOut    = paste0(preOut, "\n# Latents\n")
+	for(var in latents) {
+		if(var == "one"){
+			preOut = paste0(preOut, "\t", var, " [shape = triangle];\n")
+		} else {
+			preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+		}
+	}
+	preOut = paste0(preOut, "\n# Manifests\n")
+	for(thisManifest in manifests) {
+	   preOut = paste0(preOut, "\t", thisManifest, " [shape = square];\n")
+	}
+	return(preOut)
+}
+
+#' Helper to make a graphviz rank string
+#'
+#' Given a list of names, this filters the list, and returns a graphviz string to force them into the given rank.
+#' e.g. "{rank=same; as1};\n"
+#'
+#' @param vars a list of strings
+#' @param pattern regular expression to filter vars
+#' @param rank "same", "max", "min"
+#' @return string
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{umx_graphviz_define_shapes}}
+#' @examples
+#' umx_graphviz_rank(c("as1"), "^[ace]s[0-9]+$", "same")
+umx_graphviz_rank <- function(vars, pattern, rank) {
+	formatted = paste(namez(vars, pattern), collapse = "; ")
+	ranks = paste0("{rank=", rank, "; ", formatted, "};\n")
+	return(ranks)
+}
+
+#' Return dot code for paths in a matrix
+#'
+#' @description
+#' Return dot code for paths in a matrix is a function which walks the rows and cols of a matrix.
+#' At each free cell, it creates a dot-string specifying the relevant path, e.g.:
+#'
+#' \code{ai1 -> var1 [label=".35"]}
+#'
+#' It is hihgly customisable:
+#' 
+#' 1. You can specify which cells to inspect, e.g. "lower".
+#' 2. You can choose how to interpret path direction, from = "cols".
+#' 3. You can choose the label for the from to ends of the path (by default, the matrix name is used).
+#' 4. You can offer up a selDVs list which will be 
+#' 5. You can set the number of arrows on a path (e.g. both).
+#' 6. If `type` is set, then sources are added to the manifests or latents output (p)
+#' 
+#' Finally, you can pass in previous output and new paths will be concatendated to these.
+#' 
+#' @param x a \code{\link{umxMatrix}} to make paths from.
+#' @param from one of "rows", "columns" or a name
+#' @param cells which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
+#' @param arrows "forward" "both" or "back"
+#' @param fromLabel = NULL
+#' @param toLabel = NULL
+#' @param selDVs if not null, row is used to index into this to set target name
+#' @param showFixed = FALSE
+#' @param digits to round values to (default = 2).
+#' @param type one of "latent" or "manifest" (default NULL, don't accumulate new names using "from" list)
+#' @param p input to build on. list(str = "", latents = c(), manifests = c())
+#' @return - list(str = "", latents = c(), manifests = c())
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - \code{\link{plot}}
+#' @md
+#' @examples
+#' # Make a lower 3 * 3 value= 1:6 (1, 4, 6 on the diag)
+#' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
+#' out = umx_mat2dot(a_cp, cells = "lower", from = "rows", arrows = "both")
+#' cat(out$str) # a_cp2 -> a_cp1 [dir = both label="2"];
+#' out = umx_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
+#' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
+#' # First call also inits the plot struct
+#' out = umx_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", type = "latent")
+#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
+#' cat(out$str)
+#' 
+#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent")
+#' cat(out$str) # a_cp1 -> a [dir = forward label="1"]; a_cp2 -> b [dir = forward label="4"];
+#' 
+#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent");
+#' cat(out$str); cat(out$latents)
+#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "manifest");
+#' cat(out$str); cat(out$manifests)
+#' 
+umx_mat2dot <- function(x, cells = c("any", "diag", "lower", "upper", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, selDVs = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), type = NULL, digits = 2, p = list(str = "", latents = c(), manifests = c())) {
+	from   = match.arg(from)
+	cells  = match.arg(cells)
+	arrows = match.arg(arrows)
+	nRows  = nrow(x)
+	nCols  = ncol(x)
+	# Allow from and to labels other than the matrix name (default)
+	if(is.null(fromLabel)){ fromLabel = x$name }
+	if(is.null(toLabel))  { toLabel   = x$name }
+	 
+		# Get parameter value and make the plot string
+		# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
+		# If the model already has CIs stashed umx_stash_CIs() then pointless and harmful.
+		# Also fails to understand not using _std?
+		CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", SEstyle = SEstyle, digits = digits)
+		if(is.na(CIstr)){
+			value = umx_round(x$values[r,c], digits)
+		}else{
+			value = CIstr
+		}
+
+	for (r in 1:nRows) {
+		for (c in 1:nCols) {
+			if(umx_cell_is_on(r= r, c = c, where = cells, mat = x)){
+				# TODO get the CI (or should we rely on stashed CIs?)
+				# TODO add CIstr code (above) to umx_mat2dot (need to pass in model, and SEstyle)
+				value = round(x$values[r,c], digits)
+				if(from == "rows"){
+					if(fromLabel == "one"){
+						fr = fromLabel
+					} else {
+						fr = paste0(fromLabel, r)
+					}
+					if(!is.null(selDVs)){
+						tu = selDVs[c]
+					}else{
+						tu = paste0(toLabel, c)
+					}
+				} else { # cols
+					if(fromLabel == "one"){
+						fr = fromLabel
+					} else {
+						fr = paste0(fromLabel, c)
+					}
+					if(!is.null(selDVs)){
+						tu = selDVs[r]
+					}else{
+						tu = paste0(toLabel, r)
+					}
+				}
+				# Show fixed cells if non-0
+				if(x$free[r,c] || (showFixed && x$values[r,c] != 0)){
+					p$str = paste0(p$str, "\n", fr, " -> ", tu, " [dir = ", arrows, " label=\"", value, "\"];")
+					if(!is.null(type)){
+						if(type == "latent"){
+							p$latents   = c(p$latents, fr)
+						} else if(type == "manifest"){
+							p$manifests = c(p$manifests, fr)
+						}
+					}
+				}
+			} else {
+				# fixed cell
+			}
+		}
+	}
+	p$latents = unique(p$latents)
+	p$manifests = unique(p$manifests)	
+	p
+}
 
 #' Show matrices of RAM models in a easy-to-learn-from format. 
 #'
@@ -3787,7 +3811,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 	} else {
 		# Assume type is a class string
 		if(class(obj)[1] != type){
-			stop("You used ", callingFn, " on a model of class ", class(obj)[1], "not ", omxQuotes(type))
+			stop("You used ", callingFn, " on a model of class ", class(obj)[1], " not the expected ", omxQuotes(type))
 		}
 	}
 	if(checkSubmodels){
@@ -6395,3 +6419,28 @@ umx_standardize_CP <- function(model, ...){
 #' @export
 umx_standardize.MxModelCP <- umx_standardize_CP
 
+# Poems one should know by heart:
+
+# William Shakespeare
+# [Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
+# [To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
+# [The Merchant of Venice](https://www.goodreads.com/work/quotes/2682703-the-merchant-of-venice)
+#  * "How far that little candle throws his beams! So shines a good deed in a weary world."
+#  * The quality of mercy is not strained.
+#  * "One half of me is yours, the other half is yours,
+#    Mine own, I would say; but if mine, then yours,
+#    And so all yours."
+#  * If to do were as easy as to know what were good to do, chapels 
+#    had been churches, and poor men's cottages princes’ palaces.
+# * “This above all: to thine own self be true,
+
+# # PERCY BYSSHE SHELLEY
+# [Ozymandias](https://www.poetryfoundation.org/poems/46565/ozymandias)
+
+# Brevia
+#  * [Invictus](https://en.wikipedia.org/wiki/Invictus)
+#  * [Abou ben Adhem](https://www.poetryfoundation.org/poems/44433/abou-ben-adhem)
+#  * [Odi et amo](https://en.wikipedia.org/wiki/Catullus_85)
+
+# # [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
+#  * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))

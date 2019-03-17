@@ -52,6 +52,7 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
   \code{\link{umxPlotCPnew}}, \code{\link{umxPlotGxEbiv}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
+  \code{\link{umxPlotSexLim}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 }
 \concept{Plotting functions}

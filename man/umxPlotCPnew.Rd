@@ -45,9 +45,9 @@ mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
 m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-	nFac = 3, correlatedA = TRUE
+	nFac = 3
 )
-m1 = mxTryHardOrdinal(m1)
+# m1 = mxTryHardOrdinal(m1)
 umxPlotCPnew(m1)
 plot(m1) # no need to remember a special name: plot works fine!
 }
@@ -65,6 +65,7 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
+  \code{\link{umxPlotSexLim}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 }
 \concept{Plotting functions}

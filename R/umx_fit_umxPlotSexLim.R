@@ -1,11 +1,15 @@
-# TODO: umxPlotCPnew Add SEstyle code from plotCP
-# TODO: umxPlotCPnew Add new label trimming code if necessary
-#' Draw and display a graphical figure of Common Pathway model
+# NIA - Depression is different and pernicious in the elderly.
+# NIA - Personality is predictive, but simply not tracked longitudinally.
+# NIMH - Depression needs voice measures, large N..
+
+# TODO: umxPlotSexLim Add SEstyle code from plotCP
+
+#' Draw and display a graphical figure of a Sex limitation model
 #'
 #' Options include digits (rounding), showing means or not, and which output format is desired.
 #'
 #' # @aliases plot.MxModelCP
-#' @param x The Common Pathway \code{\link{mxModel}} to display graphically
+#' @param x \code{\link{mxModel}} to display graphically
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
@@ -19,25 +23,39 @@
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxCP}}
 #' @family Plotting functions
-#' @family Twin Reporting Functions
 #' @references - \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
 #' require(umx)
 #' umx_set_optimizer("SLSQP")
-#' data(GFF)
-#' mzData = subset(GFF, zyg_2grp == "MZ")
-#' dzData = subset(GFF, zyg_2grp == "DZ")
-# # These will be expanded into "gff_T1" "gff_T2" etc.
-#' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-#' m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-#' 	nFac = 3
-#' )
-#' # m1 = mxTryHardOrdinal(m1)
-#' umxPlotCPnew(m1)
+#' data("us_skinfold_data")
+#' # Rescale vars
+#' us_skinfold_data[, c('bic_T1', 'bic_T2')] = us_skinfold_data[, c('bic_T1', 'bic_T2')]/3.4
+#' us_skinfold_data[, c('tri_T1', 'tri_T2')] = us_skinfold_data[, c('tri_T1', 'tri_T2')]/3
+#' us_skinfold_data[, c('caf_T1', 'caf_T2')] = us_skinfold_data[, c('caf_T1', 'caf_T2')]/3
+#' us_skinfold_data[, c('ssc_T1', 'ssc_T2')] = us_skinfold_data[, c('ssc_T1', 'ssc_T2')]/5
+#' us_skinfold_data[, c('sil_T1', 'sil_T2')] = us_skinfold_data[, c('sil_T1', 'sil_T2')]/5
+#'
+#' # Data for each of the 5 twin-type groups
+#' mzmData = subset(us_skinfold_data, zyg == 1)
+#' mzfData = subset(us_skinfold_data, zyg == 2)
+#' dzmData = subset(us_skinfold_data, zyg == 3)
+#' dzfData = subset(us_skinfold_data, zyg == 4)
+#' dzoData = subset(us_skinfold_data, zyg == 5)
+#'
+#' # ==========================
+#' # = Run univariate example =
+#' # ==========================
+#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun= FALSE,
+#'		mzmData = mzmData, dzmData = dzmData, 
+#'		mzfData = mzfData, dzfData = dzfData, 
+#'		dzoData = dzoData
+#')
+#' m1 = mxTryHard(m1)
+#' umxPlotSexLim(m1)
 #' plot(m1) # no need to remember a special name: plot works fine!
 #' }
-umxPlotCPnew <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
 	# TODO Check I am handling nFac > 1 properly!!
 	# New plot functions no longer dependent on labels. This means they need to know about the correct matrices to examine.
 	# 1. a_cp_matrix = A latent (and correlations among latents)
@@ -49,11 +67,11 @@ umxPlotCPnew <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 	# 3. cp_loadings common factor loadings
 	# No longer used: parameterKeyList = omxGetParameters(model)
 
-	umx_check_model(m1, "MxModelCP", calling="umxPlotCP")
+	umx_check_model(m1, "MxModelSexLim", calling="umxPlotSexLim")
 
 	format = match.arg(format)
 	model = x # just to emphasise that x has to be a model 
-	if(std){ model = umx_standardize_CP(model) }
+	if(std){ model = umx_standardize_SexLim(model) }
 
 	facCount = dim(model$top$a_cp$labels)[[1]]
 	varCount = dim(model$top$as$values)[[1]]
@@ -105,3 +123,6 @@ umxPlotCPnew <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 	# Process "_dev" (where are these?)
 	# cat(out$str)
 }
+
+#' @export
+plot.MxModelSexLim <- umxPlotSexLim

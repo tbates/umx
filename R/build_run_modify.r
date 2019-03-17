@@ -289,21 +289,21 @@ umxModel <- function(...) {
 #' 
 #' @details
 #' 
-#' \strong{Comparison with mxModel)}
+#' **Comparison with mxModel**
 #' 
 #' umxRAM differs from mxModel in the following ways:
-#' \enumerate{
-#' \item{You don't need to set type = "RAM"}
-#' \item{You don't need to list manifestVars (they are detected from path usage)}
-#' \item{You don't need to list latentVars (detected as anything in paths but not in \code{mxData})}
-#' \item{You add data like you do in \code{\link{lm}}, with \strong{data = }}
-#' \item{with \code{\link{umxPath}} you can use powerful verbs like \strong{var = }}
-#' \item{You don't need to add labels: paths are automatically labelled "a_to_b" etc.}
-#' \item{You don't need to set start values, they will be done for you.}
-#' \item{You don't need to mxRun the model: it will run automatically, and print a summary}
-#' \item{You don't need to run summary: with autoRun, it will print a summary.}
-#' \item{You get a plot of the model.}
-#' }
+#' 
+#' 1. You don't need to set type = "RAM".
+#' 1. You don't need to list manifestVars (they are detected from path usage).
+#' 1. You don't need to list latentVars (detected as anything in paths but not in \code{mxData}).
+#' 1. You add data with \strong{data = } (as elsewhere in R, e.g. \code{\link{lm}}).
+#' 1. You don't need to add labels: paths are automatically labelled "a_to_b" etc.
+#' 1. You don't need to set start values, they will be done for you.
+#' 1. You don't need to mxRun the model: it will run automatically, and print a summary.
+#' 1. You don't need to run summary: with \code{autoRun}, it will print a summary.
+#' 1. You get a plot of the model.
+#' 1. \code{\link{umxPath}} offers powerful verbs to describe paths.
+#'
 #' 
 #' \strong{Comparison with other software}
 #' 
@@ -313,14 +313,14 @@ umxModel <- function(...) {
 #' *note*: The start-value strategy is subject to improvement, and will be documented in the help for umxRAM.
 #' 
 #' **Black-box software, defaults, and automatic addition of paths**.
-#' Some other SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored 
+#' Some SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored 
 #' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 #' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
 #' and \code{fix = "firstLoadings"}.
 #' 
 #' To be honest, these are not only more trouble than they are worth, they encourage errors and 
-#' poor modeling. I suggest user learn the handful of \code{\link{umxPath}}
-#' short cuts and stay clean and explicit!
+#' poor modeling. Learning the handful of \code{\link{umxPath}} short cuts allows modeling to 
+#' stay both effciicent and unambiguous!
 #' 
 #' @param model A model to update (or set to string to use as name for new model)
 #' @param data data for the model. Can be an \code{\link{mxData}} or a data.frame
@@ -394,19 +394,16 @@ umxModel <- function(...) {
 #' # No data needed: just list variable names!
 #' # Resulting model will be plotted automatically
 #' m1 = umxRAM("what does unique pairs do, I wonder", data = c("B", "C"),
-#'	# B<->B, C<->C, B<->C
-#'	umxPath(unique.pairs = c("B", "C"))
-#')
+#'	   umxPath(unique.pairs = c("B", "C"))
+#' )
 #' 
-#'m1 = umxRAM("ring around the rosey", data = c("B", "C"),
-#'	# A->B, A->C, B->A, B->C, C->A, C->B
-#'	umxPath(fromEach = c("A", "B", "C"))
-#')
+#' m1 = umxRAM("ring around the rosey", data = c("B", "C"),
+#'	  umxPath(fromEach = c("A", "B", "C"))
+#' )
 #' 
-#'m1 = umxRAM("fromEach with to", data = c("B", "C"),
-#'	# B->D, C->D
-#'	umxPath(fromEach = c("B", "C"), to= "D")
-#')
+#' m1 = umxRAM("fromEach with to", data = c("B", "C"),
+#'	   umxPath(fromEach = c("B", "C"), to= "D")
+#' )
 #' 
 #' m1 = umxRAM("CFA_play", data = paste0("x", 1:4),
 #' 	umxPath("g", to = paste0("x", 1:4)),

@@ -5,9 +5,9 @@
 \title{Return dot code for paths in a matrix}
 \usage{
 umx_mat2dot(x, cells = c("any", "diag", "lower", "upper", "left"),
-  from = "rows", fromLabel = NULL, toLabel = NULL, selDVs = NULL,
-  showFixed = FALSE, arrows = c("forward", "both", "back"),
-  type = NULL, digits = 2, p = list(str = "", latents = c(),
+  from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL,
+  selDVs = NULL, showFixed = FALSE, arrows = c("forward", "both",
+  "back"), type = NULL, digits = 2, p = list(str = "", latents = c(),
   manifests = c()))
 }
 \arguments{
@@ -29,37 +29,58 @@ umx_mat2dot(x, cells = c("any", "diag", "lower", "upper", "left"),
 
 \item{type}{one of "latent" or "manifest" (default NULL, don't accumulate new names using "from" list)}
 
-\item{digits}{rounding values (default = 2).}
+\item{digits}{to round values to (default = 2).}
 
 \item{p}{input to build on. list(str = "", latents = c(), manifests = c())}
 }
 \value{
-- list(str = "", latents = c(), manifests = c())
+\itemize{
+\item list(str = "", latents = c(), manifests = c())
+}
 }
 \description{
-Return dot code for paths in a matrix is a function which 
-Walk rows and cols of matrix. At each free cell, 
-Create a string like:
-	ai1 -> var1 [label=".35"]
-A latent (and correlations among latents)
-	* these go from a_cp n=row TO common n= row
-	* or for off diag, from a_cp n=col TO a_cp n= row
+Return dot code for paths in a matrix is a function which walks the rows and cols of a matrix.
+At each free cell, it creates a dot-string specifying the relevant path, e.g.:
+
+\code{ai1 -> var1 [label=".35"]}
+
+It is hihgly customisable:
+\enumerate{
+\item You can specify which cells to inspect, e.g. "lower".
+\item You can choose how to interpret path direction, from = "cols".
+\item You can choose the label for the from to ends of the path (by default, the matrix name is used).
+\item You can offer up a selDVs list which will be
+\item You can set the number of arrows on a path (e.g. both).
+\item If \code{type} is set, then sources are added to the manifests or latents output (p)
+}
+
+Finally, you can pass in previous output and new paths will be concatendated to these.
 }
 \examples{
-# Make a lower 3*3 value= 1:6 (1,4,6 on the diag)
+# Make a lower 3 * 3 value= 1:6 (1, 4, 6 on the diag)
 a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
 out = umx_mat2dot(a_cp, cells = "lower", from = "rows", arrows = "both")
-cat(out$str)
+cat(out$str) # a_cp2 -> a_cp1 [dir = both label="2"];
 out = umx_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
-cat(out$str)
+cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
 # First call also inits the plot struct
 out = umx_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", type = "latent")
 out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
 cat(out$str)
 
+out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent")
+cat(out$str) # a_cp1 -> a [dir = forward label="1"]; a_cp2 -> b [dir = forward label="4"];
+
+out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent");
+cat(out$str); cat(out$latents)
+out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "manifest");
+cat(out$str); cat(out$manifests)
+
 }
 \seealso{
-- \code{\link{plot}}
+\itemize{
+\item \code{\link{plot}}
+}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
@@ -68,6 +89,7 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_cell_is_on}},
   \code{\link{umx_cont_2_quantiles}},
   \code{\link{umx_find_object}},
+  \code{\link{umx_graphviz_define_shapes}},
   \code{\link{umx_graphviz_rank}}, \code{\link{umx_make}},
   \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
   \code{\link{umx_pad}}, \code{\link{umx_pb_note}},

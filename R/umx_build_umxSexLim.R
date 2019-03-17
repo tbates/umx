@@ -333,21 +333,22 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 		# TODO: This is quite complex, so instead of a "reduction" make it an operation which `umxSexLim` can perform
 		# 1. Equate f and m correlations by trimming the sex suffix off R[ace]f and R[ace]m matrix labels (i.e., deleting "f" and "m")
-		model = umxModify(model, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", name = "Scalar", autoRun= FALSE)
+		model = umxModify(model, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", name = "Scalar", autoRun = FALSE)
 
 		# 2. Replace opposite sex matrices (top.Rao and top.Rco) with labels that have no sex suffix(to match R[ace] same-sex)
 		# TODO: Make this a regex also? "Rao_" --> "Ra_" "Rco_" --> "Rc_"
-		# both standardized
-		model = mxModel(model, mxModel(model$top, 
-			umxMatrix("Rao", "Stand", nrow= nVar, values= .2, baseName= "Ra", lbound= -1, ubound= 1),
-			umxMatrix("Rco", "Stand", nrow= nVar, values= .2, baseName= "Rc", lbound= -1, ubound= 1)
-		))
+		# Both standardized
+		model = mxModel(model, mxModel(model$top,
+			umxMatrix("Rao", "Stand", nrow = nVar, free = TRUE, values = .2, baseName = "Ra", lbound = -1, ubound = 1),
+			umxMatrix("Rco", "Stand", nrow = nVar, free = TRUE, values = .2, baseName = "Rc", lbound = -1, ubound = 1))
+		)
 	}else{
 		# "Homogeneity"
 		# Just advise people to do ACE?
 	}
 
 	model = omxAssignFirstParameters(model)
+
 	# TODO: umxSexLim equate means would be expMeanGm, expMeanGf, expMeanGo
 	model = as(model, "MxModelSexLim") # Set class so umxSummary, plot, etc. work.
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)

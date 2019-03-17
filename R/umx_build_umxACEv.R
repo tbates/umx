@@ -630,7 +630,7 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	}
 	varCount = length(selDVs)/2;
 	parameterKeyList = omxGetParameters(model);
-	# e.g. expMean_r1c1       A_r1c1       C_r1c1       E_r1c1
+	# e.g. expMean_r1c1  A_r1c1  C_r1c1  E_r1c1
 
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
@@ -680,6 +680,12 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	rankCE  = paste("\t{rank = max; ", paste(grep('[CE]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
 	digraph = paste0("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, l_to_v_at_1, rankVars, rankA, rankCE, "\n}");
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+
+	# TODO simply with umx_graphviz_define_shapes etc.?
+	# preOut  = umx_graphviz_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
+	# top     = umx_graphviz_rank(out$latents, "^[ace]_cp", "min")
+	# bottom  = umx_graphviz_rank(out$latents, "^[ace]s[0-9]+$", "max")
+	# digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 } # end umxPlotACE
 
 #' @export

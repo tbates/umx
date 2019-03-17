@@ -2303,7 +2303,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	}
 	varCount = length(selDVs)/2;
 	parameterKeyList = omxGetParameters(model);
-	# TODO: Replace label-parsing with code that walks across the known matrices...
+	# TODO: umxPlotACE Replace label-parsing with code that walks across the known matrices...
 	# would obviate problems with arbitrary names.
 	# 1. Could add dimnames() to A, C, E?
 	
@@ -2562,6 +2562,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxCP}}
 #' @family Plotting functions
+#' @family Twin Reporting Functions
 #' @references - \url{https://tbates.github.io}
 #' @examples
 #' \dontrun{
@@ -2625,7 +2626,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			"If you are using umxModify to make newLabels, re-use one of the existing labels to help plot()")
 		}
 		if(from == "do not plot" || (from == "one" & !means) ){
-			# either this is a threshold, or we're not adding means...
+			# Either this is a threshold, or we're not adding means...
 		} else {
 			# Get parameter value and make the plot string
 			# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
@@ -2640,16 +2641,8 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			out = paste0(out, ";\n", from, " -> ", target, " [label=\"", val, "\"]")
 		}
 	}
-	preOut = "# Latents\n"
-	latents = unique(latents)
-	for(var in latents) {
-	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
-	}
-	preOut = paste0(preOut, "\n# Manifests\n")
-	for(n in c(1:varCount)) {
-	   preOut = paste0(preOut, "\n\t", selDVs[n], " [shape = square];\n")
-	}
-	
+	preOut  = umx_graphviz_define_shapes(latents = latents, manifests = selDVs[1:varCount])
+
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
@@ -2687,7 +2680,7 @@ plot.MxModelCP <- umxPlotCP
 #' plot(model)
 #' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP  <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
 	format = match.arg(format)
 	if(!class(x) == "MxModelIP"){
 		stop("The first parameter of umxPlotIP must be an IP model, you gave me a ", class(x))
@@ -4087,10 +4080,12 @@ umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = 
 #' @examples
 #' \dontrun{
 #' umx_APA_model_CI(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")
+#' umx_APA_model_CI(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
 #' }
 umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std", digits = 2, SEstyle = FALSE, verbose= FALSE){
-	# TODO umx_APA_model_CI: Add choice of separator for CI (stash as preference)
-	# TODO umx_APA_model_CI: alias to umx_get_CI
+	# TODO umx_APA_model_CI: Look for CIs, if not found look for SEs, if not found compute with mxSE (high priority!)
+	# TODO umx_APA_model_CI: Add choice of separator for CI (stash as preference) (easy)
+	# TODO umx_APA_model_CI: alias to umx_get_CI (easy)
 	if(!umx_has_CIs(model)){
 		if(verbose){
 			message("no CIs")
@@ -4129,12 +4124,12 @@ umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std",
 			   APAstr = paste0(round(est, digits), " (", round(DIFF/(1.96 * 2), digits), ")")
 			} else {
 			   APAstr = paste0(
-				umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "[",
-				umx_APA_pval(CIlist[check, "lbound"], min = -1, digits = digits)  , ",",
-				umx_APA_pval(CIlist[check, "ubound"], min = -1, digits = digits)  , "]"
+					umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "[",
+					umx_APA_pval(CIlist[check, "lbound"], min = -1, digits = digits)  , ",",
+					umx_APA_pval(CIlist[check, "ubound"], min = -1, digits = digits)  , "]"
 			   )
 			}
-		    return(APAstr) 
+		   return(APAstr) 
 		}, warning = function(cond) {
 			if(verbose){
 				message(paste0("warning ", cond, " for CI ", omxQuotes(cellLabel)))

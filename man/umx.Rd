@@ -112,7 +112,8 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
   \code{\link{umxPlotCPnew}}, \code{\link{umxPlotCP}},
   \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxPlotSimplex}}
+  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
+  \code{\link{umxPlotSimplex}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxTwoStage}}
@@ -205,6 +206,7 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_cell_is_on}},
   \code{\link{umx_cont_2_quantiles}},
   \code{\link{umx_find_object}},
+  \code{\link{umx_graphviz_define_shapes}},
   \code{\link{umx_graphviz_rank}}, \code{\link{umx_make}},
   \code{\link{umx_mat2dot}}, \code{\link{umx_msg}},
   \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},

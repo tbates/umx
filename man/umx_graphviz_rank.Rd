@@ -11,19 +11,20 @@ umx_graphviz_rank(vars, pattern, rank)
 
 \item{pattern}{regular expression to filter vars}
 
-\item{rank}{"same", max, min}
+\item{rank}{"same", "max", "min"}
 }
 \value{
 string
 }
 \description{
-Helper to make a graphviz rank string is a function which
+Given a list of names, this filters the list, and returns a graphviz string to force them into the given rank.
+e.g. "{rank=same; as1};\n"
 }
 \examples{
 umx_graphviz_rank(c("as1"), "^[ace]s[0-9]+$", "same")
 }
 \seealso{
-- \code{\link{umxLabel}}
+- \code{\link{umx_graphviz_define_shapes}}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
@@ -31,11 +32,13 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_array_shift}},
   \code{\link{umx_cell_is_on}},
   \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_find_object}}, \code{\link{umx_make}},
-  \code{\link{umx_mat2dot}}, \code{\link{umx_msg}},
-  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_scale}}, \code{\link{umx_score_scale}},
-  \code{\link{umx}}, \code{\link{xmu_check_variance}}
+  \code{\link{umx_find_object}},
+  \code{\link{umx_graphviz_define_shapes}},
+  \code{\link{umx_make}}, \code{\link{umx_mat2dot}},
+  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
+  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_print}}, \code{\link{umx_scale}},
+  \code{\link{umx_score_scale}}, \code{\link{umx}},
+  \code{\link{xmu_check_variance}}
 }
 \concept{Miscellaneous Utility Functions}

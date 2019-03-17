@@ -446,8 +446,10 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' # plot(m1)
 #' }
 umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), strip_zero = TRUE, ...) {
+	# TODO: umxPlotSimplex walks across the known matrices to obviate problems with arbitrary names in label based approaches.
+	# 1. Could add dimnames() to A, C, E?
 	if(!class(x) == "MxModelSimplex"){
-		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
+		stop("The first parameter of umxPlotSimplex must be a umxSimplex model, you gave me a ", class(x))
 	}
 	format = match.arg(format)
 	model = x # Just to emphasise that x has to be a model 
@@ -457,10 +459,14 @@ umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std
 	}
 	parameterKeyList = omxGetParameters(model)
 
+	# 1. extract model variables
 	nVar   = dim(model$top$as$values)[[1]]
 	selDVs = dimnames(model$MZ$data$observed)[[2]]
 	selDVs = selDVs[1:(nVar)]
 	selDVs = sub("(_T)?[0-9]$", "", selDVs)
+	manifests = selDVs
+
+	# 2. Build lists of expected paths for which to discover values
 	asLatents = paste0("as", 1:nVar)
 	csLatents = paste0("cs", 1:nVar)
 	esLatents = paste0("es", 1:nVar)
@@ -473,7 +479,6 @@ umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std
 	ciLatents = paste0("ci", 2:(nVar))
 	eiLatents = paste0("ei", 2:(nVar))
 
-	manifests = selDVs
 	latents   = c(atLatents, aiLatents, asLatents);
 
 	pre = "# Latents\n"
