@@ -1,7 +1,3 @@
-# NIA - Depression is different and pernicious in the elderly.
-# NIA - Personality is predictive, but simply not tracked longitudinally.
-# NIMH - Depression needs voice measures, large N..
-
 # TODO: umxPlotSexLim Add SEstyle code from plotCP
 
 #' Draw and display a graphical figure of a Sex limitation model
