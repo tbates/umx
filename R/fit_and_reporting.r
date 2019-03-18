@@ -2632,7 +2632,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
 			# If the model already has CIs stashed umx_stash_CIs() then pointless and harmful.
 			# Also fails to understand not using _std?
-			CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", SEstyle = SEstyle, digits = digits)
+			CIstr = xmu_get_CI(model, label = thisParam, prefix = "top.", suffix = "_std", SEstyle = SEstyle, digits = digits)
 			if(is.na(CIstr)){
 				val = umx_round(parameterKeyList[thisParam], digits)
 			}else{
@@ -2728,7 +2728,7 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 		if(!means & from == "one"){
 			# not adding means...
 		} else {
-			CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits, SEstyle = SEstyle, verbose = FALSE)
+			CIstr = xmu_get_CI(model, label = thisParam, prefix = "top.", suffix = "_std", digits = digits, SEstyle = SEstyle, verbose = FALSE)
 			if(is.na(CIstr)){
 				val = round(parameterKeyList[thisParam], digits)
 			}else{
@@ -3994,7 +3994,7 @@ summaryAPA <- umxAPA
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso - \code{\link{umxAPA}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - \url{https://github.com/tbates/umx}
 #' @examples
 #' data(twinData)
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
@@ -4057,98 +4057,11 @@ umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = 
 	# Calculate Mean Age and SD for men and women
 	# umx_aggregate(value ~ Sex, data = longformat, what = "mean_sd")
 	
-	# Calculate correlations, means and sd Generativity
+	# Calculate correlations, means and sd
 	# umxAPA(mzData[, allItemNames], use ="pairwise.complete.obs")
 	# umxAPA(dzData[, allItemNames], use ="pairwise.complete.obs")
 }
 
-#' umx_APA_model_CI
-#'
-#' Look up CIs for free parameters in a model, and return as APA-formatted text string
-#'
-#' @param model an \code{\link{mxModel}} to get CIs from
-#' @param cellLabel the label of the cell to interrogate for a CI, e.g. "ai_r1c1"
-#' @param prefix The submodel to look in (i.e. "top.")
-#' @param suffix The suffix for algebras ("_std")
-#' @param SEstyle report "b (se)" instead of b CI95[l,u] (default = FALSE)
-#' @param digits = 2
-#' @param verbose = FALSE
-#' @return - the CI string, e.g. ".73[-.20, .98]" or .73(.10)
-#' @export
-#' @family Reporting Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
-#' @examples
-#' \dontrun{
-#' umx_APA_model_CI(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", suffix = "_std")
-#' umx_APA_model_CI(fit_IP, cellLabel = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
-#' }
-umx_APA_model_CI <- function(model, cellLabel, prefix = "top.", suffix = "_std", digits = 2, SEstyle = FALSE, verbose= FALSE){
-	# TODO umx_APA_model_CI: Look for CIs, if not found look for SEs, if not found compute with mxSE (high priority!)
-	# TODO umx_APA_model_CI: Add choice of separator for CI (stash as preference) (easy)
-	# TODO umx_APA_model_CI: alias to umx_get_CI (easy)
-	if(!umx_has_CIs(model)){
-		if(verbose){
-			message("no CIs")
-		}
-		return(NA)
-	} else {
-		# We want "top.ai_std[1,1]" from "ai_r1c1"
-		result = tryCatch({
-			grepStr = '^(.*)_r([0-9]+)c([0-9]+)$' # 1 = matrix names, 2 = row, 3 = column
-			mat = sub(grepStr, '\\1', cellLabel, perl = TRUE);
-			row = sub(grepStr, '\\2', cellLabel, perl = TRUE);
-			col = sub(grepStr, '\\3', cellLabel, perl = TRUE);
-			# prefix = "top."
-			CIlist      = model$output$confidenceIntervals
-			dimIndex    = paste0(prefix, mat, suffix, "[", row, ",", col, "]")
-			dimNoSuffix = paste0(prefix, mat, "[", row, ",", col, "]")
-
-			intervalNames = dimnames(CIlist)[[1]]
-			if(dimIndex %in% intervalNames){
-				check = dimIndex
-			} else {
-				check = dimNoSuffix
-			}
-			if(SEstyle){
-				est = CIlist[check, "estimate"]
-				if(is.na(CIlist[check, "lbound"])){
-					# no lbound found: use ubound to form SE (SE not defined if ubound also NA :-(
-					DIFF = (CIlist[check, "ubound"] - est)
-				} else if (is.na(CIlist[check, "ubound"])){
-					# lbound, but no ubound: use lbound to form SE
-					DIFF = (est - CIlist[check, "lbound"])
-				}else{
-					# Both bounds present: average to get an SE
-					DIFF = mean(c( (CIlist[check, "ubound"] - est), (est - CIlist[check, "lbound"]) ))
-				}
-			   APAstr = paste0(round(est, digits), " (", round(DIFF/(1.96 * 2), digits), ")")
-			} else {
-			   APAstr = paste0(
-					umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "[",
-					umx_APA_pval(CIlist[check, "lbound"], min = -1, digits = digits)  , ",",
-					umx_APA_pval(CIlist[check, "ubound"], min = -1, digits = digits)  , "]"
-			   )
-			}
-		   return(APAstr) 
-		}, warning = function(cond) {
-			if(verbose){
-				message(paste0("warning ", cond, " for CI ", omxQuotes(cellLabel)))
-			}
-		    return(NA) 
-		}, error = function(cond) {
-			if(verbose){
-				message(paste0("error: ", cond, " for CI ", omxQuotes(cellLabel), "\n",
-				"dimIndex = ", dimIndex))
-				print(intervalNames)
-			}
-		    return(NA) 
-		}, finally = {
-		    # cleanup-code
-		})
-		return(result)
-	}
-	# if estimate differs...
-}
 
 #' Test the difference between correlations for significance.
 #'

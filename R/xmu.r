@@ -1410,3 +1410,114 @@ xmu_string2path <- function(from) {
 		}
 	}
 }
+
+#' xmu_get_CI
+#'
+#' Look up CIs for free parameters in a model, and return as APA-formatted text string.
+#' If std are available then they are reported.
+#'
+#' @param model an \code{\link{mxModel}} to get CIs from
+#' @param label the label of the cell to interrogate for a CI, e.g. "ai_r1c1"
+#' @param prefix The submodel to look in (default = "top.")
+#' @param suffix The suffix for algebras when standardized (default = "_std")
+#' @param SEstyle If TRUE, report "b(se)" instead of b CI95[l,u] (default = FALSE)
+#' @param digits = 2
+#' @param verbose = FALSE
+#' @return - the CI string, e.g. ".73[-.20, .98]" or .73(.10)
+#' @export
+#' @family Reporting Functions
+#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @examples
+#' require(umx); data(demoOneFactor)
+#' latents = c("g"); manifests = names(demoOneFactor)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#' m1 = umxCI(m1, run= "yes")
+#' 
+#' # Get CI by parameter label
+#' xmu_get_CI(model= m1, "x1_with_x1")
+#' xmu_get_CI(model= m1, "x1_with_x1", SEstyle=TRUE, digits=3)
+#' 
+#' # prefix (submodel) and suffix (e.g. std) are ignored if not needed
+#' xmu_get_CI(model =m1, "x1_with_x1", prefix = "top.", suffix = "_std")
+#' 
+#' \dontrun{
+#' xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", suffix = "_std")
+#' xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
+#' }
+xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 2, SEstyle = FALSE, verbose= FALSE){
+	# xmu_get_CI ?
+	# TODO xmu_get_CI: Look for CIs, if not found look for SEs, if not found compute with mxSE (high priority!)
+	# TODO xmu_get_CI: Add choice of separator for CI (stash as preference) (easy)
+	if(!umx_has_CIs(model)){
+		if(verbose){
+			message("no CIs")
+		}
+		return(NA)
+	} else {
+		# We want "top.ai_std[1,1]" from "ai_r1c1"
+		result = tryCatch({
+			CIlist = model$output$confidenceIntervals
+			intervalNames = dimnames(CIlist)[[1]]
+			if(label %in% intervalNames){
+				# Easy case - the actual cell label was given, and will have been used by OpenMx to label the CI
+				check = label
+			}else{
+				# Probably an auto-bracket-labelled CI e.g. "top.A_std[1,3]", in which case label would be "A_r1c3"
+				grepStr = '^(.*)_r([0-9]+)c([0-9]+)$' # 1 = matrix names, 2 = row, 3 = column
+				mat = sub(x = label, pattern = grepStr, replacement = '\\1', perl = TRUE);
+				row = sub(x = label, pattern = grepStr, replacement = '\\2', perl = TRUE);
+				col = sub(x = label, pattern = grepStr, replacement = '\\3', perl = TRUE);
+				# prefix = "top."
+				dimIndex    = paste0(prefix, mat, suffix, "[", row, ",", col, "]")
+				dimNoSuffix = paste0(prefix, mat, "[", row, ",", col, "]")
+
+				if(dimIndex %in% intervalNames){
+					check = dimIndex
+				} else {
+					check = dimNoSuffix
+				}
+			}
+			if(SEstyle){
+				est = CIlist[check, "estimate"]
+				if(is.na(CIlist[check, "lbound"])){
+					# no lbound found: use ubound to form SE (SE not defined if ubound also NA :-(
+					DIFF = (CIlist[check, "ubound"] - est)
+				} else if (is.na(CIlist[check, "ubound"])){
+					# lbound, but no ubound: use lbound to form SE
+					DIFF = (est - CIlist[check, "lbound"])
+				}else{
+					# Both bounds present: average to get an SE
+					DIFF = mean(c( (CIlist[check, "ubound"] - est), (est - CIlist[check, "lbound"]) ))
+				}
+			   APAstr = paste0(round(est, digits), " (", round(DIFF/(1.96 * 2), digits), ")")
+			} else {
+			   APAstr = paste0(
+					umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "[",
+					umx_APA_pval(CIlist[check, "lbound"], min = -1, digits = digits)  , ",",
+					umx_APA_pval(CIlist[check, "ubound"], min = -1, digits = digits)  , "]"
+			   )
+			}
+		   return(APAstr) 
+		}, warning = function(cond) {
+			if(verbose){
+				message(paste0("warning ", cond, " for CI ", omxQuotes(label)))
+			}
+		    return(NA) 
+		}, error = function(cond) {
+			if(verbose){
+				message(paste0("error: ", cond, " for CI ", omxQuotes(label), "\n",
+				"dimIndex = ", dimIndex))
+				print(intervalNames)
+			}
+		    return(NA) 
+		}, finally = {
+		    # cleanup-code
+		})
+		return(result)
+	}
+	# if estimate differs...
+}

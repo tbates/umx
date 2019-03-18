@@ -48,15 +48,15 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}}, \code{\link{umxSummary}},
-  \code{\link{umxWeightedAIC}},
-  \code{\link{umx_APA_model_CI}},
-  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_names}}, \code{\link{umx_parameters}},
-  \code{\link{umx_print}},
+  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_names}},
+  \code{\link{umx_parameters}}, \code{\link{umx_print}},
   \code{\link{umx_show_fit_or_comparison}},
-  \code{\link{umx_time}}, \code{\link{umx}}
+  \code{\link{umx_time}}, \code{\link{umx}},
+  \code{\link{xmu_get_CI}}
 
-Other Twin Reporting Functions: \code{\link{umxReduceACE}},
+Other Twin Reporting Functions: \code{\link{umxPlotCPnew}},
+  \code{\link{umxPlotCP}}, \code{\link{umxReduceACE}},
   \code{\link{umxReduceGxE}},
   \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
 }

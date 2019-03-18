@@ -54,12 +54,12 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_cont_2_quantiles}},
   \code{\link{umx_find_object}},
   \code{\link{umx_graphviz_define_shapes}},
+  \code{\link{umx_graphviz_mat2dot}},
   \code{\link{umx_graphviz_rank}}, \code{\link{umx_make}},
-  \code{\link{umx_mat2dot}}, \code{\link{umx_msg}},
-  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_scale}},
-  \code{\link{umx_score_scale}}, \code{\link{umx}},
-  \code{\link{xmu_check_variance}}
+  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
+  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_scale}}, \code{\link{umx_score_scale}},
+  \code{\link{umx}}, \code{\link{xmu_check_variance}}
 
 Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
@@ -67,11 +67,11 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
-  \code{\link{umx_APA_model_CI}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_names}}, \code{\link{umx_parameters}},
   \code{\link{umx_show_fit_or_comparison}},
-  \code{\link{umx_time}}, \code{\link{umx}}
+  \code{\link{umx_time}}, \code{\link{umx}},
+  \code{\link{xmu_get_CI}}
 }
 \concept{Miscellaneous Utility Functions}
 \concept{Reporting Functions}

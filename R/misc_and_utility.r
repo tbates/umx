@@ -99,7 +99,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' Left is useful for, e.g. twin means matrices.
 #' @param r which row the cell is on.
 #' @param c which column the cell is in.
-#' @param where the location (any, diag, lower or upper or left).
+#' @param where the location (any, diag, lower or upper (or _inc) or left).
 #' @param mat (optionally) provide matrix to check dimensions against r and c.
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -108,7 +108,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' umx_cell_is_on(r = 3, c = 3, "lower")
+#' umx_cell_is_on(r = 3, c = 3, "lower_inc")
 #' umx_cell_is_on(r = 3, c = 3, "upper")
+#' umx_cell_is_on(r = 3, c = 3, "upper_inc")
 #' umx_cell_is_on(r = 3, c = 3, "diag")
 #' umx_cell_is_on(r = 2, c = 3, "diag")
 #' umx_cell_is_on(r = 3, c = 3, "any")
@@ -118,7 +120,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' # test stopping
 #' umx_cell_is_on(r=4,c = 3, "any", mat = a_cp)
 #' }
-umx_cell_is_on <- function(r, c, where=c("diag", "lower", "upper", "any", "left"), mat= NULL) {
+umx_cell_is_on <- function(r, c, where=c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), mat= NULL) {
 	where = match.arg(where)
 	if(!is.null(mat)){
 		# check r and c in bounds.
@@ -152,8 +154,20 @@ umx_cell_is_on <- function(r, c, where=c("diag", "lower", "upper", "any", "left"
 		} else {
 			valid = FALSE
 		}
+	} else if(where =="lower_inc"){
+		if(r >= c){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
 	} else if(where =="upper"){
 		if(c > r){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	} else if(where =="upper_inc"){
+		if(c >= r){
 			valid = TRUE
 		} else {
 			valid = FALSE
@@ -2731,6 +2745,9 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #'
 #' \code{ai1 -> var1 [label=".35"]}
 #'
+#' Its main use is to correctly generate paths (and their sources and sink objects) 
+#' without depending on the label of the parameter.
+#' 
 #' It is hihgly customisable:
 #' 
 #' 1. You can specify which cells to inspect, e.g. "lower".
@@ -2752,6 +2769,8 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' @param showFixed = FALSE
 #' @param digits to round values to (default = 2).
 #' @param type one of "latent" or "manifest" (default NULL, don't accumulate new names using "from" list)
+#' @param model If you want to get CIs, you can pass in the model (default = NULL)
+#' @param SEstyle If TRUE, CIs shown as "b(SE)" ("b [l,h]" if FALSE (default)). Ignored if model NULL.
 #' @param p input to build on. list(str = "", latents = c(), manifests = c())
 #' @return - list(str = "", latents = c(), manifests = c())
 #' @export
@@ -2759,26 +2778,49 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' @seealso - \code{\link{plot}}
 #' @md
 #' @examples
+#'
 #' # Make a lower 3 * 3 value= 1:6 (1, 4, 6 on the diag)
 #' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
-#' out = umx_mat2dot(a_cp, cells = "lower", from = "rows", arrows = "both")
-#' cat(out$str) # a_cp2 -> a_cp1 [dir = both label="2"];
-#' out = umx_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
+#'
+#' # Get dot strings for lower triangle (default from and to based on row and column number)
+#' out = umx_graphviz_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
 #' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
+#'
+#' # one arrow (the default = "forward")
+#' out = umx_graphviz_mat2dot(a_cp, cells = "lower", from = "cols")
+#' cat(out$str) # a_cp1 -> a_cp2 [dir = forward label="2"];
+#'
+#' # label to (rows) using var names
+#' out = umx_graphviz_mat2dot(a_cp, selDVs= c("var1", "var2", "var3"), cells = "lower", from = "cols")
+#' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
+#' 
 #' # First call also inits the plot struct
-#' out = umx_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", type = "latent")
-#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
+#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", type = "latent")
+#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
 #' cat(out$str)
 #' 
-#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent")
+#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent")
 #' cat(out$str) # a_cp1 -> a [dir = forward label="1"]; a_cp2 -> b [dir = forward label="4"];
 #' 
-#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent");
+#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent");
 #' cat(out$str); cat(out$latents)
-#' out = umx_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "manifest");
+#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "manifest");
 #' cat(out$str); cat(out$manifests)
 #' 
-umx_mat2dot <- function(x, cells = c("any", "diag", "lower", "upper", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, selDVs = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), type = NULL, digits = 2, p = list(str = "", latents = c(), manifests = c())) {
+#' # ==============================================
+#' # = Get a string which includes CI information =
+#' # ==============================================
+#' data(demoOneFactor)
+#' latents = c("g"); manifests = names(demoOneFactor)
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#' m1 = umxCI(m1, run= "yes")
+#' out = umx_graphviz_mat2dot(m1$A, from = "cols", cells = "any", selDVs= paste0("x", 1:5), type = "latent", model= m1);
+#' cat(out$str); cat(out$latents)
+umx_graphviz_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, selDVs = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), type = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
 	from   = match.arg(from)
 	cells  = match.arg(cells)
 	arrows = match.arg(arrows)
@@ -2787,24 +2829,28 @@ umx_mat2dot <- function(x, cells = c("any", "diag", "lower", "upper", "left"), f
 	# Allow from and to labels other than the matrix name (default)
 	if(is.null(fromLabel)){ fromLabel = x$name }
 	if(is.null(toLabel))  { toLabel   = x$name }
-	 
-		# Get parameter value and make the plot string
-		# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
-		# If the model already has CIs stashed umx_stash_CIs() then pointless and harmful.
-		# Also fails to understand not using _std?
-		CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", SEstyle = SEstyle, digits = digits)
-		if(is.na(CIstr)){
-			value = umx_round(x$values[r,c], digits)
-		}else{
-			value = CIstr
-		}
+ 
+	# Get parameter value and make the plot string
+	# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
+	# Also fails to understand not using _std?
 
 	for (r in 1:nRows) {
 		for (c in 1:nCols) {
 			if(umx_cell_is_on(r= r, c = c, where = cells, mat = x)){
-				# TODO get the CI (or should we rely on stashed CIs?)
-				# TODO add CIstr code (above) to umx_mat2dot (need to pass in model, and SEstyle)
-				value = round(x$values[r,c], digits)
+				# cell is in the target zone
+				if(!is.null(model)){
+					# model available - look for CIs
+					CIstr = xmu_get_CI(model, label = x$labels[r,c], SEstyle = SEstyle, digits = digits)
+					umx_msg(x$labels[r,c])
+					if(is.na(CIstr)){
+						value = umx_round(x$values[r,c], digits)
+					}else{
+						value = CIstr
+					}
+				} else {
+					value = umx_round(x$values[r,c], digits)
+				}
+
 				if(from == "rows"){
 					if(fromLabel == "one"){
 						fr = fromLabel

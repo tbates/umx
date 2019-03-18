@@ -12,11 +12,11 @@
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family zAdvanced Helpers
-#' @seealso - \code{\link{umxConfint}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @seealso - \code{\link{umxConfint}}, \code{\link{xmu_get_CI}}
+#' @references - \url{https://github.com/tbates/umx}
 umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {
 	# model = cp3h
-	# TODO rationalize with umx_APA_model_CI
+	# TODO rationalize with xmu_get_CI
 	if(!umx_has_CIs(model, "output")) {
 		if(umx_has_CIs(model, "intervals")){
 			stop("Please run the intervals first: mxConfint(... run= TRUE)")
@@ -63,7 +63,7 @@ umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRU
 			thisRow = tmp[1, "row"]
 			thisCol = tmp[1, "col"]
 			#' CIname = top.cp_loadings_std[1,1]
-			#' thisSub = top; thisMat = cp_loadings_std;thisRow = 1; thisCol = 1
+			#' thisSub = top; thisMat = cp_loadings_std; thisRow = 1; thisCol = 1
 		}
 		# umx_msg(CIname); # umx_msg(thisSub); umx_msg(thisMat); umx_msg(thisRow); umx_msg(thisCol)
 		# thisMat = "cp_loadings_std"

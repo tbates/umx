@@ -4,15 +4,15 @@
 \alias{umx_cell_is_on}
 \title{Return whether a cell is in a set location of a matrix}
 \usage{
-umx_cell_is_on(r, c, where = c("diag", "lower", "upper", "any", "left"),
-  mat = NULL)
+umx_cell_is_on(r, c, where = c("diag", "lower", "lower_inc", "upper",
+  "upper_inc", "any", "left"), mat = NULL)
 }
 \arguments{
 \item{r}{which row the cell is on.}
 
 \item{c}{which column the cell is in.}
 
-\item{where}{the location (any, diag, lower or upper or left).}
+\item{where}{the location (any, diag, lower or upper (or _inc) or left).}
 
 \item{mat}{(optionally) provide matrix to check dimensions against r and c.}
 }
@@ -25,7 +25,9 @@ Left is useful for, e.g. twin means matrices.
 }
 \examples{
 umx_cell_is_on(r = 3, c = 3, "lower")
+umx_cell_is_on(r = 3, c = 3, "lower_inc")
 umx_cell_is_on(r = 3, c = 3, "upper")
+umx_cell_is_on(r = 3, c = 3, "upper_inc")
 umx_cell_is_on(r = 3, c = 3, "diag")
 umx_cell_is_on(r = 2, c = 3, "diag")
 umx_cell_is_on(r = 3, c = 3, "any")
@@ -49,11 +51,12 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_cont_2_quantiles}},
   \code{\link{umx_find_object}},
   \code{\link{umx_graphviz_define_shapes}},
+  \code{\link{umx_graphviz_mat2dot}},
   \code{\link{umx_graphviz_rank}}, \code{\link{umx_make}},
-  \code{\link{umx_mat2dot}}, \code{\link{umx_msg}},
-  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_scale}}, \code{\link{umx_score_scale}},
-  \code{\link{umx}}, \code{\link{xmu_check_variance}}
+  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
+  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_print}}, \code{\link{umx_scale}},
+  \code{\link{umx_score_scale}}, \code{\link{umx}},
+  \code{\link{xmu_check_variance}}
 }
 \concept{Miscellaneous Utility Functions}

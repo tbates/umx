@@ -41,7 +41,8 @@ model = umxReduce(model)
 \seealso{
 \code{\link{umxReduceACE}}, \code{\link{umxReduce}}
 
-Other Twin Reporting Functions: \code{\link{umxReduceACE}},
+Other Twin Reporting Functions: \code{\link{umxPlotCPnew}},
+  \code{\link{umxPlotCP}}, \code{\link{umxReduceACE}},
   \code{\link{umxReduce}},
   \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
 }

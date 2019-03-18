@@ -54,5 +54,11 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
   \code{\link{umxPlotSexLim}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
+
+Other Twin Reporting Functions: \code{\link{umxPlotCPnew}},
+  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
+  \code{\link{umxReduce}},
+  \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
 }
 \concept{Plotting functions}
+\concept{Twin Reporting Functions}

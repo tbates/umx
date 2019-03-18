@@ -56,7 +56,7 @@
 #' plot(m1) # no need to remember a special name: plot works fine!
 #' }
 umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
-	# TODO Check I am handling nFac > 1 properly!!
+	# TODO All this is CP code
 	# New plot functions no longer dependent on labels. This means they need to know about the correct matrices to examine.
 	# 1. a_cp_matrix = A latent (and correlations among latents)
 	# 	* These go from a_cp n=row TO common n= row
@@ -84,32 +84,32 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	# 1. Collect latents on the diag
 	# from   = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
-	out = umx_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
-	out = umx_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
+	out = umx_graphviz_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
+	out = umx_graphviz_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
+	out = umx_graphviz_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", type = "latent", p = out)
 
 	# 2. On the lower
 	# from = "<name><rowNum>"; target = "<name><colNum>"
-	out = umx_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = umx_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = umx_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = umx_graphviz_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = umx_graphviz_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = umx_graphviz_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
 
 	# Process "cp_loadings" nManifests * nFactors matrix: latents into common paths.
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_mat2dot(model$top$cp_loadings, cells= "any", selDVs= selDVs, from= "cols", fromLabel= "common", type= "latent", p= out)
+	out = umx_graphviz_mat2dot(model$top$cp_loadings, cells= "any", selDVs= selDVs, from= "cols", fromLabel= "common", type= "latent", p= out)
 	# from    = "common<c>"
 	# target  = selDVs[row]
 	# latents = append(latents, from)
 
 	# Process "as" matrix
-	out = umx_mat2dot(model$top$as, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
-	out = umx_mat2dot(model$top$cs, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
-	out = umx_mat2dot(model$top$es, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
+	out = umx_graphviz_mat2dot(model$top$as, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
+	out = umx_graphviz_mat2dot(model$top$cs, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
+	out = umx_graphviz_mat2dot(model$top$es, cells = "any", selDVs = selDVs, from = "rows", type = "latent", p = out)
 
 	# Process "expMean" 1 * nVar matrix
 	if(means){
 		# from = "one"; target = selDVs[c]
-		out = umx_mat2dot(model$top$expMean, cells = "left", selDVs = selDVs, from = "rows", fromLabel = "one", type = "latent", p = out)
+		out = umx_graphviz_mat2dot(model$top$expMean, cells = "left", selDVs = selDVs, from = "rows", fromLabel = "one", type = "latent", p = out)
 	}
 	preOut  = umx_graphviz_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
 	top     = umx_graphviz_rank(out$latents, "^[ace]_cp", "min")

@@ -519,7 +519,7 @@ umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std
 	ranks = paste0(ranks, "\n{rank=max; ", paste0("as", 1:nVar, collapse = " "),  "};")
 	# ranks = paste0("{rank=sink; ", paste(cSpecifics, collapse = "; "), "}");
 
-	# CIstr = umx_APA_model_CI(model, cellLabel = thisParam, prefix = "top.", suffix = "_std", digits = digits)
+	# CIstr = xmu_get_CI(model, label = thisParam, prefix = "top.", suffix = "_std", digits = digits)
 
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", pre, ranks, out, "\n}");
 	if(format != "current"){

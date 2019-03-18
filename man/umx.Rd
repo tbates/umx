@@ -94,12 +94,11 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
-  \code{\link{umx_APA_model_CI}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_names}}, \code{\link{umx_parameters}},
   \code{\link{umx_print}},
   \code{\link{umx_show_fit_or_comparison}},
-  \code{\link{umx_time}}
+  \code{\link{umx_time}}, \code{\link{xmu_get_CI}}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
@@ -134,7 +133,8 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxSummarySimplex}},
   \code{\link{xmu_twin_check}}
 
-Other Twin Reporting Functions: \code{\link{umxReduceACE}},
+Other Twin Reporting Functions: \code{\link{umxPlotCPnew}},
+  \code{\link{umxPlotCP}}, \code{\link{umxReduceACE}},
   \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
   \code{\link{umxSummarizeTwinData}}
 
@@ -207,11 +207,12 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_cont_2_quantiles}},
   \code{\link{umx_find_object}},
   \code{\link{umx_graphviz_define_shapes}},
+  \code{\link{umx_graphviz_mat2dot}},
   \code{\link{umx_graphviz_rank}}, \code{\link{umx_make}},
-  \code{\link{umx_mat2dot}}, \code{\link{umx_msg}},
-  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_scale}}, \code{\link{umx_score_scale}},
+  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
+  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_print}}, \code{\link{umx_scale}},
+  \code{\link{umx_score_scale}},
   \code{\link{xmu_check_variance}}
 
 Other datasets: \code{\link{Fischbein_wt}},

@@ -44,12 +44,12 @@ data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-	nFac = 3
+m1 = umxCP("new", selDVs = selDVs, sep = "_T", 
+	dzData = dzData, mzData = mzData, nFac = 3
 )
 # m1 = mxTryHardOrdinal(m1)
 umxPlotCPnew(m1)
-plot(m1) # no need to remember a special name: plot works fine!
+plot(m1) # No need to remember a special name: plot works fine!
 }
 }
 \references{
@@ -67,5 +67,11 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
   \code{\link{umxPlotSexLim}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
+
+Other Twin Reporting Functions: \code{\link{umxPlotCP}},
+  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
+  \code{\link{umxReduce}},
+  \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
 }
 \concept{Plotting functions}
+\concept{Twin Reporting Functions}

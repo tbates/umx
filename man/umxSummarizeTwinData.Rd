@@ -49,12 +49,13 @@ MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+- \url{https://github.com/tbates/umx}
 }
 \seealso{
 - \code{\link{umxAPA}}
 
-Other Twin Reporting Functions: \code{\link{umxReduceACE}},
+Other Twin Reporting Functions: \code{\link{umxPlotCPnew}},
+  \code{\link{umxPlotCP}}, \code{\link{umxReduceACE}},
   \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
   \code{\link{umx}}
 }

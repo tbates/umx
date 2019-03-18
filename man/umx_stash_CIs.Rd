@@ -26,12 +26,12 @@ Stash formatted CIs (e.g. ".1 [-.1, .3]") as strings overwriting the parameter v
 I might change this to a lookup-function that gets a CI string if one exists.
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+- \url{https://github.com/tbates/umx}
 CIname = top.cp_loadings_std[1,1]
-thisSub = top; thisMat = cp_loadings_std;thisRow = 1; thisCol = 1
+thisSub = top; thisMat = cp_loadings_std; thisRow = 1; thisCol = 1
 }
 \seealso{
-- \code{\link{umxConfint}}
+- \code{\link{umxConfint}}, \code{\link{xmu_get_CI}}
 
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},
   \code{\link{umx_standardize_ACEcov}},
