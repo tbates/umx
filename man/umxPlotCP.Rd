@@ -22,7 +22,7 @@ umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{SEstyle}{report "b (se)" instead of b CI95[l, u] (Default = FALSE)}
+\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" (Default)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
@@ -36,7 +36,18 @@ Options include digits (rounding), showing means or not, and which output format
 }
 \examples{
 \dontrun{
-plot(yourCP_Model) # no need to remember a special name: plot works fine!
+require(umx)
+umx_set_optimizer("SLSQP")
+data(GFF)
+mzData = subset(GFF, zyg_2grp == "MZ")
+dzData = subset(GFF, zyg_2grp == "DZ")
+selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
+m1 = umxCP("new", selDVs = selDVs, sep = "_T", 
+	dzData = dzData, mzData = mzData, nFac = 3
+)
+# m1 = mxTryHardOrdinal(m1)
+umxPlotCP(m1)
+plot(m1) # No need to remember a special name: plot works fine!
 }
 }
 \references{
@@ -50,12 +61,12 @@ plot(yourCP_Model) # no need to remember a special name: plot works fine!
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCPnew}}, \code{\link{umxPlotGxEbiv}},
+  \code{\link{umxPlotCPold}}, \code{\link{umxPlotGxEbiv}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
   \code{\link{umxPlotSexLim}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 
-Other Twin Reporting Functions: \code{\link{umxPlotCPnew}},
+Other Twin Reporting Functions: \code{\link{umxPlotCPold}},
   \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
   \code{\link{umxReduce}},
   \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}

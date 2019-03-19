@@ -23,7 +23,7 @@ umxIP(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a =
 
 \item{mzData}{The MZ dataframe.}
 
-\item{sep}{The suffix for twin 1 and twin 2. e.g. selDV="dep", sep="_T" -> c("dep_T1", "dep_T2")}
+\item{sep}{The suffix for twin 1 and twin 2. e.g. selDVs= "dep", sep= "_T" -> c("dep_T1", "dep_T2")}
 
 \item{nFac}{How many common factors for a, c, and e. If one number is given, applies to all three.}
 
@@ -132,7 +132,7 @@ Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 r
 out for each variable for twin 1, followed by each variable for twin 2.
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 
-\code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+\code{m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 }
 \examples{
 \dontrun{

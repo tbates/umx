@@ -50,7 +50,8 @@
 #' summary(scores)
 #' print(scores)
 #' 
-#' # Compare output (note, scoreItems replaces NAs with the sample median by default...)
+#' # Compare output
+#' # (note, by default psych::scoreItems replaces NAs with the sample median...)
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
 #' all(RevelleE == tmp[,"E"], na.rm = TRUE)
 #'
@@ -2694,10 +2695,10 @@ umxCov2cor <- function(x) {
 #' @return string
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{umx_graphviz_rank}}
+#' @seealso - \code{\link{umx_dot_rank}}
 #' @examples
-#' umx_graphviz_define_shapes(c("as1"), c("E", "N"))
-umx_graphviz_define_shapes <- function(latents, manifests, preOut= "") {
+#' umx_dot_define_shapes(c("as1"), c("E", "N"))
+umx_dot_define_shapes <- function(latents, manifests, preOut= "") {
 	latents   = unique(latents)
 	manifests = unique(manifests)
 	preOut    = paste0(preOut, "\n# Latents\n")
@@ -2718,7 +2719,7 @@ umx_graphviz_define_shapes <- function(latents, manifests, preOut= "") {
 #' Helper to make a graphviz rank string
 #'
 #' Given a list of names, this filters the list, and returns a graphviz string to force them into the given rank.
-#' e.g. "{rank=same; as1};\n"
+#' e.g. "{rank=same; as1};"
 #'
 #' @param vars a list of strings
 #' @param pattern regular expression to filter vars
@@ -2726,10 +2727,10 @@ umx_graphviz_define_shapes <- function(latents, manifests, preOut= "") {
 #' @return string
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{umx_graphviz_define_shapes}}
+#' @seealso - \code{\link{umx_dot_define_shapes}}
 #' @examples
-#' umx_graphviz_rank(c("as1"), "^[ace]s[0-9]+$", "same")
-umx_graphviz_rank <- function(vars, pattern, rank) {
+#' umx_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
+umx_dot_rank <- function(vars, pattern, rank) {
 	formatted = paste(namez(vars, pattern), collapse = "; ")
 	ranks = paste0("{rank=", rank, "; ", formatted, "};\n")
 	return(ranks)
@@ -2746,7 +2747,7 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' Its main use is to correctly generate paths (and their sources and sink objects) 
 #' without depending on the label of the parameter.
 #' 
-#' It is highly customisable:
+#' It is highly customizable:
 #' 
 #' 1. You can specify which cells to inspect, e.g. "lower".
 #' 2. You can choose how to interpret path direction, from = "cols".
@@ -2755,7 +2756,7 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' 5. You can set the number of arrows on a path (e.g. both).
 #' 6. If `type` is set, then sources and sinks added manifests and/or latents output (p)
 #' 
-#' Finally, you can pass in previous output and new paths will be concatendated to these.
+#' Finally, you can pass in previous output and new paths will be concatenated to these.
 #' 
 #' @param x a \code{\link{umxMatrix}} to make paths from.
 #' @param from one of "rows", "columns"
@@ -2768,7 +2769,7 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' @param fromType one of "latent" or "manifest" NULL (default) = don't accumulate new names.
 #' @param toType one of "latent" or "manifest" NULL (default) = don't accumulate new names.
 #' @param model If you want to get CIs, you can pass in the model (default = NULL).
-#' @param SEstyle If TRUE, CIs shown as "b(SE)" ("b [l,h]" if FALSE (default)). Ignored if model NULL.
+#' @param SEstyle If TRUE, CIs shown as "b(SE)" ("b \[l,h\]" if FALSE (default)). Ignored if model NULL.
 #' @param p input to build on. list(str = "", latents = c(), manifests = c())
 #' @return - list(str = "", latents = c(), manifests = c())
 #' @export
@@ -2781,32 +2782,34 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
 #'
 #' # Get dot strings for lower triangle (default from and to based on row and column number)
-#' out = umx_graphviz_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
+#' out = umx_dot_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
 #' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
 #'
 #' # one arrow (the default = "forward")
-#' out = umx_graphviz_mat2dot(a_cp, cells = "lower", from = "cols")
+#' out = umx_dot_mat2dot(a_cp, cells = "lower", from = "cols")
 #' cat(out$str) # a_cp1 -> a_cp2 [dir = forward label="2"];
 #'
 #' # label to (rows) using var names
-#' out = umx_graphviz_mat2dot(a_cp, toLabel = c("var1", "var2", "var3"), cells = "lower", from = "cols")
-#' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
+#'
+#' out = umx_dot_mat2dot(a_cp, toLabel= paste0("v", 1:3), cells = "lower", from = "cols")
+#' umx_msg(out$str) # a_cp1 -> v2 [dir = forward label="2"] ...
 #' 
 #' # First call also inits the plot struct
-#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", fromType = "latent")
-#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", toType = "manifest", p = out)
+#' out = umx_dot_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", fromType = "latent")
+#' out = umx_dot_mat2dot(a_cp, from = "rows", cells = "diag", 
+#' 		toLabel= "common", toType = "manifest", p = out)
 #' umx_msg(out$str); umx_msg(out$manifests); umx_msg(out$latents)
 #' 
 #' # ================================
 #' # = Add found sinks to manifests =
 #' # ================================
-#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= c('a','b','c'), toType = "manifest");
+#' out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", toLabel= c('a','b','c'), toType= "manifest");
 #' umx_msg(out$manifests)
 #'
 #' # ================================
 #' # = Add found sources to latents =
 #' # ================================
-#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= c('a','b','c'), fromType = "latent");
+#' out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", toLabel= c('a','b','c'), fromType= "latent");
 #' umx_msg(out$latents)
 #' 
 #' # ==============================================
@@ -2820,20 +2823,21 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' m1 = umxCI(m1, run= "yes")
-#' out = umx_graphviz_mat2dot(m1$A, from = "cols", cells = "any", toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
+#' out = umx_dot_mat2dot(m1$A, from = "cols", cells = "any", 
+#'       toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
 #' umx_msg(out$str); umx_msg(out$latents)
 #' 
 #' # ========================
 #' # = Label a means matrix =
 #' # ========================
 #' 
-#' tmp = umxMatrix("exp_means", "Full", 1, 4, free = TRUE, values = 1:4)
-#' out = umx_graphviz_mat2dot(tmp, cells = "left", from = "rows",
+#' tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
+#' out = umx_dot_mat2dot(tmp, cells = "left", from = "rows",
 #' 	fromLabel= "one", toLabel= c("v1", "v2")
 #' )
 #' cat(out$str)
 #'
-umx_graphviz_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
+umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
 	from   = match.arg(from)
 	cells  = match.arg(cells)
 	arrows = match.arg(arrows)
@@ -2924,8 +2928,8 @@ umx_graphviz_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upp
 #' Show matrices of RAM models in a easy-to-learn-from format. 
 #'
 #' A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
-#' do this in a way that makes it easy to process for users: The matrix contents are formated as tables, and can even 
-#' be displayed as tables in a web broswer.
+#' do this in a way that makes it easy to process for users: The matrix contents are formatt(?=look-ahead for)ed as tables, and can even 
+#' be displayed as tables in a web browser.
 #' 
 #' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.
 #'
@@ -2961,7 +2965,7 @@ umx_graphviz_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upp
 tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2, report = c("markdown", "inline", "html", "report"), na.print = "", zero.print = ".") {
 
 	if(!umx_is_RAM(model)){
-		stop("I can only show the components of RAM models: You gave me an ", class(m1)[[1]])
+		stop("I can only show the components of RAM models: You gave me an ", class(model)[[1]])
 	}
 	report = match.arg(report)
 	what = match.arg(what)

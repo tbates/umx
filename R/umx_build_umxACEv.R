@@ -681,10 +681,10 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	digraph = paste0("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, l_to_v_at_1, rankVars, rankA, rankCE, "\n}");
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 
-	# TODO simply with umx_graphviz_define_shapes etc.?
-	# preOut  = umx_graphviz_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
-	# top     = umx_graphviz_rank(out$latents, "^[ace]_cp", "min")
-	# bottom  = umx_graphviz_rank(out$latents, "^[ace]s[0-9]+$", "max")
+	# TODO simply with umx_dot_define_shapes etc.?
+	# preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
+	# top     = umx_dot_rank(out$latents, "^[ace]_cp", "min")
+	# bottom  = umx_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	# digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 } # end umxPlotACE
 

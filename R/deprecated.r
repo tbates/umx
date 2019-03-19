@@ -14,6 +14,113 @@
 #   limitations under the License.
 
 
+#' Draw and display a graphical figure of Common Pathway model
+#'
+#' Options include digits (rounding), showing means or not, and which output format is desired.
+#'
+#' @param x The Common Pathway \code{\link{mxModel}} to display graphically
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param digits How many decimals to include in path loadings (defaults to 2)
+#' @param means Whether to show means paths (defaults to FALSE)
+#' @param std Whether to standardize the model (defaults to TRUE)
+#' @param format = c("current", "graphviz", "DiagrammeR") 
+#' @param SEstyle report "b (se)" instead of "b [lower, upper]" (Default)
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param ... Optional additional parameters
+#' @return - Optionally return the dot code
+#' @export
+#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxCP}}
+#' @family Plotting functions
+#' @family Twin Reporting Functions
+#' @references - \url{https://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' umxPlotCPold(yourCP_Model) # no need to remember a special name: plot works fine!
+#' }
+umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+	if(!class(x) == "MxModelCP"){
+		stop("The first parameter of umxPlotCP must be a CP model, you gave me a ", class(x))
+	}
+	format = match.arg(format)
+	model = x # just to emphasise that x has to be a model 
+	if(std){
+		model = umx_standardize_CP(model)
+	}
+	# TODO Check I am handling nFac > 1 properly!!
+	facCount = dim(model$top$a_cp$labels)[[1]]
+	varCount = dim(model$top$as$values)[[1]]
+	selDVs   = dimnames(model$MZ$data$observed)[[2]]
+	selDVs   = selDVs[1:(varCount)]
+	selDVs   = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
+
+	parameterKeyList = omxGetParameters(model)
+	out = "";
+	latents = c();
+	cSpecifics = c();
+	for(thisParam in names(parameterKeyList) ) {
+		# TODO: umxPlotCP plot functions are in the process of being made more intelligent. see: umxPlotCPnew()
+		# This version uses labels. New versions will access the relevant matrices, thus
+		# breaking the dependency on label structure. This will allow more flexible labeling
+
+		# Top level a c e inputs to common factors
+		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { 
+			# Match cp latents, e.g. thisParam = "c_cp_r1c3" (note, row = factor #)
+			from    = sub("^([ace]_cp)_r([0-9])"  , '\\1\\2'   , thisParam, perl= TRUE); # "a_cp<r>"
+			target  = sub("^([ace]_cp)_r([0-9]).*", 'common\\2', thisParam, perl= TRUE); # "common<r>"
+			latents = append(latents, from)
+		} else if (grepl("^cp_loadings_r[0-9]+", thisParam)) {
+			# Match common loading string e.g. "cp_loadings_r1c1"
+			from    = sub("^cp_loadings_r([0-9]+)c([0-9]+)", "common\\2", thisParam, perl= TRUE); # "common<c>"
+			thisVar = as.numeric(sub('cp_loadings_r([0-9]+)c([0-9]+)', '\\1', thisParam, perl= TRUE)); # var[r]
+			target  = selDVs[as.numeric(thisVar)]
+			latents = append(latents,from)
+		} else if (grepl("^[ace]s_r[0-9]", thisParam)) {
+			# Match specifics, e.g. thisParam = "es_r10c10"
+			grepStr = '([ace]s)_r([0-9]+)c([0-9]+)'
+			from    = sub(grepStr, '\\1\\3', thisParam, perl= TRUE);
+			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl= TRUE));
+			target  = selDVs[as.numeric(targetindex)]			
+			latents = append(latents, from)
+			cSpecifics = append(cSpecifics, from);
+		} else if (grepl("^(exp)?[Mm]ean", thisParam)) { # means probably expMean_r1c1
+			grepStr = '(^.*)_r([0-9]+)c([0-9]+)'
+			from    = "one"
+			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl= TRUE))
+			target  = selDVs[as.numeric(targetindex)]
+		} else if (grepl("_dev[0-9]", thisParam)) { # is a threshold
+			# Doesn't need plotting? # TODO umxPlotCP could tabulate thresholds?
+			from = "do not plot"
+		} else {
+			message("While making the plot, I found a path labeled ", thisParam, "\nI don't know where that goes.\n",
+			"If you are using umxModify to make newLabels, re-use one of the existing labels to help plot()")
+		}
+		if(from == "do not plot" || (from == "one" & !means) ){
+			# Either this is a threshold, or we're not adding means...
+		} else {
+			# Get parameter value and make the plot string
+			# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
+			# If the model already has CIs stashed umx_stash_CIs() then pointless and harmful.
+			# Also fails to understand not using _std?
+			CIstr = xmu_get_CI(model, label = thisParam, prefix = "top.", suffix = "_std", SEstyle = SEstyle, digits = digits)
+			if(is.na(CIstr)){
+				val = umx_round(parameterKeyList[thisParam], digits)
+			}else{
+				val = CIstr
+			}
+			out = paste0(out, ";\n", from, " -> ", target, " [label=\"", val, "\"]")
+		}
+	}
+	preOut  = umx_dot_define_shapes(latents = latents, manifests = selDVs[1:varCount])
+	ranks = paste(cSpecifics, collapse = "; ");
+	ranks = paste0("{rank=sink; ", ranks, "}");
+	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
+	if(format != "current"){
+		umx_set_plot_format(format)
+	} 
+	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+}
+
 #' umxCPold: Build and run a Common pathway twin model
 #'
 #' Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).

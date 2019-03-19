@@ -22,7 +22,7 @@ umxPlotIP(x = NA, file = "name", digits = 2, means = FALSE,
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{SEstyle}{report "b (se)" instead of b CI95[l,u] (default = FALSE)}
+\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" (Default)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
@@ -51,7 +51,7 @@ umxPlotIP(model, file = NA)
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCPnew}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotCPold}}, \code{\link{umxPlotCP}},
   \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
   \code{\link{umxPlotSexLim}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}

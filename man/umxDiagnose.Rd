@@ -14,11 +14,28 @@ umxDiagnose(model, tryHard = FALSE, diagonalizeExpCov = FALSE)
 \item{diagonalizeExpCov}{Whether to diagonalize the ExpCov}
 }
 \value{
-- helpful messages and perhaps a modified model
+\itemize{
+\item helpful messages and perhaps a modified model
+}
 }
 \description{
 The goal of this function is to diagnose problems in a model and return suggestions to the user.
-It is a work in progress, and probably is of no use as yet.
+It is a work in progress, and of no use as yet.
+}
+\details{
+Best diagnostics are:
+\enumerate{
+\item observed data variances and means
+\item expected variances and means
+3 Difference of these?
+}
+
+try\preformatted{diagonalizeExpCov diagonal.
+
+umx_any_ordinal()
+
+more tricky - we should really report the variances and the standardized thresholds.
+}
 }
 \examples{
 require(umx)
@@ -36,6 +53,8 @@ umxSummary(m1, show = "std")
 umxDiagnose(m1)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+}
 }
 \concept{Teaching and Testing functions}

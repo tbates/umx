@@ -117,7 +117,7 @@ and \code{fix = "firstLoadings"}.
 
 To be honest, these are not only more trouble than they are worth, they encourage errors and
 poor modeling. Learning the handful of \code{\link{umxPath}} short cuts allows modeling to
-stay both effciicent and unambiguous!
+stay both efficient and unambiguous!
 }
 \examples{
 

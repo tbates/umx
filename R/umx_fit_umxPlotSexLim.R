@@ -11,7 +11,7 @@
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR") 
-#' @param SEstyle report "b (se)" instead of b CI95[l, u] (Default = FALSE)
+#' @param SEstyle report "b (se)" instead of "b [lower, upper]" (Default)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
@@ -57,16 +57,13 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	# 1. a_cp_matrix = A latent (and correlations among latents)
 	# 	* These go from a_cp n=row TO common n= row
 	# 	* Or for off diag, from a_cp n=col TO a_cp n= row
-	# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "diag", type = "latent")
-	# out = umx_dot_from_matrix(a_cp_matrix, from = "rows", cells = "lower", arrows = "both", type = "latent", strIn = out)
 	# 2. Same again for c_cp_matrix, e_cp_matrix
 	# 3. cp_loadings common factor loadings
-	# No longer used: parameterKeyList = omxGetParameters(model)
-
-	umx_check_model(m1, "MxModelSexLim", calling="umxPlotSexLim")
 
 	format = match.arg(format)
-	model = x # just to emphasise that x has to be a model 
+	model = x # just to emphasize that x has to be a model 
+	umx_check_model(model, "MxModelSexLim", callingFn= "umxPlotSexLim")
+
 	if(std){ model = umx_standardize_SexLim(model) }
 
 	facCount = dim(model$top$a_cp$labels)[[1]]
@@ -80,36 +77,36 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	# 1. Collect latents on the diag
 	# from   = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_graphviz_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
-	out = umx_graphviz_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
-	out = umx_graphviz_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
+	out = umx_dot_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
+	out = umx_dot_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
+	out = umx_dot_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
 
 	# 2. On the lower
 	# from = "<name><rowNum>"; target = "<name><colNum>"
-	out = umx_graphviz_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = umx_graphviz_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = umx_graphviz_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = umx_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = umx_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = umx_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
 
 	# Process "cp_loadings" nManifests * nFactors matrix: latents into common paths.
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_graphviz_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", p= out)
+	out = umx_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", p= out)
 	# from    = "common<c>"
 	# target  = selDVs[row]
 	# latents = append(latents, from)
 
 	# Process "as" matrix
-	out = umx_graphviz_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
-	out = umx_graphviz_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
-	out = umx_graphviz_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
+	out = umx_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
+	out = umx_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
+	out = umx_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
 
 	# Process "expMean" 1 * nVar matrix
 	if(means){
 		# from = "one"; target = selDVs[c]
-		out = umx_graphviz_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", p = out)
+		out = umx_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", p = out)
 	}
-	preOut  = umx_graphviz_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
-	top     = umx_graphviz_rank(out$latents, "^[ace]_cp", "min")
-	bottom  = umx_graphviz_rank(out$latents, "^[ace]s[0-9]+$", "max")
+	preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
+	top     = umx_dot_rank(out$latents, "^[ace]_cp", "min")
+	bottom  = umx_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 	if(format != "current"){
 		umx_set_plot_format(format)

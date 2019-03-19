@@ -16,6 +16,113 @@
 # = Fns not used directly by users subject to arbitrary change and deprecation !!  =
 # ==================================================================================
 
+
+# =====================
+# = Reporting helpers =
+# =====================
+
+#' Safely run and summarize a model
+#'
+#' @description
+#' The main benefit is that it returns the model, even if it can't be run.
+#' 
+#' The function will run the model if requested, wrapped in [tryCatch()] to avoid throwing an error.
+#' If summary = TRUE then [umxSummary()] is requested (again, wrapped in try).
+#' 
+#' *note*: If autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
+#'
+#' @param model1 The model to attempt to run and summarize.
+#' @param model2 Optional second model to compare with model1.
+#' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
+#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+#' @param summary Whether to print model summary (default = autoRun).
+#' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - \code{\link{mxTryHard}}
+#' @md
+#' @examples
+#' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
+#' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
+#' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE) {
+	# TODO xmu_safe_run_summary: Activate test examples
+	tryHard = match.arg(tryHard)
+	if(!is.logical(autoRun)){
+		if(autoRun == "if needed" && !umx_has_been_run(model1)){
+			autoRun = FALSE
+		}else{
+			autoRun = TRUE
+		}
+	}else{
+		summary = autoRun
+	}
+	if(autoRun){
+		tryCatch({
+			if(tryHard == "no"){
+				model1 = mxRun(model1)
+			} else if (tryHard == "mxTryHard"){
+				model1 = mxTryHard(model1)
+			} else if (tryHard == "mxTryHardOrdinal"){
+				model1 = mxTryHardOrdinal(model1)
+			} else if (tryHard == "mxTryHardWideSearch"){
+				model1 = mxTryHardWideSearch(model1)
+			}
+		# }, warning = function(w){
+		# 	if(tryHard == "no"){
+		# 		message("Warning incurred trying to run model: mxTryHard might help?")
+		# 	} else {
+		# 		message("Warning incurred trying to run model")
+		# 	}
+		# 	message(w)
+		}, error = function(e){
+			if(tryHard == "no"){
+				message("Error incurred trying to run model: model = mxTryHard(model) might help?")
+			} else {
+				message("Error incurred trying to run model")
+			}
+			message(e)
+		})
+	}
+	if(!umx_has_been_run(model1)){
+		# Didn't get run... don't try and summarize it (will error)
+	} else if(summary){
+		tryCatch({
+			umxSummary(model1)
+		# }, warning = function(w) {
+		# 	message("Warning incurred trying to run umxSummary")
+		# 	message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run umxSummary")
+			message(e)
+		})
+
+		tryCatch({
+			if(!is.null(model2) && comparison){
+				if(length(coef(model2)) > length(coef(model1))){
+					umxCompare(model2, model1)
+				} else {
+					umxCompare(model1, model2)
+				}
+			}
+		# }, warning = function(w) {
+		# 	message("Warning incurred trying to run umxCompare")
+		# 	message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run umxCompare")
+			message(e)
+		})
+
+	}
+	invisible(model1)
+}
+
+# ===================================
+# = Data and model checking helpers =
+# ===================================
+
+
 #' Check the minimum variance in data frame
 #'
 #' @description
@@ -204,102 +311,9 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 	return(data)
 }
 
-# =====================
-# = Reporting helpers =
-# =====================
-
-#' Safely run and summarize a model
-#'
-#' @description
-#' The main benefit is that it returns the model, even if it can't be run.
-#' 
-#' The function will run the model if requested, wrapped in [tryCatch()] to avoid throwing an error.
-#' If summary = TRUE then [umxSummary()] is requested (again, wrapped in try).
-#' 
-#' *note*: If autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
-#'
-#' @param model1 The model to attempt to run and summarize.
-#' @param model2 Optional second model to compare with model1.
-#' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
-#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
-#' @param summary Whether to print model summary (default = autoRun).
-#' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @family xmu internal not for end user
-#' @seealso - \code{\link{mxTryHard}}
-#' @md
-#' @examples
-#' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
-#' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
-#' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE) {
-	# TODO xmu_safe_run_summary: Activate test examples
-	tryHard = match.arg(tryHard)
-	if(!is.logical(autoRun)){
-		if(autoRun == "if needed" && !umx_has_been_run(model1)){
-			autoRun = FALSE
-		}else{
-			autoRun = TRUE
-		}
-	}else{
-		summary = autoRun
-	}
-	if(autoRun){
-		tryCatch({
-			if(tryHard == "no"){
-				model1 = mxRun(model1)
-			} else if (tryHard == "mxTryHard"){
-				model1 = mxTryHard(model1)
-			} else if (tryHard == "mxTryHardOrdinal"){
-				model1 = mxTryHardOrdinal(model1)
-			} else if (tryHard == "mxTryHardWideSearch"){
-				model1 = mxTryHardWideSearch(model1)
-			}
-		}, warning = function(w){
-			message("Warning incurred trying to run model: mxTryHard might help?")
-			message(w)
-		}, error = function(e){
-			message("Error incurred trying to run model: mxTryHard might help?")
-			message(e)
-		})
-	}
-	if(!umx_has_been_run(model1)){
-		# Didn't get run... don't try and summarize it (will error)
-	} else if(summary){
-		tryCatch({
-			umxSummary(model1)
-		}, warning = function(w) {
-			message("Warning incurred trying to run umxSummary")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run umxSummary")
-			message(e)
-		})
-
-		tryCatch({
-			if(!is.null(model2) && comparison){
-				if(length(coef(model2)) > length(coef(model1))){
-					umxCompare(model2, model1)
-				} else {
-					umxCompare(model1, model2)
-				}
-			}
-		}, warning = function(w) {
-			message("Warning incurred trying to run umxCompare")
-			message(w)
-		}, error = function(e) {
-			message("Error incurred trying to run umxCompare")
-			message(e)
-		})
-
-	}
-	invisible(model1)
-}
-
-# ===================================
-# = Data and model checking helpers =
-# ===================================
+# ==========================
+# = Model building helpers =
+# ==========================
 
 #' Just a helper to cope with deprecated suffix lying around.
 #'
@@ -505,9 +519,7 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 	return(allIdentical)
 }
 
-# ==========================
-# = Model building helpers =
-# ==========================
+
 
 #' xmuLabel_MATRIX_Model (not a user function)
 #'
@@ -1191,6 +1203,11 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	}
 	return(toAdd)
 }
+
+
+# ====================
+# = Graphviz helpers =
+# ====================
 
 #' Internal umx function to help plotting graphviz
 #'

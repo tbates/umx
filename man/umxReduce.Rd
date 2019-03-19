@@ -55,7 +55,7 @@ Other Reporting Functions: \code{\link{loadings.MxModel}},
   \code{\link{umx_time}}, \code{\link{umx}},
   \code{\link{xmu_get_CI}}
 
-Other Twin Reporting Functions: \code{\link{umxPlotCPnew}},
+Other Twin Reporting Functions: \code{\link{umxPlotCPold}},
   \code{\link{umxPlotCP}}, \code{\link{umxReduceACE}},
   \code{\link{umxReduceGxE}},
   \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}

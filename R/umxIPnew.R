@@ -71,7 +71,7 @@
 #'
 #' @param name The name of the model (defaults to "IP").
 #' @param selDVs The base names of the variables to model. note: Omit suffixes - just "dep" not c("dep_T1", "dep_T2")
-#' @param sep The suffix for twin 1 and twin 2. e.g. selDV="dep", sep="_T" -> c("dep_T1", "dep_T2")
+#' @param sep The suffix for twin 1 and twin 2. e.g. selDVs= "dep", sep= "_T" -> c("dep_T1", "dep_T2")
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
 #' @param nFac How many common factors for a, c, and e. If one number is given, applies to all three.

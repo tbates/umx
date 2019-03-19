@@ -49,7 +49,7 @@ m2 = umxReduce(m1)
 \seealso{
 \code{\link{umxReduceGxE}}, \code{\link{umxReduce}}
 
-Other Twin Reporting Functions: \code{\link{umxPlotCPnew}},
+Other Twin Reporting Functions: \code{\link{umxPlotCPold}},
   \code{\link{umxPlotCP}}, \code{\link{umxReduceGxE}},
   \code{\link{umxReduce}},
   \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}

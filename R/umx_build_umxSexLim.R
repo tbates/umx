@@ -96,7 +96,8 @@
 #' # ==========================
 #' # = Run univariate example =
 #' # ==========================
-#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun= FALSE,
+# tryHard = "mxTryHard",
+#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun = FALSE,
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
@@ -133,13 +134,20 @@
 #' # Variables for Analysis
 #' selDVs = c('ssc','sil','caf','tri','bic')
 #' selDVs = c('ssc','tri','bic')
-#' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", autoRun = FALSE,
-#'		  mzmData = mzmData, dzmData = dzmData, 
+#' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
+#'		mzmData = mzmData, dzmData = dzmData, 
 #'      mzfData = mzfData, dzfData = dzfData, 
 #'      dzoData = dzoData
 #')
 #' m1 = mxTryHard(m1)
-#' 
+
+#' m2 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", sexlim = "Nonscalar",
+#' 		tryHard = "mxTryHard",
+#'		mzmData = mzmData, dzmData = dzmData, 
+#'      mzfData = mzfData, dzfData = dzfData, 
+#'      dzoData = dzoData
+#')
+#'
 #' # umxSummary(m1)
 #' # summary(m1)
 #' # summary(m1)$Mi

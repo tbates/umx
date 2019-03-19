@@ -163,11 +163,12 @@ selDVs = c("ht")
 # We'll scale height up by 10x to make the Optimizer's task easier.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 
-# 2. umxACEnew picks the variables it needs from the data.
+# 2. umxACE picks the variables it needs from the data.
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 
-# 3. umxACEnew can figure out variable names using sep: e.g. selVar = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
+# 3. umxACE can figure out variable names using sep: 
+#    e.g. selVars = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
 m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 
 # tip: with report = "html", umxSummary can print the table to your browser!

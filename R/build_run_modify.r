@@ -12,8 +12,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# usethis::use_vignette("guide_for_OpenMx_users", base_path ="~/bin/umx")
-
 # Makevars for clang
 # 	mate ~/.R/Makevars
 # 	https://gist.github.com/tbates/9cec0a93e04c06c41b550454eaa892a3
@@ -320,7 +318,7 @@ umxModel <- function(...) {
 #' 
 #' To be honest, these are not only more trouble than they are worth, they encourage errors and 
 #' poor modeling. Learning the handful of \code{\link{umxPath}} short cuts allows modeling to 
-#' stay both effciicent and unambiguous!
+#' stay both efficient and unambiguous!
 #' 
 #' @param model A model to update (or set to string to use as name for new model)
 #' @param data data for the model. Can be an \code{\link{mxData}} or a data.frame

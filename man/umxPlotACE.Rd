@@ -48,7 +48,7 @@ plot(m1, std = FALSE) # don't standardize
 
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxPlotCPnew}},
+  \code{\link{umxPlotACEv}}, \code{\link{umxPlotCPold}},
   \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
   \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
   \code{\link{umxPlotSexLim}},

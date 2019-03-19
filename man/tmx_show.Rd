@@ -31,8 +31,8 @@ tmx_show(model, what = c("values", "free", "labels", "nonzero_or_free"),
 }
 \description{
 A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
-do this in a way that makes it easy to process for users: The matrix contents are formated as tables, and can even 
-be displayed as tables in a web broswer.
+do this in a way that makes it easy to process for users: The matrix contents are formatt(?=look-ahead for)ed as tables, and can even 
+be displayed as tables in a web browser.
 }
 \details{
 The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.

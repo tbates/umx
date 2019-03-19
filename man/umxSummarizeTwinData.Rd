@@ -54,7 +54,7 @@ umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ =
 \seealso{
 - \code{\link{umxAPA}}
 
-Other Twin Reporting Functions: \code{\link{umxPlotCPnew}},
+Other Twin Reporting Functions: \code{\link{umxPlotCPold}},
   \code{\link{umxPlotCP}}, \code{\link{umxReduceACE}},
   \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
   \code{\link{umx}}
