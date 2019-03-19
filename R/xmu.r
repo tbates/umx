@@ -12,10 +12,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# ==============================================================================
-# = Not used directly by users subject to arbitrary change and deprecation !!  =
-# ==============================================================================
-
+# ==================================================================================
+# = Fns not used directly by users subject to arbitrary change and deprecation !!  =
+# ==================================================================================
 
 #' Check the minimum variance in data frame
 #'
@@ -270,6 +269,15 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 	} else if(summary){
 		tryCatch({
 			umxSummary(model1)
+		}, warning = function(w) {
+			message("Warning incurred trying to run umxSummary")
+			message(w)
+		}, error = function(e) {
+			message("Error incurred trying to run umxSummary")
+			message(e)
+		})
+
+		tryCatch({
 			if(!is.null(model2) && comparison){
 				if(length(coef(model2)) > length(coef(model1))){
 					umxCompare(model2, model1)
@@ -278,12 +286,13 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 				}
 			}
 		}, warning = function(w) {
-			message("Warning incurred trying to run umxSummary")
+			message("Warning incurred trying to run umxCompare")
 			message(w)
 		}, error = function(e) {
-			message("Error incurred trying to run umxSummary")
+			message("Error incurred trying to run umxCompare")
 			message(e)
 		})
+
 	}
 	invisible(model1)
 }

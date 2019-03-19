@@ -2642,7 +2642,6 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 		}
 	}
 	preOut  = umx_graphviz_define_shapes(latents = latents, manifests = selDVs[1:varCount])
-
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");

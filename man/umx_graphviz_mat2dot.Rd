@@ -6,9 +6,9 @@
 \usage{
 umx_graphviz_mat2dot(x, cells = c("diag", "lower", "lower_inc", "upper",
   "upper_inc", "any", "left"), from = c("rows", "cols"),
-  fromLabel = NULL, toLabel = NULL, selDVs = NULL,
-  showFixed = FALSE, arrows = c("forward", "both", "back"),
-  type = NULL, digits = 2, model = NULL, SEstyle = FALSE,
+  fromLabel = NULL, toLabel = NULL, showFixed = FALSE,
+  arrows = c("forward", "both", "back"), fromType = NULL,
+  toType = NULL, digits = 2, model = NULL, SEstyle = FALSE,
   p = list(str = "", latents = c(), manifests = c()))
 }
 \arguments{
@@ -16,23 +16,23 @@ umx_graphviz_mat2dot(x, cells = c("diag", "lower", "lower_inc", "upper",
 
 \item{cells}{which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)}
 
-\item{from}{one of "rows", "columns" or a name}
+\item{from}{one of "rows", "columns"}
 
-\item{fromLabel}{= NULL}
+\item{fromLabel}{= NULL. NULL = use matrix name (default). If one, if suffixed with index, length() > 1, index into list. "one" is special.}
 
-\item{toLabel}{= NULL}
+\item{toLabel}{= NULL. NULL = use matrix name (default). If one, if suffixed with index, length() > 1, index into list.}
 
-\item{selDVs}{if not null, row is used to index into this to set target name}
-
-\item{showFixed}{= FALSE}
+\item{showFixed}{= FALSE.}
 
 \item{arrows}{"forward" "both" or "back"}
 
-\item{type}{one of "latent" or "manifest" (default NULL, don't accumulate new names using "from" list)}
+\item{fromType}{one of "latent" or "manifest" NULL (default) = don't accumulate new names.}
+
+\item{toType}{one of "latent" or "manifest" NULL (default) = don't accumulate new names.}
 
 \item{digits}{to round values to (default = 2).}
 
-\item{model}{If you want to get CIs, you can pass in the model (default = NULL)}
+\item{model}{If you want to get CIs, you can pass in the model (default = NULL).}
 
 \item{SEstyle}{If TRUE, CIs shown as "b(SE)" ("b \link{l,h}" if FALSE (default)). Ignored if model NULL.}
 
@@ -52,14 +52,14 @@ At each free cell, it creates a dot-string specifying the relevant path, e.g.:
 Its main use is to correctly generate paths (and their sources and sink objects)
 without depending on the label of the parameter.
 
-It is hihgly customisable:
+It is highly customisable:
 \enumerate{
 \item You can specify which cells to inspect, e.g. "lower".
 \item You can choose how to interpret path direction, from = "cols".
 \item You can choose the label for the from to ends of the path (by default, the matrix name is used).
-\item You can offer up a selDVs list which will be
+\item Offer up a list of from and toLabel which will be indexed into for source and sink
 \item You can set the number of arrows on a path (e.g. both).
-\item If \code{type} is set, then sources are added to the manifests or latents output (p)
+\item If \code{type} is set, then sources and sinks added manifests and/or latents output (p)
 }
 
 Finally, you can pass in previous output and new paths will be concatendated to these.
@@ -78,21 +78,25 @@ out = umx_graphviz_mat2dot(a_cp, cells = "lower", from = "cols")
 cat(out$str) # a_cp1 -> a_cp2 [dir = forward label="2"];
 
 # label to (rows) using var names
-out = umx_graphviz_mat2dot(a_cp, selDVs= c("var1", "var2", "var3"), cells = "lower", from = "cols")
+out = umx_graphviz_mat2dot(a_cp, toLabel = c("var1", "var2", "var3"), cells = "lower", from = "cols")
 cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
 
 # First call also inits the plot struct
-out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", type = "latent")
-out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
-cat(out$str)
+out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", fromType = "latent")
+out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", toType = "manifest", p = out)
+umx_msg(out$str); umx_msg(out$manifests); umx_msg(out$latents)
 
-out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent")
-cat(out$str) # a_cp1 -> a [dir = forward label="1"]; a_cp2 -> b [dir = forward label="4"];
+# ================================
+# = Add found sinks to manifests =
+# ================================
+out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= c('a','b','c'), toType = "manifest");
+umx_msg(out$manifests)
 
-out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent");
-cat(out$str); cat(out$latents)
-out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "manifest");
-cat(out$str); cat(out$manifests)
+# ================================
+# = Add found sources to latents =
+# ================================
+out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= c('a','b','c'), fromType = "latent");
+umx_msg(out$latents)
 
 # ==============================================
 # = Get a string which includes CI information =
@@ -105,8 +109,19 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath(var = latents, fixedAt = 1.0)
 )
 m1 = umxCI(m1, run= "yes")
-out = umx_graphviz_mat2dot(m1$A, from = "cols", cells = "any", selDVs= paste0("x", 1:5), type = "latent", model= m1);
-cat(out$str); cat(out$latents)
+out = umx_graphviz_mat2dot(m1$A, from = "cols", cells = "any", toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
+umx_msg(out$str); umx_msg(out$latents)
+
+# ========================
+# = Label a means matrix =
+# ========================
+
+tmp = umxMatrix("exp_means", "Full", 1, 4, free = TRUE, values = 1:4)
+out = umx_graphviz_mat2dot(tmp, cells = "left", from = "rows",
+	fromLabel= "one", toLabel= c("v1", "v2")
+)
+cat(out$str)
+
 }
 \seealso{
 \itemize{

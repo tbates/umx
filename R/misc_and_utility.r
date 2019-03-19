@@ -13,9 +13,7 @@
 #   limitations under the License.
 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# utility naming convention: "umx_" prefix, lowercase, and "_" not camel case for word boundaries
-# so umx_swap_a_block()
-
+# utility naming convention: "umx_" prefix, lowercase, and "_" (not camel case) e.g. umx_swap_a_block()
 
 #' Score a psychometric scale by summing normal and reversed items
 #'
@@ -2748,28 +2746,28 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' Its main use is to correctly generate paths (and their sources and sink objects) 
 #' without depending on the label of the parameter.
 #' 
-#' It is hihgly customisable:
+#' It is highly customisable:
 #' 
 #' 1. You can specify which cells to inspect, e.g. "lower".
 #' 2. You can choose how to interpret path direction, from = "cols".
 #' 3. You can choose the label for the from to ends of the path (by default, the matrix name is used).
-#' 4. You can offer up a selDVs list which will be 
+#' 4. Offer up a list of from and toLabel which will be indexed into for source and sink
 #' 5. You can set the number of arrows on a path (e.g. both).
-#' 6. If `type` is set, then sources are added to the manifests or latents output (p)
+#' 6. If `type` is set, then sources and sinks added manifests and/or latents output (p)
 #' 
 #' Finally, you can pass in previous output and new paths will be concatendated to these.
 #' 
 #' @param x a \code{\link{umxMatrix}} to make paths from.
-#' @param from one of "rows", "columns" or a name
+#' @param from one of "rows", "columns"
 #' @param cells which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
 #' @param arrows "forward" "both" or "back"
-#' @param fromLabel = NULL
-#' @param toLabel = NULL
-#' @param selDVs if not null, row is used to index into this to set target name
-#' @param showFixed = FALSE
+#' @param fromLabel = NULL. NULL = use matrix name (default). If one, if suffixed with index, length() > 1, index into list. "one" is special.
+#' @param toLabel = NULL. NULL = use matrix name (default). If one, if suffixed with index, length() > 1, index into list.
+#' @param showFixed = FALSE.
 #' @param digits to round values to (default = 2).
-#' @param type one of "latent" or "manifest" (default NULL, don't accumulate new names using "from" list)
-#' @param model If you want to get CIs, you can pass in the model (default = NULL)
+#' @param fromType one of "latent" or "manifest" NULL (default) = don't accumulate new names.
+#' @param toType one of "latent" or "manifest" NULL (default) = don't accumulate new names.
+#' @param model If you want to get CIs, you can pass in the model (default = NULL).
 #' @param SEstyle If TRUE, CIs shown as "b(SE)" ("b [l,h]" if FALSE (default)). Ignored if model NULL.
 #' @param p input to build on. list(str = "", latents = c(), manifests = c())
 #' @return - list(str = "", latents = c(), manifests = c())
@@ -2791,21 +2789,25 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' cat(out$str) # a_cp1 -> a_cp2 [dir = forward label="2"];
 #'
 #' # label to (rows) using var names
-#' out = umx_graphviz_mat2dot(a_cp, selDVs= c("var1", "var2", "var3"), cells = "lower", from = "cols")
+#' out = umx_graphviz_mat2dot(a_cp, toLabel = c("var1", "var2", "var3"), cells = "lower", from = "cols")
 #' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
 #' 
 #' # First call also inits the plot struct
-#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", type = "latent")
-#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", type = "latent", p = out)
-#' cat(out$str)
+#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", fromType = "latent")
+#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= "common", toType = "manifest", p = out)
+#' umx_msg(out$str); umx_msg(out$manifests); umx_msg(out$latents)
 #' 
-#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent")
-#' cat(out$str) # a_cp1 -> a [dir = forward label="1"]; a_cp2 -> b [dir = forward label="4"];
-#' 
-#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "latent");
-#' cat(out$str); cat(out$latents)
-#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , selDVs= letters[1:3], type = "manifest");
-#' cat(out$str); cat(out$manifests)
+#' # ================================
+#' # = Add found sinks to manifests =
+#' # ================================
+#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= c('a','b','c'), toType = "manifest");
+#' umx_msg(out$manifests)
+#'
+#' # ================================
+#' # = Add found sources to latents =
+#' # ================================
+#' out = umx_graphviz_mat2dot(a_cp, from = "rows", cells = "diag" , toLabel= c('a','b','c'), fromType = "latent");
+#' umx_msg(out$latents)
 #' 
 #' # ==============================================
 #' # = Get a string which includes CI information =
@@ -2818,9 +2820,20 @@ umx_graphviz_rank <- function(vars, pattern, rank) {
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' m1 = umxCI(m1, run= "yes")
-#' out = umx_graphviz_mat2dot(m1$A, from = "cols", cells = "any", selDVs= paste0("x", 1:5), type = "latent", model= m1);
-#' cat(out$str); cat(out$latents)
-umx_graphviz_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, selDVs = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), type = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
+#' out = umx_graphviz_mat2dot(m1$A, from = "cols", cells = "any", toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
+#' umx_msg(out$str); umx_msg(out$latents)
+#' 
+#' # ========================
+#' # = Label a means matrix =
+#' # ========================
+#' 
+#' tmp = umxMatrix("exp_means", "Full", 1, 4, free = TRUE, values = 1:4)
+#' out = umx_graphviz_mat2dot(tmp, cells = "left", from = "rows",
+#' 	fromLabel= "one", toLabel= c("v1", "v2")
+#' )
+#' cat(out$str)
+#'
+umx_graphviz_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
 	from   = match.arg(from)
 	cells  = match.arg(cells)
 	arrows = match.arg(arrows)
@@ -2841,7 +2854,6 @@ umx_graphviz_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upp
 				if(!is.null(model)){
 					# model available - look for CIs
 					CIstr = xmu_get_CI(model, label = x$labels[r,c], SEstyle = SEstyle, digits = digits)
-					umx_msg(x$labels[r,c])
 					if(is.na(CIstr)){
 						value = umx_round(x$values[r,c], digits)
 					}else{
@@ -2852,36 +2864,50 @@ umx_graphviz_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upp
 				}
 
 				if(from == "rows"){
-					if(fromLabel == "one"){
-						fr = fromLabel
-					} else {
-						fr = paste0(fromLabel, r)
-					}
-					if(!is.null(selDVs)){
-						tu = selDVs[c]
-					}else{
-						tu = paste0(toLabel, c)
-					}
-				} else { # cols
-					if(fromLabel == "one"){
-						fr = fromLabel
-					} else {
-						fr = paste0(fromLabel, c)
-					}
-					if(!is.null(selDVs)){
-						tu = selDVs[r]
-					}else{
-						tu = paste0(toLabel, r)
-					}
+					sourceIndex = r; sinkIndex   = c
+				} else { # from cols
+					sourceIndex = c; sinkIndex   = r
 				}
+
+				if(length(fromLabel) == 1){
+					if(fromLabel == "one"){
+						thisFrom = fromLabel
+					} else {
+						thisFrom = paste0(fromLabel, sourceIndex)
+					}
+				} else {
+					thisFrom = fromLabel[sourceIndex]
+				}
+
+				if(length(toLabel) == 1){
+					if(toLabel == "one"){
+						thisTo = toLabel
+					} else {
+						thisTo = paste0(toLabel, sinkIndex)
+					}
+				} else {
+					thisTo = toLabel[sinkIndex]
+				}
+
 				# Show fixed cells if non-0
 				if(x$free[r,c] || (showFixed && x$values[r,c] != 0)){
-					p$str = paste0(p$str, "\n", fr, " -> ", tu, " [dir = ", arrows, " label=\"", value, "\"];")
-					if(!is.null(type)){
-						if(type == "latent"){
-							p$latents   = c(p$latents, fr)
-						} else if(type == "manifest"){
-							p$manifests = c(p$manifests, fr)
+					p$str = paste0(p$str, "\n", thisFrom, " -> ", thisTo, " [dir = ", arrows, " label=\"", value, "\"];")
+					if(!is.null(fromType)){
+						if(fromType == "latent"){
+							p$latents = c(p$latents, thisFrom)
+						} else if(fromType == "manifest"){
+							p$manifests = c(p$manifests, thisFrom)
+						}else{
+							stop("not sure what to do for fromType = ", fromType, ". Legal is latent or manifest")
+						}
+					}
+					if(!is.null(toType)){
+						if(toType == "latent"){
+							p$latents   = c(p$latents, thisTo)
+						} else if(toType == "manifest"){
+							p$manifests = c(p$manifests, thisTo)
+						}else{
+							stop("not sure what to do for fromType = ", toType, ". Legal is latent or manifest")
 						}
 					}
 				}
@@ -2890,7 +2916,7 @@ umx_graphviz_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upp
 			}
 		}
 	}
-	p$latents = unique(p$latents)
+	p$latents   = unique(p$latents)
 	p$manifests = unique(p$manifests)	
 	p
 }

@@ -411,6 +411,7 @@ umxModel <- function(...) {
 #' 	umxPath(v1m0 = "g")
 #' )
 #'
+#'
 #' # =================================================
 #' # = This is an example of using your own labels:  =
 #' #   umxRAM will not over-ride them                =

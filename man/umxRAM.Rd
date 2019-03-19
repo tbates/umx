@@ -186,6 +186,7 @@ m1 = umxRAM("CFA_play", data = paste0("x", 1:4),
 	umxPath(v1m0 = "g")
 )
 
+
 # =================================================
 # = This is an example of using your own labels:  =
 #   umxRAM will not over-ride them                =
