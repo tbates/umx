@@ -134,15 +134,13 @@ selDVs = c('ssc','sil','caf','tri','bic')
 selDVs = c('ssc','tri','bic')
 m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
 	mzmData = mzmData, dzmData = dzmData, 
-     mzfData = mzfData, dzfData = dzfData, 
-     dzoData = dzoData
+   mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 )
 m1 = mxTryHard(m1)
 m2 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", sexlim = "Nonscalar",
-		tryHard = "mxTryHard",
+	tryHard = "mxTryHard",
 	mzmData = mzmData, dzmData = dzmData, 
-     mzfData = mzfData, dzfData = dzfData, 
-     dzoData = dzoData
+   mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 )
 
 # umxSummary(m1)

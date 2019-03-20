@@ -31,7 +31,6 @@
 	umx_set_auto_run(TRUE)
 	umx_set_auto_plot(TRUE)
 	umx_set_data_variance_check(minVar = .01, maxVarRatio = 500)
-	
 	# umx_complete_dollar()
 	packageStartupMessage("For an overview type '?umx'")
 }
@@ -378,8 +377,8 @@ umxModel <- function(...) {
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line")
 #' 
-#' # 5. Run an all-continuous WLS model
 #' # TODO: umxRAM: enable WLS RAM example
+#' # 5. Run an all-continuous WLS model
 #' # mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS",
 #' # 	umxPath(c("wt", "disp"), to = "mpg"),
 #' # 	umxPath("wt", with = "disp"),

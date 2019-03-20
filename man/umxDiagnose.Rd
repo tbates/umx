@@ -30,12 +30,11 @@ Best diagnostics are:
 3 Difference of these?
 }
 
-try\preformatted{diagonalizeExpCov diagonal.
-
-umx_any_ordinal()
+Try
+* diagonalizeExpCov diagonal.
+* umx_any_ordinal()
 
 more tricky - we should really report the variances and the standardized thresholds.
-}
 }
 \examples{
 require(umx)

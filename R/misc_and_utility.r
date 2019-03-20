@@ -2803,13 +2803,15 @@ umx_dot_rank <- function(vars, pattern, rank) {
 #' # ================================
 #' # = Add found sinks to manifests =
 #' # ================================
-#' out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", toLabel= c('a','b','c'), toType= "manifest");
+#' out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
+#' 		toLabel= c('a','b','c'), toType= "manifest");
 #' umx_msg(out$manifests)
 #'
 #' # ================================
 #' # = Add found sources to latents =
 #' # ================================
-#' out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", toLabel= c('a','b','c'), fromType= "latent");
+#' out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
+#' 		toLabel= c('a','b','c'), fromType= "latent");
 #' umx_msg(out$latents)
 #' 
 #' # ==============================================
@@ -6403,6 +6405,44 @@ umx_standardize_ACEcov <- function(model, ...) {
 
 #' @export
 umx_standardize.MxModelACEcov <- umx_standardize_ACEcov
+
+
+
+
+#' Standardize a SexLim model
+#'
+#' `umx_standardize_SexLim` simply computes standardized Sexlim components and stores in appropriate matrices.
+#'
+#' @param model an \code{\link{umxSexLim}} model to standardize
+#' @param ... Other options
+#' @return - standardized \code{\link{umxSexLim}} model
+#' @export
+#' @family zAdvanced Helpers
+#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @md
+#' @examples
+#' \dontrun{
+#' model = umx_standardize_IP(model)
+#' }
+umx_standardize_SexLim <- function(model, ...){
+	stop("Very sorry - umx_standardize_SexLim not implemented yet!")
+
+	if(!is.null(model$top$ai_std)){
+		# Standardized general path components
+		model$top$ai$values = model$top$ai_std$result # standardized ai
+		model$top$ci$values = model$top$ci_std$result # standardized ci
+		model$top$ei$values = model$top$ei_std$result # standardized ei
+	    # Standardized specific coeficients
+		model$top$as$values = model$top$as_std$result # standardized as
+		model$top$cs$values = model$top$cs_std$result # standardized cs
+		model$top$es$values = model$top$es_std$result # standardized es
+	} else {
+		stop("Please run umxIP(..., std = TRUE). All I do is copy ai_std values into ai..., so they have to be run!")
+	}
+	return(model)
+}
+#' @export
+umx_standardize.MxModelSexLim <- umx_standardize_SexLim
 
 
 #' umx_standardize_IP

@@ -366,6 +366,7 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' 	sep = "", enforceSep = FALSE)
 #' xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, 
 #' 	sep = "", enforceSep = TRUE, nSib = 2, optimizer = NULL)
+#' 
 #' \dontrun{
 #' # TODO xmu_twin_check: move to a test file:
 #' # 1. stop on no rows

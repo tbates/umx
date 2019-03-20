@@ -91,13 +91,15 @@ umx_msg(out$str); umx_msg(out$manifests); umx_msg(out$latents)
 # ================================
 # = Add found sinks to manifests =
 # ================================
-out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", toLabel= c('a','b','c'), toType= "manifest");
+out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
+		toLabel= c('a','b','c'), toType= "manifest");
 umx_msg(out$manifests)
 
 # ================================
 # = Add found sources to latents =
 # ================================
-out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", toLabel= c('a','b','c'), fromType= "latent");
+out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
+		toLabel= c('a','b','c'), fromType= "latent");
 umx_msg(out$latents)
 
 # ==============================================

@@ -29,12 +29,10 @@
 #' 2. expected variances and means
 #' 3 Difference of these?
 #' 	
-#' try
-#' 	
-#' 	diagonalizeExpCov diagonal.
-#' 	
-#' 	umx_any_ordinal()
-#' 	
+#' Try
+#' 	* diagonalizeExpCov diagonal.
+#' 	* umx_any_ordinal()
+#'
 #' 	more tricky - we should really report the variances and the standardized thresholds.
 # The guidance would be to try starting with unit variances and thresholds that are within +/- 2SD of the mean.
 # [bivariate outliers %p](https://openmx.ssri.psu.edu/thread/3899)
