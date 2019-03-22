@@ -96,20 +96,20 @@
 #' # ==========================
 #' # = Run univariate example =
 #' # ==========================
-# tryHard = "mxTryHard",
-#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun = FALSE,
+#' 
+#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
 #')
-#' m1 = mxTryHard(m1)
 #'
 #' m2 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "mxTryHard", sexlim = "Scalar",
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
 #')
-#' m2 = mxTryHard(m2)
+#'
+#' umxCompare(m1, m2)
 #'
 #' # =====================
 #' # = Bivariate example =
@@ -391,9 +391,14 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#  # =============================================
-#  # = Run Qualitative Sex Differences ACE model =
-#  # =============================================
+#' # =================================================================
+#' # = NOT WORKING YET! Should be good to use for Boulder/March 2020 =
+#' # =================================================================
+#'
+#' # =============================================
+#' # = Run Qualitative Sex Differences ACE model =
+#' # =============================================
+#'
 #' # =========================
 #' # = Load and Process Data =
 #' # =========================
@@ -416,9 +421,6 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' dzfData = subset(us_skinfold_data, zyg == 4)
 #' dzoData = subset(us_skinfold_data, zyg == 5)
 #'
-#' # =================================================================
-#' # = NOT WORKING YET! Should be good to use for Boulder/March 2020 =
-#' # =================================================================
 #' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
 #' 	mzmData = mzmData, dzmData = dzmData, 
 #' 	mzfData = mzfData, dzfData = dzfData, 
@@ -443,6 +445,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	selVars = model$MZm$expectation$dims
 	selDVs  = dimnames(model$top$VarsZm$result)[[1]]
 	nVar    = length(selDVs)
+	umx_msg(nVar)
 	# umx_msg(selDVs) # [1] "ssc_T1" "sil_T1" "caf_T1" "tri_T1" "bic_T1" "ssc_T2" "sil_T2" "caf_T2" "tri_T2" "bic_T2"
 
 	# 3-wide
@@ -452,30 +455,32 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	# round(m1$VarsZm$result,4); round(m1$CorsZm$result,4)
 	# round(m1$VarsZf$result,4); round(m1$CorsZf$result,4)
 	
-	# TODO if univariate, there are no correlations...
-	message("Genetic Factor Correlations (male lower triangle, female upper)")
-	RAm = tmpm[1:nVar, 1:nVar]
-	RAf = tmpf[1:nVar, 1:nVar]
-	RAboth = RAm;
-	RAboth[upper.tri(RAboth)] = RAf[upper.tri(RAf)]
-	dimnames(RAboth)[[2]] = dimnames(RAboth)[[1]]
-	umxAPA(RAboth)
+	# If univariate, there are no correlations...
+	if(nVar > 1){
+		message("Genetic Factor Correlations (male lower triangle, female upper)")
+		RAm = tmpm[1:nVar, 1:nVar]
+		RAf = tmpf[1:nVar, 1:nVar]
+		RAboth = RAm;
+		RAboth[upper.tri(RAboth)] = RAf[upper.tri(RAf)]
+		dimnames(RAboth)[[2]] = dimnames(RAboth)[[1]]
+		umxAPA(RAboth)
 
-	message("C Factor Correlations (male lower triangle, female upper)")
-	RCm = tmpm[1:nVar, (nVar + 1):(nVar * 2)]
-	RCf = tmpf[1:nVar, (nVar + 1):(nVar * 2)]
-	RCboth = RCm
-	RCboth[upper.tri(RCboth)] = RCf[upper.tri(RCf)]
-	dimnames(RAboth)[[2]] = dimnames(RAboth)[[1]]
-	umxAPA(RAboth)
+		message("C Factor Correlations (male lower triangle, female upper)")
+		RCm = tmpm[1:nVar, (nVar + 1):(nVar * 2)]
+		RCf = tmpf[1:nVar, (nVar + 1):(nVar * 2)]
+		RCboth = RCm
+		RCboth[upper.tri(RCboth)] = RCf[upper.tri(RCf)]
+		dimnames(RAboth)[[2]] = dimnames(RAboth)[[1]]
+		umxAPA(RAboth)
 
-	message("E Factor Correlations (male lower triangle, female upper)")
-	REm = tmpm[1:nVar, (nVar * 2 + 1):(nVar * 3)]
-	REf = tmpf[1:nVar, (nVar * 2 + 1):(nVar * 3)]
-	REboth = REm
-	REboth[upper.tri(REboth)] = REf[upper.tri(REf)]
-	dimnames(RAboth)[[2]] = dimnames(RAboth)[[1]]
-	umxAPA(REboth)
+		message("E Factor Correlations (male lower triangle, female upper)")
+		REm = tmpm[1:nVar, (nVar * 2 + 1):(nVar * 3)]
+		REf = tmpf[1:nVar, (nVar * 2 + 1):(nVar * 3)]
+		REboth = REm
+		REboth[upper.tri(REboth)] = REf[upper.tri(REf)]
+		dimnames(RAboth)[[2]] = dimnames(RAboth)[[1]]
+		umxAPA(REboth)
+	}
 
 	if(std){
 		message("Standardized solution")

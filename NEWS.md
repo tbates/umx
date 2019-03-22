@@ -1,4 +1,4 @@
-# Upcoming in next version... umx 3.0.0 April 2018, R 3.5.3
+# Upcoming in next version... umx 3.0.0 April 2018, R 3.5.X
 * FIX: `umxSimplex`
 * FIX: `umxSexLim`
 * NEW: `umxRAM` supports WLS, UWLS, DWLS models!

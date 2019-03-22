@@ -2441,13 +2441,13 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "win"))      # Check on win-builder
 #' umx_make(what = "release"))  # Release to CRAN
 #' }
-umx_make <- function(what = c("install", "quick", "examples", "check", "win", "rhub", "release", "spell"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
+umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "release"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
 	what = match.arg(what)
-	if(what == "install"){
+	if(what == "install_full"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
-	} else if(what == "quick"){
+	} else if(what == "quick_install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);				
-	} else if(what == "examples"){
+	} else if(what == "run_examples"){
 		devtools::run_examples(pkg = pkg, run = run, start = start)
 	} else if(what == "check"){
 		# http://r-pkgs.had.co.nz/check.html
