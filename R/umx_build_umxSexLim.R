@@ -445,7 +445,6 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	selVars = model$MZm$expectation$dims
 	selDVs  = dimnames(model$top$VarsZm$result)[[1]]
 	nVar    = length(selDVs)
-	umx_msg(nVar)
 	# umx_msg(selDVs) # [1] "ssc_T1" "sil_T1" "caf_T1" "tri_T1" "bic_T1" "ssc_T2" "sil_T2" "caf_T2" "tri_T2" "bic_T2"
 
 	# 3-wide
