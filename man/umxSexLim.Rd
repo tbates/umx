@@ -95,19 +95,20 @@ dzoData = subset(us_skinfold_data, zyg == 5)
 # ==========================
 # = Run univariate example =
 # ==========================
-m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun = FALSE,
+
+m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
 	mzmData = mzmData, dzmData = dzmData, 
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData
 )
-m1 = mxTryHard(m1)
 
 m2 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "mxTryHard", sexlim = "Scalar",
 	mzmData = mzmData, dzmData = dzmData, 
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData
 )
-m2 = mxTryHard(m2)
+
+umxCompare(m1, m2)
 
 # =====================
 # = Bivariate example =
