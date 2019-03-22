@@ -5,7 +5,7 @@
 \title{Safely run and summarize a model}
 \usage{
 xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
-  tryHard = c("no", "mxTryHard", "mxTryHardOrdinal",
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
   "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE)
 }
 \arguments{
@@ -15,7 +15,7 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
 
 \item{autoRun}{Whether to run or not (default = TRUE) Options are FALSE and "if needed".}
 
-\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{summary}{Whether to print model summary (default = autoRun).}
 

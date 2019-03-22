@@ -8,8 +8,8 @@ umxACE_cov_fixed(name = "ACEcov", selDVs, selCovs = NULL, dzData,
   mzData, sep = NULL, dzAr = 0.5, dzCr = 1, addStd = TRUE,
   addCI = TRUE, boundDiag = 0, weightVar = NULL,
   equateMeans = TRUE, bVector = FALSE, optimizer = NULL,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
-  "mxTryHardOrdinal", "mxTryHardWideSearch"))
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"))
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACEcov").}
@@ -45,7 +45,7 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACEcov

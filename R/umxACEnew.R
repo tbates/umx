@@ -98,7 +98,7 @@
 #' @param covMethod How to treat covariates: "fixed" (default) or "random".
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
-#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
@@ -281,7 +281,7 @@
 #' m1 = umxACEnew(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
-umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, covMethod = c("fixed", "random"), dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
+umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, covMethod = c("fixed", "random"), dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 
 		tryHard             = match.arg(tryHard)
 		covMethod           = match.arg(covMethod)

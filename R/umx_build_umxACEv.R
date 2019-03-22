@@ -81,7 +81,7 @@
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param covMethod How to treat covariates: "fixed" (default) or "random".
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACE
 #' @export
@@ -242,7 +242,7 @@
 umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"),
 	dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, 
 	boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE,  covMethod = c("fixed", "random"), 
-	autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
+	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
 		nSib = 2 # number of siblings in a twin pair
 		covMethod  = match.arg(covMethod)
 		type = match.arg(type)

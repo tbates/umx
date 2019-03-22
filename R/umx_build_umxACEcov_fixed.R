@@ -57,7 +57,7 @@
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param weightVar (optional) Variable containing the weights to apply to data.
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer (optionally) set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @seealso umx_residualize umxACE
@@ -92,8 +92,11 @@
 #' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, sep = "",
 #' 	     dzData = dzData, mzData = mzData)
 #' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
-umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, optimizer = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, optimizer = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
 		tryHard = match.arg(tryHard)
+	if(tryHard == "yes"){
+		tryHard = "mxTryHard"
+	}
 	
 		nSib = 2 # number of siblings in a twin pair
 		if(dzCr == .25 && name == "ACEcov"){ name = "ADEcov"}

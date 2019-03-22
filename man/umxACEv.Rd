@@ -11,7 +11,7 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
   numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
   equateMeans = TRUE, bVector = FALSE, covMethod = c("fixed",
   "random"), autoRun = getOption("umx_auto_run"), tryHard = c("no",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   optimizer = NULL)
 }
 \arguments{
@@ -55,7 +55,7 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 }

@@ -34,7 +34,7 @@
 #' @param model1 The model to attempt to run and summarize.
 #' @param model2 Optional second model to compare with model1.
 #' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
-#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param summary Whether to print model summary (default = autoRun).
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @return - \code{\link{mxModel}}
@@ -46,9 +46,12 @@
 #' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE) {
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard = match.arg(tryHard)
+	if(tryHard == "yes"){
+		tryHard = "mxTryHard"
+	}
 	if(!is.logical(autoRun)){
 		if(autoRun == "if needed" && !umx_has_been_run(model1)){
 			autoRun = FALSE

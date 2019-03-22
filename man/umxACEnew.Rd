@@ -9,7 +9,7 @@ umxACEnew(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
   "ULS"), allContinuousMethod = c("cumulants", "marginals"),
   numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0,
   autoRun = getOption("umx_auto_run"), intervals = FALSE,
-  tryHard = c("no", "mxTryHard", "mxTryHardOrdinal",
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
   "mxTryHardWideSearch"), optimizer = NULL, covMethod = c("fixed",
   "random"), dzAr = 0.5, dzCr = 1, weightVar = NULL,
   equateMeans = TRUE, addStd = TRUE, addCI = TRUE)
@@ -41,7 +41,7 @@ umxACEnew(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
 
-\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 

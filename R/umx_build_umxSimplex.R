@@ -72,7 +72,7 @@
 #' @param addStd Whether to add the algebras to compute a std model (default = TRUE).
 #' @param addCI Whether to add the interval requests for CIs (default = TRUE).
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -99,10 +99,13 @@
 #' 			dzData = dzData, mzData = mzData, sep = "_T", tryHard = "mxTryHard")
 #' }
 #' @md
-umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
+umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
 	message("This is beta code - will be ready for Boulder 2020")
 	# TODO: modernize
 	tryHard = match.arg(tryHard)
+	if(tryHard == "yes"){
+		tryHard = "mxTryHard"
+	}
 	nSib = 2
 	xmu_twin_check(selDVs = selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
 	nVar = length(selDVs) # enforce sep means these are known to be base names

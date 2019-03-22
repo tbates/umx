@@ -7,8 +7,9 @@
 umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
   dzoData, sep = NA, A_or_C = c("A", "C"), sexlim = c("Nonscalar",
   "Scalar", "Homogeneity"), dzAr = 0.5, dzCr = 1,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
-  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (Default = "sexlim")}
@@ -37,7 +38,7 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
 }
@@ -96,7 +97,7 @@ dzoData = subset(us_skinfold_data, zyg == 5)
 # = Run univariate example =
 # ==========================
 
-m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
+m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "yes",
 	mzmData = mzmData, dzmData = dzmData, 
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData

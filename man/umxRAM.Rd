@@ -8,10 +8,10 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
   setValues = TRUE, suffix = "", independent = NA,
   remove_unused_manifests = TRUE, showEstimates = c("none", "raw",
   "std", "both", "list of column names"), refModels = NULL,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
-  "mxTryHardOrdinal", "mxTryHardWideSearch"), type = c("Auto", "FIML",
-  "cov", "cor", "WLS", "DWLS", "ULS"), optimizer = NULL,
-  verbose = FALSE)
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  optimizer = NULL, verbose = FALSE)
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
@@ -38,7 +38,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{type}{One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto reacts to the incoming mxData type (raw/cov, WLS). FIML requires that the data are continuous. Remaining options are weighted, diagonally weighted, or unweighted least squares, respectively)}
 

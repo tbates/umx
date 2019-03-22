@@ -6,7 +6,7 @@
 \usage{
 umxEquate(model, master, slave, free = c(TRUE, FALSE, NA),
   verbose = FALSE, name = NULL, autoRun = FALSE, tryHard = c("no",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   comparison = TRUE)
 }
 \arguments{
@@ -24,7 +24,7 @@ umxEquate(model, master, slave, free = c(TRUE, FALSE, NA),
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 }

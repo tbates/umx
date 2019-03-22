@@ -6437,7 +6437,7 @@ umx_standardize_SexLim <- function(model, ...){
 		model$top$cs$values = model$top$cs_std$result # standardized cs
 		model$top$es$values = model$top$es_std$result # standardized es
 	} else {
-		stop("Please run umxIP(..., std = TRUE). All I do is copy ai_std values into ai..., so they have to be run!")
+		stop("Please run umxSexLim(..., std = TRUE). All I do is copy the values from the standardized matrices already in the model..., so they have to be run!")
 	}
 	return(model)
 }

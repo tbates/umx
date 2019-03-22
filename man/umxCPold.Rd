@@ -9,8 +9,9 @@ umxCPold(name = "CPold", selDVs, dzData, mzData, sep = NULL,
   freeLowerE = FALSE, correlatedA = FALSE, equateMeans = TRUE,
   dzAr = 0.5, dzCr = 1, boundDiag = 0, addStd = TRUE,
   addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard",
-  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL)
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "CP").}
@@ -52,7 +53,7 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
 }

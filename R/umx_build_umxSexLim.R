@@ -60,7 +60,7 @@
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
-#' @param tryHard optionally tryHard (default 'no' uses normal mxRun). c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.CFSexLim
 #' @export
@@ -97,7 +97,7 @@
 #' # = Run univariate example =
 #' # ==========================
 #' 
-#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
+#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "yes",
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
@@ -150,10 +150,14 @@
 #' # summary(m1)
 #' # summary(m1)$Mi
 #' }
-umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), sexlim = c("Nonscalar", "Scalar", "Homogeneity"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
+umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), sexlim = c("Nonscalar", "Scalar", "Homogeneity"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
 	A_or_C  = match.arg(A_or_C)
-	tryHard = match.arg(tryHard)
 	sexlim  = match.arg(sexlim)
+	tryHard = match.arg(tryHard)
+	if(tryHard == "yes"){
+		tryHard = "mxTryHard"
+	}
+
 
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
