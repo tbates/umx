@@ -614,6 +614,12 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
+	# TODO umxPlotACEv: update to matrix version instead of label hunting
+	# TODO umxPlotACEv: use umx_dot_define_shapes etc.?
+	# preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
+	# top     = umx_dot_rank(out$latents, "^[ace]_cp", "min")
+	# bottom  = umx_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
+	# digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 	if(!class(x) == "MxModelACEv"){
 		stop("The first parameter of umxPlotACE must be an ACEv model, you gave me a ", class(x))
 	}
@@ -673,19 +679,13 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 		var  = as.numeric(sub('([ACE])([0-9]+)', '\\2', l, perl = TRUE)); # target is [ACE]n		
 	   l_to_v_at_1 = paste0(l_to_v_at_1, "\t ", l, "-> ", selDVs[var], " [label = \"@1\"];\n")
 	}
-	
+
 	rankVars = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
-	# grep('a', latents, value=T)
+	# grep('a', latents, value= T)
 	rankA   = paste("\t{rank = min; ", paste(grep('A'   , latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[CE]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
 	digraph = paste0("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, l_to_v_at_1, rankVars, rankA, rankCE, "\n}");
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
-
-	# TODO simply with umx_dot_define_shapes etc.?
-	# preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
-	# top     = umx_dot_rank(out$latents, "^[ace]_cp", "min")
-	# bottom  = umx_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
-	# digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 } # end umxPlotACE
 
 #' @export

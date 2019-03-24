@@ -156,7 +156,10 @@ NULL
 #' Anthropometric data on twins
 #'
 #' A dataset containing height, weight, BMI, and skin-fold fat measures in several
-#' hundred US twin families participating in the MCV Cardiovascular Twin Study (PI Schieken)
+#' hundred US twin families participating in the MCV Cardiovascular Twin Study (PI Schieken).
+#' Biceps and Triceps are folds above and below the upper arm (holding arm palm upward),
+#' Calf (fold on the calf muscle), Subscapular (fold over the shoulder blade), 
+#' Suprailiacal (fold between the hip and ribs).
 #' 
 #' \itemize{
 #'   \item fan FamilyID (t1=male,t2=female)

@@ -103,7 +103,11 @@ m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "yes",
 	dzoData = dzoData
 )
 
-m2 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "mxTryHard", sexlim = "Scalar",
+# ============================
+# = 3. Scalar Sex Limitation =
+# ============================
+
+m2 = umxSexLim(selDVs = "bic", sep = "_T", sexlim = "Scalar", tryHard = "yes",
 	mzmData = mzmData, dzmData = dzmData, 
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData
@@ -114,16 +118,12 @@ umxCompare(m1, m2)
 # =====================
 # = Bivariate example =
 # =====================
-m1 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", A_or_C = "A", autoRun = FALSE,
+m1 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", A_or_C = "A", tryHard="yes",
 	mzmData = mzmData, dzmData = dzmData, 
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData
 )
-m1 = mxTryHard(m1)
 
-# ============================
-# = 3. Scalar Sex Limitation =
-# ============================
 
 m2 = umxModify(m1, regex = "^R([ace])[f|m]_", newLabels = "r\\\\1_", 
   name = "Homogeneity", comparison = TRUE)

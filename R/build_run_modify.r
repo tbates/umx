@@ -464,7 +464,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(!length(dot.items) > 0){
 		# do we care?
 	}
-
 	foundNames = c()
 	defnNames = c()
 	for (thisItem in dot.items) {
@@ -524,7 +523,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ". ")
 	}
 
-
 	# ===========================================================
 	# = TODO handle user adding an mxThreshold object to umxRAM =
 	# ===========================================================
@@ -572,6 +570,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		latentVars  = latentVars,
 		independent = independent, dot.items)
 	)
+
 	if (class(data) == "character"){
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		newModel = umxLabel(newModel, suffix = suffix)

@@ -79,14 +79,24 @@ dzmData = subset(us_skinfold_data, zyg == 3)
 dzfData = subset(us_skinfold_data, zyg == 4)
 dzoData = subset(us_skinfold_data, zyg == 5)
 
-m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
+
+
+selDVs = c('tri','bic')
+m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "yes",
 	mzmData = mzmData, dzmData = dzmData, 
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData
 )
 umxSummary(m1, file = NA);
-umxSummarySexLim(m1, file = "name", std = TRUE)
-stdFit = umxSummarySexLim(m1, returnStd = TRUE);
+
+# ===============
+# = Switch to C =
+# ===============
+m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "C", tryHard = "yes",
+	mzmData = mzmData, dzmData = dzmData, 
+	mzfData = mzfData, dzfData = dzfData, 
+	dzoData = dzoData
+)
 }
 }
 \references{
