@@ -2250,6 +2250,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 	# ======================
 	# {rank=same; x1 x2 x3 x4 x5 };
 	# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
+	# TODO plot.MxModel use `umx_dot_rank`
 	rankVariables = paste0("\t{rank=min ; ", paste(latents, collapse = "; "), "};\n")
 	rankVariables = paste0(rankVariables, "\t{rank=same; ", paste(selDVs, collapse = " "), "};\n")
 	if(umx_has_means(model)){ append(varianceNames, "one")}

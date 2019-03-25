@@ -68,7 +68,7 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE);
 - \code{\link{umxACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxModify}}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEnew}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEold}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCPold}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},

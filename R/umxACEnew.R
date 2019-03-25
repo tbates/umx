@@ -98,7 +98,7 @@
 #' @param covMethod How to treat covariates: "fixed" (default) or "random".
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
@@ -134,7 +134,7 @@
 #' 
 #' # 3. umxACE can figure out variable names using sep: 
 #' #    e.g. selVars = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
-#' m1 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+#' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 #' 
 #' # tip: with report = "html", umxSummary can print the table to your browser!
 #' umxSummary(m1, std = FALSE) # un-standardized
@@ -145,7 +145,7 @@
 #' # =============================================================
 #' # = ADE: Evidence for dominance ? (DZ correlation set to .25) =
 #' # =============================================================
-#' m2 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
+#' m2 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
 #' umxSummary(m2, comparison = m1) 
 #' # nb: Although summary is smart enough to print d, the underlying 
@@ -154,7 +154,7 @@
 #' # ================
 #' # = WLS analysis =
 #' # ================
-#' m3 = umxACEnew(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, 
+#' m3 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, 
 #' 	type = "DWLS", allContinuousMethod='marginals'
 #' )
 #'
@@ -173,7 +173,7 @@
 #' 
 #' # 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0 (prevents mirror-solutions).
 #'         # can remove this by setting boundDiag = NULL
-#' m1 = umxACEnew(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
+#' m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
 #'
 #' # MODEL MODIFICATION
 #' # We can modify this model, say testing shared environment, and see a comparison:
@@ -191,8 +191,8 @@
 #' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
 #' mzData = mzData[1:80,] # quicker run to keep CRAN happy
 #' dzData = dzData[1:80,]
-#' m1 = umxACEnew(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
-#' m2 = umxACEnew(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '',
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
+#' m2 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '',
 #' 	type = "DWLS", allContinuousMethod='marginals')
 #' umxSummary(m1)
 #'
@@ -223,7 +223,7 @@
 #' 
 #' # Data-prep done - here's where the model starts:
 #' selDVs = c("obese")
-#' m1 = umxACEnew(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
 #'
 #' # ============================================
@@ -243,7 +243,7 @@
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
 #' mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 #' dzData <- dzData[1:80,]
-#' m1 = umxACEnew(selDVs = c("wt", "obese"), dzData = dzData, mzData = mzData, sep = '')
+#' m1 = umxACE(selDVs = c("wt", "obese"), dzData = dzData, mzData = mzData, sep = '')
 #' 
 #' # =======================================
 #' # = Mixed continuous and binary example =
@@ -264,7 +264,7 @@
 #' mzData = twinData[twinData$zygosity %in% "MZFF",]
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
 #' \dontrun{
-#' m1 = umxACEnew(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
 #' }
 #'
@@ -278,10 +278,10 @@
 #' selDVs = c("wt1", "wt2")
 #' mz = cov(twinData[twinData$zygosity %in%  "MZFF", selDVs], use = "complete")
 #' dz = cov(twinData[twinData$zygosity %in%  "DZFF", selDVs], use = "complete")
-#' m1 = umxACEnew(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
+#' m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
-umxACEnew <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, covMethod = c("fixed", "random"), dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
+umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, covMethod = c("fixed", "random"), dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 
 		tryHard             = match.arg(tryHard)
 		covMethod           = match.arg(covMethod)

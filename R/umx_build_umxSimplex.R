@@ -72,7 +72,7 @@
 #' @param addStd Whether to add the algebras to compute a std model (default = TRUE).
 #' @param addCI Whether to add the interval requests for CIs (default = TRUE).
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
 #' @export

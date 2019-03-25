@@ -60,7 +60,7 @@
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.CFSexLim
 #' @export
@@ -208,7 +208,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is symm)
 			# (labels trimmed to Ra at end)
 			# TODO: Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag @1)
-			# TODO: Not sure why, as Symm can become Full... so can't turn Ao into Co...
+			# TODO: Not sure why, as Symm can't become Full... so can't turn Ao into Co...
 			Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 			Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 	} else if (A_or_C == "C"){

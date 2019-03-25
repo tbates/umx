@@ -34,7 +34,7 @@
 #' @param model1 The model to attempt to run and summarize.
 #' @param model2 Optional second model to compare with model1.
 #' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param summary Whether to print model summary (default = autoRun).
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @return - \code{\link{mxModel}}
@@ -1222,7 +1222,8 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 #' @param digraph Graphviz code for a model
 #' @param strip_zero Whether to remove the leading "0." in digits in the diagram
 #' @return -
-#' @family xmu
+#' @family xmu internal not for end user
+#' @family Graphviz
 xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 	if(strip_zero){
 		# strip leading "0." (pad "0.5" to "50")
@@ -1270,6 +1271,7 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 #' @return - list of variance names and variances
 #' @export
 #' @family xmu internal not for end user
+#' @family Graphviz
 xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits = 2, resid = c("circle", "line")) {
 	mxMat_vals   = mxMat$values
 	mxMat_free   = mxMat$free
@@ -1323,6 +1325,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 #' @return - string
 #' @export
 #' @family xmu internal not for end user
+#' @family Graphviz
 xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2) {
 	if(is.null(heads)){
 		stop("You must set 'heads' to 1 or 2 (was NULL)")

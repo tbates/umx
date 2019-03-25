@@ -34,7 +34,7 @@ Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1"
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 }
@@ -136,7 +136,7 @@ m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3),
 }
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEnew}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEold}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCPold}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},

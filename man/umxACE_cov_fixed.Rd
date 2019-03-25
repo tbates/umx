@@ -45,7 +45,7 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
 - \code{\link{mxModel}} of subclass mxModel.ACEcov
@@ -112,7 +112,7 @@ m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 umx_residualize umxACE
 
 Other Twin Modeling Functions: \code{\link{umxACEcov}},
-  \code{\link{umxACEnew}}, \code{\link{umxACEv}},
+  \code{\link{umxACEold}}, \code{\link{umxACEv}},
   \code{\link{umxACE}}, \code{\link{umxCPold}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},

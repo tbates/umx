@@ -2694,7 +2694,7 @@ umxCov2cor <- function(x) {
 #' @param preOut "" by default.
 #' @return string
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family Graphviz
 #' @seealso - \code{\link{umx_dot_rank}}
 #' @examples
 #' umx_dot_define_shapes(c("as1"), c("E", "N"))
@@ -2726,7 +2726,7 @@ umx_dot_define_shapes <- function(latents, manifests, preOut= "") {
 #' @param rank "same", "max", "min"
 #' @return string
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family Graphviz
 #' @seealso - \code{\link{umx_dot_define_shapes}}
 #' @examples
 #' umx_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
@@ -2773,7 +2773,7 @@ umx_dot_rank <- function(vars, pattern, rank) {
 #' @param p input to build on. list(str = "", latents = c(), manifests = c())
 #' @return - list(str = "", latents = c(), manifests = c())
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family Graphviz
 #' @seealso - \code{\link{plot}}
 #' @md
 #' @examples
@@ -2930,7 +2930,7 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' Show matrices of RAM models in a easy-to-learn-from format. 
 #'
 #' A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
-#' do this in a way that makes it easy to process for users: The matrix contents are formatt(?=look-ahead for)ed as tables, and can even 
+#' do this in a way that makes it easy to process for users: The matrix contents are formated as tables, and can even 
 #' be displayed as tables in a web browser.
 #' 
 #' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.

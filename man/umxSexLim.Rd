@@ -38,7 +38,7 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
 }
@@ -159,7 +159,7 @@ Multivariate genetic analysis of sex-lim and GxE interaction.
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEnew}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEold}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCPold}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},

@@ -73,7 +73,7 @@ umxSummary(m1, CIs = TRUE, file = NA);
 - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEnew}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEold}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCPold}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},

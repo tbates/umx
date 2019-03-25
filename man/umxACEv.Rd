@@ -55,7 +55,7 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryhard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 }
@@ -268,7 +268,7 @@ to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.n
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEnew}},
+  \code{\link{umxACEcov}}, \code{\link{umxACEold}},
   \code{\link{umxACE}}, \code{\link{umxCPold}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
