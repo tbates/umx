@@ -268,8 +268,6 @@ umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use 
 			pairCount = pairCount + 1
 			cat(c("\n\n", pairCount, names(data)[var1], names(data)[var2]))
 			if (use == "complete.obs"){
-			# TODO used to say, but no visible binding for mustHaveData
-			# tempData = cbind(mustHaveData, data[stats::complete.cases(data[,c(var1,var2)]),c(var1,var2)])
 			    tempData = data[stats::complete.cases(data[,c(var1, var2)]), c(var1,var2)]
 			} else {
 			    tempData = data[,c(var1,var2)]

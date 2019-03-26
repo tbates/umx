@@ -322,18 +322,19 @@ umxModel <- function(...) {
 #' @param model A model to update (or set to string to use as name for new model)
 #' @param data data for the model. Can be an \code{\link{mxData}} or a data.frame
 #' @param ... mx or umxPaths, mxThreshold objects, etc.
-#' @param setValues Whether to generate likely good start values (Defaults to TRUE)
-#' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param name A friendly name for the model
+#' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
+#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
+#' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
+#' @param suffix String to append to each label (useful if model will be used in a multi-group model)
+#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
+#' @param setValues Whether to generate likely good start values (Defaults to TRUE)
+#' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
 #' @param independent Whether the model is independent (default = NA)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
-#' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
-#' @param type One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto reacts to the incoming mxData type (raw/cov, WLS). FIML requires that the data are continuous. Remaining options are weighted, diagonally weighted, or unweighted least squares, respectively)
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
-#' @param optimizer optionally set the optimizer (default NULL does nothing)
-#' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
 #' @param verbose Whether to tell the user what latents and manifests were created etc. (Default = FALSE)
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -379,11 +380,12 @@ umxModel <- function(...) {
 #' 
 #' # TODO: umxRAM: enable WLS RAM example
 #' # 5. Run an all-continuous WLS model
-#' # mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS",
-#' # 	umxPath(c("wt", "disp"), to = "mpg"),
-#' # 	umxPath("wt", with = "disp"),
-#' #  umxPath(var = selVars)
-#' # )
+#'  mw = umxRAM("raw", data = mtcars[, c("mpg", "wt", "disp")], type = "WLS",
+#'  	umxPath(var = c("wt", "disp", "mpg")),
+#'  	umxPath(c("wt", "disp"), to = "mpg"),
+#'  	umxPath("wt", with = "disp"),
+#'   umxPath(var = c("wt", "disp", "mpg"))
+#'  )
 #' 
 #' # ===============================
 #' # = Using umxRAM in Sketch mode =
@@ -424,12 +426,14 @@ umxModel <- function(...) {
 #'# mpg  "mpg_with_mpg"  "mpg_with_wt" "disp_with_mpg"
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, setValues = TRUE, suffix = "", independent = NA, remove_unused_manifests = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), refModels = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), type = c('Auto', 'FIML', 'cov', 'cor', 'WLS', 'DWLS', 'ULS'), optimizer = NULL, verbose = FALSE) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, suffix = "", showEstimates = c("none", "raw", "std", "both", "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE) {
+	
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 
-	type          = match.arg(type)
-	tryHard       = match.arg(tryHard)
+	tryHard = match.arg(tryHard)
+	type = match.arg(type)
+	allContinuousMethod = match.arg(allContinuousMethod)
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
 
 	# =================
@@ -581,19 +585,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}else{
 		newModel = mxModel(newModel, data)
 	}
-
 	# Add means if data are raw and means not requested by user
-	if(type %in% c('Auto', 'FIML') && (data$type == "raw")){
-		if(is.null(newModel$matrices$M) ){
-			message("You have raw data, but no means model. I added\n",
-			"mxPath('one', to = manifestVars)")
-			newModel = mxModel(newModel, mxPath("one", usedManifests))
-		} else {
-			# leave the user's means as the model
-			# print("using your means model")
-			# tmx_show(newModel)
-			# print(newModel$matrices$M$values)
-		}
+	needsMeans = xmu_model_needs_means(data = data, type = type, allContinuousMethod= allContinuousMethod)
+	if(needsMeans && is.null(newModel$matrices$M)){
+		message("You have raw data, but no means model. I added\n",
+		"mxPath('one', to = manifestVars)")
+		newModel = mxModel(newModel, mxPath("one", usedManifests))
 	}
 	newModel = umxLabel(newModel, suffix = suffix)
 	if(setValues){

@@ -382,7 +382,7 @@ umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "to
 	# umxPlotGxEbiv(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
 
 	if(reduce){
-		# TODO not implemented!
+		# TODO umxReduce not yet implemented for umxGxEbiv!
 		umxReduce(model = model, report = report)
 	}
 }

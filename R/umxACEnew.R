@@ -288,7 +288,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = N
 		type                = match.arg(type)
 		allContinuousMethod = match.arg(allContinuousMethod)
 		nSib                = 2 # Number of siblings in a twin pair.
-		# TODO check covs
+
 		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
 		
 		if(dzCr == .25 & (name == "ACE")){

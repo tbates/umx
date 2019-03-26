@@ -125,6 +125,45 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 # = Data and model checking helpers =
 # ===================================
 
+#' Check data to see if model needs means.
+#'
+#' @description
+#' Check data to see if model needs means.
+#'
+#' @param data \code{\link{mxData}} to check.
+#' @param tyoe of the data requested by the model.
+#' @param allContinuousMethod How data will be processed if used for WLS.
+#' @return - T/F
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - \code{\link{xmu_make_mxData}}
+#' @examples
+#' \dontrun{
+#' # xmu_model_needs_means(data, type = "cor", allContinuousMethod= "cumulants")
+#' 
+#' }
+xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals")) {
+	# Add means if data are raw and means not requested by user
+	type = match.arg(type)
+	allContinuousMethod = match.arg(allContinuousMethod)
+	# data must be mxData
+	if(!umx_is_MxData(data)){
+		stop("xmu_model_needs_means requires mxData as input. You sent in a ", class(data))
+	}
+
+	if(type %in% c('Auto', 'FIML') && (data$type == "raw")){
+		return(TRUE)
+	}else if(type %in% c("WLS", "DWLS", "ULS")){
+		tmp = mxDescribeDataWLS(data, allContinuousMethod = allContinuousMethod)
+		return(tmp$hasMeans)
+	}else if(is.na(data$means[[1]])){
+		# cov data no means
+		return(FALSE)		
+	}else{
+		# cov data with means
+		return(TRUE)
+	}
+}
 
 #' Check the minimum variance in data frame
 #'

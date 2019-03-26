@@ -5,13 +5,13 @@
 \title{Easier path-based SEM modeling.}
 \usage{
 umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
-  setValues = TRUE, suffix = "", independent = NA,
-  remove_unused_manifests = TRUE, showEstimates = c("none", "raw",
-  "std", "both", "list of column names"), refModels = NULL,
+  suffix = "", showEstimates = c("none", "raw", "std", "both",
+  "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS",
+  "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
   "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  optimizer = NULL, verbose = FALSE)
+  refModels = NULL, remove_unused_manifests = TRUE, independent = NA,
+  setValues = TRUE, optimizer = NULL, verbose = FALSE)
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
@@ -24,23 +24,25 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
-\item{setValues}{Whether to generate likely good start values (Defaults to TRUE)}
-
 \item{suffix}{String to append to each label (useful if model will be used in a multi-group model)}
-
-\item{independent}{Whether the model is independent (default = NA)}
-
-\item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
 
 \item{showEstimates}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
 
-\item{refModels}{pass in reference models if available. Use FALSE to suppress computing these if not provided.}
+\item{type}{One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"}
+
+\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
 \item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
-\item{type}{One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto reacts to the incoming mxData type (raw/cov, WLS). FIML requires that the data are continuous. Remaining options are weighted, diagonally weighted, or unweighted least squares, respectively)}
+\item{refModels}{pass in reference models if available. Use FALSE to suppress computing these if not provided.}
+
+\item{remove_unused_manifests}{Whether to remove variables in the data to which no path makes reference (defaults to TRUE)}
+
+\item{independent}{Whether the model is independent (default = NA)}
+
+\item{setValues}{Whether to generate likely good start values (Defaults to TRUE)}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
 
@@ -157,11 +159,12 @@ plot(m1, std = TRUE, resid = "line")
 
 # TODO: umxRAM: enable WLS RAM example
 # 5. Run an all-continuous WLS model
-# mw = umxRAM("raw", data = mtcars[, selVars], type = "WLS",
-# 	umxPath(c("wt", "disp"), to = "mpg"),
-# 	umxPath("wt", with = "disp"),
-#  umxPath(var = selVars)
-# )
+ mw = umxRAM("raw", data = mtcars[, c("mpg", "wt", "disp")], type = "WLS",
+ 	umxPath(var = c("wt", "disp", "mpg")),
+ 	umxPath(c("wt", "disp"), to = "mpg"),
+ 	umxPath("wt", with = "disp"),
+  umxPath(var = c("wt", "disp", "mpg"))
+ )
 
 # ===============================
 # = Using umxRAM in Sketch mode =
