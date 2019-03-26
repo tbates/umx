@@ -2409,7 +2409,7 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 	} else if(loc == "CRAN"){
 		install.packages("OpenMx", lib= lib, repos = repos)
 	} else if(loc == "open travis build page"){
-		browseURL("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis")
+		browseURL("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis/?C=M;O=D")
 	}
 }
 
