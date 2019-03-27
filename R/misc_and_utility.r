@@ -2403,6 +2403,7 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 			install.packages("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis/OpenMx_latest.tgz")
 			# was ("https://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
 			# , lib = lib, repos=repos
+			# quit(save = "default")
 		} else {
 			stop(paste0("Sorry, travis builds are only available for MacOS :-("))
 		}
