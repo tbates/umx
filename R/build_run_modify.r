@@ -551,7 +551,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		data = xmu_make_mxData(data= data, type = type)
 		usedManifests = manifestVars
 	}
-
 	if(verbose){
 		msg_str = ""
 		if(length(unusedManifests) > 0){
@@ -585,6 +584,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	}else{
 		newModel = mxModel(newModel, data)
 	}
+
+	# Note: WLS data at this state will be mxData(..., type = "raw") at this stage.
 	# Add means if data are raw and means not requested by user
 	needsMeans = xmu_model_needs_means(data = data, type = type, allContinuousMethod= allContinuousMethod)
 	if(needsMeans && is.null(newModel$matrices$M)){
@@ -597,9 +598,20 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		newModel = umxValues(newModel, onlyTouchZeros = TRUE)
 	}
 
-	if(any(umx_is_ordered(data$observed)) && !(type %in%  c('WLS', 'DWLS', 'ULS'))){
-			newModel = umxRAM2Ordinal(newModel, verbose = TRUE)
+	if(any(umx_is_ordered(data$observed)) ){
+		newModel = umxRAM2Ordinal(newModel, verbose = TRUE)
 	}
+
+	# ==============================
+	# = Add mxFitFunction to model =
+	# ==============================
+	if(type %in%  c('WLS', 'DWLS', 'ULS')) {
+		message("data treated as ", omxQuotes(type), ". allContinuousMethod = ", omxQuotes(allContinuousMethod))
+		# Replace newModel fit functions
+		newModel = mxModel(newModel, mxFitFunctionWLS(type= type, allContinuousMethod= allContinuousMethod) )
+		# Still mxExpectationNormal and means not affected (either has or lacks means matrix already).
+	}
+
 	newModel = omxAssignFirstParameters(newModel)
 	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard)
 	invisible(newModel)
