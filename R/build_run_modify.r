@@ -380,11 +380,20 @@ umxModel <- function(...) {
 #' 
 #' # TODO: umxRAM: enable WLS RAM example
 #' # 5. Run an all-continuous WLS model
-#'  mw = umxRAM("raw", data = mtcars[, c("mpg", "wt", "disp")], type = "WLS",
+#'  mw = umxRAM("raw", data = mtcars[, c("mpg", "wt", "disp")], 
+#'		type = "WLS", allContinuousMethod = "cumulants",
 #'  	umxPath(var = c("wt", "disp", "mpg")),
 #'  	umxPath(c("wt", "disp"), to = "mpg"),
 #'  	umxPath("wt", with = "disp"),
-#'   umxPath(var = c("wt", "disp", "mpg"))
+#'      umxPath(var = c("wt", "disp", "mpg"))
+#'  )
+#' # Switch to marginals to support means
+#'  mw = umxRAM("raw", data = mtcars[, c("mpg", "wt", "disp")], 
+#'		type = "WLS", allContinuousMethod= "marginals",
+#'  	umxPath(var = c("wt", "disp", "mpg")),
+#'  	umxPath(c("wt", "disp"), to = "mpg"),
+#'  	umxPath("wt", with = "disp"),
+#'      umxPath(var = c("wt", "disp", "mpg"))
 #'  )
 #' 
 #' # ===============================
@@ -590,24 +599,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	needsMeans = xmu_model_needs_means(data = data, type = type, allContinuousMethod= allContinuousMethod)
 	if(needsMeans && is.null(newModel$matrices$M)){
 		message("You have raw data, but no means model. I added\n",
-			"mxPath('one', to = manifestVars)")
+		"mxPath('one', to = manifestVars)")
 		newModel = mxModel(newModel, mxPath("one", usedManifests))
 	}
-
-	# Add labels and start values
 	newModel = umxLabel(newModel, suffix = suffix)
 	if(setValues){
 		newModel = umxValues(newModel, onlyTouchZeros = TRUE)
 	}
 
-<<<<<<< HEAD
-	if(any(umx_is_ordered(data$observed)) ){
+	if(any(umx_is_ordered(data$observed))){
 		newModel = umxRAM2Ordinal(newModel, verbose = TRUE)
-=======
-	# Add threshold matrix if needed...
-	if(any(umx_is_ordered(data$observed)) ){
-			newModel = umxRAM2Ordinal(newModel, verbose = TRUE)
->>>>>>> 7baf482bd33883d0265346347968059ecbae82a6
 	}
 
 	# ==============================

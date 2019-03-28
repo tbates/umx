@@ -21,18 +21,26 @@ xmu_model_needs_means(data, type = c("Auto", "FIML", "cov", "cor", "WLS",
 Check data to see if model needs means.
 }
 \examples{
-xmu_model_needs_means(mtcars, type = "Auto", allContinuousMethod= "cumulants") # TRUE
-xmu_model_needs_means(mtcars, type = "FIML", allContinuousMethod= "cumulants") # TRUE
-xmu_model_needs_means(mtcars, type = "cov", allContinuousMethod= "cumulants") # TRUE
-xmu_model_needs_means(mtcars, type = "cor", allContinuousMethod= "cumulants") # TRUE
-xmu_model_needs_means(mtcars, allContinuousMethod= "marginals")  # FALSE - no means with marginals
+xmu_model_needs_means(mtcars, type = "Auto")
+xmu_model_needs_means(mtcars, type = "FIML")
+xmu_model_needs_means(mtcars, type = "cov")
+xmu_model_needs_means(mtcars, type = "cor")
+xmu_model_needs_means(mtcars, type = "WLS", allContinuousMethod= "marginals")  # FALSE - no means with marginals
+xmu_model_needs_means(mtcars, type = "ULS", allContinuousMethod= "marginals")  # FALSE - no means with marginals
+xmu_model_needs_means(mtcars, type = "DWLS", allContinuousMethod= "marginals")  # FALSE - no means with marginals
 
 # ================================
 # = Provided as an mxData object =
 # ================================
 tmp = mxData(mtcars, type="raw")
-xmu_model_needs_means(tmp, allContinuousMethod= "cumulants") # TRUE
-xmu_model_needs_means(tmp, allContinuousMethod= "marginals")  # FALSE - no means with marginals
+xmu_model_needs_means(tmp, type = "FIML") # TRUE
+xmu_model_needs_means(tmp, type = "ULS", allContinuousMethod= "cumulants") # TRUE
+xmu_model_needs_means(tmp, type = "WLS", allContinuousMethod= "marginals")  # FALSE - no means with marginals
+tmp = mxData(cov(mtcars), type="cov", numObs= 100)
+# Should catch this can't be type FIML
+xmu_model_needs_means(tmp) # FALSE
+tmp = mxData(cov(mtcars), means = umx_means(mtcars), type="cov", numObs= 100)
+xmu_model_needs_means(tmp) # TRUE
 
 # =======================
 # = One var is a factor =
