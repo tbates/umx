@@ -21,10 +21,26 @@ xmu_model_needs_means(data, type = c("Auto", "FIML", "cov", "cor", "WLS",
 Check data to see if model needs means.
 }
 \examples{
-\dontrun{
-# xmu_model_needs_means(data, type = "cor", allContinuousMethod= "cumulants")
+xmu_model_needs_means(mtcars, type = "Auto", allContinuousMethod= "cumulants") # TRUE
+xmu_model_needs_means(mtcars, type = "FIML", allContinuousMethod= "cumulants") # TRUE
+xmu_model_needs_means(mtcars, type = "cov", allContinuousMethod= "cumulants") # TRUE
+xmu_model_needs_means(mtcars, type = "cor", allContinuousMethod= "cumulants") # TRUE
+xmu_model_needs_means(mtcars, allContinuousMethod= "marginals")  # FALSE - no means with marginals
 
-}
+# ================================
+# = Provided as an mxData object =
+# ================================
+tmp = mxData(mtcars, type="raw")
+xmu_model_needs_means(tmp, allContinuousMethod= "cumulants") # TRUE
+xmu_model_needs_means(tmp, allContinuousMethod= "marginals")  # FALSE - no means with marginals
+
+# =======================
+# = One var is a factor =
+# =======================
+tmp = mtcars
+tmp$cyl = factor(tmp$cyl)
+xmu_model_needs_means(tmp, allContinuousMethod= "cumulants") # TRUE
+xmu_model_needs_means(tmp, allContinuousMethod= "marginals") # TRUE - always has means
 }
 \seealso{
 - \code{\link{xmu_make_mxData}}

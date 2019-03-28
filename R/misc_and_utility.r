@@ -3783,6 +3783,7 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' m1 = mxRun(m1)
 #' umx_has_means(m1)
 umx_has_means <- function(model) {
+	# TODO umx_has_means could check for the means matrix used in our twin models
 	if(!umx_is_RAM(model)){
 		stop("TODO umx_has_means can only test RAM models so far")
 	}

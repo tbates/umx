@@ -589,15 +589,18 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	needsMeans = xmu_model_needs_means(data = data, type = type, allContinuousMethod= allContinuousMethod)
 	if(needsMeans && is.null(newModel$matrices$M)){
 		message("You have raw data, but no means model. I added\n",
-		"mxPath('one', to = manifestVars)")
+			"mxPath('one', to = manifestVars)")
 		newModel = mxModel(newModel, mxPath("one", usedManifests))
 	}
+
+	# Add labels and start values
 	newModel = umxLabel(newModel, suffix = suffix)
 	if(setValues){
 		newModel = umxValues(newModel, onlyTouchZeros = TRUE)
 	}
 
-	if(any(umx_is_ordered(data$observed)) && !(type %in%  c('WLS', 'DWLS', 'ULS'))){
+	# Add threshold matrix if needed...
+	if(any(umx_is_ordered(data$observed)) ){
 			newModel = umxRAM2Ordinal(newModel, verbose = TRUE)
 	}
 	newModel = omxAssignFirstParameters(newModel)
