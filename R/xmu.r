@@ -138,30 +138,67 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 #' @family xmu internal not for end user
 #' @seealso - \code{\link{xmu_make_mxData}}
 #' @examples
-#' \dontrun{
-#' # xmu_model_needs_means(data, type = "cor", allContinuousMethod= "cumulants")
-#' 
-#' }
+#' xmu_model_needs_means(mtcars, type = "Auto")
+#' xmu_model_needs_means(mtcars, type = "FIML")
+#' xmu_model_needs_means(mtcars, type = "cov")
+#' xmu_model_needs_means(mtcars, type = "cor")
+#' xmu_model_needs_means(mtcars, type = "WLS", allContinuousMethod= "marginals")  # FALSE - no means with marginals
+#' xmu_model_needs_means(mtcars, type = "ULS", allContinuousMethod= "marginals")  # FALSE - no means with marginals
+#' xmu_model_needs_means(mtcars, type = "DWLS", allContinuousMethod= "marginals")  # FALSE - no means with marginals
+#'
+#' # ================================
+#' # = Provided as an mxData object =
+#' # ================================
+#' tmp = mxData(mtcars, type="raw")
+#' xmu_model_needs_means(tmp, type = "FIML") # TRUE
+#' xmu_model_needs_means(tmp, type = "ULS", allContinuousMethod= "cumulants") # TRUE
+#' xmu_model_needs_means(tmp, type = "WLS", allContinuousMethod= "marginals")  # FALSE - no means with marginals
+#' tmp = mxData(cov(mtcars), type="cov", numObs= 100)
+#' # Should catch this can't be type FIML
+#' xmu_model_needs_means(tmp) # FALSE
+#' tmp = mxData(cov(mtcars), means = umx_means(mtcars), type="cov", numObs= 100)
+#' xmu_model_needs_means(tmp) # TRUE
+#'
+#' # =======================
+#' # = One var is a factor =
+#' # =======================
+#' tmp = mtcars
+#' tmp$cyl = factor(tmp$cyl)
+#' xmu_model_needs_means(tmp, allContinuousMethod= "cumulants") # TRUE
+#' xmu_model_needs_means(tmp, allContinuousMethod= "marginals") # TRUE - always has means
 xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals")) {
 	# Add means if data are raw and means not requested by user
 	type = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	# data must be mxData
-	if(!umx_is_MxData(data)){
-		stop("xmu_model_needs_means requires mxData as input. You sent in a ", class(data))
-	}
-
-	if(type %in% c('Auto', 'FIML') && (data$type == "raw")){
-		return(TRUE)
-	}else if(type %in% c("WLS", "DWLS", "ULS")){
-		tmp = mxDescribeDataWLS(data, allContinuousMethod = allContinuousMethod)
-		return(tmp$hasMeans)
-	}else if(is.na(data$means[[1]])){
-		# cov data no means
-		return(FALSE)		
+	
+	if(class(data) == "data.frame"){
+		if(type %in% c("WLS", "DWLS", "ULS")){
+			tmp = mxDescribeDataWLS(data, allContinuousMethod = allContinuousMethod)
+			return(tmp$hasMeans)
+		}else if(type %in% c("cov", "cor")){
+			warning("You passed in raw data, but requested type cov or cor. I can't tell yet if you will need means... make data into mxData first")
+			return(FALSE)
+		}else{
+			# raw data needs means (can't tell if this would become cov with no means...)
+			return(TRUE)
+		}
+	} else if(umx_is_MxData(data)){
+		if(type %in% c('Auto', 'FIML') && (data$type == "raw")){
+			return(TRUE)
+			# Note, auto will be FIML not WLS
+		}else if(type %in% c("WLS", "DWLS", "ULS")){
+			tmp = mxDescribeDataWLS(data, allContinuousMethod = allContinuousMethod)
+			return(tmp$hasMeans)
+		}else if(is.na(data$means[[1]])){
+			# cov data no means
+			return(FALSE)		
+		}else{
+			# cov data with means
+			return(TRUE)
+		}
 	}else{
-		# cov data with means
-		return(TRUE)
+		stop("I don't know what to do with data of type ", omxQuotes(class(data)))
 	}
 }
 
