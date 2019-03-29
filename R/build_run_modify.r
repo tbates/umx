@@ -361,8 +361,12 @@ umxModel <- function(...) {
 #' # 1. For convenience, list up the manifests you will be using
 #' selVars = c("mpg", "wt", "disp")
 #' 
+#' # note, the variance of displacement is in cubic inches and is very large.
+#' # to help the optimizer, one might, say, multiply disp *.016 to work in litres
+#' tmp = mtcars[, selVars]; tmp$disp= tmp$disp *.016
+#'
 #' # 2. Create an mxData object
-#' myCov = mxData(cov(mtcars[,selVars]), type = "cov", numObs = nrow(mtcars) )
+#' myCov = mxData(cov(tmp), type = "cov", numObs = nrow(mtcars) )
 #'
 #' # 3. Create the model (see ?umxPath for more nifty options)
 #' m1 = umxRAM("tim", data = myCov,
@@ -371,14 +375,20 @@ umxModel <- function(...) {
 #' 	umxPath(var = selVars)
 #' )
 #' 
+#' # We could also just give the raw data and ask for it to be made into type cov
+#' m1 = umxRAM("tim", data = tmp, type="cov",
+#' 	umxPath(c("wt", "disp"), to = "mpg"),
+#' 	umxPath("wt", with = "disp"),
+#' 	umxPath(var = selVars)
+#' )
+#'
 #' # 4. Use umxSummary to get standardized parameters, CIs etc.
 #' umxSummary(m1, show = "std")
 #' 
 #' # 5. Display path diagram
 #' plot(m1)
-#' plot(m1, std = TRUE, resid = "line")
+#' plot(m1, std = TRUE, strip= FALSE, resid = "line")
 #' 
-#' # TODO: umxRAM: enable WLS RAM example
 #' # 5. Run an all-continuous WLS model
 #'  mw = umxRAM("raw", data = mtcars[, c("mpg", "wt", "disp")], 
 #'		type = "WLS", allContinuousMethod = "cumulants",
