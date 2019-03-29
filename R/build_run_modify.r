@@ -424,7 +424,7 @@ umxModel <- function(...) {
 #'  	umxPath("wt", with = "disp"),
 #'      umxPath(var = c("wt", "disp", "mpg"))
 #'  )
-#' 
+#'
 #' # ===============================
 #' # = Using umxRAM in Sketch mode =
 #' # ===============================
@@ -441,8 +441,8 @@ umxModel <- function(...) {
 #' m1 = umxRAM("fromEach with to", data = c("B", "C"),
 #'	   umxPath(fromEach = c("B", "C"), to= "D")
 #' )
-#' 
-#' m1 = umxRAM("CFA_play", data = paste0("x", 1:4),
+#'
+#' m1 = umxRAM("CFA_sketch", data = paste0("x", 1:4),
 #' 	umxPath("g", to = paste0("x", 1:4)),
 #' 	umxPath(var = paste0("x", 1:4)),
 #' 	umxPath(v1m0 = "g")
