@@ -15,6 +15,73 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # utility naming convention: "umx_" prefix, lowercase, and "_" (not camel case) e.g. umx_swap_a_block()
 
+#' Determine whether a dataset will have weights and summary statistics for the means if used with mxFitFunctionWLS
+#'
+#' Given either a data.frame or an mxData of type raw, this function determines whether \code{mxFitFunctionWLS}
+#' will generate expectations for means.
+#' 
+#' All-continuous data processed using the "cumulants" method lack means, while
+#' all continuous data processed with allContinuousMethod = "marginals" will have means.
+#' 
+#' When data are not all continuous, allContinuousMethod is ignored, and means are modelled.
+#'
+#' @param data the (currently raw) data being used in a \code{\link{mxFitFunctionWLS}} model.
+#' @param allContinuousMethod the method used to process data when all columns are continuous.
+#' @param verbose logical. Whether to report diagnostics.
+#' @return - list describing the data.
+#' @family Data Functions
+#' @seealso - \code{\link{mxFitFunctionWLS}}, \code{\link{omxAugmentDataWithWLSSummary}}
+#' @examples
+#'
+#' # ====================================
+#' # = All continuous, data.frame input =
+#' # ====================================
+#'
+#' tmp = umxDescribeDataWLS(mtcars, allContinuousMethod= "cumulants", verbose = TRUE)
+#' tmp$hasMeans # FALSE - no means with cumulants
+#' tmp = umxDescribeDataWLS(mtcars, allContinuousMethod= "marginals") 
+#' tmp$hasMeans # TRUE we get means with marginals
+#'
+#' # ==========================
+#' # = mxData object as input =
+#' # ==========================
+#' tmp = mxData(mtcars, type="raw")
+#' umxDescribeDataWLS(tmp, allContinuousMethod= "cumulants", verbose = TRUE)$hasMeans # FALSE
+#' umxDescribeDataWLS(tmp, allContinuousMethod= "marginals")$hasMeans  # TRUE
+#'
+#' # =======================================
+#' # = One var is a factor: Means modelled =
+#' # =======================================
+#' tmp = mtcars
+#' tmp$cyl = factor(tmp$cyl)
+#' umxDescribeDataWLS(tmp, allContinuousMethod= "cumulants")$hasMeans # TRUE - always has means
+#' umxDescribeDataWLS(tmp, allContinuousMethod= "marginals")$hasMeans # TRUE
+#' 
+umxDescribeDataWLS <- function(data, allContinuousMethod = c("cumulants", "marginals"), verbose=FALSE){
+	allContinuousMethod = match.arg(allContinuousMethod)
+	if(class(data) == "data.frame"){
+		# all good
+	} else if(class(data) == "MxDataStatic" && data$type == "raw"){
+		data = data$observed
+	}else{
+		message("mxDescribeDataWLS currently only knows how to process dataframes and mxData of type = 'raw'.\n",
+		"You offered up an object of class: ", omxQuotes(class(data)))
+	}
+
+	if(all(sapply(data, FUN= is.numeric))){
+		if(verbose){ print("all continuous") }
+
+		if(allContinuousMethod == "cumulants"){
+			return(list(hasMeans = FALSE))
+		} else {
+			return(list(hasMeans = TRUE))
+		}
+	}else{
+		# Data with any non-continuous vars have means under WLS
+		return(list(hasMeans = TRUE))
+	}
+}
+
 #' Score a psychometric scale by summing normal and reversed items
 #'
 #' @description

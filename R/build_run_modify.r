@@ -594,7 +594,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		newModel = mxModel(newModel, data)
 	}
 
-	# Note: WLS data at this state will be mxData(..., type = "raw") at this stage.
+	# Note: WLS data will be mxData(..., type = "raw") at this stage.
 	# Add means if data are raw and means not requested by user
 	needsMeans = xmu_model_needs_means(data = data, type = type, allContinuousMethod= allContinuousMethod)
 	if(needsMeans && is.null(newModel$matrices$M)){
@@ -2334,46 +2334,50 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			# We are in a RAM model, so the data must be mxData: check the type, rather than guessing.
 			# need to handle raw data that will be treated as WLS and not end up with means
 			if(type == "raw"){
-				covmat = umx_var(theData[, manifests, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
+				covData = umx_var(theData[, manifests, drop = FALSE], format = "full", ordVar = 1, use = "pairwise.complete.obs")
 			}else if (type == "acov"){
-				covmat = as.matrix(theData)
+				covData = as.matrix(theData)
 			}else if (type %in% c("cov", "cor")){
-				covmat = as.matrix(theData)
+				covData = as.matrix(theData)
 			}else{
 				message("umxValues can't recognize data of type ", type, ". I only know raw, cov, cor, and acov")
-				covmat = as.matrix(theData)
+				covData = as.matrix(theData)
 			}
-			# diag diag creates a matrix with all zeros off the diagonal
-			covData = diag(diag(covmat))
 		} else {
 			dataMeans = umx_means(theData[, manifests, drop = FALSE], ordVar = 0, na.rm = TRUE)
 			freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
 			obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
 			# covData = cov(theData, )
-			covData = umx_var(theData[, manifests, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
-			if(!is.null(dim(covData)) || length(covData) > 1){
-				covData = diag(covData)
-			} else {
-				# If this is one variable, leave alone: equivalent to a 1,1, matrix with the diag on the "diag", and zeros elsewhere
-			}
+			covData = umx_var(theData[, manifests, drop = FALSE], format = "full", ordVar = 1, use = "pairwise.complete.obs")
 		}
 
 		# ==========================================================
 		# = Fill the S (symmetrical) matrix with good start values =
 		# ==========================================================
-		# Set S diagonal (variances)
+		# Set S diagonal (variances) where the cells are free.
+		# if(!is.null(dim(covData)) || length(covData) > 1){
+			# covData = diag(covData)
+		# } else {
+			# If this is one variable, leave alone: equivalent to a 1,1, matrix with the diag on the "diag", and zeros elsewhere
+		# }
+		# diag diag creates a matrix with all zeros off the diagonal
+		# covData = diag(diag(covData))
+
+		freePaths = diag(obj$S$free) == TRUE
 		if(onlyTouchZeros) {
-			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE) & obj$S$values[1:nVar, 1:nVar] == 0
-		} else {
-			freePaths = (obj$S$free[1:nVar, 1:nVar] == TRUE)			
+			freePaths = freePaths & diag(obj$S$values) == 0
 		}
-		obj$S@values[1:nVar, 1:nVar][freePaths] = covData[freePaths]
+		diag(obj$S@values)[freePaths] = diag(covData)[freePaths]
+
+		# umx_msg(covData)
+		# umx_msg(freePaths)
+		# umx_msg(obj$S@values)
 
 		# =======================
 		# = Set off-diag values =
 		# =======================
 		# TODO decide whether to leave this as independence, or set to non-zero covariances...
-
+		# and off diagonals to the observed covariance,
 		# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		# obj$matrices$S$values[1:nVar, 1:nVar][freePaths] = (covData[freePaths]/2)
 		# offDiag = !diag(nVar)
@@ -2383,15 +2387,12 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		# ======================================================
 		# = Put modest starts into the asymmetric (one headed) =
 		# ======================================================
-		Arows = nrow(obj$matrices$A$free)
-		Acols = ncol(obj$matrices$A$free)
-		if(onlyTouchZeros) {
-			freePaths = (obj$matrices$A$free[1:Arows, 1:Acols] == TRUE) & obj$matrices$A$values[1:Arows, 1:Acols] == 0
-		} else {
-			freePaths = (obj$matrices$A$free[1:Arows, 1:Acols] == TRUE)			
+		freePaths = obj$matrices$A$free == TRUE
+		if(onlyTouchZeros){
+			freePaths = freePaths & obj$matrices$A$values == 0
 		}
-		# # TODO umxRAM A starts change from .9 to sqrt(.2*Variance)/nFactors
-		obj$A@values[1:Arows, 1:Acols][freePaths] = .9
+		# TODO umxRAM A starts change from .9 to sqrt(.2*Variance)/nFactors
+		obj$A@values[freePaths] = .9
 		return(obj)
 	} else {
 		stop("'obj' must be an mxMatrix, a RAM model, or a simple number")
