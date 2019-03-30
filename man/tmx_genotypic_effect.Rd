@@ -21,31 +21,38 @@ tmx_genotypic_effect(p = 0.75, q = (1 - p), a = 0.5, d = 0.25,
 \item{show}{Whether to draw the plot or just return it (Default = TRUE)}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
-tmx_genotypic_effect allows you to explore the concept of genotypic effect at a locus.
-The d and h increments of the gene difference A – a. Aa may lie on either side of m and the sign of h will
-vary accordingly; in the case illustrated h would be negative. (Adapted from Mather and Jinks, 1977, p. 32).
-See book issue 23
-This function lets you explore the simplest two–allele system (B and b), with three possible genotypes, BB, Bb, and bb.
-Parameter "b" is half the measured difference between the homozygotes BB and bb. The point between the two homozygotes 
-is "m" -- the mean effect of homozygous genotypes. "d" defines the measured deviation effect of the heterozygote Aa, 
+\code{tmx_genotypic_effect} allows you to explore the concept of genotypic effect at a locus.
+
+\code{d} and \code{h} are the incremental effects of the allele difference \code{B – b}. The \code{Bb} phenotype may lie on either
+side of \code{m} and the sign of \code{h} will vary accordingly; in the case illustrated \code{h} would be negative.
+(Adapted from Mather and Jinks, 1977, p. 32). See book issue #23
+
+This function lets you explore the simplest two–allele system (\code{B} and \code{b}), with three possible genotypes, \code{BB}, \code{Bb}, and \code{bb}.
+Parameter "b" is half the measured difference between the homozygotes \code{BB} and \code{bb}. The point between the two homozygotes
+is "m" -- the mean effect of the homozygous genotypes. "d" defines the measured deviation effect of the heterozygote \code{Aa},
 relative to this expected midpoint. "a" and "d" are genotypic effects.
 
-old system:
+Old system:
 
-$d$ =  half the homozygotes difference (midpoint = $m$)
+\code{u} = Frequency of the dominant allele (now = \code{p}).
+\code{v} = Frequency of the recessive allele (now = \code{q}).
 
-$h$ = measured deviation of the heterozygote from $m$
+\code{m} = midpoint between the two homozygotes
+\code{d} = half the difference between the two homozygote (now \code{a})
 
-new system:
+\code{h} = deviation of the heterozygote from \code{m} (now = \code{d})
 
-u, v -> p, q
+New system:
 
-d, h -> a, d
+\code{u} and \code{v} -> \code{p} and  \code{q}
 
-Neale, M. C. (2005). Quantitative Genetics. In Encyclopedia of Life Sciences. New York: John Wiley & Sons, Ltd.
+\code{d} and \code{h} -> \code{a} and \code{d}
+
 https://github.com/tbates/BGBook/issues/23#issuecomment-333834075
 }
 \examples{
@@ -69,11 +76,16 @@ p
 # ggsave(paste0(base, "c03_genotypic_effect_by_gene_dose.pdf"), width = 4.6, height = 4.6)
 }
 \references{
-- \url{https://vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf},
- \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf},
+Neale, M. C. (2005). Quantitative Genetics. In Encyclopedia of Life Sciences. New York: John Wiley & Sons, Ltd.
+\url{https://github.com/tbates/umx}
+}
 }
 \seealso{
--
+\itemize{
+\item 
+}
 
 Other Teaching and testing Functions: \code{\link{tmx_is.identified}},
   \code{\link{umx}}

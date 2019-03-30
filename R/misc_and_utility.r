@@ -23,7 +23,7 @@
 #' All-continuous data processed using the "cumulants" method lack means, while
 #' all continuous data processed with allContinuousMethod = "marginals" will have means.
 #' 
-#' When data are not all continuous, allContinuousMethod is ignored, and means are modelled.
+#' When data are not all continuous, allContinuousMethod is ignored, and means are modeled.
 #'
 #' @param data the (currently raw) data being used in a \code{\link{mxFitFunctionWLS}} model.
 #' @param allContinuousMethod the method used to process data when all columns are continuous.
@@ -31,6 +31,7 @@
 #' @return - list describing the data.
 #' @family Data Functions
 #' @seealso - \code{\link{mxFitFunctionWLS}}, \code{\link{omxAugmentDataWithWLSSummary}}
+#' @export
 #' @examples
 #'
 #' # ====================================
@@ -50,7 +51,7 @@
 #' umxDescribeDataWLS(tmp, allContinuousMethod= "marginals")$hasMeans  # TRUE
 #'
 #' # =======================================
-#' # = One var is a factor: Means modelled =
+#' # = One var is a factor: Means modeled =
 #' # =======================================
 #' tmp = mtcars
 #' tmp$cyl = factor(tmp$cyl)
@@ -2522,14 +2523,16 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		devtools::check(pkg = pkg)		
 	} else if (what =="win"){
 		# old =
-		devtools::build_win(pkg = pkg)
-
+		# devtools::build_win(pkg = pkg)
 		# new =
-		# devtools::check_win_devel(pkg = pkg)
+		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
 		devtools::check_rhub(pkg = pkg)
 	} else if (what == "release"){
+		oldDir = getwd()
+		setwd(dir= pkg)
 		devtools::release(pkg = pkg, check = check) # spelling = NULL		 
+		setwd(dir= oldDir)
 	} else if (what == "spell"){
 		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
 	}
@@ -2998,7 +3001,7 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' Show matrices of RAM models in a easy-to-learn-from format. 
 #'
 #' A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
-#' do this in a way that makes it easy to process for users: The matrix contents are formated as tables, and can even 
+#' do this in a way that makes it easy to process for users: The matrix contents are formatted as tables, and can even 
 #' be displayed as tables in a web browser.
 #' 
 #' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.

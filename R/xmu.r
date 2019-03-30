@@ -131,7 +131,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 #' Check data to see if model needs means.
 #'
 #' @param data \code{\link{mxData}} to check.
-#' @param tyoe of the data requested by the model.
+#' @param type of the data requested by the model.
 #' @param allContinuousMethod How data will be processed if used for WLS.
 #' @return - T/F
 #' @export
@@ -142,17 +142,20 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 #' xmu_model_needs_means(mtcars, type = "FIML")
 #' # xmu_model_needs_means(mtcars, type = "cov")
 #' # xmu_model_needs_means(mtcars, type = "cor")
-#' xmu_model_needs_means(mtcars, type = "WLS", allContinuousMethod= "marginals")  # TRUE - marginals means means
-#' xmu_model_needs_means(mtcars, type = "ULS", allContinuousMethod= "marginals")  # TRUE - marginals means means
-#' xmu_model_needs_means(mtcars, type = "DWLS", allContinuousMethod= "marginals")  # TRUE - marginals means means
+#'
+#' # TRUE - marginals means means
+#' xmu_model_needs_means(mtcars, type = "WLS", allContinuousMethod= "marginals")
+#' xmu_model_needs_means(mtcars, type = "ULS", allContinuousMethod= "marginals")
+#' xmu_model_needs_means(mtcars, type = "DWLS", allContinuousMethod= "marginals")
 #'
 #' # ================================
 #' # = Provided as an mxData object =
 #' # ================================
 #' tmp = mxData(mtcars, type="raw")
 #' xmu_model_needs_means(tmp, type = "FIML") # TRUE
-#' xmu_model_needs_means(tmp, type = "ULS", allContinuousMethod= "cumulants") # FALSE
-#' xmu_model_needs_means(tmp, type = "WLS", allContinuousMethod= "marginals")  # TRUE - means with marginals
+#' xmu_model_needs_means(tmp, type = "ULS", allContinuousMethod= "cumulants") #FALSE
+#' # TRUE - means with marginals
+#' xmu_model_needs_means(tmp, type = "WLS", allContinuousMethod= "marginals")
 #' tmp = mxData(cov(mtcars), type="cov", numObs= 100)
 #' # Should catch this can't be type FIML
 #' xmu_model_needs_means(tmp) # FALSE

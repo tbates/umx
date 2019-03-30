@@ -13,28 +13,33 @@
 #' Graphical display of genotypic effects.
 #'
 #' @description
-#' tmx_genotypic_effect allows you to explore the concept of genotypic effect at a locus.
-#' The d and h increments of the gene difference A – a. Aa may lie on either side of m and the sign of h will
-#' vary accordingly; in the case illustrated h would be negative. (Adapted from Mather and Jinks, 1977, p. 32).
-#' See book issue 23
-#' This function lets you explore the simplest two–allele system (B and b), with three possible genotypes, BB, Bb, and bb.
-#' Parameter "b" is half the measured difference between the homozygotes BB and bb. The point between the two homozygotes 
-#' is "m" -- the mean effect of homozygous genotypes. "d" defines the measured deviation effect of the heterozygote Aa, 
+#' `tmx_genotypic_effect` allows you to explore the concept of genotypic effect at a locus.
+#' 
+#' `d` and `h` are the incremental effects of the allele difference `B – b`. The `Bb` phenotype may lie on either 
+#' side of `m` and the sign of `h` will vary accordingly; in the case illustrated `h` would be negative.
+#' (Adapted from Mather and Jinks, 1977, p. 32). See book issue #23
+#'
+#' This function lets you explore the simplest two–allele system (`B` and `b`), with three possible genotypes, `BB`, `Bb`, and `bb`.
+#' Parameter "b" is half the measured difference between the homozygotes `BB` and `bb`. The point between the two homozygotes 
+#' is "m" -- the mean effect of the homozygous genotypes. "d" defines the measured deviation effect of the heterozygote `Aa`, 
 #' relative to this expected midpoint. "a" and "d" are genotypic effects.
 #' 
-#' old system:
+#' Old system:
 #' 
-#' $d$ =  half the homozygotes difference (midpoint = $m$)
+#' `u` = Frequency of the dominant allele (now = `p`).
+#' `v` = Frequency of the recessive allele (now = `q`).
+#'
+#' `m` = midpoint between the two homozygotes
+#' `d` = half the difference between the two homozygote (now `a`)
 #' 
-#' $h$ = measured deviation of the heterozygote from $m$
+#' `h` = deviation of the heterozygote from `m` (now = `d`)
 #' 
-#' new system:
+#' New system:
 #' 
-#' u, v -> p, q
+#' `u` and `v` -> `p` and  `q`
 #' 
-#' d, h -> a, d
+#' `d` and `h` -> `a` and `d`
 #' 
-#' Neale, M. C. (2005). Quantitative Genetics. In Encyclopedia of Life Sciences. New York: John Wiley & Sons, Ltd.
 #' https://github.com/tbates/BGBook/issues/23#issuecomment-333834075
 #' 
 #' @param p The frequency of the A allele (Default .5)
@@ -45,9 +50,11 @@
 #' @param show Whether to draw the plot or just return it (Default = TRUE)
 #' @return - 
 #' @export
+#' @md
 #' @family Teaching and testing Functions
 #' @seealso - 
 #' @references - \url{https://vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf},
+#' Neale, M. C. (2005). Quantitative Genetics. In Encyclopedia of Life Sciences. New York: John Wiley & Sons, Ltd.
 #'  \url{https://github.com/tbates/umx}
 #' @examples
 #' library(umx);
@@ -99,24 +106,26 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 		bb = c("q\u00B2", round(q^2, 2))
 	)
 	message("Genotype frequencies at Hardy Weinberg Equilibrium (p= ", p," q = ", q, ")")
-	umx_print(df)
 	
-	# ===========================================================
-	# = Genotypic Values form (in terms of the regression line) =
-	# ===========================================================
+	# ===============================================================
+	# = Genotypic Values (G) form (in terms of the regression line) =
+	# ===============================================================
 	# p  = .5; q = .5; a = 1; d = .5; m = 0
 	# genotypic values section of pink book
 	# G_BB_A = additive component of Genotypic value of BB
-	G_BB_A = (2 * q) * (a + d * (q - p));
-	G_BB_D =  2 * q^2 * d; 
-	G_Bb_A = (q - p) * (a + d * (q - p));
-	G_Bb_D =  2 * p*q * d; 
-	G_bb_A = (-2* p) * (a + d * (q - p));
+
+	G_bb_A = (-2 * p) * (a + (d * (q - p)));
+	G_Bb_A = ( q - p) * (a + (d * (q - p)));
+	G_BB_A = ( 2 * q) * (a + (d * (q - p)));
+
 	G_bb_D =  2 * p^2 * d; 
+	G_Bb_D =  2 * p*q * d; 
+	G_BB_D =  2 * q^2 * d; 
 	
 	G_bb   = (G_bb_A - G_bb_D);
 	G_Bb   = (G_Bb_A + G_Bb_D);
 	G_BB   = (G_BB_A - G_BB_D);
+
 	G_bb_f = q^2
 	G_Bb_f = 2 * p * q
 	G_BB_f = p^2
@@ -129,15 +138,17 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = .25, m = 0, sho
 		dose     = c(0            , 1     , 2      ),
 		genotype = c("bb"         , "Bb"  , "BB"   ),
 		value    = c(G_bb         , G_Bb  , G_BB   ),
-		freq     = factor(c(G_bb_f, G_Bb_f, G_BB_f))
+		freq     = factor(c(G_bb_f, G_Bb_f, G_BB_f)),
+		Frequency  = c(G_bb_f, G_Bb_f, G_BB_f)
 	)
+	# umx_msg(df$freq)
 	# Plot regression line, and points (sized to frequency)
 	# slope for the genotypic value plot
 	b = a + (q - p) * d
-	thePlot = ggplot2::qplot(x = dose, y = value, geom = "point", size = freq, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
+	thePlot = ggplot2::qplot(x = dose, y = value, geom = "point", size = Frequency, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
 	thePlot = qplot(x = dose, y = ((dose - 1) * b) + (.5 * d) + m, geom = "line", xlab = "Gene Dose", ylab = "Genotypic Effect", data = df)
 	
-	thePlot = qplot(x = dose, y = value, geom = "point", size = freq, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
+	thePlot = qplot(x = dose, y = value, geom = "point", size = Frequency, xlab = "Gene Dose", ylab = "Genotypic VALUE", data = df)
 	thePlot = thePlot + scale_x_continuous(breaks = c(0, 1, 2)) # Just label the legal values: 0, 1, 2
 	print(thePlot)
 

@@ -1,7 +1,6 @@
 # Upcoming in next version... umx 3.0.0 April 2018, R 3.5.X
 * FIX: `umxSimplex`
 * FIX: `umxSexLim`
-* NEW: `umxRAM` supports WLS, UWLS, DWLS models!
 * NEW: `umxACE` supports WLS, UWLS, DWLS models!
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
@@ -11,6 +10,7 @@
 
 * CITATION: Paper is out! Our paper on umx is out in *Twin Research and Human Genetics*!
 * NEW: `?umxExamples` All the code from Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. Twin Research and Human Genetics.
+* NEW: `umxRAM` supports WLS, UWLS, DWLS models!
 * NEW: `umxACEnew` supports new-style WLS 
 * NEW: `umxPlotCP` no longer relies on labels to discover paths!
 * NEW: `umxPlotCP` supports CIs on the diagram!
@@ -22,7 +22,9 @@
 * BETA: `umxPlotSexLim` moving along a little
 * BETA: `sexLim` Gained nonlinear, linear, and homogeneity modes
 * DATA: `data(Fischbein_wt)` weight of 66 females record over six 6-month intervals (from Fischbein (1977) weight data).
-* IMPROVED: help
+* IMPROVED: `xmu_model_needs_means` 
+* IMPROVED: `umxDescribeDataWLS` own copy
+* IMPROVED: `umx_make`: use check_win_devel; setwd for release; spelling
 * IMPROVED: `umx_dot_mat2dot` add `model`, `toLabel` and `fromLabel` + `fromType` & `toType`
 * IMPROVED: `umx_dot_mat2dot` example
 * IMPROVED: `umxPlotCP` revamped - now not dependent on labels! (old function now `umxPlotCPold`)
@@ -399,7 +401,7 @@
 * IMPROVE: `umxRAM` & `umxRAM2Ordinal` can turn off refModels computation with `refModels = FALSE`;
 * IMPROVE: `umx_show` can show thresholds
 * IMPROVED: `umx_is_MxModel` can take a list: `listOK` option
-* IMPROVED: `umx_check_parallel` options for rowwiseParallel and numberSubjects
+* IMPROVED: `umx_check_parallel` options for row-wise parallel and number of subjects
 * CHANGE: I changed "suffix" to "sep" in several places for consistency: this will break
   some low level code: nearly all of it mine, and fixed. But might affect some users!!
 * UPDATE: `umx_time` and `umx_check_parallel` to work with new S4 list deprecation
