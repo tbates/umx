@@ -2929,7 +2929,7 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 			if(umx_cell_is_on(r= r, c = c, where = cells, mat = x)){
 				# cell is in the target zone
 				if(!is.null(model)){
-					# model available - look for CIs
+					# Model available - look for CIs
 					CIstr = xmu_get_CI(model, label = x$labels[r,c], SEstyle = SEstyle, digits = digits)
 					if(is.na(CIstr)){
 						value = umx_round(x$values[r,c], digits)
@@ -2941,9 +2941,9 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 				}
 
 				if(from == "rows"){
-					sourceIndex = r; sinkIndex   = c
+					sourceIndex = r; sinkIndex = c
 				} else { # from cols
-					sourceIndex = c; sinkIndex   = r
+					sourceIndex = c; sinkIndex = r
 				}
 
 				if(length(fromLabel) == 1){
@@ -6490,7 +6490,6 @@ umx_standardize.MxModelACEcov <- umx_standardize_ACEcov
 #' @return - standardized \code{\link{umxSexLim}} model
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @md
 #' @examples
 #' \dontrun{
@@ -6498,16 +6497,26 @@ umx_standardize.MxModelACEcov <- umx_standardize_ACEcov
 #' }
 umx_standardize_SexLim <- function(model, ...){
 	stop("Very sorry - umx_standardize_SexLim not implemented yet!")
+	# 'AmStd', 'CmStd', 'EmStd',
+	# 'AfStd', 'CfStd', 'EfStd',
+	# 'Am', 'Cm', 'Em',
+	# 'Af', 'Cf', 'Ef',
+	# 'Amf', 'Cmf',
+	# 'minCor',
+	# 'Vm', 'Vf',
+	# 'iSDm', 'iSDf',
 
-	if(!is.null(model$top$ai_std)){
-		# Standardized general path components
-		model$top$ai$values = model$top$ai_std$result # standardized ai
-		model$top$ci$values = model$top$ci_std$result # standardized ci
-		model$top$ei$values = model$top$ei_std$result # standardized ei
-	    # Standardized specific coeficients
-		model$top$as$values = model$top$as_std$result # standardized as
-		model$top$cs$values = model$top$cs_std$result # standardized cs
-		model$top$es$values = model$top$es_std$result # standardized es
+	if(umx_has_been_run(model)){
+		# Standardized ACEm
+		model$top$Am$result = model$top$AmStd$result # standardized Am
+		model$top$Cm$result = model$top$CmStd$result # standardized Cm
+		model$top$Em$result = model$top$EmStd$result # standardized Em
+
+		# Standardized ACEm
+		model$top$Af$result = model$top$AfStd$result # standardized Af
+		model$top$Cf$result = model$top$CfStd$result # standardized Cf
+		model$top$Ef$result = model$top$EfStd$result # standardized Ef
+
 	} else {
 		stop("Please run umxSexLim(..., std = TRUE). All I do is copy the values from the standardized matrices already in the model..., so they have to be run!")
 	}
@@ -6537,7 +6546,7 @@ umx_standardize_IP <- function(model, ...){
 		model$top$ai$values = model$top$ai_std$result # standardized ai
 		model$top$ci$values = model$top$ci_std$result # standardized ci
 		model$top$ei$values = model$top$ei_std$result # standardized ei
-	    # Standardized specific coeficients
+	    # Standardized specific coefficients
 		model$top$as$values = model$top$as_std$result # standardized as
 		model$top$cs$values = model$top$cs_std$result # standardized cs
 		model$top$es$values = model$top$es_std$result # standardized es

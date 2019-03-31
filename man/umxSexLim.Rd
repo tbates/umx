@@ -48,9 +48,14 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 }
 }
 \description{
-Build a multivariate twin analysis allowing for sex limitation (factors operate differently in males
+Multivariate twin analysis allowing for sex limitation (factors operate differently in males
 vs. females) based on a correlated factors model.
+
 With 5-groups of twins, this model allows for both Quantitative & Qualitative Sex-Limitation.
+\emph{Quantitative} differences refer to different amounts of phenotypic variance produced by
+the same A, C, or E components when operating in one sex compared to the other sex.
+\emph{Qualitative} differences refer to phenotypic variance attributable to an A, C, or E component
+which operates in one sex one but not in the other.
 
 The correlation approach ensures that variable order does not affect the ability of the model
 to account for DZOS data.
@@ -70,7 +75,15 @@ Ra constrained across male, female, and opposite-sex pairs.
 
 Quantitative Sex Differences but NO Qualitative Sex Differences
 Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
+
 Restrictions: Assumes means and variances can be equated across birth order within zygosity groups.
+
+\strong{3. Homogeneity}
+This is model assumed by the basic ACE model: equal variance componetns in both sexes.
+Different means may be allowed for males and females.
+
+There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a
+scalar constant in one sex. # TODO sexlim: This k scalar heterogeneity model is not yet implemented in umx.
 }
 \examples{
 # =========================
@@ -92,6 +105,10 @@ mzfData = subset(us_skinfold_data, zyg == 2)
 dzmData = subset(us_skinfold_data, zyg == 3)
 dzfData = subset(us_skinfold_data, zyg == 4)
 dzoData = subset(us_skinfold_data, zyg == 5)
+
+umxSummarizeTwinData(us_skinfold_data, selVars="bic",zyg="zyg", sep="_T",
+		MZFF=2, DZFF=4, MZMM=1, DZMM=3, DZOS=5
+)
 
 # ==========================
 # = Run univariate example =

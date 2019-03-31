@@ -24,11 +24,6 @@ umx_standardize_SexLim(model, ...)
 model = umx_standardize_IP(model)
 }
 }
-\references{
-\itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
-}
-}
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},
   \code{\link{umx_standardize_ACEcov}},

@@ -11,9 +11,14 @@
 #' Multivariate sex limitation twin model
 #'
 #' @description
-#' Build a multivariate twin analysis allowing for sex limitation (factors operate differently in males 
+#' Multivariate twin analysis allowing for sex limitation (factors operate differently in males 
 #' vs. females) based on a correlated factors model.
+#' 
 #' With 5-groups of twins, this model allows for both Quantitative & Qualitative Sex-Limitation.
+#' *Quantitative* differences refer to different amounts of phenotypic variance produced by 
+#' the same A, C, or E components when operating in one sex compared to the other sex.
+#' *Qualitative* differences refer to phenotypic variance attributable to an A, C, or E component
+#' which operates in one sex one but not in the other.
 #' 
 #' The correlation approach ensures that variable order does not affect the ability of the model
 #' to account for DZOS data.
@@ -35,6 +40,7 @@
 #'
 #' Quantitative Sex Differences but NO Qualitative Sex Differences
 #' Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
+#' 
 #' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups.
 #'
 # Equate the R[ace]f and R[ace]m matrix labels by deleting "f" and "m"
@@ -46,6 +52,13 @@
 # ))
 #
 # m2 = omxAssignFirstParameters(m2)
+#'
+#' **3. Homogeneity**
+#' This is model assumed by the basic ACE model: equal variance componetns in both sexes. 
+#' Different means may be allowed for males and females.
+#' 
+#' There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a 
+#' scalar constant in one sex. # TODO sexlim: This k scalar heterogeneity model is not yet implemented in umx.
 #'
 #' @param name    The name of the model (Default = "sexlim")
 #' @param selDVs  BASE NAMES of the variables in the analysis. You MUST provide sep.
@@ -92,6 +105,10 @@
 #' dzmData = subset(us_skinfold_data, zyg == 3)
 #' dzfData = subset(us_skinfold_data, zyg == 4)
 #' dzoData = subset(us_skinfold_data, zyg == 5)
+#'
+#' umxSummarizeTwinData(us_skinfold_data, selVars="bic",zyg="zyg", sep="_T",
+#' 		MZFF=2, DZFF=4, MZMM=1, DZMM=3, DZOS=5
+#' )
 #'
 #' # ==========================
 #' # = Run univariate example =
@@ -463,6 +480,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' )
 #' }
 umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+	# Depends on R2HTML::HTML
 	message("umxSummarySexLim is a beta feature. Some things are broken. If any desired stats are not presented, let me know what's missing")
 	report = match.arg(report)
 
@@ -472,7 +490,6 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		umxAPA(bottom)	
 	}
 
-	# Depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
@@ -627,8 +644,8 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 			# TODO turn plot of CI_Fit back on
 			# umxPlotSexLim(CI_Fit, file = file, std = FALSE)
 		} else {
-			message("plot not implemented yet for sex lim")
-			# umxPlotSexLim(model, file = file, std = std)
+			warning("plot() not implemented yet for sex lim!")
+			umxPlotSexLim(model, file = file, std = std)
 		}
 	}
 	if(returnStd) {
@@ -706,7 +723,7 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 
 	stop("umxPlotSexLim not implemented yet.")
 	format = match.arg(format)
-	model = x # just to emphasize that x has to be a model 
+	model = x # Just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelSexLim", callingFn= "umxPlotSexLim")
 
 	selVars = model$MZm$expectation$dims
@@ -714,19 +731,45 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	# selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 	nVar    = length(selDVs)
 
-	if(std){ model = umx_standardize_SexLim(model) }
-
-	facCount = dim(model$top$a_cp$labels)[[1]]
-	varCount = dim(model$top$as$values)[[1]]
+	if(std){
+		# message("Standardized solution (top.[ACE][mf]Std  + R[ac]o matrices)")
+		Am = diag(as.matrix(model$top$AmStd$result))
+		Cm = diag(as.matrix(model$top$CmStd$result))
+		Em = diag(as.matrix(model$top$EmStd$result))
+		Af = diag(as.matrix(model$top$AfStd$result))
+		Cf = diag(as.matrix(model$top$CfStd$result))
+		Ef = diag(as.matrix(model$top$EfStd$result))
+	} else {
+		# TODO sexlim: Check raw solution
+		# message("Raw solution (top.[ACE][mf] + R[ac]o matrices)")
+		Am = diag(as.matrix(model$top$Am$result))
+		Cm = diag(as.matrix(model$top$Cm$result))
+		Em = diag(as.matrix(model$top$Em$result))
+		Af = diag(as.matrix(model$top$Af$result))
+		Cf = diag(as.matrix(model$top$Cf$result))
+		Ef = diag(as.matrix(model$top$Ef$result))
+	}
 
 	out = list(str = "", latents = c(), manifests = c())
-	# Process x_cp matrices
+
 	# 1. Collect latents on the diag
+	# TODO sexlim plot: maybe just draw a?
+	#   a1f-> man1; a1m-> man1; a2f-> man2; a2m-> man2; a1f<-> c(a1m; a2m; a2f);
+
 	# from   = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_dot_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
-	out = umx_dot_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
-	out = umx_dot_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
+
+	# Values from, e.g. AmStd$result
+	# |    |   am|   af|cm |   cf|   em|  ef|  Rao| Rco|
+	# |:---|----:|----:|:--|----:|----:|---:|----:|---:|
+	# |bic | 0.77| 0.74|.  | 0.07| 0.23| 0.2| 0.87|   1|
+
+	# Process diag (a|c|e)(mf) matrices
+	# Am cells are Am1 -> selDVs[1]; Am2 -> selDVs[2], etc.
+	
+	out = umx_dot_mat2dot(Am, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
+	out = umx_dot_mat2dot(Cm, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
+	out = umx_dot_mat2dot(Em, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
 
 	# 2. On the lower
 	# from = "<name><rowNum>"; target = "<name><colNum>"
@@ -751,7 +794,7 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		# from = "one"; target = selDVs[c]
 		out = umx_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", p = out)
 	}
-	preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
+	preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
 	top     = umx_dot_rank(out$latents, "^[ace]_cp", "min")
 	bottom  = umx_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
