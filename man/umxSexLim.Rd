@@ -120,6 +120,9 @@ m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "yes",
 	dzoData = dzoData
 )
 
+m1$top$Ram$values Rao_r1c1
+m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_non", comparison = TRUE)
+
 # ============================
 # = 3. Scalar Sex Limitation =
 # ============================

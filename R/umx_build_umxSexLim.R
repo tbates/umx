@@ -120,6 +120,10 @@
 #'		dzoData = dzoData
 #')
 #'
+#' m1$top$Rao$values #Rao_r1c1
+#' # no qualitative sex limitation
+#' m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_qual", comparison = TRUE)
+#' 
 #' # ============================
 #' # = 3. Scalar Sex Limitation =
 #' # ============================
@@ -156,7 +160,7 @@
 #'    mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 #')
 #' m1 = mxTryHard(m1)
-
+#'
 #' m2 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", sexlim = "Nonscalar",
 #' 	tryHard = "mxTryHard",
 #'		mzmData = mzmData, dzmData = dzmData, 
@@ -168,13 +172,13 @@
 #' # summary(m1)$Mi
 #' }
 umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), sexlim = c("Nonscalar", "Scalar", "Homogeneity"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
+	message("umxSexLim is a beta feature. Some things are broken. If any desired stats are not presented, let me know what's missing")
 	A_or_C  = match.arg(A_or_C)
 	sexlim  = match.arg(sexlim)
 	tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
 	}
-
 
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
@@ -208,7 +212,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	umx_check_names(selVars, data = dzoData, die = TRUE); dzoData = dzoData[, selVars]
 
 	# Start means at actual means of some group 
-	obsMean = umx_means(mzmData[, selVars[1:nVar], drop = FALSE])
+	obsMean   = umx_means(mzmData[, selVars[1:nVar], drop = FALSE])
 	varStarts = umx_var(mzmData[, selVars[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 
 	if(nVar == 1){
@@ -217,25 +221,24 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 		varStarts = t(chol(diag(varStarts/3))) # Divide variance up equally, and set to Cholesky form.
 	}
 	varStarts = matrix(varStarts, nVar, nVar)
-	
-
 
 	# Make Rao and Rco matrices 
 	if(A_or_C == "A"){
-			# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is symm)
-			# (labels trimmed to Ra at end)
-			# TODO: Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag @1)
-			# TODO: Not sure why, as Symm can't become Full... so can't turn Ao into Co...
-			Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
-			Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
+		# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is symm)
+		# (labels trimmed to Ra at end)
+		# TODO: Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag @1)
+		# TODO: Not sure why, as Symm can't become Full... so can't turn Ao into Co...
+		Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
+		Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 	} else if (A_or_C == "C"){
-			# Quantitative & Qualitative Sex Differences for C (Ra is symm, Rc is Full)
-			Rao = umxMatrix("Rao", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
-			Rco = umxMatrix("Rco", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
+		# Quantitative & Qualitative Sex Differences for C (Ra is symm, Rc is Full)
+		Rao = umxMatrix("Rao", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
+		Rco = umxMatrix("Rco", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 	}
 
 	model = mxModel(name,
 		mxModel("top",
+			# make the A and C constants into matrices
 			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 				
@@ -249,7 +252,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 			# Matrices for Correlation Coefficients within/across Individuals 
 			# Stand = symmetric with 1's on diagonal
-			# NOTE: one of # (Rc[fmo]) or (Ra[fmo]) are equated (labeled "rc") (bottom of script)
+			# NOTE: one of # (Rc[fmo]) or (Ra[fmo]) must be equated (e.g. labeled "Rc") (bottom of script)
 			umxMatrix("Ram", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
 			umxMatrix("Raf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
 			umxMatrix("Rcf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1), 
@@ -257,10 +260,12 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			umxMatrix("Rem", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
 			umxMatrix("Ref", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
 
-			# Rao_and_Rco_matrices
+			# Add opposite-sex correlation matrices (Rao & Rco matrices)
 			Rao, Rco,
 
-			# Algebra Male and female variance components 
+			# Algebra Male and female variance components
+				# %&% pre- and post-multiplies,
+				# so (Ram %&%  am) == ("am %*% Ram %*%  am")
 			mxAlgebra(name = "Am", Ram %&% am),
 			mxAlgebra(name = "Cm", Rcm %&% cm),
 			mxAlgebra(name = "Em", Rem %&% em),
@@ -281,7 +286,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			),
 			mxConstraint(name = "Keep_it_Positive", minCor > pos1by6),
 
-			# Algebra for Total variances and standard deviations (of diagonals) 
+			# Algebra for Total variances and standard deviations (on diagonals) 
 			umxMatrix("I", "Iden", nrow = nVar),
 			mxAlgebra(name = "Vm", Am + Cm + Em, list(selDVs, selDVs)),
 			mxAlgebra(name = "Vf", Af + Cf + Ef, list(selDVs, selDVs)),
@@ -300,12 +305,12 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			# colZm = paste0(selDVs, rep(c('Am', 'Cm', 'Em'), each = nVar))
 			# colZf = paste0(selDVs, rep(c('Af', 'Cf', 'Ef'), each = nVar))
 			# Algebras for Parameter Estimates and Derived Variance Components.
-			# not needed
+
+			# Not needed
 			# mxAlgebra(name = "VarsZm", cbind(Am/Vm, Cm/Vm, Em/Vm), dimnames = list(selDVs, colZm)),
 			# mxAlgebra(name = "VarsZf", cbind(Af/Vf, Cf/Vf, Ef/Vf), dimnames = list(selDVs, colZf)),
 			# mxAlgebra(name = "CorsZm", cbind(Ram  , Rcm  , Rem  ), dimnames = list(selDVs, colZm)),
 			# mxAlgebra(name = "CorsZf", cbind(Raf  , Rcf  , Ref)  , dimnames = list(selDVs, colZf)),
-
 
 			# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins (done!!).
 			umxMatrix("expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, "_mean_m")),
@@ -314,9 +319,9 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 			# Matrix & Algebra for expected Variance/Covariance Matrices in MZ & DZ twins.
 			mxAlgebra(name = "expCovMZm", rbind(cbind(Vm,          Am  + Cm)          , cbind(         Am +          Cm, Vm))),
-			mxAlgebra(name = "expCovDZm", rbind(cbind(Vm, dzAr %x% Am  + dzCr %x% Cm) , cbind(dzAr %x% Am + dzCr %x% Cm, Vm))),
+			mxAlgebra(name = "expCovDZm", rbind(cbind(Vm, dzAr %x% Am  + dzCr %x% Cm ), cbind(dzAr %x% Am + dzCr %x% Cm, Vm))),
 			mxAlgebra(name = "expCovMZf", rbind(cbind(Vf,          Af  + Cf)          , cbind(         Af +          Cf, Vf))),
-			mxAlgebra(name = "expCovDZf", rbind(cbind(Vf, dzAr %x% Af  + dzCr %x% Cf) , cbind(dzAr %x% Af + dzCr %x% Cf, Vf))),
+			mxAlgebra(name = "expCovDZf", rbind(cbind(Vf, dzAr %x% Af  + dzCr %x% Cf ), cbind(dzAr %x% Af + dzCr %x% Cf, Vf))),
 			mxAlgebra(name = "expCovDZo", rbind(cbind(Vm, dzAr %x% Amf + dzCr %x% Cmf), cbind(dzAr %x% t(Amf) +  t(Cmf), Vf)))
 		), # end of top
 
@@ -644,7 +649,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 			# TODO turn plot of CI_Fit back on
 			# umxPlotSexLim(CI_Fit, file = file, std = FALSE)
 		} else {
-			warning("plot() not implemented yet for sex lim!")
+			# TODO ("plot() not implemented yet for sex lim!")
 			umxPlotSexLim(model, file = file, std = std)
 		}
 	}
@@ -721,7 +726,8 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	# 2. Same again for c_cp_matrix, e_cp_matrix
 	# 3. cp_loadings common factor loadings
 
-	stop("umxPlotSexLim not implemented yet.")
+	message("umxPlotSexLim not implemented yet.")
+	return()
 	format = match.arg(format)
 	model = x # Just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelSexLim", callingFn= "umxPlotSexLim")
