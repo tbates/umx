@@ -123,7 +123,11 @@
 #' m1$top$Rao$values #Rao_r1c1
 #' # no qualitative sex limitation
 #' m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_qual", comparison = TRUE)
-#' 
+#' m1b = umxModify(m1a, regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual", comparison = TRUE)
+#' m1c = umxModify(m1b, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual", comparison = TRUE)
+#' m1d = umxModify(m1c, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
+#' umxCompare(m1, m1a, m1b, m1c, m1d)
+#'
 #' # ============================
 #' # = 3. Scalar Sex Limitation =
 #' # ============================
