@@ -54,7 +54,7 @@
 # m2 = omxAssignFirstParameters(m2)
 #'
 #' **3. Homogeneity**
-#' This is model assumed by the basic ACE model: equal variance componetns in both sexes. 
+#' This is model assumed by the basic ACE model: equal variance components in both sexes. 
 #' Different means may be allowed for males and females.
 #' 
 #' There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a 
