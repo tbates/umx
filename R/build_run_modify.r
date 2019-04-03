@@ -16,6 +16,8 @@
 # 	mate ~/.R/Makevars
 # 	https://gist.github.com/tbates/9cec0a93e04c06c41b550454eaa892a3
 
+# sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================

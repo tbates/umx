@@ -1,6 +1,6 @@
-# library(testthat)
 # test_file("~/bin/umx/tests/testthat/test_umxACE.r") 
 # test_package("umx")
+library(testthat)
 library(umx)
 context("twin models")
 
@@ -39,9 +39,9 @@ test_that("umxACE works", {
 	# ========================================================
 	# = Evidence for dominance ? (DZ correlation set to .25) =
 	# ========================================================
-	m2 = umxACE("ADE", selDVs = selDVs, dzData = dzData, mzData = mzData, dzCr = .25)
+	m2 = umxACE("ADE", selDVs = "ht", sep="", dzData = dzData, mzData = mzData, dzCr = .25)
 	umxCompare(m2, m1) # ADE is better
-	umxSummary(m2, comparison = m1) # nb: though this is ADE, columns are labeled ACE
+	umxSummary(m2, comparison = m1) # nb: detect ADE and label columns as such
 	# TODO Add more umxACE model tests
 	# Add umxACEcov comparison test with lm-based solution
 	# expect_gt()

@@ -371,7 +371,7 @@
 * IMPROVED: `umxEquate` supports autoRun and compare
 * IMPROVED: `umx_names` can, as a convenience, take string vectors
 * RENAME: `umxGetOpenMx` aliased to `install.OpenMx` or `umx_install_OpenMx`
-* IMPROVED: `umxFitIndices` additional fit-indices and now automatically computes refModels if needed.
+* IMPROVED: `umxFitIndices` additional fit-indices and now automatically computes reference models if needed.
 * IMPROVED: `umxRAM` remove_unused_manifests no longer updates manifestVars + leaves variable in data by default.
 * RENAME: `plot` "showFixed" deprecated in favor of easier to type "fixed"
 
@@ -398,7 +398,7 @@
 * NEW: `umx_show_options` function to help users learn the options available
 * BETA: `umxACE` can now implement a form of left-censoring.
 * BETA: `umxThresholdMatrix` can now implement a form of left-censoring.
-* IMPROVE: `umxRAM` & `umxRAM2Ordinal` can turn off refModels computation with `refModels = FALSE`;
+* IMPROVE: `umxRAM` & `umxRAM2Ordinal` can turn off reference models computation with `refModels = FALSE`;
 * IMPROVE: `umx_show` can show thresholds
 * IMPROVED: `umx_is_MxModel` can take a list: `listOK` option
 * IMPROVED: `umx_check_parallel` options for row-wise parallel and number of subjects

@@ -79,7 +79,7 @@ Male and female paths, but one set of Ra, Rc and Re between variables (same for 
 Restrictions: Assumes means and variances can be equated across birth order within zygosity groups.
 
 \strong{3. Homogeneity}
-This is model assumed by the basic ACE model: equal variance componetns in both sexes.
+This is model assumed by the basic ACE model: equal variance components in both sexes.
 Different means may be allowed for males and females.
 
 There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a
@@ -120,8 +120,9 @@ m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "yes",
 	dzoData = dzoData
 )
 
-m1$top$Ram$values Rao_r1c1
-m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_non", comparison = TRUE)
+m1$top$Rao$values #Rao_r1c1
+# no qualitative sex limitation
+m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_qual", comparison = TRUE)
 
 # ============================
 # = 3. Scalar Sex Limitation =
@@ -159,6 +160,7 @@ m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
    mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 )
 m1 = mxTryHard(m1)
+
 m2 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", sexlim = "Nonscalar",
 	tryHard = "mxTryHard",
 	mzmData = mzmData, dzmData = dzmData, 

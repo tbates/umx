@@ -1,12 +1,13 @@
-Several different types of measurement invariance can be distinguished in the common factor model for continuous outcomes: Assuming a CFA with factor-means estimated, one
-1) Equal form: The number of factors and the pattern of factor-indicator relationships are identical across groups (also known as configural invariance).
-2) Equal loadings: Factor loadings are equal across groups.
-3) Equal intercepts: When observed scores are regressed on each factor, the intercepts are equal across groups.
-4) Equal residual variances: The residual variances of the observed scores not accounted for by the factors are equal across groups.
+# Several different types of measurement invariance can be distinguished in the common factor model for continuous outcomes: Assuming a CFA with factor-means estimated, one
+# 1) Equal form: The number of factors and the pattern of factor-indicator relationships are identical across groups (also known as configural invariance).
+# 2) Equal loadings: Factor loadings are equal across groups.
+# 3) Equal intercepts: When observed scores are regressed on each factor, the intercepts are equal across groups.
+# 4) Equal residual variances: The residual variances of the observed scores not accounted for by the factors are equal across groups.
 
-1. add a group column to your data set
-2. add a group column to your data set
-1. Make the model
+# 1. add a group column to your data set
+# 2. Make the model
+
+# get some BFI data on Agreeableness
 library(psych)
 Aitems = paste0("A", 1:5)
 m1 = umxRAM("base", data = bfi,

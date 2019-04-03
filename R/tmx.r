@@ -31,8 +31,8 @@
 #'
 #' **Old system** from book ed 2:
 #' 
-#' Adapted from Mather and Jinks, 1977, p. 32). See book issue 
-#' [issue 23](https://github.com/tbates/BGBook/issues/23#issuecomment-333834075) old-style nomenclature.
+#' Adapted from Mather and Jinks, 1977, p. 32). See book issue old-style nomenclature
+#' https://github.com/tbates/BGBook/issues/23 
 #' 
 #' `u` = Frequency of the dominant allele (now = `p`).
 #' `v` = Frequency of the recessive allele (now = `q`).
@@ -48,7 +48,7 @@
 #' 
 #' `d` and `h` -> `a` and `d`
 #' 
-#' See [issue 23](https://github.com/tbates/BGBook/issues/23#issuecomment-333834075)
+#' See BGBook issue 23
 #' 
 #' @param p The frequency of the B allele (Default .5)
 #' @param q The frequency of the b allele (Default 1-p)
