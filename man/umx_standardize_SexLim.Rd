@@ -17,7 +17,7 @@ umx_standardize_SexLim(model, ...)
 }
 }
 \description{
-\code{umx_standardize_SexLim} simply computes standardized Sexlim components and stores in appropriate matrices.
+\code{umx_standardize_SexLim} would move standardized Sexlim values into raw cells, but can't as these are algebras.
 }
 \examples{
 \dontrun{

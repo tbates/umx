@@ -516,9 +516,13 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	message("umxSummarySexLim is a beta feature. Some things are broken. If any desired stats are not presented, let me know what's missing")
 	report = match.arg(report)
 
-	tmp_PrintAsUpperLower <- function(bottom, top) {
+	tmp_PrintAsUpperLower <- function(bottom, top, selDVs) {
 		bottom[upper.tri(bottom)] = top[upper.tri(top)]
-		dimnames(bottom)[[2]] = dimnames(bottom)[[1]]
+		if(is.null(dimnames(bottom))){
+			dimnames(bottom) = list(selDVs, selDVs)
+		} else {
+			dimnames(bottom)[[2]] = dimnames(bottom)[[1]]
+		}
 		umxAPA(bottom)	
 	}
 

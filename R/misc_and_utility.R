@@ -6490,7 +6490,7 @@ umx_standardize.MxModelACEcov <- umx_standardize_ACEcov
 
 #' Standardize a SexLim model
 #'
-#' `umx_standardize_SexLim` simply computes standardized Sexlim components and stores in appropriate matrices.
+#' `umx_standardize_SexLim` would move standardized Sexlim values into raw cells, but can't as these are algebras.
 #'
 #' @param model an \code{\link{umxSexLim}} model to standardize
 #' @param ... Other options
@@ -6503,7 +6503,7 @@ umx_standardize.MxModelACEcov <- umx_standardize_ACEcov
 #' model = umx_standardize_IP(model)
 #' }
 umx_standardize_SexLim <- function(model, ...){
-	stop("Very sorry - umx_standardize_SexLim not implemented yet!")
+	stop("umx_standardize_SexLim can't work as Am etc. are algebras")
 	# 'AmStd', 'CmStd', 'EmStd',
 	# 'AfStd', 'CfStd', 'EfStd',
 	# 'Am', 'Cm', 'Em',

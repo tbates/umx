@@ -91,6 +91,9 @@ umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 umx_names(mxData(twinData[, c("wt1", "wt2")], type= "raw"))
 umx_names(mxData(cov(twinData[, c("wt1", "wt2")], use="comp"), type= "cov", numObs= 1000))
 umx_names(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
+
+namez(umxMatrix("bob", "Full", 3,3)$labels)
+
 }
 \references{
 \itemize{
