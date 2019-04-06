@@ -121,12 +121,17 @@
 #')
 #'
 #' m1$top$Rao$values #Rao_r1c1
-#' # no qualitative sex limitation
+#'
+#' # Drop qualitative sex limitation
+#  2. distinct af and am (and c and e), but shared Ra (and Rc and Re) between variables (same for males and females)
 #' m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_qual", comparison = TRUE)
+#'
+
+#' # Equate a, ac, and try ace acros m & f in scalar model
 #' m1b = umxModify(m1a, regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual", comparison = TRUE)
 #' m1c = umxModify(m1b, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual", comparison = TRUE)
 #' m1d = umxModify(m1c, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
-#' umxCompare(m1, m1a, m1b, m1c, m1d)
+#' umxCompare(m1, c(m1a, m1b, m1c, m1d))
 #'
 #' # ============================
 #' # = 3. Scalar Sex Limitation =
@@ -140,6 +145,9 @@
 #'
 #' umxCompare(m1, m2)
 #'
+#' # Show our manual drop of qualitative is the same as umxSexLim with sexlim= "scalar"s
+#' umxCompare(m1a, m2)
+#'
 #' # =====================
 #' # = Bivariate example =
 #' # =====================
@@ -149,9 +157,24 @@
 #'		dzoData = dzoData
 #')
 #' 
+#' # Scalar sex limitation (same correlation among components for m and f)
+#' m2 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", 
+#' 	A_or_C = "A", tryHard="yes", sexlim="Scalar",
+#'		mzmData = mzmData, dzmData = dzmData, 
+#'		mzfData = mzfData, dzfData = dzfData, 
+#'		dzoData = dzoData
+#')
+#' # Drop qualitative sex limitation
+#' #  Distinct af and am (& c & e), but shared Ra (& Rc & Re) between variables
+#' #  	i.e., same correlations for males and females.
+#' m1a = umxModify(m1 , regex = "^Ra[mfo]_", newlabels="^Ra_", name = "no_qual_a", comparison = TRUE)
+#' m1b = umxModify(m1a, regex = "^Rc[mfo]_", newlabels="^Rc_", name = "no_qual_ac", comparison = TRUE)
+#' m1c = umxModify(m1b, regex = "^Re[mfo]_", newlabels="^Re_", name = "no_qual_ace", comparison = TRUE)
+#' umxCompare(m1, c(m1a, m1b, m1c, m2))
 #'
-#' m2 = umxModify(m1, regex = "^R([ace])[f|m]_", newLabels = "r\\1_", 
-#'   name = "Homogeneity", comparison = TRUE)
+#' # In one smart regular expression
+#' m2 = umxModify(m1, regex = "^R([ace])[fmo]_", newlabels = "R\\1_", 
+#'   name = "scalar", comparison = TRUE)
 #' 
 #'# =============================
 #'# = Run multi-variate example =
@@ -514,13 +537,13 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	# If univariate, there are no correlations...
 	if(nVar > 1){
 		message(model$name, ": ", nVar, "-variable sex limitation analysis")
-		message("Genetic Factor Correlations (male lower triangle, female upper)")
+		message("Genetic Factor Correlations (male (Ram) lower triangle, female (Raf) upper)")
 		tmp_PrintAsUpperLower(bottom = model$top$Ram$values, top = model$top$Raf$values)
 
-		message("C Factor Correlations (male lower triangle, female upper)")
+		message("C Factor Correlations (male (Rcm) lower triangle, female (Rcf) upper)")
 		tmp_PrintAsUpperLower(bottom = model$top$Rcm$values, top = model$top$Rcf$values)
 
-		message("E Factor Correlations (male lower triangle, female upper)")
+		message("E Factor Correlations (male (Rem) lower triangle, female (Ref) upper)")
 		tmp_PrintAsUpperLower(bottom = model$top$Rem$values, top = model$top$Ref$values)
 	}else{
 		message(model$name, ": Univariate sex limitation analysis")

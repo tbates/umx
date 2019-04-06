@@ -44,8 +44,8 @@ may lie on either side of \code{m} and the sign of \code{d} will vary accordingl
 
 \strong{Old system} from book ed 2:
 
-Adapted from Mather and Jinks, 1977, p. 32). See book issue
-\href{https://github.com/tbates/BGBook/issues/23#issuecomment-333834075}{issue 23} old-style nomenclature.
+Adapted from Mather and Jinks, 1977, p. 32). See book issue old-style nomenclature
+https://github.com/tbates/BGBook/issues/23
 
 \code{u} = Frequency of the dominant allele (now = \code{p}).
 \code{v} = Frequency of the recessive allele (now = \code{q}).
@@ -61,7 +61,7 @@ New system:
 
 \code{d} and \code{h} -> \code{a} and \code{d}
 
-See \href{https://github.com/tbates/BGBook/issues/23#issuecomment-333834075}{issue 23}
+See BGBook issue 23
 }
 \examples{
 library(umx);

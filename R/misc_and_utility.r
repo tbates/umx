@@ -4747,6 +4747,9 @@ umx_explode <- function(delimiter = character(), string) {
 #' umx_names(mxData(twinData[, c("wt1", "wt2")], type= "raw"))
 #' umx_names(mxData(cov(twinData[, c("wt1", "wt2")], use="comp"), type= "cov", numObs= 1000))
 #' umx_names(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
+#' 
+#' namez(umxMatrix("bob", "Full", 3,3)$labels)
+#' 
 umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, global = FALSE, collapse = c("as.is", "as.vector", "as.formula")) {
 	collapse = match.arg(collapse)
 	if(fixed){
@@ -4773,9 +4776,13 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 		}
 	} else if(class(df) == "character"){
 		nameVector = df
-	} else {
+	} else if(class(df) == "matrix"){
+		nameVector = as.vector(df)
+	} else if(umx_is_MxModel(df)){
 		# Assume it's one model, and we want the parameter names
 		nameVector = parameters(df)
+	}else{
+		stop("namez doesn't know how to handle objects of class", omxQuotes(class(df)))
 	}
 	if(is.null(nameVector)){
 		stop(paste0("umx_names requires a dataframe or something else with names() or parameters(), ", umx_object_as_str(df), " is a ", typeof(df)))

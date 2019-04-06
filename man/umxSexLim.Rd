@@ -121,8 +121,15 @@ m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "yes",
 )
 
 m1$top$Rao$values #Rao_r1c1
-# no qualitative sex limitation
+
+# Drop qualitative sex limitation
 m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_qual", comparison = TRUE)
+
+# Equate a, ac, and try ace acros m & f in scalar model
+m1b = umxModify(m1a, regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual", comparison = TRUE)
+m1c = umxModify(m1b, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual", comparison = TRUE)
+m1d = umxModify(m1c, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
+umxCompare(m1, c(m1a, m1b, m1c, m1d))
 
 # ============================
 # = 3. Scalar Sex Limitation =
@@ -136,6 +143,9 @@ m2 = umxSexLim(selDVs = "bic", sep = "_T", sexlim = "Scalar", tryHard = "yes",
 
 umxCompare(m1, m2)
 
+# Show our manual drop of qualitative is the same as umxSexLim with sexlim= "scalar"s
+umxCompare(m1a, m2)
+
 # =====================
 # = Bivariate example =
 # =====================
@@ -145,9 +155,24 @@ m1 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", A_or_C = "A", tryHard="yes"
 	dzoData = dzoData
 )
 
+# Scalar sex limitation (same correlation among components for m and f)
+m2 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", 
+	A_or_C = "A", tryHard="yes", sexlim="Scalar",
+	mzmData = mzmData, dzmData = dzmData, 
+	mzfData = mzfData, dzfData = dzfData, 
+	dzoData = dzoData
+)
+# Drop qualitative sex limitation
+#  Distinct af and am (& c & e), but shared Ra (& Rc & Re) between variables
+#  	i.e., same correlations for males and females.
+m1a = umxModify(m1 , regex = "^Ra[mfo]_", newlabels="^Ra_", name = "no_qual_a", comparison = TRUE)
+m1b = umxModify(m1a, regex = "^Rc[mfo]_", newlabels="^Rc_", name = "no_qual_ac", comparison = TRUE)
+m1c = umxModify(m1b, regex = "^Re[mfo]_", newlabels="^Re_", name = "no_qual_ace", comparison = TRUE)
+umxCompare(m1, c(m1a, m1b, m1c, m2))
 
-m2 = umxModify(m1, regex = "^R([ace])[f|m]_", newLabels = "r\\\\1_", 
-  name = "Homogeneity", comparison = TRUE)
+# In one smart regular expression
+m2 = umxModify(m1, regex = "^R([ace])[fmo]_", newlabels = "R\\\\1_", 
+  name = "scalar", comparison = TRUE)
 
 # =============================
 # = Run multi-variate example =

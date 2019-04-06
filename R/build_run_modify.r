@@ -15,9 +15,10 @@
 # Makevars for clang
 # 	mate ~/.R/Makevars
 # 	https://gist.github.com/tbates/9cec0a93e04c06c41b550454eaa892a3
-
+# 
+# for Mojave
 # sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
-
+# 
 # ===============================
 # = Highlevel models (ACE, GxE) =
 # ===============================
@@ -527,11 +528,13 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 			} else {
 				if(thisIs == "MxThreshold"){
 					# MxThreshold detected
-				} else {
+				} else if(umx_is_MxMatrix(thisItem[[i]])){
+					# matrix labels might refer to definition variables
 					tmp = namez(thisItem[[i]]$labels, "data\\.")
 					if(length(tmp) > 0){
 						defnNames = append(defnNames, namez(tmp, "data\\.(.*)", replacement= "\\1"))
 					}
+				} else {
 					# TODO: umxRAM currently not checking for unsupported items.
 					# stop("I can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
 					# "You have given me a", class(i)[1],"\n",
