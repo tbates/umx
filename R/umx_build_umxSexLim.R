@@ -417,8 +417,9 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			umxMatrix("Rco", "Stand", nrow = nVar, free = TRUE, values = .2, baseName = "Rc", lbound = -1, ubound = 1))
 		)
 	}else{
+		message("Homogeneity model not yet implemented: you can get to it by umxModify ing a scalar model")
 		# "Homogeneity"
-		# Just advise people to do ACE?
+		# implements 5-group ACe?
 	}
 
 	model = omxAssignFirstParameters(model)
@@ -516,7 +517,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	message("umxSummarySexLim is a beta feature. Some things are broken. If any desired stats are not presented, let me know what's missing")
 	report = match.arg(report)
 
-	tmp_PrintAsUpperLower <- function(bottom, top, selDVs) {
+	tmp_PrintAsUpperLower <- function(bottom, top, selDVs= NULL) {
 		bottom[upper.tri(bottom)] = top[upper.tri(top)]
 		if(is.null(dimnames(bottom))){
 			dimnames(bottom) = list(selDVs, selDVs)
@@ -542,13 +543,22 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	if(nVar > 1){
 		message(model$name, ": ", nVar, "-variable sex limitation analysis")
 		message("Genetic Factor Correlations (male (Ram) lower triangle, female (Raf) upper)")
-		tmp_PrintAsUpperLower(bottom = model$top$Ram$values, top = model$top$Raf$values)
+		tmp_PrintAsUpperLower(bottom = model$top$Ram$values, top = model$top$Raf$values, selDVs= selDVs)
 
 		message("C Factor Correlations (male (Rcm) lower triangle, female (Rcf) upper)")
-		tmp_PrintAsUpperLower(bottom = model$top$Rcm$values, top = model$top$Rcf$values)
+		tmp_PrintAsUpperLower(bottom = model$top$Rcm$values, top = model$top$Rcf$values, selDVs= selDVs)
 
 		message("E Factor Correlations (male (Rem) lower triangle, female (Ref) upper)")
-		tmp_PrintAsUpperLower(bottom = model$top$Rem$values, top = model$top$Ref$values)
+		tmp_PrintAsUpperLower(bottom = model$top$Rem$values, top = model$top$Ref$values, selDVs= selDVs)
+		
+		message("Opposite sex A Correlations Rao")
+		tmp = model$top$Rao$values; dimnames(tmp) = list(selDVs, selDVs)
+		umxAPA(tmp)	
+
+		message("Opposite sex C Correlations Rco")
+		tmp = model$top$Rco$values; dimnames(tmp) = list(selDVs, selDVs)
+		umxAPA(tmp)	
+		
 	}else{
 		message(model$name, ": Univariate sex limitation analysis")
 	}
