@@ -39,7 +39,7 @@ Parameter \code{a} is half the measured phenotypic difference between the homozy
 It corresponds to the additive effect of each additional \code{B} allele, relative to the \code{bb} phenotype.
 
 Parameter \code{d} is the deviation of the heterozygote \code{Bb} phenotype from the homozygote mid-point \code{m}.
-It corresponds to the non-additive (dominance) effect of the \code{B} allle. The heterozygote phenotype
+It corresponds to the non-additive (dominance) effect of the \code{B} allele. The heterozygote phenotype
 may lie on either side of \code{m} and the sign of \code{d} will vary accordingly.
 
 \strong{Old system} from book ed 2:

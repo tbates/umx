@@ -26,7 +26,7 @@
 #' It corresponds to the additive effect of each additional `B` allele, relative to the `bb` phenotype.
 #'
 #' Parameter `d` is the deviation of the heterozygote `Bb` phenotype from the homozygote mid-point `m`.
-#' It corresponds to the non-additive (dominance) effect of the `B` allle. The heterozygote phenotype 
+#' It corresponds to the non-additive (dominance) effect of the `B` allele. The heterozygote phenotype 
 #' may lie on either side of `m` and the sign of `d` will vary accordingly.
 #'
 #' **Old system** from book ed 2:

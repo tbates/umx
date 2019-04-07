@@ -49,41 +49,45 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 }
 \description{
 Multivariate twin analysis allowing for sex limitation (factors operate differently in males
-vs. females) based on a correlated factors model.
+vs. females) based on a correlated factors model. With 5-groups of twins, this model allows
+for both Quantitative & Qualitative Sex-Limitation.
 
-With 5-groups of twins, this model allows for both Quantitative & Qualitative Sex-Limitation.
 \emph{Quantitative} differences refer to different amounts of phenotypic variance produced by
 the same A, C, or E components when operating in one sex compared to the other sex.
-\emph{Qualitative} differences refer to phenotypic variance attributable to an A, C, or E component
-which operates in one sex one but not in the other.
 
-The correlation approach ensures that variable order does not affect the ability of the model
-to account for DZOS data.
+\emph{Qualitative} differences refer to phenotypic variance attributable to an A, C, or E
+component which operates in one sex one but not in the other.
+
+The correlation approach ensures that variable order does not affect the ability
+of the model to account for DZOS data.
 }
 \details{
 \strong{A or C}
+
 Due to limitations on the degrees of freedom allowed by the twin model, we can model
 qualitative sex differences for only one of A or C at a time.
 
 ** 1. Nonscalar Sex Limitation **
-Allow Quantitative Sex Differences and, for one of \code{A or C} only, Qualitative Sex Differences.
-Male and female paths, plus Ra, Rc and Re between variables for males and for females.
-Male-Female correlations in DZO group between \code{A or C} factors and Rao (or Rco) free.
-Ra constrained across male, female, and opposite-sex pairs.
+
+Allow quantitative (distinct male and female paths) and qualitative sex differences
+on A or C. Allows distinct between variable correlations (\code{Ra}, \code{Rc} and \code{Re})
+for males and for females. Male-Female correlations also free (\code{Rao} or \code{Rco} free in DZO group).
 
 \strong{2. Scalar Sex Limitation}
 
-Quantitative Sex Differences but NO Qualitative Sex Differences
-Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
-
-Restrictions: Assumes means and variances can be equated across birth order within zygosity groups.
+Quantitative sex differences only (distinct Male and female paths).
+Just one set of Ra, Rc and Re between variables (same for males and females)
 
 \strong{3. Homogeneity}
-This is model assumed by the basic ACE model: equal variance components in both sexes.
+
+This is the model assumed by the basic ACE model: equal variance components in both sexes.
 Different means may be allowed for males and females.
 
+\emph{notes}:
 There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a
 scalar constant in one sex. # TODO sexlim: This k scalar heterogeneity model is not yet implemented in umx.
+
+\emph{General restrictions}: Assumes means and variances can be equated across birth order within zygosity groups.
 }
 \examples{
 # =========================
@@ -120,19 +124,18 @@ m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "yes",
 	dzoData = dzoData
 )
 
-m1$top$Rao$values #Rao_r1c1
-
 # Drop qualitative sex limitation
 m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_qual", comparison = TRUE)
 
-# Equate a, ac, and try ace acros m & f in scalar model
+
+# Equate a, ac, and try ace across m & f in scalar model
 m1b = umxModify(m1a, regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual", comparison = TRUE)
 m1c = umxModify(m1b, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual", comparison = TRUE)
 m1d = umxModify(m1c, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
 umxCompare(m1, c(m1a, m1b, m1c, m1d))
 
 # ============================
-# = 3. Scalar Sex Limitation =
+# = Scalar Sex Limitation =
 # ============================
 
 m2 = umxSexLim(selDVs = "bic", sep = "_T", sexlim = "Scalar", tryHard = "yes",
@@ -141,14 +144,23 @@ m2 = umxSexLim(selDVs = "bic", sep = "_T", sexlim = "Scalar", tryHard = "yes",
 	dzoData = dzoData
 )
 
-umxCompare(m1, m2)
-
 # Show our manual drop of qualitative is the same as umxSexLim with sexlim= "scalar"s
 umxCompare(m1a, m2)
 
-# =====================
-# = Bivariate example =
-# =====================
+# ===============
+# = Homogeneity =
+# ===============
+
+m3 = umxSexLim(selDVs = "bic", sep = "_T", sexlim = "Homogeneity", tryHard = "yes",
+	mzmData = mzmData, dzmData = dzmData, 
+	mzfData = mzfData, dzfData = dzfData, 
+	dzoData = dzoData
+)
+umxCompare(m1, c(m2, m3))
+
+# ===========================================
+# = Bivariate example with manual reduction =
+# ===========================================
 m1 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", A_or_C = "A", tryHard="yes",
 	mzmData = mzmData, dzmData = dzmData, 
 	mzfData = mzfData, dzfData = dzfData, 
@@ -174,6 +186,12 @@ umxCompare(m1, c(m1a, m1b, m1c, m2))
 m2 = umxModify(m1, regex = "^R([ace])[fmo]_", newlabels = "R\\\\1_", 
   name = "scalar", comparison = TRUE)
 
+# Equate a, ac, and try ace across m & f in scalar model
+m2a = umxModify(m2 , regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual"  , comparison = TRUE)
+m2b = umxModify(m2a, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual" , comparison = TRUE)
+m2c = umxModify(m2b, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
+umxCompare(m1, c(m1a, m1b, m1c, m1d))
+
 # =============================
 # = Run multi-variate example =
 # =============================
@@ -184,7 +202,6 @@ m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
 	mzmData = mzmData, dzmData = dzmData, 
    mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 )
-m1 = mxTryHard(m1)
 
 m2 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", sexlim = "Nonscalar",
 	tryHard = "mxTryHard",

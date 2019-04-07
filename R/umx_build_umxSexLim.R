@@ -12,53 +12,47 @@
 #'
 #' @description
 #' Multivariate twin analysis allowing for sex limitation (factors operate differently in males 
-#' vs. females) based on a correlated factors model.
-#' 
-#' With 5-groups of twins, this model allows for both Quantitative & Qualitative Sex-Limitation.
+#' vs. females) based on a correlated factors model. With 5-groups of twins, this model allows
+#' for both Quantitative & Qualitative Sex-Limitation.
+#'
 #' *Quantitative* differences refer to different amounts of phenotypic variance produced by 
 #' the same A, C, or E components when operating in one sex compared to the other sex.
-#' *Qualitative* differences refer to phenotypic variance attributable to an A, C, or E component
-#' which operates in one sex one but not in the other.
 #' 
-#' The correlation approach ensures that variable order does not affect the ability of the model
-#' to account for DZOS data.
+#' *Qualitative* differences refer to phenotypic variance attributable to an A, C, or E
+#' component which operates in one sex one but not in the other.
+#' 
+#' The correlation approach ensures that variable order does not affect the ability
+#' of the model to account for DZOS data.
 #' 
 #' @details
 #' 
 #' **A or C**
+#' 
 #' Due to limitations on the degrees of freedom allowed by the twin model, we can model 
 #' qualitative sex differences for only one of A or C at a time.
 #' 
 #' 
 #' ** 1. Nonscalar Sex Limitation **
-#' Allow Quantitative Sex Differences and, for one of `A or C` only, Qualitative Sex Differences.
-#' Male and female paths, plus Ra, Rc and Re between variables for males and for females.
-#' Male-Female correlations in DZO group between `A or C` factors and Rao (or Rco) free.
-#' Ra constrained across male, female, and opposite-sex pairs.
+#' 
+#' Allow quantitative (distinct male and female paths) and qualitative sex differences 
+#' on A or C. Allows distinct between variable correlations (`Ra`, `Rc` and `Re`)
+#' for males and for females. Male-Female correlations also free (`Rao` or `Rco` free in DZO group).
 #'
 #' **2. Scalar Sex Limitation**
 #'
-#' Quantitative Sex Differences but NO Qualitative Sex Differences
-#' Male and female paths, but one set of Ra, Rc and Re between variables (same for males and females)
+#' Quantitative sex differences only (distinct Male and female paths).
+#' Just one set of Ra, Rc and Re between variables (same for males and females)
 #' 
-#' Restrictions: Assumes means and variances can be equated across birth order within zygosity groups.
-#'
-# Equate the R[ace]f and R[ace]m matrix labels by deleting "f" and "m"
-# m2 = umxModify(m1, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", name = "Homogeneity", autoRun= FALSE)
-#
-# m2 = mxModel(m2, mxModel(m2$top,
-# 	umxMatrix("Rao", "Stand", nrow= nVar, values= .2, baseName= "Ra", lbound= -1, ubound= 1),
-# 	umxMatrix("Rco", "Stand", nrow= nVar, values= .2, baseName= "Rc", lbound= -1, ubound= 1)
-# ))
-#
-# m2 = omxAssignFirstParameters(m2)
-#'
 #' **3. Homogeneity**
-#' This is model assumed by the basic ACE model: equal variance components in both sexes. 
+#'
+#' This is the model assumed by the basic ACE model: equal variance components in both sexes. 
 #' Different means may be allowed for males and females.
 #' 
+#' *notes*:
 #' There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a 
 #' scalar constant in one sex. # TODO sexlim: This k scalar heterogeneity model is not yet implemented in umx.
+#' 
+#' *General restrictions*: Assumes means and variances can be equated across birth order within zygosity groups.
 #'
 #' @param name    The name of the model (Default = "sexlim")
 #' @param selDVs  BASE NAMES of the variables in the analysis. You MUST provide sep.
@@ -120,21 +114,19 @@
 #'		dzoData = dzoData
 #')
 #'
-#' m1$top$Rao$values #Rao_r1c1
-#'
 #' # Drop qualitative sex limitation
-#  2. distinct af and am (and c and e), but shared Ra (and Rc and Re) between variables (same for males and females)
+#  Distinct af and am (and c and e), but shared Ra (and Rc and Re) between variables (same for males and females)
 #' m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_qual", comparison = TRUE)
 #'
-
-#' # Equate a, ac, and try ace acros m & f in scalar model
+#'
+#' # Equate a, ac, and try ace across m & f in scalar model
 #' m1b = umxModify(m1a, regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual", comparison = TRUE)
 #' m1c = umxModify(m1b, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual", comparison = TRUE)
 #' m1d = umxModify(m1c, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
 #' umxCompare(m1, c(m1a, m1b, m1c, m1d))
 #'
 #' # ============================
-#' # = 3. Scalar Sex Limitation =
+#' # = Scalar Sex Limitation =
 #' # ============================
 #'
 #' m2 = umxSexLim(selDVs = "bic", sep = "_T", sexlim = "Scalar", tryHard = "yes",
@@ -143,14 +135,23 @@
 #'		dzoData = dzoData
 #')
 #'
-#' umxCompare(m1, m2)
-#'
 #' # Show our manual drop of qualitative is the same as umxSexLim with sexlim= "scalar"s
 #' umxCompare(m1a, m2)
 #'
-#' # =====================
-#' # = Bivariate example =
-#' # =====================
+#' # ===============
+#' # = Homogeneity =
+#' # ===============
+#'
+#' m3 = umxSexLim(selDVs = "bic", sep = "_T", sexlim = "Homogeneity", tryHard = "yes",
+#'		mzmData = mzmData, dzmData = dzmData, 
+#'		mzfData = mzfData, dzfData = dzfData, 
+#'		dzoData = dzoData
+#')
+#' umxCompare(m1, c(m2, m3))
+#'
+#' # ===========================================
+#' # = Bivariate example with manual reduction =
+#' # ===========================================
 #' m1 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", A_or_C = "A", tryHard="yes",
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
@@ -175,7 +176,13 @@
 #' # In one smart regular expression
 #' m2 = umxModify(m1, regex = "^R([ace])[fmo]_", newlabels = "R\\1_", 
 #'   name = "scalar", comparison = TRUE)
-#' 
+#'
+#' # Equate a, ac, and try ace across m & f in scalar model
+#' m2a = umxModify(m2 , regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual"  , comparison = TRUE)
+#' m2b = umxModify(m2a, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual" , comparison = TRUE)
+#' m2c = umxModify(m2b, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
+#' umxCompare(m1, c(m1a, m1b, m1c, m1d))
+#'
 #'# =============================
 #'# = Run multi-variate example =
 #'# =============================
@@ -186,7 +193,6 @@
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'    mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 #')
-#' m1 = mxTryHard(m1)
 #'
 #' m2 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", sexlim = "Nonscalar",
 #' 	tryHard = "mxTryHard",
@@ -211,11 +217,10 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	# = 1. Non-scalar Sex Limitation =
 	# ================================
 	# Quantitative & Qualitative Sex Differences for A (or C)
-	# Rc (or Ra) constrained across male/female and opposite sex
-	# Male and female paths, plus Ra, Rc and Re between variables for males and females
-	# Male-Female correlations in DZO group between A factors (Rao) FREE
+	# * Distinct male and female paths (i.e., quantitative differences)
+	# * Distinct between-variable Ra, Rc and Re for males and females
+	# * Male-Female correlations in DZO group between A (or C) factors (Rao/Rco) FREE
 	
-	# Correlated factors sex limitation
 
 	nSib = 2 # Number of siblings in a twin pair
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzmData, mzData = mzmData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
@@ -223,9 +228,9 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	# Auto-name ADE version
 	if(name == "sexlim"){
 		if(dzCr == .25){
-			name = paste0("sexlimADE", sexlim) # c("Nonscalar", "Scalar", "Homogeneity")
+			name = paste0(sexlim, "ADE") # c("Nonscalar", "Scalar", "Homogeneity")
 		}else{
-			name = paste0("sexlim", sexlim) # c("Nonscalar", "Scalar", "Homogeneity")
+			name = paste0(sexlim) # c("Nonscalar", "Scalar", "Homogeneity")
 		}
 	}
 	nVar = length(selDVs)
@@ -265,7 +270,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 	model = mxModel(name,
 		mxModel("top",
-			# make the A and C constants into matrices
+			# Make the A and C constants into matrices
 			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 				
@@ -273,6 +278,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			umxMatrix("am", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 			umxMatrix("cm", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 			umxMatrix("em", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
+
 			umxMatrix("af", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 			umxMatrix("cf", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
 			umxMatrix("ef", "Diag", nrow = nVar, free = TRUE, values = varStarts, lbound = .0001),
@@ -281,16 +287,17 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			# Stand = symmetric with 1's on diagonal
 			# NOTE: one of # (Rc[fmo]) or (Ra[fmo]) must be equated (e.g. labeled "Rc") (bottom of script)
 			umxMatrix("Ram", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
-			umxMatrix("Raf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
-			umxMatrix("Rcf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1), 
 			umxMatrix("Rcm", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
 			umxMatrix("Rem", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
+
+			umxMatrix("Raf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
+			umxMatrix("Rcf", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1), 
 			umxMatrix("Ref", "Stand", nrow = nVar, free = TRUE, values = .4, lbound = -1, ubound = 1),
 
 			# Add opposite-sex correlation matrices (Rao & Rco matrices)
 			Rao, Rco,
 
-			# Algebra Male and female variance components
+			# Algebras for Male and female variance components
 				# %&% pre- and post-multiplies,
 				# so (Ram %&%  am) == ("am %*% Ram %*%  am")
 			mxAlgebra(name = "Am", Ram %&% am),
@@ -307,16 +314,19 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 			# Constrain the 6 R*(f|m) Eigen values to be positive 
 			umxMatrix("pos1by6", "Full", nrow = 1, ncol = 6, free = FALSE, values = .0001),
+
 			mxAlgebra(name = "minCor", cbind(
 				min(eigenval(Ram)), min(eigenval(Rcm)), min(eigenval(Rem)),
 			  	min(eigenval(Raf)), min(eigenval(Rcf)), min(eigenval(Ref)))
 			),
+
 			mxConstraint(name = "Keep_it_Positive", minCor > pos1by6),
 
 			# Algebra for Total variances and standard deviations (on diagonals) 
 			umxMatrix("I", "Iden", nrow = nVar),
 			mxAlgebra(name = "Vm", Am + Cm + Em, list(selDVs, selDVs)),
 			mxAlgebra(name = "Vf", Af + Cf + Ef, list(selDVs, selDVs)),
+			# not currently used
 			mxAlgebra(name = "iSDm", solve(sqrt(I * Vm))),
 			mxAlgebra(name = "iSDf", solve(sqrt(I * Vf))),
 
@@ -327,17 +337,6 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			mxAlgebra(name = "AfStd", Af/Vf, dimnames = list(selDVs, paste0(selDVs, "AfStd"))),
 			mxAlgebra(name = "CfStd", Cf/Vf, dimnames = list(selDVs, paste0(selDVs, "CfStd"))),
 			mxAlgebra(name = "EfStd", Ef/Vf, dimnames = list(selDVs, paste0(selDVs, "EfStd"))),
-
-			# Helpful dimnames for Algebra-based Estimates and Derived Variance Component output (see "VarsZm") 
-			# colZm = paste0(selDVs, rep(c('Am', 'Cm', 'Em'), each = nVar))
-			# colZf = paste0(selDVs, rep(c('Af', 'Cf', 'Ef'), each = nVar))
-			# Algebras for Parameter Estimates and Derived Variance Components.
-
-			# Not needed
-			# mxAlgebra(name = "VarsZm", cbind(Am/Vm, Cm/Vm, Em/Vm), dimnames = list(selDVs, colZm)),
-			# mxAlgebra(name = "VarsZf", cbind(Af/Vf, Cf/Vf, Ef/Vf), dimnames = list(selDVs, colZf)),
-			# mxAlgebra(name = "CorsZm", cbind(Ram  , Rcm  , Rem  ), dimnames = list(selDVs, colZm)),
-			# mxAlgebra(name = "CorsZf", cbind(Raf  , Rcf  , Ref)  , dimnames = list(selDVs, colZf)),
 
 			# Matrix & Algebra for expected Mean Matrices in MZ & DZ twins (done!!).
 			umxMatrix("expMeanGm", "Full", nrow = 1, ncol = nVar*2, free = TRUE, values = obsMean, labels = paste0(selDVs, "_mean_m")),
@@ -397,29 +396,35 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 				model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
 			}
 		}
-	} else if (sexlim == "Scalar"){
+	} else if (sexlim %in%  c("Scalar", "Homogeneity")){
 		# =========================
 		# = Scalar Sex Limitation =
 		# =========================
-		# Quantitative Sex Differences. NO Qualitative Sex Differences.
-		# Male and female paths, Only one set of Ra, Rc and Re between variables 
+		# Quantitative Sex Differences (Male and female paths).
+		# NO Qualitative Sex Differences (only one set of Ra, Rc and Re between variables)
 		#  (i.e., same correlations for males and for females)
 
-		# TODO: This is quite complex, so instead of a "reduction" make it an operation which `umxSexLim` can perform
-		# 1. Equate f and m correlations by trimming the sex suffix off R[ace]f and R[ace]m matrix labels (i.e., deleting "f" and "m")
-		model = umxModify(model, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", name = "Scalar", autoRun = FALSE)
+		# As this modification is somewhat complex, instead of a "reduction" I've made it an
+		# operation `umxSexLim` can perform on its own with sexlim = "Scalar".
 
-		# 2. Replace opposite sex matrices (top.Rao and top.Rco) with labels that have no sex suffix(to match R[ace] same-sex)
+		# 1. Equate f and m between-variable correlations by trimming the sex suffix off
+		#    R[ace]f and R[ace]m matrix labels (i.e., deleting "f" and "m")
+		model = umxModify(model, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", autoRun = FALSE)
+
+		# 2. Replace opposite sex matrices (top.Rao and top.Rco) with labels that have no sex suffix 
+		#    (to match R[ace] same-sex) Both standardized
 		# TODO: Make this a regex also? "Rao_" --> "Ra_" "Rco_" --> "Rc_"
-		# Both standardized
 		model = mxModel(model, mxModel(model$top,
 			umxMatrix("Rao", "Stand", nrow = nVar, free = TRUE, values = .2, baseName = "Ra", lbound = -1, ubound = 1),
 			umxMatrix("Rco", "Stand", nrow = nVar, free = TRUE, values = .2, baseName = "Rc", lbound = -1, ubound = 1))
 		)
-	}else{
-		message("Homogeneity model not yet implemented: you can get to it by umxModify ing a scalar model")
-		# "Homogeneity"
-		# implements 5-group ACe?
+		if(sexlim == "Homogeneity"){
+			# Equate [ace] across m & f in scalar model
+			model = umxModify(model, regex = "^a[fm]_", newlabels="a_", autoRun = FALSE)
+			model = umxModify(model, regex = "^c[fm]_", newlabels="c_", autoRun = FALSE)
+			model = umxModify(model, regex = "^e[fm]_", newlabels="e_", autoRun = FALSE)
+			# TODO: Implement transforms of correlated factors / factanal on factors...
+		}
 	}
 
 	model = omxAssignFirstParameters(model)
@@ -456,13 +461,13 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @export
 #' @family Twin Modeling Functions
 #' @family Reporting functions
-#' @seealso - \code{\link{umxACE}} 
+#' @seealso - \code{\link{umxSexLim}} 
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
-#' # =================================================================
-#' # = NOT WORKING YET! Should be good to use for Boulder/March 2020 =
-#' # =================================================================
+#' # ======================================================
+#' # = Beta: Should be good to use for Boulder/March 2020 =
+#' # ======================================================
 #'
 #' # =============================================
 #' # = Run Qualitative Sex Differences ACE model =
@@ -490,10 +495,9 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' dzfData = subset(us_skinfold_data, zyg == 4)
 #' dzoData = subset(us_skinfold_data, zyg == 5)
 #'
-#' 
-# ======================
-# = Bivariate examaple =
-# ======================
+#' # ======================
+#' # = Bivariate example =
+#' # ======================
 #' 
 #' selDVs = c('tri','bic')
 #' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "yes",
@@ -545,26 +549,26 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		message("Genetic Factor Correlations (male (Ram) lower triangle, female (Raf) upper)")
 		tmp_PrintAsUpperLower(bottom = model$top$Ram$values, top = model$top$Raf$values, selDVs= selDVs)
 
-		message("C Factor Correlations (male (Rcm) lower triangle, female (Rcf) upper)")
-		tmp_PrintAsUpperLower(bottom = model$top$Rcm$values, top = model$top$Rcf$values, selDVs= selDVs)
-
-		message("E Factor Correlations (male (Rem) lower triangle, female (Ref) upper)")
-		tmp_PrintAsUpperLower(bottom = model$top$Rem$values, top = model$top$Ref$values, selDVs= selDVs)
-		
 		message("Opposite sex A Correlations Rao")
 		tmp = model$top$Rao$values; dimnames(tmp) = list(selDVs, selDVs)
 		umxAPA(tmp)	
 
+		message("C Factor Correlations (male (Rcm) lower triangle, female (Rcf) upper)")
+		tmp_PrintAsUpperLower(bottom = model$top$Rcm$values, top = model$top$Rcf$values, selDVs= selDVs)
+
 		message("Opposite sex C Correlations Rco")
 		tmp = model$top$Rco$values; dimnames(tmp) = list(selDVs, selDVs)
 		umxAPA(tmp)	
+
+		message("E Factor Correlations (male (Rem) lower triangle, female (Ref) upper)")
+		tmp_PrintAsUpperLower(bottom = model$top$Rem$values, top = model$top$Ref$values, selDVs= selDVs)
 		
 	}else{
 		message(model$name, ": Univariate sex limitation analysis")
 	}
 
 	if(std){
-		message("Standardized solution (top.[ACE][mf]Std  + R[ac]o matrices)")
+		message("Standardized solution (top.[ACE][mf]Std  + R[ac]o matrices). Use std=F for raw variance.")
 		Am = diag(as.matrix(model$top$AmStd$result))
 		Cm = diag(as.matrix(model$top$CmStd$result))
 		Em = diag(as.matrix(model$top$EmStd$result))
@@ -574,7 +578,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		# Estimates (will be printed below...)
 	} else {
 		# TODO sexlim: Check raw solution
-		message("Raw solution (top.[ACE][mf] + R[ac]o matrices)")
+		message("Raw solution (top.[ACE][mf] + R[ac]o matrices). Use std=T for standardized output.")
 		Am = diag(as.matrix(model$top$Am$result))
 		Cm = diag(as.matrix(model$top$Cm$result))
 		Em = diag(as.matrix(model$top$Em$result))
@@ -603,7 +607,42 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	}
 	
 	if(extended == TRUE) {
-		message("TODO: No extended information at this time")
+		opposite = !std
+		if(opposite){
+			message("Standardized solution (top.[ACE][mf]Std  + R[ac]o matrices).")
+			Am = diag(as.matrix(model$top$AmStd$result))
+			Cm = diag(as.matrix(model$top$CmStd$result))
+			Em = diag(as.matrix(model$top$EmStd$result))
+			Af = diag(as.matrix(model$top$AfStd$result))
+			Cf = diag(as.matrix(model$top$CfStd$result))
+			Ef = diag(as.matrix(model$top$EfStd$result))
+			# Estimates (will be printed below...)
+		} else {
+			# TODO sexlim: Check raw solution
+			message("Raw solution (top.[ACE][mf] + R[ac]o matrices)")
+			Am = diag(as.matrix(model$top$Am$result))
+			Cm = diag(as.matrix(model$top$Cm$result))
+			Em = diag(as.matrix(model$top$Em$result))
+			Af = diag(as.matrix(model$top$Af$result))
+			Cf = diag(as.matrix(model$top$Cf$result))
+			Ef = diag(as.matrix(model$top$Ef$result))
+			# Estimates (will be printed below...)
+		}
+
+		Rao = diag(model$top$Rao$values)
+		Rco = diag(model$top$Rco$values)
+
+		Estimates = data.frame(row.names=selDVs, cbind(Am, Af, Cm, Cf, Em, Ef, Rao, Rco), stringsAsFactors=FALSE)
+		# Estimates = data.frame(cbind(Am, Af, Cm, Cf, Em, Ef, Rao, Rco))
+		if(model$top$dzCr$values == .25){
+			treo = c("a", "d", "e")
+		} else {
+			treo = c("a", "c", "e")
+		}
+		names(Estimates) = c(paste0(rep(treo, each = 2), rep(c("m", "f"), times = 3)), "Rao", "Rco")
+
+		Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
+
 	}
 
 	hasCIs = umx_has_CIs(model)
@@ -767,7 +806,7 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	# 2. Same again for c_cp_matrix, e_cp_matrix
 	# 3. cp_loadings common factor loadings
 
-	message("umxPlotSexLim not implemented yet.")
+	message("no plots for umxPlotSexLim as yet.")
 	return()
 	format = match.arg(format)
 	model = x # Just to emphasise that x has to be a model 

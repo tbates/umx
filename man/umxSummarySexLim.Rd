@@ -49,9 +49,9 @@ See documentation for other umx models summary here: \code{\link{umxSummary}}.
 }
 \examples{
 \dontrun{
-# =================================================================
-# = NOT WORKING YET! Should be good to use for Boulder/March 2020 =
-# =================================================================
+# ======================================================
+# = Beta: Should be good to use for Boulder/March 2020 =
+# ======================================================
 
 # =============================================
 # = Run Qualitative Sex Differences ACE model =
@@ -79,7 +79,9 @@ dzmData = subset(us_skinfold_data, zyg == 3)
 dzfData = subset(us_skinfold_data, zyg == 4)
 dzoData = subset(us_skinfold_data, zyg == 5)
 
-
+# ======================
+# = Bivariate example =
+# ======================
 
 selDVs = c('tri','bic')
 m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "yes",
@@ -103,7 +105,7 @@ m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "C", tryHard = "yes",
 - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-- \code{\link{umxACE}}
+- \code{\link{umxSexLim}}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEold}},

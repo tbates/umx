@@ -1855,9 +1855,12 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "inline", "html", "report"), compareWeightedAIC = FALSE, file = "tmp.html") {
 	report = match.arg(report)
-	if(	report == "report"){
-		message("inline-style report is being renamed to 'inline' instead of 'report'. Please change this for the future")
+	if(report == "report"){
+		message("Polite note: In future, please use report= 'inline' instead of report= 'report'")
 		report = "inline"
+	}
+	if(umx_is_MxModel(all)){
+		stop("Make a vector of the comparison models (you seem to have provided a model as input to 'all', and I'm guessing that's a mistake)")
 	}
 	if(is.null(comparison)){
 		comparison <- base
@@ -1886,7 +1889,6 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# | base    | comparison    | ep | minus2LL | df  | AIC      | diffLL   | diffdf | p    |
 	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
-
 	tablePub = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
 	# names(tablePub)   <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
 	names(tablePub)     <- c("Model"     , "EP", "\u2206 -2LL", "\u2206 df", "p", "AIC", "Compare with Model")
@@ -1898,6 +1900,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			tablePub[i, "Model"] = tablePub[i, "Compare with Model"] 
 			tablePub[i, "Compare with Model"] = NA
 		}
+		# TODO umxCompare: Could delete lines where model is compared to itself
 	}
 	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^3), digits = digits, addComparison = NA)
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
