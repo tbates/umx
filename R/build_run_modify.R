@@ -187,7 +187,7 @@ utils::globalVariables(c(
 	'correlatedA', 'minCor', 'pos1by6', 'varList', 'Im1', 'IZ', 'ZI', 'Z',
 	
 	# Used in tmx_genotypic_effect
-	"x1", "y1", "y2", "dose", "value", "freq",
+	"x1", "y1", "y2", "dose", "value", "freq", "Frequency", 
 	
 	# Used in umxGxEbiv
 	"mod1", "mod2", 
