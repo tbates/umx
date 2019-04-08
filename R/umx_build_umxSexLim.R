@@ -798,7 +798,8 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' plot(m1) # no need to remember a special name: plot works fine!
 #' }
 umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
-	# TODO All this is CP code
+	message("no plots for umxPlotSexLim as yet.")
+	return()
 	# New plot functions no longer dependent on labels. This means they need to know about the correct matrices to examine.
 	# 1. a_cp_matrix = A latent (and correlations among latents)
 	# 	* These go from a_cp n=row TO common n= row
@@ -806,15 +807,13 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	# 2. Same again for c_cp_matrix, e_cp_matrix
 	# 3. cp_loadings common factor loadings
 
-	message("no plots for umxPlotSexLim as yet.")
-	return()
 	format = match.arg(format)
 	model = x # Just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelSexLim", callingFn= "umxPlotSexLim")
 
+	umx_has_been_run(model, stop = TRUE)
 	selVars = model$MZm$expectation$dims
 	selDVs  = dimnames(model$top$Vm)[[1]]
-	# selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 	nVar    = length(selDVs)
 
 	if(std){
@@ -852,7 +851,7 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 
 	# Process diag (a|c|e)(mf) matrices
 	# Am cells are Am1 -> selDVs[1]; Am2 -> selDVs[2], etc.
-	
+	# TODO need a plain-matrix substitute here...(because sexlim uses algebras for most or what we need)
 	out = umx_dot_mat2dot(Am, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
 	out = umx_dot_mat2dot(Cm, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
 	out = umx_dot_mat2dot(Em, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
