@@ -1,17 +1,18 @@
-# Upcoming in next version... umx 3.0.0 April 2018, R 3.5.X
+# Upcoming in next version... umx 3.0.0 May 2018, R 3.5.X
 * FIX: `umxSimplex`
-* FIX: `umxSexLim`
-* NEW: `umxACE` supports WLS, UWLS, DWLS models!
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
 
 
-# umx 2.10.0 March 2019, R 3.5.3 "Great Truth"
+# umx 2.10.0 April 2019, R 3.5.3 "Great Truth"
 
 * CITATION: Paper is out! Our paper on umx is out in *Twin Research and Human Genetics*!
 * NEW: `?umxExamples` All the code from Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. Twin Research and Human Genetics.
+* NEW: `umxSexLim` is working,
+* NEW: `umxSummarySexLim` is working,
+* NEW: `umxSexLim` examples added.
 * NEW: `umxRAM` supports WLS, UWLS, DWLS models!
-* NEW: `umxACEnew` supports new-style WLS 
+* NEW: `umxACE` supports new-style WLS 
 * NEW: `umxPlotCP` no longer relies on labels to discover paths!
 * NEW: `umxPlotCP` supports CIs on the diagram!
 * NEW: `umx_make_top_twin_models` increases the robustness and improve-ability of all twin scripts.
@@ -22,6 +23,7 @@
 * BETA: `umxPlotSexLim` moving along a little
 * BETA: `sexLim` Gained nonlinear, linear, and homogeneity modes
 * DATA: `data(Fischbein_wt)` weight of 66 females record over six 6-month intervals (from Fischbein (1977) weight data).
+* IMPROVED: `tryHard` - allow "yes" for default mxTryHard across all twin and RAM models
 * IMPROVED: `xmu_model_needs_means` 
 * IMPROVED: `umxDescribeDataWLS` own copy
 * IMPROVED: `umx_make`: use check_win_devel; setwd for release; spelling
