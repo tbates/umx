@@ -4546,8 +4546,7 @@ umx_default_option <- function(x, option_list, check = TRUE){
 	# Often Rs match.arg  will work...
 	# filter = match.arg(filter)
 	if (identical(x, option_list)) {
-	    x = option_list[1]
-			return(x)
+		return(option_list[1])
 	}else{
 		if(check){
 			if((x %in% option_list)) {
@@ -4750,8 +4749,9 @@ umx_explode <- function(delimiter = character(), string) {
 #' 
 #' namez(umxMatrix("bob", "Full", 3,3)$labels)
 #' 
-umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, global = FALSE, collapse = c("as.is", "as.vector", "as.formula")) {
+umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, global = FALSE, collapse = c("as.is", "vector", "formula")) {
 	collapse = match.arg(collapse)
+
 	if(fixed){
 		ignore.case = FALSE
 	}
@@ -4799,10 +4799,10 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	}
 	if(collapse == "as.is"){
 		tmp
-	}else if(collapse == "as.vector"){
+	}else if(collapse == "vector"){
 		tmp = paste(tmp, collapse  = "', '")
 		paste0("c('", tmp, "')")
-	}else if(collapse == "as.formula"){
+	}else if(collapse == "formula"){
 		tmp = paste(tmp, collapse  = " + ")
 		paste0("~ ", tmp)
 	} else {

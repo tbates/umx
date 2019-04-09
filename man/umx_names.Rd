@@ -7,8 +7,8 @@
 \usage{
 umx_names(df, pattern = ".*", replacement = NULL, ignore.case = TRUE,
   perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE,
-  invert = FALSE, global = FALSE, collapse = c("as.is", "as.vector",
-  "as.formula"))
+  invert = FALSE, global = FALSE, collapse = c("as.is", "vector",
+  "formula"))
 }
 \arguments{
 \item{df}{dataframe (or other objects, or a list of models) from which to get names.}
