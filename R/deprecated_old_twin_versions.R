@@ -652,7 +652,6 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 	if(std){
 		model = umx_standardize_CP(model)
 	}
-	# TODO Check I am handling nFac > 1 properly!!
 	facCount = dim(model$top$a_cp$labels)[[1]]
 	varCount = dim(model$top$as$values)[[1]]
 	selDVs   = dimnames(model$MZ$data$observed)[[2]]

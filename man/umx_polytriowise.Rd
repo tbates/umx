@@ -5,7 +5,8 @@
 \title{FIML-based trio-based polychoric, polyserial, and Pearson correlations}
 \usage{
 umx_polytriowise(data, useDeviations = TRUE, printFit = FALSE,
-  use = "any")
+  use = "any", tryHard = c("no", "yes", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"))
 }
 \arguments{
 \item{data}{Dataframe}
@@ -15,6 +16,8 @@ umx_polytriowise(data, useDeviations = TRUE, printFit = FALSE,
 \item{printFit}{Whether to print information about the fit achieved (default = FALSE)}
 
 \item{use}{parameter (default = "any")}
+
+\item{tryHard}{'no' uses normal mxRun (default), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
 - matrix of correlations
@@ -23,7 +26,15 @@ umx_polytriowise(data, useDeviations = TRUE, printFit = FALSE,
 Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx.
 }
 \examples{
-# FIXME: umx_polytriowise	Needs examples
+tmp = mtcars
+tmp$am = umxFactor(mtcars$am)
+tmp$vs = umxFactor(mtcars$vs)
+tmp = umx_scale(tmp)
+x = umx_polytriowise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
+x$polychorics
+cov2cor(x$polychorics)
+cor(mtcars[, c("hp", "mpg", "am", "vs")])
+
 }
 \references{
 - \url{https://doi.org/10.3389/fpsyg.2016.00528}

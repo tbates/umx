@@ -720,7 +720,6 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	# ==============================
 	# = Add means labels if needed =
 	# ==============================
-	# TODO xmuLabel_RAM_Model: Add a test case with raw data but no means...
 
 	if(!is.null(model$M)){
 		meanLabels = paste0("one_to_", colnames(model$M$values), suffix)
@@ -1360,7 +1359,6 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 			thisPathVal   = round(mxMat_vals[to, from], digits)
 
 			if(thisPathFree){ prefix = "" } else { prefix = "@" }
-			# FIXME "a_with_a", "var_a" & "resid_a" in place of all being like "a_with_a"?
 			if(thisPathFree | (thisPathVal !=0 && fixed)) {
 				if((to == from)) {
 					if(resid =="circle"){

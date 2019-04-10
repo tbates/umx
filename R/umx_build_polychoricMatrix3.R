@@ -4,13 +4,29 @@
 #'
 #' @param data Dataframe
 #' @param useDeviations Whether to code the mode using deviation thresholds (default = TRUE)
-#' @return - matrix of correlations
+#' @param tryHard 'no' uses normal mxRun (default), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @return - list of output and diagnostics. matrix of correlations = $polychorics
 #' @export
 #' @family Data Functions
 #' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
 #' @examples
-#' # FIXME: umx_polychoric Needs examples
-umx_polychoric <- function(data, useDeviations = TRUE) {
+#' tmp = mtcars
+#' tmp$am = umxFactor(mtcars$am)
+#' tmp$vs = umxFactor(mtcars$vs)
+#' tmp = umx_scale(tmp)
+#' x = umx_polychoric(tmp[, c("am", "vs")], tryHard = "yes")
+#' x$polychorics
+#' cor(mtcars[, c("am", "vs")])
+#'
+#' x = umx_polychoric(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
+#' x$polychorics
+#' cov2cor(x$polychorics)
+#' cor(mtcars[, c("hp", "mpg", "am", "vs")])
+umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+	tryHard = match.arg(tryHard)
+	if(tryHard == "yes"){
+		tryHard = "mxTryHard"
+	}
 	nVar         = ncol(data)
 	nameList     = names(data)
 	nThresh      = vector(mode = "integer", nVar)
@@ -112,63 +128,78 @@ umx_polychoric <- function(data, useDeviations = TRUE) {
 	tnames = paste("Threshold",1:maxnThresh,sep='')
 
 	# Define the model
-	model = mxModel('model')
-	model = mxModel(model, mxMatrix("Stand", name = "R", nrow = nVar, ncol = nVar, free=TRUE, labels=correlationLabels, lbound=-.999999999, ubound=.999999999, dimnames=list(nameList, nameList)))
-	model = mxModel(model, mxMatrix("Full", name = "M", nrow = 1, ncol = nVar, free=!isOrd, dimnames = list('Mean', nameList)))
-	model = mxModel(model, mxMatrix("Diag", name = "StdDev", nrow = nVar, ncol = nVar, free=!isOrd, values=1, lbound=.01, dimnames=list(nameList, nameList)))
+	model = mxModel('model',
+		mxMatrix("Stand", name = "R", nrow = nVar, ncol = nVar, free=TRUE, labels=correlationLabels, lbound=-.999999999, ubound=.999999999, dimnames=list(nameList, nameList)),
+		mxMatrix("Full", name = "M", nrow = 1, ncol = nVar, free=!isOrd, dimnames = list('Mean', nameList)),
+		mxMatrix("Diag", name = "StdDev", nrow = nVar, ncol = nVar, free=!isOrd, values=1, lbound=.01, dimnames=list(nameList, nameList))
+	)	
 	model$expCov = mxAlgebra(StdDev %&% R, dimnames=list(nameList,nameList))
 
 	# Algebra to compute Threshold matrix
 	if (nOrdinal > 0){
-	    if (useDeviations) {
-	        # For Multiplication
-	        model = mxModel(model, mxMatrix("Lower", name="UnitLower", nrow = maxnThresh, ncol = maxnThresh, free=F, values=1))
-	        # Threshold differences:
-	        model = mxModel(model, mxMatrix("Full", name="thresholdDeviations", nrow = maxnThresh, ncol = nOrdinal, free=thresholdDeviationFree,   values=thresholdDeviationValues, lbound=thresholdDeviationLbounds, labels = thresholdDeviationLabels))
-	        model = mxModel(model, mxAlgebra(UnitLower %*% thresholdDeviations, dimnames=list(tnames,ordnameList), name="thresholds"))
-	        } else {
-	        model = mxModel(model, mxMatrix("Full", name="thresholds", ncol = nOrdinal, nrow = maxnThresh, free=thresholdDirectEstimatesFree, values=thresholdDirectEstimatesValues, lbound=thresholdDirectEstimatesLbounds, labels = thresholdDirectEstimatesLabels))
-	        dimnames(model$thresholds)=list(tnames,ordnameList)
+		if (useDeviations) {
+			model = mxModel(model, 
+				# For Multiplication
+				mxMatrix("Lower", name="UnitLower", nrow = maxnThresh, ncol = maxnThresh, free=F, values=1),
+				# Threshold differences:
+				mxMatrix("Full", name="thresholdDeviations", nrow = maxnThresh, ncol = nOrdinal, free=thresholdDeviationFree, values=thresholdDeviationValues, lbound=thresholdDeviationLbounds, labels = thresholdDeviationLabels),
+				mxAlgebra(UnitLower %*% thresholdDeviations, dimnames=list(tnames,ordnameList), name="thresholds")
+			)
+		} else {
+			model = mxModel(model, mxMatrix("Full", name="thresholds", ncol = nOrdinal, nrow = maxnThresh, free=thresholdDirectEstimatesFree, values=thresholdDirectEstimatesValues, lbound=thresholdDirectEstimatesLbounds, labels = thresholdDirectEstimatesLabels))
+			dimnames(model$thresholds) = list(tnames, ordnameList)
 	    }
 	}
 
 	# Define the objective function
 	if (nOrdinal > 0){
-	    objective = mxFIMLObjective(covariance="expCov", means="M", thresholds="thresholds", threshnames=ordnameList)
+	    expectation = mxExpectationNormal(covariance="expCov", means="M", thresholds="thresholds", threshnames=ordnameList)
 	}else{
-	    objective = mxFIMLObjective(covariance="expCov", means="M")
+	    expectation = mxExpectationNormal(covariance="expCov", means="M")
 	}
 
-	# Define the observed covariance matrix
-	dataMatrix = mxData(data, type='raw')
-
-	# Add the objective function and the data to the model
-	model = mxModel(model, objective, dataMatrix)
+	# Add the expectation function and the data to the model
+	model = mxModel(model, 
+		expectation, 
+		mxFitFunctionML(), 
+		mxData(data, type='raw')
+	)
 
 	# Run the job
-	model = mxRun(model, unsafe = TRUE)
+	if(tryHard == "no"){
+		model = mxRun(model)
+	} else if (tryHard == "mxTryHard"){
+		model = mxTryHard(model)
+		model = mxRun(model)
+	} else if (tryHard == "mxTryHardOrdinal"){
+		model = mxTryHardOrdinal(model)
+		model = mxRun(model)
+	} else if (tryHard == "mxTryHardWideSearch"){
+		model = mxTryHardWideSearch(model)
+		model = mxRun(model)
+	}
 
 	# Populate seMatrix for return
 	seMatrix = matrix(NA, nVar, nVar)
 	k = 0
 	for (i in 1:nVar){
-	    for (j in i:nVar){
-	        if(i != j) {
-	            k = k+1
-	            seMatrix[i,j] = model@output$standardErrors[k]
-	            seMatrix[j,i] = model@output$standardErrors[k]
-	        }
-	    }
+		for (j in i:nVar){
+			if(i != j) {
+				k = k+1
+				seMatrix[i,j] = model@output$standardErrors[k]
+				seMatrix[j,i] = model@output$standardErrors[k]
+			}
+		}
 	}
 	# Add dimnames to thresholds, which oddly are not in model$thresholds' output
 	if(nOrdinal > 0) {
-	    if(useDeviations){
-	        thresholds = matrix(model@output$algebras$model.thresholds, nrow=maxnThresh, ncol=nOrdinal, dimnames=list(tnames,ordnameList))     
-	    } else{
-	        thresholds = matrix(model@output$matrices$model.thresholds, nrow=maxnThresh, ncol=nOrdinal, dimnames=list(tnames,ordnameList))     
-	    }
+		if(useDeviations){
+			thresholds = matrix(model@output$algebras$model.thresholds, nrow=maxnThresh, ncol=nOrdinal, dimnames=list(tnames,ordnameList))     
+		} else{
+			thresholds = matrix(model@output$matrices$model.thresholds, nrow=maxnThresh, ncol=nOrdinal, dimnames=list(tnames,ordnameList))     
+		}
 	}else{
-	    thresholds = NULL
+		thresholds = NULL
 	}
 	# Return results      
 	return(list(polychorics= model$expCov@result, thresholds= thresholds, polychoricStandardErrors= seMatrix, Minus2LogLikelihood= model@output$Minus2LogLikelihood, Hessian= model@output$calculatedHessian, estHessian= model@output$estimatedHessian, estimatedModel= model))
@@ -183,13 +214,27 @@ umx_polychoric <- function(data, useDeviations = TRUE) {
 #' @param useDeviations Whether to code the mode using deviation thresholds (default = TRUE)
 #' @param printFit Whether to print information about the fit achieved (default = FALSE)
 #' @param use parameter (default = "any")
+#' @param tryHard 'no' uses normal mxRun (default), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @return - matrix of correlations
 #' @export
 #' @family Data Functions
 #' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
 #' @examples
-#' # FIXME: umx_polypairwise Needs examples
-umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "any") {
+#' tmp = mtcars
+#' tmp$am = umxFactor(mtcars$am)
+#' tmp$vs = umxFactor(mtcars$vs)
+#' tmp = umx_scale(tmp)
+#' x = umx_polychoric(tmp[, c("am", "vs")], tryHard = "yes")
+#' x$polychorics
+#' cor(mtcars[, c("am", "vs")])
+#'
+#' x = umx_polypairwise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
+#' x$polychorics
+#' cov2cor(x$polychorics)
+#' cor(mtcars[, c("hp", "mpg", "am", "vs")])
+umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "any", tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+	tryHard = match.arg(tryHard)
+
     nVar = dim(data)[[2]]
     ncor = nVar*(nVar-1)/2
     pairCorrelationMatrix = matrix(diag(,nVar), nVar, nVar, dimnames= list(names(data), names(data)))
@@ -206,7 +251,7 @@ umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "
 			}else{
 			    tempData = data[,c(var1,var2)]
 			}
-			tempResult = umx_polychoric(tempData, useDeviations)
+			tempResult = umx_polychoric(tempData, useDeviations, tryHard = tryHard)
 			pairCorrelationMatrix[var1,var2] = tempResult$polychorics[2,1]
 			pairCorrelationMatrix[var2,var1] = pairCorrelationMatrix[var1,var2]
 			pairErrors[pairCount] = tempResult$polychoricStandardErrors[2,1]
@@ -245,13 +290,22 @@ umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "
 #' @param useDeviations Whether to code the mode using deviation thresholds (default = TRUE)
 #' @param printFit Whether to print information about the fit achieved (default = FALSE)
 #' @param use parameter (default = "any")
+#' @param tryHard 'no' uses normal mxRun (default), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @return - matrix of correlations
 #' @export
 #' @family Data Functions
 #' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
 #' @examples
-#' # FIXME: umx_polytriowise	Needs examples
-umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use = "any") {
+#' tmp = mtcars
+#' tmp$am = umxFactor(mtcars$am)
+#' tmp$vs = umxFactor(mtcars$vs)
+#' tmp = umx_scale(tmp)
+#' x = umx_polytriowise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
+#' x$R
+#' cor(mtcars[, c("hp", "mpg", "am", "vs")])
+#'
+umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use = "any", tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+	tryHard = match.arg(tryHard)
 	nVar = dim(data)[[2]]
 	if(nVar < 3) {
 		stop("Must have at least three variables for trio-wise polychorics")
@@ -272,7 +326,7 @@ umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use 
 			} else {
 			    tempData = data[,c(var1,var2)]
 			}
-			tempResult = umx_polychoric(tempData, useDeviations)
+			tempResult = umx_polychoric(tempData, useDeviations, tryHard=tryHard)
 			pairCorrelationMatrix[var1,var2] = tempResult$polychorics[2,1]
 			pairCorrelationMatrix[var2,var1] = pairCorrelationMatrix[var1,var2]
 			pairErrors[pairCount] = tempResult$polychoricStandardErrors[2,1]

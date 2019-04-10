@@ -3854,9 +3854,9 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' m1 = mxRun(m1)
 #' umx_has_means(m1)
 umx_has_means <- function(model) {
-	# TODO umx_has_means could check for the means matrix used in our twin models
 	if(!umx_is_RAM(model)){
-		stop("TODO umx_has_means can only test RAM models so far")
+		# TODO umx_has_means could check for the means matrix used in our twin models
+		stop("umx_has_means can only test RAM models so far")
 	}
 	return(!is.null(model$matrices$M))
 }
@@ -5458,8 +5458,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		# Convert to data frames, reorder columns and add names. 
 		mzData = as.data.frame(cbind(mdatmz, mdatmz, tdatmz))
 		dzData = as.data.frame(cbind(mdatdz, mdatdz, tdatdz))
-		mzData = mzData[,c(1, 2, 3, 5, 4, 6)]
-		dzData = dzData[,c(1, 2, 3, 5, 4, 6)]
+		mzData = mzData[, c(1, 2, 3, 5, 4, 6)]
+		dzData = dzData[, c(1, 2, 3, 5, 4, 6)]
 		# TODO umx_make_TwinData: Use var names
 		colnames(mzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
 		colnames(dzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
@@ -5520,7 +5520,6 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		names(mzData) = names(dzData) = c(umx_paste_names(varNames, "_T"), "M_T1", "M_T2")
 	}
 	if(!is.null(nThresh)){
-		# TODO umx_make_TwinData: Combine all columns for more accuracy 
 		tmp = rbind(mzData, dzData)
 		levelLabels = paste0("quantile", 1:(nThresh+1))
 		for (i in 1:length(varNames)) {

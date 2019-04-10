@@ -259,7 +259,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 		# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is symm)
 		# (labels trimmed to Ra at end)
 		# TODO: Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag @1)
-		# TODO: Not sure why, as Symm can't become Full... so can't turn Ao into Co...
+		# 	Not sure why, as Symm can't become Full... so can't turn Ao into Co...
 		Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 		Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 	} else if (A_or_C == "C"){
@@ -575,9 +575,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		Af = diag(as.matrix(model$top$AfStd$result))
 		Cf = diag(as.matrix(model$top$CfStd$result))
 		Ef = diag(as.matrix(model$top$EfStd$result))
-		# Estimates (will be printed below...)
 	} else {
-		# TODO sexlim: Check raw solution
 		message("Raw solution (top.[ACE][mf] + R[ac]o matrices). Use std=T for standardized output.")
 		Am = diag(as.matrix(model$top$Am$result))
 		Cm = diag(as.matrix(model$top$Cm$result))
@@ -585,7 +583,6 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		Af = diag(as.matrix(model$top$Af$result))
 		Cf = diag(as.matrix(model$top$Cf$result))
 		Ef = diag(as.matrix(model$top$Ef$result))
-		# Estimates (will be printed below...)
 	}
 
 	Rao = diag(model$top$Rao$values)
@@ -825,7 +822,6 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		Cf = diag(as.matrix(model$top$CfStd$result))
 		Ef = diag(as.matrix(model$top$EfStd$result))
 	} else {
-		# TODO sexlim: Check raw solution
 		# message("Raw solution (top.[ACE][mf] + R[ac]o matrices)")
 		Am = diag(as.matrix(model$top$Am$result))
 		Cm = diag(as.matrix(model$top$Cm$result))

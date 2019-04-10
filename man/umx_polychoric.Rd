@@ -4,21 +4,35 @@
 \alias{umx_polychoric}
 \title{FIML-based polychoric, polyserial, and Pearson correlations}
 \usage{
-umx_polychoric(data, useDeviations = TRUE)
+umx_polychoric(data, useDeviations = TRUE, tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"))
 }
 \arguments{
 \item{data}{Dataframe}
 
 \item{useDeviations}{Whether to code the mode using deviation thresholds (default = TRUE)}
+
+\item{tryHard}{'no' uses normal mxRun (default), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
-- matrix of correlations
+- list of output and diagnostics. matrix of correlations = $polychorics
 }
 \description{
 Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx
 }
 \examples{
-# FIXME: umx_polychoric Needs examples
+tmp = mtcars
+tmp$am = umxFactor(mtcars$am)
+tmp$vs = umxFactor(mtcars$vs)
+tmp = umx_scale(tmp)
+x = umx_polychoric(tmp[, c("am", "vs")], tryHard = "yes")
+x$polychorics
+cor(mtcars[, c("am", "vs")])
+
+x = umx_polychoric(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
+x$polychorics
+cov2cor(x$polychorics)
+cor(mtcars[, c("hp", "mpg", "am", "vs")])
 }
 \references{
 - \url{https://doi.org/10.3389/fpsyg.2016.00528}
