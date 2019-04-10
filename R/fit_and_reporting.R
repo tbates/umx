@@ -2135,7 +2135,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
-#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}}
@@ -2154,7 +2154,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' )
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
-plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = TRUE, ...) {
+plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, ...) {
 	# ==========
 	# = Setup  =
 	# ==========

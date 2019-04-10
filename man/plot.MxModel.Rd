@@ -9,7 +9,7 @@
 \method{plot}{MxModel}(x = NA, std = FALSE, fixed = TRUE,
   means = TRUE, digits = 2, file = "name", pathLabels = c("none",
   "labels", "both"), resid = c("circle", "line", "none"),
-  strip_zero = TRUE, ...)
+  strip_zero = FALSE, ...)
 }
 \arguments{
 \item{x}{An \code{\link{mxModel}} from which to make a path diagram}
@@ -28,7 +28,7 @@
 
 \item{resid}{How to show residuals and variances default is "circle". Options are "line" & "none"}
 
-\item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
+\item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)}
 
 \item{...}{Optional parameters}
 }
