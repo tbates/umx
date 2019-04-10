@@ -222,7 +222,7 @@ methods::setClass("MxModelIP"     , contains = "MxModel")
 methods::setClass("MxModelSexLim" , contains = "MxModel")
 methods::setClass("MxModelSimplex", contains = "MxModel")
 methods::setClass("MxModelACEcov" , contains = "MxModelACE")
-methods::setClass("MxModelGxEbiv", contains = "MxModelGxE")
+methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 
 # ============================
 # = Core Modeling Functions =

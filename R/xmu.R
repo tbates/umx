@@ -711,12 +711,6 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	# ==============================
 	# TODO xmuLabel_RAM_Model: Add a test case with raw data but no means...
 
-	if(!is.null(model$data)){
-		if(umx_check_should_have_means(model$data) & is.null(model$M)) {
-			message("You are using raw data, but have not yet added paths for the means\n")
-			message("Do this with umxPath(means = 'var')")
-		}
-	}
 	if(!is.null(model$M)){
 		meanLabels = paste0("one_to_", colnames(model$M$values), suffix)
 		if(overRideExisting){
@@ -729,18 +723,6 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 		model = mxModel(model, name= name)
 	}
 	return(model)
-}
-
-umx_check_should_have_means <- function(data){
-	# TODO umx_check_should_have_means: Add ability to take a model instead of mxData
-	# TODO umx_check_should_have_means: Defunct: users should merely set the fit function
-	# obj$data$type
-
-	if(!is.null(data$preferredFit) && (data$preferredFit == "WLS") && (data$.wlsContinuousType ==  "cumulants")){
-		return(TRUE)
-	} else {
-		return(FALSE)
-	}
 }
 
 #' Internal function to help building simplex models
@@ -984,7 +966,6 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 #' @export
 #' @family xmu internal not for end user
 xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
-	# TODO: handle connection style
 	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
 	if(is.na(sd)){
 		sd = mean/6.6

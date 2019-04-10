@@ -107,8 +107,6 @@ and multiple examples.
 The function flexibly accepts raw data, and also summary covariance data
 (in which case the user must also supple numbers of observations for the two input data sets).
 
-TODO: Document type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
-
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
 ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal

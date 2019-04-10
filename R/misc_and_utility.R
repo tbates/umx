@@ -4987,14 +4987,6 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	}
 	# TODO umx_long2wide: Bother to check if zygosity is not NA in some member of family?
 	# 	to avoid problem of NA if NA in first family member found?
-	# TODO umx_long2wide: How to get unique values of passalong?
-	# if(!is.na(passalong)){
-		# One last look for the passalong columns
-		# current  = data[, c(famID, passalong)]
-		# previous = merge(previous, current, by = famID, all.x = TRUE, all.y = TRUE)
-		# x = names(previous)
-		# x[-which(names(x) %in% passalong)]
-	# }
   return(previous)
 }
 
