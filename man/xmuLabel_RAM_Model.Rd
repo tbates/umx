@@ -29,6 +29,18 @@ This function will label all the free parameters in a RAM \code{\link{mxModel}}
 \details{
 End users should just call \code{\link{umxLabel}}
 }
+\examples{
+require(umx); data(demoOneFactor)
+# raw but no means
+m1 <- mxModel("One Factor", mxData(demoOneFactor, type = "raw"), type="RAM",
+	manifestVars = "x1", latentVars= "G",
+	umxPath("G", to = "x1"),
+	umxPath(var = "x1"),
+	umxPath(var = "G", fixedAt = 1)
+)
+xmuLabel_RAM_Model(m1)
+
+}
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},

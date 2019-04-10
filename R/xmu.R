@@ -660,6 +660,17 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #' @return - The labeled \code{\link{mxModel}}
 #' @family xmu internal not for end user
 #' @export
+#' @examples
+#' require(umx); data(demoOneFactor)
+#' # raw but no means
+#' m1 <- mxModel("One Factor", mxData(demoOneFactor, type = "raw"), type="RAM",
+#' 	manifestVars = "x1", latentVars= "G",
+#' 	umxPath("G", to = "x1"),
+#' 	umxPath(var = "x1"),
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )
+#' xmuLabel_RAM_Model(m1)
+#'
 xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overRideExisting = FALSE, verbose = FALSE, name = NULL) {
 	if (!umx_is_RAM(model)) {
 		stop("'model' must be an OpenMx RAM Model")
