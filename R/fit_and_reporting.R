@@ -2136,6 +2136,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param pathLabels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)
+#' @param splines Whether to allow lines to curve (deafults to true = some models look better if forced FALSE)
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}}
@@ -2154,7 +2155,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' )
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
-plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, ...) {
+plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE...) {
 	# ==========
 	# = Setup  =
 	# ==========
@@ -2191,10 +2192,14 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 	tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
 	variances     = tmp$variances  #either "var_var textbox" or "var -> var port circles"
 	varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
-	# ============================
-	# = Make the manifest shapes =
-	# ============================
-	preOut = "\t# Latents\n"
+	# =================
+	# = Define shapes =
+	# =================
+	if(splines){
+		preOut = '\tsplines="TRUE";\n\t# Latents\n'
+	} else {
+		preOut = '\tsplines="FALSE";\n\t# Latents\n'
+	}
 	for(var in latents) {
 	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
 	}
