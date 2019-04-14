@@ -575,7 +575,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# = TODO handle user adding an mxThreshold object to umxRAM =
 	# ===========================================================
 	# This will be a model where things are not in the data and are not latent...
-
+	
 	# ====================
 	# = Handle Manifests =
 	# ====================

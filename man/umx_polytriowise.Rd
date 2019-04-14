@@ -31,8 +31,7 @@ tmp$am = umxFactor(mtcars$am)
 tmp$vs = umxFactor(mtcars$vs)
 tmp = umx_scale(tmp)
 x = umx_polytriowise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
-x$polychorics
-cov2cor(x$polychorics)
+x$R
 cor(mtcars[, c("hp", "mpg", "am", "vs")])
 
 }

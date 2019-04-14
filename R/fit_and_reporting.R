@@ -2137,6 +2137,9 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)
 #' @param splines Whether to allow lines to curve (deafults to true = some models look better if forced FALSE)
+#' @param min optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.
+#' @param same optional list of objects to group at the same rank in the plot. Default (NULL) chooses automatically.
+#' @param max optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.
 #' @param ... Optional parameters
 #' @export
 #' @seealso - \code{\link{umx_set_plot_format}}, \code{\link{plot.MxModel}}, \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}}, \code{\link{umxPlotIP}}, \code{\link{umxPlotGxE}}
@@ -2155,7 +2158,24 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' )
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
-plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE...) {
+#' 
+# ============================================================
+# = With a growth model, demonstrate splines= false to force =
+# = straight lines, and move "rank" of intercept object      =
+# ============================================================
+#' 
+#' m1 = umxRAM("grow", data = myGrowthMixtureData,
+#'		umxPath(var = manifests, free = TRUE), 
+#'		umxPath(means = manifests, fixedAt = 0), 
+#'		umxPath(v.m. = c("intercept","slope")),
+#'		umxPath("intercept", with = "slope"),
+#'		umxPath("intercept", to = manifests, fixedAt = 1), 
+#'		umxPath("slope", to = manifests, arrows = 1, fixedAt = c(0, 1, 2, 3, 4))
+#' )
+#'
+#' plot(m1, means=FALSE, std=T, strip=T, splines="FALSE", max="intercept")
+#'
+plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
 	# ==========
 	# = Setup  =
 	# ==========
@@ -2258,13 +2278,12 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 	# ======================
 	# {rank=same; x1 x2 x3 x4 x5 };
 	# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
-	# TODO plot.MxModel use `umx_dot_rank`
-	rankVariables = paste0("\t{rank=min ; ", paste(latents, collapse = "; "), "};\n")
-	rankVariables = paste0(rankVariables, "\t{rank=same; ", paste(selDVs, collapse = " "), "};\n")
 	if(umx_has_means(model)){ append(varianceNames, "one")}
-	if(length(varianceNames) > 0){
-		rankVariables = paste0(rankVariables, "\t{rank=max ; ", paste(varianceNames, collapse = " "), "};\n")
-	}
+
+	# min = latents; same = selDVs; max = varianceNames
+	x = xmu_dot_move_ranks(max = max, min = min, same=same, old_min = latents, old_same = selDVs, old_max = varianceNames)
+	rankVariables = xmu_dot_rank_str(min = x$min, same = x$same, max = x$max)
+
 	# ===================================
 	# = Assemble full text to write out =
 	# ===================================

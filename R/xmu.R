@@ -1330,6 +1330,66 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 	}
 }
 
+
+#' xmu_dot_move_ranks (not for end users)
+#'
+#'
+#' @param min vars to group at top of plot
+#' @param same vars to group at the same level
+#' @param max vars to group at bottom of plot
+#' @param old_min vars to group at top of plot
+#' @param old_same vars to group at the same level
+#' @param old_max vars to group at bottom of plot
+#' @return - list(min=min, same=same, max=max)
+#' @export
+#' @family xmu internal not for end user
+#' @family Graphviz
+#' # add L1 to min
+#' xmu_dot_move_ranks(min = "L1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))
+#' # move min1 to max
+#' xmu_dot_move_ranks(max = "min1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))
+xmu_dot_move_ranks <- function(min = NULL, same = NULL, max = NULL, old_min, old_same, old_max) {
+	# Remove items in user's "max" from other lists...
+	old_min  = setdiff(old_min,  max)
+	old_max  = setdiff(old_max,  max)
+	old_same = setdiff(old_same, max)
+	# Remove items in user's "max" from other lists...
+	old_min  = setdiff(old_min,  min)
+	old_max  = setdiff(old_max,  min)
+	old_same = setdiff(old_same, min)
+
+	old_min  = setdiff(old_min,  same)
+	old_max  = setdiff(old_max,  same)
+	old_same = setdiff(old_same, same)
+
+	# Append user to existing
+	max  = c(old_max, max)
+	min  = c(old_min, min)
+	same = c(old_same, same)
+	return(list(min=min, same=same, max=max))
+}
+
+#' xmu_dot_rank_str (not for end users)
+#'
+#'
+#' @param min vars to group at top of plot
+#' @param same vars to group at the same level
+#' @param max vars to group at bottom of plot
+#' @return - GraphViz rank string
+#' @export
+#' @family xmu internal not for end user
+#' @family Graphviz
+#' xmu_dot_rank_str(min = "L1", same = c("x1", "x2"), max = paste0("e", 1:3))
+xmu_dot_rank_str <- function(min = NULL, same = NULL, max = NULL) {
+	rankVariables = paste0("\t{rank=min; ", paste(min, collapse = "; "), "};\n")
+	rankVariables = paste0(rankVariables, "\t{rank=same; ", paste(same, collapse = " "), "};\n")
+	if(length(max) > 0){
+		rankVariables = paste0(rankVariables, "\t{rank=max; ", paste(max, collapse = " "), "};\n")
+	}
+	return(rankVariables)
+}
+
+
 #' xmu_dot_make_residuals (not for end users)
 #'
 #'

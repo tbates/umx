@@ -9,7 +9,8 @@
 \method{plot}{MxModel}(x = NA, std = FALSE, fixed = TRUE,
   means = TRUE, digits = 2, file = "name", pathLabels = c("none",
   "labels", "both"), resid = c("circle", "line", "none"),
-  strip_zero = FALSE, splines = TRUE...)
+  strip_zero = FALSE, splines = TRUE, min = NULL, same = NULL,
+  max = NULL, ...)
 }
 \arguments{
 \item{x}{An \code{\link{mxModel}} from which to make a path diagram}
@@ -31,6 +32,12 @@
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)}
 
 \item{splines}{Whether to allow lines to curve (deafults to true = some models look better if forced FALSE)}
+
+\item{min}{optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.}
+
+\item{same}{optional list of objects to group at the same rank in the plot. Default (NULL) chooses automatically.}
+
+\item{max}{optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.}
 
 \item{...}{Optional parameters}
 }
