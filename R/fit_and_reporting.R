@@ -2173,7 +2173,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #'		umxPath("slope", to = manifests, arrows = 1, fixedAt = c(0, 1, 2, 3, 4))
 #' )
 #'
-#' plot(m1, means=FALSE, std=T, strip=T, splines="FALSE", max="intercept")
+#' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 #'
 plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
 	# ==========
@@ -3419,8 +3419,8 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 	return(expCov) 
 }
 
-#' @export
-vcov.MxModel <- umxExpCov
+# #' @export
+# vcov.MxModel <- umxExpCov
 
 
 #' Extract the expected means matrix from an \code{\link{mxModel}}
