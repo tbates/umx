@@ -1,5 +1,13 @@
 # umx
-![alt text](https://zenodo.org/badge/5184/tbates/umx.svg)
+
+[![Build Status](https://travis-ci.org/tbates/umx.svg?branch=master)](https://travis-ci.org/tbates/umx)
+[![cran version](http://www.r-pkg.org/badges/version/umx)](https://cran.r-project.org/package=umx)
+[![Monthly Downloads](http://cranlogs.r-pkg.org/badges/umx)](http://cranlogs.r-pkg.org/badges/umx)
+[![Total Downloads](http://cranlogs.r-pkg.org/badges/grand-total/umx)](http://cranlogs.r-pkg.org/badges/grand-total/umx)
+[![Rdoc](http://www.rdocumentation.org/badges/version/umx)](http://www.rdocumentation.org/packages/umx)
+[![DOI](https://img.shields.io/badge/doi-10.1017/thg.2019.2-yellow.svg?style=flat)](https://doi.org/10.1017/thg.2019.2)
+
+![](https://zenodo.org/badge/5184/tbates/umx.svg)
 
 [![CRAN status](http://www.r-pkg.org/badges/version/umx)](https://cran.r-project.org/package=umx)
 
