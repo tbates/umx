@@ -1,4 +1,1 @@
 language: r
-r:
-  - release
-  - devel
