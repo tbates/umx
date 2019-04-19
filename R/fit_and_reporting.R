@@ -1973,6 +1973,10 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' @param digits rounding precision
 #' @return - expected covariance matrix
 #' @export
+#' @references - \url{https://openmx.ssri.psu.edu/thread/2598}
+#' Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
+#' @seealso - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
+#' @family Reporting functions
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -1987,10 +1991,6 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #'
 #' umxCI_boot(m1, type = "par.expected")
 #'}
-#' @references - \url{https://openmx.ssri.psu.edu/thread/2598}
-#' Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
-#' @seealso - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
-#' @family Reporting functions
 umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95, dat = FALSE, digits = 3) {
 	# depends on MASS::mvrnorm
 	type = match.arg(type, c("par.expected", "par.observed", "empirical"))
@@ -3487,7 +3487,6 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' @return - RMSEA object containing value (and perhaps a CI)
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
 RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 
 #' RMSEA function for MxModels
@@ -3502,7 +3501,8 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' @rdname RMSEA.MxModel
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
+#' @references - \url{https://github.com/tbates/umx},
+#' \url{https://github.com/simsem/semTools/wiki/Functions}
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)

@@ -7,17 +7,21 @@
 umx_make_sql_from_excel(theFile = "Finder")
 }
 \arguments{
-\item{theFile}{The xlsx file to read. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose file dialog will be thrown.}
+\item{theFile}{The xlsx file to read. Default = "Finder")}
 }
 \value{
 -
 }
 \description{
 Unlikely to be of use to anyone but the package author :-)
-Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
-On MacOS, the function can access the current front-most Finder window.
 }
 \details{
+On OS X, the default (theFile= "Finder" will use the file selected in the front-most Finder window.
+If it is blank, a choose file dialog will be thrown.
+
+Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
+On MacOS, the function can access the current front-most Finder window.
+
 The file name should be the name of the test.
 Columns should be headed:
 itemText	direction	scale	type	[optional	response	options]

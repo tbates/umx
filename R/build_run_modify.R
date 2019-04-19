@@ -469,14 +469,15 @@ umxModel <- function(...) {
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' parameters(m1)
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, suffix = "", showEstimates = c("none", "raw", "std", "both", "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE) {
-	
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 
-	tryHard = match.arg(tryHard)
+	umx_check(!is.null(data), "stop", "In umxRAM, you must set 'data = '. If you're building a model with no data, use mxModel")
+
 	type = match.arg(type)
-	allContinuousMethod = match.arg(allContinuousMethod)
+	tryHard = match.arg(tryHard)
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
+	allContinuousMethod = match.arg(allContinuousMethod)
 
 	# =================
 	# = Set optimizer =

@@ -35,7 +35,8 @@ m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numOb
 RMSEA(m1)
 }
 \references{
-- \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
+- \url{https://github.com/tbates/umx},
+\url{https://github.com/simsem/semTools/wiki/Functions}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.summary.mxmodel}},

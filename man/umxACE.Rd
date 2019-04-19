@@ -206,12 +206,14 @@ twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep 
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 
-# 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0 (prevents mirror-solutions).
-        # can remove this by setting boundDiag = NULL
+# 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0.
+#    Prevents mirror-solutions. If not desired: set boundDiag = NULL.
+
 m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
 
 # MODEL MODIFICATION
-# We can modify this model, say testing shared environment, and see a comparison:
+# We can modify this model, e.g. test shared environment. 
+# Set comparison to modify, and show effect in one step.
 
 m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
 # nb: You can see names of free parameters with parameters(m2)
@@ -241,15 +243,15 @@ umxSummary(m1)
 # ===================
 require(umx)
 data(twinData)
-twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
+twinData= umx_scale_wide_twin_data(data=twinData,varsToScale=c("wt"),sep="")
 # Cut BMI column to form ordinal obesity variables
-obesityLevels = c('normal', 'overweight', 'obese')
-cutPoints <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-twinData$obese1 <- cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obese2 <- cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-# Make the ordinal variables into umxFactors (ensure ordered is TRUE, and require levels)
+obLevels = c('normal', 'overweight', 'obese')
+cuts <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+twinData$obese1=cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels)
+twinData$obese2=cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels)
+# Make the ordinal variables into umxFactors
 ordDVs = c("obese1", "obese2")
-twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obesityLevels)
+twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obLevels)
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 mzData = mzData[1:80, ] # Just top 80 pairs to run fast
@@ -265,33 +267,33 @@ umxSummary(m1)
 # = Bivariate continuous and ordinal example =
 # ============================================
 data(twinData)
-twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
+twinData=umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
 # Cut BMI column to form ordinal obesity variables
-obesityLevels   = c('normal', 'overweight', 'obese')
-cutPoints       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-# Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
+obLevels   = c('normal', 'overweight', 'obese')
+cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+twinData$obese1=cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+# Make the ordinal variables into mxFactors
 ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\% "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
 mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData <- dzData[1:80,]
-m1 = umxACE(selDVs = c("wt", "obese"), dzData = dzData, mzData = mzData, sep = '')
+m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
 
 # =======================================
 # = Mixed continuous and binary example =
 # =======================================
 require(umx)
 data(twinData)
-twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
+twinData= umx_scale_wide_twin_data(data= twinData,varsToScale= "wt", sep="")
 # Cut to form category of 20\% obese subjects
 # and make into mxFactors (ensure ordered is TRUE, and require levels)
-obesityLevels   = c('normal', 'obese')
-cutPoints       = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
-twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
-twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+obLevels   = c('normal', 'obese')
+cuts       = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+twinData$obese1= cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels) 
+twinData$obese2= cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels) 
 ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 
@@ -309,11 +311,11 @@ umxSummary(m1)
 
 require(umx)
 data(twinData)
-twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
+twinData= umx_scale_wide_twin_data(data=twinData, varsToScale= "wt", sep="")
 selDVs = c("wt1", "wt2")
 mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", selDVs], use = "complete")
 dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", selDVs], use = "complete")
-m1 = umxACE(selDVs = selDVs, dzData = dz, mzData = mz, numObsDZ=569, numObsMZ=351)
+m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=569, numObsMZ=351)
 umxSummary(m1)
 plot(m1)
 }

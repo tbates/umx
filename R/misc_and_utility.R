@@ -2067,6 +2067,10 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' Convert an excel spreadsheet in a text file on sql statements.
 #'
 #' Unlikely to be of use to anyone but the package author :-)
+#' 
+#' On OS X, the default (theFile= "Finder" will use the file selected in the front-most Finder window.
+#' If it is blank, a choose file dialog will be thrown.
+#' 
 #' Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
 #' On MacOS, the function can access the current front-most Finder window.
 #' 
@@ -2087,7 +2091,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' 
 #' intro (not) scored, and sequenced as item 0
 #'
-#' @param theFile The xlsx file to read. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose file dialog will be thrown.
+#' @param theFile The xlsx file to read. Default = "Finder")
 #' @family File Functions
 #' @return - 
 #' @export
@@ -4725,7 +4729,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' # ========================================================================
 #' # = Using the custom collapse option to quote each item, and wrap in c() =
 #' # ========================================================================
-#' namez(mtcars, "m", collapse = "as.vector") # Paste-able R-code for a vector
+#' namez(mtcars, "m", collapse = "vector") # Paste-able R-code for a vector
 #' 
 #' # Other options passed to R's grep command
 #' umx_names(mtcars, "mpg" , invert = TRUE)  # Non-matches (instead of matches)

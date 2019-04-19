@@ -21,9 +21,6 @@ RMSEA(x, ci.lower, ci.upper, digits)
 \description{
 See \code{\link[umx]{RMSEA.MxModel}} to access the RMSEA of MxModels
 }
-\references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
-}
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}},

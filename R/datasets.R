@@ -79,8 +79,8 @@
 #' Ladder from best- to worst-possible life (Cantril, 1965).
 #' 
 #' \describe{
-#'   \item{zyg_6grp}{Six-level measure of zygosity: 'MZMM', 'DZMM', 'MZFF', 'DZFF', 'DZMF', 'DZFM'}
-#'   \item{zyg_2grp}{Two-level measure of zygosity: 'MZ', 'DZ'}
+#'   \item{zyg_6grp}{Six-level zygosity: MZMM, DZMM, MZFF, DZFF, DZMF, DZFM}
+#'   \item{zyg_2grp}{Two-level zygosity measure: 'MZ', 'DZ'}
 #'   \item{divorce}{Parental divorce status: 0 = No, 1 = Yes}
 #'   \item{sex_T1}{Sex of twin 1: 0 = "male", 1 = "female"}
 #'   \item{age_T1}{Age of twin 1 (years)}

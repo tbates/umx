@@ -70,7 +70,7 @@ umx_names(mtcars, "mpg", replacement = "hello") # "mpg" replaced with "hello"
 # ========================================================================
 # = Using the custom collapse option to quote each item, and wrap in c() =
 # ========================================================================
-namez(mtcars, "m", collapse = "as.vector") # Paste-able R-code for a vector
+namez(mtcars, "m", collapse = "vector") # Paste-able R-code for a vector
 
 # Other options passed to R's grep command
 umx_names(mtcars, "mpg" , invert = TRUE)  # Non-matches (instead of matches)
