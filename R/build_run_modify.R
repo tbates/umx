@@ -726,11 +726,13 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' summary(m3)
 #' 
 umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
-	dot.items = list(...) # grab all the dot items: models...	
 	tryHard = match.arg(tryHard)
 	umx_check(boolean.test= is.character(name), action="stop", message="You need to set the name for the supermodel with: name = 'modelName' ")
-	nModels = length(dot.items)
-	# get list of model names
+	dot.items = list(...) # grab all the dot items: models...	
+   dot.items = unlist(dot.items)
+	nModels   = length(dot.items)
+	
+	# Get list of model names
 	modelNames = c()
 	for(modelIndex in 1:nModels) {
 		thisModel = dot.items[[modelIndex]]
