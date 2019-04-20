@@ -1307,8 +1307,8 @@ umxFactor <- function(x = character(), levels= NULL, labels = levels, exclude = 
 				allLevels = unique(as.vector(as.matrix(a)))
 				allLevels = sort(allLevels)
 				allLevels = allLevels[!is.na(allLevels)] # drop NA if present
-				# z = umxFactor(x = x[,theseNames], levels = allLevels, ordered = T, verbose = T, collapse=FALSE)
-				# z = umxFactor(x = x[,theseNames], levels = allLevels, labels = allLevels, ordered = T, verbose = T)
+				# z = umxFactor(x = x[,theseNames], levels = allLevels, ordered = TRUE, verbose = TRUE, collapse=FALSE)
+				# z = umxFactor(x = x[,theseNames], levels = allLevels, labels = allLevels, ordered = TRUE, verbose = TRUE)
 				x[, theseNames] = umxFactor(x = x[, theseNames, drop = FALSE], levels = allLevels, labels = allLevels, exclude = exclude, collapse = collapse, ordered = ordered, verbose = verbose)
 			}
 		} else {
@@ -3781,7 +3781,7 @@ umx_is_MxMatrix <- function(obj) {
 #' @param data dataframe to test
 #' @param boolean whether to return the type ("cov") or a boolean (default = string)
 #' @param verbose How much feedback to give (default = FALSE)
-#' @return - "raw", "cor", or "cov", or, if boolean= T, then T | F
+#' @return - "raw", "cor", or "cov", (or if boolean, then T | F)
 #' @export
 #' @family Test
 #' @references - \url{https://www.github.com/tbates/umx}
@@ -5296,11 +5296,11 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		if(is.null(DZr)){
 			stop("Both MZr and DZr must be set if you want to generate data matching MZ and DZ correlations.")
 		}
-		mzCov = matrix(nrow = 2, byrow = T, c(
+		mzCov = matrix(nrow = 2, byrow = TRUE, c(
 			1, MZr,
 			MZr, 1)
 		);
-		dzCov = matrix(nrow = 2, byrow = T, c(
+		dzCov = matrix(nrow = 2, byrow = TRUE, c(
 			1, DZr,
 			DZr, 1)
 		);
@@ -5344,11 +5344,11 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		AC  =  AA + CC
 		hAC = (.5 * AA) + CC
 		ACE = AC + EE
-		mzCov = matrix(nrow = 2, byrow = T, c(
+		mzCov = matrix(nrow = 2, byrow = TRUE, c(
 			ACE, AC,
 			AC, ACE)
 		);
-		dzCov = matrix(nrow = 2, byrow = T, c(
+		dzCov = matrix(nrow = 2, byrow = TRUE, c(
 			ACE, hAC,
 			hAC, ACE)
 		);
@@ -5492,7 +5492,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			# EE = 0.1
 			AC  = AA + CC
 			ACE = AA + CC + EE
-			mzCov = matrix(nrow = 2, byrow = T, c(
+			mzCov = matrix(nrow = 2, byrow = TRUE, c(
 				ACE, AC,
 				AC , ACE)
 			);
@@ -5513,7 +5513,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			AA = max(0, (avgA + (thisSES * SES_2_A_beta)))
 			hAC = (.5 * AA) + CC
 			ACE = AA + CC + EE
-			dzCov = matrix(nrow = 2, byrow = T, c(
+			dzCov = matrix(nrow = 2, byrow = TRUE, c(
 				ACE, hAC,
 				hAC, ACE)
 			);

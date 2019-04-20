@@ -15,7 +15,7 @@
 
 # How I coded this data from the Boulder example
 #
-# GFF = read.table("~/bin/umx/data/DHBQ_bs.dat", header = T, sep = "\t", as.is = c(T), na.strings = -999)
+# GFF = read.table("~/bin/umx/data/DHBQ_bs.dat", header = TRUE, sep = "\t", as.is = c(T), na.strings = -999)
 # x   = umx_rename(GFF, old = "zyg2"     , replace = "zyg_2grp"); names(x)
 # x   = umx_rename(x  , old = "zyg"      , replace = "zyg_6grp"); names(x)
 # x   = umx_rename(x , grep = "([12bs])$", replace = "_T\\1")   ; names(x)

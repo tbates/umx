@@ -1063,7 +1063,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			# TODO:	umxGxE: Add covariates
 			# if(0){
 				# TODO: umxGxE If there are covs
-				# mxMatrix(name = "betas" , "Full", nrow = nCov, ncol = nVar, free = T, values = 0.05, labels = paste0("beta_", covariates))
+				# mxMatrix(name = "betas" , "Full", nrow = nCov, ncol = nVar, free = TRUE, values = 0.05, labels = paste0("beta_", covariates))
 			# }
 		),
 		mxModel("MZ",

@@ -14,7 +14,7 @@ umx_is_cov(data = NULL, boolean = FALSE, verbose = FALSE)
 \item{verbose}{How much feedback to give (default = FALSE)}
 }
 \value{
-- "raw", "cor", or "cov", or, if boolean= T, then T | F
+- "raw", "cor", or "cov", (or if boolean, then T | F)
 }
 \description{
 test if a data frame or matrix is cov or cor data, or is likely to be raw...
