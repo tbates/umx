@@ -29,10 +29,6 @@ x = umx_polychoric(tmp[, c("am", "vs")], tryHard = "yes")
 x$polychorics
 cor(mtcars[, c("am", "vs")])
 
-x = umx_polychoric(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
-x$polychorics
-cov2cor(x$polychorics)
-cor(mtcars[, c("hp", "mpg", "am", "vs")])
 }
 \references{
 - \url{https://doi.org/10.3389/fpsyg.2016.00528}

@@ -26,17 +26,14 @@ umx_polypairwise(data, useDeviations = TRUE, printFit = FALSE,
 Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx
 }
 \examples{
+umx_set_optimizer("SLSQP")
 tmp = mtcars
 tmp$am = umxFactor(mtcars$am)
 tmp$vs = umxFactor(mtcars$vs)
 tmp = umx_scale(tmp)
-x = umx_polychoric(tmp[, c("am", "vs")], tryHard = "yes")
-x$polychorics
-cor(mtcars[, c("am", "vs")])
-
 x = umx_polypairwise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
-x$polychorics
-cov2cor(x$polychorics)
+x$R
+cov2cor(x$R)
 cor(mtcars[, c("hp", "mpg", "am", "vs")])
 }
 \references{

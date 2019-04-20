@@ -17,11 +17,7 @@
 #' x = umx_polychoric(tmp[, c("am", "vs")], tryHard = "yes")
 #' x$polychorics
 #' cor(mtcars[, c("am", "vs")])
-#'
-#' x = umx_polychoric(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
-#' x$polychorics
-#' cov2cor(x$polychorics)
-#' cor(mtcars[, c("hp", "mpg", "am", "vs")])
+#' 
 umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
 	tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){
@@ -130,7 +126,7 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 	# Define the model
 	model = mxModel('model',
 		mxMatrix("Stand", name = "R", nrow = nVar, ncol = nVar, free=TRUE, labels=correlationLabels, lbound=-.999999999, ubound=.999999999, dimnames=list(nameList, nameList)),
-		mxMatrix("Full", name = "M", nrow = 1, ncol = nVar, free=!isOrd, dimnames = list('Mean', nameList)),
+		mxMatrix("Full" , name = "M", nrow = 1, ncol = nVar, free=!isOrd, dimnames = list('Mean', nameList)),
 		mxMatrix("Diag", name = "StdDev", nrow = nVar, ncol = nVar, free=!isOrd, values=1, lbound=.01, dimnames=list(nameList, nameList))
 	)	
 	model$expCov = mxAlgebra(StdDev %&% R, dimnames=list(nameList,nameList))
@@ -153,16 +149,16 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 
 	# Define the objective function
 	if (nOrdinal > 0){
-	    expectation = mxExpectationNormal(covariance="expCov", means="M", thresholds="thresholds", threshnames=ordnameList)
+	    expectation = mxExpectationNormal(covariance= "expCov", means="M", thresholds="thresholds", threshnames=ordnameList)
 	}else{
-	    expectation = mxExpectationNormal(covariance="expCov", means="M")
+	    expectation = mxExpectationNormal(covariance= "expCov", means="M")
 	}
 
 	# Add the expectation function and the data to the model
 	model = mxModel(model, 
 		expectation, 
 		mxFitFunctionML(), 
-		mxData(data, type='raw')
+		mxData(data, type= "raw")
 	)
 
 	# Run the job
@@ -220,17 +216,14 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 #' @family Data Functions
 #' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
 #' @examples
+#' umx_set_optimizer("SLSQP")
 #' tmp = mtcars
 #' tmp$am = umxFactor(mtcars$am)
 #' tmp$vs = umxFactor(mtcars$vs)
 #' tmp = umx_scale(tmp)
-#' x = umx_polychoric(tmp[, c("am", "vs")], tryHard = "yes")
-#' x$polychorics
-#' cor(mtcars[, c("am", "vs")])
-#'
 #' x = umx_polypairwise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
-#' x$polychorics
-#' cov2cor(x$polychorics)
+#' x$R
+#' cov2cor(x$R)
 #' cor(mtcars[, c("hp", "mpg", "am", "vs")])
 umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "any", tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
 	tryHard = match.arg(tryHard)
