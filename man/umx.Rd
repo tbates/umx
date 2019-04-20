@@ -115,7 +115,8 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotSimplex}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
-  \code{\link{umxLav2RAM}}, \code{\link{umxTwoStage}}
+  \code{\link{umxLav2RAM}}, \code{\link{umxRAM2}},
+  \code{\link{umxTwoStage}}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEold}},
@@ -249,6 +250,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuPropagateLabels}},
   \code{\link{xmu_assemble_twin_supermodel}},
   \code{\link{xmu_check_levels_identical}},
+  \code{\link{xmu_clean_label}},
   \code{\link{xmu_dot_make_paths}},
   \code{\link{xmu_dot_make_residuals}},
   \code{\link{xmu_dot_maker}},

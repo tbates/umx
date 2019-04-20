@@ -4,7 +4,7 @@
 \alias{umxRAM2}
 \title{RAM that can detect lavaan string input}
 \usage{
-umxRAM2(model, lavaan = "sem", printTab = FALSE)
+umxRAM2(model, data = NULL, lavaan = "sem", printTab = FALSE)
 }
 \arguments{
 \item{model}{a lavaan string}
@@ -24,4 +24,9 @@ umxRAM2("y~x")
 }
 \seealso{
 - \code{\link{umxLav2RAM}}
+
+Other Super-easy helpers: \code{\link{umxEFA}},
+  \code{\link{umxLav2RAM}}, \code{\link{umxTwoStage}},
+  \code{\link{umx}}
 }
+\concept{Super-easy helpers}

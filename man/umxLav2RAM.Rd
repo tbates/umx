@@ -51,23 +51,18 @@ m1 = umxLav2RAM("y ~ x")
 lav = "y ~ x1 + 2.4*x2 + x3"
 tmp = umxLav2RAM(lav, data = "auto", printTab= FALSE)
 
-# TODO: lav = "x1 ~ x3.loading*x3"
+# labelled parameter "x3.loading"
 
-lav = "x1 ~ x3_loading*x3"
-tmp = umxLav2RAM(lav)
+tmp = umxLav2RAM("x1 ~ x3_loading*x3")
+
+# start values
 tmp = umxLav2RAM("y ~ x1 + 2.4*x2; s =~ 0*y11 + 1*y12 + 2*y13 + 3*y14")
 
-m1 = umxRAM(HS.model, data =HolzingerSwineford1939)
+# m1 = umxRAM(HS.model, data =HolzingerSwineford1939)
 
 tmp = umxLav2RAM("L =~ X1 + X2; L ~ Y")
 
-m1 = umxRAM("tim", tmp, data = c("X1", "X2", "Y"))
-
 # more complex:
-
-tab = lavaanify("
-	L =~ X1 + X2
-	L ~ Y")
 
 lav = " # Model 14 PROCESS Hayes - moderated mediation
 gnt ~ a*cb
@@ -81,10 +76,10 @@ loCN := a * b1 + ab3 * -0.5
 hiCN := a * b1 + ab3 * 0.5
 "
 tmp = umxLav2RAM(lav)
-
+plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min="INT")
 
 m1 = sem("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor); summary(m1)
-m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2")
+m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
 
 lav = ' # model with labeled parameters
 y ~ b1*x1 + b2*x2 + b3*x3
@@ -100,6 +95,7 @@ tmp = umxLav2RAM(lav)
 }
 
 Other Super-easy helpers: \code{\link{umxEFA}},
-  \code{\link{umxTwoStage}}, \code{\link{umx}}
+  \code{\link{umxRAM2}}, \code{\link{umxTwoStage}},
+  \code{\link{umx}}
 }
 \concept{Super-easy helpers}

@@ -1229,6 +1229,29 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 # = RAM helpers =
 # ===============
 
+#' Remove illegal characters from labels
+#'
+#' @description
+#' Replaces . with _ in labels - e.g. from lavaan where . is common.
+#'
+#' @param label A label to clean.
+#' @param replace character to replace . with (default = _)
+#' @return - legal label string
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - \code{\link{umxLabel}}
+#' @examples
+#' xmu_clean_label("data.var", replace = "_")
+#' xmu_clean_label("my.var.lab", replace = "_")
+xmu_clean_label <- function(label, replace = "_") {
+	if(length(namez(label, patt= "^data\\.")) > 0){
+		return(label) # defn var
+	} else {
+		return(namez(label, patt="\\.", rep = replace, global=TRUE))
+	}
+}
+
+
 #' xmuMakeTwoHeadedPathsFromPathList
 #'
 #' Make two-headed paths
