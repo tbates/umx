@@ -5,7 +5,7 @@
 \title{Show matrices of RAM models in a easy-to-learn-from format.}
 \usage{
 tmx_show(model, what = c("values", "free", "labels", "nonzero_or_free"),
-  show = c("all", "free", "fixed"), matrices = c("S", "A"),
+  show = c("free", "fixed", "all"), matrices = c("S", "A", "M"),
   digits = 2, report = c("markdown", "inline", "html", "report"),
   na.print = "", zero.print = ".")
 }

@@ -77,14 +77,21 @@
 # Used in umxWeightedAIC
 #' @importFrom MuMIn Weights
 
+# Used in xmu_lavaan_process_group
+#' @importFrom constraintOps handledOps
+
+# Used in xmu_lavaan_process_group
+#' @importFrom lavaan lavaanify
+
+
+# Not used?
+#' # @importFrom numDeriv jacobian
+#' # @importFrom sfsmisc nearcor
+
 # Used in umx_make
 # #' @importFrom spelling spell_check_package
 
-# not used?
-#' @importFrom numDeriv jacobian
-#' @importFrom sfsmisc nearcor
-
-# old
+# Old
 # #' @importFrom Hmisc escapeRegex
 # #' @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
@@ -206,7 +213,11 @@ utils::globalVariables(c(
 	"SigmaA"   , "SigmaC"     , "SigmaE", 
 	"SigmaPh11", "SigmaPh21dz", "SigmaPh21mz",
 	# Used in poly funs
-	"minus2SatLogLik", "nCells", "diffchi"
+	"minus2SatLogLik", "nCells", "diffchi",
+	 
+	# Used in xmu_lavaan_process_group
+	"constraintOps", "handledOps"
+
 	 )
 )
 

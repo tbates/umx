@@ -3039,8 +3039,7 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' tmx_show(m1, what = "free")
 #' tmx_show(m1, what = "labels")
 #' tmx_show(m1, what = "free", matrices = "A")
-tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("all", "free", "fixed"), matrices = c("S", "A"), digits = 2, report = c("markdown", "inline", "html", "report"), na.print = "", zero.print = ".") {
-
+tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("markdown", "inline", "html", "report"), na.print = "", zero.print = ".") {
 	if(!umx_is_RAM(model)){
 		stop("I can only show the components of RAM models: You gave me an ", class(model)[[1]])
 	}
@@ -3083,11 +3082,12 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	} else {
 		for (w in matrices) {
 			if(report == "html"){ file = paste0(what, w, ".html") } else { file = NA}
-			message("\n", what, " for ", w, " matrix (0 and FALSE shown as '.'):", appendLF=FALSE)
 			if(what == "values"){
 				tmp = data.frame(model$matrices[[w]]$values)
+				message("\n", "Values of ", w, " matrix (0 shown as .):", appendLF = FALSE)
 			}else if(what == "free"){
 				tmp = model$matrices[[w]]$free
+				message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
 			}else if(what == "labels"){
 				x = model$matrices[[w]]$labels
 				if(show=="free"){
@@ -3096,12 +3096,14 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 					x[model$matrices[[w]]$free==TRUE] = ""
 				}
 				tmp = x
+				message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
 			}else if(what == "nonzero_or_free"){
-				message("99 means the fixed at a non-zero value")
+				message("99 means parameter is fixed at a non-zero value")
 				values = model$matrices[[w]]$values
 				Free   = model$matrices[[w]]$free
 				values[!Free & values !=0] = 99
 				tmp = data.frame(values)
+				message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
 			}
 			umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= file)
 		}
