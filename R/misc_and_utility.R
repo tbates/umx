@@ -3083,7 +3083,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	} else {
 		for (w in matrices) {
 			if(report == "html"){ file = paste0(what, w, ".html") } else { file = NA}
-			message("Showing ", what, " for:", w, " matrix (0 and FALSE shown as '.'):")
+			message("\n", what, " for ", w, " matrix (0 and FALSE shown as '.'):", appendLF=FALSE)
 			if(what == "values"){
 				tmp = data.frame(model$matrices[[w]]$values)
 			}else if(what == "free"){
@@ -3097,7 +3097,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 				}
 				tmp = x
 			}else if(what == "nonzero_or_free"){
-				message("99 means the value is fixed, but is non-zero")
+				message("99 means the fixed at a non-zero value")
 				values = model$matrices[[w]]$values
 				Free   = model$matrices[[w]]$free
 				values[!Free & values !=0] = 99

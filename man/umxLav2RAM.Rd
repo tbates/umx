@@ -51,14 +51,18 @@ m1 = umxLav2RAM("y ~ x")
 lav = "y ~ x1 + 2.4*x2 + x3"
 tmp = umxLav2RAM(lav, data = "auto", printTab= FALSE)
 
-# labelled parameter "x3.loading"
-
+# Add labels to parameters, e.g. "x3_loading" as a loading for x3->x1
 tmp = umxLav2RAM("x1 ~ x3_loading*x3")
 
-# start values
+# Fix values, e.g. x2 -> y fixed at 2.4
 tmp = umxLav2RAM("y ~ x1 + 2.4*x2; s =~ 0*y11 + 1*y12 + 2*y13 + 3*y14")
 
-# m1 = umxRAM(HS.model, data =HolzingerSwineford1939)
+# Factor model showing auto-addition of correlations among exogenous latents
+# and auto-residuals on manifests
+HS.model = "visual  =~ x1 + x2 + x3
+            textual =~ x4 + x5 + x6
+            speed   =~ x7 + x8 + x9"
+m1 = umxRAM2(HS.model, data =HolzingerSwineford1939)
 
 tmp = umxLav2RAM("L =~ X1 + X2; L ~ Y")
 
@@ -75,9 +79,11 @@ ab3 := a * b3
 loCN := a * b1 + ab3 * -0.5
 hiCN := a * b1 + ab3 * 0.5
 "
-tmp = umxLav2RAM(lav)
+tmp = umxRAM2(lav)
+# plot showing ability to influence layout with max min same groupings
 plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min="INT")
 
+# Algebra: e.g. b1^2
 m1 = sem("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor); summary(m1)
 m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
 
