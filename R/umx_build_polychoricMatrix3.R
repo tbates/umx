@@ -310,8 +310,8 @@ umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use 
 	pairErrors = matrix(0,ncor,1)
 	pairCount = 0
 	namelist = NULL
-	for (var1 in 1:(nVar2-1)) {
-		for (var2 in (var1+1):(nVar2)) {
+	for (var1 in 1:(nVar-1)) {
+		for (var2 in (var1+1):(nVar)) {
 			pairCount = pairCount + 1
 			cat(c("\n\n", pairCount, names(data)[var1], names(data)[var2]))
 			if (use == "complete.obs"){

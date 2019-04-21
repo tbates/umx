@@ -1244,10 +1244,10 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 #' xmu_clean_label("data.var", replace = "_")
 #' xmu_clean_label("my.var.lab", replace = "_")
 xmu_clean_label <- function(label, replace = "_") {
-	if(length(namez(label, patt= "^data\\.")) > 0){
+	if(length(namez(label, pattern = "^data\\.")) > 0){
 		return(label) # defn var
 	} else {
-		return(namez(label, patt="\\.", rep = replace, global=TRUE))
+		return(namez(label, pattern = "\\.", replacement = replace, global = TRUE))
 	}
 }
 

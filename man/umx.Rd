@@ -115,7 +115,6 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotSimplex}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
-  \code{\link{umxLav2RAM}}, \code{\link{umxRAM2}},
   \code{\link{umxTwoStage}}
 
 Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},

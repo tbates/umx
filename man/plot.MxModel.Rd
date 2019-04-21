@@ -25,13 +25,13 @@
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
-\item{pathLabels}{Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")}
+\item{pathLabels}{Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).}
 
 \item{resid}{How to show residuals and variances default is "circle". Options are "line" & "none"}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)}
 
-\item{splines}{Whether to allow lines to curve (deafults to true = some models look better if forced FALSE)}
+\item{splines}{Whether to allow lines to curve: defaults to TRUE (nb: some models look better with FALSE)}
 
 \item{min}{optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.}
 
