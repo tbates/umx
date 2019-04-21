@@ -23,6 +23,7 @@ RAM that can detect lavaan string input is a function which
 }
 \examples{
 umxRAM2("y~x") 
+umxRAM2("y is x") 
 
 }
 \seealso{

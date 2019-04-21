@@ -158,16 +158,19 @@ umxLav2RAM <- function(lav, data = "auto", lavaanMode = "sem", printTab = TRUE, 
 	}
 
 	if(nGroups > 1){
-		# We will have a super model, and the algebras will be added to that?
-		m1 = umxSuperModel("top", modelList)
+		# Build a super model containing the list of models (groups)
+		model = umxSuperModel("top", modelList)
+		# Add any algebras to the super?
+		tmp = xmu_lavaan_process_group(algebraRows, groupNum = 0)
+		model  = mxModel(model, tmp$plist)
 	} else {
 		# Just one model
-		m1 = modelList[[1]] # (should be just a model)
+		model = modelList[[1]] # (should be just a model)
 		# Add algebras	(if any)
 		tmp = xmu_lavaan_process_group(algebraRows, groupNum = 0)
-		m1  = mxModel(m1, tmp$plist)
+		model  = mxModel(model, tmp$plist)
 	}
-	return(m1)
+	return(model)
 }
 
 #' RAM that can detect lavaan string input
@@ -185,29 +188,29 @@ umxLav2RAM <- function(lav, data = "auto", lavaanMode = "sem", printTab = TRUE, 
 #' @seealso - \code{\link{umxLav2RAM}}
 #' @examples
 #' umxRAM2("y~x") 
+#' umxRAM2("y is x") 
 #'
 umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE){
-	if (is.character(model) && grep(model, pattern = "(~|=~|~~|:=)")){
+	if (is.character(model) && grepl(model, pattern = "(~|=~|~~|:=)")){
 		lavaanString = model
 		if(is.null(data)){
 			data = "auto"
 		}
-		model = umxLav2RAM(lav = lavaanString, data = data, lavaanMode = lavaan, printTab = printTab)
+		model = umxLav2RAM(lav = lavaanString, data = data, lavaanMode = lavaanMode, printTab = printTab)
 	}else{
 		message("woot: that doesn't look like a lavaan string to me:")
-		umx_print(model)
 	}
 	return(model)
 }
-
 
 
 # 
 #' lavaan parameter table rows to model
 #'
 #' @description
-#' Process a set of lavaan tables rows forming a group (Model)
-#'
+#' Process a set of lavaan tables rows forming a group (Model).
+#' Returns empty arrays if no rows matching the requested group are found.
+#' 
 #' @param tab a parameter table
 #' @param groupNum group number to filter table on
 #' @return - list(plist=plist, latents = latents, manifests = manifests)
@@ -215,13 +218,18 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE){
 #' @family xmu internal not for end user
 #' @seealso - \code{\link{umxLav2RAM}}
 #' @examples
-#' tab = lavaan:lavaanify("y~x")
+#' tab = lavaan::lavaanify("y~x")
 #' xmu_lavaan_process_group(tab, groupNum = 1)
+#' xmu_lavaan_process_group(tab, groupNum = 0)
 xmu_lavaan_process_group <- function(tab, groupNum){
 	constraintOps = c("==", "<", ">")
 	handledOps = c("~", "=~", "~~", ":=", constraintOps)
-	
+	# groupNum = 1
 	grpRows = tab[tab$group == groupNum, ]
+	# handle none exist
+	if(nrow(grpRows)==0){
+		return(list(plist= list(), latents = c(), manifests = c()))
+	}
 	latents = unique(grpRows$lhs[grpRows$op == "=~" | grpRows$op == "<~"])
 	all = unique(c(grpRows$lhs[! (grpRows$op %in% constraintOps)], grpRows$rhs[! (grpRows$op %in% constraintOps)]))
 	manifests = setdiff(all, latents)
@@ -235,9 +243,9 @@ xmu_lavaan_process_group <- function(tab, groupNum){
 		lhs   = thisRow$lhs
 		op    = thisRow$op
 		rhs   = thisRow$rhs
-		free  = thisRow$free>0 # just a list of numbers: same for equated; 0 for free, distinct for unique
-		value = thisRow$ustart
-		label = thisRow$label;
+		free  = thisRow$free > 0 # in lavaan, free is a list of numbers: same for equated; 0 for free, distinct for unique
+		value = thisRow$ustart # often NA
+		label = thisRow$label  # likely ""
 		label = xmu_clean_label(label, replace = "_")			
 		if(label == '') {label = NA}
 

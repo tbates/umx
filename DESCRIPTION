@@ -1,6 +1,6 @@
 Package: umx
 Version: 2.10.0
-Date: 2019-03-30
+Date: 2019-04-24
 Title: Structural Equation and Twin Modeling in R
 Authors@R: c(person("Timothy C", "Bates", role = c("aut", "cre"),
     email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")))
@@ -17,7 +17,8 @@ Depends:
 Imports:
     cowplot,
     DiagrammeR,
-    ggplot2,
+    lavaan,
+	ggplot2,
     knitr,
     MASS,
     Matrix,

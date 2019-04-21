@@ -15,11 +15,13 @@ xmu_lavaan_process_group(tab, groupNum)
 - list(plist=plist, latents = latents, manifests = manifests)
 }
 \description{
-Process a set of lavaan tables rows forming a group (Model)
+Process a set of lavaan tables rows forming a group (Model).
+Returns empty arrays if no rows matching the requested group are found.
 }
 \examples{
-tab = lavaan:lavaanify("y~x")
+tab = lavaan::lavaanify("y~x")
 xmu_lavaan_process_group(tab, groupNum = 1)
+xmu_lavaan_process_group(tab, groupNum = 0)
 }
 \seealso{
 - \code{\link{umxLav2RAM}}

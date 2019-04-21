@@ -77,9 +77,6 @@
 # Used in umxWeightedAIC
 #' @importFrom MuMIn Weights
 
-# Used in xmu_lavaan_process_group
-#' @importFrom lavaan lavaanify
-
 
 # Not used?
 # #'  @importFrom numDeriv jacobian
