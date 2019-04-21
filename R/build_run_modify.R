@@ -78,15 +78,12 @@
 #' @importFrom MuMIn Weights
 
 # Used in xmu_lavaan_process_group
-#' @importFrom constraintOps handledOps
-
-# Used in xmu_lavaan_process_group
 #' @importFrom lavaan lavaanify
 
 
 # Not used?
-#' # @importFrom numDeriv jacobian
-#' # @importFrom sfsmisc nearcor
+# #'  @importFrom numDeriv jacobian
+# #'  @importFrom sfsmisc nearcor
 
 # Used in umx_make
 # #' @importFrom spelling spell_check_package
