@@ -83,7 +83,7 @@
 #' 
 #' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 #'
-#' \code{m1$top$expMean$labels[1, 4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+#' \code{m1$top$expMean$labels[1, 4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 #'
 #' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
 #' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
@@ -98,7 +98,7 @@
 #' @param covMethod How to treat covariates: "fixed" (default) or "random".
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).

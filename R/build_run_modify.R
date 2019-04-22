@@ -335,7 +335,7 @@ umxModel <- function(...) {
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
 #' @param suffix String to append to each label (useful if model will be used in a multi-group model)
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
@@ -677,7 +677,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #' @param name The name for the container model (default = 'top')
 #' @param ...  Models forming the multiple groups contained in the supermodel.
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Core Modeling Functions
@@ -792,7 +792,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
 #' @param comparison Whether to run umxCompare() on the new and old models.
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param verbose How much feedback to give
 #' @return - \code{\link{mxModel}}
 #' @family Core Modeling Functions
@@ -949,7 +949,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @param lboundM   = numeric: If !is.na, then lbound the moderators at this value (default = NA)
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @return - GxE \code{\link{mxModel}}
 #' @export
@@ -1389,7 +1389,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @export
@@ -1752,9 +1752,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' The common factors themselves are in the matrix `top$cp_loadings` (an nVar * 1 matrix)
 #'	
 #' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
-#' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+#' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this line:
 #'
-#' `m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
+#' `m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' @param name The name of the model (defaults to "CP").
 #' @param selDVs The variables to include.
@@ -1769,7 +1769,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
@@ -2040,7 +2040,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 #' @param numObsDZ = TODO: implement ordinal Number of DZ twins: Set this if you input covariance data,
 #' @param numObsMZ = TODO: implement ordinal Number of MZ twins: Set this if you input covariance data.
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -2830,7 +2830,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @seealso \code{\link{umxModify}}, \code{\link{umxCompare}}

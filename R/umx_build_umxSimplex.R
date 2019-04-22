@@ -58,7 +58,7 @@
 #' Thus, in a model where the means for twin 1 and twin 2 had been equated 
 #' (set = to T1), you could make them independent again with this script:
 #'
-#' `m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
+#' `m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' @param name The name of the model (defaults to "simplex")
 #' @param selDVs The BASENAMES of the variables i.e., c(`obese`), not c(`obese_T1`, `obese_T2`)
@@ -72,7 +72,7 @@
 #' @param addStd Whether to add the algebras to compute a std model (default = TRUE).
 #' @param addCI Whether to add the interval requests for CIs (default = TRUE).
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
 #' @export

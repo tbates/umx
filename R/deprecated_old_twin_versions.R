@@ -93,7 +93,7 @@
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
 #' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
 #' @param boundDiag Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8
@@ -779,9 +779,10 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 #' The common factors themselves are in the matrix cp_loadings (an nVar * 1 matrix)
 #'	
 #' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
+#'
 #' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 #'
-#' `m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
+#' `m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' @param name The name of the model (defaults to "CP").
 #' @param selDVs The variables to include.
@@ -803,7 +804,7 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 #' @param numObsDZ = not yet implemented: Ordinal Number of DZ twins: Set this if you input covariance data.
 #' @param numObsMZ = not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
 #' @export

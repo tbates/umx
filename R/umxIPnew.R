@@ -63,11 +63,14 @@
 #' 
 #' The independent-pathway loadings on the manifests are in matrices `a_ip`, `c_ip`, `e_ip`.
 #'	
-#' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid 
-#' out for each variable for twin 1, followed by each variable for twin 2.
-#' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+#' Less commonly-modified matrices are the mean matrix `expMean`.
+#' This has 1 row, and the columns are laid out for each variable 
+#' for twin 1, followed by each variable for twin 2.
 #'
-#' `m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
+#' So, in a model where the means for twin 1 and twin 2 had been equated
+#' (set = to T1), you could make them independent again with this line:
+#'
+#' `m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' @param name The name of the model (defaults to "IP").
 #' @param selDVs The base names of the variables to model. note: Omit suffixes - just "dep" not c("dep_T1", "dep_T2")

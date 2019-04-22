@@ -67,7 +67,7 @@
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.CFSexLim
 #' @export

@@ -57,7 +57,7 @@
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param weightVar (optional) Variable containing the weights to apply to data.
 #' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
-#' @param tryHard 'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer (optionally) set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @seealso umx_residualize umxACE
