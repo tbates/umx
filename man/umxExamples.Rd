@@ -8,7 +8,7 @@
 umxExamples()
 }
 \description{
-This is the example code used in our Twin Research and Human Genetics Paper on `umx`
+This is the example code used in our Twin Research and Human Genetics Paper on \code{umx}
 }
 \examples{
 \dontrun{
@@ -279,8 +279,14 @@ umx_set_auto_plot(TRUE)
 }
 }
 \references{
-- TODO: Twin Research and Human Genetics citation to go here when available.
+\itemize{
+\item Bates, T. C., Neale, M. C., & Maes, H. H. (2019).
+umx: A library for Structural Equation and Twin Modelling in R.
+\emph{Twin Research and Human Genetics}, \strong{22}, 27-41. doi:10.1017/thg.2019.2
+}
 }
 \seealso{
-- \code{\link{umx}}
+\itemize{
+\item \code{\link{umx}}
+}
 }

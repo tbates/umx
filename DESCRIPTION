@@ -10,7 +10,7 @@ Language: en-US
 Encoding: UTF-8
 URL: https://github.com/tbates/umx
 Description: Quickly create, run, and report structural equation and twin models.
-    See '?umx'  for help, and file.show(system.file("NEWS", package="umx")) for NEWS.
+    See '?umx' for help, and umx_open_CRAN_page("umx") for NEWS.
 Depends:
     R (>= 3.2.0),
     OpenMx (>= 2.11.5)

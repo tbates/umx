@@ -4,23 +4,24 @@ citFooter(paste("BibTeX entries for LaTeX users are obtained by:\n\n",
 )
      
 citEntry(entry="article",
-	title = paste("umx: Twin and path-based Structural Equation Modeling in Open{M}x"),
+	title = paste("umx: A library for Structural Equation and Twin Modelling in R"),
 	author = c(
 		person(c("Timothy", "C."), "Bates"),
 		person(c("Michael", "C."), "Neale"),
 		person(c("Hermine", "H."), "Maes")
 	),
-	journal   = "Journal of Statistical Software",
-	publisher = "Foundation for Open Access Statistics",
-	year  = "under review",
-	pages = "",
-	doi   = "",
+	journal   = "Twin Research and Human Genetics",
+	publisher = "Cambridge Press",
+	year  = "2019",
+	volume = "22",
+	pages = "27-41",
+	doi   = "10.1017/thg.2019.2",
 	textVersion = paste(
 		"Timothy C. Bates,",
 		"Michael C. Neale,", 
 		"Hermine H. Maes,",
-		"(under review). umx: Twin and path-based Structural Equation Modeling in OpenMx. Journal of Statistical Software,",
-		"DOI:TBA")
+		"(2019). umx: A library for Structural Equation and Twin Modelling in R. Twin Research and Human Genetics,",
+		"DOI:10.1017/thg.2019.2")
 )
 
 year <- "2016"
@@ -40,7 +41,7 @@ bibentry("Manual",
    organization = "University of Edinburgh",
    address = "Edinburgh, UK",
    year = version$year,
-   note = "version 1.2.7",
+   note = "version 2.10.0",
    url = "http://github.com/tbates/umx/",
    doi = "10.5281/zenodo.10937",
    url = "http://dx.doi.org/10.5281/zenodo.10937",

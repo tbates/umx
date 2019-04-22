@@ -5,7 +5,10 @@
 #'
 #' @export
 #' @seealso - \code{\link{umx}}
-#' @references - TODO: Twin Research and Human Genetics citation to go here when available.
+#' @references - Bates, T. C., Neale, M. C., & Maes, H. H. (2019). 
+#' umx: A library for Structural Equation and Twin Modelling in R. 
+#' *Twin Research and Human Genetics*, **22**, 27-41. doi:10.1017/thg.2019.2
+#' @md
 #' @aliases umxExampleCode_TRHGpaper
 #' @examples
 #' \dontrun{

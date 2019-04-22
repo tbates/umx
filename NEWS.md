@@ -6,8 +6,9 @@
 
 # umx 2.10.0 April 2019, R 3.5.3 "Great Truth"
 
-* CITATION: Paper is out! Our paper on umx is out in *Twin Research and Human Genetics*!
-* NEW: `?umxExamples` All the code from Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. Twin Research and Human Genetics.
+* CITATION: Paper is out! Our paper on umx is out!
+* CITATION: Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. *Twin Research and Human Genetics*. **22**, 27-41. doi: 10.1017/thg.2019.2
+* NEW: `?umxExamples` All the code from Bates, Neale and Maes (2019).
 * NEW: `umxSexLim` is working,
 * NEW: `umxSummarySexLim` is working,
 * NEW: `umxSexLim` examples added.
