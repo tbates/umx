@@ -61,10 +61,16 @@ tmp = umxLav2RAM("y ~ x1 + 2.4*x2; s =~ 0*y11 + 1*y12 + 2*y13 + 3*y14")
 
 # Factor model showing auto-addition of correlations among exogenous latents
 # and auto-residuals on manifests
-HS.model = "visual  =~ x1 + x2 + x3
-            textual =~ x4 + x5 + x6
-            speed   =~ x7 + x8 + x9"
-m1 = umxRAM2(HS.model, data =HolzingerSwineford1939)
+HS = "spatial =~ visual   + cubes    + flags
+      verbal  =~ paragrap + sentence + wordm
+      speed   =~ addition + counting + straight"
+
+cov(HS.ability.data[, c("visual"  , "cubes"   , "flags")])
+cov(HS.ability.data[, c("paragrap", "sentence", "wordm")])
+cov(HS.ability.data[, c("addition", "counting", "straight")])
+
+m1 = umxRAM2(HS, data = HS.ability.data)
+m1 = umxRAM2(HS, data = umx_scale(HS.ability.data))
 
 tmp = umxLav2RAM("L =~ X1 + X2; L ~ Y")
 
