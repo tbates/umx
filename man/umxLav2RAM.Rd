@@ -92,14 +92,15 @@ tmp = umxRAM2(lav)
 plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min="INT")
 
 # Algebra: e.g. b1^2
-m1 = sem("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor); summary(m1)
 m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
 
-lav = ' # model with labeled parameters
+# Model with labeled parameters
+lav = '
 y ~ b1*x1 + b2*x2 + b3*x3
 # constraints
 b1 == (b2 + b3)^2
 b1 > exp(b2 + b3)'
+
 tmp = umxLav2RAM(lav)
 
 }
