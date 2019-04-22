@@ -4,7 +4,8 @@
 \alias{umxRAM2}
 \title{RAM that can detect lavaan string input}
 \usage{
-umxRAM2(model, data = NULL, lavaanMode = "sem", printTab = FALSE)
+umxRAM2(model, data = NULL, lavaanMode = "sem", name = NULL,
+  printTab = FALSE)
 }
 \arguments{
 \item{model}{a lavaan string}
@@ -23,7 +24,10 @@ RAM that can detect lavaan string input is a function which
 }
 \examples{
 umxRAM2("y~x") 
-umxRAM2("y is x") 
+umxRAM2("y is x") # not a lavaan string
+namedStr = " 	# my name
+	y ~x"
+umxRAM2(namedStr) 
 
 }
 \seealso{

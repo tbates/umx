@@ -41,7 +41,7 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
 
@@ -142,9 +142,9 @@ The common-pathway loadings on the factors are in matrices \code{top$a_cp}, \cod
 The common factors themselves are in the matrix \code{top$cp_loadings} (an nVar * 1 matrix)
 
 Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 row, and the columns are laid out for each variable for twin 1, followed by each variable for twin 2.
-So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this line:
 
-\code{m1$top$expMean$labels[1,4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+\code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 }
 \examples{
 \dontrun{

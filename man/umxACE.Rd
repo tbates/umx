@@ -41,7 +41,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
 
-\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
@@ -146,7 +146,7 @@ each variable for twin 1, followed by each variable for twin 2.
 
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 
-\code{m1$top$expMean$labels[1, 4:6] =  c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+\code{m1$top$expMean$labels[1, 4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 
 \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
 of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).

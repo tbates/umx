@@ -4,15 +4,17 @@
 \alias{umxLav2RAM}
 \title{Convert a lavaan syntax string to a umxRAM model}
 \usage{
-umxLav2RAM(lav, data = "auto", lavaanMode = "sem", printTab = TRUE,
-  group = NULL)
+umxLav2RAM(model = NA, data = "auto", name = name,
+  lavaanMode = "sem", printTab = TRUE, group = NULL)
 }
 \arguments{
-\item{lav}{a lavaan syntax string, e.g. "A~~B"}
+\item{model}{A lavaan syntax string, e.g. "A~~B"}
 
-\item{data}{data to add to model (defaults to auto, which is just sketch mode)}
+\item{data}{Data to add to model (defaults to auto, which is just sketch mode)}
 
-\item{lavaanMode}{Defaults for automagical paths with lavaan syntax input (default = "sem")}
+\item{name}{Model name}
+
+\item{lavaanMode}{Automagical path settings (default = "sem")}
 
 \item{printTab}{= TRUE (more for debugging)}
 

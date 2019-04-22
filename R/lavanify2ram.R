@@ -22,9 +22,10 @@
 #' * fixed.x         = FALSE (not standard in lavaan::sem, but needed for RAM)
 #'
 #'
-#' @param lav a lavaan syntax string, e.g. "A~~B"
-#' @param data data to add to model (defaults to auto, which is just sketch mode)
-#' @param lavaanMode Defaults for automagical paths with lavaan syntax input (default = "sem")
+#' @param model A lavaan syntax string, e.g. "A~~B"
+#' @param data Data to add to model (defaults to auto, which is just sketch mode)
+#' @param lavaanMode Automagical path settings (default = "sem")
+#' @param name Model name
 #' @param printTab = TRUE (more for debugging)
 #' @param group = NULL TODO: define this
 #' @return - list of \code{\link{umxPath}}s
@@ -90,7 +91,7 @@
 #'
 #' tmp = umxLav2RAM(lav)
 #'
-umxLav2RAM <- function(lav, data = "auto", lavaanMode = "sem", printTab = TRUE, group = NULL){
+umxLav2RAM <- function(model = NA, data = "auto", name = name, lavaanMode = "sem", printTab = TRUE, group = NULL){
 	# =~  =  L  -> A
 	# ~   =  y <-  x
 	# ~~  =  A <-> B
@@ -99,7 +100,7 @@ umxLav2RAM <- function(lav, data = "auto", lavaanMode = "sem", printTab = TRUE, 
 	# lav = ("y ~ x1 + 2.4*x2 + x3)
 	# lavaanify("y ~ x")
 	# TODO accept a list of these properties as lavaan="sem"
-	tab = lavaan::lavaanify(model = lav,
+	tab = lavaan::lavaanify(model = model,
 		int.ov.free     = TRUE,
 		int.lv.free     = FALSE,
 		auto.fix.first  = TRUE, # (unless std.lv = TRUE),
@@ -156,7 +157,7 @@ umxLav2RAM <- function(lav, data = "auto", lavaanMode = "sem", printTab = TRUE, 
 			if(is.character(data) && length(data) == 1 && data == "auto"){
 				data = manifests
 			}
-			m1 = umxRAM(paste0("m", groupNum), plist, data = data)
+			m1 = umxRAM(paste0(name, groupNum), plist, data = data)
 			modelList = append(modelList, m1)
 		} else {
 			# Could go mxModel here? (allow no data by supplying latents and manifests)
@@ -195,15 +196,32 @@ umxLav2RAM <- function(lav, data = "auto", lavaanMode = "sem", printTab = TRUE, 
 #' @seealso - \code{\link{umxLav2RAM}}
 #' @examples
 #' umxRAM2("y~x") 
-#' umxRAM2("y is x") 
+#' umxRAM2("y is x") # not a lavaan string
+#' namedStr = " 	# my name
+#' 	y ~x"
+#' umxRAM2(namedStr) 
 #'
-umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE){
+umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", name= NULL, printTab = FALSE){
 	if (is.character(model) && grepl(model, pattern = "(~|=~|~~|:=)")){
 		lavaanString = model
+		tmp = umx_trim(namedStr)
+		# if first line contains a #, assume user wants it to be a name for the model
+		if(is.null(name)){
+			if(grepl(pattern= "^#", x= tmp)){
+				grepl(pattern="^#", x=tmp)
+				# return name from #<space><name><;\n>
+				name = gsub(x= tmp, pattern= "# *([^\\n\\t;]+)[;\\n].*$", replacement= "\\1", perl=T)
+				# white space-> _
+				name = gsub("([ \t])", "_", name)
+			}
+		} else {
+			# assume set name is the one the user wants if ! null
+			name = "m1"
+		}
 		if(is.null(data)){
 			data = "auto"
 		}
-		model = umxLav2RAM(lav = lavaanString, data = data, lavaanMode = lavaanMode, printTab = printTab)
+		model = umxLav2RAM(model = lavaanString, name = name, data = data, lavaanMode = lavaanMode, printTab = printTab)
 	}else{
 		message("woot: that doesn't look like a lavaan string to me:")
 	}

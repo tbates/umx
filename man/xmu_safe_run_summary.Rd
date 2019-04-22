@@ -15,7 +15,7 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
 
 \item{autoRun}{Whether to run or not (default = TRUE) Options are FALSE and "if needed".}
 
-\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{summary}{Whether to print model summary (default = autoRun).}
 

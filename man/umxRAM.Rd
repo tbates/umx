@@ -34,7 +34,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 
 \item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
 
-\item{tryHard}{'no' uses normal mxRun (default ), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{refModels}{pass in reference models if available. Use FALSE to suppress computing these if not provided.}
 
