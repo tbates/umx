@@ -2,7 +2,7 @@
 % Please edit documentation in R/lavanify2ram.R
 \name{umxRAM2}
 \alias{umxRAM2}
-\title{RAM that can detect lavaan string input}
+\title{Make RAM model using lavaan syntax}
 \usage{
 umxRAM2(model, data = NULL, lavaanMode = "sem", name = NULL,
   printTab = FALSE)
@@ -10,9 +10,11 @@ umxRAM2(model, data = NULL, lavaanMode = "sem", name = NULL,
 \arguments{
 \item{model}{a lavaan string}
 
-\item{data}{optionally provide data}
+\item{data}{Data for the model (optional)}
 
 \item{lavaanMode}{= "sem"}
+
+\item{name}{name for model (optional)}
 
 \item{printTab}{print the table (defaults to FALSE) # TODO just verbose}
 }
@@ -20,7 +22,7 @@ umxRAM2(model, data = NULL, lavaanMode = "sem", name = NULL,
 - \code{\link{mxModel}}
 }
 \description{
-RAM that can detect lavaan string input is a function which
+Can detect lavaan string input. TODO document once merged with `umxRAM`.
 }
 \examples{
 umxRAM2("y~x") 

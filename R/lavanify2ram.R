@@ -34,7 +34,7 @@
 #' @md
 #' @seealso - \code{\link{umxRAM}}
 #' @examples
-#'
+#' data(HS.ability.data)
 #' # auto-data, print table, return umxRAM model
 #' m1 = umxLav2RAM("y ~ x")
 #' 
@@ -49,14 +49,15 @@
 #' 
 #' # Factor model showing auto-addition of correlations among exogenous latents
 #' # and auto-residuals on manifests
-#' HS = "spatial =~ visual   + cubes    + flags
-#'       verbal  =~ paragrap + sentence + wordm
-#'       speed   =~ addition + counting + straight"
+#' data(HS.ability.data, package = "OpenMx")
 #'
 #' cov(HS.ability.data[, c("visual"  , "cubes"   , "flags")])
 #' cov(HS.ability.data[, c("paragrap", "sentence", "wordm")])
 #' cov(HS.ability.data[, c("addition", "counting", "straight")])
 #'
+#' HS = "spatial =~ visual   + cubes    + flags
+#'       verbal  =~ paragrap + sentence + wordm
+#'       speed   =~ addition + counting + straight"
 #' m1 = umxRAM2(HS, data = HS.ability.data)
 #' m1 = umxRAM2(HS, data = umx_scale(HS.ability.data))
 #' 
@@ -157,7 +158,8 @@ umxLav2RAM <- function(model = NA, data = "auto", name = name, lavaanMode = "sem
 			if(is.character(data) && length(data) == 1 && data == "auto"){
 				data = manifests
 			}
-			m1 = umxRAM(paste0(name, groupNum), plist, data = data)
+			modelName = paste0(name, groupNum)
+			m1 = umxRAM(modelName, plist, data = data)
 			modelList = append(modelList, m1)
 		} else {
 			# Could go mxModel here? (allow no data by supplying latents and manifests)
@@ -181,16 +183,16 @@ umxLav2RAM <- function(model = NA, data = "auto", name = name, lavaanMode = "sem
 	return(model)
 }
 
-#' RAM that can detect lavaan string input
+#' Make RAM model using lavaan syntax
 #'
 #' @description
-#' RAM that can detect lavaan string input is a function which 
+#' Can detect lavaan string input. TODO document once merged with `umxRAM`.
 #'
-#' @param model a lavaan string
+#' @param model A lavaan string
+#' @param data Data for the model (optional)
 #' @param lavaanMode = "sem"
-#' @param data optionally provide data
-#' @param name optional name for the model
-#' @param printTab print the table (defaults to FALSE) # TODO just verbose
+#' @param printTab Print the table (defaults to FALSE) # TODO just verbose
+#' @param name Name for model (optional)
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Super-easy helpers
@@ -204,19 +206,17 @@ umxLav2RAM <- function(model = NA, data = "auto", name = name, lavaanMode = "sem
 #'
 umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", name= NULL, printTab = FALSE){
 	if (is.character(model) && grepl(model, pattern = "(~|=~|~~|:=)")){
-		lavaanString = model
-		tmp = umx_trim(lavaanString)
+		# process lavaanString
+		lavaanString = umx_trim(model)
+		
 		if(is.null(name)){
-			if(grepl(pattern= "^#", x= tmp)){
-				# if first line contains a #, assume user wants it to be a name for the model
+			# if first line contains a #, assume user wants it to be a name for the model
+			if(grepl(x= lavaanString, pattern= "^#")){
 				# return name from #<space><name><;\n>
-				name = gsub(x= tmp, pattern= "# *([^\\n\\t;]+)[;\\n].*$", replacement= "\\1", perl=T)
+				name = gsub(x= lavaanString, pattern= "# *([^\\n\\t;]+)[;\\n].*$", replacement= "\\1", perl=T)
 				# replace white space with  "_" and use as name
 				name = gsub("([ \t])", "_", name)
-			}
-		} else {
 			# Assume set name is the one the user wants if !is.null(name)
-			name = name
 		}
 
 		if(is.null(data)){
