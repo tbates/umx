@@ -8,15 +8,15 @@ umxRAM2(model, data = NULL, lavaanMode = "sem", name = NULL,
   printTab = FALSE)
 }
 \arguments{
-\item{model}{a lavaan string}
+\item{model}{A lavaan string}
 
 \item{data}{Data for the model (optional)}
 
 \item{lavaanMode}{= "sem"}
 
-\item{name}{name for model (optional)}
+\item{name}{Name for model (optional)}
 
-\item{printTab}{print the table (defaults to FALSE) # TODO just verbose}
+\item{printTab}{Print the table (defaults to FALSE) # TODO just verbose}
 }
 \value{
 - \code{\link{mxModel}}
@@ -25,11 +25,17 @@ umxRAM2(model, data = NULL, lavaanMode = "sem", name = NULL,
 Can detect lavaan string input. TODO document once merged with `umxRAM`.
 }
 \examples{
-umxRAM2("y~x") 
+m1 = umxRAM2("y~x") 
 umxRAM2("y is x") # not a lavaan string
 namedStr = " 	# my name
 	y ~x"
-umxRAM2(namedStr) 
+m1 = umxRAM2(namedStr) 
+
+# test for removal of bad chars from name
+lav = " # Model 14 PROCESS Hayes + - '~', ':', and '= moderated mediation
+gnt ~ a*cb
+" 
+m1 = umxRAM2(lav) 
 
 }
 \seealso{

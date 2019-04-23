@@ -4,7 +4,7 @@
 \alias{umxLav2RAM}
 \title{Convert a lavaan syntax string to a umxRAM model}
 \usage{
-umxLav2RAM(model = NA, data = "auto", name = name,
+umxLav2RAM(model = NA, data = "auto", name = NULL,
   lavaanMode = "sem", printTab = TRUE, group = NULL)
 }
 \arguments{
@@ -48,7 +48,7 @@ Uses the defaults of \code{lavaan::sem}
 }
 }
 \examples{
-
+data(HS.ability.data, package = "OpenMx")
 # auto-data, print table, return umxRAM model
 m1 = umxLav2RAM("y ~ x")
 

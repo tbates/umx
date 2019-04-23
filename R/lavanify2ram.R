@@ -34,7 +34,7 @@
 #' @md
 #' @seealso - \code{\link{umxRAM}}
 #' @examples
-#' data(HS.ability.data)
+#' data(HS.ability.data, package = "OpenMx")
 #' # auto-data, print table, return umxRAM model
 #' m1 = umxLav2RAM("y ~ x")
 #' 
@@ -92,7 +92,7 @@
 #'
 #' tmp = umxLav2RAM(lav)
 #'
-umxLav2RAM <- function(model = NA, data = "auto", name = name, lavaanMode = "sem", printTab = TRUE, group = NULL){
+umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem", printTab = TRUE, group = NULL){
 	# =~  =  L  -> A
 	# ~   =  y <-  x
 	# ~~  =  A <-> B
@@ -101,6 +101,11 @@ umxLav2RAM <- function(model = NA, data = "auto", name = name, lavaanMode = "sem
 	# lav = ("y ~ x1 + 2.4*x2 + x3)
 	# lavaanify("y ~ x")
 	# TODO accept a list of these properties as lavaan="sem"
+	
+	if(is.null(name)){
+		name = "myModel"
+	}
+
 	tab = lavaan::lavaanify(model = model,
 		int.ov.free     = TRUE,
 		int.lv.free     = FALSE,
@@ -198,25 +203,37 @@ umxLav2RAM <- function(model = NA, data = "auto", name = name, lavaanMode = "sem
 #' @family Super-easy helpers
 #' @seealso - \code{\link{umxLav2RAM}}
 #' @examples
-#' umxRAM2("y~x") 
+#' m1 = umxRAM2("y~x") 
 #' umxRAM2("y is x") # not a lavaan string
 #' namedStr = " 	# my name
 #' 	y ~x"
-#' umxRAM2(namedStr) 
+#' m1 = umxRAM2(namedStr) 
+#'
+#' # test for removal of bad chars from name
+#' lav = " # Model 14 PROCESS Hayes + - '~', ':', and '= moderated mediation
+#' gnt ~ a*cb
+#' " 
+#' m1 = umxRAM2(lav) 
 #'
 umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", name= NULL, printTab = FALSE){
 	if (is.character(model) && grepl(model, pattern = "(~|=~|~~|:=)")){
 		# process lavaanString
 		lavaanString = umx_trim(model)
 		
+		# Assume set name is the one the user wants if !is.null(name)
 		if(is.null(name)){
 			# if first line contains a #, assume user wants it to be a name for the model
 			if(grepl(x= lavaanString, pattern= "^#")){
 				# return name from #<space><name><;\n>
 				name = gsub(x= lavaanString, pattern= "# *([^\\n\\t;]+)[;\\n].*$", replacement= "\\1", perl=T)
-				# replace white space with  "_" and use as name
-				name = gsub("([ \t])", "_", name)
-			# Assume set name is the one the user wants if !is.null(name)
+				# replace white space with  "_"
+				name = gsub("([ \t]+)", "_", name)
+				# delete illegal characters
+				name = mxMakeNames(name) 
+			}else{
+				# no name given in name or comment
+				name = "m1"
+			}
 		}
 
 		if(is.null(data)){
