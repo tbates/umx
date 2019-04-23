@@ -189,6 +189,7 @@ umxLav2RAM <- function(model = NA, data = "auto", name = name, lavaanMode = "sem
 #' @param model a lavaan string
 #' @param lavaanMode = "sem"
 #' @param data optionally provide data
+#' @param name optional name for the model
 #' @param printTab print the table (defaults to FALSE) # TODO just verbose
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -204,20 +205,20 @@ umxLav2RAM <- function(model = NA, data = "auto", name = name, lavaanMode = "sem
 umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", name= NULL, printTab = FALSE){
 	if (is.character(model) && grepl(model, pattern = "(~|=~|~~|:=)")){
 		lavaanString = model
-		tmp = umx_trim(namedStr)
-		# if first line contains a #, assume user wants it to be a name for the model
+		tmp = umx_trim(lavaanString)
 		if(is.null(name)){
 			if(grepl(pattern= "^#", x= tmp)){
-				grepl(pattern="^#", x=tmp)
+				# if first line contains a #, assume user wants it to be a name for the model
 				# return name from #<space><name><;\n>
 				name = gsub(x= tmp, pattern= "# *([^\\n\\t;]+)[;\\n].*$", replacement= "\\1", perl=T)
-				# white space-> _
+				# replace white space with  "_" and use as name
 				name = gsub("([ \t])", "_", name)
 			}
 		} else {
-			# assume set name is the one the user wants if ! null
-			name = "m1"
+			# Assume set name is the one the user wants if !is.null(name)
+			name = name
 		}
+
 		if(is.null(data)){
 			data = "auto"
 		}
