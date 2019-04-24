@@ -21,7 +21,19 @@
 #' * auto.cov.y      = TRUE
 #' * fixed.x         = FALSE (not standard in lavaan::sem, but needed for RAM)
 #'
+#' Lavaan is fabulously well documented. For quick reference, some common symbols in lavaan strings are
+#' 
 #'
+#' \tabular{rlll}{
+#'   \tab "=~"   \tab lhs (Latent) is manifested by rhs\cr
+#'   \tab "~"    \tab lhs "is regressed on" (<- ) rhs\cr
+#'   \tab "~~"   \tab lhs covarys with rhs\cr
+#'   \tab "~ 1"  \tab lhs has mean\cr
+#'   \tab ":="   \tab lhs is defined by rhs (see [OpenMx::mxAlgebra()])\cr
+#'   \tab "=="   \tab lhs is constrained == to rhs (see [OpenMx::mxConstraint()] )
+#' }
+#'
+#' 
 #' @param model A lavaan syntax string, e.g. "A~~B"
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
 #' @param lavaanMode Automagical path settings (default = "sem")
@@ -100,7 +112,9 @@ umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem
 	# lav = ("y ~ x1 + 2.4*x2 + x3)
 	# lavaanify("y ~ x")
 	# TODO accept a list of these properties as lavaan="sem"
+	# TODO color residuals gray; biv blue; one-way green?
 	
+	# tmp = umxRAM2("e1~~n1; e2~~n2; e2+n2 ~ e1; n2 ~ n1");
 	if(is.null(name)){
 		name = "myModel"
 	}
@@ -218,7 +232,7 @@ umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem
 #' m1 = umxRAM2(lav) 
 #'
 umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE, name= NULL){
-	if (is.character(model) && grepl(model, pattern = "(~|=~|~~|:=)")){
+	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
 		# Process lavaanString
 		lavaanString = umx_trim(model)
 		

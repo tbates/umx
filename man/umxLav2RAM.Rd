@@ -46,6 +46,17 @@ Uses the defaults of \code{lavaan::sem}
 \item auto.cov.y      = TRUE
 \item fixed.x         = FALSE (not standard in lavaan::sem, but needed for RAM)
 }
+
+Lavaan is fabulously well documented. For quick reference, some common symbols in lavaan strings are
+
+\tabular{rlll}{
+\tab "=~"   \tab lhs (Latent) is manifested by rhs\cr
+\tab "~"    \tab lhs "is regressed on" (<- ) rhs\cr
+\tab "~~"   \tab lhs covarys with rhs\cr
+\tab "~ 1"  \tab lhs has mean\cr
+\tab ":="   \tab lhs is defined by rhs (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})\cr
+\tab "=="   \tab lhs is constrained == to rhs (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
+}
 }
 \examples{
 # auto-data, print table, return umxRAM model
