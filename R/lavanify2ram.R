@@ -46,6 +46,8 @@
 #' # Fix values, e.g. x2 -> y fixed at 2.4
 #' tmp = umxLav2RAM("y ~ x1 + 2.4*x2; s =~ 0*y11 + 1*y12 + 2*y13 + 3*y14")
 #' 
+#' m1 = umxRAM2(HS, data = umx_scale(HS.ability.data))
+#' 
 #' # Factor model showing auto-addition of correlations among exogenous latents
 #' # and auto-residuals on manifests
 #' data("HS.ability.data", package = "OpenMx")
@@ -57,8 +59,6 @@
 #' HS = "spatial =~ visual   + cubes    + flags
 #'       verbal  =~ paragrap + sentence + wordm
 #'       speed   =~ addition + counting + straight"
-#' m1 = umxRAM2(HS, data = HS.ability.data)
-#' m1 = umxRAM2(HS, data = umx_scale(HS.ability.data))
 #' 
 #' tmp = umxLav2RAM("L =~ X1 + X2; L ~ Y")
 #'
@@ -83,11 +83,11 @@
 #' m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
 #' 
 #' # Model with labeled parameters
-#' lav = '
+#' lav = "
 #'	y ~ b1*x1 + b2*x2 + b3*x3
 #'	# constraints
 #'	b1 == (b2 + b3)^2
-#'	b1 > exp(b2 + b3)'
+#'	b1 > exp(b2 + b3)"
 #'
 #' tmp = umxLav2RAM(lav)
 #'
