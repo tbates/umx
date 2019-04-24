@@ -9,9 +9,15 @@
 
 umx is a structural equation modeling package designed to make SEM easier, from building, to modifying and reporting.
 
-It includes high-level functions for complex models such as multi-group twin models, as well as for graphical model output.
+Please cite as:
 
-Grab it from CRAN with
+`citation("umx")`
+
+Timothy C. Bates, Michael C. Neale, Hermine H. Maes, (2019). umx: A library for Structural Equation and Twin Modelling in R. *Twin Research and Human Genetics*, **22**, 27-41. [DOI:10.1017/thg.2019.2](https://doi.org/10.1017/thg.2019.2)
+
+`umx` includes high-level functions for complex models such as multi-group twin models, as well as graphical model output.
+
+Install it from CRAN:
 
 ```splus
 install.packages("umx")
@@ -39,16 +45,17 @@ Some highlights include:
 4. Twin modeling!
 	* `umxACE()` *# Twin ACE modeling with aplomb* paths are labeled! Works with `plot()` and `umxSummary`!
 	* `umxCP()`, `umxIP()`, `umxGxE()`, `umxCP()` …
-	* ![umxACE](https://github.com/tbates/umx/blob/master/man/figures/ACE.png)
+	* ![umxACE](https://github.com/tbates/umx/blob/master/man/figures/ACEunivariate.png)
 5. Easy-to-remember options
 	* `umx_set_cores()`
 	* `umx_set_optimizer()`
 6. Many more miscellaneous helpers e.g.
-	* `umx_time(model)` reports the run times in a compact programmable format (also start and stop a timer)
+	* `umx_time(model1, model2)` reports and compares run times in a compact programmable format (also start and stop a timer)
 	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
 	* Dozens more (?umx to see them all). Check out the "family links" in any help file also!
 
 Feel free to use, and submit code and requests via Github. Tell your friends! Publish more good science :-)
+
 
 For thrill-seekers and collaborators only: the bleeding-edge development version is here:
 

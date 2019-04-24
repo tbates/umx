@@ -21,7 +21,7 @@ citEntry(entry="article",
 		"Michael C. Neale,", 
 		"Hermine H. Maes,",
 		"(2019). umx: A library for Structural Equation and Twin Modelling in R. Twin Research and Human Genetics,",
-		"DOI:10.1017/thg.2019.2")
+		"22, 27-41. DOI:10.1017/thg.2019.2")
 )
 
 year <- "2016"

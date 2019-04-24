@@ -1,65 +1,75 @@
-# Upcoming in next version... umx 3.0.0 May 2018, R 3.5.X
+# Roadmap for next version... umx 3.0.0 May 2018, R 3.5.X
 * FIX: `umxSimplex`
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
-
+* NEW: `umxLav2RAM`
+* NEW: `xmu_lavaan_process_group`
+* NEW: `xmu_clean_label`
+* NEW: `plot` will get ability to opt paths out of constraints.
 
 # umx 2.10.0 April 2019, R 3.5.3 "Great Truth"
 
-* CITATION: Paper is out! Our paper on umx is out!
-* CITATION: Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. *Twin Research and Human Genetics*. **22**, 27-41. doi: 10.1017/thg.2019.2
+* CITATION: `citation("umx")` Our paper on umx is out! 
+  * Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. *Twin Research and Human Genetics*. **22**, 27-41. doi: 10.1017/thg.2019.2
 * NEW: `?umxExamples` All the code from Bates, Neale and Maes (2019).
-* NEW: `umxSexLim` is working,
-* NEW: `umxSummarySexLim` is working,
-* NEW: `umxSexLim` examples added.
+* NEW: `umxSexLim` multivariate sex-limitation working.
+* NEW: `umxSexLim` Gained nonlinear, linear, and homogeneity modes
+* NEW: `umxSexLim` Gained examples.
 * NEW: `umxRAM` supports WLS, UWLS, DWLS models!
-* NEW: `umxACE` supports new-style WLS 
-* NEW: `umxPlotCP` no longer relies on labels to discover paths!
-* NEW: `umxPlotCP` supports CIs on the diagram!
+* NEW: `umxACE` supports WLS, UWLS, DWLS models!
+* NEW: `umxPlotCP` Supports CIs on the diagram!
 * NEW: `umx_make_top_twin_models` increases the robustness and improve-ability of all twin scripts.
 * NEW: umx_set_data_variance_check to set the criteria for warning users about excessively small variance or divergence of variance.
 * NEW: `umx_dot_define_shapes` builds the latents and manifest shape definitions (should be xmu_)
 * NEW: `xmu_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
 	* `umx_set_data_variance_check` get/set variance tolerance.
-* BETA: `umxPlotSexLim` moving along a little
-* BETA: `sexLim` Gained nonlinear, linear, and homogeneity modes
+* NEW: `umx` is checked on [travis](https://travis-ci.org/tbates/umx/builds).
+* NEW: [README.md](https://github.com/tbates/umx) has build, doi, etc info boxes! 
+* NEW: `plot` allows user control over splines, as well as max, min, same positioning.
+* NEW: `xmu_dot_move_ranks`.
+* NEW: `xmu_dot_rank_string`.
+* CHANGED: default for stripping zeros is reversed for plot.
+* CHANGED: `namez` options for collapse get easier to short-cut names.
 * DATA: `data(Fischbein_wt)` weight of 66 females record over six 6-month intervals (from Fischbein (1977) weight data).
-* IMPROVED: `tryHard` - allow "yes" for default mxTryHard across all twin and RAM models
-* IMPROVED: `xmu_model_needs_means` 
-* IMPROVED: `umxDescribeDataWLS` own copy
+* BETA: `umxRAM2` Beginning support for lavaan syntax strings.
+* BETA: Adding `type` (WLS) added to twin models...
+* BETA: Universal weighted rows support for all twin models
+* FIXED: `umxValues` to work more reliably with data with no means.
+* FIXED: `umx_rename` Didn't give correct values when `test = TRUE` for non-grep searches (drop NAs)
+* FIXED: `umxSexLim` match.arg `tryHard`
+* FIXED: use of `selVars` vs. selDVs across different functions (search for "# New-style build-block" to see these changes
+* IMPROVED: `umxSuperModel` can take a list of models.
+* IMPROVED: `tryHard` - allow "yes" for default mxTryHard across all twin and RAM models.
+* IMPROVED: `umxPlotCP` revamped - now not dependent on labels! (old function now `umxPlotCPold`)
+* IMPROVED: `xmu_model_needs_means`
+* IMPROVED: `umxDescribeDataWLS` to check whether the form of WLS requested will have means of not.
 * IMPROVED: `umx_make`: use check_win_devel; setwd for release; spelling
 * IMPROVED: `umx_dot_mat2dot` add `model`, `toLabel` and `fromLabel` + `fromType` & `toType`
 * IMPROVED: `umx_dot_mat2dot` example
-* IMPROVED: `umxPlotCP` revamped - now not dependent on labels! (old function now `umxPlotCPold`)
 * IMPROVED: `xmu_safe_run_summary` now copes with warnings in models, summary, compare etc. (as it should have)
 * IMPROVED: `umxModify` now supports find and replace labels with grep (not just find with grep and set free/value)
 * IMPROVED: `xmu_assemble_twin_supermodel` no longer take bVector (uses existence of weights instead)
 * IMPROVED: `umxModify` now obeys `verbose` option
 * IMPROVED: `umx_time` reports % change between model times
 * IMPROVED: `umIP` help
-* IMPROVED: `umx_make` now supports quick
-* IMPROVED: `tmx_show` supports better printing.
+* IMPROVED: `umx_make` now supports quick-make as default
+* IMPROVED: `tmx_show` printing.
 * IMPROVED: `umx_score_scale` help and examples.
 * IMPROVED: `umxModify` now supports find and replace labels with grep (not just find with grep and set free/value).
 * IMPROVED: `umxModify` now obeys verbose.
-* IMPROVED: Robustness to new data types especially in `umxValues` which processes the cov or raw data of a model into start values.
+* IMPROVED: `umxValues` and elsewhere more robust to new data types.
 * IMPROVED: `umx_read_lower` examples and input checking.
+* IMPROVED: `umx_cell_is_on` now has lower and upper triangle with or without diagonal included
+* IMPROVED: `umx_dot_mat2dot` now can get parameter values with CIs
+* IMPROVED: `umxRAM` feedback when no data provided
 * RENAME: `xmu_make_top_twin` lose "models" for shorter name.
-* RENAME: `tmx_show` (was `umx_show` - it is really a teaching function
+* RENAME: `tmx_show` (was `umx_show` - it is mostly a teaching function
 * RENAME: `umx_dot_define_shapes`
 * RENAME: `umx_dot_rank`
 * RENAME: `umx_mat2dot` --> `umx_dot_mat2dot`
 * RENAME: `umx_APA_model_CI` --> `xmu_get_CI`
-* IMPROVED: `umx_cell_is_on` now has lower and upper triangle with or without diagonal included
-* IMPROVED: `umx_dot_mat2dot` now can get parameter values with CIs
 * REMOVED: `umx_add_variances` old function not used and not very safe.
-* BETA: Adding `type` (WLS) added to twin models...
-* BETA: Universal weighted rows support for all twin models
 * CLEANUP: Removed `thresholds` option from several functions (always doing deviation-based, WLS isn't thresholds, and left-censored will be implemented differently)
-* FIXED: `umxValues` to work more reliably with data with no means.
-* FIXED: `umx_rename` Didn't give correct values when `test = TRUE` for non-grep searches (drop NAs)
-* FIXED: `umxSexLim` match.arg `tryHard`
-* FIXED: use of `selVars` vs. selDVs across different functions (search for "# New-style build-block" to see these changes
 
 
 # umx 2.9.9 December 2018, R 3.5.2
