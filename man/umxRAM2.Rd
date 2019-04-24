@@ -4,8 +4,8 @@
 \alias{umxRAM2}
 \title{Make RAM model using lavaan syntax}
 \usage{
-umxRAM2(model, data = NULL, lavaanMode = "sem", name = NULL,
-  printTab = FALSE)
+umxRAM2(model, data = NULL, lavaanMode = "sem", printTab = FALSE,
+  name = NULL)
 }
 \arguments{
 \item{model}{A lavaan string}
@@ -14,9 +14,9 @@ umxRAM2(model, data = NULL, lavaanMode = "sem", name = NULL,
 
 \item{lavaanMode}{= "sem"}
 
-\item{name}{Name for model (optional)}
-
 \item{printTab}{Print the table (defaults to FALSE) # TODO just verbose}
+
+\item{name}{Name for model (optional)}
 }
 \value{
 - \code{\link{mxModel}}

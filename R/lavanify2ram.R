@@ -34,7 +34,6 @@
 #' @md
 #' @seealso - \code{\link{umxRAM}}
 #' @examples
-#' data(HS.ability.data, package = "OpenMx")
 #' # auto-data, print table, return umxRAM model
 #' m1 = umxLav2RAM("y ~ x")
 #' 
@@ -49,7 +48,7 @@
 #' 
 #' # Factor model showing auto-addition of correlations among exogenous latents
 #' # and auto-residuals on manifests
-#' data(HS.ability.data, package = "OpenMx")
+#' data("HS.ability.data", package = "OpenMx")
 #'
 #' cov(HS.ability.data[, c("visual"  , "cubes"   , "flags")])
 #' cov(HS.ability.data[, c("paragrap", "sentence", "wordm")])
@@ -158,18 +157,21 @@ umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem
 		plist     = tmp$plist
 		# All model paths in plist: time to make the RAM model
 		# figure out data
-		if(!is.null(data)){
-			# TODO need to subset data for each group...
+		# TODO need to subset data for each group...
+		if(is.null(data)){
+			data = manifests
+		} else {
 			if(is.character(data) && length(data) == 1 && data == "auto"){
 				data = manifests
 			}
-			modelName = paste0(name, groupNum)
-			m1 = umxRAM(modelName, plist, data = data)
-			modelList = append(modelList, m1)
-		} else {
-			# Could go mxModel here? (allow no data by supplying latents and manifests)
-			modelList = append(modelList, plist)
 		}
+		if(nGroups > 1){
+			modelName = paste0(name, groupNum)
+		}else{
+			modelName = name
+		}
+		m1 = umxRAM(modelName, plist, data = data)
+		modelList = append(modelList, m1)
 	}
 
 	if(nGroups > 1){
@@ -215,9 +217,9 @@ umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem
 #' " 
 #' m1 = umxRAM2(lav) 
 #'
-umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", name= NULL, printTab = FALSE){
+umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE, name= NULL){
 	if (is.character(model) && grepl(model, pattern = "(~|=~|~~|:=)")){
-		# process lavaanString
+		# Process lavaanString
 		lavaanString = umx_trim(model)
 		
 		# Assume set name is the one the user wants if !is.null(name)
@@ -246,8 +248,6 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", name= NULL, printTab
 	return(model)
 }
 
-
-# 
 #' lavaan parameter table rows to model
 #'
 #' @description
