@@ -239,11 +239,14 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE, na
 		# Assume set name is the one the user wants if !is.null(name)
 		if(is.null(name)){
 			# if first line contains a #, assume user wants it to be a name for the model
-			if(grepl(x= lavaanString, pattern= "^#")){
+			line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
+			if(grepl(x= line1, pattern= "#")){
 				# return name from #<space><name><;\n>
-				name = gsub(x= lavaanString, pattern= "# *([^\\n\\t;]+)[;\\n].*$", replacement= "\\1", perl=T)
+				pat = "\\h*#\\h*([^\\n]+).*" # remove leading #, trim
+				name = gsub(x= line1, pattern= pat, replacement= "\\1", perl= TRUE);
+				name = umx_trim(name)
 				# replace white space with  "_"
-				name = gsub("([ \t]+)", "_", name)
+				name = gsub("(\\h+)", "_", name, perl=TRUE)
 				# delete illegal characters
 				name = mxMakeNames(name) 
 			}else{
