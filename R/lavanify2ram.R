@@ -283,7 +283,7 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE, na
 #' xmu_lavaan_process_group(tab, groupNum = 0)
 xmu_lavaan_process_group <- function(tab, groupNum){
 	constraintOps = c("==", "<", ">")
-	handledOps = c("~", "=~", "~~", ":=", constraintOps)
+	handledOps = c("=~", "~", "~1", "~~", ":=", constraintOps)
 	# groupNum = 1
 	grpRows = tab[tab$group == groupNum, ]
 	# handle none exist
@@ -312,12 +312,10 @@ xmu_lavaan_process_group <- function(tab, groupNum){
 		if(op %in% handledOps){
 			if(op == "~"){
 				# Regressions, x on y, 1-headed arrow, rhs = from
-				if(rhs == "1"){
-					# Intercepts (mean) lhs = variable name rhs == "1"
-					new = umxPath(means = lhs, free = free, values = value, labels = label)
-				} else {
 					new = umxPath(rhs, to = lhs, free = free, values = value, labels = label)
-				}
+			} else if(op == "~1"){
+				# Intercepts (mean) lhs = variable name rhs == "1"
+				new = umxPath(means = lhs, free = free, values = value, labels = label)
 			} else if(op == "=~"){
 				# Latent variable definitions: "=~", 1-headed arrow, lhs is latent
 				new = umxPath(lhs, to = rhs, free = free, values = value, labels = label)
