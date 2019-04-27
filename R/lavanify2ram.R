@@ -36,10 +36,12 @@
 #' 
 #' @param model A lavaan syntax string, e.g. "A~~B"
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
-#' @param lavaanMode Automagical path settings (default = "sem")
-#' @param name Model name
-#' @param printTab = TRUE (more for debugging)
+#' @param lavaanMode Automagical path settings for cfa or sem (default)
 #' @param group = NULL TODO: define this
+#' @param name Model name (can also use first line if # commented)
+#' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
+#' @param autoRun = TRUE
+#' @param printTab = TRUE (more for debugging)
 #' @return - list of \code{\link{umxPath}}s
 #' @export
 #' @family Super-easy helpers
@@ -103,7 +105,7 @@
 #'
 #' tmp = umxLav2RAM(lav)
 #'
-umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem", printTab = TRUE, group = NULL){
+umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, printTab = TRUE){
 	# =~  =  L  -> A
 	# ~   =  y <-  x
 	# ~~  =  A <-> B
@@ -119,19 +121,23 @@ umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem
 		name = "myModel"
 	}
 
-	tab = lavaan::lavaanify(model = model,
-		int.ov.free     = TRUE,
-		int.lv.free     = FALSE,
-		auto.fix.first  = TRUE, # (unless std.lv = TRUE),
-		std.lv          = FALSE,
-		auto.fix.single = TRUE,
-		auto.var        = TRUE,
-		auto.cov.lv.x   = TRUE,
-		auto.th         = TRUE,
-		auto.delta      = TRUE,
-		auto.cov.y      = TRUE,
-		fixed.x = FALSE # not standard in lavaan::sem, but needed for RAM
-	)
+	if(lavaanMode == "sem"){
+		tab = lavaan::lavaanify(model = model,
+			int.ov.free     = TRUE,
+			int.lv.free     = FALSE,
+			auto.fix.first  = !std.lv, # (so will default to TRUE)
+			std.lv          = std.lv,
+			auto.fix.single = TRUE,
+			auto.var        = TRUE,
+			auto.cov.lv.x   = TRUE,
+			auto.th         = TRUE,
+			auto.delta      = TRUE,
+			auto.cov.y      = TRUE,
+			fixed.x = FALSE # not standard in lavaan::sem, but needed for RAM
+		)
+	}else{
+		message("Only sem mode implemented as yet")		
+	}
 
 	if(printTab){
 		umx_print(tab)
@@ -155,7 +161,9 @@ umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem
 	# Pull out group 0 if found (algebras): might need to create in supergroup.
 	algebraRows = tab[tab$group == 0, ]
 	nAlg = nrow(algebraRows)
-	message("Found ", nAlg, " algebras :=/group 0 items")
+	if(nAlg){
+		message("Found ", nAlg, " algebras (:=) or group-0 items")
+	}
 	
 	# Remove group 0 from the big table
 	tab     = tab[tab$group != 0, ]
@@ -184,7 +192,7 @@ umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem
 		}else{
 			modelName = name
 		}
-		m1 = umxRAM(modelName, plist, data = data)
+		m1 = umxRAM(modelName, plist, data = data, autoRun = autoRun)
 		modelList = append(modelList, m1)
 	}
 
@@ -212,6 +220,8 @@ umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem
 #' @param model A lavaan string
 #' @param data Data for the model (optional)
 #' @param lavaanMode = "sem"
+#' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
+#' @param autoRun = TRUE
 #' @param printTab Print the table (defaults to FALSE) # TODO just verbose
 #' @param name Name for model (optional)
 #' @return - \code{\link{mxModel}}
@@ -231,7 +241,7 @@ umxLav2RAM <- function(model = NA, data = "auto", name = NULL, lavaanMode = "sem
 #' " 
 #' m1 = umxRAM2(lav) 
 #'
-umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE, name= NULL){
+umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, printTab = FALSE, name= NULL){
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
 		# Process lavaanString
 		lavaanString = umx_trim(model)
@@ -248,7 +258,7 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE, na
 				# replace white space with  "_"
 				name = gsub("(\\h+)", "_", name, perl=TRUE)
 				# delete illegal characters
-				name = mxMakeNames(name) 
+				name = as.character(mxMakeNames(name))
 			}else{
 				# no name given in name or comment
 				name = "m1"
@@ -258,7 +268,7 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", printTab = FALSE, na
 		if(is.null(data)){
 			data = "auto"
 		}
-		model = umxLav2RAM(model = lavaanString, name = name, data = data, lavaanMode = lavaanMode, printTab = printTab)
+		model = umxLav2RAM(model = lavaanString, name = name, data = data, std.lv = std.lv, autoRun = autoRun, lavaanMode = lavaanMode, printTab = printTab)
 	}else{
 		message("woot: that doesn't look like a lavaan string to me:")
 	}

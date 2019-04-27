@@ -4,21 +4,26 @@
 \alias{umxLav2RAM}
 \title{Convert a lavaan syntax string to a umxRAM model}
 \usage{
-umxLav2RAM(model = NA, data = "auto", name = NULL,
-  lavaanMode = "sem", printTab = TRUE, group = NULL)
+umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
+  lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE,
+  printTab = TRUE)
 }
 \arguments{
 \item{model}{A lavaan syntax string, e.g. "A~~B"}
 
 \item{data}{Data to add to model (defaults to auto, which is just sketch mode)}
 
-\item{name}{Model name}
+\item{group}{= NULL TODO: define this}
 
-\item{lavaanMode}{Automagical path settings (default = "sem")}
+\item{name}{Model name (can also use first line if # commented)}
+
+\item{lavaanMode}{Automagical path settings for cfa or sem (default)}
+
+\item{std.lv}{= FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.}
+
+\item{autoRun}{= TRUE}
 
 \item{printTab}{= TRUE (more for debugging)}
-
-\item{group}{= NULL TODO: define this}
 }
 \value{
 \itemize{

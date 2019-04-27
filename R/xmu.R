@@ -43,7 +43,7 @@
 #' @seealso - \code{\link{mxTryHard}}
 #' @md
 #' @examples
-#' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
+#' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
 xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE) {

@@ -4,8 +4,8 @@
 \alias{umxRAM2}
 \title{Make RAM model using lavaan syntax}
 \usage{
-umxRAM2(model, data = NULL, lavaanMode = "sem", printTab = FALSE,
-  name = NULL)
+umxRAM2(model, data = NULL, lavaanMode = "sem", std.lv = FALSE,
+  autoRun = TRUE, printTab = FALSE, name = NULL)
 }
 \arguments{
 \item{model}{A lavaan string}
@@ -13,6 +13,10 @@ umxRAM2(model, data = NULL, lavaanMode = "sem", printTab = FALSE,
 \item{data}{Data for the model (optional)}
 
 \item{lavaanMode}{= "sem"}
+
+\item{std.lv}{= FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.}
+
+\item{autoRun}{= TRUE}
 
 \item{printTab}{Print the table (defaults to FALSE) # TODO just verbose}
 

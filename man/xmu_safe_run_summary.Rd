@@ -35,7 +35,7 @@ If summary = TRUE then \code{\link[=umxSummary]{umxSummary()}} is requested (aga
 \emph{note}: If autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
 }
 \examples{
-# xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
+# xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE)
 # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
 # xmu_safe_run_summary(model, model2, autoRun = TRUE)
 }
