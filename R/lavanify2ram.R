@@ -28,7 +28,7 @@
 #' " 
 #' m1 = umxRAM2(lav) 
 #'
-umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, printTab = FALSE, tryHard = tryHard, name= NULL){
+umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, printTab = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), name= NULL){
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
 		# Process lavaanString
 		lavaanString = umx_trim(model)
@@ -178,7 +178,7 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, auto
 #'
 #' tmp = umxLav2RAM(lav)
 #'
-umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, printTab = TRUE){
+umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = TRUE){
 	# =~  =  L  -> A
 	# ~   =  y <-  x
 	# ~~  =  A <-> B

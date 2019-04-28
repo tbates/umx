@@ -6,7 +6,8 @@
 \usage{
 umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
   lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE,
-  printTab = TRUE)
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
+  "mxTryHardWideSearch"), printTab = TRUE)
 }
 \arguments{
 \item{model}{A lavaan syntax string, e.g. "A~~B"}
@@ -23,9 +24,9 @@ umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
-\item{printTab}{= TRUE (more for debugging)}
-
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+
+\item{printTab}{= TRUE (more for debugging)}
 }
 \value{
 \itemize{

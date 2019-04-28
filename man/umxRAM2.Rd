@@ -5,7 +5,8 @@
 \title{Make RAM model using lavaan syntax}
 \usage{
 umxRAM2(model, data = NULL, lavaanMode = "sem", std.lv = FALSE,
-  autoRun = TRUE, printTab = FALSE, tryHard = tryHard, name = NULL)
+  autoRun = TRUE, printTab = FALSE, tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), name = NULL)
 }
 \arguments{
 \item{model}{A lavaan string}
