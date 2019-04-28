@@ -252,15 +252,16 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, auto
 			line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
 			if(grepl(x= line1, pattern= "#")){
 				# return name from #<space><name><;\n>
-				pat = "\\h*#\\h*([^\\n]+).*" # remove leading #, trim
+				# line1 = "## my model ##"
+				pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
 				name = gsub(x= line1, pattern= pat, replacement= "\\1", perl= TRUE);
-				name = umx_trim(name)
+				name = trimws(name)
 				# replace white space with  "_"
 				name = gsub("(\\h+)", "_", name, perl=TRUE)
 				# delete illegal characters
 				name = as.character(mxMakeNames(name))
 			}else{
-				# no name given in name or comment
+				# no name given in name or comment: use a default name
 				name = "m1"
 			}
 		}

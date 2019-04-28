@@ -4822,31 +4822,32 @@ namez <- umx_names
 #' Trim whitespace surrounding a string.
 #'
 #' Returns string without leading or trailing whitespace, like the php function.
-#' See also built-in [trimws](trimws) does the same.
+#' See also built-in [base::trimws()] does the same. 
 #'
 #' @param string to trim
-#' @param removeThis if not NULL then this string is removed wherever found in 'string'
+#' @param removeThis if not NULL then this regular expression is removed wherever found in 'string'
 #' @return - string
 #' @export
-#' @seealso [trimws](trimws)
+#' @seealso [base::trimws()]
 #' @family String Functions
 #' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 #' @md
 #' @examples
 #' umx_trim(" dog") # "dog"
+#' trimws(" dog ", "l") # added by R in v 3.3.0
 #' umx_trim("dog ") # "dog"
 #' umx_trim("\t dog \n") # "dog"
-#' umx_trim("xlsx dog.xlsx", "\\.xlsx$") # "dog"
+#' umx_trim("xlsx dog.xlsx", "\\.?xlsx ?") # "dog"
 umx_trim <- function(string, removeThis = NULL) {
 	if(is.null(removeThis)){
 		# https://www.php.net/manual/en/function.trim.php
-		return(gsub("^\\s+|\\s+$", "", string))
+		return(gsub(pattern = "^\\s+|\\s+$", replacement = "", x = string))
 		# returns string w/o leading whitespace
 		# trim.leading <- function (x)  sub("^\\s+", "", x)
 		# returns string w/o trailing whitespace
 		# sub("\\s+$", "", x)
 	} else {
-		return(gsub(removeThis, "", string))
+		return(gsub(pattern = removeThis, replacement = "", x = string))
 	}
 }
 
