@@ -71,7 +71,7 @@ Lavaan is fabulously well documented. For quick reference, some common symbols i
 }
 \examples{
 # auto-data, print table, return umxRAM model
-m1 = umxLav2RAM("y ~ x")
+m1 = umxLav2RAM("y ~ x", printTab= FALSE)
 
 lav = "y ~ x1 + 2.4*x2 + x3"
 tmp = umxLav2RAM(lav, data = "auto", printTab= FALSE)

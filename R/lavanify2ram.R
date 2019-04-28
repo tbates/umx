@@ -6,7 +6,8 @@
 #' @param model A lavaan string
 #' @param data Data for the model (optional)
 #' @param lavaanMode = "sem"
-#' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). n.b. Toggles fix.first
+#' @param std.lv = Whether to set var of latents to 1 (default = FALSE) n.b. Toggles fix.first
+#' @param group = Column to use for multi-group (default = NULL)
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param printTab Print the table (defaults to FALSE) # TODO just verbose
@@ -16,7 +17,7 @@
 #' @family Super-easy helpers
 #' @seealso - [umxLav2RAM()]
 #' @examples
-#' m1 = umxRAM2("y~x") 
+#' m1 = umxRAM2("y~x")
 #' umxRAM2("y is x") # not a lavaan string
 #' namedStr = " 	# my name
 #' 	y ~x"
@@ -28,27 +29,30 @@
 #' " 
 #' m1 = umxRAM2(lav) 
 #'
-umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, printTab = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), name= NULL){
+umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NULL, lavaanMode = "sem", autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = FALSE){
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
 		# Process lavaanString
 		lavaanString = umx_trim(model)
+
+		if(!is.null(group)){
+			stop("Support for group = not implemented yet. coming shortly")
+		}
 		
 		# Assume set name is the one the user wants if !is.null(name)
 		if(is.null(name)){
-			# if first line contains a #, assume user wants it to be a name for the model
+			# If first line contains a #, assume user wants it to be a name for the model
 			line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
 			if(grepl(x= line1, pattern= "#")){
-				# return name from #<space><name><;\n>
 				# line1 = "## my model ##"
 				pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
 				name = gsub(x= line1, pattern= pat, replacement= "\\1", perl= TRUE);
 				name = trimws(name)
-				# replace white space with  "_"
+				# Replace white space with  "_"
 				name = gsub("(\\h+)", "_", name, perl=TRUE)
-				# delete illegal characters
+				# Delete illegal characters
 				name = as.character(mxMakeNames(name))
 			}else{
-				# no name given in name or comment: use a default name
+				# No name given in name or comment: use a default name
 				name = "m1"
 			}
 		}
@@ -56,13 +60,11 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, auto
 		if(is.null(data)){
 			data = "auto"
 		}
-		model = umxLav2RAM(model = lavaanString, name = name, data = data, std.lv = std.lv, autoRun = FALSE, lavaanMode = lavaanMode, printTab = printTab)
-		model = omxAssignFirstParameters(model)
-		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
+		model = umxLav2RAM(model = lavaanString, data = data, group = group, std.lv = std.lv, name = name, lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
+		# umxLav2RAM will run the subModels with umxRAM as they were built.
 		invisible(model)
-
 	}else{
-		message("woot: that doesn't look like a lavaan string to me:")
+		message("Woot: that doesn't look like a lavaan string to me:")
 	}
 	return(model)
 }
@@ -109,7 +111,7 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, auto
 #' @param model A lavaan syntax string, e.g. "A~~B"
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
 #' @param lavaanMode Automagical path settings for cfa or sem (default)
-#' @param group = NULL TODO: define this
+#' @param group = Column to use for multi-group (default = NULL)
 #' @param name Model name (can also add name in # commented line-1)
 #' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
@@ -122,7 +124,7 @@ umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, auto
 #' @seealso - [umxRAM()]
 #' @examples
 #' # auto-data, print table, return umxRAM model
-#' m1 = umxLav2RAM("y ~ x")
+#' m1 = umxLav2RAM("y ~ x", printTab= FALSE)
 #' 
 #' lav = "y ~ x1 + 2.4*x2 + x3"
 #' tmp = umxLav2RAM(lav, data = "auto", printTab= FALSE)
@@ -193,6 +195,10 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	if(is.null(name)){
 		name = "m1"
 	}
+	if(!is.null(group)){
+		stop("Support for group = not implemented yet. coming shortly")
+	}
+
 
 	if(lavaanMode == "sem"){
 		# model = "x1~b1*x2; B1_sq := b1^2"; std.lv=FALSE
@@ -236,16 +242,16 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	# Pull out group 0 if found (algebras): might need to create in supergroup.
 	algebraRows = tab[tab$group == 0, ]
 	nAlg = nrow(algebraRows)
-	
+
 	# Remove group 0 from the big table
 	tab     = tab[tab$group != 0, ]
 	groups  = unique(tab[, "group"])
 	nGroups = length(groups)
-	
+
 	# TODO umxLav2RAM: remove this reporting
 	if(nGroups){ message("Found ", nGroups, " groups") }
 	if(nAlg){ message("Found ", nAlg, " algebras (:=) or group-0 items")}
-	
+
 	modelList = list()
 	for (groupNum in groups) {
 		# Process a group/Model
@@ -284,11 +290,13 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	# Add algebras	(if any)
 	tmp   = xmu_lavaan_process_group(algebraRows, groupNum = 0)
 	model = mxModel(model, tmp$plist)
-	# model now (2019-04-28) not run at this point!
+
+	# 2019-04-28: Model not yet run, but umxLav2RAM does run so...
 	# I initially ran the subModels with umxRAM as they were built.
 	if (class(data) == "character"){
 		# User is just running a trial model, with no data, but provided names for sketch mode
-		if(autoRun && umx_set_auto_plot(silent = TRUE)){
+		autoPlot = umx_set_auto_plot(silent = TRUE)
+		if(autoRun && autoPlot){
 			plot(model)
 		}
 		return(model)
