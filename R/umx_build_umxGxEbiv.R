@@ -23,7 +23,7 @@
 #' @param lboundACE If !NA, then lbound the main effects at this value (default = NA)
 #' @param lboundM If !NA, then lbound the moderators at this value (default = NA)
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
 #' @return - GxEbiv \code{\link{mxModel}}

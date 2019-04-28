@@ -37,7 +37,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, dzData, mzData,
 
 \item{boundDiag}{Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8}
 
-\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
 

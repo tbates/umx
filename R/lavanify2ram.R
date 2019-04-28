@@ -1,8 +1,80 @@
+#' Make RAM model using lavaan syntax
+#'
+#' @description
+#' Can detect lavaan string input. TODO document once merged with [umxRAM()].
+#'
+#' @param model A lavaan string
+#' @param data Data for the model (optional)
+#' @param lavaanMode = "sem"
+#' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). n.b. Toggles fix.first
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param printTab Print the table (defaults to FALSE) # TODO just verbose
+#' @param name Name for model (optional)
+#' @return - [mxModel()]
+#' @export
+#' @family Super-easy helpers
+#' @seealso - [umxLav2RAM()]
+#' @examples
+#' m1 = umxRAM2("y~x") 
+#' umxRAM2("y is x") # not a lavaan string
+#' namedStr = " 	# my name
+#' 	y ~x"
+#' m1 = umxRAM2(namedStr) 
+#'
+#' # test for removal of bad chars from name
+#' lav = " # Model 14 PROCESS Hayes + - '~', ':', and '= moderated mediation
+#' gnt ~ a*cb
+#' " 
+#' m1 = umxRAM2(lav) 
+#'
+umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, printTab = FALSE, tryHard = tryHard, name= NULL){
+	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
+		# Process lavaanString
+		lavaanString = umx_trim(model)
+		
+		# Assume set name is the one the user wants if !is.null(name)
+		if(is.null(name)){
+			# if first line contains a #, assume user wants it to be a name for the model
+			line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
+			if(grepl(x= line1, pattern= "#")){
+				# return name from #<space><name><;\n>
+				# line1 = "## my model ##"
+				pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
+				name = gsub(x= line1, pattern= pat, replacement= "\\1", perl= TRUE);
+				name = trimws(name)
+				# replace white space with  "_"
+				name = gsub("(\\h+)", "_", name, perl=TRUE)
+				# delete illegal characters
+				name = as.character(mxMakeNames(name))
+			}else{
+				# no name given in name or comment: use a default name
+				name = "m1"
+			}
+		}
+
+		if(is.null(data)){
+			data = "auto"
+		}
+		model = umxLav2RAM(model = lavaanString, name = name, data = data, std.lv = std.lv, autoRun = FALSE, lavaanMode = lavaanMode, printTab = printTab)
+		model = omxAssignFirstParameters(model)
+		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
+		invisible(model)
+
+	}else{
+		message("woot: that doesn't look like a lavaan string to me:")
+	}
+	return(model)
+}
+
 #' Convert a lavaan syntax string to a umxRAM model
 #'
 #' @description
-#' Use lavaan syntax to create umxRAM models. If data are provided, a `umxRAM` model is returned. 
-#' If more than one group is found, a superModel is returned.
+#' Takes a lavaan syntax string and creates the matching one or more umxRAM models.
+#' 
+#' If data are provided, a [umxRAM()] model is returned. 
+#' 
+#' If more than one group is found, a [umxSuperModel()] is returned.
 #' 
 #' This function is at the alpha quality stage, and **should be expected to have bugs**.
 #' Several features are not yet supported. Let me know if you'd like them.
@@ -38,15 +110,16 @@
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
 #' @param lavaanMode Automagical path settings for cfa or sem (default)
 #' @param group = NULL TODO: define this
-#' @param name Model name (can also use first line if # commented)
+#' @param name Model name (can also add name in # commented line-1)
 #' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
-#' @param autoRun = TRUE
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param printTab = TRUE (more for debugging)
-#' @return - list of \code{\link{umxPath}}s
+#' @return - list of [umxPath()]s
 #' @export
 #' @family Super-easy helpers
 #' @md
-#' @seealso - \code{\link{umxRAM}}
+#' @seealso - [umxRAM()]
 #' @examples
 #' # auto-data, print table, return umxRAM model
 #' m1 = umxLav2RAM("y ~ x")
@@ -109,7 +182,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	# =~  =  L  -> A
 	# ~   =  y <-  x
 	# ~~  =  A <-> B
-	# <-  =  man -> Latent ((formative factor (+ biv?))
+	# ~-  =  man -> Latent ((formative factor (+ biv?))
 	# lav = ("A ~ B")
 	# lav = ("y ~ x1 + 2.4*x2 + x3)
 	# lavaanify("y ~ x")
@@ -118,10 +191,11 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	
 	# tmp = umxRAM2("e1~~n1; e2~~n2; e2+n2 ~ e1; n2 ~ n1");
 	if(is.null(name)){
-		name = "myModel"
+		name = "m1"
 	}
 
 	if(lavaanMode == "sem"){
+		# model = "x1~b1*x2; B1_sq := b1^2"; std.lv=FALSE
 		tab = lavaan::lavaanify(model = model,
 			int.ov.free     = TRUE,
 			int.lv.free     = FALSE,
@@ -136,7 +210,8 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 			fixed.x = FALSE # not standard in lavaan::sem, but needed for RAM
 		)
 	}else{
-		message("Only sem mode implemented as yet")		
+		# TODO umxLav2RAM: detect legal options (like auto.var) in the ... list and filter into lavaanify call
+		message("Only sem mode implemented as yet: what other modes would be useful?")		
 	}
 
 	if(printTab){
@@ -161,15 +236,16 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	# Pull out group 0 if found (algebras): might need to create in supergroup.
 	algebraRows = tab[tab$group == 0, ]
 	nAlg = nrow(algebraRows)
-	if(nAlg){
-		message("Found ", nAlg, " algebras (:=) or group-0 items")
-	}
 	
 	# Remove group 0 from the big table
 	tab     = tab[tab$group != 0, ]
 	groups  = unique(tab[, "group"])
 	nGroups = length(groups)
-	message("Found ", nGroups, " group")
+	
+	# TODO umxLav2RAM: remove this reporting
+	if(nGroups){ message("Found ", nGroups, " groups") }
+	if(nAlg){ message("Found ", nAlg, " algebras (:=) or group-0 items")}
+	
 	modelList = list()
 	for (groupNum in groups) {
 		# Process a group/Model
@@ -178,6 +254,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 		manifests = tmp$manifests
 		plist     = tmp$plist
 		# All model paths in plist: time to make the RAM model
+
 		# figure out data
 		# TODO need to subset data for each group...
 		if(is.null(data)){
@@ -192,89 +269,29 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 		}else{
 			modelName = name
 		}
-		m1 = umxRAM(modelName, plist, data = data, autoRun = autoRun)
+		m1 = umxRAM(modelName, plist, data = data, autoRun = FALSE)
 		modelList = append(modelList, m1)
 	}
 
+	# ModelList contains a list of models (groups)
 	if(nGroups > 1){
-		# Build a super model containing the list of models (groups)
-		model = umxSuperModel("top", modelList)
-		# Add any algebras to the super?
-		tmp = xmu_lavaan_process_group(algebraRows, groupNum = 0)
-		model  = mxModel(model, tmp$plist)
+		# If more than one, make a superModel
+		model = umxSuperModel("top", modelList, autoRun = FALSE)
 	} else {
 		# Just one model
 		model = modelList[[1]] # (should be just a model)
-		# Add algebras	(if any)
-		tmp = xmu_lavaan_process_group(algebraRows, groupNum = 0)
-		model  = mxModel(model, tmp$plist)
 	}
+	# Add algebras	(if any)
+	tmp   = xmu_lavaan_process_group(algebraRows, groupNum = 0)
+	model = mxModel(model, tmp$plist)
+	# model not run at this point!
+	model = omxAssignFirstParameters(model)
+	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
+	invisible(model)
+	
 	return(model)
 }
 
-#' Make RAM model using lavaan syntax
-#'
-#' @description
-#' Can detect lavaan string input. TODO document once merged with `umxRAM`.
-#'
-#' @param model A lavaan string
-#' @param data Data for the model (optional)
-#' @param lavaanMode = "sem"
-#' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
-#' @param autoRun = TRUE
-#' @param printTab Print the table (defaults to FALSE) # TODO just verbose
-#' @param name Name for model (optional)
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @family Super-easy helpers
-#' @seealso - \code{\link{umxLav2RAM}}
-#' @examples
-#' m1 = umxRAM2("y~x") 
-#' umxRAM2("y is x") # not a lavaan string
-#' namedStr = " 	# my name
-#' 	y ~x"
-#' m1 = umxRAM2(namedStr) 
-#'
-#' # test for removal of bad chars from name
-#' lav = " # Model 14 PROCESS Hayes + - '~', ':', and '= moderated mediation
-#' gnt ~ a*cb
-#' " 
-#' m1 = umxRAM2(lav) 
-#'
-umxRAM2 <- function(model, data = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, printTab = FALSE, name= NULL){
-	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
-		# Process lavaanString
-		lavaanString = umx_trim(model)
-		
-		# Assume set name is the one the user wants if !is.null(name)
-		if(is.null(name)){
-			# if first line contains a #, assume user wants it to be a name for the model
-			line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
-			if(grepl(x= line1, pattern= "#")){
-				# return name from #<space><name><;\n>
-				# line1 = "## my model ##"
-				pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
-				name = gsub(x= line1, pattern= pat, replacement= "\\1", perl= TRUE);
-				name = trimws(name)
-				# replace white space with  "_"
-				name = gsub("(\\h+)", "_", name, perl=TRUE)
-				# delete illegal characters
-				name = as.character(mxMakeNames(name))
-			}else{
-				# no name given in name or comment: use a default name
-				name = "m1"
-			}
-		}
-
-		if(is.null(data)){
-			data = "auto"
-		}
-		model = umxLav2RAM(model = lavaanString, name = name, data = data, std.lv = std.lv, autoRun = autoRun, lavaanMode = lavaanMode, printTab = printTab)
-	}else{
-		message("woot: that doesn't look like a lavaan string to me:")
-	}
-	return(model)
-}
 
 #' lavaan parameter table rows to model
 #'

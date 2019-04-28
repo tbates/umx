@@ -96,7 +96,7 @@
 #' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param covMethod How to treat covariates: "fixed" (default) or "random".
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).

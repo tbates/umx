@@ -51,7 +51,7 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{numObsMZ}{= not yet implemented: Ordinal Number of MZ twins: Set this if you input covariance data.}
 
-\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 

@@ -53,7 +53,7 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
 
 \item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
 
-\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 

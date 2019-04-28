@@ -15,24 +15,29 @@ umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
 
 \item{group}{= NULL TODO: define this}
 
-\item{name}{Model name (can also use first line if # commented)}
+\item{name}{Model name (can also add name in # commented line-1)}
 
 \item{lavaanMode}{Automagical path settings for cfa or sem (default)}
 
 \item{std.lv}{= FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.}
 
-\item{autoRun}{= TRUE}
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{printTab}{= TRUE (more for debugging)}
+
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
 \itemize{
-\item list of \code{\link{umxPath}}s
+\item list of \code{\link[=umxPath]{umxPath()}}s
 }
 }
 \description{
-Use lavaan syntax to create umxRAM models. If data are provided, a \code{umxRAM} model is returned.
-If more than one group is found, a superModel is returned.
+Takes a lavaan syntax string and creates the matching one or more umxRAM models.
+
+If data are provided, a \code{\link[=umxRAM]{umxRAM()}} model is returned.
+
+If more than one group is found, a \code{\link[=umxSuperModel]{umxSuperModel()}} is returned.
 
 This function is at the alpha quality stage, and \strong{should be expected to have bugs}.
 Several features are not yet supported. Let me know if you'd like them.
@@ -124,7 +129,7 @@ tmp = umxLav2RAM(lav)
 }
 \seealso{
 \itemize{
-\item \code{\link{umxRAM}}
+\item \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other Super-easy helpers: \code{\link{umxEFA}},

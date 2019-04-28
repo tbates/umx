@@ -56,7 +56,7 @@
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param weightVar (optional) Variable containing the weights to apply to data.
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer (optionally) set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov

@@ -336,7 +336,7 @@ umxModel <- function(...) {
 #' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
 #' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param setValues Whether to generate likely good start values (Defaults to TRUE)
@@ -497,9 +497,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		} else {
 			stop("If model is set to a string, don't pass in name as well...")
 		}
+		# TODO umxRAM handle lavaan here!
 	} else {
 		if(umx_is_RAM(model)){
-			message("Updating existing model")
+			# message("Updating existing model")
 			if(is.na(name)){
 				name = model$name
 			}
@@ -676,7 +677,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 #'
 #' @param name The name for the container model (default = 'top')
 #' @param ...  Models forming the multiple groups contained in the supermodel.
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -791,7 +792,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' @param name The name for the new model
 #' @param intervals Whether to run confidence intervals (see \code{\link{mxRun}})
 #' @param comparison Whether to run umxCompare() on the new and old models.
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param verbose How much feedback to give
 #' @return - \code{\link{mxModel}}
@@ -948,7 +949,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @param lboundACE = numeric: If !is.na, then lbound the main effects at this value (default = NA)
 #' @param lboundM   = numeric: If !is.na, then lbound the moderators at this value (default = NA)
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @return - GxE \code{\link{mxModel}}
@@ -1388,7 +1389,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param boundDiag = Whether to bound the diagonal of the a, c, and e matrices.
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
@@ -1768,7 +1769,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param correlatedA ?? (default = FALSE).
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
@@ -2039,7 +2040,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 #' @param addCI Whether to add the interval requests for CIs (defaults to TRUE).
 #' @param numObsDZ = TODO: implement ordinal Number of DZ twins: Set this if you input covariance data,
 #' @param numObsMZ = TODO: implement ordinal Number of MZ twins: Set this if you input covariance data.
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
@@ -2829,7 +2830,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @param verbose Whether to give verbose feedback (default = TRUE)
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @return - \code{\link{mxModel}}
 #' @export

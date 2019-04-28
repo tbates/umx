@@ -39,7 +39,7 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
-\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 

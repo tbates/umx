@@ -71,7 +71,7 @@
 #' @param dzCr The DZ "C" correlation (defaults = 1. To make an ADE model, set = .25).
 #' @param addStd Whether to add the algebras to compute a std model (default = TRUE).
 #' @param addCI Whether to add the interval requests for CIs (default = TRUE).
-#' @param autoRun Whether to run the model, and return that (default), or just to create it and return without running.
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @return - \code{\link{mxModel}}
