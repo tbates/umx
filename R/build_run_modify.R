@@ -626,16 +626,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	)
 
 	if (class(data) == "character"){
+		# umx_msg(data)
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		newModel = umxLabel(newModel, suffix = suffix)
 		if(autoRun && umx_set_auto_plot(silent = TRUE)){
 			plot(newModel)
-			return(newModel)
 		}
+		return(newModel)
 	}else{
 		newModel = mxModel(newModel, data)
 	}
-
 	# Note: WLS data will be mxData(..., type = "raw") at this stage.
 	# Add means if data are raw and means not requested by user
 	needsMeans = xmu_model_needs_means(data = data, type = type, allContinuousMethod= allContinuousMethod)

@@ -186,7 +186,7 @@ xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 			# raw data needs means (can't tell if this would become cov with no means...)
 			return(TRUE)
 		}
-	} else if(umx_is_MxData(data)){
+	}else if(umx_is_MxData(data)){
 		if(type %in% c('Auto', 'FIML') && (data$type == "raw")){
 			return(TRUE)
 			# Note, auto will be FIML not WLS
@@ -200,6 +200,8 @@ xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 			# cov data with means
 			return(TRUE)
 		}
+	}else if(is.character(data)){
+		return(FALSE)		
 	}else{
 		stop("I don't know what to do with data of type ", omxQuotes(class(data)))
 	}

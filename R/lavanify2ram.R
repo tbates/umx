@@ -284,12 +284,19 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	# Add algebras	(if any)
 	tmp   = xmu_lavaan_process_group(algebraRows, groupNum = 0)
 	model = mxModel(model, tmp$plist)
-	# model not run at this point!
-	model = omxAssignFirstParameters(model)
-	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
-	invisible(model)
-	
-	return(model)
+	# model now (2019-04-28) not run at this point!
+	# I initially ran the subModels with umxRAM as they were built.
+	if (class(data) == "character"){
+		# User is just running a trial model, with no data, but provided names for sketch mode
+		if(autoRun && umx_set_auto_plot(silent = TRUE)){
+			plot(model)
+		}
+		return(model)
+	}else{
+		model = omxAssignFirstParameters(model)
+		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
+		return(model)
+	}
 }
 
 
