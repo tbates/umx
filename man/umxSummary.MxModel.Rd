@@ -2,6 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxSummary.MxModel}
 \alias{umxSummary.MxModel}
+\alias{umxSummary.MxRAMModel}
 \title{Shows a compact, publication-style, summary of a RAM model}
 \usage{
 \method{umxSummary}{MxModel}(model, refModels = NULL,

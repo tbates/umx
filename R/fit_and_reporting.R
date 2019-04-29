@@ -803,7 +803,7 @@ umxSummary.default <- function(model, ...){
 #' under-identification and can break confidence interval estimation.
 #' Fixing a factor loading to 1 and estimating factor variances can help here.
 #'
-#' @aliases umxSummary.MxModel
+#' @aliases umxSummary.MxModel umxSummary.MxRAMModel
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param refModels Saturated models if needed for fit indices (see example below:
 #' 	If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.
@@ -1020,6 +1020,10 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 		}
 	}
 }
+
+#' @export
+umxSummary.MxRAMModel <- umxSummary.MxModel
+
 
 #' Shows a compact, publication-style, summary of a umx Cholesky ACE model
 #'
