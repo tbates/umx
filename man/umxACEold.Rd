@@ -51,7 +51,7 @@ umxACEold(name = "ACE", selDVs, selCovs = NULL,
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
 
-\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 

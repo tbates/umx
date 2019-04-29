@@ -4,28 +4,38 @@
 \alias{umxRAM2}
 \title{Make RAM model using lavaan syntax}
 \usage{
-umxRAM2(model, data = NULL, lavaanMode = "sem", printTab = FALSE,
-  name = NULL)
+umxRAM2(model, data = NULL, group = NULL, std.lv = FALSE,
+  name = NULL, lavaanMode = "sem", autoRun = TRUE,
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
+  "mxTryHardWideSearch"), printTab = FALSE)
 }
 \arguments{
 \item{model}{A lavaan string}
 
 \item{data}{Data for the model (optional)}
 
-\item{lavaanMode}{= "sem"}
+\item{group}{= Column to use for multi-group (default = NULL)}
 
-\item{printTab}{Print the table (defaults to FALSE) # TODO just verbose}
+\item{std.lv}{= Whether to set var of latents to 1 (default = FALSE) n.b. Toggles fix.first}
 
 \item{name}{Name for model (optional)}
+
+\item{lavaanMode}{= "sem"}
+
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
+
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+
+\item{printTab}{Print the table (defaults to FALSE) # TODO just verbose}
 }
 \value{
-- \code{\link{mxModel}}
+- [mxModel()]
 }
 \description{
-Can detect lavaan string input. TODO document once merged with `umxRAM`.
+Can detect lavaan string input. TODO document once merged with [umxRAM()].
 }
 \examples{
-m1 = umxRAM2("y~x") 
+m1 = umxRAM2("y~x")
 umxRAM2("y is x") # not a lavaan string
 namedStr = " 	# my name
 	y ~x"
@@ -39,7 +49,7 @@ m1 = umxRAM2(lav)
 
 }
 \seealso{
-- \code{\link{umxLav2RAM}}
+- [umxLav2RAM()]
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxLav2RAM}}, \code{\link{umxTwoStage}},

@@ -29,7 +29,7 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 \item{dropMissingDef}{Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE}
 
-\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 

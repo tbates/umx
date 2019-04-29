@@ -32,7 +32,7 @@ Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1"
 
 \item{addCI}{Whether to add the interval requests for CIs (default = TRUE).}
 
-\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 

@@ -37,7 +37,7 @@ overrides the contents of update, and sets regex to TRUE.}
 
 \item{comparison}{Whether to run umxCompare() on the new and old models.}
 
-\item{autoRun}{Whether to run the model, and return that (default), or just to create it and return without running.}
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }

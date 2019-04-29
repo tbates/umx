@@ -4,30 +4,41 @@
 \alias{umxLav2RAM}
 \title{Convert a lavaan syntax string to a umxRAM model}
 \usage{
-umxLav2RAM(model = NA, data = "auto", name = NULL,
-  lavaanMode = "sem", printTab = TRUE, group = NULL)
+umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
+  lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE,
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
+  "mxTryHardWideSearch"), printTab = TRUE)
 }
 \arguments{
 \item{model}{A lavaan syntax string, e.g. "A~~B"}
 
 \item{data}{Data to add to model (defaults to auto, which is just sketch mode)}
 
-\item{name}{Model name}
+\item{group}{= NULL TODO: define this}
 
-\item{lavaanMode}{Automagical path settings (default = "sem")}
+\item{name}{Model name (can also add name in # commented line-1)}
+
+\item{lavaanMode}{Automagical path settings for cfa or sem (default)}
+
+\item{std.lv}{= FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.}
+
+\item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
+
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{printTab}{= TRUE (more for debugging)}
-
-\item{group}{= NULL TODO: define this}
 }
 \value{
 \itemize{
-\item list of \code{\link{umxPath}}s
+\item list of \code{\link[=umxPath]{umxPath()}}s
 }
 }
 \description{
-Use lavaan syntax to create umxRAM models. If data are provided, a \code{umxRAM} model is returned.
-If more than one group is found, a superModel is returned.
+Takes a lavaan syntax string and creates the matching one or more umxRAM models.
+
+If data are provided, a \code{\link[=umxRAM]{umxRAM()}} model is returned.
+
+If more than one group is found, a \code{\link[=umxSuperModel]{umxSuperModel()}} is returned.
 
 This function is at the alpha quality stage, and \strong{should be expected to have bugs}.
 Several features are not yet supported. Let me know if you'd like them.
@@ -60,7 +71,7 @@ Lavaan is fabulously well documented. For quick reference, some common symbols i
 }
 \examples{
 # auto-data, print table, return umxRAM model
-m1 = umxLav2RAM("y ~ x")
+m1 = umxLav2RAM("y ~ x", printTab= FALSE)
 
 lav = "y ~ x1 + 2.4*x2 + x3"
 tmp = umxLav2RAM(lav, data = "auto", printTab= FALSE)
@@ -119,7 +130,7 @@ tmp = umxLav2RAM(lav)
 }
 \seealso{
 \itemize{
-\item \code{\link{umxRAM}}
+\item \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other Super-easy helpers: \code{\link{umxEFA}},

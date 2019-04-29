@@ -43,7 +43,7 @@
 #' @seealso - \code{\link{mxTryHard}}
 #' @md
 #' @examples
-#' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE, comparison= FALSE)
+#' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
 xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE) {
@@ -186,7 +186,7 @@ xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 			# raw data needs means (can't tell if this would become cov with no means...)
 			return(TRUE)
 		}
-	} else if(umx_is_MxData(data)){
+	}else if(umx_is_MxData(data)){
 		if(type %in% c('Auto', 'FIML') && (data$type == "raw")){
 			return(TRUE)
 			# Note, auto will be FIML not WLS
@@ -200,6 +200,8 @@ xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 			# cov data with means
 			return(TRUE)
 		}
+	}else if(is.character(data)){
+		return(FALSE)		
 	}else{
 		stop("I don't know what to do with data of type ", omxQuotes(class(data)))
 	}
