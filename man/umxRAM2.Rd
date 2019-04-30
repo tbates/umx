@@ -5,7 +5,7 @@
 \title{Make RAM model using lavaan syntax}
 \usage{
 umxRAM2(model, data = NULL, group = NULL, std.lv = FALSE,
-  name = NULL, lavaanMode = "sem", autoRun = TRUE,
+  name = NULL, lavaanMode = c("sem", "lavaan"), autoRun = TRUE,
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
   "mxTryHardWideSearch"), printTab = FALSE)
 }
@@ -20,7 +20,7 @@ umxRAM2(model, data = NULL, group = NULL, std.lv = FALSE,
 
 \item{name}{Name for model (optional)}
 
-\item{lavaanMode}{= "sem"}
+\item{lavaanMode}{= "sem" auto-options, or "lavaan" (no auto options)}
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 

@@ -1,11 +1,17 @@
-# Roadmap for next version... umx 3.0.0 May 2018, R 3.5.X
+# Roadmap for next version... umx 3.0.0 May 2018, R 3.5.6 "Planting of a Tree"
+
+**tip**: Try new `plot` `splines` = T|F and `min`= , `max` = `same`=  controls to layout your graphs!
+
+* FIX: `uxmSummary` the annoying "not defined for mxRAMModels" error should be fixed!
+* ALPHA: `umxRAM` lavaan string syntax mode.
 * FIX: `umxSimplex`
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
 * NEW: `umxLav2RAM`
 * NEW: `xmu_lavaan_process_group`
 * NEW: `xmu_clean_label`
-* NEW: `plot` will get ability to opt paths out of constraints.
+* NEW: `plot` now has ability control object locations, splines, and opt paths out of constraints!
+
 
 # umx 2.10.0 April 2019, R 3.5.3 "Great Truth"
 

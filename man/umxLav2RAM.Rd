@@ -5,7 +5,7 @@
 \title{Convert a lavaan syntax string to a umxRAM model}
 \usage{
 umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
-  lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE,
+  lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE,
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
   "mxTryHardWideSearch"), printTab = TRUE)
 }
@@ -14,11 +14,11 @@ umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
 
 \item{data}{Data to add to model (defaults to auto, which is just sketch mode)}
 
-\item{group}{= NULL TODO: define this}
+\item{group}{= Column to use for multi-group (default = NULL)}
 
 \item{name}{Model name (can also add name in # commented line-1)}
 
-\item{lavaanMode}{Automagical path settings for cfa or sem (default)}
+\item{lavaanMode}{Automagical path settings for cfa/sem (default) or no-defaults ("lavaan")}
 
 \item{std.lv}{= FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.}
 

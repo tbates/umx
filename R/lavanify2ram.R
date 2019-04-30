@@ -5,7 +5,7 @@
 #'
 #' @param model A lavaan string
 #' @param data Data for the model (optional)
-#' @param lavaanMode = "sem"
+#' @param lavaanMode = "sem" auto-options, or "lavaan" (no auto options)
 #' @param std.lv = Whether to set var of latents to 1 (default = FALSE) n.b. Toggles fix.first
 #' @param group = Column to use for multi-group (default = NULL)
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
@@ -29,7 +29,8 @@
 #' " 
 #' m1 = umxRAM2(lav) 
 #'
-umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NULL, lavaanMode = "sem", autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = FALSE){
+umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NULL, lavaanMode = c("sem", "lavaan"), autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = FALSE){
+	lavaanMode = match.arg(lavaanMode)
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
 		# Process lavaanString
 		lavaanString = umx_trim(model)
@@ -110,7 +111,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' 
 #' @param model A lavaan syntax string, e.g. "A~~B"
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
-#' @param lavaanMode Automagical path settings for cfa or sem (default)
+#' @param lavaanMode Automagical path settings for cfa/sem (default) or no-defaults ("lavaan")
 #' @param group = Column to use for multi-group (default = NULL)
 #' @param name Model name (can also add name in # commented line-1)
 #' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
@@ -180,7 +181,8 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #'
 #' tmp = umxLav2RAM(lav)
 #'
-umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = TRUE){
+umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = TRUE){
+	lavaanMode = match.arg(lavaanMode)
 	# =~  =  L  -> A
 	# ~   =  y <-  x
 	# ~~  =  A <-> B
@@ -200,6 +202,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	}
 
 
+	# TODO umxLav2RAM: detect legal options (like auto.var) in the ... list and filter into lavaanify call
 	if(lavaanMode == "sem"){
 		# model = "x1~b1*x2; B1_sq := b1^2"; std.lv=FALSE
 		tab = lavaan::lavaanify(model = model,
@@ -215,9 +218,10 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 			auto.cov.y      = TRUE,
 			fixed.x = FALSE # not standard in lavaan::sem, but needed for RAM
 		)
+	}else	if(lavaanMode == "lavaan"){
+		tab = lavaan::lavaanify(model = model)
 	}else{
-		# TODO umxLav2RAM: detect legal options (like auto.var) in the ... list and filter into lavaanify call
-		message("Only sem mode implemented as yet: what other modes would be useful?")		
+		message("Only sem/cfa and no-auto lavaan modes implemented as yet: what other modes would be useful?")		
 	}
 
 	if(printTab){
