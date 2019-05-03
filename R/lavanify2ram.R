@@ -181,6 +181,10 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #'
 #' tmp = umxLav2RAM(lav)
 #'
+#' # Formative factor
+#' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
+#'
+# group.equal	Equality constraints across multiple groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
 umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = TRUE){
 	lavaanMode = match.arg(lavaanMode)
 	# =~  =  L  -> A
@@ -216,7 +220,8 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 			auto.th         = TRUE,
 			auto.delta      = TRUE,
 			auto.cov.y      = TRUE,
-			fixed.x = FALSE # not standard in lavaan::sem, but needed for RAM
+			fixed.x         = FALSE # Not standard in lavaan::sem, but needed for RAM
+			# If TRUE, would fix mean, var, cov, of exogenous covariates to their sample values.
 		)
 	}else	if(lavaanMode == "lavaan"){
 		tab = lavaan::lavaanify(model = model)
