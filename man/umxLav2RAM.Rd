@@ -127,6 +127,9 @@ b1 > exp(b2 + b3)"
 
 tmp = umxLav2RAM(lav)
 
+# Formative factor
+# lavaanify("f5 <~ z1 + z2 + z3 + z4")
+
 }
 \seealso{
 \itemize{

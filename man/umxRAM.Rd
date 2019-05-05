@@ -4,12 +4,12 @@
 \alias{umxRAM}
 \title{Easier path-based SEM modeling.}
 \usage{
-umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
-  suffix = "", showEstimates = c("none", "raw", "std", "both",
-  "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS",
-  "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"),
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+umxRAM(model = NA, ..., data = NULL, name = NA, group = NA,
+  comparison = TRUE, suffix = "", showEstimates = c("none", "raw",
+  "std", "both", "list of column names"), type = c("Auto", "FIML", "cov",
+  "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants",
+  "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no",
+  "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   refModels = NULL, remove_unused_manifests = TRUE, independent = NA,
   setValues = TRUE, optimizer = NULL, verbose = FALSE)
 }
@@ -21,6 +21,8 @@ umxRAM(model = NA, ..., data = NULL, name = NA, comparison = TRUE,
 \item{data}{data for the model. Can be an \code{\link{mxData}} or a data.frame}
 
 \item{name}{A friendly name for the model}
+
+\item{group}{(optional) column name to use for a multi-group model.}
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
@@ -244,6 +246,7 @@ m1$S$labels
 # wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 # disp "disp_with_mpg" "b1"          "disp_with_disp"
 parameters(m1)
+
 }
 \references{
 \itemize{

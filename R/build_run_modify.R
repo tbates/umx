@@ -687,8 +687,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 		modelList = list()
 		levelsOfGroup = unique(data[,groups])
 		for (thisLevelOfGroup in levelsOfGroup) {
-			thisSubset = data[data[, group], == thisLevelOfGroup, ]
-			
+			thisSubset = data[data[, group] == thisLevelOfGroup, ]
 		}
 		
 		newModel = umxSuperModel()
