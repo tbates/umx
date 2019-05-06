@@ -685,13 +685,17 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 		# 3. add data to copy of the model and accumulate in list of models
 		# 4. Add list of models to umxSuperModel
 		modelList = list()
-		levelsOfGroup = unique(data[,groups])
-		for (thisLevelOfGroup in levelsOfGroup) {
-			thisSubset = data[data[, group] == thisLevelOfGroup, ]
-		}
+		groupCol = data[,group]
+		levelsOfGroup = unique(groupCol)
 		
-		newModel = umxSuperModel()
+		for (thisLevelOfGroup in levelsOfGroup) {
+			thisSubset = data[groupCol == thisLevelOfGroup, ]
+			newModel = mxModel(newModel, name= paste0(name, "_", thisLevelOfGroup))
+			modelList = c(modelList, newModel)
+		}
+		newModel = umxSuperModel(name=name, modelList)
 	}
+
 	newModel = omxAssignFirstParameters(newModel)
 	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard)
 	invisible(newModel)
