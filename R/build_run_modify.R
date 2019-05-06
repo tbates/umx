@@ -634,7 +634,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 		# umx_msg(data)
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		newModel = umxLabel(newModel, suffix = suffix)
-		if(is.na(groups)){
+		if(is.na(group)){
 			if(autoRun && umx_set_auto_plot(silent = TRUE)){
 				plot(newModel)
 			}
@@ -679,7 +679,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 	# ========================
 	# = 	handle group = here =
 	# ========================
-	if(!is.na(groups)){
+	if(!is.na(group)){
 		# 1. go back to raw data and subset by "group" column
 		# 2. create new mxData,
 		# 3. add data to copy of the model and accumulate in list of models
