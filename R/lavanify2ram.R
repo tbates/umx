@@ -33,7 +33,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 	lavaanMode = match.arg(lavaanMode)
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
 		# Process lavaanString
-		model = umxLav2RAM(model = lavaanString, data = data, group = group, std.lv = std.lv, name = name, lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
+		model = umxLav2RAM(model = model, data = data, group = group, std.lv = std.lv, name = name, lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
 		invisible(model)
 	}else{
 		message("Woot: that doesn't look like a lavaan string to me:")
@@ -67,7 +67,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' * auto.cov.y      = TRUE
 #' * fixed.x         = FALSE (not standard in lavaan::sem, but needed for RAM)
 #'
-#' Lavaan is fabulously well documented. For quick reference, some common symbols in lavaan strings are
+#' Lavaan is well documented. For quick reference, some common symbols in lavaan strings are:
 #' 
 #'
 #' \tabular{rlll}{
@@ -103,11 +103,17 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #'
 #' # Add labels to parameters, e.g. "x3_loading" as a loading for x3->x1
 #' tmp = umxLav2RAM("x1 ~ x3_loading*x3")
+#' umx_print(tmp$A$labels)
+#' # |   |x1       |x3         |
+#' # |:--|:--------|:----------|
+#' # |x1 |x1_to_x1 |x3_loading |
+#' # |x3 |x1_to_x3 |x3_to_x3   |
 #'
 #' # Fix values, e.g. x2 -> y fixed at 2.4
 #' tmp = umxLav2RAM("y ~ x1 + 2.4*x2; s =~ 0*y11 + 1*y12 + 2*y13 + 3*y14")
 #' 
 #' tmp = umxLav2RAM("L =~ X1 + X2; L ~ Y")
+#' plot(tmp, min=c("L", "Y"))
 #' 
 #' # Factor model showing auto-addition of correlations among exogenous latents
 #' # and auto-residuals on manifests
