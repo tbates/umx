@@ -2,7 +2,7 @@
 % Please edit documentation in R/lavanify2ram.R
 \name{umxLav2RAM}
 \alias{umxLav2RAM}
-\title{Convert a lavaan syntax string to a umxRAM model}
+\title{Convert a lavaan syntax string to a umxRAM model (or umxSuperModel)}
 \usage{
 umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
   lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE,
@@ -16,7 +16,7 @@ umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
 
 \item{group}{= Column to use for multi-group (default = NULL)}
 
-\item{name}{Model name (can also add name in # commented line-1)}
+\item{name}{Model name (can also add name in # commented first line)}
 
 \item{lavaanMode}{Automagical path settings for cfa/sem (default) or no-defaults ("lavaan")}
 

@@ -620,7 +620,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 		message("ManifestVars set to: ", paste(usedManifests, collapse = ", "), ". ", msg_str)
 	}
 	# ==================
-	# = assemble model =
+	# = Assemble model =
 	# ==================
 	newModel = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = usedManifests,
@@ -628,7 +628,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 		independent = independent, dot.items)
 	)
 	# ============
-	# = add data =
+	# = Add data =
 	# ============
 	if (class(data) == "character"){
 		# umx_msg(data)
@@ -640,10 +640,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 			}
 			return(newModel)
 		} else {
-			# will be added to a super model
+			# will be added to a super model, but no data needed/available to subset
 		}
 	}else{
 		newModel = mxModel(newModel, data)
+		# will be re-processed with the required data below...
+		# except should not do this if lavaan... i.e., subset here with level of group...
 	}
 	
 	# ==========================
@@ -676,9 +678,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 		newModel = mxModel(newModel, mxFitFunctionWLS(type= type, allContinuousMethod = allContinuousMethod) )
 	}
 
-	# ========================
-	# = 	handle group = here =
-	# ========================
+	# =====================
+	# = Handle group here =
+	# =====================
 	if(!is.na(group)){
 		# 1. go back to raw data and subset by "group" column
 		# 2. create new mxData,

@@ -33,36 +33,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 	lavaanMode = match.arg(lavaanMode)
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
 		# Process lavaanString
-		lavaanString = umx_trim(model)
-
-		if(!is.null(group)){
-			stop("Support for group = not implemented yet. coming shortly")
-		}
-		
-		# Assume set name is the one the user wants if !is.null(name)
-		if(is.null(name)){
-			# If first line contains a #, assume user wants it to be a name for the model
-			line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
-			if(grepl(x= line1, pattern= "#")){
-				# line1 = "## my model ##"
-				pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
-				name = gsub(x= line1, pattern= pat, replacement= "\\1", perl= TRUE);
-				name = trimws(name)
-				# Replace white space with  "_"
-				name = gsub("(\\h+)", "_", name, perl=TRUE)
-				# Delete illegal characters
-				name = as.character(mxMakeNames(name))
-			}else{
-				# No name given in name or comment: use a default name
-				name = "m1"
-			}
-		}
-
-		if(is.null(data)){
-			data = "auto"
-		}
 		model = umxLav2RAM(model = lavaanString, data = data, group = group, std.lv = std.lv, name = name, lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
-		# umxLav2RAM will run the subModels with umxRAM as they were built.
 		invisible(model)
 	}else{
 		message("Woot: that doesn't look like a lavaan string to me:")
@@ -70,7 +41,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 	return(model)
 }
 
-#' Convert a lavaan syntax string to a umxRAM model
+#' Convert a lavaan syntax string to a umxRAM model (or umxSuperModel)
 #'
 #' @description
 #' Takes a lavaan syntax string and creates the matching one or more umxRAM models.
@@ -113,7 +84,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
 #' @param lavaanMode Automagical path settings for cfa/sem (default) or no-defaults ("lavaan")
 #' @param group = Column to use for multi-group (default = NULL)
-#' @param name Model name (can also add name in # commented line-1)
+#' @param name Model name (can also add name in # commented first line)
 #' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
@@ -198,13 +169,40 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	# TODO color residuals gray; biv blue; one-way green?
 	
 	# tmp = umxRAM2("e1~~n1; e2~~n2; e2+n2 ~ e1; n2 ~ n1");
-	if(is.null(name)){
-		name = "m1"
-	}
+	
 	if(!is.null(group)){
 		stop("Support for group = not implemented yet. coming shortly")
 	}
+	
+	# Process lavaanString
+	lavaanString = umx_trim(model)
 
+	if(!is.null(group)){
+		stop("Support for group = not implemented yet. coming shortly")
+	}
+	
+	if(is.null(data)){
+		data = "auto"
+	}
+
+	# Assume `name` should be used if !is.null(name)
+	if(is.null(name)){
+		# If first line contains a #, assume user wants it to be a name for the model
+		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
+		if(grepl(x= line1, pattern= "#")){
+			# line1 = "## my model ##"
+			pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
+			name = gsub(x= line1, pattern= pat, replacement= "\\1", perl= TRUE);
+			name = trimws(name)
+			# Replace white space with  "_"
+			name = gsub("(\\h+)", "_", name, perl=TRUE)
+			# Delete illegal characters
+			name = as.character(mxMakeNames(name))
+		}else{
+			# No name given in name or comment: use a default name
+			name = "m1"
+		}
+	}
 
 	# TODO umxLav2RAM: detect legal options (like auto.var) in the ... list and filter into lavaanify call
 	if(lavaanMode == "sem"){
