@@ -21,17 +21,19 @@
 #' @description
 #' Use name if provided. If first line contains a #, uses this line as name. Else use default.
 #'
-#' @param model an \code{\link{mxModel}} to WITH
-#' @return - \code{\link{mxModel}}
+#' @param lavaanString A model string, possibly with # model name on line 1.
+#' @param name A desired model name (optional).
+#' @param default A default name if nothing else found.
+#' @return - A name string
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - \code{\link{umxLabel}}
+#' @seealso - \code{\link{umxRAM}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @md
 #' @examples
-#' "my_model" == xmu_name_from_lavaan_str("# my model")
 #' "m1" == xmu_name_from_lavaan_str("x~~x")
 #' "bob" == xmu_name_from_lavaan_str(name = "bob")
+#' "my_model" == xmu_name_from_lavaan_str("# my model")
 #'
 xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NULL, default = "m1") {
 	# Assume `name` should be used if !is.null(name)

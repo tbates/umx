@@ -8,20 +8,24 @@ xmu_name_from_lavaan_str(lavaanString = NULL, name = NULL,
   default = "m1")
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to WITH}
+\item{lavaanString}{A model string, possibly with # model name on line 1.}
+
+\item{name}{A desired model name (optional).}
+
+\item{default}{A default name if nothing else found.}
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}}
+\item A name string
 }
 }
 \description{
 Use name if provided. If first line contains a #, uses this line as name. Else use default.
 }
 \examples{
-"my_model" == xmu_name_from_lavaan_str("# my model")
 "m1" == xmu_name_from_lavaan_str("x~~x")
 "bob" == xmu_name_from_lavaan_str(name = "bob")
+"my_model" == xmu_name_from_lavaan_str("# my model")
 
 }
 \references{
@@ -31,7 +35,7 @@ Use name if provided. If first line contains a #, uses this line as name. Else u
 }
 \seealso{
 \itemize{
-\item \code{\link{umxLabel}}
+\item \code{\link{umxRAM}}
 }
 
 Other xmu internal not for end user: \code{\link{umxModel}},
