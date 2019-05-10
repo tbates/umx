@@ -2305,12 +2305,22 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		# ===================================
 		# = Assemble full text to write out =
 		# ===================================
-		if(file == "name"){
+		if(is.na(file)){
 			label = model$name
-		} else {
-			label = file
+		}else{
+			if(file == "name"){
+				label = model$name
+			} else {
+				label = file
+			}
 		}
-		digraph = paste("digraph G {\n     label=\"", label, "\";\n", preOut, out, rankVariables, "\n}", sep = "\n");
+		digraph = paste0(
+			"digraph G {\n    ", 
+			"label='", label, "';\n",
+			preOut, "\n",
+			out, "\n",
+			rankVariables, "\n}"
+		)
 		print("?plot.MxModel options: std, digits, file, fixed, means, resid= 'circle|line|none' & more")
 		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 	}

@@ -4329,17 +4329,18 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # You can get the coefficients of an MxModel with coef(), just like for lm etc.
 #' coef(m1)
 #' 
+#' # But with more control using parameters
+#' parameters(m1, thresh="above", b=.3, pat = "G_to.*", digits = 3)
+#'
 #' # ==================
 #' # = Model updating =
 #' # ==================
 #' # Can we set the loading of X5 on G to zero?
-#' m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = FALSE, name = "no_g_on_X5")
-#' m2 = mxRun(m2)
-#' # Compare the two models
-#' umxCompare(m1, m2)
-#' 
-#' # Use umxModify to do the same thing in 1-line
 #' m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = TRUE)
+#'
+#' 
+#' umxCompare(m1, m2)
+#' # Note: umxSetParameters can do this with some additional flexibility
 #' 
 #' # ========================
 #' # = Confidence intervals =
