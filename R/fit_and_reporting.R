@@ -2181,132 +2181,139 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #'
 plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
 
+	# loop over submodels
 	if(length(x@submodels)){
 		n = 1
 		for (sub in x@submodels) {
 			if(file == "name"){
 				thisFile = file
 			} else {
-				thisFile = paste0(file, "")
+				thisFile = paste0(file, "_group_", n)
 			}
 			plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, pathLabels = pathLabels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, ...)
 			n = n + 1
 		}
-	}
-	# ==========
-	# = Setup  =
-	# ==========
-	resid = match.arg(resid)
-	model = x # just to be clear that x is a model
+	}else{	
+		# ==========
+		# = Setup  =
+		# ==========
+		resid = match.arg(resid)
+		model = x # just to be clear that x is a model
 
-	pathLabels = match.arg(pathLabels)
-	latents = model@latentVars   # 'vis', 'math', and 'text' 
-	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
+		pathLabels = match.arg(pathLabels)
+		latents = model@latentVars   # 'vis', 'math', and 'text' 
+		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	
-	# update values using compute = T to capture labels with [] references.
-	# TODO: !!! Needs more work to sync with confidence intervals and SES
-	model$S$values = mxEval(S, model, compute = T)
-	model$A$values = mxEval(A, model, compute = T)
-	if(!is.null(model$M)){
-		model$M$values = mxEval(M, model, compute = T)
-	}
+		# update values using compute = T to capture labels with [] references.
+		# TODO: !!! Needs more work to sync with confidence intervals and SES
+		model$S$values = mxEval(S, model, compute = TRUE)
+		model$A$values = mxEval(A, model, compute = TRUE)
+		if(!is.null(model$M)){
+			model$M$values = mxEval(M, model, compute = TRUE)
+		}
 	
-	if(std){ model = umx_standardize_RAM(model, return = "model") }
+		if(std){ model = umx_standardize_RAM(model, return = "model") }
 
-	# ========================
-	# = Get Symmetric & Asymmetric Paths =
-	# ========================
-	out = "";
-	out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, fixed = fixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
-	if(resid == "circle"){
-		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
-	} else if(resid == "line"){
-		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
-	}else{
-		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)		
-	}
-	# TODO should xmu_dot_make_residuals handle fixed or not necessary?
-	tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
-	variances     = tmp$variances  #either "var_var textbox" or "var -> var port circles"
-	varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
-	# =================
-	# = Define shapes =
-	# =================
-	if(splines){
-		preOut = '\tsplines="TRUE";\n\t# Latents\n'
-	} else {
-		preOut = '\tsplines="FALSE";\n\t# Latents\n'
-	}
-	for(var in latents) {
-	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
-	}
+		# ========================
+		# = Get Symmetric & Asymmetric Paths =
+		# ========================
+		out = "";
+		out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, fixed = fixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
+		if(resid == "circle"){
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
+		} else if(resid == "line"){
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
+		}else{
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)		
+		}
+		# TODO should xmu_dot_make_residuals handle fixed or not necessary?
+		tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
+		variances     = tmp$variances  # either "var_var textbox" or "var -> var port circles"
+		varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
+		# =================
+		# = Define shapes =
+		# =================
+		if(splines){
+			preOut = '\tsplines="TRUE";\n\t# Latents\n'
+		} else {
+			preOut = '\tsplines="FALSE";\n\t# Latents\n'
+		}
+		for(var in latents) {
+		   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+		}
 
-	preOut = paste0(preOut, "\n\t# Manifests\n")
-	for(var in selDVs) {
-	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
-	}
+		preOut = paste0(preOut, "\n\t# Manifests\n")
+		for(var in selDVs) {
+		   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
+		}
 
 	
-	# ================
-	# = handle means =
-	# ================
-	if(umx_has_means(model) & means){
-		out = paste0(out, "\n\t# Means paths\n")
-		# Add a triangle to the list of shapes
-		preOut = paste0(preOut, "\t one [shape = triangle];\n")
-		mxMat = model$matrices$M
-		mxMat_vals   = mxMat$values
-		mxMat_free   = mxMat$free
-		mxMat_labels = mxMat$labels
-		meanVars = colnames(mxMat$values)
-		for(to in meanVars) {
-			thisPathLabel = mxMat_labels[1, to]
-			thisPathFree  = mxMat_free[1, to]
-			thisPathVal   = round(mxMat_vals[1, to], digits)
-			if(thisPathFree){
-				labelStart = ' [label="' 
-			} else {
-				labelStart = ' [label="@'
-			}
+		# ================
+		# = handle means =
+		# ================
+		if(umx_has_means(model) & means){
+			out = paste0(out, "\n\t# Means paths\n")
+			# Add a triangle to the list of shapes
+			preOut = paste0(preOut, "\t one [shape = triangle];\n")
+			mxMat = model$matrices$M
+			mxMat_vals   = mxMat$values
+			mxMat_free   = mxMat$free
+			mxMat_labels = mxMat$labels
+			meanVars = colnames(mxMat$values)
+			for(to in meanVars) {
+				thisPathLabel = mxMat_labels[1, to]
+				thisPathFree  = mxMat_free[1, to]
+				thisPathVal   = round(mxMat_vals[1, to], digits)
+				if(thisPathFree){
+					labelStart = ' [label="' 
+				} else {
+					labelStart = ' [label="@'
+				}
 
-			# TODO plot.MxModel: Find way to show means fixed @0
-			if(thisPathFree || fixed ) {
-				# if(thisPathFree | (fixed & thisPathVal != 0) ) {
-				out = paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n')
-			}else{
-				# cat(paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n'))
-				# return(thisPathVal != 0)
+				# TODO plot.MxModel: Find way to show means fixed @0
+				if(thisPathFree || fixed ) {
+					# if(thisPathFree | (fixed & thisPathVal != 0) ) {
+					out = paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n')
+				}else{
+					# cat(paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n'))
+					# return(thisPathVal != 0)
+				}
 			}
 		}
+
+		# ===========================
+		# = Make the variance lines =
+		# ===========================
+		# x1_var [label="0.21", shape = plaintext];
+		# or (circles)
+		# x1 -> x1 [label="0.21", direction = both];
+		preOut = paste0(preOut, "\n\t#Variances/residuals\n")
+		for(var in variances) {
+		   preOut = paste0(preOut, "\t", var, ";\n")
+		}
+		# ======================
+		# = Set the ranks e.g. =
+		# ======================
+		# {rank=same; x1 x2 x3 x4 x5 };
+		# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
+		if(umx_has_means(model)){ append(varianceNames, "one")}
+
+		# min = latents; same = selDVs; max = varianceNames
+		x = xmu_dot_move_ranks(max = max, min = min, same=same, old_min = latents, old_same = selDVs, old_max = varianceNames)
+		rankVariables = xmu_dot_rank_str(min = x$min, same = x$same, max = x$max)
+
+		# ===================================
+		# = Assemble full text to write out =
+		# ===================================
+		if(file == "name"){
+			label = model$name
+		} else {
+			label = file
+		}
+		digraph = paste("digraph G {\n     label=\"", label, "\";\n", preOut, out, rankVariables, "\n}", sep = "\n");
+		print("?plot.MxModel options: std, digits, file, fixed, means, resid= 'circle|line|none' & more")
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 	}
-
-	# ===========================
-	# = Make the variance lines =
-	# ===========================
-	# x1_var [label="0.21", shape = plaintext];
-	# or (circles)
-	# x1 -> x1 [label="0.21", direction = both];
-	preOut = paste0(preOut, "\n\t#Variances/residuals\n")
-	for(var in variances) {
-	   preOut = paste0(preOut, "\t", var, ";\n")
-	}
-	# ======================
-	# = Set the ranks e.g. =
-	# ======================
-	# {rank=same; x1 x2 x3 x4 x5 };
-	# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
-	if(umx_has_means(model)){ append(varianceNames, "one")}
-
-	# min = latents; same = selDVs; max = varianceNames
-	x = xmu_dot_move_ranks(max = max, min = min, same=same, old_min = latents, old_same = selDVs, old_max = varianceNames)
-	rankVariables = xmu_dot_rank_str(min = x$min, same = x$same, max = x$max)
-
-	# ===================================
-	# = Assemble full text to write out =
-	# ===================================
-	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
-	print("?plot.MxModel options: std, digits, file, fixed, means, resid= 'circle|line|none' & more")
-	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end plot.MxModel
 
 #' @export
