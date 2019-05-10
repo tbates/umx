@@ -58,7 +58,7 @@ Uses the defaults of \code{lavaan::sem}
 \item fixed.x         = FALSE (not standard in lavaan::sem, but needed for RAM)
 }
 
-Lavaan is fabulously well documented. For quick reference, some common symbols in lavaan strings are
+Lavaan is well documented. For quick reference, some common symbols in lavaan strings are:
 
 \tabular{rlll}{
 \tab "=~"   \tab lhs (Latent) is manifested by rhs\cr
@@ -78,11 +78,17 @@ tmp = umxLav2RAM(lav, data = "auto", printTab= FALSE)
 
 # Add labels to parameters, e.g. "x3_loading" as a loading for x3->x1
 tmp = umxLav2RAM("x1 ~ x3_loading*x3")
+umx_print(tmp$A$labels)
+# |   |x1       |x3         |
+# |:--|:--------|:----------|
+# |x1 |x1_to_x1 |x3_loading |
+# |x3 |x1_to_x3 |x3_to_x3   |
 
 # Fix values, e.g. x2 -> y fixed at 2.4
 tmp = umxLav2RAM("y ~ x1 + 2.4*x2; s =~ 0*y11 + 1*y12 + 2*y13 + 3*y14")
 
 tmp = umxLav2RAM("L =~ X1 + X2; L ~ Y")
+plot(tmp, min=c("L", "Y"))
 
 # Factor model showing auto-addition of correlations among exogenous latents
 # and auto-residuals on manifests
@@ -98,7 +104,10 @@ HS = "spatial =~ visual   + cubes    + flags
 
 m1 = umxRAM2(HS, data = umx_scale(HS.ability.data))
 
-# more complex:
+# Multiple groups
+m1 = umxRAM2(HS, data = umx_scale(HS.ability.data), group = "school")
+
+# More complex:
 
 lav = " # Model 14 PROCESS Hayes - moderated mediation
 gnt ~ a*cb

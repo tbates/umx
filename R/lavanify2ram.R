@@ -126,10 +126,13 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' HS = "spatial =~ visual   + cubes    + flags
 #'       verbal  =~ paragrap + sentence + wordm
 #'       speed   =~ addition + counting + straight"
-#' 
+#'
 #' m1 = umxRAM2(HS, data = umx_scale(HS.ability.data))
 #'
-#' # more complex:
+#' # Multiple groups
+#' m1 = umxRAM2(HS, data = umx_scale(HS.ability.data), group = "school")
+#'
+#' # More complex:
 #'
 #' lav = " # Model 14 PROCESS Hayes - moderated mediation
 #' gnt ~ a*cb
@@ -161,9 +164,10 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' # Formative factor
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 #'
-# group.equal	Equality constraints across multiple groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
+# # TODO support group.equal Equality constraints across multiple groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
 umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = TRUE){
 	lavaanMode = match.arg(lavaanMode)
+	
 	# =~  =  L  -> A
 	# ~   =  y <-  x
 	# ~~  =  A <-> B
@@ -176,61 +180,43 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	
 	# tmp = umxRAM2("e1~~n1; e2~~n2; e2+n2 ~ e1; n2 ~ n1");
 	
-	if(!is.null(group)){
-		stop("Support for group = not implemented yet. coming shortly")
-	}
-	
 	# Process lavaanString
 	lavaanString = umx_trim(model)
-
-	if(!is.null(group)){
-		stop("Support for group = not implemented yet. coming shortly")
-	}
 	
 	if(is.null(data)){
 		data = "auto"
+		# TODO could use a list of group names??
+		ngroups = 1L
+		groupLevels = NA # ??
+	}else{
+		if(!is.null(group)){
+			groupLevels = as.character(unique(data[,group]))
+			ngroups = length(groupLevels)
+		} else {
+			groupLevels = NA # ??
+			ngroups = 1L
+		}
 	}
 
 	# Assume `name` should be used if !is.null(name)
-	if(is.null(name)){
-		# If first line contains a #, assume user wants it to be a name for the model
-		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
-		if(grepl(x= line1, pattern= "#")){
-			# line1 = "## my model ##"
-			pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
-			name = gsub(x= line1, pattern= pat, replacement= "\\1", perl= TRUE);
-			name = trimws(name)
-			# Replace white space with  "_"
-			name = gsub("(\\h+)", "_", name, perl=TRUE)
-			# Delete illegal characters
-			name = as.character(mxMakeNames(name))
-		}else{
-			# No name given in name or comment: use a default name
-			name = "m1"
-		}
-	}
+	name = xmu_name_from_lavaan_str(lavaanString = lavaanString, name = name, default = "m1")
 
 	# TODO umxLav2RAM: detect legal options (like auto.var) in the ... list and filter into lavaanify call
 	if(lavaanMode == "sem"){
 		# model = "x1~b1*x2; B1_sq := b1^2"; std.lv=FALSE
-		tab = lavaan::lavaanify(model = model,
-			int.ov.free     = TRUE,
-			int.lv.free     = FALSE,
+		tab = lavaan::lavaanify(model = model, ngroups = ngroups,
+			int.ov.free     = TRUE, int.lv.free = FALSE,
 			auto.fix.first  = !std.lv, # (so will default to TRUE)
 			std.lv          = std.lv,
-			auto.fix.single = TRUE,
-			auto.var        = TRUE,
-			auto.cov.lv.x   = TRUE,
-			auto.th         = TRUE,
-			auto.delta      = TRUE,
-			auto.cov.y      = TRUE,
-			fixed.x         = FALSE # Not standard in lavaan::sem, but needed for RAM
+			auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, 
+			auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE, 
+			fixed.x = FALSE # Not standard in lavaan::sem, but needed for RAM
 			# If TRUE, would fix mean, var, cov, of exogenous covariates to their sample values.
 		)
 	}else	if(lavaanMode == "lavaan"){
-		tab = lavaan::lavaanify(model = model)
+		tab = lavaan::lavaanify(model = model, ngroups = ngroups)
 	}else{
-		message("Only sem/cfa and no-auto lavaan modes implemented as yet: what other modes would be useful?")		
+		message("Only sem and lavaan (only user paths) modes implemented as yet: What other modes would be useful?")		
 	}
 
 	if(printTab){
@@ -256,17 +242,32 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	algebraRows = tab[tab$group == 0, ]
 	nAlg = nrow(algebraRows)
 
+	# Already have
+	# groupLevels = as.character(unique(data[,group]))
+	# ngroups = length(groupLevels)
+
 	# Remove group 0 from the big table
 	tab     = tab[tab$group != 0, ]
-	groups  = unique(tab[, "group"])
-	nGroups = length(groups)
+	tabGroups  = unique(tab[, "group"]) # numeric
+	if(ngroups != length(tabGroups)){
+		message("I found ", ngroups, " in the data column ", omxQuotes(group), " but lavaanify found", length(tabGroups))
+	}
 
 	# TODO umxLav2RAM: remove this reporting
-	if(nGroups){ message("Found ", nGroups, " groups") }
-	if(nAlg){ message("Found ", nAlg, " algebras (:=) or group-0 items")}
+	if(ngroups){ message("Found ", ngroups, " groups") }
+	if(nAlg)   { message("Found ", nAlg   , " algebras (:=) or group-0 items")}
+
+	if(is.null(data)){
+		sketchMode = TRUE
+	} else if( is.character(data) && length(data) == 1 && data == "auto"){
+		# auto
+		sketchMode = TRUE
+	}else{
+		sketchMode = FALSE
+	}
 
 	modelList = list()
-	for (groupNum in groups) {
+	for (groupNum in tabGroups) {
 		# Process a group/Model
 		tmp = xmu_lavaan_process_group(tab, groupNum = groupNum)
 		latents   = tmp$latents
@@ -274,26 +275,29 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 		plist     = tmp$plist
 		# All model paths in plist: time to make the RAM model
 
-		# figure out data
-		# TODO need to subset data for each group...
-		if(is.null(data)){
-			data = manifests
-		} else {
-			if(is.character(data) && length(data) == 1 && data == "auto"){
-				data = manifests
-			}
+		# Figure out data
+		if(sketchMode){
+			theseData = manifests
+		}else if (ngroups > 1){
+			filter = data[, group] == groupLevels[groupNum]
+			theseData = data[filter, ]
+		}else{
+			theseData = data
 		}
-		if(nGroups > 1){
-			modelName = paste0(name, groupNum)
+		if(ngroups > 1){
+			modelName = paste0(name, "_", groupLevels[groupNum])
+			modelName = gsub("(\\h+)", "_", modelName, perl = TRUE)
+			# Delete illegal characters
+			modelName = as.character(mxMakeNames(modelName))			
 		}else{
 			modelName = name
 		}
-		m1 = umxRAM(modelName, plist, data = data, autoRun = FALSE)
+		m1 = umxRAM(modelName, plist, data = theseData, autoRun = FALSE)
 		modelList = append(modelList, m1)
 	}
 
 	# ModelList contains a list of models (groups)
-	if(nGroups > 1){
+	if(ngroups > 1){
 		# If more than one, make a superModel
 		model = umxSuperModel("top", modelList, autoRun = FALSE)
 	} else {
@@ -304,8 +308,6 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	tmp   = xmu_lavaan_process_group(algebraRows, groupNum = 0)
 	model = mxModel(model, tmp$plist)
 
-	# 2019-04-28: Model not yet run, but umxLav2RAM does run so...
-	# I initially ran the subModels with umxRAM as they were built.
 	if (class(data) == "character"){
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		autoPlot = umx_set_auto_plot(silent = TRUE)

@@ -16,6 +16,47 @@
 # = Fns not used directly by users subject to arbitrary change and deprecation !!  =
 # ==================================================================================
 
+#' Find name for model
+#'
+#' @description
+#' Use name if provided. If first line contains a #, uses this line as name. Else use default.
+#'
+#' @param model an \code{\link{mxModel}} to WITH
+#' @return - \code{\link{mxModel}}
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - \code{\link{umxLabel}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @md
+#' @examples
+#' "my_model" == xmu_name_from_lavaan_str("# my model")
+#' "m1" == xmu_name_from_lavaan_str("x~~x")
+#' "bob" == xmu_name_from_lavaan_str(name = "bob")
+#'
+xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NULL, default = "m1") {
+	# Assume `name` should be used if !is.null(name)
+	if(is.null(name)){
+		# If first line contains a #, assume user wants it to be a name for the model
+		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
+		if(grepl(x = line1, pattern = "#")){
+			# line1 = "## my model ##"
+			pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
+			name = gsub(x = line1, pattern = pat, replacement = "\\1", perl = TRUE);
+			name = trimws(name)
+			# Replace white space with  "_"
+			name = gsub("(\\h+)", "_", name, perl = TRUE)
+			# Delete illegal characters
+			name = as.character(mxMakeNames(name))
+		}else{
+			# No name given in name or comment: use a default name
+			name = default
+		}
+	}else{
+		name = name
+	}
+	return(name)
+}
+
 
 # =====================
 # = Reporting helpers =

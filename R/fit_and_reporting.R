@@ -2180,6 +2180,19 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 #'
 plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
+
+	if(length(x@submodels)){
+		n = 1
+		for (sub in x@submodels) {
+			if(file == "name"){
+				thisFile = file
+			} else {
+				thisFile = paste0(file, "")
+			}
+			plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, pathLabels = pathLabels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, ...)
+			n = n + 1
+		}
+	}
 	# ==========
 	# = Setup  =
 	# ==========
@@ -2295,6 +2308,9 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 	print("?plot.MxModel options: std, digits, file, fixed, means, resid= 'circle|line|none' & more")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end plot.MxModel
+
+#' @export
+plot.MxRAMModel <- plot.MxModel
 
 #' umxPlotACE
 #'
