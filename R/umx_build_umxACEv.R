@@ -538,7 +538,7 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
 				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
 				CIparts        = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
-				thisString     = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
+				thisString     = paste0(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]")
 
 				if(grepl("^A", thisMatrixName)) {
 					A_CI[thisMatrixRow, thisMatrixCol] = thisString

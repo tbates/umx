@@ -858,6 +858,7 @@ umxSummary.default <- function(model, ...){
 #' umxSummary(m1, showEstimates = "std", filter = "NS")
 umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = "deprecated", ...){
 	# TODO make table take lists of models...
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if(std != "deprecated"){
 		stop("use show = 'std', not std = TRUE")
 	}
@@ -939,9 +940,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 						parameterTable[i, "sig"] = FALSE
 					}
 					if(est < 0){
-						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
+						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
 					} else {
-						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
+						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
 					}
 				}
 			}
@@ -1207,7 +1208,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
 			thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
 			CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
-			thisString = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
+			thisString = paste0(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]")
 
 			if(grepl("^a", thisMatrixName)) {
 				a_CI[thisMatrixRow, thisMatrixCol] = thisString
@@ -1426,7 +1427,7 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 			thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
 			thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
 			CIparts = round(CIlist[n, c("estimate", "lbound", "ubound")], 2)
-			thisString = paste(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]", sep="")
+			thisString = paste(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]", sep="")
 			# print(list(CIlist, labelList, rowCount, fullName, thisMatrixName))
 
 			if(grepl("^a", thisMatrixName)) {
