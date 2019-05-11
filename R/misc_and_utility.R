@@ -352,6 +352,33 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 	}
 }
 
+#' Set the separator
+#'
+#' Set umx_default_separator (used in CI[low sep high] ). Default = ","
+#'
+#' @param umx_default_separator separator for CIs etc. (if empty, returns the current value)
+#' @param silent If TRUE, no message will be printed.
+#' @return - Current umx_default_separator
+#' @export
+#' @family Get and set
+#' @examples
+#' library(umx)
+#' umx_set_separator() # show current state
+#' old = umx_set_separator(silent=TRUE) # store existing value
+#' umx_set_separator("|")
+#' umxAPA(.3, .2)
+#' umx_set_separator(old)    # reinstate
+umx_set_separator <- function( umx_default_separator = NULL, silent = FALSE) {
+	if(is.null( umx_default_separator)) {
+		if(!silent){
+			message("Current separator is", omxQuotes(getOption(" umx_default_separator")) )
+		}
+		invisible(getOption(" umx_default_separator"))		
+	} else {
+			options(" umx_default_separator" =  umx_default_separator)
+	}
+} # end umx_set_separator
+
 #' umx_set_table_format
 #'
 #' Set knitr.table.format default (output style for tables). Legal values are 

@@ -2311,7 +2311,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			if(file == "name"){
 				label = model$name
 			} else {
-				label = file
+				label = paste0(file, " ", model$name)
 			}
 		}
 		digraph = paste0(
@@ -2321,7 +2321,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			out, "\n",
 			rankVariables, "\n}"
 		)
-		print("?plot.MxModel options: std, digits, file, fixed, means, resid= 'circle|line|none' & more")
+		print("?plot.MxModel options: std, means, digits, strip_zero, file, fixed, resid= 'circle|line|none'")
 		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 	}
 } # end plot.MxModel
@@ -3898,8 +3898,9 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
 	report = match.arg(report)
 	test = match.arg(test)
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if("htest" == class(obj)[[1]]){
-		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), ", ", round(obj$conf.int[2], digits), "]")
+		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), commaSep, round(obj$conf.int[2], digits), "]")
 		o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
 		return(o)
 	}else if("data.frame" == class(obj)[[1]]){
@@ -3960,7 +3961,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 			tval    = b_and_p["t value"]
 			pval    = b_and_p["Pr(>|t|)"]
 			print(paste0(i, " \u03B2 = ", round(b, digits), 
-			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
+			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "t = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))		
 		}
@@ -3990,7 +3991,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 			testStat    = b_and_p["z value"]
 			pval    = b_and_p["Pr(>|z|)"]
 			print(paste0(i, " \u03B2 = ", round(b, digits), 
-			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
+			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))
 		}
@@ -4014,7 +4015,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 			numDF   = model_coefficients[i, "DF"]
 			pval    = model_coefficients[i, "p-value"]
 			print(paste0(i, " \u03B2 = ", round(b, digits), 
-			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
+			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))
 		}
@@ -4029,7 +4030,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 			print(paste0("\u03B2 = ", round(obj, digits), ", se =", round((se[2] - se[1])/(1.96 * 2), digits)))
 		} else {
 			# obj = beta and SE
-			print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), ", ", round(obj + (1.96 * se), digits), "]"))
+			print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]"))
 		}
 	}
 }

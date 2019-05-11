@@ -67,7 +67,10 @@ Lavaan is well documented. For quick reference, some common symbols in lavaan st
 \tab "~ 1"  \tab lhs has mean\cr
 \tab ":="   \tab lhs is defined by rhs (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})\cr
 \tab "=="   \tab lhs is constrained == to rhs (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
-}
+}Naming of multiple groups
+
+When multiple groups are found the groups are named "<name>_<groupLevel>"
+White space is replaced with an _ and illegal characters are replaced with "x"
 }
 \examples{
 # auto-data, print table, return umxRAM model
@@ -122,7 +125,7 @@ hiCN := a * b1 + ab3 * 0.5
 "
 tmp = umxRAM2(lav)
 # plot showing ability to influence layout with max min same groupings
-plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min="INT")
+plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min= "INT")
 
 # Algebra: e.g. b1^2
 m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)

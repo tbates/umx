@@ -34,6 +34,7 @@
 	umx_set_auto_run(TRUE)
 	umx_set_auto_plot(TRUE)
 	umx_set_data_variance_check(minVar = .01, maxVarRatio = 500)
+	umx_set_separator(umx_default_separator = ",")
 	# umx_complete_dollar()
 	packageStartupMessage("For an overview type '?umx'")
 }
@@ -238,7 +239,7 @@ methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 #' @description
 #' Catches a common typo, moving from mxModel to umx.
 #'
-#' @param ... anything. We're just going to throw an error.
+#' @param ... Anything. We're just going to throw an error.
 #' @return - 
 #' @export
 #' @family xmu internal not for end user
@@ -379,7 +380,7 @@ umxModel <- function(...) {
 #' # 3. #' # Of course you can plot the model
 #' plot(m1)
 #' plot(m1, std=TRUE, means=FALSE)
-#' plot(m1, std = TRUE, strip= FALSE, resid = "line")
+#' plot(m1, std = TRUE, means=FALSE, strip= TRUE, resid = "line")
 #'
 #' # ====================================
 #' # = A cov model, with steps laid out =

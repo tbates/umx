@@ -43,6 +43,7 @@ Other Get and set: \code{\link{umx_default_option}},
   \code{\link{umx_set_optimization_options}},
   \code{\link{umx_set_plot_file_suffix}},
   \code{\link{umx_set_plot_format}},
+  \code{\link{umx_set_separator}},
   \code{\link{umx_set_table_format}}, \code{\link{umx}}
 }
 \concept{Get and set}

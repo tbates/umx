@@ -151,7 +151,7 @@ umxSummary(m1, show = "std")
 # 3. #' # Of course you can plot the model
 plot(m1)
 plot(m1, std=TRUE, means=FALSE)
-plot(m1, std = TRUE, strip= FALSE, resid = "line")
+plot(m1, std = TRUE, means=FALSE, strip= TRUE, resid = "line")
 
 # ====================================
 # = A cov model, with steps laid out =

@@ -7,7 +7,7 @@
 umxModel(...)
 }
 \arguments{
-\item{...}{anything. We're just going to throw an error.}
+\item{...}{Anything. We're just going to throw an error.}
 }
 \value{
 -

@@ -52,6 +52,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' 
 #' This function is at the alpha quality stage, and **should be expected to have bugs**.
 #' Several features are not yet supported. Let me know if you'd like them.
+#'
 #' @details
 #'
 #' Uses the defaults of `lavaan::sem`
@@ -79,6 +80,9 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #'   \tab "=="   \tab lhs is constrained == to rhs (see [OpenMx::mxConstraint()] )
 #' }
 #'
+#' ## Naming of multiple groups
+#' When multiple groups are found the groups are named "<name>_<groupLevel>"
+#' White space is replaced with an _ and illegal characters are replaced with "x"
 #' 
 #' @param model A lavaan syntax string, e.g. "A~~B"
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
@@ -147,7 +151,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' "
 #' tmp = umxRAM2(lav)
 #' # plot showing ability to influence layout with max min same groupings
-#' plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min="INT")
+#' plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min= "INT")
 #' 
 #' # Algebra: e.g. b1^2
 #' m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
@@ -186,15 +190,15 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	if(is.null(data)){
 		data = "auto"
 		# TODO could use a list of group names??
-		ngroups = 1L
+		ngroups = 1
 		groupLevels = NA # ??
 	}else{
 		if(!is.null(group)){
 			groupLevels = as.character(unique(data[,group]))
 			ngroups = length(groupLevels)
 		} else {
+			ngroups = 1
 			groupLevels = NA # ??
-			ngroups = 1L
 		}
 	}
 
@@ -253,9 +257,8 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 		message("I found ", ngroups, " in the data column ", omxQuotes(group), " but lavaanify found", length(tabGroups))
 	}
 
-	# TODO umxLav2RAM: remove this reporting
-	if(ngroups){ message("Found ", ngroups, " groups") }
-	if(nAlg)   { message("Found ", nAlg   , " algebras (:=) or group-0 items")}
+	# if(ngroups){ message("Found ", ngroups, " groups") }
+	# if(nAlg)   { message("Found ", nAlg   , " algebras (:=) or group-0 items")}
 
 	if(is.null(data)){
 		sketchMode = TRUE
