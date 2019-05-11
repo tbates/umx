@@ -394,6 +394,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' }
 umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {

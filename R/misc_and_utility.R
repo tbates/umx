@@ -3178,6 +3178,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' umx_time('stop')
 #' # elapsed time: .3 seconds
 umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if(is.list(x)){
 		# check each item is a model
 		if(!umx_is_MxModel(x, listOK = TRUE)){
