@@ -265,19 +265,21 @@ xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 #' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 #' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")] * 100
 #' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
-xmu_check_variance <- function(data, minVar = .1, maxVarRatio = 1000){
+xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent=T)$minVar, maxVarRatio = umx_set_data_variance_check(silent=T)$maxVarRatio){
 	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1
 	varList = umx_var(data, format = "diag")
-	if(sum(varList < minVar) > 0){
+	if(any(varList < minVar)){
 		# At least 1 small
 		message("The variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
-			"You might want to multiply to express the variable in smaller units, e.g. cm instead of metres (or umx_scale these variables in long-format).")
+			"You might want to multiply to express the variable in smaller units, e.g. cm instead of metres.\n",
+			"Alternatively umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
 		
 	}
 	if(max(varList)/min(varList) > maxVarRatio){
-		# At least 1 small
+		# At least 1 big difference in variance
 		message("The variance of variable(s) ", omxQuotes(names(which.max(varList))), " is more than ", maxVarRatio, " times that of ", omxQuotes(names(which.min(varList))), ".\n",
-			"You might want multiply to get variables into units on more similar scales (or umx_scale these variables in long-format).")
+			"You might want multiply to get variables into units on more similar scales.\n",
+			"Alternatively, umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
 		
 	}
 
