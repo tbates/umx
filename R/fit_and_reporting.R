@@ -1871,7 +1871,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		stop("Make a vector of the comparison models (you seem to have provided a model as input to 'all', and I'm guessing that's a mistake)")
 	}
 	if(is.null(comparison)){
-		comparison <- base
+		comparison = base
 	} else if (is.null(base)) {
 		stop("You must provide at least a base model for umxCompare")
 	}
@@ -1880,7 +1880,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			base = base[[1]]
 		}
 		if(!umx_has_been_run(base)){
-			warning("base model not run yet!")		
+			warning("Base model not run yet!")		
 		}
 	}
 	if(length(comparison) == 1) {

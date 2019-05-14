@@ -338,12 +338,12 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
 		stop("Did you perhaps just include the data among other functions instead of via data = ?")
 	}else if(class(data) == "character"){
-		# pass through strings
+		# Pass strings through
 		return(data)
 	}
 
 	if(is.null(manifests)){
-		# manifests not specified: retain all except illegal variables
+		# Manifests not specified: retain all except illegal variables
 		manifests = umx_names(data)
 		if("one" %in% manifests){
 			warning("You have a data column called 'one' which is illegal (it's the code used for setting means). I'll drop it!")
@@ -355,7 +355,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			dropColumns = FALSE
 		}
 	}else{
-		# manifests specified: mark all others as un-used
+		# Manifests specified: mark all others as un-used
 		unusedManifests = setdiff(umx_names(data), manifests)
 		dropColumns = TRUE
 	}
