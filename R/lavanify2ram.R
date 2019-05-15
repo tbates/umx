@@ -67,8 +67,6 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' * auto.delta      = TRUE
 #' * auto.cov.y      = TRUE
 #' * fixed.x         = FALSE (not standard in lavaan::sem, but needed for RAM)
-#' # TODO 
-#' * missing         = might set this to "ml" (default = listwise in lavaan)
 #'
 #' Lavaan is well documented. For quick reference, some common symbols in lavaan strings are:
 #' 
@@ -216,11 +214,8 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 			std.lv          = std.lv,
 			auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, 
 			auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE, 
-			fixed.x = FALSE, # Not standard in lavaan::sem, but needed for RAM
-			# If TRUE, would fix mean, var, cov, of exogenous covariates to their sample values.
-			#' # TODO 
-			missing = "ml" # (default = listwise in lavaan)
-			
+			fixed.x = FALSE # Not standard in lavaan::sem, but needed for RAM
+			# If TRUE, would fix mean, var, cov, of exogenous covariates to their sample values.			
 		)
 	}else	if(lavaanMode == "lavaan"){
 		tab = lavaan::lavaanify(model = model, ngroups = ngroups)
