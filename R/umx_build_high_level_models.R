@@ -88,7 +88,6 @@
 #' # Formula interface in base-R factanal()
 #' m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 #' loadings(m2)
-#' plot(m2)
 #' 
 #' # Return a loadings object
 #' x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
@@ -208,10 +207,12 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 	if(scores != "none"){
 		x = umxFactorScores(m1, type = scores, minManifests = minManifests)
 	} else {
-		if(return == ""){
+		if(return == "loadings"){
 			invisible(x)
-		} else {
+		}else if(return == "model"){
 			invisible(m1)
+		}else{
+			message(omxQuotes(retun), " is not a legal option for 'return'")
 		}
 	}
 }

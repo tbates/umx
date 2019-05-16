@@ -87,7 +87,6 @@ loadings(m1)
 # Formula interface in base-R factanal()
 m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m2)
-plot(m2)
 
 # Return a loadings object
 x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
