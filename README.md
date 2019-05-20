@@ -1,11 +1,13 @@
 # umx
 
 [![Build Status](https://travis-ci.org/tbates/umx.svg?branch=master)](https://travis-ci.org/tbates/umx)
+![Github commits](https://img.shields.io/github/commits-since/simongrund1/mitml/latest.svg?colorB=green)
 [![cran version](http://www.r-pkg.org/badges/version/umx)](https://cran.r-project.org/package=umx)
 [![Monthly Downloads](http://cranlogs.r-pkg.org/badges/umx)](http://cranlogs.r-pkg.org/badges/umx)
 [![Total Downloads](http://cranlogs.r-pkg.org/badges/grand-total/umx)](http://cranlogs.r-pkg.org/badges/grand-total/umx)
 [![Rdoc](http://www.rdocumentation.org/badges/version/umx)](http://www.rdocumentation.org/packages/umx)
 [![DOI](https://img.shields.io/badge/doi-10.1017/thg.2019.2-yellow.svg?style=flat)](https://doi.org/10.1017/thg.2019.2)
+
 
 umx is a structural equation modeling package designed to make SEM easier, from building, to modifying and reporting.
 
