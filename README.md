@@ -45,15 +45,15 @@ Some highlights include:
 	* `umxModify()` *# Modify and run a model. You can add objects, drop or add paths, including by regular-expression label matching), re-name the model, re-run, and even return the comparison. All in 1 line *
 	* `parameters(m1, "below", .1, pattern="_to_"))` *# A powerful assistant to get labels from a model (e.g. all 'to' params, below .1 in value)*
 4. Twin modeling!
-	* `umxACE()` *# Twin ACE modeling with aplomb* paths are labeled! Works with `plot()` and `umxSummary`!
-	* `umxCP()`, `umxIP()`, `umxGxE()`, `umxCP()` …
+	* `umxACE` *# Twin ACE modeling with aplomb* paths are labeled! Works with `plot()` and `umxSummary`!
+	* `umxCP`, `umxIP`, `umxGxE`, `umxCP`, `umxGxEbiv`, `umxSexLim`  …
 	* ![umxACE](https://github.com/tbates/umx/blob/master/man/figures/ACEunivariate.png)
 5. Easy-to-remember options
 	* `umx_set_cores()`
 	* `umx_set_optimizer()`
 6. Many more miscellaneous helpers e.g.
 	* `umx_time(model1, model2)` reports and compares run times in a compact programmable format (also start and stop a timer)
-	* `umxHcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
+	* `umxHetcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
 	* Dozens more (?umx to see them all). Check out the "family links" in any help file also!
 
 Feel free to use, and submit code and requests via Github. Tell your friends! Publish more good science :-)
