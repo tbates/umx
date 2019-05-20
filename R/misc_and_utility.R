@@ -352,6 +352,33 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 	}
 }
 
+#' Set the separator
+#'
+#' Set umx_default_separator (used in CI[low sep high] ). Default = ","
+#'
+#' @param umx_default_separator separator for CIs etc. (if empty, returns the current value)
+#' @param silent If TRUE, no message will be printed.
+#' @return - Current umx_default_separator
+#' @export
+#' @family Get and set
+#' @examples
+#' library(umx)
+#' umx_set_separator() # show current state
+#' old = umx_set_separator(silent=TRUE) # store existing value
+#' umx_set_separator("|")
+#' umxAPA(.3, .2)
+#' umx_set_separator(old)    # reinstate
+umx_set_separator <- function( umx_default_separator = NULL, silent = FALSE) {
+	if(is.null( umx_default_separator)) {
+		if(!silent){
+			message("Current separator is", omxQuotes(getOption(" umx_default_separator")) )
+		}
+		invisible(getOption(" umx_default_separator"))		
+	} else {
+			options(" umx_default_separator" =  umx_default_separator)
+	}
+} # end umx_set_separator
+
 #' umx_set_table_format
 #'
 #' Set knitr.table.format default (output style for tables). Legal values are 
@@ -3135,6 +3162,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' require(umx)
+#' umx_time('stop') # alert user stop called when not yet started... 
 #' umx_time('start')
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -3145,12 +3173,14 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' umx_time(m1)
+#' umx_time(m1) # report time from mxModel
 #' m2 = umxRun(m1)
-#' umx_time(c(m1, m2))
-#' umx_time('stop')
+#' umx_time(c(m1, m2)) # print comparison table
+#' umx_time('stop') # report the time since timer last started, and restart
+#' umx_time('stop') # report the time since timer was restarted.
 #' # elapsed time: .3 seconds
 umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if(is.list(x)){
 		# check each item is a model
 		if(!umx_is_MxModel(x, listOK = TRUE)){
@@ -3159,11 +3189,11 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 	}else if(umx_is_MxModel(x)){
 		# great, we've got a model
 	}else if(is.character(x)){
-		umx_check(x %in% c('start', 'stop'), "stop", "Valid time strings are 'start', 'stop' (or a model or list of models)")
+		umx_check(x %in% c('start', 'stop', "now"), "stop", "Valid time strings are 'start', 'stop', 'now', (or a model or list of models)")
 	}else if(is.na(x)){
-		stop("You must set the first parameter (options are 'start', 'stop', a model, or a list of models)")
+		stop("You must set the first parameter (options are 'start', 'stop', 'now', a model, or a list of models)")
 	}else{
-		stop("You must set the first parameter to 'start', 'stop', a model, or a list of models.\nYou offered up a", class(x))
+		stop("You must set the first parameter to 'start', 'stop', 'now', a model, or a list of models.\nYou offered up a", class(x))
 	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	# TODO umx_time: Improve table formating
@@ -3182,10 +3212,17 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 				options("umx_last_time" = proc.time())
 				return(invisible())
 			} else if (thisX == "stop") {
-				thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
-				options("umx_last_time" = proc.time())
-			}else{
-				stop("Value strings for umx_time are start and stop, not: ", omxQuotes(thisX))
+					tmp = getOption("umx_last_time")
+					if(is.null(tmp)){
+						message("Timer was not yet started: I started it now...")
+						options("umx_last_time" = proc.time())
+						return(invisible())
+					} else {
+						thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
+						options("umx_last_time" = proc.time())
+					}
+			}else if(thisX =="now"){
+				return(format(Sys.time(), "%X, %a %d %b %Y"))				
 			}
 		} else {
 			# handle model
@@ -3225,11 +3262,11 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 			# Handle start-stop
 			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", formatStr))
 		} else {
-			timeString = format(.POSIXct(thisTime, tz), paste0(thisX$name, ": ", formatStr, timeDelta, ", ", percentDelta))
+			timeString = format(.POSIXct(thisTime, tz), paste0(thisX$name, ": ", formatStr, timeDelta, commaSep, percentDelta))
 		}
 		message(timeString)
 	}
-	invisible(timeString)
+	invisible(thisTime)
 }
 
 

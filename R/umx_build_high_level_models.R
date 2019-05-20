@@ -43,13 +43,19 @@
 #' @details
 #' In an EFA, all items may load on all factors.
 #' 
-#' For identification we need m^2 degrees of freedom. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
-#' We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of the factor loadings
-#' component of the A matrix. The manifest variances are also lbounded at 0.
+
+
+# #' For identification we need \ifelse{html}{{m<sup>2</sup>}{\eqn{m^2}} degrees of freedom. 
+#' For identification we need \ifelse{html}{\out{m<sup>2</sup>}}{\eqn{m^2}} degrees of freedom. 
+#' We get m(m+1)/2 from fixing factor variances to 1 and covariances to 0.
+#' We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of
+#' the factor loadings component of the A matrix at 0.
+#' 
+#' To aid optimization, manifest residual variances are `lbounded` at 0.
 #' 
 #' EFA reports standardized loadings: to do this, we scale the data.
 #' 
-#' \emph{note}: Bear in mind that factor scores are indeterminate.
+#' *note*: Bear in mind that factor scores are indeterminate (can be rotated to an infinity of equivalent solutions).
 #' 
 #' Thanks to @ConorDolan for code implementing the rotation matrix and other suggestions!
 #' 
@@ -70,6 +76,7 @@
 #' @return - EFA \code{\link{mxModel}}
 #' @family Super-easy helpers
 #' @export
+#' @md
 #' @seealso - \code{\link{factanal}}, \code{\link{mxFactorScores}}
 #' @references - \url{https://github.com/tbates/umx}
 #' @examples
@@ -81,7 +88,6 @@
 #' # Formula interface in base-R factanal()
 #' m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 #' loadings(m2)
-#' plot(m2)
 #' 
 #' # Return a loadings object
 #' x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
@@ -108,7 +114,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 	if (!is.null(data)){
 		# x must be formula, or column list && covmat and n.obs must be NULL
 		if(!is.null(covmat) || !is.null(n.obs)){
-			stop("covmat and n.obs must be empty when using 'data =' ...")
+			stop("umxEFA: covmat and n.obs must be empty when using 'data =' ...")
 		}
 		if(!is.null(x)){
 			if (inherits(x,"formula")){
@@ -144,7 +150,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 				data = as.data.frame(x)
 			}
 		} else if(is.null(data)){
-			stop("You need to provide a data.frame to analyse: this can be in x, or data, or covmat")
+			stop("You need to provide a data.frame to analyse: This can be in x, or data, or covmat")
 		}
 		name = "EFA"
 	}
@@ -175,10 +181,11 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 			m1$A$values[1:(i-1), factors[i]] = 0
 		}
 	}
-	# lbound the manifest diagonal to avoid mirror indeterminacy
+	# TODO: umxEFA lbound the lambda top-right corner of A @0 to avoid mirror indeterminacy
+	# Bound residual variance at 0
 	for(i in seq_along(manifests)) {
 	   thisManifest = manifests[i]
-	   m1$A$lbound[thisManifest, thisManifest] = 0
+	   m1$S$lbound[thisManifest, thisManifest] = 0
 	}
 	m1 = mxRun(m1)
 	if(rotation != "none" && nFac > 1){
@@ -200,10 +207,12 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 	if(scores != "none"){
 		x = umxFactorScores(m1, type = scores, minManifests = minManifests)
 	} else {
-		if(return == ""){
+		if(return == "loadings"){
 			invisible(x)
-		} else {
+		}else if(return == "model"){
 			invisible(m1)
+		}else{
+			message(omxQuotes(retun), " is not a legal option for 'return'")
 		}
 	}
 }

@@ -394,6 +394,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' }
 umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
@@ -538,7 +539,7 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
 				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
 				CIparts        = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
-				thisString     = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
+				thisString     = paste0(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]")
 
 				if(grepl("^A", thisMatrixName)) {
 					A_CI[thisMatrixRow, thisMatrixCol] = thisString

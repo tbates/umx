@@ -33,7 +33,8 @@
 	}
 	umx_set_auto_run(TRUE)
 	umx_set_auto_plot(TRUE)
-	umx_set_data_variance_check(minVar = .01, maxVarRatio = 500)
+	umx_set_data_variance_check(minVar = .01, maxVarRatio = 1000)
+	umx_set_separator(umx_default_separator = ",")
 	# umx_complete_dollar()
 	packageStartupMessage("For an overview type '?umx'")
 }
@@ -238,7 +239,7 @@ methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 #' @description
 #' Catches a common typo, moving from mxModel to umx.
 #'
-#' @param ... anything. We're just going to throw an error.
+#' @param ... Anything. We're just going to throw an error.
 #' @return - 
 #' @export
 #' @family xmu internal not for end user
@@ -330,15 +331,16 @@ umxModel <- function(...) {
 #' @param model A model to update (or set to string to use as name for new model)
 #' @param data data for the model. Can be an \code{\link{mxData}} or a data.frame
 #' @param ... mx or umxPaths, mxThreshold objects, etc.
+#' @param group (optional) column name to use for a multi-group model.
+#' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
+#' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param name A friendly name for the model
 #' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
-#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
-#' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
-#' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
+#' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
-#' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
+#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param setValues Whether to generate likely good start values (Defaults to TRUE)
 #' @param refModels pass in reference models if available. Use FALSE to suppress computing these if not provided.
 #' @param independent Whether the model is independent (default = NA)
@@ -378,7 +380,7 @@ umxModel <- function(...) {
 #' # 3. #' # Of course you can plot the model
 #' plot(m1)
 #' plot(m1, std=TRUE, means=FALSE)
-#' plot(m1, std = TRUE, strip= FALSE, resid = "line")
+#' plot(m1, std = TRUE, means=FALSE, strip= TRUE, resid = "line")
 #'
 #' # ====================================
 #' # = A cov model, with steps laid out =
@@ -473,7 +475,8 @@ umxModel <- function(...) {
 #'# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' parameters(m1)
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, suffix = "", showEstimates = c("none", "raw", "std", "both", "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE) {
+#'
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparison = TRUE, suffix = "", showEstimates = c("none", "raw", "std", "both", "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 
@@ -555,10 +558,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# = All dot.items processed  =
 	# ============================
 
-	# ===============
-	# = Handle data =
-	# ===============
-	
+	# ====================================
+	# = Find latentVars and manifestVars =
+	# ====================================
 	# Get names from data (forms pool of potential usedManifests)
 	manifestVars = unique(na.omit(umx_names(data)))
 
@@ -583,13 +585,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# ===========================================================
 	# This will be a model where things are not in the data and are not latent...
 	
-	# ====================
-	# = Handle Manifests =
-	# ====================
+	# =================================
+	# = List up any un-used Manifests =
+	# =================================
 	if (class(data) == "character"){
 		# User is just running in sketch mode, with no data, but provided names.
 		unusedManifests = c()
-		# autoRun = FALSE
 	}else{
 		unusedManifests = setdiff(manifestVars, foundNames)
 	}
@@ -599,6 +600,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	if(remove_unused_manifests & length(unusedManifests) > 0){
 		data = xmu_make_mxData(data = data, type = type, manifests = c(usedManifests, defnNames))
 	} else {
+		# keep everything
 		data = xmu_make_mxData(data= data, type = type)
 		usedManifests = manifestVars
 	}
@@ -618,27 +620,41 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 		}
 		message("ManifestVars set to: ", paste(usedManifests, collapse = ", "), ". ", msg_str)
 	}
-
+	# ==================
+	# = Assemble model =
+	# ==================
 	newModel = do.call("mxModel", list(name = name, type = "RAM", 
 		manifestVars = usedManifests,
 		latentVars  = latentVars,
 		independent = independent, dot.items)
 	)
-
+	# ============
+	# = Add data =
+	# ============
 	if (class(data) == "character"){
 		# umx_msg(data)
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		newModel = umxLabel(newModel, suffix = suffix)
-		if(autoRun && umx_set_auto_plot(silent = TRUE)){
-			plot(newModel)
+		if(is.na(group)){
+			if(autoRun && umx_set_auto_plot(silent = TRUE)){
+				plot(newModel)
+			}
+			return(newModel)
+		} else {
+			# will be added to a super model, but no data needed/available to subset
 		}
-		return(newModel)
 	}else{
 		newModel = mxModel(newModel, data)
+		# will be re-processed with the required data below...
+		# except should not do this if lavaan... i.e., subset here with level of group...
 	}
+	
+	# ==========================
+	# = Add means if necessary =
+	# ==========================
 	# Note: WLS data will be mxData(..., type = "raw") at this stage.
 	# Add means if data are raw and means not requested by user
-	needsMeans = xmu_model_needs_means(data = data, type = type, allContinuousMethod= allContinuousMethod)
+	needsMeans = xmu_model_needs_means(data = data, type = type, allContinuousMethod = allContinuousMethod)
 	if(needsMeans && is.null(newModel$matrices$M)){
 		message("You have raw data, but no means model. I added\n",
 		"mxPath('one', to = manifestVars)")
@@ -657,10 +673,30 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, comparison = TRUE, s
 	# = Add mxFitFunction to model =
 	# ==============================
 	if(type %in%  c('WLS', 'DWLS', 'ULS')) {
-		message("data treated as ", omxQuotes(type), ". allContinuousMethod = ", omxQuotes(allContinuousMethod))
+		# message("data treated as ", omxQuotes(type), ". allContinuousMethod = ", omxQuotes(allContinuousMethod))
 		# Replace newModel fit functions
-		newModel = mxModel(newModel, mxFitFunctionWLS(type= type, allContinuousMethod= allContinuousMethod) )
 		# Still mxExpectationNormal and means not affected (either has or lacks means matrix already).
+		newModel = mxModel(newModel, mxFitFunctionWLS(type= type, allContinuousMethod = allContinuousMethod) )
+	}
+
+	# =====================
+	# = Handle group here =
+	# =====================
+	if(!is.na(group)){
+		# 1. go back to raw data and subset by "group" column
+		# 2. create new mxData,
+		# 3. add data to copy of the model and accumulate in list of models
+		# 4. Add list of models to umxSuperModel
+		modelList = list()
+		groupCol = data[,group]
+		levelsOfGroup = unique(groupCol)
+		
+		for (thisLevelOfGroup in levelsOfGroup) {
+			thisSubset = data[groupCol == thisLevelOfGroup, ]
+			newModel = mxModel(newModel, name= paste0(name, "_", thisLevelOfGroup))
+			modelList = c(modelList, newModel)
+		}
+		newModel = umxSuperModel(name=name, modelList)
 	}
 
 	newModel = omxAssignFirstParameters(newModel)
@@ -4294,17 +4330,18 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # You can get the coefficients of an MxModel with coef(), just like for lm etc.
 #' coef(m1)
 #' 
+#' # But with more control using parameters
+#' parameters(m1, thresh="above", b=.3, pat = "G_to.*", digits = 3)
+#'
 #' # ==================
 #' # = Model updating =
 #' # ==================
 #' # Can we set the loading of X5 on G to zero?
-#' m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = FALSE, name = "no_g_on_X5")
-#' m2 = mxRun(m2)
-#' # Compare the two models
-#' umxCompare(m1, m2)
-#' 
-#' # Use umxModify to do the same thing in 1-line
 #' m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = TRUE)
+#'
+#' 
+#' umxCompare(m1, m2)
+#' # Note: umxSetParameters can do this with some additional flexibility
 #' 
 #' # ========================
 #' # = Confidence intervals =

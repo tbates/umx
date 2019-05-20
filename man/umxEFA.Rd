@@ -37,7 +37,9 @@ umxEFA(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 \item{covmat}{Covariance matrix of data you are modeling (not implemented)}
 }
 \value{
-- EFA \code{\link{mxModel}}
+\itemize{
+\item EFA \code{\link{mxModel}}
+}
 }
 \description{
 Perform full-information maximum-likelihood factor analysis on a data matrix.
@@ -45,7 +47,7 @@ Perform full-information maximum-likelihood factor analysis on a data matrix.
 \details{
 As in \code{\link{factanal}}, you need only specify the number of factors and offer up
 some manifest data, e.g:
-                                                             
+
 \code{umxEFA(factors = 2, data = mtcars)}
 
 Equivalently, you can also give a list of factor names:
@@ -61,16 +63,18 @@ You can request \code{scores} from the model. Unlike factanal, these can cope wi
 
 You can also rotate the factors using any rotation function.
 
-
 In an EFA, all items may load on all factors.
 
-For identification we need m^2 degrees of freedom. We get m * (m+1)/2 from fixing factor variances to 1 and covariances to 0.
-We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of the factor loadings
-component of the A matrix. The manifest variances are also lbounded at 0.
+For identification we need \ifelse{html}{\out{m<sup>2</sup>}}{\eqn{m^2}} degrees of freedom.
+We get m(m+1)/2 from fixing factor variances to 1 and covariances to 0.
+We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of
+the factor loadings component of the A matrix at 0.
+
+To aid optimization, manifest residual variances are \code{lbounded} at 0.
 
 EFA reports standardized loadings: to do this, we scale the data.
 
-\emph{note}: Bear in mind that factor scores are indeterminate.
+\emph{note}: Bear in mind that factor scores are indeterminate (can be rotated to an infinity of equivalent solutions).
 
 Thanks to @ConorDolan for code implementing the rotation matrix and other suggestions!
 }
@@ -83,7 +87,6 @@ loadings(m1)
 # Formula interface in base-R factanal()
 m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m2)
-plot(m2)
 
 # Return a loadings object
 x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
@@ -96,10 +99,14 @@ x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regr
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{factanal}}, \code{\link{mxFactorScores}}
+\itemize{
+\item \code{\link{factanal}}, \code{\link{mxFactorScores}}
+}
 
 Other Super-easy helpers: \code{\link{umxLav2RAM}},
   \code{\link{umxRAM2}}, \code{\link{umxTwoStage}},

@@ -1,11 +1,26 @@
-# Roadmap for next version... umx 3.0.0 May 2018, R 3.5.X
-* FIX: `umxSimplex`
+# Roadmap for next version... umx 3.0.0 July 2018, R 3.6.1
+* ALPHA: `umxRAM` lavaan string syntax mode.
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
-* NEW: `umxLav2RAM`
-* NEW: `xmu_lavaan_process_group`
-* NEW: `xmu_clean_label`
-* NEW: `plot` will get ability to opt paths out of constraints.
+
+
+# umx 2.15.0 May 2019, R 3.6.0 "Planting of a Tree"
+**tip**: Try new `plot` `splines` = T|F and `min`= , `max` = `same`=  controls to layout your graphs!
+* FIX: `uxmSummary` the annoying "not defined for mxRAMModels" error should be fixed!
+* FIX: `umxSimplex`
+* NEW: `umxLav2RAM`: detect ngroup, and create the groups with unique names in a `umxSuperModel`.
+* NEW: `plot.MxRAMModel` now plots multiple groups in a RAM model!
+* NEW: `plot` now has ability control object clustering (`max=c("var1", "var2")` `min= ``same = `)
+* NEW: `plot` now has ability control `spline=T\F``
+* NEW: `plot` now has ability control opt paths out of layout constraints!
+* IMPROVED: `plot` now labels browser plots with the group name.
+* IMPROVED: `umx_time`  Handles stop without prior start. New `now` option returns current date. 
+* HELP: `umxLav2RAM`: multiple group example in help.
+* Minor
+  * NEW: `umx_set_separator` allows Europeans to use ; in place of comma. 
+  * NEW: `xmu_lavaan_process_group`
+  * NEW: `xmu_clean_label`
+  * NEW: `xmu_name_from_lavaan_str` helper
 
 # umx 2.10.0 April 2019, R 3.5.3 "Great Truth"
 

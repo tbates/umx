@@ -47,17 +47,18 @@ umxSummary(m1, show = "std") #also display parameter estimates
 # You can get the coefficients of an MxModel with coef(), just like for lm etc.
 coef(m1)
 
+# But with more control using parameters
+parameters(m1, thresh="above", b=.3, pat = "G_to.*", digits = 3)
+
 # ==================
 # = Model updating =
 # ==================
 # Can we set the loading of X5 on G to zero?
-m2 = omxSetParameters(m1, labels = "G_to_x1", values = 0, free = FALSE, name = "no_g_on_X5")
-m2 = mxRun(m2)
-# Compare the two models
-umxCompare(m1, m2)
-
-# Use umxModify to do the same thing in 1-line
 m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = TRUE)
+
+
+umxCompare(m1, m2)
+# Note: umxSetParameters can do this with some additional flexibility
 
 # ========================
 # = Confidence intervals =
@@ -158,6 +159,7 @@ Other Get and set: \code{\link{umx_default_option}},
   \code{\link{umx_set_optimizer}},
   \code{\link{umx_set_plot_file_suffix}},
   \code{\link{umx_set_plot_format}},
+  \code{\link{umx_set_separator}},
   \code{\link{umx_set_table_format}}
 
 Other Check or test: \code{\link{umx_check_names}},
@@ -260,6 +262,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_make_mxData}},
   \code{\link{xmu_make_top_twin}},
   \code{\link{xmu_model_needs_means}},
+  \code{\link{xmu_name_from_lavaan_str}},
   \code{\link{xmu_safe_run_summary}},
   \code{\link{xmu_set_sep_from_suffix}},
   \code{\link{xmu_simplex_corner}},

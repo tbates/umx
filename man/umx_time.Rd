@@ -36,6 +36,7 @@ If a model has not been run, umx_time will run it for you.
 }
 \examples{
 require(umx)
+umx_time('stop') # alert user stop called when not yet started... 
 umx_time('start')
 data(demoOneFactor)
 latents  = c("G")
@@ -46,10 +47,11 @@ m1 <- umxRAM("One Factor", data = myData,
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
 )
-umx_time(m1)
+umx_time(m1) # report time from mxModel
 m2 = umxRun(m1)
-umx_time(c(m1, m2))
-umx_time('stop')
+umx_time(c(m1, m2)) # print comparison table
+umx_time('stop') # report the time since timer last started, and restart
+umx_time('stop') # report the time since timer was restarted.
 # elapsed time: .3 seconds
 }
 \references{

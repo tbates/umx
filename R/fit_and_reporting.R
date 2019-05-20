@@ -858,6 +858,7 @@ umxSummary.default <- function(model, ...){
 #' umxSummary(m1, showEstimates = "std", filter = "NS")
 umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = "deprecated", ...){
 	# TODO make table take lists of models...
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if(std != "deprecated"){
 		stop("use show = 'std', not std = TRUE")
 	}
@@ -939,9 +940,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 						parameterTable[i, "sig"] = FALSE
 					}
 					if(est < 0){
-						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
+						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
 					} else {
-						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), ", ", round(est + CI95, digits), "]")
+						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
 					}
 				}
 			}
@@ -1068,6 +1069,7 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' }
 umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
@@ -1207,7 +1209,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
 			thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
 			CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
-			thisString = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
+			thisString = paste0(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]")
 
 			if(grepl("^a", thisMatrixName)) {
 				a_CI[thisMatrixRow, thisMatrixCol] = thisString
@@ -1297,6 +1299,8 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' }
 umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, showRg = FALSE, std = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
 	report = match.arg(report)
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
+	
 	# depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
@@ -1426,7 +1430,7 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 			thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
 			thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
 			CIparts = round(CIlist[n, c("estimate", "lbound", "ubound")], 2)
-			thisString = paste(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]", sep="")
+			thisString = paste(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]", sep="")
 			# print(list(CIlist, labelList, rowCount, fullName, thisMatrixName))
 
 			if(grepl("^a", thisMatrixName)) {
@@ -1867,7 +1871,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		stop("Make a vector of the comparison models (you seem to have provided a model as input to 'all', and I'm guessing that's a mistake)")
 	}
 	if(is.null(comparison)){
-		comparison <- base
+		comparison = base
 	} else if (is.null(base)) {
 		stop("You must provide at least a base model for umxCompare")
 	}
@@ -1876,7 +1880,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			base = base[[1]]
 		}
 		if(!umx_has_been_run(base)){
-			warning("base model not run yet!")		
+			warning("Base model not run yet!")		
 		}
 	}
 	if(length(comparison) == 1) {
@@ -2180,121 +2184,154 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 #'
 plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
-	# ==========
-	# = Setup  =
-	# ==========
-	resid = match.arg(resid)
-	model = x # just to be clear that x is a model
 
-	pathLabels = match.arg(pathLabels)
-	latents = model@latentVars   # 'vis', 'math', and 'text' 
-	selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
-	
-	# update values using compute = T to capture labels with [] references.
-	# TODO: !!! Needs more work to sync with confidence intervals and SES
-	model$S$values = mxEval(S, model, compute = T)
-	model$A$values = mxEval(A, model, compute = T)
-	if(!is.null(model$M)){
-		model$M$values = mxEval(M, model, compute = T)
-	}
-	
-	if(std){ model = umx_standardize_RAM(model, return = "model") }
-
-	# ========================
-	# = Get Symmetric & Asymmetric Paths =
-	# ========================
-	out = "";
-	out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, fixed = fixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
-	if(resid == "circle"){
-		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
-	} else if(resid == "line"){
-		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
-	}else{
-		out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)		
-	}
-	# TODO should xmu_dot_make_residuals handle fixed or not necessary?
-	tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
-	variances     = tmp$variances  #either "var_var textbox" or "var -> var port circles"
-	varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
-	# =================
-	# = Define shapes =
-	# =================
-	if(splines){
-		preOut = '\tsplines="TRUE";\n\t# Latents\n'
-	} else {
-		preOut = '\tsplines="FALSE";\n\t# Latents\n'
-	}
-	for(var in latents) {
-	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
-	}
-
-	preOut = paste0(preOut, "\n\t# Manifests\n")
-	for(var in selDVs) {
-	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
-	}
-
-	
-	# ================
-	# = handle means =
-	# ================
-	if(umx_has_means(model) & means){
-		out = paste0(out, "\n\t# Means paths\n")
-		# Add a triangle to the list of shapes
-		preOut = paste0(preOut, "\t one [shape = triangle];\n")
-		mxMat = model$matrices$M
-		mxMat_vals   = mxMat$values
-		mxMat_free   = mxMat$free
-		mxMat_labels = mxMat$labels
-		meanVars = colnames(mxMat$values)
-		for(to in meanVars) {
-			thisPathLabel = mxMat_labels[1, to]
-			thisPathFree  = mxMat_free[1, to]
-			thisPathVal   = round(mxMat_vals[1, to], digits)
-			if(thisPathFree){
-				labelStart = ' [label="' 
+	# loop over submodels
+	if(length(x@submodels)){
+		n = 1
+		for (sub in x@submodels) {
+			if(file == "name"){
+				thisFile = file
 			} else {
-				labelStart = ' [label="@'
+				thisFile = paste0(file, "_group_", n)
 			}
+			plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, pathLabels = pathLabels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, ...)
+			n = n + 1
+		}
+	}else{	
+		# ==========
+		# = Setup  =
+		# ==========
+		resid = match.arg(resid)
+		model = x # just to be clear that x is a model
 
-			# TODO plot.MxModel: Find way to show means fixed @0
-			if(thisPathFree || fixed ) {
-				# if(thisPathFree | (fixed & thisPathVal != 0) ) {
-				out = paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n')
-			}else{
-				# cat(paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n'))
-				# return(thisPathVal != 0)
+		pathLabels = match.arg(pathLabels)
+		latents = model@latentVars   # 'vis', 'math', and 'text' 
+		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
+	
+		# update values using compute = T to capture labels with [] references.
+		# TODO: !!! Needs more work to sync with confidence intervals and SES
+		model$S$values = mxEval(S, model, compute = TRUE)
+		model$A$values = mxEval(A, model, compute = TRUE)
+		if(!is.null(model$M)){
+			model$M$values = mxEval(M, model, compute = TRUE)
+		}
+	
+		if(std){ model = umx_standardize_RAM(model, return = "model") }
+
+		# ========================
+		# = Get Symmetric & Asymmetric Paths =
+		# ========================
+		out = "";
+		out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, fixed = fixed, pathLabels = pathLabels, comment = "Single arrow paths", digits = digits)
+		if(resid == "circle"){
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, pathLabels = pathLabels, comment = "Covariances", digits = digits)
+		} else if(resid == "line"){
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)
+		}else{
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, pathLabels = pathLabels, comment = "Covariances & residuals", digits = digits)		
+		}
+		# TODO should xmu_dot_make_residuals handle fixed or not necessary?
+		tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
+		variances     = tmp$variances  # either "var_var textbox" or "var -> var port circles"
+		varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
+		# =================
+		# = Define shapes =
+		# =================
+		if(splines){
+			preOut = '\tsplines="TRUE";\n\t# Latents\n'
+		} else {
+			preOut = '\tsplines="FALSE";\n\t# Latents\n'
+		}
+		for(var in latents) {
+		   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+		}
+
+		preOut = paste0(preOut, "\n\t# Manifests\n")
+		for(var in selDVs) {
+		   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
+		}
+
+	
+		# ================
+		# = handle means =
+		# ================
+		if(umx_has_means(model) & means){
+			out = paste0(out, "\n\t# Means paths\n")
+			# Add a triangle to the list of shapes
+			preOut = paste0(preOut, "\t one [shape = triangle];\n")
+			mxMat = model$matrices$M
+			mxMat_vals   = mxMat$values
+			mxMat_free   = mxMat$free
+			mxMat_labels = mxMat$labels
+			meanVars = colnames(mxMat$values)
+			for(to in meanVars) {
+				thisPathLabel = mxMat_labels[1, to]
+				thisPathFree  = mxMat_free[1, to]
+				thisPathVal   = round(mxMat_vals[1, to], digits)
+				if(thisPathFree){
+					labelStart = ' [label="' 
+				} else {
+					labelStart = ' [label="@'
+				}
+
+				# TODO plot.MxModel: Find way to show means fixed @0
+				if(thisPathFree || fixed ) {
+					# if(thisPathFree | (fixed & thisPathVal != 0) ) {
+					out = paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n')
+				}else{
+					# cat(paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n'))
+					# return(thisPathVal != 0)
+				}
 			}
 		}
+
+		# ===========================
+		# = Make the variance lines =
+		# ===========================
+		# x1_var [label="0.21", shape = plaintext];
+		# or (circles)
+		# x1 -> x1 [label="0.21", direction = both];
+		preOut = paste0(preOut, "\n\t#Variances/residuals\n")
+		for(var in variances) {
+		   preOut = paste0(preOut, "\t", var, ";\n")
+		}
+		# ======================
+		# = Set the ranks e.g. =
+		# ======================
+		# {rank=same; x1 x2 x3 x4 x5 };
+		# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
+		if(umx_has_means(model)){ append(varianceNames, "one")}
+
+		# min = latents; same = selDVs; max = varianceNames
+		x = xmu_dot_move_ranks(max = max, min = min, same=same, old_min = latents, old_same = selDVs, old_max = varianceNames)
+		rankVariables = xmu_dot_rank_str(min = x$min, same = x$same, max = x$max)
+
+		# ===================================
+		# = Assemble full text to write out =
+		# ===================================
+		if(is.na(file)){
+			label = model$name
+		}else{
+			if(file == "name"){
+				label = model$name
+			} else {
+				label = paste0(file, " ", model$name)
+			}
+		}
+		digraph = paste0(
+			"digraph G {\n    ", 
+			"label='", label, "';\n",
+			preOut, "\n",
+			out, "\n",
+			rankVariables, "\n}"
+		)
+		print("?plot.MxModel options: std, means, digits, strip_zero, file, fixed, resid= 'circle|line|none'")
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 	}
-
-	# ===========================
-	# = Make the variance lines =
-	# ===========================
-	# x1_var [label="0.21", shape = plaintext];
-	# or (circles)
-	# x1 -> x1 [label="0.21", direction = both];
-	preOut = paste0(preOut, "\n\t#Variances/residuals\n")
-	for(var in variances) {
-	   preOut = paste0(preOut, "\t", var, ";\n")
-	}
-	# ======================
-	# = Set the ranks e.g. =
-	# ======================
-	# {rank=same; x1 x2 x3 x4 x5 };
-	# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
-	if(umx_has_means(model)){ append(varianceNames, "one")}
-
-	# min = latents; same = selDVs; max = varianceNames
-	x = xmu_dot_move_ranks(max = max, min = min, same=same, old_min = latents, old_same = selDVs, old_max = varianceNames)
-	rankVariables = xmu_dot_rank_str(min = x$min, same = x$same, max = x$max)
-
-	# ===================================
-	# = Assemble full text to write out =
-	# ===================================
-	digraph = paste("digraph G {\n", preOut, out, rankVariables, "\n}", sep = "\n");
-	print("?plot.MxModel options: std, digits, file, fixed, means, resid= 'circle|line|none' & more")
-	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end plot.MxModel
+
+#' @export
+plot.MxRAMModel <- plot.MxModel
 
 #' umxPlotACE
 #'
@@ -3865,8 +3902,9 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
 	report = match.arg(report)
 	test = match.arg(test)
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if("htest" == class(obj)[[1]]){
-		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), ", ", round(obj$conf.int[2], digits), "]")
+		o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), commaSep, round(obj$conf.int[2], digits), "]")
 		o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
 		return(o)
 	}else if("data.frame" == class(obj)[[1]]){
@@ -3927,7 +3965,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 			tval    = b_and_p["t value"]
 			pval    = b_and_p["Pr(>|t|)"]
 			print(paste0(i, " \u03B2 = ", round(b, digits), 
-			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
+			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "t = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))		
 		}
@@ -3957,7 +3995,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 			testStat    = b_and_p["z value"]
 			pval    = b_and_p["Pr(>|z|)"]
 			print(paste0(i, " \u03B2 = ", round(b, digits), 
-			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
+			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))
 		}
@@ -3981,7 +4019,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 			numDF   = model_coefficients[i, "DF"]
 			pval    = model_coefficients[i, "p-value"]
 			print(paste0(i, " \u03B2 = ", round(b, digits), 
-			   " [", round(lower, digits), ", ", round(upper, digits), "], ",
+			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))
 		}
@@ -3996,7 +4034,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 			print(paste0("\u03B2 = ", round(obj, digits), ", se =", round((se[2] - se[1])/(1.96 * 2), digits)))
 		} else {
 			# obj = beta and SE
-			print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), ", ", round(obj + (1.96 * se), digits), "]"))
+			print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]"))
 		}
 	}
 }

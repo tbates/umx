@@ -16,6 +16,49 @@
 # = Fns not used directly by users subject to arbitrary change and deprecation !!  =
 # ==================================================================================
 
+#' Find name for model
+#'
+#' @description
+#' Use name if provided. If first line contains a #, uses this line as name. Else use default.
+#'
+#' @param lavaanString A model string, possibly with # model name on line 1.
+#' @param name A desired model name (optional).
+#' @param default A default name if nothing else found.
+#' @return - A name string
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - \code{\link{umxRAM}}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @md
+#' @examples
+#' "m1" == xmu_name_from_lavaan_str("x~~x")
+#' "bob" == xmu_name_from_lavaan_str(name = "bob")
+#' "my_model" == xmu_name_from_lavaan_str("# my model")
+#'
+xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NULL, default = "m1") {
+	# Assume `name` should be used if !is.null(name)
+	if(is.null(name)){
+		# If first line contains a #, assume user wants it to be a name for the model
+		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
+		if(grepl(x = line1, pattern = "#")){
+			# line1 = "## my model ##"
+			pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
+			name = gsub(x = line1, pattern = pat, replacement = "\\1", perl = TRUE);
+			name = trimws(name)
+			# Replace white space with  "_"
+			name = gsub("(\\h+)", "_", name, perl = TRUE)
+			# Delete illegal characters
+			name = as.character(mxMakeNames(name))
+		}else{
+			# No name given in name or comment: use a default name
+			name = default
+		}
+	}else{
+		name = name
+	}
+	return(name)
+}
+
 
 # =====================
 # = Reporting helpers =
@@ -222,19 +265,21 @@ xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 #' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 #' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")] * 100
 #' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
-xmu_check_variance <- function(data, minVar = .1, maxVarRatio = 1000){
+xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent=T)$minVar, maxVarRatio = umx_set_data_variance_check(silent=T)$maxVarRatio){
 	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1
 	varList = umx_var(data, format = "diag")
-	if(sum(varList < minVar) > 0){
+	if(any(varList < minVar)){
 		# At least 1 small
 		message("The variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
-			"You might want to multiply to express the variable in smaller units, e.g. cm instead of metres (or umx_scale these variables in long-format).")
+			"You might want to multiply to express the variable in smaller units, e.g. cm instead of metres.\n",
+			"Alternatively umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
 		
 	}
 	if(max(varList)/min(varList) > maxVarRatio){
-		# At least 1 small
+		# At least 1 big difference in variance
 		message("The variance of variable(s) ", omxQuotes(names(which.max(varList))), " is more than ", maxVarRatio, " times that of ", omxQuotes(names(which.min(varList))), ".\n",
-			"You might want multiply to get variables into units on more similar scales (or umx_scale these variables in long-format).")
+			"You might want multiply to get variables into units on more similar scales.\n",
+			"Alternatively, umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
 		
 	}
 
@@ -293,12 +338,12 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
 		stop("Did you perhaps just include the data among other functions instead of via data = ?")
 	}else if(class(data) == "character"){
-		# pass through strings
+		# Pass strings through
 		return(data)
 	}
 
 	if(is.null(manifests)){
-		# manifests not specified: retain all except illegal variables
+		# Manifests not specified: retain all except illegal variables
 		manifests = umx_names(data)
 		if("one" %in% manifests){
 			warning("You have a data column called 'one' which is illegal (it's the code used for setting means). I'll drop it!")
@@ -310,7 +355,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			dropColumns = FALSE
 		}
 	}else{
-		# manifests specified: mark all others as un-used
+		# Manifests specified: mark all others as un-used
 		unusedManifests = setdiff(umx_names(data), manifests)
 		dropColumns = TRUE
 	}

@@ -2,10 +2,10 @@
 % Please edit documentation in R/lavanify2ram.R
 \name{umxLav2RAM}
 \alias{umxLav2RAM}
-\title{Convert a lavaan syntax string to a umxRAM model}
+\title{Convert a lavaan syntax string to a umxRAM model (or umxSuperModel)}
 \usage{
 umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
-  lavaanMode = "sem", std.lv = FALSE, autoRun = TRUE,
+  lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE,
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
   "mxTryHardWideSearch"), printTab = TRUE)
 }
@@ -16,9 +16,9 @@ umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
 
 \item{group}{= Column to use for multi-group (default = NULL)}
 
-\item{name}{Model name (can also add name in # commented line-1)}
+\item{name}{Model name (can also add name in # commented first line)}
 
-\item{lavaanMode}{Automagical path settings for cfa or sem (default)}
+\item{lavaanMode}{Automagical path settings for cfa/sem (default) or no-defaults ("lavaan")}
 
 \item{std.lv}{= FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.}
 
@@ -58,7 +58,7 @@ Uses the defaults of \code{lavaan::sem}
 \item fixed.x         = FALSE (not standard in lavaan::sem, but needed for RAM)
 }
 
-Lavaan is fabulously well documented. For quick reference, some common symbols in lavaan strings are
+Lavaan is well documented. For quick reference, some common symbols in lavaan strings are:
 
 \tabular{rlll}{
 \tab "=~"   \tab lhs (Latent) is manifested by rhs\cr
@@ -67,7 +67,10 @@ Lavaan is fabulously well documented. For quick reference, some common symbols i
 \tab "~ 1"  \tab lhs has mean\cr
 \tab ":="   \tab lhs is defined by rhs (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})\cr
 \tab "=="   \tab lhs is constrained == to rhs (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
-}
+}Naming of multiple groups
+
+When multiple groups are found the groups are named "<name>_<groupLevel>"
+White space is replaced with an _ and illegal characters are replaced with "x"
 }
 \examples{
 # auto-data, print table, return umxRAM model
@@ -78,11 +81,17 @@ tmp = umxLav2RAM(lav, data = "auto", printTab= FALSE)
 
 # Add labels to parameters, e.g. "x3_loading" as a loading for x3->x1
 tmp = umxLav2RAM("x1 ~ x3_loading*x3")
+umx_print(tmp$A$labels)
+# |   |x1       |x3         |
+# |:--|:--------|:----------|
+# |x1 |x1_to_x1 |x3_loading |
+# |x3 |x1_to_x3 |x3_to_x3   |
 
 # Fix values, e.g. x2 -> y fixed at 2.4
 tmp = umxLav2RAM("y ~ x1 + 2.4*x2; s =~ 0*y11 + 1*y12 + 2*y13 + 3*y14")
 
 tmp = umxLav2RAM("L =~ X1 + X2; L ~ Y")
+plot(tmp, min=c("L", "Y"))
 
 # Factor model showing auto-addition of correlations among exogenous latents
 # and auto-residuals on manifests
@@ -98,7 +107,10 @@ HS = "spatial =~ visual   + cubes    + flags
 
 m1 = umxRAM2(HS, data = umx_scale(HS.ability.data))
 
-# more complex:
+# Multiple groups
+m1 = umxRAM2(HS, data = umx_scale(HS.ability.data), group = "school")
+
+# More complex:
 
 lav = " # Model 14 PROCESS Hayes - moderated mediation
 gnt ~ a*cb
@@ -113,7 +125,7 @@ hiCN := a * b1 + ab3 * 0.5
 "
 tmp = umxRAM2(lav)
 # plot showing ability to influence layout with max min same groupings
-plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min="INT")
+plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min= "INT")
 
 # Algebra: e.g. b1^2
 m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
@@ -126,6 +138,9 @@ b1 == (b2 + b3)^2
 b1 > exp(b2 + b3)"
 
 tmp = umxLav2RAM(lav)
+
+# Formative factor
+# lavaanify("f5 <~ z1 + z2 + z3 + z4")
 
 }
 \seealso{
