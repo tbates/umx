@@ -14,7 +14,7 @@ umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
 
 \item{data}{Data to add to model (defaults to auto, which is just sketch mode)}
 
-\item{group}{= NULL TODO: define this}
+\item{group}{= Column to use for multi-group (default = NULL)}
 
 \item{name}{Model name (can also add name in # commented line-1)}
 
