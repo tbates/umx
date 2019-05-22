@@ -865,7 +865,6 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 	report = match.arg(report)
 	filter = match.arg(filter)
 	showEstimates = match.arg(showEstimates)
-
 	message("?umxSummary showEstimates='raw|std', digits, report= 'html', filter= 'NS' & more")
 	
 	# If the filter is not default, user must want something: Assume it's what would have been the default...
@@ -917,6 +916,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 		} else {
 			nameing = c("name")
 		}
+		# TODO: umxSummary add p value, perhaps CI?
+		# TODO: umxSummary block table into latents/resid/means etc.
+		
 		if(showEstimates == "both") {
 			namesToShow = c(nameing, "Estimate", "SE", "Std.Estimate", "Std.SE")
 		} else if(showEstimates == "std"){
