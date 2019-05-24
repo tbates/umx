@@ -7,6 +7,7 @@
 [![Total Downloads](http://cranlogs.r-pkg.org/badges/grand-total/umx)](http://cranlogs.r-pkg.org/badges/grand-total/umx)
 [![Rdoc](http://www.rdocumentation.org/badges/version/umx)](http://www.rdocumentation.org/packages/umx)
 [![DOI](https://img.shields.io/badge/doi-10.1017/thg.2019.2-yellow.svg?style=flat)](https://doi.org/10.1017/thg.2019.2)
+[![License](https://img.shields.io/cran/l/umx.svg)](https://cran.r-project.org/package=umx)
 
 
 umx is a structural equation modeling package designed to make SEM easier, from building, to modifying and reporting.
