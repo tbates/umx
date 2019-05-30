@@ -4825,7 +4825,11 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 		# Assume it's one model, and we want the parameter names
 		nameVector = parameters(df)
 	}else{
-		stop("namez doesn't know how to handle objects of class", omxQuotes(class(df)))
+		result = tryCatch({
+			nameVector = names(df)
+		}, error = function() {
+			stop("namez doesn't know how to handle objects of class", omxQuotes(class(df)))
+		})
 	}
 	if(is.null(nameVector)){
 		stop(paste0("umx_names requires a dataframe or something else with names() or parameters(), ", umx_object_as_str(df), " is a ", typeof(df)))

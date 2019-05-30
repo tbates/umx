@@ -17,17 +17,18 @@ This is the example code used in our Twin Research and Human Genetics Paper on \
 # = Example code from Twin Research and Human Genetics Paper on umx(model) =
 # ==========================================================================
 
-# Installing \\pkg{umx} can be done using the R-code:
+# Installing umx can be done using the R-code:
 install.packages("umx")
 # load as usual
 library("umx")
-# current package version can be shown with:
+
+# The current package version can be shown with:
 umxVersion("umx")
 
-# Get the latest parallel and NPSOL build of OpenMx
+# Get the latest NPSOL and multi-core build of OpenMx
 install.OpenMx("NPSOL")
 
-# NPSOL and multi-core version of OpenMx
+# Bleeding edge version of OpenMx for MacOS
 install.OpenMx("travis")
 
 # ============
@@ -36,6 +37,7 @@ install.OpenMx("travis")
 
 # Load the umx library (this is assumed in subsequent examples
 library("umx")
+
 # Load demo data consisting of 5 correlated variables, x1:x5 
 data(demoOneFactor)
 
