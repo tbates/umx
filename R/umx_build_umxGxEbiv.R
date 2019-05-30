@@ -1,19 +1,21 @@
-#' Bivariate GxE models where twins differ on the moderator.
+#' Bivariate GxE models where twins differ on the moderator
 #'
-#' GxE interaction models test the hypothesis that the strength
-#' of genetic (or environmental) influence varies parametrically 
-#' across levels of environment. 
-#' univariate (see \code{\link{umxGxE}}) models assume the twins share the moderator.
-#' umxGxE umxGxEbiv allows testing moderation in cases where twins differ on the moderator,
+#' GxE interaction models test the hypothesis that the strength of genetic 
+#' (or environmental) influence varies parametrically across levels of environment. 
+#' [umxGxEbiv] supports testing, and visualizing GxE bivariate (or C or E x E) interactions.
+#' 
+#' Whereas [umxGxE][univariate] models assume the twins share the moderator,
+#' [umxGxEbiv] allows testing moderation in cases where twins differ on the moderator,
 #' (Purcell, 2002; van der Sluis et al., 2012).
-#' 
-#' It supports testing, and visualizing GxE bivariate (or C or E x E) interactions.
-#' 
-#' The following figure shows the GxE model as a path diagram: *note*: Only Twin 1 is shown.
+#'
+#' The following figure shows the GxE model as a path diagram (Twin 1 shown).
+#'
 #' Twin 1 and twin 2 A, C, and E latent traits are connected in the standard fashion, with the
 #' covariance of the T1 and T2 latent genetic traits set to .5 for DZ and 1.0 for MZ pairs.
 #' For the sake of clarity, C, and E paths are omitted here. These mirror those for A.
+#'
 #' ![](GxEbiv.png)
+#'
 #' @param name The name of the model (defaults to "GxEbiv")
 #' @param selDVs The dependent variable (e.g. IQ)
 #' @param selDefs The definition variable (e.g. socioeconomic status)
