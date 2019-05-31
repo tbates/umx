@@ -1,4 +1,4 @@
-# Roadmap...
+# Road map...
 * ALPHA: `umxRAM` lavaan string syntax mode.
 * NEW: `umxACEv` supports WLS, UWLS, DWLS models
 * NEW: `umxCP` supports WLS, UWLS, DWLS models
@@ -14,7 +14,7 @@
 * NEW: `plot` opt paths out of layout constraints!
 * IMPROVED: `plot` now labels plots with the group name.
 * IMPROVED: `umx_time` Handles stop without prior start. New `now` option returns current date.
-* FIX: `uxmSummary` the annoying "not defined for mxRAMModels" error should be fixed!
+* FIX: `uxmSummary` the annoying "umxSummary not defined" error should be fixed!
 * FIX: `umxSimplex`
 * HELP: `umxLav2RAM`: multiple group example in help.
 * Minor
@@ -40,7 +40,7 @@
 * NEW: `xmu_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
 	* `umx_set_data_variance_check` get/set variance tolerance.
 * NEW: `umx` is checked on [travis](https://travis-ci.org/tbates/umx/builds).
-* NEW: [README.md](https://github.com/tbates/umx) has build, doi, etc info boxes! 
+* NEW: [github](https://github.com/tbates/umx) has build, doi, etc info boxes! 
 * NEW: `plot` allows user control over splines, as well as max, min, same positioning.
 * NEW: `xmu_dot_move_ranks`.
 * NEW: `xmu_dot_rank_string`.
@@ -59,7 +59,7 @@
 * IMPROVED: `umxPlotCP` revamped - now not dependent on labels! (old function now `umxPlotCPold`)
 * IMPROVED: `xmu_model_needs_means`
 * IMPROVED: `umxDescribeDataWLS` to check whether the form of WLS requested will have means of not.
-* IMPROVED: `umx_make`: use check_win_devel; setwd for release; spelling
+* IMPROVED: `umx_make`: use check_win_devel; set working director for release; spelling check
 * IMPROVED: `umx_dot_mat2dot` add `model`, `toLabel` and `fromLabel` + `fromType` & `toType`
 * IMPROVED: `umx_dot_mat2dot` example
 * IMPROVED: `xmu_safe_run_summary` now copes with warnings in models, summary, compare etc. (as it should have)

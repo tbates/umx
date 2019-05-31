@@ -106,7 +106,8 @@ namez(umxMatrix("bob", "Full", 3,3)$labels)
 And \code{\link{umx_check_names}} to check for existence of names in a dataframe.
 }
 
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},

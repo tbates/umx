@@ -35,7 +35,8 @@ umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 \seealso{
 - \code{\link{umxAPA}}, \code{\link{round}}
 
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},

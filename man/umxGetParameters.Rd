@@ -53,7 +53,8 @@ umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 \seealso{
 \code{\link{omxGetParameters}}, \code{\link{umx_parameters}}
 
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}}, \code{\link{umxReduce}},

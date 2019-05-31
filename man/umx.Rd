@@ -89,7 +89,8 @@ Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
   \code{\link{umxRun}}, \code{\link{umxSuperModel}}
 
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},
@@ -180,7 +181,8 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_polypairwise}},
   \code{\link{umx_polytriowise}},
   \code{\link{umx_read_lower}}, \code{\link{umx_rename}},
-  \code{\link{umx_reorder}}, \code{\link{umx_stack}},
+  \code{\link{umx_reorder}},
+  \code{\link{umx_select_valid}}, \code{\link{umx_stack}},
   \code{\link{umx_swap_a_block}}
 
 Other File Functions: \code{\link{dl_from_dropbox}},

@@ -191,28 +191,27 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 	umx_is_MxModel(model)
 	if(class(model) == "MxModelGxE"){		
 		# Reduce GxE Model
-		# Good to drop the means if possible? I think not. Better to model their most likely value, not lock it to zerp
-		no_lin_mean = umxModify(model, update = "lin11" , name = "No_lin_mean" )
-		no_sq_mean  = umxModify(model, update = "quad11" , name = "No_quad_mean")
-		nomeans     = umxModify(model, regex = "lin|quad", name = "No_means_moderation")
 
-		noAmod       = umxModify(model, update = "am_r1c1", name = "No_mod_on_A")
-		noCmod       = umxModify(model, update = "cm_r1c1", name = "No_mod_on_C")
-		noEmod       = umxModify(model, update = "em_r1c1", name = "No_mod_on_E")
+		noAmod = umxModify(model, update = "am_r1c1", name = "No_mod_on_A")
+		noCmod = umxModify(model, update = "cm_r1c1", name = "No_mod_on_C")
+		noEmod = umxModify(model, update = "em_r1c1", name = "No_mod_on_E")
 
-		noACEmod     = umxModify(model, regex  = "[ace]m" , name = "No_moderation")
+		noACEmod     = umxModify(model, regex  = "[ace]m_r1c1" , name = "No_moderation")
 
 		no_a_no_am  = umxModify(noAmod , update = "a_r1c1", name = "No_A_no_mod_on_A")
 		no_c_no_cm  = umxModify(noCmod , update = "c_r1c1", name = "No_C_no_mod_on_C")
 		no_c_no_cem = umxModify(no_c_no_cm, update = "em_r1c1", name = "No_c_no_ce_mod")
-
 		no_c_no_mod = umxModify(no_c_no_cem, update = "am_r1c1", name = "No_c_no_moderation")
 
+		no_lin_mean = umxModify(noACEmod, update = "lin11" , name = "No_mod_no_lin_mean" )
+		no_sq_mean  = umxModify(noACEmod, update = "quad11" , name = "No_mod_no_quad_mean")
+		nomeans     = umxModify(noACEmod, regex = "lin|quad", name = "No_mod_no_means_mod")
+
 		comparisons = c(
-			no_lin_mean, no_sq_mean, nomeans, 
 			noAmod, noCmod, noEmod, noACEmod,
 			no_a_no_am, no_c_no_cm, no_c_no_cem,
-			no_c_no_mod
+			no_c_no_mod,
+			no_lin_mean, no_sq_mean, nomeans 
 		)
 
 		# ====================
@@ -3605,6 +3604,27 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 # = summary Stats and table helpers =
 # ===================================
 
+#' Fishers Method of combining p-values.
+#'
+#' @description
+#' `FishersMethod` implements R.A. Fisher's method for creating a meta-analytic p-value by combining a 
+#' set of p-values from tests of the same hypothesis in independent samples, 
+#' 
+#' @param pvalues A vector of p-values, e.g. c(.041, .183)
+#' @return - A meta-analytic p-value
+#' @export
+#' @family Reporting Functions
+#' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
+#' Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. doi:10.2307/2681650. JSTOR 2681650.
+#' See also Stouffer's method for combining Z scores, which allow weighting.
+#' Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton #' University Press.
+#' @md
+#' @examples
+#' FishersMethod(c(.041, .378))
+FishersMethod <- function(pvalues) {
+	pchisq( -2 * sum(log(pvalues)), df=(2*length(pvalues)), lower.tail = FALSE)
+}
+
 #' umx_fun
 #'
 #' Miscellaneous functions that are handy in summary and other tasks where you might otherwise have
@@ -3655,7 +3675,7 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' }
 #'
 #' @param formula The aggregation formula. e.g., DV ~ condition.
-#' @param data frame to aggregate.
+#' @param data frame to aggregate (defaults to df for common case)
 #' @param what function to use. Default reports "mean (sd)".
 #' @param digits to round results to.
 #' @param report Format for the table: Default is markdown.
@@ -3690,7 +3710,7 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' \dontrun{
 #' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 #' }
-umx_aggregate <- function(formula = DV ~ condition, data = NA, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt")) {
+umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt")) {
 	report = match.arg(report)
 	what = umx_match.arg(what, c("mean_sd", "n"), check = FALSE)
 	# TODO Add more aggregating functions?

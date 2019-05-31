@@ -63,7 +63,8 @@ umx_parameters(m1, "below", .1, "_to_")
 \seealso{
 - \code{\link{parameters}}, \code{\link{umxSummary}}, \code{\link{umx_names}}
 
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},

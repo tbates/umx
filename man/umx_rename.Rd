@@ -4,21 +4,21 @@
 \alias{umx_rename}
 \title{umx_rename}
 \usage{
-umx_rename(x, replace = NULL, old = NULL, grep = NULL,
+umx_rename(data, old = NULL, replace = NULL, regex = NULL,
   test = FALSE)
 }
 \arguments{
-\item{x}{the dataframe in which to rename variables}
+\item{data}{The dataframe in which to rename variables}
 
-\item{replace}{If used alone, a named collection of c(oldName = "newName") pairs
+\item{old}{List of old names that will be found and replaced by the contents of replace. (optional: Defaults to NULL).}
+
+\item{replace}{If used alone, a named collection of c(oldName = "newName") pairs.
 OR, if "old" is a list of existing names, the list of new names)
 OR, if "grep" is a regular expression, the replace string)}
 
-\item{old}{Optional list of old names that will be found and replaced by the contents of replace. Defaults to NULL.}
+\item{regex}{Regular expression with matches will be replaced using replace as the replace string. (Optional: Defaults to NULL).}
 
-\item{grep}{Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL.}
-
-\item{test}{whether to report a "dry run" - and not actually change anything. Defaults to FALSE.}
+\item{test}{Whether to report a "dry run", not changing anything. (Default = FALSE).}
 }
 \value{
 \itemize{
@@ -38,18 +38,24 @@ text based on patterns and replacements. so to change "replacement" to "in place
 \emph{note}: to use replace list, you must say c(old = "new"), not c(old -> "new")
 }
 \examples{
+df = mtcars
+
 # Re-name "cyl" to "cylinder"
-x = mtcars
-x = umx_rename(x, replace = c(cyl = "cylinder"))
-# alternate style
-x = umx_rename(x, old = c("disp"), replace = c("displacement"), test= TRUE)
-x = umx_rename(x, old = c("disp"), replace = c("displacement"))
-umx_check_names("displacement", data = x, die = TRUE)
+df = umx_rename(data = df, replace = c(cyl = "cylinder"))
+
+# Alternate styles, first with a test-run
+df = umx_rename(df, old = c("disp"), replace = c("displacement"), test= TRUE)
+df = umx_rename(df, old = c("disp"), replace = c("displacement"))
+umx_check_names("displacement", data = df, die = TRUE)
+
 # This will warn that "disp" does not exist (anymore)
-x = umx_rename(x, old = c("disp", "am"), replace = c("displacement", "auto"))
-x = umx_rename(x, grep = "lacement", replace = "", test=TRUE) # test using grep to revert to disp
-x = umx_rename(x, grep = "lacement", replace = "") # using grep to revert to disp
-umx_names(x, "^d") # all names begining with a d
+df = umx_rename(df, old = c("disp", "am"), replace = c("displacement", "auto"))
+namez(df) # still updated am to auto
+
+# test using regex (in this case to revert "displacement" to "disp")
+df = umx_rename(df, regex = "lacement", replace = "", test= TRUE)
+df = umx_rename(df, regex = "lacement", replace = "") # using regex to revert to disp
+umx_names(df, "^d") # Names beginning with a d
 }
 \seealso{
 \link{namez} to filter (and replace) names, Also \link{umx_check_names} to check for existence of names in a dataframe.
@@ -68,7 +74,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_polypairwise}},
   \code{\link{umx_polytriowise}},
   \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
-  \code{\link{umx_stack}}, \code{\link{umx_swap_a_block}},
-  \code{\link{umx}}
+  \code{\link{umx_select_valid}}, \code{\link{umx_stack}},
+  \code{\link{umx_swap_a_block}}, \code{\link{umx}}
 }
 \concept{Data Functions}
