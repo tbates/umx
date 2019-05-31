@@ -82,13 +82,14 @@ If needed means matrices are added. Decent starts are guessed from the data.
 For continuous raw data, top contains a means matrix "expMean".
 For Models with ordinal, top adds an \url{umxThresholdMatrix}].
 
-If binary variables are present, matrices and a constraint to hold A+C+E ==1 are added to top.
+If binary variables are present, matrices and a constraint to hold \code{A+C+E == 1} are added to top.
 
 If a weight variable is offered up, an \code{mzWeightMatrix} will be added.
 
 \strong{Data handling}
 
-In terms of data handling, \code{xmu_make_top_twin} was primarily designed to take data.frames and process these into mxData.
+In terms of data handling, \code{xmu_make_top_twin} was primarily designed to take
+data.frames and process these into mxData.
 It can also, however, handle cov and mxData input.
 
 It can process data into all the types supported by \code{mxData}.
