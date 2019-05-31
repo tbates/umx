@@ -1668,7 +1668,8 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' umx_check_names("displacement", data = tmp, die = TRUE)
 #'
 #' # This will warn that "disp" does not exist (anymore)
-#' tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = c("displacement", "auto", "rear_axle_ratio"))
+#' new = c("displacement", "auto", "rear_axle_ratio")
+#' tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
 #' namez(tmp, "a") # still updated am to auto (and rear_axle_ratio)
 #'
 #' # Test using regex (in this case to revert "displacement" to "disp")
@@ -5219,8 +5220,9 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @examples
 #' tmp = mtcars
 #' tmp$newDisp = tmp$disp
-#' tmp$disp[1,3,6] = NA
-#' umx_select_valid("disp", "newDisp", data = tmp)
+#' tmp$disp[c(1,3,6)] = NA
+#' anyNA(tmp$disp) # column has NAs
+#' tmp = umx_select_valid("disp", "newDisp", data = tmp)
 #' anyNA(tmp$disp) # column repaired
 umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 	# TODO allow columns to passed in: return as list(old, new)?
@@ -6390,7 +6392,6 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #' @param model The \code{\link{mxModel}} whose fit will be reported.
 #' @param ... Other parameters.
 #' @family Advanced Model Building Functions
-#' \url{https://www.github.com/tbates/umx}
 #' @export
 umx_standardize <- function(model, ...){
 	UseMethod("umx_standardize", model)

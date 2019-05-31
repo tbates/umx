@@ -88,6 +88,7 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},
+  \code{\link{umx_standardize}},
   \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}

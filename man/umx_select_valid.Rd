@@ -26,8 +26,9 @@ Merge valid entries from two columns
 \examples{
 tmp = mtcars
 tmp$newDisp = tmp$disp
-tmp$disp[1,3,6] = NA
-umx_select_valid("disp", "newDisp", data = tmp)
+tmp$disp[c(1,3,6)] = NA
+anyNA(tmp$disp) # column has NAs
+tmp = umx_select_valid("disp", "newDisp", data = tmp)
 anyNA(tmp$disp) # column repaired
 }
 \seealso{

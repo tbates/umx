@@ -768,7 +768,6 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #' @param ... Other parameters to control model summary
 #' @family Reporting Functions
 #' @family Core Modeling Functions
-#' \url{https://www.github.com/tbates/umx}
 #' @export
 umxSummary <- function(model, ...){
 	UseMethod("umxSummary", model)

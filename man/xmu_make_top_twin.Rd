@@ -62,13 +62,13 @@ total variance (A+C+E) is fixed at 1. For ordinal variables, the first 2 thresho
 
 For raw and WLS data, \code{top} contains a means matrix (if needed). For summary data, the top model contains only a name.
 
-For ordinal data, \code{top} gains \code{top.threshMat} (from a call to \url{umxThresholdMatrix}]).
+For ordinal data, \code{top} gains \code{top.threshMat} (from a call to \code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}}).
 
 \emph{MZ and DZ models}
 
 \code{MZ} and \code{DZ} contain the data, and an expectation referencing \code{top.expCovMZ} and \code{top.expMean}, and, \code{vector = bVector}.
-For continuous raw data, MZ and DZ contain \url{mxExpectationNormal}] and \url{mxFitFunctionML}].
-For WLS these the fit function is switched to \url{mxFitFunctionWLS}] with appropriate \code{type} and \code{allContinuousMethod}.
+For continuous raw data, MZ and DZ contain \code{\link[OpenMx:mxExpectationNormal]{OpenMx::mxExpectationNormal()}} and \code{\link[OpenMx:mxFitFunctionML]{OpenMx::mxFitFunctionML()}}.
+For WLS these the fit function is switched to \code{\link[OpenMx:mxFitFunctionWLS]{OpenMx::mxFitFunctionWLS()}} with appropriate \code{type} and \code{allContinuousMethod}.
 
 For binary, a constraint and algebras are included to constrain \code{Vtot} (A+C+E) to 1.
 
@@ -78,9 +78,9 @@ If \code{equateMeans} is \code{TRUE}, then the Twin-2 vars in the mean matrix ar
 
 \strong{Matrices created}
 
-If needed means matrices are added. Decent starts are guessed from the data.
-For continuous raw data, top contains a means matrix "expMean".
-For Models with ordinal, top adds an \url{umxThresholdMatrix}].
+Decent starts are guessed from the data.
+Where needed, e.g. continuous raw data, top adds a means matrix "expMean".
+For ordinal data, top adds a \code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}}.
 
 If binary variables are present, matrices and a constraint to hold \code{A+C+E == 1} are added to top.
 
@@ -96,7 +96,7 @@ It can process data into all the types supported by \code{mxData}.
 
 Raw data input with a target of \code{cov} or \code{cor} type requires the \code{numObsMZ} and \code{numObsDZ} to be set.
 
-Type "WLS", "DWLS", or "ULS", data remain raw, but are handled as WLS in the \url{mxFitFunctionWLS}].
+Type "WLS", "DWLS", or "ULS", data remain raw, but are handled as WLS in the \code{\link[OpenMx:mxFitFunctionWLS]{OpenMx::mxFitFunctionWLS()}}.
 
 Unused columns are dropped.
 

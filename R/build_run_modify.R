@@ -12,6 +12,16 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# =======================
+# = Markdown hyperlinks =
+# =======================
+# [func()] = function in package = \code{\link[=func]{func()}  Another package =  [pkg::func()]
+# [object] = object, class, data set, etc. in same package. Another package [pkg::object]
+# [`object`] = object, typeset as code
+# [link text][object] = Different link text. Another package = [link text][pkg::object]
+
+# ![](example-plot.jpg "Example Plot Title") = Image in man/figures
+
 # Makevars for clang
 # 	mate ~/.R/Makevars
 # 	https://gist.github.com/tbates/9cec0a93e04c06c41b550454eaa892a3

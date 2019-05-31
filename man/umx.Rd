@@ -87,7 +87,8 @@ Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxModify}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxSuperModel}}
+  \code{\link{umxRun}}, \code{\link{umxSummary}},
+  \code{\link{umxSuperModel}}
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},
@@ -230,6 +231,7 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},
+  \code{\link{umx_standardize}},
   \code{\link{umx_string_to_algebra}}
 
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

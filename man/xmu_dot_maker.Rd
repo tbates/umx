@@ -54,7 +54,8 @@ Other Graphviz: \code{\link{umx_dot_define_shapes}},
   \code{\link{umx_dot_mat2dot}},
   \code{\link{umx_dot_rank}},
   \code{\link{xmu_dot_make_paths}},
-  \code{\link{xmu_dot_make_residuals}}
+  \code{\link{xmu_dot_make_residuals}},
+  \code{\link{xmu_dot_move_ranks}}
 }
 \concept{Graphviz}
 \concept{xmu internal not for end user}

@@ -53,7 +53,8 @@ tmp = umx_rename(tmp, old = c("disp"), replace = c("displacement"))
 umx_check_names("displacement", data = tmp, die = TRUE)
 
 # This will warn that "disp" does not exist (anymore)
-tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = c("displacement", "auto", "rear_axle_ratio"))
+new = c("displacement", "auto", "rear_axle_ratio")
+tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
 namez(tmp, "a") # still updated am to auto (and rear_axle_ratio)
 
 # Test using regex (in this case to revert "displacement" to "disp")
