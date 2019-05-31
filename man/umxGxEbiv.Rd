@@ -2,7 +2,7 @@
 % Please edit documentation in R/umx_build_umxGxEbiv.R
 \name{umxGxEbiv}
 \alias{umxGxEbiv}
-\title{Bivariate GxE models where twins differ on the moderator.}
+\title{Bivariate GxE models where twins differ on the moderator}
 \usage{
 umxGxEbiv(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL,
   lboundACE = NA, lboundM = NA, dropMissingDef = FALSE,
@@ -41,20 +41,21 @@ umxGxEbiv(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL,
 }
 }
 \description{
-GxE interaction models test the hypothesis that the strength
-of genetic (or environmental) influence varies parametrically
-across levels of environment.
-univariate (see \code{\link{umxGxE}}) models assume the twins share the moderator.
-umxGxE umxGxEbiv allows testing moderation in cases where twins differ on the moderator,
-(Purcell, 2002; van der Sluis et al., 2012).
+GxE interaction models test the hypothesis that the strength of genetic
+(or environmental) influence varies parametrically across levels of environment.
+\link{umxGxEbiv} supports testing, and visualizing GxE bivariate (or C or E x E) interactions.
 }
 \details{
-It supports testing, and visualizing GxE bivariate (or C or E x E) interactions.
+Whereas \link[=univariate]{umxGxE} models assume the twins share the moderator,
+\link{umxGxEbiv} allows testing moderation in cases where twins differ on the moderator,
+(Purcell, 2002; van der Sluis et al., 2012).
 
-The following figure shows the GxE model as a path diagram: \emph{note}: Only Twin 1 is shown.
+The following figure shows the GxE model as a path diagram (Twin 1 shown).
+
 Twin 1 and twin 2 A, C, and E latent traits are connected in the standard fashion, with the
 covariance of the T1 and T2 latent genetic traits set to .5 for DZ and 1.0 for MZ pairs.
 For the sake of clarity, C, and E paths are omitted here. These mirror those for A.
+
 \figure{GxEbiv.png}{}
 }
 \examples{

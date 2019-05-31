@@ -300,15 +300,15 @@ umxModel <- function(...) {
 #' umxRAM differs from mxModel in the following ways:
 #' 
 #' 1. You don't need to set type = "RAM".
-#' 1. You don't need to list manifestVars (they are detected from path usage).
-#' 1. You don't need to list latentVars (detected as anything in paths but not in \code{mxData}).
-#' 1. You add data with \strong{data = } (as elsewhere in R, e.g. \code{\link{lm}}).
-#' 1. You don't need to add labels: paths are automatically labelled "a_to_b" etc.
-#' 1. You don't need to set start values, they will be done for you.
-#' 1. You don't need to mxRun the model: it will run automatically, and print a summary.
-#' 1. You don't need to run summary: with \code{autoRun}, it will print a summary.
-#' 1. You get a plot of the model.
-#' 1. \code{\link{umxPath}} offers powerful verbs to describe paths.
+#' 2. You don't need to list manifestVars (they are detected from path usage).
+#' 3. You don't need to list latentVars (detected as anything in paths but not in \code{mxData}).
+#' 4. You add data with \strong{data = } (as elsewhere in R, e.g. \code{\link{lm}}).
+#' 5. You don't need to add labels: paths are automatically labelled "a_to_b" etc.
+#' 6. You don't need to set start values, they will be done for you.
+#' 7. You don't need to mxRun the model: it will run automatically, and print a summary.
+#' 8. You don't need to run summary: with \code{autoRun}, it will print a summary.
+#' 9. You get a plot of the model.
+#' 10. \code{\link{umxPath}} offers powerful verbs to describe paths.
 #'
 #' 
 #' \strong{Comparison with other software}
