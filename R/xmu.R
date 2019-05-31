@@ -1547,11 +1547,21 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 				thisPathFree  = mxMat_free[target, source]
 				thisPathVal   = round(mxMat_vals[target, source], digits)
 
-				if(thisPathFree){ labelStart = ' [label="' } else { labelStart = ' [label="@' }
+				if(thisPathFree){ labelStub = ' [label="' } else { labelStub = ' [label="@' }
 
 				if(thisPathFree | ((fixed & (thisPathVal != 0))) ) {
-					stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStart, thisPathVal, '"];\n')
+					# stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathVal, '"];\n')
+					if(pathLabels == "both"){
+						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
+					} else if(pathLabels == "labels"){
+						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathLabel, "\"];\n")
+					}else {
+						# pathLabels = "none"
+						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, prefix, thisPathVal, "\"];\n")
+					}
+					
 				}else{
+					# not free and not non-0&&showfixed
 					# print(paste0("thisPathFree = ", thisPathFree , "fixed =", fixed, "; thisPathVal = ", thisPathVal, "\n"))
 				}
 				

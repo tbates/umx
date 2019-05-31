@@ -42,13 +42,15 @@ text based on patterns and replacements. so to change "replacement" to "in place
 \examples{
 # Re-name "cyl" to "cylinder"
 tmp = mtcars
-x = umx_rename(tmp, replace = c(cyl = "cylinder"))
+tmp = umx_rename(tmp, replace = c(cyl = "cylinder"))
+# let's check...
+namez(tmp, "c")
 
 # Alternate style: old<-replace
 # Dry run
 tmp = umx_rename(tmp, old = c("disp"), replace = c("displacement"), test= TRUE)
 tmp = umx_rename(tmp, old = c("disp"), replace = c("displacement"))
-umx_check_names("displacement", data = x, die = TRUE)
+umx_check_names("displacement", data = tmp, die = TRUE)
 
 # This will warn that "disp" does not exist (anymore)
 tmp = umx_rename(tmp, old = c("disp", "am"), replace = c("displacement", "auto"))
@@ -57,6 +59,7 @@ tmp = umx_rename(tmp, old = c("disp", "am"), replace = c("displacement", "auto")
 tmp = umx_rename(tmp, regex = "lacement", replace = "", test= TRUE) 
 tmp = umx_rename(tmp, regex = "lacement", replace = "") # revert to disp
 umx_names(tmp, "^d") # all names beginning with a d
+
 }
 \seealso{
 \link{namez} to filter (and replace) names, Also \link{umx_check_names} to check for existence of names in a dataframe.

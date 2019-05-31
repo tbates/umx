@@ -100,7 +100,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' @seealso - [umxRAM()]
 #' @examples
 #' # auto-data, print table, return umxRAM model
-#' m1 = umxLav2RAM("y ~ x", printTab= FALSE)
+#' m1 = umxLav2RAM("y ~ x", printTab= TRUE)
 #' 
 #' lav = "y ~ x1 + 2.4*x2 + x3"
 #' tmp = umxLav2RAM(lav, data = "auto", printTab= FALSE)
@@ -138,7 +138,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #'
 #' # More complex:
 #'
-#' lav = " # Model 14 PROCESS Hayes - moderated mediation
+#' lav = " # Moderated mediation
 #' gnt ~ a*cb
 #' INT ~ b1*gnt + b2*cn + b3*cngn + c*cb
 #' 
