@@ -1552,7 +1552,12 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 				thisPathFree  = mxMat_free[target, source]
 				thisPathVal   = round(mxMat_vals[target, source], digits)
 
-				if(thisPathFree){ labelStub = ' [label="' } else { labelStub = ' [label="@' }
+				labelStub = ' [label="'
+				if(thisPathFree){
+					prefix = "" 
+				} else {
+					prefix = "@"
+				}
 
 				if(thisPathFree | ((fixed & (thisPathVal != 0))) ) {
 					# stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathVal, '"];\n')
