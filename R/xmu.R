@@ -1416,10 +1416,13 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 #' @family Graphviz
 #' @examples
 #' # Add L1 to min
-#' xmu_dot_move_ranks(min = "L1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))
+#' old_min = c("min1", "min2")
+#' old_same = c("s1", "s2")
+#' old_max = paste0("x", 1:3)
+#' xmu_dot_move_ranks(min = "L1", old_min= old_min, old_same= old_same, old_max= old_max)
 #'
 #' # Move min1 to max
-#' xmu_dot_move_ranks(max = "min1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))
+#' xmu_dot_move_ranks(max = "min1", old_min= old_min, old_same= old_same, old_max= old_max)
 xmu_dot_move_ranks <- function(min = NULL, same = NULL, max = NULL, old_min, old_same, old_max) {
 	# Remove items in user's "max" from other lists...
 	old_min  = setdiff(old_min,  max)

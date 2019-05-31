@@ -156,7 +156,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' # Algebra: e.g. b1^2
 #' m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
 #' 
-#' # Model with labeled parameters
+#' # Model with constraints and labeled parameters
 #' lav = "
 #'	y ~ b1*x1 + b2*x2 + b3*x3
 #'	# constraints

@@ -41,12 +41,6 @@ text based on patterns and replacements. so to change "replacement" to "in place
 }
 \examples{
 tmp = mtcars
-<<<<<<< HEAD
-tmp = umx_rename(tmp, replace = c(cyl = "cylinder"))
-# let's check...
-namez(tmp, "c")
-=======
->>>>>>> 99a1698f7712b85599c3abf483e88148a779b85b
 
 tmp = umx_rename(tmp, replace = c(cyl = "cylinder"))
 # let's check...

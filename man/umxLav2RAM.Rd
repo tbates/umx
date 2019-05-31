@@ -74,7 +74,7 @@ White space is replaced with an _ and illegal characters are replaced with "x"
 }
 \examples{
 # auto-data, print table, return umxRAM model
-m1 = umxLav2RAM("y ~ x", printTab= FALSE)
+m1 = umxLav2RAM("y ~ x", printTab= TRUE)
 
 lav = "y ~ x1 + 2.4*x2 + x3"
 tmp = umxLav2RAM(lav, data = "auto", printTab= FALSE)
@@ -112,7 +112,7 @@ m1 = umxRAM2(HS, data = umx_scale(HS.ability.data), group = "school")
 
 # More complex:
 
-lav = " # Model 14 PROCESS Hayes - moderated mediation
+lav = " # Moderated mediation
 gnt ~ a*cb
 INT ~ b1*gnt + b2*cn + b3*cngn + c*cb
 
@@ -130,7 +130,7 @@ plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min= "INT")
 # Algebra: e.g. b1^2
 m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
 
-# Model with labeled parameters
+# Model with constraints and labeled parameters
 lav = "
 y ~ b1*x1 + b2*x2 + b3*x3
 # constraints

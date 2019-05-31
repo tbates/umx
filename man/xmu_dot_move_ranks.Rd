@@ -28,10 +28,13 @@ xmu_dot_move_ranks (not for end users)
 }
 \examples{
 # Add L1 to min
-xmu_dot_move_ranks(min = "L1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))
+old_min = c("min1", "min2")
+old_same = c("s1", "s2")
+old_max = paste0("x", 1:3)
+xmu_dot_move_ranks(min = "L1", old_min= old_min, old_same= old_same, old_max= old_max)
 
 # Move min1 to max
-xmu_dot_move_ranks(max = "min1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))
+xmu_dot_move_ranks(max = "min1", old_min= old_min, old_same= old_same, old_max= old_max)
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},
