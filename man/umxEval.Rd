@@ -37,7 +37,8 @@ mxEval(list(ab = ab), m1)
 - \url{https://www.github.com/tbates/umx}
 }
 \seealso{
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}}, \code{\link{umxReduce}},

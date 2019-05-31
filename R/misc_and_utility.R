@@ -1641,13 +1641,13 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #'
 #' *note*:Tto use replace list, you must say c(old = "new"), not c(old -> "new")
 #' 
-#' @param data the dataframe in which to rename variables
-#' @param old Optional list of old names that will be found and replaced by the contents of replace. Defaults to NULL.
-#' @param replace If used alone, a named collection of c(oldName = "newName") pairs
+#' @param data The dataframe in which to rename variables
+#' @param old List of old names that will be found and replaced by the contents of replace. (optional: Defaults to NULL).
+#' @param replace If used alone, a named collection of c(oldName = "newName") pairs.
 #'   OR, if "old" is a list of existing names, the list of new names)
-#'   OR, if "grep" is a regular expression, the replace string)
-#' @param regex Optional grep string. Matches will be replaced using replace as the replace string. Defaults to NULL.
-#' @param test whether to report a "dry run" - and not actually change anything. Defaults to FALSE.
+#'   OR, if "regex" is a regular expression, the replace string)
+#' @param regex Regular expression with matches will be replaced using replace as the replace string. (Optional: Defaults to NULL).
+#' @param test Whether to report a "dry run", not changing anything. (Default = FALSE).
 #' @param grep deprecated: use regex
 #' @return - dataframe with columns renamed.
 #' @export
@@ -1655,22 +1655,24 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @family Data Functions
 #' @md
 #' @examples
-#' # Re-name "cyl" to "cylinder"
 #' tmp = mtcars
+#'
 #' tmp = umx_rename(tmp, replace = c(cyl = "cylinder"))
 #' # let's check...
 #' namez(tmp, "c")
 #' 
-#' # Alternate style: old<-replace
+#' # Alternate style: old<-replace, first with a test-run
 #' # Dry run
 #' tmp = umx_rename(tmp, old = c("disp"), replace = c("displacement"), test= TRUE)
 #' tmp = umx_rename(tmp, old = c("disp"), replace = c("displacement"))
 #' umx_check_names("displacement", data = tmp, die = TRUE)
 #'
 #' # This will warn that "disp" does not exist (anymore)
-#' tmp = umx_rename(tmp, old = c("disp", "am"), replace = c("displacement", "auto"))
+#' new = c("displacement", "auto", "rear_axle_ratio")
+#' tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
+#' namez(tmp, "a") # still updated am to auto (and rear_axle_ratio)
 #'
-#' # Test using grep to revert to disp
+#' # Test using regex (in this case to revert "displacement" to "disp")
 #' tmp = umx_rename(tmp, regex = "lacement", replace = "", test= TRUE) 
 #' tmp = umx_rename(tmp, regex = "lacement", replace = "") # revert to disp
 #' umx_names(tmp, "^d") # all names beginning with a d
@@ -1707,7 +1709,7 @@ umx_rename <- function(data, old = NULL, replace = NULL, regex = NULL, test = FA
 				names(data) = new_names
 			}
 		}
-		invisible(data)
+		invisible(data)		
 	} else {
 		# Not regex
 		if(!is.null(old)){
@@ -2107,7 +2109,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #'
 #' Unlikely to be of use to anyone but the package author :-)
 #' 
-#' On OS X, the default (theFile= "Finder" will use the file selected in the front-most Finder window.
+#' On OS X, by default, the file selected in the front-most Finder window will be chosen.
 #' If it is blank, a choose file dialog will be thrown.
 #' 
 #' Read an xlsx file and convert into SQL insert statements (placed on the clipboard)
@@ -5201,6 +5203,46 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	return(theData)
 }
 
+#' Update NA values in one column with valid entries from another
+#'
+#' @description
+#' Merge valid entries from two columns
+#'
+#' @param col1 name of the first column
+#' @param col2 name of the second column
+#' @param bothways Whether to replace from 1 to 2 as well as from 2 to 1
+#' @param data The dataframe containing the two columns.
+#' @return - Updated dataframe
+#' @export
+#' @family Data Functions
+#' @seealso - \code{\link{within}}
+#' @md
+#' @examples
+#' tmp = mtcars
+#' tmp$newDisp = tmp$disp
+#' tmp$disp[c(1,3,6)] = NA
+#' anyNA(tmp$disp) # column has NAs
+#' tmp = umx_select_valid("disp", "newDisp", data = tmp)
+#' anyNA(tmp$disp) # column repaired
+umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
+	# TODO allow columns to passed in: return as list(old, new)?
+	if(is.null(data)){
+		message("You idiot!")
+	} else {
+		# 1. update NA in col1 with contents of col2
+		oldcopy = data[, col1]
+		newcopy = data[, col2]
+		oldcopy[is.na(oldcopy)] = newcopy[is.na(oldcopy)]
+		data[, col1] = oldcopy
+		if(bothways){
+			# 2. optionally update NA in col2 with contents of col1
+			newcopy[is.na(newcopy)] = oldcopy[is.na(newcopy)]
+			data[, col2] = newcopy
+		}
+		return(data)
+	}
+}
+
 # =================
 # = Simulate Data =
 # =================
@@ -6350,7 +6392,6 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #' @param model The \code{\link{mxModel}} whose fit will be reported.
 #' @param ... Other parameters.
 #' @family Advanced Model Building Functions
-#' \url{https://www.github.com/tbates/umx}
 #' @export
 umx_standardize <- function(model, ...){
 	UseMethod("umx_standardize", model)

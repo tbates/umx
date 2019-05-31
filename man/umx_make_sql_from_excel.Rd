@@ -16,7 +16,7 @@ umx_make_sql_from_excel(theFile = "Finder")
 Unlikely to be of use to anyone but the package author :-)
 }
 \details{
-On OS X, the default (theFile= "Finder" will use the file selected in the front-most Finder window.
+On OS X, by default, the file selected in the front-most Finder window will be chosen.
 If it is blank, a choose file dialog will be thrown.
 
 Read an xlsx file and convert into SQL insert statements (placed on the clipboard)

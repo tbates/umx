@@ -4,7 +4,7 @@
 #' (or environmental) influence varies parametrically across levels of environment. 
 #' [umxGxEbiv] supports testing, and visualizing GxE bivariate (or C or E x E) interactions.
 #' 
-#' Whereas [umxGxE][univariate] models assume the twins share the moderator,
+#' Whereas [univariate][umxGxE] models assume the twins share the moderator,
 #' [umxGxEbiv] allows testing moderation in cases where twins differ on the moderator,
 #' (Purcell, 2002; van der Sluis et al., 2012).
 #'

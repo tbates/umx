@@ -59,7 +59,8 @@ tmx_show(m1, what = "free", matrices = "A")
 - \url{https://tbates.github.io}
 }
 \seealso{
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{umxAPA}},
   \code{\link{umxEval}}, \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}}, \code{\link{umxReduce}},

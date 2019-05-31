@@ -58,7 +58,8 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_scale}}, \code{\link{umx_score_scale}},
   \code{\link{umx}}, \code{\link{xmu_check_variance}}
 
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},

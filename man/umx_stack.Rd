@@ -53,6 +53,7 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_polytriowise}},
   \code{\link{umx_read_lower}}, \code{\link{umx_rename}},
   \code{\link{umx_reorder}},
+  \code{\link{umx_select_valid}},
   \code{\link{umx_swap_a_block}}, \code{\link{umx}}
 }
 \concept{Data Functions}

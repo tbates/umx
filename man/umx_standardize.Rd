@@ -19,5 +19,15 @@ Versions exist for RAM, ACE, ACEv, ACEcov, IP, CP and GxE models.
 \details{
 umx_standardize takes umx models, including RAM and twin models, and returns a standardized version.
 }
-\concept{Advanced Model Building Functions
-\url{https://www.github.com/tbates/umx}}
+\seealso{
+Other Advanced Model Building Functions: \code{\link{umxJiggle}},
+  \code{\link{umxLabel}}, \code{\link{umxLatent}},
+  \code{\link{umxRAM2Ordinal}},
+  \code{\link{umxThresholdMatrix}},
+  \code{\link{umxValues}},
+  \code{\link{umx_fix_first_loadings}},
+  \code{\link{umx_fix_latents}},
+  \code{\link{umx_get_bracket_addresses}},
+  \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
+}
+\concept{Advanced Model Building Functions}

@@ -26,6 +26,13 @@ xmu_dot_move_ranks(min = NULL, same = NULL, max = NULL, old_min,
 \description{
 xmu_dot_move_ranks (not for end users)
 }
+\examples{
+# Add L1 to min
+xmu_dot_move_ranks(min = "L1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))
+
+# Move min1 to max
+xmu_dot_move_ranks(max = "min1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))
+}
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},
@@ -54,10 +61,13 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}},
   \code{\link{xmu_starts}}
+
+Other Graphviz: \code{\link{umx_dot_define_shapes}},
+  \code{\link{umx_dot_mat2dot}},
+  \code{\link{umx_dot_rank}},
+  \code{\link{xmu_dot_make_paths}},
+  \code{\link{xmu_dot_make_residuals}},
+  \code{\link{xmu_dot_maker}}
 }
-\concept{Graphviz
-# add L1 to min
-xmu_dot_move_ranks(min = "L1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))
-# move min1 to max
-xmu_dot_move_ranks(max = "min1", old_min = c("min1", "min2"), old_same = c("s1", "s2"), old_max = paste0("x", 1:3))}
+\concept{Graphviz}
 \concept{xmu internal not for end user}

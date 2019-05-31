@@ -55,7 +55,8 @@ xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = 
 - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},

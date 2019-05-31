@@ -74,19 +74,19 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' \tabular{rlll}{
 #'   \tab "=~"   \tab lhs (Latent) is manifested by rhs\cr
 #'   \tab "~"    \tab lhs "is regressed on" (<- ) rhs\cr
-#'   \tab "~~"   \tab lhs covarys with rhs\cr
+#'   \tab "~~"   \tab lhs covaries with rhs\cr
 #'   \tab "~ 1"  \tab lhs has mean\cr
 #'   \tab ":="   \tab lhs is defined by rhs (see [OpenMx::mxAlgebra()])\cr
 #'   \tab "=="   \tab lhs is constrained == to rhs (see [OpenMx::mxConstraint()] )
 #' }
 #'
 #' ## Naming of multiple groups
-#' When multiple groups are found the groups are named "<name>_<groupLevel>"
+#' When multiple groups are found the groups are named "<name>_<group level>"
 #' White space is replaced with an _ and illegal characters are replaced with "x"
 #' 
 #' @param model A lavaan syntax string, e.g. "A~~B"
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
-#' @param lavaanMode Automagical path settings for cfa/sem (default) or no-defaults ("lavaan")
+#' @param lavaanMode Auto-magical path settings for cfa/sem (default) or no-defaults ("lavaan")
 #' @param group = Column to use for multi-group (default = NULL)
 #' @param name Model name (can also add name in # commented first line)
 #' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.

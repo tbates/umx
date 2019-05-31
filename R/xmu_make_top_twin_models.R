@@ -20,13 +20,13 @@
 #' 
 #' For raw and WLS data, `top` contains a means matrix (if needed). For summary data, the top model contains only a name.
 #' 
-#' For ordinal data, `top` gains `top.threshMat` (from a call to [umxThresholdMatrix]()]).
+#' For ordinal data, `top` gains `top.threshMat` (from a call to [umxThresholdMatrix()]).
 #' 
 #' *MZ and DZ models*
 #' 
 #' `MZ` and `DZ` contain the data, and an expectation referencing `top.expCovMZ` and `top.expMean`, and, `vector = bVector`.
-#' For continuous raw data, MZ and DZ contain [mxExpectationNormal]()] and [mxFitFunctionML]()].
-#' For WLS these the fit function is switched to [mxFitFunctionWLS]()] with appropriate `type` and `allContinuousMethod`.
+#' For continuous raw data, MZ and DZ contain [OpenMx::mxExpectationNormal()] and [OpenMx::mxFitFunctionML()].
+#' For WLS these the fit function is switched to [OpenMx::mxFitFunctionWLS()] with appropriate `type` and `allContinuousMethod`.
 #' 
 #'
 #' For binary, a constraint and algebras are included to constrain `Vtot` (A+C+E) to 1.
@@ -37,9 +37,9 @@
 #'
 #' **Matrices created**
 #' 
-#' If needed means matrices are added. Decent starts are guessed from the data.
-#' For continuous raw data, top contains a means matrix "expMean". 
-#' For Models with ordinal, top adds an [umxThresholdMatrix]()]. 
+#' Decent starts are guessed from the data.
+#' Where needed, e.g. continuous raw data, top adds a means matrix "expMean". 
+#' For ordinal data, top adds a [umxThresholdMatrix()]. 
 #' 
 #' If binary variables are present, matrices and a constraint to hold `A+C+E == 1` are added to top.
 #'
@@ -55,7 +55,7 @@
 #' 
 #' Raw data input with a target of `cov` or `cor` type requires the `numObsMZ` and `numObsDZ` to be set.
 #' 
-#' Type "WLS", "DWLS", or "ULS", data remain raw, but are handled as WLS in the [mxFitFunctionWLS]()].
+#' Type "WLS", "DWLS", or "ULS", data remain raw, but are handled as WLS in the [OpenMx::mxFitFunctionWLS()].
 #' 
 #' Unused columns are dropped.
 #' 

@@ -4,14 +4,14 @@
 \alias{umx_aggregate}
 \title{Convenient formula-based cross-tabs & built-in summary functions}
 \usage{
-umx_aggregate(formula = DV ~ condition, data = NA,
+umx_aggregate(formula = DV ~ condition, data = df,
   what = c("mean_sd", "n"), digits = 2, report = c("markdown",
   "html", "txt"))
 }
 \arguments{
 \item{formula}{The aggregation formula. e.g., DV ~ condition.}
 
-\item{data}{frame to aggregate.}
+\item{data}{frame to aggregate (defaults to df for common case)}
 
 \item{what}{function to use. Default reports "mean (sd)".}
 
@@ -72,7 +72,8 @@ umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 \seealso{
 - \code{\link{umx_apply}}, \code{\link{aggregate}}
 
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},

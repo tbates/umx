@@ -300,7 +300,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData, mzData, sep = N
 		# If given covariates, call umxACEcov
 		if(!is.null(selCovs)){
 			if(covMethod == "fixed"){
-				stop("Fixed covariates are on the roadmap for umx in 2019. Until then, use umx_residualize on the data first.")
+				stop("Fixed covariates are on the road map for umx in 2019. Until then, use umx_residualize on the data first.")
 				# umxACEdefcov(name = name, selDVs= selDVs, selCovs = selCovs, dzData= dzData, mzData= mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, autoRun = autoRun, tryHard = tryHard)
 			} else if(covMethod == "random"){
 				umxACEcov(name = name, selDVs= selDVs, selCovs= selCovs, sep = sep, dzData= dzData, mzData= mzData,  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, autoRun = autoRun, tryHard = tryHard)

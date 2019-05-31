@@ -12,6 +12,16 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# =======================
+# = Markdown hyperlinks =
+# =======================
+# [func()] = function in package = \code{\link[=func]{func()}  Another package =  [pkg::func()]
+# [object] = object, class, data set, etc. in same package. Another package [pkg::object]
+# [`object`] = object, typeset as code
+# [link text][object] = Different link text. Another package = [link text][pkg::object]
+
+# ![](example-plot.jpg "Example Plot Title") = Image in man/figures
+
 # Makevars for clang
 # 	mate ~/.R/Makevars
 # 	https://gist.github.com/tbates/9cec0a93e04c06c41b550454eaa892a3
@@ -993,7 +1003,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
-#'  \strong{6}, 554-571. DOI: https://doi.org/10.1375/twin.5.6.554
+#'  \strong{6}, 554-571. DOI: [https://doi.org/10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554)
 #' @examples
 #' require(umx)
 #' data(twinData) 

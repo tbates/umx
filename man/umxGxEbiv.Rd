@@ -46,7 +46,7 @@ GxE interaction models test the hypothesis that the strength of genetic
 \link{umxGxEbiv} supports testing, and visualizing GxE bivariate (or C or E x E) interactions.
 }
 \details{
-Whereas \link[=univariate]{umxGxE} models assume the twins share the moderator,
+Whereas \link[=umxGxE]{univariate} models assume the twins share the moderator,
 \link{umxGxEbiv} allows testing moderation in cases where twins differ on the moderator,
 (Purcell, 2002; van der Sluis et al., 2012).
 

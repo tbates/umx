@@ -58,7 +58,8 @@ umx_time('stop') # report the time since timer was restarted.
 - \url{https://www.github.com/tbates/umx}
 }
 \seealso{
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},

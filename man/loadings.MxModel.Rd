@@ -30,9 +30,10 @@ loadings(m1)
 \seealso{
 - \code{\link{factanal}}, \code{\link{loadings}}
 
-Other Reporting Functions: \code{\link{tmx_is.identified}},
-  \code{\link{tmx_show}}, \code{\link{umxAPA}},
-  \code{\link{umxEval}}, \code{\link{umxFactorScores}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
+  \code{\link{umxAPA}}, \code{\link{umxEval}},
+  \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},

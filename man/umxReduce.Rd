@@ -43,7 +43,8 @@ I am thinking for RAM models to drop NS paths, and report that test.
 \seealso{
 \code{\link{umxReduceGxE}}, \code{\link{umxReduceACE}}
 
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},

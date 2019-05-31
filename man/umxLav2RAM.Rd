@@ -18,7 +18,7 @@ umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
 
 \item{name}{Model name (can also add name in # commented first line)}
 
-\item{lavaanMode}{Automagical path settings for cfa/sem (default) or no-defaults ("lavaan")}
+\item{lavaanMode}{Auto-magical path settings for cfa/sem (default) or no-defaults ("lavaan")}
 
 \item{std.lv}{= FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.}
 
@@ -63,13 +63,13 @@ Lavaan is well documented. For quick reference, some common symbols in lavaan st
 \tabular{rlll}{
 \tab "=~"   \tab lhs (Latent) is manifested by rhs\cr
 \tab "~"    \tab lhs "is regressed on" (<- ) rhs\cr
-\tab "~~"   \tab lhs covarys with rhs\cr
+\tab "~~"   \tab lhs covaries with rhs\cr
 \tab "~ 1"  \tab lhs has mean\cr
 \tab ":="   \tab lhs is defined by rhs (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})\cr
 \tab "=="   \tab lhs is constrained == to rhs (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
 }Naming of multiple groups
 
-When multiple groups are found the groups are named "<name>_<groupLevel>"
+When multiple groups are found the groups are named "<name>_<group level>"
 White space is replaced with an _ and illegal characters are replaced with "x"
 }
 \examples{

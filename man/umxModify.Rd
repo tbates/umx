@@ -123,7 +123,8 @@ Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxPath}},
   \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSuperModel}}, \code{\link{umx}}
+  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
+  \code{\link{umx}}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},

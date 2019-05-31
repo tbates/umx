@@ -87,9 +87,11 @@ Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxModify}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxSuperModel}}
+  \code{\link{umxRun}}, \code{\link{umxSummary}},
+  \code{\link{umxSuperModel}}
 
-Other Reporting Functions: \code{\link{loadings.MxModel}},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
   \code{\link{umxFactorScores}},
@@ -180,7 +182,8 @@ Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umx_polypairwise}},
   \code{\link{umx_polytriowise}},
   \code{\link{umx_read_lower}}, \code{\link{umx_rename}},
-  \code{\link{umx_reorder}}, \code{\link{umx_stack}},
+  \code{\link{umx_reorder}},
+  \code{\link{umx_select_valid}}, \code{\link{umx_stack}},
   \code{\link{umx_swap_a_block}}
 
 Other File Functions: \code{\link{dl_from_dropbox}},
@@ -228,6 +231,7 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},
+  \code{\link{umx_standardize}},
   \code{\link{umx_string_to_algebra}}
 
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

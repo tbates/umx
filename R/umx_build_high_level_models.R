@@ -61,9 +61,9 @@
 #' 
 #' 
 #' @aliases umxFactanal umxEFA
-#' @param x Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.
+#' @param x Either 1: data, 2: Right-hand-side ~ formula , 3: Vector of variable names, or 4: Name for the model.
 #' @param factors Either number of factors to request or a vector of factor names.
-#' @param data A dataframe of manifest columns you are modeling
+#' @param data A dataframe you are modeling.
 #' @param n.obs Number of observations in covmat (if provided, default = NA)
 #' @param rotation A rotation to perform on the loadings (default  = "varimax" (orthogonal))
 #' @param scores Type of scores to produce, if any. The default is none, "Regression" gives Thompson's scores. Other options are 'ML', 'WeightedML', Partial matching allows these names to be abbreviated.
@@ -85,10 +85,14 @@
 #' m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
 #' loadings(m1)
 #' 
-#' # Formula interface in base-R factanal()
+#' # Formula interface in base-R factanal
 #' m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 #' loadings(m2)
 #' 
+#' # Formula interface in umxEFA
+#' m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
+#' loadings(m2)
+#'
 #' # Return a loadings object
 #' x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
 #' names(x)
@@ -212,7 +216,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 		}else if(return == "model"){
 			invisible(m1)
 		}else{
-			message(omxQuotes(retun), " is not a legal option for 'return'")
+			message(omxQuotes(return), " is not a legal option for 'return'")
 		}
 	}
 }

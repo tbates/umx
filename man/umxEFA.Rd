@@ -12,11 +12,11 @@ umxEFA(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
   report = c("markdown", "html"), covmat = NULL)
 }
 \arguments{
-\item{x}{Either 1: data, 2: A formula (not implemented yet), 3: A vector of variable names, or 4: A name for the model.}
+\item{x}{Either 1: data, 2: Right-hand-side ~ formula , 3: Vector of variable names, or 4: Name for the model.}
 
 \item{factors}{Either number of factors to request or a vector of factor names.}
 
-\item{data}{A dataframe of manifest columns you are modeling}
+\item{data}{A dataframe you are modeling.}
 
 \item{n.obs}{Number of observations in covmat (if provided, default = NA)}
 
@@ -84,7 +84,11 @@ myVars <- c("mpg", "disp", "hp", "wt", "qsec")
 m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
 loadings(m1)
 
-# Formula interface in base-R factanal()
+# Formula interface in base-R factanal
+m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
+loadings(m2)
+
+# Formula interface in umxEFA
 m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m2)
 
