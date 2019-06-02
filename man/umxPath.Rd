@@ -132,11 +132,6 @@ This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), v
 To create Cholesky-pattern connections:
 
 \code{umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))}
-
-Finally, not implemented in this release, but intended for the future is
-John Fox "sem"-package style notation,
-
-i.e., "A -> B; X <-> B; "
 }
 \details{
 This function returns a standard mxPath, but gives new options for specifying the path. In addition to the normal
@@ -192,15 +187,7 @@ m1 <- umxRAM("Chol", data = myData,
 	umxPath(var = latents, fixedAt = 1.0)
 )
 }
-
-# The following NOT YET implemented!!
-# umxPath("A <-> B") # same path as above using a string
-# umxPath("A -> B") # one-headed arrow with string syntax
-# umxPath("A <> B; A <-- B") # This is ok too
-# umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
-# # manifests is a reserved word, as is latents.
-# # It allows the string syntax to use the manifestVars variable
-# umxPath("A -> manifests") 
+umxPath(v0m0 = "W", label = c(NA, "data.W"))
 }
 \references{
 - \url{https://tbates.github.io}

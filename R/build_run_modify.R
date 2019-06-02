@@ -3851,11 +3851,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 
 #' \code{umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))}
 #' 
-#' Finally, not implemented in this release, but intended for the future is
-#' John Fox "sem"-package style notation,
-#' 
-#' i.e., "A -> B; X <-> B; "
-#' 
 #' 
 #' @param from One or more source variables e.g "A" or c("A","B")
 #' @param to One or more target variables for one-headed paths, e.g "A" or c("A","B").
@@ -3938,15 +3933,8 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' }
-#'
-#' # The following NOT YET implemented!!
-#' # umxPath("A <-> B") # same path as above using a string
-#' # umxPath("A -> B") # one-headed arrow with string syntax
-#' # umxPath("A <> B; A <-- B") # This is ok too
-#' # umxPath("A -> B; B>C; C --> D") # two paths. white space and hyphens not needed
-#' # # manifests is a reserved word, as is latents.
-#' # # It allows the string syntax to use the manifestVars variable
-#' # umxPath("A -> manifests") 
+#'umxPath(v0m0 = "W", label = c(NA, "data.W"))
+
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
 	xmu_string2path(from)
@@ -4034,8 +4022,19 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		if(!is.na(lbound) && is.na(ubound) && FALSE){
 				message("I lbounded var of ", v1m0, " @0")
 		}
-		a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels, lbound = 0, ubound = ubound)
-		b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
+		if(any(!is.na(labels))){
+			if(length(labels)==2){
+				a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, labels = labels[1], lbound = 0, ubound = ubound)
+				b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, labels = labels[2], lbound = lbound, ubound = ubound)
+			} else {
+				stop("Managing which labels apply to the variances and which to the means is error prone:\n",
+				"I suggest you call: umxPath(var) and umxPath(means=) separately"
+				)
+			}
+		} else {
+			a = mxPath(from = v1m0, arrows = 2, free = FALSE, values = 1, lbound = 0, ubound = ubound)
+			b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, lbound = lbound, ubound = ubound)
+		}
 		return(list(a, b))
 	}
 
@@ -4044,20 +4043,53 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		if(!is.na(lbound) && is.na(ubound) && FALSE){
 			message("I lbounded var of ", v.m. , " @0")
 		}
-		a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, labels = labels, lbound = 0, ubound = ubound)
-		b = mxPath(from = "one", to = v.m., free = TRUE, values = 0, labels = labels, lbound = lbound, ubound = ubound)
+		if(any(!is.na(labels))){
+			if(length(labels)==2){
+				a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, labels = labels[1], lbound = 0, ubound = ubound)
+				b = mxPath(from = "one", to = v.m., free = TRUE, values = 0, labels = labels[2], lbound = lbound, ubound = ubound)
+			} else {
+				stop("Managing which labels apply to the variances and which to the means is error prone:\n",
+				"I suggest you call: umxPath(var) and umxPath(means=) separately"
+				)
+			}
+		} else {
+			a = mxPath(from = v.m., arrows = 2, free = TRUE, values = 1, lbound = 0, ubound = ubound)
+			b = mxPath(from = "one", to = v.m., free = TRUE, values = 0, lbound = lbound, ubound = ubound)
+		}
 		return(list(a, b))
 	}
 
 	if(!is.null(v0m0)){
-		a = mxPath(from = v0m0, arrows = 2, free = FALSE, values = 0)
-		b = mxPath(from = "one", to = v0m0, free = FALSE, values = 0)
+		if(any(!is.na(labels))){
+			if(length(labels)==2){
+				a = mxPath(from = v0m0, arrows = 2, free = FALSE, values = 0, labels = labels[1])
+				b = mxPath(from = "one", to = v0m0, free = FALSE, values = 0, labels = labels[2])
+			} else {
+				stop("Managing which labels apply to the variances and which to the means is error prone:\n",
+				"I suggest you call: umxPath(var) and umxPath(means=) separately"
+				)
+			}
+		} else {
+			a = mxPath(from = v0m0, arrows = 2, free = FALSE, values = 0)
+			b = mxPath(from = "one", to = v0m0, free = FALSE, values = 0)
+		}
 		return(list(a, b))
 	}
 
 	if(!is.null(v.m0)){
-		a = mxPath(from = v.m0, arrows = 2, free = TRUE, values = 1)
-		b = mxPath(from = "one", to = v.m0, free = FALSE, values = 0)
+		if(any(!is.na(labels))){
+			if(length(labels)==2){
+				a = mxPath(from = v.m0, arrows = 2, free = TRUE, values = 1, labels=labels[1])
+				b = mxPath(from = "one", to = v.m0, free = FALSE, values = 0, labels=labels[2])
+			} else {
+				stop("Managing which labels apply to the variances and which to the means is error prone:\n",
+				"I suggest you call: umxPath(var) and umxPath(means=) separately"
+				)
+			}
+		} else {
+			a = mxPath(from = v.m0, arrows = 2, free = TRUE, values = 1)
+			b = mxPath(from = "one", to = v.m0, free = FALSE, values = 0)
+		}
 		return(list(a, b))
 	}
 

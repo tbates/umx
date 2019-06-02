@@ -42,7 +42,7 @@ xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NULL, default =
 		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
 		if(grepl(x = line1, pattern = "#")){
 			# line1 = "## my model ##"
-			pat = "\\h*#+\\h*([^\\n#]+).*" # remove leading #, trim
+			pat = "\\h*#+\\h*([^\\n#;]+).*" # remove leading #, trim
 			name = gsub(x = line1, pattern = pat, replacement = "\\1", perl = TRUE);
 			name = trimws(name)
 			# Replace white space with  "_"
