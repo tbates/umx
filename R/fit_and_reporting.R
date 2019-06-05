@@ -2233,7 +2233,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		}
 		# TODO should xmu_dot_make_residuals handle fixed or not necessary?
 		tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
-		variances     = tmp$variances  # either "var_var textbox" or "var -> var port circles"
+		variances     = tmp$variances     # either "var_var textbox" or "var -> var port circles"
 		varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
 		# =================
 		# = Define shapes =
@@ -2321,7 +2321,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		}
 		digraph = paste0(
 			"digraph G {\n    ", 
-			"label='", label, "';\n",
+			'label="', label, '";\n',
 			preOut, "\n",
 			out, "\n",
 			rankVariables, "\n}"
