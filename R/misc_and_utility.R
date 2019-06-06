@@ -5433,7 +5433,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		}
 		if(any(c(AA, CC, EE)< 0)){
 			lowValue = c("AA", "CC", "EE")[ which(c(AA, CC, EE) < 0) ]
-			stop(paste("Hmm, each of the AA, CC, and EE variance components must be postive, but ", lowValue, " was negative."), call. = FALSE)		
+			stop(paste("Hmm, each of the AA, CC, and EE variance components must be positive, but ", lowValue, " was negative."), call. = FALSE)		
 		}
 
 		if(sum2one && !isTRUE(all.equal(sum(c(AA, CC, EE)), 1))){
