@@ -5385,7 +5385,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
 #' @md
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var",  mean=0, sd=1, nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE, MZr= NULL, DZr= MZr, Amod = NULL, Cmod = NULL, Emod = NULL) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var",  mean = 0, sd = 1, nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE, MZr= NULL, DZr= MZr, Amod = NULL, Cmod = NULL, Emod = NULL) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
@@ -5416,11 +5416,14 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		}
 		return(list(mzData = mzData, dzData = dzData))
 	}
+	if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 2){
+		stop("You must set at least 2 of AA, CC, and EE", call. = FALSE)
+	}
 	if(length(AA) == 1){
 		# standard ACE, no moderation
-		if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 2){
-			stop("You must set at least 2 of AA, CC, and EE", call. = FALSE)
-		}
+		# if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 2){
+		# 	stop("You must set at least 2 of AA, CC, and EE", call. = FALSE)
+		# }
 		if(is.null(EE)){
 			EE  = (1 - (AA + CC))
 		} else if(is.null(CC)) {
@@ -5432,7 +5435,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			lowValue = c("AA", "CC", "EE")[ which(c(AA, CC, EE) < 0) ]
 			stop(paste("Hmm, each of the AA, CC, and EE variance components must be postive, but ", lowValue, " was negative."), call. = FALSE)		
 		}
-		if(sum2one && (sum(c(AA, CC, EE)) != 1)){
+
+		if(sum2one && !isTRUE(all.equal(sum(c(AA, CC, EE)), 1))){
 			stop("Hmm, AA + CC + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)", call. = FALSE)		
 		}
 		# Report to user
