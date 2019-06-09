@@ -5388,7 +5388,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # m1 = lm(var_T1~ M_T1, data = x); 
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var",  scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE, MZr= NULL, DZr= MZr, Amod = NULL, Cmod = NULL, Emod = NULL) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var", MZr= NULL, DZr= MZr, scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, Amod = NULL, Cmod = NULL, Emod = NULL, seed = NULL, empirical = FALSE) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
@@ -5418,10 +5418,13 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
 		}
 	}else if(length(AA) == 1){
-		# standard ACE, no moderation
 		if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 2){
-			stop("You must set at least 2 of AA, CC, and EE", call. = FALSE)
+			stop("You must set at least 2 of AA, CC, and EE")
 		}
+		# standard ACE, no moderation
+		# if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 2){
+		# 	stop("You must set at least 2 of AA, CC, and EE", call. = FALSE)
+		# }
 		if(is.null(EE)){
 			EE  = (1 - (AA + CC))
 		} else if(is.null(CC)) {
@@ -5431,9 +5434,10 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		}
 		if(any(c(AA, CC, EE)< 0)){
 			lowValue = c("AA", "CC", "EE")[ which(c(AA, CC, EE) < 0) ]
-			stop(paste("Hmm, each of the AA, CC, and EE variance components must be postive, but ", lowValue, " was negative."), call. = FALSE)		
+			stop(paste("Hmm, each of the AA, CC, and EE variance components must be positive, but ", lowValue, " was negative."), call. = FALSE)		
 		}
-		if(sum2one && (sum(c(AA, CC, EE)) != 1)){
+
+		if(sum2one && !isTRUE(all.equal(sum(c(AA, CC, EE)), 1))){
 			stop("Hmm, AA + CC + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)", call. = FALSE)		
 		}
 		# Report to user
@@ -5526,8 +5530,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			atmp1 = (a22 + Beta_a2 * mod) * MZLatent[i, 1+6] + (a12 + Beta_a1 * mod) * MZLatent[i, 1]
 			ctmp1 = (c22 + Beta_c2 * mod) * MZLatent[i, 2+6] + (c12 + Beta_c1 * mod) * MZLatent[i, 2]
 			etmp1 = (e22 + Beta_e2 * mod) * MZLatent[i, 3+6] + (e12 + Beta_e1 * mod) * MZLatent[i, 3]
-			j = 1 # J = 1 twin 1 mz.
-			mdatmz[i,j] = mod			# moderator
+			j = 1 # J = 1 twin 1 MZ
+			mdatmz[i,j] = mod # moderator
 			tdatmz[i,j] = atmp1 + ctmp1 + etmp1	# trait
 
 			# twin2

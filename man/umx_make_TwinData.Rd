@@ -5,10 +5,10 @@
 \title{Simulate twin data with control over A, C, and E parameters, as well as moderation of A.}
 \usage{
 umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL,
-  CC = NULL, EE = NULL, varNames = "var", scale = FALSE,
-  mean = 0, sd = 1, nThresh = NULL, sum2one = TRUE, seed = NULL,
-  empirical = FALSE, MZr = NULL, DZr = MZr, Amod = NULL,
-  Cmod = NULL, Emod = NULL)
+  CC = NULL, EE = NULL, varNames = "var", MZr = NULL, DZr = MZr,
+  scale = FALSE, mean = 0, sd = 1, nThresh = NULL,
+  sum2one = TRUE, Amod = NULL, Cmod = NULL, Emod = NULL,
+  seed = NULL, empirical = FALSE)
 }
 \arguments{
 \item{nMZpairs}{Number of MZ pairs to simulate}
@@ -23,6 +23,10 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL,
 
 \item{varNames}{name for variables (defaults to 'var')}
 
+\item{MZr}{If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.}
+
+\item{DZr}{NULL}
+
 \item{scale}{Whether to scale output to var=1 mean=0 (Default FALSE)}
 
 \item{mean}{mean for traits (default = 0) (not applied to moderated cases)}
@@ -33,19 +37,15 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL,
 
 \item{sum2one}{Whether to enforce AA + CC + EE summing the one (default = TRUE)}
 
-\item{seed}{Allows user to set.seed() if wanting reproducible dataset}
-
-\item{empirical}{Passed to mvrnorm}
-
-\item{MZr}{If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.}
-
-\item{DZr}{NULL}
-
 \item{Amod}{Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)}
 
 \item{Cmod}{Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)}
 
 \item{Emod}{Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)}
+
+\item{seed}{Allows user to set.seed() if wanting reproducible dataset}
+
+\item{empirical}{Passed to mvrnorm}
 }
 \value{
 \itemize{
