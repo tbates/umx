@@ -32,24 +32,23 @@ tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150,
 		AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
 
 # Group 1
-ds1 = tmp[tmp$zygosity == "MZ", ];
-m1Data = mxData(cov(ds1), type = "cov", numObs = nrow(ds1), means=umx_means(ds1))
+grp1 = tmp[tmp$zygosity == "MZ", ]
+g1Data = mxData(cov(grp1), type = "cov", numObs = nrow(grp1), means=umx_means(grp1))
 
 # Group 2
-ds2 = tmp[tmp$zygosity == "DZ", ]
-m2Data = mxData(cov(ds2), type = "cov", numObs = nrow(ds2), means=umx_means(ds2))
-cor(ds1); cor(ds2)
+grp2 = tmp[tmp$zygosity == "DZ", ]
+g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
 
-manifests = names(ds1)
+manifests = names(grp1)
 
 # Model 1
-m1 <- umxRAM("m1", data = m1Data,
+m1 <- umxRAM("m1", data = g1Data,
 	umxPath("x", to = "y", labels = "beta"),
 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
 )
 # Model 2
-m2 <- umxRAM("m2", data = m2Data,
+m2 <- umxRAM("m2", data = g2Data,
 	umxPath("x", to = "y", labels = "beta"),
 	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))

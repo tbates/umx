@@ -5655,7 +5655,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 	twinData = rbind(mzData, dzData)
 	twinData$zygosity = factor(twinData$zygosity, levels = c("MZ", "DZ"), labels = c("MZ", "DZ"))
 	if(scale){
-		twinData = umx_scale_wide_twin_data(varNames, sep = sep, data = twinData)
+		twinData = umx_scale_wide_twin_data(varNames, sep = "_T", data = twinData)
 	}
 	return(twinData)
 	# return(list(mzData = mzData, dzData = dzData))
