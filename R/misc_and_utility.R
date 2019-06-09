@@ -5378,6 +5378,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
 #' Emod = list(Beta_e1 = .025, Beta_e2 = .025)
 #' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod, Emod =Emod)
+#' str(tmp)
 #' # 'data.frame':	10000 obs. of  7 variables:
 #' #  $ defM_T1 : num  0.171 0.293 -0.173 0.238 -0.73 ...
 #' #  $ defM_T2 : num  0.492 -0.405 -0.696 -0.829 -0.858 ...
@@ -5652,9 +5653,9 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 	mzData$zygosity = "MZ"
 	dzData$zygosity = "DZ"
 	twinData = rbind(mzData, dzData)
-	twinData$zygosity = factor(twinData$zygosity, levels= c("MZ", "DZ"), labels=c("MZ", "DZ"))
+	twinData$zygosity = factor(twinData$zygosity, levels = c("MZ", "DZ"), labels = c("MZ", "DZ"))
 	if(scale){
-		twinData = umx_scale_wide_twin_data(varNames, "_T", twinData)
+		twinData = umx_scale_wide_twin_data(varNames, sep = sep, data = twinData)
 	}
 	return(twinData)
 	# return(list(mzData = mzData, dzData = dzData))
