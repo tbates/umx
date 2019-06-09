@@ -93,35 +93,45 @@ str(tmp)
 # = How to consume the built datasets =
 mzData = tmp[tmp$zygosity == "MZ", ]
 dzData = tmp[tmp$zygosity == "DZ", ]
-cov(mzData); cov(dzData)
-umxAPA(mzData)
 str(mzData); str(dzData); 
+cov(mzData[,c("var_T1","var_T2")])
+cov(dzData[,c("var_T1","var_T2")])
+umxAPA(mzData[,c("var_T1","var_T2")])
 
 # Prefer to work in path coefficient values? (little a?)
-tmp = umx_make_TwinData(200, AA = .6^2, CC = .2^2)
-# Check the correlations
-umxAPA(subset(tmp, zygosity == "MZ")) 
-umxAPA(subset(tmp, zygosity == "DZ"))
+tmp = umx_make_TwinData(2000, AA = .7^2, CC = .0)
+mzData = tmp[tmp$zygosity == "MZ", ]
+dzData = tmp[tmp$zygosity == "DZ", ]
+m1 = umxACE(selDVs="var", sep="_T", mzData= mzData, dzData= dzData)
+
+# Examine correlations
+cor(mzData[,c("var_T1","var_T2")])
+cor(dzData[,c("var_T1","var_T2")])
 
 # =============
 # = Shortcuts =
 # =============
 
 # Omit nDZpairs (equal numbers of both by default)
-tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 100, AA = .36, CC = .04, EE = .60)
-tmp = umx_make_TwinData(100, AA = 0.5, CC = 0.3) # omit any one of A, C, or E (sums to 1)
-cov(tmp[tmp$zygosity == "MZ", ])
+tmp = umx_make_TwinData(nMZpairs = 100, AA = 0.5, CC = 0.3) # omit any one of A, C, or E (sums to 1)
+cov(tmp[tmp$zygosity == "DZ", c("var_T1","var_T2")])
+
 # Not limited to unit variance
 tmp = umx_make_TwinData(100, AA = 3, CC = 2, EE = 3, sum2one = FALSE) 
-cov(tmp[tmp$zygosity == "MZ", ])
+cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
+
+# Output can be scaled
+tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
+cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 
 # =====================
 # = Moderator Example =
 # =====================
 
-tmp = umx_make_TwinData(nMZpairs = 140, AA = c(avg = .5, min = .1, max = .8), CC = .35)
-str(tmp)
-m1 = umxGxE(selDVs = "var", selDefs = "M", sep = "_T", mzData = tmp[[1]], dzData = tmp[[2]])
+tmp = umx_make_TwinData(nMZpairs = 140, nDZpairs = 240, AA = c(avg = .5, min = .1, max = .8), CC = .35, EE = .65, scale= TRUE)
+mzData = tmp[tmp$zygosity == "MZ", ]
+dzData = tmp[tmp$zygosity == "DZ", ]
+m1 = umxGxE(selDVs = "var", selDefs = "M", sep = "_T", mzData = mzData, dzData = dzData)
 
 # =====================
 # = Threshold Example =
@@ -135,7 +145,8 @@ umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
 # = Just use MZr and DZr =
 # ========================
 tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, varNames = "IQ")
-umxAPA(subset(tmp, zygosity == "MZ")); umxAPA(subset(tmp, zygosity == "DZ"))
+umxAPA(subset(tmp, zygosity == "MZ", c("IQ_T1", "IQ_T2")))
+umxAPA(subset(tmp, zygosity == "DZ", c("IQ_T1", "IQ_T2")))
 
 # Bivariate GxSES example (see umxGxEbiv)
 
@@ -146,21 +157,14 @@ Amod = list(Beta_a1 = .025, Beta_a2 = .025)
 Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
 Emod = list(Beta_e1 = .025, Beta_e2 = .025)
 tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod, Emod =Emod)
-# List of 2
-# $ mzData:'data.frame':	5000 obs. of  6 variables:
-#  ..$ defM_T1: num [1:5000] 0.472 1.186 -1.101 0.137 0.865 ...
-#  ..$ defM_T2: num [1:5000] -0.577 1.129 -0.831 0.372 -0.385 ...
-#  ..$ M_T1   : num [1:5000] 0.472 1.186 -1.101 0.137 0.865 ...
-#  ..$ var_T1 : num [1:5000] 0.168 -1.002 -0.796 0.683 1.681 ...
-#  ..$ M_T2   : num [1:5000] -0.577 1.129 -0.831 0.372 -0.385 ...
-#  ..$ var_T2 : num [1:5000] -1.168 1.109 0.915 0.514 -0.562 ...
-# $ dzData:'data.frame':	5000 obs. of  6 variables:
-#  ..$ defM_T1: num [1:5000] 1.1 1.08 1.65 -1.99 1.38 ...
-#  ..$ defM_T2: num [1:5000] 0.276 0.666 0.102 -0.31 0.925 ...
-#  ..$ M_T1   : num [1:5000] 1.1 1.08 1.65 -1.99 1.38 ...
-#  ..$ var_T1 : num [1:5000] 0.675 0.24 0.395 -1.372 2.057 ...
-#  ..$ M_T2   : num [1:5000] 0.276 0.666 0.102 -0.31 0.925 ...
-#  ..$ var_T2 : num [1:5000] 0.493 1.793 0.405 -0.173 0.482 ...
+# 'data.frame':	10000 obs. of  7 variables:
+#  $ defM_T1 : num  0.171 0.293 -0.173 0.238 -0.73 ...
+#  $ defM_T2 : num  0.492 -0.405 -0.696 -0.829 -0.858 ...
+#  $ M_T1    : num  0.171 0.293 -0.173 0.238 -0.73 ...
+#  $ var_T1  : num  0.011 0.1045 0.5861 0.0583 1.0225 ...
+#  $ M_T2    : num  0.492 -0.405 -0.696 -0.829 -0.858 ...
+#  $ var_T2  : num  -0.502 -0.856 -0.154 0.065 -0.268 ...
+#  $ zygosity: Factor w/ 2 levels "MZ","DZ": 1 1 1 1 1 1 1 1 1 1 ...
 
 # TODO tmx example showing how moderation of A introduces heteroscedasticity in a regression model:
 # More residual variance at one extreme of the x axis (moderator) 

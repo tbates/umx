@@ -3931,6 +3931,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 		return(o)
 	}else if("data.frame" == class(obj)[[1]]){
 		# Generate a summary of correlation and means
+		# TODO umxAPA could upgrade strings to factors here (instead of stopping)...
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE, std.err = SEs, return = "hetcor object")
 		# cor_table = x; digits = 2
 		# cor_table = umx_apply(FUN= round, of = cor_table, digits = digits) # round correlations
