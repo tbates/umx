@@ -32,11 +32,11 @@ tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150,
 		AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
 
 # Group 1
-ds1 = tmp[[1]];
+ds1 = tmp[tmp$zygosity == "MZ", ];
 m1Data = mxData(cov(ds1), type = "cov", numObs = nrow(ds1), means=umx_means(ds1))
 
 # Group 2
-ds2 = tmp[[2]];
+ds2 = tmp[tmp$zygosity == "DZ", ]
 m2Data = mxData(cov(ds2), type = "cov", numObs = nrow(ds2), means=umx_means(ds2))
 cor(ds1); cor(ds2)
 

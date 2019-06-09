@@ -3522,10 +3522,10 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' Cells involving these non-numeric columns are set to ordVar (default = 1).
 #'
 #' @param df A dataframe of raw data from which to get variances.
-#' @param ordVar The value to return at any ordinal columns (defaults to 1).
 #' @param format to return: options are c("full", "diag", "lower"). Defaults to full, but this is not implemented yet.
 #' @param use Passed to \code{\link{cov}} - defaults to "complete.obs" (see param default for other options).
-#' @param digits Ignored if NULL. Set for easy printing.
+#' @param ordVar The value to return at any ordinal columns (defaults to 1).
+#' @param digits digits to round output to (Ignored if NULL). Set for easy printing.
 #' @param strict Whether to allow non-ordered factors to be processed (default = FALSE (no)).
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -3539,7 +3539,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' tmp2 = tmp[, c(1, 3)]
 #' umx_var(tmp2, format = "diag")
 #' umx_var(tmp2, format = "full")
-umx_var <- function(df, ordVar = 1, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), digits = NULL, strict = TRUE){
+umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), ordVar = 1, digits = NULL, strict = TRUE){
 	format = match.arg(format)
 	use    = match.arg(use)
 	if(any(umx_is_ordered(df, strict = strict))){
@@ -3554,7 +3554,7 @@ umx_var <- function(df, ordVar = 1, format = c("full", "diag", "lower"), use = c
 		if(format == "diag"){
 			return(diag(out))
 		} else {
-			stop("Only diag implemented yet for umx_var")
+			stop("umx_var: Only format='diag' supported for data with factors")
 			return(out)	
 		}
 	} else {
@@ -5251,7 +5251,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @description
 #' Makes MZ and DZ twin data, optionally with moderated A. By default, the three variance components must sum to 1.
 #' 
-#' See examples for how to use this: it is pretty flexible).
+#' See examples for how to use this: it is pretty flexible.
 #' 
 #' If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provide one, it will be expanded to var_T1 and var_T2
 #' 
@@ -5265,7 +5265,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' 
 #' **Moderation**
 #' **Univariate GxE Data**
-#' AA can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value = avg, and swinging
+#' `AA` can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value = avg, and swinging
 #' down to min and up to max across 3 SDs of the moderator.
 #'
 #' **Bivariate GxE Data**
@@ -5286,6 +5286,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @param EE value for E variance.
 #' @param MZr If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.
 #' @param DZr NULL
+#' @param scale Whether to scale output to var=1 mean=0 (Default FALSE)
 #' @param Amod Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)
 #' @param Cmod Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)
 #' @param Emod Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)
@@ -5302,6 +5303,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @family Data Functions
 #' @seealso - \code{\link{umx_make_TwinData}}, \code{\link{umxGxEbiv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @md
 #' @examples
 #' # =====================================================================
 #' # = Basic Example, with all elements of std univariate data specified =
@@ -5310,8 +5312,8 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # Show list of 2 data sets
 #' str(tmp)
 #' # = How to consume the built datasets =
-#' mzData = tmp[[1]];
-#' dzData = tmp[[2]];
+#' mzData = tmp[tmp$zygosity == "MZ", ]
+#' dzData = tmp[tmp$zygosity == "DZ", ]
 #' cov(mzData); cov(dzData)
 #' umxAPA(mzData)
 #' str(mzData); str(dzData); 
@@ -5319,7 +5321,8 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # Prefer to work in path coefficient values? (little a?)
 #' tmp = umx_make_TwinData(200, AA = .6^2, CC = .2^2)
 #' # Check the correlations
-#' umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
+#' umxAPA(subset(tmp, zygosity == "MZ")) 
+#' umxAPA(subset(tmp, zygosity == "DZ"))
 #'
 #' # =============
 #' # = Shortcuts =
@@ -5328,17 +5331,18 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # Omit nDZpairs (equal numbers of both by default)
 #' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 100, AA = .36, CC = .04, EE = .60)
 #' tmp = umx_make_TwinData(100, AA = 0.5, CC = 0.3) # omit any one of A, C, or E (sums to 1)
-#' cov(tmp[[1]])
+#' cov(tmp[tmp$zygosity == "MZ", ])
 #' # Not limited to unit variance
 #' tmp = umx_make_TwinData(100, AA = 3, CC = 2, EE = 3, sum2one = FALSE) 
-#' cov(tmp[[1]])
+#' cov(tmp[tmp$zygosity == "MZ", ])
 #'
 #' # =====================
 #' # = Moderator Example =
 #' # =====================
 #'
-#' x = umx_make_TwinData(100, AA = c(avg = .7, min = 0, max = 1), CC = .55, EE = .63)
-#' str(x)
+#' tmp = umx_make_TwinData(nMZpairs = 140, AA = c(avg = .5, min = .1, max = .8), CC = .35)
+#' str(tmp)
+#' m1 = umxGxE(selDVs = "var", selDefs = "M", sep = "_T", mzData = tmp[[1]], dzData = tmp[[2]])
 #'
 #' # =====================
 #' # = Threshold Example =
@@ -5351,8 +5355,8 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # ========================
 #' # = Just use MZr and DZr =
 #' # ========================
-#' tmp = umx_make_TwinData(100, MZr = .86, DZr= .60, varNames = "IQ")
-#' umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
+#' tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, varNames = "IQ")
+#' umxAPA(subset(tmp, zygosity == "MZ")); umxAPA(subset(tmp, zygosity == "DZ"))
 #' 
 #' # Bivariate GxSES example (see umxGxEbiv)
 #' 
@@ -5363,29 +5367,28 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
 #' Emod = list(Beta_e1 = .025, Beta_e2 = .025)
 #' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod, Emod =Emod)
-#'# List of 2
-#'#  $ mzData:'data.frame':	5000 obs. of  6 variables:
-#'#   ..$ defM_T1: num [1:5000] -1.424 -1.606 -0.749 -0.358 -0.208 ...
-#'#   ..$ defM_T2: num [1:5000] -1.703 -1.125 -1.136 0.366 -0.864 ...
-#'#   ..$ M_T1   : num [1:5000] -1.424 -1.606 -0.749 -0.358 -0.208 ...
-#'#   ..$ var_T1 : num [1:5000] -1.1197 -0.3074 -0.4156 -0.4149 0.0739 ...
-#'#   ..$ M_T2   : num [1:5000] -1.703 -1.125 -1.136 0.366 -0.864 ...
-#'#   ..$ var_T2 : num [1:5000] 0.381 -1.275 -1.114 1.297 -1.53 ...
-#'#  $ dzData:'data.frame':	5000 obs. of  6 variables:
-#'#   ..$ defM_T1: num [1:5000] 0.253 -0.402 0.545 -1.494 -0.278 ...
-#'#   ..$ defM_T2: num [1:5000] 1.7587 0.3025 -0.3864 0.0737 0.514 ...
-#'#   ..$ M_T1   : num [1:5000] 0.253 -0.402 0.545 -1.494 -0.278 ...
-#'#   ..$ var_T1 : num [1:5000] -0.835 -0.305 -0.299 -1.576 -0.26 ...
-#'#   ..$ M_T2   : num [1:5000] 1.7587 0.3025 -0.3864 0.0737 0.514 ...
-#'#   ..$ var_T2 : num [1:5000] -0.418 0.678 -0.78 -0.312 -0.272 ...
+#' # List of 2
+#' # $ mzData:'data.frame':	5000 obs. of  6 variables:
+#' #  ..$ defM_T1: num [1:5000] 0.472 1.186 -1.101 0.137 0.865 ...
+#' #  ..$ defM_T2: num [1:5000] -0.577 1.129 -0.831 0.372 -0.385 ...
+#' #  ..$ M_T1   : num [1:5000] 0.472 1.186 -1.101 0.137 0.865 ...
+#' #  ..$ var_T1 : num [1:5000] 0.168 -1.002 -0.796 0.683 1.681 ...
+#' #  ..$ M_T2   : num [1:5000] -0.577 1.129 -0.831 0.372 -0.385 ...
+#' #  ..$ var_T2 : num [1:5000] -1.168 1.109 0.915 0.514 -0.562 ...
+#' # $ dzData:'data.frame':	5000 obs. of  6 variables:
+#' #  ..$ defM_T1: num [1:5000] 1.1 1.08 1.65 -1.99 1.38 ...
+#' #  ..$ defM_T2: num [1:5000] 0.276 0.666 0.102 -0.31 0.925 ...
+#' #  ..$ M_T1   : num [1:5000] 1.1 1.08 1.65 -1.99 1.38 ...
+#' #  ..$ var_T1 : num [1:5000] 0.675 0.24 0.395 -1.372 2.057 ...
+#' #  ..$ M_T2   : num [1:5000] 0.276 0.666 0.102 -0.31 0.925 ...
+#' #  ..$ var_T2 : num [1:5000] 0.493 1.793 0.405 -0.173 0.482 ...
 #' 
-#' # TODO tmx example showing how moderation of A introduces heteroskedasticity in a regression model.
+#' # TODO tmx example showing how moderation of A introduces heteroscedasticity in a regression model:
 #' # More residual variance at one extreme of the x axis (moderator) 
 #' # m1 = lm(var_T1~ M_T1, data = x); 
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
-#' @md
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var",  mean=0, sd=1, nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE, MZr= NULL, DZr= MZr, Amod = NULL, Cmod = NULL, Emod = NULL) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var",  scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, seed = NULL, empirical = FALSE, MZr= NULL, DZr= MZr, Amod = NULL, Cmod = NULL, Emod = NULL) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
@@ -5414,9 +5417,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		} else {
 			names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
 		}
-		return(list(mzData = mzData, dzData = dzData))
-	}
-	if(length(AA) == 1){
+	}else if(length(AA) == 1){
 		# standard ACE, no moderation
 		if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 2){
 			stop("You must set at least 2 of AA, CC, and EE", call. = FALSE)
@@ -5568,7 +5569,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 	} else {
 		# Univariate Moderator
 		if(any(c(is.null(AA), is.null(CC), is.null(EE)))){
-			stop("For moderation, you must set all three of AA, CC, and EE", call. = FALSE)
+			stop("For moderation, you must set all three of AA, CC, and EE")
 		}
 		avgA = AA["avg"]
 		# minA applied at -3 SD
@@ -5581,7 +5582,6 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		# = Do MZs =
 		# ==========
 		SESlist = rnorm(n = nMZpairs, mean = 0, sd = 1)
-		# qplot(SESlist)
 		j = 1
 		for (thisSES in SESlist) {
 			# thisSES = 0
@@ -5637,8 +5637,18 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			mzData[, ordinalVars] = umxFactor(mzData[, ordinalVars])
 			dzData[, ordinalVars] = umxFactor(dzData[, ordinalVars])
 		}
-	}	
-	return(list(mzData = mzData, dzData = dzData))
+	}
+	# ============================================
+	# = Package it all up and scale if requested =
+	# ============================================
+	mzData$zygosity = "MZ"
+	dzData$zygosity = "DZ"
+	twinData = rbind(mzData, dzData)
+	if(scale){
+		twinData = umx_scale_wide_twin_data(varNames, "_T", twinData)
+	}
+	return(twinData)
+	# return(list(mzData = mzData, dzData = dzData))
 }
 
 #' Simulate Mendelian Randomization data
