@@ -5349,7 +5349,8 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # = Moderator Example =
 #' # =====================
 #'
-#' tmp = umx_make_TwinData(nMZpairs = 140, nDZpairs = 240, AA = c(avg = .5, min = .1, max = .8), CC = .35, EE = .65, scale= TRUE)
+#' AA = c(avg = .5, min = .1, max = .8)
+#' tmp = umx_make_TwinData(nMZpairs = 140, nDZpairs = 240, AA = AA, CC = .35, EE = .65, scale= TRUE)
 #' mzData = tmp[tmp$zygosity == "MZ", ]
 #' dzData = tmp[tmp$zygosity == "DZ", ]
 #' m1 = umxGxE(selDVs = "var", selDefs = "M", sep = "_T", mzData = mzData, dzData = dzData)

@@ -737,11 +737,11 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 #' 		AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
 #' 
 #' # Group 1
-#' grp1 = tmp[tmp$zygosity == "MZ", ]
+#' grp1 = tmp[tmp$zygosity == "MZ", c("x","y")]
 #' g1Data = mxData(cov(grp1), type = "cov", numObs = nrow(grp1), means=umx_means(grp1))
 #' 
 #' # Group 2
-#' grp2 = tmp[tmp$zygosity == "DZ", ]
+#' grp2 = tmp[tmp$zygosity == "DZ", c("x","y")]
 #' g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
 #' 
 #' manifests = names(grp1)
