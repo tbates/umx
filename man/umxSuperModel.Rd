@@ -41,7 +41,7 @@ grp2 = tmp[tmp$zygosity == "DZ", manifests]
 g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
 
 
-# Model 1
+# Model 1 (could add auto=FALSE if you don't want to run this as it is being built)
 m1 <- umxRAM("m1", data = g1Data,
 	umxPath("x", to = "y", labels = "beta"),
 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),

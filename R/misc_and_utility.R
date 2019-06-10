@@ -5360,7 +5360,12 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # =====================
 #' tmp = umx_make_TwinData(100, AA = .6, CC = .2, nThresh = 3)
 #' str(tmp)
-#' umxAPA(tmp[[1]]); umxAPA(tmp[[2]])
+#' umx_polychoric(subset(tmp, zygosity=="MZ", c("var_T1", "var_T2")))$polychorics
+#' # Running model with 7 parameters
+#' #           var_T1    var_T2
+#' # var_T1 1.0000000 0.7435457
+#' # var_T2 0.7435457 1.0000000
+#'
 #'
 #'
 #' # ========================
