@@ -733,18 +733,18 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 #' @examples
 #' library(umx)
 #' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
+#' manifests = c("x","y")
 #' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
-#' 		AA = 0, CC = .4, EE = .6, varNames = c("x", "y"))
+#' 		AA = 0, CC = .4, EE = .6, varNames = manifests)
 #' 
 #' # Group 1
-#' grp1 = tmp[tmp$zygosity == "MZ", c("x","y")]
+#' grp1 = tmp[tmp$zygosity == "MZ", manifests]
 #' g1Data = mxData(cov(grp1), type = "cov", numObs = nrow(grp1), means=umx_means(grp1))
 #' 
 #' # Group 2
-#' grp2 = tmp[tmp$zygosity == "DZ", c("x","y")]
+#' grp2 = tmp[tmp$zygosity == "DZ", manifests]
 #' g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
 #' 
-#' manifests = names(grp1)
 #' 
 #' # Model 1
 #' m1 <- umxRAM("m1", data = g1Data,
