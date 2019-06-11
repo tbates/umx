@@ -16,6 +16,7 @@
 #' @export
 #' @family Super-easy helpers
 #' @seealso - [umxLav2RAM()]
+#' @md
 #' @examples
 #' m1 = umxRAM2("y~x")
 #' umxRAM2("y is x") # not a lavaan string
@@ -96,8 +97,8 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' @return - list of [umxPath()]s
 #' @export
 #' @family Super-easy helpers
-#' @md
 #' @seealso - [umxRAM()]
+#' @md
 #' @examples
 #' # auto-data, print table, return umxRAM model
 #' m1 = umxLav2RAM("y ~ x", printTab= TRUE)
@@ -338,6 +339,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - \code{\link{umxLav2RAM}}
+#' @md
 #' @examples
 #' tab = lavaan::lavaanify("y~x")
 #' xmu_lavaan_process_group(tab, groupNum = 1)

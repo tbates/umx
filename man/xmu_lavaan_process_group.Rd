@@ -12,7 +12,9 @@ xmu_lavaan_process_group(tab, groupNum)
 \item{groupNum}{group number to filter table on}
 }
 \value{
-- list(plist=plist, latents = latents, manifests = manifests)
+\itemize{
+\item list(plist=plist, latents = latents, manifests = manifests)
+}
 }
 \description{
 Process a set of lavaan tables rows forming a group (Model).
@@ -24,7 +26,9 @@ xmu_lavaan_process_group(tab, groupNum = 1)
 xmu_lavaan_process_group(tab, groupNum = 0)
 }
 \seealso{
-- \code{\link{umxLav2RAM}}
+\itemize{
+\item \code{\link{umxLav2RAM}}
+}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},

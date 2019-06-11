@@ -29,10 +29,12 @@ umxRAM2(model, data = NULL, group = NULL, std.lv = FALSE,
 \item{printTab}{Print the table (defaults to FALSE) # TODO just verbose}
 }
 \value{
-- [mxModel()]
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Can detect lavaan string input. TODO document once merged with [umxRAM()].
+Can detect lavaan string input. TODO document once merged with \code{\link[=umxRAM]{umxRAM()}}.
 }
 \examples{
 m1 = umxRAM2("y~x")
@@ -49,7 +51,9 @@ m1 = umxRAM2(lav)
 
 }
 \seealso{
-- [umxLav2RAM()]
+\itemize{
+\item \code{\link[=umxLav2RAM]{umxLav2RAM()}}
+}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxLav2RAM}}, \code{\link{umxTwoStage}},
