@@ -5257,16 +5257,19 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' 
 #' You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
 #' 
-#' *Note*, if you want a power calculator, see [here](https://www.people.vcu.edu/~bverhulst/power/power.html).
+#' *Note*, if you want a power calculator, see [mxPower()].
 #' 
 #' **Shortcuts**
 #' 
-#' You can omit nDZpairs. You can also give any 2 of A, C, or E and the function will add the value which makes the ACE total = 1.
+#' You can omit nDZpairs. You can also give any two of A, C, or E and the function produce the missing parameter that makes `A+C+E == 1`.
 #' 
 #' **Moderation**
+#' 
 #' **Univariate GxE Data**
-#' `AA` can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value = avg, and swinging
-#' down to min and up to max across 3 SDs of the moderator.
+#' To simulate data for `umxGxE`, offer up a list of the average, min and max values for `AA`, i.e., c(avg = .5, min = 0, max = 1).
+#' 
+#' `umx_make_TwinData` will then return moderated heritability, with average value = avg, and swinging
+#' down to min and up to max across 3-SDs of the moderator.
 #'
 #' **Bivariate GxE Data**
 #' 
@@ -5301,7 +5304,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @export
 #' @family Twin Data functions
 #' @family Data Functions
-#' @seealso - \code{\link{umx_make_TwinData}}, \code{\link{umxGxEbiv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
+#' @seealso - \code{\link{umxACE}}, \code{\link{umxGxE}}, \code{\link{umxGxEbiv}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @md
 #' @examples
@@ -5345,9 +5348,9 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
 #' cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 #'
-#' # =====================
-#' # = Moderator Example =
-#' # =====================
+#' # ===============
+#' # = GxE Example =
+#' # ===============
 #'
 #' AA = c(avg = .5, min = .1, max = .8)
 #' tmp = umx_make_TwinData(nMZpairs = 140, nDZpairs = 240, AA = AA, CC = .35, EE = .65, scale= TRUE)
