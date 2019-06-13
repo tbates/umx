@@ -61,16 +61,19 @@ If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provi
 
 You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
 
-\emph{Note}, if you want a power calculator, see \href{https://www.people.vcu.edu/~bverhulst/power/power.html}{here}.
+\emph{Note}, if you want a power calculator, see \code{\link[=mxPower]{mxPower()}}.
 
 \strong{Shortcuts}
 
-You can omit nDZpairs. You can also give any 2 of A, C, or E and the function will add the value which makes the ACE total = 1.
+You can omit nDZpairs. You can also give any two of A, C, or E and the function produce the missing parameter that makes \code{A+C+E == 1}.
 
 \strong{Moderation}
+
 \strong{Univariate GxE Data}
-\code{AA} can take a list c(avg = .5, min = 0, max = 1). If specified will act like a moderated heritability, with average value = avg, and swinging
-down to min and up to max across 3 SDs of the moderator.
+To simulate data for \code{umxGxE}, offer up a list of the average, min and max values for \code{AA}, i.e., c(avg = .5, min = 0, max = 1).
+
+\code{umx_make_TwinData} will then return moderated heritability, with average value = avg, and swinging
+down to min and up to max across 3-SDs of the moderator.
 
 \strong{Bivariate GxE Data}
 
@@ -124,9 +127,9 @@ cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
 cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 
-# =====================
-# = Moderator Example =
-# =====================
+# ===============
+# = GxE Example =
+# ===============
 
 AA = c(avg = .5, min = .1, max = .8)
 tmp = umx_make_TwinData(nMZpairs = 140, nDZpairs = 240, AA = AA, CC = .35, EE = .65, scale= TRUE)
@@ -186,7 +189,7 @@ str(tmp)
 }
 \seealso{
 \itemize{
-\item \code{\link{umx_make_TwinData}}, \code{\link{umxGxEbiv}}, \code{\link{umxACE}}, \code{\link{umxGxE}}
+\item \code{\link{umxACE}}, \code{\link{umxGxE}}, \code{\link{umxGxEbiv}}
 }
 
 Other Twin Data functions: \code{\link{umx_long2wide}},

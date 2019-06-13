@@ -821,7 +821,9 @@ umx_get_checkpoint <- function(model = NULL) {
 #' 
 #' \tabular{rllll}{
 #'	date       \tab type            \tab Cores   \tab Time              \tab                                 \cr                  
-#'	2018-10-14 \tab v2.11.5 (OpenMP on CRAN)  \tab 1 core  \tab 01 min, 16 sec    \tab     (NPSOL)                   \cr
+#'	2019-06-13 \tab v2.13.2 (OpenMP git)  \tab 1 core  \tab 01 min, 11 sec    \tab     (NPSOL)                   \cr
+#'	2019-06-13 \tab v2.13.2 (OpenMP git)  \tab 4 core  \tab 00 min, 22 sec    \tab     (NPSOL)                   \cr
+#'	2019-06-13 \tab v2.13.2 (OpenMP git)  \tab 6 core  \tab 00 min, 21 sec    \tab     (NPSOL)                   \cr
 #'	2018-10-14 \tab v2.11.5 (OpenMP on CRAN)  \tab 4 cores  \tab 00 min, 36 sec    \tab \eqn{\Delta}:-39.598) \cr
 #'	2018-09-17 \tab v2.11.3         \tab 1    \tab 01 min, 31 sec    \tab                                 \cr
 #'	2018-09-17 \tab v2.11.3         \tab 4    \tab 00 min, 30.6 sec  \tab \eqn{\Delta}: -61.49) \cr
@@ -3202,6 +3204,9 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 		}
 	}else if(umx_is_MxModel(x)){
 		# great, we've got a model
+		if(!is.character(formatStr)){
+			stop(paste("Pass in models as a list, i.e., umx_time(c(m1, m2)), not umx_time(m1, m2)"
+		}
 	}else if(is.character(x)){
 		umx_check(x %in% c('start', 'stop', "now"), "stop", "Valid time strings are 'start', 'stop', 'now', (or a model or list of models)")
 	}else if(is.na(x)){
@@ -5452,7 +5457,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		}
 
 		if(sum2one && !isTRUE(all.equal(sum(c(AA, CC, EE)), 1))){
-			stop("Hmm, AA + CC + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)", call. = FALSE)		
+			stop("Hmm, AA + CC + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)\n",
+			"You gave me AA =  ", AA, ", CC =  ", CC, ", and EE =  ", EE)
 		}
 		# Report to user
 		print(c(AA = AA, CC = CC, EE = EE))
