@@ -3205,7 +3205,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 	}else if(umx_is_MxModel(x)){
 		# great, we've got a model
 		if(!is.character(formatStr)){
-			stop(paste("Pass in models as a list, i.e., umx_time(c(m1, m2)), not umx_time(m1, m2)"
+			stop(paste("In umx_time, pass models as a list, i.e., umx_time(c(m1, m2)), not umx_time(m1, m2)"))
 		}
 	}else if(is.character(x)){
 		umx_check(x %in% c('start', 'stop', "now"), "stop", "Valid time strings are 'start', 'stop', 'now', (or a model or list of models)")
