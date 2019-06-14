@@ -89,7 +89,7 @@ xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NULL, default =
 #' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
 #' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), comparison = TRUE) {
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){
@@ -101,13 +101,14 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		}else{
 			autoRun = TRUE
 		}
-	}else{
-		summary = autoRun
+	}
+	if(!autoRun){
+		summary = FALSE
 	}
 	if(autoRun){
 		tryCatch({
 			if(tryHard == "no"){
-				model1 = mxRun(model1)
+				model1 = mxRun(model1, beginMessage = !umx_set_silent(silent = TRUE), silent = umx_set_silent(silent = TRUE))
 			} else if (tryHard == "mxTryHard"){
 				model1 = mxTryHard(model1)
 			} else if (tryHard == "mxTryHardOrdinal"){

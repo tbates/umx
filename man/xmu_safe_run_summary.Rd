@@ -6,7 +6,8 @@
 \usage{
 xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"), summary = TRUE, comparison = TRUE)
+  "mxTryHardWideSearch"), summary = !umx_set_silent(silent = TRUE),
+  comparison = TRUE)
 }
 \arguments{
 \item{model1}{The model to attempt to run and summarize.}

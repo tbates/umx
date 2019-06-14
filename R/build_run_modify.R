@@ -36,11 +36,13 @@
 	# umx_set_condensed_slots(FALSE)
 	umx_set_plot_format('DiagrammeR')
 	umx_set_plot_file_suffix("gv")
+	umx_set_silent(FALSE)
 
 	if(is.null(getOption('knitr.table.format'))){
 		umx_set_table_format('markdown')
 		# options('knitr.table.format' = "markdown")
 	}
+	umx_set_silent(FALSE)
 	umx_set_auto_run(TRUE)
 	umx_set_auto_plot(TRUE)
 	umx_set_data_variance_check(minVar = .01, maxVarRatio = 1000)
@@ -1051,7 +1053,9 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 	umx_check_names(selDVs, mzData)
 	umx_check_names(selDVs, dzData)
-	message("selDVs: ", omxQuotes(selDVs))
+	if(!umx_set_silent(silent=TRUE)){
+		message("selDVs: ", omxQuotes(selDVs))
+	}
 
 	selVars   = c(selDVs, selDefs)
 	obsMean   = mean(colMeans(mzData[,selDVs], na.rm = TRUE)); # Just one average mean for all twins

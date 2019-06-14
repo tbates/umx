@@ -499,6 +499,40 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 }
 
 
+#' Print anything when running a model?
+#'
+#' Sets a umx property "silent" to `TRUE` or `FALSE`. This is fed to [OpenMx::mxRun()] insude functions like [umxRAM()].
+#' If TRUE, then the progress messages from model runs are supressed. Useful for power simulations etc.
+#'
+#' @param value If TRUE mxRun is silent in most umx Models. Empty returns the current value.
+#' @param silent If TRUE, no message will be printed.
+#' @return - Current silent value
+#' @export
+#' @family Get and set
+#' @references - [https://tbates.github.io], [https://github.com/tbates/umx]
+#' @md
+#' @examples
+#' library(umx)
+#' umx_set_silent() # print existing value
+#' old = umx_set_silent(silent = TRUE) # store existing value
+#' umx_set_silent(FALSE)  # set to FALSE
+#' umx_set_silent(old)    # reinstate
+umx_set_silent <- function(value = NA, silent = FALSE) {
+	if(is.na(value)) {
+		if(!silent){
+			message(
+				"Current silent setting is ", 
+				omxQuotes(getOption("umx_silent")),
+				". Valid options are TRUE or FALSE."
+			)
+		}
+		invisible(getOption("umx_silent"))
+	} else {
+		umx_check(value %in% c(TRUE, FALSE), "stop")
+		options("umx_silent" = value)
+	}
+}
+
 #' umx_set_auto_run
 #'
 #' Set autoRun default for models like umxACE umxGxE etc.
