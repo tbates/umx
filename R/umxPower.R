@@ -38,9 +38,11 @@
 #' 
 #' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), value = 0, AA= .5, CC= .3)
 #'
-#' Drop More than one parameter (A & C)
-ee  = umxModify(ace, regex = "^[ac]_", name= "E", tryHard="yes")
-
+#' # ========================================
+#' # = Drop More than one parameter (A & C) =
+#' # ========================================
+#' # power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("^[ac]_r1c1"), value = 0, AA= .5, CC= .3, tryHard= "yes")
+#'
 #' # ===================
 #' # = Show range of N =
 #' # ===================
