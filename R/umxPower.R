@@ -78,10 +78,10 @@
 #' # ===================================
 #' # = Test dropping a series of paths =
 #' # ===================================
-#' # or just get people to call it repeatedly?
-#' for (dropWhat in drop) {
-#'
-#' }
+#' # droplist = c("a_r1c1", "c_r1c1")
+#' # for (dropWhat in dropList) {
+#' # 	power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop = dropWhat, AA= .5, CC= 0)
+#' # }
 #'
 power.ACE.test <- function(nMZpairs= 500, nDZpairs = nMZpairs, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0, EE= NULL, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
 	type   = match.arg(type)
@@ -91,9 +91,10 @@ power.ACE.test <- function(nMZpairs= 500, nDZpairs = nMZpairs, drop = c("a_r1c1"
 	oldPlot = umx_set_auto_plot(silent=TRUE); umx_set_auto_plot(FALSE)
 
 	# 1. make data and run model 1
-	tmp = umx_make_TwinData(nMZpairs= nMZpairs, nDZpairs = nDZpairs, AA= AA, CC= CC, EE= NULL, varNames= "var", mean= 0, empirical= TRUE)
-	mzData = subset(twinData, zygosity == "MZ")
-	dzData = subset(twinData, zygosity == "DZ")
+	# tmp = umx_make_TwinData(nMZpairs= 500, nDZpairs = 500, AA= .5, CC= 0, EE= NULL, varNames= "var", mean= 0, empirical= TRUE)
+	tmp = umx_make_TwinData(nMZpairs= nMZpairs, nDZpairs = nDZpairs, AA= AA, CC= CC, EE= EE, varNames= "var", mean= 0, empirical= TRUE)
+	mzData = subset(tmp, zygosity == "MZ")
+	dzData = subset(tmp, zygosity == "DZ")
 	ace = umxACE(selDVs = "var", sep= "_T", mzData = mzData, dzData= dzData)
 	nullModel = umxModify(ace, update = drop, value = value, name= paste0("drop_", drop[1]))
 	

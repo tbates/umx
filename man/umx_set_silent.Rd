@@ -29,7 +29,7 @@ umx_set_silent(old)    # reinstate
 }
 \references{
 \itemize{
-\item \link{https://tbates.github.io}, \link{https://github.com/tbates/umx}
+\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

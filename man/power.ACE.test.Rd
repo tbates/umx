@@ -12,33 +12,33 @@ power.ACE.test(nMZpairs = 500, nDZpairs = nMZpairs,
   "mxTryHardWideSearch"), optimizer = NULL)
 }
 \arguments{
-\item{nDZpairs}{= nMZpairs}
+\item{nMZpairs}{Number of MZ pairs (default 500)}
 
-\item{drop}{= c("a_r1c1")}
+\item{nDZpairs}{Number of DZ pairs (Defaul = nMZpairs)}
 
-\item{value}{= 0}
+\item{drop}{Path(s) to drop (default "a_r1c1" drops a)}
 
-\item{AA}{= .5}
+\item{value}{Value to set the dropped path(s) (Default = 0)}
 
-\item{sig.level}{= 0.05}
+\item{AA}{Additive genetic variance (Default = .5)}
 
-\item{power}{= .8}
+\item{CC}{Shared environment variance (Default = 0)}
 
-\item{type}{= c("univariate", "bivariate", "GxE")}
+\item{EE}{Unique environment variance. Leave NULL to compute an amount summing to 1}
 
-\item{method}{= c("ncp", "empirical")}
+\item{sig.level}{Default alpha = 0.05}
 
-\item{search}{= FALSE}
+\item{power}{Default (1- TypeII) = .8 (80% power)}
 
-\item{tryHard}{= c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")}
+\item{type}{Type of model c("univariate", "bivariate", "GxE") (EXPERIMENTAL MAY GO AWAY OR CHANGE)}
 
-\item{optimizer}{= NULL}
+\item{method}{How to estimate power: Deaful =  using non-centrality parameter ("ncp"). Alternative is "empirical"}
 
-\item{nMZpairs=}{500}
+\item{search}{Whether to return a search across power or just a point estimate (Default FALSE = point)}
 
-\item{CC=}{0}
+\item{tryHard}{Whether to tryHard to find a solution (default = "no", alternatives are "yes"...)}
 
-\item{EE=}{NULL}
+\item{optimizer}{If set, will switch the optimizer.}
 }
 \value{
 \itemize{
@@ -57,54 +57,58 @@ This is under construction.
 # =====================
 # = Power to detect A =
 # =====================
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0)
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0)
 
 # =====================
 # = Power to detect C =
 # =====================
 
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), value = 0, AA= .5, CC= .3)
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= .3)
 
 # ========================================
 # = Drop More than one parameter (A & C) =
 # ========================================
-# power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("^[ac]_r1c1"), value = 0, AA= .5, CC= .3, tryHard= "yes")
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("^[ac]_r1c1"), 
+	AA= .5, CC= .3, tryHard= "yes")
 
 # ===================
 # = Show range of N =
 # ===================
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0, search = TRUE)
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), 
+	AA= .5, CC= 0, search = TRUE)
 
 # =====================================
 # = Compare ncp and empirical methods =
 # =====================================
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0, method = "empirical")
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), 
+	AA= .5, CC= 0, method = "empirical")
 
 # ================================
 # = Power with more DZs than MZs =
 # ================================
 
-power.ACE.test(nMZpairs= 500, nDZpairs = 2000, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0)
+power.ACE.test(nMZpairs= 500, nDZpairs = 2000, drop = c("a_r1c1"), AA= .5, CC= 0)
 
 # ================================
 # = Power with more MZs than DZs =
 # ================================
 
-power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0)
+power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0)
 
 # ===========================
 # = Pick a value (not zero) =
 # ===========================
 
-power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), value = .2, AA= .5, CC= 0)
+power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), value = .2,
+	AA= .5, CC= 0)
 
 # ===================================
 # = Test dropping a series of paths =
 # ===================================
-# or just get people to call it repeatedly?
-for (dropWhat in drop) {
-
-}
+# droplist = c("a_r1c1", "c_r1c1")
+# for (dropWhat in dropList) {
+# 	power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop = dropWhat, AA= .5, CC= 0)
+# }
 
 }
 \references{
