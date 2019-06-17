@@ -5,20 +5,20 @@
 #' The interface and functionality of this service are experimental and subject to change.
 #' @details
 #' This is under construction.
-#' @param nMZpairs= 500
-#' @param nDZpairs = nMZpairs
-#' @param AA = .5
-#' @param CC= 0
-#' @param EE= NULL
-#' @param drop = c("a_r1c1")
-#' @param value = 0
-#' @param search = FALSE
-#' @param sig.level = 0.05
-#' @param power = .8
-#' @param type = c("univariate", "bivariate", "GxE")
-#' @param method = c("ncp", "empirical")
-#' @param tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
-#' @param optimizer = NULL
+#' @param nMZpairs Number of MZ pairs (default 500)
+#' @param nDZpairs Number of DZ pairs (Defaul = nMZpairs)
+#' @param AA Additive genetic variance (Default = .5)
+#' @param CC Shared environment variance (Default = 0)
+#' @param EE  Unique environment variance. Leave NULL to compute an amount summing to 1
+#' @param drop Path(s) to drop (default "a_r1c1" drops a)
+#' @param value Value to set the dropped path(s) (Default = 0)
+#' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
+#' @param sig.level Default alpha = 0.05
+#' @param power Default (1- TypeII) = .8 (80% power)
+#' @param type Type of model c("univariate", "bivariate", "GxE") (EXPERIMENTAL MAY GO AWAY OR CHANGE)
+#' @param method How to estimate power: Deaful =  using non-centrality parameter ("ncp"). Alternative is "empirical"
+#' @param tryHard Whether to tryHard to find a solution (default = "no", alternatives are "yes"...)
+#' @param optimizer If set, will switch the optimizer.
 #' @return - nothing
 #' @export
 #' @family Twin Modeling Functions
@@ -30,46 +30,50 @@
 #' # =====================
 #' # = Power to detect A =
 #' # =====================
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0)
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0)
 #'
 #' # =====================
 #' # = Power to detect C =
 #' # =====================
 #' 
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), value = 0, AA= .5, CC= .3)
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= .3)
 #'
 #' # ========================================
 #' # = Drop More than one parameter (A & C) =
 #' # ========================================
-#' # power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("^[ac]_r1c1"), value = 0, AA= .5, CC= .3, tryHard= "yes")
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("^[ac]_r1c1"), 
+#'		AA= .5, CC= .3, tryHard= "yes")
 #'
 #' # ===================
 #' # = Show range of N =
 #' # ===================
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0, search = TRUE)
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), 
+#'		AA= .5, CC= 0, search = TRUE)
 #'
 #' # =====================================
 #' # = Compare ncp and empirical methods =
 #' # =====================================
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0, method = "empirical")
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), 
+#'		AA= .5, CC= 0, method = "empirical")
 #'
 #' # ================================
 #' # = Power with more DZs than MZs =
 #' # ================================
 #' 
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 2000, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0)
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 2000, drop = c("a_r1c1"), AA= .5, CC= 0)
 #'
 #' # ================================
 #' # = Power with more MZs than DZs =
 #' # ================================
 #' 
-#' power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0)
+#' power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0)
 #'
 #' # ===========================
 #' # = Pick a value (not zero) =
 #' # ===========================
 #' 
-#' power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), value = .2, AA= .5, CC= 0)
+#' power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), value = .2,
+#'		AA= .5, CC= 0)
 #'
 #' # ===================================
 #' # = Test dropping a series of paths =

@@ -509,7 +509,7 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 #' @return - Current silent value
 #' @export
 #' @family Get and set
-#' @references - [https://tbates.github.io], [https://github.com/tbates/umx]
+#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' library(umx)
