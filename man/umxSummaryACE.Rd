@@ -67,14 +67,15 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE);
 \seealso{
 - \code{\link{umxACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxModify}}
 
-Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEold}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCPold}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
-  \code{\link{umxGxE}}, \code{\link{umxIPold}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umxSummaryACEcov}},
+Other Twin Modeling Functions: \code{\link{power.ACE.test}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
+  \code{\link{umxACEold}}, \code{\link{umxACEv}},
+  \code{\link{umxACE}}, \code{\link{umxCPold}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
+  \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
+  \code{\link{umxIPold}}, \code{\link{umxIP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}}, \code{\link{umxSummaryCP}},
   \code{\link{umxSummaryGxEbiv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
