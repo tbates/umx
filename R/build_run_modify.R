@@ -1053,7 +1053,8 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 	umx_check_names(selDVs, mzData)
 	umx_check_names(selDVs, dzData)
-	if(!umx_set_silent(silent=TRUE)){
+
+	if(!umx_set_silent(silent = TRUE)){
 		message("selDVs: ", omxQuotes(selDVs))
 	}
 
