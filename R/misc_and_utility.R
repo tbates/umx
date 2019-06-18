@@ -5495,8 +5495,10 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			"You gave me AA =  ", AA, ", CC =  ", CC, ", and EE =  ", EE)
 		}
 		# Report to user
-		print(c(AA = AA, CC = CC, EE = EE))
-		print(round(c(a = sqrt(AA), c = sqrt(CC), e = sqrt(EE)), 2))
+		if(!umx_set_silent(silent = TRUE)){
+			print(c(AA = AA, CC = CC, EE = EE))
+			print(round(c(a = sqrt(AA), c = sqrt(CC), e = sqrt(EE)), 2))
+		}
 		
 		AC  =  AA + CC
 		hAC = (.5 * AA) + CC

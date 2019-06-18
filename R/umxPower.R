@@ -30,7 +30,7 @@
 #' # =====================
 #' # = Power to detect A =
 #' # =====================
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0)
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0)
 #'
 #' # =====================
 #' # = Power to detect C =
@@ -75,6 +75,14 @@
 #' power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), value = .2,
 #'		AA= .5, CC= 0)
 #'
+#' # ====================
+#' # = Show off options =
+#' # ====================
+#' # 1. tryhard
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
+#' # 2. toggle optimizer
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, optimizer = "SLSQP")
+
 #' # ===================================
 #' # = Test dropping a series of paths =
 #' # ===================================
@@ -83,11 +91,17 @@
 #' # 	power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop = dropWhat, AA= .5, CC= 0)
 #' # }
 #'
+# Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design revisited: II detection of common environmental variance. Twin Res Hum Genet, 11(1): 48-54. [Abstract] [Fulltext PDF]
+
 power.ACE.test <- function(nMZpairs= 500, nDZpairs = nMZpairs, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0, EE= NULL, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
+	message("This is beta code!")
 	type   = match.arg(type)
 	method = match.arg(method)
 	# strict = FALSE
 	# tol = .Machine$double.eps^0.25
+
+	# turn off plotting
+	umx_set_silent(TRUE)
 	oldPlot = umx_set_auto_plot(silent=TRUE); umx_set_auto_plot(FALSE)
 
 	# 1. make data and run model 1
@@ -95,8 +109,16 @@ power.ACE.test <- function(nMZpairs= 500, nDZpairs = nMZpairs, drop = c("a_r1c1"
 	tmp = umx_make_TwinData(nMZpairs= nMZpairs, nDZpairs = nDZpairs, AA= AA, CC= CC, EE= EE, varNames= "var", mean= 0, empirical= TRUE)
 	mzData = subset(tmp, zygosity == "MZ")
 	dzData = subset(tmp, zygosity == "DZ")
+	
+	# ==============================================
+	# = build the "true" and "false" (null) models =
+	# ==============================================
 	ace = umxACE(selDVs = "var", sep= "_T", mzData = mzData, dzData= dzData)
 	nullModel = umxModify(ace, update = drop, value = value, name= paste0("drop_", drop[1]))
+
+	# return plot to old value
+	umx_set_auto_plot(oldPlot)
+	umx_set_silent(FALSE)
 	
 	if(search){
 		tmp = mxPowerSearch(ace, nullModel, method = method)
@@ -105,10 +127,5 @@ power.ACE.test <- function(nMZpairs= 500, nDZpairs = nMZpairs, drop = c("a_r1c1"
 	} else {
 		tmp = mxPower(ace, nullModel, method = method)
 	}
-	
-	# umxSummary(ae, ee)
-
-	# pars = round(cbind(aceFit$output$estimate, aceFit$output$standardErrors), 3)
-	# colnames(pars) = c("Estimates", "Std. Err.")
-	umx_set_auto_plot(oldPlot)
+	return(tmp)
 }

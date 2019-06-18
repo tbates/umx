@@ -57,7 +57,7 @@ This is under construction.
 # =====================
 # = Power to detect A =
 # =====================
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0)
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0)
 
 # =====================
 # = Power to detect C =
@@ -102,6 +102,13 @@ power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 
 power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), value = .2,
 	AA= .5, CC= 0)
 
+# ====================
+# = Show off options =
+# ====================
+# 1. tryhard
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
+# 2. toggle optimizer
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, optimizer = "SLSQP")
 # ===================================
 # = Test dropping a series of paths =
 # ===================================
