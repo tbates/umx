@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxPower.R
 \name{power.ACE.test}
 \alias{power.ACE.test}
-\title{Test the power of an ACE model to detect A, C, or E}
+\title{Test the power of an ACE model to detect paths of interest.}
 \usage{
 power.ACE.test(nMZpairs = 500, nDZpairs = nMZpairs,
   drop = c("a_r1c1"), value = 0, AA = 0.5, CC = 0, EE = NULL,
@@ -41,13 +41,11 @@ power.ACE.test(nMZpairs = 500, nDZpairs = nMZpairs,
 \item{optimizer}{If set, will switch the optimizer.}
 }
 \value{
-\itemize{
-\item nothing
-}
+mxPower object
 }
 \description{
-\code{power.ACE.test} simulates a univariate ACE model and returns the power to detect dropping one or more label.
-The interface and functionality of this service are experimental and subject to change.
+power.ACE.test simulates a univariate ACE model and returns the power to
+detect dropping one or more paths. The interface and functionality of this service are experimental and subject to change.
 }
 \details{
 This is under construction.
@@ -57,58 +55,74 @@ This is under construction.
 # =====================
 # = Power to detect A =
 # =====================
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0)
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0) 
+# Suggests n = 30
+
+# Salutary note: You need well fitting models for power to be valid.
+# TryHard suggests 64.7 MZ pairs and 129.3 DZ pairs
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0,
+	tryHard= "yes")
+
+# Compare to empirical mode
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, 
+	method= "empirical", tryHard= "yes")
+# For 80\% power, you need 58.2 MZ pairs and 116.4 DZ pairs
 
 # =====================
 # = Power to detect C =
 # =====================
 
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= .3)
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", 
+	AA= .5, CC= .3)
 
 # ========================================
 # = Drop More than one parameter (A & C) =
 # ========================================
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("^[ac]_r1c1"), 
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "^[ac]_r1c1", 
 	AA= .5, CC= .3, tryHard= "yes")
 
 # ===================
 # = Show range of N =
 # ===================
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), 
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop= "a_r1c1", 
 	AA= .5, CC= 0, search = TRUE)
 
 # =====================================
 # = Compare ncp and empirical methods =
 # =====================================
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = c("a_r1c1"), 
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop= "a_r1c1", 
 	AA= .5, CC= 0, method = "empirical")
 
 # ================================
 # = Power with more DZs than MZs =
 # ================================
 
-power.ACE.test(nMZpairs= 500, nDZpairs = 2000, drop = c("a_r1c1"), AA= .5, CC= 0)
+power.ACE.test(nMZpairs= 500, nDZpairs = 2000, drop = "a_r1c1", AA= .5, CC= 0)
 
 # ================================
 # = Power with more MZs than DZs =
 # ================================
 
-power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), AA= .5, CC= 0)
+power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop= "a_r1c1", AA= .5, CC= 0)
 
 # ===========================
 # = Pick a value (not zero) =
 # ===========================
 
-power.ACE.test(nMZpairs= 2000, nDZpairs = 1000, drop = c("a_r1c1"), value = .2,
+power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop= "a_r1c1", value= .2,
 	AA= .5, CC= 0)
 
 # ====================
 # = Show off options =
 # ====================
-# 1. tryhard
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
+# 1. tryHard
+power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", 
+	AA= .5, CC= 0, tryHard= "yes")
+
 # 2. toggle optimizer
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, optimizer = "SLSQP")
+power.ACE.test(nMZpairs= 500, nDZpairs= 1000, drop= "a_r1c1", 
+	AA= .5, CC= 0, optimizer= "SLSQP")
+
 # ===================================
 # = Test dropping a series of paths =
 # ===================================
@@ -120,7 +134,8 @@ power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, o
 }
 \references{
 \itemize{
-\item \link{https://github.com/tbates/umx}, \link{https://tbates.github.io}
+\item Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
+revisited: II detection of common environmental variance. \emph{Twin Res Hum Genet}, \strong{11}: 48-54.
 }
 }
 \seealso{

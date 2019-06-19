@@ -51,9 +51,8 @@
 	packageStartupMessage("For an overview type '?umx'")
 }
 
-#' @importFrom graphics plot
-#' @importFrom methods as getSlots is slotNames
-#' @importFrom methods setClass
+#' @importFrom graphics plot abline
+#' @importFrom methods as getSlots is slotNames setClass
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases
@@ -223,8 +222,9 @@ utils::globalVariables(c(
 	"minus2SatLogLik", "nCells", "diffchi",
 	 
 	# Used in xmu_lavaan_process_group
-	"constraintOps", "handledOps"
-
+	"constraintOps", "handledOps",
+	# Used in power.ACE.test
+	"zygosity"
 	 )
 )
 
