@@ -3149,7 +3149,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #'
 #' @description
 #' Often you want to see the estimates from a model, and often you don't want all of them.
-#' \code{\link{umx_parameters}} helps in this case, allowing you to select parameters matching a name filter,
+#' \code{\link{umxParameters}} helps in this case, allowing you to select parameters matching a name filter,
 #' and also to only show parameters above or below a certain value.
 #' 
 #' If pattern is a vector, each regular expression is matched, and all unique matches to the whole vector are returned.
@@ -3166,8 +3166,9 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @return - list of matching parameters, filtered by name and value
 #' @export
 #' @family Reporting Functions
-#' @seealso - \code{\link{parameters}}, \code{\link{umxSummary}}, \code{\link{umx_names}}
+#' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxSummary}}, \code{\link{namez}}
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3178,13 +3179,13 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' 	umxPath(v1m0 = "G")
 #' )
 #' # Parameters with values below .1
-#' umx_parameters(m1, "below", .1)
+#' umxParameters(m1, "below", .1)
 #' # Parameters with values above .5
-#' umx_parameters(m1, "above", .5)
+#' umxParameters(m1, "above", .5)
 #' # Parameters with values below .1 and containing "_to_" in their label
-#' umx_parameters(m1, "below", .1, "_to_")
-umx_parameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {
-	# TODO rationalize (deprecate?) umx_parameters and umxGetParameters -> just parameters()
+#' umxParameters(m1, "below", .1, "_to_")
+umxParameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {
+	# TODO clarify when to use parameters vs. umxGetParameters
 	# TODO Add filtering by significance (based on SEs)
 	# TODO Offer a method to handle sub-models
 	# 	model$aSubmodel$matrices$aMatrix$labels
@@ -3251,13 +3252,9 @@ or specify all arguments:\n
 	}
 }
 
-#' @rdname umx_parameters
+#' @rdname umxParameters
 #' @export
-umxParameters <- umx_parameters
-
-#' @rdname umx_parameters
-#' @export
-parameters <- umx_parameters
+parameters <- umxParameters
 
 #' Get parameters from a model, with support for pattern matching!
 #'
@@ -3274,9 +3271,10 @@ parameters <- umx_parameters
 #' @param fetch What to return: "values" (default) or "free", "lbound", "ubound", or "all"
 #' @param verbose How much feedback to give
 #' @export
-#' @seealso \code{\link{omxGetParameters}}, \code{\link{umx_parameters}}
+#' @seealso [omxGetParameters()], [parameters()]
 #' @family Reporting Functions
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3327,7 +3325,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 		} else {
 			# it's a grep string
 			if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
-				regex = paste0("^", regex, "[0-9]*$"); # anchor to the start of the string
+				regex = paste0("^", regex, "[_0-9]"); # anchor to the start of the string
 				anchored = TRUE
 				if(verbose == TRUE) {
 					message("note: anchored regex to beginning of string and allowed only numeric follow\n");
