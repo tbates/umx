@@ -11,11 +11,7 @@
 
 [Roadmap](https://github.com/tbates/umx/labels/enhancement), and [Tutorials](https://tbates.github.io) (let me know what you'd like, or perhaps a book?)
 
-`umx` is a [structural equation modeling](https://en.wikipedia.org/wiki/Structural_equation_modeling) package designed to make SEM easier, from building, to modifying and reporting.
-
-Please cite as:
-
-`citation("umx")`
+`umx` is a [structural equation modeling](https://en.wikipedia.org/wiki/Structural_equation_modeling) package designed to make SEM easier, from building, to modifying and reporting. Please cite as: `citation("umx")`:
 
 Timothy C. Bates, Michael C. Neale, Hermine H. Maes, (2019). umx: A library for Structural Equation and Twin Modelling in R. *Twin Research and Human Genetics*, **22**, 27-41. [DOI:10.1017/thg.2019.2](https://doi.org/10.1017/thg.2019.2)
 
