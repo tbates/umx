@@ -9,7 +9,7 @@
 [![DOI](https://img.shields.io/badge/doi-10.1017/thg.2019.2-yellow.svg?style=flat)](https://doi.org/10.1017/thg.2019.2)
 [![License](https://img.shields.io/cran/l/umx.svg)](https://cran.r-project.org/package=umx)
 
-[Roadmap](https://github.com/tbates/umx/labels/enhancement) [Tutorials](https://tbates.github.io) (let me know what you'd like, or perhaps a book?)
+[Roadmap](https://github.com/tbates/umx/labels/enhancement), and [Tutorials](https://tbates.github.io) (let me know what you'd like, or perhaps a book?)
 
 `umx` is a [structural equation modeling](https://en.wikipedia.org/wiki/Structural_equation_modeling) package designed to make SEM easier, from building, to modifying and reporting.
 
