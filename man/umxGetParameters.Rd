@@ -24,7 +24,7 @@ umxGetParameters retrieves parameter labels from a model, like \code{\link{omxGe
 However, it is supercharged with regular expressions, so you can get labels that match a pattern.
 }
 \details{
-In addition, if regex contains a vector, this is treated as a list of raw labels to search for, 
+In addition, if regex contains a vector, this is treated as a list of raw labels to search for,
 and return if all are found.
 \emph{note}: To return all labels, just leave regex as is.
 }
@@ -48,20 +48,22 @@ umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
-\code{\link{omxGetParameters}}, \code{\link{umx_parameters}}
+\code{\link[=omxGetParameters]{omxGetParameters()}}, \code{\link[=parameters]{parameters()}}
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
   \code{\link{umxAPA}}, \code{\link{umxEval}},
-  \code{\link{umxFactorScores}}, \code{\link{umxReduce}},
+  \code{\link{umxFactorScores}},
+  \code{\link{umxParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_names}}, \code{\link{umx_parameters}},
-  \code{\link{umx_print}},
+  \code{\link{umx_names}}, \code{\link{umx_print}},
   \code{\link{umx_show_fit_or_comparison}},
   \code{\link{umx_time}}, \code{\link{umx}},
   \code{\link{xmu_get_CI}}

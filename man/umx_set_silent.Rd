@@ -17,8 +17,8 @@ umx_set_silent(value = NA, silent = FALSE)
 }
 }
 \description{
-Sets a umx property "silent" to \code{TRUE} or \code{FALSE}. This is fed to \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}} insude functions like \code{\link[=umxRAM]{umxRAM()}}.
-If TRUE, then the progress messages from model runs are supressed. Useful for power simulations etc.
+Sets a umx property "silent" to \code{TRUE} or \code{FALSE}. This is fed to \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}} inside functions like \code{\link[=umxRAM]{umxRAM()}}.
+If TRUE, then the progress messages from model runs are suppressed. Useful for power simulations etc.
 }
 \examples{
 library(umx)

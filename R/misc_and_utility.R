@@ -501,8 +501,8 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 
 #' Print anything when running a model?
 #'
-#' Sets a umx property "silent" to `TRUE` or `FALSE`. This is fed to [OpenMx::mxRun()] insude functions like [umxRAM()].
-#' If TRUE, then the progress messages from model runs are supressed. Useful for power simulations etc.
+#' Sets a umx property "silent" to `TRUE` or `FALSE`. This is fed to [OpenMx::mxRun()] inside functions like [umxRAM()].
+#' If TRUE, then the progress messages from model runs are suppressed. Useful for power simulations etc.
 #'
 #' @param value If TRUE mxRun is silent in most umx Models. Empty returns the current value.
 #' @param silent If TRUE, no message will be printed.
@@ -1675,7 +1675,7 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' text based on patterns and replacements. so to change "replacement" to "in place", 
 #' `grep=re(place)ment`, `replace= in \\1`.
 #'
-#' *note*:Tto use replace list, you must say c(old = "new"), not c(old -> "new")
+#' *note*:To use replace list, you must say c(old = "new"), not c(old -> "new")
 #' 
 #' @param data The dataframe in which to rename variables
 #' @param old List of old names that will be found and replaced by the contents of replace. (optional: Defaults to NULL).

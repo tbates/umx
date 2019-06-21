@@ -9,7 +9,7 @@
 [![DOI](https://img.shields.io/badge/doi-10.1017/thg.2019.2-yellow.svg?style=flat)](https://doi.org/10.1017/thg.2019.2)
 [![License](https://img.shields.io/cran/l/umx.svg)](https://cran.r-project.org/package=umx)
 
-[Roadmap](https://github.com/tbates/umx/labels/enhancement), and [Tutorials](https://tbates.github.io) (let me know what you'd like, or perhaps a book?)
+[Road map](https://github.com/tbates/umx/labels/enhancement), and [Tutorials](https://tbates.github.io) (let me know what you'd like, or perhaps a book?)
 
 `umx` is a [structural equation modeling](https://en.wikipedia.org/wiki/Structural_equation_modeling) package designed to make SEM easier, from building, to modifying and reporting. Please cite as: `citation("umx")`:
 
@@ -38,7 +38,7 @@ Some highlights include:
 	* `umxPath()` *# write paths but with one-word settings to set `var` , `mean` `cov`, `fixedAt` 'v.m.' = and more.*
 2. Reporting output
 	* `umxSummary(model)` # *A fit summary designed for journal reporting (Χ², p, CFI, TLI, & RMSEA). Optionally show the path loadings*
-	* `plot(model, std=T, digits = 3, file = "name")` # *Graphical, model in your browser! or edit in programs like Omnigraffle*
+	* `plot(model, std=T, digits = 3, file = "name")` # *Graphical, model in your browser! or edit in programs like OmniGraffle*
 3. Modify models
 	* `umxModify()` *# Modify and run a model. You can add objects, drop or add paths, including by wildcard label matching), re-name the model, re-run, and even return the comparison. All in 1 line *
 	* `parameters(m1, "below", .1, pattern="_to_"))` *# A powerful assistant to get labels and values from a model (e.g. all 'to' params, below .1 in value)*

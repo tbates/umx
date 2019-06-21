@@ -37,7 +37,7 @@ Importantly, it also supports \link[=regex]{regular expressions}. This allows yo
 text based on patterns and replacements. so to change "replacement" to "in place",
 \code{grep=re(place)ment}, \code{replace= in \\1}.
 
-\emph{note}:Tto use replace list, you must say c(old = "new"), not c(old -> "new")
+\emph{note}:To use replace list, you must say c(old = "new"), not c(old -> "new")
 }
 \examples{
 tmp = mtcars
