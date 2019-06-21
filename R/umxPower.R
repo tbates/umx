@@ -1,16 +1,19 @@
 #' Test the power of an ACE model to detect paths of interest.
 #'
-#' @description Simulate a univariate ACE model and return the power to detect dropping or changing one or more paths.
+#' @description `power.ACE.test` simulates a univariate ACE model and returns the power to
+#' detect dropping one or more paths. The interface and functionality of this service are experimental and subject to change.
+#' @details This is under construction.
+#' 
 #' @param nMZpairs Number of MZ pairs (Default 500)
 #' @param nDZpairs Number of DZ pairs (Default nMZpairs)
 #' @param AA Additive genetic variance (Default .5)
 #' @param CC Shared environment variance (Default 0)
 #' @param EE  Unique environment variance. Leave NULL to compute an amount summing to 1
-#' @param drop Path(s) to drop (default "a_r1c1" drop a)
-#' @param value Value to set the dropped path(s) (Default 0)
+#' @param drop Path(s) to drop (Default "a_r1c1", i.e., drop a)
+#' @param value Value to set drop path(s) to (Default 0)
 #' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
 #' @param sig.level Default alpha = 0.05
-#' @param power Default (1- TypeII) = .8 (80% power)
+#' @param power Default (1- TypeII) = .8 (80 percent power)
 #' @param type Type of model c("univariate", "bivariate", "GxE") (EXPERIMENTAL MAY GO AWAY OR CHANGE)
 #' @param method How to estimate power: Default =  use non-centrality parameter ("ncp"). Alternative is "empirical"
 #' @param tryHard Whether to tryHard to find a solution (default = "no", alternatives are "yes"...)
@@ -22,6 +25,87 @@
 #' @references - Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
 #' revisited: II detection of common environmental variance. *Twin Res Hum Genet*, **11**: 48-54.
 #' @md
+#' @examples
+#'
+#' # =====================
+#' # = Power to detect A =
+#' # =====================
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0) 
+#' # Suggests n = 30
+#'
+#' # Salutary note: You need well fitting models for power to be valid.
+#' # TryHard suggests 64.7 MZ pairs and 129.3 DZ pairs
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0,
+#' 	tryHard= "yes")
+#' 
+#' # Compare to empirical mode
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, 
+#'		method= "empirical", tryHard= "yes")
+#' # For 80% power, you need 58.2 MZ pairs and 116.4 DZ pairs
+#'
+#' # =====================
+#' # = Power to detect C =
+#' # =====================
+#' 
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", 
+#' 	AA= .5, CC= .3)
+#'
+#' # ========================================
+#' # = Drop More than one parameter (A & C) =
+#' # ========================================
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "^[ac]_r1c1", 
+#'		AA= .5, CC= .3, tryHard= "yes")
+#'
+#' # ===================
+#' # = Show range of N =
+#' # ===================
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop= "a_r1c1", 
+#'		AA= .5, CC= 0, search = TRUE)
+#'
+#' # =====================================
+#' # = Compare ncp and empirical methods =
+#' # =====================================
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop= "a_r1c1", 
+#'		AA= .5, CC= 0, method = "empirical")
+#'
+#' # ================================
+#' # = Power with more DZs than MZs =
+#' # ================================
+#' 
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 2000, drop = "a_r1c1", AA= .5, CC= 0)
+#'
+#' # ================================
+#' # = Power with more MZs than DZs =
+#' # ================================
+#' 
+#' power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop= "a_r1c1", AA= .5, CC= 0)
+#'
+#' # ===========================
+#' # = Pick a value (not zero) =
+#' # ===========================
+#' 
+#' power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop= "a_r1c1", value= .2,
+#'		AA= .5, CC= 0)
+#'
+#' # ====================
+#' # = Show off options =
+#' # ====================
+#' # 1. tryHard
+#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", 
+#' 	AA= .5, CC= 0, tryHard= "yes")
+#'
+#' # 2. toggle optimizer
+#' power.ACE.test(nMZpairs= 500, nDZpairs= 1000, drop= "a_r1c1", 
+#' 	AA= .5, CC= 0, optimizer= "SLSQP")
+#'
+#' # ===================================
+#' # = Test dropping a series of paths =
+#' # ===================================
+#' # droplist = c("a_r1c1", "c_r1c1")
+#' # for (dropWhat in dropList) {
+#' # 	power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop = dropWhat, AA= .5, CC= 0)
+#' # }
+#'
 power.ACE.test <- function(nMZpairs= 500, nDZpairs = nMZpairs, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0, EE= NULL, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
 	message("This is beta code!")
 	
