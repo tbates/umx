@@ -3266,7 +3266,7 @@ parameters <- umxParameters
 #' \emph{note}: To return all labels, just leave regex as is.
 #'
 #' @param inputTarget An object to get parameters from: could be a RAM \code{\link{mxModel}}
-#' @param regex A regular expression to filter the labels. Default (NA) returns all labels. Vector treated as raw labels to find.
+#' @param regex A regular expression to filter the labels. Default (NA) returns all labels. If vector, treated as raw labels to find.
 #' @param free  A Boolean determining whether to return only free parameters.
 #' @param fetch What to return: "values" (default) or "free", "lbound", "ubound", or "all"
 #' @param verbose How much feedback to give
@@ -3278,19 +3278,18 @@ parameters <- umxParameters
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	umxPath(latents, to = manifests),
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' 
 #' # Show all parameters
 #' umxGetParameters(m1)
-#' umxGetParameters(m1, free = TRUE) # only parameters which are free 
-#' umxGetParameters(m1, free = FALSE) # only parameters which are fixed
-#' # Complex regex patterns
+#' umxGetParameters(m1, free = TRUE)  # Only free parameters
+#' umxGetParameters(m1, free = FALSE) # Only fixed parameters
+#' # Complex regex pattern
 #' umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 #' 
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("values", "free", "lbound", "ubound", "all"), verbose = FALSE) {
@@ -3316,30 +3315,27 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 	theLabels = topLabels[which(!is.na(topLabels))] # exclude NAs
 	if( length(regex) > 1 || !is.na(regex) ) {
 		if(length(regex) > 1){
-			# assume regex is a list of labels
+			# Assume regex is a list of labels
 			theLabels = theLabels[theLabels %in% regex]
 			if(length(regex) != length(theLabels)){
 				msg = "Not all labels found! Missing were:\n"
 				stop(msg, regex[!(regex %in% theLabels)]);
 			}
 		} else {
-			# it's a grep string
-			if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
-				regex = paste0("^", regex, "[_0-9]"); # anchor to the start of the string
-				anchored = TRUE
-				if(verbose == TRUE) {
-					message("note: anchored regex to beginning of string and allowed only numeric follow\n");
-				}
-			}else{
-				anchored = FALSE
-			}
-			theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # return more detail
+			# It's a grep string
+			# if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
+			# 	regex = paste0("^", regex, "[_0-9]"); # anchor to the start of the string
+			# 	anchored = TRUE
+			# 	if(verbose == TRUE) {
+			# 		message("note: anchored regex to beginning of string and allowed only numeric follow\n");
+			# 	}
+			# }else{
+			# 	anchored = FALSE
+			# }
+			theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # Return more detail
 		}
 		if(length(theLabels) == 0){
 			msg = paste0("Found no labels matching", omxQuotes(regex), "!\n")
-			if(anchored == TRUE){
-				msg = paste0(msg, "note: anchored regex to beginning of string and allowed only numeric follow:\"", regex, "\"")
-			}
 			if(umx_is_MxModel(inputTarget)){
 				msg = paste0(msg, "\nUse umxGetParameters(", deparse(substitute(inputTarget)), ") to see all parameters in the model")
 			}else{

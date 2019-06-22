@@ -11,7 +11,7 @@ umxGetParameters(inputTarget, regex = NA, free = NA,
 \arguments{
 \item{inputTarget}{An object to get parameters from: could be a RAM \code{\link{mxModel}}}
 
-\item{regex}{A regular expression to filter the labels. Default (NA) returns all labels. Vector treated as raw labels to find.}
+\item{regex}{A regular expression to filter the labels. Default (NA) returns all labels. If vector, treated as raw labels to find.}
 
 \item{free}{A Boolean determining whether to return only free parameters.}
 
@@ -31,19 +31,18 @@ and return if all are found.
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-	umxPath(latents, to = manifests),
+m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1)
+	umxPath(var = "G", fixedAt = 1)
 )
 
 # Show all parameters
 umxGetParameters(m1)
-umxGetParameters(m1, free = TRUE) # only parameters which are free 
-umxGetParameters(m1, free = FALSE) # only parameters which are fixed
-# Complex regex patterns
+umxGetParameters(m1, free = TRUE)  # Only free parameters
+umxGetParameters(m1, free = FALSE) # Only fixed parameters
+# Complex regex pattern
 umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 
 }

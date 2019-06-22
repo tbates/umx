@@ -1,18 +1,32 @@
 #' Test the power of an ACE model to detect paths of interest.
 #'
-#' @description `power.ACE.test` simulates a univariate ACE model and returns the power to
-#' detect dropping one or more paths. The interface and functionality of this service are experimental and subject to change.
-#' @details This is under construction.
+#' @description `power.ACE.test` simulates a univariate ACE model (with nMZpairs= 2000 and MZ_DZ_ratio*nMZpairs DZ twins. It 
+#' computes power to detect dropping one or more paths specified in `drop=`. 
+#' The interface and functionality of this service are experimental and subject to change.
+#' @details
+#' Statistical power is the proportion of studies that, over the long run, one should expect to yield a statistically
+#' significant result given certain study characteristics such as sample size (N), the expected effect size (\eqn{\Beta}),
+#' and the criterion for statistical significance (\eqn{\Alpha}).
 #' 
-#' @param nMZpairs Number of MZ pairs (Default 500)
-#' @param nDZpairs Number of DZ pairs (Default nMZpairs)
+#' A typical target for power is 80%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
+#' of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth want to
+#' discourage running of studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
+#' At the same time, the Type-I error rate is a nominal 5%, and with any researcher degrees of freedom, perhaps much more than that.
+#' Low powered research, then, fails to detect true effects, and generates support for random false theories about as often.
+#' This sounds silly, but empirical rates are often as low as 20% (cite Button).
+#'
+#' If you have few subjects and desired adequate power, you should raise the p-value. Be aware that consumers will be skeptical.
+#'
+#'
+#' @param MZ_DZ_ratio MZ pairs per DZ pair (Default 1 = equal numbers.)
 #' @param AA Additive genetic variance (Default .5)
 #' @param CC Shared environment variance (Default 0)
 #' @param EE  Unique environment variance. Leave NULL to compute an amount summing to 1
 #' @param drop Path(s) to drop (Default "a_r1c1", i.e., drop a)
 #' @param value Value to set drop path(s) to (Default 0)
 #' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
-#' @param sig.level Default alpha = 0.05
+#' @param n  If provided, solve for power /sig.level at the given n (Default NULL)
+#' @param sig.level alpha (p-value) Default = 0.05
 #' @param power Default (1- TypeII) = .8 (80 percent power)
 #' @param type Type of model c("univariate", "bivariate", "GxE") (EXPERIMENTAL MAY GO AWAY OR CHANGE)
 #' @param method How to estimate power: Default =  use non-centrality parameter ("ncp"). Alternative is "empirical"
@@ -27,40 +41,36 @@
 #' @md
 #' @examples
 #'
-#' # =====================
-#' # = Power to detect A =
-#' # =====================
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0) 
+#' # ==========================================
+#' # = Power to detect A with equal MZ and DZ =
+#' # ==========================================
+#' power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0) 
 #' # Suggests n = 30
 #'
-#' # Salutary note: You need well fitting models for power to be valid.
-#' # TryHard suggests 64.7 MZ pairs and 129.3 DZ pairs
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0,
-#' 	tryHard= "yes")
+#' # Salutary note: You need well fitting models for power to be valid. TryHard
+#' # helps with this, as does the default 2000-pair data simulation
+#' power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
 #' 
-#' # Compare to empirical mode
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", AA= .5, CC= 0, 
-#'		method= "empirical", tryHard= "yes")
-#' # For 80% power, you need 58.2 MZ pairs and 116.4 DZ pairs
+#' # Compare to empirical mode: suggests 83.6 MZ and 83.6 DZ pairs
+#' power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, method= "empirical", tryHard= "yes")
 #'
 #' # =====================
 #' # = Power to detect C =
 #' # =====================
 #' 
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", 
-#' 	AA= .5, CC= .3)
+#' # 80% power = 101.5 MZ and 101.5 DZ pairs
+#' power.ACE.test(drop = "c_r1c1", AA= .5, CC= .3, tryHard="yes")
 #'
 #' # ========================================
 #' # = Drop More than one parameter (A & C) =
 #' # ========================================
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "^[ac]_r1c1", 
-#'		AA= .5, CC= .3, tryHard= "yes")
+#' # rather improbable hypothesis that twins show no familial similarity
+#' power.ACE.test(drop = "^[ac]_r1c1", AA= .5, CC= .3)
 #'
 #' # ===================
 #' # = Show range of N =
 #' # ===================
-#' power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop= "a_r1c1", 
-#'		AA= .5, CC= 0, search = TRUE)
+#' power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, search = TRUE)
 #'
 #' # =====================================
 #' # = Compare ncp and empirical methods =
@@ -71,7 +81,7 @@
 #' # ================================
 #' # = Power with more DZs than MZs =
 #' # ================================
-#' 
+#'
 #' power.ACE.test(nMZpairs= 500, nDZpairs = 2000, drop = "a_r1c1", AA= .5, CC= 0)
 #'
 #' # ================================
@@ -106,13 +116,15 @@
 #' # 	power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop = dropWhat, AA= .5, CC= 0)
 #' # }
 #'
-power.ACE.test <- function(nMZpairs= 500, nDZpairs = nMZpairs, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0, EE= NULL, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
-	message("This is beta code!")
-	
+power.ACE.test <- function(MZ_DZ_ratio= 1, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0, EE= NULL, n = NULL, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL){
+	message("This is beta code!")	
 	if(!all.equal(type, c("univariate", "bivariate", "GxE"))){
 		stop("type = ", omxQuotes(type), " not used yet")
 	}
 	# type   = match.arg(type)
+	nMZpairs = 2000;
+	nDZpairs = nMZpairs / MZ_DZ_ratio
+
 	method = match.arg(method)
 	tryHard = match.arg(tryHard)
 
@@ -130,22 +142,22 @@ power.ACE.test <- function(nMZpairs= 500, nDZpairs = nMZpairs, drop = c("a_r1c1"
 	# = build the "true" and "false" (null) models =
 	# ==============================================
 	ace = umxACE(selDVs = "var", sep= "_T", mzData = mzData, dzData= dzData, tryHard = tryHard, optimizer = optimizer)
-	nullModel = umxModify(ace, update = drop, value = value, name= paste0("drop_", drop[1]), tryHard= tryHard)
+	nullModel = umxModify(ace, regex = drop, value = value, name= as.character(mxMakeNames(paste0("drop_", drop[1]))), tryHard= tryHard)
 
 	# return plot to old value
 	umx_set_auto_plot(oldPlot)
 	umx_set_silent(FALSE)
 	
 	if(search){
-		tmp = mxPowerSearch(ace, nullModel, sig.level = sig.level, power = power, method = method)
+		tmp = mxPowerSearch(trueModel=ace, falseModel= nullModel, n = n, sig.level = sig.level, power = power, method = method)
 		plot(power ~ N, data = tmp)
 		abline(h= power)
 	} else {
-		tmp          = mxPower(ace, nullModel, sig.level = sig.level, power = power, method = method)
+		tmp = mxPower(trueModel=ace, falseModel= nullModel, n= n, sig.level = sig.level, power = power, method = method)
 		nFound       = attributes(tmp)$detail$n
 		totalFamiies = (nMZpairs + nDZpairs)
 		MZDZprop     = nMZpairs/totalFamiies
-		message(paste0("For ", power*100, "% power, you need ", round(nFound * MZDZprop, 1), " MZ pairs and ", round(nFound * (1 - MZDZprop), 1), " DZ pairs"))
+		message(paste0("For ", power*100, "% power, you need ", round(nFound * MZDZprop, 1), " MZ and ", round(nFound * (1 - MZDZprop), 1), " DZ pairs"))
 	}
 	return(tmp)
 }
