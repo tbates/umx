@@ -70,12 +70,15 @@ If you have few subjects and desired adequate power, you should raise the p-valu
 power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0) 
 # Suggests n = 30
 
+# ================================
+# = Show power across range of N =
+# ================================
+power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, search = TRUE)
+
 # Salutary note: You need well fitting models for power to be valid. TryHard
 # helps with this, as does the default 2000-pair data simulation
 power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
 
-# Compare to empirical mode: suggests 83.6 MZ and 83.6 DZ pairs
-power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, method= "empirical", tryHard= "yes")
 
 # =====================
 # = Power to detect C =
@@ -85,51 +88,45 @@ power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, method= "empirical", tryHard= "yes
 power.ACE.test(drop = "c_r1c1", AA= .5, CC= .3, tryHard="yes")
 
 # ========================================
+# = Set a to a fixed, but non-zero value =
+# ========================================
+
+power.ACE.test(drop= "a_r1c1", value= .2, AA= .5, CC= 0)
+
+# ========================================
 # = Drop More than one parameter (A & C) =
 # ========================================
 # rather improbable hypothesis that twins show no familial similarity
 power.ACE.test(drop = "^[ac]_r1c1", AA= .5, CC= .3)
 
-# ===================
-# = Show range of N =
-# ===================
-power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, search = TRUE)
 
 # =====================================
 # = Compare ncp and empirical methods =
 # =====================================
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop= "a_r1c1", 
-	AA= .5, CC= 0, method = "empirical")
+# Compare to empirical mode: suggests 83.6 MZ and 83.6 DZ pairs
 
-# ================================
-# = Power with more DZs than MZs =
-# ================================
+power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, method= "empirical")
+# method= "empirical": For 80\% power, you need 76 MZ and 76 DZ pairs
+power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, method = "ncp")
+# method = "ncp": For 80\% power, you need 83.5 MZ and 83.5 DZ pairs
 
-power.ACE.test(nMZpairs= 500, nDZpairs = 2000, drop = "a_r1c1", AA= .5, CC= 0)
+# ===============================================
+# = Power with more DZs than MZs and vice versa =
+# ===============================================
 
-# ================================
-# = Power with more MZs than DZs =
-# ================================
+# Power about the same: total pairs with 2 MZs per DZ = 692, vs. 707
+power.ACE.test(MZ_DZ_ratio = 2/1, drop = "a_r1c1", AA= .3, CC= 0)
+power.ACE.test(MZ_DZ_ratio = 1/2, drop = "a_r1c1", AA= .3, CC= 0)
 
-power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop= "a_r1c1", AA= .5, CC= 0)
-
-# ===========================
-# = Pick a value (not zero) =
-# ===========================
-
-power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop= "a_r1c1", value= .2,
-	AA= .5, CC= 0)
 
 # ====================
 # = Show off options =
 # ====================
 # 1. tryHard
-power.ACE.test(nMZpairs= 500, nDZpairs = 1000, drop = "a_r1c1", 
-	AA= .5, CC= 0, tryHard= "yes")
+power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
 
 # 2. toggle optimizer
-power.ACE.test(nMZpairs= 500, nDZpairs= 1000, drop= "a_r1c1", 
-	AA= .5, CC= 0, optimizer= "SLSQP")
+power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, optimizer= "SLSQP")
 
 # ===================================
 # = Test dropping a series of paths =
