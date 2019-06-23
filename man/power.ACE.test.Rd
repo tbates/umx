@@ -70,15 +70,17 @@ If you have few subjects and desired adequate power, you should raise the p-valu
 # = Power to detect a^2=.5 with equal MZ and DZ =
 # ===============================================
 power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0) 
-# Suggests n = 30
+# Suggests n = 84 MZ and 94 DZ pairs.
 
 # ================================
 # = Show power across range of N =
 # ================================
 power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, search = TRUE)
 
-# Salutary note: You need well fitting models for power to be valid. TryHard
-# helps with this, as does the default 2000-pair data simulation
+# Salutary note: You need well fitting models with correct betas in the data
+# for power to be valid.
+# tryHard helps ensure this, as does the default nSim= 4000 pair data.
+# Power is important to get right, so I recommend using tryHard = "yes"
 power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
 
 
@@ -86,15 +88,15 @@ power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
 # = Power to detect C =
 # =====================
 
-# 80\% power = 101.5 MZ and 101.5 DZ pairs
+# 102 of each of MZ and DZ pairs for 80\% power.
 power.ACE.test(drop = "c_r1c1", AA= .5, CC= .3, tryHard="yes")
 
 # ========================================
-# = Set a to a fixed, but non-zero value =
+# = Set 'a' to a fixed, but non-zero value =
 # ========================================
 
-power.ACE.test(drop= "a_r1c1", value= .2, AA= .5, CC= 0)
-
+power.ACE.test(drop= "a_r1c1", value= sqrt(.2), AA= .5, CC= 0)
+# TODO get power.ACE.test to print the value of A in the null model.
 # ========================================
 # = Drop More than one parameter (A & C) =
 # ========================================
@@ -106,8 +108,8 @@ power.ACE.test(drop = "^[ac]_r1c1", AA= .5, CC= .3)
 # ===============================================
 
 # Power about the same: total pairs with 2 MZs per DZ = 692, vs. 707
-power.ACE.test(MZ_DZ_ratio= 2/1, drop= "a_r1c1", AA= .3, CC= 0, method="ncp")
-power.ACE.test(MZ_DZ_ratio= 1/2, drop= "a_r1c1", AA= .3, CC= 0, method="ncp")
+power.ACE.test(MZ_DZ_ratio= 2/1, drop= "a_r1c1", AA= .3, CC= 0, method="ncp", tryHard="yes")
+power.ACE.test(MZ_DZ_ratio= 1/2, drop= "a_r1c1", AA= .3, CC= 0, method="ncp", tryHard="yes")
 
 \dontrun{
 
@@ -129,6 +131,11 @@ power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
 
 # 2. toggle optimizer
 power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, optimizer= "SLSQP")
+
+# 3. How many twin pairs in the base simulated data?
+power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0)
+power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0, nSim= 20)
+
 }
 
 # ===================================
@@ -144,6 +151,7 @@ power.ACE.test(drop= "a_r1c1", AA= .5, CC= 0, optimizer= "SLSQP")
 \itemize{
 \item Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
 revisited: II detection of common environmental variance. \emph{Twin Res Hum Genet}, \strong{11}: 48-54.
+\href{https://doi.org/10.1375/twin.11.1.48}{doi}
 }
 }
 \seealso{

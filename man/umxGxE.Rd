@@ -36,7 +36,9 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
 }
 \value{
-- GxE \code{\link{mxModel}}
+\itemize{
+\item GxE \code{\link{mxModel}}
+}
 }
 \description{
 Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
@@ -78,11 +80,15 @@ umxReduce(m1)
 }
 }
 \references{
-- Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
- \strong{6}, 554-571. DOI: [https://doi.org/10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554)
+\itemize{
+\item Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
+\strong{6}, 554-571. DOI: \url{https://doi.org/10.1375/twin.5.6.554}
+}
 }
 \seealso{
-- \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
+\itemize{
+\item \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
+}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

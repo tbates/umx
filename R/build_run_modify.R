@@ -1003,8 +1003,9 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
-#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
-#'  \strong{6}, 554-571. DOI: [https://doi.org/10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554)
+#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. *Twin Research*,
+#'  **6**, 554-571. DOI: [https://doi.org/10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554)
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData) 
