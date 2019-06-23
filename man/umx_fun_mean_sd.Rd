@@ -34,11 +34,11 @@ umxAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
 - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-Other Miscellaneous Stats Helpers: \code{\link{reliability}},
-  \code{\link{umxCov2cor}}, \code{\link{umxHetCor}},
-  \code{\link{umx_apply}}, \code{\link{umx_cor}},
-  \code{\link{umx_means}}, \code{\link{umx_r_test}},
-  \code{\link{umx_round}}, \code{\link{umx_var}},
-  \code{\link{umx}}
+Other Miscellaneous Stats Helpers: \code{\link{oddsratio}},
+  \code{\link{reliability}}, \code{\link{umxCov2cor}},
+  \code{\link{umxHetCor}}, \code{\link{umx_apply}},
+  \code{\link{umx_cor}}, \code{\link{umx_means}},
+  \code{\link{umx_r_test}}, \code{\link{umx_round}},
+  \code{\link{umx_var}}, \code{\link{umx}}
 }
 \concept{Miscellaneous Stats Helpers}
