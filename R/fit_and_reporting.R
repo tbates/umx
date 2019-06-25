@@ -2932,62 +2932,63 @@ umxUnexplainedCausalNexus <- function(from, delta, to, model= NULL) {
 }
 
 umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, meanOffsets = FALSE) {
-	# original author: [Timothy Brick](https://www.github.com/tbates/umx/users/tbrick)
+	# Usage: umxConditionalsFromModel(model, newData)
+	# Original author: [Timothy Brick](https://www.github.com/tbates/umx/users/tbrick)
 	# [history](https://www.github.com/tbates/umx/thread/2076)
 	# Called by: umxUnexplainedCausalNexus
-	# TODO:  Special case for latent variables
-	expectation <- model$objective
-	A <- NULL
-	S <- NULL
-	M <- NULL
+	# TODO: Special case for latent variables
+	expectation = model$objective
+	A = NULL
+	S = NULL
+	M = NULL
 	
 	# Handle missing data
 	if(is.null(newData)) {
-		data <- model$data
+		data = model$data
 		if(data$type != "raw") {
 			stop("Conditionals requires either new data or a model with raw data.")
 		}
-		newData <- data$observed
+		newData = data$observed
 	}
 	
 	# New fit-function style
-	eCov  <- model$fitfunction$info$expCov
-	eMean <- model$fitfunction$info$expMean
-	expectation <- model$expectation
+	eCov  = model$fitfunction$info$expCov
+	eMean = model$fitfunction$info$expMean
+	expectation = model$expectation
 	if(!length(setdiff(c("A", "S", "F"), names(getSlots(class(expectation)))))) {
-		A <- eval(substitute(model$X$values, list(X=expectation$A)))
-		S <- eval(substitute(model$X$values, list(X=expectation$S)))
+		A = eval(substitute(model$X$values, list(X=expectation$A)))
+		S = eval(substitute(model$X$values, list(X=expectation$S)))
 		if("M" %in% names(getSlots(class(expectation))) && !is.na(expectation$M)) {
-			M <- eval(substitute(model$X$values, list(X=expectation$M)))
+			M = eval(substitute(model$X$values, list(X=expectation$M)))
 		}
 	}
 
 	if(!is.null(A)) {
 		# RAM model: calculate total expectation
-		I <- diag(nrow(A))
-		Z <- solve(I-A)
-		eCov <- Z %*% S %*% t(Z)
+		I = diag(nrow(A))
+		Z = solve(I-A)
+		eCov = Z %*% S %*% t(Z)
 		if(!is.null(M)) {
-			eMean <- Z %*% t(M)
+			eMean = Z %*% t(M)
 		}
-		latents <- model@latentVars
-		newData <- data.frame(newData, matrix(NA, ncol=length(latents), dimnames=list(NULL, latents)))
+		latents = model@latentVars
+		newData = data.frame(newData, matrix(NA, ncol=length(latents), dimnames=list(NULL, latents)))
 	}
 	
 	# No means
 	if(meanOffsets || !dim(eMean)[1]) {
-		eMean <- matrix(0.0, 1, ncol(eCov), dimnames=list(NULL, colnames(eCov)))
+		eMean = matrix(0.0, 1, ncol(eCov), dimnames=list(NULL, colnames(eCov)))
 	}
 	
 	# TODO: Sort by pattern of missingness, lapply over patterns
 	nRows = nrow(newData)
-	outs <- omxApply(newData, 1, umxComputeConditionals, sigma=eCov, mu=eMean, onlyMean=!returnCovs)
+	outs = omxApply(newData, 1, umxComputeConditionals, sigma=eCov, mu=eMean, onlyMean=!returnCovs)
 	if(returnCovs) {
-		means <- matrix(NA, nrow(newData), ncol(eCov))
-		covs <- rep(list(matrix(NA, nrow(eCov), ncol(eCov))), nRows)
+		means = matrix(NA, nrow(newData), ncol(eCov))
+		covs = rep(list(matrix(NA, nrow(eCov), ncol(eCov))), nRows)
 		for(i in 1:nRows) {
-			means[i,] <- outs[[i]]$mu
-			covs[[i]] <- outs[[i]]$sigma
+			means[i,] = outs[[i]]$mu
+			covs[[i]] = outs[[i]]$sigma
 		}
 		return(list(mean = means, cov = covs))
 	}
@@ -3001,14 +3002,14 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 	# [history](https://www.github.com/tbates/umx/thread/2076)
 	# called by umxConditionalsFromModel()
 	if(dim(mu)[1] > dim(mu)[2] ) {
-		mu <- t(mu)
+		mu = t(mu)
 	}
 
-	nVar <- length(mu)
-	vars <- colnames(sigma)
+	nVar = length(mu)
+	vars = colnames(sigma)
 
 	if(!is.matrix(current)) {
-		current <- matrix(current, 1, length(current), dimnames=list(NULL, names(current)))
+		current = matrix(current, 1, length(current), dimnames=list(NULL, names(current)))
 	}
 	
 	# Check inputs
@@ -3017,28 +3018,28 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 	}
 	
 	if(is.null(vars)) {
-		vars <- rownames(sigma)
+		vars = rownames(sigma)
 		if(is.null(vars)) {
-			vars <- colnames(mu)
+			vars = colnames(mu)
 			if(is.null(vars)) {
-				vars <- names(current)
+				vars = names(current)
 				if(is.null(vars)) {
-					vars <- paste("X", 1:dim(sigma)[1], sep = "")
-					names(current) <- vars
+					vars = paste("X", 1:dim(sigma)[1], sep = "")
+					names(current) = vars
 				}
-				names(mu) <- vars
+				names(mu) = vars
 			}
-			dimnames(sigma) <- list(vars, vars)
+			dimnames(sigma) = list(vars, vars)
 		}
-		rownames(sigma) <- vars
+		rownames(sigma) = vars
 	}
 	
 	if(is.null(colnames(sigma))) {
-		colnames(sigma) <- vars
+		colnames(sigma) = vars
 	}
 	
 	if(is.null(rownames(sigma))) {
-		rownames(sigma) <- colnames(sigma)
+		rownames(sigma) = colnames(sigma)
 	}
 
 	if(!setequal(rownames(sigma), colnames(sigma))) {
@@ -3061,7 +3062,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 			print(paste("Got data vector of length ", ncol(current), " and names of length ", length(vars)))
 			stop("Length and names of current values mismatched in conditional computation.")
 		}
-		names(current) <- vars[1:ncol(current)]
+		names(current) = vars[1:ncol(current)]
 	}
 	
 	if(is.null(names(current))) {
@@ -3071,59 +3072,59 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 				stop("Length and names of mean values mismatched in conditional computation.")
 			}
 		}
-		names(mu) <- vars
+		names(mu) = vars
 	}
 	
 	# Get Missing and Non-missing sets
 	if(!setequal(names(current), vars)) {
-		newSet <- setdiff(vars, names(current))
-		current[newSet] <- NA
-		current <- current[vars]
+		newSet          = setdiff(vars, names(current))
+		current[newSet] = NA
+		current         = current[vars]
 	}
 	
 	# Compute Schur Complement
 	# Calculate parts:
-	missing <- names(current[is.na(current)])
-	nonmissing <- setdiff(vars, missing)
-	ordering <- c(missing, nonmissing)
+	missing    = names(current[is.na(current)])
+	nonmissing = setdiff(vars, missing)
+	ordering   = c(missing, nonmissing)
 	
-	totalCondCov <- NULL
+	totalCondCov = NULL
 
 	# Handle all-missing and none-missing cases
 	if(length(missing) == 0) {
-		totalMean = current
-		names(totalMean) <- names(current)
-		totalCondCov = sigma
+		totalMean        = current
+		names(totalMean) = names(current)
+		totalCondCov     = sigma
 	} 
 
 	if(length(nonmissing) == 0) {
 		totalMean = mu
-		names(totalMean) <- names(mu)
+		names(totalMean) = names(mu)
 		totalCondCov = sigma
 	}
 
 	# Compute Conditional expectations
 	if(is.null(totalCondCov)) {
 		
-		covMat <- sigma[ordering, ordering]
-		missMean <- mu[, missing]
-		haveMean <- mu[, nonmissing]
+		covMat   = sigma[ordering, ordering]
+		missMean = mu[, missing]
+		haveMean = mu[, nonmissing]
 
-		haves <- current[nonmissing]
-		haveNots <- current[missing]
+		haves    = current[nonmissing]
+		haveNots = current[missing]
 
-		missCov <- sigma[missing, missing]
-		haveCov <- sigma[nonmissing, nonmissing]
-		relCov <- sigma[missing, nonmissing]
-		relCov <- matrix(relCov, length(missing), length(nonmissing))
+		missCov = sigma[missing, missing]
+		haveCov = sigma[nonmissing, nonmissing]
+		relCov  = sigma[missing, nonmissing]
+		relCov  = matrix(relCov, length(missing), length(nonmissing))
 
-		invHaveCov <- solve(haveCov)
-		condMean <- missMean + relCov %*% invHaveCov %*% (haves - haveMean)
+		invHaveCov = solve(haveCov)
+		condMean   = missMean + relCov %*% invHaveCov %*% (haves - haveMean)
 
-		totalMean <- current * 0.0
-		names(totalMean) <- vars
-		totalMean[missing] <- condMean
-		totalMean[nonmissing] <- current[nonmissing]
+		totalMean             = current * 0.0
+		names(totalMean)      = vars
+		totalMean[missing]    = condMean
+		totalMean[nonmissing] = current[nonmissing]
 	}
 
 	if(onlyMean) {
@@ -3131,13 +3132,13 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 	}
 	
 	if(is.null(totalCondCov)) {
-		condCov <- missCov - relCov %*% invHaveCov %*% t(relCov)
+		condCov = missCov - relCov %*% invHaveCov %*% t(relCov)
 	
-		totalCondCov <- sigma * 0.0
-		totalCondCov[nonmissing, nonmissing] <- haveCov
-		totalCondCov[missing, missing] <- condCov
+		totalCondCov = sigma * 0.0
+		totalCondCov[nonmissing, nonmissing] = haveCov
+		totalCondCov[missing, missing] = condCov
 	}	
-	return(list(sigma=totalCondCov, mu=totalMean))
+	return(list(sigma = totalCondCov, mu = totalMean))
 	
 }
 
