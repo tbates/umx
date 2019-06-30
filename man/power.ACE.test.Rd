@@ -66,6 +66,9 @@ If you have few subjects and desired adequate power, you should raise the p-valu
 }
 \examples{
 
+# TODO why not equivalent to this?
+# https://genepi.qimr.edu.au//general/TwinPowerCalculator/twinpower.cgi
+
 # ===============================================
 # = Power to detect a^2=.5 with equal MZ and DZ =
 # ===============================================
@@ -97,11 +100,27 @@ power.ACE.test(drop = "c_r1c1", AA= .5, CC= .3, tryHard="yes")
 
 power.ACE.test(drop= "a_r1c1", value= sqrt(.2), AA= .5, CC= 0)
 # TODO get power.ACE.test to print the value of A in the null model.
+
 # ========================================
 # = Drop More than one parameter (A & C) =
 # ========================================
 # rather improbable hypothesis that twins show no familial similarity
 power.ACE.test(drop = "^[ac]_r1c1", AA= .5, CC= .3)
+
+# ===================================================
+# = More power to detect A > 0 when more C present  =
+# ===================================================
+
+power.ACE.test(drop = "a_r1c1", AA= .5, CC= .0)
+power.ACE.test(drop = "a_r1c1", AA= .5, CC= .3)
+
+# ====================================================
+# = More power to detect C > 0 when more A present?  =
+# ====================================================
+
+power.ACE.test(drop = "c_r1c1", AA= .0, CC= .5)
+power.ACE.test(drop = "c_r1c1", AA= .3, CC= .5)
+
 
 # ===============================================
 # = Power with more DZs than MZs and vice versa =

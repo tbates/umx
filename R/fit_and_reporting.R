@@ -125,30 +125,27 @@ umxWeightedAIC <- function(models, digits= 2) {
 #'
 #' @description
 #' Given a `umx` model (currently `umxACE` and `umxGxE` are supported - ask for more!)
-#' `umxReduce` will conduct a formalised reduction process.
+#' `umxReduce` will conduct a formalised reduction process. It will also report
+#' Akaike weights are also reported showing relative support across models.
 #'
-#' **GxE model reduction**
-#' For \code{\link{umxGxE}} models, each form of moderation is tested
-#' on its own, and jointly.
-#' Also, C is removed, and moderation tested in this model.
+#' Specialized functions are called for different type of input:
+#' 1. **GxE model reduction** For [umxGxE()] models [umxReduceGxE()] is called.
+#' 2. **ACE model reduction** For [umxACE()] models,[umxReduceACE()] is called.
 #' 
-#' **ACE model reduction**
-#' For \code{\link{umxACE}} models, A and then C are removed and tested.
-#' 
-#' It reports the results in a table. Set the format of the table with
-#' \code{\link{umx_set_table_format}}()., or set `report` to "html" to open a
+#' `umxReduce` reports the results in a table. Set the format of the table with
+#' [umx_set_table_format()], or set `report= "html"` to open a
 #' table for pasting into a word processor.
 #' 
 #' `umxReduce` is a work in progress, with more automatic reductions coming as demand emerges.
 #' I am thinking for RAM models to drop NS paths, and report that test.
 #'
-#' @param model The \code{\link{mxModel}} which will be reduced.
+#' @param model The [mxModel()] which will be reduced.
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param ... Other parameters to control model summary
 #' @family Reporting Functions
 #' @family Twin Reporting Functions
-#' @seealso \code{\link{umxReduceGxE}}, \code{\link{umxReduceACE}}
+#' @seealso [umxReduceGxE()], [umxReduceACE()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
 #' @export
 #' @md
@@ -164,21 +161,23 @@ umxReduce.default <- function(model, ...){
 #' Reduce a GxE model.
 #'
 #' @description
-#' This function can perform model reduction for [umxGxE][umxGxE], 
-#' testing dropping means-moderation, a`,c` & e`, as well as c & c`, a & a` etc.
+#' This function can perform model reduction for [umxGxE()] models, 
+#' testing dropping a`,c` & e`, as well as c & c`, a & a` etc.
 #'
 #' It reports the results in a table. Set the format of the table with
-#' [umx_set_table_format]. Or set `report` to "html" to open a
+#' [umx_set_table_format()]. Or set `report = "html"` to open a
 #' table for pasting into a word processor.
 #' 
-#' @param model An \code{\link{mxModel}} to reduce.
+#' In addition to printing a table, the function returns the preferred model.
+#' 
+#' @param model An [mxModel()] to reduce.
 #' @param report How to report the results. "html" = open in browser.
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp").
 #' @param ... Other parameters to control model summary.
 #' @return best model
 #' @export
 #' @family Twin Reporting Functions
-#' @seealso \code{\link{umxReduceACE}}, \code{\link{umxReduce}}
+#' @seealso [umxReduceACE()], [umxReduce()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
 #' *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482).
 #' @md
@@ -207,13 +206,18 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		no_sq_mean  = umxModify(noACEmod, update = "quad11" , name = "No_mod_no_quad_mean")
 		nomeans     = umxModify(noACEmod, regex = "lin|quad", name = "No_mod_no_means_mod")
 
+		# comparisons = c(
+		# 	noAmod, noCmod, noEmod, noACEmod,
+		# 	no_a_no_am, no_c_no_cm, no_c_no_cem,
+		# 	no_c_no_mod,
+		# 	no_lin_mean, no_sq_mean, nomeans
+		# )
+
 		comparisons = c(
 			noAmod, noCmod, noEmod, noACEmod,
 			no_a_no_am, no_c_no_cm, no_c_no_cem,
-			no_c_no_mod,
-			no_lin_mean, no_sq_mean, nomeans 
+			no_c_no_mod
 		)
-
 		# ====================
 		# = everything table =
 		# ====================
