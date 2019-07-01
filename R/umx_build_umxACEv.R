@@ -140,7 +140,7 @@
 #' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACEv(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+#' m1 = umxACEv(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 #' umxSummary(m1, std = FALSE) # unstandardized
 #' # tip: with report = "html", umxSummary can print the table to your browser!
 #' plot(m1)
