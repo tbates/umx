@@ -1103,7 +1103,6 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.
 #' # Pick the variables
-#' selDVs = c("ht")
 #' # 1. Height has a tiny variance, and this makes solution finding very hard.
 #' # We'll scale height up by 10x to make the Optimizer's task easier.
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
@@ -1114,7 +1113,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' 
 #' # 3. umxACE can figure out variable names using sep: 
 #' #    e.g. selVars = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
-#' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+#' m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 #' 
 #' # tip: with report = "html", umxSummary can print the table to your browser!
 #' umxSummary(m1, std = FALSE) # un-standardized
@@ -1125,7 +1124,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # =============================================================
 #' # = ADE: Evidence for dominance ? (DZ correlation set to .25) =
 #' # =============================================================
-#' m2 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
+#' m2 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
 #' umxCompare(m2, m1) # ADE is better
 #' umxSummary(m2, comparison = m1) 
 #' # nb: Although summary is smart enough to print d, the underlying 
@@ -1134,7 +1133,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # ================
 #' # = WLS analysis =
 #' # ================
-#' m3 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, 
+#' m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData, 
 #' 	type = "DWLS", allContinuousMethod='marginals'
 #' )
 #'

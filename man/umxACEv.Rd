@@ -140,7 +140,7 @@ m1 = umxACEv(selDVs = "wt", sep = "", dzData = "MZFF", mzData = "DZFF", data = t
 # ========================================================
 # = Evidence for dominance ? (DZ correlation set to .25) =
 # ========================================================
-m2 = umxACEv("ADE", selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
+m2 = umxACEv("ADE", selDVs = "wt", sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
 # note: the underlying matrices are still called A, C, and E.
 # I catch this in the summary table, so columns are labeled A, D, and E.
 # However, currently, the plot will say A, C, E.
@@ -173,7 +173,7 @@ plot(m1)
 # ========================================================
 # = Evidence for dominance ? (DZ correlation set to .25) =
 # ========================================================
-m2 = umxACEv("ADE", selDVs = selDVs, sep="", dzData = dzData, mzData = mzData, dzCr = .25)
+m2 = umxACEv("ADE", selDVs = "ht", sep="", dzData = dzData, mzData = mzData, dzCr = .25)
 umxCompare(m2, m1) # Is ADE better?
 umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
 
