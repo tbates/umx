@@ -5464,6 +5464,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, varNames = "IQ")
 #' umxAPA(subset(tmp, zygosity == "MZ", c("IQ_T1", "IQ_T2")))
 #' umxAPA(subset(tmp, zygosity == "DZ", c("IQ_T1", "IQ_T2")))
+#' m1 = umxACE(selDVs= "IQ", data = tmp)
 #' 
 #' # Bivariate GxSES example (see umxGxEbiv)
 #' 

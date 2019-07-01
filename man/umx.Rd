@@ -112,10 +112,9 @@ Other Modify or Compare Models: \code{\link{umxAdd1}},
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCPold}}, \code{\link{umxPlotCP}},
-  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
-  \code{\link{umxPlotSimplex}}
+  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
+  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
+  \code{\link{umxPlotSexLim}}, \code{\link{umxPlotSimplex}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxLav2RAM}}, \code{\link{umxRAM2}},
@@ -123,8 +122,7 @@ Other Super-easy helpers: \code{\link{umxEFA}},
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEold}}, \code{\link{umxACEv}},
-  \code{\link{umxACE}}, \code{\link{umxCPold}},
+  \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
   \code{\link{umxIPold}}, \code{\link{umxIP}},
@@ -138,9 +136,9 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxSummarySimplex}},
   \code{\link{xmu_twin_check}}
 
-Other Twin Reporting Functions: \code{\link{umxPlotCPold}},
-  \code{\link{umxPlotCP}}, \code{\link{umxReduceACE}},
-  \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
+Other Twin Reporting Functions: \code{\link{umxPlotCP}},
+  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
+  \code{\link{umxReduce}},
   \code{\link{umxSummarizeTwinData}}
 
 Other Twin Data functions: \code{\link{umx_long2wide}},

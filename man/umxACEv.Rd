@@ -5,13 +5,14 @@
 \title{Build and run 2-group uni- or multi-variate ACE models based on VARIANCE (not paths).}
 \usage{
 umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
-  mzData, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  allContinuousMethod = c("cumulants", "marginals"), dzAr = 0.5,
-  dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL,
-  numObsMZ = NULL, boundDiag = NULL, weightVar = NULL,
-  equateMeans = TRUE, bVector = FALSE, covMethod = c("fixed",
-  "random"), autoRun = getOption("umx_auto_run"), tryHard = c("no",
-  "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  mzData, dzAr = 0.5, dzCr = 1, type = c("Auto", "FIML", "cov",
+  "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants",
+  "marginals"), data = NULL, zyg = "zygosity", weightVar = NULL,
+  numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE,
+  boundDiag = NULL, equateMeans = TRUE, bVector = FALSE,
+  covMethod = c("fixed", "random"),
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   optimizer = NULL)
 }
 \arguments{
@@ -27,25 +28,29 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
 
 \item{mzData}{The MZ dataframe.}
 
-\item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS").}
-
-\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
-
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
 \item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
-\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
+\item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS").}
 
-\item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE).}
+\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
+
+\item{data}{If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)}
+
+\item{zyg}{If data provided, this column is used to select rows by zygosity (Default = "zygosity")}
+
+\item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL).}
 
 \item{numObsDZ}{= Number of DZ twins: Set this if you input covariance data.}
 
 \item{numObsMZ}{= Number of MZ twins: Set this if you input covariance data.}
 
-\item{boundDiag}{= Numeric lbound for diagonal of the a, c, and e matrices. Default = NULL (no bound)}
+\item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
 
-\item{weightVar}{= If provided, a vector objective will be used to weight the data. (default = NULL).}
+\item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE).}
+
+\item{boundDiag}{= Numeric lbound for diagonal of the a, c, and e matrices. Default = NULL (no bound)}
 
 \item{equateMeans}{Whether to equate the means across twins (defaults to TRUE).}
 
@@ -126,11 +131,12 @@ data(twinData) # ?twinData from Australian twins.
 #    Function generates: "wt" -> "wt1" "wt2"
 # 2. umxACEv picks the variables it needs from the data.
 
-selDVs = "wt"
 mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
-m1 = umxACEv(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+m1 = umxACEv(selDVs = "wt", sep = "", dzData = dzData, mzData = mzData)
 
+# A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:
+m1 = umxACEv(selDVs = "wt", sep = "", dzData = "MZFF", mzData = "DZFF", data = twinData)
 # ========================================================
 # = Evidence for dominance ? (DZ correlation set to .25) =
 # ========================================================
@@ -269,8 +275,7 @@ to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.n
 \seealso{
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEold}}, \code{\link{umxACE}},
-  \code{\link{umxCPold}}, \code{\link{umxCP}},
+  \code{\link{umxACE}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
   \code{\link{umxGxE}}, \code{\link{umxIPold}},
   \code{\link{umxIP}}, \code{\link{umxSexLim}},

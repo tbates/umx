@@ -56,9 +56,8 @@ Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{umx_time}}, \code{\link{umx}},
   \code{\link{xmu_get_CI}}
 
-Other Twin Reporting Functions: \code{\link{umxPlotCPold}},
-  \code{\link{umxPlotCP}}, \code{\link{umxReduceACE}},
-  \code{\link{umxReduceGxE}},
+Other Twin Reporting Functions: \code{\link{umxPlotCP}},
+  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
   \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
 }
 \concept{Reporting Functions}

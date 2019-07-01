@@ -67,14 +67,16 @@
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
 #' @param sep The separator in twin var names, often "_T" in vars like "dep_T1". Simplifies selDVs.
+#' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
+#' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
 #' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS").
-#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
-#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
-#' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
+#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param numObsDZ = Number of DZ twins: Set this if you input covariance data.
 #' @param numObsMZ = Number of MZ twins: Set this if you input covariance data.
+#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
+#' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
 #' @param boundDiag = Numeric lbound for diagonal of the a, c, and e matrices. Default = NULL (no bound)
 #' @param weightVar = If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
@@ -104,11 +106,12 @@
 #' #    Function generates: "wt" -> "wt1" "wt2"
 #' # 2. umxACEv picks the variables it needs from the data.
 #' 
-#' selDVs = "wt"
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACEv(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+#' m1 = umxACEv(selDVs = "wt", sep = "", dzData = dzData, mzData = mzData)
 #' 
+#' # A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:
+#' m1 = umxACEv(selDVs = "wt", sep = "", dzData = "MZFF", mzData = "DZFF", data = twinData)
 #' # ========================================================
 #' # = Evidence for dominance ? (DZ correlation set to .25) =
 #' # ========================================================
@@ -239,15 +242,25 @@
 #' m1 = umxACEv(selDVs = selDVs, sep= "", dzData = dz, mzData= mz, numObsDZ= 569, numObsMZ= 351)
 #' umxSummary(m1, std = FALSE)
 #' 
-umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"),
-	dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, 
-	boundDiag = NULL, weightVar = NULL, equateMeans = TRUE, bVector = FALSE,  covMethod = c("fixed", "random"), 
+umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, dzAr = .5, dzCr = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"),
+	data = NULL, zyg = "zygosity", weightVar = NULL, numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE, 
+	boundDiag = NULL, equateMeans = TRUE, bVector = FALSE,  covMethod = c("fixed", "random"), 
 	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
-		nSib = 2 # number of siblings in a twin pair
-		covMethod  = match.arg(covMethod)
-		type = match.arg(type)
+		nSib                = 2 # number of siblings in a twin pair
+		type                = match.arg(type)
+		covMethod           = match.arg(covMethod)
 		allContinuousMethod = match.arg(allContinuousMethod)
-
+		if(!is.null(data)){
+			if(is.null(dzData)){
+				dzData = "DZ"
+				mzData = "MZ"
+			}
+			if(is.null(sep)){
+				sep="_T"
+			}
+			mzData = data[data[,zyg] %in% mzData, ]
+			dzData = data[data[,zyg] %in% dzData, ]
+		}
 		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 		
 		if(dzCr == .25 & name == "ACE"){
@@ -349,7 +362,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, summary = TRUE, comparison = FALSE)
 		return(model)
 	}
-} # end umxACEvv
+} # end umxACEv
 
 
 #' Shows a compact, publication-style, summary of a variance-based Cholesky ACE model.

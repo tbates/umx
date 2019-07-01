@@ -6,8 +6,8 @@
 \usage{
 umxCP(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  allContinuousMethod = c("cumulants", "marginals"),
-  correlatedA = FALSE, dzAr = 0.5, dzCr = 1,
+  data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants",
+  "marginals"), correlatedA = FALSE, dzAr = 0.5, dzCr = 1,
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
   "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   optimizer = NULL, equateMeans = TRUE, weightVar = NULL,
@@ -30,6 +30,10 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 \item{nFac}{How many common factors (default = 1)}
 
 \item{type}{One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"}
+
+\item{data}{If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)}
+
+\item{zyg}{If data provided, this column is used to select rows by zygosity (Default = "zygosity")}
 
 \item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
@@ -158,8 +162,9 @@ dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
 m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
 		dzData = dzData, mzData = mzData, tryHard = "mxTryHardOrdinal")
-mold = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
-umxCompare(m1, mold)
+
+# Shortcut using "data ="
+m1 = umxCP(selDVs = selDVs, nFac = 3, data=GFF, zygosity="zyg_2grp")
 
 # ===================
 # = Do it using WLS =
@@ -229,8 +234,7 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEold}}, \code{\link{umxACEv}},
-  \code{\link{umxACE}}, \code{\link{umxCPold}},
+  \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
   \code{\link{umxGxE}}, \code{\link{umxIPold}},
   \code{\link{umxIP}}, \code{\link{umxSexLim}},

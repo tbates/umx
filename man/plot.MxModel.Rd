@@ -100,10 +100,9 @@ Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
 
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
-  \code{\link{umxPlotACE}}, \code{\link{umxPlotCPold}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
-  \code{\link{umxPlotSexLim}},
+  \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
+  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

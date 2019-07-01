@@ -815,14 +815,18 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 #' \dontrun{
 #' require(umx)
 #' data(GFF)
-#' mzData <- subset(GFF, zyg_2grp == "MZ")
-#' dzData <- subset(GFF, zyg_2grp == "DZ")
-#' selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
-#' m1 = umxCPold(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
-#' umxSummary(m1)
-#' umxParameters(m1, patt = "^c")
-#' m2 = umxModify(m1, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
-#' umxSummaryCP(m2, comparison = m1, file = NA)
+#' mzData = subset(GFF, zyg_2grp == "MZ")
+#' dzData = subset(GFF, zyg_2grp == "DZ")
+#  # These will be expanded into "gff_T1" "gff_T2" etc.
+#' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
+#' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
+#' 		dzData = dzData, mzData = mzData, tryHard = "mxTryHardOrdinal")
+#' mold = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
+#' umxCompare(mold, mold)
+#' umxSummary(mold)
+#' umxParameters(mold, patt = "^c")
+#' m2 = umxModify(mold, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
+#' umxSummaryCP(m2, comparison = mold, file = NA)
 #' umxCompare(m1, m2)
 #' }
 #' @md

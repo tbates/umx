@@ -975,6 +975,434 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 # ==================
 # = Twin Functions =
 # ==================
+
+#' Build and run a 2-group Cholesky twin model (uni-variate or multi-variate)
+#'
+#' @description
+#' Implementing a core task in twin modeling, umxACE models the genetic and environmental
+#' structure of one or more phenotypes (measured variables) using the Cholesky ACE model
+#' (Neale and Cardon, 1996).
+#' 
+#' Classical twin modeling uses the genetic and environmental differences 
+#' among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
+#' 
+#' `umxACE` implements a 2-group model to capture these data and represent the phenotypic variance as a sum of Additive genetic,
+#' unique environmental (E) and, optionally, either common or shared-environment (C) or 
+#' non-additive genetic effects (D).
+#' 
+#' The following figure shows how the ACE model appears as a path diagram (for one variable):
+#' 
+#' \if{html}{\figure{ACEunivariate.png}{options: width="50\%" alt="Figure: ACE univariate.png"}}
+#' \if{latex}{\figure{ACEunivariate.pdf}{options: width=7cm}}
+#'
+#' `umxACE` allows multivariate analyses, and this brings us to the Cholesky part of the model.
+#' 
+#' This model creates as many latent A C and E variables as there are phenotypes, and, moving 
+#' from left to right, decomposes the variance in each manifest into successively restricted 
+#' factors. The following figure shows how the ACE model appears as a path diagram:
+#' 
+#' \if{html}{\figure{ACEmatrix.png}{options: width="50\%" alt="Figure: ACE matrix.png"}}
+#' \if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
+#' 
+#' In this model, the variance-covariance matrix of the raw data
+#' is recovered as the product of the lower Cholesky and its transform.
+#' 
+#' This Cholesky or lower-triangle decomposition allows a model which is both sure to be 
+#' solvable, and also to account for all the variance (with some restrictions) in the data.
+#' 
+#' This figure also contains the key to understanding how to modify models that `umxACE` produces.
+#' read the "Matrices and Labels in ACE model" section in details below...
+#' 
+#' **NOTE**: Scroll down to details for how to use the function, a figure
+#' and multiple examples.
+#' 
+#' @details
+#' \strong{Data Input}
+#' The function flexibly accepts raw data, and also summary covariance data 
+#' (in which case the user must also supple numbers of observations for the two input data sets).
+#' 
+#' The `type` parameter can select how you want the model data treated.
+#' "FIML" is the normal treatment. "cov" and "cor" will turn raw data into cor data for analysis, or
+#' check that you've provided cor data as input.
+#' 
+#' Types "WLS", "DWLS", and "ULS" will process raw data into WLS data of these types.
+#' 
+#' The default, "Auto" will treat data as the type they are provided as.
+#' 
+#' \strong{Ordinal Data}
+#' In an important capability, the model transparently handles ordinal (binary or multi-level
+#' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
+#' data in any combination. An experimental feature is under development to allow Tobit modeling. 
+#' 
+#' The function also supports weighting of individual data rows. In this case,
+#' the model is estimated for each row individually, then each row likelihood
+#' is multiplied by its weight, and these weighted likelihoods summed to form
+#' the model-likelihood, which is to be minimized.
+#' This feature is used in the non-linear GxE model functions.
+#' 
+#' \strong{Additional features}
+#' The umxACE function supports varying the DZ genetic association (defaulting to .5)
+#' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
+#' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
+#' to .25 to model dominance effects.
+#'
+#' \strong{Matrices and Labels in ACE model}
+#' 
+#' Matrices 'a', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
+#' 
+#' So, labels relevant to modifying the model are of the form \code{"a_r1c1", "c_r1c1"} etc.
+#'
+#' Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say
+#'
+#'     \code{m2 = umxModify(m1, update = "c_r3c2")}
+#'	
+#' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for 
+#' each variable for twin 1, followed by each variable for twin 2.
+#' 
+#' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+#'
+#' \code{m1$top$expMean$labels[1, 4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+#'
+#' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
+#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
+#' @param name The name of the model (defaults to"ACE").
+#' @param selDVs The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").
+#' @param selCovs (optional) covariates to include from the data (do not include sep in names)
+#' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.
+#' @param dzData The DZ dataframe.
+#' @param mzData The MZ dataframe.
+#' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
+#' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
+#' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
+#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
+#' @param covMethod How to treat covariates: "fixed" (default) or "random".
+#' @param autoRun Whether to run the model (default), or just to create it and return without running.
+#' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param optimizer Optionally set the optimizer (default NULL does nothing).
+#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
+#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
+#' @param numObsDZ Number of DZ twins: Set this if you input covariance data.
+#' @param numObsMZ Number of MZ twins: Set this if you input covariance data.
+#' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
+#' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
+#' @param boundDiag Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8
+#' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
+#' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
+#' @return - \code{\link{mxModel}} of subclass mxModel.ACE
+#' @export
+#' @family Twin Modeling Functions
+#' @seealso - \code{\link{umxPlotACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
+#' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
+#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+#' @md
+#' @examples
+#' # ============================
+#' # = How heritable is height? =
+#' # ============================
+#' require(umx)
+#' data(twinData) # ?twinData from Australian twins.
+#' # Pick the variables
+#' selDVs = c("ht")
+#' # 1. Height has a tiny variance, and this makes solution finding very hard.
+#' # We'll scale height up by 10x to make the Optimizer's task easier.
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+#' 
+#' # 2. umxACE picks the variables it needs from the data.
+#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' 
+#' # 3. umxACE can figure out variable names using sep: 
+#' #    e.g. selVars = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
+#' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+#' 
+#' # tip: with report = "html", umxSummary can print the table to your browser!
+#' umxSummary(m1, std = FALSE) # un-standardized
+#' # tip: plot gives a figure of the model and parameters
+#' # plot(m1)
+#' 
+#'
+#' # =============================================================
+#' # = ADE: Evidence for dominance ? (DZ correlation set to .25) =
+#' # =============================================================
+#' m2 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
+#' umxCompare(m2, m1) # ADE is better
+#' umxSummary(m2, comparison = m1) 
+#' # nb: Although summary is smart enough to print d, the underlying 
+#' #     matrices are still called a, c & e.
+#'
+#' # ================
+#' # = WLS analysis =
+#' # ================
+#' m3 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData, 
+#' 	type = "DWLS", allContinuousMethod='marginals'
+#' )
+#'
+#' # ==============================
+#' # = Univariate model of weight =
+#' # ==============================
+#'
+#' # Things to note:
+#' 
+#' # 1. Weight has a large variance, and this makes solution finding very hard.
+#' # We'll scale wt to make the Optimizer's task easier.
+#'
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' 
+#' # 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0.
+#' #    Prevents mirror-solutions. If not desired: set boundDiag = NULL.
+#'
+#' m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
+#'
+#' # A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:
+#' m1 = umxACE(selDVs = "wt", sep = "", data = twinData,
+#' 	dzData = c("DZMM", "DZFF", "DZOS"), mzData = c("MZMM", "MZFF"))
+#' # |   |   a1|c1 |   e1|
+#' # |:--|----:|:--|----:|
+#' # |wt | 0.93|.  | 0.38|
+#'
+#' # MODEL MODIFICATION
+#' # We can modify this model, e.g. test shared environment. 
+#' # Set comparison to modify, and show effect in one step.
+#' 
+#' m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
+#' # nb: You can see names of free parameters with parameters(m2)
+#'
+#' # =====================================
+#' # = Bivariate height and weight model =
+#' # =====================================
+#' data(twinData)
+#' selDVs = c("ht", "wt") # umx will add sep (in this case "") + "1" or '2'
+#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
+#' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
+#' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
+#' mzData = mzData[1:80,] # quicker run to keep CRAN happy
+#' dzData = dzData[1:80,]
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
+#' m2 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '',
+#' 	type = "DWLS", allContinuousMethod='marginals')
+#' umxSummary(m1)
+#'
+#' # =========================================================
+#' # = Well done! Now you can make modify twin models in umx =
+#' # =========================================================
+#'
+#'
+#' # ===================
+#' # = Ordinal example =
+#' # ===================
+#' require(umx)
+#' data(twinData)
+#' twinData= umx_scale_wide_twin_data(data=twinData,varsToScale=c("wt"),sep="")
+#' # Cut BMI column to form ordinal obesity variables
+#' obLevels = c('normal', 'overweight', 'obese')
+#' cuts <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+#' twinData$obese1=cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels)
+#' twinData$obese2=cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels)
+#' # Make the ordinal variables into umxFactors
+#' ordDVs = c("obese1", "obese2")
+#' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obLevels)
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' mzData = mzData[1:80, ] # Just top 80 pairs to run fast
+#' dzData = dzData[1:80, ]
+#' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
+#' 
+#' # Data-prep done - here's where the model starts:
+#' selDVs = c("obese")
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
+#' umxSummary(m1)
+#'
+#' # ============================================
+#' # = Bivariate continuous and ordinal example =
+#' # ============================================
+#' data(twinData)
+#' twinData=umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
+#' # Cut BMI column to form ordinal obesity variables
+#' obLevels   = c('normal', 'overweight', 'obese')
+#' cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+#' twinData$obese1=cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+#' twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+#' # Make the ordinal variables into mxFactors
+#' ordDVs = c("obese1", "obese2")
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+#' mzData = twinData[twinData$zygosity %in% "MZFF",] 
+#' dzData = twinData[twinData$zygosity %in% "DZFF",]
+#' mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
+#' dzData <- dzData[1:80,]
+#' m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
+#' 
+#' # =======================================
+#' # = Mixed continuous and binary example =
+#' # =======================================
+#' require(umx)
+#' data(twinData)
+#' twinData= umx_scale_wide_twin_data(data= twinData,varsToScale= "wt", sep="")
+#' # Cut to form category of 20% obese subjects
+#' # and make into mxFactors (ensure ordered is TRUE, and require levels)
+#' obLevels   = c('normal', 'obese')
+#' cuts       = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+#' twinData$obese1= cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels) 
+#' twinData$obese2= cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels) 
+#' ordDVs = c("obese1", "obese2")
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+#' 
+#' selDVs = c("wt", "obese")
+#' mzData = twinData[twinData$zygosity %in% "MZFF",]
+#' dzData = twinData[twinData$zygosity %in% "DZFF",]
+#' \dontrun{
+#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
+#' umxSummary(m1)
+#' }
+#'
+#' # ===================================
+#' # Example with covariance data only =
+#' # ===================================
+#'
+#' require(umx)
+#' data(twinData)
+#' twinData= umx_scale_wide_twin_data(data=twinData, varsToScale= "wt", sep="")
+#' selDVs = c("wt1", "wt2")
+#' mz = cov(twinData[twinData$zygosity %in%  "MZFF", selDVs], use = "complete")
+#' dz = cov(twinData[twinData$zygosity %in%  "DZFF", selDVs], use = "complete")
+#' m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=569, numObsMZ=351)
+#' umxSummary(m1)
+#' plot(m1)
+#'
+umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, covMethod = c("fixed", "random"), dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
+		tryHard             = match.arg(tryHard)
+		covMethod           = match.arg(covMethod)
+		type                = match.arg(type)
+		allContinuousMethod = match.arg(allContinuousMethod)
+		nSib                = 2 # Number of siblings in a twin pair.
+		if(!is.null(data)){
+			if(is.null(dzData)){
+				dzData = "DZ"
+				mzData = "MZ"
+			}
+			if(is.null(sep)){
+				sep = "_T"
+			}			
+			mzData = data[data[,zyg] %in% mzData, ]
+			dzData = data[data[,zyg] %in% dzData, ]
+		}
+		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
+		
+		if(dzCr == .25 & (name == "ACE")){
+			name = "ADE"
+		}
+
+		# If given covariates, call umxACEcov
+		if(!is.null(selCovs)){
+			if(covMethod == "fixed"){
+				stop("Fixed covariates are on the road map for umx in 2019. Until then, use umx_residualize on the data first.")
+				# umxACEdefcov(name = name, selDVs= selDVs, selCovs = selCovs, dzData= dzData, mzData= mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, autoRun = autoRun, tryHard = tryHard)
+			} else if(covMethod == "random"){
+				umxACEcov(name = name, selDVs= selDVs, selCovs= selCovs, sep = sep, dzData= dzData, mzData= mzData,  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, autoRun = autoRun, tryHard = tryHard)
+			}
+		}else{
+			# nSib = 2, equateMeans = TRUE, verbose = verbose
+
+			# New-style build-block: Expand var names if necessary and make the basic components of a twin model
+			if(is.null(sep)){
+				selVars = selDVs # full names passed in... gosh I wish I'd not allowed this early on...
+				bits = xmu_make_top_twin(mzData = mzData, dzData = dzData, selDVs= selVars, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
+				tmp = xmu_starts(mzData, dzData, selVars = selVars, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+			}else{
+				selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+				bits = xmu_make_top_twin(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
+				tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+			}
+
+			nVar = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+			varStarts = tmp$varStarts
+			top     = bits$top
+			MZ      = bits$MZ
+			DZ      = bits$DZ
+			
+			if(!is.null(weightVar)){
+				mzWeightMatrix = bits$mzWeightMatrix
+				dzWeightMatrix = bits$dzWeightMatrix
+			}else{
+				mzWeightMatrix = dzWeightMatrix = NULL
+			}
+
+			# Finish building top
+			top = mxModel(top,
+				# NB: "top" defines the algebra of the twin model, which MZ and DZ slave off of
+				# it already has the means model and thresholds matrix added if necessary  - see "xmu_make_top_twin" above
+
+				# Additive, Common, and Unique environmental paths				
+				umxMatrix("a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
+				umxMatrix("c", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
+				umxMatrix("e", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE), 
+		
+				umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+				umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
+				# Multiply by each path coefficient by its inverse to get variance component
+				# Quadratic multiplication to add common_loadings
+				mxAlgebra(name = "A", a %*% t(a)), # Additive genetic variance
+				mxAlgebra(name = "C", c %*% t(c)), # Common environmental variance
+				mxAlgebra(name = "E", e %*% t(e)), # Unique environmental variance
+				mxAlgebra(name = "ACE", A+C+E),
+				mxAlgebra(name = "AC" , A+C  ),
+				mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
+				mxAlgebra(rbind(cbind(ACE, AC),
+				                cbind(AC , ACE)), dimnames = list(selVars, selVars), name = "expCovMZ"),
+				mxAlgebra(rbind(cbind(ACE, hAC),
+				                cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
+			)
+
+		# =====================================
+		# =  Assemble models into supermodel  =
+		# =====================================
+		model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, mzWeightMatrix, dzWeightMatrix) # weight matrices only used if !NULL
+
+		if(!is.null(boundDiag)){
+			if(!is.numeric(boundDiag)){
+				stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))
+			} else {				
+				newLbound = model$top$matrices$a@lbound
+				if(length(boundDiag) > 1 ){
+					if(length(boundDiag) != length(diag(newLbound)) ){
+						stop("Typically boundDiag is 1 digit: if more, must be size of diag(a)")
+					}
+				}
+				diag(newLbound) = boundDiag; 
+				model$top$a$lbound = newLbound
+				model$top$c$lbound = newLbound
+				model$top$e$lbound = newLbound
+			}
+		}
+		if(addStd){
+			newTop = mxModel(model$top,
+				umxMatrix("I", "Iden", nVar, nVar), # nVar Identity matrix
+				mxAlgebra(name = "Vtot", A + C+ E), # Total variance
+				mxAlgebra(name = "SD", solve(sqrt(I * Vtot))), # total variance --> 1/SD
+				mxAlgebra(name = "a_std", SD %*% a), # standardized a
+				mxAlgebra(name = "c_std", SD %*% c), # standardized c
+				mxAlgebra(name = "e_std", SD %*% e)  # standardized e
+			)
+			model = mxModel(model, newTop)
+			if(addCI){
+				if(addStd){
+					model = mxModel(model, mxCI(c('top.a_std', 'top.c_std', 'top.e_std')))
+				}else{
+					model = mxModel(model, mxCI(c('top.a', 'top.c', 'top.e')))
+				}
+			}
+		}
+		# Trundle through and make sure values with the same label have the same start value... means for instance.
+		model = omxAssignFirstParameters(model)
+		model = as(model, "MxModelACE") # set class so that S3 plot() dispatches
+		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
+		return(model)
+	}
+} # end umxACE
+
+
 #' umxGxE: Implements ACE models with moderation of paths, e.g. by SES.
 #'
 #' Make a 2-group GxE (moderated ACE) model (Purcell, 2002). GxE interaction studies test the hypothesis that the strength
@@ -987,18 +1415,20 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' \if{html}{\figure{GxE.png}{options: width="50\%" alt="Figure: GxE.png"}}
 #' \if{latex}{\figure{GxE.pdf}{options: width=7cm}}
 #'
-#' @param name The name of the model (defaults to "G_by_E")
-#' @param selDVs The dependent variable (e.g. IQ)
-#' @param selDefs The definition variable (e.g. socioeconomic status)
-#' @param sep Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2
+#' @param name The name of the model (default= "G_by_E")
+#' @param selDVs The dependent variable (e.g. "IQ")
+#' @param selDefs The definition variable (e.g. "SES")
+#' @param sep How to expand selDVs into full names, i.e., "_T" makes "var" -> "var_T1" and "var_T2"
 #' @param dzData The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
 #' @param mzData The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
-#' @param lboundACE = numeric: If !is.na, then lbound the main effects at this value (default = NA)
-#' @param lboundM   = numeric: If !is.na, then lbound the moderators at this value (default = NA)
-#' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
-#' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
-#' @param optimizer optionally set the optimizer (default NULL does nothing)
+#' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
+#' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
+#' @param lboundACE If not NA, then lbound the main effects at this value (default = NA, can help to set this to 0)
+#' @param lboundM   If not NA, then lbound the moderator effects at this value (default = NA, can help to set this to 0)
+#' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note. 
+#' @param autoRun Optionally run the model (default), or just to create it and return without running.
+#' @param tryHard OptionallytryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch".
+#' @param optimizer Optionally set the optimizer (default NULL does nothing)
 #' @return - GxE \code{\link{mxModel}}
 #' @export
 #' @family Twin Modeling Functions
@@ -1016,11 +1446,12 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' mzData  = subset(twinData, zygosity == "MZFF")[100,]
 #' dzData  = subset(twinData, zygosity == "DZFF")[100,]
 #' umx_time("start")
-#' m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep = "", dzData = dzData, mzData = mzData, 
-#' 			dropMissingDef = TRUE, tryHard = "mxTryHard")
+#' m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
 #' umx_time("stop")
 #' 
 #' \dontrun{
+#' # Select the data on the fly with data= and zygosity levels
+#' m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep="", dzData= "DZFF", mzData= "MZFF", data= twinData)
 #' # Controlling umxSummary
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")
@@ -1033,12 +1464,21 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # reporting these in a nice table.
 #' umxReduce(m1)
 #' }
-umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
+umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL) {
 	tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
 	}
 	nSib = 2;
+	if(!is.null(data)){
+		if(is.null(dzData)){
+			dzData = "DZ"
+			mzData = "MZ"
+		}
+		mzData = data[data[,zyg] %in% mzData, ]
+		dzData = data[data[,zyg] %in% dzData, ]
+	}
+	
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
 	selDVs  = umx_paste_names(selDVs , sep = sep, suffixes = 1:2)
 	selDefs = umx_paste_names(selDefs, sep = sep, suffixes = 1:2)
@@ -1817,6 +2257,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param nFac How many common factors (default = 1)
 #' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
+#' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
+#' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
 #' @param correlatedA ?? (default = FALSE).
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
@@ -1854,8 +2296,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
 #' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
 #' 		dzData = dzData, mzData = mzData, tryHard = "mxTryHardOrdinal")
-#' mold = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
-#' umxCompare(m1, mold)
+#'
+#' # Shortcut using "data ="
+#' m1 = umxCP(selDVs = selDVs, nFac = 3, data=GFF, zygosity="zyg_2grp")
 #'
 #' # ===================
 #' # = Do it using WLS =
@@ -1912,13 +2355,23 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 	nFac = 3, correlatedA = TRUE, tryHard = "mxTryHard")
 #' }
 #'
-umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), correlatedA = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
-	# New style CP model
+umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedA = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# TODO umxCP: Add covariates to means model: Will involve xmu_make_top_twin? also means model?
 	tryHard             = match.arg(tryHard)
 	type                = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	nSib                = 2 # Number of siblings in a twin pair.
+	if(!is.null(data)){
+		if(is.null(dzData)){
+			dzData = "DZ"
+			mzData = "MZ"
+		}
+		if(is.null(sep)){
+			sep = "_T"
+		}			
+		mzData = data[data[,zyg] %in% mzData, ]
+		dzData = data[data[,zyg] %in% dzData, ]
+	}
 
 	xmu_twin_check(selDVs= selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
 

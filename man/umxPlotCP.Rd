@@ -61,14 +61,12 @@ plot(m1) # No need to remember a special name: plot works fine!
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
   \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCPold}}, \code{\link{umxPlotGxEbiv}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
-  \code{\link{umxPlotSexLim}},
+  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
+  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 
-Other Twin Reporting Functions: \code{\link{umxPlotCPold}},
-  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
-  \code{\link{umxReduce}},
+Other Twin Reporting Functions: \code{\link{umxReduceACE}},
+  \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
   \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
 }
 \concept{Plotting functions}

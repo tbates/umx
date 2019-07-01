@@ -139,9 +139,8 @@ Educational Achievement Data. \emph{Behavior Genetics}, \strong{46}, 583-95. doi
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEold}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCPold}}, \code{\link{umxCP}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEv}},
+  \code{\link{umxACE}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
   \code{\link{umxGxE}}, \code{\link{umxIPold}},
   \code{\link{umxIP}}, \code{\link{umxSexLim}},

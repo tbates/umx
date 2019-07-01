@@ -44,10 +44,9 @@ plot(m1, std = FALSE) # don't standardize
 \seealso{
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotACE}}, \code{\link{umxPlotCPold}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
-  \code{\link{umxPlotSexLim}},
+  \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
+  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
   \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
