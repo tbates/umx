@@ -5421,7 +5421,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' cor(dzData[,c("var_T1","var_T2")])
 #'
 #' # Example with D (left un-modeled in ACE)
-#' tmp = umx_make_TwinData(AA = .4, DD = .2, CC = .2)
+#' tmp = umx_make_TwinData(nMZpairs = 500, AA = .4, DD = .2, CC = .2)
 #' m1 = umxACE(selDVs="var", data = tmp, mzData= "MZ", dzData= "DZ")
 #' # |    |   a1|   c1|   e1|
 #' # |:---|----:|----:|----:|
@@ -5488,7 +5488,8 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' Amod = list(Beta_a1 = .025, Beta_a2 = .025)
 #' Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
 #' Emod = list(Beta_e1 = .025, Beta_e2 = .025)
-#' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, bivAmod = Amod, bivCmod =Cmod, bivEmod =Emod)
+#' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, 
+#' 			bivAmod = Amod, bivCmod =Cmod, bivEmod =Emod)
 #' str(tmp)
 #' # 'data.frame':	10000 obs. of  7 variables:
 #' #  $ defM_T1 : num  0.171 0.293 -0.173 0.238 -0.73 ...
