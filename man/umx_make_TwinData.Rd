@@ -5,9 +5,9 @@
 \title{Simulate twin data with control over A, C, and E parameters, as well as moderation of A.}
 \usage{
 umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL,
-  CC = NULL, EE = NULL, varNames = "var", MZr = NULL, DZr = MZr,
-  scale = FALSE, mean = 0, sd = 1, nThresh = NULL,
-  sum2one = TRUE, Amod = NULL, Cmod = NULL, Emod = NULL,
+  CC = NULL, EE = NULL, DD = NULL, varNames = "var", MZr = NULL,
+  DZr = MZr, scale = FALSE, mean = 0, sd = 1, nThresh = NULL,
+  sum2one = TRUE, bivAmod = NULL, bivCmod = NULL, bivEmod = NULL,
   seed = NULL, empirical = FALSE)
 }
 \arguments{
@@ -20,6 +20,8 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL,
 \item{CC}{value for C variance.}
 
 \item{EE}{value for E variance.}
+
+\item{DD}{value for E variance.}
 
 \item{varNames}{name for variables (defaults to 'var')}
 
@@ -37,11 +39,11 @@ umx_make_TwinData(nMZpairs, nDZpairs = nMZpairs, AA = NULL,
 
 \item{sum2one}{Whether to enforce AA + CC + EE summing the one (default = TRUE)}
 
-\item{Amod}{Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)}
+\item{bivAmod}{Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)}
 
-\item{Cmod}{Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)}
+\item{bivCmod}{Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)}
 
-\item{Emod}{Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)}
+\item{bivEmod}{Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)}
 
 \item{seed}{Allows user to set.seed() if wanting reproducible dataset}
 
@@ -111,6 +113,10 @@ m1 = umxACE(selDVs="var", sep="_T", mzData= mzData, dzData= dzData)
 cor(mzData[,c("var_T1","var_T2")])
 cor(dzData[,c("var_T1","var_T2")])
 
+# Example with D (left unmodeled in ACE)
+tmp = umx_make_TwinData(AA = .4, DD = .2, CC = .2)
+m1 = umxACE(selDVs="var", data = tmp, mzData= "MZ", dzData= "DZ")
+
 # =============
 # = Shortcuts =
 # =============
@@ -149,7 +155,6 @@ umx_polychoric(subset(tmp, zygosity=="MZ", c("var_T1", "var_T2")))$polychorics
 # var_T2 0.7435457 1.0000000
 
 
-
 # ========================
 # = Just use MZr and DZr =
 # ========================
@@ -157,6 +162,7 @@ tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, varNames = "IQ")
 umxAPA(subset(tmp, zygosity == "MZ", c("IQ_T1", "IQ_T2")))
 umxAPA(subset(tmp, zygosity == "DZ", c("IQ_T1", "IQ_T2")))
 m1 = umxACE(selDVs= "IQ", data = tmp)
+# TODO tmx_ examples of unmodeled D etc.
 
 # Bivariate GxSES example (see umxGxEbiv)
 
@@ -166,7 +172,7 @@ EE   = list(e11 = .4, e12 = .3, e22 = .25)
 Amod = list(Beta_a1 = .025, Beta_a2 = .025)
 Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
 Emod = list(Beta_e1 = .025, Beta_e2 = .025)
-tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod, Emod =Emod)
+tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, bivAmod = Amod, bivCmod =Cmod, bivEmod =Emod)
 str(tmp)
 # 'data.frame':	10000 obs. of  7 variables:
 #  $ defM_T1 : num  0.171 0.293 -0.173 0.238 -0.73 ...

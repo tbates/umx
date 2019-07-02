@@ -5374,12 +5374,13 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @param AA value for A variance. NOTE: See options for use in GxE and Bivariate GxE
 #' @param CC value for C variance.
 #' @param EE value for E variance.
+#' @param DD value for E variance.
 #' @param MZr If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.
 #' @param DZr NULL
 #' @param scale Whether to scale output to var=1 mean=0 (Default FALSE)
-#' @param Amod Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)
-#' @param Cmod Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)
-#' @param Emod Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)
+#' @param bivAmod Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)
+#' @param bivCmod Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)
+#' @param bivEmod Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)
 #' @param varNames name for variables (defaults to 'var')
 #' @param mean mean for traits (default = 0) (not applied to moderated cases)
 #' @param sd sd of traits (default = 1) (not applied to moderated cases)
@@ -5419,6 +5420,19 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' cor(mzData[,c("var_T1","var_T2")])
 #' cor(dzData[,c("var_T1","var_T2")])
 #'
+#' # Example with D (left un-modeled in ACE)
+#' tmp = umx_make_TwinData(AA = .4, DD = .2, CC = .2)
+#' m1 = umxACE(selDVs="var", data = tmp, mzData= "MZ", dzData= "DZ")
+#' # |    |   a1|   c1|   e1|
+#' # |:---|----:|----:|----:|
+#' # |var | 0.86| 0.24| 0.45|
+#'
+#' m1 = umxACE(selDVs="var", data = tmp, mzData= "MZ", dzData= "DZ", dzCr=.25)
+#' # |    |  a1|d1 |   e1|
+#' # |:---|---:|:--|----:|
+#' # |var | 0.9|.  | 0.44|
+#'
+#'
 #' # =============
 #' # = Shortcuts =
 #' # =============
@@ -5457,7 +5471,6 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # var_T2 0.7435457 1.0000000
 #'
 #'
-#'
 #' # ========================
 #' # = Just use MZr and DZr =
 #' # ========================
@@ -5465,6 +5478,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' umxAPA(subset(tmp, zygosity == "MZ", c("IQ_T1", "IQ_T2")))
 #' umxAPA(subset(tmp, zygosity == "DZ", c("IQ_T1", "IQ_T2")))
 #' m1 = umxACE(selDVs= "IQ", data = tmp)
+#' # TODO tmx_ examples of unmodeled D etc.
 #' 
 #' # Bivariate GxSES example (see umxGxEbiv)
 #' 
@@ -5474,7 +5488,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' Amod = list(Beta_a1 = .025, Beta_a2 = .025)
 #' Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
 #' Emod = list(Beta_e1 = .025, Beta_e2 = .025)
-#' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, Amod = Amod, Cmod =Cmod, Emod =Emod)
+#' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, bivAmod = Amod, bivCmod =Cmod, bivEmod =Emod)
 #' str(tmp)
 #' # 'data.frame':	10000 obs. of  7 variables:
 #' #  $ defM_T1 : num  0.171 0.293 -0.173 0.238 -0.73 ...
@@ -5490,7 +5504,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # m1 = lm(var_T1~ M_T1, data = x); 
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  varNames = "var", MZr= NULL, DZr= MZr, scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, Amod = NULL, Cmod = NULL, Emod = NULL, seed = NULL, empirical = FALSE) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  DD = NULL,  varNames = "var", MZr= NULL, DZr= MZr, scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, bivAmod = NULL, bivCmod = NULL, bivEmod = NULL, seed = NULL, empirical = FALSE) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
@@ -5510,6 +5524,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		sdMat = diag(rep(sd, 2))
 		mzCov = sdMat %*% mzCov %*% sdMat
 		dzCov = sdMat %*% dzCov %*% sdMat
+		# MASS::mvrnorm
 		mzData = mvrnorm(n = nMZpairs, mu = c(mean, mean), Sigma = mzCov, empirical = empirical);
 		dzData = mvrnorm(n = nDZpairs, mu = c(mean, mean), Sigma = dzCov, empirical = empirical);
 		mzData = data.frame(mzData)
@@ -5520,45 +5535,58 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
 		}
 	}else if(length(AA) == 1){
-		if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 2){
-			stop("You must set at least 2 of AA, CC, and EE")
-		}
-		# standard ACE, no moderation
-		# if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 2){
-		# 	stop("You must set at least 2 of AA, CC, and EE", call. = FALSE)
-		# }
-		if(is.null(EE)){
-			EE  = (1 - (AA + CC))
-		} else if(is.null(CC)) {
-			CC  = (1 - (AA + EE))
-		} else if(is.null(AA)) {
-			AA  = (1 - (CC + EE))
-		}
-		if(any(c(AA, CC, EE)< 0)){
-			lowValue = c("AA", "CC", "EE")[ which(c(AA, CC, EE) < 0) ]
-			stop(paste("Hmm, each of the AA, CC, and EE variance components must be positive, but ", lowValue, " was negative."), call. = FALSE)		
+		# Standard ACE, no moderation
+		if(sum2one){
+			if(sum(c(is.null(AA), is.null(CC), is.null(EE), is.null(DD))) > 2){
+				stop("You must set at least 2 of AA, CC, DD, and EE. The two you set are used to ensure A, C, D, and E have values summing to 1.
+				NOTE: D will only be set automatically when left null IFF A, C, and E are all set!")
+			}else{
+				if(is.null(EE)){
+					EE  = 1 - sum(c(AA, CC, DD))
+				} else if(is.null(CC)) {
+					CC  = 1 - sum(c(AA, EE, DD))
+				} else if(is.null(AA)) {
+					AA  = 1 - sum(c(EE, CC, DD))
+				}else{
+					# Only reached when DD is the only NULL!
+					DD  = 1 - (sum(c(EE, CC, DD)))
+				}
+			}
+			if(is.null(DD)){DD = 0}
+			if(!isTRUE(all.equal(sum(c(AA, CC, DD, EE)), 1))){
+			 	stop("Hmm, AA + CC + DD + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)\n",
+					 "You gave me AA =  ", AA, ", CC =  ", CC, ", DD =  ", DD, ",and EE =  ", EE)
+			}
+		}else{
+			# no need to sum2one: NULL values cannot be set automagically.
 		}
 
-		if(sum2one && !isTRUE(all.equal(sum(c(AA, CC, EE)), 1))){
-			stop("Hmm, AA + CC + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)\n",
-			"You gave me AA =  ", AA, ", CC =  ", CC, ", and EE =  ", EE)
+		if(is.null(AA)){AA = 0}
+		if(is.null(CC)){CC = 0}
+		if(is.null(DD)){DD = 0}
+		if(is.null(EE)){EE = 0}
+
+		if(any(c(AA, CC, DD, EE)< 0)){
+			lowValue = c("AA", "CC", "EE", "DD")[ which(c(AA, CC, EE, DD) < 0) ]
+			stop(paste("Hmm, each of the AA, CC, EE and DD variance components must be positive, but ", lowValue, " was negative."), call. = FALSE)		
 		}
+
 		# Report to user
 		if(!umx_set_silent(silent = TRUE)){
-			print(c(AA = AA, CC = CC, EE = EE))
-			print(round(c(a = sqrt(AA), c = sqrt(CC), e = sqrt(EE)), 2))
+			print(c(AA = AA, CC = CC, DD = DD, EE = EE))
+			print(round(c(a = sqrt(AA), c = sqrt(CC), d = sqrt(DD), e = sqrt(EE)), 2))
 		}
 		
-		AC  =  AA + CC
-		hAC = (.5 * AA) + CC
-		ACE = AC + EE
+		ACDE = AA + CC + DD + EE
+		ACD  = AA + CC + DD
+		hACqD = (.5 * AA) + CC  + (.25 * DD)
 		mzCov = matrix(nrow = 2, byrow = TRUE, c(
-			ACE, AC,
-			AC, ACE)
+			ACDE, ACD,
+			ACD, ACDE)
 		);
 		dzCov = matrix(nrow = 2, byrow = TRUE, c(
-			ACE, hAC,
-			hAC, ACE)
+			ACDE , hACqD,
+			hACqD, ACDE)
 		);
 		sdMat = diag(rep(sd, 2))
 		mzCov = sdMat %*% mzCov %*% sdMat
@@ -5573,7 +5601,10 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		} else {
 			names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
 		}
-	}else if(!is.null(Amod)){
+	}else if(!is.null(bivAmod)){
+		if(!is.null(DD)){
+			stop("DD (dominance) is only supported for straight ACE")
+		}
 		# Bivariate Moderation example
 		
 		# Moderator (M) path components
@@ -5585,17 +5616,17 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		a12  = sqrt(AA$a12)	# A covariances in terms of Cholesky paths
 		c12  = sqrt(CC$c12)	# C
 		e12  = sqrt(EE$e12)	# E
-		Beta_a1 = Amod$Beta_a1	# A paths are moderated
-		Beta_c1 = Cmod$Beta_c1	# C mod
-		Beta_e1 = Emod$Beta_e1	# E mod
+		Beta_a1 = bivAmod$Beta_a1	# A paths are moderated
+		Beta_c1 = bivCmod$Beta_c1	# C mod
+		Beta_e1 = bivEmod$Beta_e1	# E mod
 
 		# Trait "T"
 		a22 = sqrt(AA$a22)	# A variance components of the trait ModelA (see above)
 		c22 = sqrt(CC$c22)	# C
 		e22 = sqrt(EE$e22)	# E	
-		Beta_a2 = Amod$Beta_a2	# A moderation
-		Beta_c2 = Cmod$Beta_c2	# C
-		Beta_e2 = Emod$Beta_e2	# E
+		Beta_a2 = bivAmod$Beta_a2	# A moderation
+		Beta_c2 = bivCmod$Beta_c2	# C
+		Beta_e2 = bivEmod$Beta_e2	# E
 
 		# Simulate data by generating scores on the latent variables A, C, E of
 		# the moderator and A2, C2, and E2 of the trait, conditional on the moderator. 
@@ -5678,7 +5709,10 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 	} else {
 		# Univariate Moderator
 		if(any(c(is.null(AA), is.null(CC), is.null(EE)))){
-			stop("For moderation, you must set all three of AA, CC, and EE")
+			stop("For moderation, you must set all three of AA, CC, and EE")			
+		}
+		if(!is.null(DD)){
+			stop("DD (dominance) is only supported for straight ACE")
 		}
 		avgA = AA["avg"]
 		# minA applied at -3 SD

@@ -122,7 +122,8 @@
 #' # ====================
 #' # = Show off options =
 #' # ====================
-#' # 1. tryHard
+#' # 1. tryHardsource("../../OpenMx/inst/models/nightly/Power2.R", chdir = TRUE)
+
 #' power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
 #'
 #' # 2. toggle optimizer
