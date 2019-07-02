@@ -5537,8 +5537,8 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 	}else if(length(AA) == 1){
 		# Standard ACE, no moderation
 		if(sum2one){
-			if(sum(c(is.null(AA), is.null(CC), is.null(EE), is.null(DD))) > 2){
-				stop("You must set at least 2 of AA, CC, DD, and EE. The two you set are used to ensure A, C, D, and E have values summing to 1.
+			if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 1){
+				stop("You must set at least 2 of AA, CC, and EE. The ones you set are used to ensure A, C, (D if set) and E have values summing to 1.
 				NOTE: D will only be set automatically when left null IFF A, C, and E are all set!")
 			}else{
 				if(is.null(EE)){
@@ -5549,13 +5549,14 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 					AA  = 1 - sum(c(EE, CC, DD))
 				}else{
 					# Only reached when DD is the only NULL!
-					DD  = 1 - (sum(c(EE, CC, DD)))
+					DD  = 1 - (sum(c(AA, CC, EE)))
 				}
 			}
 			if(is.null(DD)){DD = 0}
 			if(!isTRUE(all.equal(sum(c(AA, CC, DD, EE)), 1))){
 			 	stop("Hmm, AA + CC + DD + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)\n",
-					 "You gave me AA =  ", AA, ", CC =  ", CC, ", DD =  ", DD, ",and EE =  ", EE)
+					 "You gave me AA =  ", AA, ", CC =  ", CC, ", DD =  ", DD, ",and EE =  ", EE, "\n",
+					 "which sum to ", sum(c(AA, CC, DD, EE))
 			}
 		}else{
 			# no need to sum2one: NULL values cannot be set automagically.
