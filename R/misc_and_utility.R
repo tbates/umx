@@ -5556,7 +5556,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			if(!isTRUE(all.equal(sum(c(AA, CC, DD, EE)), 1))){
 			 	stop("Hmm, AA + CC + DD + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)\n",
 					 "You gave me AA =  ", AA, ", CC =  ", CC, ", DD =  ", DD, ",and EE =  ", EE, "\n",
-					 "which sum to ", sum(c(AA, CC, DD, EE))
+					 "which sum to ", sum(c(AA, CC, DD, EE)) )
 			}
 		}else{
 			# no need to sum2one: NULL values cannot be set automagically.

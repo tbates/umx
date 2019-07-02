@@ -113,9 +113,18 @@ m1 = umxACE(selDVs="var", sep="_T", mzData= mzData, dzData= dzData)
 cor(mzData[,c("var_T1","var_T2")])
 cor(dzData[,c("var_T1","var_T2")])
 
-# Example with D (left unmodeled in ACE)
+# Example with D (left un-modeled in ACE)
 tmp = umx_make_TwinData(AA = .4, DD = .2, CC = .2)
 m1 = umxACE(selDVs="var", data = tmp, mzData= "MZ", dzData= "DZ")
+# |    |   a1|   c1|   e1|
+# |:---|----:|----:|----:|
+# |var | 0.86| 0.24| 0.45|
+
+m1 = umxACE(selDVs="var", data = tmp, mzData= "MZ", dzData= "DZ", dzCr=.25)
+# |    |  a1|d1 |   e1|
+# |:---|---:|:--|----:|
+# |var | 0.9|.  | 0.44|
+
 
 # =============
 # = Shortcuts =
