@@ -321,7 +321,15 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' # ============================
 #' tmp = mtcars; tmp[1, "mpg"] = NA # add NA
 #' tmp = xmu_make_mxData(data= tmp, type = "WLS", manifests = manVars, verbose= TRUE)
-#' 
+#'
+#' # ==========================
+#' # = already mxData example =
+#' # ==========================
+#'m1 = umxRAM("auto", data = mxData(mtcars, type = "raw"),
+#'	umxPath(var= "wt"),
+#'	umxPath(mean=  "wt")
+#')
+#'
 #' # ========================
 #' # = Cov and cor examples =
 #' # ========================
@@ -400,7 +408,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				data$observed = umx_reorder(data$observed, manifests)
 			} else if (data$type == "raw"){
 				# Might be worth doing data = mxData(data = data$observed[, manifests], type=‘raw’)
-				data$observed = data$observed[, manifests]
+				data$observed = data$observed[, manifests, drop = FALSE]
 			} else {
 				stop("You offered up an existing mxData and requested dropping unused variables: I can only do this for cov, cor, and raw data")
 			}
