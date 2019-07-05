@@ -4,10 +4,10 @@
 \alias{umxRAM2}
 \title{Make RAM model using lavaan syntax}
 \usage{
-umxRAM2(model, data = NULL, group = NULL, std.lv = FALSE,
-  name = NULL, lavaanMode = c("sem", "lavaan"), autoRun = TRUE,
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"), printTab = FALSE)
+umxRAM2(model, data = NULL, group = NULL, group.equal = NULL,
+  std.lv = FALSE, name = NULL, lavaanMode = c("sem", "lavaan"),
+  autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = FALSE)
 }
 \arguments{
 \item{model}{A lavaan string}
@@ -16,7 +16,9 @@ umxRAM2(model, data = NULL, group = NULL, std.lv = FALSE,
 
 \item{group}{= Column to use for multi-group (default = NULL)}
 
-\item{std.lv}{= Whether to set var of latents to 1 (default = FALSE) n.b. Toggles fix.first}
+\item{group.equal}{= what to equate across groups. Default (NULL) means no equates. Options that might be implemented (but not yet: c("loadings", "intercepts", "means", "regressions", "residuals", "covariances")}
+
+\item{std.lv}{= Whether to standardize latents (var=1, mean=0). Default = FALSE n.b. Toggles fix.first}
 
 \item{name}{Name for model (optional)}
 

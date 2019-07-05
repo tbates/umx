@@ -222,7 +222,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 			auto.th         = TRUE,
 			auto.delta      = TRUE,
 			auto.cov.y      = TRUE, 
-			group.equal     = group.equal
+			group.equal     = group.equal,
 			fixed.x         = FALSE # Not standard in lavaan::sem, but needed for RAM
 			# If TRUE, would fix mean, var, cov, of exogenous covariates to their sample values.			
 		)

@@ -4,10 +4,11 @@
 \alias{umxLav2RAM}
 \title{Convert a lavaan syntax string to a umxRAM model (or umxSuperModel)}
 \usage{
-umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
-  lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE,
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"), printTab = TRUE)
+umxLav2RAM(model = NA, data = "auto", group = NULL,
+  group.equal = NULL, name = NULL, lavaanMode = c("sem", "lavaan"),
+  std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  printTab = TRUE)
 }
 \arguments{
 \item{model}{A lavaan syntax string, e.g. "A~~B"}
@@ -15,6 +16,8 @@ umxLav2RAM(model = NA, data = "auto", group = NULL, name = NULL,
 \item{data}{Data to add to model (defaults to auto, which is just sketch mode)}
 
 \item{group}{= Column to use for multi-group (default = NULL)}
+
+\item{group.equal}{= what to equate across groups. Default (NULL) means no equates. Options that might be implemented (but not yet: c("loadings", "intercepts", "means", "regressions", "residuals", "covariances")}
 
 \item{name}{Model name (can also add name in # commented first line)}
 
