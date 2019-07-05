@@ -6,12 +6,13 @@
 #' @param model A lavaan string
 #' @param data Data for the model (optional)
 #' @param lavaanMode = "sem" auto-options, or "lavaan" (no auto options)
-#' @param std.lv = Whether to set var of latents to 1 (default = FALSE) n.b. Toggles fix.first
+#' @param name Name for model (optional)
+#' @param std.lv = Whether to standardize latents (var=1, mean=0). Default = FALSE n.b. Toggles fix.first
 #' @param group = Column to use for multi-group (default = NULL)
+#' @param group.equal = what to equate across groups. Default (NULL) means no equates. Options that might be implemented (but not yet: c("loadings", "intercepts", "means", "regressions", "residuals", "covariances")
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param printTab Print the table (defaults to FALSE) # TODO just verbose
-#' @param name Name for model (optional)
 #' @return - [mxModel()]
 #' @export
 #' @family Super-easy helpers
@@ -30,11 +31,11 @@
 #' " 
 #' m1 = umxRAM2(lav) 
 #'
-umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NULL, lavaanMode = c("sem", "lavaan"), autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = FALSE){
+umxRAM2 <- function(model, data = NULL, group = NULL, group.equal = NULL, std.lv = FALSE, name = NULL, lavaanMode = c("sem", "lavaan"), autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = FALSE){
 	lavaanMode = match.arg(lavaanMode)
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
 		# Process lavaanString
-		model = umxLav2RAM(model = model, data = data, group = group, std.lv = std.lv, name = name, lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
+		model = umxLav2RAM(model = model, data = data, group = group, group.equal = group.equal, std.lv = std.lv, name = name, lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
 		invisible(model)
 	}else{
 		message("Woot: that doesn't look like a lavaan string to me:")
@@ -89,6 +90,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
 #' @param lavaanMode Auto-magical path settings for cfa/sem (default) or no-defaults ("lavaan")
 #' @param group = Column to use for multi-group (default = NULL)
+#' @param group.equal = what to equate across groups. Default (NULL) means no equates. Options that might be implemented (but not yet: c("loadings", "intercepts", "means", "regressions", "residuals", "covariances")
 #' @param name Model name (can also add name in # commented first line)
 #' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
@@ -170,7 +172,7 @@ umxRAM2 <- function(model, data = NULL, group = NULL, std.lv = FALSE, name = NUL
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 #'
 # # TODO support group.equal Equality constraints across multiple groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
-umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = TRUE){
+umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NULL, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = TRUE){
 	lavaanMode = match.arg(lavaanMode)
 	
 	# =~  =  L  -> A
@@ -210,18 +212,24 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, name = NULL, lav
 	if(lavaanMode == "sem"){
 		# model = "x1~b1*x2; B1_sq := b1^2"; std.lv=FALSE
 		tab = lavaan::lavaanify(model = model, ngroups = ngroups,
-			int.ov.free     = TRUE, int.lv.free = FALSE,
-			auto.fix.first  = !std.lv, # (so will default to TRUE)
+			int.ov.free     = TRUE,
+			int.lv.free     = FALSE,
 			std.lv          = std.lv,
-			auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, 
-			auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE, 
-			fixed.x = FALSE # Not standard in lavaan::sem, but needed for RAM
+			auto.fix.first  = !std.lv, # (so will default to TRUE)
+			auto.fix.single = TRUE,
+			auto.var        = TRUE,
+			auto.cov.lv.x   = TRUE, 
+			auto.th         = TRUE,
+			auto.delta      = TRUE,
+			auto.cov.y      = TRUE, 
+			group.equal     = group.equal
+			fixed.x         = FALSE # Not standard in lavaan::sem, but needed for RAM
 			# If TRUE, would fix mean, var, cov, of exogenous covariates to their sample values.			
 		)
 	}else	if(lavaanMode == "lavaan"){
 		tab = lavaan::lavaanify(model = model, ngroups = ngroups)
 	}else{
-		message("Only sem and lavaan (only user paths) modes implemented as yet: What other modes would be useful?")		
+		message("Only sem and lavaan (only what the user explicitly requests) are implemented as yet: What other modes would be useful?")		
 	}
 
 	if(printTab){
