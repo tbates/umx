@@ -2281,48 +2281,71 @@ umx_write_to_clipboard <- function(x) {
 #' Compute odds ratio (OR)
 #'
 #' @description
-#' Input cases and total N in each of two  groups. Returns the ddds in each group, and the odds ratio.
+#' Returns the odds in each group, and the odds ratio. Takes the cases (n) and total N as a list
+#' of two numbers for each of two groups. 
 #'
 #' @details
-#' Returns a list of odds1, odds2, and OR. Has a pretty-printing method so displays as:
+#' Returns a list of odds1, odds2, and OR + CI. Has a pretty-printing method so displays as:
 #'
-#' odds1 = 0.4285714
-#' odds2 = 0.1111111
-#'    OR = 3.857143
+#' Group 1 odds = 0.429
+#' Group 2 odds = 0.111
+#'           OR = 3.857 CI99[0.159, 93.646]
 #' 
 #'
 #' @param grp1 cases and total N for group 1
 #' @param grp2 cases and total N for group 2
-#' @return - list of odds in group 1 and group2, and the resulting OR
+#' @param alpha for CI (default = 0.05)
+#' @return - list of odds in group 1 and group2, and the resulting OR and CI
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @seealso - [umx_r_test()]
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
+#' oddsratio(c(1, 10), c(3, 10))
 #' oddsratio(c(3, 10), c(1, 10))
+#' oddsratio(c(3, 10), c(1, 10), alpha = .01)
 #'
-oddsratio <- function(grp1= c(n, N), grp2= c(n, N)) {
-	odds <- function(n,N) {
-		n/(N-n)
-	}
-	odds1 = odds(grp1[1], grp1[2])
-	odds2 = odds(grp2[1], grp2[2])
-	OR = odds1/odds2
-	ret = list(odds1= odds1, odds2= odds2, OR= OR)
+oddsratio <- function(grp1= c(n, N), grp2= c(n, N), alpha = 0.05) {
+	nGrp1 = grp1[1]
+	nGrp2 = grp2[1]
+
+	NGrp1 = grp1[2]
+	NGrp2 = grp2[2]
+
+	# nGrp1 = 1; nGrp2 = 2; NGrp1 = 3; NGrp2 = 4
+	
+	# odds = n/(N-n)
+	odds1 = nGrp1/(NGrp1-nGrp1)
+	odds2 = nGrp2/(NGrp2-nGrp2)
+	OR    = odds1/odds2	
+	# CI
+	siglog = sqrt((1/nGrp1) + (1/NGrp1) + (1/nGrp2) + (1/NGrp2))
+	zalph  = qnorm(1 - alpha/2)
+	LowerCI = exp(log(OR) - zalph * siglog)
+	UpperCI = exp(log(OR) + zalph * siglog)
+	ret = list(odds1= odds1, odds2= odds2, OR= OR, LowerCI = LowerCI, UpperCI = UpperCI, alpha = alpha)
 	class(ret) <- 'result_oddsratio'	
 	return(ret)
 }
 
 #' @rdname oddsratio
+#' @param x output from [oddsratio()]
+#' @param digits rounding or output (default = 3)
+#' @param ... further arguments
+#' @md
 #' @export
 print.result_oddsratio <- function(x, digits = 3, ...) {
-	keys = names(x)
-	charLen = max(nchar(keys))
-	for (thisKey in 1:length(keys)) {
-		cat(sprintf(paste0("%", charLen, "s = ",
-			format(x[[ keys[thisKey] ]])), keys[thisKey]), fill=TRUE)
-	}
+	# x = list(odds1= odds1, odds2= odds2, OR= OR, LowerCI = OR_CI_lo, UpperCI = OR_CI_hi, alpha = alpha)
+	charLen = nchar("Group 1 odds")
+	cat(sprintf(paste0("%", charLen, "s = ", format(x[["odds1"]], digits = digits)), "Group 1 odds"), fill= TRUE)
+	cat(sprintf(paste0("%", charLen, "s = ", format(x[["odds2"]], digits = digits)), "Group 2 odds"), fill= TRUE)
+	OR      = round(x[[ "OR" ]], digits=digits)
+	LowerCI = round(x[[ "LowerCI" ]], digits=digits)
+	UpperCI = round(x[[ "UpperCI" ]], digits=digits)
+	alpha   = x[[ "alpha" ]]
+	ORstring = paste0(OR, " CI", 100-(alpha*100), "[", LowerCI, ", ", UpperCI, "]")
+	cat(sprintf(paste0("%", charLen, "s = ", ORstring), "OR"), fill= TRUE)
 }
 
 
@@ -2472,7 +2495,7 @@ specify_decimal <- function(x, k){
 	format(round(x, k), nsmall = k)
 }
 
-#' reliability
+#' Report coefficient alpha (reliability)
 #'
 #' Compute and report Coefficient alpha (extracted from Rcmdr to avoid its dependencies)
 #'

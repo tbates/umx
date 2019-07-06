@@ -325,7 +325,7 @@ umxModel <- function(...) {
 #' 2. You don't need to list manifestVars (they are detected from path usage).
 #' 3. You don't need to list latentVars (detected as anything in paths but not in \code{mxData}).
 #' 4. You don't need to create mxData when you already have a data.frame.
-#' 5. You add data with [data = ] (as elsewhere in R, e.g. [lm()]).
+#' 5. You add data with `data = ` (as elsewhere in R, e.g. [lm()]).
 #' 6. You don't need to add labels: paths are automatically labelled "a_to_b" etc.
 #' 7. You don't need to set start values, they will be done for you.
 #' 8. You don't need to `mxRun` the model: it will run automatically, and print a summary.
@@ -525,8 +525,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 
 	# lavaan string style model
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
-		# Process lavaanString
-		model = umxLav2RAM(model = model, data = data, group = group, group.equal = group.equal, std.lv = std.lv, name = name, lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
+		# Process lavaanString: need to modify so that all the RAM options are processed: 
+		# suffix
+		# comparison
+		# showEstimates
+		# refModels = NULL
+		# remove_unused_manifests
+		# type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
+		# allContinuousMethod
+		model = umxLav2RAM(model = model, data = data, group = group, group.equal = group.equal, std.lv = std.lv, name = name, 
+					lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
 		return(model)
 	}
 

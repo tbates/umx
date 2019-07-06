@@ -5,7 +5,7 @@
 \alias{print.result_oddsratio}
 \title{Compute odds ratio (OR)}
 \usage{
-oddsratio(grp1 = c(n, N), grp2 = c(n, N))
+oddsratio(grp1 = c(n, N), grp2 = c(n, N), alpha = 0.05)
 
 print.result_oddsratio(x, digits = 3, ...)
 }
@@ -13,24 +13,35 @@ print.result_oddsratio(x, digits = 3, ...)
 \item{grp1}{cases and total N for group 1}
 
 \item{grp2}{cases and total N for group 2}
+
+\item{alpha}{for CI (default = 0.05)}
+
+\item{x}{output from \code{\link[=oddsratio]{oddsratio()}}}
+
+\item{digits}{rounding or output (default = 3)}
+
+\item{...}{further arguments}
 }
 \value{
 \itemize{
-\item list of odds in group 1 and group2, and the resulting OR
+\item list of odds in group 1 and group2, and the resulting OR and CI
 }
 }
 \description{
-Input cases and total N in each of two  groups. Returns the ddds in each group, and the odds ratio.
+Returns the odds in each group, and the odds ratio. Takes the cases (n) and total N as a list
+of two numbers for each of two groups.
 }
 \details{
 Returns a list of odds1, odds2, and OR. Has a pretty-printing method so displays as:
 
-odds1 = 0.4285714
-odds2 = 0.1111111
-OR = 3.857143
+odds1 = 0.428
+odds2 = 0.111
+OR = 3.87
 }
 \examples{
+oddsratio(c(1, 10), c(3, 10))
 oddsratio(c(3, 10), c(1, 10))
+oddsratio(c(3, 10), c(1, 10), alpha = .01)
 
 }
 \references{

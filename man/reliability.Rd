@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{reliability}
 \alias{reliability}
-\title{reliability}
+\title{Report coefficient alpha (reliability)}
 \usage{
 reliability(S)
 }

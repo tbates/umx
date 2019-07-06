@@ -115,7 +115,7 @@ umxRAM differs from mxModel in the following ways:
 \item You don't need to list manifestVars (they are detected from path usage).
 \item You don't need to list latentVars (detected as anything in paths but not in \code{mxData}).
 \item You don't need to create mxData when you already have a data.frame.
-\item You add data with \link{data = } (as elsewhere in R, e.g. \code{\link[=lm]{lm()}}).
+\item You add data with \code{data = } (as elsewhere in R, e.g. \code{\link[=lm]{lm()}}).
 \item You don't need to add labels: paths are automatically labelled "a_to_b" etc.
 \item You don't need to set start values, they will be done for you.
 \item You don't need to \code{mxRun} the model: it will run automatically, and print a summary.
