@@ -113,7 +113,6 @@ x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regr
 }
 
 Other Super-easy helpers: \code{\link{umxLav2RAM}},
-  \code{\link{umxRAM2}}, \code{\link{umxTwoStage}},
-  \code{\link{umx}}
+  \code{\link{umxTwoStage}}, \code{\link{umx}}
 }
 \concept{Super-easy helpers}

@@ -108,10 +108,10 @@ HS = "spatial =~ visual   + cubes    + flags
       verbal  =~ paragrap + sentence + wordm
       speed   =~ addition + counting + straight"
 
-m1 = umxRAM2(HS, data = umx_scale(HS.ability.data))
+m1 = umxRAM(HS, data = umx_scale(HS.ability.data))
 
 # Multiple groups
-m1 = umxRAM2(HS, data = umx_scale(HS.ability.data), group = "school")
+m1 = umxRAM(HS, data = umx_scale(HS.ability.data), group = "school")
 
 # More complex:
 
@@ -126,12 +126,12 @@ ab3 := a * b3
 loCN := a * b1 + ab3 * -0.5
 hiCN := a * b1 + ab3 * 0.5
 "
-tmp = umxRAM2(lav)
+tmp = umxRAM(lav)
 # plot showing ability to influence layout with max min same groupings
 plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min= "INT")
 
 # Algebra: e.g. b1^2
-m1 = umxRAM2("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
+m1 = umxRAM("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
 
 # Model with constraints and labeled parameters
 lav = "
@@ -141,6 +141,18 @@ b1 == (b2 + b3)^2
 b1 > exp(b2 + b3)"
 
 tmp = umxLav2RAM(lav)
+
+m1 = umxRAM("y ~ x")
+umxRAM("y is x") # not a lavaan string
+namedStr = " 	# my name
+	y ~x"
+m1 = umxRAM(namedStr) 
+
+# test for removal of bad chars from name
+lav = " # Model 14 PROCESS Hayes + - '~', ':', and '= moderated mediation
+gnt ~ a*cb
+" 
+m1 = umxRAM(lav) 
 
 # Formative factor
 # lavaanify("f5 <~ z1 + z2 + z3 + z4")
@@ -152,7 +164,6 @@ tmp = umxLav2RAM(lav)
 }
 
 Other Super-easy helpers: \code{\link{umxEFA}},
-  \code{\link{umxRAM2}}, \code{\link{umxTwoStage}},
-  \code{\link{umx}}
+  \code{\link{umxTwoStage}}, \code{\link{umx}}
 }
 \concept{Super-easy helpers}

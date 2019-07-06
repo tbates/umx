@@ -268,10 +268,12 @@ umxModel <- function(...) {
 #' Easier path-based SEM modeling.
 #'
 #' @description
-#' `umxRAM` expedites creation of path-based models, still without doing invisible things to the model.
+#' `umxRAM` expedites creation of structural equation models, still without doing invisible things to the model. It 
+#' supports [umxPath()] but also lavaan-style string specification of models: lavaan's scripting language has become a 
+#' lingua franca for SEM books, so supporting across apps makes a lot of sense.
 #' 
-#' Here's an example that makes a model of miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
-#' using `mtcars` data.
+#' Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
+#' using the widely used `mtcars` data set.
 #' 
 #' ```Rsplus
 #' m1 = umxRAM("tim", data = mtcars,
@@ -289,7 +291,15 @@ umxModel <- function(...) {
 #' saying `lm(y ~ x + df)` instead of `lm(y ~ x, data = dd)`.
 #' 
 #' **nb**: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
+#'
+#' **String Syntax**
 #' 
+#' Here's the same example using lavaan syntax:
+#' 
+#' ```Rsplus
+#' m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
+#' ```
+#'
 #' *note*: If you are at the "sketching" stage of theory consideration, `umxRAM` supports
 #' a simple vector of manifest names to work with.
 #' 
@@ -307,20 +317,22 @@ umxModel <- function(...) {
 #' 
 #' @details
 #' 
-#' **Comparison with mxModel**
+#' **Comparison with OpenMx and mxModel**
 #' 
 #' umxRAM differs from mxModel in the following ways:
 #' 
 #' 1. You don't need to set type = "RAM".
 #' 2. You don't need to list manifestVars (they are detected from path usage).
 #' 3. You don't need to list latentVars (detected as anything in paths but not in \code{mxData}).
-#' 4. You add data with \strong{data = } (as elsewhere in R, e.g. \code{\link{lm}}).
-#' 5. You don't need to add labels: paths are automatically labelled "a_to_b" etc.
-#' 6. You don't need to set start values, they will be done for you.
-#' 7. You don't need to mxRun the model: it will run automatically, and print a summary.
-#' 8. You don't need to run summary: with \code{autoRun}, it will print a summary.
-#' 9. You get a plot of the model.
-#' 10. \code{\link{umxPath}} offers powerful verbs to describe paths.
+#' 4. You don't need to create mxData when you already have a data.frame.
+#' 5. You add data with [data = ] (as elsewhere in R, e.g. [lm()]).
+#' 6. You don't need to add labels: paths are automatically labelled "a_to_b" etc.
+#' 7. You don't need to set start values, they will be done for you.
+#' 8. You don't need to `mxRun` the model: it will run automatically, and print a summary.
+#' 9. You don't need to run `summary`: with `autoRun=TRUE`, it will print a summary.
+#' 10. You get a plot of the model with estimates on the paths, including multiple groups.
+#' 11. Less typing: [umxPath()] offers powerful verbs to describe paths.
+#' 12. Supports a subset of lavaan string input.
 #'
 #' 
 #' \strong{Comparison with other software}
@@ -328,22 +340,20 @@ umxModel <- function(...) {
 #' **Start values**. Currently, manifest variable means are set to the observed means, residual variances are set to 80% 
 #' of the observed variance of each variable, 
 #' and single-headed paths are set to a positive starting value (currently .9).
-#' *note*: The start-value strategy is subject to improvement, and will be documented in the help for umxRAM.
+#' *note*: The start-value strategy is subject to improvement, and will be documented in the help for [umxRAM()].
 #' 
 #' **Black-box software, defaults, and automatic addition of paths**.
 #' Some SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored 
-#' similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
-#' and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"} 
-#' and \code{fix = "firstLoadings"}.
+#' similar features (like auto-creating error and exogenous variances using `endog.variances = TRUE`
+#' and `exog.variances = TRUE`). Also identification helpers like `fix = "latents"` 
+#' and `fix = "firstLoadings"`. If you want this, I'd say use `umxRAM` with lavaan string input.
 #' 
-#' To be honest, these are not only more trouble than they are worth, they encourage errors and 
-#' poor modeling. Learning the handful of \code{\link{umxPath}} short cuts allows modeling to 
-#' stay both efficient and unambiguous!
 #' 
 #' @param model A model to update (or set to string to use as name for new model)
 #' @param data data for the model. Can be an \code{\link{mxData}} or a data.frame
-#' @param ... mx or umxPaths, mxThreshold objects, etc.
-#' @param group (optional) column name to use for a multi-group model.
+#' @param ... umxPaths, mxThreshold objects, etc.
+#' @param group (optional) Column name to use for a multi-group model (default = NULL)
+#' @param group.equal In multi-group models, what to equate across groups (default = NULL)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param name A friendly name for the model
@@ -358,11 +368,14 @@ umxModel <- function(...) {
 #' @param independent Whether the model is independent (default = NA)
 #' @param remove_unused_manifests Whether to remove variables in the data to which no path makes reference (defaults to TRUE)
 #' @param verbose Whether to tell the user what latents and manifests were created etc. (Default = FALSE)
-#' @return - \code{\link{mxModel}}
-#' @export
-#' @seealso \code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, \code{\link{parameters}}, \code{\link{umxSuperModel}}
+#' @param std.lv Whether to auto standardize latent variables when using string syntax (default = FALSE)
+#' @param lavaanMode Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)
+#' @param printTab (for string input, whether to output a table of paths (FALSE)
+#' @return - [mxModel()]
+#' @export 
+#' @seealso [umxPath()], [umxSummary()], [plot()], [parameters()], [umxSuperModel()], [umxLav2RAM()]
 #' @family Core Modeling Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' 
@@ -393,6 +406,13 @@ umxModel <- function(...) {
 #' plot(m1)
 #' plot(m1, std=TRUE, means=FALSE)
 #' plot(m1, std = TRUE, means=FALSE, strip= TRUE, resid = "line")
+#'
+#' # =========================
+#' # = lavaan string example =
+#' # =========================
+#' m1 = umxRAM(data = mtcars, "#modelName
+#'  mpg ~ wt + disp")
+#' 
 #'
 #' # ====================================
 #' # = A cov model, with steps laid out =
@@ -488,17 +508,14 @@ umxModel <- function(...) {
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' parameters(m1)
 #'
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparison = TRUE, suffix = "", showEstimates = c("none", "raw", "std", "both", "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
-
-	umx_check(!is.null(data), "stop", "In umxRAM, you must set 'data = '. If you're building a model with no data, use mxModel")
-
 	type = match.arg(type)
 	tryHard = match.arg(tryHard)
 	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
 	allContinuousMethod = match.arg(allContinuousMethod)
-
+	lavaanMode = match.arg(lavaanMode)
 	# =================
 	# = Set optimizer =
 	# =================
@@ -506,13 +523,23 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 		umx_set_optimizer(optimizer)
 	}
 
+	# lavaan string style model
+	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
+		# Process lavaanString
+		model = umxLav2RAM(model = model, data = data, group = group, group.equal = group.equal, std.lv = std.lv, name = name, lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
+		return(model)
+	}
+
+	umx_check(!is.null(data), "stop", "In umxRAM, you must set 'data = '. If you're building a model with no data, use mxModel")
+
+
+	# umxPath-based model
 	if(typeof(model) == "character"){
 		if(is.na(name)){
 			name = model
 		} else {
 			stop("If model is set to a string, don't pass in name as well...")
 		}
-		# TODO umxRAM handle lavaan here!
 	} else {
 		if(umx_is_RAM(model)){
 			# message("Updating existing model")
@@ -647,7 +674,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 		# umx_msg(data)
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		newModel = umxLabel(newModel, suffix = suffix)
-		if(is.na(group)){
+		if(is.null(group)){
 			if(autoRun && umx_set_auto_plot(silent = TRUE)){
 				plot(newModel)
 			}
@@ -694,7 +721,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NA, comparis
 	# =====================
 	# = Handle group here =
 	# =====================
-	if(!is.na(group)){
+	if(!is.null(group)){
 		# 1. go back to raw data and subset by "group" column
 		# 2. create new mxData,
 		# 3. add data to copy of the model and accumulate in list of models

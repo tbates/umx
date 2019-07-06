@@ -4,29 +4,33 @@
 \alias{umxRAM}
 \title{Easier path-based SEM modeling.}
 \usage{
-umxRAM(model = NA, ..., data = NULL, name = NA, group = NA,
-  comparison = TRUE, suffix = "", showEstimates = c("none", "raw",
-  "std", "both", "list of column names"), type = c("Auto", "FIML", "cov",
-  "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants",
-  "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no",
-  "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+umxRAM(model = NA, ..., data = NULL, name = NA, group = NULL,
+  group.equal = NULL, suffix = "", comparison = TRUE,
+  showEstimates = c("none", "raw", "std", "both",
+  "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS",
+  "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"),
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   refModels = NULL, remove_unused_manifests = TRUE, independent = NA,
-  setValues = TRUE, optimizer = NULL, verbose = FALSE)
+  setValues = TRUE, optimizer = NULL, verbose = FALSE,
+  std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE)
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
 
-\item{...}{mx or umxPaths, mxThreshold objects, etc.}
+\item{...}{umxPaths, mxThreshold objects, etc.}
 
 \item{data}{data for the model. Can be an \code{\link{mxData}} or a data.frame}
 
 \item{name}{A friendly name for the model}
 
-\item{group}{(optional) column name to use for a multi-group model.}
+\item{group}{(optional) Column name to use for a multi-group model (default = NULL)}
 
-\item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
+\item{group.equal}{In multi-group models, what to equate across groups (default = NULL)}
 
 \item{suffix}{String to append to each label (useful if model will be used in a multi-group model)}
+
+\item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
 \item{showEstimates}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
 
@@ -49,17 +53,25 @@ umxRAM(model = NA, ..., data = NULL, name = NA, group = NA,
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
 
 \item{verbose}{Whether to tell the user what latents and manifests were created etc. (Default = FALSE)}
+
+\item{std.lv}{Whether to auto standardize latent variables when using string syntax (default = FALSE)}
+
+\item{lavaanMode}{Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)}
+
+\item{printTab}{(for string input, whether to output a table of paths (FALSE)}
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}}
+\item \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
-\code{umxRAM} expedites creation of path-based models, still without doing invisible things to the model.
+\code{umxRAM} expedites creation of structural equation models, still without doing invisible things to the model. It
+supports \code{\link[=umxPath]{umxPath()}} but also lavaan-style string specification of models: lavaan's scripting language has become a
+lingua franca for SEM books, so supporting across apps makes a lot of sense.
 
-Here's an example that makes a model of miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
-using \code{mtcars} data.\preformatted{m1 = umxRAM("tim", data = mtcars,
+Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
+using the widely used \code{mtcars} data set.\preformatted{m1 = umxRAM("tim", data = mtcars,
 	umxPath(c("wt", "disp"), to = "mpg"),
 	umxPath("wt", with = "disp"),
 	umxPath(v.m. = c("wt", "disp", "mpg"))
@@ -76,6 +88,11 @@ saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = dd)}.
 
 \strong{nb}: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
 
+\strong{String Syntax}
+
+Here's the same example using lavaan syntax:\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
+}
+
 \emph{note}: If you are at the "sketching" stage of theory consideration, \code{umxRAM} supports
 a simple vector of manifest names to work with.\preformatted{m1 = umxRAM("sketch", data = c("A", "B", "C"),
 	umxPath("A", to = "B"),
@@ -90,20 +107,22 @@ Will create this figure:
 \if{latex}{\figure{sketch.pdf}{options: width=7cm}}
 }
 \details{
-\strong{Comparison with mxModel}
+\strong{Comparison with OpenMx and mxModel}
 
 umxRAM differs from mxModel in the following ways:
 \enumerate{
 \item You don't need to set type = "RAM".
 \item You don't need to list manifestVars (they are detected from path usage).
 \item You don't need to list latentVars (detected as anything in paths but not in \code{mxData}).
-\item You add data with \strong{data = } (as elsewhere in R, e.g. \code{\link{lm}}).
+\item You don't need to create mxData when you already have a data.frame.
+\item You add data with \link{data = } (as elsewhere in R, e.g. \code{\link[=lm]{lm()}}).
 \item You don't need to add labels: paths are automatically labelled "a_to_b" etc.
 \item You don't need to set start values, they will be done for you.
-\item You don't need to mxRun the model: it will run automatically, and print a summary.
-\item You don't need to run summary: with \code{autoRun}, it will print a summary.
-\item You get a plot of the model.
-\item \code{\link{umxPath}} offers powerful verbs to describe paths.
+\item You don't need to \code{mxRun} the model: it will run automatically, and print a summary.
+\item You don't need to run \code{summary}: with \code{autoRun=TRUE}, it will print a summary.
+\item You get a plot of the model with estimates on the paths, including multiple groups.
+\item Less typing: \code{\link[=umxPath]{umxPath()}} offers powerful verbs to describe paths.
+\item Supports a subset of lavaan string input.
 }
 
 \strong{Comparison with other software}
@@ -111,17 +130,13 @@ umxRAM differs from mxModel in the following ways:
 \strong{Start values}. Currently, manifest variable means are set to the observed means, residual variances are set to 80%
 of the observed variance of each variable,
 and single-headed paths are set to a positive starting value (currently .9).
-\emph{note}: The start-value strategy is subject to improvement, and will be documented in the help for umxRAM.
+\emph{note}: The start-value strategy is subject to improvement, and will be documented in the help for \code{\link[=umxRAM]{umxRAM()}}.
 
 \strong{Black-box software, defaults, and automatic addition of paths}.
 Some SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored
 similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
 and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"}
-and \code{fix = "firstLoadings"}.
-
-To be honest, these are not only more trouble than they are worth, they encourage errors and
-poor modeling. Learning the handful of \code{\link{umxPath}} short cuts allows modeling to
-stay both efficient and unambiguous!
+and \code{fix = "firstLoadings"}. If you want this, I'd say use \code{umxRAM} with lavaan string input.
 }
 \examples{
 
@@ -152,6 +167,13 @@ umxSummary(m1, show = "std")
 plot(m1)
 plot(m1, std=TRUE, means=FALSE)
 plot(m1, std = TRUE, means=FALSE, strip= TRUE, resid = "line")
+
+# =========================
+# = lavaan string example =
+# =========================
+m1 = umxRAM(data = mtcars, "#modelName
+ mpg ~ wt + disp")
+
 
 # ====================================
 # = A cov model, with steps laid out =
@@ -254,7 +276,7 @@ parameters(m1)
 }
 }
 \seealso{
-\code{\link{umxPath}}, \code{\link{umxSummary}}, \code{\link{plot}}, \code{\link{parameters}}, \code{\link{umxSuperModel}}
+\code{\link[=umxPath]{umxPath()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=plot]{plot()}}, \code{\link[=parameters]{parameters()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}, \code{\link[=umxLav2RAM]{umxLav2RAM()}}
 
 Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
