@@ -28,7 +28,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, dzData = NULL,
 
 \item{sep}{The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.}
 
-\item{data}{If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)}
+\item{data}{If provided, dzData and mzData are treated as levels of zyg to select() MZ and DZ data sets (default = NULL)}
 
 \item{zyg}{If data provided, this column is used to select rows by zygosity (Default = "zygosity")}
 

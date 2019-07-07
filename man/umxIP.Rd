@@ -5,14 +5,15 @@
 \title{umxIP: Build and run an Independent pathway twin model}
 \usage{
 umxIP(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a =
-  1, c = 1, e = 1), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS",
-  "ULS"), allContinuousMethod = c("cumulants", "marginals"),
-  dzAr = 0.5, dzCr = 1, correlatedA = FALSE, numObsDZ = NULL,
-  numObsMZ = NULL, autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"), optimizer = NULL, equateMeans = TRUE,
-  weightVar = NULL, addStd = TRUE, addCI = TRUE,
-  freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE)
+  1, c = 1, e = 1), data = NULL, zyg = "zygosity", type = c("Auto",
+  "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  allContinuousMethod = c("cumulants", "marginals"), dzAr = 0.5,
+  dzCr = 1, correlatedA = FALSE, numObsDZ = NULL, numObsMZ = NULL,
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL, equateMeans = TRUE, weightVar = NULL,
+  addStd = TRUE, addCI = TRUE, freeLowerA = FALSE,
+  freeLowerC = FALSE, freeLowerE = FALSE)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "IP").}
@@ -26,6 +27,10 @@ umxIP(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a =
 \item{sep}{The suffix for twin 1 and twin 2. e.g. selDVs= "dep", sep= "_T" -> c("dep_T1", "dep_T2")}
 
 \item{nFac}{How many common factors for a, c, and e. If one number is given, applies to all three.}
+
+\item{data}{If provided, dzData and mzData are treated as levels of zyg to select() MZ and DZ data sets (default = NULL)}
+
+\item{zyg}{If data provided, this column is used to select rows by zygosity (Default = "zygosity")}
 
 \item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")}
 
@@ -163,8 +168,6 @@ m2 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac =
 	tryHard = "mxTryHard")
 umxCompare(m1, m2)
 }
-# TODO: sep enforcement: move to test case 
-# m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
 }
 \references{
 \itemize{

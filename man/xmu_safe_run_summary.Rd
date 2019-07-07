@@ -7,7 +7,7 @@
 xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
   "mxTryHardWideSearch"), summary = !umx_set_silent(silent = TRUE),
-  show = c("none", "raw", "std", "both", "list of column names"),
+  show = c("none", "raw", "std", "list of column names"),
   comparison = TRUE)
 }
 \arguments{
@@ -21,7 +21,7 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
 
 \item{summary}{Whether to print model summary (default = autoRun).}
 
-\item{show}{What to print in summary (deafult "none") (alternatives: "raw", "std", "both", "list of column names")}
+\item{show}{What to print in summary (deafult "none") (alternatives: "raw", "std", "list of column names")}
 
 \item{comparison}{Toggle to allow not making comparison, even if second model is provided (more flexible in programming).}
 }
@@ -45,10 +45,20 @@ m1 = umxRAM("tim", data = mtcars,
 	umxPath(v.m. = c("wt", "disp", "mpg"))
 )
 m2 = umxModify(m1, "wt_to_mpg")
+
+# Summary ignored if run is false
 xmu_safe_run_summary(m1, autoRun = FALSE, summary = TRUE)
-xmu_safe_run_summary(m1, autoRun = FALSE, summary = TRUE, show = "std")
-# xmu_safe_run_summary(m1, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
-# xmu_safe_run_summary(m1, model2, autoRun = TRUE)
+# Run, no summary
+xmu_safe_run_summary(m1, autoRun = TRUE, summary = FALSE)
+# Default summary is just fit string
+xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE)
+# Show std parameters
+xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE, show = "std")
+# Run + Summary + comparison
+xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE)
+# Run + Summary + no comparison
+xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, show = "std", comparison= FALSE)
+
 }
 \seealso{
 \itemize{

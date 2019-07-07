@@ -8,7 +8,8 @@
 umxSummaryGxE(model = NULL, digits = 2, xlab = NA,
   location = "topleft", separateGraphs = FALSE,
   file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL,
-  reduce = FALSE, CIs = NULL, report = c("markdown", "html"), ...)
+  reduce = FALSE, CIs = NULL, report = c("markdown", "html"),
+  show = NULL, ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxGxE}} model to summarize}
@@ -32,6 +33,8 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA,
 \item{CIs}{Confidence intervals (FALSE)}
 
 \item{report}{"1" = regular, "2" = add descriptive sentences; "html" = open a browser and copyable tables}
+
+\item{show}{not doing anything yet (required for all summary functions)}
 
 \item{...}{Optional additional parameters}
 }

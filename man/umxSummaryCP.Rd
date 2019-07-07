@@ -7,7 +7,8 @@
 \usage{
 umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE,
   showRg = FALSE, comparison = NULL, report = c("markdown", "html"),
-  file = getOption("umx_auto_plot"), returnStd = FALSE, ...)
+  file = getOption("umx_auto_plot"), returnStd = FALSE, show = NULL,
+  ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxCP}} model to summarize}
@@ -27,6 +28,8 @@ umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE,
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
+
+\item{show}{parameter used in all summary functions. currently ignored here.}
 
 \item{...}{Optional additional parameters}
 }

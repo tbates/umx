@@ -1487,6 +1487,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @param report Print tables to the console (as 'markdown'), or open in browser ('html')
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
+#' @param show parameter used in all summary functions. currently ignored here.
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @export
@@ -1523,7 +1524,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' umxSummary(m1, CIs = TRUE, file = NA);
 #' }
 #'
-umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FALSE, comparison = NULL, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE,...) {
+umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FALSE, comparison = NULL, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, show = NULL, ...) {
 	report = match.arg(report)
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
 
@@ -1646,6 +1647,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @param std = Whether to show the standardized model (TRUE)
 #' @param comparison Whether to run mxCompare on a comparison model (NULL)
 #' @param CIs Confidence intervals (F)
+#' @param show parameter used in all summary functions. currently ignored here.
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @family Twin Modeling Functions
@@ -1664,7 +1666,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' \dontrun{
 #' umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 #' }
-umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL, CIs = FALSE, ...) {
+umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL, CIs = FALSE, show = NULL, ...) {
 	umx_check_model(model, "MxModelIP", beenRun = TRUE, callingFn = "umxSummaryIP")
 	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 
@@ -1677,7 +1679,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 	ci = mxEval(top.ci, model);
 	ei = mxEval(top.ei, model);
 
-	as = mxEval(top.as, model); # nVar*nVar matrix of specific path coefficients (Just diagonal, or possibly Choleksy lower for E)
+	as = mxEval(top.as, model); # nVar * nVar matrix of specific path coefficients (Just diagonal, or possibly Cholesky lower for E)
 	cs = mxEval(top.cs, model);
 	es = mxEval(top.es, model);
 
@@ -1765,6 +1767,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @param reduce  Whether run and tabulate a complete model reduction...(Defaults to FALSE)
 #' @param separateGraphs default = F
 #' @param report "1" = regular, "2" = add descriptive sentences; "html" = open a browser and copyable tables
+#' @param show not doing anything yet (required for all summary functions)
 #' @param ... Optional additional parameters
 #' @return - optional \code{\link{mxModel}}
 #' @family Twin Modeling Functions
@@ -1795,7 +1798,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
 #' }
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), ...) {
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show=NULL, ...) {
 	report = match.arg(report)
 	umx_has_been_run(model, stop = TRUE)
 	

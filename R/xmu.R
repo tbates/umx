@@ -93,6 +93,7 @@ xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NA, default = "
 #' 	umxPath(v.m. = c("wt", "disp", "mpg"))
 #' )
 #' m2 = umxModify(m1, "wt_to_mpg")
+#'
 #' # Summary ignored if run is false
 #' xmu_safe_run_summary(m1, autoRun = FALSE, summary = TRUE)
 #' # Run, no summary
@@ -104,7 +105,7 @@ xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NA, default = "
 #' # Run + Summary + comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE)
 #' # Run + Summary + no comparison
-#' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, show = "std", comparison= F)
+#' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, show = "std", comparison= FALSE)
 #'
 xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), show = c("none", "raw", "std", "list of column names"), comparison = TRUE) {
 	# TODO xmu_safe_run_summary: Activate test examples

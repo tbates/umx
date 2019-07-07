@@ -7,7 +7,7 @@
 \title{Create and display a graphical path diagram for a model.}
 \usage{
 \method{plot}{MxModel}(x = NA, std = FALSE, fixed = TRUE,
-  means = TRUE, digits = 2, file = "name", pathLabels = c("none",
+  means = TRUE, digits = 2, file = "name", labels = c("none",
   "labels", "both"), resid = c("circle", "line", "none"),
   strip_zero = FALSE, splines = TRUE, min = NULL, same = NULL,
   max = NULL, ...)
@@ -25,7 +25,7 @@
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
-\item{pathLabels}{Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).}
+\item{labels}{Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).}
 
 \item{resid}{How to show residuals and variances default is "circle". Options are "line" & "none"}
 

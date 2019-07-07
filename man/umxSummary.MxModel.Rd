@@ -6,7 +6,7 @@
 \title{Shows a compact, publication-style, summary of a RAM model}
 \usage{
 \method{umxSummary}{MxModel}(model, refModels = NULL, show = c("raw",
-  "std", "none", "both"), digits = 2, report = c("markdown", "html"),
+  "std", "none"), digits = 2, report = c("markdown", "html"),
   filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE,
   matrixAddresses = FALSE, std = "deprecated", ...)
 }
@@ -17,7 +17,7 @@
 If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
 
 \item{show}{What estimates to show. By default, the raw estimates are shown 
-(Options = c("raw", "std", "none", "both").}
+(Options = c("raw", "std", "none").}
 
 \item{digits}{How many decimal places to report (default = 2)}
 

@@ -90,7 +90,7 @@ saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = dd)}.
 
 \strong{String Syntax}
 
-Here's the same example using lavaan syntax:\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
+Here's the same example using lavaan syntax (for more examples, see \code{\link[=umxLav2RAM]{umxLav2RAM()}})\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
 }
 
 \emph{note}: If you are at the "sketching" stage of theory consideration, \code{umxRAM} supports
@@ -168,9 +168,9 @@ plot(m1)
 plot(m1, std=TRUE, means=FALSE)
 plot(m1, std = TRUE, means=FALSE, strip= TRUE, resid = "line")
 
-# =========================
-# = lavaan string example =
-# =========================
+# ===============================================
+# = lavaan string example (more at ?umxLav2RAM) =
+# ===============================================
 m1 = umxRAM(data = mtcars, "#modelName
  mpg ~ wt + disp")
 

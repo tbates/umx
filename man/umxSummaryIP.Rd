@@ -7,7 +7,7 @@
 \usage{
 umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
   returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL,
-  CIs = FALSE, ...)
+  CIs = FALSE, show = NULL, ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link{umxIP}} model to summarize}
@@ -25,6 +25,8 @@ umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
 \item{comparison}{Whether to run mxCompare on a comparison model (NULL)}
 
 \item{CIs}{Confidence intervals (F)}
+
+\item{show}{parameter used in all summary functions. currently ignored here.}
 
 \item{...}{Optional additional parameters}
 }
