@@ -40,17 +40,24 @@
 #'
 #' ## Naming of multiple groups
 #' When multiple groups are found the groups are named "<name>_<group level>"
-#' White space is replaced with an _ and illegal characters are replaced with "x"
+#' White space is replaced with "_" and illegal characters are replaced with "x"
 #' 
 #' @param model A lavaan syntax string, e.g. "A~~B"
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
 #' @param lavaanMode Auto-magical path settings for cfa/sem (default) or no-defaults ("lavaan")
+#' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
 #' @param group = Column to use for multi-group (default = NULL)
 #' @param group.equal = what to equate across groups. Default (NULL) means no equates. Options that might be implemented (but not yet: c("loadings", "intercepts", "means", "regressions", "residuals", "covariances")
+#' @param show Whether to print estimates. Defaults to no (alternatives = "raw", "std", etc.)
+#' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
+#' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
+#' @param suffix String to append to each label (useful if model will be used in a multi-group model)
+#' @param optimizer optionally set the optimizer (default NULL does nothing)
+#' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param name Model name (can also add name in # commented first line)
-#' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
+#' @param verbose Whether to tell the user what latents and manifests were created etc. (Default = FALSE)
 #' @param printTab = TRUE (more for debugging)
 #' @return - list of [umxPath()]s
 #' @export
@@ -140,15 +147,9 @@
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 #'
 # # TODO support group.equal Equality constraints across multiple groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
-# Process lavaanString: need to modify so that all the RAM options are processed: 
-# suffix
-# comparison
-# show
-# refModels = NULL
-# remove_unused_manifests
-# type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
-# allContinuousMethod
-umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), verbose = FALSE, optimizer = NULL, show = c("none", "raw", "std", "list of column names"), refModels = NULL, printTab = TRUE){
+
+
+umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), verbose = FALSE, optimizer = NULL, show = c("none", "raw", "std", "list of column names"), printTab = TRUE){
 
 	type                = match.arg(type)
 	tryHard             = match.arg(tryHard)

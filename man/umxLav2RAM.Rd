@@ -12,7 +12,7 @@ umxLav2RAM(model = NA, data = "auto", group = NULL,
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
   "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   verbose = FALSE, optimizer = NULL, show = c("none", "raw", "std",
-  "list of column names"), refModels = NULL, printTab = TRUE)
+  "list of column names"), printTab = TRUE)
 }
 \arguments{
 \item{model}{A lavaan syntax string, e.g. "A~~B"}
@@ -29,9 +29,23 @@ umxLav2RAM(model = NA, data = "auto", group = NULL,
 
 \item{std.lv}{= FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.}
 
+\item{suffix}{String to append to each label (useful if model will be used in a multi-group model)}
+
+\item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
+
+\item{type}{One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"}
+
+\item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
+
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+
+\item{verbose}{Whether to tell the user what latents and manifests were created etc. (Default = FALSE)}
+
+\item{optimizer}{optionally set the optimizer (default NULL does nothing)}
+
+\item{show}{Whether to print estimates. Defaults to no (alternatives = "raw", "std", etc.)}
 
 \item{printTab}{= TRUE (more for debugging)}
 }
@@ -76,8 +90,8 @@ Lavaan is well documented. For quick reference, some common symbols in lavaan st
 \tab "=="   \tab lhs is constrained == to rhs (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
 }Naming of multiple groups
 
-When multiple groups are found the groups are named "<name>_<group level>"
-White space is replaced with an _ and illegal characters are replaced with "x"
+When multiple groups are found the groups are named "<name>\emph{<group level>"
+White space is replaced with "}" and illegal characters are replaced with "x"
 }
 \examples{
 # auto-data, print table, return umxRAM model

@@ -2,12 +2,10 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{oddsratio}
 \alias{oddsratio}
-\alias{print.result_oddsratio}
 \title{Compute odds ratio (OR)}
 \usage{
-oddsratio(grp1 = c(n, N), grp2 = c(n, N), alpha = 0.05)
-
-print.result_oddsratio(x, digits = 3, ...)
+oddsratio(grp1 = c(n = 3, N = 10), grp2 = c(n = 1, N = 10),
+  alpha = 0.05)
 }
 \arguments{
 \item{grp1}{cases and total N for group 1}
@@ -15,12 +13,6 @@ print.result_oddsratio(x, digits = 3, ...)
 \item{grp2}{cases and total N for group 2}
 
 \item{alpha}{for CI (default = 0.05)}
-
-\item{x}{output from \code{\link[=oddsratio]{oddsratio()}}}
-
-\item{digits}{rounding or output (default = 3)}
-
-\item{...}{further arguments}
 }
 \value{
 \itemize{

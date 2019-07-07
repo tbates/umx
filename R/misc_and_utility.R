@@ -2306,7 +2306,7 @@ umx_write_to_clipboard <- function(x) {
 #' oddsratio(c(3, 10), c(1, 10))
 #' oddsratio(c(3, 10), c(1, 10), alpha = .01)
 #'
-oddsratio <- function(grp1= c(n, N), grp2= c(n, N), alpha = 0.05) {
+oddsratio <- function(grp1= c(n=3, N=10), grp2= c(n=1, N=10), alpha = 0.05) {
 	nGrp1 = grp1[1]
 	nGrp2 = grp2[1]
 
@@ -2329,7 +2329,7 @@ oddsratio <- function(grp1= c(n, N), grp2= c(n, N), alpha = 0.05) {
 	return(ret)
 }
 
-#' @rdname oddsratio
+#' print method for oddsratio
 #' @param x output from [oddsratio()]
 #' @param digits rounding or output (default = 3)
 #' @param ... further arguments

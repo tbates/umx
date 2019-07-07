@@ -14,7 +14,8 @@ test_that("testing umx twin models", {
 	selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
 	m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 	# m2 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-	m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData)
+
+	# expect_error(m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData),"Please use sep")
 	
 	# Use "marginals" method to enable all continuous data with missingness.
 	m3 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
