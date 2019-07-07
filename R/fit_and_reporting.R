@@ -2798,7 +2798,9 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			grepStr = '^expMean_(.*_T1)'
 			from    = "one";
 			target = sub(grepStr, '\\1', thisParam, perl=TRUE)
-			latents = append(latents,from);
+			if(means){
+				latents = append(latents,from)
+			}
 		} else {
 			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
 			"If you are using umxModify to make newLabels, instead of making up a new label, use, say, the first label in update as the newLabel to help plot()")
