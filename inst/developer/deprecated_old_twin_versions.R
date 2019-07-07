@@ -347,7 +347,6 @@ umxACEold <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 				allData = rbind(mzData, dzData)
 				varStarts = umx_var(mzData[, selVars[1:nVar], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 				
-				# TODO repeat sqrt start values for other twin models. 2017-08-19 12:21PM umxACEcov done
 				if(nVar == 1){
 					# Sqrt to switch from var to path coefficient scale
 					varStarts = sqrt(varStarts)/3
@@ -446,7 +445,6 @@ umxACEold <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 					# = Constrain Ordinal variance @1  =
 					# ===================================
 					# Algebra to pick out the ordinal variables
-					# TODO check using twin 1 to pick where the bin variables are is robust...
 					# Fill with zeros: default for ordinals and binary...
 					allData   = rbind(mzData, dzData)
 					meansFree = (!isBin) # fix the binary variables at zero
@@ -586,8 +584,6 @@ umxACEold <- function(name = "ACE", selDVs, selCovs = NULL, covMethod = c("fixed
 				umxMatrix("I", "Iden", nVar, nVar), # nVar Identity matrix
 				# redundant with binary version of top - doesn't matter to add it twice
 				mxAlgebra(name = "Vtot", A + C+ E), # Total variance
-				# TODO test that these are identical in all cases.
-				# mxAlgebra(vec2diag(1/sqrt(diag2vec(Vtot))), name = "SD"), # SD
 				mxAlgebra(name = "SD", solve(sqrt(I * Vtot))), # Total variance
 				mxAlgebra(name = "a_std", SD %*% a), # standardized a
 				mxAlgebra(name = "c_std", SD %*% c), # standardized c
@@ -663,10 +659,6 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 	latents = c();
 	cSpecifics = c();
 	for(thisParam in names(parameterKeyList) ) {
-		# TODO: umxPlotCP plot functions are in the process of being made more intelligent. see: umxPlotCPnew()
-		# This version uses labels. New versions will access the relevant matrices, thus
-		# breaking the dependency on label structure. This will allow more flexible labeling
-
 		# Top level a c e inputs to common factors
 		if( grepl("^[ace]_cp_r[0-9]", thisParam)) { 
 			# Match cp latents, e.g. thisParam = "c_cp_r1c3" (note, row = factor #)
@@ -693,7 +685,7 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl= TRUE))
 			target  = selDVs[as.numeric(targetindex)]
 		} else if (grepl("_dev[0-9]", thisParam)) { # is a threshold
-			# Doesn't need plotting? # TODO umxPlotCP could tabulate thresholds?
+			# Doesn't need plotting?
 			from = "do not plot"
 		} else {
 			message("While making the plot, I found a path labeled ", thisParam, "\nI don't know where that goes.\n",

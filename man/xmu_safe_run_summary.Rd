@@ -7,6 +7,7 @@
 xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
   "mxTryHardWideSearch"), summary = !umx_set_silent(silent = TRUE),
+  show = c("none", "raw", "std", "both", "list of column names"),
   comparison = TRUE)
 }
 \arguments{
@@ -19,6 +20,8 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{summary}{Whether to print model summary (default = autoRun).}
+
+\item{show}{What to print in summary (deafult "none") (alternatives: "raw", "std", "both", "list of column names")}
 
 \item{comparison}{Toggle to allow not making comparison, even if second model is provided (more flexible in programming).}
 }
@@ -36,9 +39,16 @@ If summary = TRUE then \code{\link[=umxSummary]{umxSummary()}} is requested (aga
 \emph{note}: If autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
 }
 \examples{
-# xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE)
-# xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
-# xmu_safe_run_summary(model, model2, autoRun = TRUE)
+m1 = umxRAM("tim", data = mtcars,
+	umxPath(c("wt", "disp"), to = "mpg"),
+	umxPath("wt", with = "disp"),
+	umxPath(v.m. = c("wt", "disp", "mpg"))
+)
+m2 = umxModify(m1, "wt_to_mpg")
+xmu_safe_run_summary(m1, autoRun = FALSE, summary = TRUE)
+xmu_safe_run_summary(m1, autoRun = FALSE, summary = TRUE, show = "std")
+# xmu_safe_run_summary(m1, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
+# xmu_safe_run_summary(m1, model2, autoRun = TRUE)
 }
 \seealso{
 \itemize{

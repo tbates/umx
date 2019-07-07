@@ -32,11 +32,11 @@ Returns the odds in each group, and the odds ratio. Takes the cases (n) and tota
 of two numbers for each of two groups.
 }
 \details{
-Returns a list of odds1, odds2, and OR. Has a pretty-printing method so displays as:
+Returns a list of odds1, odds2, and OR + CI. Has a pretty-printing method so displays as:
 
-odds1 = 0.428
-odds2 = 0.111
-OR = 3.87
+Group 1 odds = 0.429
+Group 2 odds = 0.111
+OR = 3.857 CI99\link{0.159, 93.646}
 }
 \examples{
 oddsratio(c(1, 10), c(3, 10))

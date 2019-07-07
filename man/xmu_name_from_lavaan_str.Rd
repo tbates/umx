@@ -4,7 +4,7 @@
 \alias{xmu_name_from_lavaan_str}
 \title{Find name for model}
 \usage{
-xmu_name_from_lavaan_str(lavaanString = NULL, name = NULL,
+xmu_name_from_lavaan_str(lavaanString = NULL, name = NA,
   default = "m1")
 }
 \arguments{
@@ -35,7 +35,7 @@ Use name if provided. If first line contains a #, uses this line as name. Else u
 }
 \seealso{
 \itemize{
-\item \code{\link{umxRAM}}
+\item \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other xmu internal not for end user: \code{\link{umxModel}},

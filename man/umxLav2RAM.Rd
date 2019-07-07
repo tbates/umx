@@ -5,10 +5,14 @@
 \title{Convert a lavaan syntax string to a umxRAM model (or umxSuperModel)}
 \usage{
 umxLav2RAM(model = NA, data = "auto", group = NULL,
-  group.equal = NULL, name = NULL, lavaanMode = c("sem", "lavaan"),
-  std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes",
+  group.equal = NULL, name = NA, lavaanMode = c("sem", "lavaan"),
+  std.lv = FALSE, suffix = "", comparison = TRUE, type = c("Auto",
+  "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  allContinuousMethod = c("cumulants", "marginals"),
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
   "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  printTab = TRUE)
+  verbose = FALSE, optimizer = NULL, show = c("none", "raw", "std",
+  "list of column names"), refModels = NULL, printTab = TRUE)
 }
 \arguments{
 \item{model}{A lavaan syntax string, e.g. "A~~B"}

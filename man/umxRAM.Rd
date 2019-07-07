@@ -6,11 +6,11 @@
 \usage{
 umxRAM(model = NA, ..., data = NULL, name = NA, group = NULL,
   group.equal = NULL, suffix = "", comparison = TRUE,
-  showEstimates = c("none", "raw", "std", "both",
-  "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS",
-  "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"),
+  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
   "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  show = c("none", "raw", "std", "list of column names"),
   refModels = NULL, remove_unused_manifests = TRUE, independent = NA,
   setValues = TRUE, optimizer = NULL, verbose = FALSE,
   std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE)
@@ -32,8 +32,6 @@ umxRAM(model = NA, ..., data = NULL, name = NA, group = NULL,
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
-\item{showEstimates}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
-
 \item{type}{One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"}
 
 \item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
@@ -41,6 +39,8 @@ umxRAM(model = NA, ..., data = NULL, name = NA, group = NULL,
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+
+\item{show}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
 
 \item{refModels}{pass in reference models if available. Use FALSE to suppress computing these if not provided.}
 

@@ -1,7 +1,7 @@
 #' Make RAM model using lavaan syntax
 #'
 #' @description
-#' Can detect lavaan string input. TODO document once merged with [umxRAM()].
+#' Can detect lavaan string input.
 #'
 #' @param model A lavaan string
 #' @param data Data for the model (optional)

@@ -1,3 +1,4 @@
+# Any goal of which you are capable of each tiny step, you can attain.
 #' Convert a lavaan syntax string to a umxRAM model (or umxSuperModel)
 #'
 #' @description
@@ -139,8 +140,21 @@
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 #'
 # # TODO support group.equal Equality constraints across multiple groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
-umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NULL, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), printTab = TRUE){
-	lavaanMode = match.arg(lavaanMode)
+# Process lavaanString: need to modify so that all the RAM options are processed: 
+# suffix
+# comparison
+# show
+# refModels = NULL
+# remove_unused_manifests
+# type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
+# allContinuousMethod
+umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), verbose = FALSE, optimizer = NULL, show = c("none", "raw", "std", "list of column names"), refModels = NULL, printTab = TRUE){
+
+	type                = match.arg(type)
+	tryHard             = match.arg(tryHard)
+	show       = umx_default_option(show, c("none", "raw", "std", "list of column names"), check = FALSE)
+	allContinuousMethod = match.arg(allContinuousMethod)
+	lavaanMode          = match.arg(lavaanMode)
 	
 	# =~  =  L  -> A
 	# ~   =  y <-  x
@@ -172,10 +186,10 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 		}
 	}
 
-	# Assume `name` should be used if !is.null(name)
+	# Use `name` if provided, otherwise look for #name in line 1, else use "m1"
 	name = xmu_name_from_lavaan_str(lavaanString = lavaanString, name = name, default = "m1")
 
-	# TODO umxLav2RAM: detect legal options (like auto.var) in the ... list and filter into lavaanify call
+	# TODO umxLav2RAM: detect additional legal options (like auto.var) in the ... list and filter into lavaanify call
 	if(lavaanMode == "sem"){
 		# model = "x1~b1*x2; B1_sq := b1^2"; std.lv=FALSE
 		tab = lavaan::lavaanify(model = model, ngroups = ngroups,
@@ -194,7 +208,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 			# If TRUE, would fix mean, var, cov, of exogenous covariates to their sample values.			
 		)
 	}else	if(lavaanMode == "lavaan"){
-		tab = lavaan::lavaanify(model = model, ngroups = ngroups)
+		tab = lavaan::lavaanify(model = model, ngroups = ngroups, group.equal = group.equal, std.lv = std.lv, auto.fix.first = !std.lv, fixed.x = FALSE)
 	}else{
 		message("Only sem and lavaan (only what the user explicitly requests) are implemented as yet: What other modes would be useful?")		
 	}
@@ -217,8 +231,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 	# 2  2   A ~~   A    0     1     1    0      0   0         .p2.
 	# 3  3   B ~~   B    0     1     1    0     NA   1         .p3.
 
-	# Any goal of which you are capable of each tiny step, you can attain.
-	# Pull out group 0 if found (algebras): might need to create in supergroup.
+	# Pull out group 0 (algebras) if found : might need to create in supergroup.
 	algebraRows = tab[tab$group == 0, ]
 	nAlg = nrow(algebraRows)
 
@@ -271,7 +284,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 		}else{
 			modelName = name
 		}
-		m1 = umxRAM(modelName, plist, data = theseData, autoRun = FALSE)
+		m1 = umxRAM(modelName, plist, data = theseData, autoRun = FALSE, type = type, allContinuousMethod = allContinuousMethod)
 		modelList = append(modelList, m1)
 	}
 
@@ -296,11 +309,10 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 		return(model)
 	}else{
 		model = omxAssignFirstParameters(model)
-		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
+		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, show = show)
 		return(model)
 	}
 }
-
 
 #' lavaan parameter table rows to model
 #'

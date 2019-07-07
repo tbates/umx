@@ -810,8 +810,8 @@ umxSummary.default <- function(model, ...){
 #' @param model The \code{\link{mxModel}} whose fit will be reported
 #' @param refModels Saturated models if needed for fit indices (see example below:
 #' 	If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.
-#' @param showEstimates What estimates to show. By default, the raw estimates are shown 
-#' (Options = c("raw", "std", "none", "both").
+#' @param show What estimates to show. By default, the raw estimates are shown 
+#' (Options = c("raw", "std", "none").
 #' @param digits How many decimal places to report (default = 2)
 #' @param report If "html", then show results in browser (alternative = "markdown")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
@@ -845,10 +845,10 @@ umxSummary.default <- function(model, ...){
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' umxSummary(m1, showEstimates = "std")
+#' umxSummary(m1, show = "std")
 #' # output as latex
 #' umx_set_table_format("latex")
-#' umxSummary(m1, showEstimates = "std")
+#' umxSummary(m1, show = "std")
 #' umx_set_table_format("markdown")
 #' # output as raw
 #' umxSummary(m1, show = "raw")
@@ -858,8 +858,8 @@ umxSummary.default <- function(model, ...){
 #'   umxPath(mean = latents, fixedAt = 0)
 #' )
 #' m1 <- mxRun(m1)
-#' umxSummary(m1, showEstimates = "std", filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw", "std", "none", "both"), digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = "deprecated", ...){
+#' umxSummary(m1, show = "std", filter = "NS")
+umxSummary.MxModel <- function(model, refModels = NULL, show = c("raw", "std", "none"), digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = "deprecated", ...){
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if(std != "deprecated"){
@@ -867,20 +867,22 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 	}
 	report = match.arg(report)
 	filter = match.arg(filter)
-	showEstimates = match.arg(showEstimates)
-	message("?umxSummary showEstimates='raw|std', digits, report= 'html', filter= 'NS' & more")
+	show = match.arg(show)
+	show = umx_default_option(show, c("raw", "std", "none"), check = FALSE)
+	
+	message("?umxSummary show='raw|std', digits, report= 'html', filter= 'NS' & more")
 	
 	# If the filter is not default, user must want something: Assume it's what would have been the default...
-	if( filter != "ALL" & showEstimates == "none") {
-		showEstimates = "raw"
-	}else if(showEstimates == "std" && SE == FALSE){
+	if( filter != "ALL" & show == "none") {
+		show = "raw"
+	}else if(show == "std" && SE == FALSE){
 		# message("SE must be TRUE to show std, overriding to set SE = TRUE")
 		SE = TRUE
 	}
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(refModels)) {
 		# SaturatedModels not passed in from outside, so get them from the model
-		# TODO Improve efficiency: Compute summary only once by detecting when SaturatedLikelihood is missing
+		# TODO umxSummary Improve efficiency: Compute summary only once by detecting when SaturatedLikelihood is missing
 		modelSummary = summary(model)
 		if(is.null(model$data)){
 			# TODO model with no data - no saturated solution?
@@ -897,7 +899,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 	}
 
 	# DisplayColumns
-	if(showEstimates != "none"){
+	if(show != "none"){
 		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
 		nSubModels = length(model$submodels)
 		if(nSubModels > 0){
@@ -922,9 +924,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 		# TODO: umxSummary add p value, perhaps CI?
 		# TODO: umxSummary block table into latents/resid/means etc.
 		
-		if(showEstimates == "both") {
+		if(show == "both") {
 			namesToShow = c(nameing, "Estimate", "SE", "Std.Estimate", "Std.SE")
-		} else if(showEstimates == "std"){
+		} else if(show == "std"){
 			namesToShow = c(nameing, "Std.Estimate", "Std.SE", "CI")
 		}else{ # must be raw
 			namesToShow = c(nameing, "Estimate", "SE")					
@@ -965,7 +967,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 			umx_print(toShow, digits = digits, na.print = "", zero.print = "0", justify = "none")
 		}
 	} else {
-		# message("For estimates, umxSummary(..., showEstimates = 'std', 'raw', or 'both')")
+		# message("For estimates, umxSummary(..., show = 'std', 'raw', or 'both')")
 	}
 	with(modelSummary, {
 		if(!is.finite(TLI)){
@@ -1016,7 +1018,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, showEstimates = c("raw",
 	if(!is.null(model$output$confidenceIntervals)){
 		print(model$output$confidenceIntervals)
 	}
-	if(showEstimates != "none"){ # return these as  invisible for the user to filer, sort etc.
+	if(show != "none"){ # return these as  invisible for the user to filer, sort etc.
 		if(filter == "NS"){
 			invisible(parameterTable[parameterTable$sig == FALSE, namesToShow])
 		}else if(filter == "SIG"){
@@ -2146,7 +2148,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param means Whether to show means or not (default = TRUE)
 #' @param digits The number of decimal places to add to the path coefficients
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
-#' @param pathLabels Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).
+#' @param labels Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)
 #' @param splines Whether to allow lines to curve: defaults to TRUE (nb: some models look better with FALSE)
@@ -2188,7 +2190,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #'
 #' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 #'
-plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", pathLabels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
+plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
 
 	# loop over submodels
 	if(length(x@submodels)){

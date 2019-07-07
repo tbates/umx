@@ -27,17 +27,17 @@
 #' @return - A name string
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - \code{\link{umxRAM}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @seealso - [umxRAM()]
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' "m1" == xmu_name_from_lavaan_str("x~~x")
 #' "bob" == xmu_name_from_lavaan_str(name = "bob")
 #' "my_model" == xmu_name_from_lavaan_str("# my model")
 #'
-xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NULL, default = "m1") {
+xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NA, default = "m1") {
 	# Assume `name` should be used if !is.null(name)
-	if(is.null(name)){
+	if(is.na(name)){
 		# If first line contains a #, assume user wants it to be a name for the model
 		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
 		if(grepl(x = line1, pattern = "#")){
@@ -79,6 +79,7 @@ xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NULL, default =
 #' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param summary Whether to print model summary (default = autoRun).
+#' @param show What to print in summary (deafult "none") (alternatives: "raw", "std", "list of column names")
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @return - \code{\link{mxModel}}
 #' @export
@@ -86,11 +87,28 @@ xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NULL, default =
 #' @seealso - \code{\link{mxTryHard}}
 #' @md
 #' @examples
-#' # xmu_safe_run_summary(model, autoRun = FALSE, summary = TRUE)
-#' # xmu_safe_run_summary(model, model2, autoRun = TRUE, summary = TRUE, comparison= FALSE)
-#' # xmu_safe_run_summary(model, model2, autoRun = TRUE)
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), comparison = TRUE) {
+#' m1 = umxRAM("tim", data = mtcars,
+#' 	umxPath(c("wt", "disp"), to = "mpg"),
+#' 	umxPath("wt", with = "disp"),
+#' 	umxPath(v.m. = c("wt", "disp", "mpg"))
+#' )
+#' m2 = umxModify(m1, "wt_to_mpg")
+#' # Summary ignored if run is false
+#' xmu_safe_run_summary(m1, autoRun = FALSE, summary = TRUE)
+#' # Run, no summary
+#' xmu_safe_run_summary(m1, autoRun = TRUE, summary = FALSE)
+#' # Default summary is just fit string
+#' xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE)
+#' # Show std parameters
+#' xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE, show = "std")
+#' # Run + Summary + comparison
+#' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE)
+#' # Run + Summary + no comparison
+#' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, show = "std", comparison= F)
+#'
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), show = c("none", "raw", "std", "list of column names"), comparison = TRUE) {
 	# TODO xmu_safe_run_summary: Activate test examples
+	show = umx_default_option(show, c("none", "raw", "std", "list of column names"), check = FALSE)
 	tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
@@ -136,7 +154,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		# Didn't get run... don't try and summarize it (will error)
 	} else if(summary){
 		tryCatch({
-			umxSummary(model1)
+			umxSummary(model1, show = show)
 		# }, warning = function(w) {
 		# 	message("Warning incurred trying to run umxSummary")
 		# 	message(w)

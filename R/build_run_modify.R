@@ -294,7 +294,7 @@ umxModel <- function(...) {
 #'
 #' **String Syntax**
 #' 
-#' Here's the same example using lavaan syntax:
+#' Here's the same example using lavaan syntax (for more examples, see [umxLav2RAM()])
 #' 
 #' ```Rsplus
 #' m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
@@ -360,7 +360,7 @@ umxModel <- function(...) {
 #' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param showEstimates Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
+#' @param show Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param setValues Whether to generate likely good start values (Defaults to TRUE)
@@ -407,9 +407,9 @@ umxModel <- function(...) {
 #' plot(m1, std=TRUE, means=FALSE)
 #' plot(m1, std = TRUE, means=FALSE, strip= TRUE, resid = "line")
 #'
-#' # =========================
-#' # = lavaan string example =
-#' # =========================
+#' # ===============================================
+#' # = lavaan string example (more at ?umxLav2RAM) =
+#' # ===============================================
 #' m1 = umxRAM(data = mtcars, "#modelName
 #'  mpg ~ wt + disp")
 #' 
@@ -508,12 +508,12 @@ umxModel <- function(...) {
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' parameters(m1)
 #'
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, showEstimates = c("none", "raw", "std", "both", "list of column names"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), show = c("none", "raw", "std", "list of column names"), refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 	type = match.arg(type)
 	tryHard = match.arg(tryHard)
-	showEstimates = umx_default_option(showEstimates, c("none", "raw", "std", "both", "list of column names"), check = FALSE)
+	show = umx_default_option(show, c("none", "raw", "std", "list of column names"), check = FALSE)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	lavaanMode = match.arg(lavaanMode)
 	# =================
@@ -528,7 +528,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		# Process lavaanString: need to modify so that all the RAM options are processed: 
 		# suffix
 		# comparison
-		# showEstimates
+		# show
 		# refModels = NULL
 		# remove_unused_manifests
 		# type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
@@ -737,17 +737,19 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		modelList = list()
 		groupCol = data[,group]
 		levelsOfGroup = unique(groupCol)
-		
+		if(!is.null(group.equal)){
+			message("sorry, haven't implemented group.equal yet")
+		}
 		for (thisLevelOfGroup in levelsOfGroup) {
 			thisSubset = data[groupCol == thisLevelOfGroup, ]
-			newModel = mxModel(newModel, name= paste0(name, "_", thisLevelOfGroup))
-			modelList = c(modelList, newModel)
+			newModel   = mxModel(newModel, name= paste0(name, "_", thisLevelOfGroup))
+			modelList  = c(modelList, newModel)
 		}
-		newModel = umxSuperModel(name=name, modelList)
+		newModel = umxSuperModel(name = name, modelList)
 	}
 
 	newModel = omxAssignFirstParameters(newModel)
-	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard)
+	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, show = show)
 	invisible(newModel)
 }
 
