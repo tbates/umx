@@ -2797,9 +2797,9 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 		} else if (grepl("^expMean", thisParam)) { # means probably "expMean_gff_T1" (was "expMean_r1c1")
 			grepStr = '^expMean_(.*_T1)'
 			from    = "one";
-			target = sub(grepStr, '\\1', thisParam, perl=TRUE)
+			target = sub(grepStr, '\\1', thisParam, perl = TRUE)
 			if(means){
-				latents = append(latents,from)
+				latents = append(latents, from)
 			}
 		} else {
 			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
