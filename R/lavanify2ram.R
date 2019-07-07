@@ -150,7 +150,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 	# lav = ("y ~ x1 + 2.4*x2 + x3)
 	# lavaanify("y ~ x")
 	# TODO accept a list of these properties as lavaan="sem"
-	# TODO color residuals gray; biv blue; one-way green?
+	# TODO plot color residuals gray; biv blue; one-way green?
 	
 	# tmp = umxRAM2("e1~~n1; e2~~n2; e2+n2 ~ e1; n2 ~ n1");
 	

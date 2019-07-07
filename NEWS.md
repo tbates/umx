@@ -1,11 +1,6 @@
-# Road map...
-* ALPHA: `umxRAM` lavaan string syntax mode.
-* FUTURE: `umxACEv` supports WLS, UWLS, DWLS models
-* FUTURE: `umxCP` supports WLS, UWLS, DWLS models
-
 # umx 3.0.0
-* June 2019, R 3.6.0 "Planting of a Tree"
-* ALPHA: `umxRAM` lavaan string syntax mode.
+* July 2019, R 3.6.0 "Planting of a Tree"
+* ALPHA: `umxRAM` lavaan string syntax support.
 * ALPHA: `umxRAM` multi-group models.
 
 # umx 2.15.0
