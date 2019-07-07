@@ -440,7 +440,6 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' @family Plotting functions
 #' @examples
 #' \dontrun{
-#' # TODO Add example from umxSimplex help
 #' data(iqdat)
 #' mzData = subset(iqdat, zygosity == "MZ")
 #' dzData = subset(iqdat, zygosity == "DZ")
@@ -449,7 +448,7 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' # plot(m1)
 #' }
 umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), strip_zero = TRUE, ...) {
-	# TODO: umxPlotSimplex walks across the known matrices to obviate problems with arbitrary names in label based approaches.
+	# umxPlotSimplex walks across the known matrices to obviate problems with arbitrary names in label based approaches.
 	# 1. Could add dimnames() to A, C, E?
 	if(!class(x) == "MxModelSimplex"){
 		stop("The first parameter of umxPlotSimplex must be a umxSimplex model, you gave me a ", class(x))

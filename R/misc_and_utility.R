@@ -1794,23 +1794,26 @@ umx_rename <- function(data, old = NULL, replace = NULL, regex = NULL, test = FA
 	}
 }
 
-#' umx_grep
+#' Search for text
 #'
-#' Search for text. Will search names if given a data.frame, or strings if given a vector of strings. 
-#' NOTE: Handy feature is that this can search the labels of data imported from SPSS
+#' Search names if given a data.frame, or strings if given a vector of strings. 
 #'
-#' To simply grep for a pattern in a string just use R built-in grep* functions, e.g.:
-#'  grepl("^NA\\[0-9]", "NA.3")
-#' @param df The \code{\link{data.frame}} or string to search
-#' @param grepString the search string
-#' @param output the column name, the label, or both (default)
-#' @param ignore.case whether to be case sensitive or not (default TRUE = ignore case)
-#' @param useNames whether to search the names as well as the labels (for SPSS files with label metadata)
-#' @return - list of matched column names and/or labels
-#' @seealso - \code{\link{grep}} \code{\link{umx_names}} \code{\link{umx_aggregate}}
+#' The namez function is more flexible. A handy feature of `umx_grep` is that it can 
+#' search the labels of data imported from SPSS.
+#' 
+#' *nb:* To simply grep for a pattern in a string use R's built-in [grep()] functions, e.g.:
+#'  `grepl("^NA\\[0-9]", "NA.3")`
+#' @param df The [data.frame()] or string to search.
+#' @param grepString the search string.
+#' @param output the column name, the label, or both (default).
+#' @param ignore.case whether to be case sensitive or not (default TRUE = ignore case).
+#' @param useNames whether to search the names as well as the labels (for SPSS files with label metadata).
+#' @return - list of matched column names and/or labels.
+#' @seealso - [namez()], [umx_aggregate()], [grep()]
 #' @family String Functions
 #' @export
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
+#' @md
 #' @examples
 #' umx_grep(mtcars, "hp", output="both", ignore.case= TRUE)
 #' umx_grep(c("hp", "ph"), "hp")
@@ -1833,11 +1836,11 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 			return(grep(grepString, names(df), value=TRUE, ignore.case= ignore.case))
 		}
 		if(useNames) {
-			findIndex = grep(grepString,a, value=F, ignore.case=ignore.case)
+			findIndex = grep(grepString,a, value=FALSE, ignore.case=ignore.case)
 			return( as.matrix(vLabels[findIndex]))
 		} else {
 			# need to cope with finding nothing
-			findIndex = grep(grepString,vLabels, value=F, ignore.case=ignore.case)
+			findIndex = grep(grepString,vLabels, value=FALSE, ignore.case=ignore.case)
 			if(output=="both") {
 				theResult <- as.matrix(vLabels[findIndex])
 			} else if(output=="label"){
@@ -1850,14 +1853,13 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 			}
 			if(dim(theResult)[1]==0 |is.null(theResult)){
 				cat("using names!!!!\n")
-				findIndex = grep(grepString,a, value=F, ignore.case=ignore.case)
+				findIndex = grep(grepString,a, value=FALSE, ignore.case=ignore.case)
 				return(as.matrix(vLabels[findIndex]))
 			} else {
 				return(theResult)
 			}
 		}
 	} else {
-		# TODO	umx_grep: Check input is string or vector of strings
 		return(grep(grepString, df, value = TRUE, ignore.case = ignore.case))
 	}
 }
@@ -4634,28 +4636,34 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	}
 }
 
-#' umx_scale_wide_twin_data
+#' Scale wide data
 #'
-#' Scale wide data across all cases: currently 2 twins.
-#'
+#' Scale wide data across all twins. You offer up `varsToScale`, e.g. c("DEP", "bmi")
+#' and the sep (e.g. "_T") and twins e.g. (1:2) that paste together to make 
+#' complete variable names: e.g. "DEP_T1" and "DEP_T2".
 #' @param varsToScale The base names of the variables ("weight" etc.)
 #' @param sep The suffix that distinguishes each case, e.g. "_T")
-#' @param data a wide dataframe
-#' @return - new dataframe with variables scaled in place
+#' @param data A wide dataframe
+#' @param twins Legal digits following sep (default 1:2)
+#' @return - dataframe with varsToScale standardized
 #' @export
 #' @seealso umx_scale
 #' @family Twin Data functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
+#' @md
 #' @examples
 #' data(twinData) 
 #' df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 #' plot(wt1 ~ wt2, data = df)
-umx_scale_wide_twin_data <- function(varsToScale, sep, data) {
+umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 	if(length(sep) != 1){
 		stop("I need one sep, you gave me ", length(sep), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
+	if(twins != 1:2){
+		stop("I only support two twins at present. email Tim to work on arbitrary widths.")
+	}
 	# TODO umx_scale_wide_twin_data: Discover suffixes as unique digits following suffix (could be 1:6)
-	namesNeeded = umx_paste_names(varsToScale, sep = sep, suffixes = 1:2)
+	namesNeeded = umx_paste_names(varsToScale, sep = sep, suffixes = twins)
 	umx_check_names(namesNeeded, data)
 	t1Traits = paste0(varsToScale, sep, 1)
 	t2Traits = paste0(varsToScale, sep, 2)
