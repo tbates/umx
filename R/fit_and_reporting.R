@@ -2776,6 +2776,7 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	out = "";
 	cSpecifics = c();
 	latents = c()
+	
 	for(thisParam in names(parameterKeyList) ) {
 		if( grepl("^[ace]i_r[0-9]", thisParam)) {
 			# top level a c e
@@ -2785,7 +2786,7 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			from    = sub(grepStr, '\\1_\\3', thisParam, perl = TRUE);
 			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl=T));
 			target  = selDVs[as.numeric(targetindex)]
-			latents = append(latents,from);
+			latents = append(latents, from);
 		} else if (grepl("^[ace]s_r[0-9]", thisParam)) { # specific
 			grepStr = '([ace]s)_r([0-9]+)c([0-9]+)'
 			from    = sub(grepStr, '\\1\\3', thisParam, perl = T);
@@ -2793,16 +2794,15 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			target  = selDVs[as.numeric(targetindex)]
 			cSpecifics = append(cSpecifics,from);
 			latents = append(latents,from);
-		} else if (grepl("^expMean", thisParam)) { # means probably expMean_r1c1
-			grepStr = '(^.*)_r([0-9]+)c([0-9]+)'
+		} else if (grepl("^expMean", thisParam)) { # means probably "expMean_gff_T1" (was "expMean_r1c1")
+			grepStr = '^expMean_(.*_T1)'
 			from    = "one";
-			targetindex = as.numeric(sub(grepStr, '\\3', thisParam, perl=T));
-			target  = selDVs[as.numeric(targetindex)];
+			target = sub(grepStr, '\\1', thisParam, perl=TRUE)
+			latents = append(latents,from);
 		} else {
 			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
 			"If you are using umxModify to make newLabels, instead of making up a new label, use, say, the first label in update as the newLabel to help plot()")
 		}
-
 		if(!means & from == "one"){
 			# not adding means...
 		} else {
@@ -2820,7 +2820,11 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	preOut = "\t# Latents\n"
 	latents = unique(latents)
 	for(var in latents) {
-	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+		if(var == "one"){
+			preOut = paste0(preOut, "\t", var, " [shape = triangle];\n")
+		} else {
+			preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+		}
 	}
 	preOut = paste0(preOut, "\n\t# Manifests\n")
 	for(n in c(1:varCount)) {
