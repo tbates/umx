@@ -131,8 +131,6 @@
 #'
 #' tmp = umxLav2RAM(lav)
 #'
-#' m1 = umxRAM("y ~ x")
-#' umxRAM("y is x") # not a lavaan string
 #' namedStr = " 	# my name
 #' 	y ~x"
 #' m1 = umxRAM(namedStr) 
