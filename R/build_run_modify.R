@@ -2377,9 +2377,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 #' 
 #' # Do it using WLS
-#' # m3 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData,
-#'	#		tryHard = "mxTryHardOrdinal", type= "DWLS")
-#'	# TODO fix WLS with umxCP 
+#' m3 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData,
+#'			tryHard = "mxTryHardOrdinal", type= "DWLS")
+#'	# TODO umxCPL fix WLS here
 #'	# label at row 1 and column 1 of matrix 'top.binLabels'' in model 'CP3fac' : object 'Vtot'
 #'
 #' # Correlated factors example

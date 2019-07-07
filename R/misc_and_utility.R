@@ -2289,7 +2289,7 @@ umx_write_to_clipboard <- function(x) {
 #'
 #' Group 1 odds = 0.429
 #' Group 2 odds = 0.111
-#'           OR = 3.857 CI99[0.159, 93.646]
+#'           OR = 3.857 CI99\[0.159, 93.646\]
 #' 
 #'
 #' @param grp1 cases and total N for group 1

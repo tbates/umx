@@ -5,7 +5,7 @@
 \title{Create and display a graphical path diagram for a LISREL model.}
 \usage{
 \method{plot}{MxLISRELModel}(x = NA, std = FALSE, fixed = TRUE,
-  means = TRUE, digits = 2, file = "name", pathLabels = c("none",
+  means = TRUE, digits = 2, file = "name", labels = c("none",
   "labels", "both"), resid = c("circle", "line", "none"),
   strip_zero = TRUE, ...)
 }
@@ -22,7 +22,7 @@
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
-\item{pathLabels}{Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")}
+\item{labels}{Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")}
 
 \item{resid}{How to show residuals and variances default is "circle". Options are "line" & "none"}
 

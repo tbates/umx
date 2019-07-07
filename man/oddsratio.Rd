@@ -28,7 +28,7 @@ Returns a list of odds1, odds2, and OR + CI. Has a pretty-printing method so dis
 
 Group 1 odds = 0.429
 Group 2 odds = 0.111
-OR = 3.857 CI99\link{0.159, 93.646}
+OR = 3.857 CI99[0.159, 93.646]
 }
 \examples{
 oddsratio(c(1, 10), c(3, 10))

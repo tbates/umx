@@ -1554,13 +1554,13 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 #' @param fixed Whether show fixed values or not (defaults to TRUE)
 #' @param comment A comment to include
 #' @param showResiduals Whether to show residuals
-#' @param pathLabels labels
+#' @param labels show labels on the path? ("none", "labels", "both")
 #' @param digits how many digits to report
 #' @return - string
 #' @export
 #' @family xmu internal not for end user
 #' @family Graphviz
-xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comment = "More paths", showResiduals = TRUE, pathLabels = "labels", digits = 2) {
+xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comment = "More paths", showResiduals = TRUE, labels = "labels", digits = 2) {
 	if(is.null(heads)){
 		stop("You must set 'heads' to 1 or 2 (was NULL)")
 	}
@@ -1591,12 +1591,12 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 
 				if(thisPathFree | ((fixed & (thisPathVal != 0))) ) {
 					# stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathVal, '"];\n')
-					if(pathLabels == "both"){
+					if(labels == "both"){
 						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
-					} else if(pathLabels == "labels"){
+					} else if(labels == "labels"){
 						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathLabel, "\"];\n")
 					}else {
-						# pathLabels = "none"
+						# labels = "none"
 						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, prefix, thisPathVal, "\"];\n")
 					}
 					
@@ -1624,12 +1624,12 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 							stringIn = paste0(stringIn, "\t", source, "_var -> ", target, ";\n")
 						}
 					} else {
-						if(pathLabels == "both"){
+						if(labels == "both"){
 							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
-						} else if(pathLabels == "labels"){
+						} else if(labels == "labels"){
 							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "\"];\n")
 						}else {
-							# pathLabels = "none"
+							# labels = "none"
 							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', prefix, thisPathVal, "\"];\n")
 						}
 					}

@@ -5,8 +5,8 @@
 \title{xmu_dot_make_paths (not for end users)}
 \usage{
 xmu_dot_make_paths(mxMat, stringIn, heads = NULL, fixed = TRUE,
-  comment = "More paths", showResiduals = TRUE,
-  pathLabels = "labels", digits = 2)
+  comment = "More paths", showResiduals = TRUE, labels = "labels",
+  digits = 2)
 }
 \arguments{
 \item{mxMat}{An mxMatrix}
@@ -21,7 +21,7 @@ xmu_dot_make_paths(mxMat, stringIn, heads = NULL, fixed = TRUE,
 
 \item{showResiduals}{Whether to show residuals}
 
-\item{pathLabels}{labels}
+\item{labels}{show labels on the path? ("none", "labels", "both")}
 
 \item{digits}{how many digits to report}
 }
