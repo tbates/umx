@@ -21,7 +21,7 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
 
 \item{summary}{Whether to print model summary (default = autoRun).}
 
-\item{show}{What to print in summary (deafult "none") (alternatives: "raw", "std", "list of column names")}
+\item{show}{What to print in summary (default "none") (alternatives: "raw", "std", "list of column names")}
 
 \item{comparison}{Toggle to allow not making comparison, even if second model is provided (more flexible in programming).}
 }

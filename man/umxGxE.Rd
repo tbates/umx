@@ -35,7 +35,7 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 \item{autoRun}{Optionally run the model (default), or just to create it and return without running.}
 
-\item{tryHard}{OptionallytryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch".}
+\item{tryHard}{Optionally tryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch".}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing)}
 }
