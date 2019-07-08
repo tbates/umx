@@ -16,7 +16,7 @@ xmu_check_levels_identical(df, selDVs, sep, action = c("stop", "ignore"))
 \item{action}{if unequal levels found:  c("stop", "ignore")}
 }
 \value{
--
+None
 }
 \description{
 Just checks that the factor levels for twins 1 and 2 are the same

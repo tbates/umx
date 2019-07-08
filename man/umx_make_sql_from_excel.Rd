@@ -10,7 +10,7 @@ umx_make_sql_from_excel(theFile = "Finder")
 \item{theFile}{The xlsx file to read. Default = "Finder")}
 }
 \value{
--
+None
 }
 \description{
 Unlikely to be of use to anyone but the package author :-)
@@ -24,15 +24,14 @@ On MacOS, the function can access the current front-most Finder window.
 
 The file name should be the name of the test.
 Columns should be headed:
-itemText	direction	scale	type	[optional	response	options]
+itemText	direction	scale	type	\link{optional	response	options}
 
 The SQL fields generated are:
 itemID, test, native_item_number, item_text, direction, scale, format, author
 
-
 tabbedPlus: list scored from 0 to n-1
 
-tabbedVertPlus: tabbed, but vertical lay-out 
+tabbedVertPlus: tabbed, but vertical lay-out
 
 number	2+2<itemBreak>min='0' max='7' step='1'
 
@@ -53,7 +52,9 @@ umx_make_sql_from_excel("~/Desktop/test.xlsx") # provide a path
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other File Functions: \code{\link{dl_from_dropbox}},

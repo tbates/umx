@@ -10,7 +10,7 @@ umx_write_to_clipboard(x)
 \item{x}{something to put on the clipboard}
 }
 \value{
--
+None
 }
 \description{
 umx_write_to_clipboard writes data to the clipboard

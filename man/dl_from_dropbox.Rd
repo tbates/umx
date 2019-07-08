@@ -12,7 +12,7 @@ dl_from_dropbox(x, key = NULL)
 \item{key}{the code after s/ and before the file name in the dropbox url}
 }
 \value{
-- NULL
+None
 }
 \description{
 Download a file from Dropbox, given either the url, or the name and key

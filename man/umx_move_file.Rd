@@ -21,9 +21,7 @@ umx_move_file(baseFolder = NA, regex = NULL, fileNameList = NA,
 \item{overwrite}{Boolean determining whether to overwrite files or not (default = FALSE (safe))}
 }
 \value{
-\itemize{
-\item 
-}
+None
 }
 \description{
 On OS X, \code{umx_move_file} can access the current front-most Finder window.

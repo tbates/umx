@@ -10,9 +10,7 @@ umx_open(filepath = getwd())
 \item{filepath}{The file to open}
 }
 \value{
-\itemize{
-\item 
-}
+None
 }
 \description{
 Open a file or folder. Works on OS X, mostly on windows, and hopefully on unix.

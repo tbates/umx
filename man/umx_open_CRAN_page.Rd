@@ -10,7 +10,7 @@ umx_open_CRAN_page(package = "umx")
 \item{package}{An \R package name.}
 }
 \value{
--
+None
 }
 \description{
 On MacOS, this function opens the CRAN page for a package.

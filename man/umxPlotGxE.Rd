@@ -24,9 +24,7 @@ see ?legend for alternatives like bottomright}
 \item{...}{Optional additional parameters}
 }
 \value{
-\itemize{
-\item 
-}
+None
 }
 \description{
 Plot GxE results (univariate environmental moderation of ACE components).

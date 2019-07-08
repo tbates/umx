@@ -252,7 +252,7 @@ methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 #' Catches a common typo, moving from mxModel to umx.
 #'
 #' @param ... Anything. We're just going to throw an error.
-#' @return -
+#' @return None
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxRAM()], [mxModel()]

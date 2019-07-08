@@ -21,9 +21,7 @@ umx_rename_file(findStr = NA, replaceStr = NA, baseFolder = "Finder",
 \item{overwrite}{Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)}
 }
 \value{
-\itemize{
-\item 
-}
+None
 }
 \description{
 Rename files. On OS X, the function can access the current front-most Finder window.

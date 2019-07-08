@@ -830,12 +830,12 @@ umx_set_checkpoint <- function(interval = 1, units = c("evaluations", "iteration
 #' @export
 umx_checkpoint <- umx_set_checkpoint
 
-#' umx_get_checkpoint
+#' Get or set checkpointing for a model
 #'
-#' get the checkpoint status for a model or global options
+#' Get the checkpoint status for a model or global options
 #'
 #' @param model an optional model to get options from
-#' @return - NULL
+#' @return None
 #' @export
 #' @family Get and set
 #' @references - <https://tbates.github.io>
@@ -891,7 +891,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @param testScript A user-provided script to run (NULL)
 #' @param rowwiseParallel Whether to parallel-ize rows (default) or gradient computation 
 #' @param nSubjects Number of rows to model (Default = 1000) Reduce for quicker runs.
-#' @return - NULL
+#' @return None
 #' @export
 #' @family Test
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -1236,7 +1236,7 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1, freeFixedLaten
 #' @param model1 the base [mxModel()]
 #' @param model2 the nested [mxModel()]
 #' @param text name of the thing being tested, i.e., "Extraversion" or "variances"
-#' @return - T/F
+#' @return - TRUE/FALSE
 #' @export
 #' @family Reporting functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -1523,9 +1523,10 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
 #' Useful for looking up documentation, checking you have an
 #' up-to-date version, showing the package to people etc.
 #' @param package An \R package name.
-#' @return - 
+#' @return None 
 #' @export
 #' @family Miscellaneous Utility Functions
+#' @md
 #' @examples
 #' \dontrun{
 #' umx_open_CRAN_page("umx")
@@ -1905,7 +1906,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
 #' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
 #' @family File Functions
-#' @return -
+#' @return None
 #' @export
 #' @md
 #' @references - <https://www.github.com/tbates/umx>
@@ -1967,7 +1968,7 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 #' Improvements would include error handling...
 #' @param x Either the file name, or full dropbox URL (see example below)
 #' @param key the code after s/ and before the file name in the dropbox url
-#' @return - NULL
+#' @return None
 #' @export
 #' @family File Functions
 #' @references - \url{https://thebiobucket.blogspot.kr/2013/04/download-files-from-dropbox.html}
@@ -2055,7 +2056,7 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 #' @param destFolder Folder to move files into
 #' @param test Boolean determining whether to change the names, or just report on what would have happened
 #' @param overwrite Boolean determining whether to overwrite files or not (default = FALSE (safe))
-#' @return -
+#' @return None
 #' @family File Functions
 #' @md
 #' @export
@@ -2111,7 +2112,7 @@ umx_move_file <- function(baseFolder = NA, regex = NULL, fileNameList = NA, dest
 #'
 #' NOTE: Your filepath is [shQuote()]'d by this function.
 #' @param filepath The file to open
-#' @return -
+#' @return None
 #' @export
 #' @family File Functions
 #' @md
@@ -2208,9 +2209,10 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #'
 #' @param theFile The xlsx file to read. Default = "Finder")
 #' @family File Functions
-#' @return - 
+#' @return None 
 #' @export
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' \dontrun{
 #' # An example Excel spreadsheet
@@ -2291,7 +2293,7 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 #' @details
 #' Works on Mac. Let me know if it fails on windows or Unix.
 #' @param x something to put on the clipboard
-#' @return - 
+#' @return None 
 #' @export
 #' @family String Functions
 #' @family File Functions
@@ -2333,7 +2335,7 @@ umx_write_to_clipboard <- function(x) {
 #' @param grp1 cases and total N for group 1
 #' @param grp2 cases and total N for group 2
 #' @param alpha for CI (default = 0.05)
-#' @return - list of odds in group 1 and group2, and the resulting OR and CI
+#' @return - List of odds in group 1 and group2, and the resulting OR and CI
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @seealso - [umx_r_test()]
@@ -2503,7 +2505,7 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 #' @param model an [mxModel()] to report on
 #' @param comparison If not NULL, used as comparison model
 #' @param digits (default = 2)
-#' @return -
+#' @return None
 #' @export
 #' @family Reporting Functions
 #' @seealso - [umxSummary()]
@@ -2534,7 +2536,7 @@ specify_decimal <- function(x, k){
 #' Compute and report Coefficient alpha (extracted from Rcmdr to avoid its dependencies)
 #'
 #' @param S A square, symmetric, numeric covariance matrix
-#' @return - 
+#' @return None 
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @references - \url{https://cran.r-project.org/package=Rcmdr}
@@ -2601,18 +2603,18 @@ print.reliability <- function (x, digits = 4, ...){
 #' @description
 #' You can install OpenMx, including the latest NPSOL-enabled build of OpenMx. Options are:
 #' 
-#' 1. "NPSOL": Install from our repository (default: This is where we maintain binaries supporting parallel processing and NPSOL).
-#' 2. "travis": Install the latest travis built (currently MacOS only).
+#' 1. "NPSOL": Install from our repository (default): This is where we maintain binaries supporting parallel processing and NPSOL.
+#' 2. "travis": Install the latest travis built (MacOS only).
 #' 3. "CRAN": Install from CRAN.
 #' 4. "open travis build page": Open the list of travis builds in a browser window.
 #'
+#'
 #' @aliases umx_update_OpenMx
-#' @param loc Which install to get: e.g., "NPSOL" (the default), "travis" (latest build),
-#' or open the travis list of builds on the web to view/pick a url.
-#' @param url A custom URL if you have/need one (probably not). If you're on a Mac, you can set this to "Finder" and the package selected in the Finder will be installed. Overrides other settings.
+#' @param loc Version to get default is "NPSOL". "travis" (latest build),CRAN, list of builds.
+#' @param url Custom URL. On Mac, set this to "Finder" and the package selected in the Finder will be installed.
 #' @param repos Which repository to use (ignored currently).
 #' @param lib Where to install the package.
-#' @return - 
+#' @return None
 #' @export
 #' @seealso [umxVersion()]
 #' @family Miscellaneous Utility Functions
@@ -2680,7 +2682,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param run = If what is "examples", whether to also run examples marked don't run. (default FALSE)
 #' @param start If what is "examples", which function to start from (default (NULL) = beginning).
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
-#' @return -
+#' @return None
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -2924,7 +2926,7 @@ umxCovData <- function(df, columns = NA, use = c("complete.obs", "everything", "
 #' A version of [cov2cor()] that forces upper and lower triangles to be *identical* (rather than nearly identical)
 #'
 #' @param x something that cov2cor can work on (matrix, df, etc.)
-#' @return - a correlation matrix
+#' @return - A correlation matrix
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @seealso [cov2cor()]
@@ -3190,8 +3192,8 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' Show matrices of RAM models in a easy-to-learn-from format. 
 #'
 #' A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
-#' do this in a way that makes it easy to process for users: The matrix contents are formatted as tables, and can even 
-#' be displayed as tables in a web browser.
+#' do this in a way that makes it easy to process for users: The matrix contents are formatted as 
+#' tables, and can even be displayed as tables in a web browser.
 #' 
 #' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.
 #'

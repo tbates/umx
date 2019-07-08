@@ -11,7 +11,7 @@ umxCov2cor(x)
 }
 \value{
 \itemize{
-\item a correlation matrix
+\item A correlation matrix
 }
 }
 \description{

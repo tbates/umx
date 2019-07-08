@@ -2574,7 +2574,7 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' @param separateGraphs (default = FALSE)
 #' @param acergb Colors to use for plot c(a = "red", c = "green", e = "blue", tot = "black")
 #' @param ... Optional additional parameters
-#' @return - 
+#' @return None 
 #' @family Plotting functions
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
@@ -4204,19 +4204,20 @@ umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = 
 #' Test the difference between correlations for significance.
 #'
 #' @description
-#' umx_r_test is a wrapper around the cocor test of difference between correlations.
+#' `umx_r_test` is a wrapper around the cocor test of difference between correlations.
 #'
 #' @details
-#' Currently it handles the test of whether r.jk and r.hm differ in magnitude.
+#' Currently it handles the test of whether `r.jk` and `r.hm` differ in magnitude.
 #' i.e, two non-overlapping (no variable in common) correlations in the same dataset.
 #' In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
 #'
-#' @param data the dataset
-#' @param vars the 4 vars needed: "j & k" and "h & m"
+#' @param data The dataset
+#' @param vars Names of the two pairs of columns: "j & k" and "h & m"
 #' @param alternative two (default) or one-sided (greater less) test
-#' @return - 
+#' @return cocor result.
 #' @export
 #' @family Miscellaneous Stats Helpers
+#' @md
 #' @examples
 #' vars = c("mpg", "cyl", "disp", "hp")
 #' umx_r_test(mtcars, vars)

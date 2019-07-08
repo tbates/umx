@@ -17,9 +17,7 @@ umx_check_parallel(nCores = c(1, parallel::detectCores()/2),
 \item{nSubjects}{Number of rows to model (Default = 1000) Reduce for quicker runs.}
 }
 \value{
-\itemize{
-\item NULL
-}
+None
 }
 \description{
 Shows how many cores you are using, and runs a test script so user can check CPU usage.

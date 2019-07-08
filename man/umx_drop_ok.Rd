@@ -15,7 +15,7 @@ umx_drop_ok(model1, model2, text = "parameter")
 }
 \value{
 \itemize{
-\item T/F
+\item TRUE/FALSE
 }
 }
 \description{

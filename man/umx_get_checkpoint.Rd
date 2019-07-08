@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_get_checkpoint}
 \alias{umx_get_checkpoint}
-\title{umx_get_checkpoint}
+\title{Get or set checkpointing for a model}
 \usage{
 umx_get_checkpoint(model = NULL)
 }
@@ -10,12 +10,10 @@ umx_get_checkpoint(model = NULL)
 \item{model}{an optional model to get options from}
 }
 \value{
-\itemize{
-\item NULL
-}
+None
 }
 \description{
-get the checkpoint status for a model or global options
+Get the checkpoint status for a model or global options
 }
 \examples{
 umx_get_checkpoint() # current global default

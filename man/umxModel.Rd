@@ -10,9 +10,7 @@ umxModel(...)
 \item{...}{Anything. We're just going to throw an error.}
 }
 \value{
-\itemize{
-\item 
-}
+None
 }
 \description{
 Catches a common typo, moving from mxModel to umx.

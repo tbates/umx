@@ -10,7 +10,7 @@ reliability(S)
 \item{S}{A square, symmetric, numeric covariance matrix}
 }
 \value{
--
+None
 }
 \description{
 Compute and report Coefficient alpha (extracted from Rcmdr to avoid its dependencies)

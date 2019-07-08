@@ -278,7 +278,7 @@ xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 #' @param data the data frame to check
 #' @param minVar Minimum allowed variance in variables before warning user variances differ too much.
 #' @param maxVarRatio Maximum allowed ratio of variance in data before warning user variances differ too much.
-#' @return - 
+#' @return None 
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @examples
@@ -511,7 +511,7 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' @param numObsDZ set if data are not raw.
 #' @param enforceSep Whether to require sep to be set, or just warn if it is not (Default = TRUE: enforce).
 #' @param optimizer Set by name (if you want to change it).
-#' @return -
+#' @return None
 #' @export
 #' @family Twin Modeling Functions
 #' @family Check or test
@@ -640,9 +640,10 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 #' @param selDVs base names of variables (without suffixes)
 #' @param sep text-constant separating base variable names the twin index (1:2)
 #' @param action if unequal levels found:  c("stop", "ignore")
-#' @return - 
+#' @return None 
 #' @export
 #' @family xmu internal not for end user
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData)

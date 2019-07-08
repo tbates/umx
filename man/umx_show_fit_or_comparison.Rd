@@ -14,9 +14,7 @@ umx_show_fit_or_comparison(model, comparison = NULL, digits = 2)
 \item{digits}{(default = 2)}
 }
 \value{
-\itemize{
-\item 
-}
+None
 }
 \description{
 Just a helper to show the logLik of a model or print a comparison table.

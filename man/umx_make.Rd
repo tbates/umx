@@ -22,9 +22,7 @@ umx_make(what = c("quick_install", "install_full", "spell",
 \item{spelling}{Whether to check spelling before release (default = "en_US": set NULL to not check).}
 }
 \value{
-\itemize{
-\item 
-}
+None
 }
 \description{
 Easily  run devtools "install", "release", "win", "examples" etc.

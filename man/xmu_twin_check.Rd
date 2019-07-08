@@ -28,9 +28,7 @@ xmu_twin_check(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 \item{optimizer}{Set by name (if you want to change it).}
 }
 \value{
-\itemize{
-\item 
-}
+None
 }
 \description{
 Check that DVs are in the data, that the data have rows, set the optimizer if requested.

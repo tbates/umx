@@ -16,7 +16,7 @@ xmu_check_variance(data, minVar = umx_set_data_variance_check(silent =
 \item{maxVarRatio}{Maximum allowed ratio of variance in data before warning user variances differ too much.}
 }
 \value{
--
+None
 }
 \description{
 Check that each variable exceeds a minimum variance and all are on compatible scales. Let the user know what to do if not.

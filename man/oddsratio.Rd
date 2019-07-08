@@ -16,7 +16,7 @@ oddsratio(grp1 = c(n = 3, N = 10), grp2 = c(n = 1, N = 10),
 }
 \value{
 \itemize{
-\item list of odds in group 1 and group2, and the resulting OR and CI
+\item List of odds in group 1 and group2, and the resulting OR and CI
 }
 }
 \description{
